@@ -1,0 +1,21 @@
+MIT licenses
+========================================
+
+vue	3.2.21:	https://github.com/vuejs/vue	MIT
+vue-router	4.0.12:	https://github.com/vuejs/vue-router	MIT
+vuex	4.0.2:	https://github.com/vuejs/vuex	MIT
+dayjs	1.10.7:	https://github.com/iamkun/dayjs	MIT
+lodash	4.17.21:	https://github.com/lodash/lodash	MIT
+vue-i18n 9.1.9:  https://github.com/kazupon/vue-i18n   MIT
+pinia	2.0.5:	github.com/posva/pinia	MIT
+normalize-wheel-es 1.1.1:  github.com/sxzz/normalize-wheel-es   MIT
+async-validator 4.0.7:  github.com/yiminghe/async-validator   MIT
+axios 0.24.0:  github.com/axios/axios   MIT
+memoize-one 6.0.0:  github.com/alexreardon/memoize-one  MIT
+popperjs/core 2.10.2:  github.com/popperjs/popper-core  MIT
+three 0.131.3:  github.com/mrdoob/three.js  MIT
+three-orbit-controls 82.1.0: github.com/mattdesl/three-orbit-controls MIT
+vue-demi 0.12.1:  github.com/antfu/vue-demi  MIT
+vueuse/core 6.8.0:  github.com/vueuse/vueuse  MIT
+vue/devtools-api 6.0.0-beta.20.1:  github.com/vuejs/vue-devtools  MIT
+element-plus 1.2.0-beta.3:  github.com/element-plus/element-plus   MIT
