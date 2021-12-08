@@ -103,6 +103,6 @@ export const appStore = defineStore({
     },
   },
 });
-export function useAppStoreWithOut() {
+export function useAppStoreWithOut(): any {
   return appStore(store);
 }

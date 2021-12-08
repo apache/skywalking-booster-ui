@@ -141,7 +141,7 @@ class Vec3 extends Float32Array {
     return this;
   }
   /** Copy in vector data */
-  copy(v: any[] | Float32Array): Vec3 {
+  copy(v: number[] | Float32Array): Vec3 {
     this[0] = v[0];
     this[1] = v[1];
     this[2] = v[2];

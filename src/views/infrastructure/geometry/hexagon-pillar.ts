@@ -74,7 +74,7 @@ class HexagonPillar {
 
     const poly = createPolygon(radius, 6, pointyUp ? (30 * Math.PI) / 180 : 0); // Create Base Shape
     toVec3(rtn, poly);
-    const vertices = [];
+    const vertices: any[] = [];
     for (let i = 0; i < rtn.vertices.length / 3; i++) {
       vertices.push(
         new Vec3(
@@ -90,7 +90,7 @@ class HexagonPillar {
 }
 // Create the basic 2d polygon shape
 function createPolygon(radius: number, sides = 6, offset = 0) {
-  const poly = [];
+  const poly: number[] = [];
   let i, rad;
   for (i = 0; i < sides; i++) {
     rad = Math.PI * 2 * (i / sides);
@@ -180,7 +180,7 @@ function polyCapBevel(
 ) {
   // eslint-disable-next-line
   const v: any = new Vec2();
-  const lerp = [];
+  const lerp: any[] = [];
   let pivot, top, pnt, i, vlen, tlen;
 
   offset = offset || [0, 0, 0];

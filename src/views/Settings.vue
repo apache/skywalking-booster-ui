@@ -79,7 +79,7 @@ import timeFormat from "@/utils/timeFormat";
 import { ElSwitch } from "element-plus";
 
 const { t, locale } = useI18n();
-const state = reactive<{ timer: any }>({
+const state = reactive<{ timer: ReturnType<typeof setInterval> | null }>({
   timer: null,
 });
 const lang = ref<boolean>(locale.value === "zh" ? false : true);
@@ -105,14 +105,18 @@ const handleAuto = (status: boolean) => {
     handleReload();
     state.timer = setInterval(handleReload, autoTime.value * 1000);
   } else {
-    clearInterval(state.timer);
+    if (state.timer) {
+      clearInterval(state.timer);
+    }
   }
 };
 const changeAutoTime = () => {
   if (autoTime.value < 1) {
     return;
   }
-  clearInterval(state.timer);
+  if (state.timer) {
+    clearInterval(state.timer);
+  }
   if (auto.value) {
     handleReload();
     state.timer = setInterval(handleReload, autoTime.value * 1000);

@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="infrastructure-box">
     <div ref="mapRef" class="map"></div>
     <div class="info-box" v-show="showInfo">
-      {{ nodeTypes[type] }} Information
+      {{ NodeTypes[type] }} Information
     </div>
   </div>
 </template>
@@ -37,7 +37,6 @@ const animateCallbacks: Array<() => void> = [];
 const showInfo = ref<boolean>(false);
 const objSelected = ref<any>(null);
 const meshColors = ref([0xa1cffb, 0x333333, 0x333840, 0x999999]); //[0xa489b2, 0xf2bfd0, 0xf0eaea, 0xef6775, 0xfbc580];
-const nodeTypes = ref(NodeTypes);
 const type = ref<number>(0);
 const width = ref<number>(1920);
 const height = ref<number>(900);
@@ -89,7 +88,7 @@ function init(dom: HTMLDivElement): void {
   const helper = new THREE.GridHelper(10000, 40, 0x04002c, 0x04002c);
   helper.position.y = -1000;
   // this.scene.add(helper);
-  const axis = new THREE.AxesHelper(15000);
+  // const axis = new THREE.AxesHelper(15000);
   // this.scene.add(axis);
   // add mesh
   createInfrastructure();
