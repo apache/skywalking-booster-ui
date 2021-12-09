@@ -1,31 +1,43 @@
-# skywalking-x-ui
+Apache SkyWalking Booster UI
+===============
 
-## Project setup
+<img src="http://skywalking.apache.org/assets/logo.svg" alt="Sky Walking logo" height="90px" align="right" />
+
+[Apache SkyWalking](https://github.com/apache/skywalking) UI.
+
+![NPM BUILD](https://github.com/apache/skywalking-booster-ui/workflows/Node%20CI/badge.svg)
+
+# Contact Us
+* Submit an [issue](https://github.com/apache/skywalking/issues)
+* Mailing list: **dev@skywalking.apache.org**. Mail to `dev-subscribe@skywalking.apache.org`, follow the reply to subscribe the mailing list
+* Join `skywalking` channel at [Apache Slack](http://s.apache.org/slack-invite)
+* QQ Group: 392443393, 901167865
+
+## Release
+This repo wouldn't release separately. All source codes have been included in the main repo release. The tags match the [main repo](https://github.com/apache/skywalking) tags.
+
+## Development
+
+ The app was built with [Vue3.x + Typescript](https://github.com/vuejs/vue).
+
+### Prepare
+
+1. Fork, then clone the repo and change directory into it.
+1. Install dependencies via `npm`:
+
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Build
+
+**All following builds are for dev.**
 ```
+npm install
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
+The default UI address is `http://localhost:8080`.
 
-### Run your unit tests
-```
-npm run test:unit
-```
-
-### Run your end-to-end tests
-```
-npm run test:e2e
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
+# License
+[Apache 2.0 License.](/LICENSE)

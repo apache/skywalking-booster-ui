@@ -1,5 +1,5 @@
 {
-  "name": "skywalking-x-ui",
+  "name": "skywalking-booster-ui",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -62,7 +62,11 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "rules": {"@typescript-eslint/no-explicit-any": ["off"]},
+    "rules": {
+      "@typescript-eslint/no-explicit-any": [
+        "off"
+      ]
+    },
     "overrides": [
       {
         "files": [
