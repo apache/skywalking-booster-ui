@@ -33,7 +33,7 @@ limitations under the License. -->
     </div>
     <el-table :data="tableData" style="width: 100%" max-height="550">
       <el-table-column fixed prop="name" label="Name" />
-      <el-table-column prop="type" label="type" />
+      <el-table-column prop="type" label="Type" />
       <el-table-column prop="date" label="Date" />
       <el-table-column label="Operations">
         <template #default="scope">
@@ -88,7 +88,7 @@ const tableData = [
   },
   {
     date: "2016-05-01",
-    name: "Tom",
+    name: "xxx",
     type: "mesh",
   },
 ];
