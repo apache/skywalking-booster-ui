@@ -57,7 +57,7 @@ const utcHour = isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]);
 const utcMin = isNaN(Number(utcArr[1])) ? 0 : Number(utcArr[1]);
 
 appStore.setUTC(utcHour, utcMin);
-console.log(route);
+
 const setConfig = (value: string) => {
   pageName.value = value || "";
   theme.value = route.path.includes("/infrastructure/") ? "dark" : "light";

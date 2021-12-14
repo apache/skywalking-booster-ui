@@ -23,7 +23,7 @@ const msg = {
   infrastructure: "Infrastructure",
   virtualMachine: "Virtual Machine",
   kubernetes: "Kubernetes",
-  dashboardHome: "Dashboard Home",
+  dashboardNew: "New Dashboard",
   dashboardList: "Dashboard List",
   logs: "Logs",
   events: "Events",

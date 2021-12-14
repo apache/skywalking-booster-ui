@@ -30,20 +30,20 @@ export const routesDashboard: Array<RouteRecordRaw> = [
     },
     children: [
       {
-        path: "/dashboard/home",
-        component: () => import("@/views/Service.vue"),
-        name: "Home",
+        path: "/dashboard/list",
+        component: () => import("@/views/dashboard/List.vue"),
+        name: "List",
         meta: {
-          title: "dashboardHome",
+          title: "dashboardList",
           exact: false,
         },
       },
       {
-        path: "/dashboard/list",
-        component: () => import("@/views/Log.vue"),
-        name: "List",
+        path: "/dashboard/new",
+        component: () => import("@/views/dashboard/New.vue"),
+        name: "New",
         meta: {
-          title: "dashboardList",
+          title: "dashboardNew",
           exact: false,
         },
       },

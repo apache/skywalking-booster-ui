@@ -13,11 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="about">{{ props.msg }}</div>
+  <div class="Infrastructure">
+    <InfrastructureMap />
+  </div>
 </template>
+
 <script lang="ts" setup>
-import { defineProps } from "vue";
-const props = defineProps({
-  msg: String,
-});
+import InfrastructureMap from "./InfrastructureMap.vue";
 </script>
+<style scoped>
+.Infrastructure {
+  width: 100%;
+  height: 100%;
+}
+</style>
