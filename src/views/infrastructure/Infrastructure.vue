@@ -13,17 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <section class="app-main">
-    <router-view v-slot="{ Component }">
-      <keep-alive>
-        <component :is="Component" />
-      </keep-alive>
-    </router-view>
-  </section>
+  <div class="Infrastructure">
+    <InfrastructureMap />
+  </div>
 </template>
-<script lang="ts" setup></script>
-<style lang="scss" scoped>
-.app-main {
-  height: calc(100% - 128px);
+
+<script lang="ts" setup>
+import InfrastructureMap from "./InfrastructureMap.vue";
+</script>
+<style scoped>
+.Infrastructure {
+  width: 100%;
+  height: 100%;
 }
 </style>

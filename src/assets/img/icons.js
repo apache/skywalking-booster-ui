@@ -14,37 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
+const requireComponent = require.context('../../assets', false, /\.png$/);
 
-export const routesInfra: Array<RouteRecordRaw> = [
-  {
-    path: "",
-    name: "Infrastructure",
-    meta: {
-      title: "infrastructure",
-      icon: "scatter_plot",
-      exact: true,
-      hasGroup: true,
-    },
-    component: Layout,
-    children: [
-      {
-        path: "/infrastructure/vm",
-        name: "VirtualMachine",
-        meta: {
-          title: "virtualMachine",
-        },
-        component: () => import("@/views/infrastructure/Infrastructure.vue"),
-      },
-      {
-        path: "/infrastructure/k8s",
-        name: "Kubernetes",
-        meta: {
-          title: "kubernetes",
-        },
-        component: () => import("@/views/infrastructure/Infrastructure.vue"),
-      },
-    ],
-  },
-];
+const result = {};
+function capitalizeFirstLetter(str) {
+  return str.toUpperCase();
+}
+function validateFileName(str) {
+  return /^\S+\.png$/.test(str) && str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) => capitalizeFirstLetter($1));
+}
+requireComponent.keys().forEach((filePath) => {
+  const componentConfig = requireComponent(filePath);
+  const fileName = validateFileName(filePath);
+  result[fileName] = componentConfig;
+});
+export default result;
