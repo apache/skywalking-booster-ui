@@ -43,6 +43,7 @@ const msg = {
   eventList: "Event List",
   databasePanel: "Database Panel",
   meshServicePanel: "Service Panel",
+  newDashboard: "New a dashboard",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

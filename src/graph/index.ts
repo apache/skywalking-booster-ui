@@ -16,9 +16,10 @@
  */
 import axios, { AxiosPromise, AxiosResponse } from "axios";
 import { cancelToken } from "@/utils/cancelToken";
-import * as global from "./query/global";
+import * as app from "./query/app";
+import * as selector from "./query/selector";
 
-const query: { [key: string]: string } = { ...global };
+const query: { [key: string]: string } = { ...app, ...selector };
 class Graph {
   private queryData = "";
   public query(queryData: string) {

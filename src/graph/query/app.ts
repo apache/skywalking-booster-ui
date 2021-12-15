@@ -14,12 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { OAPTimeInfo, OAPVersion } from "../fragments/app";
 
-import axios from "axios";
-const CancelToken = axios.CancelToken;
+export const queryOAPTimeInfo = `query queryOAPTimeInfo {${OAPTimeInfo.query}}`;
 
-export const cancelToken = (): any =>
-  new CancelToken(function executor(c) {
-    const w = window as any;
-    w.axiosCancel.push(c);
-  });
+export const queryOAPVersion = `query ${OAPVersion.query}`;

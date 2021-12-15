@@ -492,7 +492,7 @@ watch(
 }
 
 .datepicker-range {
-  min-width: 238px;
+  min-width: 260px;
 }
 
 .datepicker-range .datepicker-popup {
