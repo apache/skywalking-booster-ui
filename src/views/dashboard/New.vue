@@ -149,10 +149,10 @@ import {
   ElInput,
   ElButton,
 } from "element-plus";
-// import { useSelectorStore } from "@/store/modules/selectors";
+import { useSelectorStore } from "@/store/modules/selectors";
 import { EntityType, SelectOpt, Options } from "./data";
 
-// const selectorStore = useSelectorStore();
+const selectorStore = useSelectorStore();
 const props = {
   expandTrigger: "hover",
 };
@@ -173,24 +173,22 @@ const handleChange = (value: any) => {
 const onCreate = () => {
   console.log(state);
 };
-// selectorStore.fetchServices("general");
+selectorStore.fetchServices("general");
 </script>
 <style lang="scss" scoped>
 .new-dashboard {
-  width: 600px;
   margin: 0 auto;
 }
 .item {
   margin-top: 20px;
 }
-.selectors {
-  width: 600px;
-}
+.new-dashboard,
+.selectors,
 .el-cascader-menu {
   width: 600px;
 }
 .create {
-  width: 160px;
+  width: 600px;
 }
 .btn {
   margin-top: 40px;
