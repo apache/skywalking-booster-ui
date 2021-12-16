@@ -27,7 +27,10 @@ const msg = {
   dashboardList: "仪表盘列表",
   log: "日志",
   events: "事件",
+  // 警告
   alerts: "警告",
+  alertName: "警告名称",
+  startedTime: "开始时间",
   settings: "设置",
   dashboards: "仪表盘",
   profiles: "性能剖析",

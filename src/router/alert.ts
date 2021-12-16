@@ -24,8 +24,8 @@ export const routesAlert: Array<RouteRecordRaw> = [
     meta: {
       title: "alerts",
       icon: "notification_important",
-      hasGroup: false,
-      exact: false,
+      hasGroup: true,
+      exact: true,
     },
     component: Layout,
     children: [
@@ -38,7 +38,7 @@ export const routesAlert: Array<RouteRecordRaw> = [
           hasGroup: false,
           exact: false,
         },
-        component: () => import("@/views/Log.vue"),
+        component: () => import("@/views/Alert.vue"),
       },
     ],
   },
