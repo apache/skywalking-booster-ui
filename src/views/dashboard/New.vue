@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="new-dashboard">
-    <h4>Create a new dashboard</h4>
+    <h4>{{ t("newDashboard") }}</h4>
     <div class="item">
-      <div class="label">Name</div>
+      <div class="label">{{ t("name") }}</div>
       <el-input
         size="small"
         v-model="state.name"
@@ -24,7 +24,7 @@ limitations under the License. -->
       />
     </div>
     <div class="item">
-      <div class="label">Layer</div>
+      <div class="label">{{ t("layer") }}</div>
       <el-select
         size="small"
         v-model="state.layer"
@@ -41,7 +41,7 @@ limitations under the License. -->
       </el-select>
     </div>
     <div class="item">
-      <div class="label">Entity</div>
+      <div class="label">{{ t("entityType") }}</div>
       <el-select
         size="small"
         v-model="state.entity"
@@ -58,7 +58,7 @@ limitations under the License. -->
       </el-select>
     </div>
     <div class="item" v-show="state.entity === EntityType[0].value">
-      <div class="label">Service</div>
+      <div class="label">{{ t("service") }}</div>
       <el-select
         size="small"
         v-model="state.service"
@@ -75,7 +75,7 @@ limitations under the License. -->
       </el-select>
     </div>
     <div class="item" v-show="state.entity === EntityType[2].value">
-      <div class="label">Service / Endpoint</div>
+      <div class="label">{{ t("service") }} / {{ t("endpoint") }}</div>
       <el-cascader
         v-model="state.serviceEndpoint"
         :options="SelectOpt"
@@ -86,7 +86,7 @@ limitations under the License. -->
       ></el-cascader>
     </div>
     <div class="item" v-show="state.entity === EntityType[3].value">
-      <div class="label">Service / Instance</div>
+      <div class="label">{{ t("service") }} / {{ t("instance") }}</div>
       <el-cascader
         v-model="state.serviceInstance"
         :options="SelectOpt"
@@ -97,7 +97,7 @@ limitations under the License. -->
       ></el-cascader>
     </div>
     <div class="item" v-show="state.entity === EntityType[4].value">
-      <div class="label">Destination Service</div>
+      <div class="label">{{ t("destService") }}</div>
       <el-select
         size="small"
         v-model="state.destService"
@@ -114,7 +114,9 @@ limitations under the License. -->
       </el-select>
     </div>
     <div class="item" v-show="state.entity === EntityType[5].value">
-      <span class="label">Destination Service / Endpoint</span>
+      <span class="label"
+        >{{ t("destService") }} / {{ t("destServiceInstance") }}</span
+      >
       <el-cascader
         v-model="state.destServiceEndpoint"
         :options="SelectOpt"
@@ -124,7 +126,9 @@ limitations under the License. -->
       ></el-cascader>
     </div>
     <div class="item" v-show="state.entity === EntityType[6].value">
-      <span class="label">Destination Service / Instance</span>
+      <span class="label">
+        {{ t("destService") }} / {{ t("destEndpoint") }}
+      </span>
       <el-cascader
         v-model="state.destServiceInstance"
         :options="SelectOpt"
@@ -135,13 +139,14 @@ limitations under the License. -->
     </div>
     <div class="btn">
       <el-button class="create" size="small" type="primary" @click="onCreate">
-        Create
+        {{ t("create") }}
       </el-button>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
+import { useI18n } from "vue-i18n";
 import router from "@/router";
 import {
   ElSelect,
@@ -153,6 +158,7 @@ import {
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EntityType, SelectOpt, Options } from "./data";
 
+const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const props = {
   expandTrigger: "hover",

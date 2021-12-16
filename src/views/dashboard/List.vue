@@ -40,17 +40,17 @@ limitations under the License. -->
       <el-table-column label="Operations">
         <template #default="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
-            View
+            {{ t("view") }}
           </el-button>
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
-            Edit
+            {{ t("edit") }}
           </el-button>
           <el-button
             size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
           >
-            Delete
+            {{ t("delete") }}
           </el-button>
         </template>
       </el-table-column>
