@@ -38,7 +38,7 @@ export const routesGen: Array<RouteRecordRaw> = [
           headPath: "/generalService/service",
           exact: true,
         },
-        component: () => import("@/views/Service.vue"),
+        component: () => import("@/views/service/Service.vue"),
       },
       {
         path: "/generalService/service/:id/:type",

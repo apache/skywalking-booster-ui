@@ -162,7 +162,7 @@ function createHexagonLine(
     );
     const material = new LineMaterial({
       color: meshColors.value[type],
-      linewidth: 4,
+      linewidth: 1,
       // opacity: 0.2,
       dashed: false,
     });

@@ -35,7 +35,7 @@ export const routesInfra: Array<RouteRecordRaw> = [
         meta: {
           title: "virtualMachine",
         },
-        component: () => import("@/views/Infrastructure.vue"),
+        component: () => import("@/views/infrastructure/Infrastructure.vue"),
       },
       {
         path: "/infrastructure/k8s",
@@ -43,7 +43,7 @@ export const routesInfra: Array<RouteRecordRaw> = [
         meta: {
           title: "kubernetes",
         },
-        component: () => import("@/views/Infrastructure.vue"),
+        component: () => import("@/views/infrastructure/Infrastructure.vue"),
       },
     ],
   },

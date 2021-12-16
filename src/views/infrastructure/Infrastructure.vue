@@ -19,7 +19,7 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import InfrastructureMap from "./infrastructure/InfrastructureMap.vue";
+import InfrastructureMap from "./InfrastructureMap.vue";
 </script>
 <style scoped>
 .Infrastructure {

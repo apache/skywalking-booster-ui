@@ -30,21 +30,51 @@ export const routesDashboard: Array<RouteRecordRaw> = [
     },
     children: [
       {
-        path: "/dashboard/home",
-        component: () => import("@/views/Service.vue"),
-        name: "Home",
-        meta: {
-          title: "dashboardHome",
-          exact: false,
-        },
-      },
-      {
         path: "/dashboard/list",
-        component: () => import("@/views/Log.vue"),
+        component: () => import("@/views/dashboard/List.vue"),
         name: "List",
         meta: {
           title: "dashboardList",
           exact: false,
+        },
+      },
+      {
+        path: "/dashboard/new",
+        component: () => import("@/views/dashboard/New.vue"),
+        name: "New",
+        meta: {
+          title: "dashboardNew",
+          exact: false,
+        },
+      },
+      {
+        path: "/dashboard/edit/service/:serviceId",
+        component: () => import("@/views/dashboard/Edit.vue"),
+        name: "serviceEdit",
+        meta: {
+          title: "dashboardEdit",
+          exact: false,
+          notShow: true,
+        },
+      },
+      {
+        path: "/dashboard/edit/endpoint/:serviceId/:endpointId",
+        component: () => import("@/views/dashboard/Edit.vue"),
+        name: "endpointEdit",
+        meta: {
+          title: "dashboardEdit",
+          exact: false,
+          notShow: true,
+        },
+      },
+      {
+        path: "/dashboard/edit/instance/:serviceId/:instanceId",
+        component: () => import("@/views/dashboard/Edit.vue"),
+        name: "instanceEdit",
+        meta: {
+          title: "dashboardEdit",
+          exact: false,
+          notShow: true,
         },
       },
     ],

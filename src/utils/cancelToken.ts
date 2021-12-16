@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* eslint-disable */
+
 import axios from "axios";
 const CancelToken = axios.CancelToken;
 
-export const cancelToken = () =>
+export const cancelToken = (): any =>
   new CancelToken(function executor(c) {
     const w = window as any;
     w.axiosCancel.push(c);

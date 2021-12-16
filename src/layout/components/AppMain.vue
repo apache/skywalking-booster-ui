@@ -21,14 +21,7 @@ limitations under the License. -->
     </router-view>
   </section>
 </template>
-<script lang="ts" setup>
-import { useRoute } from "vue-router";
-
-const route = useRoute();
-const key = () => {
-  return route.path;
-};
-</script>
+<script lang="ts" setup></script>
 <style lang="scss" scoped>
 .app-main {
   height: calc(100% - 128px);
