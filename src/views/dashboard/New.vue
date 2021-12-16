@@ -57,7 +57,7 @@ limitations under the License. -->
         </el-option>
       </el-select>
     </div>
-    <div class="item" v-show="state.entity === 'Service'">
+    <div class="item" v-show="state.entity === EntityType[0].value">
       <div class="label">Service</div>
       <el-select
         size="small"
@@ -74,7 +74,7 @@ limitations under the License. -->
         </el-option>
       </el-select>
     </div>
-    <div class="item" v-show="state.entity === 'Endpoint'">
+    <div class="item" v-show="state.entity === EntityType[2].value">
       <div class="label">Service / Endpoint</div>
       <el-cascader
         v-model="state.serviceEndpoint"
@@ -85,7 +85,7 @@ limitations under the License. -->
         :style="{ width: '600px' }"
       ></el-cascader>
     </div>
-    <div class="item" v-show="state.entity === 'ServiceInstance'">
+    <div class="item" v-show="state.entity === EntityType[3].value">
       <div class="label">Service / Instance</div>
       <el-cascader
         v-model="state.serviceInstance"
@@ -96,7 +96,7 @@ limitations under the License. -->
         :style="{ width: '600px' }"
       ></el-cascader>
     </div>
-    <div class="item" v-show="state.entity === 'ServiceRelation'">
+    <div class="item" v-show="state.entity === EntityType[4].value">
       <div class="label">Destination Service</div>
       <el-select
         size="small"
@@ -113,7 +113,7 @@ limitations under the License. -->
         </el-option>
       </el-select>
     </div>
-    <div class="item" v-show="state.entity === 'EndpointRelation'">
+    <div class="item" v-show="state.entity === EntityType[5].value">
       <span class="label">Destination Service / Endpoint</span>
       <el-cascader
         v-model="state.destServiceEndpoint"
@@ -123,7 +123,7 @@ limitations under the License. -->
         :style="{ width: '600px' }"
       ></el-cascader>
     </div>
-    <div class="item" v-show="state.entity === 'ServiceInstanceRelation'">
+    <div class="item" v-show="state.entity === EntityType[6].value">
       <span class="label">Destination Service / Instance</span>
       <el-cascader
         v-model="state.destServiceInstance"
@@ -142,6 +142,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
+import router from "@/router";
 import {
   ElSelect,
   ElOption,
@@ -171,7 +172,19 @@ const handleChange = (value: any) => {
   console.log(value);
 };
 const onCreate = () => {
-  console.log(state);
+  let path = `/dashboard/edit/${state.entity}/`;
+  switch (state.entity) {
+    case EntityType[0].value:
+      path += state.service;
+      break;
+    case EntityType[2].value:
+      path += `${state.service}/${state.serviceEndpoint}`;
+      break;
+    case EntityType[3].value:
+      path += `${state.service}/${state.serviceInstance}`;
+      break;
+  }
+  router.push(path);
 };
 selectorStore.fetchServices("general");
 </script>

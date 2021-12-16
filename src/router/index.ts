@@ -46,7 +46,7 @@ const router = createRouter({
 (window as any).axiosCancel = [];
 
 router.beforeEach((to, from, next) => {
-  const token = window.localStorage.getItem("skywalking-authority");
+  // const token = window.localStorage.getItem("skywalking-authority");
   if ((window as any).axiosCancel.length !== 0) {
     for (const func of (window as any).axiosCancel) {
       setTimeout(func(), 0);

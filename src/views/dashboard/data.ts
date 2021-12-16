@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 export const EntityType = [
-  { value: "Service", label: "Service" },
-  { value: "All", label: "All" },
-  { value: "Endpoint", label: "Service Endpoint" },
-  { value: "ServiceInstance", label: "Service Instance" },
-  { value: "ServiceRelation", label: "Service Relation" },
-  { value: "ServiceInstanceRelation", label: "Service Instance Relation" },
-  { value: "EndpointRelation", label: "Endpoint Relation" },
+  { value: "service", label: "Service" },
+  { value: "all", label: "All" },
+  { value: "endpoint", label: "Service Endpoint" },
+  { value: "serviceInstance", label: "Service Instance" },
+  { value: "serviceRelation", label: "Service Relation" },
+  { value: "serviceInstanceRelation", label: "Service Instance Relation" },
+  { value: "endpointRelation", label: "Endpoint Relation" },
 ];
 export const SelectOpt = [
   {
