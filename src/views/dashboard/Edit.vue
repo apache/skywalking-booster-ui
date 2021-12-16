@@ -12,13 +12,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<template>
-  <router-view />
-</template>
-
-<style>
-#app {
-  color: #2c3e50;
-  height: 100%;
-}
-</style>
+<template>dashboard edit</template>

@@ -26,6 +26,8 @@ interface AppState {
   utc: string;
   utcHour: number;
   utcMin: number;
+  eventStack: (() => unknown)[];
+  timer: ReturnType<typeof setInterval> | null;
 }
 
 export const appStore = defineStore({
@@ -35,6 +37,8 @@ export const appStore = defineStore({
     utc: "",
     utcHour: 0,
     utcMin: 0,
+    eventStack: [],
+    timer: null,
   }),
   getters: {
     duration(): Duration {
@@ -92,14 +96,37 @@ export const appStore = defineStore({
     },
   },
   actions: {
-    setDuration(data: Duration) {
+    setDuration(data: Duration): void {
       this.durationRow = data;
+      if ((window as any).axiosCancel.length !== 0) {
+        for (const event of (window as any).axiosCancel) {
+          setTimeout(event(), 0);
+        }
+        (window as any).axiosCancel = [];
+      }
+      this.runEventStack();
     },
-    setUTC(utcHour: number, utcMin: number) {
+    setUTC(utcHour: number, utcMin: number): void {
+      this.runEventStack();
       this.utcMin = utcMin;
       this.utcHour = utcHour;
       this.utc = `${utcHour}:${utcMin}`;
       localStorage.setItem("utc", this.utc);
+    },
+    setEventStack(funcs: (() => void)[]): void {
+      this.eventStack = funcs;
+    },
+    runEventStack() {
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
+      this.timer = setTimeout(
+        () =>
+          this.eventStack.forEach((event: any) => {
+            setTimeout(event(), 0);
+          }),
+        500
+      );
     },
   },
 });

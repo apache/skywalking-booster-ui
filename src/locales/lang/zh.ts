@@ -43,6 +43,8 @@ const msg = {
   eventList: "事件列表",
   databasePanel: "数据库面板",
   meshServicePanel: "服务面板",
+  newDashboard: "新增仪表盘",
+  dashboardEdit: "编辑仪表盘",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

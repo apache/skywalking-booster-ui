@@ -28,7 +28,9 @@ limitations under the License. -->
         </template>
       </el-input>
       <router-link to="/dashboard/new">
-        <el-button size="small" type="primary">+ New Dashboard</el-button>
+        <el-button size="small" type="primary">
+          + {{ t("newDashboard") }}
+        </el-button>
       </router-link>
     </div>
     <el-table :data="tableData" style="width: 100%" max-height="550">
@@ -57,6 +59,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { ElTable, ElTableColumn, ElButton, ElInput } from "element-plus";
 //  # - os-linux
 //  # - k8s
@@ -69,6 +72,7 @@ import { ElTable, ElTableColumn, ElButton, ElInput } from "element-plus";
 //  # - cache
 //  # - browser
 //  # - skywalking
+const { t } = useI18n();
 const searchText = ref<string>("");
 const tableData = [
   {
