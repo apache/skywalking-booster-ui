@@ -18,7 +18,14 @@ limitations under the License. -->
     <el-button size="mini">Discard</el-button>
     <el-button size="mini" type="primary">Apply</el-button>
   </div>
-  <div class="ds-layout"></div>
+  <div class="flex-h ds-main">
+    <div class="ds-layout flex-h">
+      <div class="panel">item</div>
+      <div class="panel">item</div>
+      <div class="panel">item</div>
+    </div>
+    <div class="ds-config">config</div>
+  </div>
 </template>
 <script lang="ts" setup>
 import { ElButton } from "element-plus";
@@ -27,10 +34,30 @@ import { ElButton } from "element-plus";
 .dashboard-tool {
   text-align: right;
   padding: 5px 10px;
-  // border-bottom: 1px solid #ccc;
+  background: rgb(240, 242, 245);
+  // border-bottom: 1px solid rgb(240, 242, 245);
+}
+.ds-main {
+  background: rgb(240, 242, 245);
 }
 .ds-layout {
-  background: rgb(240, 242, 245);
+  // background: rgb(240, 242, 245);
+  // background-color: #fafbfc;
+  height: 890px;
+  flex-grow: 2;
+  overflow: auto;
+  // padding: 0 5px;
+}
+.ds-config {
+  width: 360px;
+  margin: 5px 0;
+  background-color: #fff;
+}
+.panel {
+  width: 300px;
   height: 300px;
+  background-color: #fff;
+  margin: 5px;
+  text-align: center;
 }
 </style>
