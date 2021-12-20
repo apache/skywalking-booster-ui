@@ -34,6 +34,7 @@
       "webpack-env",
       "jest"
     ],
+    "typeRoots": ["./node_modules/@types/", "./types"],
     "paths": {
       "@/*": [
         "src/*"
