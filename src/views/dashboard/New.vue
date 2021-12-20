@@ -181,7 +181,7 @@ const onCreate = () => {
   let path = `/dashboard/edit/${state.entity}/`;
   switch (state.entity) {
     case EntityType[0].value:
-      path += state.service;
+      path += state.service || 1;
       break;
     case EntityType[2].value:
       path += `${state.service}/${state.serviceEndpoint}`;

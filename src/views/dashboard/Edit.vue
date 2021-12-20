@@ -12,4 +12,25 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<template>dashboard edit</template>
+<template>
+  <div class="dashboard-tool">
+    <el-button size="mini">Save As</el-button>
+    <el-button size="mini">Discard</el-button>
+    <el-button size="mini" type="primary">Apply</el-button>
+  </div>
+  <div class="ds-layout"></div>
+</template>
+<script lang="ts" setup>
+import { ElButton } from "element-plus";
+</script>
+<style lang="scss" scoped>
+.dashboard-tool {
+  text-align: right;
+  padding: 5px 10px;
+  // border-bottom: 1px solid #ccc;
+}
+.ds-layout {
+  background: rgb(240, 242, 245);
+  height: 300px;
+}
+</style>
