@@ -83,7 +83,7 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter, RouteRecordRaw, RouteRecordName } from "vue-router";
 import { useI18n } from "vue-i18n";
 import {
@@ -114,9 +114,6 @@ const filterMenus = (menus: any[]) => {
   return menus.filter((d) => d.meta && !d.meta.notShow);
 };
 
-onMounted(() => {
-  console.log(name)
-})
 </script>
 
 <style lang="scss" scope>
