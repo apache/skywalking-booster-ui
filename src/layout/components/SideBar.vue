@@ -52,7 +52,11 @@ limitations under the License. -->
             </el-menu-item>
           </el-menu-item-group>
         </el-sub-menu>
-        <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
+        <el-menu-item
+          :index="String(menu.name)"
+          @click="changePage(menu)"
+          v-else
+        >
           <el-icon class="menu-icons" :style="{ margin: '-10px 12px 0 0' }">
             <router-link :to="menu.children[0].path" :exact="menu.meta.exact">
               <Icon size="lg" :iconName="menu.meta.icon" />
@@ -113,7 +117,6 @@ const changePage = (menu: RouteRecordRaw) => {
 const filterMenus = (menus: any[]) => {
   return menus.filter((d) => d.meta && !d.meta.notShow);
 };
-
 </script>
 
 <style lang="scss" scope>
