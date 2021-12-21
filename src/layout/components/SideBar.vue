@@ -24,14 +24,14 @@ limitations under the License. -->
       active-text-color="#448dfe"
       background-color="#252a2f"
       class="el-menu-vertical"
-      default-active="0"
+      :default-active="name"
       text-color="#efefef"
       :unique-opened="true"
       :collapse="isCollapse"
       :style="{ border: 'none' }"
     >
       <template v-for="(menu, index) in routes" :key="index">
-        <el-sub-menu :index="String(index)" v-if="menu.meta.hasGroup">
+        <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
           <template #title>
             <router-link :to="menu.path" :exact="menu.meta.exact || false">
               <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
@@ -43,7 +43,7 @@ limitations under the License. -->
           <el-menu-item-group>
             <el-menu-item
               v-for="(m, idx) in filterMenus(menu.children)"
-              :index="`${index}-${idx}`"
+              :index="m.name"
               :key="idx"
             >
               <router-link :to="m.path" :exact="m.meta.exact || false">
@@ -52,7 +52,11 @@ limitations under the License. -->
             </el-menu-item>
           </el-menu-item-group>
         </el-sub-menu>
-        <el-menu-item :index="String(index)" @click="changePage(menu)" v-else>
+        <el-menu-item
+          :index="String(menu.name)"
+          @click="changePage(menu)"
+          v-else
+        >
           <el-icon class="menu-icons" :style="{ margin: '-10px 12px 0 0' }">
             <router-link :to="menu.children[0].path" :exact="menu.meta.exact">
               <Icon size="lg" :iconName="menu.meta.icon" />
