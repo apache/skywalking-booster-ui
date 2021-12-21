@@ -20,7 +20,7 @@ limitations under the License. -->
   </div>
   <div class="flex-h ds-main">
     <div class="ds-layout">
-      <grid-layout
+      <GridLayout
         v-model="layout"
         :col-num="12"
         :row-height="30"
@@ -29,7 +29,7 @@ limitations under the License. -->
         :vertical-compact="true"
         :use-css-transforms="true"
       >
-        <grid-item
+        <GridItem
           v-for="item in layout"
           :static="item.static"
           :x="item.x"
@@ -40,53 +40,66 @@ limitations under the License. -->
           :key="item.i"
         >
           <span class="text">{{ itemTitle(item) }}</span>
-        </grid-item>
-      </grid-layout>
+        </GridItem>
+      </GridLayout>
     </div>
     <div class="ds-config">Configurations</div>
   </div>
 </template>
-<script lang="ts" setup>
-import { ref, reactive } from "vue";
+<script lang="ts">
+import { ref, reactive, defineComponent } from "vue";
 import { ElButton } from "element-plus";
-import { GridLayout, GridItem, GridItemData } from "vue-grid-layout";
+import VueGridLayout, { GridItemData } from "vue-grid-layout";
 interface CustomData extends GridItemData {
-  label?: string;
   static: boolean;
 }
-const layout = reactive<CustomData[]>([
-  { x: 0, y: 0, w: 2, h: 2, i: "0", static: false },
-  { x: 2, y: 0, w: 2, h: 4, i: "1", static: true },
-  { x: 4, y: 0, w: 2, h: 5, i: "2", static: false },
-  { x: 6, y: 0, w: 2, h: 3, i: "3", static: false },
-  { x: 8, y: 0, w: 2, h: 3, i: "4", static: false },
-  { x: 10, y: 0, w: 2, h: 3, i: "5", static: false },
-  { x: 0, y: 5, w: 2, h: 5, i: "6", static: false },
-  { x: 2, y: 5, w: 2, h: 5, i: "7", static: false },
-  { x: 4, y: 5, w: 2, h: 5, i: "8", static: false },
-  { x: 6, y: 3, w: 2, h: 4, i: "9", static: true },
-  { x: 8, y: 4, w: 2, h: 4, i: "10", static: false },
-  { x: 10, y: 4, w: 2, h: 4, i: "11", static: false },
-  { x: 0, y: 10, w: 2, h: 5, i: "12", static: false },
-  { x: 2, y: 10, w: 2, h: 5, i: "13", static: false },
-  { x: 4, y: 8, w: 2, h: 4, i: "14", static: false },
-  { x: 6, y: 8, w: 2, h: 4, i: "15", static: false },
-  { x: 8, y: 10, w: 2, h: 5, i: "16", static: false },
-  { x: 10, y: 4, w: 2, h: 2, i: "17", static: false },
-  { x: 0, y: 9, w: 2, h: 3, i: "18", static: false },
-  { x: 2, y: 6, w: 2, h: 2, i: "19", static: false },
-]);
-console.log(layout);
-const draggable = ref(true);
-const resizable = ref(true);
-const index = ref(0);
-function itemTitle(item: any) {
-  let result = item.i;
-  if (item.static) {
-    result += " - Static";
-  }
-  return result;
-}
+
+console.log(VueGridLayout.GridLayout);
+export default defineComponent({
+  name: "dashboardEdit",
+  components: {
+    ElButton,
+    GridLayout: VueGridLayout.GridLayout,
+    GridItem: VueGridLayout.GridItem,
+  },
+  setup() {
+    const layout = reactive<CustomData[]>([
+      { x: 0, y: 0, w: 2, h: 2, i: "0", static: false },
+      { x: 2, y: 0, w: 2, h: 4, i: "1", static: true },
+      { x: 4, y: 0, w: 2, h: 5, i: "2", static: false },
+      { x: 6, y: 0, w: 2, h: 3, i: "3", static: false },
+      { x: 8, y: 0, w: 2, h: 3, i: "4", static: false },
+      { x: 10, y: 0, w: 2, h: 3, i: "5", static: false },
+      { x: 0, y: 5, w: 2, h: 5, i: "6", static: false },
+      { x: 2, y: 5, w: 2, h: 5, i: "7", static: false },
+      { x: 4, y: 5, w: 2, h: 5, i: "8", static: false },
+      { x: 6, y: 3, w: 2, h: 4, i: "9", static: true },
+      { x: 8, y: 4, w: 2, h: 4, i: "10", static: false },
+      { x: 10, y: 4, w: 2, h: 4, i: "11", static: false },
+      { x: 0, y: 10, w: 2, h: 5, i: "12", static: false },
+      { x: 2, y: 10, w: 2, h: 5, i: "13", static: false },
+      { x: 4, y: 8, w: 2, h: 4, i: "14", static: false },
+      { x: 6, y: 8, w: 2, h: 4, i: "15", static: false },
+      { x: 8, y: 10, w: 2, h: 5, i: "16", static: false },
+      { x: 10, y: 4, w: 2, h: 2, i: "17", static: false },
+      { x: 0, y: 9, w: 2, h: 3, i: "18", static: false },
+      { x: 2, y: 6, w: 2, h: 2, i: "19", static: false },
+    ]);
+    console.log(layout);
+
+    const draggable = ref(true);
+    const resizable = ref(true);
+    const index = ref(0);
+    function itemTitle(item: any) {
+      let result = item.i;
+      if (item.static) {
+        result += " - Static";
+      }
+      return result;
+    }
+    return { draggable, resizable, index, layout, itemTitle };
+  },
+});
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {
