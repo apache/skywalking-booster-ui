@@ -20,84 +20,60 @@ limitations under the License. -->
   </div>
   <div class="flex-h ds-main">
     <div class="ds-layout">
-      <GridLayout
-        v-model="layout"
-        :col-num="12"
-        :row-height="30"
-        :is-draggable="draggable"
-        :is-resizable="resizable"
-        :vertical-compact="true"
-        :use-css-transforms="true"
+      <VueDragResize
+        :isActive="item.static"
+        :w="item.w"
+        :h="item.h"
+        :x="item.x"
+        :y="item.y"
+        @resizing="resize"
+        @dragging="resize"
+        v-for="item in layout"
+        :key="item.i"
       >
-        <GridItem
-          v-for="item in layout"
-          :static="item.static"
-          :x="item.x"
-          :y="item.y"
-          :w="item.w"
-          :h="item.h"
-          :i="item.i"
-          :key="item.i"
-        >
-          <span class="text">{{ itemTitle(item) }}</span>
-        </GridItem>
-      </GridLayout>
+        <h3>Hello World {{ item.i }}</h3>
+      </VueDragResize>
     </div>
     <div class="ds-config">Configurations</div>
   </div>
 </template>
 <script lang="ts">
-import { ref, reactive, defineComponent } from "vue";
+import { toRefs, defineComponent, reactive, ref } from "vue";
 import { ElButton } from "element-plus";
-import VueGridLayout, { GridItemData } from "vue-grid-layout";
-interface CustomData extends GridItemData {
+import VueDragResize from "vue-drag-resize";
+
+export interface GridItemData {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  i: number;
   static: boolean;
 }
 
-console.log(VueGridLayout.GridLayout);
 export default defineComponent({
   name: "dashboardEdit",
   components: {
     ElButton,
-    GridLayout: VueGridLayout.GridLayout,
-    GridItem: VueGridLayout.GridItem,
+    VueDragResize,
   },
   setup() {
-    const layout = reactive<CustomData[]>([
-      { x: 0, y: 0, w: 2, h: 2, i: "0", static: false },
-      { x: 2, y: 0, w: 2, h: 4, i: "1", static: true },
-      { x: 4, y: 0, w: 2, h: 5, i: "2", static: false },
-      { x: 6, y: 0, w: 2, h: 3, i: "3", static: false },
-      { x: 8, y: 0, w: 2, h: 3, i: "4", static: false },
-      { x: 10, y: 0, w: 2, h: 3, i: "5", static: false },
-      { x: 0, y: 5, w: 2, h: 5, i: "6", static: false },
-      { x: 2, y: 5, w: 2, h: 5, i: "7", static: false },
-      { x: 4, y: 5, w: 2, h: 5, i: "8", static: false },
-      { x: 6, y: 3, w: 2, h: 4, i: "9", static: true },
-      { x: 8, y: 4, w: 2, h: 4, i: "10", static: false },
-      { x: 10, y: 4, w: 2, h: 4, i: "11", static: false },
-      { x: 0, y: 10, w: 2, h: 5, i: "12", static: false },
-      { x: 2, y: 10, w: 2, h: 5, i: "13", static: false },
-      { x: 4, y: 8, w: 2, h: 4, i: "14", static: false },
-      { x: 6, y: 8, w: 2, h: 4, i: "15", static: false },
-      { x: 8, y: 10, w: 2, h: 5, i: "16", static: false },
-      { x: 10, y: 4, w: 2, h: 2, i: "17", static: false },
-      { x: 0, y: 9, w: 2, h: 3, i: "18", static: false },
-      { x: 2, y: 6, w: 2, h: 2, i: "19", static: false },
+    const layout = ref<GridItemData[]>([
+      { x: 300, y: 100, w: 200, h: 200, i: 0, static: true },
+      { x: 500, y: 100, w: 200, h: 200, i: 1, static: true },
+      { x: 700, y: 100, w: 200, h: 200, i: 2, static: true },
+      { x: 900, y: 100, w: 200, h: 200, i: 3, static: true },
     ]);
-    console.log(layout);
 
-    const draggable = ref(true);
-    const resizable = ref(true);
-    const index = ref(0);
-    function itemTitle(item: any) {
-      let result = item.i;
-      if (item.static) {
-        result += " - Static";
-      }
-      return result;
+    function resize(newRect: {
+      width: number;
+      height: number;
+      top: number;
+      left: number;
+    }) {
+      console.log(newRect);
     }
-    return { draggable, resizable, index, layout, itemTitle };
+    return { resize, layout };
   },
 });
 </script>
@@ -108,9 +84,11 @@ export default defineComponent({
   background: rgb(240, 242, 245);
   // border-bottom: 1px solid rgb(240, 242, 245);
 }
+
 .ds-main {
   background: rgb(240, 242, 245);
 }
+
 .ds-layout {
   // background: rgb(240, 242, 245);
   // background-color: #fafbfc;
@@ -119,6 +97,7 @@ export default defineComponent({
   overflow: auto;
   // padding: 0 5px;
 }
+
 .ds-config {
   width: 360px;
   margin: 5px 0;
@@ -126,6 +105,7 @@ export default defineComponent({
   box-shadow: 5px 5px 5px #fff;
   text-align: center;
 }
+
 .panel {
   width: 300px;
   height: 300px;
@@ -133,19 +113,24 @@ export default defineComponent({
   margin: 5px;
   text-align: center;
 }
+
 .vue-grid-layout {
   background: #eee;
 }
+
 .vue-grid-item:not(.vue-grid-placeholder) {
   background: #ccc;
   border: 1px solid black;
 }
+
 .vue-grid-item .resizing {
   opacity: 0.9;
 }
+
 .vue-grid-item .static {
   background: #cce;
 }
+
 .vue-grid-item .text {
   font-size: 24px;
   text-align: center;
@@ -158,16 +143,20 @@ export default defineComponent({
   height: 100%;
   width: 100%;
 }
+
 .vue-grid-item .no-drag {
   height: 100%;
   width: 100%;
 }
+
 .vue-grid-item .minMax {
   font-size: 12px;
 }
+
 .vue-grid-item .add {
   cursor: pointer;
 }
+
 .vue-draggable-handle {
   position: absolute;
   width: 20px;
