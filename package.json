@@ -16,7 +16,7 @@
     "three": "^0.131.3",
     "three-orbit-controls": "^82.1.0",
     "vue": "^3.0.0",
-    "vue-grid-layout": "^2.3.12",
+    "vue-drag-resize": "^2.0.3",
     "vue-i18n": "^9.1.9",
     "vue-router": "^4.0.0-0",
     "vue-types": "^4.1.1",
@@ -111,7 +111,7 @@
     "*.vue": [
       "eslint --fix",
       "prettier --write",
-      "stylelint --fix"
+      "stylelint --fix --custom-syntax postcss-scss"
     ],
     "{!(package)*.json,*.code-snippets,.!(browserslist)*rc}": [
       "prettier --write--parser json"

@@ -14,18 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-declare module "vue-grid-layout" {
+declare module "vue-drag-resize" {
   import Vue from "vue";
 
-  export class GridLayout extends Vue {}
-
-  export class GridItem extends Vue {}
-
-  export interface GridItemData {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-    i: string;
-  }
+  export class VueDragResize extends Vue {}
 }
