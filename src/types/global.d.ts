@@ -38,7 +38,7 @@ declare global {
   };
 
   // vue
-  declare type PropType<T> = VuePropType<T>;
+  export declare type PropType<T> = VuePropType<T>;
   declare type VueNode = VNodeChild | JSX.Element;
 
   export type Writable<T> = {

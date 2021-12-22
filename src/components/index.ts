@@ -16,13 +16,28 @@
  */
 import Icon from "./Icon.vue";
 import TimePicker from "./TimePicker.vue";
-import type { App } from "vue";
+import type { App, Plugin } from "vue";
+import VueGridLayout from "vue-grid-layout";
 
-const components: { [key: string]: any } = { Icon, TimePicker };
+const components: { [key: string]: any } = {
+  Icon,
+  TimePicker,
+  VueGridLayout,
+};
 const componentsName: string[] = Object.keys(components);
-
+const withInstall = <T>(component: T, alias?: string) => {
+  const comp = component as any;
+  comp.install = (app: App) => {
+    app.component(comp.name || comp.displayName, component);
+    if (alias) {
+      app.config.globalProperties[alias] = component;
+    }
+  };
+  return component as T & Plugin;
+};
 export default {
   install: (vue: App): void => {
+    vue.use(components["VueGridLayout"]);
     componentsName.forEach((i) => {
       vue.component(i, components[i]);
     });
