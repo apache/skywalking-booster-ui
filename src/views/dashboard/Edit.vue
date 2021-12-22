@@ -19,9 +19,7 @@ limitations under the License. -->
     <el-button size="mini" type="primary">Apply</el-button>
   </div>
   <div class="flex-h ds-main">
-    <div class="ds-layout">
-      <GridLayout />
-    </div>
+    <GridLayout />
     <div class="ds-config">Configurations</div>
   </div>
 </template>
@@ -35,29 +33,20 @@ import GridLayout from "./widget/GridLayout.vue";
   text-align: right;
   padding: 5px 10px;
   background: rgb(240, 242, 245);
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #dfe4e8;
 }
 
 .ds-main {
-  background: #f7f9fa;
-  // background: #eee;
-}
-
-.ds-layout {
-  // background: rgb(240, 242, 245);
-  // background-color: #fafbfc;
-  height: 890px;
-  flex-grow: 2;
-  overflow: auto;
-  // padding: 0 5px;
+  height: calc(100% - 40px);
 }
 
 .ds-config {
   width: 360px;
   margin: 5px 0;
   background-color: #fff;
-  box-shadow: 5px 5px 5px #fff;
+  box-shadow: 2px 0 2px 0 #ccc;
   text-align: center;
+  border-left: 1px solid #eee;
 }
 
 .panel {

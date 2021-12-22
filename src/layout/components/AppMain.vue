@@ -24,6 +24,7 @@ limitations under the License. -->
 <script lang="ts" setup></script>
 <style lang="scss" scoped>
 .app-main {
-  height: calc(100% - 128px);
+  height: calc(100% - 40px);
+  background: #f7f9fa;
 }
 </style>

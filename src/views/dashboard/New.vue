@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="new-dashboard">
-    <h4>{{ t("newDashboard") }}</h4>
+    <div class="title">{{ t("newDashboard") }}</div>
     <div class="item">
       <div class="label">{{ t("name") }}</div>
       <el-input
@@ -195,20 +195,30 @@ const onCreate = () => {
 selectorStore.fetchServices("general");
 </script>
 <style lang="scss" scoped>
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  padding-top: 20px;
+}
+
 .new-dashboard {
   margin: 0 auto;
 }
+
 .item {
   margin-top: 20px;
 }
+
 .new-dashboard,
 .selectors,
 .el-cascader-menu {
   width: 600px;
 }
+
 .create {
   width: 600px;
 }
+
 .btn {
   margin-top: 40px;
 }

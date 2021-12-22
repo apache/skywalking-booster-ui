@@ -21,7 +21,6 @@ limitations under the License. -->
     :is-resizable="true"
     :is-mirrored="false"
     :vertical-compact="true"
-    :margin="[10, 10]"
     :use-css-transforms="true"
   >
     <grid-item
@@ -73,6 +72,8 @@ const layout = [
 <style lang="scss" scoped>
 .vue-grid-layout {
   background: #f7f9fa;
+  flex-grow: 2;
+  overflow: auto;
 }
 
 .vue-grid-item:not(.vue-grid-placeholder) {
