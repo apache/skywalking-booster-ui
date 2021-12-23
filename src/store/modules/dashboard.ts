@@ -15,39 +15,25 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Option } from "@/types/app";
 import { store } from "@/store";
-import graph from "@/graph";
-import { AxiosResponse } from "axios";
+import { GridItemData } from "@/types/dashboard";
 
-interface SelectorState {
-  services: Option[];
+interface DashboardState {
+  layouts: GridItemData[];
 }
 
-export const selectorStore = defineStore({
-  id: "selector",
-  state: (): SelectorState => ({
-    services: [],
+export const dashboardStore = defineStore({
+  id: "dashboard",
+  state: (): DashboardState => ({
+    layouts: [],
   }),
   actions: {
-    async fetchLayers(): Promise<AxiosResponse> {
-      const res: AxiosResponse = await graph.query("queryLayers").params({});
-
-      return res;
-    },
-    async fetchServices(layer: string): Promise<AxiosResponse> {
-      const res: AxiosResponse = await graph
-        .query("queryServices")
-        .params({ layer });
-
-      if (!res.data.errors) {
-        this.services = res.data.data.services;
-      }
-      return res;
+    setLayouts(data: GridItemData[]) {
+      this.layouts = data;
     },
   },
 });
 
-export function useSelectorStore(): any {
-  return selectorStore(store);
+export function useDashboardStore(): any {
+  return dashboardStore(store);
 }

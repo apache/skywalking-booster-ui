@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool">
+    <el-button size="mini">Add Widget</el-button>
     <el-button size="mini">Save As</el-button>
     <el-button size="mini">Discard</el-button>
     <el-button size="mini" type="primary">Apply</el-button>
