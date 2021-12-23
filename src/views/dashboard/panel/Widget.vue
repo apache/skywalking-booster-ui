@@ -13,48 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <VueDragResize
-    :isActive="item.static"
-    :w="item.w"
-    :h="item.h"
-    :x="item.x"
-    :y="item.y"
-    @resizing="resize"
-    @dragging="resize"
-  >
-    <h3>Hello World {{ item.i }}</h3>
-  </VueDragResize>
+  <div class="header">title</div>
+  <div class="body">chart</div>
 </template>
 <script lang="ts" setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps } from "vue";
 import type { PropType } from "vue";
-import VueDragResize from "vue-drag-resize";
-interface GridItemData {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  i: number;
-  static: boolean;
-}
+import { GridItemData } from "@/types/dashboard";
+
 const props = defineProps({
   item: { type: Object as PropType<GridItemData> },
 });
-const emit = defineEmits(["move"]);
-
-function resize(newRect: {
-  width: number;
-  height: number;
-  top: number;
-  left: number;
-}) {
-  const m = {
-    ...props.item,
-    x: newRect.left,
-    y: newRect.top,
-    w: newRect.width,
-    h: newRect.height,
-  };
-  emit("move", m);
-}
 </script>

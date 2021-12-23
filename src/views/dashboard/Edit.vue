@@ -27,14 +27,13 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { toRefs, defineComponent, reactive, ref } from "vue";
 import { ElButton } from "element-plus";
-import GridLayout from "./widget/Layout.vue";
+import GridLayout from "./panel/Layout.vue";
 import { GridItemData } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const dashboardStore = useDashboardStore();
-const layouts: GridItemData[] = [
+const layout: GridItemData[] = [
   { x: 0, y: 0, w: 2, h: 2, i: "0" },
   { x: 2, y: 0, w: 2, h: 4, i: "1" },
   { x: 4, y: 0, w: 2, h: 5, i: "2" },
@@ -56,7 +55,7 @@ const layouts: GridItemData[] = [
   { x: 0, y: 9, w: 2, h: 3, i: "18" },
   { x: 2, y: 6, w: 2, h: 2, i: "19" },
 ];
-dashboardStore.setLayouts(layouts);
+dashboardStore.setLayout(layout);
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {

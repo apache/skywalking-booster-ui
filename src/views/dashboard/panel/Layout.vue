@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <grid-layout
-    v-model:layout="dashboardStore.layouts"
+    v-model:layout="dashboardStore.layout"
     :col-num="12"
     :row-height="30"
     :is-draggable="true"
@@ -22,9 +22,10 @@ limitations under the License. -->
     :is-mirrored="false"
     :vertical-compact="true"
     :use-css-transforms="true"
+    @layout-updated="layoutUpdatedEvent"
   >
     <grid-item
-      v-for="item in dashboardStore.layouts"
+      v-for="item in dashboardStore.layout"
       :x="item.x"
       :y="item.y"
       :w="item.w"
@@ -32,14 +33,19 @@ limitations under the License. -->
       :i="item.i"
       :key="item.i"
     >
-      {{ item.i }}
+      <Widget :item="item" />
     </grid-item>
   </grid-layout>
 </template>
 <script lang="ts" setup>
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { GridItemData } from "@/types/dashboard";
+import Widget from "./Widget.vue";
 
 const dashboardStore = useDashboardStore();
+function layoutUpdatedEvent(newLayout: GridItemData) {
+  dashboardStore.setLayout(newLayout);
+}
 </script>
 <style lang="scss" scoped>
 .vue-grid-layout {
@@ -52,7 +58,6 @@ const dashboardStore = useDashboardStore();
   background: #fff;
   box-shadow: 0px 1px 4px 0px #00000029;
   border-radius: 5px;
-  // border: 1px solid black;
 }
 
 .vue-grid-item .resizing {
