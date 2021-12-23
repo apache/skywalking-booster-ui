@@ -17,7 +17,12 @@ limitations under the License. -->
     <div class="header flex-h">
       <div>title</div>
       <div class="operations">
-        <Icon class="mr-5" size="sm" iconName="createmode_editedit" />
+        <Icon
+          class="mr-5"
+          size="sm"
+          iconName="createmode_editedit"
+          @click="setConfig"
+        />
         <Icon size="sm" iconName="clearclose" @click="removeWidget" />
       </div>
     </div>
@@ -36,6 +41,9 @@ const props = defineProps({
 const dashboardStore = useDashboardStore();
 function removeWidget() {
   dashboardStore.removeWidget(props.item);
+}
+function setConfig() {
+  dashboardStore.setConfigPanel(true);
 }
 </script>
 <style lang="scss" scoped>

@@ -24,39 +24,48 @@ limitations under the License. -->
   </div>
   <div class="flex-h ds-main">
     <GridLayout />
-    <div class="ds-config">Configurations</div>
+    <div
+      class="ds-config"
+      v-show="dashboardStore.showConfig"
+      @click="dashboardStore.setConfigPanel(true)"
+    >
+      Configurations
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
+import { ref } from "vue";
 import { ElButton } from "element-plus";
 import GridLayout from "./panel/Layout.vue";
 import { GridItemData } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const dashboardStore = useDashboardStore();
+// fetch layout data from serve side
 const layout: GridItemData[] = [
-  { x: 0, y: 0, w: 2, h: 2, i: "0" },
-  { x: 2, y: 0, w: 2, h: 4, i: "1" },
-  { x: 4, y: 0, w: 2, h: 5, i: "2" },
-  { x: 6, y: 0, w: 2, h: 3, i: "3" },
-  { x: 8, y: 0, w: 2, h: 3, i: "4" },
-  { x: 10, y: 0, w: 2, h: 3, i: "5" },
-  { x: 0, y: 5, w: 2, h: 5, i: "6" },
-  { x: 2, y: 5, w: 2, h: 5, i: "7" },
-  { x: 4, y: 5, w: 2, h: 5, i: "8" },
-  { x: 6, y: 3, w: 2, h: 4, i: "9" },
-  { x: 8, y: 4, w: 2, h: 4, i: "10" },
-  { x: 10, y: 4, w: 2, h: 4, i: "11" },
-  { x: 0, y: 10, w: 2, h: 5, i: "12" },
-  { x: 2, y: 10, w: 2, h: 5, i: "13" },
-  { x: 4, y: 8, w: 2, h: 4, i: "14" },
-  { x: 6, y: 8, w: 2, h: 4, i: "15" },
-  { x: 8, y: 10, w: 2, h: 5, i: "16" },
-  { x: 10, y: 4, w: 2, h: 2, i: "17" },
-  { x: 0, y: 9, w: 2, h: 3, i: "18" },
-  { x: 2, y: 6, w: 2, h: 2, i: "19" },
+  { x: 0, y: 0, w: 2, h: 12, i: "0" },
+  { x: 2, y: 0, w: 2, h: 12, i: "1" },
+  { x: 4, y: 0, w: 2, h: 15, i: "2" },
+  { x: 6, y: 0, w: 2, h: 9, i: "3" },
+  { x: 8, y: 0, w: 2, h: 9, i: "4" },
+  { x: 10, y: 0, w: 2, h: 9, i: "5" },
+  { x: 0, y: 5, w: 2, h: 15, i: "6" },
+  { x: 2, y: 5, w: 2, h: 15, i: "7" },
+  { x: 4, y: 5, w: 2, h: 15, i: "8" },
+  { x: 6, y: 3, w: 2, h: 12, i: "9" },
+  { x: 8, y: 4, w: 2, h: 12, i: "10" },
+  { x: 10, y: 4, w: 2, h: 12, i: "11" },
+  { x: 0, y: 10, w: 2, h: 15, i: "12" },
+  { x: 2, y: 10, w: 2, h: 15, i: "13" },
+  { x: 4, y: 8, w: 2, h: 12, i: "14" },
+  { x: 6, y: 8, w: 2, h: 12, i: "15" },
+  { x: 8, y: 10, w: 2, h: 15, i: "16" },
 ];
 dashboardStore.setLayout(layout);
+document.addEventListener("click", setConfig, true);
+function setConfig() {
+  dashboardStore.setConfigPanel(false);
+}
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {
@@ -68,22 +77,15 @@ dashboardStore.setLayout(layout);
 
 .ds-main {
   height: calc(100% - 40px);
+  overflow: auto;
 }
 
 .ds-config {
-  width: 360px;
-  margin: 5px 0;
+  width: 340px;
   background-color: #fff;
   box-shadow: 2px 0 2px 0 #ccc;
   text-align: center;
   border-left: 1px solid #eee;
-}
-
-.panel {
-  width: 300px;
-  height: 300px;
-  background-color: #fff;
-  margin: 5px;
-  text-align: center;
+  margin: 10px 0;
 }
 </style>

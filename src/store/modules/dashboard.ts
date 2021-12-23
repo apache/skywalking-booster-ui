@@ -19,6 +19,7 @@ import { store } from "@/store";
 import { GridItemData } from "@/types/dashboard";
 
 interface DashboardState {
+  showConfig: boolean;
   layout: GridItemData[];
 }
 
@@ -26,6 +27,7 @@ export const dashboardStore = defineStore({
   id: "dashboard",
   state: (): DashboardState => ({
     layout: [],
+    showConfig: false,
   }),
   actions: {
     setLayout(data: GridItemData[]) {
@@ -36,17 +38,20 @@ export const dashboardStore = defineStore({
         x: 0,
         y: 0,
         w: 12,
-        h: 3,
+        h: 12,
         i: String(this.layout.length),
       };
       this.layout = this.layout.map((d: GridItemData) => {
-        d.y = d.y + 3;
+        d.y = d.y + newWidget.h;
         return d;
       });
       this.layout.push(newWidget);
     },
     removeWidget(item: GridItemData) {
       this.layout = this.layout.filter((d: GridItemData) => d.i !== item.i);
+    },
+    setConfigPanel(show: boolean) {
+      this.showConfig = show;
     },
   },
 });
