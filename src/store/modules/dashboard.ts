@@ -45,6 +45,9 @@ export const dashboardStore = defineStore({
       });
       this.layout.push(newWidget);
     },
+    removeWidget(item: GridItemData) {
+      this.layout = this.layout.filter((d: GridItemData) => d.i !== item.i);
+    },
   },
 });
 

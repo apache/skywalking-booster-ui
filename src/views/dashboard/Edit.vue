@@ -17,6 +17,7 @@ limitations under the License. -->
     <el-button size="mini" @click="dashboardStore.addWidget">
       Add Widget
     </el-button>
+    <el-button size="mini">Dashboard Settings</el-button>
     <el-button size="mini">Save As</el-button>
     <el-button size="mini">Discard</el-button>
     <el-button size="mini" type="primary">Apply</el-button>
