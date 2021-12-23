@@ -31,6 +31,20 @@ export const dashboardStore = defineStore({
     setLayouts(data: GridItemData[]) {
       this.layouts = data;
     },
+    addWidget() {
+      const newWidget: GridItemData = {
+        x: 0,
+        y: 0,
+        w: 12,
+        h: 3,
+        i: String(this.layouts.length),
+      };
+      this.layouts = this.layouts.map((d: GridItemData) => {
+        d.y = d.y + 3;
+        return d;
+      });
+      this.layouts.push(newWidget);
+    },
   },
 });
 
