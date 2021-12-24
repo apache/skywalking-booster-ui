@@ -25,40 +25,30 @@ export const EntityType = [
 ];
 export const SelectOpt = [
   {
-    value: "guide",
-    label: "Guide",
+    value: "service1",
+    label: "Service1",
     children: [
       {
-        value: "disciplines",
-        label: "Disciplines",
-        children: [
-          {
-            value: "consistency",
-            label: "Consistency",
-          },
-          {
-            value: "feedback",
-            label: "Feedback",
-          },
-          {
-            value: "efficiency",
-            label: "Efficiency",
-          },
-        ],
+        value: "instance1",
+        label: "Instance1",
       },
       {
-        value: "navigation",
-        label: "Navigation",
-        children: [
-          {
-            value: "side nav",
-            label: "Side Navigation",
-          },
-          {
-            value: "top nav",
-            label: "Top Navigation",
-          },
-        ],
+        value: "instance2",
+        label: "Instance2",
+      },
+    ],
+  },
+  {
+    value: "service2",
+    label: "Service2",
+    children: [
+      {
+        value: "instance1",
+        label: "Instance1",
+      },
+      {
+        value: "instance2",
+        label: "Instance2",
       },
     ],
   },

@@ -14,16 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool">
-    <el-button size="mini" @click="dashboardStore.addWidget">
-      Add Widget
-    </el-button>
+    <el-button size="mini" @click="addWidget"> Add Widget </el-button>
     <el-button size="mini">Dashboard Settings</el-button>
     <el-button size="mini">Save As</el-button>
     <el-button size="mini">Discard</el-button>
     <el-button size="mini" type="primary">Apply</el-button>
   </div>
   <div class="flex-h ds-main">
-    <GridLayout />
+    <div class="layout">
+      <div class="grids">
+        <GridLayout />
+      </div>
+    </div>
     <div
       class="ds-config"
       v-show="dashboardStore.showConfig"
@@ -66,6 +68,10 @@ document.addEventListener("click", setConfig, true);
 function setConfig() {
   dashboardStore.setConfigPanel(false);
 }
+function addWidget() {
+  dashboardStore.setConfigPanel(true);
+  dashboardStore.addWidget();
+}
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {
@@ -77,7 +83,17 @@ function setConfig() {
 
 .ds-main {
   height: calc(100% - 40px);
-  overflow: auto;
+}
+
+.layout {
+  height: 100%;
+  flex-grow: 2;
+  overflow: hidden;
+}
+
+.grids {
+  height: 100%;
+  overflow-y: auto;
 }
 
 .ds-config {
@@ -86,6 +102,5 @@ function setConfig() {
   box-shadow: 2px 0 2px 0 #ccc;
   text-align: center;
   border-left: 1px solid #eee;
-  margin: 10px 0;
 }
 </style>

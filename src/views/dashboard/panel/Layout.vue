@@ -47,7 +47,6 @@ function layoutUpdatedEvent(newLayout: GridItemData) {
 <style lang="scss" scoped>
 .vue-grid-layout {
   background: #f7f9fa;
-  flex-grow: 2;
   height: auto !important;
 }
 
