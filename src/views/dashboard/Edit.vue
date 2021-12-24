@@ -36,7 +36,6 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
 import { ElButton } from "element-plus";
 import GridLayout from "./panel/Layout.vue";
 import { GridItemData } from "@/types/dashboard";
@@ -69,7 +68,6 @@ function setConfig() {
   dashboardStore.setConfigPanel(false);
 }
 function addWidget() {
-  dashboardStore.setConfigPanel(true);
   dashboardStore.addWidget();
 }
 </script>
