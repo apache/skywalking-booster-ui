@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <grid-layout
     v-model:layout="dashboardStore.layout"
-    :col-num="12"
+    :col-num="24"
     :row-height="10"
     :is-draggable="true"
     :is-resizable="true"
@@ -36,11 +36,11 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { GridItemData } from "@/types/dashboard";
+import { LayoutConfig } from "@/types/dashboard";
 import Widget from "./Widget.vue";
 
 const dashboardStore = useDashboardStore();
-function layoutUpdatedEvent(newLayout: GridItemData) {
+function layoutUpdatedEvent(newLayout: LayoutConfig) {
   dashboardStore.setLayout(newLayout);
 }
 </script>

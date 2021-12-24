@@ -38,29 +38,27 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ElButton } from "element-plus";
 import GridLayout from "./panel/Layout.vue";
-import { GridItemData } from "@/types/dashboard";
+import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const dashboardStore = useDashboardStore();
 // fetch layout data from serve side
-const layout: GridItemData[] = [
-  { x: 0, y: 0, w: 2, h: 12, i: "0" },
-  { x: 2, y: 0, w: 2, h: 12, i: "1" },
-  { x: 4, y: 0, w: 2, h: 15, i: "2" },
-  { x: 6, y: 0, w: 2, h: 9, i: "3" },
-  { x: 8, y: 0, w: 2, h: 9, i: "4" },
-  { x: 10, y: 0, w: 2, h: 9, i: "5" },
-  { x: 0, y: 5, w: 2, h: 15, i: "6" },
-  { x: 2, y: 5, w: 2, h: 15, i: "7" },
-  { x: 4, y: 5, w: 2, h: 15, i: "8" },
-  { x: 6, y: 3, w: 2, h: 12, i: "9" },
-  { x: 8, y: 4, w: 2, h: 12, i: "10" },
-  { x: 10, y: 4, w: 2, h: 12, i: "11" },
-  { x: 0, y: 10, w: 2, h: 15, i: "12" },
-  { x: 2, y: 10, w: 2, h: 15, i: "13" },
-  { x: 4, y: 8, w: 2, h: 12, i: "14" },
-  { x: 6, y: 8, w: 2, h: 12, i: "15" },
-  { x: 8, y: 10, w: 2, h: 15, i: "16" },
+const layout: LayoutConfig[] = [
+  { x: 0, y: 0, w: 4, h: 12, i: "0" },
+  { x: 4, y: 0, w: 4, h: 12, i: "1" },
+  { x: 8, y: 0, w: 4, h: 15, i: "2" },
+  { x: 12, y: 0, w: 4, h: 9, i: "3" },
+  { x: 16, y: 0, w: 4, h: 9, i: "4" },
+  { x: 20, y: 0, w: 4, h: 9, i: "5" },
+  { x: 0, y: 12, w: 4, h: 15, i: "7" },
+  { x: 4, y: 12, w: 4, h: 15, i: "8" },
+  { x: 8, y: 15, w: 4, h: 12, i: "9" },
+  { x: 12, y: 9, w: 4, h: 12, i: "10" },
+  { x: 16, y: 9, w: 4, h: 12, i: "11" },
+  { x: 20, y: 9, w: 4, h: 15, i: "12" },
+  { x: 0, y: 27, w: 4, h: 12, i: "14" },
+  { x: 4, y: 8, w: 4, h: 12, i: "15" },
+  { x: 8, y: 10, w: 4, h: 15, i: "16" },
 ];
 dashboardStore.setLayout(layout);
 document.addEventListener("click", setConfig, true);

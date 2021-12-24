@@ -1,3 +1,5 @@
+import { string } from "vue-types";
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,11 +16,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface GridItemData {
+export interface LayoutConfig {
   x: number;
-  y: number;
+  y?: number;
   w: number;
   h: number;
   i: string;
-  static?: boolean;
+  widget?: WidgetConfig;
+  graph?: GraphConfig;
+}
+
+export interface WidgetConfig {
+  title: string;
+  Metrics: string[];
+  unit: string;
+  tips: string;
+  sortOrder: string;
+}
+
+export interface GraphConfig {
+  type: string;
 }

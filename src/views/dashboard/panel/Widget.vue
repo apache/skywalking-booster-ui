@@ -32,11 +32,11 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { defineProps } from "vue";
 import type { PropType } from "vue";
-import { GridItemData } from "@/types/dashboard";
+import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const props = defineProps({
-  item: { type: Object as PropType<GridItemData> },
+  item: { type: Object as PropType<LayoutConfig> },
 });
 const dashboardStore = useDashboardStore();
 function removeWidget() {

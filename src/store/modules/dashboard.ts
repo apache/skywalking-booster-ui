@@ -16,11 +16,11 @@
  */
 import { defineStore } from "pinia";
 import { store } from "@/store";
-import { GridItemData } from "@/types/dashboard";
+import { LayoutConfig } from "@/types/dashboard";
 
 interface DashboardState {
   showConfig: boolean;
-  layout: GridItemData[];
+  layout: LayoutConfig[];
 }
 
 export const dashboardStore = defineStore({
@@ -30,25 +30,25 @@ export const dashboardStore = defineStore({
     showConfig: false,
   }),
   actions: {
-    setLayout(data: GridItemData[]) {
+    setLayout(data: LayoutConfig[]) {
       this.layout = data;
     },
     addWidget() {
-      const newWidget: GridItemData = {
+      const newWidget: LayoutConfig = {
         x: 0,
         y: 0,
-        w: 12,
+        w: 24,
         h: 12,
         i: String(this.layout.length),
       };
-      this.layout = this.layout.map((d: GridItemData) => {
+      this.layout = this.layout.map((d: LayoutConfig) => {
         d.y = d.y + newWidget.h;
         return d;
       });
       this.layout.push(newWidget);
     },
-    removeWidget(item: GridItemData) {
-      this.layout = this.layout.filter((d: GridItemData) => d.i !== item.i);
+    removeWidget(item: LayoutConfig) {
+      this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
     },
     setConfigPanel(show: boolean) {
       this.showConfig = show;
