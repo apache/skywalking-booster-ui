@@ -18,7 +18,7 @@ import { string } from "vue-types";
  */
 export interface LayoutConfig {
   x: number;
-  y?: number;
+  y: number;
   w: number;
   h: number;
   i: string;
