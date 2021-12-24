@@ -57,8 +57,8 @@ const layout: LayoutConfig[] = [
   { x: 16, y: 9, w: 4, h: 12, i: "11" },
   { x: 20, y: 9, w: 4, h: 15, i: "12" },
   { x: 0, y: 27, w: 4, h: 12, i: "14" },
-  { x: 4, y: 8, w: 4, h: 12, i: "15" },
-  { x: 8, y: 10, w: 4, h: 15, i: "16" },
+  { x: 4, y: 27, w: 4, h: 12, i: "15" },
+  { x: 8, y: 27, w: 4, h: 15, i: "16" },
 ];
 dashboardStore.setLayout(layout);
 document.addEventListener("click", setConfig, true);
