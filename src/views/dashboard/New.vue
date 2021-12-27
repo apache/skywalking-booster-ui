@@ -71,19 +71,17 @@ import router from "@/router";
 import { ElSelect, ElOption, ElInput, ElButton } from "element-plus";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EntityType, Options } from "./data";
+import uuid from "@/utils/uuid";
 
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
-const props = {
-  expandTrigger: "hover",
-};
 const state = reactive({
   name: "",
   layer: "",
   entity: EntityType[0].value,
 });
 const onCreate = () => {
-  const id = "1";
+  const id = uuid();
   const path = `/dashboard/edit/${state.layer}/${state.entity}/${id}`;
   router.push(path);
 };
