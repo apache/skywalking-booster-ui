@@ -26,6 +26,7 @@ limitations under the License. -->
     <div class="item">
       <div class="label">{{ t("layer") }}</div>
       <Selector
+        :value="states.layer"
         :options="Options"
         size="small"
         placeholder="Select a layer"
@@ -36,6 +37,7 @@ limitations under the License. -->
     <div class="item">
       <div class="label">{{ t("entityType") }}</div>
       <Selector
+        :value="states.entity"
         :options="EntityType"
         size="small"
         placeholder="Select a entity"
@@ -63,7 +65,7 @@ const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const states = reactive({
   name: "",
-  layer: "",
+  layer: Options[0].value,
   entity: EntityType[0].value,
 });
 const onCreate = () => {

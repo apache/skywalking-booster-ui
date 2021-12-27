@@ -44,10 +44,11 @@ const props = defineProps({
     type: Array as PropType<Option[]>,
     default: () => [],
   },
+  value: { type: String, default: "" },
   size: { type: String, default: "small" },
   placeholder: { type: String, default: "Select a option" },
 });
-const selected = ref<string>("");
+const selected = ref<string>(props.value);
 function changeSelected() {
   const optionSele = props.options.filter(
     (d: Option) => d.value === selected.value
