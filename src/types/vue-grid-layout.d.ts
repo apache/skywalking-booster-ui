@@ -14,25 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Icon from "./Icon.vue";
-import TimePicker from "./TimePicker.vue";
-import Selector from "./Selector.vue";
-import type { App } from "vue";
-import VueGridLayout from "vue-grid-layout";
+declare module "vue-grid-layout" {
+  import Vue from "vue";
 
-const components: { [key: string]: any } = {
-  Icon,
-  TimePicker,
-  VueGridLayout,
-  Selector,
-};
-const componentsName: string[] = Object.keys(components);
+  export class GridLayout extends Vue {}
 
-export default {
-  install: (vue: App): void => {
-    vue.use(components["VueGridLayout"]);
-    componentsName.forEach((i) => {
-      vue.component(i, components[i]);
-    });
-  },
-};
+  export class GridItem extends Vue {}
+
+  export interface GridItemData {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    i: string;
+  }
+}

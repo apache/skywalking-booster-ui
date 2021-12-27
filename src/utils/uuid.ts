@@ -14,25 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Icon from "./Icon.vue";
-import TimePicker from "./TimePicker.vue";
-import Selector from "./Selector.vue";
-import type { App } from "vue";
-import VueGridLayout from "vue-grid-layout";
 
-const components: { [key: string]: any } = {
-  Icon,
-  TimePicker,
-  VueGridLayout,
-  Selector,
-};
-const componentsName: string[] = Object.keys(components);
+export default function uuid(): string {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    /* tslint:disable */
+    const r = (Math.random() * 16) | 0;
+    /* tslint:disable */
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
 
-export default {
-  install: (vue: App): void => {
-    vue.use(components["VueGridLayout"]);
-    componentsName.forEach((i) => {
-      vue.component(i, components[i]);
-    });
-  },
-};
+    return v.toString(16);
+  });
+}

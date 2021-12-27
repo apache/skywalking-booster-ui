@@ -14,195 +14,97 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="new-dashboard">
-    <h4>Create a new dashboard</h4>
+    <div class="title">{{ t("newDashboard") }}</div>
     <div class="item">
-      <div class="label">Name</div>
+      <div class="label">{{ t("name") }}</div>
       <el-input
         size="small"
-        v-model="state.name"
+        v-model="states.name"
         placeholder="Please input name"
       />
     </div>
     <div class="item">
-      <div class="label">Layer</div>
-      <el-select
+      <div class="label">{{ t("layer") }}</div>
+      <Selector
+        :value="states.layer"
+        :options="Options"
         size="small"
-        v-model="state.layer"
         placeholder="Select a layer"
+        @change="changeLayer"
         class="selectors"
-      >
-        <el-option
-          v-for="item in Options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
+      />
     </div>
     <div class="item">
-      <div class="label">Entity</div>
-      <el-select
+      <div class="label">{{ t("entityType") }}</div>
+      <Selector
+        :value="states.entity"
+        :options="EntityType"
         size="small"
-        v-model="state.entity"
         placeholder="Select a entity"
+        @change="changeEntity"
         class="selectors"
-      >
-        <el-option
-          v-for="item in EntityType"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[0].value">
-      <div class="label">Service</div>
-      <el-select
-        size="small"
-        v-model="state.service"
-        placeholder="Select a service"
-        class="selectors"
-      >
-        <el-option
-          v-for="item in Options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[2].value">
-      <div class="label">Service / Endpoint</div>
-      <el-cascader
-        v-model="state.serviceEndpoint"
-        :options="SelectOpt"
-        :props="props"
-        size="small"
-        @change="handleChange"
-        :style="{ width: '600px' }"
-      ></el-cascader>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[3].value">
-      <div class="label">Service / Instance</div>
-      <el-cascader
-        v-model="state.serviceInstance"
-        :options="SelectOpt"
-        :props="props"
-        size="small"
-        @change="handleChange"
-        :style="{ width: '600px' }"
-      ></el-cascader>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[4].value">
-      <div class="label">Destination Service</div>
-      <el-select
-        size="small"
-        v-model="state.destService"
-        placeholder="Select"
-        class="selectors"
-      >
-        <el-option
-          v-for="item in Options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[5].value">
-      <span class="label">Destination Service / Endpoint</span>
-      <el-cascader
-        v-model="state.destServiceEndpoint"
-        :options="SelectOpt"
-        :props="props"
-        @change="handleChange"
-        :style="{ width: '600px' }"
-      ></el-cascader>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[6].value">
-      <span class="label">Destination Service / Instance</span>
-      <el-cascader
-        v-model="state.destServiceInstance"
-        :options="SelectOpt"
-        :props="props"
-        @change="handleChange"
-        :style="{ width: '600px' }"
-      ></el-cascader>
+      />
     </div>
     <div class="btn">
       <el-button class="create" size="small" type="primary" @click="onCreate">
-        Create
+        {{ t("create") }}
       </el-button>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
+import { useI18n } from "vue-i18n";
 import router from "@/router";
-import {
-  ElSelect,
-  ElOption,
-  ElCascader,
-  ElInput,
-  ElButton,
-} from "element-plus";
+import { ElInput, ElButton } from "element-plus";
 import { useSelectorStore } from "@/store/modules/selectors";
-import { EntityType, SelectOpt, Options } from "./data";
+import { EntityType, Options } from "./data";
+import uuid from "@/utils/uuid";
 
+const { t } = useI18n();
 const selectorStore = useSelectorStore();
-const props = {
-  expandTrigger: "hover",
-};
-const state = reactive({
+const states = reactive({
   name: "",
-  layer: "",
+  layer: Options[0].value,
   entity: EntityType[0].value,
-  service: "",
-  serviceEndpoint: "",
-  serviceInstance: "",
-  destService: "",
-  destServiceEndpoint: "",
-  destServiceInstance: "",
 });
-const handleChange = (value: any) => {
-  console.log(value);
-};
 const onCreate = () => {
-  let path = `/dashboard/edit/${state.entity}/`;
-  switch (state.entity) {
-    case EntityType[0].value:
-      path += state.service;
-      break;
-    case EntityType[2].value:
-      path += `${state.service}/${state.serviceEndpoint}`;
-      break;
-    case EntityType[3].value:
-      path += `${state.service}/${state.serviceInstance}`;
-      break;
-  }
+  const id = uuid();
+  const path = `/dashboard/edit/${states.layer}/${states.entity}/${id}`;
   router.push(path);
 };
 selectorStore.fetchServices("general");
+function changeLayer(opt: { label: string; value: string }) {
+  states.layer = opt.value;
+}
+function changeEntity(opt: { label: string; value: string }) {
+  states.entity = opt.value;
+}
 </script>
 <style lang="scss" scoped>
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  padding-top: 20px;
+}
+
 .new-dashboard {
   margin: 0 auto;
 }
+
 .item {
   margin-top: 20px;
 }
+
 .new-dashboard,
-.selectors,
-.el-cascader-menu {
+.selectors {
   width: 600px;
 }
+
 .create {
   width: 600px;
 }
+
 .btn {
   margin-top: 40px;
 }
