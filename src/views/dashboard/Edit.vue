@@ -48,7 +48,7 @@ limitations under the License. -->
       width="95%"
       @closed="dashboardStore.setConfigPanel(false)"
     >
-      <span>Configurations</span>
+      <div class="configuration">xxxx</div>
     </el-dialog>
   </div>
 </template>
@@ -120,5 +120,9 @@ dashboardStore.setLayout(layout);
   cursor: pointer;
   background-color: #eee;
   color: #666;
+}
+
+.configuration {
+  height: 600px;
 }
 </style>
