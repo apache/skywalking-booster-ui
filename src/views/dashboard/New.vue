@@ -19,7 +19,7 @@ limitations under the License. -->
       <div class="label">{{ t("name") }}</div>
       <el-input
         size="small"
-        v-model="state.name"
+        v-model="states.name"
         placeholder="Please input name"
       />
     </div>
@@ -30,6 +30,7 @@ limitations under the License. -->
         size="small"
         placeholder="Select a layer"
         @change="changeLayer"
+        class="selectors"
       />
     </div>
     <div class="item">
@@ -39,6 +40,7 @@ limitations under the License. -->
         size="small"
         placeholder="Select a entity"
         @change="changeEntity"
+        class="selectors"
       />
     </div>
     <div class="btn">
@@ -59,22 +61,22 @@ import uuid from "@/utils/uuid";
 
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
-const state = reactive({
+const states = reactive({
   name: "",
   layer: "",
   entity: EntityType[0].value,
 });
 const onCreate = () => {
   const id = uuid();
-  const path = `/dashboard/edit/${state.layer}/${state.entity}/${id}`;
+  const path = `/dashboard/edit/${states.layer}/${states.entity}/${id}`;
   router.push(path);
 };
 selectorStore.fetchServices("general");
-function changeLayer(val: { label: string; value: string }) {
-  state.layer = val.value;
+function changeLayer(opt: { label: string; value: string }) {
+  states.layer = opt.value;
 }
-function changeEntity(val: { label: string; value: string }) {
-  state.entity = val.value;
+function changeEntity(opt: { label: string; value: string }) {
+  states.entity = opt.value;
 }
 </script>
 <style lang="scss" scoped>
@@ -93,8 +95,7 @@ function changeEntity(val: { label: string; value: string }) {
 }
 
 .new-dashboard,
-.selectors,
-.el-cascader-menu {
+.selectors {
   width: 600px;
 }
 

@@ -19,8 +19,16 @@ export const EntityType = [
   { value: "all", label: "All" },
   { value: "endpoint", label: "Service Endpoint" },
   { value: "serviceInstance", label: "Service Instance" },
-  { value: "serviceRelation", label: "Service Relation" },
-  { value: "serviceInstanceRelation", label: "Service Instance Relation" },
+  { value: "serviceRelationClient", label: "Service Relation(client)" },
+  { value: "serviceRelationServer", label: "Service Relation(server)" },
+  {
+    value: "serviceInstanceRelationClient",
+    label: "Service Instance Relation(client)",
+  },
+  {
+    value: "serviceInstanceRelationServer",
+    label: "Service Instance Relation(server)",
+  },
   { value: "endpointRelation", label: "Endpoint Relation" },
 ];
 export const Options = [

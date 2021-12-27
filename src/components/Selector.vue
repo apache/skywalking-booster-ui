@@ -14,10 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <el-select
-    size="small"
+    :size="size"
     v-model="selected"
     :placeholder="placeholder"
-    class="selectors"
     @change="changeSelected"
   >
     <el-option
@@ -49,8 +48,10 @@ const props = defineProps({
   placeholder: { type: String, default: "Select a option" },
 });
 const selected = ref<string>("");
-function changeSelected(val: string) {
-  const optionSele = props.options.filter((d: Option) => d.value === val);
+function changeSelected() {
+  const optionSele = props.options.filter(
+    (d: Option) => d.value === selected.value
+  )[0];
   emit("change", optionSele);
 }
 </script>
