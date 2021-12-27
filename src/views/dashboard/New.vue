@@ -57,86 +57,6 @@ limitations under the License. -->
         </el-option>
       </el-select>
     </div>
-    <div class="item" v-show="state.entity === EntityType[0].value">
-      <div class="label">{{ t("service") }}</div>
-      <el-select
-        size="small"
-        v-model="state.service"
-        placeholder="Select a service"
-        class="selectors"
-      >
-        <el-option
-          v-for="item in Options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[2].value">
-      <div class="label">{{ t("service") }} / {{ t("endpoint") }}</div>
-      <el-cascader
-        v-model="state.serviceEndpoint"
-        :options="SelectOpt"
-        :props="props"
-        size="small"
-        @change="handleChange"
-        :style="{ width: '600px' }"
-      ></el-cascader>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[3].value">
-      <div class="label">{{ t("service") }} / {{ t("instance") }}</div>
-      <el-cascader
-        v-model="state.serviceInstance"
-        :options="SelectOpt"
-        :props="props"
-        size="small"
-        @change="handleChange"
-        :style="{ width: '600px' }"
-      ></el-cascader>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[4].value">
-      <div class="label">{{ t("destService") }}</div>
-      <el-select
-        size="small"
-        v-model="state.destService"
-        placeholder="Select"
-        class="selectors"
-      >
-        <el-option
-          v-for="item in Options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[5].value">
-      <span class="label"
-        >{{ t("destService") }} / {{ t("destServiceInstance") }}</span
-      >
-      <el-cascader
-        v-model="state.destServiceEndpoint"
-        :options="SelectOpt"
-        :props="props"
-        @change="handleChange"
-        :style="{ width: '600px' }"
-      ></el-cascader>
-    </div>
-    <div class="item" v-show="state.entity === EntityType[6].value">
-      <span class="label">
-        {{ t("destService") }} / {{ t("destEndpoint") }}
-      </span>
-      <el-cascader
-        v-model="state.destServiceInstance"
-        :options="SelectOpt"
-        :props="props"
-        @change="handleChange"
-        :style="{ width: '600px' }"
-      ></el-cascader>
-    </div>
     <div class="btn">
       <el-button class="create" size="small" type="primary" @click="onCreate">
         {{ t("create") }}
@@ -148,15 +68,9 @@ limitations under the License. -->
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import router from "@/router";
-import {
-  ElSelect,
-  ElOption,
-  ElCascader,
-  ElInput,
-  ElButton,
-} from "element-plus";
+import { ElSelect, ElOption, ElInput, ElButton } from "element-plus";
 import { useSelectorStore } from "@/store/modules/selectors";
-import { EntityType, SelectOpt, Options } from "./data";
+import { EntityType, Options } from "./data";
 
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
@@ -167,29 +81,10 @@ const state = reactive({
   name: "",
   layer: "",
   entity: EntityType[0].value,
-  service: "",
-  serviceEndpoint: "",
-  serviceInstance: "",
-  destService: "",
-  destServiceEndpoint: "",
-  destServiceInstance: "",
 });
-const handleChange = (value: any) => {
-  console.log(value);
-};
 const onCreate = () => {
-  let path = `/dashboard/edit/${state.entity}/`;
-  switch (state.entity) {
-    case EntityType[0].value:
-      path += state.service || 1;
-      break;
-    case EntityType[2].value:
-      path += `${state.service}/${state.serviceEndpoint}`;
-      break;
-    case EntityType[3].value:
-      path += `${state.service}/${state.serviceInstance}`;
-      break;
-  }
+  const id = "1";
+  const path = `/dashboard/edit/${state.layer}/${state.entity}/${id}`;
   router.push(path);
 };
 selectorStore.fetchServices("general");
