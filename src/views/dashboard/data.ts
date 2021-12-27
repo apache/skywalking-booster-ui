@@ -23,36 +23,6 @@ export const EntityType = [
   { value: "serviceInstanceRelation", label: "Service Instance Relation" },
   { value: "endpointRelation", label: "Endpoint Relation" },
 ];
-export const SelectOpt = [
-  {
-    value: "service1",
-    label: "Service1",
-    children: [
-      {
-        value: "instance1",
-        label: "Instance1",
-      },
-      {
-        value: "instance2",
-        label: "Instance2",
-      },
-    ],
-  },
-  {
-    value: "service2",
-    label: "Service2",
-    children: [
-      {
-        value: "instance1",
-        label: "Instance1",
-      },
-      {
-        value: "instance2",
-        label: "Instance2",
-      },
-    ],
-  },
-];
 export const Options = [
   {
     value: "Option1",

@@ -25,37 +25,21 @@ limitations under the License. -->
     </div>
     <div class="item">
       <div class="label">{{ t("layer") }}</div>
-      <el-select
+      <Selector
+        :options="Options"
         size="small"
-        v-model="state.layer"
         placeholder="Select a layer"
-        class="selectors"
-      >
-        <el-option
-          v-for="item in Options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
+        @change="changeLayer"
+      />
     </div>
     <div class="item">
       <div class="label">{{ t("entityType") }}</div>
-      <el-select
+      <Selector
+        :options="EntityType"
         size="small"
-        v-model="state.entity"
         placeholder="Select a entity"
-        class="selectors"
-      >
-        <el-option
-          v-for="item in EntityType"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
+        @change="changeEntity"
+      />
     </div>
     <div class="btn">
       <el-button class="create" size="small" type="primary" @click="onCreate">
@@ -68,7 +52,7 @@ limitations under the License. -->
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import router from "@/router";
-import { ElSelect, ElOption, ElInput, ElButton } from "element-plus";
+import { ElInput, ElButton } from "element-plus";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EntityType, Options } from "./data";
 import uuid from "@/utils/uuid";
@@ -86,6 +70,12 @@ const onCreate = () => {
   router.push(path);
 };
 selectorStore.fetchServices("general");
+function changeLayer(val: { label: string; value: string }) {
+  state.layer = val.value;
+}
+function changeEntity(val: { label: string; value: string }) {
+  state.entity = val.value;
+}
 </script>
 <style lang="scss" scoped>
 .title {

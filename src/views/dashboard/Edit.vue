@@ -14,31 +14,49 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool">
-    <el-button size="mini" @click="addWidget"> Add Widget </el-button>
-    <el-button size="mini">Dashboard Settings</el-button>
-    <el-button size="mini">Discard</el-button>
-    <el-button size="mini" type="primary">Apply</el-button>
+    <el-tooltip class="item" effect="dark" content="Add Widget" placement="top">
+      <span class="icon-btn" @click="dashboardStore.addWidget">
+        <Icon size="sm" iconName="playlist_add" />
+      </span>
+    </el-tooltip>
+    <el-tooltip class="item" effect="dark" content="Settings" placement="top">
+      <span class="icon-btn" @click="dashboardStore.setConfigPanel(true)">
+        <Icon size="sm" iconName="settings" />
+      </span>
+    </el-tooltip>
+    <el-tooltip class="item" effect="dark" content="Import" placement="top">
+      <span class="icon-btn">
+        <Icon size="sm" iconName="folder_open" />
+      </span>
+    </el-tooltip>
+    <el-tooltip class="item" effect="dark" content="Export" placement="top">
+      <span class="icon-btn">
+        <Icon size="sm" iconName="save_alt" />
+      </span>
+    </el-tooltip>
+    <el-tooltip class="item" effect="dark" content="Apply" placement="top">
+      <span class="icon-btn">
+        <Icon size="sm" iconName="save" />
+      </span>
+    </el-tooltip>
   </div>
-  <div class="flex-h ds-main">
-    <div class="layout">
-      <div class="grids">
-        <GridLayout />
-      </div>
-    </div>
-    <div
-      class="ds-config"
-      v-show="dashboardStore.showConfig"
-      @click="dashboardStore.setConfigPanel(true)"
+  <div class="ds-main">
+    <GridLayout />
+    <el-dialog
+      v-model="dashboardStore.showConfig"
+      title="Configurations"
+      width="95%"
+      @closed="dashboardStore.setConfigPanel(false)"
     >
-      Configurations
-    </div>
+      <span>Configurations</span>
+    </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
-import { ElButton } from "element-plus";
 import GridLayout from "./panel/Layout.vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { ElDialog, ElTooltip } from "element-plus";
 
 const dashboardStore = useDashboardStore();
 // fetch layout data from serve side
@@ -60,13 +78,6 @@ const layout: LayoutConfig[] = [
   { x: 8, y: 27, w: 4, h: 15, i: "16" },
 ];
 dashboardStore.setLayout(layout);
-document.addEventListener("click", setConfig, true);
-function setConfig() {
-  dashboardStore.setConfigPanel(false);
-}
-function addWidget() {
-  dashboardStore.addWidget();
-}
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {
@@ -97,5 +108,17 @@ function addWidget() {
   box-shadow: 2px 0 2px 0 #ccc;
   text-align: center;
   border-left: 1px solid #eee;
+}
+
+.icon-btn {
+  display: inline-block;
+  padding: 0 5px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-left: 8px;
+  cursor: pointer;
+  background-color: #eee;
+  color: #666;
 }
 </style>
