@@ -18,6 +18,8 @@ limitations under the License. -->
     v-model="selected"
     :placeholder="placeholder"
     @change="changeSelected"
+    filterable
+    :style="{ borderRadius }"
   >
     <el-option
       v-for="item in options"
@@ -47,6 +49,7 @@ const props = defineProps({
   value: { type: String, default: "" },
   size: { type: String, default: "small" },
   placeholder: { type: String, default: "Select a option" },
+  borderRadius: { type: Number, default: 3 },
 });
 const selected = ref<string>(props.value);
 function changeSelected() {
@@ -91,5 +94,9 @@ function changeSelected() {
     height: 30px;
     width: 30px;
   }
+}
+
+.el-input__inner {
+  border-radius: unset !important;
 }
 </style>

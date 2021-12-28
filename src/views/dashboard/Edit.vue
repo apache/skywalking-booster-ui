@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <Tool />
   <div class="ds-main">
-    <GridLayout />
+    <grid-layout />
     <el-dialog
       v-model="dashboardStore.showConfig"
       title="Configurations"

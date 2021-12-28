@@ -13,40 +13,104 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="dashboard-tool">
-    <el-tooltip class="item" effect="dark" content="Add Widget" placement="top">
-      <span class="icon-btn" @click="dashboardStore.addWidget">
-        <Icon size="sm" iconName="playlist_add" />
-      </span>
-    </el-tooltip>
-    <el-tooltip class="item" effect="dark" content="Settings" placement="top">
-      <span class="icon-btn" @click="dashboardStore.setConfigPanel(true)">
-        <Icon size="sm" iconName="settings" />
-      </span>
-    </el-tooltip>
-    <el-tooltip class="item" effect="dark" content="Import" placement="top">
-      <span class="icon-btn">
-        <Icon size="sm" iconName="folder_open" />
-      </span>
-    </el-tooltip>
-    <el-tooltip class="item" effect="dark" content="Export" placement="top">
-      <span class="icon-btn">
-        <Icon size="sm" iconName="save_alt" />
-      </span>
-    </el-tooltip>
-    <el-tooltip class="item" effect="dark" content="Apply" placement="top">
-      <span class="icon-btn">
-        <Icon size="sm" iconName="save" />
-      </span>
-    </el-tooltip>
+  <div class="dashboard-tool flex-h">
+    <div class="flex-h">
+      <div class="selectors-item">
+        <span class="label">$Service</span>
+        <Selector
+          :value="states.service"
+          :options="Options"
+          size="mini"
+          placeholder="Select a service"
+          :borderRadius="0"
+          @change="changeService"
+          class="selectors"
+        />
+      </div>
+      <div class="selectors-item">
+        <span class="label">$ServiceInstance</span>
+        <el-cascader
+          placeholder="Select a instance"
+          :options="SelectOpts"
+          size="mini"
+          filterable
+          :style="{ minWidth: '230px' }"
+        />
+      </div>
+      <div class="selectors-item">
+        <span class="label">$DestinationService</span>
+        <Selector
+          :value="states.service"
+          :options="Options"
+          size="mini"
+          placeholder="Select a service"
+          :borderRadius="0"
+          @change="changeService"
+          class="selectors"
+        />
+      </div>
+      <div class="selectors-item">
+        <span class="label">$DestinationServiceInstance</span>
+        <el-cascader
+          placeholder="Select a instance"
+          :options="SelectOpts"
+          size="mini"
+          filterable
+          :style="{ minWidth: '230px' }"
+        />
+      </div>
+    </div>
+    <div class="tool-icons">
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="Add Widget"
+        placement="top"
+      >
+        <span class="icon-btn" @click="dashboardStore.addWidget">
+          <Icon size="sm" iconName="playlist_add" />
+        </span>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="Settings" placement="top">
+        <span class="icon-btn" @click="dashboardStore.setConfigPanel(true)">
+          <Icon size="sm" iconName="settings" />
+        </span>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="Import" placement="top">
+        <span class="icon-btn">
+          <Icon size="sm" iconName="folder_open" />
+        </span>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="Export" placement="top">
+        <span class="icon-btn">
+          <Icon size="sm" iconName="save_alt" />
+        </span>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="Apply" placement="top">
+        <span class="icon-btn">
+          <Icon size="sm" iconName="save" />
+        </span>
+      </el-tooltip>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ElTooltip } from "element-plus";
+import { reactive } from "vue";
+import { useRoute } from "vue-router";
+import { ElTooltip, ElCascader } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { Options, SelectOpts } from "../data";
 
 const dashboardStore = useDashboardStore();
+const params = useRoute().params;
+const states = reactive({
+  service: Options[0].value,
+});
+console.log(params);
+function changeService(val: { value: string; label: string }) {
+  states.service = val.value;
+}
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {
@@ -54,6 +118,16 @@ const dashboardStore = useDashboardStore();
   padding: 5px 10px;
   background: rgb(240, 242, 245);
   border-bottom: 1px solid #dfe4e8;
+  justify-content: space-between;
+}
+
+.label {
+  font-size: 12px;
+  display: inline-block;
+  padding: 4px;
+  border: var(--el-input-border, var(--el-border-base));
+  border-right: none;
+  border-radius: 2px;
 }
 
 .icon-btn {
@@ -66,5 +140,13 @@ const dashboardStore = useDashboardStore();
   cursor: pointer;
   background-color: #eee;
   color: #666;
+}
+
+.selectors {
+  min-width: 180px;
+}
+
+.selectors-item {
+  margin-right: 5px;
 }
 </style>

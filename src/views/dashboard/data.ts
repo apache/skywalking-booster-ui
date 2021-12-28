@@ -33,23 +33,67 @@ export const EntityType = [
 ];
 export const Options = [
   {
-    value: "layer1",
-    label: "layer1",
+    value: "Option1",
+    label: "Option1",
   },
   {
-    value: "layer2",
-    label: "layer2",
+    value: "Option2",
+    label: "Option2",
   },
   {
-    value: "layer3",
-    label: "layer3",
+    value: "Option3",
+    label: "Option3",
   },
   {
-    value: "layer4",
-    label: "layer4",
+    value: "Option4",
+    label: "Option4",
   },
   {
-    value: "layer5",
-    label: "layer5",
+    value: "Option5",
+    label: "Option5",
+  },
+];
+export const SelectOpts = [
+  {
+    value: "guide",
+    label: "Guide",
+    children: [
+      {
+        value: "disciplines",
+        label: "Disciplines",
+        children: [
+          {
+            value: "consistency",
+            label: "Consistency",
+          },
+          {
+            value: "feedback",
+            label: "Feedback",
+          },
+          {
+            value: "efficiency",
+            label: "Efficiency",
+          },
+          {
+            value: "controllability",
+            label: "Controllability",
+          },
+        ],
+      },
+      {
+        value: "navigation",
+        label: "Navigation",
+        children: [
+          {
+            value: "side nav",
+            label: "Side Navigation",
+          },
+          {
+            value: "top nav",
+            label: "Top Navigation",
+          },
+        ],
+      },
+    ],
   },
 ];
