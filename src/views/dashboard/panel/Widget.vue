@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="widget">
     <div class="header flex-h">
-      <div>title</div>
+      <div>Title</div>
       <div class="operations">
         <Icon
           class="mr-5"
@@ -26,7 +26,7 @@ limitations under the License. -->
         <Icon size="sm" iconName="clearclose" @click="removeWidget" />
       </div>
     </div>
-    <div class="body">chart</div>
+    <div class="body">No Data</div>
   </div>
 </template>
 <script lang="ts" setup>

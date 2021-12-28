@@ -130,7 +130,7 @@ function changeService(val: { value: string; label: string }) {
 .label {
   font-size: 12px;
   display: inline-block;
-  padding: 4px;
+  padding: 4px 2px;
   border: var(--el-input-border, var(--el-border-base));
   border-right: none;
   border-radius: 2px;

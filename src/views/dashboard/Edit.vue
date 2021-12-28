@@ -18,11 +18,10 @@ limitations under the License. -->
     <grid-layout />
     <el-dialog
       v-model="dashboardStore.showConfig"
-      title="Configurations"
-      width="95%"
+      fullscreen
       @closed="dashboardStore.setConfigPanel(false)"
     >
-      <div class="configuration">xxxx</div>
+      <widget-config />
     </el-dialog>
   </div>
 </template>
@@ -31,6 +30,7 @@ import { ElDialog } from "element-plus";
 import GridLayout from "./panel/Layout.vue";
 import { LayoutConfig } from "@/types/dashboard";
 import Tool from "./panel/Tool.vue";
+import WidgetConfig from "./configuration/WidgetConfig.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const dashboardStore = useDashboardStore();
@@ -68,17 +68,5 @@ dashboardStore.setLayout(layout);
 .grids {
   height: 100%;
   overflow-y: auto;
-}
-
-.ds-config {
-  width: 340px;
-  background-color: #fff;
-  box-shadow: 2px 0 2px 0 #ccc;
-  text-align: center;
-  border-left: 1px solid #eee;
-}
-
-.configuration {
-  height: 600px;
 }
 </style>

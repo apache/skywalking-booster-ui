@@ -127,38 +127,46 @@ const filterMenus = (menus: any[]) => {
   font-weight: bold;
   // box-shadow: 1px 5px 3px #888;
 }
+
 .el-menu-vertical:not(.el-menu--collapse) {
   width: 210px;
   font-size: 18px;
 }
+
 .logo-icon-collapse {
   width: 65px;
   margin: 15px 0 30px 0;
 }
+
 .logo-icon {
   margin: 15px 0 30px 15px;
   width: 110px;
 }
+
 .el-sub-menu .el-icon {
   height: 26px;
   margin-right: 0;
 }
+
 .el-sub-menu__title {
   font-size: 16px;
   font-weight: bold;
 }
+
 .menu-control {
   position: absolute;
   top: 8px;
   left: 215px;
   cursor: pointer;
   transition: all 0.2s linear;
-  z-index: 9999;
+  z-index: 99;
   color: #252a2f;
 }
+
 .menu-control.collapse {
   left: 70px;
 }
+
 .el-icon.el-sub-menu__icon-arrow {
   height: 12px;
 }
