@@ -15,21 +15,23 @@
  * limitations under the License.
  */
 export const EntityType = [
-  { value: "service", label: "Service" },
-  { value: "all", label: "All" },
-  { value: "endpoint", label: "Service Endpoint" },
-  { value: "serviceInstance", label: "Service Instance" },
-  { value: "serviceRelationClient", label: "Service Relation(client)" },
-  { value: "serviceRelationServer", label: "Service Relation(server)" },
+  { value: "service", label: "Service", key: 1 },
+  { value: "all", label: "All", key: 10 },
+  { value: "endpoint", label: "Service Endpoint", key: 3 },
+  { value: "serviceInstance", label: "Service Instance", key: 3 },
+  { value: "serviceRelationClient", label: "Service Relation(client)", key: 2 },
+  { value: "serviceRelationServer", label: "Service Relation(server)", key: 2 },
   {
     value: "serviceInstanceRelationClient",
     label: "Service Instance Relation(client)",
+    key: 4,
   },
   {
     value: "serviceInstanceRelationServer",
     label: "Service Instance Relation(server)",
+    key: 4,
   },
-  { value: "endpointRelation", label: "Endpoint Relation" },
+  { value: "endpointRelation", label: "Endpoint Relation", key: 4 },
 ];
 export const Options = [
   {

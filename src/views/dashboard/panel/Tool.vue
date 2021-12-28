@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
     <div class="flex-h">
-      <div class="selectors-item">
+      <div class="selectors-item" v-if="states.key < 3">
         <span class="label">$Service</span>
         <Selector
           :value="states.service"
@@ -27,17 +27,17 @@ limitations under the License. -->
           class="selectors"
         />
       </div>
-      <div class="selectors-item">
+      <div class="selectors-item" v-if="states.key === 3 || states.key === 4">
         <span class="label">$ServiceInstance</span>
         <el-cascader
           placeholder="Select a instance"
           :options="SelectOpts"
           size="mini"
           filterable
-          :style="{ minWidth: '230px' }"
+          :style="{ minWidth: '300px' }"
         />
       </div>
-      <div class="selectors-item">
+      <div class="selectors-item" v-if="states.key === 2">
         <span class="label">$DestinationService</span>
         <Selector
           :value="states.service"
@@ -49,14 +49,14 @@ limitations under the License. -->
           class="selectors"
         />
       </div>
-      <div class="selectors-item">
+      <div class="selectors-item" v-if="states.key === 4">
         <span class="label">$DestinationServiceInstance</span>
         <el-cascader
           placeholder="Select a instance"
           :options="SelectOpts"
           size="mini"
           filterable
-          :style="{ minWidth: '230px' }"
+          :style="{ minWidth: '300px' }"
         />
       </div>
     </div>
@@ -100,14 +100,20 @@ import { reactive } from "vue";
 import { useRoute } from "vue-router";
 import { ElTooltip, ElCascader } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { Options, SelectOpts } from "../data";
+import { Options, SelectOpts, EntityType } from "../data";
 
 const dashboardStore = useDashboardStore();
 const params = useRoute().params;
 const states = reactive({
   service: Options[0].value,
+  pod: Options[0].value, // instances and endpoints
+  destService: "",
+  destPod: "",
+  key: EntityType.filter((d: any) => d.value === params.entity)[0].key || 0,
+  ...params,
 });
-console.log(params);
+console.log(states);
+
 function changeService(val: { value: string; label: string }) {
   states.service = val.value;
 }
