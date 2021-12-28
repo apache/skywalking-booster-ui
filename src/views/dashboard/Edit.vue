@@ -13,33 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="dashboard-tool">
-    <el-tooltip class="item" effect="dark" content="Add Widget" placement="top">
-      <span class="icon-btn" @click="dashboardStore.addWidget">
-        <Icon size="sm" iconName="playlist_add" />
-      </span>
-    </el-tooltip>
-    <el-tooltip class="item" effect="dark" content="Settings" placement="top">
-      <span class="icon-btn" @click="dashboardStore.setConfigPanel(true)">
-        <Icon size="sm" iconName="settings" />
-      </span>
-    </el-tooltip>
-    <el-tooltip class="item" effect="dark" content="Import" placement="top">
-      <span class="icon-btn">
-        <Icon size="sm" iconName="folder_open" />
-      </span>
-    </el-tooltip>
-    <el-tooltip class="item" effect="dark" content="Export" placement="top">
-      <span class="icon-btn">
-        <Icon size="sm" iconName="save_alt" />
-      </span>
-    </el-tooltip>
-    <el-tooltip class="item" effect="dark" content="Apply" placement="top">
-      <span class="icon-btn">
-        <Icon size="sm" iconName="save" />
-      </span>
-    </el-tooltip>
-  </div>
+  <Tool />
   <div class="ds-main">
     <GridLayout />
     <el-dialog
@@ -53,10 +27,11 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import { ElDialog } from "element-plus";
 import GridLayout from "./panel/Layout.vue";
 import { LayoutConfig } from "@/types/dashboard";
+import Tool from "./panel/Tool.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { ElDialog, ElTooltip } from "element-plus";
 
 const dashboardStore = useDashboardStore();
 // fetch layout data from serve side
@@ -80,13 +55,6 @@ const layout: LayoutConfig[] = [
 dashboardStore.setLayout(layout);
 </script>
 <style lang="scss" scoped>
-.dashboard-tool {
-  text-align: right;
-  padding: 5px 10px;
-  background: rgb(240, 242, 245);
-  border-bottom: 1px solid #dfe4e8;
-}
-
 .ds-main {
   height: calc(100% - 40px);
 }
@@ -108,18 +76,6 @@ dashboardStore.setLayout(layout);
   box-shadow: 2px 0 2px 0 #ccc;
   text-align: center;
   border-left: 1px solid #eee;
-}
-
-.icon-btn {
-  display: inline-block;
-  padding: 0 5px;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  margin-left: 8px;
-  cursor: pointer;
-  background-color: #eee;
-  color: #666;
 }
 
 .configuration {
