@@ -19,6 +19,7 @@ limitations under the License. -->
     :placeholder="placeholder"
     @change="changeSelected"
     filterable
+    :multiple="multiple"
     :style="{ borderRadius }"
   >
     <el-option
@@ -50,13 +51,14 @@ const props = defineProps({
   size: { type: String, default: "small" },
   placeholder: { type: String, default: "Select a option" },
   borderRadius: { type: Number, default: 3 },
+  multiple: { type: Boolean, default: false },
 });
 const selected = ref<string>(props.value);
 function changeSelected() {
-  const optionSele = props.options.filter(
-    (d: Option) => d.value === selected.value
-  )[0];
-  emit("change", optionSele);
+  const options = props.options.filter((d: Option) =>
+    selected.value.includes(d.value)
+  );
+  emit("change", options);
 }
 </script>
 <style lang="scss" scope>

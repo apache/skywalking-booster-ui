@@ -18,8 +18,9 @@ import axios, { AxiosPromise, AxiosResponse } from "axios";
 import { cancelToken } from "@/utils/cancelToken";
 import * as app from "./query/app";
 import * as selector from "./query/selector";
+import * as dashboard from "./query/dashboard";
 
-const query: { [key: string]: string } = { ...app, ...selector };
+const query: { [key: string]: string } = { ...app, ...selector, ...dashboard };
 class Graph {
   private queryData = "";
   public query(queryData: string) {

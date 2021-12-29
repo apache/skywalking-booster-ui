@@ -15,37 +15,64 @@ limitations under the License. -->
 <template>
   <div class="graph">No Data</div>
   <div class="config">
-    <div class="metric">
+    <div class="metric-config item">
       <label>Graph your metric</label>
+      <div class="name">Metrics</div>
+      <Selector
+        :value="states.metrics"
+        :options="metricOpts"
+        :multiple="true"
+        size="mini"
+        placeholder="Select a metric"
+        @change="changeMetrics"
+        class="selectors"
+      />
+      <Selector
+        :value="states.metrics"
+        :options="metricOpts"
+        :multiple="true"
+        size="mini"
+        placeholder="Select a metric"
+        @change="changeMetrics"
+        class="selectors"
+      />
     </div>
-    <div class="visualization">
+    <div class="visualization item">
       <label>Select you visualization</label>
     </div>
-    <div class="graph-styles">
+    <div class="graph-styles item">
       <label>Graph styles</label>
     </div>
-    <div>
+    <div class="item">
       <label>Widget options</label>
     </div>
-    <div>
+    <div class="item">
       <label>Standard options</label>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { reactive } from "vue";
+
+const states = reactive<any>({
+  metrics: "",
+});
+function changeMetrics(val: string[]) {
+  console.log(val);
+}
+const metricOpts = [
+  { value: "service_apdex", label: "service_apdex" },
+  { value: "service_sla", label: "service_sla" },
+  { value: "service_cpm", label: "service_cpm" },
+  { value: "service_resp_time", label: "service_resp_time" },
+  { value: "service_percentile", label: "service_percentile" },
+  { value: "service_mq_consume_latency", label: "service_mq_consume_latency" },
+  { value: "service_mq_consume_count", label: "service_mq_consume_count" },
+];
 </script>
 <style lang="scss" scoped>
-.ds-config {
-  width: 340px;
-  background-color: #fff;
-  box-shadow: 2px 0 2px 0 #ccc;
-  text-align: center;
-  border-left: 1px solid #eee;
-}
-
-.configuration {
-  z-index: 9999;
+.item {
+  margin: 20px 0;
 }
 
 .graph {
@@ -54,6 +81,19 @@ import { ref } from "vue";
 }
 
 label {
+  display: inline-block;
   font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.selectors {
+  width: 500px;
+  margin-right: 10px;
+}
+
+.name {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 </style>

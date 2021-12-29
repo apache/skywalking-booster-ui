@@ -14,6 +14,75 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export enum QueryTypes {
+  ReadMetricsValue = "readMetricsValue",
+  ReadMetricsValues = "readMetricsValues",
+  SortMetrics = "sortMetrics",
+  ReadLabeledMetricsValues = "readLabeledMetricsValues",
+  READHEATMAP = "readHeatMap",
+  ReadSampledRecords = "readSampledRecords",
+}
+export enum MetricsType {
+  UNKNOWN = "UNKNOWN",
+  REGULAR_VALUE = "REGULAR_VALUE",
+  LABELED_VALUE = "LABELED_VALUE",
+  HEATMAP = "HEATMAP",
+  SAMPLED_RECORD = "SAMPLED_RECORD",
+}
+export const QueryMetricTypes: {
+  [key: string]: Array<{ label: string; value: string }>;
+} = {
+  REGULAR_VALUE: [
+    {
+      label: "read the single value in the duration",
+      value: "readMetricsValue",
+    },
+    { label: "read all values in the duration", value: "readMetricsValues" },
+    { label: "get sorted top N values", value: "sortMetrics" },
+  ],
+  LABELED_VALUE: [
+    {
+      label: "read all values of labels in the duration",
+      value: "readLabeledMetricsValues",
+    },
+  ],
+  HEATMAP: [
+    { label: "read heatmap values in the duration", value: "readHeatMap" },
+  ],
+  SAMPLED_RECORD: [
+    { label: "get sorted topN values", value: "readSampledRecords" },
+  ],
+};
+export const MetricChartType: { [key: string]: string } = {
+  readMetricsValue: "ChartNum",
+  readMetricsValues: "ChartLine",
+  sortMetrics: "ChartSlow",
+  readLabeledMetricsValues: "ChartLine",
+  readHeatMap: "ChartHeatmap",
+  readSampledRecords: "ChartSlow",
+};
+export const CalculationType = [
+  { label: "Plus", value: "+" },
+  { label: "Minus", value: "-" },
+  { label: "Multiplication", value: "*" },
+  { label: "Division", value: "/" },
+  { label: "Convert Unix Timestamp(milliseconds)", value: "milliseconds" },
+  { label: "Convert Unix Timestamp(seconds)", value: "seconds" },
+];
+export const ReadValueChartType = [
+  { value: "ChartNum", label: "Digital Card" },
+  { value: "ChartSlow", label: "Slow Chart" },
+];
+
+export const MaxItemNum = 10;
+
+export enum MetricsName {
+  SERVICE_RESP_TIME = "service_resp_time",
+  SERVICE_SLA = "service_sla",
+  SERVICE_CPM = "service_cpm",
+  SERVICE_PERCENTILE = "service_percentile",
+  SERVICE_APDEX = "service_apdex",
+}
 export const EntityType = [
   { value: "service", label: "Service", key: 1 },
   { value: "all", label: "All", key: 10 },
