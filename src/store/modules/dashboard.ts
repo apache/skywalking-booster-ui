@@ -17,6 +17,8 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
+import graph from "@/graph";
+import { AxiosResponse } from "axios";
 
 interface DashboardState {
   showConfig: boolean;
@@ -52,6 +54,13 @@ export const dashboardStore = defineStore({
     },
     setConfigPanel(show: boolean) {
       this.showConfig = show;
+    },
+    async fetchMetricType(item: string) {
+      const res: AxiosResponse = await graph
+        .query("queryTypeOfMetrics")
+        .params({ name: item });
+
+      return res.data;
     },
   },
 });

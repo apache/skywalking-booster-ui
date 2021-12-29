@@ -15,9 +15,9 @@ limitations under the License. -->
 <template>
   <div class="graph">No Data</div>
   <div class="config">
-    <div class="metric-config item">
+    <div class="metrics item">
       <label>Graph your metric</label>
-      <div class="name">Metrics</div>
+      <div class="name">Metrics Name</div>
       <Selector
         :value="states.metrics"
         :options="metricOpts"
@@ -28,12 +28,12 @@ limitations under the License. -->
         class="selectors"
       />
       <Selector
-        :value="states.metrics"
-        :options="metricOpts"
-        :multiple="true"
+        v-show="states.valueType"
+        :value="states.valueType"
+        :options="states.valueTypes"
         size="mini"
         placeholder="Select a metric"
-        @change="changeMetrics"
+        @change="changeValueType"
         class="selectors"
       />
     </div>
@@ -53,12 +53,36 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { ElMessage } from "element-plus";
+import { ValuesTypes, MetricQueryTypes } from "../data";
+import { Option } from "@/types/app";
 
-const states = reactive<any>({
+const states = reactive<{
+  metrics: string;
+  valueTypes: Option[];
+  valueType: string;
+  metricQueryType: string;
+}>({
   metrics: "",
+  valueTypes: [],
+  valueType: "",
+  metricQueryType: "",
 });
-function changeMetrics(val: string[]) {
-  console.log(val);
+const dashboardStore = useDashboardStore();
+async function changeMetrics(val: Option[]) {
+  const resp = await dashboardStore.fetchMetricType(val[0].value);
+  if (resp.error) {
+    ElMessage.error(resp.data.error);
+    return;
+  }
+  const { typeOfMetrics } = resp.data;
+  states.valueTypes = ValuesTypes[typeOfMetrics];
+  states.valueType = ValuesTypes[typeOfMetrics][0].value;
+}
+function changeValueType(val: Option[]) {
+  states.valueType = String(val[0].value);
+  states.metricQueryType = (MetricQueryTypes as any)[states.valueType];
 }
 const metricOpts = [
   { value: "service_apdex", label: "service_apdex" },

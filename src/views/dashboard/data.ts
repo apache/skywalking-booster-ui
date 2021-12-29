@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export enum QueryTypes {
+export enum MetricQueryTypes {
   ReadMetricsValue = "readMetricsValue",
   ReadMetricsValues = "readMetricsValues",
   SortMetrics = "sortMetrics",
@@ -29,7 +29,7 @@ export enum MetricsType {
   HEATMAP = "HEATMAP",
   SAMPLED_RECORD = "SAMPLED_RECORD",
 }
-export const QueryMetricTypes: {
+export const ValuesTypes: {
   [key: string]: Array<{ label: string; value: string }>;
 } = {
   REGULAR_VALUE: [
