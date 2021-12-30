@@ -52,6 +52,7 @@ const msg = {
   endpoint: "Endpoint",
   instance: "Instance",
   create: "Create",
+  loading: "Loading",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

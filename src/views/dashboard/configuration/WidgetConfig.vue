@@ -53,10 +53,12 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
+import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { ElMessage } from "element-plus";
 import { ValuesTypes, MetricQueryTypes } from "../data";
 import { Option } from "@/types/app";
+import Loading from "@/utils/loading";
 
 const states = reactive<{
   metrics: string;
@@ -69,9 +71,18 @@ const states = reactive<{
   valueType: "",
   metricQueryType: "",
 });
+const { t } = useI18n();
 const dashboardStore = useDashboardStore();
+const { loading } = Loading();
 async function changeMetrics(val: Option[]) {
+  if (!val.length) {
+    states.valueTypes = [];
+    states.valueType = "";
+    return;
+  }
+  const loadingInstance = loading({ text: t("loading"), fullscreen: true });
   const resp = await dashboardStore.fetchMetricType(val[0].value);
+  loadingInstance.close();
   if (resp.error) {
     ElMessage.error(resp.data.error);
     return;

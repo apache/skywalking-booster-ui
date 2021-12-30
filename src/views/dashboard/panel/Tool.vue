@@ -112,8 +112,6 @@ const states = reactive({
   key: EntityType.filter((d: any) => d.value === params.entity)[0].key || 0,
   ...params,
 });
-console.log(states);
-
 function changeService(val: { value: string; label: string }) {
   states.service = val.value;
 }
