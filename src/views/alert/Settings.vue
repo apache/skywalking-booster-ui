@@ -35,7 +35,6 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { ElButton, ElTable, ElTableColumn } from "element-plus";
@@ -57,18 +56,6 @@ const tableData = [
     status: "Disable",
   },
 ];
-const state = reactive({
-  path: route.meta.headPath,
-});
-watch(
-  () => route.meta.headPath,
-  (path: unknown) => {
-    if (!path) {
-      return;
-    }
-    state.path = path;
-  }
-);
 </script>
 <style lang="scss" scoped>
 .alert-name {
