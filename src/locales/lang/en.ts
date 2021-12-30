@@ -31,7 +31,7 @@ const msg = {
   alerts: "Alerts",
   description: "Description",
   action: "Action",
-  createAAlert: "Create a alert",
+  createAlert: "Create a alert",
   alertSettings: "Alert setting",
   settings: "Settings",
   dashboards: "Dashboards",

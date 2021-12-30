@@ -31,7 +31,7 @@ const msg = {
   alerts: "警告",
   description: "描述",
   action: "操作",
-  createAAlert: "创建告警",
+  createAlert: "创建告警",
   alertSettings: "告警设置",
   alertName: "警告名称",
   startedTime: "开始时间",

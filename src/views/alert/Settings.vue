@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="alert-table">
     <el-button class="alert-create" type="primary" size="small">{{
-      t("createAAlert")
+      t("createAlert")
     }}</el-button>
     <el-table :data="tableData" border>
       <el-table-column
