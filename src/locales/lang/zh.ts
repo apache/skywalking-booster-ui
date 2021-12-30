@@ -29,6 +29,10 @@ const msg = {
   events: "事件",
   // 警告
   alerts: "警告",
+  description: "描述",
+  operate: "操作",
+  createAAlert: "创建告警",
+  alertSettings: "告警设置",
   alertName: "警告名称",
   startedTime: "开始时间",
   settings: "设置",
