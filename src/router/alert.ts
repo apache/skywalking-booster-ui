@@ -40,6 +40,17 @@ export const routesAlert: Array<RouteRecordRaw> = [
         },
         component: () => import("@/views/alert/Settings.vue"),
       },
+      {
+        path: "/alert/channels",
+        name: "alertChannels",
+        meta: {
+          title: "Alert Channels",
+          icon: "notification_important",
+          hasGroup: false,
+          exact: false,
+        },
+        component: () => import("@/views/alert/Channels.vue"),
+      },
     ],
   },
 ];
