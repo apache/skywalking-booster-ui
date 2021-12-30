@@ -14,32 +14,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
-
-export const routesAlert: Array<RouteRecordRaw> = [
-  {
-    path: "",
-    name: "Alerts",
-    meta: {
-      title: "alerts",
-      icon: "notification_important",
-      hasGroup: true,
-      exact: true,
-    },
-    component: Layout,
-    children: [
-      {
-        path: "/alerts",
-        name: "alertSettings",
-        meta: {
-          title: "Alert Settings",
-          icon: "notification_important",
-          hasGroup: false,
-          exact: false,
-        },
-        component: () => import("@/views/alert/Settings.vue"),
-      },
-    ],
-  },
-];
