@@ -24,21 +24,21 @@ export const routesAlert: Array<RouteRecordRaw> = [
     meta: {
       title: "alerts",
       icon: "notification_important",
-      hasGroup: true,
-      exact: true,
+      hasGroup: false,
+      exact: false,
     },
     component: Layout,
     children: [
       {
         path: "/alerts",
-        name: "alertSettings",
+        name: "Alerts",
         meta: {
-          title: "Alert Settings",
+          title: "alerts",
           icon: "notification_important",
           hasGroup: false,
           exact: false,
         },
-        component: () => import("@/views/alert/Settings.vue"),
+        component: () => import("@/views/Log.vue"),
       },
     ],
   },
