@@ -13,51 +13,61 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="graph">No Data</div>
-  <div class="config">
-    <div class="metrics item">
-      <label>Graph your metric</label>
-      <div class="name">Metrics Name</div>
-      <Selector
-        :value="states.metrics"
-        :options="metricOpts"
-        :multiple="true"
-        size="mini"
-        placeholder="Select a metric"
-        @change="changeMetrics"
-        class="selectors"
-      />
-      <Selector
-        v-show="states.valueType"
-        :value="states.valueType"
-        :options="states.valueTypes"
-        size="mini"
-        placeholder="Select a metric"
-        @change="changeValueType"
-        class="selectors"
-      />
-    </div>
-    <div class="visualization item">
-      <label>Select you visualization</label>
-      <div class="chart-types">
-        <span
-          v-for="type in ChartTypes"
-          :key="type.value"
-          @click="changeChartType(type)"
-          :class="{ active: type.value === states.chartType }"
-        >
-          {{ type.label }}
-        </span>
+  <div class="widget-config">
+    <div class="graph">No Data</div>
+    <div class="config">
+      <div class="metrics item">
+        <label>Graph your metric</label>
+        <div class="name">Metrics Name</div>
+        <Selector
+          :value="states.metrics"
+          :options="metricOpts"
+          :multiple="true"
+          size="mini"
+          placeholder="Select a metric"
+          @change="changeMetrics"
+          class="selectors"
+        />
+        <Selector
+          v-show="states.valueType"
+          :value="states.valueType"
+          :options="states.valueTypes"
+          size="mini"
+          placeholder="Select a metric"
+          @change="changeValueType"
+          class="selectors"
+        />
+      </div>
+      <div class="visualization item">
+        <label>Select you visualization</label>
+        <div class="chart-types">
+          <span
+            v-for="type in ChartTypes"
+            :key="type.value"
+            @click="changeChartType(type)"
+            :class="{ active: type.value === states.chartType }"
+          >
+            {{ type.label }}
+          </span>
+        </div>
+      </div>
+      <div class="graph-styles item">
+        <label>Graph styles</label>
+      </div>
+      <div class="item">
+        <label>Widget options</label>
+      </div>
+      <div class="item">
+        <label>Standard options</label>
       </div>
     </div>
-    <div class="graph-styles item">
-      <label>Graph styles</label>
-    </div>
-    <div class="item">
-      <label>Widget options</label>
-    </div>
-    <div class="item">
-      <label>Standard options</label>
+    <div class="footer">
+      <el-button size="mini">
+        {{ t("cancel") }}
+      </el-button>
+      <el-button size="mini" type="primary">
+        {{ t("apply") }}
+      </el-button>
     </div>
   </div>
 </template>
@@ -65,7 +75,7 @@ limitations under the License. -->
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElButton } from "element-plus";
 import { ValuesTypes, MetricQueryTypes, ChartTypes } from "../data";
 import { Option } from "@/types/app";
 import Loading from "@/utils/loading";
@@ -121,6 +131,10 @@ const metricOpts = [
 ];
 </script>
 <style lang="scss" scoped>
+.widget-config {
+  position: relative;
+}
+
 .item {
   margin: 20px 0;
 }
@@ -169,5 +183,15 @@ label {
 
 span.active {
   background-color: #eee;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  border-top: 1px solid #eee;
+  padding: 10px;
+  text-align: right;
+  width: 100%;
 }
 </style>

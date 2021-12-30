@@ -26,3 +26,6 @@ interactjs 1.10.11: https://github.com/taye/interact.js MIT
 mitt 1.1.2: https://github.com/developit/mitt MIT
 element-resize-detector 1.2.4: https://github.com/wnr/element-resize-detector MIT
 batch-processor 1.0.0: https://github.com/wnr/batch-processor MIT
+echarts 5.2.2: https://github.com/apache/echarts Apache-2.0 License
+zrender 5.2.1: https://github.com/ecomfe/zrender BSD-3-Clause License
+tslib 2.3.0: https://github.com/Microsoft/tslib 0BSD License
