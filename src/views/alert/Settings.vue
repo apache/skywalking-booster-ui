@@ -24,7 +24,7 @@ limitations under the License. -->
         :key="h + index"
       >
         <template #default="scope">
-          <span v-if="h !== 'operate'">{{ scope.row[h] }}</span>
+          <span v-if="h !== 'action'">{{ scope.row[h] }}</span>
           <el-button v-else type="danger" size="mini">{{
             t("delete")
           }}</el-button>
@@ -36,12 +36,10 @@ limitations under the License. -->
 
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
 import { ElButton, ElTable, ElTableColumn } from "element-plus";
 
-const route = useRoute();
 const { t } = useI18n();
-const tableHeader = ["name", "entityType", "description", "status", "operate"];
+const tableHeader = ["name", "entityType", "description", "status", "action"];
 const tableData = [
   {
     name: "xxxx-name",
