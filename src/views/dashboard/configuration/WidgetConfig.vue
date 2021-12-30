@@ -39,6 +39,16 @@ limitations under the License. -->
     </div>
     <div class="visualization item">
       <label>Select you visualization</label>
+      <div class="chart-types">
+        <span
+          v-for="type in ChartTypes"
+          :key="type.value"
+          @click="changeChartType(type)"
+          :class="{ active: type.value === states.chartType }"
+        >
+          {{ type.label }}
+        </span>
+      </div>
     </div>
     <div class="graph-styles item">
       <label>Graph styles</label>
@@ -56,7 +66,7 @@ import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { ElMessage } from "element-plus";
-import { ValuesTypes, MetricQueryTypes } from "../data";
+import { ValuesTypes, MetricQueryTypes, ChartTypes } from "../data";
 import { Option } from "@/types/app";
 import Loading from "@/utils/loading";
 
@@ -65,11 +75,13 @@ const states = reactive<{
   valueTypes: Option[];
   valueType: string;
   metricQueryType: string;
+  chartType: string;
 }>({
   metrics: "",
   valueTypes: [],
   valueType: "",
   metricQueryType: "",
+  chartType: "",
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -95,6 +107,9 @@ function changeValueType(val: Option[]) {
   states.valueType = String(val[0].value);
   states.metricQueryType = (MetricQueryTypes as any)[states.valueType];
 }
+function changeChartType(item: Option) {
+  states.chartType = String(item.value);
+}
 const metricOpts = [
   { value: "service_apdex", label: "service_apdex" },
   { value: "service_sla", label: "service_sla" },
@@ -113,6 +128,7 @@ const metricOpts = [
 .graph {
   width: 100%;
   height: 350px;
+  min-width: 1280px;
 }
 
 label {
@@ -130,5 +146,28 @@ label {
   font-size: 12px;
   font-weight: bold;
   margin-bottom: 5px;
+}
+
+.config {
+  min-width: 1280px;
+}
+
+.chart-types {
+  span {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-right: 0;
+    cursor: pointer;
+  }
+
+  span:nth-last-child(1) {
+    border-right: 1px solid #ccc;
+  }
+}
+
+span.active {
+  background-color: #eee;
 }
 </style>

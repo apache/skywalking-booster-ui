@@ -14,6 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export const ChartTypes = [
+  { label: "Bar", value: "bar" },
+  { label: "Line", value: "line" },
+  { label: "Area", value: "area" },
+  { label: "Heat Map", value: "heatMap" },
+  { label: "Pie", value: "pie" },
+  { label: "Sankey", value: "sankey" },
+  { label: "Gauge", value: "gauge" },
+  { label: "Card", value: "card" },
+  { label: "Table", value: "table" },
+  { label: "Progress Bar", value: "progressBar" },
+  { label: "Endpoint List", value: "endpointList" },
+  { label: "Instance List", value: "instanceList" },
+];
 export enum MetricQueryTypes {
   ReadMetricsValue = "readMetricsValue",
   ReadMetricsValues = "readMetricsValues",
