@@ -26,23 +26,30 @@ import {
 } from "vue";
 import type { PropType } from "vue";
 import * as echarts from "echarts";
-const dom = ref<any>(null);
-const state = reactive<any>({
+// eslint-disable-next-line no-undef
+const dom = ref<Nullable<HTMLElement>>(null);
+const state = reactive<{ instanceChart: any }>({
   instanceChart: null,
 });
 const props = defineProps({
   clickEvent: { type: Function as PropType<(param: unknown) => void> },
-  height: { type: Number, default: 100 },
-  width: { type: Number, default: 300 },
-  option: { type: Object as PropType<any>, default: () => ({}) },
+  height: { type: String, default: "100%" },
+  width: { type: String, default: "100%" },
+  option: {
+    type: Object as PropType<{ [key: string]: unknown }>,
+    default: () => ({}),
+  },
 });
 onMounted(() => {
   drawEcharts();
   window.addEventListener("resize", state.instanceChart.resize);
 });
 function drawEcharts(): void {
+  if (!dom.value) {
+    return;
+  }
   state.instanceChart = echarts.init(dom.value, "");
-  state.instanceChart.setOption(state.option);
+  state.instanceChart.setOption(props.option);
   state.instanceChart.on("click", (params: any) => {
     if (!props.clickEvent) {
       return;

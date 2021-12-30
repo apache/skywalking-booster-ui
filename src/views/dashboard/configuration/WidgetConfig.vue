@@ -14,7 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="widget-config">
-    <div class="graph">No Data</div>
+    <div class="graph" style="height: 350px; width: 100%">
+      <Bar :data="source" :intervalTime="appStoreWithOut.intervalTime" />
+      <span v-show="!source">No Data</span>
+    </div>
     <div class="config">
       <div class="metrics item">
         <label>Graph your metric</label>
@@ -75,10 +78,12 @@ limitations under the License. -->
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import { ElMessage, ElButton } from "element-plus";
 import { ValuesTypes, MetricQueryTypes, ChartTypes } from "../data";
 import { Option } from "@/types/app";
 import Loading from "@/utils/loading";
+import Bar from "../graphs/Bar.vue";
 
 const states = reactive<{
   metrics: string;
@@ -95,6 +100,7 @@ const states = reactive<{
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
+const appStoreWithOut = useAppStoreWithOut();
 const { loading } = Loading();
 async function changeMetrics(val: Option[]) {
   if (!val.length) {
@@ -129,10 +135,14 @@ const metricOpts = [
   { value: "service_mq_consume_latency", label: "service_mq_consume_latency" },
   { value: "service_mq_consume_count", label: "service_mq_consume_count" },
 ];
+const source = {
+  count: [1, 2, 3, 4, 5, 6, 7, 3, 4, 5, 2, 1, 6, 9],
+};
 </script>
 <style lang="scss" scoped>
 .widget-config {
   position: relative;
+  width: 100%;
 }
 
 .item {
@@ -140,9 +150,9 @@ const metricOpts = [
 }
 
 .graph {
-  width: 100%;
-  height: 350px;
   min-width: 1280px;
+  border: 1px solid #eee;
+  padding: 10px;
 }
 
 label {

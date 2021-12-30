@@ -25,21 +25,22 @@ const props = defineProps({
     type: Object as PropType<{ [key: string]: number[] }>,
     default: () => ({}),
   },
+  type: { type: String, default: "" },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   theme: { type: String, default: "dark" },
   itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
 });
 const chart = ref<any>(null);
 const option = computed(() => getOption());
-function resize() {
-  chart.value.myChart.resize();
-}
+// function resize() {
+//   chart.value.myChart.resize();
+// }
 function getOption() {
   const keys = Object.keys(props.data || {}).filter(
     (i: any) => Array.isArray(props.data[i]) && props.data[i].length
   );
   const startP = keys.length > 1 ? 50 : 15;
-  const diff = 15;
+  const diff = 10;
   const markAreas = (props.itemEvents || []).map(
     (event: Event, index: number) => {
       return [
@@ -61,23 +62,19 @@ function getOption() {
       ];
     }
   );
-  const temp = keys.map((i: string, index: number) => {
-    if (!props.intervalTime) {
-      return;
-    }
-    return {
-      data: props.data[i].map((item: any, itemIndex: any) => [
+  const temp = keys.map((i: any, index: number) => {
+    const serie: any = {
+      data: props.data[i].map((item: any, itemIndex: number) => [
         props.intervalTime[itemIndex],
         item,
       ]),
       name: i,
-      type: "bar",
+      type: "line",
       symbol: "none",
       barMaxWidth: 10,
-      stack: "总量",
       lineStyle: {
         width: 1.5,
-        type: "dotted",
+        type: "solid",
       },
       markArea:
         index === 0
@@ -97,6 +94,12 @@ function getOption() {
             }
           : undefined,
     };
+    if (props.type === "areaChart") {
+      serie.areaStyle = {
+        opacity: 0.4,
+      };
+    }
+    return serie;
   });
   let color: string[] = [];
   switch (keys.length) {
@@ -151,7 +154,7 @@ function getOption() {
       },
     },
     grid: {
-      top: keys.length === 1 ? 15 : 40,
+      top: keys.length === 1 ? 15 : 55,
       left: 0,
       right: 10,
       bottom: 5,
