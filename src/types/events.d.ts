@@ -14,27 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Icon from "./Icon.vue";
-import TimePicker from "./TimePicker.vue";
-import Selector from "./Selector.vue";
-import Graph from "./Graph.vue";
-import type { App } from "vue";
-import VueGridLayout from "vue-grid-layout";
-
-const components: { [key: string]: any } = {
-  Icon,
-  TimePicker,
-  VueGridLayout,
-  Selector,
-  Graph,
-};
-const componentsName: string[] = Object.keys(components);
-
-export default {
-  install: (vue: App): void => {
-    vue.use(components["VueGridLayout"]);
-    componentsName.forEach((i) => {
-      vue.component(i, components[i]);
-    });
-  },
+export type Event = {
+  uuid: string;
+  source: SourceInput;
+  name: string;
+  type: string;
+  message: string;
+  parameters: { key: string; value: string }[];
+  startTime: number | string;
+  endTime: number | string;
+  entityType?: string;
+  checked?: boolean;
+  scope?: string;
 };
