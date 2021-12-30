@@ -1,3 +1,5 @@
+import { string } from "vue-types";
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,21 +16,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireComponent = require.context("../../assets", false, /\.png$/);
+export interface LayoutConfig {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  i: string;
+  widget?: WidgetConfig;
+  graph?: GraphConfig;
+}
 
-const result = {};
-function capitalizeFirstLetter(str) {
-  return str.toUpperCase();
+export interface WidgetConfig {
+  title: string;
+  Metrics: string[];
+  unit: string;
+  tips: string;
+  sortOrder: string;
 }
-function validateFileName(str) {
-  return (
-    /^\S+\.png$/.test(str) &&
-    str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) => capitalizeFirstLetter($1))
-  );
+
+export interface GraphConfig {
+  type: string;
 }
-requireComponent.keys().forEach((filePath) => {
-  const componentConfig = requireComponent(filePath);
-  const fileName = validateFileName(filePath);
-  result[fileName] = componentConfig;
-});
-export default result;

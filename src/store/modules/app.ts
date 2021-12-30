@@ -27,7 +27,7 @@ interface AppState {
   utcHour: number;
   utcMin: number;
   eventStack: (() => unknown)[];
-  timer: ReturnType<typeof setInterval> | null;
+  timer: Nullable<any>;
 }
 
 export const appStore = defineStore({

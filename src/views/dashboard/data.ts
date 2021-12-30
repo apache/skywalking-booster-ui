@@ -19,69 +19,37 @@ export const EntityType = [
   { value: "all", label: "All" },
   { value: "endpoint", label: "Service Endpoint" },
   { value: "serviceInstance", label: "Service Instance" },
-  { value: "serviceRelation", label: "Service Relation" },
-  { value: "serviceInstanceRelation", label: "Service Instance Relation" },
-  { value: "endpointRelation", label: "Endpoint Relation" },
-];
-export const SelectOpt = [
+  { value: "serviceRelationClient", label: "Service Relation(client)" },
+  { value: "serviceRelationServer", label: "Service Relation(server)" },
   {
-    value: "guide",
-    label: "Guide",
-    children: [
-      {
-        value: "disciplines",
-        label: "Disciplines",
-        children: [
-          {
-            value: "consistency",
-            label: "Consistency",
-          },
-          {
-            value: "feedback",
-            label: "Feedback",
-          },
-          {
-            value: "efficiency",
-            label: "Efficiency",
-          },
-        ],
-      },
-      {
-        value: "navigation",
-        label: "Navigation",
-        children: [
-          {
-            value: "side nav",
-            label: "Side Navigation",
-          },
-          {
-            value: "top nav",
-            label: "Top Navigation",
-          },
-        ],
-      },
-    ],
+    value: "serviceInstanceRelationClient",
+    label: "Service Instance Relation(client)",
   },
+  {
+    value: "serviceInstanceRelationServer",
+    label: "Service Instance Relation(server)",
+  },
+  { value: "endpointRelation", label: "Endpoint Relation" },
 ];
 export const Options = [
   {
-    value: "Option1",
-    label: "Option1",
+    value: "layer1",
+    label: "layer1",
   },
   {
-    value: "Option2",
-    label: "Option2",
+    value: "layer2",
+    label: "layer2",
   },
   {
-    value: "Option3",
-    label: "Option3",
+    value: "layer3",
+    label: "layer3",
   },
   {
-    value: "Option4",
-    label: "Option4",
+    value: "layer4",
+    label: "layer4",
   },
   {
-    value: "Option5",
-    label: "Option5",
+    value: "layer5",
+    label: "layer5",
   },
 ];

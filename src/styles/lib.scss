@@ -18,85 +18,111 @@
   display: flex;
   flex-direction: column;
 }
+
 .flex-h {
   display: flex;
   flex-direction: row;
 }
+
 .ell {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
+
 .cp {
   cursor: pointer;
 }
+
 .cm {
   cursor: move;
 }
+
 .auto {
   margin-right: auto;
   margin-left: auto;
 }
+
 .green {
   color: #4caf50;
 }
+
 .red {
   color: #e54c17;
 }
+
 .blue {
   color: #448dfe;
 }
+
 .purple {
   color: #6e40aa;
 }
+
 .yellow {
   color: #fbb03b;
 }
+
 .grey {
   color: #a7aebb;
 }
+
 .white {
   color: #fff;
 }
+
 .bg-green {
   background-color: #4caf50;
 }
+
 .bg-red {
   background-color: #e54c17;
 }
+
 .bg-blue {
   background-color: #448dfe;
 }
+
 .bg-purple {
   background-color: #6e40aa;
 }
+
 .bg-yellow {
   background-color: #fbb03b;
 }
+
 .bg-grey {
   background-color: #a7aebb;
 }
+
 .ml-5 {
   margin-left: 5px;
 }
+
 .ml-10 {
   margin-left: 10px;
 }
+
 .ml-15 {
   margin-left: 15px;
 }
+
 .ml-20 {
   margin-left: 20px;
 }
+
 .mr-5 {
   margin-right: 5px;
 }
+
 .mr-10 {
   margin-right: 10px;
 }
+
 .mr-15 {
   margin-right: 15px;
 }
+
 .mr-20 {
   margin-right: 20px;
 }

@@ -14,21 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireComponent = require.context("../../assets", false, /\.png$/);
+declare module "vue-grid-layout" {
+  import Vue from "vue";
 
-const result = {};
-function capitalizeFirstLetter(str) {
-  return str.toUpperCase();
+  export class GridLayout extends Vue {}
+
+  export class GridItem extends Vue {}
+
+  export interface GridItemData {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    i: string;
+  }
 }
-function validateFileName(str) {
-  return (
-    /^\S+\.png$/.test(str) &&
-    str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) => capitalizeFirstLetter($1))
-  );
-}
-requireComponent.keys().forEach((filePath) => {
-  const componentConfig = requireComponent(filePath);
-  const fileName = validateFileName(filePath);
-  result[fileName] = componentConfig;
-});
-export default result;

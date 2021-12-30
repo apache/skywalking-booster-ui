@@ -14,21 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireComponent = require.context("../../assets", false, /\.png$/);
 
-const result = {};
-function capitalizeFirstLetter(str) {
-  return str.toUpperCase();
+export default function uuid(): string {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    /* tslint:disable */
+    const r = (Math.random() * 16) | 0;
+    /* tslint:disable */
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+
+    return v.toString(16);
+  });
 }
-function validateFileName(str) {
-  return (
-    /^\S+\.png$/.test(str) &&
-    str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) => capitalizeFirstLetter($1))
-  );
-}
-requireComponent.keys().forEach((filePath) => {
-  const componentConfig = requireComponent(filePath);
-  const fileName = validateFileName(filePath);
-  result[fileName] = componentConfig;
-});
-export default result;

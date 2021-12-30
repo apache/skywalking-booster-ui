@@ -15,39 +15,47 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Option } from "@/types/app";
 import { store } from "@/store";
-import graph from "@/graph";
-import { AxiosResponse } from "axios";
+import { LayoutConfig } from "@/types/dashboard";
 
-interface SelectorState {
-  services: Option[];
+interface DashboardState {
+  showConfig: boolean;
+  layout: LayoutConfig[];
 }
 
-export const selectorStore = defineStore({
-  id: "selector",
-  state: (): SelectorState => ({
-    services: [],
+export const dashboardStore = defineStore({
+  id: "dashboard",
+  state: (): DashboardState => ({
+    layout: [],
+    showConfig: false,
   }),
   actions: {
-    async fetchLayers(): Promise<AxiosResponse> {
-      const res: AxiosResponse = await graph.query("queryLayers").params({});
-
-      return res;
+    setLayout(data: LayoutConfig[]) {
+      this.layout = data;
     },
-    async fetchServices(layer: string): Promise<AxiosResponse> {
-      const res: AxiosResponse = await graph
-        .query("queryServices")
-        .params({ layer });
-
-      if (!res.data.errors) {
-        this.services = res.data.data.services;
-      }
-      return res;
+    addWidget() {
+      const newWidget: LayoutConfig = {
+        x: 0,
+        y: 0,
+        w: 24,
+        h: 12,
+        i: String(this.layout.length),
+      };
+      this.layout = this.layout.map((d: LayoutConfig) => {
+        d.y = d.y + newWidget.h;
+        return d;
+      });
+      this.layout.push(newWidget);
+    },
+    removeWidget(item: LayoutConfig) {
+      this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
+    },
+    setConfigPanel(show: boolean) {
+      this.showConfig = show;
     },
   },
 });
 
-export function useSelectorStore(): any {
-  return selectorStore(store);
+export function useDashboardStore(): any {
+  return dashboardStore(store);
 }
