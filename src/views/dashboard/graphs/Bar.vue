@@ -31,9 +31,7 @@ const props = defineProps({
 });
 const chart = ref<any>(null);
 const option = computed(() => getOption());
-function resize() {
-  chart.value.myChart.resize();
-}
+
 function getOption() {
   const keys = Object.keys(props.data || {}).filter(
     (i: any) => Array.isArray(props.data[i]) && props.data[i].length
@@ -66,7 +64,7 @@ function getOption() {
       return;
     }
     return {
-      data: props.data[i].map((item: any, itemIndex: any) => [
+      data: props.data[i].map((item: number, itemIndex: number) => [
         props.intervalTime[itemIndex],
         item,
       ]),

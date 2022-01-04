@@ -40,7 +40,9 @@ import { ElProgress } from "element-plus";
 import copy from "@/utils/copy";
 const props = defineProps({
   data: {
-    type: Array as PropType<{ [key: string]: number | string }[]>,
+    type: Array as PropType<
+      { name: string; value: number; traceIds: string[] }[]
+    >,
     default: () => [],
   },
   theme: { type: String, default: "" },
