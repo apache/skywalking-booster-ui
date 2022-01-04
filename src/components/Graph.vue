@@ -26,7 +26,7 @@ import {
 } from "vue";
 import type { PropType } from "vue";
 import * as echarts from "echarts";
-// eslint-disable-next-line no-undef
+/*global Nullable*/
 const dom = ref<Nullable<HTMLElement>>(null);
 const state = reactive<{ instanceChart: any }>({
   instanceChart: null,

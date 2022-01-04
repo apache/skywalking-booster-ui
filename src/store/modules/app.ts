@@ -20,7 +20,7 @@ import { Duration, DurationTime } from "@/types/app";
 import getLocalTime from "@/utils/localtime";
 import getDurationRow from "@/utils/dateTime";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
-
+/*global Nullable*/
 interface AppState {
   durationRow: any;
   utc: string;

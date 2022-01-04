@@ -60,10 +60,11 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const chartTable = ref<any>(null);
+/*global Nullable*/
+const chartTable = ref<Nullable<HTMLElement>>(null);
 const initWidth = ref<number>(0);
 const nameWidth = ref<number>(0);
-const draggerName = ref<any>(0);
+const draggerName = ref<Nullable<HTMLElement>>(null);
 onMounted(() => {
   if (!chartTable.value) {
     return;

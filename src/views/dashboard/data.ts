@@ -23,9 +23,9 @@ export const ChartTypes = [
   { label: "Card", value: "card" },
   { label: "Progress Bar", value: "progressBar" },
   { label: "Table", value: "table" },
-  { label: "Image", value: "image" },
   { label: "Endpoint List", value: "endpointList" },
   { label: "Instance List", value: "instanceList" },
+  { label: "Image", value: "image" },
   { label: "Tab", value: "tab" },
 ];
 export enum MetricQueryTypes {

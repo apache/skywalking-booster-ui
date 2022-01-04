@@ -30,3 +30,26 @@ export const Layers = {
     layers: listLayers
   `,
 };
+export const Instances = {
+  variable: "$serviceId: ID!, $duration: Duration!",
+  query: `
+    getServiceInstances(duration: $duration, serviceId: $serviceId) {
+      key: id
+      label: name
+      language
+      attributes {
+        name
+        value
+      }
+    }
+  `,
+};
+export const Endpoints = {
+  variable: "$serviceId: ID!, $keyword: String!",
+  query: `
+    getEndpoints: searchEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 100) {
+      key: id
+      label: name
+    }
+`,
+};
