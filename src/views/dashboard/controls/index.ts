@@ -15,22 +15,10 @@
  * limitations under the License.
  */
 
-import Area from "./Area.vue";
-import Line from "./Line.vue";
-import Bar from "./Bar.vue";
-import Heatmap from "./Heatmap.vue";
-import ProgressBar from "./ProgressBar.vue";
-import Table from "./Table.vue";
-import Pie from "./Pie.vue";
-import Card from "./Card.vue";
+import Image from "./Image.vue";
+import Tabs from "./Tabs.vue";
 
 export default {
-  Line,
-  Bar,
-  Heatmap,
-  ProgressBar,
-  Area,
-  Table,
-  Pie,
-  Card,
+  Image,
+  Tabs,
 };

@@ -40,7 +40,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { defineProps, reactive } from "vue";
 import type { PropType } from "vue";
-import Widget from "./Widget.vue";
+import Widget from "../panel/Widget.vue";
 import { LayoutConfig } from "@/types/dashboard";
 
 defineProps({

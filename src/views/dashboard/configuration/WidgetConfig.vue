@@ -87,11 +87,12 @@ import { ElMessage, ElButton } from "element-plus";
 import { ValuesTypes, MetricQueryTypes, ChartTypes } from "../data";
 import { Option } from "@/types/app";
 import Loading from "@/utils/loading";
-import charts from "../graphs";
+import graphs from "../graphs";
+import controls from "../controls";
 
 export default defineComponent({
   name: "WidgetConfig",
-  components: { ...charts, ElButton },
+  components: { ...graphs, ...controls, ElButton },
   setup() {
     const states = reactive<{
       metrics: string;

@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 export const ChartTypes = [
-  { label: "Bar", value: "bar" },
-  { label: "Line", value: "line" },
-  { label: "Area", value: "area" },
-  { label: "Heatmap", value: "heatmap" },
-  { label: "Pie", value: "pie" },
-  { label: "Card", value: "card" },
-  { label: "Progress Bar", value: "progressBar" },
-  { label: "Table", value: "table" },
-  { label: "Endpoint List", value: "endpointList" },
-  { label: "Instance List", value: "instanceList" },
-  { label: "Image", value: "image" },
-  { label: "Tab", value: "tab" },
+  { label: "Bar", value: "Bar" },
+  { label: "Line", value: "Line" },
+  { label: "Area", value: "Area" },
+  { label: "Heatmap", value: "Heatmap" },
+  { label: "Pie", value: "Pie" },
+  { label: "Card", value: "Card" },
+  { label: "Progress Bar", value: "ProgressBar" },
+  { label: "Table", value: "Table" },
+  { label: "Endpoint List", value: "EndpointList" },
+  { label: "Instance List", value: "InstanceList" },
+  { label: "Image", value: "Image" },
+  { label: "Tab", value: "Tabs" },
 ];
 export enum MetricQueryTypes {
   ReadMetricsValue = "readMetricsValue",
