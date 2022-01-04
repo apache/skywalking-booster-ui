@@ -33,7 +33,8 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const chart = ref<any>(null);
+/*global Nullable */
+const chart = ref<Nullable<HTMLElement>>(null);
 const option = computed(() => getOption());
 function getOption() {
   const source = (props.data.nodes || []).map((d: number[]) => d[2]);

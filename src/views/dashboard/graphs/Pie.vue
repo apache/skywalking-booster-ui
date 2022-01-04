@@ -26,7 +26,8 @@ const props = defineProps({
   },
   theme: { type: String, default: "dark" },
 });
-const chart = ref<any>(null);
+/*global Nullable */
+const chart = ref<Nullable<HTMLElement>>(null);
 const option = computed(() => getOption());
 function getOption() {
   return {
