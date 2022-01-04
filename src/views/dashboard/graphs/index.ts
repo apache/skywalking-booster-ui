@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 
-import ChartArea from "./Area.vue";
-import ChartLine from "./Line.vue";
-import ChartBar from "./Bar.vue";
-import ChartHeatmap from "./Heatmap.vue";
-import ProgressBar from "./ProgressBar.vue";
-import ChartTable from "./Table.vue";
-import ChartPie from "./Pie.vue";
-import ChartCard from "./Card.vue";
+import Area from "./Area.vue";
+import Line from "./Line.vue";
+import Bar from "./Bar.vue";
+import Heatmap from "./Heatmap.vue";
+// import ProgressBar from "./ProgressBar.vue";
+import Table from "./Table.vue";
+import Pie from "./Pie.vue";
+import Card from "./Card.vue";
 
 export default {
-  ChartLine,
-  ChartBar,
-  ChartHeatmap,
-  ProgressBar,
-  ChartArea,
-  ChartTable,
-  ChartPie,
-  ChartCard,
+  Line,
+  Bar,
+  Heatmap,
+  // ProgressBar,
+  Area,
+  Table,
+  Pie,
+  Card,
 };

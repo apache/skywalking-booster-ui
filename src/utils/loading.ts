@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ElLoading, ILoadingInstance } from "element-plus";
+import { ElLoading } from "element-plus";
+
 type Props = { text?: string; fullscreen?: boolean };
 
 export default function (): {
-  loading: (props: Props) => ILoadingInstance;
+  loading: (props: Props) => any;
 } {
   const loading = (props: Props) => {
     const loadingInstance = ElLoading.service(props);

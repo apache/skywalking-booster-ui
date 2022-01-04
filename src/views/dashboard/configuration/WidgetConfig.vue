@@ -15,7 +15,11 @@ limitations under the License. -->
 <template>
   <div class="widget-config">
     <div class="graph" style="height: 350px; width: 100%">
-      <Bar :data="source" :intervalTime="appStoreWithOut.intervalTime" />
+      <component
+        :is="states.chartType"
+        :intervalTime="appStoreWithOut.intervalTime"
+        :data="source"
+      />
       <span v-show="!source">No Data</span>
     </div>
     <div class="config">
@@ -45,8 +49,8 @@ limitations under the License. -->
         <label>Select you visualization</label>
         <div class="chart-types">
           <span
-            v-for="type in ChartTypes"
-            :key="type.value"
+            v-for="(type, index) in ChartTypes"
+            :key="index"
             @click="changeChartType(type)"
             :class="{ active: type.value === states.chartType }"
           >
@@ -74,8 +78,8 @@ limitations under the License. -->
     </div>
   </div>
 </template>
-<script lang="ts" setup>
-import { reactive } from "vue";
+<script lang="ts">
+import { reactive, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -83,61 +87,81 @@ import { ElMessage, ElButton } from "element-plus";
 import { ValuesTypes, MetricQueryTypes, ChartTypes } from "../data";
 import { Option } from "@/types/app";
 import Loading from "@/utils/loading";
-import Bar from "../graphs/Bar.vue";
+import charts from "../graphs";
 
-const states = reactive<{
-  metrics: string;
-  valueTypes: Option[];
-  valueType: string;
-  metricQueryType: string;
-  chartType: string;
-}>({
-  metrics: "",
-  valueTypes: [],
-  valueType: "",
-  metricQueryType: "",
-  chartType: "",
+export default defineComponent({
+  name: "WidgetConfig",
+  components: { ...charts, ElButton },
+  setup() {
+    const states = reactive<{
+      metrics: string;
+      valueTypes: Option[];
+      valueType: string;
+      metricQueryType: string;
+      chartType: string;
+    }>({
+      metrics: "",
+      valueTypes: [],
+      valueType: "",
+      metricQueryType: "",
+      chartType: "Bar",
+    });
+    const { t } = useI18n();
+    const dashboardStore = useDashboardStore();
+    const appStoreWithOut = useAppStoreWithOut();
+    const { loading } = Loading();
+    async function changeMetrics(val: Option[]) {
+      if (!val.length) {
+        states.valueTypes = [];
+        states.valueType = "";
+        return;
+      }
+      const loadingInstance = loading({ text: t("loading"), fullscreen: true });
+      const resp = await dashboardStore.fetchMetricType(val[0].value);
+      loadingInstance.close();
+      if (resp.error) {
+        ElMessage.error(resp.data.error);
+        return;
+      }
+      const { typeOfMetrics } = resp.data;
+      states.valueTypes = ValuesTypes[typeOfMetrics];
+      states.valueType = ValuesTypes[typeOfMetrics][0].value;
+    }
+    function changeValueType(val: Option[]) {
+      states.valueType = String(val[0].value);
+      states.metricQueryType = (MetricQueryTypes as any)[states.valueType];
+    }
+    function changeChartType(item: Option) {
+      states.chartType = String(item.value);
+    }
+    const metricOpts = [
+      { value: "service_apdex", label: "service_apdex" },
+      { value: "service_sla", label: "service_sla" },
+      { value: "service_cpm", label: "service_cpm" },
+      { value: "service_resp_time", label: "service_resp_time" },
+      { value: "service_percentile", label: "service_percentile" },
+      {
+        value: "service_mq_consume_latency",
+        label: "service_mq_consume_latency",
+      },
+      { value: "service_mq_consume_count", label: "service_mq_consume_count" },
+    ];
+    const source = {
+      count: [1, 2, 3, 4, 5, 6, 7, 3, 4, 5, 2, 1, 6, 9],
+    };
+    return {
+      states,
+      changeChartType,
+      changeValueType,
+      changeMetrics,
+      t,
+      appStoreWithOut,
+      ChartTypes,
+      source,
+      metricOpts,
+    };
+  },
 });
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const appStoreWithOut = useAppStoreWithOut();
-const { loading } = Loading();
-async function changeMetrics(val: Option[]) {
-  if (!val.length) {
-    states.valueTypes = [];
-    states.valueType = "";
-    return;
-  }
-  const loadingInstance = loading({ text: t("loading"), fullscreen: true });
-  const resp = await dashboardStore.fetchMetricType(val[0].value);
-  loadingInstance.close();
-  if (resp.error) {
-    ElMessage.error(resp.data.error);
-    return;
-  }
-  const { typeOfMetrics } = resp.data;
-  states.valueTypes = ValuesTypes[typeOfMetrics];
-  states.valueType = ValuesTypes[typeOfMetrics][0].value;
-}
-function changeValueType(val: Option[]) {
-  states.valueType = String(val[0].value);
-  states.metricQueryType = (MetricQueryTypes as any)[states.valueType];
-}
-function changeChartType(item: Option) {
-  states.chartType = String(item.value);
-}
-const metricOpts = [
-  { value: "service_apdex", label: "service_apdex" },
-  { value: "service_sla", label: "service_sla" },
-  { value: "service_cpm", label: "service_cpm" },
-  { value: "service_resp_time", label: "service_resp_time" },
-  { value: "service_percentile", label: "service_percentile" },
-  { value: "service_mq_consume_latency", label: "service_mq_consume_latency" },
-  { value: "service_mq_consume_count", label: "service_mq_consume_count" },
-];
-const source = {
-  count: [1, 2, 3, 4, 5, 6, 7, 3, 4, 5, 2, 1, 6, 9],
-};
 </script>
 <style lang="scss" scoped>
 .widget-config {

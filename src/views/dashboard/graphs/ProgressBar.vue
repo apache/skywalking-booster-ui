@@ -22,7 +22,7 @@ limitations under the License. -->
     />
     <div class="mb-5 ell">
       <span class="calls sm mr-10">{{ i.value }}</span>
-      <span class="cp link-hover" @click="handleLink(i)">
+      <span class="cp link-hover">
         {{ i.name + getTraceId(i) }}
       </span>
     </div>
@@ -33,7 +33,7 @@ limitations under the License. -->
     />
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import type { PropType } from "vue";
 import { defineProps, computed } from "vue";
 import { ElProgress } from "element-plus";
@@ -53,33 +53,33 @@ const props = defineProps({
 });
 const maxValue = computed(() => {
   if (!props.data.length) {
-    return null;
+    return 0;
   }
   const temp: number[] = props.data.map((i: any) => i.value);
   return Math.max.apply(null, temp);
 });
-const getTraceId = computed((i: { [key: string]: (number | string)[] }) => {
+const getTraceId = (i: { [key: string]: (number | string)[] }): string => {
   return i.traceIds && i.traceIds[0] ? ` - ${i.traceIds[0]}` : "";
-});
-const datas: any = computed(() => {
+};
+const datas: any = () => {
   if (!props.data.length) {
     return [];
   }
   const { sortOrder } = props.itemConfig;
-  let val: { [key: string]: number | string }[] = [];
+  const val: any = props.data;
 
   switch (sortOrder) {
     case "DES":
-      val = props.data.sort((a: any, b: any) => b.value - a.value);
+      val.sort((a: any, b: any) => b.value - a.value);
       break;
     case "ASC":
-      val = props.data.sort((a: any, b: any) => a.value - b.value);
+      val.sort((a: any, b: any) => a.value - b.value);
       break;
     default:
       break;
   }
   return val;
-});
+};
 function handleClick(i: string) {
   copy(i);
 }
