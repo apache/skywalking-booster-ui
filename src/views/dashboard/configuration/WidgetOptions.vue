@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="item">
-    <span class="label">Title</span>
+    <span class="label">{{ t("title") }}</span>
     <el-input
       class="input"
       v-model="title"
@@ -23,18 +23,21 @@ limitations under the License. -->
     />
   </div>
   <div class="item">
-    <span class="label">Tooltip</span>
+    <span class="label">{{ t("tooltipsContent") }}</span>
     <el-input
       class="input"
       v-model="tooltip"
       size="mini"
-      placeholder="Please input tooltip"
+      placeholder="Please input tooltip content"
     />
   </div>
 </template>
 <script lang="ts" setup>
 import { ElInput } from "element-plus";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 const title = ref<string>("");
 const tooltip = ref<string>("");
 </script>

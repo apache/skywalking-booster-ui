@@ -65,10 +65,10 @@ limitations under the License. -->
         <component :is="`${states.chartType}Config`" />
       </el-collapse-item>
       <el-collapse-item :title="t('widgetOptions')" name="4">
-        <WidgetConfig />
+        <WidgetOptions />
       </el-collapse-item>
       <el-collapse-item :title="t('standardOptions')" name="5">
-        Standard options
+        <StandardOptions />
       </el-collapse-item>
     </el-collapse>
     <div class="footer">
@@ -93,7 +93,8 @@ import Loading from "@/utils/loading";
 import graphs from "../graphs";
 import controls from "../controls";
 import configs from "./graph-styles";
-import WidgetConfig from "./WidgetConfig.vue";
+import WidgetOptions from "./WidgetOptions.vue";
+import StandardOptions from "./StandardOptions.vue";
 
 export default defineComponent({
   name: "ConfigEdit",
@@ -101,7 +102,8 @@ export default defineComponent({
     ...graphs,
     ...controls,
     ...configs,
-    WidgetConfig,
+    WidgetOptions,
+    StandardOptions,
     ElButton,
     ElCollapse,
     ElCollapseItem,
