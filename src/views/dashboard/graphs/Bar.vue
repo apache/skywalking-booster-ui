@@ -26,8 +26,16 @@ const props = defineProps({
     default: () => ({}),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-  theme: { type: String, default: "dark" },
+  theme: { type: String, default: "light" },
   itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
+  config: {
+    type: Object as PropType<{
+      theme: string;
+      showBackground: boolean;
+      barMaxWidth: number;
+    }>,
+    default: () => ({ theme: "light", showBackground: true, barMaxWidth: 30 }),
+  },
 });
 /*global Nullable */
 const chart = ref<Nullable<HTMLElement>>(null);
@@ -72,12 +80,13 @@ function getOption() {
       name: i,
       type: "bar",
       symbol: "none",
-      barMaxWidth: 10,
-      stack: "总量",
+      barWidth: props.config.barMaxWidth,
+      stack: "sum",
       lineStyle: {
         width: 1.5,
         type: "dotted",
       },
+      showBackground: props.config.showBackground,
       markArea:
         index === 0
           ? {
@@ -130,13 +139,13 @@ function getOption() {
     color,
     tooltip: {
       trigger: "axis",
-      backgroundColor: "rgb(50,50,50)",
-      textStyle: {
-        fontSize: 13,
-        color: "#ccc",
-      },
-      enterable: true,
-      extraCssText: "max-height: 300px; overflow: auto;",
+      // backgroundColor: "rgb(50,50,50)",
+      // textStyle: {
+      //   fontSize: 13,
+      //   color: "#ccc",
+      // },
+      // enterable: true,
+      // extraCssText: "max-height: 300px; overflow: auto;",
     },
     legend: {
       type: "scroll",
@@ -146,7 +155,7 @@ function getOption() {
       left: 0,
       itemWidth: 12,
       textStyle: {
-        color: props.theme === "dark" ? "#fff" : "#333",
+        color: props.config.theme === "dark" ? "#fff" : "#333",
       },
     },
     grid: {

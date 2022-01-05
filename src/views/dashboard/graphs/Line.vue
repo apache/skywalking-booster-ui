@@ -27,7 +27,7 @@ const props = defineProps({
   },
   type: { type: String, default: "" },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-  theme: { type: String, default: "dark" },
+  theme: { type: String, default: "light" },
   itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
 });
 /*global Nullable */

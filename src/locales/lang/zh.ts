@@ -51,6 +51,8 @@ const msg = {
   endpoint: "端点",
   create: "新建",
   loading: "加载中",
+  graphMetric: "用图表示你的指标",
+  selectVisualization: "选择你的可视化",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

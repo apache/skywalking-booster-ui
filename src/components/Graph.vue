@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div ref="dom" :style="`height:${height};width:${width};`"></div>
+  <div ref="chart" :style="`height:${height};width:${width};`"></div>
 </template>
 <script lang="ts" setup>
 import {
@@ -27,7 +27,7 @@ import {
 import type { PropType } from "vue";
 import * as echarts from "echarts";
 /*global Nullable*/
-const dom = ref<Nullable<HTMLElement>>(null);
+const chart = ref<Nullable<HTMLElement>>(null);
 const state = reactive<{ instanceChart: any }>({
   instanceChart: null,
 });
@@ -40,16 +40,19 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+
 onMounted(() => {
-  drawEcharts();
-  window.addEventListener("resize", state.instanceChart.resize);
+  setTimeout(() => {
+    drawEcharts();
+    window.addEventListener("resize", state.instanceChart.resize);
+  }, 50);
 });
 function drawEcharts(): void {
-  if (!dom.value) {
+  if (!chart.value) {
     return;
   }
-  state.instanceChart = echarts.init(dom.value, "");
-  state.instanceChart.setOption(props.option);
+  state.instanceChart = echarts.init(chart.value, "");
+  unWarp(state.instanceChart).setOption(props.option);
   state.instanceChart.on("click", (params: any) => {
     if (!props.clickEvent) {
       return;
@@ -57,6 +60,10 @@ function drawEcharts(): void {
     props.clickEvent(params);
   });
 }
+function unWarp(obj: any) {
+  return obj && (obj.__v_raw || obj.valueOf() || obj);
+}
+
 watch(
   () => props.option,
   (opt) => {

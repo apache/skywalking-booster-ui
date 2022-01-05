@@ -20,12 +20,12 @@ limitations under the License. -->
         :intervalTime="appStoreWithOut.intervalTime"
         :data="source"
       />
-      <span v-show="!source">No Data</span>
+      <span v-show="!source">{{ t("noData") }}</span>
     </div>
     <div class="config">
       <div class="metrics item">
-        <label>Graph your metric</label>
-        <div class="name">Metrics Name</div>
+        <label>{{ t("graphMetric") }}</label>
+        <div class="name">{{ t("metricName") }}</div>
         <Selector
           :value="states.metrics"
           :options="metricOpts"
@@ -46,7 +46,7 @@ limitations under the License. -->
         />
       </div>
       <div class="visualization item">
-        <label>Select you visualization</label>
+        <label>{{ t("selectVisualization") }}</label>
         <div class="chart-types">
           <span
             v-for="(type, index) in ChartTypes"
@@ -148,7 +148,8 @@ export default defineComponent({
       { value: "service_mq_consume_count", label: "service_mq_consume_count" },
     ];
     const source = {
-      count: [1, 2, 3, 4, 5, 6, 7, 3, 4, 5, 2, 1, 6, 9],
+      count: [1, 2, 5, 4, 5, 6, 7, 3, 4, 5, 2, 1, 6, 9],
+      avg: [3, 2, 4, 4, 5, 6, 5, 3, 4, 1, 2, 1, 6, 10],
     };
     return {
       states,
