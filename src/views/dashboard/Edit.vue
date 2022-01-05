@@ -18,6 +18,7 @@ limitations under the License. -->
     <grid-layout />
     <el-dialog
       v-model="dashboardStore.showConfig"
+      title="Edit"
       fullscreen
       @closed="dashboardStore.setConfigPanel(false)"
     >
@@ -30,7 +31,7 @@ import { ElDialog } from "element-plus";
 import GridLayout from "./panel/Layout.vue";
 import { LayoutConfig } from "@/types/dashboard";
 import Tool from "./panel/Tool.vue";
-import WidgetConfig from "./configuration/WidgetConfig.vue";
+import WidgetConfig from "./configuration/ConfigEdit.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const dashboardStore = useDashboardStore();

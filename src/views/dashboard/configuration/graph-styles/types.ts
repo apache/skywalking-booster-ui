@@ -14,23 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import Area from "./Area.vue";
-import Line from "./Line.vue";
-import Bar from "./Bar.vue";
-import Heatmap from "./Heatmap.vue";
-import TopList from "./TopList.vue";
-import Table from "./Table.vue";
-import Pie from "./Pie.vue";
-import Card from "./Card.vue";
-
-export default {
-  Line,
-  Bar,
-  Heatmap,
-  TopList,
-  Area,
-  Table,
-  Pie,
-  Card,
-};
+export interface BarConfig {
+  showBackground: boolean;
+  barWidth: number;
+}

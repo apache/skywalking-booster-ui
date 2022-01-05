@@ -32,9 +32,9 @@ const props = defineProps({
     type: Object as PropType<{
       theme: string;
       showBackground: boolean;
-      barMaxWidth: number;
+      barWidth: number;
     }>,
-    default: () => ({ theme: "light", showBackground: true, barMaxWidth: 30 }),
+    default: () => ({ theme: "light", showBackground: true, barWidth: 20 }),
   },
 });
 /*global Nullable */
@@ -80,7 +80,7 @@ function getOption() {
       name: i,
       type: "bar",
       symbol: "none",
-      barWidth: props.config.barMaxWidth,
+      barWidth: props.config.barWidth,
       stack: "sum",
       lineStyle: {
         width: 1.5,

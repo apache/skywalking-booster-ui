@@ -21,7 +21,7 @@ export const ChartTypes = [
   { label: "Heatmap", value: "Heatmap" },
   { label: "Pie", value: "Pie" },
   { label: "Card", value: "Card" },
-  { label: "Progress Bar", value: "ProgressBar" },
+  { label: "Top List", value: "TopList" },
   { label: "Table", value: "Table" },
   { label: "Endpoint List", value: "EndpointList" },
   { label: "Instance List", value: "InstanceList" },

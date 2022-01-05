@@ -12,45 +12,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<template>
-  <div class="item">
-    <span class="label">Title</span>
-    <el-input
-      class="input"
-      v-model="title"
-      size="mini"
-      placeholder="Please input title"
-    />
-  </div>
-  <div class="item">
-    <span class="label">Tooltip</span>
-    <el-input
-      class="input"
-      v-model="tooltip"
-      size="mini"
-      placeholder="Please input tooltip"
-    />
-  </div>
-</template>
+<template>bar config</template>
 <script lang="ts" setup>
-import { ElInput } from "element-plus";
 import { ref } from "vue";
-const title = ref<string>("");
-const tooltip = ref<string>("");
 </script>
-<style lang="scss" scoped>
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
-}
-
-.input {
-  width: 500px;
-}
-
-.item {
-  margin-bottom: 10px;
-}
-</style>
