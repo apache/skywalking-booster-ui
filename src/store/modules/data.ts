@@ -14,33 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface LayoutConfig {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  i: string;
-  widget?: WidgetConfig;
-  graph?: GraphConfig;
-  standard?: StandardConfig;
-  metrics?: string[];
-  visualization?: string;
-  queryMetricType?: string;
-}
-
-export interface WidgetConfig {
-  title?: string;
-  tips?: string;
-}
-
-export interface GraphConfig {
-  showBackground?: boolean;
-  barWidth?: number;
-}
-
-export interface StandardConfig {
-  sortOrder?: string;
-  unit?: string;
-  max?: string;
-  min?: string;
-}
+import { LayoutConfig } from "@/types/dashboard";
+export const ConfigData: LayoutConfig = {
+  x: 0,
+  y: 0,
+  w: 8,
+  h: 12,
+  i: "0",
+  metrics: ["service_resp_time"],
+  queryMetricType: "readMetricsValues",
+  visualization: "Line",
+  widget: {
+    title: "Title",
+    tips: "Tooltip",
+  },
+  graph: {
+    showBackground: true,
+    barWidth: 30,
+  },
+  standard: {
+    sortOrder: "DEC",
+    unit: "s",
+  },
+};

@@ -23,6 +23,16 @@ limitations under the License. -->
     />
   </div>
   <div class="item">
+    <span class="label">{{ t("sortOrder") }}</span>
+    <Selector
+      :value="state.sortOrder"
+      :options="SortOrder"
+      size="mini"
+      placeholder="Select a sort order"
+      class="selector"
+    />
+  </div>
+  <div class="item">
     <span class="label">{{ t("max") }}</span>
     <el-input
       class="input"
@@ -99,6 +109,7 @@ limitations under the License. -->
 import { ElInput } from "element-plus";
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
+import { SortOrder } from "../data";
 
 const { t } = useI18n();
 const state = reactive({
@@ -111,6 +122,7 @@ const state = reactive({
   divide: "",
   milliseconds: "",
   seconds: "",
+  sortOrder: "DES",
 });
 </script>
 <style lang="scss" scoped>
@@ -127,5 +139,9 @@ const state = reactive({
 
 .item {
   margin-bottom: 10px;
+}
+
+.selector {
+  width: 500px;
 }
 </style>

@@ -26,30 +26,63 @@ limitations under the License. -->
         <Icon size="sm" iconName="clearclose" @click="removeWidget" />
       </div>
     </div>
-    <div class="body">No Data</div>
+    <div class="body" :style="{ height: '200px', width: '400px' }">
+      <component
+        :is="item.visualization"
+        :intervalTime="appStoreWithOut.intervalTime"
+        :data="state.source"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { defineProps } from "vue";
+import { defineProps, reactive, onMounted } from "vue";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
-const props = defineProps({
-  item: { type: Object as PropType<LayoutConfig> },
+const state = reactive({
+  source: {},
 });
+const props = defineProps({
+  item: { type: Object as PropType<LayoutConfig>, default: () => ({}) },
+});
+const appStoreWithOut = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
+onMounted(() => {
+  queryMetrics();
+});
+async function queryMetrics() {
+  const json = await dashboardStore.fetchMetricValue(props.item);
+
+  if (json.error) {
+    return;
+  }
+  const metricVal = json.data.readMetricsValues.values.values.map(
+    (d: any) => d.value
+  );
+  const m = props.item.metrics && props.item.metrics[0];
+  if (!m) {
+    return;
+  }
+  state.source = {
+    [m]: metricVal,
+  };
+  console.log(state.source);
+}
+
 function removeWidget() {
   dashboardStore.removeWidget(props.item);
 }
 function setConfig() {
   dashboardStore.setConfigPanel(true);
+  dashboardStore.selectWidget(props.item);
 }
 </script>
 <style lang="scss" scoped>
 .widget {
   font-size: 12px;
-  // position: relative;
 }
 
 .header {
@@ -67,5 +100,7 @@ function setConfig() {
 
 .body {
   padding: 5px;
+  height: 200px;
+  width: 100%;
 }
 </style>

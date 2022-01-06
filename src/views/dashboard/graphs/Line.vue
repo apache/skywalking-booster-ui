@@ -33,9 +33,6 @@ const props = defineProps({
 /*global Nullable */
 const chart = ref<Nullable<HTMLElement>>(null);
 const option = computed(() => getOption());
-// function resize() {
-//   chart.value.myChart.resize();
-// }
 function getOption() {
   const keys = Object.keys(props.data || {}).filter(
     (i: any) => Array.isArray(props.data[i]) && props.data[i].length

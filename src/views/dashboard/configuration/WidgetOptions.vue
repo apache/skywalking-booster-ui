@@ -28,7 +28,7 @@ limitations under the License. -->
       class="input"
       v-model="tooltip"
       size="mini"
-      placeholder="Please input tooltip content"
+      placeholder="Please input tips"
     />
   </div>
 </template>

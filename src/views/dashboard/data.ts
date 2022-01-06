@@ -116,6 +116,10 @@ export const EntityType = [
   },
   { value: "endpointRelation", label: "Endpoint Relation", key: 4 },
 ];
+export const SortOrder = [
+  { label: "DES", value: "DES" },
+  { label: "ASC", value: "ASC" },
+];
 export const Options = [
   {
     value: "Option1",

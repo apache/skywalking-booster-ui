@@ -20,10 +20,10 @@ limitations under the License. -->
         <component
           :is="states.chartType"
           :intervalTime="appStoreWithOut.intervalTime"
-          :data="source"
+          :data="states.source"
         />
       </div>
-      <span v-show="!source">{{ t("noData") }}</span>
+      <span v-show="!states.source">{{ t("noData") }}</span>
     </div>
     <div class="collapse" :style="{ height: configHeight + 'px' }">
       <el-collapse
@@ -86,7 +86,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { reactive, defineComponent } from "vue";
+import { reactive, defineComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -113,25 +113,27 @@ export default defineComponent({
     ElCollapseItem,
   },
   setup() {
+    const { t } = useI18n();
+    const dashboardStore = useDashboardStore();
+    const appStoreWithOut = useAppStoreWithOut();
+    const { loading } = Loading();
     const states = reactive<{
-      metrics: string;
+      metrics?: string[] | string;
       valueTypes: Option[];
       valueType: string;
       metricQueryType: string;
       chartType: string;
       activeNames: string;
+      source: any;
     }>({
       metrics: "",
       valueTypes: [],
       valueType: "",
       metricQueryType: "",
-      chartType: "Bar",
+      chartType: "Line",
       activeNames: "1",
+      source: {},
     });
-    const { t } = useI18n();
-    const dashboardStore = useDashboardStore();
-    const appStoreWithOut = useAppStoreWithOut();
-    const { loading } = Loading();
     async function changeMetrics(val: Option[]) {
       if (!val.length) {
         states.valueTypes = [];
@@ -168,11 +170,29 @@ export default defineComponent({
       },
       { value: "service_mq_consume_count", label: "service_mq_consume_count" },
     ];
-    const source = {
-      count: [1, 2, 5, 4, 5, 6, 7, 3, 4, 5, 2, 1, 6, 9],
-      avg: [3, 2, 4, 4, 5, 6, 5, 3, 4, 1, 2, 1, 6, 10],
-    };
     const configHeight = document.documentElement.clientHeight - 520;
+    async function queryMetrics() {
+      const json = await dashboardStore.fetchMetricValue(
+        dashboardStore.selectedWidget
+      );
+
+      if (json.error) {
+        return;
+      }
+      const metricVal = json.data.readMetricsValues.values.values.map(
+        (d: any) => d.value
+      );
+      const m =
+        dashboardStore.selectedWidget.metrics &&
+        dashboardStore.selectedWidget.metrics[0];
+      if (!m) {
+        return;
+      }
+      states.source = {
+        [m]: metricVal,
+      };
+    }
+    queryMetrics();
     return {
       states,
       changeChartType,
@@ -181,7 +201,6 @@ export default defineComponent({
       t,
       appStoreWithOut,
       ChartTypes,
-      source,
       metricOpts,
       configHeight,
     };

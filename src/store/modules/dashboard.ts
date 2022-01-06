@@ -19,17 +19,24 @@ import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
 import graph from "@/graph";
 import { AxiosResponse } from "axios";
-
+import { ConfigData } from "./data";
+import { useAppStoreWithOut } from "@/store/modules/app";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
+  selectedWidget: Nullable<LayoutConfig>;
+  entity: string;
+  layerId: string;
 }
 
 export const dashboardStore = defineStore({
   id: "dashboard",
   state: (): DashboardState => ({
-    layout: [],
+    layout: [ConfigData],
     showConfig: false,
+    selectedWidget: ConfigData,
+    entity: "",
+    layerId: "",
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -55,10 +62,41 @@ export const dashboardStore = defineStore({
     setConfigPanel(show: boolean) {
       this.showConfig = show;
     },
+    selectWidget(widget: Nullable<LayoutConfig>) {
+      this.selectedWidget = ConfigData || widget;
+    },
+    setLayer(id: string) {
+      this.layerId = id;
+    },
+    setEntity(type: string) {
+      this.entity = type;
+    },
     async fetchMetricType(item: string) {
       const res: AxiosResponse = await graph
         .query("queryTypeOfMetrics")
         .params({ name: item });
+
+      return res.data;
+    },
+    async fetchMetricValue(config: LayoutConfig) {
+      if (!config.queryMetricType) {
+        return;
+      }
+      const appStoreWithOut = useAppStoreWithOut();
+      const variable = {
+        condition: {
+          name: "service_resp_time",
+          entity: {
+            normal: true,
+            scope: "Service",
+            serviceName: "agentless::app",
+          },
+        },
+        duration: appStoreWithOut.durationTime,
+      };
+      const res: AxiosResponse = await graph
+        .query(config.queryMetricType)
+        .params(variable);
 
       return res.data;
     },

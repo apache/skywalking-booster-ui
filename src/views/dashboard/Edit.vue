@@ -53,7 +53,7 @@ const layout: LayoutConfig[] = [
   { x: 4, y: 27, w: 4, h: 12, i: "15" },
   { x: 8, y: 27, w: 4, h: 15, i: "16" },
 ];
-dashboardStore.setLayout(layout);
+// dashboardStore.setLayout(layout);
 </script>
 <style lang="scss" scoped>
 .ds-main {

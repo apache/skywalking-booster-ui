@@ -104,14 +104,27 @@ import { Options, SelectOpts, EntityType } from "../data";
 
 const dashboardStore = useDashboardStore();
 const params = useRoute().params;
-const states = reactive({
+const states = reactive<{
+  entity: string | string[];
+  layerId: string | string[];
+  service: string;
+  pod: string;
+  destService: string;
+  destPod: string;
+  key: number;
+}>({
   service: Options[0].value,
   pod: Options[0].value, // instances and endpoints
   destService: "",
   destPod: "",
   key: EntityType.filter((d: any) => d.value === params.entity)[0].key || 0,
-  ...params,
+  entity: params.entity,
+  layerId: params.layerId,
 });
+
+dashboardStore.setLayer(states.layerId);
+dashboardStore.setEntity(states.entity);
+
 function changeService(val: { value: string; label: string }) {
   states.service = val.value;
 }

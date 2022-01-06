@@ -88,7 +88,7 @@ function getOption() {
       },
       showBackground: props.config.showBackground,
       backgroundStyle: {
-        color: "rgba(180, 180, 180, 0.2)",
+        color: "rgba(180, 180, 180, 0.1)",
       },
       markArea:
         index === 0

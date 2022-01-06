@@ -18,3 +18,69 @@ export const TypeOfMetrics = {
   variable: "$name: String!",
   query: `typeOfMetrics(name: $name)`,
 };
+export const queryMetricsValues = {
+  variable: ["$condition: MetricsCondition!, $duration: Duration!"],
+  query: `
+  readMetricsValues: readMetricsValues(condition: $condition, duration: $duration) {
+    label
+    values {
+      values {value}
+    }
+  }`,
+};
+
+export const queryMetricsValue = {
+  variable: ["$condition: MetricsCondition!, $duration: Duration!"],
+  query: `
+  readMetricsValue: readMetricsValue(condition: $condition, duration: $duration)`,
+};
+
+export const querySortMetrics = {
+  variable: ["$condition: TopNCondition!, $duration: Duration!"],
+  query: `
+  sortMetrics: sortMetrics(condition: $condition, duration: $duration) {
+    name
+    id
+    value
+    refId
+  }`,
+};
+export const queryLabeledMetricsValues = {
+  variable: [
+    "$condition: MetricsCondition!, $labels: [String!]!, $duration: Duration!",
+  ],
+  query: `
+  readLabeledMetricsValues: readLabeledMetricsValues(
+    condition: $condition,
+    labels: $labels,
+    duration: $duration) {
+    label
+    values {
+      values {value}
+    }
+  }`,
+};
+
+export const queryHeatMap = {
+  variable: ["$condition: MetricsCondition!, $duration: Duration!"],
+  query: `
+  readHeatMap: readHeatMap(condition: $condition, duration: $duration) {
+    values {
+      id
+      values
+    }
+    buckets {
+      min
+      max
+    }
+  }`,
+};
+export const querySampledRecords = {
+  variable: ["$condition: TopNCondition!, $duration: Duration!"],
+  query: `
+  readSampledRecords: readSampledRecords(condition: $condition, duration: $duration) {
+    name
+    value
+    refId
+  }`,
+};
