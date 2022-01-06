@@ -32,7 +32,7 @@ limitations under the License. -->
   </el-select>
 </template>
 <script lang="ts" setup>
-import { defineProps, ref, defineEmits } from "vue";
+import { ref, defineEmits } from "vue";
 import type { PropType } from "vue";
 import { ElSelect, ElOption } from "element-plus";
 
@@ -42,21 +42,30 @@ interface Option {
 }
 
 const emit = defineEmits(["change"]);
+/*global  defineProps*/
 const props = defineProps({
   options: {
     type: Array as PropType<Option[]>,
     default: () => [],
   },
-  value: { type: String, default: "" },
+  value: {
+    type: [Array, String] as PropType<string[] | string>,
+    default: () => [],
+  },
   size: { type: String, default: "small" },
   placeholder: { type: String, default: "Select a option" },
   borderRadius: { type: Number, default: 3 },
   multiple: { type: Boolean, default: false },
 });
-const selected = ref<string>(props.value);
+const selected = ref<string[] | string>(props.value);
 function changeSelected() {
+  if (!props.multiple) {
+    return;
+  }
   const options = props.options.filter((d: Option) =>
-    selected.value.includes(d.value)
+    props.multiple
+      ? selected.value.includes(d.value)
+      : selected.value === d.value
   );
   emit("change", options);
 }

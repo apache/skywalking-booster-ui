@@ -12,7 +12,50 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<template>bar config</template>
+<template>
+  <div>
+    <span class="label">Bar Width</span>
+    <el-slider
+      class="bar-width"
+      v-model="barWidth"
+      show-input
+      input-size="small"
+    />
+  </div>
+  <div>
+    <span class="label">Show Background</span>
+    <el-switch
+      v-model="showBackground"
+      active-text="Yes"
+      inactive-text="No"
+    ></el-switch>
+  </div>
+</template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { defineProps, ref } from "vue";
+import type { PropType } from "vue";
+import { BarConfig } from "./types";
+import { ElSlider, ElSwitch } from "element-plus";
+
+const props = defineProps({
+  config: {
+    type: Object as PropType<BarConfig>,
+    default: () => ({ showBackground: true, barWidth: 30 }),
+  },
+});
+const barWidth = ref(props.config.barWidth);
+const showBackground = ref(props.config.showBackground);
 </script>
+<style lang="scss" scoped>
+.bar-width {
+  width: 500px;
+  margin-top: -13px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+}
+</style>

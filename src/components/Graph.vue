@@ -51,6 +51,9 @@ function drawEcharts(): void {
   if (!chart.value) {
     return;
   }
+  if (state.instanceChart) {
+    return;
+  }
   state.instanceChart = echarts.init(chart.value, "");
   unWarp(state.instanceChart).setOption(props.option);
   state.instanceChart.on("click", (params: any) => {

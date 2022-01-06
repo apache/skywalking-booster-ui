@@ -15,25 +15,25 @@ limitations under the License. -->
 <template>
   <div class="widget-config flex-v">
     <div class="graph">
-      <div class="header">Title</div>
+      <div class="header">{{ title }}</div>
       <div class="render-chart">
         <component
-          :is="states.chartType"
+          :is="chartType"
           :intervalTime="appStoreWithOut.intervalTime"
-          :data="states.source"
+          :data="source"
         />
       </div>
-      <span v-show="!states.source">{{ t("noData") }}</span>
+      <span v-show="!source">{{ t("noData") }}</span>
     </div>
     <div class="collapse" :style="{ height: configHeight + 'px' }">
       <el-collapse
-        v-model="states.activeNames"
+        v-model="activeNames"
         :style="{ '--el-collapse-header-font-size': '15px' }"
       >
         <el-collapse-item :title="t('metricName')" name="1">
           <div>
             <Selector
-              :value="states.metrics"
+              :value="metrics"
               :options="metricOpts"
               :multiple="true"
               size="mini"
@@ -42,9 +42,9 @@ limitations under the License. -->
               class="selectors"
             />
             <Selector
-              v-show="states.valueType"
-              :value="states.valueType"
-              :options="states.valueTypes"
+              v-if="valueType"
+              :value="valueType"
+              :options="valueTypes"
               size="mini"
               placeholder="Select a metric"
               @change="changeValueType"
@@ -58,17 +58,20 @@ limitations under the License. -->
               v-for="(type, index) in ChartTypes"
               :key="index"
               @click="changeChartType(type)"
-              :class="{ active: type.value === states.chartType }"
+              :class="{ active: type.value === chartType }"
             >
               {{ type.label }}
             </span>
           </div>
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="3">
-          <component :is="`${states.chartType}Config`" />
+          <component
+            :is="`${chartType}Config`"
+            :config="dashboardStore.selectedWidget.graph"
+          />
         </el-collapse-item>
         <el-collapse-item :title="t('widgetOptions')" name="4">
-          <WidgetOptions />
+          <WidgetOptions @update="updateWidgetOptions" />
         </el-collapse-item>
         <el-collapse-item :title="t('standardOptions')" name="5">
           <StandardOptions />
@@ -86,7 +89,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { reactive, defineComponent } from "vue";
+import { reactive, defineComponent, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -118,30 +121,41 @@ export default defineComponent({
     const appStoreWithOut = useAppStoreWithOut();
     const { loading } = Loading();
     const states = reactive<{
-      metrics?: string[] | string;
+      metrics: string[];
       valueTypes: Option[];
       valueType: string;
       metricQueryType: string;
       chartType: string;
       activeNames: string;
+      tips: string;
       source: any;
+      title: string;
     }>({
-      metrics: "",
+      metrics: dashboardStore.selectedWidget.metrics || [],
       valueTypes: [],
       valueType: "",
       metricQueryType: "",
-      chartType: "Line",
+      chartType: dashboardStore.selectedWidget.chart,
       activeNames: "1",
       source: {},
+      tips: "",
+      title: "",
     });
-    async function changeMetrics(val: Option[]) {
-      if (!val.length) {
+    queryMetricType(states.metrics[0]);
+
+    async function changeMetrics(arr: Option[]) {
+      if (!arr.length) {
         states.valueTypes = [];
         states.valueType = "";
         return;
       }
+      states.metrics = arr.map((d: Option) => String(d.value));
+      queryMetricType(String(arr[0].value));
+    }
+
+    async function queryMetricType(metric: string) {
       const loadingInstance = loading({ text: t("loading"), fullscreen: true });
-      const resp = await dashboardStore.fetchMetricType(val[0].value);
+      const resp = await dashboardStore.fetchMetricType(metric);
       loadingInstance.close();
       if (resp.error) {
         ElMessage.error(resp.data.error);
@@ -150,14 +164,18 @@ export default defineComponent({
       const { typeOfMetrics } = resp.data;
       states.valueTypes = ValuesTypes[typeOfMetrics];
       states.valueType = ValuesTypes[typeOfMetrics][0].value;
+      console.log(states.valueType);
     }
+
     function changeValueType(val: Option[]) {
       states.valueType = String(val[0].value);
       states.metricQueryType = (MetricQueryTypes as any)[states.valueType];
     }
+
     function changeChartType(item: Option) {
       states.chartType = String(item.value);
     }
+
     const metricOpts = [
       { value: "service_apdex", label: "service_apdex" },
       { value: "service_sla", label: "service_sla" },
@@ -171,6 +189,16 @@ export default defineComponent({
       { value: "service_mq_consume_count", label: "service_mq_consume_count" },
     ];
     const configHeight = document.documentElement.clientHeight - 520;
+
+    function updateWidgetOptions(param: any) {
+      if (param.title !== undefined) {
+        states.title = param.title;
+      }
+      if (param.tips !== undefined) {
+        states.tips = param.tips;
+      }
+    }
+
     async function queryMetrics() {
       const json = await dashboardStore.fetchMetricValue(
         dashboardStore.selectedWidget
@@ -192,9 +220,11 @@ export default defineComponent({
         [m]: metricVal,
       };
     }
+
     queryMetrics();
+
     return {
-      states,
+      ...toRefs(states),
       changeChartType,
       changeValueType,
       changeMetrics,
@@ -202,7 +232,9 @@ export default defineComponent({
       appStoreWithOut,
       ChartTypes,
       metricOpts,
+      updateWidgetOptions,
       configHeight,
+      dashboardStore,
     };
   },
 });
@@ -223,10 +255,11 @@ export default defineComponent({
 }
 
 .header {
-  padding: 3px 0;
+  height: 25px;
+  line-height: 25px;
   text-align: center;
-  // border-bottom: 1px solid #eee;
   background-color: aliceblue;
+  font-size: 12px;
 }
 
 .render-chart {

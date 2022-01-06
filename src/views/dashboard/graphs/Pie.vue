@@ -16,7 +16,7 @@ limitations under the License. -->
   <Graph :option="option" />
 </template>
 <script lang="ts" setup>
-import { defineProps, ref, computed } from "vue";
+import { defineProps, computed } from "vue";
 import type { PropType } from "vue";
 
 const props = defineProps({
@@ -26,8 +26,6 @@ const props = defineProps({
   },
   theme: { type: String, default: "dark" },
 });
-/*global Nullable */
-const chart = ref<Nullable<HTMLElement>>(null);
 const option = computed(() => getOption());
 function getOption() {
   return {

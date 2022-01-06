@@ -20,6 +20,7 @@ limitations under the License. -->
       v-model="title"
       size="mini"
       placeholder="Please input title"
+      @change="updateTitle"
     />
   </div>
   <div class="item">
@@ -29,17 +30,26 @@ limitations under the License. -->
       v-model="tooltip"
       size="mini"
       placeholder="Please input tips"
+      @change="updateTips"
     />
   </div>
 </template>
 <script lang="ts" setup>
 import { ElInput } from "element-plus";
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 import { useI18n } from "vue-i18n";
 
+const emits = defineEmits(["update"]);
 const { t } = useI18n();
 const title = ref<string>("");
 const tooltip = ref<string>("");
+
+function updateTitle(value: string) {
+  emits("update", { title: value });
+}
+function updateTips(value: string) {
+  emits("update", { tips: value });
+}
 </script>
 <style lang="scss" scoped>
 .label {

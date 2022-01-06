@@ -24,7 +24,7 @@ export interface LayoutConfig {
   graph?: GraphConfig;
   standard?: StandardConfig;
   metrics?: string[];
-  visualization?: string;
+  chart?: string;
   queryMetricType?: string;
 }
 

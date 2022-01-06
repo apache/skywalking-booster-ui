@@ -28,7 +28,7 @@ limitations under the License. -->
     </div>
     <div class="body" :style="{ height: '200px', width: '400px' }">
       <component
-        :is="item.visualization"
+        :is="item.chart"
         :intervalTime="appStoreWithOut.intervalTime"
         :data="state.source"
       />
@@ -76,11 +76,11 @@ export default defineComponent({
     }
 
     function removeWidget() {
-      dashboardStore.removeWidget(props.item);
+      dashboardStore.removeWidget(item);
     }
     function setConfig() {
       dashboardStore.setConfigPanel(true);
-      dashboardStore.selectWidget(props.item);
+      dashboardStore.selectWidget(item);
     }
     return {
       state,

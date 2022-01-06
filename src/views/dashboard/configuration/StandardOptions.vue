@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="item">
-    <span class="label">{{ t("title") }}</span>
+    <span class="label">{{ t("unit") }}</span>
     <el-input
       class="input"
       v-model="state.unit"
