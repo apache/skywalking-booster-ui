@@ -14,63 +14,67 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="widget-config flex-v">
-    <div class="graph" style="height: 350px; width: 100%">
-      <component
-        :is="states.chartType"
-        :intervalTime="appStoreWithOut.intervalTime"
-        :data="source"
-      />
+    <div class="graph">
+      <div class="header">Title</div>
+      <div class="render-chart">
+        <component
+          :is="states.chartType"
+          :intervalTime="appStoreWithOut.intervalTime"
+          :data="source"
+        />
+      </div>
       <span v-show="!source">{{ t("noData") }}</span>
     </div>
-    <el-collapse
-      class="collapse"
-      v-model="states.activeNames"
-      :style="{ '--el-collapse-header-font-size': '15px' }"
-    >
-      <el-collapse-item :title="t('metricName')" name="1">
-        <div>
-          <Selector
-            :value="states.metrics"
-            :options="metricOpts"
-            :multiple="true"
-            size="mini"
-            placeholder="Select a metric"
-            @change="changeMetrics"
-            class="selectors"
-          />
-          <Selector
-            v-show="states.valueType"
-            :value="states.valueType"
-            :options="states.valueTypes"
-            size="mini"
-            placeholder="Select a metric"
-            @change="changeValueType"
-            class="selectors"
-          />
-        </div>
-      </el-collapse-item>
-      <el-collapse-item :title="t('selectVisualization')" name="2">
-        <div class="chart-types">
-          <span
-            v-for="(type, index) in ChartTypes"
-            :key="index"
-            @click="changeChartType(type)"
-            :class="{ active: type.value === states.chartType }"
-          >
-            {{ type.label }}
-          </span>
-        </div>
-      </el-collapse-item>
-      <el-collapse-item :title="t('graphStyles')" name="3">
-        <component :is="`${states.chartType}Config`" />
-      </el-collapse-item>
-      <el-collapse-item :title="t('widgetOptions')" name="4">
-        <WidgetOptions />
-      </el-collapse-item>
-      <el-collapse-item :title="t('standardOptions')" name="5">
-        <StandardOptions />
-      </el-collapse-item>
-    </el-collapse>
+    <div class="collapse" :style="{ height: configHeight + 'px' }">
+      <el-collapse
+        v-model="states.activeNames"
+        :style="{ '--el-collapse-header-font-size': '15px' }"
+      >
+        <el-collapse-item :title="t('metricName')" name="1">
+          <div>
+            <Selector
+              :value="states.metrics"
+              :options="metricOpts"
+              :multiple="true"
+              size="mini"
+              placeholder="Select a metric"
+              @change="changeMetrics"
+              class="selectors"
+            />
+            <Selector
+              v-show="states.valueType"
+              :value="states.valueType"
+              :options="states.valueTypes"
+              size="mini"
+              placeholder="Select a metric"
+              @change="changeValueType"
+              class="selectors"
+            />
+          </div>
+        </el-collapse-item>
+        <el-collapse-item :title="t('selectVisualization')" name="2">
+          <div class="chart-types">
+            <span
+              v-for="(type, index) in ChartTypes"
+              :key="index"
+              @click="changeChartType(type)"
+              :class="{ active: type.value === states.chartType }"
+            >
+              {{ type.label }}
+            </span>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item :title="t('graphStyles')" name="3">
+          <component :is="`${states.chartType}Config`" />
+        </el-collapse-item>
+        <el-collapse-item :title="t('widgetOptions')" name="4">
+          <WidgetOptions />
+        </el-collapse-item>
+        <el-collapse-item :title="t('standardOptions')" name="5">
+          <StandardOptions />
+        </el-collapse-item>
+      </el-collapse>
+    </div>
     <div class="footer">
       <el-button size="mini">
         {{ t("cancel") }}
@@ -168,6 +172,7 @@ export default defineComponent({
       count: [1, 2, 5, 4, 5, 6, 7, 3, 4, 5, 2, 1, 6, 9],
       avg: [3, 2, 4, 4, 5, 6, 5, 3, 4, 1, 2, 1, 6, 10],
     };
+    const configHeight = document.documentElement.clientHeight - 520;
     return {
       states,
       changeChartType,
@@ -178,6 +183,7 @@ export default defineComponent({
       ChartTypes,
       source,
       metricOpts,
+      configHeight,
     };
   },
 });
@@ -187,12 +193,27 @@ export default defineComponent({
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 .graph {
+  position: relative;
   min-width: 1280px;
   border: 1px solid #eee;
-  padding: 10px;
+  background-color: #fff;
+}
+
+.header {
+  padding: 3px 0;
+  text-align: center;
+  // border-bottom: 1px solid #eee;
+  background-color: aliceblue;
+}
+
+.render-chart {
+  padding: 5px;
+  height: 350px;
+  width: 100%;
 }
 
 .selectors {
@@ -224,7 +245,8 @@ export default defineComponent({
 }
 
 span.active {
-  background-color: #eee;
+  background-color: #409eff;
+  color: #fff;
 }
 
 .footer {
@@ -239,6 +261,7 @@ span.active {
 }
 
 .collapse {
-  margin: 10px 0;
+  margin-top: 10px;
+  overflow: auto;
 }
 </style>

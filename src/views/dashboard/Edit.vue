@@ -18,7 +18,7 @@ limitations under the License. -->
     <grid-layout />
     <el-dialog
       v-model="dashboardStore.showConfig"
-      title="Edit"
+      title="Edit Graph Options"
       fullscreen
       @closed="dashboardStore.setConfigPanel(false)"
     >
