@@ -35,50 +35,62 @@ limitations under the License. -->
     </div>
   </div>
 </template>
-<script lang="ts" setup>
-import { defineProps, reactive, onMounted } from "vue";
+<script lang="ts">
+import { toRefs, reactive, defineComponent } from "vue";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-
-const state = reactive({
-  source: {},
-});
-const props = defineProps({
+import graphs from "../graphs";
+const props = {
   item: { type: Object as PropType<LayoutConfig>, default: () => ({}) },
-});
-const appStoreWithOut = useAppStoreWithOut();
-const dashboardStore = useDashboardStore();
-onMounted(() => {
-  queryMetrics();
-});
-async function queryMetrics() {
-  const json = await dashboardStore.fetchMetricValue(props.item);
+};
+export default defineComponent({
+  name: "Widget",
+  components: { ...graphs },
+  props,
+  setup(props) {
+    const state = reactive({
+      source: {},
+    });
+    const { item } = toRefs(props);
+    const appStoreWithOut = useAppStoreWithOut();
+    const dashboardStore = useDashboardStore();
+    queryMetrics();
+    async function queryMetrics() {
+      const json = await dashboardStore.fetchMetricValue(props.item);
 
-  if (json.error) {
-    return;
-  }
-  const metricVal = json.data.readMetricsValues.values.values.map(
-    (d: any) => d.value
-  );
-  const m = props.item.metrics && props.item.metrics[0];
-  if (!m) {
-    return;
-  }
-  state.source = {
-    [m]: metricVal,
-  };
-  console.log(state.source);
-}
+      if (json.error) {
+        return;
+      }
+      const metricVal = json.data.readMetricsValues.values.values.map(
+        (d: any) => d.value
+      );
+      const m = props.item.metrics && props.item.metrics[0];
+      if (!m) {
+        return;
+      }
+      state.source = {
+        [m]: metricVal,
+      };
+    }
 
-function removeWidget() {
-  dashboardStore.removeWidget(props.item);
-}
-function setConfig() {
-  dashboardStore.setConfigPanel(true);
-  dashboardStore.selectWidget(props.item);
-}
+    function removeWidget() {
+      dashboardStore.removeWidget(props.item);
+    }
+    function setConfig() {
+      dashboardStore.setConfigPanel(true);
+      dashboardStore.selectWidget(props.item);
+    }
+    return {
+      state,
+      appStoreWithOut,
+      removeWidget,
+      setConfig,
+      item,
+    };
+  },
+});
 </script>
 <style lang="scss" scoped>
 .widget {

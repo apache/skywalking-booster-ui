@@ -86,7 +86,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { reactive, defineComponent, ref } from "vue";
+import { reactive, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";

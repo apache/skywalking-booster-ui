@@ -13,10 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Graph ref="chart" :option="option" :autoResize="true" />
+  <Graph :option="option" />
 </template>
 <script lang="ts" setup>
-import { defineProps, ref, computed } from "vue";
+import { defineProps, computed } from "vue";
 import type { PropType } from "vue";
 import { Event } from "@/types/events";
 
@@ -37,8 +37,6 @@ const props = defineProps({
     default: () => ({ theme: "light", showBackground: true, barWidth: 20 }),
   },
 });
-/*global Nullable */
-const chart = ref<Nullable<HTMLElement>>(null);
 const option = computed(() => getOption());
 
 function getOption() {

@@ -23,7 +23,7 @@ export const ConfigData: LayoutConfig = {
   i: "0",
   metrics: ["service_resp_time"],
   queryMetricType: "readMetricsValues",
-  visualization: "Line",
+  visualization: "Bar",
   widget: {
     title: "Title",
     tips: "Tooltip",

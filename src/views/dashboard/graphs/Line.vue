@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Graph ref="chart" :option="option" :autoResize="true" />
+  <Graph :option="option" />
 </template>
 <script lang="ts" setup>
 import { defineProps, ref, computed } from "vue";
@@ -30,8 +30,6 @@ const props = defineProps({
   theme: { type: String, default: "light" },
   itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
 });
-/*global Nullable */
-const chart = ref<Nullable<HTMLElement>>(null);
 const option = computed(() => getOption());
 function getOption() {
   const keys = Object.keys(props.data || {}).filter(

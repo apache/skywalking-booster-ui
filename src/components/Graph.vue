@@ -43,7 +43,6 @@ const props = defineProps({
 
 onMounted(() => {
   setTimeout(() => {
-    console.log(chart.value);
     drawEcharts();
     window.addEventListener("resize", state.instanceChart.resize);
   }, 50);
