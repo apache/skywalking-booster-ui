@@ -25,8 +25,8 @@ export const ConfigData: LayoutConfig = {
   queryMetricType: "readMetricsValues",
   chart: "Line",
   widget: {
-    title: "Title",
-    tips: "Tooltip",
+    title: "Title123",
+    tips: "Tooltip123",
   },
   graph: {
     showBackground: true,

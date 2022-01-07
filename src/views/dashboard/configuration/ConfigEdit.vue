@@ -82,7 +82,7 @@ limitations under the License. -->
       <el-button size="mini">
         {{ t("cancel") }}
       </el-button>
-      <el-button size="mini" type="primary">
+      <el-button size="mini" type="primary" @click="applyConfig">
         {{ t("apply") }}
       </el-button>
     </div>
@@ -120,6 +120,7 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
     const { loading } = Loading();
+    const { selectedWidget } = dashboardStore;
     const states = reactive<{
       metrics: string[];
       valueTypes: Option[];
@@ -127,19 +128,27 @@ export default defineComponent({
       metricQueryType: string;
       chartType: string;
       activeNames: string;
-      tips: string;
       source: any;
-      title: string;
+      index: string;
     }>({
-      metrics: dashboardStore.selectedWidget.metrics || [],
+      metrics: selectedWidget.metrics || [],
       valueTypes: [],
       valueType: "",
       metricQueryType: "",
-      chartType: dashboardStore.selectedWidget.chart,
+      chartType: selectedWidget.chart,
       activeNames: "1",
       source: {},
-      tips: "",
-      title: "",
+      index: selectedWidget.i,
+    });
+    const widgetOpt = reactive<
+      | {
+          title: string;
+          tips: string;
+        }
+      | any
+    >({
+      tips: selectedWidget.widget.tips,
+      title: selectedWidget.widget.title,
     });
     queryMetricType(states.metrics[0]);
 
@@ -164,7 +173,6 @@ export default defineComponent({
       const { typeOfMetrics } = resp.data;
       states.valueTypes = ValuesTypes[typeOfMetrics];
       states.valueType = ValuesTypes[typeOfMetrics][0].value;
-      console.log(states.valueType);
     }
 
     function changeValueType(val: Option[]) {
@@ -190,13 +198,11 @@ export default defineComponent({
     ];
     const configHeight = document.documentElement.clientHeight - 520;
 
-    function updateWidgetOptions(param: any) {
-      if (param.title !== undefined) {
-        states.title = param.title;
+    function updateWidgetOptions(param: { label: string; value: string }) {
+      if (widgetOpt[param.label] === undefined) {
+        return;
       }
-      if (param.tips !== undefined) {
-        states.tips = param.tips;
-      }
+      widgetOpt[param.label] = param.value;
     }
 
     async function queryMetrics() {
@@ -208,7 +214,7 @@ export default defineComponent({
         return;
       }
       const metricVal = json.data.readMetricsValues.values.values.map(
-        (d: any) => d.value
+        (d: { value: number }, index: number) => d.value + index // todo
       );
       const m =
         dashboardStore.selectedWidget.metrics &&
@@ -223,7 +229,30 @@ export default defineComponent({
 
     queryMetrics();
 
+    function applyConfig() {
+      const opts = {
+        ...dashboardStore.selectedWidget,
+        metrics: states.metrics,
+        queryMetricType: states.valueType,
+        chart: states.chartType,
+        widget: {
+          ...dashboardStore.selectedWidget.widget,
+          title: widgetOpt.title,
+          tips: widgetOpt.tips,
+        },
+        graph: {
+          ...dashboardStore.selectedWidget.graph,
+        },
+        standard: {
+          ...dashboardStore.selectedWidget.standard,
+        },
+      };
+      dashboardStore.setConfigs(opts);
+      dashboardStore.setConfigPanel(false);
+    }
+
     return {
+      ...toRefs(widgetOpt),
       ...toRefs(states),
       changeChartType,
       changeValueType,
@@ -235,6 +264,7 @@ export default defineComponent({
       updateWidgetOptions,
       configHeight,
       dashboardStore,
+      applyConfig,
     };
   },
 });

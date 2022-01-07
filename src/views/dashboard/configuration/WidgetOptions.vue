@@ -45,10 +45,10 @@ const title = ref<string>("");
 const tooltip = ref<string>("");
 
 function updateTitle(value: string) {
-  emits("update", { title: value });
+  emits("update", { value, label: "title" });
 }
 function updateTips(value: string) {
-  emits("update", { tips: value });
+  emits("update", { value, label: "tips" });
 }
 </script>
 <style lang="scss" scoped>

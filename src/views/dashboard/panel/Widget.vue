@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="widget">
     <div class="header flex-h">
-      <div>Title</div>
+      <div>{{ item.widget.title || "" }}</div>
       <div class="operations">
         <Icon
           class="mr-5"
@@ -42,14 +42,23 @@ import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import graphs from "../graphs";
+import { ElMessage } from "element-plus";
+import Loading from "@/utils/loading";
+import { useI18n } from "vue-i18n";
+
 const props = {
-  item: { type: Object as PropType<LayoutConfig>, default: () => ({}) },
+  item: {
+    type: Object as PropType<LayoutConfig>,
+    default: () => ({ widget: {} }),
+  },
 };
 export default defineComponent({
   name: "Widget",
   components: { ...graphs },
   props,
   setup(props) {
+    const { t } = useI18n();
+    const { loading } = Loading();
     const state = reactive({
       source: {},
     });
@@ -58,9 +67,15 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     queryMetrics();
     async function queryMetrics() {
+      const loadingInstance = loading({
+        text: t("loading"),
+        fullscreen: false,
+      });
       const json = await dashboardStore.fetchMetricValue(props.item);
 
+      loadingInstance.close();
       if (json.error) {
+        ElMessage.error(json.error);
         return;
       }
       const metricVal = json.data.readMetricsValues.values.values.map(

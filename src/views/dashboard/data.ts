@@ -47,11 +47,11 @@ export const ValuesTypes: {
   [key: string]: Array<{ label: string; value: string }>;
 } = {
   REGULAR_VALUE: [
+    { label: "read all values in the duration", value: "readMetricsValues" },
     {
       label: "read the single value in the duration",
       value: "readMetricsValue",
     },
-    { label: "read all values in the duration", value: "readMetricsValues" },
     { label: "get sorted top N values", value: "sortMetrics" },
   ],
   LABELED_VALUE: [

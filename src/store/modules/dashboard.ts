@@ -63,13 +63,20 @@ export const dashboardStore = defineStore({
       this.showConfig = show;
     },
     selectWidget(widget: Nullable<LayoutConfig>) {
-      this.selectedWidget = ConfigData || widget;
+      this.selectedWidget = ConfigData || widget; //todo
     },
     setLayer(id: string) {
       this.layerId = id;
     },
     setEntity(type: string) {
       this.entity = type;
+    },
+    setConfigs(param: { [key: string]: unknown }) {
+      const index = this.layout.findIndex((d: LayoutConfig) => d.i === param.i);
+      this.layout[index] = {
+        ...this.layout[index],
+        ...param,
+      };
     },
     async fetchMetricType(item: string) {
       const res: AxiosResponse = await graph
