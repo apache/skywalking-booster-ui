@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="widget">
     <div class="header flex-h">
-      <div>{{ item.widget.title || "" }}</div>
+      <div>{{ data.widget.title || "" }}</div>
       <div class="operations">
         <Icon
           class="mr-5"
@@ -28,7 +28,7 @@ limitations under the License. -->
     </div>
     <div class="body" :style="{ height: '200px', width: '400px' }">
       <component
-        :is="item.chart"
+        :is="data.graph.type"
         :intervalTime="appStoreWithOut.intervalTime"
         :data="state.source"
       />
@@ -47,7 +47,7 @@ import Loading from "@/utils/loading";
 import { useI18n } from "vue-i18n";
 
 const props = {
-  item: {
+  data: {
     type: Object as PropType<LayoutConfig>,
     default: () => ({ widget: {} }),
   },
@@ -62,7 +62,7 @@ export default defineComponent({
     const state = reactive({
       source: {},
     });
-    const { item } = toRefs(props);
+    const { data } = toRefs(props);
     const appStoreWithOut = useAppStoreWithOut();
     const dashboardStore = useDashboardStore();
     queryMetrics();
@@ -71,7 +71,7 @@ export default defineComponent({
         text: t("loading"),
         fullscreen: false,
       });
-      const json = await dashboardStore.fetchMetricValue(props.item);
+      const json = await dashboardStore.fetchMetricValue(props.data);
 
       loadingInstance.close();
       if (json.error) {
@@ -81,7 +81,7 @@ export default defineComponent({
       const metricVal = json.data.readMetricsValues.values.values.map(
         (d: any) => d.value
       );
-      const m = props.item.metrics && props.item.metrics[0];
+      const m = props.data.metrics && props.data.metrics[0];
       if (!m) {
         return;
       }
@@ -91,18 +91,18 @@ export default defineComponent({
     }
 
     function removeWidget() {
-      dashboardStore.removeWidget(item);
+      dashboardStore.removeWidget(data);
     }
     function setConfig() {
       dashboardStore.setConfigPanel(true);
-      dashboardStore.selectWidget(item);
+      dashboardStore.selectWidget(data);
     }
     return {
       state,
       appStoreWithOut,
       removeWidget,
       setConfig,
-      item,
+      data,
     };
   },
 });

@@ -25,8 +25,8 @@ export const ChartTypes = [
   { label: "Table", value: "Table" },
   { label: "Endpoint List", value: "EndpointList" },
   { label: "Instance List", value: "InstanceList" },
-  { label: "Image", value: "Image" },
-  { label: "Tab", value: "Tabs" },
+  // { label: "Image", value: "Image" },
+  // { label: "Tab", value: "Tabs" },
 ];
 export enum MetricQueryTypes {
   ReadMetricsValue = "readMetricsValue",
@@ -119,6 +119,15 @@ export const EntityType = [
 export const SortOrder = [
   { label: "DES", value: "DES" },
   { label: "ASC", value: "ASC" },
+];
+export const ToolIcons = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "insert_image", content: "Add Image", id: "addImage" },
+  { name: "save_alt", content: "Export", id: "export" },
+  { name: "folder_open", content: "Import", id: "import" },
+  { name: "settings", content: "Settings", id: "settings" },
+  { name: "save", content: "Apply", id: "applay" },
 ];
 export const Options = [
   {

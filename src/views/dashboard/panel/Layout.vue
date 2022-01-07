@@ -30,19 +30,30 @@ limitations under the License. -->
       :i="item.i"
       :key="item.i"
     >
-      <Widget :item="item" />
+      <component :is="item.type" :data="item" />
     </grid-item>
   </grid-layout>
 </template>
-<script lang="ts" setup>
+<script lang="ts">
+import { defineComponent } from "vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
-import Widget from "./Widget.vue";
-
-const dashboardStore = useDashboardStore();
-function layoutUpdatedEvent(newLayout: LayoutConfig) {
-  dashboardStore.setLayout(newLayout);
-}
+import Widget from "../controls/Widget.vue";
+import Tab from "../controls/Tab.vue";
+export default defineComponent({
+  name: "Layout",
+  components: { Widget, Tab },
+  setup() {
+    const dashboardStore = useDashboardStore();
+    function layoutUpdatedEvent(newLayout: LayoutConfig) {
+      dashboardStore.setLayout(newLayout);
+    }
+    return {
+      dashboardStore,
+      layoutUpdatedEvent,
+    };
+  },
+});
 </script>
 <style lang="scss" scoped>
 .vue-grid-layout {

@@ -98,7 +98,6 @@ import { ValuesTypes, MetricQueryTypes, ChartTypes } from "../data";
 import { Option } from "@/types/app";
 import Loading from "@/utils/loading";
 import graphs from "../graphs";
-import controls from "../controls";
 import configs from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
 import StandardOptions from "./StandardOptions.vue";
@@ -107,7 +106,6 @@ export default defineComponent({
   name: "ConfigEdit",
   components: {
     ...graphs,
-    ...controls,
     ...configs,
     WidgetOptions,
     StandardOptions,
@@ -135,7 +133,7 @@ export default defineComponent({
       valueTypes: [],
       valueType: "",
       metricQueryType: "",
-      chartType: selectedWidget.chart,
+      chartType: selectedWidget.graph.type,
       activeNames: "1",
       source: {},
       index: selectedWidget.i,

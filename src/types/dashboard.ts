@@ -20,12 +20,13 @@ export interface LayoutConfig {
   w: number;
   h: number;
   i: string;
-  widget?: WidgetConfig;
-  graph?: GraphConfig;
-  standard?: StandardConfig;
+  widget: WidgetConfig;
+  graph: GraphConfig;
+  standard: StandardConfig;
   metrics?: string[];
-  chart?: string;
+  type?: string;
   queryMetricType?: string;
+  children?: any[];
 }
 
 export interface WidgetConfig {
@@ -34,6 +35,7 @@ export interface WidgetConfig {
 }
 
 export interface GraphConfig {
+  type?: string;
   showBackground?: boolean;
   barWidth?: number;
 }

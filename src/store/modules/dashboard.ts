@@ -49,6 +49,34 @@ export const dashboardStore = defineStore({
         w: 24,
         h: 12,
         i: String(this.layout.length),
+        type: "Widget",
+        widget: {},
+        graph: {},
+        standard: {},
+      };
+      this.layout = this.layout.map((d: LayoutConfig) => {
+        d.y = d.y + newWidget.h;
+        return d;
+      });
+      this.layout.push(newWidget);
+    },
+    addTab() {
+      const newWidget: LayoutConfig = {
+        x: 0,
+        y: 0,
+        w: 24,
+        h: 12,
+        i: String(this.layout.length),
+        type: "Tab",
+        children: [
+          {
+            name: "Tab1",
+            children: [],
+          },
+        ],
+        widget: {},
+        graph: {},
+        standard: {},
       };
       this.layout = this.layout.map((d: LayoutConfig) => {
         d.y = d.y + newWidget.h;

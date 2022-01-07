@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LayoutConfig } from "@/types/dashboard";
-export const ConfigData: LayoutConfig = {
+export const ConfigData = {
   x: 0,
   y: 0,
   w: 8,
@@ -23,7 +22,7 @@ export const ConfigData: LayoutConfig = {
   i: "0",
   metrics: ["service_resp_time"],
   queryMetricType: "readMetricsValues",
-  chart: "Line",
+  type: "Widget",
   widget: {
     title: "Title123",
     tips: "Tooltip123",
@@ -31,6 +30,7 @@ export const ConfigData: LayoutConfig = {
   graph: {
     showBackground: true,
     barWidth: 30,
+    type: "Line",
   },
   standard: {
     sortOrder: "DEC",
