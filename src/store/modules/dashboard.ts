@@ -73,6 +73,10 @@ export const dashboardStore = defineStore({
             name: "Tab1",
             children: [],
           },
+          {
+            name: "Tab2",
+            children: [],
+          },
         ],
         widget: {},
         graph: {},
@@ -84,8 +88,26 @@ export const dashboardStore = defineStore({
       });
       this.layout.push(newWidget);
     },
-    removeWidget(item: LayoutConfig) {
+    addTabItem(item: LayoutConfig) {
+      const idx = this.layout.findIndex((d: LayoutConfig) => d.i === item.i);
+      if (!this.layout[idx].children) {
+        return;
+      }
+      const len = this.layout[idx].children?.length || 0;
+      const i = {
+        name: "Tab" + (len + 1),
+        children: [],
+      };
+      this.layout[idx].children?.push(i);
+    },
+    removeControls(item: LayoutConfig) {
       this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
+    },
+    removeTabItem(item: LayoutConfig, index: number) {
+      const idx = this.layout.findIndex((d: LayoutConfig) => d.i === item.i);
+      if (this.layout[idx].children) {
+        this.layout[idx].children?.splice(index, 1);
+      }
     },
     setConfigPanel(show: boolean) {
       this.showConfig = show;

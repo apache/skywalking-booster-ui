@@ -69,7 +69,6 @@ export default defineComponent({
     async function queryMetrics() {
       const loadingInstance = loading({
         text: t("loading"),
-        fullscreen: false,
       });
       const json = await dashboardStore.fetchMetricValue(props.data);
 
@@ -91,7 +90,7 @@ export default defineComponent({
     }
 
     function removeWidget() {
-      dashboardStore.removeWidget(data);
+      dashboardStore.removeControls(data);
     }
     function setConfig() {
       dashboardStore.setConfigPanel(true);
