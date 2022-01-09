@@ -31,7 +31,7 @@ limitations under the License. -->
       </span>
 
       <span class="add-Item" @click="addTabItem">
-        <Icon size="sm" iconName="add" />
+        <Icon size="middle" iconName="add" />
       </span>
     </div>
     <div class="operations">
@@ -71,6 +71,7 @@ const props = defineProps({
     type: Object as PropType<{ type: string; children: any[] }>,
     default: () => ({ children: [] }),
   },
+  active: { type: Boolean, default: false },
 });
 const dashboardStore = useDashboardStore();
 const state = reactive<{ layout: any[]; activeTab: number }>({

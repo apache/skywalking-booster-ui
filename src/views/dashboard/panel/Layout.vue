@@ -29,8 +29,14 @@ limitations under the License. -->
       :h="item.h"
       :i="item.i"
       :key="item.i"
+      @click="clickGrid(item)"
+      :class="{ active: dashboardStore.activedGridItem === item.i }"
     >
-      <component :is="item.type" :data="item" />
+      <component
+        :is="item.type"
+        :data="item"
+        :active="dashboardStore.activedGridItem === item.i"
+      />
     </grid-item>
   </grid-layout>
 </template>
@@ -45,12 +51,16 @@ export default defineComponent({
   components: { Widget, Tab },
   setup() {
     const dashboardStore = useDashboardStore();
-    function layoutUpdatedEvent(newLayout: LayoutConfig) {
+    function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
       dashboardStore.setLayout(newLayout);
+    }
+    function clickGrid(item: LayoutConfig) {
+      dashboardStore.activeGridItem(item.i);
     }
     return {
       dashboardStore,
       layoutUpdatedEvent,
+      clickGrid,
     };
   },
 });
@@ -65,5 +75,9 @@ export default defineComponent({
   background: #fff;
   box-shadow: 0px 1px 4px 0px #00000029;
   border-radius: 5px;
+}
+
+.vue-grid-item.active {
+  border: 1px solid #409eff;
 }
 </style>

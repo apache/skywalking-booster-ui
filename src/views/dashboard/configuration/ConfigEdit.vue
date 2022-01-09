@@ -67,7 +67,7 @@ limitations under the License. -->
         <el-collapse-item :title="t('graphStyles')" name="3">
           <component
             :is="`${chartType}Config`"
-            :config="dashboardStore.selectedWidget.graph"
+            :config="dashboardStore.selectedGrid.graph"
           />
         </el-collapse-item>
         <el-collapse-item :title="t('widgetOptions')" name="4">
@@ -118,7 +118,7 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
     const { loading } = Loading();
-    const { selectedWidget } = dashboardStore;
+    const { selectedGrid } = dashboardStore;
     const states = reactive<{
       metrics: string[];
       valueTypes: Option[];
@@ -129,14 +129,14 @@ export default defineComponent({
       source: any;
       index: string;
     }>({
-      metrics: selectedWidget.metrics || [],
+      metrics: selectedGrid.metrics || [],
       valueTypes: [],
       valueType: "",
       metricQueryType: "",
-      chartType: selectedWidget.graph.type,
+      chartType: selectedGrid.graph.type,
       activeNames: "1",
       source: {},
-      index: selectedWidget.i,
+      index: selectedGrid.i,
     });
     const widgetOpt = reactive<
       | {
@@ -145,8 +145,8 @@ export default defineComponent({
         }
       | any
     >({
-      tips: selectedWidget.widget.tips,
-      title: selectedWidget.widget.title,
+      tips: selectedGrid.widget.tips,
+      title: selectedGrid.widget.title,
     });
     queryMetricType(states.metrics[0]);
 
@@ -205,7 +205,7 @@ export default defineComponent({
 
     async function queryMetrics() {
       const json = await dashboardStore.fetchMetricValue(
-        dashboardStore.selectedWidget
+        dashboardStore.selectedGrid
       );
 
       if (json.error) {
@@ -215,8 +215,8 @@ export default defineComponent({
         (d: { value: number }, index: number) => d.value + index // todo
       );
       const m =
-        dashboardStore.selectedWidget.metrics &&
-        dashboardStore.selectedWidget.metrics[0];
+        dashboardStore.selectedGrid.metrics &&
+        dashboardStore.selectedGrid.metrics[0];
       if (!m) {
         return;
       }
@@ -229,20 +229,20 @@ export default defineComponent({
 
     function applyConfig() {
       const opts = {
-        ...dashboardStore.selectedWidget,
+        ...dashboardStore.selectedGrid,
         metrics: states.metrics,
         queryMetricType: states.valueType,
         chart: states.chartType,
         widget: {
-          ...dashboardStore.selectedWidget.widget,
+          ...dashboardStore.selectedGrid.widget,
           title: widgetOpt.title,
           tips: widgetOpt.tips,
         },
         graph: {
-          ...dashboardStore.selectedWidget.graph,
+          ...dashboardStore.selectedGrid.graph,
         },
         standard: {
-          ...dashboardStore.selectedWidget.standard,
+          ...dashboardStore.selectedGrid.standard,
         },
       };
       dashboardStore.setConfigs(opts);

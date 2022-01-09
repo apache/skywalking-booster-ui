@@ -24,9 +24,10 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
-  selectedWidget: Nullable<LayoutConfig>;
+  selectedGrid: Nullable<LayoutConfig>;
   entity: string;
   layerId: string;
+  activedGridItem: string;
 }
 
 export const dashboardStore = defineStore({
@@ -34,9 +35,10 @@ export const dashboardStore = defineStore({
   state: (): DashboardState => ({
     layout: [ConfigData],
     showConfig: false,
-    selectedWidget: ConfigData,
+    selectedGrid: ConfigData,
     entity: "",
     layerId: "",
+    activedGridItem: "",
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -100,6 +102,9 @@ export const dashboardStore = defineStore({
       };
       this.layout[idx].children?.push(i);
     },
+    activeGridItem(index: string) {
+      this.activedGridItem = index;
+    },
     removeControls(item: LayoutConfig) {
       this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
     },
@@ -113,7 +118,7 @@ export const dashboardStore = defineStore({
       this.showConfig = show;
     },
     selectWidget(widget: Nullable<LayoutConfig>) {
-      this.selectedWidget = ConfigData || widget; //todo
+      this.selectedGrid = ConfigData || widget; //todo
     },
     setLayer(id: string) {
       this.layerId = id;

@@ -51,6 +51,7 @@ const props = {
     type: Object as PropType<LayoutConfig>,
     default: () => ({ widget: {} }),
   },
+  active: { type: Boolean, default: false },
 };
 export default defineComponent({
   name: "Widget",
@@ -73,6 +74,9 @@ export default defineComponent({
       const json = await dashboardStore.fetchMetricValue(props.data);
 
       loadingInstance.close();
+      if (!json) {
+        return;
+      }
       if (json.error) {
         ElMessage.error(json.error);
         return;
@@ -90,11 +94,11 @@ export default defineComponent({
     }
 
     function removeWidget() {
-      dashboardStore.removeControls(data);
+      dashboardStore.removeControls(props.data);
     }
     function setConfig() {
       dashboardStore.setConfigPanel(true);
-      dashboardStore.selectWidget(data);
+      dashboardStore.selectWidget(props.data);
     }
     return {
       state,
