@@ -74,7 +74,7 @@ limitations under the License. -->
   </grid-layout>
 </template>
 <script lang="ts" setup>
-import { defineProps, reactive, ref } from "vue";
+import { defineProps, reactive, ref, watch } from "vue";
 import type { PropType } from "vue";
 import Widget from "./Widget.vue";
 import { LayoutConfig } from "@/types/dashboard";
@@ -124,6 +124,16 @@ function addTabWidget() {
   dashboardStore.addTabWidget(activeTabIndex.value);
 }
 document.body.addEventListener("click", handleClick, false);
+watch(
+  () =>
+    dashboardStore.layout[props.data.i].children[activeTabIndex.value].children,
+  () => {
+    state.layout =
+      dashboardStore.layout[props.data.i].children[
+        activeTabIndex.value
+      ].children;
+  }
+);
 </script>
 <style lang="scss" scoped>
 .tabs {

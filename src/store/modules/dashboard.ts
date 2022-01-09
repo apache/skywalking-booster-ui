@@ -108,19 +108,25 @@ export const dashboardStore = defineStore({
       const idx = this.layout.findIndex(
         (d: LayoutConfig) => d.i === this.activedGridItem
       );
+      const { children } = this.layout[idx].children[tabIndex];
       const newWidget = {
         x: 0,
         y: 0,
         w: 24,
         h: 12,
-        i: String(this.layout[idx].children[tabIndex].children.length),
+        i: String(children.length),
         type: "Widget",
         widget: {},
         graph: {},
         standard: {},
       };
       if (this.layout[idx].children) {
-        this.layout[idx].children[tabIndex].children.push(newWidget);
+        const items = children.map((d: LayoutConfig) => {
+          d.y = d.y + newWidget.h;
+          return d;
+        });
+        items.push(newWidget);
+        this.layout[idx].children[tabIndex].children = items;
       }
     },
     activeGridItem(index: string) {
