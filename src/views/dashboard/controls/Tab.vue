@@ -127,11 +127,8 @@ document.body.addEventListener("click", handleClick, false);
 watch(
   () =>
     dashboardStore.layout[props.data.i].children[activeTabIndex.value].children,
-  () => {
-    state.layout =
-      dashboardStore.layout[props.data.i].children[
-        activeTabIndex.value
-      ].children;
+  (data) => {
+    state.layout = data;
   }
 );
 </script>
