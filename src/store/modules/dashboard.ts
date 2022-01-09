@@ -24,7 +24,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
-  selectedGrid: Nullable<LayoutConfig>;
+  selectedGrid: Nullable<LayoutConfig>; // edit widgets
   entity: string;
   layerId: string;
   activedGridItem: string;
@@ -61,13 +61,14 @@ export const dashboardStore = defineStore({
         return d;
       });
       this.layout.push(newWidget);
+      this.activedGridItem = newWidget.i;
     },
     addTab() {
       const newWidget: LayoutConfig = {
         x: 0,
         y: 0,
         w: 24,
-        h: 12,
+        h: 20,
         i: String(this.layout.length),
         type: "Tab",
         children: [
@@ -89,6 +90,7 @@ export const dashboardStore = defineStore({
         return d;
       });
       this.layout.push(newWidget);
+      this.activedGridItem = newWidget.i;
     },
     addTabItem(item: LayoutConfig) {
       const idx = this.layout.findIndex((d: LayoutConfig) => d.i === item.i);
@@ -101,6 +103,25 @@ export const dashboardStore = defineStore({
         children: [],
       };
       this.layout[idx].children?.push(i);
+    },
+    addTabWidget(tabIndex: number) {
+      const idx = this.layout.findIndex(
+        (d: LayoutConfig) => d.i === this.activedGridItem
+      );
+      const newWidget = {
+        x: 0,
+        y: 0,
+        w: 24,
+        h: 12,
+        i: String(this.layout[idx].children[tabIndex].children.length),
+        type: "Widget",
+        widget: {},
+        graph: {},
+        standard: {},
+      };
+      if (this.layout[idx].children) {
+        this.layout[idx].children[tabIndex].children.push(newWidget);
+      }
     },
     activeGridItem(index: string) {
       this.activedGridItem = index;

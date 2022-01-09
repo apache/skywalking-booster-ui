@@ -157,6 +157,10 @@ function clickIcons(t: { id: string; content: string; name: string }) {
   color: #666;
 }
 
+.item {
+  font-size: 12px;
+}
+
 .selectors {
   min-width: 180px;
 }

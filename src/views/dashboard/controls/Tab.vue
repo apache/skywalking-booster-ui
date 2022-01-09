@@ -16,22 +16,33 @@ limitations under the License. -->
   <div class="flex-h tab-header">
     <div class="tabs">
       <span
-        v-for="(item, idx) in data.children || []"
+        v-for="(child, idx) in data.children || []"
         :key="idx"
-        :class="{ active: state.activeTab === idx }"
+        :class="{ active: activeTabIndex === idx }"
         @click="clickTabs(idx)"
       >
-        {{ item.name }}
+        <input
+          @click="editTabName(idx)"
+          v-model="child.name"
+          placeholder="Please input"
+          class="tab-name"
+          :readonly="isNaN(editTabIndex)"
+          :class="{ view: isNaN(editTabIndex) }"
+        />
         <Icon
-          v-show="state.activeTab === idx"
+          v-show="activeTabIndex === idx"
           size="sm"
           iconName="cancel"
           @click="deleteTabItem(idx)"
         />
       </span>
-
-      <span class="add-Item" @click="addTabItem">
-        <Icon size="middle" iconName="add" />
+      <span class="tab-icons">
+        <i @click="addTabItem">
+          <Icon size="middle" iconName="add" />
+        </i>
+        <i @click="addTabWidget">
+          <Icon size="middle" iconName="playlist_add" />
+        </i>
       </span>
     </div>
     <div class="operations">
@@ -55,12 +66,15 @@ limitations under the License. -->
       :i="item.i"
       :key="item.i"
     >
-      <Widget :item="item" />
+      <Widget
+        :data="item"
+        :active="dashboardStore.activedGridItem === item.i"
+      />
     </grid-item>
   </grid-layout>
 </template>
 <script lang="ts" setup>
-import { defineProps, reactive } from "vue";
+import { defineProps, reactive, ref } from "vue";
 import type { PropType } from "vue";
 import Widget from "./Widget.vue";
 import { LayoutConfig } from "@/types/dashboard";
@@ -68,21 +82,25 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 
 const props = defineProps({
   data: {
-    type: Object as PropType<{ type: string; children: any[] }>,
+    type: Object as PropType<{ type: string; children: any[]; i: string }>,
     default: () => ({ children: [] }),
   },
   active: { type: Boolean, default: false },
 });
 const dashboardStore = useDashboardStore();
-const state = reactive<{ layout: any[]; activeTab: number }>({
-  layout: [],
-  activeTab: 0,
+const activeTabIndex = ref<number>(0);
+const editTabIndex = ref<number>(NaN); // edit tab item name
+const state = reactive<{
+  layout: LayoutConfig[];
+}>({
+  layout:
+    dashboardStore.layout[props.data.i].children[activeTabIndex.value].children,
 });
 function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
   state.layout = newLayout;
 }
 function clickTabs(idx: number) {
-  state.activeTab = idx;
+  activeTabIndex.value = idx;
 }
 function removeTab() {
   dashboardStore.removeControls(props.data);
@@ -93,14 +111,27 @@ function deleteTabItem(idx: number) {
 function addTabItem() {
   dashboardStore.addTabItem(props.data);
 }
+function editTabName(index: number) {
+  editTabIndex.value = index;
+}
+function handleClick(el: any) {
+  if (el.target.className === "tab-name") {
+    return;
+  }
+  editTabIndex.value = NaN;
+}
+function addTabWidget() {
+  dashboardStore.addTabWidget(activeTabIndex.value);
+}
+document.body.addEventListener("click", handleClick, false);
 </script>
 <style lang="scss" scoped>
 .tabs {
   height: 40px;
+  color: #ccc;
 
   span {
     display: inline-block;
-    width: auto;
     padding: 0 10px;
     margin: 0 10px;
     height: 40px;
@@ -108,10 +139,40 @@ function addTabItem() {
     cursor: pointer;
   }
 
+  .tab-name {
+    max-width: 80px;
+    height: 25px;
+    line-height: 25px;
+    outline: none;
+    color: #333;
+    font-style: normal;
+    margin-right: 5px;
+  }
+
+  .tab-icons {
+    color: #333;
+
+    i {
+      margin-right: 3px;
+    }
+  }
+
+  .view {
+    cursor: pointer;
+  }
+
+  input.tab-name {
+    border: 0;
+  }
+
   span.active {
     border-bottom: 1px solid #409eff;
     color: #409eff;
   }
+}
+
+.el-input__inner {
+  border: none !important;
 }
 
 .operations {

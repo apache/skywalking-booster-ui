@@ -36,4 +36,5 @@ export const ConfigData = {
     sortOrder: "DEC",
     unit: "s",
   },
+  children: [],
 };

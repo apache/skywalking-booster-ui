@@ -26,7 +26,7 @@ export interface LayoutConfig {
   metrics?: string[];
   type?: string;
   queryMetricType?: string;
-  children?: any[];
+  children?: any;
 }
 
 export interface WidgetConfig {
