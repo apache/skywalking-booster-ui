@@ -49,29 +49,30 @@ limitations under the License. -->
       <Icon size="sm" iconName="clearclose" @click="removeTab" />
     </div>
   </div>
-  <grid-layout
-    v-model:layout="state.layout"
-    :col-num="24"
-    :row-height="10"
-    :is-draggable="true"
-    :is-resizable="true"
-    @layout-updated="layoutUpdatedEvent"
-  >
-    <grid-item
-      v-for="item in state.layout"
-      :x="item.x"
-      :y="item.y"
-      :w="item.w"
-      :h="item.h"
-      :i="item.i"
-      :key="item.i"
+  <div class="tab-layout">
+    <grid-layout
+      v-model:layout="state.layout"
+      :col-num="24"
+      :row-height="10"
+      :is-draggable="true"
+      :is-resizable="true"
+      @layout-updated="layoutUpdatedEvent"
     >
-      <Widget
-        :data="item"
-        :active="dashboardStore.activedGridItem === item.i"
-      />
-    </grid-item>
-  </grid-layout>
+      <grid-item
+        v-for="item in state.layout"
+        :x="item.x"
+        :y="item.y"
+        :w="item.w"
+        :h="item.h"
+        :i="item.i"
+        :key="item.i"
+        @click="clickTabGrid($event, item)"
+        :class="{ active: activeTabWidget === item.i }"
+      >
+        <Widget :data="item" :active="activeTabWidget === item.i" />
+      </grid-item>
+    </grid-layout>
+  </div>
 </template>
 <script lang="ts" setup>
 import { defineProps, reactive, ref, watch } from "vue";
@@ -82,13 +83,14 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 
 const props = defineProps({
   data: {
-    type: Object as PropType<{ type: string; children: any[]; i: string }>,
+    type: Object as PropType<LayoutConfig>,
     default: () => ({ children: [] }),
   },
   active: { type: Boolean, default: false },
 });
 const dashboardStore = useDashboardStore();
 const activeTabIndex = ref<number>(0);
+const activeTabWidget = ref<string>("0");
 const editTabIndex = ref<number>(NaN); // edit tab item name
 const state = reactive<{
   layout: LayoutConfig[];
@@ -96,6 +98,7 @@ const state = reactive<{
   layout:
     dashboardStore.layout[props.data.i].children[activeTabIndex.value].children,
 });
+
 function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
   state.layout = newLayout;
 }
@@ -120,8 +123,20 @@ function handleClick(el: any) {
   }
   editTabIndex.value = NaN;
 }
-function addTabWidget() {
+function addTabWidget(e: any) {
+  e.stopPropagation();
+  activeTabWidget.value = String(state.layout.length);
   dashboardStore.addTabWidget(activeTabIndex.value);
+  dashboardStore.activeGridItem(
+    `${props.data.i}-${activeTabIndex.value}-${activeTabWidget.value}`
+  );
+}
+function clickTabGrid(e: any, item: LayoutConfig) {
+  e.stopPropagation();
+  activeTabWidget.value = item.i;
+  dashboardStore.activeGridItem(
+    `${props.data.i}-${activeTabIndex.value}-${item.i}`
+  );
 }
 document.body.addEventListener("click", handleClick, false);
 watch(
@@ -148,8 +163,8 @@ watch(
 
   .tab-name {
     max-width: 80px;
-    height: 25px;
-    line-height: 25px;
+    height: 20px;
+    line-height: 20px;
     outline: none;
     color: #333;
     font-style: normal;
@@ -205,5 +220,14 @@ watch(
   background: #fff;
   box-shadow: 0px 1px 4px 0px #00000029;
   border-radius: 5px;
+}
+
+.tab-layout {
+  height: calc(100% - 55px);
+  overflow: auto;
+}
+
+.vue-grid-item.active {
+  border: 1px solid #409eff;
 }
 </style>

@@ -55,6 +55,7 @@ export default defineComponent({
       dashboardStore.setLayout(newLayout);
     }
     function clickGrid(item: LayoutConfig) {
+      console.log(item);
       dashboardStore.activeGridItem(item.i);
     }
     return {

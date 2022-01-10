@@ -105,9 +105,13 @@ export const dashboardStore = defineStore({
       this.layout[idx].children?.push(i);
     },
     addTabWidget(tabIndex: number) {
+      const activedGridItem = this.activedGridItem.split("-")[0];
       const idx = this.layout.findIndex(
-        (d: LayoutConfig) => d.i === this.activedGridItem
+        (d: LayoutConfig) => d.i === activedGridItem
       );
+      if (idx < 0) {
+        return;
+      }
       const { children } = this.layout[idx].children[tabIndex];
       const newWidget = {
         x: 0,
