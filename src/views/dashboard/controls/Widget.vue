@@ -16,15 +16,21 @@ limitations under the License. -->
   <div class="widget">
     <div class="header flex-h">
       <div>{{ data.widget.title || "" }}</div>
-      <div class="operations">
-        <Icon
-          class="mr-5"
-          size="sm"
-          iconName="createmode_editedit"
-          @click="setConfig"
-        />
-        <Icon size="sm" iconName="clearclose" @click="removeWidget" />
-      </div>
+      <el-popover
+        placement="bottom"
+        trigger="click"
+        :style="{ width: '100px' }"
+      >
+        <template #reference>
+          <Icon iconName="ellipsis_v" size="middle" class="operation" />
+        </template>
+        <div class="tools" @click="setConfig">
+          <span>Edit</span>
+        </div>
+        <div class="tools" @click="removeWidget">
+          <span>Delete</span>
+        </div>
+      </el-popover>
     </div>
     <div class="body" :style="{ height: '200px', width: '400px' }">
       <component
@@ -45,6 +51,7 @@ import graphs from "../graphs";
 import { ElMessage } from "element-plus";
 import Loading from "@/utils/loading";
 import { useI18n } from "vue-i18n";
+import { ElPopover } from "element-plus";
 
 const props = {
   data: {
@@ -55,7 +62,7 @@ const props = {
 };
 export default defineComponent({
   name: "Widget",
-  components: { ...graphs },
+  components: { ...graphs, ElPopover },
   props,
   setup(props) {
     const { t } = useI18n();
@@ -70,6 +77,7 @@ export default defineComponent({
     async function queryMetrics() {
       const loadingInstance = loading({
         text: t("loading"),
+        fullscreen: false,
       });
       const json = await dashboardStore.fetchMetricValue(props.data);
 
@@ -123,9 +131,21 @@ export default defineComponent({
   justify-content: space-between;
 }
 
-.operations {
-  color: #aaa;
+.operation {
   cursor: pointer;
+}
+
+.tools {
+  padding: 5px 0;
+  color: #999;
+  cursor: pointer;
+  position: relative;
+  text-align: center;
+
+  &:hover {
+    color: #409eff;
+    background-color: #eee;
+  }
 }
 
 .body {
