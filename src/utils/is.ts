@@ -32,22 +32,6 @@ export function isObject(val: unknown): val is Record<any, any> {
   return val !== null && is(val, "Object");
 }
 
-export function isEmpty<T = unknown>(val: any): val is T {
-  if (isArray(val) || isString(val)) {
-    return val.length === 0;
-  }
-
-  if (val instanceof Map || val instanceof Set) {
-    return val.size === 0;
-  }
-
-  if (isObject(val)) {
-    return Object.keys(val).length === 0;
-  }
-
-  return false;
-}
-
 export function isDate(val: unknown): val is Date {
   return is(val, "Date");
 }
@@ -81,7 +65,7 @@ export function isString(val: unknown): val is string {
   return is(val, "String");
 }
 
-export function isFunction(val: unknown): boolean {
+export function isFunction(val: unknown): val is () => unknown {
   return typeof val === "function";
 }
 
@@ -93,8 +77,8 @@ export function isRegExp(val: unknown): val is RegExp {
   return is(val, "RegExp");
 }
 
-export function isArray(val: any): boolean {
-  return val && Array.isArray(val);
+export function isArray(val: unknown): boolean {
+  return Array.isArray(val);
 }
 
 export function isWindow(val: unknown): val is Window {

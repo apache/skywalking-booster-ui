@@ -14,12 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BarSeriesOption, LineSeriesOption } from "echarts/charts";
+import {
+  BarSeriesOption,
+  LineSeriesOption,
+  HeatmapSeriesOption,
+  PieSeriesOption,
+} from "echarts/charts";
 import {
   TitleComponentOption,
   TooltipComponentOption,
   GridComponentOption,
   DatasetComponentOption,
+  LegendComponentOption,
 } from "echarts/components";
 import type { Ref } from "vue";
 import { useTimeoutFn } from "./useTimeout";
@@ -37,6 +43,9 @@ export type ECOption = echarts.ComposeOption<
   | TooltipComponentOption
   | GridComponentOption
   | DatasetComponentOption
+  | LegendComponentOption
+  | HeatmapSeriesOption
+  | PieSeriesOption
 >;
 
 export function useECharts(
@@ -46,7 +55,7 @@ export function useECharts(
   const getDarkMode = computed(() => {
     return theme === "default" ? "light" : theme;
   });
-  let chartInstance: echarts.ECharts | null = null;
+  let chartInstance: Nullable<echarts.ECharts> = null;
   let resizeFn: Fn = resize;
   const cacheOptions = ref({}) as Ref<ECOption>;
   let removeResizeFn: Fn = () => ({});
@@ -128,7 +137,7 @@ export function useECharts(
     chartInstance = null;
   });
 
-  function getInstance(): echarts.ECharts | null {
+  function getInstance(): Nullable<echarts.ECharts> {
     if (!chartInstance) {
       initCharts(getDarkMode.value as "default");
     }
