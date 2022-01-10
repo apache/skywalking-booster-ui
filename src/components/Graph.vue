@@ -13,24 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div ref="chart" :style="`height:${height};width:${width};`"></div>
+  <div ref="chartRef" :style="`height:${height};width:${width};`"></div>
 </template>
 <script lang="ts" setup>
-import {
-  onMounted,
-  watch,
-  reactive,
-  ref,
-  defineProps,
-  onBeforeUnmount,
-} from "vue";
+import { watch, ref, defineProps, Ref } from "vue";
 import type { PropType } from "vue";
-import * as echarts from "echarts";
+import { useECharts } from "@/hooks/useECharts";
 /*global Nullable*/
-const chart = ref<Nullable<HTMLElement>>(null);
-const state = reactive<{ instanceChart: any }>({
-  instanceChart: null,
-});
+const chartRef = ref<Nullable<HTMLDivElement>>(null);
+const { setOptions } = useECharts(chartRef as Ref<HTMLDivElement>);
+
 const props = defineProps({
   clickEvent: { type: Function as PropType<(param: unknown) => void> },
   height: { type: String, default: "100%" },
@@ -41,46 +33,10 @@ const props = defineProps({
   },
 });
 
-onMounted(() => {
-  setTimeout(() => {
-    drawEcharts();
-    window.addEventListener("resize", state.instanceChart.resize);
-  }, 50);
-});
-function drawEcharts(): void {
-  if (!chart.value) {
-    return;
-  }
-  if (state.instanceChart) {
-    return;
-  }
-  state.instanceChart = echarts.init(chart.value, "");
-  unWarp(state.instanceChart).setOption(props.option);
-  state.instanceChart.on("click", (params: any) => {
-    if (!props.clickEvent) {
-      return;
-    }
-    props.clickEvent(params);
-  });
-}
-function unWarp(obj: any) {
-  return obj && (obj.__v_raw || obj.valueOf() || obj);
-}
-
 watch(
   () => props.option,
   (opt) => {
-    if (state.instanceChart) {
-      state.instanceChart.setOption(opt, true);
-    } else {
-      drawEcharts();
-    }
+    setOptions(opt);
   }
 );
-onBeforeUnmount(() => {
-  if (state.instanceChart.dispose) {
-    state.instanceChart.dispose();
-  }
-  window.removeEventListener("resize", state.instanceChart.resize);
-});
 </script>
