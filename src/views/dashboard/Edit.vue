@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <Tool />
-  <div class="ds-main">
+  <div class="ds-main" @click="handleClick">
     <grid-layout />
     <el-dialog
       v-model="dashboardStore.showConfig"
@@ -36,7 +36,7 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 
 const dashboardStore = useDashboardStore();
 // fetch layout data from serve side
-const layout: LayoutConfig[] = [
+const layout: any[] = [
   { x: 0, y: 0, w: 4, h: 12, i: "0" },
   { x: 4, y: 0, w: 4, h: 12, i: "1" },
   { x: 8, y: 0, w: 4, h: 15, i: "2" },
@@ -54,6 +54,12 @@ const layout: LayoutConfig[] = [
   { x: 8, y: 27, w: 4, h: 15, i: "16" },
 ];
 // dashboardStore.setLayout(layout);
+function handleClick(e: any) {
+  e.stopPropagation();
+  if (e.target.className === "ds-main") {
+    dashboardStore.activeGridItem("");
+  }
+}
 </script>
 <style lang="scss" scoped>
 .ds-main {

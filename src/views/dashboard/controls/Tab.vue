@@ -19,10 +19,10 @@ limitations under the License. -->
         v-for="(child, idx) in data.children || []"
         :key="idx"
         :class="{ active: activeTabIndex === idx }"
-        @click="clickTabs(idx)"
+        @click="clickTabs($event, idx)"
       >
         <input
-          @click="editTabName(idx)"
+          @click="editTabName($event, idx)"
           v-model="child.name"
           placeholder="Please input"
           class="tab-name"
@@ -102,7 +102,8 @@ const state = reactive<{
 function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
   state.layout = newLayout;
 }
-function clickTabs(idx: number) {
+function clickTabs(e: Event, idx: number) {
+  e.stopPropagation();
   activeTabIndex.value = idx;
 }
 function removeTab() {
@@ -114,7 +115,8 @@ function deleteTabItem(idx: number) {
 function addTabItem() {
   dashboardStore.addTabItem(props.data);
 }
-function editTabName(index: number) {
+function editTabName(el: Event, index: number) {
+  el.stopPropagation();
   editTabIndex.value = index;
 }
 function handleClick(el: any) {
@@ -123,7 +125,7 @@ function handleClick(el: any) {
   }
   editTabIndex.value = NaN;
 }
-function addTabWidget(e: any) {
+function addTabWidget(e: Event) {
   e.stopPropagation();
   activeTabWidget.value = String(state.layout.length);
   dashboardStore.addTabWidget(activeTabIndex.value);
@@ -131,7 +133,7 @@ function addTabWidget(e: any) {
     `${props.data.i}-${activeTabIndex.value}-${activeTabWidget.value}`
   );
 }
-function clickTabGrid(e: any, item: LayoutConfig) {
+function clickTabGrid(e: Event, item: LayoutConfig) {
   e.stopPropagation();
   activeTabWidget.value = item.i;
   dashboardStore.activeGridItem(
@@ -144,6 +146,17 @@ watch(
     dashboardStore.layout[props.data.i].children[activeTabIndex.value].children,
   (data) => {
     state.layout = data;
+  }
+);
+watch(
+  () => dashboardStore.activedGridItem,
+  (data) => {
+    const i = data.split("-");
+    if (i[0] === props.data.i && activeTabIndex.value === Number(i[1])) {
+      activeTabWidget.value = i[2];
+    } else {
+      activeTabWidget.value = "";
+    }
   }
 );
 </script>
