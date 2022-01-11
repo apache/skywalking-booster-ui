@@ -101,7 +101,6 @@ import graphs from "../graphs";
 import configs from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
 import StandardOptions from "./StandardOptions.vue";
-import { isEmptyObject } from "@/utils/is";
 
 export default defineComponent({
   name: "ConfigEdit",
