@@ -30,6 +30,7 @@ limitations under the License. -->
       :i="item.i"
       :key="item.i"
       @click="clickGrid(item)"
+      @resized="resizedEvent"
       :class="{ active: dashboardStore.activedGridItem === item.i }"
     >
       <component
@@ -57,10 +58,14 @@ export default defineComponent({
     function clickGrid(item: LayoutConfig) {
       dashboardStore.activeGridItem(item.i);
     }
+    function resizedEvent() {
+      console.log("test");
+    }
     return {
       dashboardStore,
       layoutUpdatedEvent,
       clickGrid,
+      resizedEvent,
     };
   },
 });

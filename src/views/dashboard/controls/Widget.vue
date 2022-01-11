@@ -32,7 +32,7 @@ limitations under the License. -->
         </div>
       </el-popover>
     </div>
-    <div class="body" :style="{ height: '200px', width: '400px' }">
+    <div class="body">
       <component
         :is="data.graph.type"
         :intervalTime="appStoreWithOut.intervalTime"
@@ -48,10 +48,9 @@ import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import graphs from "../graphs";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElPopover } from "element-plus";
 import Loading from "@/utils/loading";
 import { useI18n } from "vue-i18n";
-import { ElPopover } from "element-plus";
 
 const props = {
   data: {
@@ -121,6 +120,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .widget {
   font-size: 12px;
+  height: 100%;
 }
 
 .header {
@@ -149,8 +149,8 @@ export default defineComponent({
 }
 
 .body {
-  padding: 5px;
-  height: 200px;
+  padding: 5px 10px;
   width: 100%;
+  height: calc(100% - 30px);
 }
 </style>
