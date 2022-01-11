@@ -20,6 +20,7 @@ import Selector from "./Selector.vue";
 import Graph from "./Graph.vue";
 import type { App } from "vue";
 import VueGridLayout from "vue-grid-layout";
+import { ElLoading } from "element-plus";
 
 const components: { [key: string]: any } = {
   Icon,
@@ -27,6 +28,7 @@ const components: { [key: string]: any } = {
   VueGridLayout,
   Selector,
   Graph,
+  ElLoading,
 };
 const componentsName: string[] = Object.keys(components);
 

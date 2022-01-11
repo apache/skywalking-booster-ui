@@ -116,7 +116,6 @@ export function useECharts(
   }
 
   function resize() {
-    console.log("resize");
     chartInstance?.resize();
   }
 

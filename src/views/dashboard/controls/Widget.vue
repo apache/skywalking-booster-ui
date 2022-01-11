@@ -32,7 +32,7 @@ limitations under the License. -->
         </div>
       </el-popover>
     </div>
-    <div class="body">
+    <div class="body" v-loading="loading">
       <component
         :is="data.graph.type"
         :intervalTime="appStoreWithOut.intervalTime"
@@ -42,15 +42,14 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { toRefs, reactive, defineComponent } from "vue";
+import { toRefs, reactive, defineComponent, ref } from "vue";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import graphs from "../graphs";
-import { ElMessage, ElPopover } from "element-plus";
-import Loading from "@/utils/loading";
-import { useI18n } from "vue-i18n";
+import { ElMessage } from "element-plus";
+// import { useI18n } from "vue-i18n";
 
 const props = {
   data: {
@@ -61,11 +60,11 @@ const props = {
 };
 export default defineComponent({
   name: "Widget",
-  components: { ...graphs, ElPopover },
+  components: { ...graphs },
   props,
   setup(props) {
-    const { t } = useI18n();
-    const { loading } = Loading();
+    // const { t } = useI18n();
+    const loading = ref<boolean>(false);
     const state = reactive({
       source: {},
     });
@@ -74,13 +73,9 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     queryMetrics();
     async function queryMetrics() {
-      const loadingInstance = loading({
-        text: t("loading"),
-        fullscreen: false,
-      });
+      loading.value = true;
       const json = await dashboardStore.fetchMetricValue(props.data);
-
-      loadingInstance.close();
+      loading.value = false;
       if (!json) {
         return;
       }
@@ -113,6 +108,7 @@ export default defineComponent({
       removeWidget,
       editConfig,
       data,
+      loading,
     };
   },
 });

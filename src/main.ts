@@ -23,9 +23,11 @@ import i18n from "./locales";
 import "element-plus/dist/index.css";
 import "./styles/lib.scss";
 import "./styles/reset.scss";
+import ElementPlus from "element-plus";
 
 const app = createApp(App);
 
+app.use(ElementPlus);
 app.use(components);
 app.use(i18n);
 app.use(store);

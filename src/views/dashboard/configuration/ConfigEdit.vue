@@ -49,6 +49,7 @@ limitations under the License. -->
               placeholder="Select a metric"
               @change="changeValueType"
               class="selectors"
+              v-loading="loading"
             />
           </div>
         </el-collapse-item>
@@ -89,14 +90,13 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { reactive, defineComponent, toRefs } from "vue";
+import { reactive, defineComponent, toRefs, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { ElMessage, ElButton, ElCollapse, ElCollapseItem } from "element-plus";
 import { ValuesTypes, MetricQueryTypes, ChartTypes } from "../data";
 import { Option } from "@/types/app";
-import Loading from "@/utils/loading";
 import graphs from "../graphs";
 import configs from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
@@ -114,10 +114,10 @@ export default defineComponent({
     ElCollapseItem,
   },
   setup() {
+    const loading = ref<boolean>(false);
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
-    const { loading } = Loading();
     const { selectedGrid } = dashboardStore;
     const states = reactive<{
       metrics: string[];
@@ -161,9 +161,9 @@ export default defineComponent({
     }
 
     async function queryMetricType(metric: string) {
-      const loadingInstance = loading({ text: t("loading"), fullscreen: true });
+      loading.value = true;
       const resp = await dashboardStore.fetchMetricType(metric);
-      loadingInstance.close();
+      loading.value = false;
       if (resp.error) {
         ElMessage.error(resp.data.error);
         return;
@@ -212,7 +212,7 @@ export default defineComponent({
         return;
       }
       const metricVal = json.data.readMetricsValues.values.values.map(
-        (d: { value: number }, index: number) => d.value + index // todo
+        (d: { value: number }) => d.value
       );
       const m =
         dashboardStore.selectedGrid.metrics &&
@@ -263,6 +263,7 @@ export default defineComponent({
       configHeight,
       dashboardStore,
       applyConfig,
+      loading,
     };
   },
 });
