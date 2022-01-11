@@ -51,6 +51,7 @@ limitations under the License. -->
   </div>
   <div class="tab-layout">
     <grid-layout
+      v-if="state.layout.length"
       v-model:layout="state.layout"
       :col-num="24"
       :row-height="10"
@@ -72,6 +73,7 @@ limitations under the License. -->
         <Widget :data="item" :active="activeTabWidget === item.i" />
       </grid-item>
     </grid-layout>
+    <div class="no-data-tips" v-else>No widgets, plase add widgets</div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -242,5 +244,13 @@ watch(
 
 .vue-grid-item.active {
   border: 1px solid #409eff;
+}
+
+.no-data-tips {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  padding-top: 30px;
+  color: #888;
 }
 </style>

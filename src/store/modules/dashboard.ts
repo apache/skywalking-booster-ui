@@ -51,22 +51,12 @@ export const dashboardStore = defineStore({
         w: 24,
         h: 12,
         i: String(this.layout.length),
-        metrics: ["service_resp_time"],
-        queryMetricType: "readMetricsValues",
         type: "Widget",
         widget: {
-          title: "Title123",
-          tips: "Tooltip123",
+          title: "Title",
         },
-        graph: {
-          showBackground: true,
-          barWidth: 30,
-          type: "Line",
-        },
-        standard: {
-          sortOrder: "DEC",
-          unit: "s",
-        },
+        graph: {},
+        standard: {},
       };
       this.layout = this.layout.map((d: LayoutConfig) => {
         d.y = d.y + newWidget.h;
@@ -131,22 +121,12 @@ export const dashboardStore = defineStore({
         w: 24,
         h: 12,
         i: String(children.length),
-        metrics: ["service_resp_time"],
-        queryMetricType: "readMetricsValues",
         type: "Widget",
         widget: {
-          title: "Title123",
-          tips: "Tooltip123",
+          title: "Title",
         },
-        graph: {
-          showBackground: true,
-          barWidth: 30,
-          type: "Line",
-        },
-        standard: {
-          sortOrder: "DEC",
-          unit: "s",
-        },
+        graph: {},
+        standard: {},
       };
       if (this.layout[idx].children) {
         const items = children.map((d: LayoutConfig) => {

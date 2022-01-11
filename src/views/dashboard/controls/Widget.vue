@@ -32,13 +32,14 @@ limitations under the License. -->
         </div>
       </el-popover>
     </div>
-    <div class="body" v-loading="loading">
+    <div class="body" v-if="data.graph.type" v-loading="loading">
       <component
         :is="data.graph.type"
         :intervalTime="appStoreWithOut.intervalTime"
         :data="state.source"
       />
     </div>
+    <div v-else class="no-data">No data</div>
   </div>
 </template>
 <script lang="ts">
@@ -148,5 +149,13 @@ export default defineComponent({
   padding: 5px 10px;
   width: 100%;
   height: calc(100% - 30px);
+}
+
+.no-data {
+  font-size: 14px;
+  color: #888;
+  width: 100%;
+  text-align: center;
+  padding-top: 20px;
 }
 </style>
