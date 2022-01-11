@@ -29,13 +29,25 @@ interface DashboardState {
   layerId: string;
   activedGridItem: string;
 }
-
+const newControl: LayoutConfig = {
+  x: 0,
+  y: 0,
+  w: 24,
+  h: 12,
+  i: "0",
+  type: "Widget",
+  widget: {
+    title: "Title",
+  },
+  graph: {},
+  standard: {},
+};
 export const dashboardStore = defineStore({
   id: "dashboard",
   state: (): DashboardState => ({
     layout: [ConfigData],
     showConfig: false,
-    selectedGrid: ConfigData,
+    selectedGrid: null,
     entity: "",
     layerId: "",
     activedGridItem: "",
@@ -44,36 +56,15 @@ export const dashboardStore = defineStore({
     setLayout(data: LayoutConfig[]) {
       this.layout = data;
     },
-    addWidget() {
+    addControl(type: string) {
       const newWidget: LayoutConfig = {
-        x: 0,
-        y: 0,
-        w: 24,
-        h: 12,
+        ...newControl,
         i: String(this.layout.length),
-        type: "Widget",
-        widget: {
-          title: "Title",
-        },
-        graph: {},
-        standard: {},
+        type,
       };
-      this.layout = this.layout.map((d: LayoutConfig) => {
-        d.y = d.y + newWidget.h;
-        return d;
-      });
-      this.layout.push(newWidget);
-      this.activedGridItem = newWidget.i;
-    },
-    addTab() {
-      const newWidget: LayoutConfig = {
-        x: 0,
-        y: 0,
-        w: 24,
-        h: 20,
-        i: String(this.layout.length),
-        type: "Tab",
-        children: [
+      if (type === "Tab") {
+        newWidget.h = 24;
+        newWidget.children = [
           {
             name: "Tab1",
             children: [],
@@ -82,11 +73,8 @@ export const dashboardStore = defineStore({
             name: "Tab2",
             children: [],
           },
-        ],
-        widget: {},
-        graph: {},
-        standard: {},
-      };
+        ];
+      }
       this.layout = this.layout.map((d: LayoutConfig) => {
         d.y = d.y + newWidget.h;
         return d;
@@ -153,7 +141,7 @@ export const dashboardStore = defineStore({
       this.showConfig = show;
     },
     selectWidget(widget: Nullable<LayoutConfig>) {
-      this.selectedGrid = ConfigData || widget; //todo
+      this.selectedGrid = widget;
     },
     setLayer(id: string) {
       this.layerId = id;
@@ -176,9 +164,10 @@ export const dashboardStore = defineStore({
       return res.data;
     },
     async fetchMetricValue(config: LayoutConfig) {
-      if (!config.queryMetricType) {
-        return;
-      }
+      // if (!config.queryMetricType) {
+      //   return;
+      // }
+      config.queryMetricType = "readMetricsValues";
       const appStoreWithOut = useAppStoreWithOut();
       const variable = {
         condition: {

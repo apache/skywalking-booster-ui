@@ -25,10 +25,10 @@ limitations under the License. -->
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
         </template>
         <div class="tools" @click="editConfig">
-          <span>Edit</span>
+          <span>{{ t("edit") }}</span>
         </div>
         <div class="tools" @click="removeWidget">
-          <span>Delete</span>
+          <span>{{ t("delete") }}</span>
         </div>
       </el-popover>
     </div>
@@ -39,7 +39,7 @@ limitations under the License. -->
         :data="state.source"
       />
     </div>
-    <div v-else class="no-data">No data</div>
+    <div v-else class="no-data">{{ t("noData") }}</div>
   </div>
 </template>
 <script lang="ts">
@@ -50,7 +50,7 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import graphs from "../graphs";
 import { ElMessage } from "element-plus";
-// import { useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 
 const props = {
   data: {
@@ -64,7 +64,7 @@ export default defineComponent({
   components: { ...graphs },
   props,
   setup(props) {
-    // const { t } = useI18n();
+    const { t } = useI18n();
     const loading = ref<boolean>(false);
     const state = reactive({
       source: {},
@@ -110,6 +110,7 @@ export default defineComponent({
       editConfig,
       data,
       loading,
+      t,
     };
   },
 });

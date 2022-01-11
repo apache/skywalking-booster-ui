@@ -79,7 +79,6 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { reactive } from "vue";
 import { useRoute } from "vue-router";
-import { ElTooltip, ElCascader } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { Options, SelectOpts, EntityType, ToolIcons } from "../data";
 
@@ -113,17 +112,19 @@ function changeService(val: { value: string; label: string }) {
 function clickIcons(t: { id: string; content: string; name: string }) {
   switch (t.id) {
     case "addWidget":
-      dashboardStore.addWidget();
+      dashboardStore.addControl("Widget");
       break;
     case "addTab":
-      dashboardStore.addTab();
+      dashboardStore.addControl("Tab");
       break;
     case "addImage":
-      dashboardStore.addWidget();
+      dashboardStore.addControl("Image");
       break;
     case "settings":
       dashboardStore.setConfigPanel(true);
       break;
+    default:
+      dashboardStore.addControl("Widget");
   }
 }
 </script>

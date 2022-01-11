@@ -26,7 +26,6 @@ export const ChartTypes = [
   { label: "Endpoint List", value: "EndpointList" },
   { label: "Instance List", value: "InstanceList" },
   // { label: "Image", value: "Image" },
-  // { label: "Tab", value: "Tabs" },
 ];
 export enum MetricQueryTypes {
   ReadMetricsValue = "readMetricsValue",
@@ -123,7 +122,7 @@ export const SortOrder = [
 export const ToolIcons = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
-  { name: "insert_image", content: "Add Image", id: "addImage" },
+  // { name: "insert_image", content: "Add Image", id: "addImage" },
   { name: "save_alt", content: "Export", id: "export" },
   { name: "folder_open", content: "Import", id: "import" },
   { name: "settings", content: "Settings", id: "settings" },

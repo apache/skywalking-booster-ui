@@ -32,11 +32,7 @@ limitations under the License. -->
       @click="clickGrid(item)"
       :class="{ active: dashboardStore.activedGridItem === item.i }"
     >
-      <component
-        :is="item.type"
-        :data="item"
-        :active="dashboardStore.activedGridItem === item.i"
-      />
+      <component :is="item.type" :data="item" />
     </grid-item>
   </grid-layout>
 </template>
@@ -46,6 +42,7 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
 import Widget from "../controls/Widget.vue";
 import Tab from "../controls/Tab.vue";
+
 export default defineComponent({
   name: "Layout",
   components: { Widget, Tab },

@@ -37,12 +37,16 @@ limitations under the License. -->
         />
       </span>
       <span class="tab-icons">
-        <i @click="addTabItem">
-          <Icon size="middle" iconName="add" />
-        </i>
-        <i @click="addTabWidget">
-          <Icon size="middle" iconName="playlist_add" />
-        </i>
+        <el-tooltip effect="dark" content="Add tab items" placement="bottom">
+          <i @click="addTabItem">
+            <Icon size="middle" iconName="add" />
+          </i>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="Add widgets" placement="bottom">
+          <i @click="addTabWidget">
+            <Icon size="middle" iconName="playlist_add" />
+          </i>
+        </el-tooltip>
       </span>
     </div>
     <div class="operations">
@@ -73,7 +77,7 @@ limitations under the License. -->
         <Widget :data="item" :active="activeTabWidget === item.i" />
       </grid-item>
     </grid-layout>
-    <div class="no-data-tips" v-else>No widgets, plase add widgets</div>
+    <div class="no-data-tips" v-else>Please add widgets.</div>
   </div>
 </template>
 <script lang="ts" setup>

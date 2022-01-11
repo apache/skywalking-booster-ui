@@ -92,3 +92,9 @@ export function isElement(val: unknown): val is Element {
 export function isMap(val: unknown): val is Map<any, any> {
   return is(val, "Map");
 }
+export function isEmptyObject<T = unknown>(val: T): val is T {
+  if (isObject(val)) {
+    return Object.keys(val).length === 0;
+  }
+  return false;
+}

@@ -56,7 +56,6 @@ limitations under the License. -->
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import router from "@/router";
-import { ElInput, ElButton } from "element-plus";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EntityType, Options } from "./data";
 import uuid from "@/utils/uuid";

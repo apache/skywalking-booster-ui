@@ -18,22 +18,22 @@ limitations under the License. -->
       <div class="header">{{ title }}</div>
       <div class="render-chart">
         <component
-          :is="chartType"
+          :is="states.chartType"
           :intervalTime="appStoreWithOut.intervalTime"
-          :data="source"
+          :data="states.source"
         />
+        <div v-show="!states.chartType" class="no-data">{{ t("noData") }}</div>
       </div>
-      <span v-show="!source">{{ t("noData") }}</span>
     </div>
     <div class="collapse" :style="{ height: configHeight + 'px' }">
       <el-collapse
-        v-model="activeNames"
+        v-model="states.activeNames"
         :style="{ '--el-collapse-header-font-size': '15px' }"
       >
         <el-collapse-item :title="t('metricName')" name="1">
           <div>
             <Selector
-              :value="metrics"
+              :value="states.metrics"
               :options="metricOpts"
               :multiple="true"
               size="mini"
@@ -42,9 +42,9 @@ limitations under the License. -->
               class="selectors"
             />
             <Selector
-              v-if="valueType"
-              :value="valueType"
-              :options="valueTypes"
+              v-if="states.valueType"
+              :value="states.valueType"
+              :options="states.valueTypes"
               size="mini"
               placeholder="Select a metric"
               @change="changeValueType"
@@ -59,7 +59,7 @@ limitations under the License. -->
               v-for="(type, index) in ChartTypes"
               :key="index"
               @click="changeChartType(type)"
-              :class="{ active: type.value === chartType }"
+              :class="{ active: type.value === states.chartType }"
             >
               {{ type.label }}
             </span>
@@ -67,7 +67,7 @@ limitations under the License. -->
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="3">
           <component
-            :is="`${chartType}Config`"
+            :is="`${states.chartType}Config`"
             :config="dashboardStore.selectedGrid.graph"
           />
         </el-collapse-item>
@@ -94,13 +94,14 @@ import { reactive, defineComponent, toRefs, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { ElMessage, ElButton, ElCollapse, ElCollapseItem } from "element-plus";
+import { ElMessage } from "element-plus";
 import { ValuesTypes, MetricQueryTypes, ChartTypes } from "../data";
 import { Option } from "@/types/app";
 import graphs from "../graphs";
 import configs from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
 import StandardOptions from "./StandardOptions.vue";
+import { isEmptyObject } from "@/utils/is";
 
 export default defineComponent({
   name: "ConfigEdit",
@@ -109,9 +110,6 @@ export default defineComponent({
     ...configs,
     WidgetOptions,
     StandardOptions,
-    ElButton,
-    ElCollapse,
-    ElCollapseItem,
   },
   setup() {
     const loading = ref<boolean>(false);
@@ -148,7 +146,9 @@ export default defineComponent({
       tips: selectedGrid.widget.tips,
       title: selectedGrid.widget.title,
     });
-    queryMetricType(states.metrics[0]);
+    if (states.metrics[0]) {
+      queryMetricType(states.metrics[0]);
+    }
 
     async function changeMetrics(arr: Option[]) {
       if (!arr.length) {
@@ -157,7 +157,9 @@ export default defineComponent({
         return;
       }
       states.metrics = arr.map((d: Option) => String(d.value));
-      queryMetricType(String(arr[0].value));
+      if (arr[0].value) {
+        queryMetricType(String(arr[0].value));
+      }
     }
 
     async function queryMetricType(metric: string) {
@@ -171,11 +173,13 @@ export default defineComponent({
       const { typeOfMetrics } = resp.data;
       states.valueTypes = ValuesTypes[typeOfMetrics];
       states.valueType = ValuesTypes[typeOfMetrics][0].value;
+      queryMetrics();
     }
 
     function changeValueType(val: Option[]) {
       states.valueType = String(val[0].value);
       states.metricQueryType = (MetricQueryTypes as any)[states.valueType];
+      queryMetrics();
     }
 
     function changeChartType(item: Option) {
@@ -207,6 +211,9 @@ export default defineComponent({
       const json = await dashboardStore.fetchMetricValue(
         dashboardStore.selectedGrid
       );
+      if (!json) {
+        return;
+      }
 
       if (json.error) {
         return;
@@ -214,9 +221,7 @@ export default defineComponent({
       const metricVal = json.data.readMetricsValues.values.values.map(
         (d: { value: number }) => d.value
       );
-      const m =
-        dashboardStore.selectedGrid.metrics &&
-        dashboardStore.selectedGrid.metrics[0];
+      const m = states.metrics[0];
       if (!m) {
         return;
       }
@@ -251,7 +256,7 @@ export default defineComponent({
 
     return {
       ...toRefs(widgetOpt),
-      ...toRefs(states),
+      states,
       changeChartType,
       changeValueType,
       changeMetrics,
@@ -323,6 +328,12 @@ export default defineComponent({
   span:nth-last-child(1) {
     border-right: 1px solid #ccc;
   }
+}
+
+.no-data {
+  font-size: 14px;
+  text-align: center;
+  line-height: 350px;
 }
 
 span.active {

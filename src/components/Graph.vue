@@ -28,6 +28,7 @@ import {
 import type { PropType } from "vue";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
+
 /*global Nullable*/
 const chartRef = ref<Nullable<HTMLDivElement>>(null);
 const { setOptions, resize } = useECharts(chartRef as Ref<HTMLDivElement>);
@@ -45,7 +46,7 @@ onMounted(() => {
   if (!chartRef.value) {
     return;
   }
-  window.addEventListener("resize", resize);
+  setOptions(props.option);
   addResizeListener(unref(chartRef), resize);
 });
 
@@ -60,7 +61,6 @@ onBeforeUnmount(() => {
   if (!chartRef.value) {
     return;
   }
-  window.removeEventListener("resize", resize);
   removeResizeListener(unref(chartRef), resize);
 });
 </script>
