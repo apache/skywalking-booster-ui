@@ -24,7 +24,7 @@ limitations under the License. -->
         <template #reference>
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
         </template>
-        <div class="tools" @click="setConfig">
+        <div class="tools" @click="editConfig">
           <span>Edit</span>
         </div>
         <div class="tools" @click="removeWidget">
@@ -104,7 +104,7 @@ export default defineComponent({
     function removeWidget() {
       dashboardStore.removeControls(props.data);
     }
-    function setConfig() {
+    function editConfig() {
       dashboardStore.setConfigPanel(true);
       dashboardStore.selectWidget(props.data);
     }
@@ -112,7 +112,7 @@ export default defineComponent({
       state,
       appStoreWithOut,
       removeWidget,
-      setConfig,
+      editConfig,
       data,
     };
   },

@@ -16,13 +16,12 @@ limitations under the License. -->
   <div ref="chartRef" :style="`height:${height};width:${width};`"></div>
 </template>
 <script lang="ts" setup>
-import { watch, ref, defineProps, Ref } from "vue";
+import { watch, ref, defineProps, Ref, onMounted, onBeforeUnmount } from "vue";
 import type { PropType } from "vue";
-import { useECharts } from "@/hooks/useECharts";
+import { useECharts } from "@/hooks/useEcharts";
 /*global Nullable*/
 const chartRef = ref<Nullable<HTMLDivElement>>(null);
-const { setOptions } = useECharts(chartRef as Ref<HTMLDivElement>);
-
+const { setOptions, resize } = useECharts(chartRef as Ref<HTMLDivElement>);
 const props = defineProps({
   clickEvent: { type: Function as PropType<(param: unknown) => void> },
   height: { type: String, default: "100%" },
@@ -33,10 +32,24 @@ const props = defineProps({
   },
 });
 
+onMounted(() => {
+  if (!chartRef.value) {
+    return;
+  }
+  window.addEventListener("resize", resize);
+});
+
 watch(
   () => props.option,
   (opt) => {
     setOptions(opt);
   }
 );
+
+onBeforeUnmount(() => {
+  if (!chartRef.value) {
+    return;
+  }
+  window.removeEventListener("resize", resize);
+});
 </script>

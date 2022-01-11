@@ -16,7 +16,7 @@ limitations under the License. -->
   <Graph :option="option" />
 </template>
 <script lang="ts" setup>
-import { defineProps, ref, computed } from "vue";
+import { defineProps, computed } from "vue";
 import type { PropType } from "vue";
 import { Event } from "@/types/events";
 
