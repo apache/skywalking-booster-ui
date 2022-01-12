@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="widget-config flex-v">
     <div class="graph">
-      <div class="header">{{ title }}</div>
+      <div class="header">{{ states.widget.title }}</div>
       <div class="render-chart">
         <component
           :is="states.chartType"
@@ -66,13 +66,13 @@ limitations under the License. -->
           </div>
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="3">
-          <component
-            :is="`${states.chartType}Config`"
-            :config="dashboardStore.selectedGrid.graph"
-          />
+          <component :is="`${states.chartType}Config`" :config="states.graph" />
         </el-collapse-item>
         <el-collapse-item :title="t('widgetOptions')" name="4">
-          <WidgetOptions @update="updateWidgetOptions" />
+          <WidgetOptions
+            :config="states.widget"
+            @update="updateWidgetOptions"
+          />
         </el-collapse-item>
         <el-collapse-item :title="t('standardOptions')" name="5">
           <StandardOptions />
@@ -90,13 +90,19 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { reactive, defineComponent, toRefs, ref } from "vue";
+import { reactive, defineComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { ElMessage } from "element-plus";
-import { ValuesTypes, MetricQueryTypes, ChartTypes } from "../data";
+import {
+  ValuesTypes,
+  MetricQueryTypes,
+  ChartTypes,
+  DefaultGraphConfig,
+} from "../data";
 import { Option } from "@/types/app";
+import { WidgetConfig, GraphConfig } from "@/types/dashboard";
 import graphs from "../graphs";
 import configs from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
@@ -125,6 +131,8 @@ export default defineComponent({
       activeNames: string;
       source: any;
       index: string;
+      graph: GraphConfig;
+      widget: WidgetConfig | any;
     }>({
       metrics: selectedGrid.metrics || [],
       valueTypes: [],
@@ -134,16 +142,11 @@ export default defineComponent({
       activeNames: "1",
       source: {},
       index: selectedGrid.i,
-    });
-    const widgetOpt = reactive<
-      | {
-          title: string;
-          tips: string;
-        }
-      | any
-    >({
-      tips: selectedGrid.widget.tips,
-      title: selectedGrid.widget.title,
+      graph: {},
+      widget: {
+        tips: selectedGrid.widget.tips,
+        title: selectedGrid.widget.title,
+      },
     });
     if (states.metrics[0]) {
       queryMetricType(states.metrics[0]);
@@ -183,6 +186,9 @@ export default defineComponent({
 
     function changeChartType(item: Option) {
       states.chartType = String(item.value);
+      states.graph = {
+        ...DefaultGraphConfig[item.value],
+      };
     }
 
     const metricOpts = [
@@ -200,10 +206,10 @@ export default defineComponent({
     const configHeight = document.documentElement.clientHeight - 520;
 
     function updateWidgetOptions(param: { label: string; value: string }) {
-      if (widgetOpt[param.label] === undefined) {
+      if (states.widget[param.label] === undefined) {
         return;
       }
-      widgetOpt[param.label] = param.value;
+      states.widget[param.label] = param.value;
     }
 
     async function queryMetrics() {
@@ -239,8 +245,8 @@ export default defineComponent({
         chart: states.chartType,
         widget: {
           ...dashboardStore.selectedGrid.widget,
-          title: widgetOpt.title,
-          tips: widgetOpt.tips,
+          title: states.widget.title,
+          tips: states.widget.tips,
         },
         graph: {
           ...dashboardStore.selectedGrid.graph,
@@ -254,7 +260,6 @@ export default defineComponent({
     }
 
     return {
-      ...toRefs(widgetOpt),
       states,
       changeChartType,
       changeValueType,

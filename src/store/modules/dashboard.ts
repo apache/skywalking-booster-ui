@@ -19,8 +19,9 @@ import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
 import graph from "@/graph";
 import { AxiosResponse } from "axios";
-import { ConfigData } from "./data";
+import { ConfigData } from "../data";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { NewControl } from "../data";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -29,19 +30,7 @@ interface DashboardState {
   layerId: string;
   activedGridItem: string;
 }
-const newControl: LayoutConfig = {
-  x: 0,
-  y: 0,
-  w: 24,
-  h: 12,
-  i: "0",
-  type: "Widget",
-  widget: {
-    title: "Title",
-  },
-  graph: {},
-  standard: {},
-};
+
 export const dashboardStore = defineStore({
   id: "dashboard",
   state: (): DashboardState => ({
@@ -58,7 +47,7 @@ export const dashboardStore = defineStore({
     },
     addControl(type: string) {
       const newWidget: LayoutConfig = {
-        ...newControl,
+        ...NewControl,
         i: String(this.layout.length),
         type,
       };

@@ -27,6 +27,24 @@ export const ChartTypes = [
   { label: "Instance List", value: "InstanceList" },
   // { label: "Image", value: "Image" },
 ];
+export const DefaultGraphConfig: { [key: string]: any } = {
+  Bar: {
+    type: "Bar",
+    showBackground: true,
+    barWidth: 30,
+  },
+  Line: {
+    type: "Line",
+    showBackground: true,
+    barWidth: 30,
+  },
+  Area: {
+    type: "Area",
+    showBackground: true,
+    barWidth: 30,
+  },
+};
+
 export enum MetricQueryTypes {
   ReadMetricsValue = "readMetricsValue",
   ReadMetricsValues = "readMetricsValues",

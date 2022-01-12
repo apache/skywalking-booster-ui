@@ -106,7 +106,6 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ElInput } from "element-plus";
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { SortOrder } from "../data";

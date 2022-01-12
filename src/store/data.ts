@@ -14,6 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export const NewControl = {
+  x: 0,
+  y: 0,
+  w: 24,
+  h: 12,
+  i: "0",
+  type: "Widget",
+  widget: {
+    title: "Title",
+  },
+  graph: {},
+  standard: {},
+};
 export const ConfigData = {
   x: 0,
   y: 0,
@@ -24,8 +37,8 @@ export const ConfigData = {
   queryMetricType: "readMetricsValues",
   type: "Widget",
   widget: {
-    title: "Title123",
-    tips: "Tooltip123",
+    title: "Title",
+    tips: "Tooltip",
   },
   graph: {
     showBackground: true,
@@ -34,7 +47,7 @@ export const ConfigData = {
   },
   standard: {
     sortOrder: "DEC",
-    unit: "s",
+    unit: "min",
   },
   children: [],
 };

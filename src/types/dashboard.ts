@@ -30,14 +30,8 @@ export interface LayoutConfig {
 }
 
 export interface WidgetConfig {
-  title?: string;
-  tips?: string;
-}
-
-export interface GraphConfig {
-  type?: string;
-  showBackground?: boolean;
-  barWidth?: number;
+  title: string;
+  tips: string;
 }
 
 export interface StandardConfig {
@@ -45,4 +39,16 @@ export interface StandardConfig {
   unit?: string;
   max?: string;
   min?: string;
+}
+
+export type GraphConfig = BarConfig | LineConfig;
+interface BarConfig {
+  type?: string;
+  showBackground?: boolean;
+  barWidth?: number;
+}
+interface LineConfig {
+  type?: string;
+  showBackground?: boolean;
+  barWidth?: number;
 }

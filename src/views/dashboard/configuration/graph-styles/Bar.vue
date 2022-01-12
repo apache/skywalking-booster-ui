@@ -24,18 +24,13 @@ limitations under the License. -->
   </div>
   <div>
     <span class="label">Show Background</span>
-    <el-switch
-      v-model="showBackground"
-      active-text="Yes"
-      inactive-text="No"
-    ></el-switch>
+    <el-switch v-model="showBackground" active-text="Yes" inactive-text="No" />
   </div>
 </template>
 <script lang="ts" setup>
 import { defineProps, ref } from "vue";
 import type { PropType } from "vue";
 import { BarConfig } from "./types";
-import { ElSlider, ElSwitch } from "element-plus";
 
 const props = defineProps({
   config: {

@@ -20,6 +20,7 @@ limitations under the License. -->
       v-model="dashboardStore.showConfig"
       title="Edit Graph Options"
       fullscreen
+      :destroy-on-close="true"
       @closed="dashboardStore.setConfigPanel(false)"
     >
       <widget-config />

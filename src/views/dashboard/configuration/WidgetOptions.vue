@@ -35,10 +35,15 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ElInput } from "element-plus";
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits, defineProps } from "vue";
 import { useI18n } from "vue-i18n";
 
+defineProps({
+  config: {
+    type: Object,
+    default: () => ({ title: "", tooltips: "" }),
+  },
+});
 const emits = defineEmits(["update"]);
 const { t } = useI18n();
 const title = ref<string>("");
