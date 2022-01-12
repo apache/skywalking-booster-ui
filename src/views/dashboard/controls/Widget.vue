@@ -54,7 +54,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { toRefs, reactive, defineComponent, ref } from "vue";
+import { toRefs, reactive, defineComponent, ref, watch } from "vue";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -114,12 +114,15 @@ export default defineComponent({
       dashboardStore.setConfigPanel(true);
       dashboardStore.selectWidget(props.data);
     }
-    // watch(
-    //   () => data.value,
-    //   (data) => {
-    //     console.log(data);
-    //   }
-    // );
+    watch(
+      () => [props.data.queryMetricType, props.data.metrics],
+      (data, old) => {
+        if (data[0] === old[0] && data[1] === old[1]) {
+          return;
+        }
+        queryMetrics();
+      }
+    );
     return {
       state,
       appStoreWithOut,
