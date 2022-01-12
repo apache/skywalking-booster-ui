@@ -144,6 +144,7 @@ export const dashboardStore = defineStore({
         ...this.layout[index],
         ...param,
       };
+      this.selectedGrid = this.layout[index];
     },
     async fetchMetricType(item: string) {
       const res: AxiosResponse = await graph

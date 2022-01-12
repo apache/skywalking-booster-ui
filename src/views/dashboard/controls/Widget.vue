@@ -15,10 +15,15 @@ limitations under the License. -->
 <template>
   <div class="widget">
     <div class="header flex-h">
-      <div>{{ data.widget.title || "" }}</div>
+      <div>{{ data.widget?.title || "" }}</div>
       <div>
-        <el-tooltip :content="data.widget.tips">
-          <Icon iconName="info_outline" size="sm" class="operation" />
+        <el-tooltip :content="data.widget?.tips">
+          <Icon
+            iconName="info_outline"
+            size="sm"
+            class="operation"
+            v-show="data.widget?.tips"
+          />
         </el-tooltip>
         <el-popover
           placement="bottom"
@@ -37,11 +42,12 @@ limitations under the License. -->
         </el-popover>
       </div>
     </div>
-    <div class="body" v-if="data.graph.type" v-loading="loading">
+    <div class="body" v-if="data.graph?.type" v-loading="loading">
       <component
         :is="data.graph.type"
         :intervalTime="appStoreWithOut.intervalTime"
         :data="state.source"
+        :config="data.graph"
       />
     </div>
     <div v-else class="no-data">{{ t("noData") }}</div>
@@ -108,6 +114,12 @@ export default defineComponent({
       dashboardStore.setConfigPanel(true);
       dashboardStore.selectWidget(props.data);
     }
+    // watch(
+    //   () => data.value,
+    //   (data) => {
+    //     console.log(data);
+    //   }
+    // );
     return {
       state,
       appStoreWithOut,

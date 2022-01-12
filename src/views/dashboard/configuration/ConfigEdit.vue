@@ -17,7 +17,7 @@ limitations under the License. -->
     <div class="graph">
       <div class="header">
         <span>{{ states.widget.title }}</span>
-        <div class="tips">
+        <div class="tips" v-show="states.widget.tips">
           <el-tooltip :content="states.widget.tips">
             <Icon iconName="info_outline" size="sm" />
           </el-tooltip>

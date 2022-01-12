@@ -20,9 +20,9 @@ export interface LayoutConfig {
   w: number;
   h: number;
   i: string;
-  widget: WidgetConfig;
-  graph: GraphConfig;
-  standard: StandardConfig;
+  widget?: WidgetConfig;
+  graph?: GraphConfig;
+  standard?: StandardConfig;
   metrics?: string[];
   type?: string;
   queryMetricType?: string;
@@ -30,8 +30,8 @@ export interface LayoutConfig {
 }
 
 export interface WidgetConfig {
-  title: string;
-  tips: string;
+  title?: string;
+  tips?: string;
 }
 
 export interface StandardConfig {
@@ -39,19 +39,18 @@ export interface StandardConfig {
   unit?: string;
   max?: string;
   min?: string;
-  plus: string;
-  minus: string;
-  multiply: string;
-  divide: string;
-  milliseconds: string;
-  seconds: string;
+  plus?: string;
+  minus?: string;
+  multiply?: string;
+  divide?: string;
+  milliseconds?: string;
+  seconds?: string;
 }
 
 export type GraphConfig = BarConfig | LineConfig;
 export interface BarConfig {
   type?: string;
   showBackground?: boolean;
-  barWidth?: number;
 }
 export interface LineConfig extends AreaConfig {
   type?: string;

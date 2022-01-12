@@ -30,7 +30,6 @@ export const DefaultGraphConfig: { [key: string]: any } = {
   Bar: {
     type: "Bar",
     showBackground: true,
-    barWidth: 30,
   },
   Line: {
     type: "Line",

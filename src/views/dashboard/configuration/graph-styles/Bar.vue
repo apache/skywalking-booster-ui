@@ -14,16 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">Bar Width</span>
-    <el-slider
-      class="bar-width"
-      v-model="barWidth"
-      show-input
-      input-size="small"
-      @change="changeConfig({ barWidth })"
-    />
-  </div>
-  <div>
     <span class="label">Show Background</span>
     <el-switch
       v-model="showBackground"
@@ -45,7 +35,6 @@ const props = defineProps({
   },
 });
 const emits = defineEmits(["update"]);
-const barWidth = ref(props.config.barWidth || 30);
 const showBackground = ref(props.config.showBackground || false);
 
 function changeConfig(param: { [key: string]: unknown }) {

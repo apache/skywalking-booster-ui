@@ -75,7 +75,6 @@ function getOption() {
       name: i,
       type: "bar",
       symbol: "none",
-      barWidth: props.config.barWidth,
       stack: "sum",
       lineStyle: {
         width: 1.5,

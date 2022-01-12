@@ -27,7 +27,7 @@ export const NewControl = {
   graph: {},
   standard: {},
 };
-export const ConfigData = {
+export const ConfigData: any = {
   x: 0,
   y: 0,
   w: 8,
@@ -41,8 +41,6 @@ export const ConfigData = {
     tips: "Tooltip",
   },
   graph: {
-    showBackground: true,
-    barWidth: 30,
     type: "Line",
   },
   standard: {

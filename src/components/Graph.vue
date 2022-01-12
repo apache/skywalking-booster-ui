@@ -43,9 +43,6 @@ const props = defineProps({
 });
 
 onMounted(() => {
-  if (!chartRef.value) {
-    return;
-  }
   setOptions(props.option);
   addResizeListener(unref(chartRef), resize);
 });
@@ -58,9 +55,6 @@ watch(
 );
 
 onBeforeUnmount(() => {
-  if (!chartRef.value) {
-    return;
-  }
   removeResizeListener(unref(chartRef), resize);
 });
 </script>

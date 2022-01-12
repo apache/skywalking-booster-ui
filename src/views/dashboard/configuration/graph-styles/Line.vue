@@ -49,7 +49,7 @@ import { LineConfig } from "@/types/dashboard";
 const props = defineProps({
   config: {
     type: Object as PropType<LineConfig>,
-    default: () => ({ showBackground: true, barWidth: 30 }),
+    default: () => ({}),
   },
 });
 const emits = defineEmits(["update"]);
