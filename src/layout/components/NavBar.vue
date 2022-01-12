@@ -18,10 +18,10 @@ limitations under the License. -->
     <div class="app-config">
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
       <TimePicker
-        v-model="time"
         :value="time"
         position="bottom"
         format="YYYY-MM-DD HH:mm"
+        @input="changeTimeRange"
       />
       <span>
         UTC{{ utcHour >= 0 ? "+" : ""
@@ -62,19 +62,18 @@ const setConfig = (value: string) => {
   pageName.value = value || "";
   theme.value = route.path.includes("/infrastructure/") ? "dark" : "light";
 };
-const time = computed({
-  get() {
-    return [appStore.durationRow.start, appStore.durationRow.end];
-  },
-  set(val: Date[]) {
-    timeRange.value =
-      val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
-    if (timeRange.value) {
-      return;
-    }
-    appStore.setDuration(timeFormat(val));
-  },
-});
+const time = computed(() => [
+  appStore.durationRow.start,
+  appStore.durationRow.end,
+]);
+function changeTimeRange(val: Date[]) {
+  timeRange.value =
+    val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
+  if (timeRange.value) {
+    return;
+  }
+  appStore.setDuration(timeFormat(val));
+}
 setConfig(String(route.meta.title));
 watch(
   () => route.meta.title,
@@ -93,17 +92,20 @@ watch(
   color: #222;
   font-size: 12px;
 }
+
 .nav-bar.dark {
   background-color: #333840;
   border-bottom: 1px solid #252a2f;
   color: #fafbfc;
 }
+
 .title {
   font-size: 14px;
   font-weight: 500;
   height: 28px;
   line-height: 28px;
 }
+
 .nav-tabs {
   padding: 10px;
 }

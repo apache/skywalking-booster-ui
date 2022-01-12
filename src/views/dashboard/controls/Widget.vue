@@ -16,21 +16,26 @@ limitations under the License. -->
   <div class="widget">
     <div class="header flex-h">
       <div>{{ data.widget.title || "" }}</div>
-      <el-popover
-        placement="bottom"
-        trigger="click"
-        :style="{ width: '100px' }"
-      >
-        <template #reference>
-          <Icon iconName="ellipsis_v" size="middle" class="operation" />
-        </template>
-        <div class="tools" @click="editConfig">
-          <span>{{ t("edit") }}</span>
-        </div>
-        <div class="tools" @click="removeWidget">
-          <span>{{ t("delete") }}</span>
-        </div>
-      </el-popover>
+      <div>
+        <el-tooltip :content="data.widget.tips">
+          <Icon iconName="info_outline" size="sm" class="operation" />
+        </el-tooltip>
+        <el-popover
+          placement="bottom"
+          trigger="click"
+          :style="{ width: '100px' }"
+        >
+          <template #reference>
+            <Icon iconName="ellipsis_v" size="middle" class="operation" />
+          </template>
+          <div class="tools" @click="editConfig">
+            <span>{{ t("edit") }}</span>
+          </div>
+          <div class="tools" @click="removeWidget">
+            <span>{{ t("delete") }}</span>
+          </div>
+        </el-popover>
+      </div>
     </div>
     <div class="body" v-if="data.graph.type" v-loading="loading">
       <component

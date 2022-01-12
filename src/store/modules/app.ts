@@ -98,6 +98,7 @@ export const appStore = defineStore({
   actions: {
     setDuration(data: Duration): void {
       this.durationRow = data;
+      localStorage.setItem("durationRow", JSON.stringify(data, null, 0));
       if ((window as any).axiosCancel.length !== 0) {
         for (const event of (window as any).axiosCancel) {
           setTimeout(event(), 0);
