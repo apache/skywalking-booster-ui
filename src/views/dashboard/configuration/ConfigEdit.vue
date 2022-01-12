@@ -25,12 +25,12 @@ limitations under the License. -->
       </div>
       <div class="render-chart">
         <component
-          :is="states.chartType"
+          :is="states.graph.type"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
           :config="states.graph"
         />
-        <div v-show="!states.chartType" class="no-data">{{ t("noData") }}</div>
+        <div v-show="!states.graph.type" class="no-data">{{ t("noData") }}</div>
       </div>
     </div>
     <div class="collapse" :style="{ height: configHeight + 'px' }">
@@ -67,7 +67,7 @@ limitations under the License. -->
               v-for="(type, index) in ChartTypes"
               :key="index"
               @click="changeChartType(type)"
-              :class="{ active: type.value === states.chartType }"
+              :class="{ active: type.value === states.graph.type }"
             >
               {{ type.label }}
             </span>
@@ -75,7 +75,7 @@ limitations under the License. -->
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="3">
           <component
-            :is="`${states.chartType}Config`"
+            :is="`${states.graph.type}Config`"
             :config="states.graph"
             @update="updateGraphOptions"
           />
@@ -142,7 +142,6 @@ export default defineComponent({
       valueTypes: Option[];
       valueType: string;
       metricQueryType: string;
-      chartType: string;
       activeNames: string;
       source: any;
       index: string;
@@ -154,11 +153,10 @@ export default defineComponent({
       valueTypes: [],
       valueType: "",
       metricQueryType: "",
-      chartType: selectedGrid.graph.type,
       activeNames: "1",
       source: {},
       index: selectedGrid.i,
-      graph: {},
+      graph: selectedGrid.graph,
       widget: selectedGrid.widget,
       standard: selectedGrid.standard,
     });
@@ -199,7 +197,6 @@ export default defineComponent({
     }
 
     function changeChartType(item: Option) {
-      states.chartType = String(item.value);
       states.graph = {
         ...DefaultGraphConfig[item.value],
       };
@@ -270,18 +267,9 @@ export default defineComponent({
         ...dashboardStore.selectedGrid,
         metrics: states.metrics,
         queryMetricType: states.valueType,
-        chart: states.chartType,
-        widget: {
-          ...dashboardStore.selectedGrid.widget,
-          title: states.widget.title,
-          tips: states.widget.tips,
-        },
-        graph: {
-          ...dashboardStore.selectedGrid.graph,
-        },
-        standard: {
-          ...dashboardStore.selectedGrid.standard,
-        },
+        widget: states.widget,
+        graph: states.graph,
+        standard: states.standard,
       };
       dashboardStore.setConfigs(opts);
       dashboardStore.setConfigPanel(false);
