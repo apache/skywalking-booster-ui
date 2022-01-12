@@ -41,14 +41,20 @@ export interface StandardConfig {
   min?: string;
 }
 
-export type GraphConfig = BarConfig | LineConfig;
-interface BarConfig {
+type GraphConfig = BarConfig | LineConfig;
+export interface BarConfig {
   type?: string;
   showBackground?: boolean;
   barWidth?: number;
 }
-interface LineConfig {
+export interface LineConfig extends AreaConfig {
   type?: string;
-  showBackground?: boolean;
-  barWidth?: number;
+  smooth?: boolean;
+  showSymbol?: boolean;
+  step?: boolean;
+}
+
+export interface AreaConfig {
+  type?: string;
+  opacity?: number;
 }

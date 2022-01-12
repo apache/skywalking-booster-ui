@@ -20,17 +20,23 @@ limitations under the License. -->
       v-model="barWidth"
       show-input
       input-size="small"
+      @change="changeConfig({ barWidth })"
     />
   </div>
   <div>
     <span class="label">Show Background</span>
-    <el-switch v-model="showBackground" active-text="Yes" inactive-text="No" />
+    <el-switch
+      v-model="showBackground"
+      active-text="Yes"
+      inactive-text="No"
+      @change="changeConfig({ showBackground })"
+    />
   </div>
 </template>
 <script lang="ts" setup>
-import { defineProps, ref } from "vue";
+import { defineProps, ref, defineEmits } from "vue";
 import type { PropType } from "vue";
-import { BarConfig } from "./types";
+import { BarConfig } from "@/types/dashboard";
 
 const props = defineProps({
   config: {
@@ -38,8 +44,13 @@ const props = defineProps({
     default: () => ({ showBackground: true, barWidth: 30 }),
   },
 });
-const barWidth = ref(props.config.barWidth);
-const showBackground = ref(props.config.showBackground);
+const emits = defineEmits(["update"]);
+const barWidth = ref(props.config.barWidth || 30);
+const showBackground = ref(props.config.showBackground || false);
+
+function changeConfig(param: { [key: string]: unknown }) {
+  emits("update", param);
+}
 </script>
 <style lang="scss" scoped>
 .bar-width {

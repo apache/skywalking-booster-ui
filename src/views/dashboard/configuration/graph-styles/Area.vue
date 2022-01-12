@@ -14,32 +14,36 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">Bar Width</span>
+    <span class="label">Area Opacity</span>
     <el-slider
       class="bar-width"
-      v-model="barWidth"
+      v-model="opacity"
       show-input
       input-size="small"
+      :min="0.1"
+      :max="1"
+      :step="0.1"
+      @change="updateConfig({ opacity })"
     />
-  </div>
-  <div>
-    <span class="label">Show Background</span>
-    <el-switch v-model="showBackground" active-text="Yes" inactive-text="No" />
   </div>
 </template>
 <script lang="ts" setup>
-import { defineProps, ref } from "vue";
+import { defineProps, ref, defineEmits } from "vue";
 import type { PropType } from "vue";
-import { BarConfig } from "./types";
+import { AreaConfig } from "@/types/dashboard";
 
 const props = defineProps({
   config: {
-    type: Object as PropType<BarConfig>,
-    default: () => ({ showBackground: true, barWidth: 30 }),
+    type: Object as PropType<AreaConfig>,
+    default: () => ({ opacity: 0.4 }),
   },
 });
-const barWidth = ref(props.config.barWidth);
-const showBackground = ref(props.config.showBackground);
+const emits = defineEmits(["update"]);
+const opacity = ref(props.config.opacity);
+
+function updateConfig(param: { [key: string]: unknown }) {
+  emits("update", param);
+}
 </script>
 <style lang="scss" scoped>
 .bar-width {

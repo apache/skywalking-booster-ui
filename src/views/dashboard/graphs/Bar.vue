@@ -19,6 +19,7 @@ limitations under the License. -->
 import { defineProps, computed } from "vue";
 import type { PropType } from "vue";
 import { Event } from "@/types/events";
+import { BarConfig } from "@/types/dashboard";
 
 const props = defineProps({
   data: {
@@ -29,12 +30,8 @@ const props = defineProps({
   theme: { type: String, default: "light" },
   itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
   config: {
-    type: Object as PropType<{
-      theme: string;
-      showBackground: boolean;
-      barWidth: number;
-    }>,
-    default: () => ({ theme: "light", showBackground: true, barWidth: 20 }),
+    type: Object as PropType<BarConfig>,
+    default: () => ({}),
   },
 });
 const option = computed(() => getOption());
@@ -156,7 +153,7 @@ function getOption() {
       left: 0,
       itemWidth: 12,
       textStyle: {
-        color: props.config.theme === "dark" ? "#fff" : "#333",
+        color: "#333",
       },
     },
     grid: {

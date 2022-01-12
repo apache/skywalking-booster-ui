@@ -19,16 +19,25 @@ limitations under the License. -->
 import { defineProps, computed } from "vue";
 import type { PropType } from "vue";
 import { Event } from "@/types/events";
+import { LineConfig } from "@/types/dashboard";
 
 const props = defineProps({
   data: {
     type: Object as PropType<{ [key: string]: number[] }>,
     default: () => ({}),
   },
-  type: { type: String, default: "" },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   theme: { type: String, default: "light" },
   itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
+  config: {
+    type: Object as PropType<LineConfig>,
+    default: () => ({
+      step: false,
+      smooth: false,
+      showSymbol: false,
+      opacity: 0.4,
+    }),
+  },
 });
 const option = computed(() => getOption());
 function getOption() {
@@ -68,6 +77,9 @@ function getOption() {
       type: "line",
       symbol: "none",
       barMaxWidth: 10,
+      step: props.config.step,
+      smooth: props.config.smooth,
+      showSymbol: true,
       lineStyle: {
         width: 1.5,
         type: "solid",
@@ -90,9 +102,9 @@ function getOption() {
             }
           : undefined,
     };
-    if (props.type === "areaChart") {
+    if (props.config.type === "Area") {
       serie.areaStyle = {
-        opacity: 0.4,
+        opacity: props.config.opacity || 0.4,
       };
     }
     return serie;

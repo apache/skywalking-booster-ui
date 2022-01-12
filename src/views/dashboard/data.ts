@@ -35,13 +35,13 @@ export const DefaultGraphConfig: { [key: string]: any } = {
   },
   Line: {
     type: "Line",
-    showBackground: true,
-    barWidth: 30,
+    step: false,
+    smooth: false,
+    showSymbol: false,
   },
   Area: {
     type: "Area",
-    showBackground: true,
-    barWidth: 30,
+    opacity: 0.4,
   },
 };
 

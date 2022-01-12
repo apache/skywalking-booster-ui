@@ -21,6 +21,7 @@ limitations under the License. -->
           :is="states.chartType"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
+          :config="states.graph"
         />
         <div v-show="!states.chartType" class="no-data">{{ t("noData") }}</div>
       </div>
@@ -66,7 +67,11 @@ limitations under the License. -->
           </div>
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="3">
-          <component :is="`${states.chartType}Config`" :config="states.graph" />
+          <component
+            :is="`${states.chartType}Config`"
+            :config="states.graph"
+            @update="updateGraphOptions"
+          />
         </el-collapse-item>
         <el-collapse-item :title="t('widgetOptions')" name="4">
           <WidgetOptions
@@ -212,6 +217,14 @@ export default defineComponent({
       states.widget[param.label] = param.value;
     }
 
+    function updateGraphOptions(param: { label: string; value: unknown }) {
+      console.log(param);
+      states.graph = {
+        ...states.graph,
+        ...param,
+      };
+    }
+
     async function queryMetrics() {
       const json = await dashboardStore.fetchMetricValue(
         dashboardStore.selectedGrid
@@ -224,7 +237,7 @@ export default defineComponent({
         return;
       }
       const metricVal = json.data.readMetricsValues.values.values.map(
-        (d: { value: number }) => d.value
+        (d: { value: number }) => d.value + 1
       );
       const m = states.metrics[0];
       if (!m) {
@@ -270,7 +283,7 @@ export default defineComponent({
       metricOpts,
       updateWidgetOptions,
       configHeight,
-      dashboardStore,
+      updateGraphOptions,
       applyConfig,
       loading,
     };

@@ -14,12 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <Line :data="data" :intervalTime="intervalTime" :type="'areaChart'" />
+  <Line :data="data" :intervalTime="intervalTime" :config="config" />
 </template>
 <script lang="ts" setup>
 import { defineProps } from "vue";
 import type { PropType } from "vue";
 import Line from "./Line.vue";
+import { AreaConfig } from "@/types/dashboard";
 
 defineProps({
   data: {
@@ -27,5 +28,9 @@ defineProps({
     default: () => ({}),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+  config: {
+    type: Object as PropType<AreaConfig>,
+    default: () => ({}),
+  },
 });
 </script>
