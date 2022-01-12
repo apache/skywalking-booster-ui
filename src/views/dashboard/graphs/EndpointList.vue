@@ -18,7 +18,6 @@ limitations under the License. -->
   </el-table>
 </template>
 <script setup lang="ts">
-import { ElTable, ElTableColumn } from "element-plus";
 import { defineProps } from "vue";
 import type { PropType } from "vue";
 
@@ -27,6 +26,9 @@ defineProps({
     type: Array as PropType<{ label: string; value: string }[]>,
     default: () => [],
   },
-  theme: { type: String, default: "" },
+  config: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 </script>

@@ -18,7 +18,7 @@
 import Area from "./Area.vue";
 import Line from "./Line.vue";
 import Bar from "./Bar.vue";
-// import Heatmap from "./Heatmap.vue";
+import Heatmap from "./Heatmap.vue";
 import TopList from "./TopList.vue";
 import Table from "./Table.vue";
 import Pie from "./Pie.vue";
@@ -27,7 +27,7 @@ import Card from "./Card.vue";
 export default {
   Line,
   Bar,
-  // Heatmap,
+  Heatmap,
   TopList,
   Area,
   Table,

@@ -47,7 +47,7 @@ export interface StandardConfig {
   seconds?: string;
 }
 
-export type GraphConfig = BarConfig | LineConfig;
+export type GraphConfig = BarConfig | LineConfig | CardConfig | TableConfig;
 export interface BarConfig {
   type?: string;
   showBackground?: boolean;
@@ -62,4 +62,22 @@ export interface LineConfig extends AreaConfig {
 export interface AreaConfig {
   type?: string;
   opacity?: number;
+}
+
+export interface CardConfig {
+  type?: string;
+  fontSize?: number;
+  showUint: boolean;
+}
+
+export interface TableConfig {
+  type?: string;
+  showTableValues: boolean;
+  tableHeaderCol1: string;
+  tableHeaderCol2: string;
+}
+
+export interface TopListConfig {
+  type?: string;
+  topN: number;
 }

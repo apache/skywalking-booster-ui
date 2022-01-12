@@ -19,28 +19,26 @@ limitations under the License. -->
       <div
         class="row header flex-h"
         :style="`width: ${nameWidth + initWidth}px`"
-        :class="{ dark: theme === 'dark' }"
       >
         <div class="name" :style="`width: ${nameWidth}px`">
-          {{ item.tableHeaderCol1 || $t("name") }}
+          {{ config.tableHeaderCol1 || $t("name") }}
           <i class="r cp" ref="draggerName"
             ><rk-icon icon="settings_ethernet"
           /></i>
         </div>
-        <div class="value-col" v-if="showTableValues">
-          {{ item.tableHeaderCol2 || $t("value") }}
+        <div class="value-col" v-if="config.showTableValues">
+          {{ config.tableHeaderCol2 || $t("value") }}
         </div>
       </div>
       <div
         class="row flex-h"
-        :class="{ dark: theme === 'dark' }"
         v-for="key in dataKeys"
         :key="key"
         :style="`width: ${nameWidth + initWidth}px`"
       >
         <div :style="`width: ${nameWidth}px`">{{ key }}</div>
-        <div class="value-col" v-if="showTableValues">
-          {{ data[key][dataLength(data[key])] }}
+        <div class="value-col" v-if="config.showTableValues">
+          {{ data[key][data[key].length - 1 || 0] }}
         </div>
       </div>
     </div>
@@ -54,9 +52,12 @@ const props = defineProps({
     type: Object as PropType<{ [key: string]: number[][] }>,
     default: () => ({}),
   },
-  theme: { type: String, default: "dark" },
-  itemConfig: {
-    type: Object as PropType<{ showTableValues: string | boolean }>,
+  config: {
+    type: Object as PropType<{
+      showTableValues: boolean;
+      tableHeaderCol2: string;
+      tableHeaderCol1: string;
+    }>,
     default: () => ({}),
   },
 });
@@ -69,10 +70,10 @@ onMounted(() => {
   if (!chartTable.value) {
     return;
   }
-  const width = showTableValues.value
+  const width = props.config.showTableValues
     ? chartTable.value.offsetWidth / 2
     : chartTable.value.offsetWidth;
-  initWidth.value = showTableValues.value
+  initWidth.value = props.config.showTableValues
     ? chartTable.value.offsetWidth / 2
     : 0;
   nameWidth.value = width - 5;
@@ -97,15 +98,6 @@ const dataKeys = computed(() => {
     (i: any) => Array.isArray(props.data[i]) && props.data[i].length
   );
   return keys;
-});
-const showTableValues = computed(() => {
-  return props.itemConfig.showTableValues === "true" ||
-    props.itemConfig.showTableValues === true
-    ? true
-    : false;
-});
-const dataLength = computed((param: number[]) => {
-  return param.length - 1 || 0;
 });
 </script>
 <style lang="scss" scoped>

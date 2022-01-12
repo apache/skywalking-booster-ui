@@ -48,6 +48,7 @@ limitations under the License. -->
         :intervalTime="appStoreWithOut.intervalTime"
         :data="state.source"
         :config="data.graph"
+        :standard="data.standard"
       />
     </div>
     <div v-else class="no-data">{{ t("noData") }}</div>

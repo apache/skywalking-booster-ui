@@ -13,22 +13,48 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-table :data="data" style="width: 100%">
-    <el-table-column prop="label" label="Service Instances" />
-  </el-table>
+  <div>
+    <span class="label">Font Size</span>
+    <el-slider
+      class="slider"
+      v-model="fontSize"
+      show-input
+      input-size="small"
+      :min="0.1"
+      :max="1"
+      :step="0.1"
+      @change="updateConfig({ fontSize })"
+    />
+  </div>
 </template>
-<script setup lang="ts">
-import { defineProps } from "vue";
+<script lang="ts" setup>
+import { defineProps, ref, defineEmits } from "vue";
 import type { PropType } from "vue";
+import { CardConfig } from "@/types/dashboard";
 
-defineProps({
-  data: {
-    type: Array as PropType<{ label: string; value: string }[]>,
-    default: () => [],
-  },
+const props = defineProps({
   config: {
-    type: Object,
-    default: () => ({}),
+    type: Object as PropType<CardConfig>,
+    default: () => ({ fontSize: 12 }),
   },
 });
+const emits = defineEmits(["update"]);
+const fontSize = ref(props.config.fontSize);
+
+function updateConfig(param: { [key: string]: unknown }) {
+  emits("update", param);
+}
 </script>
+<style lang="scss" scoped>
+.slider {
+  width: 500px;
+  margin-top: -13px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+}
+</style>

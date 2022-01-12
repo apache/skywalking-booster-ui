@@ -14,54 +14,67 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">Smooth</span>
+    <span class="label">Show Values</span>
     <el-switch
-      v-model="smooth"
+      v-model="showTableValues"
       active-text="Yes"
       inactive-text="No"
-      @change="updateConfig({ smooth })"
+      @change="updateConfig({ showTableValues })"
     />
   </div>
-  <div>
-    <span class="label">Show Symbol</span>
-    <el-switch
-      v-model="showSymbol"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ showSymbol })"
+  <div class="item">
+    <span class="label">{{ t("tableHeaderCol1") }}</span>
+    <el-input
+      class="input"
+      v-model="tableHeaderCol1"
+      size="mini"
+      placeholder="none"
+      @change="updateConfig({ tableHeaderCol1 })"
     />
   </div>
-  <div>
-    <span class="label">Step</span>
-    <el-switch
-      v-model="step"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ step })"
+  <div class="item">
+    <span class="label">{{ t("tableHeaderCol2") }}</span>
+    <el-input
+      class="input"
+      v-model="tableHeaderCol2"
+      size="mini"
+      placeholder="none"
+      @change="updateConfig({ tableHeaderCol2 })"
     />
   </div>
 </template>
 <script lang="ts" setup>
 import { defineProps, ref, defineEmits } from "vue";
 import type { PropType } from "vue";
-import { LineConfig } from "@/types/dashboard";
+import { TableConfig } from "@/types/dashboard";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const props = defineProps({
   config: {
-    type: Object as PropType<LineConfig>,
-    default: () => ({}),
+    type: Object as PropType<TableConfig>,
+    default: () => ({
+      showTableValues: true,
+      tableHeaderCol1: "",
+      tableHeaderCol2: "",
+    }),
   },
 });
 const emits = defineEmits(["update"]);
-const smooth = ref(props.config.smooth);
-const showSymbol = ref(props.config.showSymbol);
-const step = ref(props.config.step);
+const showTableValues = ref(props.config.showTableValues);
+const tableHeaderCol1 = ref(props.config.tableHeaderCol1);
+const tableHeaderCol2 = ref(props.config.tableHeaderCol2);
 
 function updateConfig(param: { [key: string]: unknown }) {
   emits("update", param);
 }
 </script>
 <style lang="scss" scoped>
+.slider {
+  width: 500px;
+  margin-top: -13px;
+}
+
 .label {
   font-size: 13px;
   font-weight: 500;

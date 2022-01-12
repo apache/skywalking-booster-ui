@@ -16,9 +16,9 @@ limitations under the License. -->
   <Graph :option="option" />
 </template>
 <script lang="ts" setup>
-import { defineProps, ref, computed } from "vue";
+import { defineProps, computed } from "vue";
 import type { PropType } from "vue";
-import { Event } from "@/types/events";
+import { StandardConfig } from "@/types/dashboard";
 
 const props = defineProps({
   data: {
@@ -26,15 +26,15 @@ const props = defineProps({
     default: () => ({}),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-  theme: { type: String, default: "dark" },
-  itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
-  itemConfig: {
-    type: Object as PropType<{ unit: string }>,
+  config: {
+    type: Object as PropType<any>,
+    default: () => ({}),
+  },
+  standard: {
+    type: Object as PropType<StandardConfig>,
     default: () => ({}),
   },
 });
-/*global Nullable */
-const chart = ref<Nullable<HTMLElement>>(null);
 const option = computed(() => getOption());
 function getOption() {
   const source = (props.data.nodes || []).map((d: number[]) => d[2]);
@@ -66,7 +66,7 @@ function getOption() {
     tooltip: {
       position: "top",
       formatter: (a: any) =>
-        `${a.data[1] * 100}${props.itemConfig.unit}  [ ${a.data[2]} ]`,
+        `${a.data[1] * 100}${props.standard.unit}  [ ${a.data[2]} ]`,
       textStyle: {
         fontSize: 13,
         color: "#ccc",

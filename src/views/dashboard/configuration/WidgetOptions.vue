@@ -48,8 +48,8 @@ const props = defineProps({
 });
 const emits = defineEmits(["update"]);
 const { t } = useI18n();
-const title = ref<string>(props.config.title);
-const tips = ref<string>(props.config.tips);
+const title = ref<string>(props.config.title || "");
+const tips = ref<string>(props.config.tips || "");
 
 function updateWidgetConfig(param: { [key: string]: unknown }) {
   emits("update", param);

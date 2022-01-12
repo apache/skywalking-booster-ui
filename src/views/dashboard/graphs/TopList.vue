@@ -36,7 +36,6 @@ limitations under the License. -->
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import { defineProps, computed } from "vue";
-import { ElProgress } from "element-plus";
 import copy from "@/utils/copy";
 const props = defineProps({
   data: {
@@ -45,8 +44,7 @@ const props = defineProps({
     >,
     default: () => [],
   },
-  theme: { type: String, default: "" },
-  itemConfig: {
+  config: {
     type: Object as PropType<{ sortOrder: string }>,
     default: () => ({}),
   },
@@ -65,7 +63,7 @@ const datas: any = () => {
   if (!props.data.length) {
     return [];
   }
-  const { sortOrder } = props.itemConfig;
+  const { sortOrder } = props.config;
   const val: any = props.data;
 
   switch (sortOrder) {

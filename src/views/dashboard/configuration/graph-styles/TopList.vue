@@ -13,53 +13,47 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Graph :option="option" />
+  <div>
+    <span class="label">{{ $t("maxItemNum") }}</span>
+    <el-input
+      class="input"
+      v-model="topN"
+      size="mini"
+      placeholder="none"
+      type="number"
+      :min="1"
+      :max="100"
+      @change="updateConfig({ topN })"
+    />
+  </div>
 </template>
 <script lang="ts" setup>
-import { defineProps, computed } from "vue";
+import { defineProps, ref, defineEmits } from "vue";
 import type { PropType } from "vue";
+import { TopListConfig } from "@/types/dashboard";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const props = defineProps({
-  data: {
-    type: Array as PropType<{ name: string; value: number }[]>,
-    default: () => [],
-  },
   config: {
-    type: Object as PropType<{ sortOrder: string }>,
-    default: () => ({}),
+    type: Object as PropType<TopListConfig>,
+    default: () => ({
+      topN: 10,
+    }),
   },
 });
-const option = computed(() => getOption());
-function getOption() {
-  return {
-    tooltip: {
-      trigger: "item",
-    },
-    legend: {
-      type: "scroll",
-      show: props.data.length === 1 ? false : true,
-      icon: "circle",
-      top: 0,
-      left: 0,
-      itemWidth: 12,
-      textStyle: {
-        color: "#333",
-      },
-    },
-    series: [
-      {
-        type: "pie",
-        radius: "50%",
-        data: props.data,
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: "rgba(0, 0, 0, 0.5)",
-          },
-        },
-      },
-    ],
-  };
+const emits = defineEmits(["update"]);
+const topN = ref(props.config.topN);
+
+function updateConfig(param: { [key: string]: unknown }) {
+  emits("update", param);
 }
 </script>
+<style lang="scss" scoped>
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+}
+</style>

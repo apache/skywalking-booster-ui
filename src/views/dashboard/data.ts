@@ -41,6 +41,21 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     type: "Area",
     opacity: 0.4,
   },
+  Card: {
+    type: "Card",
+    fontSize: 14,
+    showUint: true,
+  },
+  Table: {
+    type: "Card",
+    showTableValues: true,
+    tableHeaderCol1: "",
+    tableHeaderCol2: "",
+  },
+  TopList: {
+    type: "TopList",
+    topN: 10,
+  },
 };
 
 export enum MetricQueryTypes {

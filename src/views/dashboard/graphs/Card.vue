@@ -14,44 +14,41 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="chart-card">
-    <div v-for="(item, index) in data" :key="index" class="card-detail">
-      <span class="b" :style="`color: ${getColors}`">{{
-        typeof item.avgNum === "string"
-          ? item.avgNum
-          : isNaN(item.avgNum)
-          ? null
-          : item.avgNum.toFixed(2)
-      }}</span>
-    </div>
+  <div class="chart-card" :style="{ fontSize: `${config.fontSize}px` }">
+    {{
+      typeof data[key] === "string"
+        ? data[key]
+        : isNaN(data[key])
+        ? null
+        : data[key].toFixed(2)
+    }}
+    <span v-show="config.showUint">{{ standard.unit }}</span>
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
-import { defineProps, computed } from "vue";
+import { computed, PropType } from "vue";
+import { defineProps } from "vue";
+import { CardConfig, StandardConfig } from "@/types/dashboard";
+
 const props = defineProps({
   data: {
-    type: Object as PropType<{ [key: string]: number[] }>,
+    type: Object as PropType<{ [key: string]: number }>,
     default: () => ({}),
   },
-  theme: { type: String, default: "" },
+  config: {
+    type: Object as PropType<CardConfig>,
+    default: () => ({ fontSize: 12, showUint: true }),
+  },
+  standard: {
+    type: Object as PropType<StandardConfig>,
+    default: () => ({ unit: "" }),
+  },
 });
-
-const getColors = computed(() => {
-  return props.theme === "dark" ? "#eee" : "#333";
-});
+const key = computed(() => Object.keys(props.data)[0]);
 </script>
 <style lang="scss" scoped>
 .chart-card {
-  font-size: 14px;
+  box-sizing: border-box;
   color: #333;
-}
-
-.card-detail {
-  span:first-child {
-    padding-right: 8px;
-    box-sizing: border-box;
-    color: #666;
-  }
 }
 </style>
