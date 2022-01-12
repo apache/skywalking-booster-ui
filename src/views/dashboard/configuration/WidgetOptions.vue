@@ -20,40 +20,39 @@ limitations under the License. -->
       v-model="title"
       size="mini"
       placeholder="Please input title"
-      @change="updateTitle"
+      @change="updateWidgetConfig({ title })"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("tooltipsContent") }}</span>
     <el-input
       class="input"
-      v-model="tooltip"
+      v-model="tips"
       size="mini"
       placeholder="Please input tips"
-      @change="updateTips"
+      @change="updateWidgetConfig({ tips })"
     />
   </div>
 </template>
 <script lang="ts" setup>
 import { ref, defineEmits, defineProps } from "vue";
 import { useI18n } from "vue-i18n";
+import { WidgetConfig } from "@/types/dashboard";
+import type { PropType } from "vue";
 
-defineProps({
+const props = defineProps({
   config: {
-    type: Object,
+    type: Object as PropType<WidgetConfig>,
     default: () => ({ title: "", tooltips: "" }),
   },
 });
 const emits = defineEmits(["update"]);
 const { t } = useI18n();
-const title = ref<string>("");
-const tooltip = ref<string>("");
+const title = ref<string>(props.config.title);
+const tips = ref<string>(props.config.tips);
 
-function updateTitle(value: string) {
-  emits("update", { value, label: "title" });
-}
-function updateTips(value: string) {
-  emits("update", { value, label: "tips" });
+function updateWidgetConfig(param: { [key: string]: unknown }) {
+  emits("update", param);
 }
 </script>
 <style lang="scss" scoped>

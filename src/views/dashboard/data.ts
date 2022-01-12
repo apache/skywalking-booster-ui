@@ -25,7 +25,6 @@ export const ChartTypes = [
   { label: "Table", value: "Table" },
   { label: "Endpoint List", value: "EndpointList" },
   { label: "Instance List", value: "InstanceList" },
-  // { label: "Image", value: "Image" },
 ];
 export const DefaultGraphConfig: { [key: string]: any } = {
   Bar: {

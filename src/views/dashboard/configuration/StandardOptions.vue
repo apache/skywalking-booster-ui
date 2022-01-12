@@ -20,6 +20,7 @@ limitations under the License. -->
       v-model="state.unit"
       size="mini"
       placeholder="Please input Unit"
+      @change="changeStandardOpt({ unit: state.unit })"
     />
   </div>
   <div class="item">
@@ -30,6 +31,7 @@ limitations under the License. -->
       size="mini"
       placeholder="Select a sort order"
       class="selector"
+      @change="changeStandardOpt({ sortOrder: state.sortOrder })"
     />
   </div>
   <div class="item">
@@ -39,6 +41,7 @@ limitations under the License. -->
       v-model="state.max"
       size="mini"
       placeholder="auto"
+      @change="changeStandardOpt({ max: state.max })"
     />
   </div>
   <div class="item">
@@ -48,6 +51,7 @@ limitations under the License. -->
       v-model="state.min"
       size="mini"
       placeholder="auto"
+      @change="changeStandardOpt({ min: state.min })"
     />
   </div>
   <div class="item">
@@ -57,6 +61,7 @@ limitations under the License. -->
       v-model="state.plus"
       size="mini"
       placeholder="none"
+      @change="changeStandardOpt({ plus: state.plus })"
     />
   </div>
   <div class="item">
@@ -66,6 +71,7 @@ limitations under the License. -->
       v-model="state.minus"
       size="mini"
       placeholder="none"
+      @change="changeStandardOpt({ minus: state.minus })"
     />
   </div>
   <div class="item">
@@ -75,6 +81,7 @@ limitations under the License. -->
       v-model="state.multiply"
       size="mini"
       placeholder="none"
+      @change="changeStandardOpt({ multiply: state.multiply })"
     />
   </div>
   <div class="item">
@@ -84,6 +91,7 @@ limitations under the License. -->
       v-model="state.divide"
       size="mini"
       placeholder="none"
+      @change="changeStandardOpt({ divide: state.divide })"
     />
   </div>
   <div class="item">
@@ -93,6 +101,7 @@ limitations under the License. -->
       v-model="state.milliseconds"
       size="mini"
       placeholder="none"
+      @change="changeStandardOpt({ milliseconds: state.milliseconds })"
     />
   </div>
   <div class="item">
@@ -102,17 +111,27 @@ limitations under the License. -->
       v-model="state.seconds"
       size="mini"
       placeholder="none"
+      @change="changeStandardOpt({ seconds: state.seconds })"
     />
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, defineProps, defineEmits } from "vue";
 import { useI18n } from "vue-i18n";
 import { SortOrder } from "../data";
+import { StandardConfig } from "@/types/dashboard";
+import type { PropType } from "vue";
 
+const props = defineProps({
+  config: {
+    type: Object as PropType<StandardConfig>,
+    default: () => ({ unit: "", sortOrder: "DES" }),
+  },
+});
+const emits = defineEmits(["update"]);
 const { t } = useI18n();
 const state = reactive({
-  unit: "",
+  unit: props.config.unit,
   max: "",
   min: "",
   plus: "",
@@ -121,8 +140,12 @@ const state = reactive({
   divide: "",
   milliseconds: "",
   seconds: "",
-  sortOrder: "DES",
+  sortOrder: props.config.sortOrder,
 });
+
+function changeStandardOpt(param: { [key: string]: unknown }) {
+  emits("update", param);
+}
 </script>
 <style lang="scss" scoped>
 .label {

@@ -39,9 +39,15 @@ export interface StandardConfig {
   unit?: string;
   max?: string;
   min?: string;
+  plus: string;
+  minus: string;
+  multiply: string;
+  divide: string;
+  milliseconds: string;
+  seconds: string;
 }
 
-type GraphConfig = BarConfig | LineConfig;
+export type GraphConfig = BarConfig | LineConfig;
 export interface BarConfig {
   type?: string;
   showBackground?: boolean;

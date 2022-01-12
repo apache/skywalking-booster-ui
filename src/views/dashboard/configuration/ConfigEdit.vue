@@ -15,7 +15,14 @@ limitations under the License. -->
 <template>
   <div class="widget-config flex-v">
     <div class="graph">
-      <div class="header">{{ states.widget.title }}</div>
+      <div class="header">
+        <span>{{ states.widget.title }}</span>
+        <div class="tips">
+          <el-tooltip :content="states.widget.tips">
+            <Icon iconName="info_outline" size="sm" />
+          </el-tooltip>
+        </div>
+      </div>
       <div class="render-chart">
         <component
           :is="states.chartType"
@@ -80,7 +87,10 @@ limitations under the License. -->
           />
         </el-collapse-item>
         <el-collapse-item :title="t('standardOptions')" name="5">
-          <StandardOptions />
+          <StandardOptions
+            :config="states.standard"
+            @update="updateStandardOptions"
+          />
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -107,7 +117,7 @@ import {
   DefaultGraphConfig,
 } from "../data";
 import { Option } from "@/types/app";
-import { WidgetConfig, GraphConfig } from "@/types/dashboard";
+import { WidgetConfig, GraphConfig, StandardConfig } from "@/types/dashboard";
 import graphs from "../graphs";
 import configs from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
@@ -138,6 +148,7 @@ export default defineComponent({
       index: string;
       graph: GraphConfig;
       widget: WidgetConfig | any;
+      standard: StandardConfig;
     }>({
       metrics: selectedGrid.metrics || [],
       valueTypes: [],
@@ -148,10 +159,8 @@ export default defineComponent({
       source: {},
       index: selectedGrid.i,
       graph: {},
-      widget: {
-        tips: selectedGrid.widget.tips,
-        title: selectedGrid.widget.title,
-      },
+      widget: selectedGrid.widget,
+      standard: selectedGrid.standard,
     });
     if (states.metrics[0]) {
       queryMetricType(states.metrics[0]);
@@ -210,17 +219,23 @@ export default defineComponent({
     ];
     const configHeight = document.documentElement.clientHeight - 520;
 
-    function updateWidgetOptions(param: { label: string; value: string }) {
-      if (states.widget[param.label] === undefined) {
-        return;
-      }
-      states.widget[param.label] = param.value;
+    function updateWidgetOptions(param: { [key: string]: unknown }) {
+      states.widget = {
+        ...states.widget,
+        ...param,
+      };
     }
 
-    function updateGraphOptions(param: { label: string; value: unknown }) {
-      console.log(param);
+    function updateGraphOptions(param: { [key: string]: unknown }) {
       states.graph = {
         ...states.graph,
+        ...param,
+      };
+    }
+
+    function updateStandardOptions(param: { [key: string]: unknown }) {
+      states.standard = {
+        ...states.standard,
         ...param,
       };
     }
@@ -284,6 +299,7 @@ export default defineComponent({
       updateWidgetOptions,
       configHeight,
       updateGraphOptions,
+      updateStandardOptions,
       applyConfig,
       loading,
     };
@@ -311,6 +327,13 @@ export default defineComponent({
   text-align: center;
   background-color: aliceblue;
   font-size: 12px;
+  position: relative;
+}
+
+.tips {
+  position: absolute;
+  right: 5px;
+  top: 0;
 }
 
 .render-chart {
