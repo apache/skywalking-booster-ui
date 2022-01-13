@@ -64,7 +64,8 @@ function handleClick(e: any) {
 </script>
 <style lang="scss" scoped>
 .ds-main {
-  height: calc(100% - 40px);
+  height: calc(100% - 45px);
+  overflow: auto;
 }
 
 .layout {

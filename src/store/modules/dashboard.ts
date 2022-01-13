@@ -139,7 +139,19 @@ export const dashboardStore = defineStore({
       this.entity = type;
     },
     setConfigs(param: { [key: string]: unknown }) {
-      const index = this.layout.findIndex((d: LayoutConfig) => d.i === param.i);
+      const actived = this.activedGridItem.split("-");
+      const index = this.layout.findIndex(
+        (d: LayoutConfig) => actived[0] === d.i
+      );
+
+      if (actived.length === 3) {
+        this.layout[index].children[actived[1]].children[actived[2]] = {
+          ...this.layout[index],
+          ...param,
+        };
+        this.selectedGrid = this.layout[index];
+        return;
+      }
       this.layout[index] = {
         ...this.layout[index],
         ...param,
