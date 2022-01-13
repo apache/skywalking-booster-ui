@@ -18,6 +18,9 @@ limitations under the License. -->
     v-model="selected"
     :placeholder="placeholder"
     @change="changeSelected"
+    filterable
+    :multiple="multiple"
+    :style="{ borderRadius }"
   >
     <el-option
       v-for="item in options"
@@ -29,7 +32,7 @@ limitations under the License. -->
   </el-select>
 </template>
 <script lang="ts" setup>
-import { defineProps, ref, defineEmits } from "vue";
+import { ref, defineEmits } from "vue";
 import type { PropType } from "vue";
 import { ElSelect, ElOption } from "element-plus";
 
@@ -39,21 +42,32 @@ interface Option {
 }
 
 const emit = defineEmits(["change"]);
+/*global  defineProps*/
 const props = defineProps({
   options: {
     type: Array as PropType<Option[]>,
     default: () => [],
   },
-  value: { type: String, default: "" },
+  value: {
+    type: [Array, String] as PropType<string[] | string>,
+    default: () => [],
+  },
   size: { type: String, default: "small" },
   placeholder: { type: String, default: "Select a option" },
+  borderRadius: { type: Number, default: 3 },
+  multiple: { type: Boolean, default: false },
 });
-const selected = ref<string>(props.value);
+const selected = ref<string[] | string>(props.value);
 function changeSelected() {
-  const optionSele = props.options.filter(
-    (d: Option) => d.value === selected.value
-  )[0];
-  emit("change", optionSele);
+  if (!props.multiple) {
+    return;
+  }
+  const options = props.options.filter((d: Option) =>
+    props.multiple
+      ? selected.value.includes(d.value)
+      : selected.value === d.value
+  );
+  emit("change", options);
 }
 </script>
 <style lang="scss" scope>
@@ -91,5 +105,9 @@ function changeSelected() {
     height: 30px;
     width: 30px;
   }
+}
+
+.el-input__inner {
+  border-radius: unset !important;
 }
 </style>

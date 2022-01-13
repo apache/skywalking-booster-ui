@@ -29,20 +29,38 @@ limitations under the License. -->
       :h="item.h"
       :i="item.i"
       :key="item.i"
+      @click="clickGrid(item)"
+      :class="{ active: dashboardStore.activedGridItem === item.i }"
     >
-      <Widget :item="item" />
+      <component :is="item.type" :data="item" />
     </grid-item>
   </grid-layout>
 </template>
-<script lang="ts" setup>
+<script lang="ts">
+import { defineComponent } from "vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
-import Widget from "./Widget.vue";
+import Widget from "../controls/Widget.vue";
+import Tab from "../controls/Tab.vue";
 
-const dashboardStore = useDashboardStore();
-function layoutUpdatedEvent(newLayout: LayoutConfig) {
-  dashboardStore.setLayout(newLayout);
-}
+export default defineComponent({
+  name: "Layout",
+  components: { Widget, Tab },
+  setup() {
+    const dashboardStore = useDashboardStore();
+    function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
+      dashboardStore.setLayout(newLayout);
+    }
+    function clickGrid(item: LayoutConfig) {
+      dashboardStore.activeGridItem(item.i);
+    }
+    return {
+      dashboardStore,
+      layoutUpdatedEvent,
+      clickGrid,
+    };
+  },
+});
 </script>
 <style lang="scss" scoped>
 .vue-grid-layout {
@@ -54,5 +72,9 @@ function layoutUpdatedEvent(newLayout: LayoutConfig) {
   background: #fff;
   box-shadow: 0px 1px 4px 0px #00000029;
   border-radius: 5px;
+}
+
+.vue-grid-item.active {
+  border: 1px solid #409eff;
 }
 </style>

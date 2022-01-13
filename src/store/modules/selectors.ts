@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Option } from "@/types/app";
+import { Option, Duration } from "@/types/app";
 import { store } from "@/store";
 import graph from "@/graph";
 import { AxiosResponse } from "axios";
@@ -43,6 +43,27 @@ export const selectorStore = defineStore({
       if (!res.data.errors) {
         this.services = res.data.data.services;
       }
+      return res;
+    },
+    async getServiceInstances(params: {
+      serviceId: string;
+      duration: Duration;
+    }): Promise<AxiosResponse> {
+      const res: AxiosResponse = await graph
+        .query("queryInstances")
+        .params(params);
+      return res;
+    },
+    async getEndpoints(params: {
+      keyword: string;
+      serviceId: string;
+    }): Promise<AxiosResponse> {
+      if (!params.keyword) {
+        params.keyword = "";
+      }
+      const res: AxiosResponse = await graph
+        .query("queryEndpoints")
+        .params(params);
       return res;
     },
   },

@@ -20,7 +20,7 @@ import { Duration, DurationTime } from "@/types/app";
 import getLocalTime from "@/utils/localtime";
 import getDurationRow from "@/utils/dateTime";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
-
+/*global Nullable*/
 interface AppState {
   durationRow: any;
   utc: string;
@@ -98,6 +98,7 @@ export const appStore = defineStore({
   actions: {
     setDuration(data: Duration): void {
       this.durationRow = data;
+      localStorage.setItem("durationRow", JSON.stringify(data, null, 0));
       if ((window as any).axiosCancel.length !== 0) {
         for (const event of (window as any).axiosCancel) {
           setTimeout(event(), 0);

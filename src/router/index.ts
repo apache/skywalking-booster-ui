@@ -53,6 +53,10 @@ router.beforeEach((to, from, next) => {
     }
     (window as any).axiosCancel = [];
   }
-  next();
+  if (to.path === "/") {
+    next({ path: "/generalService" });
+  } else {
+    next();
+  }
 });
 export default router;

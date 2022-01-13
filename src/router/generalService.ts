@@ -21,7 +21,6 @@ export const routesGen: Array<RouteRecordRaw> = [
   {
     path: "",
     name: "GeneralService",
-    redirect: "/generalService",
     meta: {
       title: "generalService",
       icon: "chart",

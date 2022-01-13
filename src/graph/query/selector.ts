@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Services, Layers } from "../fragments/selector";
+import { Services, Layers, Endpoints, Instances } from "../fragments/selector";
 
 export const queryServices = `query queryServices(${Services.variable}) {${Services.query}}`;
 export const queryLayers = `query ${Layers.query}`;
+export const queryEndpoints = `query queryEndpoints(${Endpoints.variable}) {${Endpoints.query}}`;
+
+export const queryInstances = `query queryInstances(${Instances.variable}) {${Instances.query}}`;

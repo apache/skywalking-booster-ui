@@ -48,7 +48,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "/dashboard/edit/:layerId/:entityId/:dashboardId",
+        path: "/dashboard/edit/:layerId/:entity/:dashboardId",
         component: () => import("@/views/dashboard/Edit.vue"),
         name: "Edit",
         meta: {

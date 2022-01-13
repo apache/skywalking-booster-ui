@@ -37,7 +37,9 @@ limitations under the License. -->
               <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
                 <Icon size="lg" :iconName="menu.meta.icon" />
               </el-icon>
-              <span>{{ t(menu.meta.title) }}</span>
+              <span :class="isCollapse ? 'collapse' : ''">{{
+                t(menu.meta.title)
+              }}</span>
             </router-link>
           </template>
           <el-menu-item-group>
@@ -88,24 +90,16 @@ limitations under the License. -->
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { useRouter, RouteRecordRaw, RouteRecordName } from "vue-router";
+import { useRouter, RouteRecordRaw } from "vue-router";
 import { useI18n } from "vue-i18n";
-import {
-  ElMenu,
-  ElMenuItem,
-  ElSubMenu,
-  ElMenuItemGroup,
-  ElIcon,
-} from "element-plus";
+
 const { t } = useI18n();
-const name: RouteRecordName | null | undefined = String(
-  useRouter().currentRoute.value.name
-);
-const theme = ["VirtualMachine", "Kubernetes"].includes(name || "")
+const name = ref<any>(String(useRouter().currentRoute.value.name));
+const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
   ? ref("light")
   : ref("black");
-const routes = useRouter().options.routes;
-const isCollapse = ref(false);
+const routes = ref<any>(useRouter().options.routes);
+const isCollapse = ref(true);
 const controlMenu = () => {
   isCollapse.value = !isCollapse.value;
 };
@@ -125,40 +119,56 @@ const filterMenus = (menus: any[]) => {
   height: 100%;
   background: #252a2f;
   font-weight: bold;
-  // box-shadow: 1px 5px 3px #888;
 }
+
 .el-menu-vertical:not(.el-menu--collapse) {
   width: 210px;
   font-size: 18px;
 }
+
 .logo-icon-collapse {
   width: 65px;
   margin: 15px 0 30px 0;
+  text-align: center;
 }
+
+span.collapse {
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  visibility: hidden;
+  display: inline-block;
+}
+
 .logo-icon {
   margin: 15px 0 30px 15px;
   width: 110px;
 }
+
 .el-sub-menu .el-icon {
   height: 26px;
   margin-right: 0;
 }
+
 .el-sub-menu__title {
   font-size: 16px;
   font-weight: bold;
 }
+
 .menu-control {
   position: absolute;
   top: 8px;
   left: 215px;
   cursor: pointer;
   transition: all 0.2s linear;
-  z-index: 9999;
+  z-index: 99;
   color: #252a2f;
 }
+
 .menu-control.collapse {
   left: 70px;
 }
+
 .el-icon.el-sub-menu__icon-arrow {
   height: 12px;
 }

@@ -56,7 +56,6 @@ limitations under the License. -->
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import router from "@/router";
-import { ElInput, ElButton } from "element-plus";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EntityType, Options } from "./data";
 import uuid from "@/utils/uuid";
@@ -74,11 +73,11 @@ const onCreate = () => {
   router.push(path);
 };
 selectorStore.fetchServices("general");
-function changeLayer(opt: { label: string; value: string }) {
-  states.layer = opt.value;
+function changeLayer(opt: { label: string; value: string }[]) {
+  states.layer = opt[0].value;
 }
-function changeEntity(opt: { label: string; value: string }) {
-  states.entity = opt.value;
+function changeEntity(opt: { label: string; value: string }[]) {
+  states.entity = opt[0].value;
 }
 </script>
 <style lang="scss" scoped>

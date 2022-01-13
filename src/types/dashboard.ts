@@ -1,5 +1,3 @@
-import { string } from "vue-types";
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -24,16 +22,62 @@ export interface LayoutConfig {
   i: string;
   widget?: WidgetConfig;
   graph?: GraphConfig;
+  standard?: StandardConfig;
+  metrics?: string[];
+  type?: string;
+  queryMetricType?: string;
+  children?: any;
 }
 
 export interface WidgetConfig {
-  title: string;
-  Metrics: string[];
-  unit: string;
-  tips: string;
-  sortOrder: string;
+  title?: string;
+  tips?: string;
 }
 
-export interface GraphConfig {
-  type: string;
+export interface StandardConfig {
+  sortOrder?: string;
+  unit?: string;
+  max?: string;
+  min?: string;
+  plus?: string;
+  minus?: string;
+  multiply?: string;
+  divide?: string;
+  milliseconds?: string;
+  seconds?: string;
+}
+
+export type GraphConfig = BarConfig | LineConfig | CardConfig | TableConfig;
+export interface BarConfig {
+  type?: string;
+  showBackground?: boolean;
+}
+export interface LineConfig extends AreaConfig {
+  type?: string;
+  smooth?: boolean;
+  showSymbol?: boolean;
+  step?: boolean;
+}
+
+export interface AreaConfig {
+  type?: string;
+  opacity?: number;
+}
+
+export interface CardConfig {
+  type?: string;
+  fontSize?: number;
+  showUint: boolean;
+}
+
+export interface TableConfig {
+  type?: string;
+  showTableValues: boolean;
+  tableHeaderCol1: string;
+  tableHeaderCol2: string;
+}
+
+export interface TopListConfig {
+  type?: string;
+  topN: number;
 }
