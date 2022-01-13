@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">Smooth</span>
+    <span class="label">{{ t("smooth") }}</span>
     <el-switch
       v-model="smooth"
       active-text="Yes"
@@ -23,7 +23,7 @@ limitations under the License. -->
     />
   </div>
   <div>
-    <span class="label">Show Symbol</span>
+    <span class="label">{{ t("showSymbol") }}</span>
     <el-switch
       v-model="showSymbol"
       active-text="Yes"
@@ -32,7 +32,7 @@ limitations under the License. -->
     />
   </div>
   <div>
-    <span class="label">Step</span>
+    <span class="label">{{ t("step") }}</span>
     <el-switch
       v-model="step"
       active-text="Yes"
@@ -45,7 +45,9 @@ limitations under the License. -->
 import { defineProps, ref, defineEmits } from "vue";
 import type { PropType } from "vue";
 import { LineConfig } from "@/types/dashboard";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const props = defineProps({
   config: {
     type: Object as PropType<LineConfig>,

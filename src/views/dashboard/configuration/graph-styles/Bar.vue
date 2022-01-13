@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">Show Background</span>
+    <span class="label">{{ t("showBackground") }}</span>
     <el-switch
       v-model="showBackground"
       active-text="Yes"
@@ -27,6 +27,9 @@ limitations under the License. -->
 import { defineProps, ref, defineEmits } from "vue";
 import type { PropType } from "vue";
 import { BarConfig } from "@/types/dashboard";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = defineProps({
   config: {

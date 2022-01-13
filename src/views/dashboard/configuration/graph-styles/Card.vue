@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">Font Size</span>
+    <span class="label">{{ t("fontSize") }}</span>
     <el-slider
       class="slider"
       v-model="fontSize"
@@ -31,6 +31,9 @@ limitations under the License. -->
 import { defineProps, ref, defineEmits } from "vue";
 import type { PropType } from "vue";
 import { CardConfig } from "@/types/dashboard";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = defineProps({
   config: {

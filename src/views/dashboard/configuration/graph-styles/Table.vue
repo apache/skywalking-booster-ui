@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">Show Values</span>
+    <span class="label">{{ t("showValues") }}</span>
     <el-switch
       v-model="showTableValues"
       active-text="Yes"
