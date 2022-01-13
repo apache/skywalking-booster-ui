@@ -69,7 +69,7 @@ const props = {
     type: Object as PropType<LayoutConfig>,
     default: () => ({ widget: {} }),
   },
-  active: { type: Boolean, default: false },
+  activeIndex: { type: String, default: "" },
 };
 export default defineComponent({
   name: "Widget",
@@ -112,8 +112,14 @@ export default defineComponent({
       dashboardStore.removeControls(props.data);
     }
     function editConfig() {
+      console.log(props.data);
       dashboardStore.setConfigPanel(true);
       dashboardStore.selectWidget(props.data);
+      if (props.activeIndex) {
+        dashboardStore.activeGridItem(props.activeIndex);
+      } else {
+        dashboardStore.activeGridItem(props.data.i);
+      }
     }
     watch(
       () => [props.data.queryMetricType, props.data.metrics],

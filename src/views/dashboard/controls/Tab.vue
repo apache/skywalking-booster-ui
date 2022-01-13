@@ -74,7 +74,10 @@ limitations under the License. -->
         @click="clickTabGrid($event, item)"
         :class="{ active: activeTabWidget === item.i }"
       >
-        <Widget :data="item" :active="activeTabWidget === item.i" />
+        <Widget
+          :data="item"
+          :activeIndex="`${data.i}-${activeTabIndex}-${item.i}`"
+        />
       </grid-item>
     </grid-layout>
     <div class="no-data-tips" v-else>Please add widgets.</div>
