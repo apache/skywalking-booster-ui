@@ -22,9 +22,9 @@ limitations under the License. -->
           :options="Options"
           size="mini"
           placeholder="Select a service"
-          :borderRadius="0"
           @change="changeService"
           class="selectors"
+          :borderRadius="4"
         />
       </div>
       <div class="selectors-item" v-if="states.key === 3 || states.key === 4">
@@ -141,9 +141,6 @@ function clickIcons(t: { id: string; content: string; name: string }) {
   font-size: 12px;
   display: inline-block;
   padding: 4px 2px;
-  border: var(--el-input-border, var(--el-border-base));
-  border-right: none;
-  border-radius: 2px;
 }
 
 .icon-btn {

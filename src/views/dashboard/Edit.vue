@@ -28,7 +28,6 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ElDialog } from "element-plus";
 import GridLayout from "./panel/Layout.vue";
 // import { LayoutConfig } from "@/types/dashboard";
 import Tool from "./panel/Tool.vue";
