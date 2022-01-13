@@ -112,7 +112,6 @@ export default defineComponent({
       dashboardStore.removeControls(props.data);
     }
     function editConfig() {
-      console.log(props.data);
       dashboardStore.setConfigPanel(true);
       dashboardStore.selectWidget(props.data);
       if (props.activeIndex) {
