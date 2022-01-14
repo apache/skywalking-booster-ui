@@ -245,7 +245,7 @@ export default defineComponent({
         return;
       }
 
-      if (json.error) {
+      if (json.errors) {
         return;
       }
       const metricVal = json.data.readMetricsValues.values.values.map(

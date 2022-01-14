@@ -33,7 +33,7 @@ export const selectorStore = defineStore({
     async fetchLayers(): Promise<AxiosResponse> {
       const res: AxiosResponse = await graph.query("queryLayers").params({});
 
-      return res;
+      return res.data || {};
     },
     async fetchServices(layer: string): Promise<AxiosResponse> {
       const res: AxiosResponse = await graph
@@ -43,7 +43,7 @@ export const selectorStore = defineStore({
       if (!res.data.errors) {
         this.services = res.data.data.services;
       }
-      return res;
+      return res.data;
     },
     async getServiceInstances(params: {
       serviceId: string;
