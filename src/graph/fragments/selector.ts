@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 export const Services = {
-  variable: ["$layer: String!"],
+  variable: "$layer: String!",
   query: `
-    services: listServices(layer: $layer) {
-      value: id
+  services: listServices(layer: $layer) {
+    value: id
       label: name
       group
-      layer
-    }
+      layers
+  }
   `,
 };
 export const Layers = {
@@ -33,10 +33,12 @@ export const Layers = {
 export const Instances = {
   variable: "$serviceId: ID!, $duration: Duration!",
   query: `
-    getServiceInstances(duration: $duration, serviceId: $serviceId) {
+  instances: listInstances(duration: $duration, serviceId: $serviceId) {
       key: id
       label: name
       language
+      instanceUUID
+      layer
       attributes {
         name
         value
@@ -47,7 +49,7 @@ export const Instances = {
 export const Endpoints = {
   variable: "$serviceId: ID!, $keyword: String!",
   query: `
-    getEndpoints: searchEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 100) {
+  endpoints: searchEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 100) {
       key: id
       label: name
     }

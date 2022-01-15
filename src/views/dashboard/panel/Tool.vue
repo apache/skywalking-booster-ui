@@ -18,8 +18,8 @@ limitations under the License. -->
       <div class="selectors-item" v-if="states.key < 3">
         <span class="label">$Service</span>
         <Selector
-          :value="states.service"
-          :options="Options"
+          :value="selectorStore.currentService"
+          :options="selectorStore.services"
           size="mini"
           placeholder="Select a service"
           @change="changeService"
@@ -41,7 +41,7 @@ limitations under the License. -->
         <span class="label">$DestinationService</span>
         <Selector
           :value="states.service"
-          :options="Options"
+          :options="selectorStore.services"
           size="mini"
           placeholder="Select a service"
           :borderRadius="0"
@@ -77,24 +77,25 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { Options, SelectOpts, EntityType, ToolIcons } from "../data";
+import { SelectOpts, EntityType, ToolIcons } from "../data";
+import { useSelectorStore } from "@/store/modules/selectors";
+import { ElMessage } from "element-plus";
 
 const dashboardStore = useDashboardStore();
+const selectorStore = useSelectorStore();
 const params = useRoute().params;
 const states = reactive<{
   entity: string | string[];
   layerId: string | string[];
-  service: string;
   pod: string;
   destService: string;
   destPod: string;
   key: number;
 }>({
-  service: Options[0].value,
-  pod: Options[0].value, // instances and endpoints
+  pod: "", // instances or endpoints
   destService: "",
   destPod: "",
   key: EntityType.filter((d: any) => d.value === params.entity)[0].key || 0,
@@ -104,9 +105,25 @@ const states = reactive<{
 
 dashboardStore.setLayer(states.layerId);
 dashboardStore.setEntity(states.entity);
+onBeforeMount(async () => {
+  if (!states.layerId) {
+    return;
+  }
+  const json = await selectorStore.fetchServices(states.layerId);
+  if (json.errors) {
+    ElMessage.error(json.errors);
+    return;
+  }
+  const resp = await selectorStore.getServiceInstances();
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  // states.pods =
+});
 
-function changeService(val: { value: string; label: string }) {
-  states.service = val.value;
+function changeService(service: { value: string; label: string }) {
+  selectorStore.setCurrentService(service.value);
 }
 
 function clickIcons(t: { id: string; content: string; name: string }) {

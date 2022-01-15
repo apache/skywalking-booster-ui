@@ -72,6 +72,7 @@ const msg = {
   fontSize: "Font Size",
   showBackground: "Show Background",
   areaOpacity: "Area Opacity",
+  editGraph: "Edit Graph Options",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

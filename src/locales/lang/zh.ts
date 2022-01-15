@@ -70,6 +70,7 @@ const msg = {
   fontSize: "字体大小",
   showBackground: "显示背景",
   areaOpacity: "透明度",
+  editGraph: "编辑图表选项",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

@@ -84,7 +84,6 @@ onBeforeMount(async () => {
     return { label: d, value: d };
   });
 });
-// selectorStore.fetchServices("general");
 function changeLayer(opt: { label: string; value: string }[]) {
   states.selectedLayer = opt[0].value;
 }

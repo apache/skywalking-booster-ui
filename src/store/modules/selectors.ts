@@ -19,17 +19,36 @@ import { Option, Duration } from "@/types/app";
 import { store } from "@/store";
 import graph from "@/graph";
 import { AxiosResponse } from "axios";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface SelectorState {
   services: Option[];
+  instances: Option[];
+  pods: Option[];
+  endpoints: Option[];
+  currentService: string;
+  currentPod: string;
+  durationTime: any;
 }
 
 export const selectorStore = defineStore({
   id: "selector",
   state: (): SelectorState => ({
     services: [],
+    instances: [],
+    pods: [],
+    endpoints: [],
+    currentService: "",
+    currentPod: "",
+    durationTime: useAppStoreWithOut().durationTime,
   }),
   actions: {
+    setCurrentService(service: string) {
+      this.currentService = service;
+    },
+    setCurrentPod(pod: string) {
+      this.currentPod = pod;
+    },
     async fetchLayers(): Promise<AxiosResponse> {
       const res: AxiosResponse = await graph.query("queryLayers").params({});
 
@@ -41,30 +60,40 @@ export const selectorStore = defineStore({
         .params({ layer });
 
       if (!res.data.errors) {
-        this.services = res.data.data.services;
+        this.services = res.data.data.services || [];
+        this.currentService = this.services.length
+          ? this.services[0].value
+          : "";
       }
       return res.data;
     },
-    async getServiceInstances(params: {
-      serviceId: string;
-      duration: Duration;
-    }): Promise<AxiosResponse> {
-      const res: AxiosResponse = await graph
-        .query("queryInstances")
-        .params(params);
-      return res;
+    async getServiceInstances(): Promise<AxiosResponse> {
+      const res: AxiosResponse = await graph.query("queryInstances").params({
+        serviceId: this.currentService,
+        duration: this.durationTime,
+      });
+      if (!res.data.errors) {
+        this.instances = res.data.data.instances || [];
+        this.pods = this.instances;
+        this.currentPod = this.pods.length ? this.pods[0].value : "";
+      }
+      return res.data;
     },
-    async getEndpoints(params: {
-      keyword: string;
-      serviceId: string;
-    }): Promise<AxiosResponse> {
+    async getEndpoints(params: { keyword: string }): Promise<AxiosResponse> {
       if (!params.keyword) {
         params.keyword = "";
       }
-      const res: AxiosResponse = await graph
-        .query("queryEndpoints")
-        .params(params);
-      return res;
+      const res: AxiosResponse = await graph.query("queryEndpoints").params({
+        serviceId: this.currentService,
+        duration: this.durationTime,
+        keyword: params.keyword,
+      });
+      if (!res.data.errors) {
+        this.endpoints = res.data.data.endpoints || [];
+        this.pods = this.endpoints;
+        this.currentPod = this.pods.length ? this.pods[0].value : "";
+      }
+      return res.data;
     },
   },
 });

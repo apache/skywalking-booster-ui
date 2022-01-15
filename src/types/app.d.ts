@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 export interface Option {
-  value: string | number;
+  value: string;
   label: string;
 }
 export interface Duration {
