@@ -28,9 +28,11 @@ limitations under the License. -->
         />
       </div>
       <div class="selectors-item" v-if="states.key === 3 || states.key === 4">
-        <span class="label">$ServiceInstance</span>
+        <span class="label">
+          {{ states.entity === "endpoint" ? "$Endpoint" : "$ServiceInstance" }}
+        </span>
         <el-cascader
-          placeholder="Select a instance"
+          placeholder="Please Select data"
           :options="SelectOpts"
           size="mini"
           filterable
@@ -40,7 +42,7 @@ limitations under the License. -->
       <div class="selectors-item" v-if="states.key === 2">
         <span class="label">$DestinationService</span>
         <Selector
-          :value="states.service"
+          :value="selectorStore.currentDestService"
           :options="selectorStore.services"
           size="mini"
           placeholder="Select a service"

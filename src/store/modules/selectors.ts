@@ -28,6 +28,7 @@ interface SelectorState {
   endpoints: Option[];
   currentService: string;
   currentPod: string;
+  currentDestService: string;
   durationTime: any;
 }
 
@@ -40,6 +41,7 @@ export const selectorStore = defineStore({
     endpoints: [],
     currentService: "",
     currentPod: "",
+    currentDestService: "",
     durationTime: useAppStoreWithOut().durationTime,
   }),
   actions: {
