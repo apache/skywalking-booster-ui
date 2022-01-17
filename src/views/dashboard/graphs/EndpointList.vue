@@ -17,13 +17,20 @@ limitations under the License. -->
     :data="selectorStore.endpoints"
     style="width: 100%; height: 100%; overflow: auto"
   >
-    <el-table-column prop="label" label="Endpoints" />
+    <el-table-column label="Endpoints">
+      <template #default="scope">
+        <span class="link" @click="linkInstance(scope.row)">
+          {{ scope.row.label }}
+        </span>
+      </template>
+    </el-table-column>
   </el-table>
 </template>
 <script setup lang="ts">
 import { defineProps, onBeforeMount } from "vue";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
+import router from "@/router";
 
 defineProps({
   data: {
@@ -43,4 +50,16 @@ onBeforeMount(async () => {
     ElMessage.error(resp.errors);
   }
 });
+function linkInstance(row: any) {
+  const path = `/dashboard/view/${row.layer}/endpoint/${selectorStore.currentService}/${row.value}`;
+  router.push(path);
+}
 </script>
+<style lang="scss" scoped>
+.link {
+  cursor: pointer;
+  color: #409eff;
+  display: inline-block;
+  width: 100%;
+}
+</style>

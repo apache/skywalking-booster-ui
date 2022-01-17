@@ -38,7 +38,23 @@ limitations under the License. -->
         v-model="states.activeNames"
         :style="{ '--el-collapse-header-font-size': '15px' }"
       >
-        <el-collapse-item :title="t('metricName')" name="1">
+        <el-collapse-item :title="t('selectVisualization')" name="1">
+          <div class="chart-types">
+            <span
+              v-for="(type, index) in states.visType"
+              :key="index"
+              @click="changeChartType(type)"
+              :class="{ active: type.value === states.graph.type }"
+            >
+              {{ type.label }}
+            </span>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item
+          :title="t('metricName')"
+          name="2"
+          v-show="states.graph.type !== 'InstanceList'"
+        >
           <div>
             <Selector
               :value="states.metrics"
@@ -59,18 +75,6 @@ limitations under the License. -->
               class="selectors"
               v-loading="loading"
             />
-          </div>
-        </el-collapse-item>
-        <el-collapse-item :title="t('selectVisualization')" name="2">
-          <div class="chart-types">
-            <span
-              v-for="(type, index) in states.visType"
-              :key="index"
-              @click="changeChartType(type)"
-              :class="{ active: type.value === states.graph.type }"
-            >
-              {{ type.label }}
-            </span>
           </div>
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="3">
