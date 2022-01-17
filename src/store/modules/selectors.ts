@@ -83,10 +83,13 @@ export const selectorStore = defineStore({
       }
       return res.data;
     },
-    async getEndpoints(params: {
-      keyword: string;
+    async getEndpoints(params?: {
+      keyword?: string;
       serviceId?: string;
     }): Promise<AxiosResponse> {
+      if (!params) {
+        params = {};
+      }
       if (!params.keyword) {
         params.keyword = "";
       }

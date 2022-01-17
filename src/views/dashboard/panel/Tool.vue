@@ -165,10 +165,11 @@ async function fetchPods(type: string) {
     case "serviceInstance":
       resp = await selectorStore.getServiceInstances();
       break;
+    default:
+      resp = {};
   }
   if (resp.errors) {
     ElMessage.error(resp.errors);
-    return [];
   }
 }
 </script>

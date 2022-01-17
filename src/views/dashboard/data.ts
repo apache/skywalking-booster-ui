@@ -49,14 +49,19 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     showUint: true,
   },
   Table: {
-    type: "Card",
+    type: "Table",
     showTableValues: true,
     tableHeaderCol1: "",
     tableHeaderCol2: "",
   },
   TopList: {
     type: "TopList",
-    topN: 10,
+  },
+  InstanceList: {
+    type: "InstanceList",
+  },
+  EndpointList: {
+    type: "EndpointList",
   },
 };
 

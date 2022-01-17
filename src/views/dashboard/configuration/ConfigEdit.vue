@@ -169,12 +169,12 @@ export default defineComponent({
       queryMetricType(states.metrics[0]);
     }
 
-    if (PodsChartTypes.includes(String(params.entity))) {
+    if (params.entity === "service") {
+      states.visType = ChartTypes;
+    } else {
       states.visType = ChartTypes.filter(
         (d: Option) => !PodsChartTypes.includes(d.value)
       );
-    } else {
-      states.visType = ChartTypes;
     }
 
     async function changeMetrics(arr: Option[]) {

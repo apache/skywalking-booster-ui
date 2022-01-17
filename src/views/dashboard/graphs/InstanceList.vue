@@ -13,22 +13,34 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-table :data="data" style="width: 100%">
+  <el-table
+    :data="selectorStore.instances"
+    style="width: 100%; height: 100%; overflow: auto"
+  >
     <el-table-column prop="label" label="Service Instances" />
   </el-table>
 </template>
 <script setup lang="ts">
-import { defineProps } from "vue";
-import type { PropType } from "vue";
+import { defineProps, onBeforeMount } from "vue";
+import { useSelectorStore } from "@/store/modules/selectors";
+import { ElMessage } from "element-plus";
 
 defineProps({
   data: {
-    type: Array as PropType<{ label: string; value: string }[]>,
-    default: () => [],
+    type: Object,
   },
   config: {
     type: Object,
     default: () => ({}),
   },
+});
+const selectorStore = useSelectorStore();
+
+onBeforeMount(async () => {
+  const resp = await selectorStore.getServiceInstances();
+
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+  }
 });
 </script>

@@ -23,6 +23,8 @@ import TopList from "./TopList.vue";
 import Table from "./Table.vue";
 import Pie from "./Pie.vue";
 import Card from "./Card.vue";
+import InstanceList from "./InstanceList.vue";
+import EndpointList from "./EndpointList.vue";
 
 export default {
   Line,
@@ -33,4 +35,6 @@ export default {
   Table,
   Pie,
   Card,
+  EndpointList,
+  InstanceList,
 };
