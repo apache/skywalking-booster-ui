@@ -33,7 +33,7 @@ limitations under the License. -->
         </span>
         <el-cascader
           placeholder="Please Select data"
-          :options="SelectOpts"
+          :props="propScascader"
           size="mini"
           filterable
           :style="{ minWidth: '300px' }"
@@ -46,7 +46,6 @@ limitations under the License. -->
           :options="selectorStore.services"
           size="mini"
           placeholder="Select a service"
-          :borderRadius="0"
           @change="changeService"
           class="selectors"
         />
@@ -55,7 +54,7 @@ limitations under the License. -->
         <span class="label">$DestinationServiceInstance</span>
         <el-cascader
           placeholder="Select a instance"
-          :options="SelectOpts"
+          :props="propScascader"
           size="mini"
           filterable
           :style="{ minWidth: '300px' }"
@@ -82,28 +81,48 @@ limitations under the License. -->
 import { reactive, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { SelectOpts, EntityType, ToolIcons } from "../data";
+import { EntityType, ToolIcons } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
+import { useTimeoutFn } from "@/hooks/useTimeout";
+import { Option } from "@/types/app";
 
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const params = useRoute().params;
 const states = reactive<{
-  entity: string | string[];
+  entity: string;
   layerId: string | string[];
-  pod: string;
   destService: string;
   destPod: string;
   key: number;
+  pods: { value: string; label: string; children: Option[] }[];
+  pod: Option[];
 }>({
-  pod: "", // instances or endpoints
+  pod: [], // instances or endpoints
   destService: "",
   destPod: "",
-  key: EntityType.filter((d: any) => d.value === params.entity)[0].key || 0,
-  entity: params.entity,
+  key: EntityType.filter((d: Option) => d.value === params.entity)[0].key || 0,
+  entity: String(params.entity),
   layerId: params.layerId,
+  pods: [],
 });
+const propScascader = {
+  lazy: true,
+  lazyLoad(node: any, resolve: any) {
+    useTimeoutFn(async () => {
+      console.log(node);
+      const params = node.value ? { serviceId: node.label } : undefined;
+      const pods = fetchPods(states.entity, params);
+      if (node.index) {
+        states.pods[node.index].children = pods;
+      } else {
+        states.pods = pods;
+      }
+      resolve(states.pods);
+    }, 100);
+  },
+};
 
 dashboardStore.setLayer(states.layerId);
 dashboardStore.setEntity(states.entity);
@@ -116,12 +135,6 @@ onBeforeMount(async () => {
     ElMessage.error(json.errors);
     return;
   }
-  const resp = await selectorStore.getServiceInstances();
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return;
-  }
-  // states.pods =
 });
 
 function changeService(service: { value: string; label: string }) {
@@ -145,6 +158,23 @@ function clickIcons(t: { id: string; content: string; name: string }) {
     default:
       dashboardStore.addControl("Widget");
   }
+}
+
+async function fetchPods(type: string, params: unknown) {
+  let resp;
+  switch (type) {
+    case "endpoint":
+      resp = await selectorStore.getEndpoints(params);
+      break;
+    case "serviceInstance":
+      resp = await selectorStore.getServiceInstances(params);
+      break;
+  }
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return [];
+  }
+  return resp.data.pods || [];
 }
 </script>
 <style lang="scss" scoped>

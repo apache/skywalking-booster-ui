@@ -59,9 +59,6 @@ const props = defineProps({
 });
 const selected = ref<string[] | string>(props.value);
 function changeSelected() {
-  if (!props.multiple) {
-    return;
-  }
   const options = props.options.filter((d: Option) =>
     props.multiple
       ? selected.value.includes(d.value)

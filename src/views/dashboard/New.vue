@@ -37,7 +37,7 @@ limitations under the License. -->
     <div class="item">
       <div class="label">{{ t("entityType") }}</div>
       <Selector
-        :value="states.entity"
+        v-model="states.entity"
         :options="EntityType"
         size="small"
         placeholder="Select a entity"

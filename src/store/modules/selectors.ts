@@ -29,7 +29,7 @@ interface SelectorState {
   currentService: string;
   currentPod: string;
   currentDestService: string;
-  durationTime: any;
+  durationTime: Duration;
 }
 
 export const selectorStore = defineStore({
@@ -69,9 +69,11 @@ export const selectorStore = defineStore({
       }
       return res.data;
     },
-    async getServiceInstances(): Promise<AxiosResponse> {
+    async getServiceInstances(param?: {
+      serviceId: string;
+    }): Promise<AxiosResponse> {
       const res: AxiosResponse = await graph.query("queryInstances").params({
-        serviceId: this.currentService,
+        serviceId: param ? param.serviceId : this.currentService,
         duration: this.durationTime,
       });
       if (!res.data.errors) {
@@ -81,12 +83,15 @@ export const selectorStore = defineStore({
       }
       return res.data;
     },
-    async getEndpoints(params: { keyword: string }): Promise<AxiosResponse> {
+    async getEndpoints(params: {
+      keyword: string;
+      serviceId?: string;
+    }): Promise<AxiosResponse> {
       if (!params.keyword) {
         params.keyword = "";
       }
       const res: AxiosResponse = await graph.query("queryEndpoints").params({
-        serviceId: this.currentService,
+        serviceId: params.serviceId || this.currentService,
         duration: this.durationTime,
         keyword: params.keyword,
       });

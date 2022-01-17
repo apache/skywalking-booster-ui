@@ -33,8 +33,8 @@ export const Layers = {
 export const Instances = {
   variable: "$serviceId: ID!, $duration: Duration!",
   query: `
-  instances: listInstances(duration: $duration, serviceId: $serviceId) {
-      key: id
+  pods: listInstances(duration: $duration, serviceId: $serviceId) {
+    value: id
       label: name
       language
       instanceUUID
@@ -49,8 +49,8 @@ export const Instances = {
 export const Endpoints = {
   variable: "$serviceId: ID!, $keyword: String!",
   query: `
-  endpoints: searchEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 100) {
-      key: id
+  pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 100) {
+      value: id
       label: name
     }
 `,
