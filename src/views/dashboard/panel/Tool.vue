@@ -15,10 +15,10 @@ limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
     <div class="flex-h">
-      <div class="selectors-item" v-if="states.key < 3">
+      <div class="selectors-item">
         <span class="label">$Service</span>
         <Selector
-          :value="selectorStore.currentService"
+          v-model="selectorStore.currentService"
           :options="selectorStore.services"
           size="mini"
           placeholder="Select a service"
@@ -31,18 +31,20 @@ limitations under the License. -->
         <span class="label">
           {{ states.entity === "endpoint" ? "$Endpoint" : "$ServiceInstance" }}
         </span>
-        <el-cascader
-          placeholder="Please Select data"
-          :props="propScascader"
+        <Selector
+          v-model="selectorStore.currentPod"
+          :options="selectorStore.pods"
           size="mini"
-          filterable
-          :style="{ minWidth: '300px' }"
+          placeholder="Select a data"
+          @change="changePods"
+          class="selectors"
+          :borderRadius="4"
         />
       </div>
       <div class="selectors-item" v-if="states.key === 2">
         <span class="label">$DestinationService</span>
         <Selector
-          :value="selectorStore.currentDestService"
+          v-model="selectorStore.currentDestService"
           :options="selectorStore.services"
           size="mini"
           placeholder="Select a service"
@@ -52,12 +54,14 @@ limitations under the License. -->
       </div>
       <div class="selectors-item" v-if="states.key === 4">
         <span class="label">$DestinationServiceInstance</span>
-        <el-cascader
-          placeholder="Select a instance"
-          :props="propScascader"
+        <Selector
+          v-model="selectorStore.currentPod"
+          :options="selectorStore.pods"
           size="mini"
-          filterable
-          :style="{ minWidth: '300px' }"
+          placeholder="Select a data"
+          @change="changePods"
+          class="selectors"
+          :borderRadius="4"
         />
       </div>
     </div>
@@ -84,7 +88,6 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { EntityType, ToolIcons } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
-import { useTimeoutFn } from "@/hooks/useTimeout";
 import { Option } from "@/types/app";
 
 const dashboardStore = useDashboardStore();
@@ -96,34 +99,13 @@ const states = reactive<{
   destService: string;
   destPod: string;
   key: number;
-  pods: { value: string; label: string; children: Option[] }[];
-  pod: Option[];
 }>({
-  pod: [], // instances or endpoints
   destService: "",
   destPod: "",
   key: EntityType.filter((d: Option) => d.value === params.entity)[0].key || 0,
   entity: String(params.entity),
   layerId: params.layerId,
-  pods: [],
 });
-const propScascader = {
-  lazy: true,
-  lazyLoad(node: any, resolve: any) {
-    useTimeoutFn(async () => {
-      console.log(node);
-      const params = node.value ? { serviceId: node.label } : undefined;
-      const pods = fetchPods(states.entity, params);
-      if (node.index) {
-        states.pods[node.index].children = pods;
-      } else {
-        states.pods = pods;
-      }
-      resolve(states.pods);
-    }, 100);
-  },
-};
-
 dashboardStore.setLayer(states.layerId);
 dashboardStore.setEntity(states.entity);
 onBeforeMount(async () => {
@@ -135,10 +117,24 @@ onBeforeMount(async () => {
     ElMessage.error(json.errors);
     return;
   }
+  fetchPods(states.entity);
 });
 
-function changeService(service: { value: string; label: string }) {
-  selectorStore.setCurrentService(service.value);
+async function changeService(service: Option[]) {
+  if (service[0]) {
+    selectorStore.setCurrentService(service[0].value);
+    fetchPods(states.entity);
+  } else {
+    selectorStore.setCurrentService("");
+  }
+}
+
+function changePods(pod: Option[]) {
+  if (pod[0]) {
+    selectorStore.setCurrentPod(pod[0].value);
+  } else {
+    selectorStore.setCurrentPod("");
+  }
 }
 
 function clickIcons(t: { id: string; content: string; name: string }) {
@@ -160,21 +156,20 @@ function clickIcons(t: { id: string; content: string; name: string }) {
   }
 }
 
-async function fetchPods(type: string, params: unknown) {
+async function fetchPods(type: string) {
   let resp;
   switch (type) {
     case "endpoint":
-      resp = await selectorStore.getEndpoints(params);
+      resp = await selectorStore.getEndpoints();
       break;
     case "serviceInstance":
-      resp = await selectorStore.getServiceInstances(params);
+      resp = await selectorStore.getServiceInstances();
       break;
   }
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return [];
   }
-  return resp.data.pods || [];
 }
 </script>
 <style lang="scss" scoped>

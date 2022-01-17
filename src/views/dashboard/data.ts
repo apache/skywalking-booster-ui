@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export const PodsChartTypes = ["EndpointList", "InstanceList"];
+
 export const ChartTypes = [
   { label: "Bar", value: "Bar" },
   { label: "Line", value: "Line" },

@@ -77,7 +77,7 @@ export const selectorStore = defineStore({
         duration: this.durationTime,
       });
       if (!res.data.errors) {
-        this.instances = res.data.data.instances || [];
+        this.instances = res.data.data.pods || [];
         this.pods = this.instances;
         this.currentPod = this.pods.length ? this.pods[0].value : "";
       }
@@ -96,7 +96,7 @@ export const selectorStore = defineStore({
         keyword: params.keyword,
       });
       if (!res.data.errors) {
-        this.endpoints = res.data.data.endpoints || [];
+        this.endpoints = res.data.data.pods || [];
         this.pods = this.endpoints;
         this.currentPod = this.pods.length ? this.pods[0].value : "";
       }

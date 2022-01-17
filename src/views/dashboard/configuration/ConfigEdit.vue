@@ -64,7 +64,7 @@ limitations under the License. -->
         <el-collapse-item :title="t('selectVisualization')" name="2">
           <div class="chart-types">
             <span
-              v-for="(type, index) in ChartTypes"
+              v-for="(type, index) in states.visType"
               :key="index"
               @click="changeChartType(type)"
               :class="{ active: type.value === states.graph.type }"
@@ -107,6 +107,7 @@ limitations under the License. -->
 <script lang="ts">
 import { reactive, defineComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { ElMessage } from "element-plus";
@@ -115,6 +116,7 @@ import {
   MetricQueryTypes,
   ChartTypes,
   DefaultGraphConfig,
+  PodsChartTypes,
 } from "../data";
 import { Option } from "@/types/app";
 import { WidgetConfig, GraphConfig, StandardConfig } from "@/types/dashboard";
@@ -137,6 +139,7 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
     const { selectedGrid } = dashboardStore;
+    const params = useRoute().params;
     const states = reactive<{
       metrics: string[];
       valueTypes: Option[];
@@ -148,6 +151,7 @@ export default defineComponent({
       graph: GraphConfig;
       widget: WidgetConfig | any;
       standard: StandardConfig;
+      visType: Option[];
     }>({
       metrics: selectedGrid.metrics || [],
       valueTypes: [],
@@ -159,9 +163,18 @@ export default defineComponent({
       graph: selectedGrid.graph,
       widget: selectedGrid.widget,
       standard: selectedGrid.standard,
+      visType: [],
     });
     if (states.metrics[0]) {
       queryMetricType(states.metrics[0]);
+    }
+
+    if (PodsChartTypes.includes(String(params.entity))) {
+      states.visType = ChartTypes.filter(
+        (d: Option) => !PodsChartTypes.includes(d.value)
+      );
+    } else {
+      states.visType = ChartTypes;
     }
 
     async function changeMetrics(arr: Option[]) {
