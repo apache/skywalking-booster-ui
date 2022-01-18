@@ -50,11 +50,7 @@ limitations under the License. -->
             </span>
           </div>
         </el-collapse-item>
-        <el-collapse-item
-          :title="t('metricName')"
-          name="2"
-          v-show="states.graph.type !== 'InstanceList'"
-        >
+        <el-collapse-item :title="t('metricName')" name="2">
           <div>
             <Selector
               :value="states.metrics"

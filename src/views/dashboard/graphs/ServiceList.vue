@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <el-table
-    :data="selectorStore.instances"
+    :data="selectorStore.services"
     style="width: 100%; height: 100%; overflow: auto"
   >
-    <el-table-column label="Service Instances">
+    <el-table-column label="Services">
       <template #default="scope">
-        <span class="link" @click="linkInstance(scope.row)">
+        <span class="link" @click="linkService(scope.row)">
           {{ scope.row.label }}
         </span>
       </template>
@@ -44,14 +44,14 @@ defineProps({
 const selectorStore = useSelectorStore();
 
 onBeforeMount(async () => {
-  const resp = await selectorStore.getServiceInstances();
+  const resp = await selectorStore.fetchServices();
 
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
 });
-function linkInstance(row: any) {
-  const path = `/dashboard/${row.layer}/serviceInstance/${selectorStore.currentService}/${row.value}/test`;
+function linkService(row: { layer: string }) {
+  const path = `/dashboard/${row.layer}/service/${selectorStore.currentService}/test`;
   router.push(path);
 }
 </script>

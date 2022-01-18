@@ -25,6 +25,7 @@ export const ChartTypes = [
   { label: "Card", value: "Card" },
   { label: "Top List", value: "TopList" },
   { label: "Table", value: "Table" },
+  { label: "Service List", value: "ServiceList" },
   { label: "Endpoint List", value: "EndpointList" },
   { label: "Instance List", value: "InstanceList" },
 ];

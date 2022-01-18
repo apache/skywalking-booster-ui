@@ -25,6 +25,7 @@ import Pie from "./Pie.vue";
 import Card from "./Card.vue";
 import InstanceList from "./InstanceList.vue";
 import EndpointList from "./EndpointList.vue";
+import ServiceList from "./ServiceList.vue";
 
 export default {
   Line,
@@ -37,4 +38,5 @@ export default {
   Card,
   EndpointList,
   InstanceList,
+  ServiceList,
 };

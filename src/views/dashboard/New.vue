@@ -58,7 +58,6 @@ import { useI18n } from "vue-i18n";
 import router from "@/router";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EntityType } from "./data";
-import uuid from "@/utils/uuid";
 import { ElMessage } from "element-plus";
 
 const { t } = useI18n();
@@ -70,8 +69,8 @@ const states = reactive({
   layers: [],
 });
 const onCreate = () => {
-  const id = uuid();
-  const path = `/dashboard/edit/${states.selectedLayer}/${states.entity}/${id}`;
+  const name = states.name.split(" ").join("-");
+  const path = `/dashboard/${states.selectedLayer}/${states.entity}/${name}`;
   router.push(path);
 };
 onBeforeMount(async () => {
