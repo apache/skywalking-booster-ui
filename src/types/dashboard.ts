@@ -47,7 +47,14 @@ export interface StandardConfig {
   seconds?: string;
 }
 
-export type GraphConfig = BarConfig | LineConfig | CardConfig | TableConfig;
+export type GraphConfig =
+  | BarConfig
+  | LineConfig
+  | CardConfig
+  | TableConfig
+  | EndpointListConfig
+  | ServiceListConfig
+  | InstanceListConfig;
 export interface BarConfig {
   type?: string;
   showBackground?: boolean;
@@ -80,4 +87,22 @@ export interface TableConfig {
 export interface TopListConfig {
   type?: string;
   topN: number;
+}
+
+export interface ServiceListConfig {
+  type?: string;
+  dashboardName: string;
+  fontSize: number;
+}
+
+export interface InstanceListConfig {
+  type?: string;
+  dashboardName: string;
+  fontSize: number;
+}
+
+export interface EndpointListConfig {
+  type?: string;
+  dashboardName: string;
+  fontSize: number;
 }

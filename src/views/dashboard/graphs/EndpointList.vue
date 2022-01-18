@@ -14,46 +14,52 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <el-table
+    v-loading="chartLoading"
     :data="selectorStore.endpoints"
     style="width: 100%; height: 100%; overflow: auto"
   >
     <el-table-column label="Endpoints">
       <template #default="scope">
-        <span class="link" @click="linkInstance(scope.row)">
+        <router-link
+          target="_blank"
+          class="link"
+          :to="`/dashboard/${scope.row.layer}/endpoint/${selectorStore.currentService}/${scope.row.value}/${config.dashboardName}`"
+          :style="{ fontSize: `${config.fontSize}px` }"
+        >
           {{ scope.row.label }}
-        </span>
+        </router-link>
       </template>
     </el-table-column>
   </el-table>
 </template>
 <script setup lang="ts">
-import { defineProps, onBeforeMount } from "vue";
+import { defineProps, onBeforeMount, ref } from "vue";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
-import router from "@/router";
+import type { PropType } from "vue";
+import { EndpointListConfig } from "@/types/dashboard";
 
 defineProps({
   data: {
     type: Object,
   },
   config: {
-    type: Object,
-    default: () => ({}),
+    type: Object as PropType<EndpointListConfig>,
+    default: () => ({ dashboardName: "", fontSize: 12 }),
   },
 });
 const selectorStore = useSelectorStore();
+const chartLoading = ref<boolean>(false);
 
 onBeforeMount(async () => {
+  chartLoading.value = true;
   const resp = await selectorStore.getEndpoints();
 
+  chartLoading.value = false;
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
 });
-function linkInstance(row: any) {
-  const path = `/dashboard/view/${row.layer}/endpoint/${selectorStore.currentService}/${row.value}`;
-  router.push(path);
-}
 </script>
 <style lang="scss" scoped>
 .link {

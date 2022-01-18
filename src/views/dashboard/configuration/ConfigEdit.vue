@@ -50,8 +50,21 @@ limitations under the License. -->
             </span>
           </div>
         </el-collapse-item>
-        <el-collapse-item :title="t('metricName')" name="2">
-          <div>
+        <el-collapse-item
+          :title="t(states.isTable ? 'dashboardName' : 'metricName')"
+          name="2"
+        >
+          <div v-if="states.isTable">
+            <Selector
+              :value="states.graph.dashboardName"
+              :options="metricOpts"
+              size="mini"
+              placeholder="Select a dashboard"
+              @change="changeDashboard"
+              class="selectors"
+            />
+          </div>
+          <div v-else>
             <Selector
               :value="states.metrics"
               :options="metricOpts"
@@ -66,7 +79,6 @@ limitations under the License. -->
               :value="states.valueType"
               :options="states.valueTypes"
               size="mini"
-              placeholder="Select a metric"
               @change="changeValueType"
               class="selectors"
               v-loading="loading"
@@ -117,6 +129,7 @@ import {
   ChartTypes,
   DefaultGraphConfig,
   PodsChartTypes,
+  TableChartTypes,
 } from "../data";
 import { Option } from "@/types/app";
 import { WidgetConfig, GraphConfig, StandardConfig } from "@/types/dashboard";
@@ -148,10 +161,11 @@ export default defineComponent({
       activeNames: string;
       source: any;
       index: string;
-      graph: GraphConfig;
+      graph: GraphConfig | any;
       widget: WidgetConfig | any;
       standard: StandardConfig;
       visType: Option[];
+      isTable: boolean;
     }>({
       metrics: selectedGrid.metrics || [],
       valueTypes: [],
@@ -164,16 +178,26 @@ export default defineComponent({
       widget: selectedGrid.widget,
       standard: selectedGrid.standard,
       visType: [],
+      isTable: false,
     });
+
+    states.isTable = TableChartTypes.includes(states.graph.type || "");
+
     if (states.metrics[0]) {
       queryMetricType(states.metrics[0]);
     }
 
     if (params.entity === "service") {
-      states.visType = ChartTypes;
-    } else {
+      states.visType = ChartTypes.filter(
+        (d: Option) => d.value !== "serviceList"
+      );
+    } else if (params.entity === "all") {
       states.visType = ChartTypes.filter(
         (d: Option) => !PodsChartTypes.includes(d.value)
+      );
+    } else {
+      states.visType = ChartTypes.filter(
+        (d: Option) => !TableChartTypes.includes(d.value)
       );
     }
 
@@ -213,6 +237,11 @@ export default defineComponent({
       states.graph = {
         ...DefaultGraphConfig[item.value],
       };
+      states.isTable = TableChartTypes.includes(states.graph.type || "");
+    }
+
+    function changeDashboard(item: Option[]) {
+      states.graph.dashboardName = item[0].value;
     }
 
     const metricOpts = [
@@ -302,6 +331,7 @@ export default defineComponent({
       updateGraphOptions,
       updateStandardOptions,
       applyConfig,
+      changeDashboard,
       loading,
     };
   },

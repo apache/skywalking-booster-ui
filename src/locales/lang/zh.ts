@@ -71,6 +71,7 @@ const msg = {
   showBackground: "显示背景",
   areaOpacity: "透明度",
   editGraph: "编辑图表选项",
+  dashboardName: "选择仪表板名称",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

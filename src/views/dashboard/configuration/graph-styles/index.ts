@@ -18,9 +18,15 @@
 import AreaConfig from "./Area.vue";
 import LineConfig from "./Line.vue";
 import BarConfig from "./Bar.vue";
+import InstanceListConfig from "./InstanceList.vue";
+import EndpointListConfig from "./EndpointList.vue";
+import ServiceListConfig from "./ServiceList.vue";
 
 export default {
   AreaConfig,
   LineConfig,
   BarConfig,
+  InstanceListConfig,
+  EndpointListConfig,
+  ServiceListConfig,
 };

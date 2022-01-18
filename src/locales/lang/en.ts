@@ -73,6 +73,7 @@ const msg = {
   showBackground: "Show Background",
   areaOpacity: "Area Opacity",
   editGraph: "Edit Graph Options",
+  dashboardName: "Select Dashboard Name",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

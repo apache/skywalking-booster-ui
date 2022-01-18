@@ -16,6 +16,8 @@
  */
 export const PodsChartTypes = ["EndpointList", "InstanceList"];
 
+export const TableChartTypes = ["EndpointList", "InstanceList", "ServiceList"];
+
 export const ChartTypes = [
   { label: "Bar", value: "Bar" },
   { label: "Line", value: "Line" },
@@ -60,9 +62,18 @@ export const DefaultGraphConfig: { [key: string]: any } = {
   },
   InstanceList: {
     type: "InstanceList",
+    dashboardName: "",
+    fontSize: 12,
   },
   EndpointList: {
     type: "EndpointList",
+    dashboardName: "",
+    fontSize: 12,
+  },
+  ServiceList: {
+    type: "ServiceList",
+    dashboardName: "",
+    fontSize: 12,
   },
 };
 
