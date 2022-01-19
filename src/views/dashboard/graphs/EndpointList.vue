@@ -14,6 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="table">
+    <div class="search">
+      <el-input
+        v-model="searchText"
+        placeholder="Please input instance name"
+        class="input-with-search"
+        size="small"
+        @change="searchList"
+      >
+        <template #append>
+          <el-button size="small" @click="searchList">
+            <Icon size="lg" iconName="search" />
+          </el-button>
+        </template>
+      </el-input>
+    </div>
     <el-table
       v-loading="chartLoading"
       :data="endpoints"
@@ -62,8 +77,10 @@ defineProps({
 });
 const selectorStore = useSelectorStore();
 const chartLoading = ref<boolean>(false);
-const endpoints = ref<{ label: string; value: string }[]>([]);
+const endpoints = ref<{ layer: string; label: string }[]>([]);
+const searchEndpoints = ref<{ layer: string; label: string }[]>([]);
 const pageSize = 7;
+const searchText = ref<string>("");
 
 onBeforeMount(async () => {
   chartLoading.value = true;
@@ -79,23 +96,13 @@ onBeforeMount(async () => {
 function changePage(pageIndex: number) {
   endpoints.value = selectorStore.endpoints.splice(pageIndex - 1, pageSize);
 }
+function searchList() {
+  searchEndpoints.value = selectorStore.instances.filter(
+    (d: { label: string }) => d.label.includes(searchText.value)
+  );
+  endpoints.value = searchEndpoints.value.splice(0, pageSize);
+}
 </script>
 <style lang="scss" scoped>
-.table {
-  height: 100%;
-}
-
-.pagination {
-  width: 100%;
-  text-align: center;
-  height: 30px;
-  padding: 3px 0;
-}
-
-.link {
-  cursor: pointer;
-  color: #409eff;
-  display: inline-block;
-  width: 100%;
-}
+@import "./style.scss";
 </style>

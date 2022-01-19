@@ -15,20 +15,23 @@
  * limitations under the License.
  */
 
- body {
+body {
   margin: 0;
   line-height: 1.5;
   font-size: 14px;
   color: #3d444f;
-  font-family: 'Helvetica', 'Arial', 'Source Han Sans CN', 'Microsoft YaHei', 'sans-serif';
+  font-family: Helvetica, Arial, "Source Han Sans CN", "Microsoft YaHei",
+    sans-serif;
   text-rendering: optimizeLegibility;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
+
 html,
 body {
   height: 100%;
 }
+
 div,
 header,
 footer,
@@ -53,6 +56,7 @@ a,
 img {
   box-sizing: border-box;
 }
+
 input,
 textarea,
 select,
@@ -60,41 +64,51 @@ button {
   font-size: 100%;
   font-family: inherit;
 }
+
 h1 {
   font-size: 26px;
 }
+
 h2 {
   font-size: 24px;
 }
+
 h3 {
   font-size: 21px;
 }
+
 h4 {
   font-size: 18px;
 }
+
 h5 {
   font-size: 14px;
 }
+
 h6 {
   font-size: 1em;
 }
+
 ul,
 ol {
   margin: 0;
   padding-left: 0;
   list-style-type: none;
 }
+
 a {
   text-decoration: none;
   cursor: pointer;
   color: inherit;
   -webkit-tap-highlight-color: transparent;
-  -webkit-appearance: none;
+  appearance: none;
 }
+
 hr {
   border-width: 0;
   border-bottom: 1px solid #e0e0e0;
 }
+
 blockquote {
   margin-left: 0;
   margin-right: 0;
@@ -102,57 +116,76 @@ blockquote {
   border-left: 4px solid #cacaca;
 }
 
+.el-dialog__body {
+  padding: 10px 20px;
+}
+
 code,
 pre {
   font-family: Consolas, Menlo, Courier, monospace;
 }
-/*webkit core*/
+
+/* webkit core */
 .scroll_hide::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
+  width: 0;
+  height: 0;
 }
+
 .scroll_hide::-webkit-scrollbar-button {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
+
 .scroll_hide::-webkit-scrollbar-track {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
+
 .scroll_hide::-webkit-scrollbar-track-piece {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
+
 .scroll_hide::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
+
 .scroll_hide::-webkit-scrollbar-corner {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
+
 .scroll_hide::-webkit-scrollbar-resizer {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
-/*o core*/
+
+/* o core */
 .scroll_hide .-o-scrollbar {
-  -moz-appearance: none !important;
-  background: rgba(0, 255, 0, 0) !important;
+  appearance: none !important;
+  background: rgb(0 255 0 / 0%) !important;
 }
+
 .scroll_hide::-o-scrollbar-button {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
+
 .scroll_hide::-o-scrollbar-track {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
+
 .scroll_hide::-o-scrollbar-track-piece {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
+
 .scroll_hide::-o-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
+
 .scroll_hide::-o-scrollbar-corner {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
+
 .scroll_hide::-o-scrollbar-resizer {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
 }
-/*IE10,IE11,IE12*/
+
+/* IE10,IE11,IE12 */
 .scroll_hide {
   -ms-scroll-chaining: chained;
   -ms-overflow-style: none;
@@ -160,18 +193,20 @@ pre {
   -ms-scroll-rails: none;
   -ms-content-zoom-limit-min: 100%;
   -ms-content-zoom-limit-max: 500%;
-  -ms-scroll-snap-points-x: snapList(100%, 200%, 300%, 400%, 500%);
-  -ms-overflow-style: none;
+  scroll-snap-points-x: snaplist(100%, 200%, 300%, 400%, 500%);
   overflow: auto;
 }
+
 .scroll_bar_style::-webkit-scrollbar {
   width: 9px;
   height: 6px;
 }
+
 .scroll_bar_style::-webkit-scrollbar-track {
   background-color: #3d444f;
 }
+
 .scroll_bar_style::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background: rgba(196, 200, 225, .2);
+  background: rgb(196 200 225 / 20%);
 }

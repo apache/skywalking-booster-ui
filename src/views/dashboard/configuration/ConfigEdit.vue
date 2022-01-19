@@ -370,7 +370,7 @@ export default defineComponent({
 
 .render-chart {
   padding: 5px;
-  height: 360px;
+  height: 400px;
   width: 100%;
 }
 
@@ -405,7 +405,7 @@ export default defineComponent({
 .no-data {
   font-size: 14px;
   text-align: center;
-  line-height: 350px;
+  line-height: 400px;
 }
 
 span.active {

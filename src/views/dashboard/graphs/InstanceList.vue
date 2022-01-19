@@ -14,6 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="table">
+    <div class="search">
+      <el-input
+        v-model="searchText"
+        placeholder="Please input instance name"
+        class="input-with-search"
+        size="small"
+        @change="searchList"
+      >
+        <template #append>
+          <el-button size="small" @click="searchList">
+            <Icon size="lg" iconName="search" />
+          </el-button>
+        </template>
+      </el-input>
+    </div>
     <el-table
       v-loading="chartLoading"
       :data="instances"
@@ -36,8 +51,8 @@ limitations under the License. -->
       class="pagination"
       background
       layout="prev, pager, next"
-      :page-size="6"
-      :total="selectorStore.instances.length"
+      :page-size="pageSize"
+      :total="searchInstances.length"
       @current-change="changePage"
       @prev-click="changePage"
       @next-click="changePage"
@@ -62,8 +77,10 @@ defineProps({
 });
 const selectorStore = useSelectorStore();
 const chartLoading = ref<boolean>(false);
-const instances = ref<any[]>([]);
+const instances = ref<{ layer: string; label: string }[]>([]);
+const searchInstances = ref<{ layer: string; label: string }[]>([]);
 const pageSize = 7;
+const searchText = ref<string>("");
 
 onBeforeMount(async () => {
   chartLoading.value = true;
@@ -74,28 +91,19 @@ onBeforeMount(async () => {
     ElMessage.error(resp.errors);
     return;
   }
-  instances.value = selectorStore.instances.splice(0, pageSize);
+  searchInstances.value = selectorStore.instances;
+  instances.value = searchInstances.value.splice(0, pageSize);
 });
 function changePage(pageIndex: number) {
-  instances.value = selectorStore.instances.splice(pageIndex - 1, pageSize);
+  instances.value = searchInstances.value.splice(pageIndex - 1, pageSize);
+}
+function searchList() {
+  searchInstances.value = selectorStore.instances.filter(
+    (d: { label: string }) => d.label.includes(searchText.value)
+  );
+  instances.value = searchInstances.value.splice(0, pageSize);
 }
 </script>
 <style lang="scss" scoped>
-.table {
-  height: 100%;
-}
-
-.pagination {
-  width: 100%;
-  text-align: center;
-  height: 30px;
-  padding: 3px 0;
-}
-
-.link {
-  cursor: pointer;
-  color: #409eff;
-  display: inline-block;
-  width: 100%;
-}
+@import "./style.scss";
 </style>
