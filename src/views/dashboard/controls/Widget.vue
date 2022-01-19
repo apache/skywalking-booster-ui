@@ -121,7 +121,7 @@ export default defineComponent({
       }
     }
     watch(
-      () => [props.data.queryMetricType, props.data.metrics],
+      () => [props.data.metricTypes, props.data.metrics],
       (data, old) => {
         if (data[0] === old[0] && data[1] === old[1]) {
           return;

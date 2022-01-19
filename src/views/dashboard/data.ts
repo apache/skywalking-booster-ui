@@ -92,7 +92,7 @@ export enum MetricsType {
   HEATMAP = "HEATMAP",
   SAMPLED_RECORD = "SAMPLED_RECORD",
 }
-export const ValuesTypes: {
+export const MetricTypes: {
   [key: string]: Array<{ label: string; value: string }>;
 } = {
   REGULAR_VALUE: [

@@ -25,7 +25,7 @@ export interface LayoutConfig {
   standard?: StandardConfig;
   metrics?: string[];
   type?: string;
-  queryMetricType?: string;
+  metricTypes?: string[];
   children?: any;
 }
 

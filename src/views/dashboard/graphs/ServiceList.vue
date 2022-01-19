@@ -17,7 +17,7 @@ limitations under the License. -->
     <div class="search">
       <el-input
         v-model="searchText"
-        placeholder="Please input instance name"
+        placeholder="Please input service name"
         class="input-with-search"
         size="small"
         @change="searchList"

@@ -39,43 +39,11 @@ limitations under the License. -->
         :style="{ '--el-collapse-header-font-size': '15px' }"
       >
         <el-collapse-item :title="t('metricName')" name="1">
-          <div v-show="states.isTable" class="ds-name">
-            <Selector
-              :value="states.graph.dashboardName"
-              :options="states.metricList"
-              size="mini"
-              placeholder="Select a dashboard"
-              @change="changeDashboard"
-              class="selectors"
-            />
-          </div>
-          <div>
-            <Selector
-              :value="states.metrics"
-              :options="states.metricList"
-              :multiple="!states.isTable"
-              size="mini"
-              placeholder="Select a metric"
-              @change="changeMetrics"
-              class="selectors"
-            />
-            <Selector
-              v-if="states.valueType"
-              :value="states.valueType"
-              :options="states.valueTypes"
-              size="mini"
-              @change="changeValueType"
-              class="selectors"
-              v-loading="loading"
-            />
-            <Icon
-              iconName="add_circle_outlinecontrol_point"
-              size="middle"
-              v-show="states.isTable"
-              @click="addMetricName"
-              class="cp"
-            />
-          </div>
+          <MetricOptions
+            :graph="states.graph"
+            @update="getSource"
+            @apply="getMetricsConfig"
+          />
         </el-collapse-item>
         <el-collapse-item :title="t('selectVisualization')" name="2">
           <div class="chart-types">
@@ -121,15 +89,12 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { reactive, defineComponent, ref } from "vue";
+import { reactive, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { ElMessage } from "element-plus";
 import {
-  ValuesTypes,
-  MetricQueryTypes,
   ChartTypes,
   DefaultGraphConfig,
   PodsChartTypes,
@@ -141,6 +106,7 @@ import graphs from "../graphs";
 import configs from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
 import StandardOptions from "./StandardOptions.vue";
+import MetricOptions from "./MetricOptions.vue";
 
 export default defineComponent({
   name: "ConfigEdit",
@@ -149,20 +115,16 @@ export default defineComponent({
     ...configs,
     WidgetOptions,
     StandardOptions,
+    MetricOptions,
   },
   setup() {
     const configHeight = document.documentElement.clientHeight - 520;
-    const loading = ref<boolean>(false);
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
     const { selectedGrid } = dashboardStore;
     const params = useRoute().params;
     const states = reactive<{
-      metrics: string[];
-      valueTypes: Option[];
-      valueType: string;
-      metricQueryType: string;
       activeNames: string;
       source: any;
       index: string;
@@ -171,12 +133,9 @@ export default defineComponent({
       standard: StandardConfig;
       visType: Option[];
       isTable: boolean;
-      metricList: (Option & { type: string })[];
+      metrics: string[];
+      metricTypes: string[];
     }>({
-      metrics: selectedGrid.metrics || [],
-      valueTypes: [],
-      valueType: "",
-      metricQueryType: "",
       activeNames: "1",
       source: {},
       index: selectedGrid.i,
@@ -185,9 +144,9 @@ export default defineComponent({
       standard: selectedGrid.standard,
       visType: [],
       isTable: false,
-      metricList: [],
+      metrics: [],
+      metricTypes: [],
     });
-
     states.isTable = TableChartTypes.includes(states.graph.type || "");
 
     if (params.entity === "service") {
@@ -204,40 +163,12 @@ export default defineComponent({
       );
     }
 
-    setMetricType(states.metrics[0]);
-
-    async function changeMetrics(arr: (Option & { type: string })[]) {
-      if (!arr.length) {
-        states.valueTypes = [];
-        states.valueType = "";
-        return;
-      }
-      states.metrics = arr.map((d: Option) => d.value);
-      if (arr[0]) {
-        const typeOfMetrics = arr[0].type;
-        states.valueTypes = ValuesTypes[typeOfMetrics];
-        states.valueType = ValuesTypes[typeOfMetrics][0].value;
-        queryMetrics();
-      }
-    }
-
-    function changeValueType(val: Option[]) {
-      states.valueType = String(val[0].value);
-      states.metricQueryType = (MetricQueryTypes as any)[states.valueType];
-      queryMetrics();
-    }
-
     function changeChartType(item: Option) {
       states.graph = {
         ...DefaultGraphConfig[item.value],
       };
-      states.isTable = TableChartTypes.includes(states.graph.type || "");
+      states.isTable = TableChartTypes.includes(states.graph.type);
     }
-
-    function changeDashboard(item: Option[]) {
-      states.graph.dashboardName = item[0].value;
-    }
-
     function updateWidgetOptions(param: { [key: string]: unknown }) {
       states.widget = {
         ...states.widget,
@@ -259,57 +190,26 @@ export default defineComponent({
       };
     }
 
-    async function queryMetrics() {
-      const json = await dashboardStore.fetchMetricValue(
-        dashboardStore.selectedGrid
-      );
-      if (!json) {
-        return;
-      }
-
-      if (json.errors) {
-        ElMessage.error(json.errors);
-        return;
-      }
-      const metricVal = json.data.readMetricsValues.values.values.map(
-        (d: { value: number }) => d.value
-      );
-      const m = states.metrics[0];
-      if (!m) {
-        return;
-      }
-      states.source = {
-        [m]: metricVal,
-      };
+    function getSource(source: unknown) {
+      states.source = source;
     }
-    async function setMetricType(regex: string) {
-      const json = await dashboardStore.fetchMetricList(regex);
-      if (json.errors) {
-        ElMessage.error(json.errors);
-        return;
+    function getMetricsConfig(opts: {
+      metrics?: string[];
+      metricTypes?: string[];
+    }) {
+      if (opts.metrics !== undefined) {
+        states.metrics = opts.metrics;
       }
-      states.metricList = json.data.metrics || [];
-      const name = states.metrics[0];
-      if (!name) {
-        return;
+      if (opts.metricTypes !== undefined) {
+        states.metricTypes = opts.metricTypes;
       }
-      const typeOfMetrics: any = states.metricList.filter(
-        (d: { value: string }) => d.value === name
-      )[0];
-      states.valueTypes = ValuesTypes[typeOfMetrics];
-      states.valueType = ValuesTypes[typeOfMetrics][0].value;
-      queryMetrics();
-    }
-
-    function addMetricName() {
-      console.log(states);
     }
 
     function applyConfig() {
       const opts = {
         ...dashboardStore.selectedGrid,
         metrics: states.metrics,
-        queryMetricType: states.valueType,
+        metricTypes: states.metricTypes,
         widget: states.widget,
         graph: states.graph,
         standard: states.standard,
@@ -321,19 +221,15 @@ export default defineComponent({
     return {
       states,
       changeChartType,
-      changeValueType,
-      changeMetrics,
       t,
       appStoreWithOut,
-      ChartTypes,
       updateWidgetOptions,
       configHeight,
       updateGraphOptions,
       updateStandardOptions,
       applyConfig,
-      changeDashboard,
-      addMetricName,
-      loading,
+      getSource,
+      getMetricsConfig,
     };
   },
 });

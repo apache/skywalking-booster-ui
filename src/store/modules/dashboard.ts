@@ -173,10 +173,10 @@ export const dashboardStore = defineStore({
       return res.data;
     },
     async fetchMetricValue(config: LayoutConfig) {
-      // if (!config.queryMetricType) {
+      // if (!config.metricTypes) {
       //   return;
       // }
-      config.queryMetricType = "readMetricsValues";
+      // config.metricTypes = "readMetricsValues";
       const appStoreWithOut = useAppStoreWithOut();
       const variable = {
         condition: {
@@ -190,7 +190,7 @@ export const dashboardStore = defineStore({
         duration: appStoreWithOut.durationTime,
       };
       const res: AxiosResponse = await graph
-        .query(config.queryMetricType)
+        .query("readMetricsValues")
         .params(variable);
 
       return res.data;

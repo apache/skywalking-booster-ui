@@ -34,7 +34,7 @@ export const ConfigData: any = {
   h: 12,
   i: "0",
   metrics: ["service_resp_time"],
-  queryMetricType: "readMetricsValues",
+  metricTypes: ["readMetricsValues"],
   type: "Widget",
   widget: {
     title: "Title",
