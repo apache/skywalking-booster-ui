@@ -18,6 +18,17 @@ export const TypeOfMetrics = {
   variable: "$name: String!",
   query: `typeOfMetrics(name: $name)`,
 };
+export const listMetrics = {
+  variable: "$regex: String",
+  query: `
+  metrics: listMetrics(regex: $regex) {
+    value: name
+    label: name
+    type
+    catalog
+  }
+  `,
+};
 export const queryMetricsValues = {
   variable: ["$condition: MetricsCondition!, $duration: Duration!"],
   query: `

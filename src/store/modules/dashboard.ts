@@ -165,6 +165,13 @@ export const dashboardStore = defineStore({
 
       return res.data;
     },
+    async fetchMetricList(regex: string) {
+      const res: AxiosResponse = await graph
+        .query("queryMetrics")
+        .params({ regex });
+
+      return res.data;
+    },
     async fetchMetricValue(config: LayoutConfig) {
       // if (!config.queryMetricType) {
       //   return;

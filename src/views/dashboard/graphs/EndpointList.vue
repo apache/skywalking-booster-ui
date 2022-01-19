@@ -13,24 +13,36 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-table
-    v-loading="chartLoading"
-    :data="selectorStore.endpoints"
-    style="width: 100%; height: 100%; overflow: auto"
-  >
-    <el-table-column label="Endpoints">
-      <template #default="scope">
-        <router-link
-          target="_blank"
-          class="link"
-          :to="`/dashboard/${scope.row.layer}/endpoint/${selectorStore.currentService}/${scope.row.value}/${config.dashboardName}`"
-          :style="{ fontSize: `${config.fontSize}px` }"
-        >
-          {{ scope.row.label }}
-        </router-link>
-      </template>
-    </el-table-column>
-  </el-table>
+  <div class="table">
+    <el-table
+      v-loading="chartLoading"
+      :data="endpoints"
+      style="width: 100%; height: 100%; overflow: auto"
+    >
+      <el-table-column label="Endpoints">
+        <template #default="scope">
+          <router-link
+            target="_blank"
+            class="link"
+            :to="`/dashboard/${scope.row.layer}/endpoint/${selectorStore.currentService}/${scope.row.value}/${config.dashboardName}`"
+            :style="{ fontSize: `${config.fontSize}px` }"
+          >
+            {{ scope.row.label }}
+          </router-link>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      class="pagination"
+      background
+      layout="prev, pager, next"
+      :page-size="6"
+      :total="selectorStore.endpoints.length"
+      @current-change="changePage"
+      @prev-click="changePage"
+      @next-click="changePage"
+    />
+  </div>
 </template>
 <script setup lang="ts">
 import { defineProps, onBeforeMount, ref } from "vue";
@@ -50,6 +62,8 @@ defineProps({
 });
 const selectorStore = useSelectorStore();
 const chartLoading = ref<boolean>(false);
+const endpoints = ref<{ label: string; value: string }[]>([]);
+const pageSize = 7;
 
 onBeforeMount(async () => {
   chartLoading.value = true;
@@ -58,10 +72,26 @@ onBeforeMount(async () => {
   chartLoading.value = false;
   if (resp.errors) {
     ElMessage.error(resp.errors);
+    return;
   }
+  endpoints.value = selectorStore.endpoints.splice(0, pageSize);
 });
+function changePage(pageIndex: number) {
+  endpoints.value = selectorStore.endpoints.splice(pageIndex - 1, pageSize);
+}
 </script>
 <style lang="scss" scoped>
+.table {
+  height: 100%;
+}
+
+.pagination {
+  width: 100%;
+  text-align: center;
+  height: 30px;
+  padding: 3px 0;
+}
+
 .link {
   cursor: pointer;
   color: #409eff;

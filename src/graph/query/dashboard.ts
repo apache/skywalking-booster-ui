@@ -22,6 +22,7 @@ import {
   querySortMetrics,
   queryMetricsValue,
   queryMetricsValues,
+  listMetrics,
 } from "../fragments/dashboard";
 
 export const queryTypeOfMetrics = `query typeOfMetrics(${TypeOfMetrics.variable}) {${TypeOfMetrics.query}}`;
@@ -38,3 +39,5 @@ export const sortMetrics = `query queryData(${querySortMetrics.variable}) {${que
 export const readMetricsValue = `query queryData(${queryMetricsValue.variable}) {${queryMetricsValue.query}}`;
 
 export const readMetricsValues = `query queryData(${queryMetricsValues.variable}) {${queryMetricsValues.query}}`;
+
+export const queryMetrics = `query queryData(${listMetrics.variable}) {${listMetrics.query}}`;

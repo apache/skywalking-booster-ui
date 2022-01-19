@@ -38,37 +38,22 @@ limitations under the License. -->
         v-model="states.activeNames"
         :style="{ '--el-collapse-header-font-size': '15px' }"
       >
-        <el-collapse-item :title="t('selectVisualization')" name="1">
-          <div class="chart-types">
-            <span
-              v-for="(type, index) in states.visType"
-              :key="index"
-              @click="changeChartType(type)"
-              :class="{ active: type.value === states.graph.type }"
-            >
-              {{ type.label }}
-            </span>
-          </div>
-        </el-collapse-item>
-        <el-collapse-item
-          :title="t(states.isTable ? 'dashboardName' : 'metricName')"
-          name="2"
-        >
-          <div v-if="states.isTable">
+        <el-collapse-item :title="t('metricName')" name="1">
+          <div v-show="states.isTable" class="ds-name">
             <Selector
               :value="states.graph.dashboardName"
-              :options="metricOpts"
+              :options="states.metricList"
               size="mini"
               placeholder="Select a dashboard"
               @change="changeDashboard"
               class="selectors"
             />
           </div>
-          <div v-else>
+          <div>
             <Selector
               :value="states.metrics"
-              :options="metricOpts"
-              :multiple="true"
+              :options="states.metricList"
+              :multiple="!states.isTable"
               size="mini"
               placeholder="Select a metric"
               @change="changeMetrics"
@@ -83,6 +68,25 @@ limitations under the License. -->
               class="selectors"
               v-loading="loading"
             />
+            <Icon
+              iconName="add_circle_outlinecontrol_point"
+              size="middle"
+              v-show="states.isTable"
+              @click="addMetricName"
+              class="cp"
+            />
+          </div>
+        </el-collapse-item>
+        <el-collapse-item :title="t('selectVisualization')" name="2">
+          <div class="chart-types">
+            <span
+              v-for="(type, index) in states.visType"
+              :key="index"
+              @click="changeChartType(type)"
+              :class="{ active: type.value === states.graph.type }"
+            >
+              {{ type.label }}
+            </span>
           </div>
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="3">
@@ -147,6 +151,7 @@ export default defineComponent({
     StandardOptions,
   },
   setup() {
+    const configHeight = document.documentElement.clientHeight - 520;
     const loading = ref<boolean>(false);
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
@@ -166,6 +171,7 @@ export default defineComponent({
       standard: StandardConfig;
       visType: Option[];
       isTable: boolean;
+      metricList: (Option & { type: string })[];
     }>({
       metrics: selectedGrid.metrics || [],
       valueTypes: [],
@@ -179,13 +185,10 @@ export default defineComponent({
       standard: selectedGrid.standard,
       visType: [],
       isTable: false,
+      metricList: [],
     });
 
     states.isTable = TableChartTypes.includes(states.graph.type || "");
-
-    if (states.metrics[0]) {
-      queryMetricType(states.metrics[0]);
-    }
 
     if (params.entity === "service") {
       states.visType = ChartTypes.filter(
@@ -201,30 +204,21 @@ export default defineComponent({
       );
     }
 
-    async function changeMetrics(arr: Option[]) {
+    setMetricType(states.metrics[0]);
+
+    async function changeMetrics(arr: (Option & { type: string })[]) {
       if (!arr.length) {
         states.valueTypes = [];
         states.valueType = "";
         return;
       }
-      states.metrics = arr.map((d: Option) => String(d.value));
-      if (arr[0].value) {
-        queryMetricType(String(arr[0].value));
+      states.metrics = arr.map((d: Option) => d.value);
+      if (arr[0]) {
+        const typeOfMetrics = arr[0].type;
+        states.valueTypes = ValuesTypes[typeOfMetrics];
+        states.valueType = ValuesTypes[typeOfMetrics][0].value;
+        queryMetrics();
       }
-    }
-
-    async function queryMetricType(metric: string) {
-      loading.value = true;
-      const resp = await dashboardStore.fetchMetricType(metric);
-      loading.value = false;
-      if (resp.error) {
-        ElMessage.error(resp.data.error);
-        return;
-      }
-      const { typeOfMetrics } = resp.data;
-      states.valueTypes = ValuesTypes[typeOfMetrics];
-      states.valueType = ValuesTypes[typeOfMetrics][0].value;
-      queryMetrics();
     }
 
     function changeValueType(val: Option[]) {
@@ -243,20 +237,6 @@ export default defineComponent({
     function changeDashboard(item: Option[]) {
       states.graph.dashboardName = item[0].value;
     }
-
-    const metricOpts = [
-      { value: "service_apdex", label: "service_apdex" },
-      { value: "service_sla", label: "service_sla" },
-      { value: "service_cpm", label: "service_cpm" },
-      { value: "service_resp_time", label: "service_resp_time" },
-      { value: "service_percentile", label: "service_percentile" },
-      {
-        value: "service_mq_consume_latency",
-        label: "service_mq_consume_latency",
-      },
-      { value: "service_mq_consume_count", label: "service_mq_consume_count" },
-    ];
-    const configHeight = document.documentElement.clientHeight - 520;
 
     function updateWidgetOptions(param: { [key: string]: unknown }) {
       states.widget = {
@@ -288,10 +268,11 @@ export default defineComponent({
       }
 
       if (json.errors) {
+        ElMessage.error(json.errors);
         return;
       }
       const metricVal = json.data.readMetricsValues.values.values.map(
-        (d: { value: number }) => d.value + 1
+        (d: { value: number }) => d.value
       );
       const m = states.metrics[0];
       if (!m) {
@@ -301,8 +282,28 @@ export default defineComponent({
         [m]: metricVal,
       };
     }
+    async function setMetricType(regex: string) {
+      const json = await dashboardStore.fetchMetricList(regex);
+      if (json.errors) {
+        ElMessage.error(json.errors);
+        return;
+      }
+      states.metricList = json.data.metrics || [];
+      const name = states.metrics[0];
+      if (!name) {
+        return;
+      }
+      const typeOfMetrics: any = states.metricList.filter(
+        (d: { value: string }) => d.value === name
+      )[0];
+      states.valueTypes = ValuesTypes[typeOfMetrics];
+      states.valueType = ValuesTypes[typeOfMetrics][0].value;
+      queryMetrics();
+    }
 
-    queryMetrics();
+    function addMetricName() {
+      console.log(states);
+    }
 
     function applyConfig() {
       const opts = {
@@ -325,13 +326,13 @@ export default defineComponent({
       t,
       appStoreWithOut,
       ChartTypes,
-      metricOpts,
       updateWidgetOptions,
       configHeight,
       updateGraphOptions,
       updateStandardOptions,
       applyConfig,
       changeDashboard,
+      addMetricName,
       loading,
     };
   },
@@ -369,7 +370,7 @@ export default defineComponent({
 
 .render-chart {
   padding: 5px;
-  height: 350px;
+  height: 360px;
   width: 100%;
 }
 
@@ -426,5 +427,9 @@ span.active {
 .collapse {
   margin-top: 10px;
   overflow: auto;
+}
+
+.ds-name {
+  margin-bottom: 10px;
 }
 </style>
