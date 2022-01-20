@@ -35,8 +35,9 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 import copy from "@/utils/copy";
+/*global defineProps */
 const props = defineProps({
   data: {
     type: Array as PropType<

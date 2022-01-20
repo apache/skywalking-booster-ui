@@ -45,8 +45,9 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { defineProps, computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted } from "vue";
 import type { PropType } from "vue";
+/*global defineProps */
 const props = defineProps({
   data: {
     type: Object as PropType<{ [key: string]: number[][] }>,

@@ -60,12 +60,13 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { defineProps, onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import { ServiceListConfig } from "@/types/dashboard";
 
+/*global defineProps */
 defineProps({
   data: {
     type: Object,

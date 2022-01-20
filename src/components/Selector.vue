@@ -33,7 +33,7 @@ limitations under the License. -->
   </el-select>
 </template>
 <script lang="ts" setup>
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import type { PropType } from "vue";
 import { ElSelect, ElOption } from "element-plus";
 
@@ -42,8 +42,9 @@ interface Option {
   value: string;
 }
 
+/*global  defineProps, defineEmits*/
+
 const emit = defineEmits(["change"]);
-/*global  defineProps*/
 const props = defineProps({
   options: {
     type: Array as PropType<Option[]>,

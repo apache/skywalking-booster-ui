@@ -17,11 +17,11 @@ limitations under the License. -->
   <Line :data="data" :intervalTime="intervalTime" :config="config" />
 </template>
 <script lang="ts" setup>
-import { defineProps } from "vue";
 import type { PropType } from "vue";
 import Line from "./Line.vue";
 import { AreaConfig } from "@/types/dashboard";
 
+/*global defineProps */
 defineProps({
   data: {
     type: Object as PropType<{ [key: string]: number[] }>,

@@ -16,11 +16,12 @@ limitations under the License. -->
   <Graph :option="option" />
 </template>
 <script lang="ts" setup>
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 import type { PropType } from "vue";
 import { Event } from "@/types/events";
 import { LineConfig } from "@/types/dashboard";
 
+/*global defineProps */
 const props = defineProps({
   data: {
     type: Object as PropType<{ [key: string]: number[] }>,

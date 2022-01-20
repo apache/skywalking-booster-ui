@@ -28,11 +28,12 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { defineProps, ref, defineEmits } from "vue";
+import { ref } from "vue";
 import type { PropType } from "vue";
 import { TopListConfig } from "@/types/dashboard";
 import { useI18n } from "vue-i18n";
 
+/*global defineProps, defineEmits */
 const { t } = useI18n();
 const props = defineProps({
   config: {

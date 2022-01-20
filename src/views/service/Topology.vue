@@ -17,7 +17,7 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from "vue";
+/*global defineProps */
 defineProps({
   msg: { type: String },
 });

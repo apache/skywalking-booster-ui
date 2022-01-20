@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="about">{{ props.msg }}</div>
 </template>
 <script lang="ts" setup>
-import { defineProps } from "vue";
+/*global defineProps */
 const props = defineProps({
   msg: String,
 });

@@ -61,7 +61,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, defineProps, defineEmits } from "vue";
+import { reactive } from "vue";
 import type { PropType } from "vue";
 import { useRoute } from "vue-router";
 import { Option } from "@/types/app";
@@ -71,6 +71,7 @@ import { MetricTypes, TableChartTypes } from "../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
 
+/*global defineProps, defineEmits */
 const props = defineProps({
   graph: {
     type: Object as PropType<GraphConfig>,

@@ -116,12 +116,13 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, defineProps, defineEmits } from "vue";
+import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { SortOrder } from "../data";
 import { StandardConfig } from "@/types/dashboard";
 import type { PropType } from "vue";
 
+/*global defineProps, defineEmits */
 const props = defineProps({
   config: {
     type: Object as PropType<StandardConfig>,

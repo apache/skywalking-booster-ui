@@ -172,11 +172,10 @@ export const dashboardStore = defineStore({
 
       return res.data;
     },
-    async fetchMetricValue(config: LayoutConfig) {
+    async fetchMetricValue() {
       // if (!config.metricTypes) {
       //   return;
       // }
-      // config.metricTypes = "readMetricsValues";
       const appStoreWithOut = useAppStoreWithOut();
       const variable = {
         condition: {

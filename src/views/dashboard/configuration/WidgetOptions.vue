@@ -35,11 +35,12 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, defineEmits, defineProps } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { WidgetConfig } from "@/types/dashboard";
 import type { PropType } from "vue";
 
+/*global defineProps, defineEmits */
 const props = defineProps({
   config: {
     type: Object as PropType<WidgetConfig>,

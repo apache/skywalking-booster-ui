@@ -27,9 +27,9 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { computed, PropType } from "vue";
-import { defineProps } from "vue";
 import { CardConfig, StandardConfig } from "@/types/dashboard";
 
+/*global defineProps */
 const props = defineProps({
   data: {
     type: Object as PropType<{ [key: string]: number }>,

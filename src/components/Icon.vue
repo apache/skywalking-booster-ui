@@ -28,8 +28,9 @@ limitations under the License. -->
   </svg>
 </template>
 <script lang="ts" setup>
-import { defineProps } from "vue";
 import "@/assets/icons/index";
+
+/*global defineProps */
 defineProps({
   iconName: { type: String, default: "" },
   size: { type: String, default: "sm" },
@@ -42,25 +43,31 @@ defineProps({
   height: 16px;
   vertical-align: middle;
   fill: currentColor;
+
   &.sm {
     width: 14px;
     height: 14px;
   }
+
   &.middle {
     width: 18px;
     height: 18px;
   }
+
   &.lg {
     width: 24px;
     height: 24px;
   }
+
   &.loading {
     animation: loading 1.5s linear infinite;
   }
+
   &.logo {
     height: 30px;
     width: 110px;
   }
+
   &.xl {
     height: 30px;
     width: 30px;
