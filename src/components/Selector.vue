@@ -20,6 +20,7 @@ limitations under the License. -->
     @change="changeSelected"
     filterable
     :multiple="multiple"
+    :disabled="disabled"
     :style="{ borderRadius }"
   >
     <el-option
@@ -56,7 +57,9 @@ const props = defineProps({
   placeholder: { type: String, default: "Select a option" },
   borderRadius: { type: Number, default: 3 },
   multiple: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
 });
+
 const selected = ref<string[] | string>(props.value);
 function changeSelected() {
   const options = props.options.filter((d: Option) =>

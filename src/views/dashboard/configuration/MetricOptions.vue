@@ -23,23 +23,40 @@ limitations under the License. -->
       class="selectors"
     />
   </div>
-  <div>
+  <div
+    v-for="(metric, index) in states.metrics"
+    :key="index"
+    class="metric-item"
+  >
     <Selector
-      :value="states.metrics"
+      :value="metric"
       :options="states.metricList"
-      :multiple="true"
       size="mini"
       placeholder="Select a metric"
-      @change="changeMetrics"
+      @change="changeMetrics(index, $event)"
       class="selectors"
     />
     <Selector
-      :value="states.metricTypes"
-      :options="states.metricTypeList"
+      :value="states.metricTypes[index]"
+      :options="states.metricTypeList[index]"
       size="mini"
-      @change="changeMetricType"
+      :disabled="states.graph.type && !states.isTable && index !== 0"
+      @change="changeMetricType(index, $event)"
       class="selectors"
-      :multiple="true"
+    />
+    <Icon
+      class="cp mr-5"
+      v-show="index === states.metrics.length - 1 && index < 6"
+      iconName="add_circle_outlinecontrol_point"
+      size="middle"
+      @click="addMetric"
+    />
+    <Icon
+      class="cp"
+      v-show="states.metrics.length > 1"
+      iconName="remove_circle_outline"
+      size="middle"
+      @click="deleteMetric(index)"
     />
   </div>
 </template>
@@ -50,8 +67,9 @@ import { useRoute } from "vue-router";
 import { Option } from "@/types/app";
 import { GraphConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { MetricTypes, MetricQueryTypes, TableChartTypes } from "../data";
+import { MetricTypes, TableChartTypes } from "../data";
 import { ElMessage } from "element-plus";
+import Icon from "@/components/Icon.vue";
 
 const props = defineProps({
   graph: {
@@ -65,25 +83,26 @@ const { selectedGrid } = dashboardStore;
 const states = reactive<{
   metrics: string[];
   metricTypes: string[];
-  metricTypeList: Option[];
-  metricQueryType: string;
+  metricTypeList: Option[][];
   visType: Option[];
   isTable: boolean;
   metricList: (Option & { type: string })[];
   graph: GraphConfig | any;
 }>({
-  metrics: selectedGrid.metrics || [],
-  metricTypes: selectedGrid.metricTypes || [],
+  metrics: selectedGrid.metrics || [""],
+  metricTypes: selectedGrid.metricTypes || [""],
   metricTypeList: [],
-  metricQueryType: "",
   visType: [],
   isTable: false,
   metricList: [],
   graph: props.graph,
 });
-states.isTable = TableChartTypes.includes(states.graph.type || "");
+states.isTable = TableChartTypes.includes(states.graph.type);
+
 const params = useRoute().params;
+
 setMetricType();
+
 async function setMetricType() {
   const json = await dashboardStore.fetchMetricList();
   if (json.errors) {
@@ -94,38 +113,55 @@ async function setMetricType() {
     (d: { catalog: string }) =>
       String(params.entity).toUpperCase() === d.catalog
   );
-  const name = states.metrics[0];
-  if (!name) {
-    return;
-  }
   const metrics: any = states.metricList.filter(
-    (d: { value: string }) => d.value === name
-  )[0];
-  states.metricTypeList = MetricTypes[metrics.type];
-  states.metricTypes = [MetricTypes[metrics.type][0].value];
-  emit("apply", { metricTypes: states.metricTypes });
+    (d: { value: string; type: string }) => {
+      const metric = states.metrics.filter((m: string) => m === d.value)[0];
+      if (metric) {
+        return d;
+      }
+    }
+  );
+  for (const metric of metrics) {
+    states.metricTypeList.push(MetricTypes[metric.type]);
+  }
+
   queryMetrics();
 }
-function changeMetrics(arr: (Option & { type: string })[]) {
+
+function changeMetrics(index: number, arr: (Option & { type: string })[]) {
   if (!arr.length) {
     states.metricTypeList = [];
     states.metricTypes = [];
     emit("apply", { metricTypes: states.metricTypes });
     return;
   }
-  states.metrics = arr.map((d: Option) => d.value);
-  if (arr[0]) {
-    const typeOfMetrics = arr[0].type;
-    states.metricTypeList = MetricTypes[typeOfMetrics];
-    states.metricTypes = [MetricTypes[typeOfMetrics][0].value];
-    emit("apply", { metricTypes: states.metricTypes, metrics: states.metrics });
-    queryMetrics();
-  }
+  states.metrics[index] = arr[0].value;
+  const typeOfMetrics = arr[0].type;
+  states.metricTypeList[index] = MetricTypes[typeOfMetrics];
+  states.metricTypes[index] = MetricTypes[typeOfMetrics][0].value;
+  emit("apply", { metricTypes: states.metricTypes, metrics: states.metrics });
+  queryMetrics();
 }
 
-function changeMetricType(val: Option[]) {
-  states.metricTypes = [val[0].value];
-  states.metricQueryType = (MetricQueryTypes as any)[states.metricTypes[0]];
+function changeMetricType(index: number, opt: Option[]) {
+  const metric =
+    states.metricList.filter(
+      (d: Option) => states.metrics[index] === d.value
+    )[0] || {};
+  if (states.isTable) {
+    states.metricTypes[index] = opt[0].value;
+    states.metricTypeList[index] = (MetricTypes as any)[metric.type];
+  } else {
+    states.metricTypes = states.metricTypes.map((d: string) => {
+      d = opt[0].value;
+      return d;
+    });
+    states.metricTypeList = states.metricTypeList.map((d: Option[]) => {
+      d = (MetricTypes as any)[metric.type];
+
+      return d;
+    });
+  }
   emit("apply", { metricTypes: states.metricTypes });
   queryMetrics();
 }
@@ -153,6 +189,19 @@ async function queryMetrics() {
 function changeDashboard(item: Option[]) {
   states.graph.dashboardName = item[0].value;
 }
+function addMetric() {
+  states.metrics.push("");
+  if (!states.isTable) {
+    states.metricTypes.push(states.metricTypes[0]);
+    states.metricTypeList.push(states.metricTypeList[0]);
+    return;
+  }
+  states.metricTypes.push("");
+}
+function deleteMetric(index: number) {
+  states.metrics.splice(index, 1);
+  states.metricTypes.splice(index, 1);
+}
 </script>
 <style lang="scss" scoped>
 .ds-name {
@@ -162,5 +211,9 @@ function changeDashboard(item: Option[]) {
 .selectors {
   width: 500px;
   margin-right: 10px;
+}
+
+.metric-item {
+  margin-bottom: 10px;
 }
 </style>
