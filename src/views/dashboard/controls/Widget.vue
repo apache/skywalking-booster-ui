@@ -63,6 +63,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import graphs from "../graphs";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
+import { AudioAnalyser } from "three";
 
 const props = {
   data: {
@@ -78,7 +79,7 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
     const loading = ref<boolean>(false);
-    const state = reactive({
+    const state = reactive<{ source: any }>({
       source: {},
     });
     const { data } = toRefs(props);
@@ -99,9 +100,7 @@ export default defineComponent({
       const keys = Object.keys(json.data);
       keys.map((key: string, index) => {
         const m = props.data.metrics[index];
-        state.source = {
-          [m]: json.data[key].values.values.map((d: any) => d.value),
-        };
+        state.source[m] = json.data[key].values.values.map((d: any) => d.value);
       });
     }
 
