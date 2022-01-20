@@ -32,7 +32,7 @@ export enum screenEnum {
   XXL = 1600,
 }
 
-const screenMap = new Map<sizeEnum, number>();
+export const screenMap = new Map<sizeEnum, number>();
 
 screenMap.set(sizeEnum.XS, screenEnum.XS);
 screenMap.set(sizeEnum.SM, screenEnum.SM);
@@ -41,4 +41,39 @@ screenMap.set(sizeEnum.LG, screenEnum.LG);
 screenMap.set(sizeEnum.XL, screenEnum.XL);
 screenMap.set(sizeEnum.XXL, screenEnum.XXL);
 
-export { screenMap };
+export const RespFields: any = {
+  readMetricsValues: `{
+    label
+    values {
+      values {value}
+    }
+  }`,
+  readMetricsValue: "",
+  sortMetrics: `{
+    name
+    id
+    value
+    refId
+  }`,
+  readLabeledMetricsValues: `{
+    label
+    values {
+      values {value}
+    }
+  }`,
+  readHeatMap: `{
+    values {
+      id
+      values
+    }
+    buckets {
+      min
+      max
+    }
+  }`,
+  readSampledRecords: `{
+    name
+    value
+    refId
+  }`,
+};

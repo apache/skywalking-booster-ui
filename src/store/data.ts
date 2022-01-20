@@ -51,39 +51,3 @@ export const ConfigData: any = {
   },
   children: [],
 };
-export const RespFields: any = {
-  readMetricsValues: `{
-    label
-    values {
-      values {value}
-    }
-  }`,
-  readMetricsValue: "",
-  sortMetrics: `{
-    name
-    id
-    value
-    refId
-  }`,
-  readLabeledMetricsValues: `{
-    label
-    values {
-      values {value}
-    }
-  }`,
-  readHeatMap: `{
-    values {
-      id
-      values
-    }
-    buckets {
-      min
-      max
-    }
-  }`,
-  readSampledRecords: `{
-    name
-    value
-    refId
-  }`,
-};

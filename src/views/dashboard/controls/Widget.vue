@@ -45,7 +45,7 @@ limitations under the License. -->
     <div class="body" v-if="data.graph?.type" v-loading="loading">
       <component
         :is="data.graph.type"
-        :intervalTime="appStoreWithOut.intervalTime"
+        :intervalTime="appStore.intervalTime"
         :data="state.source"
         :config="data.graph"
         :standard="data.standard"
@@ -59,11 +59,12 @@ import { toRefs, reactive, defineComponent, ref, watch } from "vue";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import graphs from "../graphs";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
-import { AudioAnalyser } from "three";
+import { useQueryProcessor } from "@/hooks/useProcessor";
 
 const props = {
   data: {
@@ -83,12 +84,19 @@ export default defineComponent({
       source: {},
     });
     const { data } = toRefs(props);
-    const appStoreWithOut = useAppStoreWithOut();
+    const appStore = useAppStoreWithOut();
     const dashboardStore = useDashboardStore();
+    const selectorStore = useSelectorStore();
     queryMetrics();
     async function queryMetrics() {
       loading.value = true;
-      const json = await dashboardStore.fetchMetricValue(props.data);
+      const params = useQueryProcessor(
+        props.data,
+        selectorStore,
+        dashboardStore,
+        appStore.durationTime
+      );
+      const json = await dashboardStore.fetchMetricValue(params);
       loading.value = false;
       if (!json) {
         return;
@@ -98,7 +106,7 @@ export default defineComponent({
         return;
       }
       const keys = Object.keys(json.data);
-      keys.map((key: string, index) => {
+      keys.forEach((key: string, index) => {
         const m = props.data.metrics[index];
         state.source[m] = json.data[key].values.values.map((d: any) => d.value);
       });
@@ -127,7 +135,7 @@ export default defineComponent({
     );
     return {
       state,
-      appStoreWithOut,
+      appStore,
       removeWidget,
       editConfig,
       data,
