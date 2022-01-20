@@ -26,6 +26,8 @@ export const NewControl = {
   },
   graph: {},
   standard: {},
+  metrics: [],
+  metricTypes: [],
 };
 export const ConfigData: any = {
   x: 0,
@@ -33,8 +35,8 @@ export const ConfigData: any = {
   w: 8,
   h: 12,
   i: "0",
-  metrics: ["service_resp_time"],
-  metricTypes: ["readMetricsValues"],
+  metrics: ["service_resp_time", "service_cpm"],
+  metricTypes: ["readMetricsValues", "readMetricsValues"],
   type: "Widget",
   widget: {
     title: "Title",
@@ -48,4 +50,40 @@ export const ConfigData: any = {
     unit: "min",
   },
   children: [],
+};
+export const RespFields: any = {
+  readMetricsValues: `{
+    label
+    values {
+      values {value}
+    }
+  }`,
+  readMetricsValue: "",
+  sortMetrics: `{
+    name
+    id
+    value
+    refId
+  }`,
+  readLabeledMetricsValues: `{
+    label
+    values {
+      values {value}
+    }
+  }`,
+  readHeatMap: `{
+    values {
+      id
+      values
+    }
+    buckets {
+      min
+      max
+    }
+  }`,
+  readSampledRecords: `{
+    name
+    value
+    refId
+  }`,
 };

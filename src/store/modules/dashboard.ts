@@ -18,10 +18,13 @@ import { defineStore } from "pinia";
 import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
 import graph from "@/graph";
-import { AxiosResponse } from "axios";
 import { ConfigData } from "../data";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { NewControl } from "../data";
+import { useSelectorStore } from "@/store/modules/selectors";
+import { NewControl, RespFields } from "../data";
+import { Duration } from "@/types/app";
+import axios, { AxiosResponse } from "axios";
+import { cancelToken } from "@/utils/cancelToken";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -29,6 +32,8 @@ interface DashboardState {
   entity: string;
   layerId: string;
   activedGridItem: string;
+  durationTime: Duration;
+  selectorStore: any;
 }
 
 export const dashboardStore = defineStore({
@@ -40,6 +45,8 @@ export const dashboardStore = defineStore({
     entity: "",
     layerId: "",
     activedGridItem: "",
+    durationTime: useAppStoreWithOut().durationTime,
+    selectorStore: useSelectorStore(),
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -172,25 +179,83 @@ export const dashboardStore = defineStore({
 
       return res.data;
     },
-    async fetchMetricValue() {
-      // if (!config.metricTypes) {
-      //   return;
-      // }
-      const appStoreWithOut = useAppStoreWithOut();
-      const variable = {
-        condition: {
-          name: "service_resp_time",
-          entity: {
-            normal: true,
-            scope: "Service",
-            serviceName: "agentless::app",
-          },
-        },
-        duration: appStoreWithOut.durationTime,
+    async fetchMetricValue(config: LayoutConfig) {
+      if (!(config.metrics && config.metrics.length)) {
+        return;
+      }
+      const conditions: any = {
+        duration: this.durationTime,
       };
-      const res: AxiosResponse = await graph
-        .query("readMetricsValues")
-        .params(variable);
+      const variables: string[] = [`$duration: Duration!`];
+      const { currentPod, currentService, currentDestPod, currentDestService } =
+        this.selectorStore;
+      const isRelation = [
+        "ServiceRelation",
+        "ServiceInstanceRelation",
+        "EndpointRelation",
+      ].includes(this.entity);
+      const fragment = config.metrics.map((name: string, index: number) => {
+        const metricTypes = config.metricTypes[index] || "";
+        if (["readSampledRecords", "sortMetrics"].includes(metricTypes)) {
+          variables.push(`$condition${index}: TopNCondition!`);
+          conditions[`condition${index}`] = {
+            name,
+            parentService: currentService,
+            normal: true,
+            scope: this.entity,
+            topN: Number(config.standard.maxItemNum || 10),
+            order: config.standard.sortOrder || "DES",
+          };
+        } else {
+          variables.push(`$condition${index}: MetricsCondition!`);
+          conditions[`condition${index}`] = {
+            name,
+            entity: {
+              scope: this.entity,
+              serviceName: currentService,
+              normal: true,
+              serviceInstanceName: this.entity.includes("ServiceInstance")
+                ? currentPod
+                : undefined,
+              endpointName: this.entity.includes("Endpoint")
+                ? currentPod
+                : undefined,
+              destNormal: true,
+              destServiceName: isRelation ? currentDestService : undefined,
+              destServiceInstanceName:
+                this.entity === "ServiceInstanceRelation"
+                  ? currentDestPod
+                  : undefined,
+              destEndpointName:
+                this.entity === "EndpointRelation" ? currentDestPod : undefined,
+            },
+          };
+        }
+
+        return `${name}${index}: ${metricTypes}(condition: $condition${index}, duration: $duration)${RespFields[metricTypes]}`;
+      });
+      const graphStr = `query queryData(${variables}) {${fragment}}`;
+      const res: AxiosResponse = await axios.post(
+        "/graphql",
+        { query: graphStr, variables: { ...conditions } },
+        { cancelToken: cancelToken() }
+      );
+
+      // const appStoreWithOut = useAppStoreWithOut();
+      // const variable = {
+      //   condition: {
+      //     name: "service_resp_time",
+      //     entity: {
+      //       normal: true,
+      //       scope: "Service",
+      //       serviceName: "agentless::app",
+      //     },
+      //   },
+      //   duration: appStoreWithOut.durationTime,
+      // };
+      // const res: AxiosResponse = await graph
+      //   .query("readMetricsValues")
+      //   .params(variable);
 
       return res.data;
     },

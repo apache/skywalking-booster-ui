@@ -96,16 +96,13 @@ export default defineComponent({
         ElMessage.error(json.error);
         return;
       }
-      const metricVal = json.data.readMetricsValues.values.values.map(
-        (d: any) => d.value
-      );
-      const m = props.data.metrics && props.data.metrics[0];
-      if (!m) {
-        return;
-      }
-      state.source = {
-        [m]: metricVal,
-      };
+      const keys = Object.keys(json.data);
+      keys.map((key: string, index) => {
+        const m = props.data.metrics[index];
+        state.source = {
+          [m]: json.data[key].values.values.map((d: any) => d.value),
+        };
+      });
     }
 
     function removeWidget() {

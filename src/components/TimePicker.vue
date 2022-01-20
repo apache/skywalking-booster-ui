@@ -332,8 +332,6 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-
-
 @keyframes datepicker-anim-in {
   0% {
     opacity: 0;

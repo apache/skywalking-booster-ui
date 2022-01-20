@@ -32,7 +32,7 @@ limitations under the License. -->
     <el-table
       v-loading="chartLoading"
       :data="services"
-      style="width: 100%; height: 100%; overflow: auto"
+      style="width: 100%; height: 320px; overflow: auto"
     >
       <el-table-column label="Services">
         <template #default="scope">
@@ -51,7 +51,7 @@ limitations under the License. -->
       class="pagination"
       background
       layout="prev, pager, next"
-      :page-size="6"
+      :page-size="pageSize"
       :total="selectorStore.services.length"
       @current-change="changePage"
       @prev-click="changePage"
@@ -78,7 +78,7 @@ defineProps({
 });
 const selectorStore = useSelectorStore();
 const chartLoading = ref<boolean>(false);
-const pageSize = 6;
+const pageSize = 7;
 const services = ref<{ label: string; layer: string }[]>([]);
 const searchServices = ref<{ layer: string; label: string }[]>([]);
 const searchText = ref<string>("");

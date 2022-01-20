@@ -46,7 +46,7 @@ limitations under the License. -->
     />
     <Icon
       class="cp mr-5"
-      v-show="index === states.metrics.length - 1 && index < 6"
+      v-show="index === states.metrics.length - 1 && states.metrics.length < 5"
       iconName="add_circle_outlinecontrol_point"
       size="middle"
       @click="addMetric"
@@ -61,7 +61,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 import type { PropType } from "vue";
 import { useRoute } from "vue-router";
 import { Option } from "@/types/app";
@@ -203,6 +203,13 @@ function deleteMetric(index: number) {
   states.metrics.splice(index, 1);
   states.metricTypes.splice(index, 1);
 }
+watch(
+  () => props.graph,
+  (data: any) => {
+    states.isTable = TableChartTypes.includes(data.type);
+    console.log(data);
+  }
+);
 </script>
 <style lang="scss" scoped>
 .ds-name {

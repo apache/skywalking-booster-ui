@@ -20,12 +20,12 @@ export interface LayoutConfig {
   w: number;
   h: number;
   i: string;
-  widget?: WidgetConfig;
-  graph?: GraphConfig;
-  standard?: StandardConfig;
-  metrics?: string[];
-  type?: string;
-  metricTypes?: string[];
+  widget: WidgetConfig;
+  graph: GraphConfig;
+  standard: StandardConfig;
+  metrics: string[];
+  type: string;
+  metricTypes: string[];
   children?: any;
 }
 
@@ -45,6 +45,7 @@ export interface StandardConfig {
   divide?: string;
   milliseconds?: string;
   seconds?: string;
+  maxItemNum?: number;
 }
 
 export type GraphConfig =

@@ -32,7 +32,7 @@ limitations under the License. -->
     <el-table
       v-loading="chartLoading"
       :data="endpoints"
-      style="width: 100%; height: 100%; overflow: auto"
+      style="width: 100%; height: 320px; overflow: auto"
     >
       <el-table-column label="Endpoints">
         <template #default="scope">
@@ -51,7 +51,7 @@ limitations under the License. -->
       class="pagination"
       background
       layout="prev, pager, next"
-      :page-size="6"
+      :page-size="pageSize"
       :total="selectorStore.endpoints.length"
       @current-change="changePage"
       @prev-click="changePage"

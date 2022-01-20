@@ -147,23 +147,23 @@ export enum MetricsName {
   SERVICE_APDEX = "service_apdex",
 }
 export const EntityType = [
-  { value: "service", label: "Service", key: 1 },
-  { value: "all", label: "All", key: 10 },
-  { value: "endpoint", label: "Service Endpoint", key: 3 },
-  { value: "serviceInstance", label: "Service Instance", key: 3 },
-  { value: "serviceRelationClient", label: "Service Relation(client)", key: 2 },
-  { value: "serviceRelationServer", label: "Service Relation(server)", key: 2 },
+  { value: "Service", label: "Service", key: 1 },
+  { value: "All", label: "All", key: 10 },
+  { value: "Endpoint", label: "Service Endpoint", key: 3 },
+  { value: "ServiceInstance", label: "Service Instance", key: 3 },
+  { value: "ServiceRelationClient", label: "Service Relation(client)", key: 2 },
+  { value: "ServiceRelationServer", label: "Service Relation(server)", key: 2 },
   {
-    value: "serviceInstanceRelationClient",
+    value: "ServiceInstanceRelationClient",
     label: "Service Instance Relation(client)",
     key: 4,
   },
   {
-    value: "serviceInstanceRelationServer",
+    value: "ServiceInstanceRelationServer",
     label: "Service Instance Relation(server)",
     key: 4,
   },
-  { value: "endpointRelation", label: "Endpoint Relation", key: 4 },
+  { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },
 ];
 export const SortOrder = [
   { label: "DES", value: "DES" },
