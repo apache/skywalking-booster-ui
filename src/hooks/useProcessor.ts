@@ -141,6 +141,30 @@ export function useSourceProcessor(
     ) {
       source[m] = Object.values(resp.data)[0] || [];
     }
+    if (type === MetricQueryTypes.READHEATMAP) {
+      const resVal = Object.values(resp.data)[0] || {};
+      const nodes = [] as any;
+      if (!(resVal && resVal.values)) {
+        source[m] = { nodes: [] };
+        return;
+      }
+      resVal.values.forEach((items: { values: number[] }, x: number) => {
+        const grids = items.values.map((val: number, y: number) => [x, y, val]);
+
+        nodes.push(...grids);
+      });
+      let buckets = [] as any;
+      if (resVal.buckets.length) {
+        buckets = [
+          resVal.buckets[0].min,
+          ...resVal.buckets.map(
+            (item: { min: string; max: string }) => item.max
+          ),
+        ];
+      }
+
+      source[m] = { nodes, buckets }; // nodes: number[][]
+    }
   });
 
   return source;
