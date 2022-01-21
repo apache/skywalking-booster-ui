@@ -18,7 +18,8 @@ export const Services = {
   variable: "$layer: String!",
   query: `
   services: listServices(layer: $layer) {
-    value: id
+    id
+    value: name
       label: name
       group
       layers

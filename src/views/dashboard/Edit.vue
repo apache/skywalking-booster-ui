@@ -23,7 +23,7 @@ limitations under the License. -->
       :destroy-on-close="true"
       @closed="dashboardStore.setConfigPanel(false)"
     >
-      <widget-config />
+      <config-edit />
     </el-dialog>
   </div>
 </template>
@@ -32,7 +32,7 @@ import { useI18n } from "vue-i18n";
 import GridLayout from "./panel/Layout.vue";
 // import { LayoutConfig } from "@/types/dashboard";
 import Tool from "./panel/Tool.vue";
-import WidgetConfig from "./configuration/ConfigEdit.vue";
+import ConfigEdit from "./configuration/ConfigEdit.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();

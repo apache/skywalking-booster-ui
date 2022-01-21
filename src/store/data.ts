@@ -35,7 +35,7 @@ export const ConfigData: any = {
   w: 8,
   h: 12,
   i: "0",
-  metrics: ["service_resp_time", "service_cpm"],
+  metrics: ["service_resp_time", "service_apdex"],
   metricTypes: ["readMetricsValues", "readMetricsValues"],
   type: "Widget",
   widget: {

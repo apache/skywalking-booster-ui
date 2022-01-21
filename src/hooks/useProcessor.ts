@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Duration } from "@/types/app";
-import { RespFields } from "./data";
+import { RespFields, MetricQueryTypes, CalculationType } from "./data";
 import { ElMessage } from "element-plus";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { useSelectorStore } from "@/store/modules/selectors";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
-export function useQueryProcessor(
-  config: any,
-  selectorStore: any,
-  dashboardStore: any,
-  durationTime: Duration
-) {
+export function useQueryProcessor(config: any) {
   if (!(config.metrics && config.metrics.length)) {
     return;
   }
+  const appStore = useAppStoreWithOut();
+  const dashboardStore = useDashboardStore();
+  const selectorStore = useSelectorStore();
   const conditions: { [key: string]: unknown } = {
-    duration: durationTime,
+    duration: appStore.durationTime,
   };
   const variables: string[] = [`$duration: Duration!`];
   const { currentPod, currentService, currentDestPod, currentDestService } =
@@ -40,31 +40,42 @@ export function useQueryProcessor(
     "EndpointRelation",
   ].includes(entity);
   const fragment = config.metrics.map((name: string, index: number) => {
-    const metricTypes = config.metricTypes[index] || "";
-    // const labels = config.metricType === 'LABELED_VALUE' ? labelsIndex : undefined;
-    if (["readSampledRecords", "sortMetrics"].includes(metricTypes)) {
+    const metricType = config.metricTypes[index] || "";
+    const labels = ["0", "1", "2", "3", "4"];
+    if (
+      [
+        MetricQueryTypes.ReadSampledRecords,
+        MetricQueryTypes.SortMetrics,
+      ].includes(metricType)
+    ) {
       variables.push(`$condition${index}: TopNCondition!`);
       conditions[`condition${index}`] = {
         name,
-        parentService: entity === "All" ? null : currentService,
+        parentService: ["Service", "All"].includes(entity)
+          ? null
+          : currentService,
         normal: normal,
         scope: entity,
-        topN: Number(config.standard.maxItemNum || 10),
-        order: config.standard.sortOrder || "DES",
+        topN: 10,
+        order: "DES",
       };
     } else {
+      if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
+        variables.push(`$labels${index}: [String!]!`);
+        conditions[`labels${index}`] = labels;
+      }
       variables.push(`$condition${index}: MetricsCondition!`);
       conditions[`condition${index}`] = {
         name,
         entity: {
           scope: entity,
           serviceName: entity === "All" ? undefined : currentService,
-          normal: true,
+          normal: entity === "All" ? undefined : normal,
           serviceInstanceName: entity.includes("ServiceInstance")
             ? currentPod
             : undefined,
           endpointName: entity.includes("Endpoint") ? currentPod : undefined,
-          destNormal: entity === "All" ? undefined : destNormal,
+          destNormal: entity === "All" ? undefined : undefined,
           destServiceName: isRelation ? currentDestService : undefined,
           destServiceInstanceName:
             entity === "ServiceInstanceRelation" ? currentDestPod : undefined,
@@ -73,8 +84,11 @@ export function useQueryProcessor(
         },
       };
     }
-
-    return `${name}${index}: ${metricTypes}(condition: $condition${index}, duration: $duration)${RespFields[metricTypes]}`;
+    if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
+      return `${name}${index}: ${metricType}(condition: $condition${index}, labels: $labels${index}, duration: $duration)${RespFields[metricType]}`;
+    } else {
+      return `${name}${index}: ${metricType}(condition: $condition${index}, duration: $duration)${RespFields[metricType]}`;
+    }
   });
   const queryStr = `query queryData(${variables}) {${fragment}}`;
   return {
@@ -84,20 +98,72 @@ export function useQueryProcessor(
 }
 export function useSourceProcessor(
   resp: { errors: string; data: { [key: string]: any } },
-  config: { metrics: string[] }
+  config: { metrics: string[]; metricTypes: string[] }
 ) {
-  const source: { [key: string]: unknown } = {};
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return {};
   }
+  const source: { [key: string]: unknown } = {};
   const keys = Object.keys(resp.data);
-  keys.forEach((key: string, index) => {
+
+  config.metricTypes.forEach((type: string, index) => {
     const m = config.metrics[index];
-    source[m] = resp.data[key].values.values.map(
-      (d: { value: number }) => d.value
-    );
+
+    if (type === MetricQueryTypes.ReadMetricsValues) {
+      source[m] = resp.data[keys[index]].values.values.map(
+        (d: { value: number }) => d.value
+      );
+    }
+    if (type === MetricQueryTypes.ReadLabeledMetricsValues) {
+      const resVal = Object.values(resp.data)[0] || [];
+      const labelsIdx = ["0", "1", "2", "3", "4"];
+      const labels = ["P50", "P75", "P90", "P95", "P99"];
+      for (const item of resVal) {
+        const values = item.values.values.map(
+          (d: { value: number }) => d.value
+        );
+
+        const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
+        if (labels[indexNum] && indexNum > -1) {
+          source[labels[indexNum]] = values;
+        } else {
+          source[item.label] = values;
+        }
+      }
+    }
+    if (type === MetricQueryTypes.ReadMetricsValue) {
+      source[m] = Object.values(resp.data)[0];
+    }
+    if (
+      type === MetricQueryTypes.SortMetrics ||
+      type === MetricQueryTypes.ReadSampledRecords
+    ) {
+      source[m] = Object.values(resp.data)[0] || [];
+    }
   });
 
   return source;
+}
+function aggregation(json: {
+  data: number;
+  type: string;
+  aggregationNum: number;
+}) {
+  if (isNaN(json.aggregationNum)) {
+    return json.data;
+  }
+  if (json.type === CalculationType.Plus) {
+    return json.data + json.aggregationNum;
+  }
+  if (json.type === CalculationType.Minus) {
+    return json.data - json.aggregationNum;
+  }
+  if (json.type === CalculationType.Multiplication) {
+    return json.data * json.aggregationNum;
+  }
+  if (json.type === CalculationType.Division) {
+    return json.data / json.aggregationNum;
+  }
+  return json.data;
 }

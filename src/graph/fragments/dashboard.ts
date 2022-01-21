@@ -90,6 +90,7 @@ export const querySampledRecords = {
   variable: ["$condition: TopNCondition!, $duration: Duration!"],
   query: `
   readSampledRecords: readSampledRecords(condition: $condition, duration: $duration) {
+    id
     name
     value
     refId

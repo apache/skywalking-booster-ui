@@ -87,14 +87,11 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
-    queryMetrics();
+    if (props.data.metrics && props.data.metrics[0]) {
+      queryMetrics();
+    }
     async function queryMetrics() {
-      const params = useQueryProcessor(
-        props.data,
-        selectorStore,
-        dashboardStore,
-        appStore.durationTime
-      );
+      const params = await useQueryProcessor(props.data);
       if (!params) {
         state.source = {};
         return;
@@ -102,6 +99,9 @@ export default defineComponent({
       loading.value = true;
       const json = await dashboardStore.fetchMetricValue(params);
       loading.value = false;
+      if (!json) {
+        return;
+      }
       state.source = useSourceProcessor(json, props.data);
     }
 

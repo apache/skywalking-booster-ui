@@ -14,6 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export enum MetricQueryTypes {
+  ReadMetricsValue = "readMetricsValue",
+  ReadMetricsValues = "readMetricsValues",
+  SortMetrics = "sortMetrics",
+  ReadLabeledMetricsValues = "readLabeledMetricsValues",
+  READHEATMAP = "readHeatMap",
+  ReadSampledRecords = "readSampledRecords",
+}
 export enum sizeEnum {
   XS = "XS",
   SM = "SM",
@@ -77,3 +85,11 @@ export const RespFields: any = {
     refId
   }`,
 };
+export enum CalculationType {
+  Plus = "+",
+  Minus = "-",
+  Multiplication = "*",
+  Division = "/",
+  "Convert Unix Timestamp(milliseconds)" = "milliseconds",
+  "Convert Unix Timestamp(seconds)" = "seconds",
+}

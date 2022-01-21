@@ -69,6 +69,7 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { MetricTypes, TableChartTypes, MetricCatalog } from "../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
+import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
 
 /*global defineProps, defineEmits */
 const props = defineProps({
@@ -122,8 +123,9 @@ async function setMetricType() {
   for (const metric of metrics) {
     states.metricTypeList.push(MetricTypes[metric.type]);
   }
-
-  queryMetrics();
+  if (states.metrics && states.metrics[0]) {
+    queryMetrics();
+  }
 }
 
 function changeMetrics(index: number, arr: (Option & { type: string })[]) {
@@ -135,6 +137,7 @@ function changeMetrics(index: number, arr: (Option & { type: string })[]) {
   }
   states.metrics[index] = arr[0].value;
   const typeOfMetrics = arr[0].type;
+
   states.metricTypeList[index] = MetricTypes[typeOfMetrics];
   states.metricTypes[index] = MetricTypes[typeOfMetrics][0].value;
   emit("apply", { metricTypes: states.metricTypes, metrics: states.metrics });
@@ -164,26 +167,21 @@ function changeMetricType(index: number, opt: Option[]) {
   queryMetrics();
 }
 async function queryMetrics() {
-  const json = await dashboardStore.fetchMetricValue(
-    dashboardStore.selectedGrid
-  );
-  if (!json) {
+  const params = useQueryProcessor(states);
+  if (!params) {
+    emit("update", {});
     return;
   }
 
+  const json = await dashboardStore.fetchMetricValue(params);
   if (json.errors) {
     ElMessage.error(json.errors);
     return;
   }
-  const metricVal = json.data.readMetricsValues.values.values.map(
-    (d: { value: number }) => d.value
-  );
-  const m = states.metrics[0];
-  if (!m) {
-    return;
-  }
-  emit("update", { [m]: metricVal });
+  const source = useSourceProcessor(json, states);
+  emit("update", source);
 }
+
 function changeDashboard(item: Option[]) {
   states.graph.dashboardName = item[0].value;
 }
@@ -204,7 +202,6 @@ watch(
   () => props.graph,
   (data: any) => {
     states.isTable = TableChartTypes.includes(data.type);
-    console.log(data);
   }
 );
 </script>

@@ -78,14 +78,6 @@ export const DefaultGraphConfig: { [key: string]: any } = {
   },
 };
 
-export enum MetricQueryTypes {
-  ReadMetricsValue = "readMetricsValue",
-  ReadMetricsValues = "readMetricsValues",
-  SortMetrics = "sortMetrics",
-  ReadLabeledMetricsValues = "readLabeledMetricsValues",
-  READHEATMAP = "readHeatMap",
-  ReadSampledRecords = "readSampledRecords",
-}
 export enum MetricsType {
   UNKNOWN = "UNKNOWN",
   REGULAR_VALUE = "REGULAR_VALUE",

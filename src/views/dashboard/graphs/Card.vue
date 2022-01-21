@@ -16,11 +16,11 @@ limitations under the License. -->
 <template>
   <div class="chart-card" :style="{ fontSize: `${config.fontSize}px` }">
     {{
-      typeof data[key] === "string"
-        ? data[key]
-        : isNaN(data[key])
+      typeof singleVal === "string"
+        ? singleVal
+        : isNaN(singleVal)
         ? null
-        : data[key].toFixed(2)
+        : singleVal.toFixed(2)
     }}
     <span v-show="config.showUint">{{ standard.unit }}</span>
   </div>
@@ -45,6 +45,7 @@ const props = defineProps({
   },
 });
 const key = computed(() => Object.keys(props.data)[0]);
+const singleVal = computed(() => props.data[key.value]);
 </script>
 <style lang="scss" scoped>
 .chart-card {

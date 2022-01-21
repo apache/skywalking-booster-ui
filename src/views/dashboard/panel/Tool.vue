@@ -108,7 +108,10 @@ const states = reactive<{
 });
 dashboardStore.setLayer(states.layerId);
 dashboardStore.setEntity(states.entity);
-onBeforeMount(async () => {
+
+getServices();
+
+async function getServices() {
   if (!states.layerId) {
     return;
   }
@@ -118,7 +121,7 @@ onBeforeMount(async () => {
     return;
   }
   fetchPods(states.entity);
-});
+}
 
 async function changeService(service: Option[]) {
   if (service[0]) {

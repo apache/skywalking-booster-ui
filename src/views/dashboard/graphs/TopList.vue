@@ -14,23 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="chart-slow-i" v-for="(i, index) in datas" :key="index">
-    <Icon
-      iconName="review-list"
-      size="sm"
-      @click="handleClick((i.traceIds && i.traceIds[0]) || i.name)"
-    />
-    <div class="mb-5 ell">
-      <span class="calls sm mr-10">{{ i.value }}</span>
-      <span class="cp link-hover">
-        {{ i.name + getTraceId(i) }}
-      </span>
+  <div class="top-list">
+    <div class="chart-slow-i" v-for="(i, index) in datas" :key="index">
+      <Icon
+        iconName="review-list"
+        size="sm"
+        @click="handleClick((i.traceIds && i.traceIds[0]) || i.name)"
+      />
+      <div class="mb-5 ell">
+        <span class="calls sm mr-10">{{ i.value }}</span>
+        <span class="cp link-hover">
+          {{ i.name + getTraceId(i) }}
+        </span>
+      </div>
+      <el-progress
+        :stroke-width="10"
+        :percentage="(i.value / maxValue) * 100"
+        color="#bf99f8"
+      />
     </div>
-    <el-progress
-      :stroke-width="10"
-      :percentage="(i.value / maxValue) * 100"
-      color="#bf99f8"
-    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -40,32 +42,34 @@ import copy from "@/utils/copy";
 /*global defineProps */
 const props = defineProps({
   data: {
-    type: Array as PropType<
-      { name: string; value: number; traceIds: string[] }[]
-    >,
-    default: () => [],
+    type: Object as PropType<{
+      [key: string]: { name: string; value: number; traceIds: string[] }[];
+    }>,
+    default: () => ({}),
   },
   config: {
     type: Object as PropType<{ sortOrder: string }>,
     default: () => ({}),
   },
+  intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
+const key = computed(() => Object.keys(props.data)[0]);
 const maxValue = computed(() => {
-  if (!props.data.length) {
+  if (!props.data[key.value].length) {
     return 0;
   }
-  const temp: number[] = props.data.map((i: any) => i.value);
+  const temp: number[] = props.data[key.value].map((i: any) => i.value);
   return Math.max.apply(null, temp);
 });
 const getTraceId = (i: { [key: string]: (number | string)[] }): string => {
   return i.traceIds && i.traceIds[0] ? ` - ${i.traceIds[0]}` : "";
 };
-const datas: any = () => {
-  if (!props.data.length) {
+const datas = computed(() => {
+  if (!props.data[key.value].length) {
     return [];
   }
   const { sortOrder } = props.config;
-  const val: any = props.data;
+  const val: any = props.data[key.value];
 
   switch (sortOrder) {
     case "DES":
@@ -75,17 +79,25 @@ const datas: any = () => {
       val.sort((a: any, b: any) => a.value - b.value);
       break;
     default:
+      val.sort((a: any, b: any) => b.value - a.value);
       break;
   }
+
   return val;
-};
+});
 function handleClick(i: string) {
   copy(i);
 }
 </script>
 <style lang="scss" scoped>
+.top-list {
+  height: 100%;
+  overflow: auto;
+  padding: 10px;
+}
+
 .progress-bar {
-  font-size: 14px;
+  font-size: 12px;
   color: #333;
 }
 
