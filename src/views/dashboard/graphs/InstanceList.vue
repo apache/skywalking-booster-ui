@@ -69,7 +69,8 @@ import { InstanceListConfig } from "@/types/dashboard";
 /*global defineProps */
 defineProps({
   data: {
-    type: Object,
+    type: Object as PropType<{ [key: string]: number[] }>,
+    default: () => ({}),
   },
   config: {
     type: Object as PropType<InstanceListConfig>,

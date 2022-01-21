@@ -78,7 +78,7 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const emit = defineEmits(["update", "apply"]);
+const emit = defineEmits(["update", "apply", "loading"]);
 const dashboardStore = useDashboardStore();
 const { selectedGrid, entity, metrics, metricTypes } = dashboardStore;
 const states = reactive<{
@@ -173,7 +173,9 @@ async function queryMetrics() {
     return;
   }
 
+  emit("loading", true);
   const json = await dashboardStore.fetchMetricValue(params);
+  emit("loading", false);
   if (json.errors) {
     ElMessage.error(json.errors);
     return;

@@ -150,9 +150,12 @@ function clickTabGrid(e: Event, item: LayoutConfig) {
   );
 }
 document.body.addEventListener("click", handleClick, false);
+
+const children = ref(
+  dashboardStore.layout[props.data.i].children[activeTabIndex.value].children
+);
 watch(
-  () =>
-    dashboardStore.layout[props.data.i].children[activeTabIndex.value].children,
+  () => children.value,
   (data) => {
     state.layout = data;
   }

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="widget-config flex-v">
-    <div class="graph">
+    <div class="graph" v-loading="loading">
       <div class="header">
         <span>{{ states.widget.title }}</span>
         <div class="tips" v-show="states.widget.tips">
@@ -43,6 +43,7 @@ limitations under the License. -->
             :graph="states.graph"
             @update="getSource"
             @apply="getMetricsConfig"
+            @loading="setLoading"
           />
         </el-collapse-item>
         <el-collapse-item :title="t('selectVisualization')" name="2">
@@ -89,7 +90,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { reactive, defineComponent } from "vue";
+import { reactive, defineComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -123,6 +124,7 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
     const { selectedGrid, entity } = dashboardStore;
+    const loading = ref<boolean>(false);
     const states = reactive<{
       activeNames: string;
       source: any;
@@ -192,6 +194,7 @@ export default defineComponent({
     function getSource(source: unknown) {
       states.source = source;
     }
+
     function getMetricsConfig(opts: {
       metrics?: string[];
       metricTypes?: string[];
@@ -202,6 +205,10 @@ export default defineComponent({
       if (opts.metricTypes !== undefined) {
         states.metricTypes = opts.metricTypes;
       }
+    }
+
+    function setLoading(load: boolean) {
+      loading.value = load;
     }
 
     function applyConfig() {
@@ -229,6 +236,7 @@ export default defineComponent({
       applyConfig,
       getSource,
       getMetricsConfig,
+      setLoading,
     };
   },
 });

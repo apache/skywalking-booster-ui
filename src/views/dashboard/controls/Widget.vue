@@ -59,8 +59,8 @@ import { toRefs, reactive, defineComponent, ref, watch } from "vue";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { useSelectorStore } from "@/store/modules/selectors";
 import graphs from "../graphs";
 import { useI18n } from "vue-i18n";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
@@ -87,9 +87,6 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
-    if (props.data.metrics && props.data.metrics[0]) {
-      queryMetrics();
-    }
     async function queryMetrics() {
       const params = await useQueryProcessor(props.data);
       if (!params) {
@@ -118,14 +115,19 @@ export default defineComponent({
       }
     }
     watch(
-      () => [props.data.metricTypes, props.data.metrics],
+      () => [
+        props.data.metricTypes,
+        props.data.metrics,
+        selectorStore.currentService,
+      ],
       (data, old) => {
-        if (data[0] === old[0] && data[1] === old[1]) {
+        if (data[0] === old[0] && data[1] === old[1] && data[2] === old[2]) {
           return;
         }
         queryMetrics();
       }
     );
+
     return {
       state,
       appStore,

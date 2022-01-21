@@ -23,6 +23,7 @@ export const Services = {
       label: name
       group
       layers
+      normal
   }
   `,
 };
