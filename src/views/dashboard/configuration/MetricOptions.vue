@@ -63,11 +63,10 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { reactive, watch } from "vue";
 import type { PropType } from "vue";
-import { useRoute } from "vue-router";
 import { Option } from "@/types/app";
 import { GraphConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { MetricTypes, TableChartTypes } from "../data";
+import { MetricTypes, TableChartTypes, MetricCatalog } from "../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
 
@@ -80,7 +79,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["update", "apply"]);
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
+const { selectedGrid, entity, metrics, metricTypes } = dashboardStore;
 const states = reactive<{
   metrics: string[];
   metricTypes: string[];
@@ -90,8 +89,8 @@ const states = reactive<{
   metricList: (Option & { type: string })[];
   graph: GraphConfig | any;
 }>({
-  metrics: selectedGrid.metrics || [""],
-  metricTypes: selectedGrid.metricTypes || [""],
+  metrics: metrics && metrics.length ? selectedGrid.metrics : [""],
+  metricTypes: metricTypes && metricTypes.length ? metricTypes : [""],
   metricTypeList: [],
   visType: [],
   isTable: false,
@@ -99,8 +98,6 @@ const states = reactive<{
   graph: props.graph,
 });
 states.isTable = TableChartTypes.includes(states.graph.type);
-
-const params = useRoute().params;
 
 setMetricType();
 
@@ -111,9 +108,9 @@ async function setMetricType() {
     return;
   }
   states.metricList = (json.data.metrics || []).filter(
-    (d: { catalog: string }) =>
-      String(params.entity).toUpperCase() === d.catalog
+    (d: { catalog: string }) => entity === (MetricCatalog as any)[d.catalog]
   );
+
   const metrics: any = states.metricList.filter(
     (d: { value: string; type: string }) => {
       const metric = states.metrics.filter((m: string) => m === d.value)[0];

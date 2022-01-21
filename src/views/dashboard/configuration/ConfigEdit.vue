@@ -91,7 +91,6 @@ limitations under the License. -->
 <script lang="ts">
 import { reactive, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import {
@@ -99,6 +98,7 @@ import {
   DefaultGraphConfig,
   PodsChartTypes,
   TableChartTypes,
+  EntityType,
 } from "../data";
 import { Option } from "@/types/app";
 import { WidgetConfig, GraphConfig, StandardConfig } from "@/types/dashboard";
@@ -122,8 +122,7 @@ export default defineComponent({
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
-    const { selectedGrid } = dashboardStore;
-    const params = useRoute().params;
+    const { selectedGrid, entity } = dashboardStore;
     const states = reactive<{
       activeNames: string;
       source: any;
@@ -149,11 +148,11 @@ export default defineComponent({
     });
     states.isTable = TableChartTypes.includes(states.graph.type || "");
 
-    if (params.entity === "service") {
+    if (entity === EntityType[0].value) {
       states.visType = ChartTypes.filter(
         (d: Option) => d.value !== "serviceList"
       );
-    } else if (params.entity === "all") {
+    } else if (entity === EntityType[1].value) {
       states.visType = ChartTypes.filter(
         (d: Option) => !PodsChartTypes.includes(d.value)
       );

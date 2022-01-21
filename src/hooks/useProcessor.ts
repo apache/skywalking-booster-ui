@@ -16,6 +16,7 @@
  */
 import { Duration } from "@/types/app";
 import { RespFields } from "./data";
+import { ElMessage } from "element-plus";
 
 export function useQueryProcessor(
   config: any,
@@ -26,26 +27,28 @@ export function useQueryProcessor(
   if (!(config.metrics && config.metrics.length)) {
     return;
   }
-  const conditions: any = {
+  const conditions: { [key: string]: unknown } = {
     duration: durationTime,
   };
   const variables: string[] = [`$duration: Duration!`];
   const { currentPod, currentService, currentDestPod, currentDestService } =
     selectorStore;
+  const { normal, destNormal, entity } = dashboardStore;
   const isRelation = [
     "ServiceRelation",
     "ServiceInstanceRelation",
     "EndpointRelation",
-  ].includes(dashboardStore.entity);
+  ].includes(entity);
   const fragment = config.metrics.map((name: string, index: number) => {
     const metricTypes = config.metricTypes[index] || "";
+    // const labels = config.metricType === 'LABELED_VALUE' ? labelsIndex : undefined;
     if (["readSampledRecords", "sortMetrics"].includes(metricTypes)) {
       variables.push(`$condition${index}: TopNCondition!`);
       conditions[`condition${index}`] = {
         name,
-        parentService: currentService,
-        normal: true,
-        scope: dashboardStore.entity,
+        parentService: entity === "All" ? null : currentService,
+        normal: normal,
+        scope: entity,
         topN: Number(config.standard.maxItemNum || 10),
         order: config.standard.sortOrder || "DES",
       };
@@ -54,25 +57,19 @@ export function useQueryProcessor(
       conditions[`condition${index}`] = {
         name,
         entity: {
-          scope: dashboardStore.entity,
-          serviceName: currentService,
+          scope: entity,
+          serviceName: entity === "All" ? undefined : currentService,
           normal: true,
-          serviceInstanceName: dashboardStore.entity.includes("ServiceInstance")
+          serviceInstanceName: entity.includes("ServiceInstance")
             ? currentPod
             : undefined,
-          endpointName: dashboardStore.entity.includes("Endpoint")
-            ? currentPod
-            : undefined,
-          destNormal: true,
+          endpointName: entity.includes("Endpoint") ? currentPod : undefined,
+          destNormal: entity === "All" ? undefined : destNormal,
           destServiceName: isRelation ? currentDestService : undefined,
           destServiceInstanceName:
-            dashboardStore.entity === "ServiceInstanceRelation"
-              ? currentDestPod
-              : undefined,
+            entity === "ServiceInstanceRelation" ? currentDestPod : undefined,
           destEndpointName:
-            dashboardStore.entity === "EndpointRelation"
-              ? currentDestPod
-              : undefined,
+            entity === "EndpointRelation" ? currentDestPod : undefined,
         },
       };
     }
@@ -85,5 +82,22 @@ export function useQueryProcessor(
     conditions,
   };
 }
-// export function useSourceProcessor() {
-// }
+export function useSourceProcessor(
+  resp: { errors: string; data: { [key: string]: any } },
+  config: { metrics: string[] }
+) {
+  const source: { [key: string]: unknown } = {};
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return {};
+  }
+  const keys = Object.keys(resp.data);
+  keys.forEach((key: string, index) => {
+    const m = config.metrics[index];
+    source[m] = resp.data[key].values.values.map(
+      (d: { value: number }) => d.value
+    );
+  });
+
+  return source;
+}

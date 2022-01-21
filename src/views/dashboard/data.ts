@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 export const PodsChartTypes = ["EndpointList", "InstanceList"];
 
 export const TableChartTypes = ["EndpointList", "InstanceList", "ServiceList"];
@@ -137,7 +138,15 @@ export const ReadValueChartType = [
   { value: "ChartSlow", label: "Slow Chart" },
 ];
 
-export const MaxItemNum = 10;
+export enum MetricCatalog {
+  SERVICE = "Service",
+  SERVICE_INSTANCE = "ServiceInstance",
+  ENDPOINT = "Endpoint",
+  ALL = "All",
+  SERVICE_RELATION = "ServiceRelation",
+  SERVICE_INSTANCE_RELATION = "ServiceInstanceRelation",
+  ENDPOINT_RELATION = "EndpointRelation",
+}
 
 export enum MetricsName {
   SERVICE_RESP_TIME = "service_resp_time",

@@ -62,9 +62,8 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import graphs from "../graphs";
-import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
-import { useQueryProcessor } from "@/hooks/useProcessor";
+import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
 
 const props = {
   data: {
@@ -80,36 +79,30 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
     const loading = ref<boolean>(false);
-    const state = reactive<{ source: any }>({
+    const state = reactive<{ source: { [key: string]: unknown } }>({
       source: {},
     });
     const { data } = toRefs(props);
     const appStore = useAppStoreWithOut();
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
+
     queryMetrics();
     async function queryMetrics() {
-      loading.value = true;
       const params = useQueryProcessor(
         props.data,
         selectorStore,
         dashboardStore,
         appStore.durationTime
       );
+      if (!params) {
+        state.source = {};
+        return;
+      }
+      loading.value = true;
       const json = await dashboardStore.fetchMetricValue(params);
       loading.value = false;
-      if (!json) {
-        return;
-      }
-      if (json.error) {
-        ElMessage.error(json.error);
-        return;
-      }
-      const keys = Object.keys(json.data);
-      keys.forEach((key: string, index) => {
-        const m = props.data.metrics[index];
-        state.source[m] = json.data[key].values.values.map((d: any) => d.value);
-      });
+      state.source = useSourceProcessor(json, props.data);
     }
 
     function removeWidget() {

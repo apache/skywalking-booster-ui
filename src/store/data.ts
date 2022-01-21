@@ -26,8 +26,8 @@ export const NewControl = {
   },
   graph: {},
   standard: {},
-  metrics: [],
-  metricTypes: [],
+  metrics: [""],
+  metricTypes: [""],
 };
 export const ConfigData: any = {
   x: 0,
