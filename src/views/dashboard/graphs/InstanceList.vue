@@ -46,6 +46,11 @@ limitations under the License. -->
           </router-link>
         </template>
       </el-table-column>
+      <el-table-column label="metric">
+        <template #default="scope">
+          {{ scope.row.label }}
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       class="pagination"
@@ -68,10 +73,6 @@ import { InstanceListConfig } from "@/types/dashboard";
 
 /*global defineProps */
 defineProps({
-  data: {
-    type: Object as PropType<{ [key: string]: number[] }>,
-    default: () => ({}),
-  },
   config: {
     type: Object as PropType<InstanceListConfig>,
     default: () => ({ dashboardName: "", fontSize: 12 }),
