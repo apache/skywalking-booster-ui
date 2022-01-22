@@ -16,21 +16,27 @@ limitations under the License. -->
 <template>
   <div class="top-list">
     <div class="chart-slow-i" v-for="(i, index) in datas" :key="index">
-      <Icon
-        iconName="review-list"
-        size="sm"
-        @click="handleClick((i.traceIds && i.traceIds[0]) || i.name)"
-      />
-      <div class="mb-5 ell">
-        <span class="calls sm mr-10">{{ i.value }}</span>
-        <span class="cp link-hover">
-          {{ i.name + getTraceId(i) }}
-        </span>
+      <div class="ell tools flex-h">
+        <div>
+          <span class="calls mr-10">{{ i.value }}</span>
+          <span class="cp mr-20">
+            {{ i.name + getTraceId(i) }}
+          </span>
+        </div>
+        <div>
+          <Icon
+            iconName="review-list"
+            size="middle"
+            class="cp"
+            @click="handleClick((i.traceIds && i.traceIds[0]) || i.name)"
+          />
+        </div>
       </div>
       <el-progress
-        :stroke-width="10"
+        :stroke-width="6"
         :percentage="(i.value / maxValue) * 100"
         color="#bf99f8"
+        :show-text="false"
       />
     </div>
   </div>
@@ -55,7 +61,7 @@ const props = defineProps({
 });
 const key = computed(() => Object.keys(props.data)[0]);
 const maxValue = computed(() => {
-  if (!props.data[key.value].length) {
+  if (!(props.data[key.value] && props.data[key.value].length)) {
     return 0;
   }
   const temp: number[] = props.data[key.value].map((i: any) => i.value);
@@ -65,7 +71,7 @@ const getTraceId = (i: { [key: string]: (number | string)[] }): string => {
   return i.traceIds && i.traceIds[0] ? ` - ${i.traceIds[0]}` : "";
 };
 const datas = computed(() => {
-  if (!props.data[key.value].length) {
+  if (!(props.data[key.value] && props.data[key.value].length)) {
     return [];
   }
   const { sortOrder } = props.config;
@@ -96,6 +102,10 @@ function handleClick(i: string) {
   padding: 10px;
 }
 
+.tools {
+  justify-content: space-between;
+}
+
 .progress-bar {
   font-size: 12px;
   color: #333;
@@ -107,14 +117,15 @@ function handleClick(i: string) {
 
 .chart-slow {
   height: 100%;
+}
 
-  .calls {
-    padding: 0 5px;
-    display: inline-block;
-    background-color: #40454e;
-    color: #eee;
-    border-radius: 4px;
-  }
+.calls {
+  font-size: 12px;
+  padding: 0 5px;
+  display: inline-block;
+  background-color: #40454e;
+  color: #eee;
+  border-radius: 4px;
 }
 
 .chart-slow-link {

@@ -226,6 +226,7 @@ export default defineComponent({
 
     return {
       states,
+      loading,
       changeChartType,
       t,
       appStoreWithOut,

@@ -80,7 +80,8 @@ const props = defineProps({
 });
 const emit = defineEmits(["update", "apply", "loading"]);
 const dashboardStore = useDashboardStore();
-const { selectedGrid, entity, metrics, metricTypes } = dashboardStore;
+const { selectedGrid, entity } = dashboardStore;
+const { metrics, metricTypes } = selectedGrid;
 const states = reactive<{
   metrics: string[];
   metricTypes: string[];
