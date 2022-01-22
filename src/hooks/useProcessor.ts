@@ -33,7 +33,7 @@ export function useQueryProcessor(config: any) {
   const variables: string[] = [`$duration: Duration!`];
   const { currentPod, currentService, currentDestPod, currentDestService } =
     selectorStore;
-  const { normal, destNormal, entity } = dashboardStore;
+  const { entity } = dashboardStore;
   const isRelation = [
     "ServiceRelation",
     "ServiceInstanceRelation",
@@ -53,8 +53,8 @@ export function useQueryProcessor(config: any) {
         name,
         parentService: ["Service", "All"].includes(entity)
           ? null
-          : currentService,
-        normal: normal,
+          : currentService.value,
+        normal: currentService.normal,
         scope: entity,
         topN: 10,
         order: "DES",
@@ -69,14 +69,14 @@ export function useQueryProcessor(config: any) {
         name,
         entity: {
           scope: entity,
-          serviceName: entity === "All" ? undefined : currentService,
-          normal: entity === "All" ? undefined : normal,
+          serviceName: entity === "All" ? undefined : currentService.value,
+          normal: entity === "All" ? undefined : currentService.normal,
           serviceInstanceName: entity.includes("ServiceInstance")
             ? currentPod
             : undefined,
           endpointName: entity.includes("Endpoint") ? currentPod : undefined,
-          destNormal: entity === "All" ? undefined : undefined,
-          destServiceName: isRelation ? currentDestService : undefined,
+          destNormal: isRelation ? currentDestService.normal : undefined,
+          destServiceName: isRelation ? currentDestService.value : undefined,
           destServiceInstanceName:
             entity === "ServiceInstanceRelation" ? currentDestPod : undefined,
           destEndpointName:

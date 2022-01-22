@@ -34,8 +34,6 @@ interface DashboardState {
   activedGridItem: string;
   durationTime: Duration;
   selectorStore: any;
-  normal: boolean;
-  destNormal: boolean;
 }
 
 export const dashboardStore = defineStore({
@@ -49,8 +47,6 @@ export const dashboardStore = defineStore({
     activedGridItem: "",
     durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
-    normal: true,
-    destNormal: true,
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {

@@ -39,7 +39,7 @@ limitations under the License. -->
           <router-link
             target="_blank"
             class="link"
-            :to="`/dashboard/${scope.row.layer}/endpoint/${selectorStore.currentService}/${scope.row.value}/${config.dashboardName}`"
+            :to="`/dashboard/${scope.row.layer}/endpoint/${selectorStore.currentService.value}/${scope.row.value}/${config.dashboardName}`"
             :style="{ fontSize: `${config.fontSize}px` }"
           >
             {{ scope.row.label }}

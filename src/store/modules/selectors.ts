@@ -16,19 +16,20 @@
  */
 import { defineStore } from "pinia";
 import { Option, Duration } from "@/types/app";
+import { Service } from "@/types/selector";
 import { store } from "@/store";
 import graph from "@/graph";
 import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface SelectorState {
-  services: Option[];
+  services: Service[];
   instances: Option[];
   pods: Option[];
   endpoints: Option[];
-  currentService: string;
+  currentService: Nullable<Service>;
   currentPod: string;
-  currentDestService: string;
+  currentDestService: Nullable<Service>;
   currentDestPod: string;
   durationTime: Duration;
 }
@@ -40,14 +41,14 @@ export const selectorStore = defineStore({
     instances: [],
     pods: [],
     endpoints: [],
-    currentService: "",
+    currentService: null,
     currentPod: "",
-    currentDestService: "",
+    currentDestService: null,
     currentDestPod: "",
     durationTime: useAppStoreWithOut().durationTime,
   }),
   actions: {
-    setCurrentService(service: string) {
+    setCurrentService(service: Service) {
       this.currentService = service;
     },
     setCurrentPod(pod: string) {
@@ -65,17 +66,19 @@ export const selectorStore = defineStore({
 
       if (!res.data.errors) {
         this.services = res.data.data.services || [];
-        this.currentService = this.services.length
-          ? this.services[0].value
-          : "";
+        this.currentService = this.services.length ? this.services[0] : null;
       }
       return res.data;
     },
     async getServiceInstances(param?: {
       serviceId: string;
-    }): Promise<AxiosResponse> {
+    }): Promise<Nullable<AxiosResponse>> {
+      const serviceId = param ? param.serviceId : this.currentService?.id;
+      if (!serviceId) {
+        return null;
+      }
       const res: AxiosResponse = await graph.query("queryInstances").params({
-        serviceId: param ? param.serviceId : this.currentService,
+        serviceId,
         duration: this.durationTime,
       });
       if (!res.data.errors) {
@@ -88,15 +91,19 @@ export const selectorStore = defineStore({
     async getEndpoints(params?: {
       keyword?: string;
       serviceId?: string;
-    }): Promise<AxiosResponse> {
+    }): Promise<Nullable<AxiosResponse>> {
       if (!params) {
         params = {};
       }
       if (!params.keyword) {
         params.keyword = "";
       }
+      const serviceId = params.serviceId || this.currentService?.id;
+      if (!serviceId) {
+        return null;
+      }
       const res: AxiosResponse = await graph.query("queryEndpoints").params({
-        serviceId: params.serviceId || this.currentService,
+        serviceId,
         duration: this.durationTime,
         keyword: params.keyword,
       });

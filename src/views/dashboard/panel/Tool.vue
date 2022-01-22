@@ -18,7 +18,7 @@ limitations under the License. -->
       <div class="selectors-item">
         <span class="label">$Service</span>
         <Selector
-          v-model="selectorStore.currentService"
+          v-model="states.currentService"
           :options="selectorStore.services"
           size="mini"
           placeholder="Select a service"
@@ -82,13 +82,14 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import { reactive, onBeforeMount } from "vue";
+import { reactive } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { EntityType, ToolIcons } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
+import { Service } from "@/types/selector";
 
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
@@ -99,12 +100,15 @@ const states = reactive<{
   destService: string;
   destPod: string;
   key: number;
+  currentService: string;
 }>({
   destService: "",
   destPod: "",
   key: EntityType.filter((d: Option) => d.value === params.entity)[0].key || 0,
   entity: String(params.entity),
   layerId: params.layerId,
+  currentService:
+    (selectorStore.currentService && selectorStore.currentService.value) || "",
 });
 dashboardStore.setLayer(states.layerId);
 dashboardStore.setEntity(states.entity);
@@ -123,9 +127,9 @@ async function getServices() {
   fetchPods(states.entity);
 }
 
-async function changeService(service: Option[]) {
+async function changeService(service: Service[]) {
   if (service[0]) {
-    selectorStore.setCurrentService(service[0].value);
+    selectorStore.setCurrentService(service[0]);
     fetchPods(states.entity);
   } else {
     selectorStore.setCurrentService("");
