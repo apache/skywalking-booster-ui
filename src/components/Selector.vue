@@ -33,7 +33,7 @@ limitations under the License. -->
   </el-select>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import type { PropType } from "vue";
 import { ElSelect, ElOption } from "element-plus";
 
@@ -70,6 +70,12 @@ function changeSelected() {
   );
   emit("change", options);
 }
+watch(
+  () => props.value,
+  (data) => {
+    selected.value = data;
+  }
+);
 </script>
 <style lang="scss" scope>
 .icon {

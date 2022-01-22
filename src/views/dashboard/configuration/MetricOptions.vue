@@ -44,20 +44,26 @@ limitations under the License. -->
       @change="changeMetricType(index, $event)"
       class="selectors"
     />
-    <Icon
-      class="cp mr-5"
-      v-show="index === states.metrics.length - 1 && states.metrics.length < 5"
-      iconName="add_circle_outlinecontrol_point"
-      size="middle"
-      @click="addMetric"
-    />
-    <Icon
-      class="cp"
-      v-show="states.metrics.length > 1"
-      iconName="remove_circle_outline"
-      size="middle"
-      @click="deleteMetric(index)"
-    />
+    <span
+      v-show="states.isTable || states.metricTypes[0] === 'readMetricsValues'"
+    >
+      <Icon
+        class="cp mr-5"
+        v-show="
+          index === states.metrics.length - 1 && states.metrics.length < 5
+        "
+        iconName="add_circle_outlinecontrol_point"
+        size="middle"
+        @click="addMetric"
+      />
+      <Icon
+        class="cp"
+        v-show="states.metrics.length > 1"
+        iconName="remove_circle_outline"
+        size="middle"
+        @click="deleteMetric(index)"
+      />
+    </span>
   </div>
 </template>
 <script lang="ts" setup>

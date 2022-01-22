@@ -117,18 +117,6 @@ export const MetricChartType: { [key: string]: string } = {
   readHeatMap: "ChartHeatmap",
   readSampledRecords: "ChartSlow",
 };
-export const CalculationType = [
-  { label: "Plus", value: "+" },
-  { label: "Minus", value: "-" },
-  { label: "Multiplication", value: "*" },
-  { label: "Division", value: "/" },
-  { label: "Convert Unix Timestamp(milliseconds)", value: "milliseconds" },
-  { label: "Convert Unix Timestamp(seconds)", value: "seconds" },
-];
-export const ReadValueChartType = [
-  { value: "ChartNum", label: "Digital Card" },
-  { value: "ChartSlow", label: "Slow Chart" },
-];
 
 export enum MetricCatalog {
   SERVICE = "Service",
@@ -138,14 +126,6 @@ export enum MetricCatalog {
   SERVICE_RELATION = "ServiceRelation",
   SERVICE_INSTANCE_RELATION = "ServiceInstanceRelation",
   ENDPOINT_RELATION = "EndpointRelation",
-}
-
-export enum MetricsName {
-  SERVICE_RESP_TIME = "service_resp_time",
-  SERVICE_SLA = "service_sla",
-  SERVICE_CPM = "service_cpm",
-  SERVICE_PERCENTILE = "service_percentile",
-  SERVICE_APDEX = "service_apdex",
 }
 export const EntityType = [
   { value: "Service", label: "Service", key: 1 },
