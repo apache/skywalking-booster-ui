@@ -46,6 +46,21 @@ limitations under the License. -->
           </router-link>
         </template>
       </el-table-column>
+      <el-table-column
+        v-for="(metric, index) in dashboardStore.selectedGrid.metrics"
+        :label="metric"
+        :key="metric + index"
+      >
+        <template #default="scope">
+          <div class="chart">
+            <Line
+              :data="{ metric: scope.row[metric] }"
+              :intervalTime="intervalTime"
+              :config="{ showXAxis: false, showYAxis: false }"
+            />
+          </div>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       class="pagination"
@@ -60,11 +75,15 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { onBeforeMount, ref } from "vue";
+import { ref, watch } from "vue";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import { EndpointListConfig } from "@/types/dashboard";
+import { Endpoint } from "@/types/selector";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
+import Line from "./Line.vue";
 
 /*global defineProps */
 defineProps({
@@ -75,15 +94,19 @@ defineProps({
     type: Object as PropType<EndpointListConfig>,
     default: () => ({ dashboardName: "", fontSize: 12 }),
   },
+  intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
 const selectorStore = useSelectorStore();
+const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
-const endpoints = ref<{ layer: string; label: string }[]>([]);
-const searchEndpoints = ref<{ layer: string; label: string }[]>([]);
+const endpoints = ref<Endpoint[]>([]);
+const currentEndpoints = ref<Endpoint[]>([]);
 const pageSize = 7;
 const searchText = ref<string>("");
 
-onBeforeMount(async () => {
+queryEndpoints();
+
+async function queryEndpoints() {
   chartLoading.value = true;
   const resp = await selectorStore.getEndpoints();
 
@@ -93,16 +116,50 @@ onBeforeMount(async () => {
     return;
   }
   endpoints.value = selectorStore.endpoints.splice(0, pageSize);
-});
+  queryMetrics(endpoints.value);
+}
+async function queryMetrics(currentPods: Endpoint[]) {
+  const { metrics } = dashboardStore.selectedGrid;
+
+  if (metrics.length && metrics[0]) {
+    const params = await useQueryPodsMetrics(
+      currentPods,
+      dashboardStore.selectedGrid
+    );
+    const json = await dashboardStore.fetchMetricValue(params);
+
+    if (json.errors) {
+      ElMessage.error(json.errors);
+      return;
+    }
+    endpoints.value = usePodsSource(
+      currentPods,
+      json,
+      dashboardStore.selectedGrid
+    );
+    return;
+  }
+  endpoints.value = currentPods;
+}
 function changePage(pageIndex: number) {
   endpoints.value = selectorStore.endpoints.splice(pageIndex - 1, pageSize);
 }
 function searchList() {
-  searchEndpoints.value = selectorStore.instances.filter(
+  currentEndpoints.value = selectorStore.instances.filter(
     (d: { label: string }) => d.label.includes(searchText.value)
   );
-  endpoints.value = searchEndpoints.value.splice(0, pageSize);
+  endpoints.value = currentEndpoints.value.splice(0, pageSize);
 }
+watch(
+  () => [
+    dashboardStore.selectedGrid.metricTypes,
+    dashboardStore.selectedGrid.metrics,
+  ],
+  () => {
+    const currentPods = currentEndpoints.value.splice(0, pageSize);
+    queryMetrics(currentPods);
+  }
+);
 </script>
 <style lang="scss" scoped>
 @import "./style.scss";

@@ -19,7 +19,7 @@ import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { Instance } from "@/types/selector";
+import { Instance, Endpoint } from "@/types/selector";
 
 export function useQueryProcessor(config: any) {
   if (!(config.metrics && config.metrics.length)) {
@@ -194,7 +194,7 @@ function aggregation(json: {
 }
 
 export function useQueryPodsMetrics(
-  pods: Instance[],
+  pods: Array<Instance | Endpoint>,
   config: { metrics: string[]; metricTypes: string[] }
 ) {
   const appStore = useAppStoreWithOut();
@@ -205,7 +205,7 @@ export function useQueryPodsMetrics(
   const variables: string[] = [`$duration: Duration!`];
   const { currentService } = selectorStore;
 
-  const fragmentList = pods.map((d: Instance, index: number) => {
+  const fragmentList = pods.map((d: Instance | Endpoint, index: number) => {
     const param = {
       scope: "ServiceInstance",
       serviceName: currentService.label,
@@ -229,7 +229,7 @@ export function useQueryPodsMetrics(
   return { queryStr, conditions };
 }
 export function usePodsSource(
-  instances: Instance[],
+  pods: Array<Instance | Endpoint>,
   resp: { errors: string; data: { [key: string]: any } },
   config: { metrics: string[]; metricTypes: string[] }
 ): any {
@@ -237,7 +237,7 @@ export function usePodsSource(
     ElMessage.error(resp.errors);
     return {};
   }
-  const data = instances.map((d: Instance | any, idx: number) => {
+  const data = pods.map((d: Instance | any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const key = name + idx + index;
 

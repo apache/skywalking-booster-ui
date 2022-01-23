@@ -31,3 +31,9 @@ export type Instance = {
   instanceUUID: string;
   attributes: { name: string; value: string }[];
 };
+
+export type Endpoint = {
+  id: string;
+  label: string;
+  value: string;
+};

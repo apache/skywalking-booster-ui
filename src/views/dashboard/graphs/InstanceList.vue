@@ -167,6 +167,6 @@ watch(
 @import "./style.scss";
 
 .chart {
-  height: 50px;
+  height: 39px;
 }
 </style>
