@@ -47,7 +47,7 @@ limitations under the License. -->
         </template>
       </el-table-column>
       <el-table-column
-        v-for="(metric, index) in selectedGrid.metrics"
+        v-for="(metric, index) in dashboardStore.selectedGrid.metrics"
         :label="metric"
         :key="metric + index"
       >
@@ -88,9 +88,7 @@ import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 /*global defineProps */
 defineProps({
   config: {
-    type: Object as PropType<
-      InstanceListConfig & { metrics: string[]; metricTypes: string[] }
-    >,
+    type: Object as PropType<InstanceListConfig>,
     default: () => ({ dashboardName: "", fontSize: 12 }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
@@ -102,7 +100,6 @@ const instances = ref<(Instance | any)[]>([]); // current instances
 const searchInstances = ref<Instance[]>([]); // all instances
 const pageSize = 5;
 const searchText = ref<string>("");
-const selectedGrid = dashboardStore.selectedGrid;
 
 queryInstance();
 
@@ -118,15 +115,22 @@ async function queryInstance() {
   searchInstances.value = selectorStore.instances;
 
   const currentInstances = searchInstances.value.splice(0, pageSize);
-  const params = await useQueryPodsMetrics(currentInstances, selectedGrid);
+  const params = await useQueryPodsMetrics(
+    currentInstances,
+    dashboardStore.selectedGrid
+  );
   const json = await dashboardStore.fetchMetricValue(params);
 
   if (json.errors) {
     ElMessage.error(json.errors);
     return;
   }
-  usePodsSource(currentInstances, json, selectedGrid);
-  instances.value = usePodsSource(currentInstances, json, selectedGrid);
+  usePodsSource(currentInstances, json, dashboardStore.selectedGrid);
+  instances.value = usePodsSource(
+    currentInstances,
+    json,
+    dashboardStore.selectedGrid
+  );
 }
 
 function changePage(pageIndex: number) {

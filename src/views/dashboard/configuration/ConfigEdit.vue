@@ -16,21 +16,21 @@ limitations under the License. -->
   <div class="widget-config flex-v">
     <div class="graph" v-loading="loading">
       <div class="header">
-        <span>{{ selectedGrid.widget.title }}</span>
-        <div class="tips" v-show="selectedGrid.widget.tips">
-          <el-tooltip :content="selectedGrid.widget.tips">
+        <span>{{ dashboardStore.selectedGrid.widget.title }}</span>
+        <div class="tips" v-show="dashboardStore.selectedGrid.widget.tips">
+          <el-tooltip :content="dashboardStore.selectedGrid.widget.tips">
             <Icon iconName="info_outline" size="sm" />
           </el-tooltip>
         </div>
       </div>
       <div class="render-chart">
         <component
-          :is="selectedGrid.graph.type"
+          :is="dashboardStore.selectedGrid.graph.type"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
-          :config="selectedGrid.graph"
+          :config="dashboardStore.selectedGrid.graph"
         />
-        <div v-show="!selectedGrid.graph.type" class="no-data">
+        <div v-show="!dashboardStore.selectedGrid.graph.type" class="no-data">
           {{ t("noData") }}
         </div>
       </div>
@@ -49,14 +49,16 @@ limitations under the License. -->
               v-for="(type, index) in states.visType"
               :key="index"
               @click="changeChartType(type)"
-              :class="{ active: type.value === selectedGrid.graph.type }"
+              :class="{
+                active: type.value === dashboardStore.selectedGrid.graph.type,
+              }"
             >
               {{ type.label }}
             </span>
           </div>
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="3">
-          <component :is="`${selectedGrid.graph.type}Config`" />
+          <component :is="`${dashboardStore.selectedGrid.graph.type}Config`" />
         </el-collapse-item>
         <el-collapse-item :title="t('widgetOptions')" name="4">
           <WidgetOptions />
@@ -109,7 +111,6 @@ export default defineComponent({
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
-    const { selectedGrid, entity } = dashboardStore;
     const loading = ref<boolean>(false);
     const states = reactive<{
       activeNames: string;
@@ -120,17 +121,19 @@ export default defineComponent({
     }>({
       activeNames: "1",
       source: {},
-      index: selectedGrid.i,
+      index: dashboardStore.selectedGrid.i,
       visType: [],
       isTable: false,
     });
-    states.isTable = TableChartTypes.includes(selectedGrid.graph.type || "");
+    states.isTable = TableChartTypes.includes(
+      dashboardStore.selectedGrid.graph.type || ""
+    );
 
-    if (entity === EntityType[0].value) {
+    if (dashboardStore.entity === EntityType[0].value) {
       states.visType = ChartTypes.filter(
         (d: Option) => d.value !== "serviceList"
       );
-    } else if (entity === EntityType[1].value) {
+    } else if (dashboardStore.entity === EntityType[1].value) {
       states.visType = ChartTypes.filter(
         (d: Option) => !PodsChartTypes.includes(d.value)
       );
@@ -141,12 +144,9 @@ export default defineComponent({
     }
 
     function changeChartType(item: Option) {
-      const graph = {
-        ...selectedGrid.graph,
-        ...DefaultGraphConfig[item.value],
-      };
-      states.isTable = TableChartTypes.includes(selectedGrid.graph.type);
-      dashboardStore.selectWidget({ ...selectedGrid, graph });
+      const graph = DefaultGraphConfig[item.value];
+      states.isTable = TableChartTypes.includes(graph.type);
+      dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
     }
 
     function getSource(source: unknown) {
@@ -169,7 +169,7 @@ export default defineComponent({
       t,
       appStoreWithOut,
       configHeight,
-      selectedGrid,
+      dashboardStore,
       applyConfig,
       getSource,
       setLoading,

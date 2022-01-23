@@ -25,7 +25,6 @@ import { NewControl } from "../data";
 import { Duration } from "@/types/app";
 import axios, { AxiosResponse } from "axios";
 import { cancelToken } from "@/utils/cancelToken";
-import { Instance } from "@/types/selector";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -137,8 +136,8 @@ export const dashboardStore = defineStore({
     setConfigPanel(show: boolean) {
       this.showConfig = show;
     },
-    selectWidget(widget: Nullable<LayoutConfig>) {
-      this.selectedGrid = widget;
+    selectWidget(item: Nullable<LayoutConfig>) {
+      this.selectedGrid = item;
     },
     setLayer(id: string) {
       this.layerId = id;

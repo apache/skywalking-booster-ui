@@ -16,7 +16,7 @@ limitations under the License. -->
   <div v-show="states.isTable" class="ds-name">
     <div>Dashboard</div>
     <Selector
-      :value="states.graph.dashboardName"
+      :value="selectedGrid.graph.dashboardName"
       :options="states.metricList"
       size="mini"
       placeholder="Select a dashboard"
@@ -24,12 +24,12 @@ limitations under the License. -->
       class="selectors"
     />
   </div>
+  <div>Metrics</div>
   <div
     v-for="(metric, index) in states.metrics"
     :key="index"
     class="metric-item"
   >
-    <div>Metrics</div>
     <Selector
       :value="metric"
       :options="states.metricList"
@@ -42,7 +42,7 @@ limitations under the License. -->
       :value="states.metricTypes[index]"
       :options="states.metricTypeList[index]"
       size="mini"
-      :disabled="states.graph.type && !states.isTable && index !== 0"
+      :disabled="selectedGrid.graph.type && !states.isTable && index !== 0"
       @change="changeMetricType(index, $event)"
       class="selectors"
     />
@@ -71,7 +71,6 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { reactive, watch } from "vue";
 import { Option } from "@/types/app";
-import { GraphConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { MetricTypes, TableChartTypes, MetricCatalog } from "../data";
 import { ElMessage } from "element-plus";
@@ -90,7 +89,6 @@ const states = reactive<{
   visType: Option[];
   isTable: boolean;
   metricList: (Option & { type: string })[];
-  graph: GraphConfig | any;
 }>({
   metrics: metrics && metrics.length ? metrics : [""],
   metricTypes: metricTypes && metricTypes.length ? metricTypes : [""],
@@ -98,20 +96,20 @@ const states = reactive<{
   visType: [],
   isTable: false,
   metricList: [],
-  graph: selectedGrid.graph,
 });
-states.isTable = TableChartTypes.includes(states.graph.type);
+states.isTable = TableChartTypes.includes(selectedGrid.graph.type);
 
 setMetricType();
 
-async function setMetricType() {
+async function setMetricType(catalog?: string) {
+  catalog = catalog || entity;
   const json = await dashboardStore.fetchMetricList();
   if (json.errors) {
     ElMessage.error(json.errors);
     return;
   }
   states.metricList = (json.data.metrics || []).filter(
-    (d: { catalog: string }) => entity === (MetricCatalog as any)[d.catalog]
+    (d: { catalog: string }) => catalog === (MetricCatalog as any)[d.catalog]
   );
 
   const metrics: any = states.metricList.filter(
@@ -196,7 +194,10 @@ async function queryMetrics() {
 }
 
 function changeDashboard(item: Option[]) {
-  states.graph.dashboardName = item[0].value;
+  dashboardStore.selectWidget({
+    ...selectedGrid,
+    ...{ dashboardName: item[0].value },
+  });
 }
 function addMetric() {
   states.metrics.push("");
@@ -212,9 +213,15 @@ function deleteMetric(index: number) {
   states.metricTypes.splice(index, 1);
 }
 watch(
-  () => selectedGrid.graph,
-  (data: { type: string }) => {
-    states.isTable = TableChartTypes.includes(data.type);
+  () => selectedGrid.graph.type,
+  (type: string) => {
+    states.isTable = TableChartTypes.includes(type);
+    const catalog: { [key: string]: string } = {
+      InstanceList: "ServiceInstance",
+      EndpointList: "Endpoint",
+      ServiceList: "Service",
+    };
+    setMetricType(catalog[type]);
   }
 );
 </script>
