@@ -70,7 +70,6 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { reactive, watch } from "vue";
-import type { PropType } from "vue";
 import { Option } from "@/types/app";
 import { GraphConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -79,14 +78,8 @@ import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
 
-/*global defineProps, defineEmits */
-const props = defineProps({
-  graph: {
-    type: Object as PropType<GraphConfig>,
-    default: () => ({}),
-  },
-});
-const emit = defineEmits(["update", "apply", "loading"]);
+/*global defineEmits */
+const emit = defineEmits(["update", "loading"]);
 const dashboardStore = useDashboardStore();
 const { selectedGrid, entity } = dashboardStore;
 const { metrics, metricTypes } = selectedGrid;
@@ -99,13 +92,13 @@ const states = reactive<{
   metricList: (Option & { type: string })[];
   graph: GraphConfig | any;
 }>({
-  metrics: metrics && metrics.length ? selectedGrid.metrics : [""],
+  metrics: metrics && metrics.length ? metrics : [""],
   metricTypes: metricTypes && metricTypes.length ? metricTypes : [""],
   metricTypeList: [],
   visType: [],
   isTable: false,
   metricList: [],
-  graph: props.graph,
+  graph: selectedGrid.graph,
 });
 states.isTable = TableChartTypes.includes(states.graph.type);
 
@@ -141,7 +134,6 @@ function changeMetrics(index: number, arr: (Option & { type: string })[]) {
   if (!arr.length) {
     states.metricTypeList = [];
     states.metricTypes = [];
-    emit("apply", { metricTypes: states.metricTypes });
     dashboardStore.selectWidget({
       ...selectedGrid,
       ...{ metricTypes: states.metricTypes, metrics: states.metrics },
@@ -157,7 +149,6 @@ function changeMetrics(index: number, arr: (Option & { type: string })[]) {
     ...selectedGrid,
     ...{ metricTypes: states.metricTypes, metrics: states.metrics },
   });
-  emit("apply", { metricTypes: states.metricTypes, metrics: states.metrics });
   queryMetrics();
 }
 
@@ -184,7 +175,6 @@ function changeMetricType(index: number, opt: Option[]) {
     ...selectedGrid,
     ...{ metricTypes: states.metricTypes },
   });
-  emit("apply", { metricTypes: states.metricTypes });
   queryMetrics();
 }
 async function queryMetrics() {
@@ -222,8 +212,8 @@ function deleteMetric(index: number) {
   states.metricTypes.splice(index, 1);
 }
 watch(
-  () => props.graph,
-  (data: any) => {
+  () => selectedGrid.graph,
+  (data: { type: string }) => {
     states.isTable = TableChartTypes.includes(data.type);
   }
 );

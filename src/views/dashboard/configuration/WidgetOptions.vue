@@ -37,23 +37,20 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { WidgetConfig } from "@/types/dashboard";
-import type { PropType } from "vue";
+import { useDashboardStore } from "@/store/modules/dashboard";
 
-/*global defineProps, defineEmits */
-const props = defineProps({
-  config: {
-    type: Object as PropType<WidgetConfig>,
-    default: () => ({ title: "", tooltips: "" }),
-  },
-});
-const emits = defineEmits(["update"]);
 const { t } = useI18n();
-const title = ref<string>(props.config.title || "");
-const tips = ref<string>(props.config.tips || "");
+const dashboardStore = useDashboardStore();
+const { selectedGrid } = dashboardStore;
+const title = ref<string>(selectedGrid.widget.title || "");
+const tips = ref<string>(selectedGrid.widget.tips || "");
 
 function updateWidgetConfig(param: { [key: string]: unknown }) {
-  emits("update", param);
+  const widget = {
+    ...selectedGrid.widget,
+    ...param,
+  };
+  dashboardStore.selectWidget({ ...selectedGrid, widget });
 }
 </script>
 <style lang="scss" scoped>

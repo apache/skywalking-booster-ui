@@ -25,24 +25,20 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import type { PropType } from "vue";
-import { BarConfig } from "@/types/dashboard";
+import { useDashboardStore } from "@/store/modules/dashboard";
 import { useI18n } from "vue-i18n";
 
-/*global defineProps, defineEmits */
 const { t } = useI18n();
-
-const props = defineProps({
-  config: {
-    type: Object as PropType<BarConfig>,
-    default: () => ({ showBackground: true, barWidth: 30 }),
-  },
-});
-const emits = defineEmits(["update"]);
-const showBackground = ref(props.config.showBackground || false);
+const dashboardStore = useDashboardStore();
+const { selectedGrid } = dashboardStore;
+const showBackground = ref(selectedGrid.graph.showBackground || false);
 
 function changeConfig(param: { [key: string]: unknown }) {
-  emits("update", param);
+  const graph = {
+    ...selectedGrid.graph,
+    ...param,
+  };
+  dashboardStore.selectWidget({ ...selectedGrid, graph });
 }
 </script>
 <style lang="scss" scoped>

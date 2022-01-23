@@ -20,7 +20,6 @@ import { computed } from "vue";
 import type { PropType } from "vue";
 import { Event } from "@/types/events";
 import { LineConfig } from "@/types/dashboard";
-import { config } from "@vue/test-utils";
 
 /*global defineProps */
 const props = defineProps({

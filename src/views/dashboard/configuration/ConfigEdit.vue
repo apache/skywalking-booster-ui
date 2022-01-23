@@ -16,21 +16,23 @@ limitations under the License. -->
   <div class="widget-config flex-v">
     <div class="graph" v-loading="loading">
       <div class="header">
-        <span>{{ states.widget.title }}</span>
-        <div class="tips" v-show="states.widget.tips">
-          <el-tooltip :content="states.widget.tips">
+        <span>{{ selectedGrid.widget.title }}</span>
+        <div class="tips" v-show="selectedGrid.widget.tips">
+          <el-tooltip :content="selectedGrid.widget.tips">
             <Icon iconName="info_outline" size="sm" />
           </el-tooltip>
         </div>
       </div>
       <div class="render-chart">
         <component
-          :is="states.graph.type"
+          :is="selectedGrid.graph.type"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
-          :config="states.graph"
+          :config="selectedGrid.graph"
         />
-        <div v-show="!states.graph.type" class="no-data">{{ t("noData") }}</div>
+        <div v-show="!selectedGrid.graph.type" class="no-data">
+          {{ t("noData") }}
+        </div>
       </div>
     </div>
     <div class="collapse" :style="{ height: configHeight + 'px' }">
@@ -39,12 +41,7 @@ limitations under the License. -->
         :style="{ '--el-collapse-header-font-size': '15px' }"
       >
         <el-collapse-item :title="t('metricName')" name="1">
-          <MetricOptions
-            :graph="states.graph"
-            @update="getSource"
-            @apply="getMetricsConfig"
-            @loading="setLoading"
-          />
+          <MetricOptions @update="getSource" @loading="setLoading" />
         </el-collapse-item>
         <el-collapse-item :title="t('selectVisualization')" name="2">
           <div class="chart-types">
@@ -52,34 +49,20 @@ limitations under the License. -->
               v-for="(type, index) in states.visType"
               :key="index"
               @click="changeChartType(type)"
-              :class="{ active: type.value === states.graph.type }"
+              :class="{ active: type.value === selectedGrid.graph.type }"
             >
               {{ type.label }}
             </span>
           </div>
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="3">
-          <component
-            :is="`${states.graph.type}Config`"
-            :config="{
-              ...states.graph,
-              metrics: states.metrics,
-              metricTypes: states.metricTypes,
-            }"
-            @update="updateGraphOptions"
-          />
+          <component :is="`${selectedGrid.graph.type}Config`" />
         </el-collapse-item>
         <el-collapse-item :title="t('widgetOptions')" name="4">
-          <WidgetOptions
-            :config="states.widget"
-            @update="updateWidgetOptions"
-          />
+          <WidgetOptions />
         </el-collapse-item>
         <el-collapse-item :title="t('standardOptions')" name="5">
-          <StandardOptions
-            :config="states.standard"
-            @update="updateStandardOptions"
-          />
+          <StandardOptions />
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -106,7 +89,6 @@ import {
   EntityType,
 } from "../data";
 import { Option } from "@/types/app";
-import { WidgetConfig, GraphConfig, StandardConfig } from "@/types/dashboard";
 import graphs from "../graphs";
 import configs from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
@@ -133,26 +115,16 @@ export default defineComponent({
       activeNames: string;
       source: any;
       index: string;
-      graph: GraphConfig | any;
-      widget: WidgetConfig | any;
-      standard: StandardConfig;
       visType: Option[];
       isTable: boolean;
-      metrics: string[];
-      metricTypes: string[];
     }>({
       activeNames: "1",
       source: {},
       index: selectedGrid.i,
-      graph: selectedGrid.graph,
-      widget: selectedGrid.widget,
-      standard: selectedGrid.standard,
       visType: [],
       isTable: false,
-      metrics: [],
-      metricTypes: [],
     });
-    states.isTable = TableChartTypes.includes(states.graph.type || "");
+    states.isTable = TableChartTypes.includes(selectedGrid.graph.type || "");
 
     if (entity === EntityType[0].value) {
       states.visType = ChartTypes.filter(
@@ -169,46 +141,16 @@ export default defineComponent({
     }
 
     function changeChartType(item: Option) {
-      states.graph = {
+      const graph = {
+        ...selectedGrid.graph,
         ...DefaultGraphConfig[item.value],
       };
-      states.isTable = TableChartTypes.includes(states.graph.type);
-    }
-    function updateWidgetOptions(param: { [key: string]: unknown }) {
-      states.widget = {
-        ...states.widget,
-        ...param,
-      };
-    }
-
-    function updateGraphOptions(param: { [key: string]: unknown }) {
-      states.graph = {
-        ...states.graph,
-        ...param,
-      };
-    }
-
-    function updateStandardOptions(param: { [key: string]: unknown }) {
-      states.standard = {
-        ...states.standard,
-        ...param,
-      };
+      states.isTable = TableChartTypes.includes(selectedGrid.graph.type);
+      dashboardStore.selectWidget({ ...selectedGrid, graph });
     }
 
     function getSource(source: unknown) {
       states.source = source;
-    }
-
-    function getMetricsConfig(opts: {
-      metrics?: string[];
-      metricTypes?: string[];
-    }) {
-      if (opts.metrics !== undefined) {
-        states.metrics = opts.metrics;
-      }
-      if (opts.metricTypes !== undefined) {
-        states.metricTypes = opts.metricTypes;
-      }
     }
 
     function setLoading(load: boolean) {
@@ -216,15 +158,7 @@ export default defineComponent({
     }
 
     function applyConfig() {
-      const opts = {
-        ...dashboardStore.selectedGrid,
-        metrics: states.metrics,
-        metricTypes: states.metricTypes,
-        widget: states.widget,
-        graph: states.graph,
-        standard: states.standard,
-      };
-      dashboardStore.setConfigs(opts);
+      dashboardStore.setConfigs(dashboardStore.selectedGrid);
       dashboardStore.setConfigPanel(false);
     }
 
@@ -234,13 +168,10 @@ export default defineComponent({
       changeChartType,
       t,
       appStoreWithOut,
-      updateWidgetOptions,
       configHeight,
-      updateGraphOptions,
-      updateStandardOptions,
+      selectedGrid,
       applyConfig,
       getSource,
-      getMetricsConfig,
       setLoading,
     };
   },

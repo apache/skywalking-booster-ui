@@ -45,29 +45,22 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import type { PropType } from "vue";
-import { TableConfig } from "@/types/dashboard";
 import { useI18n } from "vue-i18n";
+import { useDashboardStore } from "@/store/modules/dashboard";
 
-/*global defineProps, defineEmits */
 const { t } = useI18n();
-const props = defineProps({
-  config: {
-    type: Object as PropType<TableConfig>,
-    default: () => ({
-      showTableValues: true,
-      tableHeaderCol1: "",
-      tableHeaderCol2: "",
-    }),
-  },
-});
-const emits = defineEmits(["update"]);
-const showTableValues = ref(props.config.showTableValues);
-const tableHeaderCol1 = ref(props.config.tableHeaderCol1);
-const tableHeaderCol2 = ref(props.config.tableHeaderCol2);
+const dashboardStore = useDashboardStore();
+const { selectedGrid } = dashboardStore;
+const showTableValues = ref(selectedGrid.graph.showTableValues);
+const tableHeaderCol1 = ref(selectedGrid.graph.tableHeaderCol1);
+const tableHeaderCol2 = ref(selectedGrid.graph.tableHeaderCol2);
 
 function updateConfig(param: { [key: string]: unknown }) {
-  emits("update", param);
+  const graph = {
+    ...selectedGrid.graph,
+    ...param,
+  };
+  dashboardStore.selectWidget({ ...selectedGrid, graph });
 }
 </script>
 <style lang="scss" scoped>
