@@ -75,7 +75,7 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import Line from "./Line.vue";
@@ -115,22 +115,31 @@ async function queryInstance() {
   searchInstances.value = selectorStore.instances;
 
   const currentInstances = searchInstances.value.splice(0, pageSize);
-  const params = await useQueryPodsMetrics(
-    currentInstances,
-    dashboardStore.selectedGrid
-  );
-  const json = await dashboardStore.fetchMetricValue(params);
+  queryMetrics(currentInstances);
+}
 
-  if (json.errors) {
-    ElMessage.error(json.errors);
+async function queryMetrics(currentInstances: Instance[]) {
+  const { metrics } = dashboardStore.selectedGrid;
+
+  if (metrics.length && metrics[0]) {
+    const params = await useQueryPodsMetrics(
+      currentInstances,
+      dashboardStore.selectedGrid
+    );
+    const json = await dashboardStore.fetchMetricValue(params);
+
+    if (json.errors) {
+      ElMessage.error(json.errors);
+      return;
+    }
+    instances.value = usePodsSource(
+      currentInstances,
+      json,
+      dashboardStore.selectedGrid
+    );
     return;
   }
-  usePodsSource(currentInstances, json, dashboardStore.selectedGrid);
-  instances.value = usePodsSource(
-    currentInstances,
-    json,
-    dashboardStore.selectedGrid
-  );
+  instances.value = currentInstances;
 }
 
 function changePage(pageIndex: number) {
@@ -142,11 +151,22 @@ function searchList() {
   );
   instances.value = searchInstances.value.splice(0, pageSize);
 }
+
+watch(
+  () => [
+    dashboardStore.selectedGrid.metricTypes,
+    dashboardStore.selectedGrid.metrics,
+  ],
+  () => {
+    const currentInstances = searchInstances.value.splice(0, pageSize);
+    queryMetrics(currentInstances);
+  }
+);
 </script>
 <style lang="scss" scoped>
 @import "./style.scss";
 
 .chart {
-  height: 39px;
+  height: 50px;
 }
 </style>

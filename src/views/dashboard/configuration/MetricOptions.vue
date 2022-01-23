@@ -16,7 +16,7 @@ limitations under the License. -->
   <div v-show="states.isTable" class="ds-name">
     <div>Dashboard</div>
     <Selector
-      :value="selectedGrid.graph.dashboardName"
+      :value="dashboardStore.selectedGrid.graph.dashboardName"
       :options="states.metricList"
       size="mini"
       placeholder="Select a dashboard"
@@ -42,7 +42,9 @@ limitations under the License. -->
       :value="states.metricTypes[index]"
       :options="states.metricTypeList[index]"
       size="mini"
-      :disabled="selectedGrid.graph.type && !states.isTable && index !== 0"
+      :disabled="
+        dashboardStore.selectedGrid.graph.type && !states.isTable && index !== 0
+      "
       @change="changeMetricType(index, $event)"
       class="selectors"
     />
@@ -80,8 +82,7 @@ import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
 /*global defineEmits */
 const emit = defineEmits(["update", "loading"]);
 const dashboardStore = useDashboardStore();
-const { selectedGrid, entity } = dashboardStore;
-const { metrics, metricTypes } = selectedGrid;
+const { metrics, metricTypes, graph } = dashboardStore.selectedGrid;
 const states = reactive<{
   metrics: string[];
   metricTypes: string[];
@@ -97,12 +98,12 @@ const states = reactive<{
   isTable: false,
   metricList: [],
 });
-states.isTable = TableChartTypes.includes(selectedGrid.graph.type);
+states.isTable = TableChartTypes.includes(graph.type);
 
 setMetricType();
 
 async function setMetricType(catalog?: string) {
-  catalog = catalog || entity;
+  catalog = catalog || dashboardStore.entity;
   const json = await dashboardStore.fetchMetricList();
   if (json.errors) {
     ElMessage.error(json.errors);
@@ -111,7 +112,6 @@ async function setMetricType(catalog?: string) {
   states.metricList = (json.data.metrics || []).filter(
     (d: { catalog: string }) => catalog === (MetricCatalog as any)[d.catalog]
   );
-
   const metrics: any = states.metricList.filter(
     (d: { value: string; type: string }) => {
       const metric = states.metrics.filter((m: string) => m === d.value)[0];
@@ -133,7 +133,7 @@ function changeMetrics(index: number, arr: (Option & { type: string })[]) {
     states.metricTypeList = [];
     states.metricTypes = [];
     dashboardStore.selectWidget({
-      ...selectedGrid,
+      ...dashboardStore.selectedGrid,
       ...{ metricTypes: states.metricTypes, metrics: states.metrics },
     });
     return;
@@ -144,7 +144,7 @@ function changeMetrics(index: number, arr: (Option & { type: string })[]) {
   states.metricTypeList[index] = MetricTypes[typeOfMetrics];
   states.metricTypes[index] = MetricTypes[typeOfMetrics][0].value;
   dashboardStore.selectWidget({
-    ...selectedGrid,
+    ...dashboardStore.selectedGrid,
     ...{ metricTypes: states.metricTypes, metrics: states.metrics },
   });
   queryMetrics();
@@ -170,7 +170,7 @@ function changeMetricType(index: number, opt: Option[]) {
     });
   }
   dashboardStore.selectWidget({
-    ...selectedGrid,
+    ...dashboardStore.selectedGrid,
     ...{ metricTypes: states.metricTypes },
   });
   queryMetrics();
@@ -195,7 +195,7 @@ async function queryMetrics() {
 
 function changeDashboard(item: Option[]) {
   dashboardStore.selectWidget({
-    ...selectedGrid,
+    ...dashboardStore.selectedGrid,
     ...{ dashboardName: item[0].value },
   });
 }
@@ -213,7 +213,7 @@ function deleteMetric(index: number) {
   states.metricTypes.splice(index, 1);
 }
 watch(
-  () => selectedGrid.graph.type,
+  () => dashboardStore.selectedGrid.graph.type,
   (type: string) => {
     states.isTable = TableChartTypes.includes(type);
     const catalog: { [key: string]: string } = {
@@ -221,7 +221,9 @@ watch(
       EndpointList: "Endpoint",
       ServiceList: "Service",
     };
-    setMetricType(catalog[type]);
+    if (catalog[type] || dashboardStore.entity) {
+      setMetricType(catalog[type]);
+    }
   }
 );
 </script>
