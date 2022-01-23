@@ -47,7 +47,11 @@ limitations under the License. -->
         :is="data.graph.type"
         :intervalTime="appStore.intervalTime"
         :data="state.source"
-        :config="data.graph"
+        :config="{
+          ...data.graph,
+          metrics: data.metrics,
+          metricTypes: data.metricTypes,
+        }"
         :standard="data.standard"
       />
     </div>

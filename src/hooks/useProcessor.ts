@@ -19,6 +19,7 @@ import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { Instance } from "@/types/selector";
 
 export function useQueryProcessor(config: any) {
   if (!(config.metrics && config.metrics.length)) {
@@ -190,4 +191,62 @@ function aggregation(json: {
     return json.data / json.aggregationNum;
   }
   return json.data;
+}
+
+export function useQueryPodsMetrics(
+  pods: Instance[],
+  config: { metrics: string[]; metricTypes: string[] }
+) {
+  const appStore = useAppStoreWithOut();
+  const selectorStore = useSelectorStore();
+  const conditions: { [key: string]: unknown } = {
+    duration: appStore.durationTime,
+  };
+  const variables: string[] = [`$duration: Duration!`];
+  const { currentService } = selectorStore;
+
+  const fragmentList = pods.map((d: Instance, index: number) => {
+    const param = {
+      scope: "ServiceInstance",
+      serviceName: currentService.label,
+      serviceInstanceName: d.label,
+      normal: currentService.normal,
+    };
+    const f = config.metrics.map((name: string, idx: number) => {
+      const metricType = config.metricTypes[idx] || "";
+      conditions[`condition${index}${idx}`] = {
+        name,
+        entity: param,
+      };
+      variables.push(`$condition${index}${idx}: MetricsCondition!`);
+      return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, duration: $duration)${RespFields[metricType]}`;
+    });
+    return f;
+  });
+  const fragment = fragmentList.flat(1).join(" ");
+  const queryStr = `query queryData(${variables}) {${fragment}}`;
+
+  return { queryStr, conditions };
+}
+export function usePodsSource(
+  instances: Instance[],
+  resp: { errors: string; data: { [key: string]: any } },
+  config: { metrics: string[]; metricTypes: string[] }
+): any {
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return {};
+  }
+  const data = instances.map((d: Instance | any, idx: number) => {
+    config.metrics.map((name: string, index: number) => {
+      const key = name + idx + index;
+
+      d[name] = resp.data[key].values.values.map(
+        (d: { value: number }) => d.value
+      );
+    });
+
+    return d;
+  });
+  return data;
 }

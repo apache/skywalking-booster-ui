@@ -20,6 +20,7 @@ import { computed } from "vue";
 import type { PropType } from "vue";
 import { Event } from "@/types/events";
 import { LineConfig } from "@/types/dashboard";
+import { config } from "@vue/test-utils";
 
 /*global defineProps */
 const props = defineProps({
@@ -37,6 +38,8 @@ const props = defineProps({
       smooth: false,
       showSymbol: false,
       opacity: 0.4,
+      showXAxis: true,
+      showYAxis: true,
     }),
   },
 });
@@ -143,6 +146,8 @@ function getOption() {
     color,
     tooltip: {
       trigger: "axis",
+      zlevel: 1000,
+      z: 60,
       backgroundColor: "rgb(50,50,50)",
       textStyle: {
         fontSize: 13,
@@ -171,6 +176,7 @@ function getOption() {
     },
     xAxis: {
       type: "category",
+      show: props.config.showXAxis,
       axisTick: {
         lineStyle: { color: "#c1c5ca41" },
         alignWithLabel: true,
@@ -184,7 +190,11 @@ function getOption() {
       axisLine: { show: false },
       axisTick: { show: false },
       splitLine: { lineStyle: { color: "#c1c5ca41", type: "dashed" } },
-      axisLabel: { color: "#9da5b2", fontSize: "11" },
+      axisLabel: {
+        color: "#9da5b2",
+        fontSize: "11",
+        show: props.config.showYAxis,
+      },
     },
     series: temp,
   };

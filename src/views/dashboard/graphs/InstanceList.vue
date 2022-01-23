@@ -46,9 +46,19 @@ limitations under the License. -->
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column label="metric">
+      <el-table-column
+        v-for="(metric, index) in selectedGrid.metrics"
+        :label="metric"
+        :key="metric + index"
+      >
         <template #default="scope">
-          {{ scope.row.label }}
+          <div class="chart">
+            <Line
+              :data="{ metric: scope.row[metric] }"
+              :intervalTime="intervalTime"
+              :config="{ showXAxis: false, showYAxis: false }"
+            />
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -65,27 +75,38 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { onBeforeMount, ref } from "vue";
-import { useSelectorStore } from "@/store/modules/selectors";
+import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
+import Line from "./Line.vue";
+import { useSelectorStore } from "@/store/modules/selectors";
+import { useDashboardStore } from "@/store/modules/dashboard";
 import { InstanceListConfig } from "@/types/dashboard";
+import { Instance } from "@/types/selector";
+import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 
 /*global defineProps */
 defineProps({
   config: {
-    type: Object as PropType<InstanceListConfig>,
+    type: Object as PropType<
+      InstanceListConfig & { metrics: string[]; metricTypes: string[] }
+    >,
     default: () => ({ dashboardName: "", fontSize: 12 }),
   },
+  intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
 const selectorStore = useSelectorStore();
+const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
-const instances = ref<{ layer: string; label: string }[]>([]);
-const searchInstances = ref<{ layer: string; label: string }[]>([]);
-const pageSize = 7;
+const instances = ref<(Instance | any)[]>([]); // current instances
+const searchInstances = ref<Instance[]>([]); // all instances
+const pageSize = 5;
 const searchText = ref<string>("");
+const selectedGrid = dashboardStore.selectedGrid;
 
-onBeforeMount(async () => {
+queryInstance();
+
+async function queryInstance() {
   chartLoading.value = true;
   const resp = await selectorStore.getServiceInstances();
 
@@ -95,8 +116,19 @@ onBeforeMount(async () => {
     return;
   }
   searchInstances.value = selectorStore.instances;
-  instances.value = searchInstances.value.splice(0, pageSize);
-});
+
+  const currentInstances = searchInstances.value.splice(0, pageSize);
+  const params = await useQueryPodsMetrics(currentInstances, selectedGrid);
+  const json = await dashboardStore.fetchMetricValue(params);
+
+  if (json.errors) {
+    ElMessage.error(json.errors);
+    return;
+  }
+  usePodsSource(currentInstances, json, selectedGrid);
+  instances.value = usePodsSource(currentInstances, json, selectedGrid);
+}
+
 function changePage(pageIndex: number) {
   instances.value = searchInstances.value.splice(pageIndex - 1, pageSize);
 }
@@ -109,4 +141,8 @@ function searchList() {
 </script>
 <style lang="scss" scoped>
 @import "./style.scss";
+
+.chart {
+  height: 39px;
+}
 </style>

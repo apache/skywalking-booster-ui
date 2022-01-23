@@ -61,7 +61,11 @@ limitations under the License. -->
         <el-collapse-item :title="t('graphStyles')" name="3">
           <component
             :is="`${states.graph.type}Config`"
-            :config="states.graph"
+            :config="{
+              ...states.graph,
+              metrics: states.metrics,
+              metricTypes: states.metricTypes,
+            }"
             @update="updateGraphOptions"
           />
         </el-collapse-item>

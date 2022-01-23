@@ -25,6 +25,7 @@ import { NewControl } from "../data";
 import { Duration } from "@/types/app";
 import axios, { AxiosResponse } from "axios";
 import { cancelToken } from "@/utils/cancelToken";
+import { Instance } from "@/types/selector";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -179,7 +180,10 @@ export const dashboardStore = defineStore({
 
       return res.data;
     },
-    async fetchMetricValue(param: { queryStr: string; conditions: any }) {
+    async fetchMetricValue(param: {
+      queryStr: string;
+      conditions: { [key: string]: unknown };
+    }) {
       const res: AxiosResponse = await axios.post(
         "/graphql",
         { query: param.queryStr, variables: { ...param.conditions } },

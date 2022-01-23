@@ -65,6 +65,8 @@ export interface LineConfig extends AreaConfig {
   smooth?: boolean;
   showSymbol?: boolean;
   step?: boolean;
+  showXAxis?: boolean;
+  showYAxis?: boolean;
 }
 
 export interface AreaConfig {

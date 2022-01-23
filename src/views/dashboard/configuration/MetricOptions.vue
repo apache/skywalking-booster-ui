@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div v-show="states.isTable" class="ds-name">
+    <div>Dashboard</div>
     <Selector
       :value="states.graph.dashboardName"
       :options="states.metricList"
@@ -28,6 +29,7 @@ limitations under the License. -->
     :key="index"
     class="metric-item"
   >
+    <div>Metrics</div>
     <Selector
       :value="metric"
       :options="states.metricList"
@@ -140,6 +142,10 @@ function changeMetrics(index: number, arr: (Option & { type: string })[]) {
     states.metricTypeList = [];
     states.metricTypes = [];
     emit("apply", { metricTypes: states.metricTypes });
+    dashboardStore.selectWidget({
+      ...selectedGrid,
+      ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+    });
     return;
   }
   states.metrics[index] = arr[0].value;
@@ -147,6 +153,10 @@ function changeMetrics(index: number, arr: (Option & { type: string })[]) {
 
   states.metricTypeList[index] = MetricTypes[typeOfMetrics];
   states.metricTypes[index] = MetricTypes[typeOfMetrics][0].value;
+  dashboardStore.selectWidget({
+    ...selectedGrid,
+    ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+  });
   emit("apply", { metricTypes: states.metricTypes, metrics: states.metrics });
   queryMetrics();
 }
@@ -170,6 +180,10 @@ function changeMetricType(index: number, opt: Option[]) {
       return d;
     });
   }
+  dashboardStore.selectWidget({
+    ...selectedGrid,
+    ...{ metricTypes: states.metricTypes },
+  });
   emit("apply", { metricTypes: states.metricTypes });
   queryMetrics();
 }
