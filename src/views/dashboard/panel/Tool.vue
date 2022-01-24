@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
-    <div class="flex-h" v-if="!params.serviceId">
+    <div v-if="params.serviceId"></div>
+    <div class="flex-h" v-else>
       <div class="selectors-item" v-if="states.key !== 10">
         <span class="label">$Service</span>
         <Selector
@@ -35,7 +36,7 @@ limitations under the License. -->
           }}
         </span>
         <Selector
-          v-model="selectorStore.currentPod"
+          v-model="states.currentPod"
           :options="selectorStore.pods"
           size="mini"
           placeholder="Select a data"
@@ -57,7 +58,7 @@ limitations under the License. -->
       <div class="selectors-item" v-if="states.key === 4">
         <span class="label">$DestinationServiceInstance</span>
         <Selector
-          v-model="selectorStore.currentPod"
+          v-model="states.currentPod"
           :options="selectorStore.pods"
           size="mini"
           placeholder="Select a data"
@@ -96,21 +97,43 @@ import { Service } from "@/types/selector";
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const params = useRoute().params;
+const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
 const states = reactive<{
   destService: string;
   destPod: string;
   key: number;
   currentService: string;
+  currentPod: string;
 }>({
   destService: "",
   destPod: "",
-  key: EntityType.filter((d: Option) => d.value === params.entity)[0].key || 0,
+  key: (type && type.key) || 0,
   currentService: "",
+  currentPod: "",
 });
+
 dashboardStore.setLayer(String(params.layerId));
 dashboardStore.setEntity(String(params.entity));
 
-getServices();
+if (params.serviceId) {
+  setSelector();
+} else {
+  getServices();
+}
+
+async function setSelector() {
+  await selectorStore.getService(String(params.serviceId));
+  states.currentService = selectorStore.currentService.value;
+  if (params.podId) {
+    if (String(params.entity) === EntityType[2].value) {
+      await selectorStore.getEndpoint(String(params.podId));
+    }
+    if (String(params.entity) === EntityType[3].value) {
+      await selectorStore.getInstance(String(params.podId));
+    }
+    states.currentPod = selectorStore.currentPod.label;
+  }
+}
 
 async function getServices() {
   if (!dashboardStore.layerId) {
@@ -167,15 +190,18 @@ async function fetchPods(type: string) {
   switch (type) {
     case "Endpoint":
       resp = await selectorStore.getEndpoints();
+      states.currentPod = selectorStore.currentPod.label;
       break;
     case "ServiceInstance":
       resp = await selectorStore.getServiceInstances();
+      states.currentPod = selectorStore.currentPod.label;
       break;
     default:
       resp = {};
   }
   if (resp.errors) {
     ElMessage.error(resp.errors);
+    return;
   }
 }
 </script>

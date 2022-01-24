@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Option, Duration } from "@/types/app";
-import { Service } from "@/types/selector";
+import { Duration } from "@/types/app";
+import { Service, Instance, Endpoint } from "@/types/selector";
 import { store } from "@/store";
 import graph from "@/graph";
 import { AxiosResponse } from "axios";
@@ -24,13 +24,11 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface SelectorState {
   services: Service[];
-  instances: Option[];
-  pods: Option[];
-  endpoints: Option[];
+  pods: Array<Instance | Endpoint>;
   currentService: Nullable<Service>;
-  currentPod: string;
+  currentPod: Nullable<Instance | Endpoint>;
   currentDestService: Nullable<Service>;
-  currentDestPod: string;
+  currentDestPod: Nullable<Instance | Endpoint>;
   durationTime: Duration;
 }
 
@@ -38,20 +36,18 @@ export const selectorStore = defineStore({
   id: "selector",
   state: (): SelectorState => ({
     services: [],
-    instances: [],
     pods: [],
-    endpoints: [],
     currentService: null,
-    currentPod: "",
+    currentPod: null,
     currentDestService: null,
-    currentDestPod: "",
+    currentDestPod: null,
     durationTime: useAppStoreWithOut().durationTime,
   }),
   actions: {
     setCurrentService(service: Service) {
       this.currentService = service;
     },
-    setCurrentPod(pod: string) {
+    setCurrentPod(pod: Nullable<Instance | Endpoint>) {
       this.currentPod = pod;
     },
     async fetchLayers(): Promise<AxiosResponse> {
@@ -82,9 +78,8 @@ export const selectorStore = defineStore({
         duration: this.durationTime,
       });
       if (!res.data.errors) {
-        this.instances = res.data.data.pods || [];
-        this.pods = this.instances;
-        this.currentPod = this.pods.length ? this.pods[0].value : "";
+        this.pods = res.data.data.pods || [];
+        this.currentPod = this.pods.length ? this.pods[0] : null;
       }
       return res.data;
     },
@@ -108,10 +103,48 @@ export const selectorStore = defineStore({
         keyword: params.keyword,
       });
       if (!res.data.errors) {
-        this.endpoints = res.data.data.pods || [];
-        this.pods = this.endpoints;
-        this.currentPod = this.pods.length ? this.pods[0].value : "";
+        this.pods = res.data.data.pods || [];
+        this.currentPod = this.pods.length ? this.pods[0] : null;
       }
+      return res.data;
+    },
+    async getService(serviceId: string) {
+      if (!serviceId) {
+        return;
+      }
+      const res: AxiosResponse = await graph.query("queryService").params({
+        serviceId,
+      });
+      if (!res.data.errors) {
+        this.currentService = res.data.data.service || {};
+      }
+
+      return res.data;
+    },
+    async getInstance(instanceId: string) {
+      if (!instanceId) {
+        return;
+      }
+      const res: AxiosResponse = await graph.query("queryInstance").params({
+        instanceId,
+      });
+      if (!res.data.errors) {
+        this.currentPod = res.data.data.instance || null;
+      }
+
+      return res.data;
+    },
+    async getEndpoint(endpointId: string) {
+      if (!endpointId) {
+        return;
+      }
+      const res: AxiosResponse = await graph.query("queryEndpoint").params({
+        endpointId,
+      });
+      if (!res.data.errors) {
+        this.currentPod = res.data.data.endpoint || null;
+      }
+
       return res.data;
     },
   },

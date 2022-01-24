@@ -39,7 +39,7 @@ limitations under the License. -->
           <router-link
             target="_blank"
             class="link"
-            :to="`/dashboard/${scope.row.layer}/endpoint/${selectorStore.currentService.value}/${scope.row.value}/${config.dashboardName}`"
+            :to="`/dashboard/${scope.row.layer}/Endpoint/${selectorStore.currentService.id}/${scope.row.id}/${config.dashboardName}`"
             :style="{ fontSize: `${config.fontSize}px` }"
           >
             {{ scope.row.label }}
@@ -67,7 +67,7 @@ limitations under the License. -->
       background
       layout="prev, pager, next"
       :page-size="pageSize"
-      :total="selectorStore.endpoints.length"
+      :total="selectorStore.pods.length"
       @current-change="changePage"
       @prev-click="changePage"
       @next-click="changePage"
@@ -115,8 +115,8 @@ async function queryEndpoints() {
     ElMessage.error(resp.errors);
     return;
   }
-  searchEndpoints.value = selectorStore.endpoints;
-  endpoints.value = selectorStore.endpoints.splice(0, pageSize);
+  searchEndpoints.value = selectorStore.pods;
+  endpoints.value = selectorStore.pods.splice(0, pageSize);
   queryEndpointMetrics(endpoints.value);
 }
 async function queryEndpointMetrics(currentPods: Endpoint[]) {
@@ -147,8 +147,8 @@ function changePage(pageIndex: number) {
   endpoints.value = searchEndpoints.value.splice(pageIndex - 1, pageSize);
 }
 function searchList() {
-  const currentEndpoints = selectorStore.instances.filter(
-    (d: { label: string }) => d.label.includes(searchText.value)
+  const currentEndpoints = selectorStore.pods.filter((d: { label: string }) =>
+    d.label.includes(searchText.value)
   );
   searchEndpoints.value = currentEndpoints;
   endpoints.value = currentEndpoints.splice(0, pageSize);

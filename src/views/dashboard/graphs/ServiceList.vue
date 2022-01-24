@@ -39,7 +39,8 @@ limitations under the License. -->
           <router-link
             target="_blank"
             class="link"
-            :to="`/dashboard/${scope.row.layer}/service/${selectorStore.currentService.value}/${config.dashboardName}`"
+            :to="`/dashboard/${scope.row.layer}/Service/${selectorStore.currentService.value}/${config.dashboardName}`"
+            :key="1"
             :style="{ fontSize: `${config.fontSize}px` }"
           >
             {{ scope.row.label }}
@@ -144,8 +145,8 @@ function changePage(pageIndex: number) {
   services.value = selectorStore.services.splice(pageIndex - 1, pageSize);
 }
 function searchList() {
-  searchServices.value = selectorStore.instances.filter(
-    (d: { label: string }) => d.label.includes(searchText.value)
+  searchServices.value = selectorStore.services.filter((d: { label: string }) =>
+    d.label.includes(searchText.value)
   );
   services.value = searchServices.value.splice(0, pageSize);
 }

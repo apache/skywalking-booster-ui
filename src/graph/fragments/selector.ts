@@ -59,3 +59,49 @@ export const Endpoints = {
     }
 `,
 };
+
+export const getService = {
+  variable: "$serviceId: String!",
+  query: `
+  service: getService(serviceId: $serviceId) {
+    id
+    value: name
+      label: name
+      group
+      layers
+      normal
+  }
+  `,
+};
+
+export const getInstance = {
+  variable: "$instanceId: String!",
+  query: `
+  instance: getInstance(instanceId: $instanceId) {
+    id
+     value: name
+      label: name
+      language
+      instanceUUID
+      layer
+      attributes {
+        name
+        value
+      }
+    }
+  `,
+};
+
+export const getEndpoint = {
+  variable: "$endpointId: String!",
+  query: `
+  endpoint: getEndpointInfo(endpointId: $endpointId) {
+    id
+     value: name
+      label: name
+      serviceId
+      serviceName
+    }
+  }
+  `,
+};

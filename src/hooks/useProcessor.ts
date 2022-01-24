@@ -28,6 +28,9 @@ export function useQueryProcessor(config: any) {
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
+  if (!selectorStore.currentService) {
+    return;
+  }
   const conditions: { [key: string]: unknown } = {
     duration: appStore.durationTime,
   };
@@ -76,10 +79,10 @@ export function useQueryProcessor(config: any) {
               ? undefined
               : selectorStore.currentService.normal,
           serviceInstanceName: dashboardStore.entity.includes("ServiceInstance")
-            ? selectorStore.currentPod
+            ? selectorStore.currentPod.value
             : undefined,
           endpointName: dashboardStore.entity.includes("Endpoint")
-            ? selectorStore.currentPod
+            ? selectorStore.currentPod.value
             : undefined,
           destNormal: isRelation
             ? selectorStore.currentDestService.normal
@@ -89,11 +92,11 @@ export function useQueryProcessor(config: any) {
             : undefined,
           destServiceInstanceName:
             dashboardStore.entity === "ServiceInstanceRelation"
-              ? selectorStore.currentDestPod
+              ? selectorStore.currentDestPod.value
               : undefined,
           destEndpointName:
             dashboardStore.entity === "EndpointRelation"
-              ? selectorStore.currentDestPod
+              ? selectorStore.currentDestPod.value
               : undefined,
         },
       };

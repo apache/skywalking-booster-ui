@@ -194,9 +194,13 @@ async function queryMetrics() {
 }
 
 function changeDashboard(item: Option[]) {
+  const graph = {
+    ...dashboardStore.selectedGrid.graph,
+    dashboardName: item[0].value,
+  };
   dashboardStore.selectWidget({
     ...dashboardStore.selectedGrid,
-    ...{ dashboardName: item[0].value },
+    graph,
   });
 }
 function addMetric() {

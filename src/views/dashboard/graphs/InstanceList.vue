@@ -37,9 +37,8 @@ limitations under the License. -->
       <el-table-column label="Service Instances">
         <template #default="scope">
           <router-link
-            target="_blank"
             class="link"
-            :to="`/dashboard/${scope.row.layer}/serviceInstance/${selectorStore.currentService.value}/${scope.row.value}/${config.dashboardName}`"
+            :to="`/dashboard/${scope.row.layer}/ServiceInstance/${selectorStore.currentService.id}/${scope.row.id}/${config.dashboardName}`"
             :style="{ fontSize: `${config.fontSize}px` }"
           >
             {{ scope.row.label }}
@@ -96,7 +95,7 @@ defineProps({
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
-const instances = ref<(Instance | any)[]>([]); // current instances
+const instances = ref<Instance[]>([]); // current instances
 const searchInstances = ref<Instance[]>([]); // all instances
 const pageSize = 5;
 const searchText = ref<string>("");
@@ -112,7 +111,7 @@ async function queryInstance() {
     ElMessage.error(resp.errors);
     return;
   }
-  searchInstances.value = selectorStore.instances;
+  searchInstances.value = selectorStore.pods;
 
   const currentInstances = searchInstances.value.splice(0, pageSize);
   queryInstanceMetrics(currentInstances);
@@ -147,8 +146,8 @@ function changePage(pageIndex: number) {
   instances.value = searchInstances.value.splice(pageIndex - 1, pageSize);
 }
 function searchList() {
-  searchInstances.value = selectorStore.instances.filter(
-    (d: { label: string }) => d.label.includes(searchText.value)
+  searchInstances.value = selectorStore.pods.filter((d: { label: string }) =>
+    d.label.includes(searchText.value)
   );
   instances.value = searchInstances.value.splice(0, pageSize);
 }
