@@ -46,6 +46,21 @@ limitations under the License. -->
           </router-link>
         </template>
       </el-table-column>
+      <el-table-column
+        v-for="(metric, index) in dashboardStore.selectedGrid.metrics"
+        :label="metric"
+        :key="metric + index"
+      >
+        <template #default="scope">
+          <div class="chart">
+            <Line
+              :data="{ metric: scope.row[metric] }"
+              :intervalTime="intervalTime"
+              :config="{ showXAxis: false, showYAxis: false }"
+            />
+          </div>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       class="pagination"
@@ -60,11 +75,15 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { onBeforeMount, ref } from "vue";
-import { useSelectorStore } from "@/store/modules/selectors";
+import { watch, ref } from "vue";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import { ServiceListConfig } from "@/types/dashboard";
+import Line from "./Line.vue";
+import { useSelectorStore } from "@/store/modules/selectors";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { Service } from "@/types/selector";
+import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 
 /*global defineProps */
 defineProps({
@@ -78,13 +97,16 @@ defineProps({
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
 const selectorStore = useSelectorStore();
+const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const pageSize = 5;
-const services = ref<{ label: string; layer: string }[]>([]);
-const searchServices = ref<{ layer: string; label: string }[]>([]);
+const services = ref<Service[]>([]);
+const searchServices = ref<Service[]>([]);
 const searchText = ref<string>("");
 
-onBeforeMount(async () => {
+queryServices();
+
+async function queryServices() {
   chartLoading.value = true;
   const resp = await selectorStore.fetchServices();
 
@@ -93,7 +115,31 @@ onBeforeMount(async () => {
     ElMessage.error(resp.errors);
   }
   services.value = selectorStore.services.splice(0, pageSize);
-});
+}
+async function queryServiceMetrics(currentServices: Service[]) {
+  const { metrics } = dashboardStore.selectedGrid;
+
+  if (metrics.length && metrics[0]) {
+    const params = await useQueryPodsMetrics(
+      currentServices,
+      dashboardStore.selectedGrid,
+      "Service"
+    );
+    const json = await dashboardStore.fetchMetricValue(params);
+
+    if (json.errors) {
+      ElMessage.error(json.errors);
+      return;
+    }
+    services.value = usePodsSource(
+      currentServices,
+      json,
+      dashboardStore.selectedGrid
+    );
+    return;
+  }
+  services.value = currentServices;
+}
 function changePage(pageIndex: number) {
   services.value = selectorStore.services.splice(pageIndex - 1, pageSize);
 }
@@ -103,6 +149,15 @@ function searchList() {
   );
   services.value = searchServices.value.splice(0, pageSize);
 }
+watch(
+  () => [
+    dashboardStore.selectedGrid.metricTypes,
+    dashboardStore.selectedGrid.metrics,
+  ],
+  () => {
+    queryServiceMetrics(services.value);
+  }
+);
 </script>
 <style lang="scss" scoped>
 @import "./style.scss";

@@ -37,3 +37,13 @@ export type Endpoint = {
   label: string;
   value: string;
 };
+
+export type Service = {
+  id: string;
+  value: string;
+  label: string;
+  group: string;
+  normal: boolean;
+  layers: string[];
+  shortName: string;
+};
