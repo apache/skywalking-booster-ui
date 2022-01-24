@@ -32,14 +32,11 @@ export function useQueryProcessor(config: any) {
     duration: appStore.durationTime,
   };
   const variables: string[] = [`$duration: Duration!`];
-  const { currentPod, currentService, currentDestPod, currentDestService } =
-    selectorStore;
-  const { entity } = dashboardStore;
   const isRelation = [
     "ServiceRelation",
     "ServiceInstanceRelation",
     "EndpointRelation",
-  ].includes(entity);
+  ].includes(dashboardStore.entity);
   const fragment = config.metrics.map((name: string, index: number) => {
     const metricType = config.metricTypes[index] || "";
     const labels = ["0", "1", "2", "3", "4"];
@@ -52,11 +49,11 @@ export function useQueryProcessor(config: any) {
       variables.push(`$condition${index}: TopNCondition!`);
       conditions[`condition${index}`] = {
         name,
-        parentService: ["Service", "All"].includes(entity)
+        parentService: ["Service", "All"].includes(dashboardStore.entity)
           ? null
-          : currentService.value,
-        normal: currentService.normal,
-        scope: entity,
+          : selectorStore.currentService.value,
+        normal: selectorStore.currentService.normal,
+        scope: dashboardStore.entity,
         topN: 10,
         order: "DES",
       };
@@ -69,19 +66,35 @@ export function useQueryProcessor(config: any) {
       conditions[`condition${index}`] = {
         name,
         entity: {
-          scope: entity,
-          serviceName: entity === "All" ? undefined : currentService.value,
-          normal: entity === "All" ? undefined : currentService.normal,
-          serviceInstanceName: entity.includes("ServiceInstance")
-            ? currentPod
+          scope: dashboardStore.entity,
+          serviceName:
+            dashboardStore.entity === "All"
+              ? undefined
+              : selectorStore.currentService.value,
+          normal:
+            dashboardStore.entity === "All"
+              ? undefined
+              : selectorStore.currentService.normal,
+          serviceInstanceName: dashboardStore.entity.includes("ServiceInstance")
+            ? selectorStore.currentPod
             : undefined,
-          endpointName: entity.includes("Endpoint") ? currentPod : undefined,
-          destNormal: isRelation ? currentDestService.normal : undefined,
-          destServiceName: isRelation ? currentDestService.value : undefined,
+          endpointName: dashboardStore.entity.includes("Endpoint")
+            ? selectorStore.currentPod
+            : undefined,
+          destNormal: isRelation
+            ? selectorStore.currentDestService.normal
+            : undefined,
+          destServiceName: isRelation
+            ? selectorStore.currentDestService.value
+            : undefined,
           destServiceInstanceName:
-            entity === "ServiceInstanceRelation" ? currentDestPod : undefined,
+            dashboardStore.entity === "ServiceInstanceRelation"
+              ? selectorStore.currentDestPod
+              : undefined,
           destEndpointName:
-            entity === "EndpointRelation" ? currentDestPod : undefined,
+            dashboardStore.entity === "EndpointRelation"
+              ? selectorStore.currentDestPod
+              : undefined,
         },
       };
     }

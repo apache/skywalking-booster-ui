@@ -42,10 +42,14 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     step: false,
     smooth: false,
     showSymbol: false,
+    showXAxis: true,
+    showYAxis: true,
   },
   Area: {
     type: "Area",
     opacity: 0.4,
+    showXAxis: true,
+    showYAxis: true,
   },
   Card: {
     type: "Card",

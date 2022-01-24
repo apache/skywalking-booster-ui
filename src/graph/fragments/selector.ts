@@ -36,7 +36,8 @@ export const Instances = {
   variable: "$serviceId: ID!, $duration: Duration!",
   query: `
   pods: listInstances(duration: $duration, serviceId: $serviceId) {
-    value: id
+     id
+     value: name
       label: name
       language
       instanceUUID
@@ -52,8 +53,9 @@ export const Endpoints = {
   variable: "$serviceId: ID!, $keyword: String!",
   query: `
   pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 100) {
-      value: id
-      label: name
+    id
+    value: name
+     label: name
     }
 `,
 };

@@ -119,13 +119,27 @@ export default defineComponent({
       }
     }
     watch(
-      () => [
-        props.data.metricTypes,
-        props.data.metrics,
-        selectorStore.currentService,
-      ],
-      (data, old) => {
-        if (data[0] === old[0] && data[1] === old[1] && data[2] === old[2]) {
+      () => [props.data.metricTypes, props.data.metrics],
+      () => {
+        queryMetrics();
+      }
+    );
+    watch(
+      () => selectorStore.currentService,
+      () => {
+        if (dashboardStore.entity !== "Service") {
+          return;
+        }
+        queryMetrics();
+      }
+    );
+    watch(
+      () => selectorStore.currentPod,
+      () => {
+        if (
+          dashboardStore.entity === "All" ||
+          dashboardStore.entity === "Service"
+        ) {
           return;
         }
         queryMetrics();

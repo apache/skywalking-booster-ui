@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
-    <div class="flex-h">
-      <div class="selectors-item">
+    <div class="flex-h" v-if="!params.serviceId">
+      <div class="selectors-item" v-if="states.key !== 10">
         <span class="label">$Service</span>
         <Selector
           v-model="states.currentService"
@@ -24,12 +24,15 @@ limitations under the License. -->
           placeholder="Select a service"
           @change="changeService"
           class="selectors"
-          :borderRadius="4"
         />
       </div>
       <div class="selectors-item" v-if="states.key === 3 || states.key === 4">
         <span class="label">
-          {{ states.entity === "endpoint" ? "$Endpoint" : "$ServiceInstance" }}
+          {{
+            dashboardStore.entity === "Endpoint"
+              ? "$Endpoint"
+              : "$ServiceInstance"
+          }}
         </span>
         <Selector
           v-model="selectorStore.currentPod"
@@ -38,7 +41,6 @@ limitations under the License. -->
           placeholder="Select a data"
           @change="changePods"
           class="selectors"
-          :borderRadius="4"
         />
       </div>
       <div class="selectors-item" v-if="states.key === 2">
@@ -95,8 +97,6 @@ const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const params = useRoute().params;
 const states = reactive<{
-  entity: string;
-  layerId: string | string[];
   destService: string;
   destPod: string;
   key: number;
@@ -105,32 +105,31 @@ const states = reactive<{
   destService: "",
   destPod: "",
   key: EntityType.filter((d: Option) => d.value === params.entity)[0].key || 0,
-  entity: String(params.entity),
-  layerId: params.layerId,
-  currentService:
-    (selectorStore.currentService && selectorStore.currentService.value) || "",
+  currentService: "",
 });
-dashboardStore.setLayer(states.layerId);
-dashboardStore.setEntity(states.entity);
+dashboardStore.setLayer(String(params.layerId));
+dashboardStore.setEntity(String(params.entity));
 
 getServices();
 
 async function getServices() {
-  if (!states.layerId) {
+  if (!dashboardStore.layerId) {
     return;
   }
-  const json = await selectorStore.fetchServices(states.layerId);
+  const json = await selectorStore.fetchServices(dashboardStore.layerId);
   if (json.errors) {
     ElMessage.error(json.errors);
     return;
   }
-  fetchPods(states.entity);
+  states.currentService = selectorStore.currentService.value;
+  fetchPods(dashboardStore.entity);
 }
 
 async function changeService(service: Service[]) {
   if (service[0]) {
+    states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
-    fetchPods(states.entity);
+    fetchPods(dashboardStore.entity);
   } else {
     selectorStore.setCurrentService("");
   }
@@ -166,10 +165,10 @@ function clickIcons(t: { id: string; content: string; name: string }) {
 async function fetchPods(type: string) {
   let resp;
   switch (type) {
-    case "endpoint":
+    case "Endpoint":
       resp = await selectorStore.getEndpoints();
       break;
-    case "serviceInstance":
+    case "ServiceInstance":
       resp = await selectorStore.getServiceInstances();
       break;
     default:

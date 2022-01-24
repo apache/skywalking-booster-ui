@@ -35,15 +35,65 @@ export const ConfigData: any = {
   w: 8,
   h: 12,
   i: "0",
-  metrics: ["service_resp_time", "service_apdex"],
-  metricTypes: ["readMetricsValues", "readMetricsValues"],
+  metrics: ["service_resp_time"],
+  metricTypes: ["readMetricsValues"],
   type: "Widget",
   widget: {
-    title: "Title",
+    title: "service_resp_time",
     tips: "Tooltip",
   },
   graph: {
     type: "Line",
+    showXAxis: true,
+    showYAxis: true,
+  },
+  standard: {
+    sortOrder: "DEC",
+    unit: "min",
+  },
+  children: [],
+};
+export const ConfigData1: any = {
+  x: 0,
+  y: 0,
+  w: 8,
+  h: 12,
+  i: "0",
+  metrics: ["service_instance_resp_time"],
+  metricTypes: ["readMetricsValues"],
+  type: "Widget",
+  widget: {
+    title: "service_instance_resp_time",
+    tips: "Tooltip",
+  },
+  graph: {
+    type: "Line",
+    showXAxis: true,
+    showYAxis: true,
+  },
+  standard: {
+    sortOrder: "DEC",
+    unit: "min",
+  },
+  children: [],
+};
+export const ConfigData2: any = {
+  x: 0,
+  y: 0,
+  w: 8,
+  h: 12,
+  i: "0",
+  metrics: ["endpoint_avg"],
+  metricTypes: ["readMetricsValues"],
+  type: "Widget",
+  widget: {
+    title: "endpoint_avg",
+    tips: "Tooltip",
+  },
+  graph: {
+    type: "Line",
+    showXAxis: true,
+    showYAxis: true,
   },
   standard: {
     sortOrder: "DEC",
