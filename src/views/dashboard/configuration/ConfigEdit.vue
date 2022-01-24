@@ -40,30 +40,16 @@ limitations under the License. -->
         v-model="states.activeNames"
         :style="{ '--el-collapse-header-font-size': '15px' }"
       >
-        <el-collapse-item :title="t('metricName')" name="1">
+        <el-collapse-item :title="t('selectVisualization')" name="1">
           <MetricOptions @update="getSource" @loading="setLoading" />
         </el-collapse-item>
-        <el-collapse-item :title="t('selectVisualization')" name="2">
-          <div class="chart-types">
-            <span
-              v-for="(type, index) in states.visType"
-              :key="index"
-              @click="changeChartType(type)"
-              :class="{
-                active: type.value === dashboardStore.selectedGrid.graph.type,
-              }"
-            >
-              {{ type.label }}
-            </span>
-          </div>
-        </el-collapse-item>
-        <el-collapse-item :title="t('graphStyles')" name="3">
+        <el-collapse-item :title="t('graphStyles')" name="2">
           <component :is="`${dashboardStore.selectedGrid.graph.type}Config`" />
         </el-collapse-item>
-        <el-collapse-item :title="t('widgetOptions')" name="4">
+        <el-collapse-item :title="t('widgetOptions')" name="3">
           <WidgetOptions />
         </el-collapse-item>
-        <el-collapse-item :title="t('standardOptions')" name="5">
+        <el-collapse-item :title="t('standardOptions')" name="4">
           <StandardOptions />
         </el-collapse-item>
       </el-collapse>
@@ -83,13 +69,6 @@ import { reactive, defineComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import {
-  ChartTypes,
-  DefaultGraphConfig,
-  PodsChartTypes,
-  TableChartTypes,
-  EntityType,
-} from "../data";
 import { Option } from "@/types/app";
 import graphs from "../graphs";
 import configs from "./graph-styles";
@@ -117,37 +96,12 @@ export default defineComponent({
       source: any;
       index: string;
       visType: Option[];
-      isTable: boolean;
     }>({
       activeNames: "1",
       source: {},
       index: dashboardStore.selectedGrid.i,
       visType: [],
-      isTable: false,
     });
-    states.isTable = TableChartTypes.includes(
-      dashboardStore.selectedGrid.graph.type || ""
-    );
-
-    if (dashboardStore.entity === EntityType[0].value) {
-      states.visType = ChartTypes.filter(
-        (d: Option) => d.value !== "serviceList"
-      );
-    } else if (dashboardStore.entity === EntityType[1].value) {
-      states.visType = ChartTypes.filter(
-        (d: Option) => !PodsChartTypes.includes(d.value)
-      );
-    } else {
-      states.visType = ChartTypes.filter(
-        (d: Option) => !TableChartTypes.includes(d.value)
-      );
-    }
-
-    function changeChartType(item: Option) {
-      const graph = DefaultGraphConfig[item.value];
-      states.isTable = TableChartTypes.includes(graph.type);
-      dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
-    }
 
     function getSource(source: unknown) {
       states.source = source;
@@ -160,12 +114,12 @@ export default defineComponent({
     function applyConfig() {
       dashboardStore.setConfigs(dashboardStore.selectedGrid);
       dashboardStore.setConfigPanel(false);
+      dashboardStore.selectWidget(null);
     }
 
     return {
       states,
       loading,
-      changeChartType,
       t,
       appStoreWithOut,
       configHeight,
@@ -226,30 +180,10 @@ export default defineComponent({
   min-width: 1280px;
 }
 
-.chart-types {
-  span {
-    display: inline-block;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    border-right: 0;
-    cursor: pointer;
-  }
-
-  span:nth-last-child(1) {
-    border-right: 1px solid #ccc;
-  }
-}
-
 .no-data {
   font-size: 14px;
   text-align: center;
   line-height: 400px;
-}
-
-span.active {
-  background-color: #409eff;
-  color: #fff;
 }
 
 .footer {

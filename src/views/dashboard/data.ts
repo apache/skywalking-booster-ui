@@ -32,6 +32,18 @@ export const ChartTypes = [
   { label: "Endpoint List", value: "EndpointList" },
   { label: "Instance List", value: "InstanceList" },
 ];
+export const MetricChartType: any = {
+  readMetricsValue: [{ label: "Card", value: "Card" }],
+  readMetricsValues: [
+    { label: "Bar", value: "Bar" },
+    { label: "Line", value: "Line" },
+    { label: "Area", value: "Area" },
+  ],
+  sortMetrics: [{ label: "Top List", value: "TopList" }],
+  readLabeledMetricsValues: [{ label: "Line", value: "Line" }],
+  readHeatMap: [{ label: "Heatmap", value: "Heatmap" }],
+  readSampledRecords: [{ label: "Top List", value: "TopList" }],
+};
 export const DefaultGraphConfig: { [key: string]: any } = {
   Bar: {
     type: "Bar",
@@ -112,14 +124,6 @@ export const MetricTypes: {
   SAMPLED_RECORD: [
     { label: "get sorted topN values", value: "readSampledRecords" },
   ],
-};
-export const MetricChartType: { [key: string]: string } = {
-  readMetricsValue: "ChartNum",
-  readMetricsValues: "ChartLine",
-  sortMetrics: "ChartSlow",
-  readLabeledMetricsValues: "ChartLine",
-  readHeatMap: "ChartHeatmap",
-  readSampledRecords: "ChartSlow",
 };
 
 export enum MetricCatalog {

@@ -93,7 +93,7 @@ export const getInstance = {
 };
 
 export const getEndpoint = {
-  variable: "$endpointId: String!",
+  variable: "$endpointId: ID!",
   query: `
   endpoint: getEndpointInfo(endpointId: $endpointId) {
     id
@@ -101,7 +101,6 @@ export const getEndpoint = {
       label: name
       serviceId
       serviceName
-    }
   }
   `,
 };

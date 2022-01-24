@@ -22,7 +22,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { Instance, Endpoint } from "@/types/selector";
 
 export function useQueryProcessor(config: any) {
-  if (!(config.metrics && config.metrics.length)) {
+  if (!(config.metrics && config.metrics[0])) {
     return;
   }
   const appStore = useAppStoreWithOut();

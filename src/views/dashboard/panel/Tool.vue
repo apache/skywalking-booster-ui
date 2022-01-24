@@ -13,9 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="dashboard-tool flex-h">
-    <div v-if="params.serviceId"></div>
-    <div class="flex-h" v-else>
+  <div class="dashboard-tool flex-h" v-if="!params.serviceId">
+    <div class="flex-h">
       <div class="selectors-item" v-if="states.key !== 10">
         <span class="label">$Service</span>
         <Selector

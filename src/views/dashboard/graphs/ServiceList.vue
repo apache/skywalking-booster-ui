@@ -29,17 +29,12 @@ limitations under the License. -->
         </template>
       </el-input>
     </div>
-    <el-table
-      v-loading="chartLoading"
-      :data="services"
-      style="width: 100%; height: 320px; overflow: auto"
-    >
+    <el-table v-loading="chartLoading" :data="services" style="width: 100%">
       <el-table-column label="Services">
         <template #default="scope">
           <router-link
-            target="_blank"
             class="link"
-            :to="`/dashboard/${scope.row.layer}/Service/${selectorStore.currentService.value}/${config.dashboardName}`"
+            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${selectorStore.currentService.id}/${config.dashboardName}`"
             :key="1"
             :style="{ fontSize: `${config.fontSize}px` }"
           >
@@ -85,6 +80,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { Service } from "@/types/selector";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
+import { EntityType } from "../data";
 
 /*global defineProps */
 defineProps({
@@ -124,7 +120,7 @@ async function queryServiceMetrics(currentServices: Service[]) {
     const params = await useQueryPodsMetrics(
       currentServices,
       dashboardStore.selectedGrid,
-      "Service"
+      EntityType[0].value
     );
     const json = await dashboardStore.fetchMetricValue(params);
 

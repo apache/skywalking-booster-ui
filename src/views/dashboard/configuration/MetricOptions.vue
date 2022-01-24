@@ -14,17 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div v-show="states.isTable" class="ds-name">
-    <div>Dashboard</div>
-    <Selector
-      :value="dashboardStore.selectedGrid.graph.dashboardName"
-      :options="states.metricList"
-      size="mini"
-      placeholder="Select a dashboard"
+    <div>{{ t("dashboards") }}</div>
+    <el-input
+      v-model="states.dashboardName"
+      placeholder="Please input dashboard name"
       @change="changeDashboard"
       class="selectors"
     />
   </div>
-  <div>Metrics</div>
+  <div>{{ t("metrics") }}</div>
   <div
     v-for="(metric, index) in states.metrics"
     :key="index"
@@ -69,17 +67,40 @@ limitations under the License. -->
       />
     </span>
   </div>
+  <div>{{ t("visualization") }}</div>
+  <div class="chart-types">
+    <span
+      v-for="(type, index) in states.visTypes"
+      :key="index"
+      @click="changeChartType(type)"
+      :class="{
+        active: type.value === dashboardStore.selectedGrid.graph.type,
+      }"
+    >
+      {{ type.label }}
+    </span>
+  </div>
 </template>
 <script lang="ts" setup>
-import { reactive, watch } from "vue";
+import { reactive } from "vue";
 import { Option } from "@/types/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { MetricTypes, TableChartTypes, MetricCatalog } from "../data";
+import {
+  MetricTypes,
+  TableChartTypes,
+  MetricCatalog,
+  DefaultGraphConfig,
+  EntityType,
+  ChartTypes,
+  PodsChartTypes,
+} from "../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
+import { useI18n } from "vue-i18n";
 
 /*global defineEmits */
+const { t } = useI18n();
 const emit = defineEmits(["update", "loading"]);
 const dashboardStore = useDashboardStore();
 const { metrics, metricTypes, graph } = dashboardStore.selectedGrid;
@@ -87,19 +108,22 @@ const states = reactive<{
   metrics: string[];
   metricTypes: string[];
   metricTypeList: Option[][];
-  visType: Option[];
+  visTypes: Option[];
   isTable: boolean;
   metricList: (Option & { type: string })[];
+  dashboardName: string;
 }>({
   metrics: metrics && metrics.length ? metrics : [""],
   metricTypes: metricTypes && metricTypes.length ? metricTypes : [""],
   metricTypeList: [],
-  visType: [],
+  visTypes: [],
   isTable: false,
   metricList: [],
+  dashboardName: graph.dashboardName,
 });
-states.isTable = TableChartTypes.includes(graph.type);
 
+states.isTable = TableChartTypes.includes(graph.type);
+states.visTypes = setVisTypes();
 setMetricType();
 
 async function setMetricType(catalog?: string) {
@@ -125,6 +149,47 @@ async function setMetricType(catalog?: string) {
   }
   if (states.metrics && states.metrics[0]) {
     queryMetrics();
+  }
+}
+
+function setVisTypes() {
+  let graphs = [];
+  if (dashboardStore.entity === EntityType[0].value) {
+    graphs = ChartTypes.filter((d: Option) => d.value !== ChartTypes[8].value);
+  } else if (dashboardStore.entity === EntityType[1].value) {
+    graphs = ChartTypes.filter(
+      (d: Option) => !PodsChartTypes.includes(d.value)
+    );
+  } else {
+    graphs = ChartTypes.filter(
+      (d: Option) => !TableChartTypes.includes(d.value)
+    );
+  }
+
+  return graphs;
+}
+
+function changeChartType(item: Option) {
+  const graph = DefaultGraphConfig[item.value];
+  states.isTable = TableChartTypes.includes(graph.type);
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
+  states.isTable = TableChartTypes.includes(graph.type);
+  if (states.isTable) {
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      metrics: [""],
+      metricTypes: [""],
+    });
+    states.metrics = [""];
+    states.metricTypes = [""];
+  }
+  const catalog: { [key: string]: string } = {
+    InstanceList: EntityType[3].value,
+    EndpointList: EntityType[2].value,
+    ServiceList: EntityType[0].value,
+  };
+  if (catalog[graph.type] || dashboardStore.entity) {
+    setMetricType(catalog[graph.type]);
   }
 }
 
@@ -193,10 +258,10 @@ async function queryMetrics() {
   emit("update", source);
 }
 
-function changeDashboard(item: Option[]) {
+function changeDashboard() {
   const graph = {
     ...dashboardStore.selectedGrid.graph,
-    dashboardName: item[0].value,
+    dashboardName: states.dashboardName,
   };
   dashboardStore.selectWidget({
     ...dashboardStore.selectedGrid,
@@ -216,20 +281,6 @@ function deleteMetric(index: number) {
   states.metrics.splice(index, 1);
   states.metricTypes.splice(index, 1);
 }
-watch(
-  () => dashboardStore.selectedGrid.graph.type,
-  (type: string) => {
-    states.isTable = TableChartTypes.includes(type);
-    const catalog: { [key: string]: string } = {
-      InstanceList: "ServiceInstance",
-      EndpointList: "Endpoint",
-      ServiceList: "Service",
-    };
-    if (catalog[type] || dashboardStore.entity) {
-      setMetricType(catalog[type]);
-    }
-  }
-);
 </script>
 <style lang="scss" scoped>
 .ds-name {
@@ -243,5 +294,25 @@ watch(
 
 .metric-item {
   margin-bottom: 10px;
+}
+
+.chart-types {
+  span {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-right: 0;
+    cursor: pointer;
+  }
+
+  span:nth-last-child(1) {
+    border-right: 1px solid #ccc;
+  }
+}
+
+span.active {
+  background-color: #409eff;
+  color: #fff;
 }
 </style>
