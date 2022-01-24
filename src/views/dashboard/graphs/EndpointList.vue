@@ -100,8 +100,8 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const endpoints = ref<Endpoint[]>([]);
-const currentEndpoints = ref<Endpoint[]>([]);
-const pageSize = 7;
+const searchEndpoints = ref<Endpoint[]>([]);
+const pageSize = 5;
 const searchText = ref<string>("");
 
 queryEndpoints();
@@ -115,16 +115,18 @@ async function queryEndpoints() {
     ElMessage.error(resp.errors);
     return;
   }
+  searchEndpoints.value = selectorStore.endpoints;
   endpoints.value = selectorStore.endpoints.splice(0, pageSize);
-  queryMetrics(endpoints.value);
+  queryEndpointMetrics(endpoints.value);
 }
-async function queryMetrics(currentPods: Endpoint[]) {
+async function queryEndpointMetrics(currentPods: Endpoint[]) {
   const { metrics } = dashboardStore.selectedGrid;
 
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
       currentPods,
-      dashboardStore.selectedGrid
+      dashboardStore.selectedGrid,
+      "Endpoint"
     );
     const json = await dashboardStore.fetchMetricValue(params);
 
@@ -142,13 +144,14 @@ async function queryMetrics(currentPods: Endpoint[]) {
   endpoints.value = currentPods;
 }
 function changePage(pageIndex: number) {
-  endpoints.value = selectorStore.endpoints.splice(pageIndex - 1, pageSize);
+  endpoints.value = searchEndpoints.value.splice(pageIndex - 1, pageSize);
 }
 function searchList() {
-  currentEndpoints.value = selectorStore.instances.filter(
+  const currentEndpoints = selectorStore.instances.filter(
     (d: { label: string }) => d.label.includes(searchText.value)
   );
-  endpoints.value = currentEndpoints.value.splice(0, pageSize);
+  searchEndpoints.value = currentEndpoints;
+  endpoints.value = currentEndpoints.splice(0, pageSize);
 }
 watch(
   () => [
@@ -156,11 +159,14 @@ watch(
     dashboardStore.selectedGrid.metrics,
   ],
   () => {
-    const currentPods = currentEndpoints.value.splice(0, pageSize);
-    queryMetrics(currentPods);
+    queryEndpointMetrics(endpoints.value);
   }
 );
 </script>
 <style lang="scss" scoped>
 @import "./style.scss";
+
+.chart {
+  height: 39px;
+}
 </style>

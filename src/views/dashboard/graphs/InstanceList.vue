@@ -115,16 +115,17 @@ async function queryInstance() {
   searchInstances.value = selectorStore.instances;
 
   const currentInstances = searchInstances.value.splice(0, pageSize);
-  queryMetrics(currentInstances);
+  queryInstanceMetrics(currentInstances);
 }
 
-async function queryMetrics(currentInstances: Instance[]) {
+async function queryInstanceMetrics(currentInstances: Instance[]) {
   const { metrics } = dashboardStore.selectedGrid;
 
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
       currentInstances,
-      dashboardStore.selectedGrid
+      dashboardStore.selectedGrid,
+      "ServiceInstance"
     );
     const json = await dashboardStore.fetchMetricValue(params);
 
@@ -158,8 +159,7 @@ watch(
     dashboardStore.selectedGrid.metrics,
   ],
   () => {
-    const currentInstances = searchInstances.value.splice(0, pageSize);
-    queryMetrics(currentInstances);
+    queryInstanceMetrics(instances.value);
   }
 );
 </script>

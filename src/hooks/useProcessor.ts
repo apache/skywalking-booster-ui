@@ -195,7 +195,8 @@ function aggregation(json: {
 
 export function useQueryPodsMetrics(
   pods: Array<Instance | Endpoint>,
-  config: { metrics: string[]; metricTypes: string[] }
+  config: { metrics: string[]; metricTypes: string[] },
+  scope: string
 ) {
   const appStore = useAppStoreWithOut();
   const selectorStore = useSelectorStore();
@@ -207,9 +208,10 @@ export function useQueryPodsMetrics(
 
   const fragmentList = pods.map((d: Instance | Endpoint, index: number) => {
     const param = {
-      scope: "ServiceInstance",
+      scope,
       serviceName: currentService.label,
-      serviceInstanceName: d.label,
+      serviceInstanceName: scope === "ServiceInstance" ? d.label : undefined,
+      endpointName: scope === "Endpoint" ? d.label : undefined,
       normal: currentService.normal,
     };
     const f = config.metrics.map((name: string, idx: number) => {

@@ -75,10 +75,11 @@ defineProps({
     type: Object as PropType<ServiceListConfig>,
     default: () => ({ dashboardName: "", fontSize: 12 }),
   },
+  intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
 const selectorStore = useSelectorStore();
 const chartLoading = ref<boolean>(false);
-const pageSize = 7;
+const pageSize = 5;
 const services = ref<{ label: string; layer: string }[]>([]);
 const searchServices = ref<{ layer: string; label: string }[]>([]);
 const searchText = ref<string>("");
@@ -105,4 +106,8 @@ function searchList() {
 </script>
 <style lang="scss" scoped>
 @import "./style.scss";
+
+.chart {
+  height: 39px;
+}
 </style>
