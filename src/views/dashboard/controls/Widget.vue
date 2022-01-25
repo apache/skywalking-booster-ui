@@ -69,7 +69,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import graphs from "../graphs";
 import { useI18n } from "vue-i18n";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
-import { TableChartTypes } from "../data";
+import { EntityType, TableChartTypes } from "../data";
 
 const props = {
   data: {
@@ -133,8 +133,22 @@ export default defineComponent({
       }
     );
     watch(
-      () => [selectorStore.currentService, selectorStore.currentPod],
+      () => [selectorStore.currentService],
       () => {
+        if (dashboardStore.entity === EntityType[0].value) {
+          queryMetrics();
+        }
+      }
+    );
+    watch(
+      () => [selectorStore.currentPod],
+      () => {
+        if (
+          dashboardStore.entity === EntityType[0].value ||
+          dashboardStore.entity === EntityType[1].value
+        ) {
+          return;
+        }
         queryMetrics();
       }
     );
