@@ -48,7 +48,6 @@ export const selectorStore = defineStore({
       this.currentService = service;
     },
     setCurrentPod(pod: Nullable<Instance | Endpoint>) {
-      console.log(pod);
       this.currentPod = pod;
     },
     async fetchLayers(): Promise<AxiosResponse> {
@@ -115,6 +114,7 @@ export const selectorStore = defineStore({
       });
       if (!res.data.errors) {
         this.currentService = res.data.data.service || {};
+        this.services = [res.data.data.service];
       }
 
       return res.data;

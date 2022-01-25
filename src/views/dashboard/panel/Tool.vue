@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
-    <div v-if="params.serviceId"></div>
-    <div v-else class="flex-h">
+    <div class="flex-h">
       <div class="selectors-item" v-if="states.key !== 10">
         <span class="label">$Service</span>
         <Selector
           v-model="states.currentService"
           :options="selectorStore.services"
+          :disabled="states.disableService"
           size="mini"
           placeholder="Select a service"
           @change="changeService"
@@ -104,12 +104,14 @@ const states = reactive<{
   key: number;
   currentService: string;
   currentPod: string;
+  disableService: boolean;
 }>({
   destService: "",
   destPod: "",
   key: (type && type.key) || 0,
   currentService: "",
   currentPod: "",
+  disableService: false,
 });
 
 dashboardStore.setLayer(String(params.layerId));
@@ -122,17 +124,29 @@ if (params.serviceId) {
 }
 
 async function setSelector() {
-  await selectorStore.getService(String(params.serviceId));
-  states.currentService = selectorStore.currentService.value;
   if (params.podId) {
-    if (String(params.entity) === EntityType[2].value) {
-      await selectorStore.getEndpoint(String(params.podId));
-    }
-    if (String(params.entity) === EntityType[3].value) {
-      await selectorStore.getInstance(String(params.podId));
-    }
-    states.currentPod = selectorStore.currentPod.label;
+    await selectorStore.getService(String(params.serviceId));
+    states.currentService = selectorStore.currentService.value;
+    await fetchPods(String(params.entity), false);
+    const currentPod = selectorStore.pods.filter(
+      (d: { id: string }) => d.id === String(params.podId)
+    )[0];
+    selectorStore.setCurrentPod(currentPod);
+    states.currentPod = currentPod.label;
+    states.disableService = true;
+    return;
   }
+  // entity=Service with serviceId
+  const json = await selectorStore.fetchServices(dashboardStore.layerId);
+  if (json.errors) {
+    ElMessage.error(json.errors);
+    return;
+  }
+  const currentService = selectorStore.services.filter(
+    (d: { id: string }) => d.id === String(params.serviceId)
+  )[0];
+  selectorStore.setCurrentService(currentService);
+  states.currentService = selectorStore.currentService.value;
 }
 
 async function getServices() {
@@ -148,14 +162,14 @@ async function getServices() {
     selectorStore.services.length ? selectorStore.services[0] : null
   );
   states.currentService = selectorStore.currentService.value;
-  fetchPods(dashboardStore.entity);
+  fetchPods(dashboardStore.entity, true);
 }
 
 async function changeService(service: Service[]) {
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
-    fetchPods(dashboardStore.entity);
+    fetchPods(dashboardStore.entity, true);
   } else {
     selectorStore.setCurrentService("");
   }
@@ -188,22 +202,26 @@ function clickIcons(t: { id: string; content: string; name: string }) {
   }
 }
 
-async function fetchPods(type: string) {
+async function fetchPods(type: string, setPod: boolean) {
   let resp;
   switch (type) {
     case "Endpoint":
       resp = await selectorStore.getEndpoints();
-      selectorStore.setCurrentPod(
-        selectorStore.pods.length ? selectorStore.pods[0] : null
-      );
-      states.currentPod = selectorStore.currentPod.label;
+      if (setPod) {
+        selectorStore.setCurrentPod(
+          selectorStore.pods.length ? selectorStore.pods[0] : null
+        );
+        states.currentPod = selectorStore.currentPod.label;
+      }
       break;
     case "ServiceInstance":
       resp = await selectorStore.getServiceInstances();
-      selectorStore.setCurrentPod(
-        selectorStore.pods.length ? selectorStore.pods[0] : null
-      );
-      states.currentPod = selectorStore.currentPod.label;
+      if (setPod) {
+        selectorStore.setCurrentPod(
+          selectorStore.pods.length ? selectorStore.pods[0] : null
+        );
+        states.currentPod = selectorStore.currentPod.label;
+      }
       break;
     default:
       resp = {};
