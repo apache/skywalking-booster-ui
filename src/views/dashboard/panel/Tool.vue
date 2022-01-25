@@ -40,7 +40,7 @@ limitations under the License. -->
           size="mini"
           placeholder="Select a data"
           @change="changePods"
-          class="selectors"
+          class="selectorPod"
         />
       </div>
       <div class="selectors-item" v-if="states.key === 2">
@@ -149,6 +149,9 @@ async function getServices() {
   if (!dashboardStore.layerId) {
     return;
   }
+  if (dashboardStore.entity === EntityType[1].value) {
+    return;
+  }
   const json = await selectorStore.fetchServices(dashboardStore.layerId);
   if (json.errors) {
     ElMessage.error(json.errors);
@@ -173,7 +176,7 @@ async function changeService(service: Service[]) {
 
 function changePods(pod: Option[]) {
   if (pod[0]) {
-    selectorStore.setCurrentPod(pod[0].value);
+    selectorStore.setCurrentPod(pod[0]);
   } else {
     selectorStore.setCurrentPod("");
   }
@@ -260,10 +263,14 @@ async function fetchPods(type: string, setPod: boolean) {
 }
 
 .selectors {
-  min-width: 180px;
+  min-width: 200px;
 }
 
 .selectors-item {
   margin-right: 5px;
+}
+
+.selectorPod {
+  width: 340px;
 }
 </style>

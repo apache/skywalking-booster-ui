@@ -23,7 +23,9 @@ import { StandardConfig } from "@/types/dashboard";
 /*global defineProps */
 const props = defineProps({
   data: {
-    type: Object as PropType<{ nodes: number[][]; buckets: number[][] }>,
+    type: Object as PropType<{
+      [key: string]: { nodes: number[][]; buckets: number[][] };
+    }>,
     default: () => ({}),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
@@ -37,8 +39,11 @@ const props = defineProps({
   },
 });
 const option = computed(() => getOption());
+
 function getOption() {
-  const source = (props.data.nodes || []).map((d: number[]) => d[2]);
+  const metric = props.config.metrics[0];
+  const nodes = (props.data[metric] && props.data[metric].nodes) || [];
+  const source = (nodes || []).map((d: number[]) => d[2]);
   const maxItem = Math.max(...source);
   const minItem = Math.min(...source);
   const colorBox = [
@@ -63,15 +68,16 @@ function getOption() {
     "#761212",
     "#671010",
   ];
+
   return {
     tooltip: {
       position: "top",
-      formatter: (a: any) =>
-        `${a.data[1] * 100}${props.standard.unit}  [ ${a.data[2]} ]`,
-      textStyle: {
-        fontSize: 13,
-        color: "#ccc",
-      },
+      // formatter: (a: any) =>
+      //   `${a.data[1] * 100}${props.standard.unit}  [ ${a.data[2]} ]`,
+      // textStyle: {
+      //   fontSize: 13,
+      //   color: "#ccc",
+      // },
     },
     grid: {
       top: 15,
@@ -112,7 +118,7 @@ function getOption() {
     series: [
       {
         type: "heatmap",
-        data: props.data.nodes || [],
+        data: nodes || [],
         emphasis: {
           itemStyle: {
             shadowBlur: 10,

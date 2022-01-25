@@ -41,7 +41,7 @@ export const MetricChartType: any = {
   ],
   sortMetrics: [{ label: "Top List", value: "TopList" }],
   readLabeledMetricsValues: [{ label: "Line", value: "Line" }],
-  readHeatMap: [{ label: "Heatmap", value: "Heatmap" }],
+  readHeatMap: [{ label: "Heat Map", value: "HeatMap" }],
   readSampledRecords: [{ label: "Top List", value: "TopList" }],
 };
 export const DefaultGraphConfig: { [key: string]: any } = {
@@ -92,6 +92,9 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     type: "ServiceList",
     dashboardName: "",
     fontSize: 12,
+  },
+  HeatMap: {
+    type: "HeatMap",
   },
 };
 
