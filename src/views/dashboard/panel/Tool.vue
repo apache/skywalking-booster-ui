@@ -13,8 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="dashboard-tool flex-h" v-if="!params.serviceId">
-    <div class="flex-h">
+  <div class="dashboard-tool flex-h">
+    <div v-if="params.serviceId"></div>
+    <div v-else class="flex-h">
       <div class="selectors-item" v-if="states.key !== 10">
         <span class="label">$Service</span>
         <Selector
@@ -143,6 +144,9 @@ async function getServices() {
     ElMessage.error(json.errors);
     return;
   }
+  selectorStore.setCurrentService(
+    selectorStore.services.length ? selectorStore.services[0] : null
+  );
   states.currentService = selectorStore.currentService.value;
   fetchPods(dashboardStore.entity);
 }
@@ -189,10 +193,16 @@ async function fetchPods(type: string) {
   switch (type) {
     case "Endpoint":
       resp = await selectorStore.getEndpoints();
+      selectorStore.setCurrentPod(
+        selectorStore.pods.length ? selectorStore.pods[0] : null
+      );
       states.currentPod = selectorStore.currentPod.label;
       break;
     case "ServiceInstance":
       resp = await selectorStore.getServiceInstances();
+      selectorStore.setCurrentPod(
+        selectorStore.pods.length ? selectorStore.pods[0] : null
+      );
       states.currentPod = selectorStore.currentPod.label;
       break;
     default:

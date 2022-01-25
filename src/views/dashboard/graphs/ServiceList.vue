@@ -83,7 +83,7 @@ import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
 
 /*global defineProps */
-defineProps({
+const props = defineProps({
   data: {
     type: Object,
   },
@@ -152,7 +152,9 @@ watch(
     dashboardStore.selectedGrid.metrics,
   ],
   () => {
-    queryServiceMetrics(services.value);
+    if (dashboardStore.selectedGrid.i === props.config.i) {
+      queryServiceMetrics(services.value);
+    }
   }
 );
 </script>

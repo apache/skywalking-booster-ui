@@ -51,6 +51,7 @@ limitations under the License. -->
           ...data.graph,
           metrics: data.metrics,
           metricTypes: data.metricTypes,
+          i: data.i,
         }"
         :standard="data.standard"
       />
@@ -69,6 +70,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import graphs from "../graphs";
 import { useI18n } from "vue-i18n";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
+import { TableChartTypes } from "../data";
 
 const props = {
   data: {
@@ -83,7 +85,6 @@ export default defineComponent({
   props,
   setup(props) {
     const { t } = useI18n();
-    const params = useRoute().params;
     const loading = ref<boolean>(false);
     const state = reactive<{ source: { [key: string]: unknown } }>({
       source: {},
@@ -92,10 +93,6 @@ export default defineComponent({
     const appStore = useAppStoreWithOut();
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
-
-    if (params.serviceId) {
-      queryMetrics();
-    }
 
     async function queryMetrics() {
       const params = await useQueryProcessor(props.data);
@@ -127,27 +124,18 @@ export default defineComponent({
     watch(
       () => [props.data.metricTypes, props.data.metrics],
       () => {
-        queryMetrics();
-      }
-    );
-    watch(
-      () => selectorStore.currentService,
-      () => {
-        if (dashboardStore.entity !== "Service") {
+        if (props.data.i !== dashboardStore.selectedGrid.i) {
+          return;
+        }
+        if (TableChartTypes.includes(dashboardStore.selectedGrid.graph.type)) {
           return;
         }
         queryMetrics();
       }
     );
     watch(
-      () => selectorStore.currentPod,
+      () => [selectorStore.currentService, selectorStore.currentPod],
       () => {
-        if (
-          dashboardStore.entity === "All" ||
-          dashboardStore.entity === "Service"
-        ) {
-          return;
-        }
         queryMetrics();
       }
     );

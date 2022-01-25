@@ -57,6 +57,8 @@ export const dashboardStore = defineStore({
         ...NewControl,
         i: String(this.layout.length),
         type,
+        metricTypes: [""],
+        metrics: [""],
       };
       if (type === "Tab") {
         newWidget.h = 24;

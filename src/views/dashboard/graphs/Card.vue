@@ -14,7 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="chart-card" :style="{ fontSize: `${config.fontSize}px` }">
+  <div
+    class="chart-card"
+    :style="{ fontSize: `${config.fontSize}px`, textAlign: config.textAlign }"
+  >
     {{
       typeof singleVal === "string"
         ? singleVal
@@ -37,7 +40,7 @@ const props = defineProps({
   },
   config: {
     type: Object as PropType<CardConfig>,
-    default: () => ({ fontSize: 12, showUint: true }),
+    default: () => ({ fontSize: 12, showUint: true, textAlign: "center" }),
   },
   standard: {
     type: Object as PropType<StandardConfig>,
@@ -51,5 +54,7 @@ const singleVal = computed(() => props.data[key.value]);
 .chart-card {
   box-sizing: border-box;
   color: #333;
+  height: 100%;
+  line-height: 100%;
 }
 </style>

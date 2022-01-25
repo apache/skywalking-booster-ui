@@ -77,7 +77,8 @@ export interface AreaConfig {
 export interface CardConfig {
   type?: string;
   fontSize?: number;
-  showUint: boolean;
+  showUint?: boolean;
+  textAlign?: "center" | "right" | "left";
 }
 
 export interface TableConfig {

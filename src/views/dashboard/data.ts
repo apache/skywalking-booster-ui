@@ -23,11 +23,11 @@ export const ChartTypes = [
   { label: "Bar", value: "Bar" },
   { label: "Line", value: "Line" },
   { label: "Area", value: "Area" },
-  { label: "Heatmap", value: "Heatmap" },
-  { label: "Pie", value: "Pie" },
+  // { label: "Pie", value: "Pie" },
   { label: "Card", value: "Card" },
   { label: "Top List", value: "TopList" },
   { label: "Table", value: "Table" },
+  { label: "Heatmap", value: "Heatmap" },
   { label: "Service List", value: "ServiceList" },
   { label: "Endpoint List", value: "EndpointList" },
   { label: "Instance List", value: "InstanceList" },
@@ -66,6 +66,7 @@ export const DefaultGraphConfig: { [key: string]: any } = {
   Card: {
     type: "Card",
     fontSize: 14,
+    textAlign: "center",
     showUint: true,
   },
   Table: {

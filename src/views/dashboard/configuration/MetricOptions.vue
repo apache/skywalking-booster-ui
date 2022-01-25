@@ -155,7 +155,7 @@ async function setMetricType(catalog?: string) {
 function setVisTypes() {
   let graphs = [];
   if (dashboardStore.entity === EntityType[0].value) {
-    graphs = ChartTypes.filter((d: Option) => d.value !== ChartTypes[8].value);
+    graphs = ChartTypes.filter((d: Option) => d.value !== ChartTypes[7].value);
   } else if (dashboardStore.entity === EntityType[1].value) {
     graphs = ChartTypes.filter(
       (d: Option) => !PodsChartTypes.includes(d.value)
@@ -188,7 +188,7 @@ function changeChartType(item: Option) {
     EndpointList: EntityType[2].value,
     ServiceList: EntityType[0].value,
   };
-  if (catalog[graph.type] || dashboardStore.entity) {
+  if (catalog[graph.type]) {
     setMetricType(catalog[graph.type]);
   }
 }
@@ -212,6 +212,9 @@ function changeMetrics(index: number, arr: (Option & { type: string })[]) {
     ...dashboardStore.selectedGrid,
     ...{ metricTypes: states.metricTypes, metrics: states.metrics },
   });
+  if (states.isTable) {
+    return;
+  }
   queryMetrics();
 }
 
@@ -238,6 +241,9 @@ function changeMetricType(index: number, opt: Option[]) {
     ...dashboardStore.selectedGrid,
     ...{ metricTypes: states.metricTypes },
   });
+  if (states.isTable) {
+    return;
+  }
   queryMetrics();
 }
 async function queryMetrics() {

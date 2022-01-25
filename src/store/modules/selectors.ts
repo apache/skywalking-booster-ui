@@ -62,7 +62,6 @@ export const selectorStore = defineStore({
 
       if (!res.data.errors) {
         this.services = res.data.data.services || [];
-        this.currentService = this.services.length ? this.services[0] : null;
       }
       return res.data;
     },
@@ -79,7 +78,6 @@ export const selectorStore = defineStore({
       });
       if (!res.data.errors) {
         this.pods = res.data.data.pods || [];
-        this.currentPod = this.pods.length ? this.pods[0] : null;
       }
       return res.data;
     },
@@ -104,7 +102,6 @@ export const selectorStore = defineStore({
       });
       if (!res.data.errors) {
         this.pods = res.data.data.pods || [];
-        this.currentPod = this.pods.length ? this.pods[0] : null;
       }
       return res.data;
     },

@@ -22,9 +22,9 @@ limitations under the License. -->
       >
         <div class="name" :style="`width: ${nameWidth}px`">
           {{ config.tableHeaderCol1 || $t("name") }}
-          <i class="r cp" ref="draggerName"
-            ><rk-icon icon="settings_ethernet"
-          /></i>
+          <i class="r cp" ref="draggerName">
+            <Icon iconName="settings_ethernet" size="middle" />
+          </i>
         </div>
         <div class="value-col" v-if="config.showTableValues">
           {{ config.tableHeaderCol2 || $t("value") }}
@@ -50,7 +50,7 @@ import type { PropType } from "vue";
 /*global defineProps */
 const props = defineProps({
   data: {
-    type: Object as PropType<{ [key: string]: number[][] }>,
+    type: Object as PropType<{ [key: string]: number[] }>,
     default: () => ({}),
   },
   config: {

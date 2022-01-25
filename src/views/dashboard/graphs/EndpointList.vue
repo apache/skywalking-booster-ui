@@ -82,13 +82,13 @@ import Line from "./Line.vue";
 import { EntityType } from "../data";
 
 /*global defineProps */
-defineProps({
+const props = defineProps({
   data: {
     type: Object,
   },
   config: {
-    type: Object as PropType<EndpointListConfig>,
-    default: () => ({ dashboardName: "", fontSize: 12 }),
+    type: Object as PropType<EndpointListConfig & { i: string }>,
+    default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
@@ -155,7 +155,9 @@ watch(
     dashboardStore.selectedGrid.metrics,
   ],
   () => {
-    queryEndpointMetrics(endpoints.value);
+    if (dashboardStore.selectedGrid.i === props.config.i) {
+      queryEndpointMetrics(endpoints.value);
+    }
   }
 );
 </script>

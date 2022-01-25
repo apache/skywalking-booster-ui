@@ -34,7 +34,7 @@ limitations under the License. -->
         <template #default="scope">
           <router-link
             class="link"
-            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${selectorStore.currentService.id}/${scope.row.id}/${config.dashboardName}`"
+            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${selectorStore.currentService.id}/${scope.row.id}/${config.dashboardName}`"
             :style="{ fontSize: `${config.fontSize}px` }"
           >
             {{ scope.row.label }}
@@ -42,16 +42,22 @@ limitations under the License. -->
         </template>
       </el-table-column>
       <el-table-column
-        v-for="(metric, index) in dashboardStore.selectedGrid.metrics"
+        v-for="(metric, index) in config.metrics"
         :label="metric"
         :key="metric + index"
       >
         <template #default="scope">
           <div class="chart">
             <Line
+              v-if="config.metricTypes[index] === 'readMetricsValues'"
               :data="{ metric: scope.row[metric] }"
               :intervalTime="intervalTime"
               :config="{ showXAxis: false, showYAxis: false }"
+            />
+            <Card
+              v-else
+              :data="{ metric: scope.row[metric] }"
+              :config="{ textAlign: 'left' }"
             />
           </div>
         </template>
@@ -74,6 +80,7 @@ import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import Line from "./Line.vue";
+import Card from "./Card.vue";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { InstanceListConfig } from "@/types/dashboard";
@@ -82,10 +89,22 @@ import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
 
 /*global defineProps */
-defineProps({
+const props = defineProps({
   config: {
-    type: Object as PropType<InstanceListConfig>,
-    default: () => ({ dashboardName: "", fontSize: 12 }),
+    type: Object as PropType<
+      InstanceListConfig & {
+        i: string;
+        metrics: string[];
+        metricTypes: string[];
+      }
+    >,
+    default: () => ({
+      dashboardName: "",
+      fontSize: 12,
+      i: "",
+      metrics: [],
+      metricTypes: [],
+    }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
@@ -109,13 +128,10 @@ async function queryInstance() {
     return;
   }
   searchInstances.value = selectorStore.pods;
-
-  const currentInstances = searchInstances.value.splice(0, pageSize);
-  queryInstanceMetrics(currentInstances);
 }
 
 async function queryInstanceMetrics(currentInstances: Instance[]) {
-  const { metrics } = dashboardStore.selectedGrid;
+  const { metrics } = props.config;
 
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
@@ -150,12 +166,12 @@ function searchList() {
 }
 
 watch(
-  () => [
-    dashboardStore.selectedGrid.metricTypes,
-    dashboardStore.selectedGrid.metrics,
-  ],
+  () => [props.config.metricTypes, props.config.metrics],
   () => {
-    queryInstanceMetrics(instances.value);
+    if (dashboardStore.selectedGrid.i === props.config.i) {
+      const currentInstances = searchInstances.value.splice(0, pageSize);
+      queryInstanceMetrics(currentInstances);
+    }
   }
 );
 </script>
@@ -163,6 +179,6 @@ watch(
 @import "./style.scss";
 
 .chart {
-  height: 39px;
+  height: 40px;
 }
 </style>

@@ -28,7 +28,12 @@ limitations under the License. -->
           :is="dashboardStore.selectedGrid.graph.type"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
-          :config="dashboardStore.selectedGrid.graph"
+          :config="{
+            ...dashboardStore.selectedGrid.graph,
+            i: dashboardStore.selectedGrid.i,
+            metrics: dashboardStore.selectedGrid.metrics,
+            metricTypes: dashboardStore.selectedGrid.metricTypes,
+          }"
         />
         <div v-show="!dashboardStore.selectedGrid.graph.type" class="no-data">
           {{ t("noData") }}
@@ -114,7 +119,6 @@ export default defineComponent({
     function applyConfig() {
       dashboardStore.setConfigs(dashboardStore.selectedGrid);
       dashboardStore.setConfigPanel(false);
-      dashboardStore.selectWidget(null);
     }
 
     return {

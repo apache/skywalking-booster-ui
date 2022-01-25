@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RespFields, MetricQueryTypes, CalculationType } from "./data";
+import { RespFields, MetricQueryTypes } from "./data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -186,28 +186,6 @@ export function useSourceProcessor(
 
   return source;
 }
-function aggregation(json: {
-  data: number;
-  type: string;
-  aggregationNum: number;
-}) {
-  if (isNaN(json.aggregationNum)) {
-    return json.data;
-  }
-  if (json.type === CalculationType.Plus) {
-    return json.data + json.aggregationNum;
-  }
-  if (json.type === CalculationType.Minus) {
-    return json.data - json.aggregationNum;
-  }
-  if (json.type === CalculationType.Multiplication) {
-    return json.data * json.aggregationNum;
-  }
-  if (json.type === CalculationType.Division) {
-    return json.data / json.aggregationNum;
-  }
-  return json.data;
-}
 
 export function useQueryPodsMetrics(
   pods: Array<Instance | Endpoint>,
@@ -258,10 +236,14 @@ export function usePodsSource(
   const data = pods.map((d: Instance | any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const key = name + idx + index;
-
-      d[name] = resp.data[key].values.values.map(
-        (d: { value: number }) => d.value
-      );
+      if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValue) {
+        d[name] = resp.data[key];
+      }
+      if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
+        d[name] = resp.data[key].values.values.map(
+          (d: { value: number }) => d.value
+        );
+      }
     });
 
     return d;
