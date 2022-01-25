@@ -54,7 +54,10 @@ const singleVal = computed(() => props.data[key.value]);
 .chart-card {
   box-sizing: border-box;
   color: #333;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
   height: 100%;
-  line-height: 100%;
 }
 </style>
