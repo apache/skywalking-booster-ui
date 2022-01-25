@@ -156,6 +156,9 @@ export const dashboardStore = defineStore({
       if (type == "All") {
         this.layout = [ConfigData3];
       }
+      if (type == "Service") {
+        this.layout = [ConfigData];
+      }
     },
     setConfigs(param: { [key: string]: unknown }) {
       const actived = this.activedGridItem.split("-");

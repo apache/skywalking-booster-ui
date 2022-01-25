@@ -50,9 +50,15 @@ limitations under the License. -->
         <template #default="scope">
           <div class="chart">
             <Line
-              :data="{ metric: scope.row[metric] }"
+              v-if="config.metricTypes[index] === 'readMetricsValues'"
+              :data="{ [metric]: scope.row[metric] }"
               :intervalTime="intervalTime"
               :config="{ showXAxis: false, showYAxis: false }"
+            />
+            <Card
+              v-else
+              :data="{ [metric]: scope.row[metric] }"
+              :config="{ textAlign: 'left' }"
             />
           </div>
         </template>
@@ -76,6 +82,7 @@ import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import { ServiceListConfig } from "@/types/dashboard";
 import Line from "./Line.vue";
+import Card from "./Card.vue";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { Service } from "@/types/selector";
