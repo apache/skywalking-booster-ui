@@ -3,9 +3,11 @@ Apache SkyWalking Booster UI
 
 <img src="http://skywalking.apache.org/assets/logo.svg" alt="Sky Walking logo" height="90px" align="right" />
 
-[Apache SkyWalking](https://github.com/apache/skywalking) UI.
+[Apache SkyWalking](https://github.com/apache/skywalking) Booster UI. 
 
 ![NPM BUILD](https://github.com/apache/skywalking-booster-ui/workflows/Node%20CI/badge.svg)
+
+This UI starts from SkyWalking OAP v9 core, replaced the RocketBot UI used in SkyWalking OAP from v6 to v8.
 
 # Contact Us
 * Submit an [issue](https://github.com/apache/skywalking/issues)

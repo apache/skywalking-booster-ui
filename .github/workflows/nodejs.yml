@@ -33,14 +33,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build:
-
+  npm:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x]
-
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node-version }}
@@ -55,3 +52,11 @@ jobs:
           npm run test:unit
         env:
           CI: true
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    needs: [npm]
+    steps:
+      - name: To pass or not pass
+        run: echo "Just to make the GitHub merge button green"
