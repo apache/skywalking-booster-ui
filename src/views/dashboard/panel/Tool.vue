@@ -20,7 +20,6 @@ limitations under the License. -->
         <Selector
           v-model="states.currentService"
           :options="selectorStore.services"
-          :disabled="states.disableService"
           size="mini"
           placeholder="Select a service"
           @change="changeService"
@@ -104,14 +103,12 @@ const states = reactive<{
   key: number;
   currentService: string;
   currentPod: string;
-  disableService: boolean;
 }>({
   destService: "",
   destPod: "",
   key: (type && type.key) || 0,
   currentService: "",
   currentPod: "",
-  disableService: false,
 });
 
 dashboardStore.setLayer(String(params.layerId));
@@ -133,7 +130,6 @@ async function setSelector() {
     )[0];
     selectorStore.setCurrentPod(currentPod);
     states.currentPod = currentPod.label;
-    states.disableService = true;
     return;
   }
   // entity=Service with serviceId
