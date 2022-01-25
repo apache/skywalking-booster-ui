@@ -93,6 +93,7 @@ import {
   EntityType,
   ChartTypes,
   PodsChartTypes,
+  TableEntity,
 } from "../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
@@ -127,7 +128,11 @@ states.visTypes = setVisTypes();
 setMetricType();
 
 async function setMetricType(catalog?: string) {
-  catalog = catalog || dashboardStore.entity;
+  if (states.isTable) {
+    catalog = catalog || TableEntity[graph.type];
+  } else {
+    catalog = catalog || dashboardStore.entity;
+  }
   const json = await dashboardStore.fetchMetricList();
   if (json.errors) {
     ElMessage.error(json.errors);

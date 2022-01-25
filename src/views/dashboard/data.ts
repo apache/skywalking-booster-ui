@@ -155,6 +155,11 @@ export const EntityType = [
   },
   { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },
 ];
+export const TableEntity: any = {
+  InstanceList: EntityType[3].value,
+  EndpointList: EntityType[2].value,
+  ServiceList: EntityType[0].value,
+};
 export const SortOrder = [
   { label: "DES", value: "DES" },
   { label: "ASC", value: "ASC" },

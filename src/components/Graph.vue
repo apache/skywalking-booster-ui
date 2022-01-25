@@ -41,8 +41,11 @@ onMounted(() => {
 
 watch(
   () => props.option,
-  (opt) => {
-    setOptions(opt);
+  (newVal, oldVal) => {
+    if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
+      return;
+    }
+    setOptions(newVal);
   }
 );
 

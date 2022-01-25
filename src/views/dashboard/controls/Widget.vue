@@ -62,7 +62,6 @@ limitations under the License. -->
 <script lang="ts">
 import { toRefs, reactive, defineComponent, ref, watch } from "vue";
 import type { PropType } from "vue";
-import { useRoute } from "vue-router";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";

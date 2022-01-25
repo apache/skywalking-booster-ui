@@ -43,7 +43,7 @@ limitations under the License. -->
         </template>
       </el-table-column>
       <el-table-column
-        v-for="(metric, index) in dashboardStore.selectedGrid.metrics"
+        v-for="(metric, index) in config.metrics"
         :label="metric"
         :key="metric + index"
       >
@@ -88,7 +88,13 @@ const props = defineProps({
     type: Object,
   },
   config: {
-    type: Object as PropType<ServiceListConfig>,
+    type: Object as PropType<
+      ServiceListConfig & {
+        i: string;
+        metrics: string[];
+        metricTypes: string[];
+      }
+    >,
     default: () => ({ dashboardName: "", fontSize: 12 }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
@@ -114,7 +120,7 @@ async function queryServices() {
   services.value = selectorStore.services.splice(0, pageSize);
 }
 async function queryServiceMetrics(currentServices: Service[]) {
-  const { metrics } = dashboardStore.selectedGrid;
+  const { metrics } = props.config;
 
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
@@ -147,14 +153,9 @@ function searchList() {
   services.value = searchServices.value.splice(0, pageSize);
 }
 watch(
-  () => [
-    dashboardStore.selectedGrid.metricTypes,
-    dashboardStore.selectedGrid.metrics,
-  ],
+  () => [props.config.metricTypes, props.config.metrics],
   () => {
-    if (dashboardStore.selectedGrid.i === props.config.i) {
-      queryServiceMetrics(services.value);
-    }
+    queryServiceMetrics(services.value);
   }
 );
 </script>

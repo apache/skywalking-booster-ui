@@ -79,10 +79,10 @@ export function useQueryProcessor(config: any) {
               ? undefined
               : selectorStore.currentService.normal,
           serviceInstanceName: dashboardStore.entity.includes("ServiceInstance")
-            ? selectorStore.currentPod.value
+            ? selectorStore.currentPod && selectorStore.currentPod.value
             : undefined,
           endpointName: dashboardStore.entity.includes("Endpoint")
-            ? selectorStore.currentPod.value
+            ? selectorStore.currentPod && selectorStore.currentPod.value
             : undefined,
           destNormal: isRelation
             ? selectorStore.currentDestService.normal
@@ -92,11 +92,13 @@ export function useQueryProcessor(config: any) {
             : undefined,
           destServiceInstanceName:
             dashboardStore.entity === "ServiceInstanceRelation"
-              ? selectorStore.currentDestPod.value
+              ? selectorStore.currentDestPod &&
+                selectorStore.currentDestPod.value
               : undefined,
           destEndpointName:
             dashboardStore.entity === "EndpointRelation"
-              ? selectorStore.currentDestPod.value
+              ? selectorStore.currentDestPod &&
+                selectorStore.currentDestPod.value
               : undefined,
         },
       };

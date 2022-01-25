@@ -50,13 +50,13 @@ limitations under the License. -->
           <div class="chart">
             <Line
               v-if="config.metricTypes[index] === 'readMetricsValues'"
-              :data="{ metric: scope.row[metric] }"
+              :data="metric ? { [metric]: scope.row[metric] } : {}"
               :intervalTime="intervalTime"
               :config="{ showXAxis: false, showYAxis: false }"
             />
             <Card
               v-else
-              :data="{ metric: scope.row[metric] }"
+              :data="{ [metric]: scope.row[metric] }"
               :config="{ textAlign: 'left' }"
             />
           </div>
@@ -128,6 +128,8 @@ async function queryInstance() {
     return;
   }
   searchInstances.value = selectorStore.pods;
+  instances.value = searchInstances.value.splice(0, pageSize);
+  queryInstanceMetrics(instances.value);
 }
 
 async function queryInstanceMetrics(currentInstances: Instance[]) {
@@ -168,10 +170,7 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    if (dashboardStore.selectedGrid.i === props.config.i) {
-      const currentInstances = searchInstances.value.splice(0, pageSize);
-      queryInstanceMetrics(currentInstances);
-    }
+    queryInstanceMetrics(instances.value);
   }
 );
 </script>

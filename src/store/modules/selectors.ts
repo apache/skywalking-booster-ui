@@ -48,6 +48,7 @@ export const selectorStore = defineStore({
       this.currentService = service;
     },
     setCurrentPod(pod: Nullable<Instance | Endpoint>) {
+      console.log(pod);
       this.currentPod = pod;
     },
     async fetchLayers(): Promise<AxiosResponse> {

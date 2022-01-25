@@ -42,7 +42,7 @@ limitations under the License. -->
         </template>
       </el-table-column>
       <el-table-column
-        v-for="(metric, index) in dashboardStore.selectedGrid.metrics"
+        v-for="(metric, index) in config.metrics"
         :label="metric"
         :key="metric + index"
       >
@@ -87,7 +87,13 @@ const props = defineProps({
     type: Object,
   },
   config: {
-    type: Object as PropType<EndpointListConfig & { i: string }>,
+    type: Object as PropType<
+      EndpointListConfig & {
+        i: string;
+        metrics: string[];
+        metricTypes: string[];
+      }
+    >,
     default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
@@ -116,7 +122,7 @@ async function queryEndpoints() {
   queryEndpointMetrics(endpoints.value);
 }
 async function queryEndpointMetrics(currentPods: Endpoint[]) {
-  const { metrics } = dashboardStore.selectedGrid;
+  const { metrics } = props.config;
 
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
@@ -150,14 +156,9 @@ function searchList() {
   endpoints.value = currentEndpoints.splice(0, pageSize);
 }
 watch(
-  () => [
-    dashboardStore.selectedGrid.metricTypes,
-    dashboardStore.selectedGrid.metrics,
-  ],
+  () => [props.config.metricTypes, props.config.metrics],
   () => {
-    if (dashboardStore.selectedGrid.i === props.config.i) {
-      queryEndpointMetrics(endpoints.value);
-    }
+    queryEndpointMetrics(endpoints.value);
   }
 );
 </script>
