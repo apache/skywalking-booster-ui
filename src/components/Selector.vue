@@ -20,6 +20,7 @@ limitations under the License. -->
     @change="changeSelected"
     filterable
     :multiple="multiple"
+    :disabled="disabled"
     :style="{ borderRadius }"
   >
     <el-option
@@ -32,7 +33,7 @@ limitations under the License. -->
   </el-select>
 </template>
 <script lang="ts" setup>
-import { ref, defineEmits } from "vue";
+import { ref, watch } from "vue";
 import type { PropType } from "vue";
 import { ElSelect, ElOption } from "element-plus";
 
@@ -41,8 +42,9 @@ interface Option {
   value: string;
 }
 
+/*global  defineProps, defineEmits*/
+
 const emit = defineEmits(["change"]);
-/*global  defineProps*/
 const props = defineProps({
   options: {
     type: Array as PropType<Option[]>,
@@ -56,12 +58,11 @@ const props = defineProps({
   placeholder: { type: String, default: "Select a option" },
   borderRadius: { type: Number, default: 3 },
   multiple: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
 });
+
 const selected = ref<string[] | string>(props.value);
 function changeSelected() {
-  if (!props.multiple) {
-    return;
-  }
   const options = props.options.filter((d: Option) =>
     props.multiple
       ? selected.value.includes(d.value)
@@ -69,6 +70,12 @@ function changeSelected() {
   );
   emit("change", options);
 }
+watch(
+  () => props.value,
+  (data) => {
+    selected.value = data;
+  }
+);
 </script>
 <style lang="scss" scope>
 .icon {

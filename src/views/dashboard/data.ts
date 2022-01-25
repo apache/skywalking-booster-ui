@@ -14,18 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+export const PodsChartTypes = ["EndpointList", "InstanceList"];
+
+export const TableChartTypes = ["EndpointList", "InstanceList", "ServiceList"];
+
 export const ChartTypes = [
   { label: "Bar", value: "Bar" },
   { label: "Line", value: "Line" },
   { label: "Area", value: "Area" },
-  { label: "Heatmap", value: "Heatmap" },
-  { label: "Pie", value: "Pie" },
+  // { label: "Pie", value: "Pie" },
   { label: "Card", value: "Card" },
   { label: "Top List", value: "TopList" },
   { label: "Table", value: "Table" },
+  { label: "Heatmap", value: "Heatmap" },
+  { label: "Service List", value: "ServiceList" },
   { label: "Endpoint List", value: "EndpointList" },
   { label: "Instance List", value: "InstanceList" },
 ];
+export const MetricChartType: any = {
+  readMetricsValue: [{ label: "Card", value: "Card" }],
+  readMetricsValues: [
+    { label: "Bar", value: "Bar" },
+    { label: "Line", value: "Line" },
+    { label: "Area", value: "Area" },
+  ],
+  sortMetrics: [{ label: "Top List", value: "TopList" }],
+  readLabeledMetricsValues: [{ label: "Line", value: "Line" }],
+  readHeatMap: [{ label: "Heatmap", value: "Heatmap" }],
+  readSampledRecords: [{ label: "Top List", value: "TopList" }],
+};
 export const DefaultGraphConfig: { [key: string]: any } = {
   Bar: {
     type: "Bar",
@@ -36,36 +54,47 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     step: false,
     smooth: false,
     showSymbol: false,
+    showXAxis: true,
+    showYAxis: true,
   },
   Area: {
     type: "Area",
     opacity: 0.4,
+    showXAxis: true,
+    showYAxis: true,
   },
   Card: {
     type: "Card",
     fontSize: 14,
+    textAlign: "center",
     showUint: true,
   },
   Table: {
-    type: "Card",
+    type: "Table",
     showTableValues: true,
     tableHeaderCol1: "",
     tableHeaderCol2: "",
   },
   TopList: {
     type: "TopList",
-    topN: 10,
+  },
+  InstanceList: {
+    type: "InstanceList",
+    dashboardName: "",
+    fontSize: 12,
+  },
+  EndpointList: {
+    type: "EndpointList",
+    dashboardName: "",
+    fontSize: 12,
+  },
+  ServiceList: {
+    type: "ServiceList",
+    dashboardName: "",
+    fontSize: 12,
   },
 };
 
-export enum MetricQueryTypes {
-  ReadMetricsValue = "readMetricsValue",
-  ReadMetricsValues = "readMetricsValues",
-  SortMetrics = "sortMetrics",
-  ReadLabeledMetricsValues = "readLabeledMetricsValues",
-  READHEATMAP = "readHeatMap",
-  ReadSampledRecords = "readSampledRecords",
-}
 export enum MetricsType {
   UNKNOWN = "UNKNOWN",
   REGULAR_VALUE = "REGULAR_VALUE",
@@ -73,7 +102,7 @@ export enum MetricsType {
   HEATMAP = "HEATMAP",
   SAMPLED_RECORD = "SAMPLED_RECORD",
 }
-export const ValuesTypes: {
+export const MetricTypes: {
   [key: string]: Array<{ label: string; value: string }>;
 } = {
   REGULAR_VALUE: [
@@ -97,55 +126,40 @@ export const ValuesTypes: {
     { label: "get sorted topN values", value: "readSampledRecords" },
   ],
 };
-export const MetricChartType: { [key: string]: string } = {
-  readMetricsValue: "ChartNum",
-  readMetricsValues: "ChartLine",
-  sortMetrics: "ChartSlow",
-  readLabeledMetricsValues: "ChartLine",
-  readHeatMap: "ChartHeatmap",
-  readSampledRecords: "ChartSlow",
-};
-export const CalculationType = [
-  { label: "Plus", value: "+" },
-  { label: "Minus", value: "-" },
-  { label: "Multiplication", value: "*" },
-  { label: "Division", value: "/" },
-  { label: "Convert Unix Timestamp(milliseconds)", value: "milliseconds" },
-  { label: "Convert Unix Timestamp(seconds)", value: "seconds" },
-];
-export const ReadValueChartType = [
-  { value: "ChartNum", label: "Digital Card" },
-  { value: "ChartSlow", label: "Slow Chart" },
-];
 
-export const MaxItemNum = 10;
-
-export enum MetricsName {
-  SERVICE_RESP_TIME = "service_resp_time",
-  SERVICE_SLA = "service_sla",
-  SERVICE_CPM = "service_cpm",
-  SERVICE_PERCENTILE = "service_percentile",
-  SERVICE_APDEX = "service_apdex",
+export enum MetricCatalog {
+  SERVICE = "Service",
+  SERVICE_INSTANCE = "ServiceInstance",
+  ENDPOINT = "Endpoint",
+  ALL = "All",
+  SERVICE_RELATION = "ServiceRelation",
+  SERVICE_INSTANCE_RELATION = "ServiceInstanceRelation",
+  ENDPOINT_RELATION = "EndpointRelation",
 }
 export const EntityType = [
-  { value: "service", label: "Service", key: 1 },
-  { value: "all", label: "All", key: 10 },
-  { value: "endpoint", label: "Service Endpoint", key: 3 },
-  { value: "serviceInstance", label: "Service Instance", key: 3 },
-  { value: "serviceRelationClient", label: "Service Relation(client)", key: 2 },
-  { value: "serviceRelationServer", label: "Service Relation(server)", key: 2 },
+  { value: "Service", label: "Service", key: 1 },
+  { value: "All", label: "All", key: 10 },
+  { value: "Endpoint", label: "Service Endpoint", key: 3 },
+  { value: "ServiceInstance", label: "Service Instance", key: 3 },
+  { value: "ServiceRelationClient", label: "Service Relation(client)", key: 2 },
+  { value: "ServiceRelationServer", label: "Service Relation(server)", key: 2 },
   {
-    value: "serviceInstanceRelationClient",
+    value: "ServiceInstanceRelationClient",
     label: "Service Instance Relation(client)",
     key: 4,
   },
   {
-    value: "serviceInstanceRelationServer",
+    value: "ServiceInstanceRelationServer",
     label: "Service Instance Relation(server)",
     key: 4,
   },
-  { value: "endpointRelation", label: "Endpoint Relation", key: 4 },
+  { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },
 ];
+export const TableEntity: any = {
+  InstanceList: EntityType[3].value,
+  EndpointList: EntityType[2].value,
+  ServiceList: EntityType[0].value,
+};
 export const SortOrder = [
   { label: "DES", value: "DES" },
   { label: "ASC", value: "ASC" },
@@ -158,70 +172,4 @@ export const ToolIcons = [
   { name: "folder_open", content: "Import", id: "import" },
   { name: "settings", content: "Settings", id: "settings" },
   { name: "save", content: "Apply", id: "applay" },
-];
-export const Options = [
-  {
-    value: "Option1",
-    label: "Option1",
-  },
-  {
-    value: "Option2",
-    label: "Option2",
-  },
-  {
-    value: "Option3",
-    label: "Option3",
-  },
-  {
-    value: "Option4",
-    label: "Option4",
-  },
-  {
-    value: "Option5",
-    label: "Option5",
-  },
-];
-export const SelectOpts = [
-  {
-    value: "guide",
-    label: "Guide",
-    children: [
-      {
-        value: "disciplines",
-        label: "Disciplines",
-        children: [
-          {
-            value: "consistency",
-            label: "Consistency",
-          },
-          {
-            value: "feedback",
-            label: "Feedback",
-          },
-          {
-            value: "efficiency",
-            label: "Efficiency",
-          },
-          {
-            value: "controllability",
-            label: "Controllability",
-          },
-        ],
-      },
-      {
-        value: "navigation",
-        label: "Navigation",
-        children: [
-          {
-            value: "side nav",
-            label: "Side Navigation",
-          },
-          {
-            value: "top nav",
-            label: "Top Navigation",
-          },
-        ],
-      },
-    ],
-  },
 ];

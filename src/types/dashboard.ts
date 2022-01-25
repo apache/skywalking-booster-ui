@@ -20,12 +20,12 @@ export interface LayoutConfig {
   w: number;
   h: number;
   i: string;
-  widget?: WidgetConfig;
-  graph?: GraphConfig;
-  standard?: StandardConfig;
-  metrics?: string[];
-  type?: string;
-  queryMetricType?: string;
+  widget: WidgetConfig;
+  graph: GraphConfig;
+  standard: StandardConfig;
+  metrics: string[];
+  type: string;
+  metricTypes: string[];
   children?: any;
 }
 
@@ -45,9 +45,17 @@ export interface StandardConfig {
   divide?: string;
   milliseconds?: string;
   seconds?: string;
+  maxItemNum?: number;
 }
 
-export type GraphConfig = BarConfig | LineConfig | CardConfig | TableConfig;
+export type GraphConfig =
+  | BarConfig
+  | LineConfig
+  | CardConfig
+  | TableConfig
+  | EndpointListConfig
+  | ServiceListConfig
+  | InstanceListConfig;
 export interface BarConfig {
   type?: string;
   showBackground?: boolean;
@@ -57,6 +65,8 @@ export interface LineConfig extends AreaConfig {
   smooth?: boolean;
   showSymbol?: boolean;
   step?: boolean;
+  showXAxis?: boolean;
+  showYAxis?: boolean;
 }
 
 export interface AreaConfig {
@@ -67,7 +77,8 @@ export interface AreaConfig {
 export interface CardConfig {
   type?: string;
   fontSize?: number;
-  showUint: boolean;
+  showUint?: boolean;
+  textAlign?: "center" | "right" | "left";
 }
 
 export interface TableConfig {
@@ -80,4 +91,22 @@ export interface TableConfig {
 export interface TopListConfig {
   type?: string;
   topN: number;
+}
+
+export interface ServiceListConfig {
+  type?: string;
+  dashboardName: string;
+  fontSize: number;
+}
+
+export interface InstanceListConfig {
+  type?: string;
+  dashboardName: string;
+  fontSize: number;
+}
+
+export interface EndpointListConfig {
+  type?: string;
+  dashboardName: string;
+  fontSize: number;
 }

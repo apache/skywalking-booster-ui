@@ -15,48 +15,55 @@ limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
     <div class="flex-h">
-      <div class="selectors-item" v-if="states.key < 3">
+      <div class="selectors-item" v-if="states.key !== 10">
         <span class="label">$Service</span>
         <Selector
-          :value="states.service"
-          :options="Options"
+          v-model="states.currentService"
+          :options="selectorStore.services"
           size="mini"
           placeholder="Select a service"
           @change="changeService"
           class="selectors"
-          :borderRadius="4"
         />
       </div>
       <div class="selectors-item" v-if="states.key === 3 || states.key === 4">
-        <span class="label">$ServiceInstance</span>
-        <el-cascader
-          placeholder="Select a instance"
-          :options="SelectOpts"
+        <span class="label">
+          {{
+            dashboardStore.entity === "Endpoint"
+              ? "$Endpoint"
+              : "$ServiceInstance"
+          }}
+        </span>
+        <Selector
+          v-model="states.currentPod"
+          :options="selectorStore.pods"
           size="mini"
-          filterable
-          :style="{ minWidth: '300px' }"
+          placeholder="Select a data"
+          @change="changePods"
+          class="selectors"
         />
       </div>
       <div class="selectors-item" v-if="states.key === 2">
         <span class="label">$DestinationService</span>
         <Selector
-          :value="states.service"
-          :options="Options"
+          v-model="selectorStore.currentDestService"
+          :options="selectorStore.services"
           size="mini"
           placeholder="Select a service"
-          :borderRadius="0"
           @change="changeService"
           class="selectors"
         />
       </div>
       <div class="selectors-item" v-if="states.key === 4">
         <span class="label">$DestinationServiceInstance</span>
-        <el-cascader
-          placeholder="Select a instance"
-          :options="SelectOpts"
+        <Selector
+          v-model="states.currentPod"
+          :options="selectorStore.pods"
           size="mini"
-          filterable
-          :style="{ minWidth: '300px' }"
+          placeholder="Select a data"
+          @change="changePods"
+          class="selectors"
+          :borderRadius="4"
         />
       </div>
     </div>
@@ -80,33 +87,96 @@ limitations under the License. -->
 import { reactive } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { Options, SelectOpts, EntityType, ToolIcons } from "../data";
+import { EntityType, ToolIcons } from "../data";
+import { useSelectorStore } from "@/store/modules/selectors";
+import { ElMessage } from "element-plus";
+import { Option } from "@/types/app";
+import { Service } from "@/types/selector";
 
 const dashboardStore = useDashboardStore();
+const selectorStore = useSelectorStore();
 const params = useRoute().params;
+const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
 const states = reactive<{
-  entity: string | string[];
-  layerId: string | string[];
-  service: string;
-  pod: string;
   destService: string;
   destPod: string;
   key: number;
+  currentService: string;
+  currentPod: string;
 }>({
-  service: Options[0].value,
-  pod: Options[0].value, // instances and endpoints
   destService: "",
   destPod: "",
-  key: EntityType.filter((d: any) => d.value === params.entity)[0].key || 0,
-  entity: params.entity,
-  layerId: params.layerId,
+  key: (type && type.key) || 0,
+  currentService: "",
+  currentPod: "",
 });
 
-dashboardStore.setLayer(states.layerId);
-dashboardStore.setEntity(states.entity);
+dashboardStore.setLayer(String(params.layerId));
+dashboardStore.setEntity(String(params.entity));
 
-function changeService(val: { value: string; label: string }) {
-  states.service = val.value;
+if (params.serviceId) {
+  setSelector();
+} else {
+  getServices();
+}
+
+async function setSelector() {
+  if (params.podId) {
+    await selectorStore.getService(String(params.serviceId));
+    states.currentService = selectorStore.currentService.value;
+    await fetchPods(String(params.entity), false);
+    const currentPod = selectorStore.pods.filter(
+      (d: { id: string }) => d.id === String(params.podId)
+    )[0];
+    selectorStore.setCurrentPod(currentPod);
+    states.currentPod = currentPod.label;
+    return;
+  }
+  // entity=Service with serviceId
+  const json = await selectorStore.fetchServices(dashboardStore.layerId);
+  if (json.errors) {
+    ElMessage.error(json.errors);
+    return;
+  }
+  const currentService = selectorStore.services.filter(
+    (d: { id: string }) => d.id === String(params.serviceId)
+  )[0];
+  selectorStore.setCurrentService(currentService);
+  states.currentService = selectorStore.currentService.value;
+}
+
+async function getServices() {
+  if (!dashboardStore.layerId) {
+    return;
+  }
+  const json = await selectorStore.fetchServices(dashboardStore.layerId);
+  if (json.errors) {
+    ElMessage.error(json.errors);
+    return;
+  }
+  selectorStore.setCurrentService(
+    selectorStore.services.length ? selectorStore.services[0] : null
+  );
+  states.currentService = selectorStore.currentService.value;
+  fetchPods(dashboardStore.entity, true);
+}
+
+async function changeService(service: Service[]) {
+  if (service[0]) {
+    states.currentService = service[0].value;
+    selectorStore.setCurrentService(service[0]);
+    fetchPods(dashboardStore.entity, true);
+  } else {
+    selectorStore.setCurrentService("");
+  }
+}
+
+function changePods(pod: Option[]) {
+  if (pod[0]) {
+    selectorStore.setCurrentPod(pod[0].value);
+  } else {
+    selectorStore.setCurrentPod("");
+  }
 }
 
 function clickIcons(t: { id: string; content: string; name: string }) {
@@ -125,6 +195,36 @@ function clickIcons(t: { id: string; content: string; name: string }) {
       break;
     default:
       dashboardStore.addControl("Widget");
+  }
+}
+
+async function fetchPods(type: string, setPod: boolean) {
+  let resp;
+  switch (type) {
+    case "Endpoint":
+      resp = await selectorStore.getEndpoints();
+      if (setPod) {
+        selectorStore.setCurrentPod(
+          selectorStore.pods.length ? selectorStore.pods[0] : null
+        );
+        states.currentPod = selectorStore.currentPod.label;
+      }
+      break;
+    case "ServiceInstance":
+      resp = await selectorStore.getServiceInstances();
+      if (setPod) {
+        selectorStore.setCurrentPod(
+          selectorStore.pods.length ? selectorStore.pods[0] : null
+        );
+        states.currentPod = selectorStore.currentPod.label;
+      }
+      break;
+    default:
+      resp = {};
+  }
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
   }
 }
 </script>

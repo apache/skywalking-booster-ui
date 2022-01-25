@@ -14,23 +14,30 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="widget-config flex-v">
-    <div class="graph">
+    <div class="graph" v-loading="loading">
       <div class="header">
-        <span>{{ states.widget.title }}</span>
-        <div class="tips" v-show="states.widget.tips">
-          <el-tooltip :content="states.widget.tips">
+        <span>{{ dashboardStore.selectedGrid.widget.title }}</span>
+        <div class="tips" v-show="dashboardStore.selectedGrid.widget.tips">
+          <el-tooltip :content="dashboardStore.selectedGrid.widget.tips">
             <Icon iconName="info_outline" size="sm" />
           </el-tooltip>
         </div>
       </div>
       <div class="render-chart">
         <component
-          :is="states.graph.type"
+          :is="dashboardStore.selectedGrid.graph.type"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
-          :config="states.graph"
+          :config="{
+            ...dashboardStore.selectedGrid.graph,
+            i: dashboardStore.selectedGrid.i,
+            metrics: dashboardStore.selectedGrid.metrics,
+            metricTypes: dashboardStore.selectedGrid.metricTypes,
+          }"
         />
-        <div v-show="!states.graph.type" class="no-data">{{ t("noData") }}</div>
+        <div v-show="!dashboardStore.selectedGrid.graph.type" class="no-data">
+          {{ t("noData") }}
+        </div>
       </div>
     </div>
     <div class="collapse" :style="{ height: configHeight + 'px' }">
@@ -38,59 +45,17 @@ limitations under the License. -->
         v-model="states.activeNames"
         :style="{ '--el-collapse-header-font-size': '15px' }"
       >
-        <el-collapse-item :title="t('metricName')" name="1">
-          <div>
-            <Selector
-              :value="states.metrics"
-              :options="metricOpts"
-              :multiple="true"
-              size="mini"
-              placeholder="Select a metric"
-              @change="changeMetrics"
-              class="selectors"
-            />
-            <Selector
-              v-if="states.valueType"
-              :value="states.valueType"
-              :options="states.valueTypes"
-              size="mini"
-              placeholder="Select a metric"
-              @change="changeValueType"
-              class="selectors"
-              v-loading="loading"
-            />
-          </div>
+        <el-collapse-item :title="t('selectVisualization')" name="1">
+          <MetricOptions @update="getSource" @loading="setLoading" />
         </el-collapse-item>
-        <el-collapse-item :title="t('selectVisualization')" name="2">
-          <div class="chart-types">
-            <span
-              v-for="(type, index) in ChartTypes"
-              :key="index"
-              @click="changeChartType(type)"
-              :class="{ active: type.value === states.graph.type }"
-            >
-              {{ type.label }}
-            </span>
-          </div>
+        <el-collapse-item :title="t('graphStyles')" name="2">
+          <component :is="`${dashboardStore.selectedGrid.graph.type}Config`" />
         </el-collapse-item>
-        <el-collapse-item :title="t('graphStyles')" name="3">
-          <component
-            :is="`${states.graph.type}Config`"
-            :config="states.graph"
-            @update="updateGraphOptions"
-          />
+        <el-collapse-item :title="t('widgetOptions')" name="3">
+          <WidgetOptions />
         </el-collapse-item>
-        <el-collapse-item :title="t('widgetOptions')" name="4">
-          <WidgetOptions
-            :config="states.widget"
-            @update="updateWidgetOptions"
-          />
-        </el-collapse-item>
-        <el-collapse-item :title="t('standardOptions')" name="5">
-          <StandardOptions
-            :config="states.standard"
-            @update="updateStandardOptions"
-          />
+        <el-collapse-item :title="t('standardOptions')" name="4">
+          <StandardOptions />
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -109,19 +74,12 @@ import { reactive, defineComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { ElMessage } from "element-plus";
-import {
-  ValuesTypes,
-  MetricQueryTypes,
-  ChartTypes,
-  DefaultGraphConfig,
-} from "../data";
 import { Option } from "@/types/app";
-import { WidgetConfig, GraphConfig, StandardConfig } from "@/types/dashboard";
 import graphs from "../graphs";
 import configs from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
 import StandardOptions from "./StandardOptions.vue";
+import MetricOptions from "./MetricOptions.vue";
 
 export default defineComponent({
   name: "ConfigEdit",
@@ -130,166 +88,49 @@ export default defineComponent({
     ...configs,
     WidgetOptions,
     StandardOptions,
+    MetricOptions,
   },
   setup() {
-    const loading = ref<boolean>(false);
+    const configHeight = document.documentElement.clientHeight - 520;
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
-    const { selectedGrid } = dashboardStore;
+    const loading = ref<boolean>(false);
     const states = reactive<{
-      metrics: string[];
-      valueTypes: Option[];
-      valueType: string;
-      metricQueryType: string;
       activeNames: string;
       source: any;
       index: string;
-      graph: GraphConfig;
-      widget: WidgetConfig | any;
-      standard: StandardConfig;
+      visType: Option[];
     }>({
-      metrics: selectedGrid.metrics || [],
-      valueTypes: [],
-      valueType: "",
-      metricQueryType: "",
       activeNames: "1",
       source: {},
-      index: selectedGrid.i,
-      graph: selectedGrid.graph,
-      widget: selectedGrid.widget,
-      standard: selectedGrid.standard,
+      index: dashboardStore.selectedGrid.i,
+      visType: [],
     });
-    if (states.metrics[0]) {
-      queryMetricType(states.metrics[0]);
+
+    function getSource(source: unknown) {
+      states.source = source;
     }
 
-    async function changeMetrics(arr: Option[]) {
-      if (!arr.length) {
-        states.valueTypes = [];
-        states.valueType = "";
-        return;
-      }
-      states.metrics = arr.map((d: Option) => String(d.value));
-      if (arr[0].value) {
-        queryMetricType(String(arr[0].value));
-      }
+    function setLoading(load: boolean) {
+      loading.value = load;
     }
-
-    async function queryMetricType(metric: string) {
-      loading.value = true;
-      const resp = await dashboardStore.fetchMetricType(metric);
-      loading.value = false;
-      if (resp.error) {
-        ElMessage.error(resp.data.error);
-        return;
-      }
-      const { typeOfMetrics } = resp.data;
-      states.valueTypes = ValuesTypes[typeOfMetrics];
-      states.valueType = ValuesTypes[typeOfMetrics][0].value;
-      queryMetrics();
-    }
-
-    function changeValueType(val: Option[]) {
-      states.valueType = String(val[0].value);
-      states.metricQueryType = (MetricQueryTypes as any)[states.valueType];
-      queryMetrics();
-    }
-
-    function changeChartType(item: Option) {
-      states.graph = {
-        ...DefaultGraphConfig[item.value],
-      };
-    }
-
-    const metricOpts = [
-      { value: "service_apdex", label: "service_apdex" },
-      { value: "service_sla", label: "service_sla" },
-      { value: "service_cpm", label: "service_cpm" },
-      { value: "service_resp_time", label: "service_resp_time" },
-      { value: "service_percentile", label: "service_percentile" },
-      {
-        value: "service_mq_consume_latency",
-        label: "service_mq_consume_latency",
-      },
-      { value: "service_mq_consume_count", label: "service_mq_consume_count" },
-    ];
-    const configHeight = document.documentElement.clientHeight - 520;
-
-    function updateWidgetOptions(param: { [key: string]: unknown }) {
-      states.widget = {
-        ...states.widget,
-        ...param,
-      };
-    }
-
-    function updateGraphOptions(param: { [key: string]: unknown }) {
-      states.graph = {
-        ...states.graph,
-        ...param,
-      };
-    }
-
-    function updateStandardOptions(param: { [key: string]: unknown }) {
-      states.standard = {
-        ...states.standard,
-        ...param,
-      };
-    }
-
-    async function queryMetrics() {
-      const json = await dashboardStore.fetchMetricValue(
-        dashboardStore.selectedGrid
-      );
-      if (!json) {
-        return;
-      }
-
-      if (json.error) {
-        return;
-      }
-      const metricVal = json.data.readMetricsValues.values.values.map(
-        (d: { value: number }) => d.value + 1
-      );
-      const m = states.metrics[0];
-      if (!m) {
-        return;
-      }
-      states.source = {
-        [m]: metricVal,
-      };
-    }
-
-    queryMetrics();
 
     function applyConfig() {
-      const opts = {
-        ...dashboardStore.selectedGrid,
-        metrics: states.metrics,
-        queryMetricType: states.valueType,
-        widget: states.widget,
-        graph: states.graph,
-        standard: states.standard,
-      };
-      dashboardStore.setConfigs(opts);
+      dashboardStore.setConfigs(dashboardStore.selectedGrid);
       dashboardStore.setConfigPanel(false);
     }
 
     return {
       states,
-      changeChartType,
-      changeValueType,
-      changeMetrics,
+      loading,
       t,
       appStoreWithOut,
-      ChartTypes,
-      metricOpts,
-      updateWidgetOptions,
       configHeight,
-      updateGraphOptions,
-      updateStandardOptions,
+      dashboardStore,
       applyConfig,
-      loading,
+      getSource,
+      setLoading,
     };
   },
 });
@@ -326,7 +167,7 @@ export default defineComponent({
 
 .render-chart {
   padding: 5px;
-  height: 350px;
+  height: 400px;
   width: 100%;
 }
 
@@ -343,30 +184,10 @@ export default defineComponent({
   min-width: 1280px;
 }
 
-.chart-types {
-  span {
-    display: inline-block;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    border-right: 0;
-    cursor: pointer;
-  }
-
-  span:nth-last-child(1) {
-    border-right: 1px solid #ccc;
-  }
-}
-
 .no-data {
   font-size: 14px;
   text-align: center;
-  line-height: 350px;
-}
-
-span.active {
-  background-color: #409eff;
-  color: #fff;
+  line-height: 400px;
 }
 
 .footer {
@@ -383,5 +204,9 @@ span.active {
 .collapse {
   margin-top: 10px;
   overflow: auto;
+}
+
+.ds-name {
+  margin-bottom: 10px;
 }
 </style>

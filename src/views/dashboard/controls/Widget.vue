@@ -45,9 +45,14 @@ limitations under the License. -->
     <div class="body" v-if="data.graph?.type" v-loading="loading">
       <component
         :is="data.graph.type"
-        :intervalTime="appStoreWithOut.intervalTime"
+        :intervalTime="appStore.intervalTime"
         :data="state.source"
-        :config="data.graph"
+        :config="{
+          ...data.graph,
+          metrics: data.metrics,
+          metricTypes: data.metricTypes,
+          i: data.i,
+        }"
         :standard="data.standard"
       />
     </div>
@@ -60,9 +65,11 @@ import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { useSelectorStore } from "@/store/modules/selectors";
 import graphs from "../graphs";
-import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
+import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
+import { EntityType, TableChartTypes } from "../data";
 
 const props = {
   data: {
@@ -78,34 +85,27 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
     const loading = ref<boolean>(false);
-    const state = reactive({
+    const state = reactive<{ source: { [key: string]: unknown } }>({
       source: {},
     });
     const { data } = toRefs(props);
-    const appStoreWithOut = useAppStoreWithOut();
+    const appStore = useAppStoreWithOut();
     const dashboardStore = useDashboardStore();
-    queryMetrics();
+    const selectorStore = useSelectorStore();
+
     async function queryMetrics() {
+      const params = await useQueryProcessor(props.data);
+      if (!params) {
+        state.source = {};
+        return;
+      }
       loading.value = true;
-      const json = await dashboardStore.fetchMetricValue(props.data);
+      const json = await dashboardStore.fetchMetricValue(params);
       loading.value = false;
       if (!json) {
         return;
       }
-      if (json.error) {
-        ElMessage.error(json.error);
-        return;
-      }
-      const metricVal = json.data.readMetricsValues.values.values.map(
-        (d: any) => d.value
-      );
-      const m = props.data.metrics && props.data.metrics[0];
-      if (!m) {
-        return;
-      }
-      state.source = {
-        [m]: metricVal,
-      };
+      state.source = useSourceProcessor(json, props.data);
     }
 
     function removeWidget() {
@@ -121,17 +121,41 @@ export default defineComponent({
       }
     }
     watch(
-      () => [props.data.queryMetricType, props.data.metrics],
-      (data, old) => {
-        if (data[0] === old[0] && data[1] === old[1]) {
+      () => [props.data.metricTypes, props.data.metrics],
+      () => {
+        if (props.data.i !== dashboardStore.selectedGrid.i) {
+          return;
+        }
+        if (TableChartTypes.includes(dashboardStore.selectedGrid.graph.type)) {
           return;
         }
         queryMetrics();
       }
     );
+    watch(
+      () => [selectorStore.currentService],
+      () => {
+        if (dashboardStore.entity === EntityType[0].value) {
+          queryMetrics();
+        }
+      }
+    );
+    watch(
+      () => [selectorStore.currentPod],
+      () => {
+        if (
+          dashboardStore.entity === EntityType[0].value ||
+          dashboardStore.entity === EntityType[1].value
+        ) {
+          return;
+        }
+        queryMetrics();
+      }
+    );
+
     return {
       state,
-      appStoreWithOut,
+      appStore,
       removeWidget,
       editConfig,
       data,

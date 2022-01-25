@@ -48,9 +48,29 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "/dashboard/edit/:layerId/:entity/:dashboardId",
+        path: "/dashboard/:layerId/:entity/:name",
         component: () => import("@/views/dashboard/Edit.vue"),
-        name: "Edit",
+        name: "Create",
+        meta: {
+          title: "dashboardEdit",
+          exact: false,
+          notShow: true,
+        },
+      },
+      {
+        path: "/dashboard/:layerId/:entity/:serviceId/:name",
+        component: () => import("@/views/dashboard/Edit.vue"),
+        name: "CreateService",
+        meta: {
+          title: "dashboardEdit",
+          exact: false,
+          notShow: true,
+        },
+      },
+      {
+        path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
+        component: () => import("@/views/dashboard/Edit.vue"),
+        name: "ViewPod",
         meta: {
           title: "dashboardEdit",
           exact: false,

@@ -18,23 +18,25 @@ limitations under the License. -->
     <grid-layout />
     <el-dialog
       v-model="dashboardStore.showConfig"
-      title="Edit Graph Options"
+      :title="t('editGraph')"
       fullscreen
       :destroy-on-close="true"
       @closed="dashboardStore.setConfigPanel(false)"
     >
-      <widget-config />
+      <config-edit />
     </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
+import { useI18n } from "vue-i18n";
 import GridLayout from "./panel/Layout.vue";
 // import { LayoutConfig } from "@/types/dashboard";
 import Tool from "./panel/Tool.vue";
-import WidgetConfig from "./configuration/ConfigEdit.vue";
+import ConfigEdit from "./configuration/ConfigEdit.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const dashboardStore = useDashboardStore();
+const { t } = useI18n();
 // fetch layout data from serve side
 // const layout: any[] = [
 //   { x: 0, y: 0, w: 4, h: 12, i: "0" },
@@ -54,6 +56,7 @@ const dashboardStore = useDashboardStore();
 //   { x: 8, y: 27, w: 4, h: 15, i: "16" },
 // ];
 // dashboardStore.setLayout(layout);
+
 function handleClick(e: any) {
   e.stopPropagation();
   if (e.target.className === "ds-main") {

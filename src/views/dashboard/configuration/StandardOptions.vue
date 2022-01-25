@@ -116,22 +116,16 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, defineProps, defineEmits } from "vue";
+import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { SortOrder } from "../data";
-import { StandardConfig } from "@/types/dashboard";
-import type { PropType } from "vue";
+import { useDashboardStore } from "@/store/modules/dashboard";
 
-const props = defineProps({
-  config: {
-    type: Object as PropType<StandardConfig>,
-    default: () => ({ unit: "", sortOrder: "DES" }),
-  },
-});
-const emits = defineEmits(["update"]);
+const dashboardStore = useDashboardStore();
+const { selectedGrid } = dashboardStore;
 const { t } = useI18n();
 const state = reactive({
-  unit: props.config.unit,
+  unit: selectedGrid.standard.unit,
   max: "",
   min: "",
   plus: "",
@@ -140,11 +134,15 @@ const state = reactive({
   divide: "",
   milliseconds: "",
   seconds: "",
-  sortOrder: props.config.sortOrder,
+  sortOrder: selectedGrid.standard.sortOrder,
 });
 
 function changeStandardOpt(param: { [key: string]: unknown }) {
-  emits("update", param);
+  const standard = {
+    ...selectedGrid.standard,
+    ...param,
+  };
+  dashboardStore.selectWidget({ ...selectedGrid, standard });
 }
 </script>
 <style lang="scss" scoped>

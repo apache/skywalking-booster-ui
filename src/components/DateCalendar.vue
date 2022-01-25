@@ -277,15 +277,9 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import {
-  defineProps,
-  computed,
-  defineEmits,
-  onMounted,
-  watch,
-  reactive,
-} from "vue";
+import { computed, onMounted, watch, reactive } from "vue";
 import { useI18n } from "vue-i18n";
+/*global defineProps, defineEmits */
 const emit = defineEmits(["input", "setDates", "ok"]);
 const { t } = useI18n();
 const props = defineProps({
@@ -580,11 +574,13 @@ onMounted(() => {
   user-select: none;
   color: #3d444f;
 }
+
 .calendar + .calendar {
   border-left: solid 1px #eaeaea;
   margin-left: 5px;
   padding-left: 5px;
 }
+
 .calendar-head {
   line-height: 34px;
   height: 34px;
@@ -630,10 +626,12 @@ onMounted(() => {
 .calendar-next-month-btn {
   right: 24px;
 }
+
 .calendar-next-month-btn .middle,
 .calendar-prev-month-btn .middle {
   margin-top: 8px;
 }
+
 .calendar-body {
   position: relative;
   width: 196px;

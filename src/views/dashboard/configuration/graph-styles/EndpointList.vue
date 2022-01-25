@@ -14,30 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">{{ t("smooth") }}</span>
-    <el-switch
-      v-model="smooth"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ smooth })"
-    />
-  </div>
-  <div>
-    <span class="label">{{ t("showSymbol") }}</span>
-    <el-switch
-      v-model="showSymbol"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ showSymbol })"
-    />
-  </div>
-  <div>
-    <span class="label">{{ t("step") }}</span>
-    <el-switch
-      v-model="step"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ step })"
+    <span class="label">{{ t("fontSize") }}</span>
+    <el-slider
+      class="slider"
+      v-model="fontSize"
+      show-input
+      input-size="small"
+      :min="10"
+      :max="20"
+      :step="1"
+      @change="updateConfig({ fontSize })"
     />
   </div>
 </template>
@@ -46,12 +32,11 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
-const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const { selectedGrid } = dashboardStore;
-const smooth = ref(selectedGrid.graph.smooth);
-const showSymbol = ref(selectedGrid.graph.showSymbol);
-const step = ref(selectedGrid.graph.step);
+const { t } = useI18n();
+
+const fontSize = ref(selectedGrid.graph.fontSize);
 
 function updateConfig(param: { [key: string]: unknown }) {
   const graph = {
@@ -62,6 +47,11 @@ function updateConfig(param: { [key: string]: unknown }) {
 }
 </script>
 <style lang="scss" scoped>
+.slider {
+  width: 500px;
+  margin-top: -13px;
+}
+
 .label {
   font-size: 13px;
   font-weight: 500;

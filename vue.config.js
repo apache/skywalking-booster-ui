@@ -40,9 +40,19 @@ module.exports = {
         chunks: "all",
         cacheGroups: {
           echarts: {
+            name: "echarts",
+            test: /[\\/]node_modules[\\/]echarts[\\/]/,
+            priority: 1,
+          },
+          elementPlus: {
+            name: "element-plus",
+            test: /[\\/]node_modules[\\/]element-plus[\\/]/,
+            priority: 2,
+          },
+          three: {
             name: "three",
             test: /[\\/]node_modules[\\/]three[\\/]/,
-            priority: 2,
+            priority: 3,
           },
         },
       },

@@ -18,9 +18,21 @@
 import AreaConfig from "./Area.vue";
 import LineConfig from "./Line.vue";
 import BarConfig from "./Bar.vue";
+import TableConfig from "./Table.vue";
+import CardConfig from "./Card.vue";
+import InstanceListConfig from "./InstanceList.vue";
+import EndpointListConfig from "./EndpointList.vue";
+import ServiceListConfig from "./ServiceList.vue";
+import TopListConfig from "./TopList.vue";
 
 export default {
   AreaConfig,
   LineConfig,
   BarConfig,
+  InstanceListConfig,
+  EndpointListConfig,
+  ServiceListConfig,
+  TableConfig,
+  CardConfig,
+  TopListConfig,
 };

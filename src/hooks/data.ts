@@ -14,6 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export enum MetricQueryTypes {
+  ReadMetricsValue = "readMetricsValue",
+  ReadMetricsValues = "readMetricsValues",
+  SortMetrics = "sortMetrics",
+  ReadLabeledMetricsValues = "readLabeledMetricsValues",
+  READHEATMAP = "readHeatMap",
+  ReadSampledRecords = "readSampledRecords",
+}
 export enum sizeEnum {
   XS = "XS",
   SM = "SM",
@@ -32,7 +40,7 @@ export enum screenEnum {
   XXL = 1600,
 }
 
-const screenMap = new Map<sizeEnum, number>();
+export const screenMap = new Map<sizeEnum, number>();
 
 screenMap.set(sizeEnum.XS, screenEnum.XS);
 screenMap.set(sizeEnum.SM, screenEnum.SM);
@@ -41,4 +49,47 @@ screenMap.set(sizeEnum.LG, screenEnum.LG);
 screenMap.set(sizeEnum.XL, screenEnum.XL);
 screenMap.set(sizeEnum.XXL, screenEnum.XXL);
 
-export { screenMap };
+export const RespFields: any = {
+  readMetricsValues: `{
+    label
+    values {
+      values {value}
+    }
+  }`,
+  readMetricsValue: "",
+  sortMetrics: `{
+    name
+    id
+    value
+    refId
+  }`,
+  readLabeledMetricsValues: `{
+    label
+    values {
+      values {value}
+    }
+  }`,
+  readHeatMap: `{
+    values {
+      id
+      values
+    }
+    buckets {
+      min
+      max
+    }
+  }`,
+  readSampledRecords: `{
+    name
+    value
+    refId
+  }`,
+};
+export enum CalculationType {
+  Plus = "+",
+  Minus = "-",
+  Multiplication = "*",
+  Division = "/",
+  "Convert Unix Timestamp(milliseconds)" = "milliseconds",
+  "Convert Unix Timestamp(seconds)" = "seconds",
+}

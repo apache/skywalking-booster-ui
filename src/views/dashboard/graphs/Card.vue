@@ -14,22 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="chart-card" :style="{ fontSize: `${config.fontSize}px` }">
+  <div
+    class="chart-card"
+    :style="{ fontSize: `${config.fontSize}px`, textAlign: config.textAlign }"
+  >
     {{
-      typeof data[key] === "string"
-        ? data[key]
-        : isNaN(data[key])
+      typeof singleVal === "string"
+        ? singleVal
+        : isNaN(singleVal)
         ? null
-        : data[key].toFixed(2)
+        : singleVal.toFixed(2)
     }}
     <span v-show="config.showUint">{{ standard.unit }}</span>
   </div>
 </template>
 <script lang="ts" setup>
 import { computed, PropType } from "vue";
-import { defineProps } from "vue";
 import { CardConfig, StandardConfig } from "@/types/dashboard";
 
+/*global defineProps */
 const props = defineProps({
   data: {
     type: Object as PropType<{ [key: string]: number }>,
@@ -37,7 +40,7 @@ const props = defineProps({
   },
   config: {
     type: Object as PropType<CardConfig>,
-    default: () => ({ fontSize: 12, showUint: true }),
+    default: () => ({ fontSize: 12, showUint: true, textAlign: "center" }),
   },
   standard: {
     type: Object as PropType<StandardConfig>,
@@ -45,10 +48,16 @@ const props = defineProps({
   },
 });
 const key = computed(() => Object.keys(props.data)[0]);
+const singleVal = computed(() => props.data[key.value]);
 </script>
 <style lang="scss" scoped>
 .chart-card {
   box-sizing: border-box;
   color: #333;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+  height: 100%;
 }
 </style>

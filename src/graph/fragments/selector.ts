@@ -15,14 +15,16 @@
  * limitations under the License.
  */
 export const Services = {
-  variable: ["$layer: String!"],
+  variable: "$layer: String!",
   query: `
-    services: listServices(layer: $layer) {
-      value: id
+  services: listServices(layer: $layer) {
+    id
+    value: name
       label: name
       group
-      layer
-    }
+      layers
+      normal
+  }
   `,
 };
 export const Layers = {
@@ -33,10 +35,13 @@ export const Layers = {
 export const Instances = {
   variable: "$serviceId: ID!, $duration: Duration!",
   query: `
-    getServiceInstances(duration: $duration, serviceId: $serviceId) {
-      key: id
+  pods: listInstances(duration: $duration, serviceId: $serviceId) {
+     id
+     value: name
       label: name
       language
+      instanceUUID
+      layer
       attributes {
         name
         value
@@ -47,9 +52,55 @@ export const Instances = {
 export const Endpoints = {
   variable: "$serviceId: ID!, $keyword: String!",
   query: `
-    getEndpoints: searchEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 100) {
-      key: id
-      label: name
+  pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 100) {
+    id
+    value: name
+     label: name
     }
 `,
+};
+
+export const getService = {
+  variable: "$serviceId: String!",
+  query: `
+  service: getService(serviceId: $serviceId) {
+    id
+    value: name
+      label: name
+      group
+      layers
+      normal
+  }
+  `,
+};
+
+export const getInstance = {
+  variable: "$instanceId: String!",
+  query: `
+  instance: getInstance(instanceId: $instanceId) {
+    id
+     value: name
+      label: name
+      language
+      instanceUUID
+      layer
+      attributes {
+        name
+        value
+      }
+    }
+  `,
+};
+
+export const getEndpoint = {
+  variable: "$endpointId: ID!",
+  query: `
+  endpoint: getEndpointInfo(endpointId: $endpointId) {
+    id
+     value: name
+      label: name
+      serviceId
+      serviceName
+  }
+  `,
 };

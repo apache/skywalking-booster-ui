@@ -84,12 +84,12 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { defineProps, reactive, ref, watch } from "vue";
+import { ref, watch, reactive } from "vue";
 import type { PropType } from "vue";
 import Widget from "./Widget.vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
-
+/*global defineProps */
 const props = defineProps({
   data: {
     type: Object as PropType<LayoutConfig>,
@@ -150,9 +150,12 @@ function clickTabGrid(e: Event, item: LayoutConfig) {
   );
 }
 document.body.addEventListener("click", handleClick, false);
+
+const children = ref(
+  dashboardStore.layout[props.data.i].children[activeTabIndex.value].children
+);
 watch(
-  () =>
-    dashboardStore.layout[props.data.i].children[activeTabIndex.value].children,
+  () => children.value,
   (data) => {
     state.layout = data;
   }

@@ -14,21 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createApp } from "vue";
-import App from "./App.vue";
-import router from "./router";
-import { store } from "./store";
-import components from "@/components";
-import i18n from "./locales";
-import "element-plus/dist/index.css";
-import "./styles/lib.scss";
-import "./styles/reset.scss";
-import ElementPlus from "element-plus";
+export type Service = {
+  id: string;
+  label: string;
+  value: string;
+  layers: string[];
+  normal: boolean;
+  group: string;
+};
 
-const app = createApp(App);
+export type Instance = {
+  value: string;
+  label: string;
+  layer: string;
+  language: string;
+  instanceUUID: string;
+  attributes: { name: string; value: string }[];
+};
 
-app.use(ElementPlus, { size: "small", zIndex: 3000 });
-app.use(components);
-app.use(i18n);
-app.use(store);
-app.use(router).mount("#app");
+export type Endpoint = {
+  id: string;
+  label: string;
+  value: string;
+};
+
+export type Service = {
+  id: string;
+  value: string;
+  label: string;
+  group: string;
+  normal: boolean;
+  layers: string[];
+  shortName: string;
+};

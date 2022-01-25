@@ -26,8 +26,8 @@ limitations under the License. -->
     <div class="item">
       <div class="label">{{ t("layer") }}</div>
       <Selector
-        :value="states.layer"
-        :options="Options"
+        v-model="states.selectedLayer"
+        :options="states.layers"
         size="small"
         placeholder="Select a layer"
         @change="changeLayer"
@@ -37,7 +37,7 @@ limitations under the License. -->
     <div class="item">
       <div class="label">{{ t("entityType") }}</div>
       <Selector
-        :value="states.entity"
+        v-model="states.entity"
         :options="EntityType"
         size="small"
         placeholder="Select a entity"
@@ -53,28 +53,38 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
 import router from "@/router";
 import { useSelectorStore } from "@/store/modules/selectors";
-import { EntityType, Options } from "./data";
-import uuid from "@/utils/uuid";
+import { EntityType } from "./data";
+import { ElMessage } from "element-plus";
 
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const states = reactive({
   name: "",
-  layer: Options[0].value,
+  selectedLayer: "",
   entity: EntityType[0].value,
+  layers: [],
 });
 const onCreate = () => {
-  const id = uuid();
-  const path = `/dashboard/edit/${states.layer}/${states.entity}/${id}`;
+  const name = states.name.split(" ").join("-");
+  const path = `/dashboard/${states.selectedLayer}/${states.entity}/${name}`;
   router.push(path);
 };
-selectorStore.fetchServices("general");
+onBeforeMount(async () => {
+  const resp = await selectorStore.fetchLayers();
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+  }
+  states.selectedLayer = resp.data.layers[0];
+  states.layers = resp.data.layers.map((d: string) => {
+    return { label: d, value: d };
+  });
+});
 function changeLayer(opt: { label: string; value: string }[]) {
-  states.layer = opt[0].value;
+  states.selectedLayer = opt[0].value;
 }
 function changeEntity(opt: { label: string; value: string }[]) {
   states.entity = opt[0].value;

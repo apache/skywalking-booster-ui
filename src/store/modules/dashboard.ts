@@ -18,10 +18,13 @@ import { defineStore } from "pinia";
 import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
 import graph from "@/graph";
-import { AxiosResponse } from "axios";
-import { ConfigData } from "../data";
+import { ConfigData, ConfigData1, ConfigData2 } from "../data";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
+import { Duration } from "@/types/app";
+import axios, { AxiosResponse } from "axios";
+import { cancelToken } from "@/utils/cancelToken";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -29,6 +32,8 @@ interface DashboardState {
   entity: string;
   layerId: string;
   activedGridItem: string;
+  durationTime: Duration;
+  selectorStore: any;
 }
 
 export const dashboardStore = defineStore({
@@ -40,6 +45,8 @@ export const dashboardStore = defineStore({
     entity: "",
     layerId: "",
     activedGridItem: "",
+    durationTime: useAppStoreWithOut().durationTime,
+    selectorStore: useSelectorStore(),
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -50,6 +57,8 @@ export const dashboardStore = defineStore({
         ...NewControl,
         i: String(this.layout.length),
         type,
+        metricTypes: [""],
+        metrics: [""],
       };
       if (type === "Tab") {
         newWidget.h = 24;
@@ -129,14 +138,20 @@ export const dashboardStore = defineStore({
     setConfigPanel(show: boolean) {
       this.showConfig = show;
     },
-    selectWidget(widget: Nullable<LayoutConfig>) {
-      this.selectedGrid = widget;
+    selectWidget(item: Nullable<LayoutConfig>) {
+      this.selectedGrid = item;
     },
     setLayer(id: string) {
       this.layerId = id;
     },
     setEntity(type: string) {
       this.entity = type;
+      if (type === "ServiceInstance") {
+        this.layout = [ConfigData1];
+      }
+      if (type === "Endpoint") {
+        this.layout = [ConfigData2];
+      }
     },
     setConfigs(param: { [key: string]: unknown }) {
       const actived = this.activedGridItem.split("-");
@@ -165,27 +180,22 @@ export const dashboardStore = defineStore({
 
       return res.data;
     },
-    async fetchMetricValue(config: LayoutConfig) {
-      // if (!config.queryMetricType) {
-      //   return;
-      // }
-      config.queryMetricType = "readMetricsValues";
-      const appStoreWithOut = useAppStoreWithOut();
-      const variable = {
-        condition: {
-          name: "service_resp_time",
-          entity: {
-            normal: true,
-            scope: "Service",
-            serviceName: "agentless::app",
-          },
-        },
-        duration: appStoreWithOut.durationTime,
-      };
+    async fetchMetricList(regex: string) {
       const res: AxiosResponse = await graph
-        .query(config.queryMetricType)
-        .params(variable);
+        .query("queryMetrics")
+        .params({ regex });
 
+      return res.data;
+    },
+    async fetchMetricValue(param: {
+      queryStr: string;
+      conditions: { [key: string]: unknown };
+    }) {
+      const res: AxiosResponse = await axios.post(
+        "/graphql",
+        { query: param.queryStr, variables: { ...param.conditions } },
+        { cancelToken: cancelToken() }
+      );
       return res.data;
     },
   },

@@ -17,7 +17,7 @@ limitations under the License. -->
     <div class="search">
       <el-input
         v-model="searchText"
-        placeholder="Please input endpoint name"
+        placeholder="Please input service name"
         class="input-with-search"
         size="small"
         @change="searchList"
@@ -29,12 +29,13 @@ limitations under the License. -->
         </template>
       </el-input>
     </div>
-    <el-table v-loading="chartLoading" :data="endpoints" style="width: 100%">
-      <el-table-column label="Endpoints">
+    <el-table v-loading="chartLoading" :data="services" style="width: 100%">
+      <el-table-column label="Services">
         <template #default="scope">
           <router-link
             class="link"
-            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${selectorStore.currentService.id}/${scope.row.id}/${config.dashboardName}`"
+            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${selectorStore.currentService.id}/${config.dashboardName}`"
+            :key="1"
             :style="{ fontSize: `${config.fontSize}px` }"
           >
             {{ scope.row.label }}
@@ -62,7 +63,7 @@ limitations under the License. -->
       background
       layout="prev, pager, next"
       :page-size="pageSize"
-      :total="selectorStore.pods.length"
+      :total="selectorStore.services.length"
       @current-change="changePage"
       @prev-click="changePage"
       @next-click="changePage"
@@ -70,15 +71,15 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { useSelectorStore } from "@/store/modules/selectors";
+import { watch, ref } from "vue";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
-import { EndpointListConfig } from "@/types/dashboard";
-import { Endpoint } from "@/types/selector";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
+import { ServiceListConfig } from "@/types/dashboard";
 import Line from "./Line.vue";
+import { useSelectorStore } from "@/store/modules/selectors";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { Service } from "@/types/selector";
+import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
 
 /*global defineProps */
@@ -88,47 +89,44 @@ const props = defineProps({
   },
   config: {
     type: Object as PropType<
-      EndpointListConfig & {
+      ServiceListConfig & {
         i: string;
         metrics: string[];
         metricTypes: string[];
       }
     >,
-    default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
+    default: () => ({ dashboardName: "", fontSize: 12 }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
-const endpoints = ref<Endpoint[]>([]);
-const searchEndpoints = ref<Endpoint[]>([]);
 const pageSize = 5;
+const services = ref<Service[]>([]);
+const searchServices = ref<Service[]>([]);
 const searchText = ref<string>("");
 
-queryEndpoints();
+queryServices();
 
-async function queryEndpoints() {
+async function queryServices() {
   chartLoading.value = true;
-  const resp = await selectorStore.getEndpoints();
+  const resp = await selectorStore.fetchServices();
 
   chartLoading.value = false;
   if (resp.errors) {
     ElMessage.error(resp.errors);
-    return;
   }
-  searchEndpoints.value = selectorStore.pods;
-  endpoints.value = selectorStore.pods.splice(0, pageSize);
-  queryEndpointMetrics(endpoints.value);
+  services.value = selectorStore.services.splice(0, pageSize);
 }
-async function queryEndpointMetrics(currentPods: Endpoint[]) {
+async function queryServiceMetrics(currentServices: Service[]) {
   const { metrics } = props.config;
 
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
-      currentPods,
+      currentServices,
       dashboardStore.selectedGrid,
-      EntityType[2].value
+      EntityType[0].value
     );
     const json = await dashboardStore.fetchMetricValue(params);
 
@@ -136,29 +134,28 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
       ElMessage.error(json.errors);
       return;
     }
-    endpoints.value = usePodsSource(
-      currentPods,
+    services.value = usePodsSource(
+      currentServices,
       json,
       dashboardStore.selectedGrid
     );
     return;
   }
-  endpoints.value = currentPods;
+  services.value = currentServices;
 }
 function changePage(pageIndex: number) {
-  endpoints.value = searchEndpoints.value.splice(pageIndex - 1, pageSize);
+  services.value = selectorStore.services.splice(pageIndex - 1, pageSize);
 }
 function searchList() {
-  const currentEndpoints = selectorStore.pods.filter((d: { label: string }) =>
+  searchServices.value = selectorStore.services.filter((d: { label: string }) =>
     d.label.includes(searchText.value)
   );
-  searchEndpoints.value = currentEndpoints;
-  endpoints.value = currentEndpoints.splice(0, pageSize);
+  services.value = searchServices.value.splice(0, pageSize);
 }
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    queryEndpointMetrics(endpoints.value);
+    queryServiceMetrics(services.value);
   }
 );
 </script>

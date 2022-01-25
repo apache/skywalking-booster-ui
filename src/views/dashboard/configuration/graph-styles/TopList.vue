@@ -28,25 +28,21 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { defineProps, ref, defineEmits } from "vue";
-import type { PropType } from "vue";
-import { TopListConfig } from "@/types/dashboard";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
-const props = defineProps({
-  config: {
-    type: Object as PropType<TopListConfig>,
-    default: () => ({
-      topN: 10,
-    }),
-  },
-});
-const emits = defineEmits(["update"]);
-const topN = ref(props.config.topN);
+const dashboardStore = useDashboardStore();
+const { selectedGrid } = dashboardStore;
+const topN = ref(selectedGrid.graph.topN);
 
 function updateConfig(param: { [key: string]: unknown }) {
-  emits("update", param);
+  const graph = {
+    ...selectedGrid.graph,
+    ...param,
+  };
+  dashboardStore.selectWidget({ ...selectedGrid, graph });
 }
 </script>
 <style lang="scss" scoped>

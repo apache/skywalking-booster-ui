@@ -16,25 +16,12 @@
  */
 import {
   TypeOfMetrics,
-  querySampledRecords,
   queryHeatMap,
-  queryLabeledMetricsValues,
-  querySortMetrics,
-  queryMetricsValue,
-  queryMetricsValues,
+  listMetrics,
 } from "../fragments/dashboard";
 
 export const queryTypeOfMetrics = `query typeOfMetrics(${TypeOfMetrics.variable}) {${TypeOfMetrics.query}}`;
 
 export const readHeatMap = `query queryData(${queryHeatMap.variable}) {${queryHeatMap.query}}`;
 
-export const readSampledRecords = `query queryData(${querySampledRecords.variable}) {${querySampledRecords.query}}`;
-
-export const readLabeledMetricsValues = `query queryData(${queryLabeledMetricsValues.variable}) {
-  ${queryLabeledMetricsValues.query}}`;
-
-export const sortMetrics = `query queryData(${querySortMetrics.variable}) {${querySortMetrics.query}}`;
-
-export const readMetricsValue = `query queryData(${queryMetricsValue.variable}) {${queryMetricsValue.query}}`;
-
-export const readMetricsValues = `query queryData(${queryMetricsValues.variable}) {${queryMetricsValues.query}}`;
+export const queryMetrics = `query queryData(${listMetrics.variable}) {${listMetrics.query}}`;

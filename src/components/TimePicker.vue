@@ -142,17 +142,10 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import {
-  defineProps,
-  ref,
-  computed,
-  defineEmits,
-  onMounted,
-  onBeforeUnmount,
-  watch,
-} from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import DateCalendar from "./DateCalendar.vue";
+/*global defineProps, defineEmits */
 const datepicker = ref(null);
 const { t } = useI18n();
 const show = ref<boolean>(false);
@@ -339,6 +332,30 @@ watch(
 </script>
 
 <style lang="scss" scoped>
+@keyframes datepicker-anim-in {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes datepicker-anim-out {
+  0% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scaleY(0.8);
+  }
+}
+
 .datepicker {
   display: inline-block;
   position: relative;
@@ -373,7 +390,6 @@ watch(
   margin-left: -8px;
   margin-top: -8px;
   text-align: center;
-  background: #ccc;
   color: #fff;
   border-radius: 50%;
   background: #ccc
@@ -384,6 +400,7 @@ watch(
 .datepicker__clearable:hover:before {
   display: none;
 }
+
 .datepicker__clearable:hover .datepicker-close {
   display: block;
 }
@@ -436,25 +453,30 @@ watch(
   padding: 5px;
   overflow: hidden;
   z-index: 999;
+
   &.top {
     bottom: 30px;
     right: 0;
     transform-origin: center bottom;
   }
+
   &.bottom {
     top: 30px;
     right: 0;
     transform-origin: center top;
   }
+
   &.left {
     top: 30px;
     transform-origin: center top;
   }
+
   &.right {
     right: -80px;
     top: 30px;
     transform-origin: center top;
   }
+
   &__sidebar {
     position: absolute;
     top: 0;
@@ -464,6 +486,7 @@ watch(
     padding: 5px;
     border-right: solid 1px #eaeaea;
   }
+
   &__shortcut {
     display: block;
     width: 100%;
@@ -476,10 +499,12 @@ watch(
     outline: none;
     cursor: pointer;
     white-space: nowrap;
+
     &:hover {
       color: #3f97e3;
     }
   }
+
   &__body {
     margin-left: 100px;
     padding-left: 5px;
@@ -513,6 +538,7 @@ watch(
   display: inline-block;
   cursor: pointer;
 }
+
 .datepicker-anim-enter-active {
   transform-origin: 0 0;
   animation: datepicker-anim-in 0.2s cubic-bezier(0.23, 1, 0.32, 1);
@@ -544,27 +570,5 @@ watch(
 
 .datepicker__buttons .datepicker__button-cancel {
   background: #666;
-}
-
-@keyframes datepicker-anim-in {
-  0% {
-    opacity: 0;
-    transform: scaleY(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scaleY(1);
-  }
-}
-
-@keyframes datepicker-anim-out {
-  0% {
-    opacity: 1;
-    transform: scaleY(1);
-  }
-  to {
-    opacity: 0;
-    transform: scaleY(0.8);
-  }
 }
 </style>
