@@ -34,7 +34,7 @@ limitations under the License. -->
         <template #default="scope">
           <router-link
             class="link"
-            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${selectorStore.currentService.id}/${config.dashboardName}`"
+            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${scope.row.id}/${config.dashboardName}`"
             :key="1"
             :style="{ fontSize: `${config.fontSize}px` }"
           >
@@ -111,13 +111,14 @@ queryServices();
 
 async function queryServices() {
   chartLoading.value = true;
-  const resp = await selectorStore.fetchServices();
+  const resp = await selectorStore.fetchServices(dashboardStore.layerId);
 
   chartLoading.value = false;
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
   services.value = selectorStore.services.splice(0, pageSize);
+  queryServiceMetrics(services.value);
 }
 async function queryServiceMetrics(currentServices: Service[]) {
   const { metrics } = props.config;
@@ -155,7 +156,9 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    queryServiceMetrics(services.value);
+    if (dashboardStore.showConfig) {
+      queryServiceMetrics(services.value);
+    }
   }
 );
 </script>

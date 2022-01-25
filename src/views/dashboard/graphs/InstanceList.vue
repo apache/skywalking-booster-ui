@@ -170,7 +170,9 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    queryInstanceMetrics(instances.value);
+    if (dashboardStore.showConfig) {
+      queryInstanceMetrics(instances.value);
+    }
   }
 );
 </script>

@@ -158,7 +158,9 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    queryEndpointMetrics(endpoints.value);
+    if (dashboardStore.showConfig) {
+      queryEndpointMetrics(endpoints.value);
+    }
   }
 );
 </script>
