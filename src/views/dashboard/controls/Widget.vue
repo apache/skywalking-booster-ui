@@ -137,7 +137,7 @@ export default defineComponent({
       }
     );
     watch(
-      () => [selectorStore.currentService],
+      () => selectorStore.currentService,
       () => {
         if (dashboardStore.entity === EntityType[0].value) {
           queryMetrics();
@@ -145,7 +145,7 @@ export default defineComponent({
       }
     );
     watch(
-      () => [selectorStore.currentPod],
+      () => selectorStore.currentPod,
       () => {
         if (dashboardStore.entity === EntityType[0].value) {
           return;

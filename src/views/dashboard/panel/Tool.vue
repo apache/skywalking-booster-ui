@@ -84,9 +84,10 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import { EntityType, ToolIcons } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
@@ -95,6 +96,7 @@ import { Service } from "@/types/selector";
 
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
+const appStore = useAppStoreWithOut();
 const params = useRoute().params;
 const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
 const states = reactive<{
@@ -114,10 +116,14 @@ const states = reactive<{
 dashboardStore.setLayer(String(params.layerId));
 dashboardStore.setEntity(String(params.entity));
 
-if (params.serviceId) {
-  setSelector();
-} else {
-  getServices();
+initSelector();
+
+function initSelector() {
+  if (params.serviceId) {
+    setSelector();
+  } else {
+    getServices();
+  }
 }
 
 async function setSelector() {
@@ -230,6 +236,12 @@ async function fetchPods(type: string, setPod: boolean) {
     return;
   }
 }
+watch(
+  () => appStore.durationTime,
+  () => {
+    initSelector();
+  }
+);
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {
