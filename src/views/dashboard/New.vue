@@ -59,7 +59,10 @@ import router from "@/router";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EntityType } from "./data";
 import { ElMessage } from "element-plus";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
+const appStore = useAppStoreWithOut();
+appStore.setPageTitle("Dashboard New");
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const states = reactive({

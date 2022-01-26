@@ -16,6 +16,10 @@ limitations under the License. -->
   <div class="about">{{ props.msg }}</div>
 </template>
 <script lang="ts" setup>
+import { useAppStoreWithOut } from "@/store/modules/app";
+
+const appStore = useAppStoreWithOut();
+appStore.setPageTitle("Log");
 /*global defineProps */
 const props = defineProps({
   msg: String,

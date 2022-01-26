@@ -90,6 +90,7 @@ const utcArr = appStore.utc.split(":");
 const utcHour = ref<number>(isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]));
 const utcMin = ref<number>(isNaN(Number(utcArr[1])) ? 0 : Number(utcArr[1]));
 
+appStore.setPageTitle("Setting");
 const handleReload = () => {
   const gap =
     appStore.duration.end.getTime() - appStore.duration.start.getTime();

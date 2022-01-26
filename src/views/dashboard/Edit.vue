@@ -34,8 +34,10 @@ import GridLayout from "./panel/Layout.vue";
 import Tool from "./panel/Tool.vue";
 import ConfigEdit from "./configuration/ConfigEdit.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 const dashboardStore = useDashboardStore();
+const appStore = useAppStoreWithOut();
 const { t } = useI18n();
 // fetch layout data from serve side
 // const layout: any[] = [
@@ -56,7 +58,7 @@ const { t } = useI18n();
 //   { x: 8, y: 27, w: 4, h: 15, i: "16" },
 // ];
 // dashboardStore.setLayout(layout);
-
+appStore.setPageTitle("Dashboard Name");
 function handleClick(e: any) {
   e.stopPropagation();
   if (e.target.className === "ds-main") {
