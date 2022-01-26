@@ -93,6 +93,10 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
+    if (dashboardStore.entity === EntityType[1].value) {
+      queryMetrics();
+    }
+
     async function queryMetrics() {
       const params = await useQueryProcessor(props.data);
       if (!params) {
@@ -133,7 +137,7 @@ export default defineComponent({
       }
     );
     watch(
-      () => [selectorStore.currentService],
+      () => selectorStore.currentService,
       () => {
         if (dashboardStore.entity === EntityType[0].value) {
           queryMetrics();
@@ -141,12 +145,9 @@ export default defineComponent({
       }
     );
     watch(
-      () => [selectorStore.currentPod],
+      () => selectorStore.currentPod,
       () => {
-        if (
-          dashboardStore.entity === EntityType[0].value ||
-          dashboardStore.entity === EntityType[1].value
-        ) {
+        if (dashboardStore.entity === EntityType[0].value) {
           return;
         }
         queryMetrics();

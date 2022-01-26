@@ -49,9 +49,15 @@ limitations under the License. -->
         <template #default="scope">
           <div class="chart">
             <Line
-              :data="{ metric: scope.row[metric] }"
+              v-if="config.metricTypes[index] === 'readMetricsValues'"
+              :data="{ [metric]: scope.row[metric] }"
               :intervalTime="intervalTime"
               :config="{ showXAxis: false, showYAxis: false }"
+            />
+            <Card
+              v-else
+              :data="{ [metric]: scope.row[metric] }"
+              :config="{ textAlign: 'left' }"
             />
           </div>
         </template>
@@ -79,6 +85,7 @@ import { Endpoint } from "@/types/selector";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import Line from "./Line.vue";
+import Card from "./Card.vue";
 import { EntityType } from "../data";
 
 /*global defineProps */
@@ -158,7 +165,9 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    queryEndpointMetrics(endpoints.value);
+    if (dashboardStore.showConfig) {
+      queryEndpointMetrics(endpoints.value);
+    }
   }
 );
 </script>

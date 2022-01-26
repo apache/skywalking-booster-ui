@@ -61,6 +61,10 @@ limitations under the License. -->
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { ElTable, ElTableColumn, ElButton, ElInput } from "element-plus";
+import { useAppStoreWithOut } from "@/store/modules/app";
+
+const appStore = useAppStoreWithOut();
+appStore.setPageTitle("Dashboard List");
 //  # - os-linux
 //  # - k8s
 //  # - general(agent-installed)
@@ -107,9 +111,11 @@ const handleDelete = (index: number, row: any) => {
 .header {
   flex-direction: row-reverse;
 }
+
 .dashboard-list {
   padding: 20px;
 }
+
 .input-with-search {
   width: 300px;
   margin-left: 20px;

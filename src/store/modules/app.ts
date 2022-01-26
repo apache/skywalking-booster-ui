@@ -28,6 +28,8 @@ interface AppState {
   utcMin: number;
   eventStack: (() => unknown)[];
   timer: Nullable<any>;
+  autoRefresh: boolean;
+  pageTitle: string;
 }
 
 export const appStore = defineStore({
@@ -39,6 +41,8 @@ export const appStore = defineStore({
     utcMin: 0,
     eventStack: [],
     timer: null,
+    autoRefresh: false,
+    pageTitle: "",
   }),
   getters: {
     duration(): Duration {
@@ -116,6 +120,12 @@ export const appStore = defineStore({
     },
     setEventStack(funcs: (() => void)[]): void {
       this.eventStack = funcs;
+    },
+    setAutoRefresh(auto: boolean) {
+      this.autoRefresh = auto;
+    },
+    setPageTitle(title: string) {
+      this.pageTitle = title;
     },
     runEventStack() {
       if (this.timer) {

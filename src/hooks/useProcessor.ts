@@ -19,7 +19,7 @@ import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { Instance, Endpoint } from "@/types/selector";
+import { Instance, Endpoint, Service } from "@/types/selector";
 
 export function useQueryProcessor(config: any) {
   if (!(config.metrics && config.metrics[0])) {
@@ -28,7 +28,7 @@ export function useQueryProcessor(config: any) {
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
-  if (!selectorStore.currentService) {
+  if (!selectorStore.currentService && dashboardStore.entity !== "All") {
     return;
   }
   const conditions: { [key: string]: unknown } = {
@@ -190,7 +190,7 @@ export function useSourceProcessor(
 }
 
 export function useQueryPodsMetrics(
-  pods: Array<Instance | Endpoint>,
+  pods: Array<Instance | Endpoint | Service | any>,
   config: { metrics: string[]; metricTypes: string[] },
   scope: string
 ) {
@@ -202,25 +202,30 @@ export function useQueryPodsMetrics(
   const variables: string[] = [`$duration: Duration!`];
   const { currentService } = selectorStore;
 
-  const fragmentList = pods.map((d: Instance | Endpoint, index: number) => {
-    const param = {
-      scope,
-      serviceName: currentService.label,
-      serviceInstanceName: scope === "ServiceInstance" ? d.label : undefined,
-      endpointName: scope === "Endpoint" ? d.label : undefined,
-      normal: currentService.normal,
-    };
-    const f = config.metrics.map((name: string, idx: number) => {
-      const metricType = config.metricTypes[idx] || "";
-      conditions[`condition${index}${idx}`] = {
-        name,
-        entity: param,
+  const fragmentList = pods.map(
+    (
+      d: (Instance | Endpoint | Service) & { normal: boolean },
+      index: number
+    ) => {
+      const param = {
+        scope,
+        serviceName: scope === "Service" ? d.label : currentService.label,
+        serviceInstanceName: scope === "ServiceInstance" ? d.label : undefined,
+        endpointName: scope === "Endpoint" ? d.label : undefined,
+        normal: scope === "Service" ? d.normal : currentService.normal,
       };
-      variables.push(`$condition${index}${idx}: MetricsCondition!`);
-      return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, duration: $duration)${RespFields[metricType]}`;
-    });
-    return f;
-  });
+      const f = config.metrics.map((name: string, idx: number) => {
+        const metricType = config.metricTypes[idx] || "";
+        conditions[`condition${index}${idx}`] = {
+          name,
+          entity: param,
+        };
+        variables.push(`$condition${index}${idx}: MetricsCondition!`);
+        return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, duration: $duration)${RespFields[metricType]}`;
+      });
+      return f;
+    }
+  );
   const fragment = fragmentList.flat(1).join(" ");
   const queryStr = `query queryData(${variables}) {${fragment}}`;
 

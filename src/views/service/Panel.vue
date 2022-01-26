@@ -50,7 +50,10 @@ import Endpoints from "./Endpoints.vue";
 import Topology from "./Topology.vue";
 import Traces from "./Traces.vue";
 import Profiles from "./Profiles.vue";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
+const appStore = useAppStoreWithOut();
+appStore.setPageTitle("General Service");
 const route = useRoute();
 const { t } = useI18n();
 const tabs = ["metrics", "topologies", "endpoints", "traces", "profiles"];
@@ -69,30 +72,36 @@ function handleClick(tab: string) {
 .service-detail {
   text-align: left;
 }
+
 .tabs {
   padding: 15px 15px 0 15px;
   border-bottom: 1px solid var(--el-border-color-light);
 }
+
 .tab {
   display: inline-block;
   margin-right: 30px;
   font-size: 13px;
   font-weight: 400;
   height: 30px;
+
   &:hover {
     color: var(--el-color-primary);
   }
+
   &.active {
     color: var(--el-color-primary);
     border-bottom: 1px solid var(--el-color-primary);
   }
 }
+
 .title {
   padding: 5px 0 5px 15px;
   font-size: 14px;
   font-weight: 400;
   border-bottom: 1px solid #dfe4e8;
   background-color: #c4c8e133;
+
   span {
     display: inline-block;
     margin-right: 10px;

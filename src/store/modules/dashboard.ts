@@ -18,7 +18,7 @@ import { defineStore } from "pinia";
 import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
 import graph from "@/graph";
-import { ConfigData, ConfigData1, ConfigData2 } from "../data";
+import { ConfigData, ConfigData1, ConfigData2, ConfigData3 } from "../data";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
@@ -146,11 +146,18 @@ export const dashboardStore = defineStore({
     },
     setEntity(type: string) {
       this.entity = type;
+      // todo
       if (type === "ServiceInstance") {
         this.layout = [ConfigData1];
       }
       if (type === "Endpoint") {
         this.layout = [ConfigData2];
+      }
+      if (type == "All") {
+        this.layout = [ConfigData3];
+      }
+      if (type == "Service") {
+        this.layout = [ConfigData];
       }
     },
     setConfigs(param: { [key: string]: unknown }) {

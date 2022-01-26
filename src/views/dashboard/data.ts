@@ -41,7 +41,7 @@ export const MetricChartType: any = {
   ],
   sortMetrics: [{ label: "Top List", value: "TopList" }],
   readLabeledMetricsValues: [{ label: "Line", value: "Line" }],
-  readHeatMap: [{ label: "Heatmap", value: "Heatmap" }],
+  readHeatMap: [{ label: "Heat Map", value: "HeatMap" }],
   readSampledRecords: [{ label: "Top List", value: "TopList" }],
 };
 export const DefaultGraphConfig: { [key: string]: any } = {
@@ -93,6 +93,9 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     dashboardName: "",
     fontSize: 12,
   },
+  HeatMap: {
+    type: "HeatMap",
+  },
 };
 
 export enum MetricsType {
@@ -141,16 +144,10 @@ export const EntityType = [
   { value: "All", label: "All", key: 10 },
   { value: "Endpoint", label: "Service Endpoint", key: 3 },
   { value: "ServiceInstance", label: "Service Instance", key: 3 },
-  { value: "ServiceRelationClient", label: "Service Relation(client)", key: 2 },
-  { value: "ServiceRelationServer", label: "Service Relation(server)", key: 2 },
+  { value: "ServiceRelation", label: "Service Relation", key: 2 },
   {
-    value: "ServiceInstanceRelationClient",
-    label: "Service Instance Relation(client)",
-    key: 4,
-  },
-  {
-    value: "ServiceInstanceRelationServer",
-    label: "Service Instance Relation(server)",
+    value: "ServiceInstanceRelation",
+    label: "Service Instance Relation",
     key: 4,
   },
   { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },

@@ -40,7 +40,7 @@ limitations under the License. -->
           size="mini"
           placeholder="Select a data"
           @change="changePods"
-          class="selectors"
+          class="selectorPod"
         />
       </div>
       <div class="selectors-item" v-if="states.key === 2">
@@ -84,9 +84,10 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import { EntityType, ToolIcons } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
@@ -95,6 +96,7 @@ import { Service } from "@/types/selector";
 
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
+const appStore = useAppStoreWithOut();
 const params = useRoute().params;
 const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
 const states = reactive<{
@@ -114,10 +116,14 @@ const states = reactive<{
 dashboardStore.setLayer(String(params.layerId));
 dashboardStore.setEntity(String(params.entity));
 
-if (params.serviceId) {
-  setSelector();
-} else {
-  getServices();
+initSelector();
+
+function initSelector() {
+  if (params.serviceId) {
+    setSelector();
+  } else {
+    getServices();
+  }
 }
 
 async function setSelector() {
@@ -149,6 +155,9 @@ async function getServices() {
   if (!dashboardStore.layerId) {
     return;
   }
+  if (dashboardStore.entity === EntityType[1].value) {
+    return;
+  }
   const json = await selectorStore.fetchServices(dashboardStore.layerId);
   if (json.errors) {
     ElMessage.error(json.errors);
@@ -173,7 +182,7 @@ async function changeService(service: Service[]) {
 
 function changePods(pod: Option[]) {
   if (pod[0]) {
-    selectorStore.setCurrentPod(pod[0].value);
+    selectorStore.setCurrentPod(pod[0]);
   } else {
     selectorStore.setCurrentPod("");
   }
@@ -227,6 +236,12 @@ async function fetchPods(type: string, setPod: boolean) {
     return;
   }
 }
+watch(
+  () => appStore.durationTime,
+  () => {
+    initSelector();
+  }
+);
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {
@@ -260,10 +275,14 @@ async function fetchPods(type: string, setPod: boolean) {
 }
 
 .selectors {
-  min-width: 180px;
+  min-width: 200px;
 }
 
 .selectors-item {
   margin-right: 5px;
+}
+
+.selectorPod {
+  width: 340px;
 }
 </style>

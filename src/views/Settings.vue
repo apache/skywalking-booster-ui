@@ -55,7 +55,7 @@ limitations under the License. -->
     </div>
     <div class="flex-h item">
       <span class="label">{{ t("auto") }}</span>
-      <el-switch :change="handleAuto" style="height: 25px" />
+      <el-switch v-model="auto" @change="handleAuto" style="height: 25px" />
       <div class="auto-time ml-5">
         <span class="auto-select">
           <input
@@ -90,17 +90,18 @@ const utcArr = appStore.utc.split(":");
 const utcHour = ref<number>(isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]));
 const utcMin = ref<number>(isNaN(Number(utcArr[1])) ? 0 : Number(utcArr[1]));
 
+appStore.setPageTitle("Setting");
 const handleReload = () => {
   const gap =
     appStore.duration.end.getTime() - appStore.duration.start.getTime();
   const time: Date[] = [new Date(new Date().getTime() - gap), new Date()];
   appStore.setDuration(timeFormat(time));
 };
-const handleAuto = (status: boolean) => {
+const handleAuto = () => {
   if (autoTime.value < 1) {
     return;
   }
-  auto.value = status;
+  appStore.setAutoRefresh(auto.value);
   if (auto.value) {
     handleReload();
     state.timer = setInterval(handleReload, autoTime.value * 1000);
@@ -164,15 +165,16 @@ const setUTCMin = () => {
   outline: none;
   padding-bottom: 0;
 }
+
 .utc-min {
   display: inline-block;
   padding-top: 2px;
 }
+
 .auto-select {
   border-radius: 3px;
   background-color: #fff;
   padding: 1px;
-  border-radius: 3px;
 
   input {
     width: 38px;
@@ -180,14 +182,17 @@ const setUTCMin = () => {
     outline: 0;
   }
 }
+
 .settings {
   color: #222;
   font-family: inherit;
   font-size: 14px;
   padding: 20px;
+
   .item {
     margin-top: 10px;
   }
+
   input {
     outline: 0;
     width: 50px;
@@ -196,6 +201,7 @@ const setUTCMin = () => {
     text-align: center;
     height: 25px;
   }
+
   .label {
     width: 100px;
     display: inline-block;

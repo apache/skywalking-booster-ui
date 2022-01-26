@@ -18,7 +18,7 @@
 import Area from "./Area.vue";
 import Line from "./Line.vue";
 import Bar from "./Bar.vue";
-import Heatmap from "./HeatMap.vue";
+import HeatMap from "./HeatMap.vue";
 import TopList from "./TopList.vue";
 import Table from "./Table.vue";
 import Pie from "./Pie.vue";
@@ -30,7 +30,7 @@ import ServiceList from "./ServiceList.vue";
 export default {
   Line,
   Bar,
-  Heatmap,
+  HeatMap,
   TopList,
   Area,
   Table,

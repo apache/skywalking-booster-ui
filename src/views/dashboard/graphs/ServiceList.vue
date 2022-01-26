@@ -34,7 +34,7 @@ limitations under the License. -->
         <template #default="scope">
           <router-link
             class="link"
-            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${selectorStore.currentService.id}/${config.dashboardName}`"
+            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${scope.row.id}/${config.dashboardName}`"
             :key="1"
             :style="{ fontSize: `${config.fontSize}px` }"
           >
@@ -50,9 +50,15 @@ limitations under the License. -->
         <template #default="scope">
           <div class="chart">
             <Line
-              :data="{ metric: scope.row[metric] }"
+              v-if="config.metricTypes[index] === 'readMetricsValues'"
+              :data="{ [metric]: scope.row[metric] }"
               :intervalTime="intervalTime"
               :config="{ showXAxis: false, showYAxis: false }"
+            />
+            <Card
+              v-else
+              :data="{ [metric]: scope.row[metric] }"
+              :config="{ textAlign: 'left' }"
             />
           </div>
         </template>
@@ -76,6 +82,7 @@ import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import { ServiceListConfig } from "@/types/dashboard";
 import Line from "./Line.vue";
+import Card from "./Card.vue";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { Service } from "@/types/selector";
@@ -111,13 +118,14 @@ queryServices();
 
 async function queryServices() {
   chartLoading.value = true;
-  const resp = await selectorStore.fetchServices();
+  const resp = await selectorStore.fetchServices(dashboardStore.layerId);
 
   chartLoading.value = false;
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
   services.value = selectorStore.services.splice(0, pageSize);
+  queryServiceMetrics(services.value);
 }
 async function queryServiceMetrics(currentServices: Service[]) {
   const { metrics } = props.config;
@@ -155,7 +163,9 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    queryServiceMetrics(services.value);
+    if (dashboardStore.showConfig) {
+      queryServiceMetrics(services.value);
+    }
   }
 );
 </script>
