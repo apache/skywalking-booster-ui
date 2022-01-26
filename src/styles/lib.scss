@@ -126,3 +126,14 @@
 .mr-20 {
   margin-right: 20px;
 }
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(1turn);
+    transform: rotate(1turn);
+  }
+}

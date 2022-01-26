@@ -27,9 +27,9 @@ limitations under the License. -->
         UTC{{ utcHour >= 0 ? "+" : ""
         }}{{ `${appStore.utcHour}:${appStore.utcMin}` }}
       </span>
-      <!-- <span @click="handleReload" title="refresh">
-        <Icon icon="retry" :loading="auto" class="middle" />
-      </span> -->
+      <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
+        <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
+      </span>
     </div>
   </div>
 </template>
@@ -66,6 +66,12 @@ const time = computed(() => [
   appStore.durationRow.start,
   appStore.durationRow.end,
 ]);
+const handleReload = () => {
+  const gap =
+    appStore.duration.end.getTime() - appStore.duration.start.getTime();
+  const time: Date[] = [new Date(new Date().getTime() - gap), new Date()];
+  appStore.setDuration(timeFormat(time));
+};
 function changeTimeRange(val: Date[]) {
   timeRange.value =
     val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
