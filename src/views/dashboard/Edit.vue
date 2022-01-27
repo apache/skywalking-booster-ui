@@ -25,6 +25,14 @@ limitations under the License. -->
     >
       <config-edit />
     </el-dialog>
+    <el-dialog
+      v-model="dashboardStore.showTopology"
+      :title="t('topology')"
+      :destroy-on-close="true"
+      @closed="dashboardStore.setTopology(false)"
+    >
+      topology
+    </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>

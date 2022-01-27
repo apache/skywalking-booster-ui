@@ -34,6 +34,7 @@ interface DashboardState {
   activedGridItem: string;
   durationTime: Duration;
   selectorStore: any;
+  showTopology: boolean;
 }
 
 export const dashboardStore = defineStore({
@@ -47,6 +48,7 @@ export const dashboardStore = defineStore({
     activedGridItem: "",
     durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
+    showTopology: false,
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -159,6 +161,9 @@ export const dashboardStore = defineStore({
       if (type == "Service") {
         this.layout = [ConfigData];
       }
+    },
+    setTopology(show: boolean) {
+      this.showTopology = show;
     },
     setConfigs(param: { [key: string]: unknown }) {
       const actived = this.activedGridItem.split("-");

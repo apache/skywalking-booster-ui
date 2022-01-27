@@ -168,5 +168,6 @@ export const ToolIcons = [
   { name: "save_alt", content: "Export", id: "export" },
   { name: "folder_open", content: "Import", id: "import" },
   { name: "settings", content: "Settings", id: "settings" },
-  { name: "save", content: "Apply", id: "applay" },
+  { name: "device_hub", content: "Topology", id: "topology" },
+  { name: "save", content: "Apply", id: "apply" },
 ];
