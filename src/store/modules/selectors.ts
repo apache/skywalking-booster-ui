@@ -18,7 +18,7 @@ import { defineStore } from "pinia";
 import { Duration } from "@/types/app";
 import { Service, Instance, Endpoint } from "@/types/selector";
 import { store } from "@/store";
-import graph from "@/graph";
+import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
@@ -51,12 +51,12 @@ export const selectorStore = defineStore({
       this.currentPod = pod;
     },
     async fetchLayers(): Promise<AxiosResponse> {
-      const res: AxiosResponse = await graph.query("queryLayers").params({});
+      const res: AxiosResponse = await graphql.query("queryLayers").params({});
 
       return res.data || {};
     },
     async fetchServices(layer: string): Promise<AxiosResponse> {
-      const res: AxiosResponse = await graph
+      const res: AxiosResponse = await graphql
         .query("queryServices")
         .params({ layer });
 
@@ -72,7 +72,7 @@ export const selectorStore = defineStore({
       if (!serviceId) {
         return null;
       }
-      const res: AxiosResponse = await graph.query("queryInstances").params({
+      const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId,
         duration: this.durationTime,
       });
@@ -95,7 +95,7 @@ export const selectorStore = defineStore({
       if (!serviceId) {
         return null;
       }
-      const res: AxiosResponse = await graph.query("queryEndpoints").params({
+      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: this.durationTime,
         keyword: params.keyword,
@@ -109,7 +109,7 @@ export const selectorStore = defineStore({
       if (!serviceId) {
         return;
       }
-      const res: AxiosResponse = await graph.query("queryService").params({
+      const res: AxiosResponse = await graphql.query("queryService").params({
         serviceId,
       });
       if (!res.data.errors) {
@@ -123,7 +123,7 @@ export const selectorStore = defineStore({
       if (!instanceId) {
         return;
       }
-      const res: AxiosResponse = await graph.query("queryInstance").params({
+      const res: AxiosResponse = await graphql.query("queryInstance").params({
         instanceId,
       });
       if (!res.data.errors) {
@@ -136,7 +136,7 @@ export const selectorStore = defineStore({
       if (!endpointId) {
         return;
       }
-      const res: AxiosResponse = await graph.query("queryEndpoint").params({
+      const res: AxiosResponse = await graphql.query("queryEndpoint").params({
         endpointId,
       });
       if (!res.data.errors) {

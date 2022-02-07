@@ -17,7 +17,7 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
-import graph from "@/graph";
+import graphql from "@/graphql";
 import { ConfigData, ConfigData1, ConfigData2, ConfigData3 } from "../data";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -186,14 +186,14 @@ export const dashboardStore = defineStore({
       this.selectedGrid = this.layout[index];
     },
     async fetchMetricType(item: string) {
-      const res: AxiosResponse = await graph
+      const res: AxiosResponse = await graphql
         .query("queryTypeOfMetrics")
         .params({ name: item });
 
       return res.data;
     },
     async fetchMetricList(regex: string) {
-      const res: AxiosResponse = await graph
+      const res: AxiosResponse = await graphql
         .query("queryMetrics")
         .params({ regex });
 
