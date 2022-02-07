@@ -29,6 +29,8 @@ export const ServiceTopology = {
       source
       detectPoints
       target
+      sourceComponents
+      targetComponents
     }
   }`,
 };
@@ -47,6 +49,8 @@ export const GlobalTopology = {
       source
       detectPoints
       target
+      sourceComponents
+      targetComponents
     }
   }`,
 };
@@ -65,6 +69,8 @@ export const ServicesTopology = {
       source
       detectPoints
       target
+      sourceComponents
+      targetComponents
     }
   }`,
 };

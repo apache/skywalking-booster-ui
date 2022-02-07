@@ -13,5 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="topology">topology</div>
+  <div class="micro-topo-chart"></div>
 </template>
+<script lang="ts" setup>
+import * as d3 from "d3";
+import d3tip from "d3-tip";
+</script>

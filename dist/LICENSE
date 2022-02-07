@@ -29,3 +29,5 @@ batch-processor 1.0.0: https://github.com/wnr/batch-processor MIT
 echarts 5.2.2: https://github.com/apache/echarts Apache-2.0 License
 zrender 5.2.1: https://github.com/ecomfe/zrender BSD-3-Clause License
 tslib 2.3.0: https://github.com/Microsoft/tslib 0BSD License
+d3-tip 0.9.1: https: //github.com/Caged/d3-tip MIT Licensee
+d3 7.3.0: https://github.com/d3/d3  ISC License

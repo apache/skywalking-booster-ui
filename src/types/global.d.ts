@@ -26,6 +26,8 @@ import type {
 declare module "three";
 declare module "three-orbit-controls";
 declare module "element-plus";
+declare module "d3-tip";
+declare module "d3";
 declare global {
   const __APP_INFO__: {
     pkg: {
