@@ -29,6 +29,8 @@ import tool from "./utils/tool";
 import topoLegend from "./utils/legend";
 import { Node, Call } from "@/types/topology";
 import { useTopologyStore } from "@/store/modules/topology";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { EntityType } from "../../data";
 
 /*global defineProps, Nullable */
 const props = defineProps({
@@ -41,6 +43,7 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const topologyStore = useTopologyStore();
+const dashboardStore = useDashboardStore();
 // const height = ref<number>(600);
 const simulation = ref<any>("");
 const svg = ref<Nullable<any>>(null);
@@ -53,6 +56,7 @@ const anchor = ref<any>(null);
 const tools = ref<any>(null);
 
 onMounted(() => {
+  getTopology();
   window.addEventListener("resize", resize);
   svg.value = d3
     .select(chart.value)
@@ -75,6 +79,22 @@ onMounted(() => {
   //   { icon: "" },
   // ]);
 });
+async function getTopology() {
+  switch (dashboardStore.layer) {
+    case EntityType[0].value:
+      await topologyStore.getServiceTopology();
+      break;
+    case EntityType[1].value:
+      await topologyStore.getGlobalTopology();
+      break;
+    case EntityType[2].value:
+      await topologyStore.getEndpointTopology();
+      break;
+    case EntityType[3].value:
+      await topologyStore.getInstanceTopology();
+      break;
+  }
+}
 function resize() {
   svg.value.attr("height", chart.value.clientHeight);
 }

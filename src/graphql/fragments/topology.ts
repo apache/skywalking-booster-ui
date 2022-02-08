@@ -17,7 +17,7 @@
 export const ServiceTopology = {
   variable: "$duration: Duration!, $serviceId: ID!",
   query: `
-  topo: getServiceTopology(duration: $duration, serviceId: $serviceId) {
+  topology: getServiceTopology(duration: $duration, serviceId: $serviceId) {
     nodes {
       id
       name
@@ -37,7 +37,7 @@ export const ServiceTopology = {
 export const GlobalTopology = {
   variable: "$duration: Duration!",
   query: `
-  topo: getGlobalTopology(duration: $duration) {
+  topology: getGlobalTopology(duration: $duration) {
     nodes {
       id
       name
@@ -57,7 +57,7 @@ export const GlobalTopology = {
 export const ServicesTopology = {
   variable: "$duration: Duration!, $serviceIds: [ID!]!",
   query: `
-  topo: getServicesTopology(duration: $duration, serviceIds: $serviceIds) {
+  topology: getServicesTopology(duration: $duration, serviceIds: $serviceIds) {
     nodes {
       id
       name
@@ -77,7 +77,7 @@ export const ServicesTopology = {
 export const EndpointTopology = {
   variable: ["$endpointId: ID!", "$duration: Duration!"],
   query: `
-  endpointTopology: getEndpointDependencies(endpointId: $endpointId, duration: $duration) {
+  topology: getEndpointDependencies(endpointId: $endpointId, duration: $duration) {
     nodes {
       id
       name
@@ -98,7 +98,7 @@ export const InstanceTopology = {
   variable:
     "$clientServiceId: ID!, $serverServiceId: ID!, $duration: Duration!",
   query: `
-  topo: getServiceInstanceTopology(clientServiceId: $clientServiceId,
+  topology: getServiceInstanceTopology(clientServiceId: $clientServiceId,
     serverServiceId: $serverServiceId, duration: $duration) {
     nodes {
       id

@@ -19,8 +19,14 @@ import { cancelToken } from "@/utils/cancelToken";
 import * as app from "./query/app";
 import * as selector from "./query/selector";
 import * as dashboard from "./query/dashboard";
+import * as topology from "./query/topology";
 
-const query: { [key: string]: string } = { ...app, ...selector, ...dashboard };
+const query: { [key: string]: string } = {
+  ...app,
+  ...selector,
+  ...dashboard,
+  ...topology,
+};
 class Graph {
   private queryData = "";
   public query(queryData: string) {
