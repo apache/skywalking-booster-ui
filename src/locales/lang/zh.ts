@@ -23,6 +23,7 @@ const msg = {
   infrastructure: "基础结构",
   virtualMachine: "虚拟机",
   kubernetes: "Kubernetes",
+  dashboardNew: "新建仪表板",
   dashboardHome: "仪表盘首页",
   dashboardList: "仪表盘列表",
   log: "日志",

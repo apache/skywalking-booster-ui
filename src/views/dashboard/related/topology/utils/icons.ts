@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireComponent = require.context("../../assets", false, /\.png$/);
+const requireComponent = require.context("./tool", false, /\.png$/);
 
 const result: { [key: string]: string } = {};
 function capitalizeFirstLetter(str: string) {
