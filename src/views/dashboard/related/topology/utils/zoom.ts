@@ -14,27 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const linkElement = (graph) => {
-  const linkEnter = graph
-    .append("path")
-    .attr("class", "topo-line")
-    .attr("stroke", (d) => (d.cpm ? "#217EF25f" : "#6a6d7777"));
-  return linkEnter;
-};
-export const anchorElement = (graph, funcs, tip) => {
-  const linkEnter = graph
-    .append("circle")
-    .attr("class", "topo-line-anchor")
-    .attr("r", 5)
-    .attr("fill", (d) => (d.cpm ? "#217EF25f" : "#6a6d7777"))
-    .on("mouseover", function (d) {
-      tip.html(funcs.$tip).show(d, this);
-    })
-    .on("mouseout", function () {
-      tip.hide(this);
-    })
-    .on("click", (d) => {
-      funcs.handleLinkClick(d);
+export default (d3: any, graph: any) =>
+  d3
+    .zoom()
+    .scaleExtent([0.3, 10])
+    .on("zoom", () => {
+      graph.attr(
+        "transform",
+        `translate(${d3.event.transform.x},${d3.event.transform.y})scale(${d3.event.transform.k})`
+      );
     });
-  return linkEnter;
-};

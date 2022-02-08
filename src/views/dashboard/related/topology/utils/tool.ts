@@ -15,40 +15,43 @@
  * limitations under the License.
  */
 const requireComponent = require.context("./tool", false, /\.png$/);
+const icons: { [key: string]: string } = {};
 
-const icons = {};
-function capitalizeFirstLetter(str) {
+function capitalizeFirstLetter(str: string) {
   return str.toUpperCase();
 }
-function validateFileName(str) {
-  return (
-    /^\S+\.png$/.test(str) &&
-    str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) => capitalizeFirstLetter($1))
-  );
+function validateFileName(str: string): string | undefined {
+  if (/^\S+\.png$/.test(str)) {
+    return str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) =>
+      capitalizeFirstLetter($1)
+    );
+  }
 }
-requireComponent.keys().forEach((filePath) => {
+requireComponent.keys().forEach((filePath: string) => {
   const componentConfig = requireComponent(filePath);
   const fileName = validateFileName(filePath);
-  icons[fileName] = componentConfig;
+  if (fileName) {
+    icons[fileName] = componentConfig;
+  }
 });
 
-const Hexagon = (side, r, cx, cy) => {
+const Hexagon = (side: number, r: number, cx: number, cy: number) => {
   let path = "";
   for (let i = 0; i < side; i += 1) {
-    let x = Math.cos(((2 / side) * i + 1 / side) * Math.PI) * r + cx;
-    let y = -Math.sin(((2 / side) * i + 1 / side) * Math.PI) * r + cy;
+    const x = Math.cos(((2 / side) * i + 1 / side) * Math.PI) * r + cx;
+    const y = -Math.sin(((2 / side) * i + 1 / side) * Math.PI) * r + cy;
     path += !i ? `M${x},${y} ` : `L${x},${y} `;
     if (i == side - 1) path += "Z";
   }
   return path;
 };
 
-export default (graph, data) => {
+export default (graph: any, data: any) => {
   const tool = graph.append("g").attr("class", "topo-tool");
   const side = 6;
   for (let i = 0; i < data.length; i += 1) {
-    let x = Math.cos((2 / side) * i * Math.PI) * 34;
-    let y = -Math.sin((2 / side) * i * Math.PI) * 34;
+    const x = Math.cos((2 / side) * i * Math.PI) * 34;
+    const y = -Math.sin((2 / side) * i * Math.PI) * 34;
     const tool_g = tool
       .append("g")
       .attr("class", "topo-tool-i")

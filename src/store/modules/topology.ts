@@ -14,21 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireComponent = require.context("../../assets", false, /\.png$/);
+import { defineStore } from "pinia";
+import { store } from "@/store";
+import { Node, Call } from "@/types/topology";
 
-const result = {};
-function capitalizeFirstLetter(str) {
-  return str.toUpperCase();
+interface TopologyState {
+  node: Node | null;
+  call: Call | null;
+  calls: Call[];
+  nodes: Node[];
 }
-function validateFileName(str) {
-  return (
-    /^\S+\.png$/.test(str) &&
-    str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) => capitalizeFirstLetter($1))
-  );
-}
-requireComponent.keys().forEach((filePath) => {
-  const componentConfig = requireComponent(filePath);
-  const fileName = validateFileName(filePath);
-  result[fileName] = componentConfig;
+
+export const topologyStore = defineStore({
+  id: "topology",
+  state: (): TopologyState => ({
+    calls: [],
+    nodes: [],
+    node: null,
+    call: null,
+  }),
+  actions: {
+    setNode(node: Node) {
+      this.node = node;
+    },
+    setLink(link: Call) {
+      this.call = link;
+    },
+    setTopology(nodes: Node[], links: Call[]) {
+      this.nodes = nodes;
+      this.calls = links;
+    },
+  },
 });
-export default result;
+
+export function useTopologyStore(): any {
+  return topologyStore(store);
+}

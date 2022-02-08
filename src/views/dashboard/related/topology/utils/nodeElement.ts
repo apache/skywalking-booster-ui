@@ -17,7 +17,7 @@
 import icons from "./icons";
 
 icons["KAFKA-CONSUMER"] = icons.KAFKA;
-export default (d3, graph, tool, funcs, tip) => {
+export default (d3: any, graph: any, tool: any, funcs: any, tip: any) => {
   const nodeEnter = graph
     .append("g")
     .call(
@@ -27,22 +27,22 @@ export default (d3, graph, tool, funcs, tip) => {
         .on("drag", funcs.dragged)
         .on("end", funcs.dragended)
     )
-    .on("mouseover", function (d) {
-      tip.html((data) => `<div>${data.name}</div>`).show(d, this);
+    .on("mouseover", function (d: any) {
+      tip.html((data: any) => `<div>${data.name}</div>`).show(d, this);
     })
     .on("mouseout", function () {
       tip.hide(this);
     })
-    .on("click", (d) => {
+    .on("click", (event: any, d: any) => {
       event.stopPropagation();
-      event.preventDefault();
-      tool.attr("style", "display: none");
+      // event.preventDefault();
+      // tool.attr("style", "display: none");
       funcs.handleNodeClick(d);
-      if (d.isReal) {
-        tool
-          .attr("transform", `translate(${d.x},${d.y - 20})`)
-          .attr("style", "display: block");
-      }
+      // if (d.isReal) {
+      //   tool
+      //     .attr("transform", `translate(${d.x},${d.y - 20})`)
+      //     .attr("style", "display: block");
+      // }
     });
   nodeEnter
     .append("image")
@@ -51,7 +51,7 @@ export default (d3, graph, tool, funcs, tip) => {
     .attr("x", 2)
     .attr("y", 10)
     .attr("style", "cursor: move;")
-    .attr("xlink:href", (d) =>
+    .attr("xlink:href", (d: { isReal: number; sla: number; cpm: number }) =>
       d.sla < 95 && d.isReal && d.cpm > 1 ? icons.CUBEERROR : icons.CUBE
     );
   nodeEnter
@@ -68,7 +68,7 @@ export default (d3, graph, tool, funcs, tip) => {
     .attr("height", 18)
     .attr("x", 13)
     .attr("y", -7)
-    .attr("xlink:href", (d) =>
+    .attr("xlink:href", (d: { type: string }) =>
       !d.type || d.type === "N/A"
         ? icons.UNDEFINED
         : icons[d.type.toUpperCase().replace("-", "")]
@@ -79,7 +79,7 @@ export default (d3, graph, tool, funcs, tip) => {
     .attr("text-anchor", "middle")
     .attr("x", 22)
     .attr("y", 70)
-    .text((d) =>
+    .text((d: { name: string }) =>
       d.name.length > 20 ? `${d.name.substring(0, 20)}...` : d.name
     );
   return nodeEnter;

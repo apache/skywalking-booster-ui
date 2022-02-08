@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const simulationInit = (d3, data_nodes, data_links, ticked) => {
+export const simulationInit = (
+  d3: any,
+  data_nodes: any,
+  dataLinks: any,
+  ticked: any
+) => {
   const simulation = d3
     .forceSimulation(data_nodes)
     .force(
@@ -26,7 +31,7 @@ export const simulationInit = (d3, data_nodes, data_links, ticked) => {
     .force("charge", d3.forceManyBody().strength(-520))
     .force(
       "link",
-      d3.forceLink(data_links).id((d) => d.id)
+      d3.forceLink(dataLinks).id((d: { id: string }) => d.id)
     )
     .force(
       "center",
@@ -38,7 +43,7 @@ export const simulationInit = (d3, data_nodes, data_links, ticked) => {
   return simulation;
 };
 
-export const simulationSkip = (d3, simulation, ticked) => {
+export const simulationSkip = (d3: any, simulation: any, ticked: any) => {
   d3.timeout(() => {
     const n = Math.ceil(
       Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())

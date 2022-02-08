@@ -31,7 +31,7 @@ limitations under the License. -->
       :destroy-on-close="true"
       @closed="dashboardStore.setTopology(false)"
     >
-      topology
+      <Graph />
     </el-dialog>
   </div>
 </template>
@@ -41,6 +41,7 @@ import GridLayout from "./panel/Layout.vue";
 // import { LayoutConfig } from "@/types/dashboard";
 import Tool from "./panel/Tool.vue";
 import ConfigEdit from "./configuration/ConfigEdit.vue";
+import Graph from "./related/topology/Graph.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 

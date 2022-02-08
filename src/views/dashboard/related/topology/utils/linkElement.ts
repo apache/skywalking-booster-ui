@@ -14,29 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import icons from "./icons";
-
-export default function topoLegend(graph, clientHeight, clientWidth) {
-  for (const item of ["CUBE", "CUBEERROR"]) {
-    graph
-      .append("image")
-      .attr("width", 30)
-      .attr("height", 30)
-      .attr("x", clientWidth - (item === "CUBEERROR" ? 340 : 440))
-      .attr("y", clientHeight - 50)
-      .attr("xlink:href", () =>
-        item === "CUBEERROR" ? icons.CUBEERROR : icons.CUBE
-      );
-    graph
-      .append("text")
-      .attr("x", clientWidth - (item === "CUBEERROR" ? 310 : 410))
-      .attr("y", clientHeight - 30)
-      .text(() => {
-        return item === "CUBEERROR"
-          ? "Unhealthy (Successful Rate < 95% and Traffic > 1 call/min)"
-          : "Healthy";
-      })
-      .style("fill", "#efeff1")
-      .style("font-size", "11px");
-  }
-}
+export const linkElement = (graph: any) => {
+  const linkEnter = graph
+    .append("path")
+    .attr("class", "topo-line")
+    .attr("stroke", (d: { cpm: number }) =>
+      d.cpm ? "#217EF25f" : "#6a6d7777"
+    );
+  return linkEnter;
+};
+export const anchorElement = (graph: any, funcs: any, tip: any) => {
+  const linkEnter = graph
+    .append("circle")
+    .attr("class", "topo-line-anchor")
+    .attr("r", 5)
+    .attr("fill", (d: { cpm: number }) => (d.cpm ? "#217EF25f" : "#6a6d7777"))
+    .on("mouseover", function (d: unknown) {
+      tip.html(funcs.$tip).show(d, this);
+    })
+    .on("mouseout", function () {
+      tip.hide(this);
+    })
+    .on("click", (d: unknown) => {
+      funcs.handleLinkClick(d);
+    });
+  return linkEnter;
+};
