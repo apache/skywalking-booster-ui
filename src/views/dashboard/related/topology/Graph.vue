@@ -77,6 +77,7 @@ onMounted(async () => {
   node.value = graph.value.append("g").selectAll(".topo-node");
   link.value = graph.value.append("g").selectAll(".topo-line");
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
+  svg.value.call(zoom(d3, graph.value));
   // tools.value = tool(graph.value, [
   //   { icon: "API", click: handleGoEndpoint },
   //   { icon: "INSTANCE", click: handleGoInstance },
@@ -133,19 +134,19 @@ function dragstart(d: any) {
     g.__data__.fx = g.__data__.x;
     g.__data__.fy = g.__data__.y;
   });
-  if (!(d3 as any).event.active) {
+  if (!d.active) {
     simulation.value.alphaTarget(0.1).restart();
   }
-  (d3 as any).event.sourceEvent.stopPropagation();
+  d.subject.fx = d.subject.x;
+  d.subject.fy = d.subject.y;
+  d.sourceEvent.stopPropagation();
 }
 function dragged(d: any) {
-  d.fx = (d3 as any).event.x;
-  d.fy = (d3 as any).event.y;
-  d.x = d.fx;
-  d.y = d.fy;
+  d.subject.fx = d.x;
+  d.subject.fy = d.y;
 }
-function dragended() {
-  if (!(d3 as any).event.active) {
+function dragended(d: any) {
+  if (!d.active) {
     simulation.value.alphaTarget(0);
   }
 }
