@@ -33,21 +33,22 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { EntityType } from "../../data";
 
 /*global defineProps, Nullable */
-const props = defineProps({
-  current: {
-    type: Object as PropType<{ [key: string]: number[] }>,
-    default: () => ({}),
-  },
-  nodes: { type: Array as PropType<Node[]>, default: () => [] },
-  links: { type: Array as PropType<Call[]>, default: () => [] },
-});
+// const props = defineProps({
+//   current: {
+//     type: Object as PropType<{ [key: string]: number[] }>,
+//     default: () => ({}),
+//   },
+//   nodes: { type: Array as PropType<Node[]>, default: () => [] },
+//   links: { type: Array as PropType<Call[]>, default: () => [] },
+// });
 const { t } = useI18n();
 const topologyStore = useTopologyStore();
 const dashboardStore = useDashboardStore();
-// const height = ref<number>(600);
+const height = ref<number>(document.body.clientHeight - 90);
+const width = ref<number>(document.body.clientWidth - 40);
 const simulation = ref<any>("");
 const svg = ref<Nullable<any>>(null);
-const chart = ref<any>(null);
+const chart = ref<HTMLDivElement | null>(null);
 const tip = ref<any>(null);
 const graph = ref<any>(null);
 const node = ref<any>(null);
@@ -55,18 +56,24 @@ const link = ref<any>(null);
 const anchor = ref<any>(null);
 const tools = ref<any>(null);
 
-onMounted(() => {
-  getTopology();
+onMounted(async () => {
+  await getTopology();
   window.addEventListener("resize", resize);
   svg.value = d3
     .select(chart.value)
     .append("svg")
     .attr("class", "topo-svg")
-    .attr("height", chart.value.clientHeight);
+    .attr("height", height.value)
+    .attr("width", width.value);
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
   graph.value = svg.value.append("g").attr("class", "topo-svg_graph");
   graph.value.call(tip.value);
-  simulation.value = simulationInit(d3, props.nodes, props.links, ticked);
+  simulation.value = simulationInit(
+    d3,
+    topologyStore.nodes,
+    topologyStore.calls,
+    ticked
+  );
   node.value = graph.value.append("g").selectAll(".topo-node");
   link.value = graph.value.append("g").selectAll(".topo-line");
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
@@ -78,9 +85,10 @@ onMounted(() => {
   //   { icon: "ENDPOINT", click: handleGoEndpointDependency },
   //   { icon: "" },
   // ]);
+  update();
 });
 async function getTopology() {
-  switch (dashboardStore.layer) {
+  switch (dashboardStore.entity) {
     case EntityType[0].value:
       await topologyStore.getServiceTopology();
       break;
@@ -96,7 +104,9 @@ async function getTopology() {
   }
 }
 function resize() {
-  svg.value.attr("height", chart.value.clientHeight);
+  height.value = document.body.clientHeight - 90;
+  width.value = document.body.clientWidth - 40;
+  svg.value.attr("height", height.value).attr("width", width.value);
 }
 function ticked() {
   link.value.attr(
@@ -151,7 +161,7 @@ function handleLinkClick(event: any, d: any) {
 }
 function update() {
   // node element
-  node.value = node.value.data(props.nodes, (d: any) => d.id);
+  node.value = node.value.data(topologyStore.nodes, (d: any) => d.id);
   node.value.exit().remove();
   node.value = nodeElement(
     d3,
@@ -166,11 +176,11 @@ function update() {
     tip.value
   ).merge(node.value);
   // line element
-  link.value = link.value.data(props.links, (d: any) => d.id);
+  link.value = link.value.data(topologyStore.calls, (d: any) => d.id);
   link.value.exit().remove();
   link.value = linkElement(link.value.enter()).merge(link.value);
   // anchorElement
-  anchor.value = anchor.value.data(props.links, (d: any) => d.id);
+  anchor.value = anchor.value.data(topologyStore.calls, (d: any) => d.id);
   anchor.value.exit().remove();
   anchor.value = anchorElement(
     anchor.value.enter(),
@@ -192,21 +202,21 @@ function update() {
     tip.value
   ).merge(anchor.value);
   // force element
-  simulation.value.nodes(props.nodes);
+  simulation.value.nodes(topologyStore.nodes);
   simulation.value
     .force("link")
-    .links(props.links)
+    .links(topologyStore.calls)
     .id((d: any) => d.id);
   simulationSkip(d3, simulation.value, ticked);
   const loopMap: any = {};
-  for (let i = 0; i < props.links.length; i++) {
-    const link: any = props.links[i];
+  for (let i = 0; i < topologyStore.calls.length; i++) {
+    const link: any = topologyStore.calls[i];
     link.loopFactor = 1;
-    for (let j = 0; j < props.links.length; j++) {
+    for (let j = 0; j < topologyStore.calls.length; j++) {
       if (i === j || loopMap[i]) {
         continue;
       }
-      const otherLink = props.links[j];
+      const otherLink = topologyStore.calls[j];
       if (
         link.source.id === otherLink.target.id &&
         link.target.id === otherLink.source.id
@@ -222,10 +232,19 @@ onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+@keyframes topo-dash {
+  from {
+    stroke-dashoffset: 20;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .micro-topo-chart {
-  height: 100%;
-  width: 100%;
+  background: #333840;
 
   .topo-svg {
     display: block;
@@ -234,7 +253,7 @@ onBeforeUnmount(() => {
 
   .topo-line {
     stroke-linecap: round;
-    stroke-width: 1.3px !important;
+    stroke-width: 3px !important;
     stroke-dasharray: 13 7;
     fill: none;
     animation: topo-dash 1s linear infinite !important;
@@ -270,15 +289,6 @@ onBeforeUnmount(() => {
         stroke-opacity: 1;
       }
     }
-  }
-}
-@keyframes topo-dash {
-  from {
-    stroke-dashoffset: 20;
-  }
-
-  to {
-    stroke-dashoffset: 0;
   }
 }
 </style>

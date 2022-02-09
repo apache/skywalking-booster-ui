@@ -29,6 +29,7 @@ limitations under the License. -->
       v-model="dashboardStore.showTopology"
       :title="t('topology')"
       :destroy-on-close="true"
+      fullscreen
       @closed="dashboardStore.setTopology(false)"
     >
       <Graph />
@@ -91,4 +92,8 @@ function handleClick(e: any) {
   height: 100%;
   overflow-y: auto;
 }
+// .el-overlay-dialog {
+//   background-color: #333840 !important;
+//   color: #ddd;
+// }
 </style>

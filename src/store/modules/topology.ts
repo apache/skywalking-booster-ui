@@ -44,9 +44,9 @@ export const topologyStore = defineStore({
     setLink(link: Call) {
       this.call = link;
     },
-    setTopology(data: { nodes: Node[]; links: Call[] }) {
+    setTopology(data: { nodes: Node[]; calls: Call[] }) {
       this.nodes = data.nodes;
-      this.calls = data.links;
+      this.calls = data.calls;
     },
     async getServiceTopology() {
       const serviceId = useSelectorStore().currentService.id;

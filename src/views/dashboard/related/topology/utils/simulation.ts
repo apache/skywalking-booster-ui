@@ -16,12 +16,12 @@
  */
 export const simulationInit = (
   d3: any,
-  data_nodes: any,
+  dataNodes: any,
   dataLinks: any,
   ticked: any
 ) => {
   const simulation = d3
-    .forceSimulation(data_nodes)
+    .forceSimulation(dataNodes)
     .force(
       "collide",
       d3.forceCollide().radius(() => 60)
