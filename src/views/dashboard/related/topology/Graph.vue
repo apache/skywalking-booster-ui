@@ -25,21 +25,13 @@ import { simulationInit, simulationSkip } from "./utils/simulation";
 import nodeElement from "./utils/nodeElement";
 import { linkElement, anchorElement, arrowMarker } from "./utils/linkElement";
 // import tool from "./utils/tool";
-// import topoLegend from "./utils/legend";
+import topoLegend from "./utils/legend";
 import { Node, Call } from "@/types/topology";
 import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { EntityType } from "../../data";
 
-/*global defineProps, Nullable */
-// const props = defineProps({
-//   current: {
-//     type: Object as PropType<{ [key: string]: number[] }>,
-//     default: () => ({}),
-//   },
-//   nodes: { type: Array as PropType<Node[]>, default: () => [] },
-//   links: { type: Array as PropType<Call[]>, default: () => [] },
-// });
+/*global Nullable */
 const { t } = useI18n();
 const topologyStore = useTopologyStore();
 const dashboardStore = useDashboardStore();
@@ -55,6 +47,7 @@ const link = ref<any>(null);
 const anchor = ref<any>(null);
 const arrow = ref<any>(null);
 const tools = ref<any>(null);
+const legend = ref<any>(null);
 
 onMounted(async () => {
   await getTopology();
@@ -87,6 +80,13 @@ onMounted(async () => {
   //   { icon: "ENDPOINT", click: handleGoEndpointDependency },
   //   { icon: "" },
   // ]);
+  // legend
+  legend.value = graph.value.append("g").attr("class", "topo-legend");
+  topoLegend(legend.value, height.value, width.value);
+  svg.value.on("click", (event: any) => {
+    event.stopPropagation();
+    event.preventDefault();
+  });
 });
 async function getTopology() {
   switch (dashboardStore.entity) {
@@ -173,7 +173,8 @@ function update() {
       dragended: dragended,
       handleNodeClick: handleNodeClick,
     },
-    tip.value
+    tip.value,
+    t
   ).merge(node.value);
   // line element
   link.value = link.value.data(topologyStore.calls, (d: Call) => d.id);
@@ -196,7 +197,7 @@ function update() {
         }</div>
             <div><span class="grey">${t(
               "detectPoint"
-            )}:</span>${data.detectPoints.join(" | ")}</div>
+            )}: </span>${data.detectPoints.join(" | ")}</div>
           `,
     },
     tip.value

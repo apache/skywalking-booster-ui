@@ -15,9 +15,17 @@
  * limitations under the License.
  */
 import icons from "./icons";
+import { Node } from "@/types/topology";
 
 icons["KAFKA-CONSUMER"] = icons.KAFKA;
-export default (d3: any, graph: any, tool: any, funcs: any, tip: any) => {
+export default (
+  d3: any,
+  graph: any,
+  tool: any,
+  funcs: any,
+  tip: any,
+  t: any
+) => {
   const nodeEnter = graph
     .append("g")
     .call(
@@ -27,10 +35,18 @@ export default (d3: any, graph: any, tool: any, funcs: any, tip: any) => {
         .on("drag", funcs.dragged)
         .on("end", funcs.dragended)
     )
-    .on("mouseover", function (event: any, d: { name: string }) {
+    .on("mouseover", function (event: any, d: Node) {
       tip
         .html(() => {
-          return `<div>${d.name}</div>`;
+          return `
+          <div class="mb-5"><span class="grey">${t("cpm")}: </span>${
+            d.cpm
+          }</div>
+          <div class="mb-5"><span class="grey">${t("latency")}: </span>${
+            d.latency
+          }</div>
+          <div><span class="grey">${t("sla")}: </span>${d.sla}</div>
+        `;
         })
         .show(d, this);
     })
