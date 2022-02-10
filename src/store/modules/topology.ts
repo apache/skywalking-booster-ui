@@ -45,7 +45,6 @@ export const topologyStore = defineStore({
       this.call = link;
     },
     setTopology(data: { nodes: Node[]; calls: Call[] }) {
-      console.log(data);
       this.nodes = data.nodes;
       this.calls = data.calls;
     },

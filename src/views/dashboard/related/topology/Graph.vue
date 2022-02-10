@@ -23,7 +23,7 @@ import d3tip from "d3-tip";
 import zoom from "./utils/zoom";
 import { simulationInit, simulationSkip } from "./utils/simulation";
 import nodeElement from "./utils/nodeElement";
-import { linkElement, anchorElement } from "./utils/linkElement";
+import { linkElement, anchorElement, arrowMarker } from "./utils/linkElement";
 // import tool from "./utils/tool";
 // import topoLegend from "./utils/legend";
 import { Node, Call } from "@/types/topology";
@@ -53,6 +53,7 @@ const graph = ref<any>(null);
 const node = ref<any>(null);
 const link = ref<any>(null);
 const anchor = ref<any>(null);
+const arrow = ref<any>(null);
 const tools = ref<any>(null);
 
 onMounted(async () => {
@@ -76,6 +77,7 @@ onMounted(async () => {
   node.value = graph.value.append("g").selectAll(".topo-node");
   link.value = graph.value.append("g").selectAll(".topo-line");
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
+  arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
   svg.value.call(zoom(d3, graph.value));
   // tools.value = tool(graph.value, [
   //   { icon: "API", click: handleGoEndpoint },
@@ -118,7 +120,7 @@ function ticked() {
   );
   anchor.value.attr(
     "transform",
-    (d: any) =>
+    (d: Call | any) =>
       `translate(${(d.source.x + d.target.x) / 2}, ${
         (d.target.y + d.source.y) / 2 - d.loopFactor * 45
       })`
@@ -150,8 +152,7 @@ function dragended(d: any) {
   }
 }
 function handleNodeClick(d: any) {
-  const { x, y, vx, vy, fx, fy, index, ...rest } = d;
-  topologyStore.setNode(rest);
+  topologyStore.setNode(d);
   topologyStore.setLink({});
 }
 function handleLinkClick(event: any, d: any) {
@@ -176,11 +177,11 @@ function update() {
     tip.value
   ).merge(node.value);
   // line element
-  link.value = link.value.data(topologyStore.calls, (d: any) => d.id);
+  link.value = link.value.data(topologyStore.calls, (d: Call) => d.id);
   link.value.exit().remove();
   link.value = linkElement(link.value.enter()).merge(link.value);
   // anchorElement
-  anchor.value = anchor.value.data(topologyStore.calls, (d: any) => d.id);
+  anchor.value = anchor.value.data(topologyStore.calls, (d: Call) => d.id);
   anchor.value.exit().remove();
   anchor.value = anchorElement(
     anchor.value.enter(),
@@ -201,12 +202,16 @@ function update() {
     },
     tip.value
   ).merge(anchor.value);
+  // arrow marker
+  arrow.value = arrow.value.data(topologyStore.calls, (d: Call) => d.id);
+  arrow.value.exit().remove();
+  arrow.value = arrowMarker(arrow.value.enter()).merge(arrow.value);
   // force element
   simulation.value.nodes(topologyStore.nodes);
   simulation.value
     .force("link")
     .links(topologyStore.calls)
-    .id((d: any) => d.id);
+    .id((d: Call) => d.id);
   simulationSkip(d3, simulation.value, ticked);
   const loopMap: any = {};
   for (let i = 0; i < topologyStore.calls.length; i++) {

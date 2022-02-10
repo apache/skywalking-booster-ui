@@ -14,10 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 export const linkElement = (graph: any) => {
   const linkEnter = graph
     .append("path")
     .attr("class", "topo-line")
+    // .attr("stroke-width", (d: { cpm: number }) => (d.cpm ? 8 : 2))
+    .attr("marker-end", "url(#arrow)")
     .attr("stroke", (d: { cpm: number }) =>
       d.cpm ? "#217EF25f" : "#6a6d7777"
     );
@@ -39,4 +42,25 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
       funcs.handleLinkClick(d);
     });
   return linkEnter;
+};
+export const arrowMarker = (graph: any) => {
+  const defs = graph.append("defs");
+  const arrow = defs
+    .append("marker")
+    .attr("id", "arrow")
+    .attr("class", "topo-line-arrow")
+    .attr("markerUnits", "strokeWidth")
+    .attr("markerWidth", "6")
+    .attr("markerHeight", "6")
+    .attr("viewBox", "0 0 12 12")
+    .attr("refX", "5")
+    .attr("refY", "6")
+    .attr("orient", "auto");
+  const arrowPath = "M2,2 L10,6 L2,10 L6,6 L2,2";
+
+  arrow
+    .append("path")
+    .attr("d", arrowPath)
+    .attr("fill", (d: { cpm: number }) => (d.cpm ? "#217EF25f" : "#6a6d7777"));
+  return arrow;
 };
