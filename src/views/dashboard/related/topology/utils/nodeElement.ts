@@ -27,13 +27,17 @@ export default (d3: any, graph: any, tool: any, funcs: any, tip: any) => {
         .on("drag", funcs.dragged)
         .on("end", funcs.dragended)
     )
-    .on("mouseover", function (d: any) {
-      tip.html((data: any) => `<div>${data.name}</div>`).show(d, this);
+    .on("mouseover", function (event: any, d: { name: string }) {
+      tip
+        .html(() => {
+          return `<div>${d.name}</div>`;
+        })
+        .show(d, this);
     })
     .on("mouseout", function () {
       tip.hide(this);
     })
-    .on("click", (event: any, d: any) => {
+    .on("click", (event: any, d: unknown) => {
       event.stopPropagation();
       // event.preventDefault();
       // tool.attr("style", "display: none");

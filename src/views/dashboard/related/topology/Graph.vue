@@ -16,7 +16,7 @@ limitations under the License. -->
   <div ref="chart" class="micro-topo-chart"></div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
@@ -66,7 +66,7 @@ onMounted(async () => {
     .attr("height", height.value)
     .attr("width", width.value);
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
-  graph.value = svg.value.append("g").attr("class", "topo-svg_graph");
+  graph.value = svg.value.append("g").attr("class", "topo-svg-graph");
   graph.value.call(tip.value);
   simulation.value = simulationInit(
     d3,
@@ -87,7 +87,6 @@ onMounted(async () => {
   //   { icon: "ENDPOINT", click: handleGoEndpointDependency },
   //   { icon: "" },
   // ]);
-  update();
 });
 async function getTopology() {
   switch (dashboardStore.entity) {
@@ -236,6 +235,12 @@ function update() {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
+watch(
+  () => [topologyStore.calls, topologyStore.nodes],
+  () => {
+    update();
+  }
+);
 </script>
 <style lang="scss">
 @keyframes topo-dash {
@@ -258,10 +263,10 @@ onBeforeUnmount(() => {
 
   .topo-line {
     stroke-linecap: round;
-    stroke-width: 3px !important;
+    stroke-width: 3px;
     stroke-dasharray: 13 7;
     fill: none;
-    animation: topo-dash 0.5s linear infinite !important;
+    animation: topo-dash 0.5s linear infinite;
   }
 
   .topo-line-anchor {
@@ -295,5 +300,33 @@ onBeforeUnmount(() => {
       }
     }
   }
+}
+
+.d3-tip {
+  line-height: 1;
+  padding: 8px;
+  color: #eee;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 9999;
+  background: #252a2f;
+}
+
+.d3-tip:after {
+  box-sizing: border-box;
+  display: block;
+  font-size: 10px;
+  width: 100%;
+  line-height: 0.8;
+  color: #252a2f;
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+.d3-tip.n:after {
+  margin: -2px 0 0 0;
+  top: 100%;
+  left: 0;
 }
 </style>

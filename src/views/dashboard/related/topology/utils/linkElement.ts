@@ -32,7 +32,7 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .attr("class", "topo-line-anchor")
     .attr("r", 5)
     .attr("fill", (d: { cpm: number }) => (d.cpm ? "#217EF25f" : "#6a6d7777"))
-    .on("mouseover", function (d: unknown) {
+    .on("mouseover", function (event: unknown, d: unknown) {
       tip.html(funcs.$tip).show(d, this);
     })
     .on("mouseout", function () {
