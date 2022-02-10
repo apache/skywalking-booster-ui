@@ -22,7 +22,7 @@ limitations under the License. -->
       <span class="label">{{ t("language") }}</span>
       <el-switch
         v-model="lang"
-        :change="setLang"
+        @change="setLang"
         active-text="En"
         inactive-text="Zh"
         style="height: 25px"

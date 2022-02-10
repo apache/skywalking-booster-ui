@@ -39,6 +39,9 @@ export default (
       tip
         .html(() => {
           return `
+          <div class="mb-5"><span class="grey">${t("name")}: </span>${
+            d.name
+          }</div>
           <div class="mb-5"><span class="grey">${t("cpm")}: </span>${
             d.cpm
           }</div>

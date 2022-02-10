@@ -27,10 +27,10 @@ limitations under the License. -->
     </el-dialog>
     <el-dialog
       v-model="dashboardStore.showTopology"
-      :title="t('topology')"
       :destroy-on-close="true"
       fullscreen
       @closed="dashboardStore.setTopology(false)"
+      custom-class="topology-dialog"
     >
       <Graph />
     </el-dialog>
@@ -92,8 +92,4 @@ function handleClick(e: any) {
   height: 100%;
   overflow-y: auto;
 }
-// .el-overlay-dialog {
-//   background-color: #333840 !important;
-//   color: #ddd;
-// }
 </style>

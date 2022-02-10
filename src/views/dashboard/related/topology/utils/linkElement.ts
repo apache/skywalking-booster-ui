@@ -38,8 +38,8 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .on("mouseout", function () {
       tip.hide(this);
     })
-    .on("click", (d: unknown) => {
-      funcs.handleLinkClick(d);
+    .on("click", (event: unknown, d: unknown) => {
+      funcs.handleLinkClick(event, d);
     });
   return linkEnter;
 };

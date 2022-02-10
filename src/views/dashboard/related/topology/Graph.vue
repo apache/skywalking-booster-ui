@@ -30,6 +30,7 @@ import { Node, Call } from "@/types/topology";
 import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { EntityType } from "../../data";
+import router from "@/router";
 
 /*global Nullable */
 const { t } = useI18n();
@@ -39,7 +40,7 @@ const height = ref<number>(document.body.clientHeight - 90);
 const width = ref<number>(document.body.clientWidth - 40);
 const simulation = ref<any>("");
 const svg = ref<Nullable<any>>(null);
-const chart = ref<HTMLDivElement | null>(null);
+const chart = ref<Nullable<HTMLDivElement>>(null);
 const tip = ref<any>(null);
 const graph = ref<any>(null);
 const node = ref<any>(null);
@@ -154,10 +155,12 @@ function handleNodeClick(d: any) {
   topologyStore.setNode(d);
   topologyStore.setLink({});
 }
-function handleLinkClick(event: any, d: any) {
+function handleLinkClick(event: any, d: Call) {
   event.stopPropagation();
   topologyStore.setNode({});
   topologyStore.setLink(d);
+  // const path = `/dashboard/${states.selectedLayer}/${states.entity}/${name}`;
+  // router.push(path);
 }
 function update() {
   // node element
@@ -255,8 +258,6 @@ watch(
 }
 
 .micro-topo-chart {
-  background: #333840;
-
   .topo-svg {
     display: block;
     width: 100%;
