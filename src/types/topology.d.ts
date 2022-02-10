@@ -24,6 +24,8 @@ export interface Call {
   detectPoints: string[];
   type?: string;
   sourceObj?: any;
+  isGroupActive?: boolean;
+  latency?: number;
 }
 export interface Node {
   apdex: number;
@@ -38,4 +40,6 @@ export interface Node {
   sla: number;
   type: string;
   isReal: boolean;
+  isGroupActive?: boolean;
+  latency?: number;
 }

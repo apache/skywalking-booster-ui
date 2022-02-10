@@ -17,7 +17,6 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
@@ -25,8 +24,8 @@ import zoom from "./utils/zoom";
 import { simulationInit, simulationSkip } from "./utils/simulation";
 import nodeElement from "./utils/nodeElement";
 import { linkElement, anchorElement } from "./utils/linkElement";
-import tool from "./utils/tool";
-import topoLegend from "./utils/legend";
+// import tool from "./utils/tool";
+// import topoLegend from "./utils/legend";
 import { Node, Call } from "@/types/topology";
 import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -257,7 +256,7 @@ onBeforeUnmount(() => {
     stroke-width: 3px !important;
     stroke-dasharray: 13 7;
     fill: none;
-    animation: topo-dash 1s linear infinite !important;
+    animation: topo-dash 0.5s linear infinite !important;
   }
 
   .topo-line-anchor {

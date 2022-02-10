@@ -45,8 +45,78 @@ export const topologyStore = defineStore({
       this.call = link;
     },
     setTopology(data: { nodes: Node[]; calls: Call[] }) {
+      console.log(data);
       this.nodes = data.nodes;
       this.calls = data.calls;
+    },
+    async setMetrics(data: { nodes: Node[]; calls: Call[] }, params: any) {
+      const ids = data.nodes.map((i: Node) => i.id);
+      const idsC = data.calls
+        .filter((i: Call) => i.detectPoints.includes("CLIENT"))
+        .map((b: any) => b.id);
+      const idsS = data.calls
+        .filter((i: Call) => i.detectPoints.includes("SERVER"))
+        .map((b: any) => b.id);
+      const res: AxiosResponse = await graphql
+        .query("queryTopoInfo")
+        .params({ ...params, ids, idsC, idsS });
+      const resInfo = res.data.data;
+      if (!resInfo.sla) {
+        return this.setTopology(data);
+      }
+      for (let i = 0; i < resInfo.sla.values.length; i += 1) {
+        for (let j = 0; j < data.nodes.length; j += 1) {
+          if (data.nodes[j].id === resInfo.sla.values[i].id) {
+            data.nodes[j] = {
+              ...data.nodes[j],
+              isGroupActive: true,
+              sla: resInfo.sla.values[i].value
+                ? resInfo.sla.values[i].value / 100
+                : -1,
+              cpm: resInfo.nodeCpm.values[i]
+                ? resInfo.nodeCpm.values[i].value
+                : -1,
+              latency: resInfo.nodeLatency.values[i]
+                ? resInfo.nodeLatency.values[i].value
+                : -1,
+            };
+          }
+        }
+      }
+      if (!resInfo.cpmC) {
+        return this.setTopology(data);
+      }
+      for (let i = 0; i < resInfo.cpmC.values.length; i += 1) {
+        for (let j = 0; j < data.calls.length; j += 1) {
+          if (data.calls[j].id === resInfo.cpmC.values[i].id) {
+            data.calls[j] = {
+              ...data.calls[j],
+              isGroupActive: true,
+              cpm: resInfo.cpmC.values[i] ? resInfo.cpmC.values[i].value : "",
+              latency: resInfo.latencyC.values[i]
+                ? resInfo.latencyC.values[i].value
+                : "",
+            };
+          }
+        }
+      }
+      if (!resInfo.cpmS) {
+        return this.setTopology(data);
+      }
+      for (let i = 0; i < resInfo.cpmS.values.length; i += 1) {
+        for (let j = 0; j < data.calls.length; j += 1) {
+          if (data.calls[j].id === resInfo.cpmS.values[i].id) {
+            data.calls[j] = {
+              ...data.calls[j],
+              cpm: resInfo.cpmS.values[i] ? resInfo.cpmS.values[i].value : "",
+              latency: resInfo.latencyS.values[i]
+                ? resInfo.latencyS.values[i].value
+                : "",
+            };
+          }
+        }
+      }
+      this.setTopology(data);
     },
     async getServiceTopology() {
       const serviceId = useSelectorStore().currentService.id;
@@ -58,7 +128,7 @@ export const topologyStore = defineStore({
           duration,
         });
       if (!res.data.errors) {
-        this.setTopology(res.data.data.topology);
+        this.setMetrics(res.data.data.topology, { duration });
       }
       return res.data;
     },
@@ -70,7 +140,7 @@ export const topologyStore = defineStore({
           duration,
         });
       if (!res.data.errors) {
-        this.setTopology(res.data.data.topology);
+        this.setMetrics(res.data.data.topology, { duration });
       }
       return res.data;
     },

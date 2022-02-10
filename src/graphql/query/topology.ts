@@ -19,9 +19,22 @@ import {
   EndpointTopology,
   ServiceTopology,
   GlobalTopology,
+  TopoMetric,
+  TopoServiceMetric,
+  TopoClientMetric,
 } from "../fragments/topology";
 
 export const getGlobalTopology = `query queryData(${GlobalTopology.variable}) {${GlobalTopology.query}}`;
 export const getInstanceTopology = `query queryData(${InstanceTopology.variable}) {${InstanceTopology.query}}`;
 export const getServiceTopology = `query queryData(${ServiceTopology.variable}) {${ServiceTopology.query}}`;
 export const getEndpointTopology = `query queryData(${EndpointTopology.variable}) {${EndpointTopology.query}}`;
+export const queryTopoInfo = `query queryTopoInfo(
+  ${GlobalTopology.variable},
+  ${TopoMetric.variable},
+  ${TopoServiceMetric.variable},
+  ${TopoClientMetric.variable})
+    {
+      ${TopoMetric.query},
+      ${TopoServiceMetric.query},
+      ${TopoClientMetric.query}
+    }`;
