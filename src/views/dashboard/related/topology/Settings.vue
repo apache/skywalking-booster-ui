@@ -14,30 +14,119 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="link-settings">
-    <div>{{ t("dashboards") }}</div>
+    <h5 class="title">Call settings</h5>
+    <div class="label">{{ t("dashboards") }}</div>
     <el-input
       v-model="states.linkDashboard"
       placeholder="Please input a dashboard name for calls"
-      @change="changeLinkDashboard"
+      @change="updateSettings"
       size="small"
       class="inputs"
+    />
+    <div class="label">{{ t("metrics") }}</div>
+    <Selector
+      class="inputs"
+      :multiple="true"
+      :value="states.linkMetrics"
+      :options="states.metricList"
+      size="small"
+      placeholder="Select a metric"
+      @change="changeLinkMetrics"
+    />
+  </div>
+  <div class="node-settings">
+    <h5 class="title">Node settings</h5>
+    <div class="label">{{ t("dashboards") }}</div>
+    <el-input
+      v-model="states.nodeDashboard"
+      placeholder="Please input a dashboard name for nodes"
+      @change="updateSettings"
+      size="small"
+      class="inputs"
+    />
+    <div class="label">{{ t("metrics") }}</div>
+    <Selector
+      class="inputs"
+      :multiple="true"
+      :value="states.nodeMetrics"
+      :options="states.metricList"
+      size="small"
+      placeholder="Select a metric"
+      @change="changeNodeMetrics"
     />
   </div>
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { ElMessage } from "element-plus";
+import { MetricCatalog } from "../../data";
+import { Option } from "@/types/app";
 
+/*global defineEmits */
+const emit = defineEmits(["update"]);
 const { t } = useI18n();
-const states = reactive<{ linkDashboard: string }>({
+const dashboardStore = useDashboardStore();
+const states = reactive<{
+  linkDashboard: string;
+  nodeDashboard: string;
+  linkMetrics: string[];
+  nodeMetrics: string[];
+  metricList: Option[];
+}>({
   linkDashboard: "",
+  nodeDashboard: "",
+  linkMetrics: [],
+  nodeMetrics: [],
+  metricList: [],
 });
-function changeLinkDashboard() {
-  console.log(states.linkDashboard);
+
+getMetricList();
+async function getMetricList() {
+  const json = await dashboardStore.fetchMetricList();
+  if (json.errors) {
+    ElMessage.error(json.errors);
+    return;
+  }
+  states.metricList = (json.data.metrics || []).filter(
+    (d: { catalog: string }) =>
+      dashboardStore.entity === (MetricCatalog as any)[d.catalog]
+  );
+}
+function updateSettings() {
+  emit("update", {
+    linkDashboard: states.linkDashboard,
+    nodeDashboard: states.nodeDashboard,
+    linkMetrics: states.linkMetrics,
+    nodeMetrics: states.nodeMetrics,
+  });
+}
+function changeLinkMetrics(options: Option[]) {
+  states.linkMetrics = options.map((d: Option) => d.value);
+  updateSettings();
+}
+function changeNodeMetrics(options: Option[]) {
+  states.nodeMetrics = options.map((d: Option) => d.value);
+  updateSettings();
 }
 </script>
 <style lang="scss" scoped>
+.link-settings {
+  margin-bottom: 20px;
+}
+
 .inputs {
+  margin-top: 8px;
+  width: 330px;
+}
+
+.title {
+  margin-bottom: 0;
+}
+
+.label {
+  font-size: 12px;
   margin-top: 10px;
 }
 </style>

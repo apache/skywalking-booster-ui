@@ -20,7 +20,7 @@ limitations under the License. -->
     :style="`height: ${height}`"
   >
     <div class="setting" v-show="showSetting">
-      <Settings />
+      <Settings @update="updateSettings" />
     </div>
     <Icon
       @click="setConfig"
@@ -48,6 +48,7 @@ import { EntityType } from "../../data";
 import router from "@/router";
 import { ElMessage } from "element-plus";
 import Settings from "./Settings.vue";
+// import { Option } from "@/types/app";
 
 /*global Nullable */
 const { t } = useI18n();
@@ -68,6 +69,7 @@ const arrow = ref<any>(null);
 const tools = ref<any>(null);
 const legend = ref<any>(null);
 const showSetting = ref<boolean>(false);
+const settings = ref<any>({});
 
 onMounted(async () => {
   loading.value = true;
@@ -188,8 +190,9 @@ function handleLinkClick(event: any, d: Call) {
   event.stopPropagation();
   topologyStore.setNode({});
   topologyStore.setLink(d);
-  // const path = `/dashboard/${states.selectedLayer}/${states.entity}/${name}`;
-  // router.push(path);
+  const path = `/dashboard/${dashboardStore.layerId}/${dashboardStore.entity}Relation/${d.source.id}/${d.target.id}/${settings.value.linkDashboard}`;
+  const routeUrl = router.resolve({ path });
+  window.open(routeUrl.href, "_blank");
 }
 function update() {
   // node element
@@ -265,6 +268,9 @@ function update() {
     }
   }
 }
+function updateSettings(config: any) {
+  settings.value = config;
+}
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
@@ -287,9 +293,9 @@ watch(
     height: 700px;
     background-color: #2b3037;
     overflow: auto;
-    padding: 10px;
+    padding: 0 10px;
     border-radius: 4px;
-    color: #ddd;
+    color: #ccc;
     transition: all 0.5ms linear;
   }
 
@@ -297,7 +303,7 @@ watch(
     position: absolute;
     top: 22px;
     right: 0;
-    color: #aaa;
+    color: #ccc;
     cursor: pointer;
     transition: all 0.5ms linear;
   }
