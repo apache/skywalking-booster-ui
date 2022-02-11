@@ -18,7 +18,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="topN"
-      size="mini"
+      size="small"
       placeholder="none"
       type="number"
       :min="1"

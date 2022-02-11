@@ -13,6 +13,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-<title>all_inbox</title>
 <path d="M15 15.984h6v3q0 0.797-0.609 1.406t-1.406 0.609h-13.969q-0.797 0-1.406-0.609t-0.609-1.406v-3h6q0 1.219 0.891 2.109t2.109 0.891 2.109-0.891 0.891-2.109zM18.984 9v-3.984h-13.969v3.984h3.984q0 1.219 0.891 2.109t2.109 0.891 2.109-0.891 0.891-2.109h3.984zM18.984 3q0.797 0 1.406 0.609t0.609 1.406v6.984q0 0.797-0.609 1.406t-1.406 0.609h-13.969q-0.797 0-1.406-0.609t-0.609-1.406v-6.984q0-0.797 0.609-1.406t1.406-0.609h13.969z"></path>
 </svg>

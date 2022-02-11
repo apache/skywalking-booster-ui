@@ -77,7 +77,7 @@ watch(
   }
 );
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .icon {
   width: 16px;
   height: 16px;

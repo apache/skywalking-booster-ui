@@ -5,13 +5,39 @@ The ASF licenses this file to You under the Apache License, Version 2.0
 (the "License"); you may not use this file except in compliance with
 the License.  You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-<path d="M20.016 18v-9.984h-16.031v9.984h16.031zM20.016 6q0.797 0 1.383 0.609t0.586 1.406v9.984q0 0.797-0.586 1.406t-1.383 0.609h-16.031q-0.797 0-1.383-0.609t-0.586-1.406v-12q0-0.797 0.586-1.406t1.383-0.609h6l2.016 2.016h8.016z"></path>
-</svg>
+<template>
+  <div class="link-settings">
+    <div>{{ t("dashboards") }}</div>
+    <el-input
+      v-model="states.linkDashboard"
+      placeholder="Please input a dashboard name for calls"
+      @change="changeLinkDashboard"
+      size="small"
+      class="inputs"
+    />
+  </div>
+</template>
+<script lang="ts" setup>
+import { reactive } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+const states = reactive<{ linkDashboard: string }>({
+  linkDashboard: "",
+});
+function changeLinkDashboard() {
+  console.log(states.linkDashboard);
+}
+</script>
+<style lang="scss" scoped>
+.inputs {
+  margin-top: 10px;
+}
+</style>

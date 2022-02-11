@@ -27,7 +27,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="tableHeaderCol1"
-      size="mini"
+      size="small"
       placeholder="none"
       @change="updateConfig({ tableHeaderCol1 })"
     />
@@ -37,7 +37,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="tableHeaderCol2"
-      size="mini"
+      size="small"
       placeholder="none"
       @change="updateConfig({ tableHeaderCol2 })"
     />

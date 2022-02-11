@@ -20,6 +20,7 @@ limitations under the License. -->
       placeholder="Please input dashboard name"
       @change="changeDashboard"
       class="selectors"
+      size="small"
     />
   </div>
   <div>{{ t("metrics") }}</div>
@@ -31,7 +32,7 @@ limitations under the License. -->
     <Selector
       :value="metric"
       :options="states.metricList"
-      size="mini"
+      size="small"
       placeholder="Select a metric"
       @change="changeMetrics(index, $event)"
       class="selectors"
@@ -39,7 +40,7 @@ limitations under the License. -->
     <Selector
       :value="states.metricTypes[index]"
       :options="states.metricTypeList[index]"
-      size="mini"
+      size="small"
       :disabled="
         dashboardStore.selectedGrid.graph.type && !states.isTable && index !== 0
       "

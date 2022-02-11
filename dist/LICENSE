@@ -18,7 +18,7 @@ three-orbit-controls 82.1.0: https://github.com/mattdesl/three-orbit-controls MI
 vue-demi 0.12.1:  https://github.com/antfu/vue-demi  MIT
 vueuse/core 6.8.0:  https://github.com/vueuse/vueuse  MIT
 vue/devtools-api 6.0.0-beta.20.1:  https://github.com/vuejs/vue-devtools  MIT
-element-plus 1.2.0-beta.3:  https://github.com/element-plus/element-plus   MIT
+element-plus 2.0.1:  https://github.com/element-plus/element-plus   MIT
 vue-types 4.1.1: https://github.com/dwightjack/vue-types   MIT
 is-plain-object 5.0.0: https://github.com/jonschlinkert/is-plain-object MIT
 vue-grid-layout 3.0.0-beta1: https://github.com/jbaysolutions/vue-grid-layout MIT
@@ -31,3 +31,4 @@ zrender 5.2.1: https://github.com/ecomfe/zrender BSD-3-Clause License
 tslib 2.3.0: https://github.com/Microsoft/tslib 0BSD License
 d3-tip 0.9.1: https: //github.com/Caged/d3-tip MIT Licensee
 d3 7.3.0: https://github.com/d3/d3  ISC License
+ctrl/tinycolor 3.4.0: https: //github.com/scttcper/tinycolor MIT Licensee

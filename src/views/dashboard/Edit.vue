@@ -30,7 +30,7 @@ limitations under the License. -->
       :destroy-on-close="true"
       fullscreen
       @closed="dashboardStore.setTopology(false)"
-      custom-class="topology-dialog"
+      custom-class="dark-dialog"
     >
       <Graph />
     </el-dialog>

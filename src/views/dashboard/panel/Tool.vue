@@ -20,7 +20,7 @@ limitations under the License. -->
         <Selector
           v-model="states.currentService"
           :options="selectorStore.services"
-          size="mini"
+          size="small"
           placeholder="Select a service"
           @change="changeService"
           class="selectors"
@@ -37,7 +37,7 @@ limitations under the License. -->
         <Selector
           v-model="states.currentPod"
           :options="selectorStore.pods"
-          size="mini"
+          size="small"
           placeholder="Select a data"
           @change="changePods"
           class="selectorPod"
@@ -48,7 +48,7 @@ limitations under the License. -->
         <Selector
           v-model="selectorStore.currentDestService"
           :options="selectorStore.services"
-          size="mini"
+          size="small"
           placeholder="Select a service"
           @change="changeService"
           class="selectors"
@@ -59,7 +59,7 @@ limitations under the License. -->
         <Selector
           v-model="states.currentPod"
           :options="selectorStore.pods"
-          size="mini"
+          size="small"
           placeholder="Select a data"
           @change="changePods"
           class="selectors"
@@ -68,17 +68,15 @@ limitations under the License. -->
       </div>
     </div>
     <div class="tool-icons">
-      <el-tooltip
+      <span
+        class="icon-btn"
+        @click="clickIcons(t)"
         v-for="(t, index) in ToolIcons"
         :key="index"
-        class="item"
-        :content="t.content"
-        placement="top"
+        :title="t.content"
       >
-        <span class="icon-btn" @click="clickIcons(t)">
-          <Icon size="sm" :iconName="t.name" />
-        </span>
-      </el-tooltip>
+        <Icon size="sm" :iconName="t.name" />
+      </span>
     </div>
   </div>
 </template>
@@ -261,6 +259,10 @@ watch(
   padding: 4px 2px;
 }
 
+.tool-icons {
+  margin-top: 2px;
+}
+
 .icon-btn {
   display: inline-block;
   padding: 0 5px;
@@ -271,9 +273,6 @@ watch(
   cursor: pointer;
   background-color: #eee;
   color: #666;
-}
-
-.item {
   font-size: 12px;
 }
 

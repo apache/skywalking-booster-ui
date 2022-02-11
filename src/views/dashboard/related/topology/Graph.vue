@@ -13,7 +13,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div ref="chart" class="micro-topo-chart"></div>
+  <div
+    ref="chart"
+    class="micro-topo-chart"
+    v-loading="loading"
+    :style="`height: ${height}`"
+  >
+    <div class="setting" v-show="showSetting">
+      <Settings />
+    </div>
+    <Icon
+      @click="setConfig"
+      class="switch-icon"
+      size="middle"
+      iconName="format_indent_decrease"
+    />
+  </div>
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
@@ -31,6 +46,8 @@ import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { EntityType } from "../../data";
 import router from "@/router";
+import { ElMessage } from "element-plus";
+import Settings from "./Settings.vue";
 
 /*global Nullable */
 const { t } = useI18n();
@@ -38,7 +55,8 @@ const topologyStore = useTopologyStore();
 const dashboardStore = useDashboardStore();
 const height = ref<number>(document.body.clientHeight - 90);
 const width = ref<number>(document.body.clientWidth - 40);
-const simulation = ref<any>("");
+const loading = ref<boolean>(false);
+const simulation = ref<any>(null);
 const svg = ref<Nullable<any>>(null);
 const chart = ref<Nullable<HTMLDivElement>>(null);
 const tip = ref<any>(null);
@@ -49,9 +67,15 @@ const anchor = ref<any>(null);
 const arrow = ref<any>(null);
 const tools = ref<any>(null);
 const legend = ref<any>(null);
+const showSetting = ref<boolean>(false);
 
 onMounted(async () => {
-  await getTopology();
+  loading.value = true;
+  const resp = await getTopology();
+  loading.value = false;
+  if (resp && resp.errors) {
+    ElMessage.error(resp.errors);
+  }
   window.addEventListener("resize", resize);
   svg.value = d3
     .select(chart.value)
@@ -90,20 +114,25 @@ onMounted(async () => {
   });
 });
 async function getTopology() {
+  let resp;
   switch (dashboardStore.entity) {
     case EntityType[0].value:
-      await topologyStore.getServiceTopology();
+      resp = await topologyStore.getServiceTopology();
       break;
     case EntityType[1].value:
-      await topologyStore.getGlobalTopology();
+      resp = await topologyStore.getGlobalTopology();
       break;
     case EntityType[2].value:
-      await topologyStore.getEndpointTopology();
+      resp = await topologyStore.getEndpointTopology();
       break;
     case EntityType[3].value:
-      await topologyStore.getInstanceTopology();
+      resp = await topologyStore.getInstanceTopology();
       break;
   }
+  return resp;
+}
+function setConfig() {
+  showSetting.value = !showSetting.value;
 }
 function resize() {
   height.value = document.body.clientHeight - 90;
@@ -151,7 +180,7 @@ function dragended(d: any) {
     simulation.value.alphaTarget(0);
   }
 }
-function handleNodeClick(d: any) {
+function handleNodeClick(d: Node) {
   topologyStore.setNode(d);
   topologyStore.setLink({});
 }
@@ -164,7 +193,7 @@ function handleLinkClick(event: any, d: Call) {
 }
 function update() {
   // node element
-  node.value = node.value.data(topologyStore.nodes, (d: any) => d.id);
+  node.value = node.value.data(topologyStore.nodes, (d: Node) => d.id);
   node.value.exit().remove();
   node.value = nodeElement(
     d3,
@@ -247,17 +276,32 @@ watch(
 );
 </script>
 <style lang="scss">
-@keyframes topo-dash {
-  from {
-    stroke-dashoffset: 20;
-  }
-
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
 .micro-topo-chart {
+  position: relative;
+
+  .setting {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 350px;
+    height: 700px;
+    background-color: #2b3037;
+    overflow: auto;
+    padding: 10px;
+    border-radius: 4px;
+    color: #ddd;
+    transition: all 0.5ms linear;
+  }
+
+  .switch-icon {
+    position: absolute;
+    top: 22px;
+    right: 0;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.5ms linear;
+  }
+
   .topo-svg {
     display: block;
     width: 100%;
@@ -330,5 +374,14 @@ watch(
   margin: -2px 0 0 0;
   top: 100%;
   left: 0;
+}
+@keyframes topo-dash {
+  from {
+    stroke-dashoffset: 20;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 </style>
