@@ -28,6 +28,7 @@ export function useQueryProcessor(config: any) {
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
+
   if (!selectorStore.currentService && dashboardStore.entity !== "All") {
     return;
   }

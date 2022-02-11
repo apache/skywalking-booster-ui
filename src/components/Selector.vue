@@ -28,6 +28,7 @@ limitations under the License. -->
       :key="item.value"
       :label="item.label"
       :value="item.value"
+      :disabled="!!item.disabled"
     >
     </el-option>
   </el-select>
@@ -47,14 +48,14 @@ interface Option {
 const emit = defineEmits(["change"]);
 const props = defineProps({
   options: {
-    type: Array as PropType<Option[]>,
+    type: Array as PropType<(Option & { disabled: boolean })[]>,
     default: () => [],
   },
   value: {
     type: [Array, String] as PropType<string[] | string>,
     default: () => [],
   },
-  size: { type: String, default: "small" },
+  size: { type: String, default: "default" },
   placeholder: { type: String, default: "Select a option" },
   borderRadius: { type: Number, default: 3 },
   multiple: { type: Boolean, default: false },

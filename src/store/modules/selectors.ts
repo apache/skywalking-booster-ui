@@ -44,10 +44,16 @@ export const selectorStore = defineStore({
     durationTime: useAppStoreWithOut().durationTime,
   }),
   actions: {
-    setCurrentService(service: Service) {
+    setCurrentService(service: Nullable<Service>) {
       this.currentService = service;
     },
+    setCurrentDestService(service: Nullable<Service>) {
+      this.currentDestService = service;
+    },
     setCurrentPod(pod: Nullable<Instance | Endpoint>) {
+      this.currentPod = pod;
+    },
+    setCurrentDestPod(pod: Nullable<Instance | Endpoint>) {
       this.currentPod = pod;
     },
     async fetchLayers(): Promise<AxiosResponse> {
@@ -113,7 +119,7 @@ export const selectorStore = defineStore({
         serviceId,
       });
       if (!res.data.errors) {
-        this.currentService = res.data.data.service || {};
+        this.setCurrentService(res.data.data.service);
         this.services = [res.data.data.service];
       }
 

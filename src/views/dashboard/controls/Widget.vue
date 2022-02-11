@@ -93,12 +93,9 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
-    if (dashboardStore.entity === EntityType[1].value) {
-      queryMetrics();
-    }
-
     async function queryMetrics() {
       const params = await useQueryProcessor(props.data);
+
       if (!params) {
         state.source = {};
         return;
@@ -137,9 +134,12 @@ export default defineComponent({
       }
     );
     watch(
-      () => selectorStore.currentService,
+      () => [selectorStore.currentService, selectorStore.currentDestService],
       () => {
-        if (dashboardStore.entity === EntityType[0].value) {
+        if (
+          dashboardStore.entity === EntityType[0].value ||
+          dashboardStore.entity === EntityType[4].value
+        ) {
           queryMetrics();
         }
       }

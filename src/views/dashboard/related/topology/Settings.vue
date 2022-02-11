@@ -28,7 +28,7 @@ limitations under the License. -->
       class="inputs"
       :multiple="true"
       :value="states.linkMetrics"
-      :options="states.metricList"
+      :options="states.linkMetricList"
       size="small"
       placeholder="Select a metric"
       @change="changeLinkMetrics"
@@ -49,7 +49,7 @@ limitations under the License. -->
       class="inputs"
       :multiple="true"
       :value="states.nodeMetrics"
-      :options="states.metricList"
+      :options="states.nodeMetricList"
       size="small"
       placeholder="Select a metric"
       @change="changeNodeMetrics"
@@ -73,13 +73,15 @@ const states = reactive<{
   nodeDashboard: string;
   linkMetrics: string[];
   nodeMetrics: string[];
-  metricList: Option[];
+  nodeMetricList: Option[];
+  linkMetricList: Option[];
 }>({
   linkDashboard: "",
   nodeDashboard: "",
   linkMetrics: [],
   nodeMetrics: [],
-  metricList: [],
+  nodeMetricList: [],
+  linkMetricList: [],
 });
 
 getMetricList();
@@ -89,9 +91,13 @@ async function getMetricList() {
     ElMessage.error(json.errors);
     return;
   }
-  states.metricList = (json.data.metrics || []).filter(
+  states.nodeMetricList = (json.data.metrics || []).filter(
     (d: { catalog: string }) =>
       dashboardStore.entity === (MetricCatalog as any)[d.catalog]
+  );
+  states.linkMetricList = (json.data.metrics || []).filter(
+    (d: { catalog: string }) =>
+      dashboardStore.entity + "Relation" === (MetricCatalog as any)[d.catalog]
   );
 }
 function updateSettings() {

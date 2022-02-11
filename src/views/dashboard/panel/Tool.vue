@@ -46,11 +46,11 @@ limitations under the License. -->
       <div class="selectors-item" v-if="states.key === 2">
         <span class="label">$DestinationService</span>
         <Selector
-          v-model="selectorStore.currentDestService"
+          v-model="states.currentDestService"
           :options="selectorStore.services"
           size="small"
           placeholder="Select a service"
-          @change="changeService"
+          @change="changeDestService"
           class="selectors"
         />
       </div>
@@ -103,12 +103,14 @@ const states = reactive<{
   key: number;
   currentService: string;
   currentPod: string;
+  currentDestService: string;
 }>({
   destService: "",
   destPod: "",
   key: (type && type.key) || 0,
   currentService: "",
   currentPod: "",
+  currentDestService: "",
 });
 
 dashboardStore.setLayer(String(params.layerId));
@@ -142,11 +144,19 @@ async function setSelector() {
     ElMessage.error(json.errors);
     return;
   }
-  const currentService = selectorStore.services.filter(
-    (d: { id: string }) => d.id === String(params.serviceId)
-  )[0];
+  let currentService, currentDestService;
+  for (const d of selectorStore.services) {
+    if (d.id === String(params.serviceId)) {
+      currentService = d;
+    }
+    if (d.id === String(params.destServiceId)) {
+      currentDestService = d;
+    }
+  }
   selectorStore.setCurrentService(currentService);
+  selectorStore.setCurrentDestService(currentDestService);
   states.currentService = selectorStore.currentService.value;
+  states.currentDestService = selectorStore.currentDestService.value;
 }
 
 async function getServices() {
@@ -164,7 +174,11 @@ async function getServices() {
   selectorStore.setCurrentService(
     selectorStore.services.length ? selectorStore.services[0] : null
   );
+  selectorStore.setCurrentDestService(
+    selectorStore.services.length ? selectorStore.services[1] : null
+  );
   states.currentService = selectorStore.currentService.value;
+  states.currentDestService = selectorStore.currentDestService.value;
   fetchPods(dashboardStore.entity, true);
 }
 
@@ -174,7 +188,16 @@ async function changeService(service: Service[]) {
     selectorStore.setCurrentService(service[0]);
     fetchPods(dashboardStore.entity, true);
   } else {
-    selectorStore.setCurrentService("");
+    selectorStore.setCurrentService(null);
+  }
+}
+
+function changeDestService(service: Service[]) {
+  if (service[0]) {
+    states.currentDestService = service[0].value;
+    selectorStore.setCurrentDestService(service[0]);
+  } else {
+    selectorStore.setCurrentDestService(null);
   }
 }
 
@@ -265,7 +288,7 @@ watch(
 
 .icon-btn {
   display: inline-block;
-  padding: 0 5px;
+  padding: 0 5px 2px 5px;
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 3px;

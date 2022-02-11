@@ -18,7 +18,13 @@ import { defineStore } from "pinia";
 import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
-import { ConfigData, ConfigData1, ConfigData2, ConfigData3 } from "../data";
+import {
+  ConfigData,
+  ConfigData1,
+  ConfigData2,
+  ConfigData3,
+  ConfigData4,
+} from "../data";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
@@ -160,6 +166,9 @@ export const dashboardStore = defineStore({
       }
       if (type == "Service") {
         this.layout = [ConfigData];
+      }
+      if (type == "ServiceRelation") {
+        this.layout = [ConfigData4];
       }
     },
     setTopology(show: boolean) {

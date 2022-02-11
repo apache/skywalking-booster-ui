@@ -122,3 +122,24 @@ export const ConfigData3: any = {
   },
   children: [],
 };
+export const ConfigData4: any = {
+  x: 0,
+  y: 0,
+  w: 8,
+  h: 12,
+  i: "0",
+  metrics: ["service_relation_server_resp_time"],
+  metricTypes: ["readMetricsValues"],
+  type: "Widget",
+  widget: {
+    title: "service_relation_server_resp_time",
+    tips: "Tooltip",
+  },
+  graph: {
+    type: "Line",
+  },
+  standard: {
+    unit: "min",
+  },
+  children: [],
+};
