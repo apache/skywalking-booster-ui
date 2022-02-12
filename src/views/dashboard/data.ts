@@ -152,6 +152,7 @@ export const EntityType = [
   },
   { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },
 ];
+export const hasTopology = ["All", "Service", "ServiceRelation", "Endpoint"];
 export const TableEntity: any = {
   InstanceList: EntityType[3].value,
   EndpointList: EntityType[2].value,

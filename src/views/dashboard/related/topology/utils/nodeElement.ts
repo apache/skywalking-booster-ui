@@ -56,16 +56,16 @@ export default (
     .on("mouseout", function () {
       tip.hide(this);
     })
-    .on("click", (event: any, d: unknown) => {
+    .on("click", (event: any, d: Node | any) => {
       event.stopPropagation();
-      // event.preventDefault();
-      // tool.attr("style", "display: none");
+      event.preventDefault();
+      tool.attr("style", "display: none");
       funcs.handleNodeClick(d);
-      // if (d.isReal) {
-      //   tool
-      //     .attr("transform", `translate(${d.x},${d.y - 20})`)
-      //     .attr("style", "display: block");
-      // }
+      if (d.isReal) {
+        tool
+          .attr("transform", `translate(${d.x},${d.y - 20})`)
+          .attr("style", "display: block");
+      }
     });
   nodeEnter
     .append("image")

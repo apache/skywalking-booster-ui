@@ -39,7 +39,7 @@ import zoom from "./utils/zoom";
 import { simulationInit, simulationSkip } from "./utils/simulation";
 import nodeElement from "./utils/nodeElement";
 import { linkElement, anchorElement, arrowMarker } from "./utils/linkElement";
-// import tool from "./utils/tool";
+import tool from "./utils/tool";
 import topoLegend from "./utils/legend";
 import { Node, Call } from "@/types/topology";
 import { useTopologyStore } from "@/store/modules/topology";
@@ -48,7 +48,6 @@ import { EntityType } from "../../data";
 import router from "@/router";
 import { ElMessage } from "element-plus";
 import Settings from "./Settings.vue";
-// import { Option } from "@/types/app";
 
 /*global Nullable */
 const { t } = useI18n();
@@ -99,48 +98,23 @@ onMounted(async () => {
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
   arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
   svg.value.call(zoom(d3, graph.value));
-  // tools.value = tool(graph.value, [
-  //   { icon: "API", click: handleGoEndpoint },
-  //   { icon: "INSTANCE", click: handleGoInstance },
-  //   { icon: "TRACE", click: handleGoTrace },
-  //   { icon: "ALARM", click: handleGoAlarm },
-  //   { icon: "ENDPOINT", click: handleGoEndpointDependency },
-  //   { icon: "" },
-  // ]);
+  tools.value = tool(graph.value, tip.value, [
+    { icon: "API", title: "Endpoint", func: handleGoEndpoint },
+    { icon: "INSTANCE", title: "Instance", func: handleGoInstance },
+    { icon: "TRACE", title: "Dashboard", func: handleGoDashboard },
+    { icon: "ALARM", title: "Alarm", func: handleGoAlarm },
+    { icon: "" },
+    { icon: "" },
+  ]);
   // legend
   legend.value = graph.value.append("g").attr("class", "topo-legend");
   topoLegend(legend.value, height.value, width.value);
   svg.value.on("click", (event: any) => {
     event.stopPropagation();
     event.preventDefault();
+    tools.value.attr("style", "display: none");
   });
 });
-async function getTopology() {
-  let resp;
-  switch (dashboardStore.entity) {
-    case EntityType[0].value:
-      resp = await topologyStore.getServiceTopology();
-      break;
-    case EntityType[1].value:
-      resp = await topologyStore.getGlobalTopology();
-      break;
-    case EntityType[2].value:
-      resp = await topologyStore.getEndpointTopology();
-      break;
-    case EntityType[3].value:
-      resp = await topologyStore.getInstanceTopology();
-      break;
-  }
-  return resp;
-}
-function setConfig() {
-  showSetting.value = !showSetting.value;
-}
-function resize() {
-  height.value = document.body.clientHeight - 90;
-  width.value = document.body.clientWidth - 40;
-  svg.value.attr("height", height.value).attr("width", width.value);
-}
 function ticked() {
   link.value.attr(
     "d",
@@ -267,6 +241,59 @@ function update() {
       }
     }
   }
+}
+function handleGoEndpoint() {
+  const node = topologyStore.node;
+  const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${node.id}/${settings.value.nodeDashboard}`;
+  const routeUrl = router.resolve({ path });
+
+  window.open(routeUrl.href, "_blank");
+}
+function handleGoInstance() {
+  const node = topologyStore.node;
+  const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${node.id}/${settings.value.nodeDashboard}`;
+  const routeUrl = router.resolve({ path });
+
+  window.open(routeUrl.href, "_blank");
+}
+function handleGoDashboard() {
+  const node = topologyStore.node;
+  const path = `/dashboard/${dashboardStore.layerId}/Service/${node.id}/${settings.value.nodeDashboard}`;
+  const routeUrl = router.resolve({ path });
+
+  window.open(routeUrl.href, "_blank");
+}
+function handleGoAlarm() {
+  const path = `/alarm`;
+  const routeUrl = router.resolve({ path });
+
+  window.open(routeUrl.href, "_blank");
+}
+async function getTopology() {
+  let resp;
+  switch (dashboardStore.entity) {
+    case EntityType[0].value:
+      resp = await topologyStore.getServiceTopology();
+      break;
+    case EntityType[1].value:
+      resp = await topologyStore.getGlobalTopology();
+      break;
+    case EntityType[2].value:
+      resp = await topologyStore.getEndpointTopology();
+      break;
+    case EntityType[3].value:
+      resp = await topologyStore.getInstanceTopology();
+      break;
+  }
+  return resp;
+}
+function setConfig() {
+  showSetting.value = !showSetting.value;
+}
+function resize() {
+  height.value = document.body.clientHeight - 90;
+  width.value = document.body.clientWidth - 40;
+  svg.value.attr("height", height.value).attr("width", width.value);
 }
 function updateSettings(config: any) {
   settings.value = config;

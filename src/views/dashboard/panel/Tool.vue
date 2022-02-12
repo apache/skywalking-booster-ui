@@ -69,13 +69,20 @@ limitations under the License. -->
     </div>
     <div class="tool-icons">
       <span
-        class="icon-btn"
         @click="clickIcons(t)"
         v-for="(t, index) in ToolIcons"
         :key="index"
         :title="t.content"
       >
-        <Icon size="sm" :iconName="t.name" />
+        <Icon
+          class="icon-btn"
+          size="sm"
+          :iconName="t.name"
+          v-if="
+            t.id !== 'topology' ||
+            (t.id === 'topology' && hasTopology.includes(dashboardStore.entity))
+          "
+        />
       </span>
     </div>
   </div>
@@ -86,7 +93,7 @@ import { reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { EntityType, ToolIcons } from "../data";
+import { EntityType, ToolIcons, hasTopology } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
@@ -288,7 +295,7 @@ watch(
 
 .icon-btn {
   display: inline-block;
-  padding: 0 5px 2px 5px;
+  padding: 3px;
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 3px;

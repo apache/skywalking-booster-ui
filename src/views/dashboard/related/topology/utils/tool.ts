@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import icons from "./icons";
+import { Node } from "@/types/topology";
 
 const Hexagon = (side: number, r: number, cx: number, cy: number) => {
   let path = "";
@@ -27,7 +28,7 @@ const Hexagon = (side: number, r: number, cx: number, cy: number) => {
   return path;
 };
 
-export default (graph: any, data: any) => {
+export default (graph: any, tip: any, data: any) => {
   const tool = graph.append("g").attr("class", "topo-tool");
   const side = 6;
   for (let i = 0; i < data.length; i += 1) {
@@ -36,7 +37,13 @@ export default (graph: any, data: any) => {
     const tool_g = tool
       .append("g")
       .attr("class", "topo-tool-i")
-      .on("click", data[i].click);
+      .on("mouseover", function (event: any, d: Node) {
+        tip.html(() => data[i].title).show(d, this);
+      })
+      .on("mouseout", function () {
+        tip.hide(this);
+      })
+      .on("click", data[i].func);
     tool_g
       .append("path")
       .attr("class", "tool-hexagon")

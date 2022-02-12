@@ -60,7 +60,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       {
         path: "/dashboard/:layerId/:entity/:serviceId/:name",
         component: () => import("@/views/dashboard/Edit.vue"),
-        name: "CreateService",
+        name: "View",
         meta: {
           title: "dashboardEdit",
           exact: false,
@@ -70,7 +70,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       {
         path: "/dashboard/:layerId/:entity/:serviceId/:destServiceId/:name",
         component: () => import("@/views/dashboard/Edit.vue"),
-        name: "CreateServiceRelation",
+        name: "ViewServiceRelation",
         meta: {
           title: "dashboardEdit",
           exact: false,
