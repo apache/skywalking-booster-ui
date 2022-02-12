@@ -244,14 +244,14 @@ function update() {
 }
 function handleGoEndpoint() {
   const node = topologyStore.node;
-  const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${node.id}/${settings.value.nodeDashboard}`;
+  const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${node.id}/${settings.value.endpointDashboard}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
 }
 function handleGoInstance() {
   const node = topologyStore.node;
-  const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${node.id}/${settings.value.nodeDashboard}`;
+  const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${node.id}/${settings.value.instanceDashboard}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");

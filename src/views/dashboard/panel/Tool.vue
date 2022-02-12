@@ -134,12 +134,21 @@ function initSelector() {
 }
 
 async function setSelector() {
-  if (params.podId) {
+  if (
+    params.entity === EntityType[2].value ||
+    params.entity === EntityType[3].value
+  ) {
     await selectorStore.getService(String(params.serviceId));
     states.currentService = selectorStore.currentService.value;
     await fetchPods(String(params.entity), false);
+    if (!(selectorStore.pods.length && selectorStore.pods[0])) {
+      selectorStore.setCurrentPod(null);
+      states.currentPod = "";
+      return;
+    }
+    const pod = params.podId || selectorStore.pods[0].id;
     const currentPod = selectorStore.pods.filter(
-      (d: { id: string }) => d.id === String(params.podId)
+      (d: { id: string }) => d.id === pod
     )[0];
     selectorStore.setCurrentPod(currentPod);
     states.currentPod = currentPod.label;

@@ -44,6 +44,22 @@ limitations under the License. -->
       size="small"
       class="inputs"
     />
+    <div class="label">{{ t("dashboards") }}</div>
+    <el-input
+      v-model="states.instanceDashboard"
+      placeholder="Please input a dashboard name for service instances"
+      @change="updateSettings"
+      size="small"
+      class="inputs"
+    />
+    <div class="label">{{ t("dashboards") }}</div>
+    <el-input
+      v-model="states.endpointDashboard"
+      placeholder="Please input a dashboard name for endpoints"
+      @change="updateSettings"
+      size="small"
+      class="inputs"
+    />
     <div class="label">{{ t("metrics") }}</div>
     <Selector
       class="inputs"
@@ -71,6 +87,8 @@ const dashboardStore = useDashboardStore();
 const states = reactive<{
   linkDashboard: string;
   nodeDashboard: string;
+  instanceDashboard: string;
+  endpointDashboard: string;
   linkMetrics: string[];
   nodeMetrics: string[];
   nodeMetricList: Option[];
@@ -78,6 +96,8 @@ const states = reactive<{
 }>({
   linkDashboard: "",
   nodeDashboard: "",
+  instanceDashboard: "",
+  endpointDashboard: "",
   linkMetrics: [],
   nodeMetrics: [],
   nodeMetricList: [],
@@ -104,6 +124,8 @@ function updateSettings() {
   emit("update", {
     linkDashboard: states.linkDashboard,
     nodeDashboard: states.nodeDashboard,
+    endpointDashboard: states.endpointDashboard,
+    instanceDashboard: states.instanceDashboard,
     linkMetrics: states.linkMetrics,
     nodeMetrics: states.nodeMetrics,
   });
