@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import icons from "./icons";
+import icons from "@/assets/img/icons";
 import { Node } from "@/types/topology";
 
 const Hexagon = (side: number, r: number, cx: number, cy: number) => {

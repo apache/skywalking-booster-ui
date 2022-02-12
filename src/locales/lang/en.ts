@@ -81,6 +81,8 @@ const msg = {
   nodeMetrics: "Metrics related with topology nodes",
   instanceDashboard: "Dashboard name related with service instances",
   endpointDashboard: "Dashboard name related with endpoints",
+  callSettings: "Call settings",
+  nodeSettings: "Node Settings",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

@@ -80,6 +80,8 @@ const msg = {
   nodeMetrics: "拓扑节点关联的指标",
   instanceDashboard: "拓节点关联的实例的仪表板名称",
   endpointDashboard: "拓节点端点的实例的仪表板名称",
+  callSettings: "拓扑线设置",
+  nodeSettings: "拓扑点设置",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

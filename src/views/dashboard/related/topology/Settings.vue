@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="link-settings">
-    <h5 class="title">Call settings</h5>
+    <h5 class="title">{{ t("callSettings") }}</h5>
     <div class="label">{{ t("linkDashboard") }}</div>
     <el-input
       v-model="states.linkDashboard"
@@ -35,7 +35,7 @@ limitations under the License. -->
     />
   </div>
   <div class="node-settings">
-    <h5 class="title">Node settings</h5>
+    <h5 class="title">{{ t("nodeSettings") }}</h5>
     <div class="label">{{ t("nodeDashboard") }}</div>
     <el-input
       v-model="states.nodeDashboard"
