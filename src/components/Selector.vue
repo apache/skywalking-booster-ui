@@ -55,7 +55,7 @@ const props = defineProps({
     type: [Array, String] as PropType<string[] | string>,
     default: () => [],
   },
-  size: { type: String },
+  size: { type: String, default: "default" },
   placeholder: { type: String, default: "Select a option" },
   borderRadius: { type: Number, default: 3 },
   multiple: { type: Boolean, default: false },

@@ -19,7 +19,7 @@ limitations under the License. -->
     v-loading="loading"
     :style="`height: ${height}`"
   >
-    <div class="setting" v-show="showSetting">
+    <div class="setting" v-if="showSetting">
       <Settings @update="updateSettings" />
     </div>
     <Icon

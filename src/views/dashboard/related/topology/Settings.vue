@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="link-settings">
     <h5 class="title">Call settings</h5>
-    <div class="label">{{ t("dashboards") }}</div>
+    <div class="label">{{ t("linkDashboard") }}</div>
     <el-input
       v-model="states.linkDashboard"
       placeholder="Please input a dashboard name for calls"
@@ -23,20 +23,20 @@ limitations under the License. -->
       size="small"
       class="inputs"
     />
-    <div class="label">{{ t("metrics") }}</div>
+    <div class="label">{{ t("linkMetrics") }}</div>
     <Selector
       class="inputs"
       :multiple="true"
       :value="states.linkMetrics"
       :options="states.linkMetricList"
       size="small"
-      placeholder="Select a metric"
+      placeholder="Select metrics"
       @change="changeLinkMetrics"
     />
   </div>
   <div class="node-settings">
     <h5 class="title">Node settings</h5>
-    <div class="label">{{ t("dashboards") }}</div>
+    <div class="label">{{ t("nodeDashboard") }}</div>
     <el-input
       v-model="states.nodeDashboard"
       placeholder="Please input a dashboard name for nodes"
@@ -44,7 +44,7 @@ limitations under the License. -->
       size="small"
       class="inputs"
     />
-    <div class="label">{{ t("dashboards") }}</div>
+    <div class="label">{{ t("instanceDashboard") }}</div>
     <el-input
       v-model="states.instanceDashboard"
       placeholder="Please input a dashboard name for service instances"
@@ -52,7 +52,7 @@ limitations under the License. -->
       size="small"
       class="inputs"
     />
-    <div class="label">{{ t("dashboards") }}</div>
+    <div class="label">{{ t("endpointDashboard") }}</div>
     <el-input
       v-model="states.endpointDashboard"
       placeholder="Please input a dashboard name for endpoints"
@@ -60,14 +60,14 @@ limitations under the License. -->
       size="small"
       class="inputs"
     />
-    <div class="label">{{ t("metrics") }}</div>
+    <div class="label">{{ t("nodeMetrics") }}</div>
     <Selector
       class="inputs"
       :multiple="true"
       :value="states.nodeMetrics"
       :options="states.nodeMetricList"
       size="small"
-      placeholder="Select a metric"
+      placeholder="Select metrics"
       @change="changeNodeMetrics"
     />
   </div>
