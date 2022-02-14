@@ -28,7 +28,6 @@ limitations under the License. -->
       <Selector
         v-model="states.selectedLayer"
         :options="states.layers"
-        size="default"
         placeholder="Select a layer"
         @change="changeLayer"
         class="selectors"
@@ -39,7 +38,6 @@ limitations under the License. -->
       <Selector
         v-model="states.entity"
         :options="EntityType"
-        size="default"
         placeholder="Select a entity"
         @change="changeEntity"
         class="selectors"

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <el-select
-    size
+    :size="size"
     v-model="selected"
     :placeholder="placeholder"
     @change="changeSelected"
@@ -54,7 +54,7 @@ const props = defineProps({
     type: [Array, String] as PropType<string[] | string>,
     default: () => [],
   },
-  size: { type: String, default: "default" },
+  size: { type: [], default: "default" },
   placeholder: { type: String, default: "Select a option" },
   borderRadius: { type: Number, default: 3 },
   multiple: { type: Boolean, default: false },

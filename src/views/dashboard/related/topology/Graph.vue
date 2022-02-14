@@ -49,7 +49,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount, reactive, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
@@ -341,7 +341,7 @@ function handleGoAlarm() {
 }
 async function backToTopology() {
   svg.value.selectAll(".topo-svg-graph").remove();
-  const resp = await topologyStore.getServicesTopology();
+  const resp = await getTopology();
 
   if (resp.errors) {
     ElMessage.error(resp.errors);
@@ -365,7 +365,7 @@ async function getTopology() {
     case EntityType[2].value:
       resp = await topologyStore.getEndpointTopology();
       break;
-    case EntityType[3].value:
+    case EntityType[4].value:
       resp = await topologyStore.getInstanceTopology();
       break;
   }
@@ -423,8 +423,8 @@ onBeforeUnmount(() => {
 
   .setting {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 70px;
+    right: 0;
     width: 360px;
     height: 700px;
     background-color: #2b3037;
