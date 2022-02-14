@@ -22,12 +22,18 @@ limitations under the License. -->
     <div class="setting" v-show="showSetting">
       <Settings @update="updateSettings" />
     </div>
-    <Icon
-      @click="setConfig"
-      class="switch-icon"
-      size="middle"
-      iconName="settings"
-    />
+    <div class="tool">
+      <span class="switch-icon ml-5" title="Settings">
+        <Icon @click="setConfig" size="middle" iconName="settings" />
+      </span>
+      <span class="switch-icon ml-5" title="Back to overview topology">
+        <Icon
+          @click="backToTopology"
+          size="middle"
+          iconName="keyboard_backspace"
+        />
+      </span>
+    </div>
     <div
       class="operations-list"
       v-if="topologyStore.node && topologyStore.node.isReal"
@@ -43,8 +49,8 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
-// import { useI18n } from "vue-i18n";
+import { ref, onMounted, onBeforeUnmount, reactive, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
 import zoom from "./utils/zoom";
@@ -53,6 +59,7 @@ import nodeElement from "./utils/nodeElement";
 import { linkElement, anchorElement, arrowMarker } from "./utils/linkElement";
 import topoLegend from "./utils/legend";
 import { Node, Call } from "@/types/topology";
+import { useSelectorStore } from "@/store/modules/selectors";
 import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { EntityType } from "../../data";
@@ -61,7 +68,8 @@ import { ElMessage } from "element-plus";
 import Settings from "./Settings.vue";
 
 /*global Nullable */
-// const { t } = useI18n();
+const { t } = useI18n();
+const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
 const dashboardStore = useDashboardStore();
 const height = ref<number>(document.body.clientHeight - 90);
@@ -80,7 +88,10 @@ const legend = ref<any>(null);
 const showSetting = ref<boolean>(false);
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
-const items = ref([{ id: "alarm", title: "Alarm", func: handleGoAlarm }]);
+const items = ref([
+  { id: "inspect", title: "Inspect", func: handleInspect },
+  { id: "alarm", title: "Alarm", func: handleGoAlarm },
+]);
 
 onMounted(async () => {
   loading.value = true;
@@ -96,6 +107,10 @@ onMounted(async () => {
     .attr("class", "topo-svg")
     .attr("height", height.value)
     .attr("width", width.value);
+  await init();
+  update();
+});
+async function init() {
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
   graph.value = svg.value.append("g").attr("class", "topo-svg-graph");
   graph.value.call(tip.value);
@@ -117,10 +132,10 @@ onMounted(async () => {
     event.stopPropagation();
     event.preventDefault();
     topologyStore.setNode(null);
+    topologyStore.setLink(null);
     // showSetting.value = false;
   });
-  update();
-});
+}
 function ticked() {
   link.value.attr(
     "d",
@@ -196,10 +211,7 @@ function update() {
       dragended: dragended,
       handleNodeClick: handleNodeClick,
       tipHtml: (data: Node) => {
-        const nodeMetrics: string[] = settings.value.nodeMetrics;
-        if (!nodeMetrics) {
-          return;
-        }
+        const nodeMetrics: string[] = settings.value.nodeMetrics || [];
         const html = nodeMetrics.map((m) => {
           const metric =
             topologyStore.nodeMetrics[m].values.filter(
@@ -247,7 +259,13 @@ function update() {
             return ` <div class="mb-5"><span class="grey">${m}: </span>${metric.value}</div>`;
           }
         });
-        const html = [...htmlServer, ...htmlClient].join(" ");
+        const html = [
+          ...htmlServer,
+          ...htmlClient,
+          `<div><span class="grey">${t(
+            "detectPoint"
+          )}:</span>${data.detectPoints.join(" | ")}</div>`,
+        ].join(" ");
 
         return html;
       },
@@ -285,6 +303,18 @@ function update() {
     }
   }
 }
+async function handleInspect() {
+  svg.value.selectAll(".topo-svg-graph").remove();
+  const resp = await topologyStore.getServiceTopology(topologyStore.node.id);
+
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+  }
+  topologyStore.setNode(null);
+  topologyStore.setLink(null);
+  await init();
+  update();
+}
 function handleGoEndpoint() {
   const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${topologyStore.node.id}/${settings.value.endpointDashboard}`;
   const routeUrl = router.resolve({ path });
@@ -309,11 +339,25 @@ function handleGoAlarm() {
 
   window.open(routeUrl.href, "_blank");
 }
+async function backToTopology() {
+  svg.value.selectAll(".topo-svg-graph").remove();
+  const resp = await topologyStore.getServicesTopology();
+
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+  }
+  await init();
+  update();
+  topologyStore.setNode(null);
+  topologyStore.setLink(null);
+}
 async function getTopology() {
   let resp;
   switch (dashboardStore.entity) {
     case EntityType[0].value:
-      resp = await topologyStore.getServiceTopology();
+      resp = await topologyStore.getServiceTopology(
+        selectorStore.currentService.id
+      );
       break;
     case EntityType[1].value:
       resp = await topologyStore.getServicesTopology();
@@ -336,7 +380,10 @@ function resize() {
   svg.value.attr("height", height.value).attr("width", width.value);
 }
 function updateSettings(config: any) {
-  items.value = [{ id: "alarm", title: "Alarm", func: handleGoAlarm }];
+  items.value = [
+    { id: "inspect", title: "Inspect", func: handleInspect },
+    { id: "alarm", title: "Alarm", func: handleGoAlarm },
+  ];
   settings.value = config;
   if (config.nodeDashboard) {
     items.value.push({
@@ -363,6 +410,12 @@ function updateSettings(config: any) {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
+// watch(
+//   () => [topologyStore.nodes, topologyStore.calls],
+//   () => {
+//     update();
+//   }
+// );
 </script>
 <style lang="scss">
 .micro-topo-chart {
@@ -372,7 +425,7 @@ onBeforeUnmount(() => {
     position: absolute;
     top: 20px;
     right: 20px;
-    width: 350px;
+    width: 360px;
     height: 700px;
     background-color: #2b3037;
     overflow: auto;
@@ -399,17 +452,25 @@ onBeforeUnmount(() => {
     }
 
     span:hover {
-      color: #217ef2;
+      color: #409eff;
+      background-color: #eee;
     }
   }
 
-  .switch-icon {
+  .tool {
     position: absolute;
     top: 22px;
     right: 0;
-    color: #ccc;
+  }
+
+  .switch-icon {
     cursor: pointer;
     transition: all 0.5ms linear;
+    background-color: #252a2f99;
+    color: #ddd;
+    display: inline-block;
+    padding: 5px 8px 8px;
+    border-radius: 3px;
   }
 
   .topo-svg {

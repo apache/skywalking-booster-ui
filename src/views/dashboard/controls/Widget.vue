@@ -25,13 +25,11 @@ limitations under the License. -->
             v-show="data.widget?.tips"
           />
         </el-tooltip>
-        <el-popover
-          placement="bottom"
-          trigger="click"
-          :style="{ width: '100px' }"
-        >
+        <el-popover placement="bottom" trigger="click" :width="100">
           <template #reference>
-            <Icon iconName="ellipsis_v" size="middle" class="operation" />
+            <span>
+              <Icon iconName="ellipsis_v" size="middle" class="operation" />
+            </span>
           </template>
           <div class="tools" @click="editConfig">
             <span>{{ t("edit") }}</span>

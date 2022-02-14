@@ -68,13 +68,13 @@ export const topologyStore = defineStore({
     setLinkClientMetrics(m: { id: string; value: unknown }[]) {
       this.linkClientMetrics = m;
     },
-    async getServiceTopology() {
-      const serviceId = useSelectorStore().currentService.id;
+    async getServiceTopology(id: string) {
+      const serviceIds = [id];
       const duration = useAppStoreWithOut().durationTime;
       const res: AxiosResponse = await graphql
-        .query("getServiceTopology")
+        .query("getServicesTopology")
         .params({
-          serviceId,
+          serviceIds,
           duration,
         });
       if (!res.data.errors) {
