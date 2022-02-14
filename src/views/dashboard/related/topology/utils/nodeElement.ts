@@ -18,14 +18,7 @@ import icons from "@/assets/img/icons";
 import { Node } from "@/types/topology";
 
 icons["KAFKA-CONSUMER"] = icons.KAFKA;
-export default (
-  d3: any,
-  graph: any,
-  tool: any,
-  funcs: any,
-  tip: any,
-  t: any
-) => {
+export default (d3: any, graph: any, funcs: any, tip: any, t: any) => {
   const nodeEnter = graph
     .append("g")
     .call(
@@ -59,13 +52,7 @@ export default (
     .on("click", (event: any, d: Node | any) => {
       event.stopPropagation();
       event.preventDefault();
-      tool.attr("style", "display: none");
       funcs.handleNodeClick(d);
-      if (d.isReal) {
-        tool
-          .attr("transform", `translate(${d.x},${d.y - 20})`)
-          .attr("style", "display: block");
-      }
     });
   nodeEnter
     .append("image")

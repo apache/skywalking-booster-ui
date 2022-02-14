@@ -26,12 +26,24 @@ limitations under the License. -->
       @click="setConfig"
       class="switch-icon"
       size="middle"
-      iconName="format_indent_decrease"
+      iconName="settings"
     />
+    <div
+      class="operations-list"
+      v-if="topologyStore.node && topologyStore.node.isReal"
+      :style="{
+        top: operationsPos.y + 'px',
+        left: operationsPos.x + 'px',
+      }"
+    >
+      <span v-for="(item, index) of items" :key="index" @click="item.func">
+        {{ item.title }}
+      </span>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
@@ -39,7 +51,6 @@ import zoom from "./utils/zoom";
 import { simulationInit, simulationSkip } from "./utils/simulation";
 import nodeElement from "./utils/nodeElement";
 import { linkElement, anchorElement, arrowMarker } from "./utils/linkElement";
-import tool from "./utils/tool";
 import topoLegend from "./utils/legend";
 import { Node, Call } from "@/types/topology";
 import { useTopologyStore } from "@/store/modules/topology";
@@ -65,10 +76,16 @@ const node = ref<any>(null);
 const link = ref<any>(null);
 const anchor = ref<any>(null);
 const arrow = ref<any>(null);
-const tools = ref<any>(null);
 const legend = ref<any>(null);
 const showSetting = ref<boolean>(false);
 const settings = ref<any>({});
+const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
+const items = [
+  { title: "Endpoint", func: handleGoEndpoint },
+  { title: "Instance", func: handleGoInstance },
+  { title: "Dashboard", func: handleGoDashboard },
+  { title: "Alarm", func: handleGoAlarm },
+];
 
 onMounted(async () => {
   loading.value = true;
@@ -98,21 +115,14 @@ onMounted(async () => {
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
   arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
   svg.value.call(zoom(d3, graph.value));
-  tools.value = tool(graph.value, tip.value, [
-    { icon: "API", title: "Endpoint", func: handleGoEndpoint },
-    { icon: "INSTANCE", title: "Instance", func: handleGoInstance },
-    { icon: "TRACE", title: "Dashboard", func: handleGoDashboard },
-    { icon: "ALARM", title: "Alarm", func: handleGoAlarm },
-    { icon: "" },
-    { icon: "" },
-  ]);
   // legend
   legend.value = graph.value.append("g").attr("class", "topo-legend");
   topoLegend(legend.value, height.value, width.value);
   svg.value.on("click", (event: any) => {
     event.stopPropagation();
     event.preventDefault();
-    tools.value.attr("style", "display: none");
+    topologyStore.setNode(null);
+    showSetting.value = false;
   });
 });
 function ticked() {
@@ -156,13 +166,15 @@ function dragended(d: any) {
     simulation.value.alphaTarget(0);
   }
 }
-function handleNodeClick(d: Node) {
+function handleNodeClick(d: Node & { x: number; y: number }) {
   topologyStore.setNode(d);
-  topologyStore.setLink({});
+  topologyStore.setLink(null);
+  operationsPos.x = d.x;
+  operationsPos.y = d.y + 30;
 }
 function handleLinkClick(event: any, d: Call) {
   event.stopPropagation();
-  topologyStore.setNode({});
+  topologyStore.setNode(null);
   topologyStore.setLink(d);
   const path = `/dashboard/${dashboardStore.layerId}/${dashboardStore.entity}Relation/${d.source.id}/${d.target.id}/${settings.value.linkDashboard}`;
   const routeUrl = router.resolve({ path });
@@ -175,7 +187,6 @@ function update() {
   node.value = nodeElement(
     d3,
     node.value.enter(),
-    tools.value,
     {
       dragstart: dragstart,
       dragged: dragged,
@@ -321,9 +332,30 @@ watch(
     background-color: #2b3037;
     overflow: auto;
     padding: 0 10px;
-    border-radius: 4px;
+    border-radius: 3px;
     color: #ccc;
     transition: all 0.5ms linear;
+  }
+
+  .operations-list {
+    position: absolute;
+    padding: 10px;
+    color: #333;
+    cursor: pointer;
+    background-color: #fff;
+    border-radius: 3px;
+
+    span {
+      display: block;
+      height: 30px;
+      width: 100px;
+      line-height: 30px;
+      text-align: center;
+    }
+
+    span:hover {
+      color: #217ef2;
+    }
   }
 
   .switch-icon {

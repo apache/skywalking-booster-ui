@@ -19,11 +19,8 @@ export const linkElement = (graph: any) => {
   const linkEnter = graph
     .append("path")
     .attr("class", "topo-line")
-    // .attr("stroke-width", (d: { cpm: number }) => (d.cpm ? 8 : 2))
     .attr("marker-end", "url(#arrow)")
-    .attr("stroke", (d: { cpm: number }) =>
-      d.cpm ? "#217EF25f" : "#6a6d7777"
-    );
+    .attr("stroke", "#217EF25f");
   return linkEnter;
 };
 export const anchorElement = (graph: any, funcs: any, tip: any) => {
@@ -31,7 +28,7 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .append("circle")
     .attr("class", "topo-line-anchor")
     .attr("r", 5)
-    .attr("fill", (d: { cpm: number }) => (d.cpm ? "#217EF25f" : "#6a6d7777"))
+    .attr("fill", "#217EF25f")
     .on("mouseover", function (event: unknown, d: unknown) {
       tip.html(funcs.$tip).show(d, this);
     })
@@ -58,9 +55,6 @@ export const arrowMarker = (graph: any) => {
     .attr("orient", "auto");
   const arrowPath = "M2,2 L10,6 L2,10 L6,6 L2,2";
 
-  arrow
-    .append("path")
-    .attr("d", arrowPath)
-    .attr("fill", (d: { cpm: number }) => (d.cpm ? "#217EF25f" : "#6a6d7777"));
+  arrow.append("path").attr("d", arrowPath).attr("fill", "#217EF25f");
   return arrow;
 };

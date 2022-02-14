@@ -25,6 +25,7 @@ import { routesLog } from "./log";
 import { routesEvent } from "./event";
 import { routesAlert } from "./alert";
 import { routesSetting } from "./setting";
+import { routesAlarm } from "./alarm";
 
 const routes: Array<RouteRecordRaw> = [
   ...routesGen,
@@ -36,6 +37,7 @@ const routes: Array<RouteRecordRaw> = [
   ...routesEvent,
   ...routesAlert,
   ...routesSetting,
+  ...routesAlarm,
 ];
 
 const router = createRouter({
