@@ -18,6 +18,7 @@ import { defineStore } from "pinia";
 import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
+import query from "@/graphql/fetch";
 import {
   ConfigData,
   ConfigData1,
@@ -29,8 +30,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
 import { Duration } from "@/types/app";
-import axios, { AxiosResponse } from "axios";
-import { cancelToken } from "@/utils/cancelToken";
+import { AxiosResponse } from "axios";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -212,11 +212,7 @@ export const dashboardStore = defineStore({
       queryStr: string;
       conditions: { [key: string]: unknown };
     }) {
-      const res: AxiosResponse = await axios.post(
-        "/graphql",
-        { query: param.queryStr, variables: { ...param.conditions } },
-        { cancelToken: cancelToken() }
-      );
+      const res: AxiosResponse = await query(param);
       return res.data;
     },
   },

@@ -258,3 +258,28 @@ export function usePodsSource(
   });
   return data;
 }
+export function useQueryNodesMetrics(metrics: string[], ids: string[]) {
+  const appStore = useAppStoreWithOut();
+  const conditions: { [key: string]: unknown } = {
+    duration: appStore.durationTime,
+    ids,
+  };
+  const variables: string[] = [`$duration: Duration!`, `$ids: [ID!]!`];
+  const fragmentList = metrics.map((d: string, index: number) => {
+    conditions[`m${index}`] = d;
+    variables.push(`$m${index}: String!`);
+
+    return `${d}: getValues(metric: {
+      name: $m${index}
+      ids: $ids
+    }, duration: $duration) {
+      values {
+        id
+        value
+      }
+    }`;
+  });
+  const queryStr = `query queryData(${variables}) {${fragmentList.join(" ")}}`;
+
+  return { queryStr, conditions };
+}

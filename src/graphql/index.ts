@@ -27,7 +27,7 @@ const query: { [key: string]: string } = {
   ...dashboard,
   ...topology,
 };
-class Graph {
+class Graphql {
   private queryData = "";
   public query(queryData: string) {
     this.queryData = queryData;
@@ -57,4 +57,4 @@ class Graph {
   }
 }
 
-export default new Graph();
+export default new Graphql();

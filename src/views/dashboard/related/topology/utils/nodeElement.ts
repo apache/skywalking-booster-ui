@@ -18,7 +18,7 @@ import icons from "@/assets/img/icons";
 import { Node } from "@/types/topology";
 
 icons["KAFKA-CONSUMER"] = icons.KAFKA;
-export default (d3: any, graph: any, funcs: any, tip: any, t: any) => {
+export default (d3: any, graph: any, funcs: any, tip: any) => {
   const nodeEnter = graph
     .append("g")
     .call(
@@ -29,22 +29,7 @@ export default (d3: any, graph: any, funcs: any, tip: any, t: any) => {
         .on("end", funcs.dragended)
     )
     .on("mouseover", function (event: any, d: Node) {
-      tip
-        .html(() => {
-          return `
-          <div class="mb-5"><span class="grey">${t("name")}: </span>${
-            d.name
-          }</div>
-          <div class="mb-5"><span class="grey">${t("cpm")}: </span>${
-            d.cpm
-          }</div>
-          <div class="mb-5"><span class="grey">${t("latency")}: </span>${
-            d.latency
-          }</div>
-          <div><span class="grey">${t("sla")}: </span>${d.sla}</div>
-        `;
-        })
-        .show(d, this);
+      tip.html(funcs.tipHtml).show(d, this);
     })
     .on("mouseout", function () {
       tip.hide(this);

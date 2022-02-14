@@ -122,8 +122,9 @@ onMounted(async () => {
     event.stopPropagation();
     event.preventDefault();
     topologyStore.setNode(null);
-    showSetting.value = false;
+    // showSetting.value = false;
   });
+  update();
 });
 function ticked() {
   link.value.attr(
@@ -182,6 +183,9 @@ function handleLinkClick(event: any, d: Call) {
 }
 function update() {
   // node element
+  if (!node.value || !link.value) {
+    return;
+  }
   node.value = node.value.data(topologyStore.nodes, (d: Node) => d.id);
   node.value.exit().remove();
   node.value = nodeElement(
@@ -192,9 +196,25 @@ function update() {
       dragged: dragged,
       dragended: dragended,
       handleNodeClick: handleNodeClick,
+      tipHtml: (data: Node) => {
+        const nodeMetrics: string[] = settings.value.nodeMetrics;
+        if (!nodeMetrics) {
+          return;
+        }
+        const html = nodeMetrics.map((m) => {
+          const metric =
+            topologyStore.nodeMetrics[m].values.filter(
+              (val: { id: string; value: unknown }) => val.id === data.id
+            )[0] || {};
+          return ` <div class="mb-5"><span class="grey">${m}: </span>${metric.value}</div>`;
+        });
+        return [
+          ` <div class="mb-5"><span class="grey">name: </span>${data.name}</div>`,
+          ...html,
+        ].join(" ");
+      },
     },
-    tip.value,
-    t
+    tip.value
   ).merge(node.value);
   // line element
   link.value = link.value.data(topologyStore.calls, (d: Call) => d.id);
@@ -207,7 +227,7 @@ function update() {
     anchor.value.enter(),
     {
       handleLinkClick: handleLinkClick,
-      $tip: (data: any) =>
+      $tip: (data: Call) =>
         `
             <div class="mb-5"><span class="grey">${t("cpm")}: </span>${
           data.cpm
@@ -254,22 +274,19 @@ function update() {
   }
 }
 function handleGoEndpoint() {
-  const node = topologyStore.node;
-  const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${node.id}/${settings.value.endpointDashboard}`;
+  const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${topologyStore.node.id}/${settings.value.endpointDashboard}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
 }
 function handleGoInstance() {
-  const node = topologyStore.node;
-  const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${node.id}/${settings.value.instanceDashboard}`;
+  const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${topologyStore.node.id}/${settings.value.instanceDashboard}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
 }
 function handleGoDashboard() {
-  const node = topologyStore.node;
-  const path = `/dashboard/${dashboardStore.layerId}/Service/${node.id}/${settings.value.nodeDashboard}`;
+  const path = `/dashboard/${dashboardStore.layerId}/Service/${topologyStore.node.id}/${settings.value.nodeDashboard}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
@@ -312,12 +329,12 @@ function updateSettings(config: any) {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
-watch(
-  () => [topologyStore.calls, topologyStore.nodes],
-  () => {
-    update();
-  }
-);
+// watch(
+//   () => [topologyStore.calls, topologyStore.nodes],
+//   () => {
+//     update();
+//   }
+// );
 </script>
 <style lang="scss">
 .micro-topo-chart {

@@ -76,14 +76,18 @@ limitations under the License. -->
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useTopologyStore } from "@/store/modules/topology";
 import { ElMessage } from "element-plus";
 import { MetricCatalog } from "../../data";
 import { Option } from "@/types/app";
+import { useQueryNodesMetrics } from "@/hooks/useProcessor";
+import { Node, Call } from "@/types/topology";
 
 /*global defineEmits */
 const emit = defineEmits(["update"]);
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
+const topologyStore = useTopologyStore();
 const states = reactive<{
   linkDashboard: string;
   nodeDashboard: string;
@@ -130,13 +134,21 @@ function updateSettings() {
     nodeMetrics: states.nodeMetrics,
   });
 }
-function changeLinkMetrics(options: Option[]) {
+async function changeLinkMetrics(options: Option[]) {
   states.linkMetrics = options.map((d: Option) => d.value);
   updateSettings();
 }
-function changeNodeMetrics(options: Option[]) {
+async function changeNodeMetrics(options: Option[]) {
   states.nodeMetrics = options.map((d: Option) => d.value);
   updateSettings();
+
+  const ids = topologyStore.nodes.map((d: Node) => d.id);
+  const param = await useQueryNodesMetrics(states.nodeMetrics, ids);
+  const res = await topologyStore.getNodeMetrics(param);
+
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
 }
 </script>
 <style lang="scss" scoped>
