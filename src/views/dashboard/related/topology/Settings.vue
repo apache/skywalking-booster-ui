@@ -36,6 +36,7 @@ limitations under the License. -->
     <div class="label">{{ t("linkClientMetrics") }}</div>
     <Selector
       class="inputs"
+      v-show="dashboardStore.entity !== EntityType[2].value"
       :multiple="true"
       :value="states.linkClientMetrics"
       :options="states.linkMetricList"
@@ -92,6 +93,7 @@ import { MetricCatalog } from "../../data";
 import { Option } from "@/types/app";
 import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
 import { Node, Call } from "@/types/topology";
+import { EntityType } from "../../data";
 
 /*global defineEmits */
 const emit = defineEmits(["update"]);
@@ -131,9 +133,13 @@ async function getMetricList() {
     (d: { catalog: string }) =>
       dashboardStore.entity === (MetricCatalog as any)[d.catalog]
   );
+  const e =
+    dashboardStore.entity === EntityType[1].value
+      ? EntityType[0].value
+      : dashboardStore.entity;
   states.linkMetricList = (json.data.metrics || []).filter(
     (d: { catalog: string }) =>
-      dashboardStore.entity + "Relation" === (MetricCatalog as any)[d.catalog]
+      e + "Relation" === (MetricCatalog as any)[d.catalog]
   );
 }
 function updateSettings() {
@@ -150,6 +156,10 @@ function updateSettings() {
 async function changeLinkServerMetrics(options: Option[]) {
   states.linkServerMetrics = options.map((d: Option) => d.value);
   updateSettings();
+  if (!states.linkServerMetrics.length) {
+    topologyStore.setLinkServerMetrics({});
+    return;
+  }
   const idsS = topologyStore.calls
     .filter((i: Call) => i.detectPoints.includes("SERVER"))
     .map((b: Call) => b.id);
@@ -163,6 +173,10 @@ async function changeLinkServerMetrics(options: Option[]) {
 async function changeLinkClientMetrics(options: Option[]) {
   states.linkClientMetrics = options.map((d: Option) => d.value);
   updateSettings();
+  if (!states.linkClientMetrics.length) {
+    topologyStore.setLinkClientMetrics({});
+    return;
+  }
   const idsC = topologyStore.calls
     .filter((i: Call) => i.detectPoints.includes("CLIENT"))
     .map((b: Call) => b.id);
@@ -176,7 +190,10 @@ async function changeLinkClientMetrics(options: Option[]) {
 async function changeNodeMetrics(options: Option[]) {
   states.nodeMetrics = options.map((d: Option) => d.value);
   updateSettings();
-
+  if (!states.nodeMetrics.length) {
+    topologyStore.setNodeMetrics({});
+    return;
+  }
   const ids = topologyStore.nodes.map((d: Node) => d.id);
   const param = await useQueryTopologyMetrics(states.nodeMetrics, ids);
   const res = await topologyStore.getNodeMetrics(param);

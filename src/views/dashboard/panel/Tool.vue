@@ -179,12 +179,12 @@ async function getServices() {
   if (!dashboardStore.layerId) {
     return;
   }
-  if (dashboardStore.entity === EntityType[1].value) {
-    return;
-  }
   const json = await selectorStore.fetchServices(dashboardStore.layerId);
   if (json.errors) {
     ElMessage.error(json.errors);
+    return;
+  }
+  if (dashboardStore.entity === EntityType[1].value) {
     return;
   }
   selectorStore.setCurrentService(

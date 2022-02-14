@@ -16,6 +16,7 @@
  */
 import { defineStore } from "pinia";
 import { store } from "@/store";
+import { Service } from "@/types/selector";
 import { Node, Call } from "@/types/topology";
 import graphql from "@/graphql";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -23,14 +24,17 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { AxiosResponse } from "axios";
 import query from "@/graphql/fetch";
 
+interface MetricVal {
+  [key: string]: { values: { id: string; value: unknown }[] };
+}
 interface TopologyState {
   node: Node | null;
   call: Call | null;
   calls: Call[];
   nodes: Node[];
-  nodeMetrics: { id: string; value: unknown }[];
-  linkServerMetrics: { id: string; value: unknown }[];
-  linkClientMetrics: { id: string; value: unknown }[];
+  nodeMetrics: MetricVal;
+  linkServerMetrics: MetricVal;
+  linkClientMetrics: MetricVal;
 }
 
 export const topologyStore = defineStore({
@@ -40,9 +44,9 @@ export const topologyStore = defineStore({
     nodes: [],
     node: null,
     call: null,
-    nodeMetrics: [],
-    linkServerMetrics: [],
-    linkClientMetrics: [],
+    nodeMetrics: {},
+    linkServerMetrics: {},
+    linkClientMetrics: {},
   }),
   actions: {
     setNode(node: Node) {
@@ -55,6 +59,15 @@ export const topologyStore = defineStore({
       this.nodes = data.nodes;
       this.calls = data.calls;
     },
+    setNodeMetrics(m: { id: string; value: unknown }[]) {
+      this.nodeMetrics = m;
+    },
+    setLinkServerMetrics(m: { id: string; value: unknown }[]) {
+      this.linkServerMetrics = m;
+    },
+    setLinkClientMetrics(m: { id: string; value: unknown }[]) {
+      this.linkClientMetrics = m;
+    },
     async getServiceTopology() {
       const serviceId = useSelectorStore().currentService.id;
       const duration = useAppStoreWithOut().durationTime;
@@ -62,6 +75,20 @@ export const topologyStore = defineStore({
         .query("getServiceTopology")
         .params({
           serviceId,
+          duration,
+        });
+      if (!res.data.errors) {
+        this.setTopology(res.data.data.topology);
+      }
+      return res.data;
+    },
+    async getServicesTopology() {
+      const serviceIds = useSelectorStore().services.map((d: Service) => d.id);
+      const duration = useAppStoreWithOut().durationTime;
+      const res: AxiosResponse = await graphql
+        .query("getServicesTopology")
+        .params({
+          serviceIds,
           duration,
         });
       if (!res.data.errors) {
@@ -120,7 +147,7 @@ export const topologyStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.nodeMetrics = res.data.data;
+      this.setNodeMetrics(res.data.data);
       return res.data;
     },
     async getCallServerMetrics(param: {
@@ -132,7 +159,7 @@ export const topologyStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.linkServerMetrics = res.data.data;
+      this.setLinkServerMetrics(res.data.data);
       return res.data;
     },
     async getCallClientMetrics(param: {
@@ -144,7 +171,7 @@ export const topologyStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.linkClientMetrics = res.data.data;
+      this.setLinkClientMetrics(res.data.data);
       return res.data;
     },
   },

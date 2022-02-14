@@ -80,12 +80,7 @@ const legend = ref<any>(null);
 const showSetting = ref<boolean>(false);
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
-const items = [
-  { title: "Endpoint", func: handleGoEndpoint },
-  { title: "Instance", func: handleGoInstance },
-  { title: "Dashboard", func: handleGoDashboard },
-  { title: "Alarm", func: handleGoAlarm },
-];
+const items = ref([{ id: "alarm", title: "Alarm", func: handleGoAlarm }]);
 
 onMounted(async () => {
   loading.value = true;
@@ -177,7 +172,11 @@ function handleLinkClick(event: any, d: Call) {
   event.stopPropagation();
   topologyStore.setNode(null);
   topologyStore.setLink(d);
-  const path = `/dashboard/${dashboardStore.layerId}/${dashboardStore.entity}Relation/${d.source.id}/${d.target.id}/${settings.value.linkDashboard}`;
+  const e =
+    dashboardStore.entity === EntityType[1].value
+      ? EntityType[0].value
+      : dashboardStore.entity;
+  const path = `/dashboard/${dashboardStore.layerId}/${e}Relation/${d.source.id}/${d.target.id}/${settings.value.linkDashboard}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
 }
@@ -228,8 +227,10 @@ function update() {
     {
       handleLinkClick: handleLinkClick,
       tipHtml: (data: Call) => {
-        const linkClientMetrics: string[] = settings.value.linkClientMetrics;
-        const linkServerMetrics: string[] = settings.value.linkServerMetrics;
+        const linkClientMetrics: string[] =
+          settings.value.linkClientMetrics || [];
+        const linkServerMetrics: string[] =
+          settings.value.linkServerMetrics || [];
         const htmlServer = linkServerMetrics.map((m) => {
           const metric = topologyStore.linkServerMetrics[m].values.filter(
             (val: { id: string; value: unknown }) => val.id === data.id
@@ -315,7 +316,7 @@ async function getTopology() {
       resp = await topologyStore.getServiceTopology();
       break;
     case EntityType[1].value:
-      resp = await topologyStore.getGlobalTopology();
+      resp = await topologyStore.getServicesTopology();
       break;
     case EntityType[2].value:
       resp = await topologyStore.getEndpointTopology();
@@ -335,7 +336,29 @@ function resize() {
   svg.value.attr("height", height.value).attr("width", width.value);
 }
 function updateSettings(config: any) {
+  items.value = [{ id: "alarm", title: "Alarm", func: handleGoAlarm }];
   settings.value = config;
+  if (config.nodeDashboard) {
+    items.value.push({
+      id: "dashboard",
+      title: "Dashboard",
+      func: handleGoDashboard,
+    });
+  }
+  if (config.instanceDashboard) {
+    items.value.push({
+      id: "instance",
+      title: "Instance",
+      func: handleGoInstance,
+    });
+  }
+  if (config.endpointDashboard) {
+    items.value.push({
+      id: "endpoint",
+      title: "Endpoint",
+      func: handleGoEndpoint,
+    });
+  }
 }
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);

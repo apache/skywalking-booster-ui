@@ -93,6 +93,10 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
+    if (dashboardStore.entity === EntityType[1].value) {
+      queryMetrics();
+    }
+
     async function queryMetrics() {
       const params = await useQueryProcessor(props.data);
 
