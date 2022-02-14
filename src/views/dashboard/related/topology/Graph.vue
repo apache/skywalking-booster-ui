@@ -43,8 +43,8 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount, watch, reactive } from "vue";
-import { useI18n } from "vue-i18n";
+import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
+// import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
 import zoom from "./utils/zoom";
@@ -61,7 +61,7 @@ import { ElMessage } from "element-plus";
 import Settings from "./Settings.vue";
 
 /*global Nullable */
-const { t } = useI18n();
+// const { t } = useI18n();
 const topologyStore = useTopologyStore();
 const dashboardStore = useDashboardStore();
 const height = ref<number>(document.body.clientHeight - 90);
@@ -227,18 +227,29 @@ function update() {
     anchor.value.enter(),
     {
       handleLinkClick: handleLinkClick,
-      $tip: (data: Call) =>
-        `
-            <div class="mb-5"><span class="grey">${t("cpm")}: </span>${
-          data.cpm
-        }</div>
-            <div class="mb-5"><span class="grey">${t("latency")}: </span>${
-          data.latency
-        }</div>
-            <div><span class="grey">${t(
-              "detectPoint"
-            )}: </span>${data.detectPoints.join(" | ")}</div>
-          `,
+      tipHtml: (data: Call) => {
+        const linkClientMetrics: string[] = settings.value.linkClientMetrics;
+        const linkServerMetrics: string[] = settings.value.linkServerMetrics;
+        const htmlServer = linkServerMetrics.map((m) => {
+          const metric = topologyStore.linkServerMetrics[m].values.filter(
+            (val: { id: string; value: unknown }) => val.id === data.id
+          )[0];
+          if (metric) {
+            return ` <div class="mb-5"><span class="grey">${m}: </span>${metric.value}</div>`;
+          }
+        });
+        const htmlClient = linkClientMetrics.map((m) => {
+          const metric = topologyStore.linkClientMetrics[m].values.filter(
+            (val: { id: string; value: unknown }) => val.id === data.id
+          )[0];
+          if (metric) {
+            return ` <div class="mb-5"><span class="grey">${m}: </span>${metric.value}</div>`;
+          }
+        });
+        const html = [...htmlServer, ...htmlClient].join(" ");
+
+        return html;
+      },
     },
     tip.value
   ).merge(anchor.value);

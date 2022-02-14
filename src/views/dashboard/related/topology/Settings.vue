@@ -27,11 +27,21 @@ limitations under the License. -->
     <Selector
       class="inputs"
       :multiple="true"
-      :value="states.linkMetrics"
+      :value="states.linkServerMetrics"
       :options="states.linkMetricList"
       size="small"
       placeholder="Select metrics"
-      @change="changeLinkMetrics"
+      @change="changeLinkServerMetrics"
+    />
+    <div class="label">{{ t("linkMetrics") }}</div>
+    <Selector
+      class="inputs"
+      :multiple="true"
+      :value="states.linkClientMetrics"
+      :options="states.linkMetricList"
+      size="small"
+      placeholder="Select metrics"
+      @change="changeLinkClientMetrics"
     />
   </div>
   <div class="node-settings">
@@ -80,7 +90,7 @@ import { useTopologyStore } from "@/store/modules/topology";
 import { ElMessage } from "element-plus";
 import { MetricCatalog } from "../../data";
 import { Option } from "@/types/app";
-import { useQueryNodesMetrics } from "@/hooks/useProcessor";
+import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
 import { Node, Call } from "@/types/topology";
 
 /*global defineEmits */
@@ -93,7 +103,8 @@ const states = reactive<{
   nodeDashboard: string;
   instanceDashboard: string;
   endpointDashboard: string;
-  linkMetrics: string[];
+  linkServerMetrics: string[];
+  linkClientMetrics: string[];
   nodeMetrics: string[];
   nodeMetricList: Option[];
   linkMetricList: Option[];
@@ -102,7 +113,8 @@ const states = reactive<{
   nodeDashboard: "",
   instanceDashboard: "",
   endpointDashboard: "",
-  linkMetrics: [],
+  linkServerMetrics: [],
+  linkClientMetrics: [],
   nodeMetrics: [],
   nodeMetricList: [],
   linkMetricList: [],
@@ -130,20 +142,43 @@ function updateSettings() {
     nodeDashboard: states.nodeDashboard,
     endpointDashboard: states.endpointDashboard,
     instanceDashboard: states.instanceDashboard,
-    linkMetrics: states.linkMetrics,
+    linkServerMetrics: states.linkServerMetrics,
+    linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
   });
 }
-async function changeLinkMetrics(options: Option[]) {
-  states.linkMetrics = options.map((d: Option) => d.value);
+async function changeLinkServerMetrics(options: Option[]) {
+  states.linkServerMetrics = options.map((d: Option) => d.value);
   updateSettings();
+  const idsS = topologyStore.calls
+    .filter((i: Call) => i.detectPoints.includes("SERVER"))
+    .map((b: Call) => b.id);
+  const param = await useQueryTopologyMetrics(states.linkServerMetrics, idsS);
+  const res = await topologyStore.getCallServerMetrics(param);
+
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
+}
+async function changeLinkClientMetrics(options: Option[]) {
+  states.linkClientMetrics = options.map((d: Option) => d.value);
+  updateSettings();
+  const idsC = topologyStore.calls
+    .filter((i: Call) => i.detectPoints.includes("CLIENT"))
+    .map((b: Call) => b.id);
+  const param = await useQueryTopologyMetrics(states.linkClientMetrics, idsC);
+  const res = await topologyStore.getCallClientMetrics(param);
+
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
 }
 async function changeNodeMetrics(options: Option[]) {
   states.nodeMetrics = options.map((d: Option) => d.value);
   updateSettings();
 
   const ids = topologyStore.nodes.map((d: Node) => d.id);
-  const param = await useQueryNodesMetrics(states.nodeMetrics, ids);
+  const param = await useQueryTopologyMetrics(states.nodeMetrics, ids);
   const res = await topologyStore.getNodeMetrics(param);
 
   if (res.errors) {

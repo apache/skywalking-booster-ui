@@ -29,6 +29,8 @@ interface TopologyState {
   calls: Call[];
   nodes: Node[];
   nodeMetrics: { id: string; value: unknown }[];
+  linkServerMetrics: { id: string; value: unknown }[];
+  linkClientMetrics: { id: string; value: unknown }[];
 }
 
 export const topologyStore = defineStore({
@@ -39,6 +41,8 @@ export const topologyStore = defineStore({
     node: null,
     call: null,
     nodeMetrics: [],
+    linkServerMetrics: [],
+    linkClientMetrics: [],
   }),
   actions: {
     setNode(node: Node) {
@@ -117,6 +121,30 @@ export const topologyStore = defineStore({
         return res.data;
       }
       this.nodeMetrics = res.data.data;
+      return res.data;
+    },
+    async getCallServerMetrics(param: {
+      queryStr: string;
+      conditions: { [key: string]: unknown };
+    }) {
+      const res: AxiosResponse = await query(param);
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.linkServerMetrics = res.data.data;
+      return res.data;
+    },
+    async getCallClientMetrics(param: {
+      queryStr: string;
+      conditions: { [key: string]: unknown };
+    }) {
+      const res: AxiosResponse = await query(param);
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.linkClientMetrics = res.data.data;
       return res.data;
     },
   },

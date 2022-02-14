@@ -117,37 +117,7 @@ export const InstanceTopology = {
   }
 `,
 };
-export const TopoMetric = {
-  variable: "$ids: [ID!]!",
-  query: `
-  sla: getValues(metric: {
-    name: "service_sla"
-    ids: $ids
-  }, duration: $duration) {
-    values {
-      id
-      value
-    }
-  }
-  nodeCpm: getValues(metric: {
-    name: "service_cpm"
-    ids: $ids
-  }, duration: $duration) {
-    values {
-      id
-      value
-    }
-  }
-  nodeLatency: getValues(metric: {
-    name: "service_resp_time"
-    ids: $ids
-  }, duration: $duration) {
-    values {
-      id
-      value
-    }
-  }`,
-};
+
 export const TopoServiceMetric = {
   variable: "$idsS: [ID!]!",
   query: `

@@ -30,7 +30,7 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .attr("r", 5)
     .attr("fill", "#217EF25f")
     .on("mouseover", function (event: unknown, d: unknown) {
-      tip.html(funcs.$tip).show(d, this);
+      tip.html(funcs.tipHtml).show(d, this);
     })
     .on("mouseout", function () {
       tip.hide(this);

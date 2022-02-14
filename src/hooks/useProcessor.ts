@@ -258,7 +258,7 @@ export function usePodsSource(
   });
   return data;
 }
-export function useQueryNodesMetrics(metrics: string[], ids: string[]) {
+export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   const appStore = useAppStoreWithOut();
   const conditions: { [key: string]: unknown } = {
     duration: appStore.durationTime,
