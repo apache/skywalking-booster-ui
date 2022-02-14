@@ -19,7 +19,7 @@ limitations under the License. -->
     v-loading="loading"
     :style="`height: ${height}`"
   >
-    <div class="setting" v-if="showSetting">
+    <div class="setting" v-show="showSetting">
       <Settings @update="updateSettings" />
     </div>
     <Icon
@@ -340,12 +340,6 @@ function updateSettings(config: any) {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
-// watch(
-//   () => [topologyStore.calls, topologyStore.nodes],
-//   () => {
-//     update();
-//   }
-// );
 </script>
 <style lang="scss">
 .micro-topo-chart {
@@ -359,7 +353,7 @@ onBeforeUnmount(() => {
     height: 700px;
     background-color: #2b3037;
     overflow: auto;
-    padding: 0 10px;
+    padding: 0 15px;
     border-radius: 3px;
     color: #ccc;
     transition: all 0.5ms linear;

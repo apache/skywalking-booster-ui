@@ -28,7 +28,6 @@ limitations under the License. -->
       :key="item.value"
       :label="item.label"
       :value="item.value"
-      :disabled="!!item.disabled"
     >
     </el-option>
   </el-select>

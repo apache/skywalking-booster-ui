@@ -23,7 +23,7 @@ limitations under the License. -->
       size="small"
       class="inputs"
     />
-    <div class="label">{{ t("linkMetrics") }}</div>
+    <div class="label">{{ t("linkServerMetrics") }}</div>
     <Selector
       class="inputs"
       :multiple="true"
@@ -33,7 +33,7 @@ limitations under the License. -->
       placeholder="Select metrics"
       @change="changeLinkServerMetrics"
     />
-    <div class="label">{{ t("linkMetrics") }}</div>
+    <div class="label">{{ t("linkClientMetrics") }}</div>
     <Selector
       class="inputs"
       :multiple="true"
