@@ -118,9 +118,9 @@ limitations under the License. -->
           v-for="(i, j) in local.months"
           @click="
             is($event) &&
-              ((state.showMonths = m === 'M'),
+              ((state.showMonths = state.m === 'M'),
               (state.month = j),
-              m === 'M' && ok('m'))
+              state.m === 'M' && ok('m'))
           "
           :class="[
             status(
@@ -142,7 +142,7 @@ limitations under the License. -->
           v-for="(i, j) in years"
           @click="
             is($event) &&
-              ((state.showYears = m === 'Y'),
+              ((state.showYears = state.m === 'Y'),
               (state.year = i),
               state.m === 'Y' && ok('y'))
           "
@@ -278,6 +278,7 @@ limitations under the License. -->
 
 <script lang="ts" setup>
 import { computed, onMounted, watch, reactive } from "vue";
+import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 /*global defineProps, defineEmits */
 const emit = defineEmits(["input", "setDates", "ok"]);
@@ -286,7 +287,7 @@ const props = defineProps({
   value: { type: Date },
   left: { type: Boolean, default: false },
   right: { type: Boolean, default: false },
-  dates: { default: [] },
+  dates: { type: Array as PropType<number[] | string[]>, default: () => [] },
   disabledDate: { type: Function, default: () => false },
   format: {
     type: String,
@@ -353,10 +354,10 @@ const parse = (num: number): number => {
   return Math.floor(num / 1000);
 };
 const start = computed(() => {
-  return parse(props.dates[0]);
+  return parse(Number(props.dates[0]));
 });
 const end = computed(() => {
-  return parse(props.dates[1]);
+  return parse(Number(props.dates[1]));
 });
 const ys = computed(() => {
   return Math.floor(state.year / 10) * 10;
@@ -550,7 +551,7 @@ const ok = (info: any) => {
     emit("setDates", _time);
   }
   emit("input", _time);
-  ok(info === "h");
+  emit("ok", info === "h");
 };
 onMounted(() => {
   const is = (c: string) => props.format.indexOf(c) !== -1;
