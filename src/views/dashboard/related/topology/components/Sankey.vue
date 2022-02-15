@@ -14,11 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <Graph :option="option" />
+  <Graph :option="option" @select="clickChart" />
 </template>
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useTopologyStore } from "@/store/modules/topology";
+import { Node, Call } from "@/types/topology";
 
 const topologyStore = useTopologyStore();
 const option = computed(() => getOption());
@@ -63,13 +64,58 @@ function getOption() {
         position: "bottom",
         formatter: (param: { data: any; dataType: string }) => {
           if (param.dataType === "edge") {
-            return `${param.data.sourceObj.serviceName} -> ${param.data.targetObj.serviceName}`;
+            return linkTooltip(param.data);
           }
-          return param.data.serviceName;
+          return nodeTooltip(param.data);
         },
       },
     },
   };
+}
+function linkTooltip(data: Call) {
+  const clientMetrics: string[] = Object.keys(topologyStore.linkClientMetrics);
+  const serverMetrics: string[] = Object.keys(topologyStore.linkServerMetrics);
+  const htmlServer = serverMetrics.map((m) => {
+    const metric = topologyStore.linkServerMetrics[m].values.filter(
+      (val: { id: string; value: unknown }) => val.id === data.id
+    )[0];
+    if (metric) {
+      return ` <div><span>${m}: </span>${metric.value}</div>`;
+    }
+  });
+  const htmlClient = clientMetrics.map((m) => {
+    const metric = topologyStore.linkClientMetrics[m].values.filter(
+      (val: { id: string; value: unknown }) => val.id === data.id
+    )[0];
+    if (metric) {
+      return ` <div><span>${m}: </span>${metric.value}</div>`;
+    }
+  });
+  const html = [
+    `<div>${data.sourceObj.serviceName} -> ${data.targetObj.serviceName}</div>`,
+    ...htmlServer,
+    ...htmlClient,
+  ].join(" ");
+
+  return html;
+}
+
+function nodeTooltip(data: Node) {
+  const nodeMetrics: string[] = Object.keys(topologyStore.nodeMetrics);
+  const html = nodeMetrics.map((m) => {
+    const metric =
+      topologyStore.nodeMetrics[m].values.filter(
+        (val: { id: string; value: unknown }) => val.id === data.id
+      )[0] || {};
+    return ` <div><span>${m}: </span>${metric.value}</div>`;
+  });
+  return [` <div><span>name: </span>${data.serviceName}</div>`, ...html].join(
+    " "
+  );
+}
+
+function clickChart(param: any) {
+  console.log(param);
 }
 </script>
 <style lang="scss" scoped>

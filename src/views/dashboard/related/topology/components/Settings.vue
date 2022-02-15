@@ -144,6 +144,8 @@ async function getMetricList() {
   const e =
     dashboardStore.entity === EntityType[1].value
       ? EntityType[0].value
+      : dashboardStore.entity === EntityType[4].value
+      ? EntityType[3].value
       : dashboardStore.entity;
   states.linkMetricList = (json.data.metrics || []).filter(
     (d: { catalog: string }) =>

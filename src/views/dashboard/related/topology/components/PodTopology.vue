@@ -14,15 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="tool">
-    <span class="label">{{ t("currentDepth") }}</span>
-    <Selector
-      class="inputs"
-      :value="depth"
-      :options="depthList"
-      placeholder="Select metrics"
-      @change="changeDepth"
-      :style="`background: '#2b3037';`"
-    />
+    <span v-show="dashboardStore.entity === EntityType[2].value">
+      <span class="label">{{ t("currentDepth") }}</span>
+      <Selector
+        class="inputs"
+        :value="depth"
+        :options="depthList"
+        placeholder="Select a option"
+        @change="changeDepth"
+      />
+    </span>
     <span class="switch-icon ml-5" title="Settings">
       <Icon @click="setConfig" size="middle" iconName="settings" />
     </span>
@@ -55,7 +56,7 @@ const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
 const loading = ref<boolean>(false);
-const height = ref<number>(document.body.clientHeight - 110);
+const height = ref<number>(document.body.clientHeight - 150);
 const width = ref<number>(document.body.clientWidth - 40);
 const showSettings = ref<boolean>(false);
 const depth = ref<string>("2");

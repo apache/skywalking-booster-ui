@@ -129,6 +129,7 @@ export const topologyStore = defineStore({
     },
     setLinkServerMetrics(m: { id: string; value: unknown }[]) {
       this.linkServerMetrics = m;
+      console.log(m);
     },
     setLinkClientMetrics(m: { id: string; value: unknown }[]) {
       this.linkClientMetrics = m;
@@ -294,7 +295,6 @@ export const topologyStore = defineStore({
       }
     },
     async getEndpointTopology(endpointIds: string[]) {
-      // const endpointId = useSelectorStore().currentPod.id;
       const duration = useAppStoreWithOut().durationTime;
       const variables = ["$duration: Duration!"];
       const fragment = endpointIds.map((id: string, index: number) => {

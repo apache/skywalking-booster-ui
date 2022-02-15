@@ -30,4 +30,5 @@ export interface Node {
   type: string;
   isReal: boolean;
   layer?: string;
+  serviceName?: string;
 }
