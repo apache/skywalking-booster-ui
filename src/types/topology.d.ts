@@ -15,31 +15,17 @@
  * limitations under the License.
  */
 export interface Call {
-  avgResponseTime: number;
-  cpm: number;
-  isAlert: boolean;
   source: string | any;
   target: string | any;
   id: string;
   detectPoints: string[];
   type?: string;
-  sourceObj?: any;
-  isGroupActive?: boolean;
-  latency?: number;
+  layer?: string;
 }
 export interface Node {
-  apdex: number;
-  avgResponseTime: number;
-  cpm: number;
   id: string;
-  isAlarm: boolean;
   name: string;
-  numOfServer: number;
-  numOfServerAlarm: number;
-  numOfServiceAlarm: number;
-  sla: number;
   type: string;
   isReal: boolean;
-  isGroupActive?: boolean;
-  latency?: number;
+  layer?: string;
 }

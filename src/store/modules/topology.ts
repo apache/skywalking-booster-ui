@@ -56,8 +56,25 @@ export const topologyStore = defineStore({
       this.call = link;
     },
     setTopology(data: { nodes: Node[]; calls: Call[] }) {
-      this.nodes = data.nodes;
-      this.calls = data.calls;
+      this.nodes = data.nodes.map((n: Node) => {
+        const service =
+          useSelectorStore().services.filter(
+            (d: Service) => d.id === n.id
+          )[0] || {};
+        n.layer = service.layers ? service.layers[0] : null;
+        return n;
+      });
+      this.calls = data.calls.map((c: Call) => {
+        for (const s of useSelectorStore().services) {
+          if (c.source.id === s.id) {
+            c.source.layer = s.layers[0];
+          }
+          if (c.target.id === s.id) {
+            c.target.layer = s.layers[0];
+          }
+        }
+        return c;
+      });
     },
     setNodeMetrics(m: { id: string; value: unknown }[]) {
       this.nodeMetrics = m;

@@ -36,7 +36,7 @@ limitations under the License. -->
     </div>
     <div
       class="operations-list"
-      v-if="topologyStore.node && topologyStore.node.isReal"
+      v-if="topologyStore.node"
       :style="{
         top: operationsPos.y + 'px',
         left: operationsPos.x + 'px',
@@ -182,8 +182,22 @@ function handleNodeClick(d: Node & { x: number; y: number }) {
   topologyStore.setLink(null);
   operationsPos.x = d.x;
   operationsPos.y = d.y + 30;
+  console.log(d.layer === String(dashboardStore.layerId));
+  if (d.layer === String(dashboardStore.layerId)) {
+    return;
+  }
+  items.value = [
+    { id: "inspect", title: "Inspect", func: handleInspect },
+    { id: "alarm", title: "Alarm", func: handleGoAlarm },
+  ];
 }
 function handleLinkClick(event: any, d: Call) {
+  if (
+    d.source.layer !== dashboardStore.layerId ||
+    d.target.layer !== dashboardStore.layerId
+  ) {
+    return;
+  }
   event.stopPropagation();
   topologyStore.setNode(null);
   topologyStore.setLink(d);
@@ -305,13 +319,14 @@ function update() {
 }
 async function handleInspect() {
   svg.value.selectAll(".topo-svg-graph").remove();
-  const resp = await topologyStore.getServiceTopology(topologyStore.node.id);
+  const id = topologyStore.node.id;
+  topologyStore.setNode(null);
+  topologyStore.setLink(null);
+  const resp = await topologyStore.getServiceTopology(id);
 
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
-  topologyStore.setNode(null);
-  topologyStore.setLink(null);
   await init();
   update();
 }
@@ -410,12 +425,6 @@ function updateSettings(config: any) {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
-// watch(
-//   () => [topologyStore.nodes, topologyStore.calls],
-//   () => {
-//     update();
-//   }
-// );
 </script>
 <style lang="scss">
 .micro-topo-chart {

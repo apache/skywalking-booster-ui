@@ -43,7 +43,6 @@ interface Option {
 }
 
 /*global  defineProps, defineEmits*/
-
 const emit = defineEmits(["change"]);
 const props = defineProps({
   options: {
@@ -54,7 +53,7 @@ const props = defineProps({
     type: [Array, String] as PropType<string[] | string>,
     default: () => [],
   },
-  size: { type: [], default: "default" },
+  size: { type: null, default: "default" },
   placeholder: { type: String, default: "Select a option" },
   borderRadius: { type: Number, default: 3 },
   multiple: { type: Boolean, default: false },
