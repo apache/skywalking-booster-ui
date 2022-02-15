@@ -20,7 +20,7 @@ limitations under the License. -->
 import { ref, computed, onMounted } from "vue";
 import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { EntityType } from "../../data";
+import { EntityType } from "../../../data";
 import { ElMessage } from "element-plus";
 
 const topologyStore = useTopologyStore();

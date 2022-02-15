@@ -33,17 +33,20 @@ limitations under the License. -->
       placeholder="Select metrics"
       @change="changeLinkServerMetrics"
     />
-    <div class="label">{{ t("linkClientMetrics") }}</div>
-    <Selector
-      class="inputs"
-      v-show="dashboardStore.entity !== EntityType[2].value"
-      :multiple="true"
-      :value="states.linkClientMetrics"
-      :options="states.linkMetricList"
-      size="small"
-      placeholder="Select metrics"
-      @change="changeLinkClientMetrics"
-    />
+    <span v-show="dashboardStore.entity !== EntityType[2].value">
+      <div class="label">
+        {{ t("linkClientMetrics") }}
+      </div>
+      <Selector
+        class="inputs"
+        :multiple="true"
+        :value="states.linkClientMetrics"
+        :options="states.linkMetricList"
+        size="small"
+        placeholder="Select metrics"
+        @change="changeLinkClientMetrics"
+      />
+    </span>
   </div>
   <div class="node-settings">
     <h5 class="title">{{ t("nodeSettings") }}</h5>
@@ -55,22 +58,24 @@ limitations under the License. -->
       size="small"
       class="inputs"
     />
-    <div class="label">{{ t("instanceDashboard") }}</div>
-    <el-input
-      v-model="states.instanceDashboard"
-      placeholder="Please input a dashboard name for service instances"
-      @change="updateSettings"
-      size="small"
-      class="inputs"
-    />
-    <div class="label">{{ t("endpointDashboard") }}</div>
-    <el-input
-      v-model="states.endpointDashboard"
-      placeholder="Please input a dashboard name for endpoints"
-      @change="updateSettings"
-      size="small"
-      class="inputs"
-    />
+    <span v-show="isService">
+      <div class="label">{{ t("instanceDashboard") }}</div>
+      <el-input
+        v-model="states.instanceDashboard"
+        placeholder="Please input a dashboard name for service instances"
+        @change="updateSettings"
+        size="small"
+        class="inputs"
+      />
+      <div class="label">{{ t("endpointDashboard") }}</div>
+      <el-input
+        v-model="states.endpointDashboard"
+        placeholder="Please input a dashboard name for endpoints"
+        @change="updateSettings"
+        size="small"
+        class="inputs"
+      />
+    </span>
     <div class="label">{{ t("nodeMetrics") }}</div>
     <Selector
       class="inputs"
@@ -84,16 +89,16 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useTopologyStore } from "@/store/modules/topology";
 import { ElMessage } from "element-plus";
-import { MetricCatalog } from "../../data";
+import { MetricCatalog } from "../../../data";
 import { Option } from "@/types/app";
 import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
 import { Node, Call } from "@/types/topology";
-import { EntityType } from "../../data";
+import { EntityType } from "../../../data";
 
 /*global defineEmits */
 const emit = defineEmits(["update"]);
@@ -121,6 +126,9 @@ const states = reactive<{
   nodeMetricList: [],
   linkMetricList: [],
 });
+const isService = ref(
+  [EntityType[1].value, EntityType[0].value].includes(dashboardStore.entity)
+);
 
 getMetricList();
 async function getMetricList() {

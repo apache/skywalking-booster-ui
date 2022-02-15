@@ -13,15 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div :style="`height:${height}px;width:${width}px;`" v-if="isSankey">
-    <Sankey />
-  </div>
+  <PodTopology v-if="isSankey" />
   <Graph v-else />
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import Graph from "./Graph.vue";
-import Sankey from "./Sankey.vue";
+import Graph from "./components/Graph.vue";
+import PodTopology from "./components/PodTopology.vue";
 import { EntityType } from "../../data";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
@@ -29,6 +27,4 @@ const dashboardStore = useDashboardStore();
 const isSankey = ref<boolean>(
   [EntityType[2].value, EntityType[4].value].includes(dashboardStore.entity)
 );
-const height = ref<number>(document.body.clientHeight - 90);
-const width = ref<number>(document.body.clientWidth - 40);
 </script>

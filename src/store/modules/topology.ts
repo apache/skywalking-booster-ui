@@ -110,6 +110,17 @@ export const topologyStore = defineStore({
         }
         return prev;
       }, []);
+      for (const call of calls) {
+        for (const node of nodes) {
+          if (call.source === node.id) {
+            call.sourceObj = node;
+          }
+          if (call.target === node.id) {
+            call.targetObj = node;
+          }
+        }
+        call.value = call.value || 1;
+      }
       this.calls = calls;
       this.nodes = nodes;
     },

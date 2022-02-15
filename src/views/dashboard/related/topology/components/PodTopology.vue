@@ -1,0 +1,84 @@
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+<template>
+  <div class="tool">
+    <span class="switch-icon ml-5" title="Settings">
+      <Icon @click="setConfig" size="middle" iconName="settings" />
+    </span>
+    <div class="settings" v-show="showSettings">
+      <Settings @update="updateConfig" />
+    </div>
+  </div>
+  <div class="sankey" :style="`height:${height}px;width:${width}px;`">
+    <Sankey />
+  </div>
+</template>
+<script lang="ts" setup>
+import { ref } from "vue";
+import Sankey from "./Sankey.vue";
+import Settings from "./Settings.vue";
+
+const height = ref<number>(document.body.clientHeight - 110);
+const width = ref<number>(document.body.clientWidth - 40);
+const showSettings = ref<boolean>(false);
+
+function setConfig() {
+  showSettings.value = !showSettings.value;
+}
+
+function updateConfig(config: any) {
+  console.log(config);
+}
+</script>
+<style lang="scss" scoped>
+.sankey {
+  margin-top: 10px;
+}
+
+.settings {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 360px;
+  height: 700px;
+  background-color: #2b3037;
+  overflow: auto;
+  padding: 0 15px;
+  border-radius: 3px;
+  color: #ccc;
+  transition: all 0.5ms linear;
+  z-index: 99;
+  text-align: left;
+}
+
+.tool {
+  text-align: right;
+  margin-top: 10px;
+  position: relative;
+}
+
+.switch-icon {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.5ms linear;
+  background-color: #252a2f99;
+  color: #ddd;
+  display: inline-block;
+  border-radius: 3px;
+}
+</style>
