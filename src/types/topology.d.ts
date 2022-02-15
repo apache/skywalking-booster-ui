@@ -20,7 +20,9 @@ export interface Call {
   id: string;
   detectPoints: string[];
   type?: string;
-  layer?: string;
+  sourceObj?: any;
+  targetObj?: any;
+  value?: number;
 }
 export interface Node {
   id: string;

@@ -19,6 +19,7 @@ import {
   LineSeriesOption,
   HeatmapSeriesOption,
   PieSeriesOption,
+  SankeySeriesOption,
 } from "echarts/charts";
 import {
   TitleComponentOption,
@@ -46,6 +47,7 @@ export type ECOption = echarts.ComposeOption<
   | LegendComponentOption
   | HeatmapSeriesOption
   | PieSeriesOption
+  | SankeySeriesOption
 >;
 
 export function useECharts(

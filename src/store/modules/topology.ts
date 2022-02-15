@@ -28,8 +28,8 @@ interface MetricVal {
   [key: string]: { values: { id: string; value: unknown }[] };
 }
 interface TopologyState {
-  node: Node | null;
-  call: Call | null;
+  node: Nullable<Node>;
+  call: Nullable<Call>;
   calls: Call[];
   nodes: Node[];
   nodeMetrics: MetricVal;
@@ -75,6 +75,43 @@ export const topologyStore = defineStore({
         }
         return c;
       });
+    },
+    setInstanceTopology(data: { nodes: Node[]; calls: Call[] }) {
+      for (const call of data.calls) {
+        for (const node of data.nodes) {
+          if (call.source === node.id) {
+            call.sourceObj = node;
+          }
+          if (call.target === node.id) {
+            call.targetObj = node;
+          }
+        }
+        call.value = call.value || 1;
+      }
+      this.calls = data.calls;
+      this.nodes = data.nodes;
+    },
+    setEndpointTopology(data: { nodes: Node[]; calls: Call[] }) {
+      const obj = {} as any;
+      let nodes = [];
+      let calls = [];
+      nodes = data.nodes.reduce((prev: Node[], next: Node) => {
+        if (!obj[next.id]) {
+          obj[next.id] = true;
+          prev.push(next);
+        }
+        return prev;
+      }, []);
+      calls = data.calls.reduce((prev: Call[], next: Call) => {
+        if (!obj[next.id]) {
+          obj[next.id] = true;
+          next.value = next.value || 1;
+          prev.push(next);
+        }
+        return prev;
+      }, []);
+      this.calls = calls;
+      this.nodes = nodes;
     },
     setNodeMetrics(m: { id: string; value: unknown }[]) {
       this.nodeMetrics = m;
@@ -135,7 +172,7 @@ export const topologyStore = defineStore({
           duration,
         });
       if (!res.data.errors) {
-        this.setTopology(res.data.data.topology);
+        this.setEndpointTopology(res.data.data.topology);
       }
       return res.data;
     },
@@ -151,7 +188,7 @@ export const topologyStore = defineStore({
           duration,
         });
       if (!res.data.errors) {
-        this.setTopology(res.data.data.topology);
+        this.setInstanceTopology(res.data.data.topology);
       }
       return res.data;
     },

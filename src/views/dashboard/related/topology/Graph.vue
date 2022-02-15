@@ -17,7 +17,7 @@ limitations under the License. -->
     ref="chart"
     class="micro-topo-chart"
     v-loading="loading"
-    :style="`height: ${height}`"
+    :style="`height: ${height}px`"
   >
     <div class="setting" v-show="showSetting">
       <Settings @update="updateSettings" />
@@ -182,7 +182,6 @@ function handleNodeClick(d: Node & { x: number; y: number }) {
   topologyStore.setLink(null);
   operationsPos.x = d.x;
   operationsPos.y = d.y + 30;
-  console.log(d.layer === String(dashboardStore.layerId));
   if (d.layer === String(dashboardStore.layerId)) {
     return;
   }
@@ -322,7 +321,9 @@ async function handleInspect() {
   const id = topologyStore.node.id;
   topologyStore.setNode(null);
   topologyStore.setLink(null);
+  loading.value = true;
   const resp = await topologyStore.getServiceTopology(id);
+  loading.value = false;
 
   if (resp.errors) {
     ElMessage.error(resp.errors);
@@ -356,7 +357,9 @@ function handleGoAlarm() {
 }
 async function backToTopology() {
   svg.value.selectAll(".topo-svg-graph").remove();
+  loading.value = true;
   const resp = await getTopology();
+  loading.value = false;
 
   if (resp.errors) {
     ElMessage.error(resp.errors);
@@ -376,12 +379,6 @@ async function getTopology() {
       break;
     case EntityType[1].value:
       resp = await topologyStore.getServicesTopology();
-      break;
-    case EntityType[2].value:
-      resp = await topologyStore.getEndpointTopology();
-      break;
-    case EntityType[4].value:
-      resp = await topologyStore.getInstanceTopology();
       break;
   }
   return resp;
