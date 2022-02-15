@@ -14,28 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <Graph :option="option" v-loading="loading" />
+  <Graph :option="option" />
 </template>
 <script lang="ts" setup>
-import { ref, computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useTopologyStore } from "@/store/modules/topology";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { EntityType } from "../../../data";
-import { ElMessage } from "element-plus";
 
 const topologyStore = useTopologyStore();
-const dashboardStore = useDashboardStore();
-const loading = ref<boolean>(false);
 const option = computed(() => getOption());
-
-onMounted(async () => {
-  loading.value = true;
-  const resp = await getTopology();
-  loading.value = false;
-  if (resp && resp.errors) {
-    ElMessage.error(resp.errors);
-  }
-});
 
 function getOption() {
   return {
@@ -84,19 +70,6 @@ function getOption() {
       },
     },
   };
-}
-
-async function getTopology() {
-  let resp;
-  switch (dashboardStore.entity) {
-    case EntityType[2].value:
-      resp = await topologyStore.getEndpointTopology();
-      break;
-    case EntityType[4].value:
-      resp = await topologyStore.getInstanceTopology();
-      break;
-  }
-  return resp;
 }
 </script>
 <style lang="scss" scoped>

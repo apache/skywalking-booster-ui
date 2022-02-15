@@ -173,20 +173,6 @@ export const topologyStore = defineStore({
       }
       return res.data;
     },
-    async getEndpointTopology() {
-      const endpointId = useSelectorStore().currentPod.id;
-      const duration = useAppStoreWithOut().durationTime;
-      const res: AxiosResponse = await graphql
-        .query("getEndpointTopology")
-        .params({
-          endpointId,
-          duration,
-        });
-      if (!res.data.errors) {
-        this.setEndpointTopology(res.data.data.topology);
-      }
-      return res.data;
-    },
     async getInstanceTopology() {
       const serverServiceId = useSelectorStore().currentService.id;
       const clientServiceId = useSelectorStore().currentDestService.id;
@@ -202,6 +188,150 @@ export const topologyStore = defineStore({
         this.setInstanceTopology(res.data.data.topology);
       }
       return res.data;
+    },
+    async updateEndpointTopology(endpointIds: string[], depth: number) {
+      const res = await this.getEndpointTopology(endpointIds);
+      if (depth > 1) {
+        const ids = res.nodes
+          .map((item: Node) => item.id)
+          .filter((d: string) => !endpointIds.includes(d));
+        if (!ids.length) {
+          this.setEndpointTopology(res);
+          return;
+        }
+        const json = await this.getEndpointTopology(ids);
+        if (depth > 2) {
+          const pods = json.nodes
+            .map((item: Node) => item.id)
+            .filter((d: string) => ![...ids, ...endpointIds].includes(d));
+          if (!pods.length) {
+            const nodes = [...res.nodes, ...json.nodes];
+            const calls = [...res.calls, ...json.calls];
+            this.setEndpointTopology({ nodes, calls });
+            return;
+          }
+          const topo = await this.getEndpointTopology(pods);
+          if (depth > 3) {
+            const endpoints = topo.nodes
+              .map((item: Node) => item.id)
+              .filter(
+                (d: string) => ![...ids, ...pods, ...endpointIds].includes(d)
+              );
+            if (!endpoints.length) {
+              const nodes = [...res.nodes, ...json.nodes, ...topo.nodes];
+              const calls = [...res.calls, ...json.calls, ...topo.calls];
+              this.setEndpointTopology({ nodes, calls });
+              return;
+            }
+            const data = await this.getEndpointTopology(endpoints);
+            if (depth > 4) {
+              const nodeIds = data.nodes
+                .map((item: Node) => item.id)
+                .filter(
+                  (d: string) =>
+                    ![...endpoints, ...ids, ...pods, ...endpointIds].includes(d)
+                );
+              if (!nodeIds.length) {
+                const nodes = [
+                  ...res.nodes,
+                  ...json.nodes,
+                  ...topo.nodes,
+                  ...data.nodes,
+                ];
+                const calls = [
+                  ...res.calls,
+                  ...json.calls,
+                  ...topo.calls,
+                  ...data.calls,
+                ];
+                this.setEndpointTopology({ nodes, calls });
+                return;
+              }
+              const toposObj = await this.getEndpointTopology(nodeIds);
+              const nodes = [
+                ...res.nodes,
+                ...json.nodes,
+                ...topo.nodes,
+                ...data.nodes,
+                ...toposObj.nodes,
+              ];
+              const calls = [
+                ...res.calls,
+                ...json.calls,
+                ...topo.calls,
+                ...data.calls,
+                ...toposObj.calls,
+              ];
+              this.setEndpointTopology({ nodes, calls });
+            } else {
+              const nodes = [
+                ...res.nodes,
+                ...json.nodes,
+                ...topo.nodes,
+                ...data.nodes,
+              ];
+              const calls = [
+                ...res.calls,
+                ...json.calls,
+                ...topo.calls,
+                ...data.calls,
+              ];
+              this.setEndpointTopology({ nodes, calls });
+            }
+          } else {
+            const nodes = [...res.nodes, ...json.nodes, ...topo.nodes];
+            const calls = [...res.calls, ...json.calls, ...topo.calls];
+            this.setEndpointTopology({ nodes, calls });
+          }
+        } else {
+          this.setEndpointTopology({
+            nodes: [...res.nodes, ...json.nodes],
+            calls: [...res.calls, ...json.calls],
+          });
+        }
+      } else {
+        this.setEndpointTopology(res);
+      }
+    },
+    async getEndpointTopology(endpointIds: string[]) {
+      // const endpointId = useSelectorStore().currentPod.id;
+      const duration = useAppStoreWithOut().durationTime;
+      const variables = ["$duration: Duration!"];
+      const fragment = endpointIds.map((id: string, index: number) => {
+        return `endpointTopology${index}: getEndpointDependencies(endpointId: "${id}", duration: $duration) {
+          nodes {
+            id
+            name
+            serviceId
+            serviceName
+            type
+            isReal
+          }
+          calls {
+            id
+            source
+            target
+            detectPoints
+          }
+        }`;
+      });
+      const queryStr = `query queryData(${variables}) {${fragment}}`;
+      const conditions = { duration };
+      const res: AxiosResponse = await query({ queryStr, conditions });
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      const topo = res.data.data;
+      const calls = [] as any;
+      const nodes = [] as any;
+      for (const key of Object.keys(topo)) {
+        calls.push(...topo[key].calls);
+        nodes.push(...topo[key].nodes);
+      }
+      // this.setEndpointTopology({ calls, nodes });
+
+      return { calls, nodes };
     },
     async getNodeMetrics(param: {
       queryStr: string;
