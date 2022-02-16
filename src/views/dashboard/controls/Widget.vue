@@ -152,7 +152,6 @@ export default defineComponent({
         if (dashboardStore.entity === EntityType[0].value) {
           return;
         }
-        console.log("enter");
         queryMetrics();
       }
     );

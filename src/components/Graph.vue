@@ -37,11 +37,12 @@ const props = defineProps({
 });
 
 onMounted(() => {
+  setOptions(props.option);
   const instance = getInstance();
+
   instance.on("click", (params: any) => {
     emits("select", params);
   });
-  setOptions(props.option);
   addResizeListener(unref(chartRef), resize);
 });
 

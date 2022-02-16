@@ -403,7 +403,7 @@ function updateSettings(config: any) {
   if (config.nodeDashboard) {
     items.value.push({
       id: "dashboard",
-      title: "Dashboard",
+      title: "View Dashboard",
       func: handleGoDashboard,
     });
   }
@@ -455,7 +455,7 @@ onBeforeUnmount(() => {
     span {
       display: block;
       height: 30px;
-      width: 100px;
+      width: 140px;
       line-height: 30px;
       text-align: center;
     }
@@ -504,27 +504,6 @@ onBeforeUnmount(() => {
     fill: #ddd;
     font-size: 11px;
     opacity: 0.8;
-  }
-
-  .topo-tool {
-    display: none;
-  }
-
-  .topo-tool-i {
-    cursor: pointer;
-
-    .tool-hexagon {
-      fill: #3f4450;
-      stroke: #217ef2;
-      stroke-width: 2;
-      stroke-opacity: 0.5;
-    }
-
-    &:hover {
-      .tool-hexagon {
-        stroke-opacity: 1;
-      }
-    }
   }
 }
 

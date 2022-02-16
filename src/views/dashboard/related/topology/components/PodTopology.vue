@@ -42,6 +42,7 @@ limitations under the License. -->
     class="sankey"
     :style="`height:${height}px;width:${width}px;`"
     v-loading="loading"
+    @click="handleClick"
   >
     <Sankey @click="selectNodeLink" />
   </div>
@@ -153,7 +154,6 @@ function backToTopology() {
 
 function selectNodeLink(d: any) {
   if (d.dataType === "edge") {
-    console.log(d.data);
     topologyStore.setNode(null);
     topologyStore.setLink(d.data);
     if (!settings.value.linkDashboard) {
@@ -194,6 +194,12 @@ async function getTopology(id: string) {
       break;
   }
   return resp;
+}
+function handleClick(event: any) {
+  if (event.target.nodeName === "svg") {
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
+  }
 }
 </script>
 <style lang="scss" scoped>
