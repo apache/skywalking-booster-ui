@@ -27,6 +27,13 @@ limitations under the License. -->
     <span class="switch-icon ml-5" title="Settings">
       <Icon @click="setConfig" size="middle" iconName="settings" />
     </span>
+    <span class="switch-icon ml-5" title="Back to overview topology">
+      <Icon
+        @click="backToTopology"
+        size="middle"
+        iconName="keyboard_backspace"
+      />
+    </span>
     <div class="settings" v-show="showSettings">
       <Settings @update="updateConfig" />
     </div>
@@ -46,9 +53,16 @@ limitations under the License. -->
       left: operationsPos.x + 'px',
     }"
   >
-    <span v-for="(item, index) of items" :key="index" @click="item.func">
-      {{ item.title }}
-    </span>
+    <i v-for="(item, index) of items" :key="index" @click="item.func">
+      <span
+        v-if="
+          ['alarm', 'inspect'].includes(item.id) ||
+          (item.id === 'dashboard' && settings.nodeDashboard)
+        "
+      >
+        {{ item.title }}
+      </span>
+    </i>
   </div>
 </template>
 <script lang="ts" setup>
@@ -73,55 +87,64 @@ const height = ref<number>(document.body.clientHeight - 150);
 const width = ref<number>(document.body.clientWidth - 40);
 const showSettings = ref<boolean>(false);
 const depth = ref<string>("2");
-const showTool = ref<boolean>(false);
-const depthList = [1, 2, 3, 4, 5].map((item: number) => ({
-  value: String(item),
-  label: String(item),
+const depthList = ["1", "2", "3", "4", "5"].map((item: string) => ({
+  value: item,
+  label: item,
 }));
 const settings = ref<any>({});
-const items = ref([
-  { id: "inspect", title: "Inspect", func: inspect },
-  { id: "alarm", title: "Alarm", func: goAlarm },
-]);
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
+const items = [
+  { id: "inspect", title: "Inspect", func: inspect },
+  { id: "dashboard", title: "View Dashboard", func: goDashboard },
+  { id: "alarm", title: "View Alarm", func: goAlarm },
+];
 
 onMounted(async () => {
+  loadTopology(selectorStore.currentPod.id);
+});
+
+async function loadTopology(id: string) {
   loading.value = true;
-  const resp = await getTopology();
+  const resp = await getTopology(id);
   loading.value = false;
   if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
-});
+}
 
 function inspect() {
-  console.log(settings.value);
+  const id = topologyStore.node.id;
+  topologyStore.setNode(null);
+  topologyStore.setLink(null);
+  loadTopology(id);
 }
 
 function goAlarm() {
-  console.log(settings.value);
+  const path = `/alarm`;
+  const routeUrl = router.resolve({ path });
+
+  window.open(routeUrl.href, "_blank");
+  topologyStore.setNode(null);
 }
 function goDashboard() {
-  console.log(settings.value);
+  const path = `/dashboard/${dashboardStore.layerId}/${dashboardStore.entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${settings.value.nodeDashboard}`;
+  const routeUrl = router.resolve({ path });
+  window.open(routeUrl.href, "_blank");
+  topologyStore.setNode(null);
 }
 
 function setConfig() {
+  topologyStore.setNode(null);
   showSettings.value = !showSettings.value;
 }
 
 function updateConfig(config: any) {
-  items.value = [
-    { id: "inspect", title: "Inspect", func: inspect },
-    { id: "alarm", title: "Alarm", func: goAlarm },
-  ];
   settings.value = config;
-  if (config.nodeDashboard) {
-    items.value.push({
-      id: "dashboard",
-      title: "Dashboard",
-      func: goDashboard,
-    });
-  }
+}
+
+function backToTopology() {
+  loadTopology(selectorStore.currentPod.id);
+  topologyStore.setNode(null);
 }
 
 function selectNodeLink(d: any) {
@@ -131,7 +154,6 @@ function selectNodeLink(d: any) {
     if (!settings.value.linkDashboard) {
       return;
     }
-    console.log(d.data);
     const { sourceObj, targetObj } = d.data;
     const entity =
       dashboardStore.entity === EntityType[2].value
@@ -140,29 +162,25 @@ function selectNodeLink(d: any) {
     const path = `/dashboard/${dashboardStore.layerId}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${settings.value.linkDashboard}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
-  } else {
-    topologyStore.setNode(d.data);
-    topologyStore.setLink(null);
-    showTool.value = true;
+    return;
   }
+  topologyStore.setNode(d.data);
+  topologyStore.setLink(null);
+  operationsPos.x = d.event.event.clientX;
+  operationsPos.y = d.event.event.clientY;
 }
 
 async function changeDepth(opt: Option[]) {
   depth.value = opt[0].value;
-  loading.value = true;
-  const resp = await getTopology();
-  loading.value = false;
-  if (resp && resp.errors) {
-    ElMessage.error(resp.errors);
-  }
+  loadTopology(selectorStore.currentPod.id);
 }
 
-async function getTopology() {
+async function getTopology(id: string) {
   let resp;
   switch (dashboardStore.entity) {
     case EntityType[2].value:
       resp = await topologyStore.updateEndpointTopology(
-        [selectorStore.currentPod.id],
+        [id],
         Number(depth.value)
       );
       break;
@@ -217,5 +235,31 @@ async function getTopology() {
   color: #ccc;
   display: inline-block;
   margin-right: 5px;
+}
+
+.operations-list {
+  position: absolute;
+  padding: 10px;
+  color: #333;
+  cursor: pointer;
+  background-color: #fff;
+  border-radius: 3px;
+
+  span {
+    display: block;
+    height: 30px;
+    width: 100px;
+    line-height: 30px;
+    text-align: center;
+  }
+
+  span:hover {
+    color: #409eff;
+    background-color: #eee;
+  }
+
+  i {
+    font-style: normal;
+  }
 }
 </style>

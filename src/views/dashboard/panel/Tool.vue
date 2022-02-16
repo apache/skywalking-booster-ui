@@ -55,7 +55,13 @@ limitations under the License. -->
         />
       </div>
       <div class="selectors-item" v-if="states.key === 4">
-        <span class="label">$DestinationServiceInstance</span>
+        <span class="label">
+          {{
+            dashboardStore.entity === "EndpointRelation"
+              ? "$DestinationEndpoint"
+              : "$DestinationServiceInstance"
+          }}</span
+        >
         <Selector
           v-model="states.currentDestPod"
           :options="selectorStore.destPods"
@@ -145,8 +151,6 @@ async function setSelector() {
   ) {
     await selectorStore.getService(String(params.serviceId));
     states.currentService = selectorStore.currentService.value;
-    await selectorStore.getService(String(params.destServiceId), true);
-    states.currentDestService = selectorStore.currentDestService.value;
     const e = String(params.entity).split("Relation")[0];
     await fetchPods(e, selectorStore.currentService.id, false);
     if (!(selectorStore.pods.length && selectorStore.pods[0])) {
