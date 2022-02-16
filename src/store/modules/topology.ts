@@ -129,7 +129,6 @@ export const topologyStore = defineStore({
     },
     setLinkServerMetrics(m: { id: string; value: unknown }[]) {
       this.linkServerMetrics = m;
-      console.log(m);
     },
     setLinkClientMetrics(m: { id: string; value: unknown }[]) {
       this.linkClientMetrics = m;

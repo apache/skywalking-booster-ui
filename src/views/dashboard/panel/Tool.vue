@@ -149,46 +149,13 @@ async function setSelector() {
       EntityType[6].value,
     ].includes(String(params.entity))
   ) {
-    await selectorStore.getService(String(params.serviceId));
-    states.currentService = selectorStore.currentService.value;
-    const e = String(params.entity).split("Relation")[0];
-    await fetchPods(e, selectorStore.currentService.id, false);
-    if (!(selectorStore.pods.length && selectorStore.pods[0])) {
-      selectorStore.setCurrentPod(null);
-      states.currentPod = "";
-      return;
-    }
-    const pod = params.podId || selectorStore.pods[0].id;
-    const currentPod = selectorStore.pods.filter(
-      (d: { id: string }) => d.id === pod
-    )[0];
-    if (currentPod) {
-      selectorStore.setCurrentPod(currentPod);
-      states.currentPod = currentPod.label;
-    }
+    setSourceSelector();
     if (
       [EntityType[2].value, EntityType[3].value].includes(String(params.entity))
     ) {
       return;
     }
-    await fetchPods(
-      String(params.entity),
-      selectorStore.currentDestService.id,
-      false
-    );
-    if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
-      selectorStore.setCurrentDestPod(null);
-      states.currentDestPod = "";
-      return;
-    }
-    const destPod = params.destPodId || selectorStore.destPods[0].id;
-    const currentDestPod = selectorStore.destPods.filter(
-      (d: { id: string }) => d.id === destPod
-    )[0];
-    if (currentDestPod) {
-      selectorStore.setCurrentDestPod(currentDestPod);
-      states.currentDestPod = currentDestPod.label;
-    }
+    setDestSelector();
     return;
   }
   // entity=Service/ServiceRelation
@@ -212,6 +179,49 @@ async function setSelector() {
   states.currentDestService = selectorStore.currentDestService.value;
 }
 
+async function setSourceSelector() {
+  await selectorStore.getService(String(params.serviceId));
+  states.currentService = selectorStore.currentService.value;
+  const e = String(params.entity).split("Relation")[0];
+  await fetchPods(e, selectorStore.currentService.id, false);
+  if (!(selectorStore.pods.length && selectorStore.pods[0])) {
+    selectorStore.setCurrentPod(null);
+    states.currentPod = "";
+    return;
+  }
+  const pod = params.podId || selectorStore.pods[0].id;
+  const currentPod = selectorStore.pods.filter(
+    (d: { id: string }) => d.id === pod
+  )[0];
+  if (currentPod) {
+    selectorStore.setCurrentPod(currentPod);
+    states.currentPod = currentPod.label;
+  }
+}
+
+async function setDestSelector() {
+  await selectorStore.getService(String(params.destServiceId), true);
+  states.currentDestService = selectorStore.currentDestService.value;
+  await fetchPods(
+    String(params.entity),
+    selectorStore.currentDestService.id,
+    false
+  );
+  if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
+    selectorStore.setCurrentDestPod(null);
+    states.currentDestPod = "";
+    return;
+  }
+  const destPod = params.destPodId || selectorStore.destPods[0].id;
+  const currentDestPod = selectorStore.destPods.filter(
+    (d: { id: string }) => d.id === destPod
+  )[0];
+  if (currentDestPod) {
+    selectorStore.setCurrentDestPod(currentDestPod);
+    states.currentDestPod = currentDestPod.label;
+  }
+}
+
 async function getServices() {
   if (!dashboardStore.layerId) {
     return;
@@ -233,8 +243,16 @@ async function getServices() {
   states.currentService = selectorStore.currentService.value;
   states.currentDestService = selectorStore.currentDestService.value;
   const e = dashboardStore.entity.split("Relation")[0];
-  fetchPods(e, selectorStore.currentService.id, true);
-  fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
+  if (
+    [EntityType[2].value, EntityType[3].value].includes(dashboardStore.entity)
+  ) {
+    fetchPods(e, selectorStore.currentService.id, true);
+  }
+  if (
+    [EntityType[5].value, EntityType[6].value].includes(dashboardStore.entity)
+  ) {
+    fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
+  }
 }
 
 async function changeService(service: Service[]) {

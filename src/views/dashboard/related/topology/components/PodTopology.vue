@@ -100,7 +100,7 @@ const items = [
 ];
 
 onMounted(async () => {
-  loadTopology(selectorStore.currentPod.id);
+  loadTopology(selectorStore.currentPod && selectorStore.currentPod.id);
 });
 
 async function loadTopology(id: string) {
@@ -127,7 +127,11 @@ function goAlarm() {
   topologyStore.setNode(null);
 }
 function goDashboard() {
-  const path = `/dashboard/${dashboardStore.layerId}/${dashboardStore.entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${settings.value.nodeDashboard}`;
+  const entity =
+    dashboardStore.entity === EntityType[2].value
+      ? EntityType[2].value
+      : EntityType[3].value;
+  const path = `/dashboard/${dashboardStore.layerId}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${settings.value.nodeDashboard}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
   topologyStore.setNode(null);
@@ -149,6 +153,7 @@ function backToTopology() {
 
 function selectNodeLink(d: any) {
   if (d.dataType === "edge") {
+    console.log(d.data);
     topologyStore.setNode(null);
     topologyStore.setLink(d.data);
     if (!settings.value.linkDashboard) {
@@ -194,6 +199,8 @@ async function getTopology(id: string) {
 <style lang="scss" scoped>
 .sankey {
   margin-top: 10px;
+  background-color: #333840;
+  color: #ddd;
 }
 
 .settings {
@@ -248,7 +255,7 @@ async function getTopology(id: string) {
   span {
     display: block;
     height: 30px;
-    width: 100px;
+    width: 140px;
     line-height: 30px;
     text-align: center;
   }

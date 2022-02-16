@@ -41,6 +41,9 @@ export function useQueryProcessor(config: any) {
     "ServiceInstanceRelation",
     "EndpointRelation",
   ].includes(dashboardStore.entity);
+  if (isRelation && !selectorStore.currentDestService) {
+    return;
+  }
   const fragment = config.metrics.map((name: string, index: number) => {
     const metricType = config.metricTypes[index] || "";
     const labels = ["0", "1", "2", "3", "4"];

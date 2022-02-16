@@ -147,20 +147,12 @@ export default defineComponent({
       }
     );
     watch(
-      () => [selectorStore.currentPod],
+      () => [selectorStore.currentPod, selectorStore.currentDestPod],
       () => {
         if (dashboardStore.entity === EntityType[0].value) {
           return;
         }
-        queryMetrics();
-      }
-    );
-    watch(
-      () => [selectorStore.currentDestPod],
-      () => {
-        if (dashboardStore.entity === EntityType[0].value) {
-          return;
-        }
+        console.log("enter");
         queryMetrics();
       }
     );
