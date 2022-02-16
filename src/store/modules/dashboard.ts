@@ -25,6 +25,8 @@ import {
   ConfigData2,
   ConfigData3,
   ConfigData4,
+  ConfigData5,
+  ConfigData6,
 } from "../data";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -169,6 +171,12 @@ export const dashboardStore = defineStore({
       }
       if (type == "ServiceRelation") {
         this.layout = [ConfigData4];
+      }
+      if (type == "ServiceInstanceRelation") {
+        this.layout = [ConfigData6];
+      }
+      if (type == "EndpointRelation") {
+        this.layout = [ConfigData5];
       }
     },
     setTopology(show: boolean) {

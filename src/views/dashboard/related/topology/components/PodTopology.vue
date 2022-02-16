@@ -36,12 +36,24 @@ limitations under the License. -->
     :style="`height:${height}px;width:${width}px;`"
     v-loading="loading"
   >
-    <Sankey />
+    <Sankey @click="selectNodeLink" />
+  </div>
+  <div
+    class="operations-list"
+    v-if="topologyStore.node"
+    :style="{
+      top: operationsPos.y + 'px',
+      left: operationsPos.x + 'px',
+    }"
+  >
+    <span v-for="(item, index) of items" :key="index" @click="item.func">
+      {{ item.title }}
+    </span>
   </div>
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import { Option } from "@/types/app";
 import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -50,6 +62,7 @@ import { EntityType } from "../../../data";
 import { ElMessage } from "element-plus";
 import Sankey from "./Sankey.vue";
 import Settings from "./Settings.vue";
+import router from "@/router";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -60,10 +73,17 @@ const height = ref<number>(document.body.clientHeight - 150);
 const width = ref<number>(document.body.clientWidth - 40);
 const showSettings = ref<boolean>(false);
 const depth = ref<string>("2");
+const showTool = ref<boolean>(false);
 const depthList = [1, 2, 3, 4, 5].map((item: number) => ({
   value: String(item),
   label: String(item),
 }));
+const settings = ref<any>({});
+const items = ref([
+  { id: "inspect", title: "Inspect", func: inspect },
+  { id: "alarm", title: "Alarm", func: goAlarm },
+]);
+const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
 
 onMounted(async () => {
   loading.value = true;
@@ -74,17 +94,61 @@ onMounted(async () => {
   }
 });
 
+function inspect() {
+  console.log(settings.value);
+}
+
+function goAlarm() {
+  console.log(settings.value);
+}
+function goDashboard() {
+  console.log(settings.value);
+}
+
 function setConfig() {
   showSettings.value = !showSettings.value;
 }
 
 function updateConfig(config: any) {
-  console.log(config);
+  items.value = [
+    { id: "inspect", title: "Inspect", func: inspect },
+    { id: "alarm", title: "Alarm", func: goAlarm },
+  ];
+  settings.value = config;
+  if (config.nodeDashboard) {
+    items.value.push({
+      id: "dashboard",
+      title: "Dashboard",
+      func: goDashboard,
+    });
+  }
+}
+
+function selectNodeLink(d: any) {
+  if (d.dataType === "edge") {
+    topologyStore.setNode(null);
+    topologyStore.setLink(d.data);
+    if (!settings.value.linkDashboard) {
+      return;
+    }
+    console.log(d.data);
+    const { sourceObj, targetObj } = d.data;
+    const entity =
+      dashboardStore.entity === EntityType[2].value
+        ? EntityType[6].value
+        : EntityType[5].value;
+    const path = `/dashboard/${dashboardStore.layerId}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${settings.value.linkDashboard}`;
+    const routeUrl = router.resolve({ path });
+    window.open(routeUrl.href, "_blank");
+  } else {
+    topologyStore.setNode(d.data);
+    topologyStore.setLink(null);
+    showTool.value = true;
+  }
 }
 
 async function changeDepth(opt: Option[]) {
   depth.value = opt[0].value;
-  console.log(depth.value);
   loading.value = true;
   const resp = await getTopology();
   loading.value = false;

@@ -143,3 +143,45 @@ export const ConfigData4: any = {
   },
   children: [],
 };
+export const ConfigData5: any = {
+  x: 0,
+  y: 0,
+  w: 8,
+  h: 12,
+  i: "0",
+  metrics: ["endpoint_relation_cpm"],
+  metricTypes: ["readMetricsValues"],
+  type: "Widget",
+  widget: {
+    title: "endpoint_relation_cpm",
+    tips: "Tooltip",
+  },
+  graph: {
+    type: "Line",
+  },
+  standard: {
+    unit: "min",
+  },
+  children: [],
+};
+export const ConfigData6: any = {
+  x: 0,
+  y: 0,
+  w: 8,
+  h: 12,
+  i: "0",
+  metrics: ["service_instance_relation_server_cpm"],
+  metricTypes: ["readMetricsValues"],
+  type: "Widget",
+  widget: {
+    title: "service_instance_relation_server_cpm",
+    tips: "Tooltip",
+  },
+  graph: {
+    type: "Line",
+  },
+  standard: {
+    unit: "min",
+  },
+  children: [],
+};

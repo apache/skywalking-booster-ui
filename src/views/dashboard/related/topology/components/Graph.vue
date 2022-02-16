@@ -200,6 +200,9 @@ function handleLinkClick(event: any, d: Call) {
   event.stopPropagation();
   topologyStore.setNode(null);
   topologyStore.setLink(d);
+  if (settings.value.linkDashboard) {
+    return;
+  }
   const e =
     dashboardStore.entity === EntityType[1].value
       ? EntityType[0].value

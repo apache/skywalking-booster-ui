@@ -87,6 +87,16 @@ export const routesDashboard: Array<RouteRecordRaw> = [
           notShow: true,
         },
       },
+      {
+        path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
+        component: () => import("@/views/dashboard/Edit.vue"),
+        name: "ViewPodRelation",
+        meta: {
+          title: "dashboardEdit",
+          exact: true,
+          notShow: true,
+        },
+      },
     ],
   },
 ];

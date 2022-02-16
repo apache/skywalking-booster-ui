@@ -21,6 +21,8 @@ import { computed } from "vue";
 import { useTopologyStore } from "@/store/modules/topology";
 import { Node, Call } from "@/types/topology";
 
+/*global defineEmits */
+const emit = defineEmits(["click"]);
 const topologyStore = useTopologyStore();
 const option = computed(() => getOption());
 
@@ -115,7 +117,7 @@ function nodeTooltip(data: Node) {
 }
 
 function clickChart(param: any) {
-  console.log(param);
+  emit("click", param);
 }
 </script>
 <style lang="scss" scoped>

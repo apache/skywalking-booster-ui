@@ -43,11 +43,11 @@ limitations under the License. -->
           class="selectorPod"
         />
       </div>
-      <div class="selectors-item" v-if="states.key === 2">
+      <div class="selectors-item" v-if="states.key === 2 || states.key === 4">
         <span class="label">$DestinationService</span>
         <Selector
           v-model="states.currentDestService"
-          :options="selectorStore.services"
+          :options="selectorStore.destServices"
           size="small"
           placeholder="Select a service"
           @change="changeDestService"
@@ -57,13 +57,12 @@ limitations under the License. -->
       <div class="selectors-item" v-if="states.key === 4">
         <span class="label">$DestinationServiceInstance</span>
         <Selector
-          v-model="states.currentPod"
-          :options="selectorStore.pods"
+          v-model="states.currentDestPod"
+          :options="selectorStore.destPods"
           size="small"
           placeholder="Select a data"
           @change="changePods"
-          class="selectors"
-          :borderRadius="4"
+          class="selectorPod"
         />
       </div>
     </div>
@@ -111,6 +110,7 @@ const states = reactive<{
   currentService: string;
   currentPod: string;
   currentDestService: string;
+  currentDestPod: string;
 }>({
   destService: "",
   destPod: "",
@@ -118,6 +118,7 @@ const states = reactive<{
   currentService: "",
   currentPod: "",
   currentDestService: "",
+  currentDestPod: "",
 });
 
 dashboardStore.setLayer(String(params.layerId));
@@ -135,12 +136,19 @@ function initSelector() {
 
 async function setSelector() {
   if (
-    params.entity === EntityType[2].value ||
-    params.entity === EntityType[3].value
+    [
+      EntityType[2].value,
+      EntityType[3].value,
+      EntityType[5].value,
+      EntityType[6].value,
+    ].includes(String(params.entity))
   ) {
     await selectorStore.getService(String(params.serviceId));
     states.currentService = selectorStore.currentService.value;
-    await fetchPods(String(params.entity), false);
+    await selectorStore.getService(String(params.destServiceId), true);
+    states.currentDestService = selectorStore.currentDestService.value;
+    const e = String(params.entity).split("Relation")[0];
+    await fetchPods(e, selectorStore.currentService.id, false);
     if (!(selectorStore.pods.length && selectorStore.pods[0])) {
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
@@ -150,11 +158,36 @@ async function setSelector() {
     const currentPod = selectorStore.pods.filter(
       (d: { id: string }) => d.id === pod
     )[0];
-    selectorStore.setCurrentPod(currentPod);
-    states.currentPod = currentPod.label;
+    if (currentPod) {
+      selectorStore.setCurrentPod(currentPod);
+      states.currentPod = currentPod.label;
+    }
+    if (
+      [EntityType[2].value, EntityType[3].value].includes(String(params.entity))
+    ) {
+      return;
+    }
+    await fetchPods(
+      String(params.entity),
+      selectorStore.currentDestService.id,
+      false
+    );
+    if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
+      selectorStore.setCurrentDestPod(null);
+      states.currentDestPod = "";
+      return;
+    }
+    const destPod = params.destPodId || selectorStore.destPods[0].id;
+    const currentDestPod = selectorStore.destPods.filter(
+      (d: { id: string }) => d.id === destPod
+    )[0];
+    if (currentDestPod) {
+      selectorStore.setCurrentDestPod(currentDestPod);
+      states.currentDestPod = currentDestPod.label;
+    }
     return;
   }
-  // entity=Service with serviceId
+  // entity=Service/ServiceRelation
   const json = await selectorStore.fetchServices(dashboardStore.layerId);
   if (json.errors) {
     ElMessage.error(json.errors);
@@ -195,14 +228,16 @@ async function getServices() {
   );
   states.currentService = selectorStore.currentService.value;
   states.currentDestService = selectorStore.currentDestService.value;
-  fetchPods(dashboardStore.entity, true);
+  const e = dashboardStore.entity.split("Relation")[0];
+  fetchPods(e, selectorStore.currentService.id, true);
+  fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
 }
 
 async function changeService(service: Service[]) {
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
-    fetchPods(dashboardStore.entity, true);
+    fetchPods(dashboardStore.entity, selectorStore.currentService.id, true);
   } else {
     selectorStore.setCurrentService(null);
   }
@@ -247,11 +282,11 @@ function clickIcons(t: { id: string; content: string; name: string }) {
   }
 }
 
-async function fetchPods(type: string, setPod: boolean) {
+async function fetchPods(type: string, serviceId: string, setPod: boolean) {
   let resp;
   switch (type) {
-    case "Endpoint":
-      resp = await selectorStore.getEndpoints();
+    case EntityType[2].value:
+      resp = await selectorStore.getEndpoints({ serviceId });
       if (setPod) {
         selectorStore.setCurrentPod(
           selectorStore.pods.length ? selectorStore.pods[0] : null
@@ -259,13 +294,34 @@ async function fetchPods(type: string, setPod: boolean) {
         states.currentPod = selectorStore.currentPod.label;
       }
       break;
-    case "ServiceInstance":
-      resp = await selectorStore.getServiceInstances();
+    case EntityType[3].value:
+      resp = await selectorStore.getServiceInstances({ serviceId });
       if (setPod) {
         selectorStore.setCurrentPod(
           selectorStore.pods.length ? selectorStore.pods[0] : null
         );
         states.currentPod = selectorStore.currentPod.label;
+      }
+      break;
+    case EntityType[6].value:
+      resp = await selectorStore.getEndpoints({ serviceId, isRelation: true });
+      if (setPod) {
+        selectorStore.setCurrentDestPod(
+          selectorStore.destPods.length ? selectorStore.destPods[0] : null
+        );
+        states.currentDestPod = selectorStore.currentDestPod.label;
+      }
+      break;
+    case EntityType[5].value:
+      resp = await selectorStore.getServiceInstances({
+        serviceId,
+        isRelation: true,
+      });
+      if (setPod) {
+        selectorStore.setCurrentDestPod(
+          selectorStore.destPods.length ? selectorStore.destPods[0] : null
+        );
+        states.currentDestPod = selectorStore.currentDestPod.label;
       }
       break;
     default:
