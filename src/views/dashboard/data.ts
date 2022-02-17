@@ -142,7 +142,7 @@ export enum MetricCatalog {
 export const EntityType = [
   { value: "Service", label: "Service", key: 1 },
   { value: "All", label: "All", key: 10 },
-  { value: "Endpoint", label: "Service Endpoint", key: 3 },
+  { value: "Endpoint", label: "Endpoint", key: 3 },
   { value: "ServiceInstance", label: "Service Instance", key: 3 },
   { value: "ServiceRelation", label: "Service Relation", key: 2 },
   {
@@ -171,4 +171,9 @@ export const ToolIcons = [
   // { name: "settings", content: "Settings", id: "settings" },
   { name: "device_hub", content: "Topology", id: "topology" },
   // { name: "save", content: "Apply", id: "apply" },
+];
+export const ScopeType = [
+  { value: "Service", label: "Service", key: 1 },
+  { value: "Endpoint", label: "Endpoint", key: 3 },
+  { value: "ServiceInstance", label: "Service Instance", key: 3 },
 ];

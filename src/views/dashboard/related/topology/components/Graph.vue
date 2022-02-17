@@ -42,7 +42,11 @@ limitations under the License. -->
         left: operationsPos.x + 'px',
       }"
     >
-      <span v-for="(item, index) of items" :key="index" @click="item.func">
+      <span
+        v-for="(item, index) of items"
+        :key="index"
+        @click="item.func(item.dashboard)"
+      >
         {{ item.title }}
       </span>
     </div>
@@ -88,7 +92,9 @@ const legend = ref<any>(null);
 const showSetting = ref<boolean>(false);
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
-const items = ref([
+const items = ref<
+  { id: string; title: string; func: any; dashboard?: string }[]
+>([
   { id: "inspect", title: "Inspect", func: handleInspect },
   { id: "alarm", title: "Alarm", func: handleGoAlarm },
 ]);
@@ -334,20 +340,20 @@ async function handleInspect() {
   await init();
   update();
 }
-function handleGoEndpoint() {
-  const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${topologyStore.node.id}/${settings.value.endpointDashboard}`;
+function handleGoEndpoint(name: string) {
+  const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
 }
-function handleGoInstance() {
-  const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${topologyStore.node.id}/${settings.value.instanceDashboard}`;
+function handleGoInstance(name: string) {
+  const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
 }
-function handleGoDashboard() {
-  const path = `/dashboard/${dashboardStore.layerId}/Service/${topologyStore.node.id}/${settings.value.nodeDashboard}`;
+function handleGoDashboard(name: string) {
+  const path = `/dashboard/${dashboardStore.layerId}/Service/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
@@ -400,26 +406,31 @@ function updateSettings(config: any) {
     { id: "alarm", title: "Alarm", func: handleGoAlarm },
   ];
   settings.value = config;
-  if (config.nodeDashboard) {
-    items.value.push({
-      id: "dashboard",
-      title: "View Dashboard",
-      func: handleGoDashboard,
-    });
-  }
-  if (config.instanceDashboard) {
-    items.value.push({
-      id: "instance",
-      title: "Instance",
-      func: handleGoInstance,
-    });
-  }
-  if (config.endpointDashboard) {
-    items.value.push({
-      id: "endpoint",
-      title: "Endpoint",
-      func: handleGoEndpoint,
-    });
+  for (const item of config.nodeDashboard) {
+    if (item.scope === EntityType[0].value) {
+      items.value.push({
+        id: "dashboard",
+        title: "Dashboard",
+        func: handleGoDashboard,
+        ...item,
+      });
+    }
+    if (item.scope === EntityType[2].value) {
+      items.value.push({
+        id: "endpoint",
+        title: "Endpoint",
+        func: handleGoEndpoint,
+        ...item,
+      });
+    }
+    if (item.scope === EntityType[3].value) {
+      items.value.push({
+        id: "instance",
+        title: "Service Instance",
+        func: handleGoInstance,
+        ...item,
+      });
+    }
   }
 }
 onBeforeUnmount(() => {

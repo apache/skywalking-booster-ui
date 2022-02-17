@@ -51,31 +51,39 @@ limitations under the License. -->
   <div class="node-settings">
     <h5 class="title">{{ t("nodeSettings") }}</h5>
     <div class="label">{{ t("nodeDashboard") }}</div>
-    <el-input
-      v-model="states.nodeDashboard"
-      placeholder="Please input a dashboard name for nodes"
-      @change="updateSettings"
-      size="small"
-      class="inputs"
-    />
-    <span v-show="isService">
-      <div class="label">{{ t("instanceDashboard") }}</div>
-      <el-input
-        v-model="states.instanceDashboard"
-        placeholder="Please input a dashboard name for service instances"
-        @change="updateSettings"
+    <div v-for="(item, index) in items" :key="index" class="metric-item">
+      <Selector
+        :value="item.scope"
+        :options="ScopeType"
         size="small"
-        class="inputs"
+        placeholder="Select a scope"
+        @change="changeScope(index, $event)"
+        class="item"
       />
-      <div class="label">{{ t("endpointDashboard") }}</div>
       <el-input
-        v-model="states.endpointDashboard"
-        placeholder="Please input a dashboard name for endpoints"
-        @change="updateSettings"
+        v-model="item.dashboard"
+        placeholder="Please input a dashboard name for nodes"
+        @change="updateNodeDashboards(index, $event)"
         size="small"
-        class="inputs"
+        class="item"
       />
-    </span>
+      <span>
+        <Icon
+          class="cp mr-5"
+          v-show="index === items.length - 1 && items.length < 5"
+          iconName="add_circle_outlinecontrol_point"
+          size="middle"
+          @click="addItem"
+        />
+        <Icon
+          class="cp"
+          v-show="items.length > 1"
+          iconName="remove_circle_outline"
+          size="middle"
+          @click="deleteItem(index)"
+        />
+      </span>
+    </div>
     <div class="label">{{ t("nodeMetrics") }}</div>
     <Selector
       class="inputs"
@@ -94,7 +102,7 @@ import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useTopologyStore } from "@/store/modules/topology";
 import { ElMessage } from "element-plus";
-import { MetricCatalog } from "../../../data";
+import { MetricCatalog, ScopeType } from "../../../data";
 import { Option } from "@/types/app";
 import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
 import { Node, Call } from "@/types/topology";
@@ -105,11 +113,15 @@ const emit = defineEmits(["update"]);
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const topologyStore = useTopologyStore();
+const items = reactive<
+  {
+    scope: string;
+    dashboard: string;
+  }[]
+>([{ scope: "", dashboard: "" }]);
 const states = reactive<{
   linkDashboard: string;
   nodeDashboard: string;
-  instanceDashboard: string;
-  endpointDashboard: string;
   linkServerMetrics: string[];
   linkClientMetrics: string[];
   nodeMetrics: string[];
@@ -118,17 +130,12 @@ const states = reactive<{
 }>({
   linkDashboard: "",
   nodeDashboard: "",
-  instanceDashboard: "",
-  endpointDashboard: "",
   linkServerMetrics: [],
   linkClientMetrics: [],
   nodeMetrics: [],
   nodeMetricList: [],
   linkMetricList: [],
 });
-const isService = ref(
-  [EntityType[1].value, EntityType[0].value].includes(dashboardStore.entity)
-);
 
 getMetricList();
 async function getMetricList() {
@@ -152,12 +159,27 @@ async function getMetricList() {
       e + "Relation" === (MetricCatalog as any)[d.catalog]
   );
 }
+function changeScope(index: number, opt: Option[]) {
+  items[index].scope = opt[0].value;
+  items[index].dashboard = "";
+}
+function updateNodeDashboards(index: number, content: string) {
+  items[index].dashboard = content;
+  updateSettings();
+}
+function addItem() {
+  items.push({ scope: "", dashboard: "" });
+}
+function deleteItem(index: number) {
+  items.splice(index, 1);
+  updateSettings();
+}
 function updateSettings() {
   emit("update", {
     linkDashboard: states.linkDashboard,
-    nodeDashboard: states.nodeDashboard,
-    endpointDashboard: states.endpointDashboard,
-    instanceDashboard: states.instanceDashboard,
+    nodeDashboard: items.filter(
+      (d: { scope: string; dashboard: string }) => d.dashboard
+    ),
     linkServerMetrics: states.linkServerMetrics,
     linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
@@ -221,6 +243,11 @@ async function changeNodeMetrics(options: Option[]) {
 .inputs {
   margin-top: 8px;
   width: 330px;
+}
+
+.item {
+  width: 137px;
+  margin: 5px 5px 0 0;
 }
 
 .title {
