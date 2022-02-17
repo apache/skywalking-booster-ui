@@ -177,3 +177,16 @@ export const ScopeType = [
   { value: "Endpoint", label: "Endpoint", key: 3 },
   { value: "ServiceInstance", label: "Service Instance", key: 3 },
 ];
+export const LegendConditions = [
+  { label: "&&", value: "and" },
+  { label: "||", value: "or" },
+];
+export const MetricConditions = [
+  { label: ">", value: ">" },
+  { label: "<", value: "<" },
+];
+export enum LegendOpt {
+  NAME = "name",
+  VALUE = "value",
+  CONDITION = "condition",
+}

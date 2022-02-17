@@ -58,29 +58,29 @@ limitations under the License. -->
         size="small"
         placeholder="Select a scope"
         @change="changeScope(index, $event)"
-        class="item"
+        class="item mr-5"
       />
       <el-input
         v-model="item.dashboard"
         placeholder="Please input a dashboard name for nodes"
         @change="updateNodeDashboards(index, $event)"
         size="small"
-        class="item"
+        class="item mr-5"
       />
       <span>
         <Icon
           class="cp mr-5"
-          v-show="index === items.length - 1 && items.length < 5"
-          iconName="add_circle_outlinecontrol_point"
-          size="middle"
-          @click="addItem"
-        />
-        <Icon
-          class="cp"
           v-show="items.length > 1"
           iconName="remove_circle_outline"
           size="middle"
           @click="deleteItem(index)"
+        />
+        <Icon
+          class="cp"
+          v-show="index === items.length - 1 && items.length < 5"
+          iconName="add_circle_outlinecontrol_point"
+          size="middle"
+          @click="addItem"
         />
       </span>
     </div>
@@ -95,21 +95,94 @@ limitations under the License. -->
       @change="changeNodeMetrics"
     />
   </div>
+  <div class="legend-settings">
+    <h5 class="title">{{ t("legendSettings") }}</h5>
+    <div class="label">{{ t("metrics") }}</div>
+    <Selector
+      class="item mr-5"
+      :value="legend.metric.name"
+      :options="states.nodeMetricList"
+      size="small"
+      placeholder="Select a metric"
+      @change="changeLegend(LegendOpt.NAME, $event)"
+    />
+    <Selector
+      class="input-small mr-5"
+      :value="legend.metric.condition"
+      :options="MetricConditions"
+      size="small"
+      placeholder="Select a condition"
+      @change="changeLegend(LegendOpt.CONDITION, $event)"
+    />
+    <el-input
+      v-model="legend.metric.value"
+      placeholder="Please input a value"
+      @change="changeLegend(LegendOpt.VALUE, $event)"
+      size="small"
+      class="item"
+    />
+    <!-- <div class="label">{{ t("conditions") }}</div>
+    <Selector
+      class="inputs"
+      :value="legend.condition"
+      :options="LegendConditions"
+      size="small"
+      placeholder="Select a condition"
+      @change="changeCondition"
+    /> -->
+    <!-- <div class="label">{{ t("metrics") }}</div>
+    <Selector
+      class="item mr-5"
+      :value="legend.secondMetric.name"
+      :options="states.nodeMetricList"
+      size="small"
+      placeholder="Select a metric"
+      @change="changeLegendMetric(LegendOpt.NAME, $event)"
+    />
+    <Selector
+      class="input-small mr-5"
+      :value="legend.secondMetric.value"
+      :options="states.nodeMetricList"
+      size="small"
+      placeholder="Select a metric"
+      @change="changeLegendMetric(LegendOpt.CONDITION, $event)"
+    />
+    <el-input
+      v-model="legend.secondMetric.condidtion"
+      placeholder="Please input a value"
+      @change="changeLegendMetric(LegendOpt.VALUE, $event)"
+      size="small"
+      class="item"
+    /> -->
+    <el-button
+      @click="setLegend"
+      class="legend-btn"
+      size="small"
+      type="primary"
+    >
+      set legend
+    </el-button>
+  </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useTopologyStore } from "@/store/modules/topology";
 import { ElMessage } from "element-plus";
-import { MetricCatalog, ScopeType } from "../../../data";
+import {
+  MetricCatalog,
+  ScopeType,
+  MetricConditions,
+  LegendConditions,
+} from "../../../data";
 import { Option } from "@/types/app";
 import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
 import { Node, Call } from "@/types/topology";
-import { EntityType } from "../../../data";
+import { EntityType, LegendOpt } from "../../../data";
 
 /*global defineEmits */
-const emit = defineEmits(["update"]);
+const emit = defineEmits(["update", "updateNodes"]);
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const topologyStore = useTopologyStore();
@@ -121,7 +194,10 @@ const items = reactive<
 >([{ scope: "", dashboard: "" }]);
 const states = reactive<{
   linkDashboard: string;
-  nodeDashboard: string;
+  nodeDashboard: {
+    scope: string;
+    dashboard: string;
+  }[];
   linkServerMetrics: string[];
   linkClientMetrics: string[];
   nodeMetrics: string[];
@@ -129,13 +205,18 @@ const states = reactive<{
   linkMetricList: Option[];
 }>({
   linkDashboard: "",
-  nodeDashboard: "",
+  nodeDashboard: [],
   linkServerMetrics: [],
   linkClientMetrics: [],
   nodeMetrics: [],
   nodeMetricList: [],
   linkMetricList: [],
 });
+const legend = reactive<{
+  metric: any;
+  condition: string;
+  secondMetric: any;
+}>({ metric: {}, condition: "", secondMetric: {} });
 
 getMetricList();
 async function getMetricList() {
@@ -158,6 +239,26 @@ async function getMetricList() {
     (d: { catalog: string }) =>
       e + "Relation" === (MetricCatalog as any)[d.catalog]
   );
+}
+async function setLegend() {
+  updateSettings();
+  const ids = topologyStore.nodes.map((d: Node) => d.id);
+  const param = await useQueryTopologyMetrics([legend.metric.name], ids);
+  const res = await topologyStore.getLegendMetrics(param);
+
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
+  emit("updateNodes");
+}
+function changeLegend(type: string, opt: any) {
+  legend.metric[type] = opt[0].value || opt;
+}
+function changeCondition(opt: Option[]) {
+  legend.condition = opt[0].value;
+}
+function changeLegendMetric(type: string, opt: any) {
+  legend.secondMetric[type] = opt[0].value || opt;
 }
 function changeScope(index: number, opt: Option[]) {
   items[index].scope = opt[0].value;
@@ -183,6 +284,7 @@ function updateSettings() {
     linkServerMetrics: states.linkServerMetrics,
     linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
+    legend,
   });
 }
 async function changeLinkServerMetrics(options: Option[]) {
@@ -242,12 +344,16 @@ async function changeNodeMetrics(options: Option[]) {
 
 .inputs {
   margin-top: 8px;
-  width: 330px;
+  width: 350px;
 }
 
 .item {
-  width: 137px;
-  margin: 5px 5px 0 0;
+  width: 140px;
+  margin-top: 5px;
+}
+
+.input-small {
+  width: 60px;
 }
 
 .title {
@@ -257,5 +363,10 @@ async function changeNodeMetrics(options: Option[]) {
 .label {
   font-size: 12px;
   margin-top: 10px;
+}
+
+.legend-btn {
+  margin-top: 20px;
+  cursor: pointer;
 }
 </style>

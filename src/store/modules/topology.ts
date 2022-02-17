@@ -344,6 +344,29 @@ export const topologyStore = defineStore({
       this.setNodeMetrics(res.data.data);
       return res.data;
     },
+    async getLegendMetrics(param: {
+      queryStr: string;
+      conditions: { [key: string]: unknown };
+    }) {
+      const res: AxiosResponse = await query(param);
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      const data = res.data.data;
+      const metrics = Object.keys(data);
+      this.nodes = this.nodes.map((d: Node | any) => {
+        for (const m of metrics) {
+          for (const val of data[m].values) {
+            if (d.id === val.id) {
+              d[m] = val.value;
+            }
+          }
+        }
+        return d;
+      });
+      return res.data;
+    },
     async getCallServerMetrics(param: {
       queryStr: string;
       conditions: { [key: string]: unknown };

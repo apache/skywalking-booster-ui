@@ -84,6 +84,8 @@ const msg = {
   endpointDashboard: "Dashboard name related with endpoints",
   callSettings: "Call settings",
   nodeSettings: "Node Settings",
+  conditions: "Conditions",
+  legendSettings: "Legend Settings",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

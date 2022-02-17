@@ -18,7 +18,7 @@ import icons from "@/assets/img/icons";
 import { Node } from "@/types/topology";
 
 icons["KAFKA-CONSUMER"] = icons.KAFKA;
-export default (d3: any, graph: any, funcs: any, tip: any) => {
+export default (d3: any, graph: any, funcs: any, tip: any, legend: any) => {
   const nodeEnter = graph
     .append("g")
     .call(
@@ -46,9 +46,25 @@ export default (d3: any, graph: any, funcs: any, tip: any) => {
     .attr("x", 2)
     .attr("y", 10)
     .attr("style", "cursor: move;")
-    .attr("xlink:href", (d: { isReal: number; sla: number; cpm: number }) =>
-      d.sla < 95 && d.isReal && d.cpm > 1 ? icons.CUBEERROR : icons.CUBE
-    );
+    .attr("xlink:href", (d: { [key: string]: number }) => {
+      if (!legend) {
+        return icons.CUBE;
+      }
+      const val = legend.metric.name.includes("_sla")
+        ? d[legend.metric.name] / 100
+        : d[legend.metric.name];
+      if (legend.metric.condition === "<") {
+        return val < Number(legend.metric.value) && d.isReal
+          ? icons.CUBEERROR
+          : icons.CUBE;
+      }
+      if (legend.metric.condition === ">") {
+        return val > Number(legend.metric.value) && d.isReal
+          ? icons.CUBEERROR
+          : icons.CUBE;
+      }
+      return icons.CUBE;
+    });
   nodeEnter
     .append("image")
     .attr("width", 32)

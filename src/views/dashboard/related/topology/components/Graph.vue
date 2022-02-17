@@ -20,18 +20,18 @@ limitations under the License. -->
     :style="`height: ${height}px`"
   >
     <div class="setting" v-show="showSetting">
-      <Settings @update="updateSettings" />
+      <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
     <div class="tool">
-      <span class="switch-icon ml-5" title="Settings">
-        <Icon @click="setConfig" size="middle" iconName="settings" />
+      <span class="switch-icon ml-5" title="Settings" @click="setConfig">
+        <Icon size="middle" iconName="settings" />
       </span>
-      <span class="switch-icon ml-5" title="Back to overview topology">
-        <Icon
-          @click="backToTopology"
-          size="middle"
-          iconName="keyboard_backspace"
-        />
+      <span
+        class="switch-icon ml-5"
+        title="Back to overview topology"
+        @click="backToTopology"
+      >
+        <Icon size="middle" iconName="keyboard_backspace" />
       </span>
     </div>
     <div
@@ -239,7 +239,10 @@ function update() {
             topologyStore.nodeMetrics[m].values.filter(
               (val: { id: string; value: unknown }) => val.id === data.id
             )[0] || {};
-          return ` <div class="mb-5"><span class="grey">${m}: </span>${metric.value}</div>`;
+          const val = m.includes("_sla")
+            ? metric.value / 100
+            : metric.value.value;
+          return ` <div class="mb-5"><span class="grey">${m}: </span>${val}</div>`;
         });
         return [
           ` <div class="mb-5"><span class="grey">name: </span>${data.name}</div>`,
@@ -247,7 +250,8 @@ function update() {
         ].join(" ");
       },
     },
-    tip.value
+    tip.value,
+    settings.value.legend
   ).merge(node.value);
   // line element
   link.value = link.value.data(topologyStore.calls, (d: Call) => d.id);
@@ -270,7 +274,8 @@ function update() {
             (val: { id: string; value: unknown }) => val.id === data.id
           )[0];
           if (metric) {
-            return ` <div class="mb-5"><span class="grey">${m}: </span>${metric.value}</div>`;
+            const val = m.includes("_sla") ? metric.value / 100 : metric.value;
+            return ` <div class="mb-5"><span class="grey">${m}: </span>${val}</div>`;
           }
         });
         const htmlClient = linkClientMetrics.map((m) => {
@@ -278,7 +283,8 @@ function update() {
             (val: { id: string; value: unknown }) => val.id === data.id
           )[0];
           if (metric) {
-            return ` <div class="mb-5"><span class="grey">${m}: </span>${metric.value}</div>`;
+            const val = m.includes("_sla") ? metric.value / 100 : metric.value;
+            return ` <div class="mb-5"><span class="grey">${m}: </span>${val}</div>`;
           }
         });
         const html = [
@@ -433,6 +439,11 @@ function updateSettings(config: any) {
     }
   }
 }
+async function freshNodes() {
+  svg.value.selectAll(".topo-svg-graph").remove();
+  await init();
+  update();
+}
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
@@ -445,7 +456,7 @@ onBeforeUnmount(() => {
     position: absolute;
     top: 70px;
     right: 0;
-    width: 360px;
+    width: 380px;
     height: 700px;
     background-color: #2b3037;
     overflow: auto;

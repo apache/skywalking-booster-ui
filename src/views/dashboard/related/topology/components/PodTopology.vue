@@ -24,15 +24,15 @@ limitations under the License. -->
         @change="changeDepth"
       />
     </span>
-    <span class="switch-icon ml-5" title="Settings">
-      <Icon @click="setConfig" size="middle" iconName="settings" />
+    <span class="switch-icon ml-5" title="Settings" @click="setConfig">
+      <Icon size="middle" iconName="settings" />
     </span>
-    <span class="switch-icon ml-5" title="Back to overview topology">
-      <Icon
-        @click="backToTopology"
-        size="middle"
-        iconName="keyboard_backspace"
-      />
+    <span
+      class="switch-icon ml-5"
+      title="Back to overview topology"
+      @click="backToTopology"
+    >
+      <Icon size="middle" iconName="keyboard_backspace" />
     </span>
     <div class="settings" v-show="showSettings">
       <Settings @update="updateConfig" />
