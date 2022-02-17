@@ -82,7 +82,8 @@ function linkTooltip(data: Call) {
       (val: { id: string; value: unknown }) => val.id === data.id
     )[0];
     if (metric) {
-      return ` <div><span>${m}: </span>${metric.value}</div>`;
+      const val = m.includes("_sla") ? metric.value / 100 : metric.value;
+      return ` <div><span>${m}: </span>${val}</div>`;
     }
   });
   const htmlClient = clientMetrics.map((m) => {
@@ -90,7 +91,8 @@ function linkTooltip(data: Call) {
       (val: { id: string; value: unknown }) => val.id === data.id
     )[0];
     if (metric) {
-      return ` <div><span>${m}: </span>${metric.value}</div>`;
+      const val = m.includes("_sla") ? metric.value / 100 : metric.value;
+      return ` <div><span>${m}: </span>${val}</div>`;
     }
   });
   const html = [
@@ -109,7 +111,8 @@ function nodeTooltip(data: Node) {
       topologyStore.nodeMetrics[m].values.filter(
         (val: { id: string; value: unknown }) => val.id === data.id
       )[0] || {};
-    return ` <div><span>${m}: </span>${metric.value}</div>`;
+    const val = m.includes("_sla") ? metric.value / 100 : metric.value;
+    return ` <div><span>${m}: </span>${val}</div>`;
   });
   return [` <div><span>name: </span>${data.serviceName}</div>`, ...html].join(
     " "

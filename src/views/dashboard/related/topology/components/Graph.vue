@@ -206,7 +206,7 @@ function handleLinkClick(event: any, d: Call) {
   event.stopPropagation();
   topologyStore.setNode(null);
   topologyStore.setLink(d);
-  if (settings.value.linkDashboard) {
+  if (!settings.value.linkDashboard) {
     return;
   }
   const e =
@@ -239,9 +239,7 @@ function update() {
             topologyStore.nodeMetrics[m].values.filter(
               (val: { id: string; value: unknown }) => val.id === data.id
             )[0] || {};
-          const val = m.includes("_sla")
-            ? metric.value / 100
-            : metric.value.value;
+          const val = m.includes("_sla") ? metric.value / 100 : metric.value;
           return ` <div class="mb-5"><span class="grey">${m}: </span>${val}</div>`;
         });
         return [

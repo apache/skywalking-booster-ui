@@ -213,7 +213,7 @@ function handleClick(event: any) {
   position: absolute;
   top: 40px;
   right: 0;
-  width: 360px;
+  width: 380px;
   height: 700px;
   background-color: #2b3037;
   overflow: auto;
