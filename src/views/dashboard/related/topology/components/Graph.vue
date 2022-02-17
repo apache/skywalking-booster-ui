@@ -133,7 +133,7 @@ async function init() {
   svg.value.call(zoom(d3, graph.value));
   // legend
   legend.value = graph.value.append("g").attr("class", "topo-legend");
-  topoLegend(legend.value, height.value, width.value);
+  topoLegend(legend.value, height.value, width.value, settings.value.legend);
   svg.value.on("click", (event: any) => {
     event.stopPropagation();
     event.preventDefault();

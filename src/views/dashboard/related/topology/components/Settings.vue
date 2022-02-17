@@ -236,11 +236,16 @@ async function getMetricList() {
   );
 }
 async function setLegend() {
-  if (
-    !(legend.metric.name && legend.metric.value && legend.metric.condidtion)
-  ) {
+  if (!legend.metric.name) {
     return;
   }
+  if (!legend.metric.value) {
+    return;
+  }
+  if (!legend.metric.condition) {
+    return;
+  }
+
   updateSettings();
   const ids = topologyStore.nodes.map((d: Node) => d.id);
   const param = await useQueryTopologyMetrics([legend.metric.name], ids);

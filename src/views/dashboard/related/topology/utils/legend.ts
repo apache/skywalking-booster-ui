@@ -19,7 +19,8 @@ import icons from "@/assets/img/icons";
 export default function topoLegend(
   graph: any,
   clientHeight: number,
-  clientWidth: number
+  clientWidth: number,
+  config: any
 ) {
   for (const item of ["CUBE", "CUBEERROR"]) {
     graph
@@ -37,7 +38,9 @@ export default function topoLegend(
       .attr("y", clientHeight - 30)
       .text(() => {
         return item === "CUBEERROR"
-          ? "Unhealthy (Successful Rate < 95% and Traffic > 1 call/min)"
+          ? config
+            ? `Unhealthy (${config.metric.name} ${config.metric.condition} ${config.metric.value})`
+            : "Unhealthy"
           : "Healthy";
       })
       .style("fill", "#efeff1")
