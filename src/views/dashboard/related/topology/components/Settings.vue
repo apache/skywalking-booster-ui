@@ -236,6 +236,11 @@ async function getMetricList() {
   );
 }
 async function setLegend() {
+  if (
+    !(legend.metric.name && legend.metric.value && legend.metric.condidtion)
+  ) {
+    return;
+  }
   updateSettings();
   const ids = topologyStore.nodes.map((d: Node) => d.id);
   const param = await useQueryTopologyMetrics([legend.metric.name], ids);
@@ -249,12 +254,12 @@ async function setLegend() {
 function changeLegend(type: string, opt: any) {
   legend.metric[type] = opt[0].value || opt;
 }
-function changeCondition(opt: Option[]) {
-  legend.condition = opt[0].value;
-}
-function changeLegendMetric(type: string, opt: any) {
-  legend.secondMetric[type] = opt[0].value || opt;
-}
+// function changeCondition(opt: Option[]) {
+//   legend.condition = opt[0].value;
+// }
+// function changeLegendMetric(type: string, opt: any) {
+//   legend.secondMetric[type] = opt[0].value || opt;
+// }
 function changeScope(index: number, opt: Option[]) {
   items[index].scope = opt[0].value;
   items[index].dashboard = "";
