@@ -160,7 +160,7 @@ limitations under the License. -->
       size="small"
       type="primary"
     >
-      set legend
+      {{ t("setLegend") }}
     </el-button>
   </div>
 </template>
@@ -170,12 +170,7 @@ import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useTopologyStore } from "@/store/modules/topology";
 import { ElMessage } from "element-plus";
-import {
-  MetricCatalog,
-  ScopeType,
-  MetricConditions,
-  LegendConditions,
-} from "../../../data";
+import { MetricCatalog, ScopeType, MetricConditions } from "../../../data";
 import { Option } from "@/types/app";
 import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
 import { Node, Call } from "@/types/topology";

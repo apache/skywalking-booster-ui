@@ -26,6 +26,7 @@ import { routesEvent } from "./event";
 import { routesAlert } from "./alert";
 import { routesSetting } from "./setting";
 import { routesAlarm } from "./alarm";
+import { useTimeoutFn } from "@/hooks/useTimeout";
 
 const routes: Array<RouteRecordRaw> = [
   ...routesGen,
@@ -51,7 +52,7 @@ router.beforeEach((to, from, next) => {
   // const token = window.localStorage.getItem("skywalking-authority");
   if ((window as any).axiosCancel.length !== 0) {
     for (const func of (window as any).axiosCancel) {
-      setTimeout(func(), 0);
+      useTimeoutFn(func(), 0);
     }
     (window as any).axiosCancel = [];
   }

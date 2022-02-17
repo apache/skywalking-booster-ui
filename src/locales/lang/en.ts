@@ -86,6 +86,7 @@ const msg = {
   nodeSettings: "Node Settings",
   conditions: "Conditions",
   legendSettings: "Legend Settings",
+  setLegend: "Set Legend",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

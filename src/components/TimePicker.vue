@@ -145,6 +145,7 @@ limitations under the License. -->
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import DateCalendar from "./DateCalendar.vue";
+import { useTimeoutFn } from "@/hooks/useTimeout";
 /*global defineProps, defineEmits */
 const datepicker = ref(null);
 const { t } = useI18n();
@@ -270,9 +271,9 @@ const ok = (leaveOpened: boolean) => {
   emit("input", get());
   !leaveOpened &&
     !props.showButtons &&
-    setTimeout(() => {
+    useTimeoutFn(() => {
       show.value = range.value;
-    });
+    }, 1);
 };
 const setDates = (d: Date) => {
   dates.value[1] = d;

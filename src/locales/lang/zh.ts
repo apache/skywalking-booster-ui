@@ -85,6 +85,7 @@ const msg = {
   nodeSettings: "拓扑点设置",
   conditions: "条件",
   legendSettings: "图例设置",
+  setLegend: "设置图例",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",
