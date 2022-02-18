@@ -110,30 +110,51 @@ limitations under the License. -->
   </div>
   <div class="legend-settings" v-show="isServer">
     <h5 class="title">{{ t("legendSettings") }}</h5>
-    <div class="label">{{ t("metrics") }}</div>
-    <Selector
-      class="item mr-5"
-      :value="legend.metric.name"
-      :options="states.nodeMetricList"
-      size="small"
-      placeholder="Select a metric"
-      @change="changeLegend(LegendOpt.NAME, $event)"
-    />
-    <Selector
-      class="input-small mr-5"
-      :value="legend.metric.condition"
-      :options="MetricConditions"
-      size="small"
-      placeholder="Select a condition"
-      @change="changeLegend(LegendOpt.CONDITION, $event)"
-    />
-    <el-input
-      v-model="legend.metric.value"
-      placeholder="Please input a value"
-      @change="changeLegend(LegendOpt.VALUE, $event)"
-      size="small"
-      class="item"
-    />
+    <div class="label">{{ t("conditions") }} (&&)</div>
+    <div v-for="(metric, index) of legend.metric" :key="metric.name + index">
+      <Selector
+        class="item"
+        :value="metric.name"
+        :options="states.nodeMetricList"
+        size="small"
+        placeholder="Select a metric"
+        @change="changeLegend(LegendOpt.NAME, $event, index)"
+      />
+      <Selector
+        class="input-small"
+        :value="metric.condition"
+        :options="MetricConditions"
+        size="small"
+        placeholder="Select a condition"
+        @change="changeLegend(LegendOpt.CONDITION, $event, index)"
+      />
+      <el-input
+        v-model="metric.value"
+        placeholder="Please input a value"
+        @change="changeLegend(LegendOpt.VALUE, $event, index)"
+        size="small"
+        class="item"
+      />
+      <span>
+        <Icon
+          class="cp delete"
+          iconName="remove_circle_outline"
+          size="middle"
+          @click="deleteMetric(index)"
+          v-show="legend.metric.length > 1"
+        />
+        <Icon
+          class="cp"
+          iconName="add_circle_outlinecontrol_point"
+          size="middle"
+          v-show="
+            index === legend.metric.length - 1 && legend.metric.length < 5
+          "
+          @click="addMetric"
+        />
+      </span>
+      <div v-show="index !== legend.metric.length - 1">&&</div>
+    </div>
     <!-- <div class="label">{{ t("conditions") }}</div>
     <Selector
       class="inputs"
@@ -142,30 +163,6 @@ limitations under the License. -->
       size="small"
       placeholder="Select a condition"
       @change="changeCondition"
-    /> -->
-    <!-- <div class="label">{{ t("metrics") }}</div>
-    <Selector
-      class="item mr-5"
-      :value="legend.secondMetric.name"
-      :options="states.nodeMetricList"
-      size="small"
-      placeholder="Select a metric"
-      @change="changeLegendMetric(LegendOpt.NAME, $event)"
-    />
-    <Selector
-      class="input-small mr-5"
-      :value="legend.secondMetric.value"
-      :options="states.nodeMetricList"
-      size="small"
-      placeholder="Select a metric"
-      @change="changeLegendMetric(LegendOpt.CONDITION, $event)"
-    />
-    <el-input
-      v-model="legend.secondMetric.condidtion"
-      placeholder="Please input a value"
-      @change="changeLegendMetric(LegendOpt.VALUE, $event)"
-      size="small"
-      class="item"
     /> -->
     <el-button
       @click="setLegend"
@@ -224,10 +221,8 @@ const isServer = [EntityType[0].value, EntityType[1].value].includes(
   dashboardStore.entity
 );
 const legend = reactive<{
-  metric: any;
-  condition: string;
-  secondMetric: any;
-}>({ metric: {}, condition: "", secondMetric: {} });
+  metric: { name: string; condition: string; value: string }[];
+}>({ metric: [{ name: "", condition: "", value: "" }] });
 
 getMetricList();
 async function getMetricList() {
@@ -257,19 +252,23 @@ async function getMetricList() {
   );
 }
 async function setLegend() {
-  if (!legend.metric.name) {
-    return;
-  }
-  if (!legend.metric.value) {
-    return;
-  }
-  if (!legend.metric.condition) {
-    return;
-  }
+  const metrics = legend.metric.filter(
+    (d: any) => d.name && d.value && d.condition
+  );
+  const names = metrics.map((d: any) => d.name);
 
-  updateSettings();
+  emit("update", {
+    linkDashboard: states.linkDashboard,
+    nodeDashboard: isServer
+      ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
+      : states.nodeDashboard,
+    linkServerMetrics: states.linkServerMetrics,
+    linkClientMetrics: states.linkClientMetrics,
+    nodeMetrics: states.nodeMetrics,
+    legend: metrics,
+  });
   const ids = topologyStore.nodes.map((d: Node) => d.id);
-  const param = await useQueryTopologyMetrics([legend.metric.name], ids);
+  const param = await useQueryTopologyMetrics(names, ids);
   const res = await topologyStore.getLegendMetrics(param);
 
   if (res.errors) {
@@ -277,15 +276,9 @@ async function setLegend() {
   }
   emit("updateNodes");
 }
-function changeLegend(type: string, opt: any) {
-  legend.metric[type] = opt[0].value || opt;
+function changeLegend(type: string, opt: any, index: number) {
+  (legend.metric[index] as any)[type] = opt[0].value || opt;
 }
-// function changeCondition(opt: Option[]) {
-//   legend.condition = opt[0].value;
-// }
-// function changeLegendMetric(type: string, opt: any) {
-//   legend.secondMetric[type] = opt[0].value || opt;
-// }
 function changeScope(index: number, opt: Option[]) {
   items[index].scope = opt[0].value;
   items[index].dashboard = "";
@@ -310,7 +303,7 @@ function updateSettings() {
     linkServerMetrics: states.linkServerMetrics,
     linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
-    legend,
+    legend: legend.metric,
   });
 }
 async function changeLinkServerMetrics(options: Option[]) {
@@ -362,6 +355,12 @@ async function changeNodeMetrics(options: Option[]) {
     ElMessage.error(res.errors);
   }
 }
+function deleteMetric(index: number) {
+  legend.metric.splice(index, 1);
+}
+function addMetric() {
+  legend.metric.push({ name: "", condition: "", value: "" });
+}
 </script>
 <style lang="scss" scoped>
 .link-settings {
@@ -374,12 +373,13 @@ async function changeNodeMetrics(options: Option[]) {
 }
 
 .item {
-  width: 140px;
+  width: 130px;
   margin-top: 5px;
 }
 
 .input-small {
   width: 45px;
+  margin: 0 3px;
 }
 
 .title {
@@ -394,5 +394,9 @@ async function changeNodeMetrics(options: Option[]) {
 .legend-btn {
   margin: 20px 0;
   cursor: pointer;
+}
+
+.delete {
+  margin: 0 1px;
 }
 </style>

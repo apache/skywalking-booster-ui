@@ -50,20 +50,19 @@ export default (d3: any, graph: any, funcs: any, tip: any, legend: any) => {
       if (!legend) {
         return icons.CUBE;
       }
-      const val = legend.metric.name.includes("_sla")
-        ? d[legend.metric.name] / 100
-        : d[legend.metric.name];
-      if (legend.metric.condition === "<") {
-        return val < Number(legend.metric.value) && d.isReal
-          ? icons.CUBEERROR
-          : icons.CUBE;
+      if (!legend.length) {
+        return icons.CUBE;
       }
-      if (legend.metric.condition === ">") {
-        return val > Number(legend.metric.value) && d.isReal
-          ? icons.CUBEERROR
-          : icons.CUBE;
+      let c = true;
+      for (const l of legend) {
+        const val = l.name.includes("_sla") ? d[l.name] / 100 : d[l.name];
+        if (l.condition === "<") {
+          c = c && val < Number(l.value);
+        } else {
+          c = c && val > Number(l.value);
+        }
       }
-      return icons.CUBE;
+      return c && d.isReal ? icons.CUBEERROR : icons.CUBE;
     });
   nodeEnter
     .append("image")

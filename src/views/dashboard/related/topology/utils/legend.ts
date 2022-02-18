@@ -37,9 +37,13 @@ export default function topoLegend(
       .attr("x", clientWidth - (item === "CUBEERROR" ? 310 : 410))
       .attr("y", clientHeight - 30)
       .text(() => {
+        const l = config || [];
+        const str = l
+          .map((d: any) => `${d.name} ${d.condition} ${d.value}`)
+          .join(" and ");
         return item === "CUBEERROR"
           ? config
-            ? `Unhealthy (${config.metric.name} ${config.metric.condition} ${config.metric.value})`
+            ? `Unhealthy (${str})`
             : "Unhealthy"
           : "Healthy";
       })
