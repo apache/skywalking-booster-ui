@@ -29,7 +29,7 @@ limitations under the License. -->
       <div class="selectors-item" v-if="states.key === 3 || states.key === 4">
         <span class="label">
           {{
-            dashboardStore.entity === "Endpoint"
+            ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
               ? "$Endpoint"
               : "$ServiceInstance"
           }}

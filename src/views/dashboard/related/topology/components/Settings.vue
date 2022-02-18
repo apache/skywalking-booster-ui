@@ -50,42 +50,53 @@ limitations under the License. -->
   </div>
   <div class="node-settings">
     <h5 class="title">{{ t("nodeSettings") }}</h5>
-    <span v-show="isServer">
-      <div class="label">{{ t("nodeDashboard") }}</div>
-      <div v-for="(item, index) in items" :key="index" class="metric-item">
-        <Selector
-          :value="item.scope"
-          :options="ScopeType"
-          size="small"
-          placeholder="Select a scope"
-          @change="changeScope(index, $event)"
-          class="item mr-5"
+    <div class="label">{{ t("nodeDashboard") }}</div>
+    <el-input
+      v-show="!isServer"
+      v-model="states.nodeDashboard"
+      placeholder="Please input a dashboard name for nodes"
+      @change="updateSettings"
+      size="small"
+      class="inputs"
+    />
+    <div
+      v-show="isServer"
+      v-for="(item, index) in items"
+      :key="index"
+      class="metric-item"
+    >
+      <Selector
+        :value="item.scope"
+        :options="ScopeType"
+        size="small"
+        placeholder="Select a scope"
+        @change="changeScope(index, $event)"
+        class="item mr-5"
+      />
+      <el-input
+        v-model="item.dashboard"
+        placeholder="Please input a dashboard name for nodes"
+        @change="updateNodeDashboards(index, $event)"
+        size="small"
+        class="item mr-5"
+      />
+      <span>
+        <Icon
+          class="cp mr-5"
+          v-show="items.length > 1"
+          iconName="remove_circle_outline"
+          size="middle"
+          @click="deleteItem(index)"
         />
-        <el-input
-          v-model="item.dashboard"
-          placeholder="Please input a dashboard name for nodes"
-          @change="updateNodeDashboards(index, $event)"
-          size="small"
-          class="item mr-5"
+        <Icon
+          class="cp"
+          v-show="index === items.length - 1 && items.length < 5"
+          iconName="add_circle_outlinecontrol_point"
+          size="middle"
+          @click="addItem"
         />
-        <span>
-          <Icon
-            class="cp mr-5"
-            v-show="items.length > 1"
-            iconName="remove_circle_outline"
-            size="middle"
-            @click="deleteItem(index)"
-          />
-          <Icon
-            class="cp"
-            v-show="index === items.length - 1 && items.length < 5"
-            iconName="add_circle_outlinecontrol_point"
-            size="middle"
-            @click="addItem"
-          />
-        </span>
-      </div>
-    </span>
+      </span>
+    </div>
     <div class="label">{{ t("nodeMetrics") }}</div>
     <Selector
       class="inputs"
@@ -228,6 +239,8 @@ async function getMetricList() {
   const entity =
     dashboardStore.entity === EntityType[1].value
       ? EntityType[0].value
+      : dashboardStore.entity === EntityType[4].value
+      ? EntityType[3].value
       : dashboardStore.entity;
   states.nodeMetricList = (json.data.metrics || []).filter(
     (d: { catalog: string }) => entity === (MetricCatalog as any)[d.catalog]
@@ -291,9 +304,9 @@ function deleteItem(index: number) {
 function updateSettings() {
   emit("update", {
     linkDashboard: states.linkDashboard,
-    nodeDashboard: items.filter(
-      (d: { scope: string; dashboard: string }) => d.dashboard
-    ),
+    nodeDashboard: isServer
+      ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
+      : states.nodeDashboard,
     linkServerMetrics: states.linkServerMetrics,
     linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
