@@ -72,14 +72,12 @@ export const topologyStore = defineStore({
     },
     setTopology(data: { nodes: Node[]; calls: Call[] }) {
       const obj = {} as any;
+      const services = useSelectorStore().services;
       const nodes = data.nodes.reduce((prev: Node[], next: Node) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
-          const service =
-            useSelectorStore().services.filter(
-              (d: Service) => d.id === next.id
-            )[0] || {};
-          next.layer = service.layers ? service.layers[0] : null;
+          const s = services.filter((d: Service) => d.id === next.id)[0] || {};
+          next.layer = s.layers ? s.layers[0] : null;
           prev.push(next);
         }
         return prev;

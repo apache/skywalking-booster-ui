@@ -150,7 +150,6 @@ async function init() {
     event.preventDefault();
     topologyStore.setNode(null);
     topologyStore.setLink(null);
-    // showSetting.value = false;
   });
 }
 function ticked() {
@@ -346,7 +345,7 @@ async function handleInspect() {
   topologyStore.setNode(null);
   topologyStore.setLink(null);
   loading.value = true;
-  const resp = await topologyStore.getServiceTopology(id);
+  const resp = await topologyStore.getServicesTopology([id]);
   loading.value = false;
 
   if (resp.errors) {
