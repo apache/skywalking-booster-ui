@@ -23,6 +23,14 @@ limitations under the License. -->
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
     <div class="tool">
+      <span class="label">{{ t("currentDepth") }}</span>
+      <Selector
+        class="inputs"
+        :value="depth"
+        :options="DepthList"
+        placeholder="Select a option"
+        @change="changeDepth"
+      />
       <span class="switch-icon ml-5" title="Settings" @click="setConfig">
         <Icon size="middle" iconName="settings" />
       </span>
@@ -66,10 +74,12 @@ import { Node, Call } from "@/types/topology";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { EntityType } from "../../../data";
+import { EntityType, DepthList } from "../../../data";
 import router from "@/router";
 import { ElMessage } from "element-plus";
 import Settings from "./Settings.vue";
+import { Option } from "@/types/app";
+import { Service } from "@/types/selector";
 
 /*global Nullable */
 const { t } = useI18n();
@@ -98,6 +108,7 @@ const items = ref<
   { id: "inspect", title: "Inspect", func: handleInspect },
   { id: "alarm", title: "Alarm", func: handleGoAlarm },
 ]);
+const depth = ref<string>("2");
 
 onMounted(async () => {
   loading.value = true;
@@ -383,17 +394,15 @@ async function backToTopology() {
   topologyStore.setLink(null);
 }
 async function getTopology() {
-  let resp;
-  switch (dashboardStore.entity) {
-    case EntityType[0].value:
-      resp = await topologyStore.getServiceTopology(
-        selectorStore.currentService.id
-      );
-      break;
-    case EntityType[1].value:
-      resp = await topologyStore.getServicesTopology();
-      break;
-  }
+  const ids = selectorStore.services.map((d: Service) => d.id);
+  const serviceIds =
+    dashboardStore.entity === EntityType[0].value
+      ? [selectorStore.currentService.id]
+      : ids;
+  const resp = await topologyStore.getDepthServiceTopology(
+    serviceIds,
+    Number(depth.value)
+  );
   return resp;
 }
 function setConfig() {
@@ -442,6 +451,12 @@ async function freshNodes() {
   await init();
   update();
 }
+
+async function changeDepth(opt: Option[]) {
+  depth.value = opt[0].value;
+  await getTopology();
+  freshNodes();
+}
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
@@ -462,6 +477,12 @@ onBeforeUnmount(() => {
     border-radius: 3px;
     color: #ccc;
     transition: all 0.5ms linear;
+  }
+
+  .label {
+    color: #ccc;
+    display: inline-block;
+    margin-right: 5px;
   }
 
   .operations-list {

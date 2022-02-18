@@ -169,7 +169,7 @@ export const ToolIcons = [
   // { name: "save_alt", content: "Export", id: "export" },
   // { name: "folder_open", content: "Import", id: "import" },
   // { name: "settings", content: "Settings", id: "settings" },
-  { name: "device_hub", content: "Topology", id: "topology" },
+  { name: "device_hub", content: "Add Topology", id: "topology" },
   // { name: "save", content: "Apply", id: "apply" },
 ];
 export const ScopeType = [
@@ -190,3 +190,7 @@ export enum LegendOpt {
   VALUE = "value",
   CONDITION = "condition",
 }
+export const DepthList = ["1", "2", "3", "4", "5"].map((item: string) => ({
+  value: item,
+  label: item,
+}));

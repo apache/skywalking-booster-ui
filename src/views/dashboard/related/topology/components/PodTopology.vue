@@ -19,7 +19,7 @@ limitations under the License. -->
       <Selector
         class="inputs"
         :value="depth"
-        :options="depthList"
+        :options="DepthList"
         placeholder="Select a option"
         @change="changeDepth"
       />
@@ -73,7 +73,7 @@ import { Option } from "@/types/app";
 import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
-import { EntityType } from "../../../data";
+import { EntityType, DepthList } from "../../../data";
 import { ElMessage } from "element-plus";
 import Sankey from "./Sankey.vue";
 import Settings from "./Settings.vue";
@@ -88,10 +88,6 @@ const height = ref<number>(document.body.clientHeight - 150);
 const width = ref<number>(document.body.clientWidth - 40);
 const showSettings = ref<boolean>(false);
 const depth = ref<string>("2");
-const depthList = ["1", "2", "3", "4", "5"].map((item: string) => ({
-  value: item,
-  label: item,
-}));
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
 const items = [

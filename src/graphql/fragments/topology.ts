@@ -14,26 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const GlobalTopology = {
-  variable: "$duration: Duration!",
-  query: `
-  topology: getGlobalTopology(duration: $duration) {
-    nodes {
-      id
-      name
-      type
-      isReal
-    }
-    calls {
-      id
-      source
-      detectPoints
-      target
-      sourceComponents
-      targetComponents
-    }
-  }`,
-};
 export const ServicesTopology = {
   variable: "$duration: Duration!, $serviceIds: [ID!]!",
   query: `
@@ -49,8 +29,6 @@ export const ServicesTopology = {
       source
       detectPoints
       target
-      sourceComponents
-      targetComponents
     }
   }`,
 };

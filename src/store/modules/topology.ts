@@ -55,27 +55,6 @@ export const topologyStore = defineStore({
     setLink(link: Call) {
       this.call = link;
     },
-    setTopology(data: { nodes: Node[]; calls: Call[] }) {
-      this.nodes = data.nodes.map((n: Node) => {
-        const service =
-          useSelectorStore().services.filter(
-            (d: Service) => d.id === n.id
-          )[0] || {};
-        n.layer = service.layers ? service.layers[0] : null;
-        return n;
-      });
-      this.calls = data.calls.map((c: Call) => {
-        for (const s of useSelectorStore().services) {
-          if (c.source.id === s.id) {
-            c.source.layer = s.layers[0];
-          }
-          if (c.target.id === s.id) {
-            c.target.layer = s.layers[0];
-          }
-        }
-        return c;
-      });
-    },
     setInstanceTopology(data: { nodes: Node[]; calls: Call[] }) {
       for (const call of data.calls) {
         for (const node of data.nodes) {
@@ -91,36 +70,38 @@ export const topologyStore = defineStore({
       this.calls = data.calls;
       this.nodes = data.nodes;
     },
-    setEndpointTopology(data: { nodes: Node[]; calls: Call[] }) {
+    setTopology(data: { nodes: Node[]; calls: Call[] }) {
       const obj = {} as any;
-      let nodes = [];
-      let calls = [];
-      nodes = data.nodes.reduce((prev: Node[], next: Node) => {
+      const nodes = data.nodes.reduce((prev: Node[], next: Node) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
+          const service =
+            useSelectorStore().services.filter(
+              (d: Service) => d.id === next.id
+            )[0] || {};
+          next.layer = service.layers ? service.layers[0] : null;
           prev.push(next);
         }
         return prev;
       }, []);
-      calls = data.calls.reduce((prev: Call[], next: Call) => {
+      const calls = data.calls.reduce((prev: Call[], next: Call) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
+          next.value = next.value || 1;
+          for (const node of data.nodes) {
+            if (next.source === node.id) {
+              next.sourceObj = node;
+            }
+            if (next.target === node.id) {
+              next.targetObj = node;
+            }
+          }
           next.value = next.value || 1;
           prev.push(next);
         }
         return prev;
       }, []);
-      for (const call of calls) {
-        for (const node of nodes) {
-          if (call.source === node.id) {
-            call.sourceObj = node;
-          }
-          if (call.target === node.id) {
-            call.targetObj = node;
-          }
-        }
-        call.value = call.value || 1;
-      }
+
       this.calls = calls;
       this.nodes = nodes;
     },
@@ -133,8 +114,111 @@ export const topologyStore = defineStore({
     setLinkClientMetrics(m: { id: string; value: unknown }[]) {
       this.linkClientMetrics = m;
     },
-    async getServiceTopology(id: string) {
-      const serviceIds = [id];
+    async getDepthServiceTopology(serviceIds: string[], depth: number) {
+      const res = await this.getServicesTopology(serviceIds);
+      if (depth > 1) {
+        const ids = res.nodes
+          .map((item: Node) => item.id)
+          .filter((d: string) => !serviceIds.includes(d));
+        if (!ids.length) {
+          this.setTopology(res);
+          return;
+        }
+        const json = await this.getServicesTopology(ids);
+        if (depth > 2) {
+          const pods = json.nodes
+            .map((item: Node) => item.id)
+            .filter((d: string) => ![...ids, ...serviceIds].includes(d));
+          if (!pods.length) {
+            const nodes = [...res.nodes, ...json.nodes];
+            const calls = [...res.calls, ...json.calls];
+            this.setTopology({ nodes, calls });
+            return;
+          }
+          const topo = await this.getServicesTopology(pods);
+          if (depth > 3) {
+            const services = topo.nodes
+              .map((item: Node) => item.id)
+              .filter(
+                (d: string) => ![...ids, ...pods, ...serviceIds].includes(d)
+              );
+            if (!services.length) {
+              const nodes = [...res.nodes, ...json.nodes, ...topo.nodes];
+              const calls = [...res.calls, ...json.calls, ...topo.calls];
+              this.setTopology({ nodes, calls });
+              return;
+            }
+            const data = await this.getServicesTopology(services);
+            if (depth > 4) {
+              const nodeIds = data.nodes
+                .map((item: Node) => item.id)
+                .filter(
+                  (d: string) =>
+                    ![...services, ...ids, ...pods, ...serviceIds].includes(d)
+                );
+              if (!nodeIds.length) {
+                const nodes = [
+                  ...res.nodes,
+                  ...json.nodes,
+                  ...topo.nodes,
+                  ...data.nodes,
+                ];
+                const calls = [
+                  ...res.calls,
+                  ...json.calls,
+                  ...topo.calls,
+                  ...data.calls,
+                ];
+                this.setTopology({ nodes, calls });
+                return;
+              }
+              const toposObj = await this.getServicesTopology(nodeIds);
+              const nodes = [
+                ...res.nodes,
+                ...json.nodes,
+                ...topo.nodes,
+                ...data.nodes,
+                ...toposObj.nodes,
+              ];
+              const calls = [
+                ...res.calls,
+                ...json.calls,
+                ...topo.calls,
+                ...data.calls,
+                ...toposObj.calls,
+              ];
+              this.setTopology({ nodes, calls });
+            } else {
+              const nodes = [
+                ...res.nodes,
+                ...json.nodes,
+                ...topo.nodes,
+                ...data.nodes,
+              ];
+              const calls = [
+                ...res.calls,
+                ...json.calls,
+                ...topo.calls,
+                ...data.calls,
+              ];
+              this.setTopology({ nodes, calls });
+            }
+          } else {
+            const nodes = [...res.nodes, ...json.nodes, ...topo.nodes];
+            const calls = [...res.calls, ...json.calls, ...topo.calls];
+            this.setTopology({ nodes, calls });
+          }
+        } else {
+          this.setTopology({
+            nodes: [...res.nodes, ...json.nodes],
+            calls: [...res.calls, ...json.calls],
+          });
+        }
+      } else {
+        this.setTopology(res);
+      }
+    },
+    async getServicesTopology(serviceIds: string[]) {
       const duration = useAppStoreWithOut().durationTime;
       const res: AxiosResponse = await graphql
         .query("getServicesTopology")
@@ -142,36 +226,10 @@ export const topologyStore = defineStore({
           serviceIds,
           duration,
         });
-      if (!res.data.errors) {
-        this.setTopology(res.data.data.topology);
+      if (res.data.errors) {
+        return res.data;
       }
-      return res.data;
-    },
-    async getServicesTopology() {
-      const serviceIds = useSelectorStore().services.map((d: Service) => d.id);
-      const duration = useAppStoreWithOut().durationTime;
-      const res: AxiosResponse = await graphql
-        .query("getServicesTopology")
-        .params({
-          serviceIds,
-          duration,
-        });
-      if (!res.data.errors) {
-        this.setTopology(res.data.data.topology);
-      }
-      return res.data;
-    },
-    async getGlobalTopology() {
-      const duration = useAppStoreWithOut().durationTime;
-      const res: AxiosResponse = await graphql
-        .query("getGlobalTopology")
-        .params({
-          duration,
-        });
-      if (!res.data.errors) {
-        this.setTopology(res.data.data.topology);
-      }
-      return res.data;
+      return res.data.data.topology;
     },
     async getInstanceTopology() {
       const serverServiceId = useSelectorStore().currentService.id;
@@ -196,7 +254,7 @@ export const topologyStore = defineStore({
           .map((item: Node) => item.id)
           .filter((d: string) => !endpointIds.includes(d));
         if (!ids.length) {
-          this.setEndpointTopology(res);
+          this.setTopology(res);
           return;
         }
         const json = await this.getEndpointTopology(ids);
@@ -207,7 +265,7 @@ export const topologyStore = defineStore({
           if (!pods.length) {
             const nodes = [...res.nodes, ...json.nodes];
             const calls = [...res.calls, ...json.calls];
-            this.setEndpointTopology({ nodes, calls });
+            this.setTopology({ nodes, calls });
             return;
           }
           const topo = await this.getEndpointTopology(pods);
@@ -220,7 +278,7 @@ export const topologyStore = defineStore({
             if (!endpoints.length) {
               const nodes = [...res.nodes, ...json.nodes, ...topo.nodes];
               const calls = [...res.calls, ...json.calls, ...topo.calls];
-              this.setEndpointTopology({ nodes, calls });
+              this.setTopology({ nodes, calls });
               return;
             }
             const data = await this.getEndpointTopology(endpoints);
@@ -244,7 +302,7 @@ export const topologyStore = defineStore({
                   ...topo.calls,
                   ...data.calls,
                 ];
-                this.setEndpointTopology({ nodes, calls });
+                this.setTopology({ nodes, calls });
                 return;
               }
               const toposObj = await this.getEndpointTopology(nodeIds);
@@ -262,7 +320,7 @@ export const topologyStore = defineStore({
                 ...data.calls,
                 ...toposObj.calls,
               ];
-              this.setEndpointTopology({ nodes, calls });
+              this.setTopology({ nodes, calls });
             } else {
               const nodes = [
                 ...res.nodes,
@@ -276,21 +334,21 @@ export const topologyStore = defineStore({
                 ...topo.calls,
                 ...data.calls,
               ];
-              this.setEndpointTopology({ nodes, calls });
+              this.setTopology({ nodes, calls });
             }
           } else {
             const nodes = [...res.nodes, ...json.nodes, ...topo.nodes];
             const calls = [...res.calls, ...json.calls, ...topo.calls];
-            this.setEndpointTopology({ nodes, calls });
+            this.setTopology({ nodes, calls });
           }
         } else {
-          this.setEndpointTopology({
+          this.setTopology({
             nodes: [...res.nodes, ...json.nodes],
             calls: [...res.calls, ...json.calls],
           });
         }
       } else {
-        this.setEndpointTopology(res);
+        this.setTopology(res);
       }
     },
     async getEndpointTopology(endpointIds: string[]) {
@@ -328,7 +386,7 @@ export const topologyStore = defineStore({
         calls.push(...topo[key].calls);
         nodes.push(...topo[key].nodes);
       }
-      // this.setEndpointTopology({ calls, nodes });
+      // this.setTopology({ calls, nodes });
 
       return { calls, nodes };
     },
