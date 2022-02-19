@@ -72,7 +72,7 @@ const msg = {
   fontSize: "字体大小",
   showBackground: "显示背景",
   areaOpacity: "透明度",
-  editGraph: "编辑图表选项",
+  editGraph: "选项编辑",
   dashboardName: "选择仪表板名称",
   linkDashboard: "拓扑线关联的仪表板名称",
   linkServerMetrics: "拓扑线服务端关联的指标",

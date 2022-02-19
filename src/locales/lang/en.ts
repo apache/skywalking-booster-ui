@@ -73,7 +73,7 @@ const msg = {
   fontSize: "Font Size",
   showBackground: "Show Background",
   areaOpacity: "Area Opacity",
-  editGraph: "Edit Graph Options",
+  editGraph: "Edit Options",
   dashboardName: "Select Dashboard Name",
   linkDashboard: "Dashboard name related with topology calls",
   linkServerMetrics: "Server metrics related with topology calls",

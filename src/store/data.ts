@@ -101,27 +101,41 @@ export const ConfigData2: any = {
   },
   children: [],
 };
-export const ConfigData3: any = {
-  x: 0,
-  y: 0,
-  w: 8,
-  h: 12,
-  i: "0",
-  metrics: ["all_heatmap"],
-  metricTypes: ["readHeatMap"],
-  type: "Widget",
-  widget: {
-    title: "all_heatmap",
-    tips: "Tooltip",
+export const ConfigData3: any = [
+  {
+    x: 0,
+    y: 0,
+    w: 2,
+    h: 6,
+    i: "1",
+    type: "Topology",
+    widget: {
+      title: "Topology",
+      tips: "Topology",
+    },
   },
-  graph: {
-    type: "HeatMap",
+  {
+    x: 2,
+    y: 0,
+    w: 8,
+    h: 12,
+    i: "0",
+    metrics: ["all_heatmap"],
+    metricTypes: ["readHeatMap"],
+    type: "Widget",
+    widget: {
+      title: "all_heatmap",
+      tips: "Tooltip",
+    },
+    graph: {
+      type: "HeatMap",
+    },
+    standard: {
+      unit: "min",
+    },
+    children: [],
   },
-  standard: {
-    unit: "min",
-  },
-  children: [],
-};
+];
 export const ConfigData4: any = {
   x: 0,
   y: 0,

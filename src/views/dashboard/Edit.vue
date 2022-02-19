@@ -23,7 +23,8 @@ limitations under the License. -->
       :destroy-on-close="true"
       @closed="dashboardStore.setConfigPanel(false)"
     >
-      <config-edit />
+      <TopologyConfig v-if="dashboardStore.selectedGrid.type === 'Topology'" />
+      <Widget v-else />
     </el-dialog>
     <el-dialog
       v-model="dashboardStore.showTopology"
@@ -41,7 +42,8 @@ import { useI18n } from "vue-i18n";
 import GridLayout from "./panel/Layout.vue";
 // import { LayoutConfig } from "@/types/dashboard";
 import Tool from "./panel/Tool.vue";
-import ConfigEdit from "./configuration/ConfigEdit.vue";
+import Widget from "./configuration/Widget.vue";
+import TopologyConfig from "./configuration/Topology.vue";
 import Topology from "./related/topology/Index.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";

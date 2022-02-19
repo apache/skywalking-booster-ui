@@ -110,7 +110,7 @@ limitations under the License. -->
   </div>
   <div class="legend-settings" v-show="isServer">
     <h5 class="title">{{ t("legendSettings") }}</h5>
-    <div class="label">{{ t("conditions") }} (&&)</div>
+    <div class="label">{{ t("conditions") }}</div>
     <div v-for="(metric, index) of legend.metric" :key="metric.name + index">
       <Selector
         class="item"

@@ -164,7 +164,7 @@ export const dashboardStore = defineStore({
         this.layout = [ConfigData2];
       }
       if (type == "All") {
-        this.layout = [ConfigData3];
+        this.layout = ConfigData3;
       }
       if (type == "Service") {
         this.layout = [ConfigData];
