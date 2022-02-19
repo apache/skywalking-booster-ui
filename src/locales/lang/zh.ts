@@ -240,6 +240,7 @@ const msg = {
   defaultOrder: "默认顺序",
   chartType: "图表类型",
   currentDepth: "当前深度",
+  defaultDepth: "默认深度",
   traceTagsTip:
     "只有core/default/searchableTracesTags中定义的标记才可搜索。查看配置词汇表页面上的更多详细信息。",
   tagsLink: "配置词汇页",

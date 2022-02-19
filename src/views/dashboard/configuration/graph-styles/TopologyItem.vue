@@ -66,20 +66,34 @@ limitations under the License. -->
       @change="changeConfig({ content })"
     />
   </div>
+  <div class="item">
+    <span class="label">{{ t("defaultDepth") }}</span>
+    <Selector
+      class="inputs"
+      :value="depth"
+      :options="DepthList"
+      @change="changeDepth($event)"
+    />
+  </div>
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { ref } from "vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { DepthList } from "../../data";
+import { Option } from "@/types/app";
+import { useTopologyStore } from "@/store/modules/topology";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
+const topologyStore = useTopologyStore();
 const { selectedGrid } = dashboardStore;
 const iconTheme = ref(selectedGrid.graph.iconTheme || true);
 const backgroundColor = ref(selectedGrid.graph.backgroundColor || "green");
 const fontColor = ref(selectedGrid.graph.fontColor || "white");
 const content = ref<string>(selectedGrid.graph.content);
 const fontSize = ref<number>(selectedGrid.graph.fontSize);
+const depth = ref<string>(selectedGrid.graph.depth);
 const colors = [
   {
     label: "Green",
@@ -92,7 +106,7 @@ const colors = [
   { label: "Black", value: "black" },
   { label: "Orange", value: "orange" },
 ];
-
+topologyStore.setDefaultDepth(depth.value);
 function changeConfig(param: { [key: string]: unknown }) {
   const { selectedGrid } = dashboardStore;
   const graph = {
@@ -100,6 +114,11 @@ function changeConfig(param: { [key: string]: unknown }) {
     ...param,
   };
   dashboardStore.selectWidget({ ...selectedGrid, graph });
+}
+function changeDepth(opt: Option[]) {
+  const val = opt[0].value;
+  topologyStore.setDefaultDepth(val);
+  changeConfig({ depth: val });
 }
 </script>
 <style lang="scss" scoped>

@@ -239,6 +239,7 @@ const msg = {
   defaultOrder: "Default Order",
   chartType: "Chart Type",
   currentDepth: "Current Depth",
+  defaultDepth: "Default Depth",
   traceTagsTip: `Only tags defined in the core/default/searchableTracesTags are searchable.
   Check more details on the Configuration Vocabulary page`,
   tagsLink: "Configuration Vocabulary page",

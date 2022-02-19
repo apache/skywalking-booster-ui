@@ -369,7 +369,7 @@ function addMetric() {
 
 .inputs {
   margin-top: 8px;
-  width: 350px;
+  width: 370px;
 }
 
 .item {
@@ -397,6 +397,6 @@ function addMetric() {
 }
 
 .delete {
-  margin: 0 1px;
+  margin: 0 3px;
 }
 </style>

@@ -108,7 +108,7 @@ const items = ref<
   { id: "inspect", title: "Inspect", func: handleInspect },
   { id: "alarm", title: "Alarm", func: handleGoAlarm },
 ]);
-const depth = ref<string>("2");
+const depth = ref<string>(topologyStore.defaultDepth);
 
 onMounted(async () => {
   loading.value = true;
@@ -468,7 +468,7 @@ onBeforeUnmount(() => {
     position: absolute;
     top: 70px;
     right: 0;
-    width: 380px;
+    width: 400px;
     height: 700px;
     background-color: #2b3037;
     overflow: auto;
