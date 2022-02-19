@@ -94,7 +94,7 @@ const backgroundColor = ref(selectedGrid.graph.backgroundColor || "green");
 const fontColor = ref(selectedGrid.graph.fontColor || "white");
 const content = ref<string>(selectedGrid.graph.content);
 const fontSize = ref<number>(selectedGrid.graph.fontSize);
-const depth = ref<string>(selectedGrid.graph.depth);
+const depth = ref<string>(selectedGrid.graph.depth || "2");
 const colors = [
   {
     label: "Green",
