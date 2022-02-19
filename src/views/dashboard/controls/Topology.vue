@@ -15,10 +15,17 @@ limitations under the License. -->
 <template>
   <div class="topology">
     <div class="header flex-h">
-      <div>title</div>
+      <div>{{ data.widget?.title || "" }}</div>
       <div>
-        <el-tooltip :content="'tips'">
-          <Icon iconName="info_outline" size="sm" class="operation" />
+        <el-tooltip :content="data.widget?.tips">
+          <span>
+            <Icon
+              iconName="info_outline"
+              size="sm"
+              class="operation"
+              v-show="data.widget?.tips"
+            />
+          </span>
         </el-tooltip>
         <el-popover placement="bottom" trigger="click" :width="100">
           <template #reference>
@@ -38,7 +45,7 @@ limitations under the License. -->
     <div
       class="body"
       @click="ViewTopology"
-      :style="`background: ${Colors[data.graph.backgroundColor]}`"
+      :style="{ backgroundColor: Colors[data.graph.backgroundColor] }"
     >
       <Icon
         :iconName="data.graph.iconTheme ? 'topology-light' : 'topology-dark'"
@@ -70,6 +77,7 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
+console.log(Colors[props.data.graph.backgroundColor]);
 function editConfig() {
   dashboardStore.setConfigPanel(true);
   dashboardStore.selectWidget(props.data);

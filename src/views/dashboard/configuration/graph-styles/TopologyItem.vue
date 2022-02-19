@@ -21,7 +21,7 @@ limitations under the License. -->
       size="small"
       placeholder="Select a color"
       class="input"
-      @change="changeConfig({ backgroundColor })"
+      @change="changeConfig({ backgroundColor: $event[0].value })"
     />
   </div>
   <div class="item">
@@ -45,7 +45,7 @@ limitations under the License. -->
       size="small"
       placeholder="Select a color"
       class="input"
-      @change="changeConfig({ fontColor })"
+      @change="changeConfig({ fontColor: $event[0].value })"
     />
   </div>
   <div class="item">
@@ -78,23 +78,23 @@ const { selectedGrid } = dashboardStore;
 const iconTheme = ref(selectedGrid.graph.iconTheme || true);
 const backgroundColor = ref(selectedGrid.graph.backgroundColor || "green");
 const fontColor = ref(selectedGrid.graph.fontColor || "white");
-const content = ref<string>("");
+const content = ref<string>(selectedGrid.graph.content);
 const fontSize = ref<number>(selectedGrid.graph.fontSize);
 const colors = [
   {
     label: "Green",
-    key: "#67C23A",
     value: "green",
   },
-  { label: "Blue", key: "#409EFF", value: "blue" },
-  { label: "Red", key: "#F56C6C", value: "red" },
-  { label: "Grey", key: "#909399", value: "grey" },
-  { label: "White", key: "#fff", value: "white" },
-  { label: "Black", key: "#000", value: "black" },
-  { label: "Orange", key: "#E6A23C", value: "orange" },
+  { label: "Blue", value: "blue" },
+  { label: "Red", value: "red" },
+  { label: "Grey", value: "grey" },
+  { label: "White", value: "white" },
+  { label: "Black", value: "black" },
+  { label: "Orange", value: "orange" },
 ];
 
 function changeConfig(param: { [key: string]: unknown }) {
+  const { selectedGrid } = dashboardStore;
   const graph = {
     ...selectedGrid.graph,
     ...param,

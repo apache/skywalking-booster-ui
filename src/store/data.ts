@@ -105,7 +105,7 @@ export const ConfigData3: any = [
   {
     x: 0,
     y: 0,
-    w: 2,
+    w: 4,
     h: 6,
     i: "1",
     type: "Topology",
@@ -122,7 +122,7 @@ export const ConfigData3: any = [
     },
   },
   {
-    x: 2,
+    x: 4,
     y: 0,
     w: 8,
     h: 12,

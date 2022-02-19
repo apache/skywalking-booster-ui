@@ -18,12 +18,14 @@ limitations under the License. -->
       <div>{{ data.widget?.title || "" }}</div>
       <div>
         <el-tooltip :content="data.widget?.tips">
-          <Icon
-            iconName="info_outline"
-            size="sm"
-            class="operation"
-            v-show="data.widget?.tips"
-          />
+          <span>
+            <Icon
+              iconName="info_outline"
+              size="sm"
+              class="operation"
+              v-show="data.widget?.tips"
+            />
+          </span>
         </el-tooltip>
         <el-popover placement="bottom" trigger="click" :width="100">
           <template #reference>

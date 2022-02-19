@@ -27,7 +27,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import WidgetOptions from "./WidgetOptions.vue";
-import TopologyOptions from "./graph-styles/Topology.vue";
+import TopologyOptions from "./graph-styles/TopologyItem.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
