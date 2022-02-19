@@ -84,8 +84,15 @@ export const dashboardStore = defineStore({
         ];
       }
       if (type === "Topology") {
-        newWidget.w = 2;
+        newWidget.w = 4;
         newWidget.h = 6;
+        newWidget.graph = {
+          fontColor: "white",
+          backgroundColor: "green",
+          iconTheme: true,
+          content: "Topology",
+          fontSize: 18,
+        };
       }
       this.layout = this.layout.map((d: LayoutConfig) => {
         d.y = d.y + newWidget.h;

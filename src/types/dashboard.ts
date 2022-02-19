@@ -116,7 +116,7 @@ export interface TopologyConfig {
   type?: string;
   backgroundColor?: string;
   fontColor?: string;
-  iconTheme?: string;
+  iconTheme?: boolean;
   content?: string;
   fontSize?: number;
 }

@@ -77,7 +77,7 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-console.log(Colors[props.data.graph.backgroundColor]);
+
 function editConfig() {
   dashboardStore.setConfigPanel(true);
   dashboardStore.selectWidget(props.data);
