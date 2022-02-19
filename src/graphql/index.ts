@@ -19,9 +19,15 @@ import { cancelToken } from "@/utils/cancelToken";
 import * as app from "./query/app";
 import * as selector from "./query/selector";
 import * as dashboard from "./query/dashboard";
+import * as topology from "./query/topology";
 
-const query: { [key: string]: string } = { ...app, ...selector, ...dashboard };
-class Graph {
+const query: { [key: string]: string } = {
+  ...app,
+  ...selector,
+  ...dashboard,
+  ...topology,
+};
+class Graphql {
   private queryData = "";
   public query(queryData: string) {
     this.queryData = queryData;
@@ -51,4 +57,4 @@ class Graph {
   }
 }
 
-export default new Graph();
+export default new Graphql();

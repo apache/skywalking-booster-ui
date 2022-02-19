@@ -20,12 +20,15 @@ import { watch, ref, Ref, onMounted, onBeforeUnmount, unref } from "vue";
 import type { PropType } from "vue";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
+import { useTimeoutFn } from "@/hooks/useTimeout";
 
-/*global Nullable, defineProps*/
+/*global Nullable, defineProps, defineEmits*/
+const emits = defineEmits(["select"]);
 const chartRef = ref<Nullable<HTMLDivElement>>(null);
-const { setOptions, resize } = useECharts(chartRef as Ref<HTMLDivElement>);
+const { setOptions, resize, getInstance } = useECharts(
+  chartRef as Ref<HTMLDivElement>
+);
 const props = defineProps({
-  clickEvent: { type: Function as PropType<(param: unknown) => void> },
   height: { type: String, default: "100%" },
   width: { type: String, default: "100%" },
   option: {
@@ -34,9 +37,16 @@ const props = defineProps({
   },
 });
 
-onMounted(() => {
-  setOptions(props.option);
+onMounted(async () => {
+  await setOptions(props.option);
   addResizeListener(unref(chartRef), resize);
+  useTimeoutFn(() => {
+    const instance = getInstance();
+
+    instance.on("click", (params: any) => {
+      emits("select", params);
+    });
+  }, 1000);
 });
 
 watch(

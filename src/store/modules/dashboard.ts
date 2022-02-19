@@ -17,14 +17,22 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
-import graph from "@/graph";
-import { ConfigData, ConfigData1, ConfigData2, ConfigData3 } from "../data";
+import graphql from "@/graphql";
+import query from "@/graphql/fetch";
+import {
+  ConfigData,
+  ConfigData1,
+  ConfigData2,
+  ConfigData3,
+  ConfigData4,
+  ConfigData5,
+  ConfigData6,
+} from "../data";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
 import { Duration } from "@/types/app";
-import axios, { AxiosResponse } from "axios";
-import { cancelToken } from "@/utils/cancelToken";
+import { AxiosResponse } from "axios";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -34,6 +42,7 @@ interface DashboardState {
   activedGridItem: string;
   durationTime: Duration;
   selectorStore: any;
+  showTopology: boolean;
 }
 
 export const dashboardStore = defineStore({
@@ -47,6 +56,7 @@ export const dashboardStore = defineStore({
     activedGridItem: "",
     durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
+    showTopology: false,
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -72,6 +82,17 @@ export const dashboardStore = defineStore({
             children: [],
           },
         ];
+      }
+      if (type === "Topology") {
+        newWidget.w = 4;
+        newWidget.h = 6;
+        newWidget.graph = {
+          fontColor: "white",
+          backgroundColor: "green",
+          iconTheme: true,
+          content: "Topology",
+          fontSize: 18,
+        };
       }
       this.layout = this.layout.map((d: LayoutConfig) => {
         d.y = d.y + newWidget.h;
@@ -154,11 +175,23 @@ export const dashboardStore = defineStore({
         this.layout = [ConfigData2];
       }
       if (type == "All") {
-        this.layout = [ConfigData3];
+        this.layout = ConfigData3;
       }
       if (type == "Service") {
         this.layout = [ConfigData];
       }
+      if (type == "ServiceRelation") {
+        this.layout = [ConfigData4];
+      }
+      if (type == "ServiceInstanceRelation") {
+        this.layout = [ConfigData6];
+      }
+      if (type == "EndpointRelation") {
+        this.layout = [ConfigData5];
+      }
+    },
+    setTopology(show: boolean) {
+      this.showTopology = show;
     },
     setConfigs(param: { [key: string]: unknown }) {
       const actived = this.activedGridItem.split("-");
@@ -181,14 +214,14 @@ export const dashboardStore = defineStore({
       this.selectedGrid = this.layout[index];
     },
     async fetchMetricType(item: string) {
-      const res: AxiosResponse = await graph
+      const res: AxiosResponse = await graphql
         .query("queryTypeOfMetrics")
         .params({ name: item });
 
       return res.data;
     },
     async fetchMetricList(regex: string) {
-      const res: AxiosResponse = await graph
+      const res: AxiosResponse = await graphql
         .query("queryMetrics")
         .params({ regex });
 
@@ -198,11 +231,7 @@ export const dashboardStore = defineStore({
       queryStr: string;
       conditions: { [key: string]: unknown };
     }) {
-      const res: AxiosResponse = await axios.post(
-        "/graphql",
-        { query: param.queryStr, variables: { ...param.conditions } },
-        { cancelToken: cancelToken() }
-      );
+      const res: AxiosResponse = await query(param);
       return res.data;
     },
   },

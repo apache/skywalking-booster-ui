@@ -142,7 +142,7 @@ export enum MetricCatalog {
 export const EntityType = [
   { value: "Service", label: "Service", key: 1 },
   { value: "All", label: "All", key: 10 },
-  { value: "Endpoint", label: "Service Endpoint", key: 3 },
+  { value: "Endpoint", label: "Endpoint", key: 3 },
   { value: "ServiceInstance", label: "Service Instance", key: 3 },
   { value: "ServiceRelation", label: "Service Relation", key: 2 },
   {
@@ -152,6 +152,7 @@ export const EntityType = [
   },
   { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },
 ];
+export const hasTopology = ["All", "Service", "ServiceRelation", "Endpoint"];
 export const TableEntity: any = {
   InstanceList: EntityType[3].value,
   EndpointList: EntityType[2].value,
@@ -165,8 +166,40 @@ export const ToolIcons = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
   // { name: "insert_image", content: "Add Image", id: "addImage" },
-  { name: "save_alt", content: "Export", id: "export" },
-  { name: "folder_open", content: "Import", id: "import" },
-  { name: "settings", content: "Settings", id: "settings" },
-  { name: "save", content: "Apply", id: "applay" },
+  // { name: "save_alt", content: "Export", id: "export" },
+  // { name: "folder_open", content: "Import", id: "import" },
+  // { name: "settings", content: "Settings", id: "settings" },
+  { name: "device_hub", content: "Add Topology", id: "topology" },
+  // { name: "save", content: "Apply", id: "apply" },
 ];
+export const ScopeType = [
+  { value: "Service", label: "Service", key: 1 },
+  { value: "Endpoint", label: "Endpoint", key: 3 },
+  { value: "ServiceInstance", label: "Service Instance", key: 3 },
+];
+export const LegendConditions = [
+  { label: "&&", value: "and" },
+  { label: "||", value: "or" },
+];
+export const MetricConditions = [
+  { label: ">", value: ">" },
+  { label: "<", value: "<" },
+];
+export enum LegendOpt {
+  NAME = "name",
+  VALUE = "value",
+  CONDITION = "condition",
+}
+export const DepthList = ["1", "2", "3", "4", "5"].map((item: string) => ({
+  value: item,
+  label: item,
+}));
+export const Colors: any = {
+  green: "#67C23A",
+  blue: "#409EFF",
+  red: "#F56C6C",
+  grey: "#909399",
+  white: "#fff",
+  black: "#000",
+  orange: "#E6A23C",
+};

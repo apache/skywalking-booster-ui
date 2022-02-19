@@ -60,10 +60,10 @@ limitations under the License. -->
       </el-collapse>
     </div>
     <div class="footer">
-      <el-button size="mini">
+      <el-button size="small">
         {{ t("cancel") }}
       </el-button>
-      <el-button size="mini" type="primary" @click="applyConfig">
+      <el-button size="small" type="primary" @click="applyConfig">
         {{ t("apply") }}
       </el-button>
     </div>

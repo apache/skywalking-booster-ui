@@ -30,6 +30,7 @@
     "baseUrl": ".",
     "allowJs": true,
     "resolveJsonModule": true,
+    "noImplicitThis": false,
     "types": [
       "webpack-env",
       "jest"

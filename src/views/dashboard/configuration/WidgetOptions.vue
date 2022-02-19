@@ -18,7 +18,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="title"
-      size="mini"
+      size="small"
       placeholder="Please input title"
       @change="updateWidgetConfig({ title })"
     />
@@ -28,7 +28,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="tips"
-      size="mini"
+      size="small"
       placeholder="Please input tips"
       @change="updateWidgetConfig({ tips })"
     />

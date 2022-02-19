@@ -18,20 +18,20 @@ limitations under the License. -->
       <div>{{ data.widget?.title || "" }}</div>
       <div>
         <el-tooltip :content="data.widget?.tips">
-          <Icon
-            iconName="info_outline"
-            size="sm"
-            class="operation"
-            v-show="data.widget?.tips"
-          />
+          <span>
+            <Icon
+              iconName="info_outline"
+              size="sm"
+              class="operation"
+              v-show="data.widget?.tips"
+            />
+          </span>
         </el-tooltip>
-        <el-popover
-          placement="bottom"
-          trigger="click"
-          :style="{ width: '100px' }"
-        >
+        <el-popover placement="bottom" trigger="click" :width="100">
           <template #reference>
-            <Icon iconName="ellipsis_v" size="middle" class="operation" />
+            <span>
+              <Icon iconName="ellipsis_v" size="middle" class="operation" />
+            </span>
           </template>
           <div class="tools" @click="editConfig">
             <span>{{ t("edit") }}</span>
@@ -99,6 +99,7 @@ export default defineComponent({
 
     async function queryMetrics() {
       const params = await useQueryProcessor(props.data);
+
       if (!params) {
         state.source = {};
         return;
@@ -137,15 +138,18 @@ export default defineComponent({
       }
     );
     watch(
-      () => selectorStore.currentService,
+      () => [selectorStore.currentService, selectorStore.currentDestService],
       () => {
-        if (dashboardStore.entity === EntityType[0].value) {
+        if (
+          dashboardStore.entity === EntityType[0].value ||
+          dashboardStore.entity === EntityType[4].value
+        ) {
           queryMetrics();
         }
       }
     );
     watch(
-      () => selectorStore.currentPod,
+      () => [selectorStore.currentPod, selectorStore.currentDestPod],
       () => {
         if (dashboardStore.entity === EntityType[0].value) {
           return;

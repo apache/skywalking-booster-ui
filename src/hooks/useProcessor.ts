@@ -28,6 +28,7 @@ export function useQueryProcessor(config: any) {
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
+
   if (!selectorStore.currentService && dashboardStore.entity !== "All") {
     return;
   }
@@ -40,6 +41,9 @@ export function useQueryProcessor(config: any) {
     "ServiceInstanceRelation",
     "EndpointRelation",
   ].includes(dashboardStore.entity);
+  if (isRelation && !selectorStore.currentDestService) {
+    return;
+  }
   const fragment = config.metrics.map((name: string, index: number) => {
     const metricType = config.metricTypes[index] || "";
     const labels = ["0", "1", "2", "3", "4"];
@@ -256,4 +260,29 @@ export function usePodsSource(
     return d;
   });
   return data;
+}
+export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
+  const appStore = useAppStoreWithOut();
+  const conditions: { [key: string]: unknown } = {
+    duration: appStore.durationTime,
+    ids,
+  };
+  const variables: string[] = [`$duration: Duration!`, `$ids: [ID!]!`];
+  const fragmentList = metrics.map((d: string, index: number) => {
+    conditions[`m${index}`] = d;
+    variables.push(`$m${index}: String!`);
+
+    return `${d}: getValues(metric: {
+      name: $m${index}
+      ids: $ids
+    }, duration: $duration) {
+      values {
+        id
+        value
+      }
+    }`;
+  });
+  const queryStr = `query queryData(${variables}) {${fragmentList.join(" ")}}`;
+
+  return { queryStr, conditions };
 }

@@ -101,21 +101,86 @@ export const ConfigData2: any = {
   },
   children: [],
 };
-export const ConfigData3: any = {
+export const ConfigData3: any = [
+  {
+    x: 0,
+    y: 0,
+    w: 8,
+    h: 12,
+    i: "0",
+    metrics: ["all_heatmap"],
+    metricTypes: ["readHeatMap"],
+    type: "Widget",
+    widget: {
+      title: "all_heatmap",
+      tips: "Tooltip",
+    },
+    graph: {
+      type: "HeatMap",
+    },
+    standard: {
+      unit: "min",
+    },
+    children: [],
+  },
+];
+export const ConfigData4: any = {
   x: 0,
   y: 0,
   w: 8,
   h: 12,
   i: "0",
-  metrics: ["all_heatmap"],
-  metricTypes: ["readHeatMap"],
+  metrics: ["service_relation_server_resp_time"],
+  metricTypes: ["readMetricsValues"],
   type: "Widget",
   widget: {
-    title: "all_heatmap",
+    title: "service_relation_server_resp_time",
     tips: "Tooltip",
   },
   graph: {
-    type: "HeatMap",
+    type: "Line",
+  },
+  standard: {
+    unit: "min",
+  },
+  children: [],
+};
+export const ConfigData5: any = {
+  x: 0,
+  y: 0,
+  w: 8,
+  h: 12,
+  i: "0",
+  metrics: ["endpoint_relation_cpm"],
+  metricTypes: ["readMetricsValues"],
+  type: "Widget",
+  widget: {
+    title: "endpoint_relation_cpm",
+    tips: "Tooltip",
+  },
+  graph: {
+    type: "Line",
+  },
+  standard: {
+    unit: "min",
+  },
+  children: [],
+};
+export const ConfigData6: any = {
+  x: 0,
+  y: 0,
+  w: 8,
+  h: 12,
+  i: "0",
+  metrics: ["service_instance_relation_server_cpm"],
+  metricTypes: ["readMetricsValues"],
+  type: "Widget",
+  widget: {
+    title: "service_instance_relation_server_cpm",
+    tips: "Tooltip",
+  },
+  graph: {
+    type: "Line",
   },
   standard: {
     unit: "min",

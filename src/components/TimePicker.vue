@@ -145,11 +145,12 @@ limitations under the License. -->
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import DateCalendar from "./DateCalendar.vue";
+import { useTimeoutFn } from "@/hooks/useTimeout";
 /*global defineProps, defineEmits */
 const datepicker = ref(null);
 const { t } = useI18n();
 const show = ref<boolean>(false);
-const dates = ref<Date[]>([]);
+const dates = ref<Date | string[] | any>([]);
 const props = defineProps({
   position: { type: String, default: "bottom" },
   name: [String],
@@ -244,7 +245,7 @@ const range = computed(() => {
 const text = computed(() => {
   const val = props.value;
   const txt = dates.value
-    .map((date) => tf(date))
+    .map((date: Date) => tf(date))
     .join(` ${props.rangeSeparator} `);
   if (Array.isArray(val)) {
     return val.length > 1 ? txt : "";
@@ -270,9 +271,9 @@ const ok = (leaveOpened: boolean) => {
   emit("input", get());
   !leaveOpened &&
     !props.showButtons &&
-    setTimeout(() => {
+    useTimeoutFn(() => {
       show.value = range.value;
-    });
+    }, 1);
 };
 const setDates = (d: Date) => {
   dates.value[1] = d;

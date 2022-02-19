@@ -95,6 +95,10 @@
   background-color: #a7aebb;
 }
 
+.mb-5 {
+  margin-bottom: 5px;
+}
+
 .ml-5 {
   margin-left: 5px;
 }
@@ -129,11 +133,19 @@
 @keyframes loading {
   0% {
     transform: rotate(0deg);
-    transform: rotate(0deg);
   }
 
   to {
     transform: rotate(1turn);
-    transform: rotate(1turn);
+  }
+}
+
+.dark-dialog {
+  background-color: #333840;
+  color: #ddd;
+
+  .el-loading-mask {
+    background-color: #333840;
+    color: #ddd;
   }
 }

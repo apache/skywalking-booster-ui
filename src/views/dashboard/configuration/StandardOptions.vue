@@ -18,7 +18,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="state.unit"
-      size="mini"
+      size="small"
       placeholder="Please input Unit"
       @change="changeStandardOpt({ unit: state.unit })"
     />
@@ -28,7 +28,7 @@ limitations under the License. -->
     <Selector
       :value="state.sortOrder"
       :options="SortOrder"
-      size="mini"
+      size="small"
       placeholder="Select a sort order"
       class="selector"
       @change="changeStandardOpt({ sortOrder: state.sortOrder })"
@@ -39,7 +39,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="state.max"
-      size="mini"
+      size="small"
       placeholder="auto"
       @change="changeStandardOpt({ max: state.max })"
     />
@@ -49,7 +49,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="state.min"
-      size="mini"
+      size="small"
       placeholder="auto"
       @change="changeStandardOpt({ min: state.min })"
     />
@@ -59,7 +59,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="state.plus"
-      size="mini"
+      size="small"
       placeholder="none"
       @change="changeStandardOpt({ plus: state.plus })"
     />
@@ -69,7 +69,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="state.minus"
-      size="mini"
+      size="small"
       placeholder="none"
       @change="changeStandardOpt({ minus: state.minus })"
     />
@@ -79,7 +79,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="state.multiply"
-      size="mini"
+      size="small"
       placeholder="none"
       @change="changeStandardOpt({ multiply: state.multiply })"
     />
@@ -89,7 +89,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="state.divide"
-      size="mini"
+      size="small"
       placeholder="none"
       @change="changeStandardOpt({ divide: state.divide })"
     />
@@ -99,7 +99,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="state.milliseconds"
-      size="mini"
+      size="small"
       placeholder="none"
       @change="changeStandardOpt({ milliseconds: state.milliseconds })"
     />
@@ -109,7 +109,7 @@ limitations under the License. -->
     <el-input
       class="input"
       v-model="state.seconds"
-      size="mini"
+      size="small"
       placeholder="none"
       @change="changeStandardOpt({ seconds: state.seconds })"
     />

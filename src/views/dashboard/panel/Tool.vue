@@ -20,7 +20,7 @@ limitations under the License. -->
         <Selector
           v-model="states.currentService"
           :options="selectorStore.services"
-          size="mini"
+          size="small"
           placeholder="Select a service"
           @change="changeService"
           class="selectors"
@@ -29,7 +29,7 @@ limitations under the License. -->
       <div class="selectors-item" v-if="states.key === 3 || states.key === 4">
         <span class="label">
           {{
-            dashboardStore.entity === "Endpoint"
+            ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
               ? "$Endpoint"
               : "$ServiceInstance"
           }}
@@ -37,48 +37,58 @@ limitations under the License. -->
         <Selector
           v-model="states.currentPod"
           :options="selectorStore.pods"
-          size="mini"
+          size="small"
           placeholder="Select a data"
           @change="changePods"
           class="selectorPod"
         />
       </div>
-      <div class="selectors-item" v-if="states.key === 2">
+      <div class="selectors-item" v-if="states.key === 2 || states.key === 4">
         <span class="label">$DestinationService</span>
         <Selector
-          v-model="selectorStore.currentDestService"
-          :options="selectorStore.services"
-          size="mini"
+          v-model="states.currentDestService"
+          :options="selectorStore.destServices"
+          size="small"
           placeholder="Select a service"
-          @change="changeService"
+          @change="changeDestService"
           class="selectors"
         />
       </div>
       <div class="selectors-item" v-if="states.key === 4">
-        <span class="label">$DestinationServiceInstance</span>
+        <span class="label">
+          {{
+            dashboardStore.entity === "EndpointRelation"
+              ? "$DestinationEndpoint"
+              : "$DestinationServiceInstance"
+          }}</span
+        >
         <Selector
-          v-model="states.currentPod"
-          :options="selectorStore.pods"
-          size="mini"
+          v-model="states.currentDestPod"
+          :options="selectorStore.destPods"
+          size="small"
           placeholder="Select a data"
           @change="changePods"
-          class="selectors"
-          :borderRadius="4"
+          class="selectorPod"
         />
       </div>
     </div>
     <div class="tool-icons">
-      <el-tooltip
+      <span
+        @click="clickIcons(t)"
         v-for="(t, index) in ToolIcons"
         :key="index"
-        class="item"
-        :content="t.content"
-        placement="top"
+        :title="t.content"
       >
-        <span class="icon-btn" @click="clickIcons(t)">
-          <Icon size="sm" :iconName="t.name" />
-        </span>
-      </el-tooltip>
+        <Icon
+          class="icon-btn"
+          size="sm"
+          :iconName="t.name"
+          v-if="
+            t.id !== 'topology' ||
+            (t.id === 'topology' && hasTopology.includes(dashboardStore.entity))
+          "
+        />
+      </span>
     </div>
   </div>
 </template>
@@ -88,7 +98,7 @@ import { reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { EntityType, ToolIcons } from "../data";
+import { EntityType, ToolIcons, hasTopology } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
@@ -105,12 +115,16 @@ const states = reactive<{
   key: number;
   currentService: string;
   currentPod: string;
+  currentDestService: string;
+  currentDestPod: string;
 }>({
   destService: "",
   destPod: "",
   key: (type && type.key) || 0,
   currentService: "",
   currentPod: "",
+  currentDestService: "",
+  currentDestPod: "",
 });
 
 dashboardStore.setLayer(String(params.layerId));
@@ -127,56 +141,136 @@ function initSelector() {
 }
 
 async function setSelector() {
-  if (params.podId) {
-    await selectorStore.getService(String(params.serviceId));
-    states.currentService = selectorStore.currentService.value;
-    await fetchPods(String(params.entity), false);
-    const currentPod = selectorStore.pods.filter(
-      (d: { id: string }) => d.id === String(params.podId)
-    )[0];
-    selectorStore.setCurrentPod(currentPod);
-    states.currentPod = currentPod.label;
+  if (
+    [
+      EntityType[2].value,
+      EntityType[3].value,
+      EntityType[5].value,
+      EntityType[6].value,
+    ].includes(String(params.entity))
+  ) {
+    setSourceSelector();
+    if (
+      [EntityType[2].value, EntityType[3].value].includes(String(params.entity))
+    ) {
+      return;
+    }
+    setDestSelector();
     return;
   }
-  // entity=Service with serviceId
+  // entity=Service/ServiceRelation
   const json = await selectorStore.fetchServices(dashboardStore.layerId);
   if (json.errors) {
     ElMessage.error(json.errors);
     return;
   }
-  const currentService = selectorStore.services.filter(
-    (d: { id: string }) => d.id === String(params.serviceId)
-  )[0];
+  let currentService, currentDestService;
+  for (const d of selectorStore.services) {
+    if (d.id === String(params.serviceId)) {
+      currentService = d;
+    }
+    if (d.id === String(params.destServiceId)) {
+      currentDestService = d;
+    }
+  }
   selectorStore.setCurrentService(currentService);
+  selectorStore.setCurrentDestService(currentDestService);
   states.currentService = selectorStore.currentService.value;
+  states.currentDestService = selectorStore.currentDestService.value;
+}
+
+async function setSourceSelector() {
+  await selectorStore.getService(String(params.serviceId));
+  states.currentService = selectorStore.currentService.value;
+  const e = String(params.entity).split("Relation")[0];
+  await fetchPods(e, selectorStore.currentService.id, false);
+  if (!(selectorStore.pods.length && selectorStore.pods[0])) {
+    selectorStore.setCurrentPod(null);
+    states.currentPod = "";
+    return;
+  }
+  const pod = params.podId || selectorStore.pods[0].id;
+  const currentPod = selectorStore.pods.filter(
+    (d: { id: string }) => d.id === pod
+  )[0];
+  if (currentPod) {
+    selectorStore.setCurrentPod(currentPod);
+    states.currentPod = currentPod.label;
+  }
+}
+
+async function setDestSelector() {
+  await selectorStore.getService(String(params.destServiceId), true);
+  states.currentDestService = selectorStore.currentDestService.value;
+  await fetchPods(
+    String(params.entity),
+    selectorStore.currentDestService.id,
+    false
+  );
+  if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
+    selectorStore.setCurrentDestPod(null);
+    states.currentDestPod = "";
+    return;
+  }
+  const destPod = params.destPodId || selectorStore.destPods[0].id;
+  const currentDestPod = selectorStore.destPods.filter(
+    (d: { id: string }) => d.id === destPod
+  )[0];
+  if (currentDestPod) {
+    selectorStore.setCurrentDestPod(currentDestPod);
+    states.currentDestPod = currentDestPod.label;
+  }
 }
 
 async function getServices() {
   if (!dashboardStore.layerId) {
     return;
   }
-  if (dashboardStore.entity === EntityType[1].value) {
-    return;
-  }
   const json = await selectorStore.fetchServices(dashboardStore.layerId);
   if (json.errors) {
     ElMessage.error(json.errors);
     return;
   }
+  if (dashboardStore.entity === EntityType[1].value) {
+    return;
+  }
   selectorStore.setCurrentService(
     selectorStore.services.length ? selectorStore.services[0] : null
   );
+  selectorStore.setCurrentDestService(
+    selectorStore.services.length ? selectorStore.services[1] : null
+  );
   states.currentService = selectorStore.currentService.value;
-  fetchPods(dashboardStore.entity, true);
+  states.currentDestService = selectorStore.currentDestService.value;
+  const e = dashboardStore.entity.split("Relation")[0];
+  if (
+    [EntityType[2].value, EntityType[3].value].includes(dashboardStore.entity)
+  ) {
+    fetchPods(e, selectorStore.currentService.id, true);
+  }
+  if (
+    [EntityType[5].value, EntityType[6].value].includes(dashboardStore.entity)
+  ) {
+    fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
+  }
 }
 
 async function changeService(service: Service[]) {
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
-    fetchPods(dashboardStore.entity, true);
+    fetchPods(dashboardStore.entity, selectorStore.currentService.id, true);
   } else {
-    selectorStore.setCurrentService("");
+    selectorStore.setCurrentService(null);
+  }
+}
+
+function changeDestService(service: Service[]) {
+  if (service[0]) {
+    states.currentDestService = service[0].value;
+    selectorStore.setCurrentDestService(service[0]);
+  } else {
+    selectorStore.setCurrentDestService(null);
   }
 }
 
@@ -199,6 +293,9 @@ function clickIcons(t: { id: string; content: string; name: string }) {
     case "addImage":
       dashboardStore.addControl("Image");
       break;
+    case "topology":
+      dashboardStore.addControl("Topology");
+      break;
     case "settings":
       dashboardStore.setConfigPanel(true);
       break;
@@ -207,11 +304,11 @@ function clickIcons(t: { id: string; content: string; name: string }) {
   }
 }
 
-async function fetchPods(type: string, setPod: boolean) {
+async function fetchPods(type: string, serviceId: string, setPod: boolean) {
   let resp;
   switch (type) {
-    case "Endpoint":
-      resp = await selectorStore.getEndpoints();
+    case EntityType[2].value:
+      resp = await selectorStore.getEndpoints({ serviceId });
       if (setPod) {
         selectorStore.setCurrentPod(
           selectorStore.pods.length ? selectorStore.pods[0] : null
@@ -219,13 +316,34 @@ async function fetchPods(type: string, setPod: boolean) {
         states.currentPod = selectorStore.currentPod.label;
       }
       break;
-    case "ServiceInstance":
-      resp = await selectorStore.getServiceInstances();
+    case EntityType[3].value:
+      resp = await selectorStore.getServiceInstances({ serviceId });
       if (setPod) {
         selectorStore.setCurrentPod(
           selectorStore.pods.length ? selectorStore.pods[0] : null
         );
         states.currentPod = selectorStore.currentPod.label;
+      }
+      break;
+    case EntityType[6].value:
+      resp = await selectorStore.getEndpoints({ serviceId, isRelation: true });
+      if (setPod) {
+        selectorStore.setCurrentDestPod(
+          selectorStore.destPods.length ? selectorStore.destPods[0] : null
+        );
+        states.currentDestPod = selectorStore.currentDestPod.label;
+      }
+      break;
+    case EntityType[5].value:
+      resp = await selectorStore.getServiceInstances({
+        serviceId,
+        isRelation: true,
+      });
+      if (setPod) {
+        selectorStore.setCurrentDestPod(
+          selectorStore.destPods.length ? selectorStore.destPods[0] : null
+        );
+        states.currentDestPod = selectorStore.currentDestPod.label;
       }
       break;
     default:
@@ -258,9 +376,13 @@ watch(
   padding: 4px 2px;
 }
 
+.tool-icons {
+  margin-top: 2px;
+}
+
 .icon-btn {
   display: inline-block;
-  padding: 0 5px;
+  padding: 3px;
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 3px;
@@ -268,9 +390,6 @@ watch(
   cursor: pointer;
   background-color: #eee;
   color: #666;
-}
-
-.item {
   font-size: 12px;
 }
 

@@ -43,18 +43,17 @@ interface Option {
 }
 
 /*global  defineProps, defineEmits*/
-
 const emit = defineEmits(["change"]);
 const props = defineProps({
   options: {
-    type: Array as PropType<Option[]>,
+    type: Array as PropType<(Option & { disabled: boolean })[]>,
     default: () => [],
   },
   value: {
     type: [Array, String] as PropType<string[] | string>,
     default: () => [],
   },
-  size: { type: String, default: "small" },
+  size: { type: null, default: "default" },
   placeholder: { type: String, default: "Select a option" },
   borderRadius: { type: Number, default: 3 },
   multiple: { type: Boolean, default: false },
@@ -77,7 +76,7 @@ watch(
   }
 );
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .icon {
   width: 16px;
   height: 16px;

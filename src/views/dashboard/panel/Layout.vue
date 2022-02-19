@@ -42,10 +42,11 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
 import Widget from "../controls/Widget.vue";
 import Tab from "../controls/Tab.vue";
+import Topology from "../controls/Topology.vue";
 
 export default defineComponent({
   name: "Layout",
-  components: { Widget, Tab },
+  components: { Widget, Tab, Topology },
   setup() {
     const dashboardStore = useDashboardStore();
     function layoutUpdatedEvent(newLayout: LayoutConfig[]) {

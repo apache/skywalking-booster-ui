@@ -16,7 +16,13 @@
  */
 import * as echarts from "echarts/core";
 
-import { BarChart, LineChart, PieChart, HeatmapChart } from "echarts/charts";
+import {
+  BarChart,
+  LineChart,
+  PieChart,
+  HeatmapChart,
+  SankeyChart,
+} from "echarts/charts";
 
 import {
   TitleComponent,
@@ -39,6 +45,7 @@ echarts.use([
   LineChart,
   PieChart,
   HeatmapChart,
+  SankeyChart,
   SVGRenderer,
   DataZoomComponent,
   VisualMapComponent,

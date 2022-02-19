@@ -18,7 +18,7 @@ limitations under the License. -->
     <div class="item">
       <div class="label">{{ t("name") }}</div>
       <el-input
-        size="small"
+        size="default"
         v-model="states.name"
         placeholder="Please input name"
       />
@@ -28,7 +28,6 @@ limitations under the License. -->
       <Selector
         v-model="states.selectedLayer"
         :options="states.layers"
-        size="small"
         placeholder="Select a layer"
         @change="changeLayer"
         class="selectors"
@@ -39,14 +38,13 @@ limitations under the License. -->
       <Selector
         v-model="states.entity"
         :options="EntityType"
-        size="small"
         placeholder="Select a entity"
         @change="changeEntity"
         class="selectors"
       />
     </div>
     <div class="btn">
-      <el-button class="create" size="small" type="primary" @click="onCreate">
+      <el-button class="create" size="default" type="primary" @click="onCreate">
         {{ t("create") }}
       </el-button>
     </div>

@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
+    "d3": "^7.3.0",
+    "d3-tip": "^0.9.1",
     "echarts": "^5.2.2",
-    "element-plus": "^1.2.0-beta.3",
+    "element-plus": "^2.0.2",
     "pinia": "^2.0.5",
     "three": "^0.131.3",
     "three-orbit-controls": "^82.1.0",
@@ -24,6 +26,8 @@
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
+    "@types/d3": "^7.1.0",
+    "@types/d3-tip": "^3.5.5",
     "@types/echarts": "^4.9.12",
     "@types/jest": "^24.0.19",
     "@types/three": "^0.131.0",

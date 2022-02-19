@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import graph from "@/graph";
+import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 
 const getLocalTime = (utc: string, time: Date): Date => {
@@ -38,7 +38,9 @@ const setTimezoneOffset = () => {
 export const queryOAPTimeInfo = async (): Promise<void> => {
   let utc = window.localStorage.getItem("utc");
   if (!utc) {
-    const res: AxiosResponse = await graph.query("queryOAPTimeInfo").params({});
+    const res: AxiosResponse = await graphql
+      .query("queryOAPTimeInfo")
+      .params({});
     if (
       !res.data ||
       !res.data.data ||
