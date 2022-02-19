@@ -17,7 +17,7 @@
 #
 
 github:
-  description: APM, Application Performance Monitoring System
+  description: Apache SkyWalking 3rd generation UI
   homepage: https://skywalking.apache.org/
   labels:
     - skywalking
