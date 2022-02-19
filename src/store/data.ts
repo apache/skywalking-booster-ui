@@ -113,6 +113,13 @@ export const ConfigData3: any = [
       title: "Topology",
       tips: "Topology",
     },
+    graph: {
+      fontColor: "white",
+      backgroundColor: "green",
+      iconTheme: true,
+      content: "Topology",
+      fontSize: 18,
+    },
   },
   {
     x: 2,

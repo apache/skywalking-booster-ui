@@ -55,7 +55,8 @@ export type GraphConfig =
   | TableConfig
   | EndpointListConfig
   | ServiceListConfig
-  | InstanceListConfig;
+  | InstanceListConfig
+  | TopologyConfig;
 export interface BarConfig {
   type?: string;
   showBackground?: boolean;
@@ -109,4 +110,13 @@ export interface EndpointListConfig {
   type?: string;
   dashboardName: string;
   fontSize: number;
+}
+
+export interface TopologyConfig {
+  type?: string;
+  backgroundColor?: string;
+  fontColor?: string;
+  iconTheme?: string;
+  content?: string;
+  fontSize?: number;
 }

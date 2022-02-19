@@ -83,6 +83,10 @@ export const dashboardStore = defineStore({
           },
         ];
       }
+      if (type === "Topology") {
+        newWidget.w = 2;
+        newWidget.h = 6;
+      }
       this.layout = this.layout.map((d: LayoutConfig) => {
         d.y = d.y + newWidget.h;
         return d;

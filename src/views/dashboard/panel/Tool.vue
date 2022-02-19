@@ -294,7 +294,7 @@ function clickIcons(t: { id: string; content: string; name: string }) {
       dashboardStore.addControl("Image");
       break;
     case "topology":
-      dashboardStore.setTopology(true);
+      dashboardStore.addControl("Topology");
       break;
     case "settings":
       dashboardStore.setConfigPanel(true);

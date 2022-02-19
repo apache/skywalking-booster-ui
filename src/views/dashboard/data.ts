@@ -194,3 +194,12 @@ export const DepthList = ["1", "2", "3", "4", "5"].map((item: string) => ({
   value: item,
   label: item,
 }));
+export const Colors: any = {
+  green: "#67C23A",
+  blue: "#409EFF",
+  red: "#F56C6C",
+  grey: "#909399",
+  white: "#fff",
+  black: "#000",
+  orange: "#E6A23C",
+};

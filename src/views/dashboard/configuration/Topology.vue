@@ -12,7 +12,41 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<template>topology</template>
+<template>
+  <WidgetOptions />
+  <TopologyOptions />
+  <div class="footer">
+    <el-button size="small">
+      {{ t("cancel") }}
+    </el-button>
+    <el-button size="small" type="primary" @click="applyConfig">
+      {{ t("apply") }}
+    </el-button>
+  </div>
+</template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import WidgetOptions from "./WidgetOptions.vue";
+import TopologyOptions from "./graph-styles/Topology.vue";
+import { useDashboardStore } from "@/store/modules/dashboard";
+
+const { t } = useI18n();
+const dashboardStore = useDashboardStore();
+
+function applyConfig() {
+  dashboardStore.setConfigs(dashboardStore.selectedGrid);
+  dashboardStore.setConfigPanel(false);
+}
 </script>
+<style lang="scss" scoped>
+.footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  border-top: 1px solid #eee;
+  padding: 10px;
+  text-align: right;
+  width: 100%;
+  background-color: #fff;
+}
+</style>

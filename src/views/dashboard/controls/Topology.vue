@@ -29,15 +29,29 @@ limitations under the License. -->
           <div class="tools" @click="editConfig">
             <span>{{ t("edit") }}</span>
           </div>
-          <div class="tools">
+          <div class="tools" @click="removeTopo">
             <span>{{ t("delete") }}</span>
           </div>
         </el-popover>
       </div>
     </div>
-    <div class="body" @click="ViewTopology">
-      <Icon iconName="topology" size="xl" />
-      <div>Topology</div>
+    <div
+      class="body"
+      @click="ViewTopology"
+      :style="`background: ${Colors[data.graph.backgroundColor]}`"
+    >
+      <Icon
+        :iconName="data.graph.iconTheme ? 'topology-light' : 'topology-dark'"
+        size="middle"
+      />
+      <div
+        :style="{
+          color: Colors[data.graph.fontColor],
+          fontSize: data.graph.fontSize + 'px',
+        }"
+      >
+        {{ data.graph.content }}
+      </div>
     </div>
   </div>
 </template>
@@ -45,16 +59,15 @@ limitations under the License. -->
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { LayoutConfig } from "@/types/dashboard";
+import { Colors } from "../data";
 /*global defineProps */
 const props = defineProps({
   data: {
-    type: Object as PropType<LayoutConfig>,
-    default: () => ({ widget: {} }),
+    type: Object as PropType<any>,
+    default: () => ({ graph: {} }),
   },
   activeIndex: { type: String, default: "" },
 });
-
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 function editConfig() {
@@ -63,6 +76,9 @@ function editConfig() {
 }
 function ViewTopology() {
   dashboardStore.setTopology(true);
+}
+function removeTopo() {
+  dashboardStore.removeControls(props.data);
 }
 </script>
 <style lang="scss" scoped>
@@ -97,10 +113,16 @@ function ViewTopology() {
 }
 
 .body {
-  padding: 5px 10px;
+  text-align: center;
   width: 100%;
   height: calc(100% - 30px);
   cursor: pointer;
+  box-sizing: border-box;
+  color: #333;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
 }
 
 .no-data {
