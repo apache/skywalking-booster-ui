@@ -69,7 +69,8 @@ limitations under the License. -->
   <div class="item">
     <span class="label">{{ t("defaultDepth") }}</span>
     <Selector
-      class="inputs"
+      class="input"
+      size="small"
       :value="depth"
       :options="DepthList"
       @change="changeDepth($event)"

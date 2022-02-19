@@ -87,9 +87,9 @@ const loading = ref<boolean>(false);
 const height = ref<number>(document.body.clientHeight - 150);
 const width = ref<number>(document.body.clientWidth - 40);
 const showSettings = ref<boolean>(false);
-const depth = ref<string>("2");
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
+const depth = ref<string>(topologyStore.defaultDepth);
 const items = [
   { id: "inspect", title: "Inspect", func: inspect },
   { id: "dashboard", title: "View Dashboard", func: goDashboard },
