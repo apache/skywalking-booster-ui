@@ -89,6 +89,7 @@ const msg = {
   backgroundColors: "背景颜色",
   fontColors: "字体颜色",
   iconTheme: "图标主题",
+  showDepth: "展示深度选择器",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

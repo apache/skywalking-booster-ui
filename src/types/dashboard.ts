@@ -120,4 +120,5 @@ export interface TopologyConfig {
   content?: string;
   fontSize?: number;
   depth?: string;
+  showDepth?: boolean;
 }

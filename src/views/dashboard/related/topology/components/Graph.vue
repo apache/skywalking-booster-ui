@@ -23,14 +23,16 @@ limitations under the License. -->
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
     <div class="tool">
-      <span class="label">{{ t("currentDepth") }}</span>
-      <Selector
-        class="inputs"
-        :value="depth"
-        :options="DepthList"
-        placeholder="Select a option"
-        @change="changeDepth"
-      />
+      <span v-show="dashboardStore.selectedGrid.showDepth">
+        <span class="label">{{ t("currentDepth") }}</span>
+        <Selector
+          class="inputs"
+          :value="depth"
+          :options="DepthList"
+          placeholder="Select a option"
+          @change="changeDepth"
+        />
+      </span>
       <span class="switch-icon ml-5" title="Settings" @click="setConfig">
         <Icon size="middle" iconName="settings" />
       </span>
@@ -108,7 +110,7 @@ const items = ref<
   { id: "inspect", title: "Inspect", func: handleInspect },
   { id: "alarm", title: "Alarm", func: handleGoAlarm },
 ]);
-const depth = ref<string>(topologyStore.defaultDepth);
+const depth = ref<string>(dashboardStore.selectedGrid.depth || "2");
 
 onMounted(async () => {
   loading.value = true;
