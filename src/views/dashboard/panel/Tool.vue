@@ -290,8 +290,8 @@ function clickIcons(t: { id: string; content: string; name: string }) {
     case "addTab":
       dashboardStore.addControl("Tab");
       break;
-    case "addImage":
-      dashboardStore.addControl("Image");
+    case "trace":
+      dashboardStore.addControl("Trace");
       break;
     case "topology":
       dashboardStore.addControl("Topology");

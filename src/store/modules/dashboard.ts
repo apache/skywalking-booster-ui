@@ -63,7 +63,7 @@ export const dashboardStore = defineStore({
       this.layout = data;
     },
     addControl(type: string) {
-      const newWidget: LayoutConfig = {
+      const newItem: LayoutConfig = {
         ...NewControl,
         i: String(this.layout.length),
         type,
@@ -71,8 +71,8 @@ export const dashboardStore = defineStore({
         metrics: [""],
       };
       if (type === "Tab") {
-        newWidget.h = 24;
-        newWidget.children = [
+        newItem.h = 24;
+        newItem.children = [
           {
             name: "Tab1",
             children: [],
@@ -84,9 +84,9 @@ export const dashboardStore = defineStore({
         ];
       }
       if (type === "Topology") {
-        newWidget.w = 4;
-        newWidget.h = 6;
-        newWidget.graph = {
+        newItem.w = 4;
+        newItem.h = 6;
+        newItem.graph = {
           fontColor: "white",
           backgroundColor: "green",
           iconTheme: true,
@@ -95,12 +95,15 @@ export const dashboardStore = defineStore({
           showDepth: true,
         };
       }
+      if (type === "Trace") {
+        newItem.h = 24;
+      }
       this.layout = this.layout.map((d: LayoutConfig) => {
-        d.y = d.y + newWidget.h;
+        d.y = d.y + newItem.h;
         return d;
       });
-      this.layout.push(newWidget);
-      this.activedGridItem = newWidget.i;
+      this.layout.push(newItem);
+      this.activedGridItem = newItem.i;
     },
     addTabItem(item: LayoutConfig) {
       const idx = this.layout.findIndex((d: LayoutConfig) => d.i === item.i);
