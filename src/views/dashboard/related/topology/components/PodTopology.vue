@@ -14,7 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="tool">
-    <span v-show="dashboardStore.entity === EntityType[2].value">
+    <span
+      v-show="
+        dashboardStore.entity === EntityType[2].value &&
+        dashboardStore.selectedGrid.showDepth
+      "
+    >
       <span class="label">{{ t("currentDepth") }}</span>
       <Selector
         class="inputs"
@@ -89,7 +94,7 @@ const width = ref<number>(document.body.clientWidth - 40);
 const showSettings = ref<boolean>(false);
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
-const depth = ref<string>(topologyStore.defaultDepth);
+const depth = ref<string>(dashboardStore.selectedGrid.depth || "3");
 const items = [
   { id: "inspect", title: "Inspect", func: inspect },
   { id: "dashboard", title: "View Dashboard", func: goDashboard },

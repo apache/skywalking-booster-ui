@@ -92,6 +92,7 @@ export const dashboardStore = defineStore({
           iconTheme: true,
           content: "Topology",
           fontSize: 18,
+          showDepth: true,
         };
       }
       this.layout = this.layout.map((d: LayoutConfig) => {

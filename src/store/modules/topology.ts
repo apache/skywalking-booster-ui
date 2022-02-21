@@ -35,7 +35,6 @@ interface TopologyState {
   nodeMetrics: MetricVal;
   linkServerMetrics: MetricVal;
   linkClientMetrics: MetricVal;
-  defaultDepth: string;
 }
 
 export const topologyStore = defineStore({
@@ -48,7 +47,6 @@ export const topologyStore = defineStore({
     nodeMetrics: {},
     linkServerMetrics: {},
     linkClientMetrics: {},
-    defaultDepth: "2",
   }),
   actions: {
     setNode(node: Node) {
@@ -113,9 +111,6 @@ export const topologyStore = defineStore({
     },
     setLinkClientMetrics(m: { id: string; value: unknown }[]) {
       this.linkClientMetrics = m;
-    },
-    setDefaultDepth(val: number) {
-      this.defaultDepth = val;
     },
     async getDepthServiceTopology(serviceIds: string[], depth: number) {
       const res = await this.getServicesTopology(serviceIds);
