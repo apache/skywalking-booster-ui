@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <WidgetOptions />
-  <TopologyOptions />
+  <StyleOptions />
   <div class="footer">
     <el-button size="small">
       {{ t("cancel") }}
@@ -26,8 +26,8 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import WidgetOptions from "./WidgetOptions.vue";
-import TopologyOptions from "./graph-styles/TopologyItem.vue";
+import WidgetOptions from "./components/WidgetOptions.vue";
+import StyleOptions from "./topology/StyleOptions.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();

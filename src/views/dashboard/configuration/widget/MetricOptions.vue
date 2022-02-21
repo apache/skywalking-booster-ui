@@ -95,7 +95,7 @@ import {
   ChartTypes,
   PodsChartTypes,
   TableEntity,
-} from "../data";
+} from "../../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";

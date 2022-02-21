@@ -118,7 +118,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
-import { SortOrder } from "../data";
+import { SortOrder } from "../../data";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const dashboardStore = useDashboardStore();

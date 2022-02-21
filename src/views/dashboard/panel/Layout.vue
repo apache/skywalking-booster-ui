@@ -40,13 +40,11 @@ limitations under the License. -->
 import { defineComponent } from "vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
-import Widget from "../controls/Widget.vue";
-import Tab from "../controls/Tab.vue";
-import Topology from "../controls/Topology.vue";
+import controls from "../controls/index";
 
 export default defineComponent({
   name: "Layout",
-  components: { Widget, Tab, Topology },
+  components: { ...controls },
   setup() {
     const dashboardStore = useDashboardStore();
     function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
