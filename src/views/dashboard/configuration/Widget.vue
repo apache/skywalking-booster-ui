@@ -76,7 +76,7 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Option } from "@/types/app";
 import graphs from "../graphs";
-import configs from "./graph-styles";
+import configs from "./widget/graph-styles";
 import WidgetOptions from "./components/WidgetOptions.vue";
 import StandardOptions from "./widget/StandardOptions.vue";
 import MetricOptions from "./widget/MetricOptions.vue";

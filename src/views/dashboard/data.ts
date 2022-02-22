@@ -203,3 +203,8 @@ export const Colors: any = {
   black: "#000",
   orange: "#E6A23C",
 };
+export const Status = [
+  { label: "All", value: "ALL" },
+  { label: "Success", value: "SUCCESS" },
+  { label: "Error", value: "ERROR" },
+];
