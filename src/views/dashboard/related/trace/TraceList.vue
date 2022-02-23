@@ -19,21 +19,24 @@ limitations under the License. -->
         :small="true"
         layout="prev, pager, next, jumper"
         :total="traceStore.traceTotal"
+        v-model:pager-count="pageCount"
         @current-change="updatePage"
       />
-      <Selector
-        size="small"
-        v-model="traceStore.conditions.queryOrder"
-        :options="QueryOrders"
-        placeholder="Select a option"
-        @change="changeSort"
-      />
+      <div class="selectors">
+        <Selector
+          size="small"
+          v-model="traceStore.conditions.queryOrder"
+          :options="QueryOrders"
+          placeholder="Select a option"
+          @change="changeSort"
+        />
+      </div>
     </div>
     <div class="trace-t-loading" v-loading="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
-    <div class="trace-t-wrapper scroll_hide">
-      <table class="trace-t">
+    <div class="trace-t-wrapper">
+      <table class="list">
         <tr
           class="trace-tr cp"
           v-for="(i, index) in traceStore.traceList"
@@ -59,7 +62,7 @@ limitations under the License. -->
             </div>
             <div class="grey ell sm">
               <span class="tag mr-10 sm">{{ i.duration }} ms</span
-              >{{ parseInt(i.start, 10) }}
+              >{{ dateFormat(parseInt(i.start, 10)) }}
             </div>
           </td>
         </tr>
@@ -69,6 +72,7 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
+import dayjs from "dayjs";
 import { ref } from "vue";
 import { useTraceStore } from "@/store/modules/trace";
 import { ElMessage } from "element-plus";
@@ -80,6 +84,9 @@ const traceStore = useTraceStore();
 const loading = ref<boolean>(false);
 const selectedKey = ref<string>("");
 const pageSize = ref<number>(15);
+const pageCount = ref<number>(5);
+const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
+  dayjs(date).format(pattern);
 
 function searchTrace() {
   loading.value = true;
@@ -89,8 +96,7 @@ function searchTrace() {
 
 function updatePage(p: number) {
   traceStore.setCondition({
-    type: "paging",
-    data: { pageNum: p, pageSize: 15, needTotal: true },
+    paging: { pageNum: p, pageSize: 15, needTotal: true },
   });
   searchTrace();
 }
@@ -120,33 +126,26 @@ async function queryTraces() {
 </script>
 <style lang="scss">
 .trace-t-tool {
-  flex-shrink: 0;
   background-color: rgba(196, 200, 225, 0.2);
   justify-content: space-between;
-  padding-right: 5px;
-  padding-top: 1px;
   border-bottom: 1px solid #c1c5ca41;
   border-right: 1px solid #c1c5ca41;
   height: 35px;
+}
 
-  select {
-    background-color: rgba(0, 0, 0, 0);
-    outline: 0;
-    border-style: unset;
-    margin: 0 10px;
-  }
+.selectors {
+  margin: 2px 2px 0 0;
 }
 
 .trace-t-wrapper {
   overflow: auto;
-  flex-grow: 1;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .trace-t-loading {
   text-align: center;
   position: absolute;
-  width: 100%;
+  width: 420px;
   height: 70px;
   margin-top: 40px;
   line-height: 88px;
@@ -159,11 +158,11 @@ async function queryTraces() {
 }
 
 .trace-t {
-  width: 100%;
-  border-spacing: 0;
-  table-layout: fixed;
-  flex-grow: 1;
-  position: relative;
+  width: 420px;
+}
+
+.list {
+  width: 400px;
 }
 
 .trace-tr {
@@ -173,7 +172,7 @@ async function queryTraces() {
 }
 
 .trace-td {
-  padding: 8px 10px;
+  padding: 5px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 
   &.selected {

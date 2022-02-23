@@ -4,55 +4,15 @@ this work for additional information regarding copyright ownership.
 The ASF licenses this file to You under the Apache License, Version 2.0
 (the "License"); you may not use this file except in compliance with
 the License.  You may obtain a copy of the License at
-
   http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-wrapper flex-v">
-    <div class="header">
-      <Filter />
-    </div>
-    <div class="trace flex-h">
-      <TraceList />
-      <Content />
-    </div>
-  </div>
+  <Detail />
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
-import Filter from "../related/trace/Filter.vue";
-import TraceList from "../related/trace/TraceList.vue";
-import Content from "../related/trace/Content.vue";
-
-/*global defineProps */
-defineProps({
-  data: {
-    type: Object as PropType<any>,
-    default: () => ({ graph: {} }),
-  },
-  activeIndex: { type: String, default: "" },
-});
+import Detail from "./components/Detail.vue";
 </script>
-<style lang="scss" scoped>
-.trace-wrapper {
-  width: 100%;
-  height: 100%;
-  font-size: 12px;
-}
-
-.header {
-  padding: 10px;
-  font-size: 12px;
-  border-bottom: 1px solid #dcdfe6;
-}
-
-.trace {
-  width: 100%;
-  overflow: auto;
-}
-</style>

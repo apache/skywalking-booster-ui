@@ -21,7 +21,7 @@ export interface Trace {
   key: string;
   operationNames: string[];
   start: string;
-  traceIds: string[];
+  traceIds: Array<string | any>;
 }
 
 export interface Span {

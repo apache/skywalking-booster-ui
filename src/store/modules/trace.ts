@@ -30,7 +30,7 @@ interface TraceState {
   traceList: Trace[];
   traceTotal: number;
   traceSpans: Span[];
-  currentTrace: Nullable<Trace>;
+  currentTrace: Trace | any;
   conditions: any;
   // traceSpanLogs: any[];
   // traceSpanLogsTotal: number;
@@ -49,7 +49,7 @@ export const traceStore = defineStore({
     traceList: [],
     traceSpans: [],
     traceTotal: 0,
-    currentTrace: null,
+    currentTrace: {},
     conditions: {
       queryDuration: useAppStoreWithOut().durationTime,
       traceState: "ALL",
@@ -103,10 +103,16 @@ export const traceStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.traceList = res.data.data.data.traces;
+      this.traceList = res.data.data.data.traces.map((d: Trace) => {
+        d.traceIds = d.traceIds.map((id: string) => {
+          return { value: id, label: id };
+        });
+        return d;
+      });
       this.traceTotal = res.data.data.data.total;
+      this.setCurrentTrace(res.data.data.data.traces[0] || {});
     },
-    async getTraceSpans(params: any) {
+    async getTraceSpans(params: { traceId: string }) {
       const res: AxiosResponse = await graphql
         .query("queryTrace")
         .params(params);

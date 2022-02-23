@@ -48,12 +48,6 @@ limitations under the License. -->
       <span class="grey mr-5">{{ t("traceID") }}:</span>
       <el-input v-model="traceId" class="traceId" />
     </div>
-    <div class="mr-5">
-      <span class="sm b grey mr-5">{{ t("duration") }}:</span>
-      <el-input class="inputs mr-5" v-model="minTraceDuration" />
-      <span class="grey mr-5">-</span>
-      <el-input class="inputs" v-model="maxTraceDuration" />
-    </div>
   </div>
   <div class="flex-h">
     <!-- <div class="mr-5">
@@ -65,6 +59,12 @@ limitations under the License. -->
         @input="changeTimeRange"
       />
     </div> -->
+    <div class="mr-5">
+      <span class="sm b grey mr-5">{{ t("duration") }}:</span>
+      <el-input class="inputs mr-5" v-model="minTraceDuration" />
+      <span class="grey mr-5">-</span>
+      <el-input class="inputs" v-model="maxTraceDuration" />
+    </div>
     <ConditionTags :type="'TRACE'" @update="updateTags" />
     <el-button
       class="search-btn"
@@ -125,7 +125,7 @@ function searchTraces() {
 }
 async function queryTraces() {
   const res = await traceStore.getTraces();
-  if (res.errors) {
+  if (res && res.errors) {
     ElMessage.error(res.errors);
   }
 }
