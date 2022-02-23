@@ -13,14 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="header">
-    <Filter />
+  <div class="trace-list">
+    <div class="header">
+      <Filter />
+    </div>
+    <div class="content flex-h">
+      <TraceList />
+    </div>
   </div>
-  <div class="content">xxx</div>
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import Filter from "../related/trace/Filter.vue";
+import TraceList from "../related/trace/TraceList.vue";
 
 /*global defineProps */
 const props = defineProps({
@@ -32,6 +37,11 @@ const props = defineProps({
 });
 </script>
 <style lang="scss" scoped>
+.trace-list {
+  height: 100%;
+  overflow: auto;
+}
+
 .header {
   padding: 10px;
   font-size: 12px;

@@ -66,7 +66,12 @@ limitations under the License. -->
       />
     </div> -->
     <ConditionTags :type="'TRACE'" @update="updateTags" />
-    <el-button class="search-btn" size="small" type="primary">
+    <el-button
+      class="search-btn"
+      size="small"
+      type="primary"
+      @click="searchTraces"
+    >
       {{ t("search") }}
     </el-button>
   </div>
@@ -77,11 +82,14 @@ import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { Status } from "../../data";
 import { useTraceStore } from "@/store/modules/trace";
+import { useAppStoreWithOut } from "@/store/modules/app";
+import { useSelectorStore } from "@/store/modules/selectors";
 import ConditionTags from "@/views/components/ConditionTags.vue";
-// import type { PropType } from "vue";
+import { ElMessage } from "element-plus";
 
 const { t } = useI18n();
-// const appStore = useAppStoreWithOut();
+const appStore = useAppStoreWithOut();
+const selectorStore = useSelectorStore();
 const traceStore = useTraceStore();
 const traceId = ref<string>("");
 const minTraceDuration = ref<string>("");
@@ -89,7 +97,7 @@ const maxTraceDuration = ref<string>("");
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
 const state = reactive<any>({
-  status: "",
+  status: "ALL",
   instance: "",
   endpoint: "",
 });
@@ -98,10 +106,29 @@ const state = reactive<any>({
 //   appStore.durationRow.start,
 //   appStore.durationRow.end,
 // ]);
-traceStore.getTraces({
-  queryOrder: "DES",
-  paging: { pageNum: 1, pageSize: 15, needTotal: true },
-});
+searchTraces();
+function searchTraces() {
+  traceStore.setCondition({
+    serviceId: selectorStore.currentService.id || 0,
+    traceId: traceId.value || undefined,
+    endpointId: state.endpoint || undefined,
+    serviceInstanceId: state.instance || undefined,
+    traceState: state.status || "ALL",
+    queryDuration: appStore.durationTime,
+    minTraceDuration: appStore.minTraceDuration || undefined,
+    maxTraceDuration: appStore.maxTraceDuration || undefined,
+    queryOrder: "BY_DURATION",
+    tags: tagsMap.value.length ? tagsMap.value : undefined,
+    paging: { pageNum: 1, pageSize: 15, needTotal: true },
+  });
+  queryTraces();
+}
+async function queryTraces() {
+  const res = await traceStore.getTraces();
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
+}
 function changeField(type: string, opt: any[]) {
   state[type] = opt[0].value;
 }

@@ -208,3 +208,7 @@ export const Status = [
   { label: "Success", value: "SUCCESS" },
   { label: "Error", value: "ERROR" },
 ];
+export const QueryOrders = [
+  { label: "startTime", value: "BY_START_TIME" },
+  { label: "duration", value: "BY_DURATION" },
+];
