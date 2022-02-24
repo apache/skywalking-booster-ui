@@ -32,7 +32,7 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <div class="trace-t-loading" v-loading="loading">
+    <div class="trace-t-loading" v-show="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
     <div class="trace-t-wrapper">

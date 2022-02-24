@@ -19,7 +19,7 @@ limitations under the License. -->
     </div>
     <div class="trace flex-h">
       <TraceList />
-      <Content />
+      <Detail />
     </div>
   </div>
 </template>
@@ -27,7 +27,7 @@ limitations under the License. -->
 import type { PropType } from "vue";
 import Filter from "../related/trace/Filter.vue";
 import TraceList from "../related/trace/TraceList.vue";
-import Content from "../related/trace/Content.vue";
+import Detail from "../related/trace/Detail.vue";
 
 /*global defineProps */
 defineProps({

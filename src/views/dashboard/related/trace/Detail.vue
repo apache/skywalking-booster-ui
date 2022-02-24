@@ -92,14 +92,20 @@ limitations under the License. -->
       </div>
     </div>
   </div>
+  <List
+    v-if="displayMode == 'list' && traceStore.currentTrace.endpointNames"
+    :data="traceStore.traceSpans"
+    :traceId="traceStore.currentTrace.traceIds[0].value"
+  />
 </template>
 <script lang="ts" setup>
 import dayjs from "dayjs";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
 import copy from "@/utils/copy";
+import List from "./components/List.vue";
 
 const { t } = useI18n();
 const traceStore = useTraceStore();
@@ -107,11 +113,6 @@ const traceId = ref<string>("");
 const displayMode = ref<string>("list");
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
-onMounted(() => {
-  if (traceStore.currentTrace.traceIds && traceStore.currentTrace.traceIds[0]) {
-    traceId.value = traceStore.currentTrace.traceIds[0].value;
-  }
-});
 function handleClick(ids: string[]) {
   let copyValue = null;
   if (ids.length === 1) {
