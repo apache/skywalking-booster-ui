@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="time-charts">
+  <div class="trace-tree-charts flex-v">
     <div>
       <span
         class="time-charts-item mr-5"
@@ -22,33 +22,41 @@ limitations under the License. -->
         <Icon iconName="issue-open-m" class="mr-5" size="sm" />
         <span>{{ i }}</span>
       </span>
-      <el-button class="btn" type="primary" @click="downloadTrace">
-        {{ t("exportImage") }}
-      </el-button>
     </div>
-    <div class="trace-chart">
-      <Graph :data="data" :traceId="traceId" type="List" />
+    <div style="padding: 0 30px">
+      <a class="trace-tree-btn mr-10" @click="tree.setDefault()">Default</a>
+      <a class="trace-tree-btn mr-10" @click="tree.getTopSlow()">
+        Top 5 of slow
+      </a>
+      <a class="trace-tree-btn mr-10" @click="tree.getTopChild()">
+        Top 5 of children
+      </a>
+    </div>
+    <div class="trace-tree" style="height: 100%">
+      <Graph :data="data" :traceId="traceId" type="Tree" />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
-import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
-import { Span } from "@/types/trace";
 import Graph from "./Graph.vue";
+import type { PropType } from "vue";
+import { Span } from "@/types/trace";
+import { useI18n } from "vue-i18n";
+import { ref, onMounted } from "vue";
 
-/* global defineProps*/
+/* global defineProps */
 const props = defineProps({
   data: { type: Array as PropType<Span[]>, default: () => [] },
   traceId: { type: String, default: "" },
 });
 const { t } = useI18n();
-const list = computed(() =>
-  Array.from(new Set(props.data.map((i: Span) => i.serviceCode)))
-);
+const list = ref<string[]>([]);
+const tree = ref<any>(null);
 
+onMounted(() => {
+  list.value = Array.from(new Set(props.data.map((i: Span) => i.serviceCode)));
+});
 function computedScale(i: number) {
   const sequentialScale = d3
     .scaleSequential()
@@ -56,37 +64,21 @@ function computedScale(i: number) {
     .interpolator(d3.interpolateCool);
   return sequentialScale(i);
 }
-function downloadTrace() {
-  const serializer = new XMLSerializer();
-  const svgNode: any = d3.select(".trace-list-dowanload").node();
-  const source = `<?xml version="1.0" standalone="no"?>\r\n${serializer.serializeToString(
-    svgNode
-  )}`;
-  const canvas = document.createElement("canvas");
-  const context: any = canvas.getContext("2d");
-  canvas.width = (
-    d3.select(".trace-list-dowanload") as any
-  )._groups[0][0].clientWidth;
-  canvas.height = (
-    d3.select(".trace-list-dowanload") as any
-  )._groups[0][0].clientHeight;
-  context.fillStyle = "#fff";
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  const image = new Image();
-  image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(source)}`;
-  image.onload = () => {
-    context.drawImage(image, 0, 0);
-    const tagA = document.createElement("a");
-    tagA.download = "trace-list.png";
-    tagA.href = canvas.toDataURL("image/png");
-    tagA.click();
-  };
-}
 </script>
 <style lang="scss" scoped>
+.trace-tree-btn {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 0px 7px;
+  background-color: #40454e;
+  color: #eee;
+  font-size: 11px;
+}
+
 .time-charts {
   overflow: auto;
   padding: 10px;
+  position: relative;
   height: calc(100% - 95px);
   width: 100%;
 }
@@ -97,13 +89,5 @@ function downloadTrace() {
   border: 1px solid;
   font-size: 11px;
   border-radius: 4px;
-}
-
-.trace-chart {
-  fill: rgba(0, 0, 0, 0);
-}
-
-.btn {
-  float: right;
 }
 </style>

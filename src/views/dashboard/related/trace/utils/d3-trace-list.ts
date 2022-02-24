@@ -17,17 +17,8 @@
 
 import * as d3 from "d3";
 import d3tip from "d3-tip";
-import { Span, Trace } from "@/types/trace";
-import { func } from "vue-types";
+import { Trace } from "@/types/trace";
 
-const type = {
-  MQ: "#bf99f8",
-  Http: "#72a5fd",
-  Database: "#ff6732",
-  Unknown: "#ffc107",
-  Cache: "#00bcd4",
-  RPCFramework: "#ee4395",
-};
 export default class ListGraph {
   private barHeight = 48;
   private handleSelectSpan: Nullable<(i: Trace) => void> = null;
@@ -36,7 +27,6 @@ export default class ListGraph {
   private width = 0;
   private height = 0;
   private svg: any = null;
-  private treemap: any = null;
   private tip: any = null;
   private row: any[] = [];
   private data: any = [];
@@ -58,7 +48,6 @@ export default class ListGraph {
       .attr("class", "trace-list-dowanload")
       .attr("width", this.width)
       .attr("height", this.height);
-    this.treemap = d3.tree().size([this.height * 0.7, this.width]);
     this.tip = (d3tip as any)()
       .attr("class", "d3-tip")
       .offset([-8, 0])
@@ -250,7 +239,7 @@ export default class ListGraph {
       )
       .on("click", (d: any) => {
         this.click(d, this);
-        (d3 as any).event.stopPropagation();
+        // (d3 as any).event.stopPropagation();
       });
     node
       .transition()

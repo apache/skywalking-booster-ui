@@ -62,32 +62,32 @@ limitations under the License. -->
         <div>
           <el-button
             class="grey"
-            :class="{ ghost: displayMode !== 'list' }"
-            @click="displayMode = 'list'"
+            :class="{ ghost: displayMode !== 'List' }"
+            @click="displayMode = 'List'"
           >
             <Icon class="mr-5" size="sm" iconName="list-bulleted" />
             {{ t("list") }}
           </el-button>
           <el-button
             class="grey"
-            :class="{ ghost: displayMode !== 'tree' }"
-            @click="displayMode = 'tree'"
+            :class="{ ghost: displayMode !== 'Tree' }"
+            @click="displayMode = 'Tree'"
           >
             <Icon class="mr-5" size="sm" iconName="issue-child" />
             {{ t("tree") }}
           </el-button>
           <el-button
             class="grey"
-            :class="{ ghost: displayMode !== 'table' }"
-            @click="displayMode = 'table'"
+            :class="{ ghost: displayMode !== 'Table' }"
+            @click="displayMode = 'Table'"
           >
             <Icon class="mr-5" size="sm" iconName="table" />
             {{ t("table") }}
           </el-button>
           <el-button
             class="grey"
-            :class="{ ghost: displayMode !== 'statistics' }"
-            @click="displayMode = 'statistics'"
+            :class="{ ghost: displayMode !== 'Statistics' }"
+            @click="displayMode = 'Statistics'"
           >
             <Icon class="mr-5" size="sm" iconName="statistics-bulleted" />
             {{ t("statistics") }}
@@ -95,54 +95,73 @@ limitations under the License. -->
         </div>
       </div>
     </div>
-    <List
-      v-if="displayMode == 'list' && traceStore.currentTrace.endpointNames"
+    <component
+      v-if="traceStore.currentTrace.endpointNames"
+      :is="displayMode"
       :data="traceStore.traceSpans"
       :traceId="traceStore.currentTrace.traceIds[0].value"
     />
   </div>
 </template>
-<script lang="ts" setup>
+<script lang="ts">
 import dayjs from "dayjs";
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
 import copy from "@/utils/copy";
 import List from "./components/List.vue";
+import graphs from "./components/index";
 
-const { t } = useI18n();
-const traceStore = useTraceStore();
-const traceId = ref<string>("");
-const displayMode = ref<string>("list");
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
-function handleClick(ids: string[]) {
-  let copyValue = null;
-  if (ids.length === 1) {
-    copyValue = ids[0];
-  } else {
-    copyValue = ids.join(",");
-  }
-  copy(copyValue);
-}
+export default defineComponent({
+  name: "TraceDetail",
+  components: {
+    ...graphs,
+    List,
+  },
+  setup() {
+    const { t } = useI18n();
+    const traceStore = useTraceStore();
+    const traceId = ref<string>("");
+    const displayMode = ref<string>("List");
+    const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
+      dayjs(date).format(pattern);
+    function handleClick(ids: string[]) {
+      let copyValue = null;
+      if (ids.length === 1) {
+        copyValue = ids[0];
+      } else {
+        copyValue = ids.join(",");
+      }
+      copy(copyValue);
+    }
 
-function changeTraceId(opt: Option[]) {
-  traceId.value = opt[0].value;
-  traceStore.getTraceSpans({ traceId: opt[0].value });
-}
+    function changeTraceId(opt: Option[]) {
+      traceId.value = opt[0].value;
+      traceStore.getTraceSpans({ traceId: opt[0].value });
+    }
 
-// function searchTraceLogs() {
-//       this.showTraceLogs = true;
-//       this.GET_TRACE_SPAN_LOGS({
-//         condition: {
-//           relatedTrace: {
-//             traceId: this.traceId || traceStore.current.traceIds[0],
-//           },
-//           paging: { pageNum: this.pageNum, pageSize: this.pageSize, needTotal: true },
-//         },
-//       });
-//     }
+    // function searchTraceLogs() {
+    //       this.showTraceLogs = true;
+    //       this.GET_TRACE_SPAN_LOGS({
+    //         condition: {
+    //           relatedTrace: {
+    //             traceId: this.traceId || traceStore.current.traceIds[0],
+    //           },
+    //           paging: { pageNum: this.pageNum, pageSize: this.pageSize, needTotal: true },
+    //         },
+    //       });
+    //     }
+    return {
+      traceStore,
+      displayMode,
+      dateFormat,
+      changeTraceId,
+      handleClick,
+      t,
+    };
+  },
+});
 </script>
 <style lang="scss" scoped>
 .trace-detail {

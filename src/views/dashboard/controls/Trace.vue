@@ -14,12 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-wrapper flex-v">
+    <el-popover placement="bottom" trigger="click" :width="100">
+      <template #reference>
+        <span class="delete cp">
+          <Icon iconName="ellipsis_v" size="middle" class="operation" />
+        </span>
+      </template>
+      <div class="tools">
+        <span @click="removeWidget">{{ t("delete") }}</span>
+      </div>
+    </el-popover>
     <div class="header">
       <Filter />
     </div>
     <div class="trace flex-h">
       <TraceList />
-      <Detail />
+      <TraceDetail />
     </div>
   </div>
 </template>
@@ -27,28 +37,55 @@ limitations under the License. -->
 import type { PropType } from "vue";
 import Filter from "../related/trace/Filter.vue";
 import TraceList from "../related/trace/TraceList.vue";
-import Detail from "../related/trace/Detail.vue";
+import TraceDetail from "../related/trace/Detail.vue";
+import { useI18n } from "vue-i18n";
+import { useDashboardStore } from "@/store/modules/dashboard";
 
 /*global defineProps */
-defineProps({
+const props = defineProps({
   data: {
     type: Object as PropType<any>,
     default: () => ({ graph: {} }),
   },
   activeIndex: { type: String, default: "" },
 });
+const { t } = useI18n();
+const dashboardStore = useDashboardStore();
+function removeWidget() {
+  dashboardStore.removeControls(props.data);
+}
 </script>
 <style lang="scss" scoped>
 .trace-wrapper {
   width: 100%;
   height: 100%;
   font-size: 12px;
+  position: relative;
+}
+
+.delete {
+  position: absolute;
+  top: 5px;
+  right: 3px;
 }
 
 .header {
   padding: 10px;
   font-size: 12px;
   border-bottom: 1px solid #dcdfe6;
+}
+
+.tools {
+  padding: 5px 0;
+  color: #999;
+  cursor: pointer;
+  position: relative;
+  text-align: center;
+
+  &:hover {
+    color: #409eff;
+    background-color: #eee;
+  }
 }
 
 .trace {
