@@ -103,6 +103,7 @@ export const traceStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
+      this.getTraceSpans({ traceId: res.data.data.data.traces[0].traceIds[0] });
       this.traceList = res.data.data.data.traces.map((d: Trace) => {
         d.traceIds = d.traceIds.map((id: string) => {
           return { value: id, label: id };

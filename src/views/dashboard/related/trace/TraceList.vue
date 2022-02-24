@@ -25,7 +25,7 @@ limitations under the License. -->
       <div class="selectors">
         <Selector
           size="small"
-          v-model="traceStore.conditions.queryOrder"
+          :value="traceStore.conditions.queryOrder"
           :options="QueryOrders"
           placeholder="Select a option"
           @change="changeSort"

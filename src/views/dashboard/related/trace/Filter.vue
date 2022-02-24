@@ -18,7 +18,7 @@ limitations under the License. -->
       <span class="grey mr-5">{{ t("instance") }}:</span>
       <Selector
         size="small"
-        v-model="state.instance"
+        :value="state.instance"
         :options="traceStore.instances"
         placeholder="Select a instance"
         @change="changeField('instance', $event)"
@@ -28,7 +28,7 @@ limitations under the License. -->
       <span class="grey mr-5">{{ t("endpoint") }}:</span>
       <Selector
         size="small"
-        v-model="state.endpoint"
+        :value="state.endpoint"
         :options="traceStore.endpoints"
         placeholder="Select a endpoint"
         @change="changeField('endpoint', $event)"
@@ -38,7 +38,7 @@ limitations under the License. -->
       <span class="grey mr-5">{{ t("status") }}:</span>
       <Selector
         size="small"
-        v-model="state.status"
+        :value="state.status"
         :options="Status"
         placeholder="Select a status"
         @change="changeField('status', $event)"

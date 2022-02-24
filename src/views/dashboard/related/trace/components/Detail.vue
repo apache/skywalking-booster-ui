@@ -29,7 +29,11 @@ limitations under the License. -->
     <div class="mb-5 blue sm">
       <Selector
         size="small"
-        v-model="traceId"
+        :value="
+          traceStore.currentTrace.traceIds &&
+          traceStore.currentTrace.traceIds[0] &&
+          traceStore.currentTrace.traceIds[0].value
+        "
         :options="traceStore.currentTrace.traceIds"
         @change="changeTraceId"
         class="trace-detail-ids"
@@ -44,9 +48,9 @@ limitations under the License. -->
     <div class="flex-h item">
       <div>
         <div class="tag mr-5">{{ t("start") }}</div>
-        <span class="mr-15 sm">{{
-          dateFormat(parseInt(traceStore.currentTrace.start))
-        }}</span>
+        <span class="mr-15 sm">
+          {{ dateFormat(parseInt(traceStore.currentTrace.start)) }}
+        </span>
         <div class="tag mr-5">{{ t("duration") }}</div>
         <span class="mr-15 sm">{{ traceStore.currentTrace.duration }} ms</span>
         <div class="tag mr-5">{{ t("spans") }}</div>
@@ -91,9 +95,10 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import dayjs from "dayjs";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
+import { Option } from "@/types/app";
 import copy from "@/utils/copy";
 
 const { t } = useI18n();
@@ -102,7 +107,11 @@ const traceId = ref<string>("");
 const displayMode = ref<string>("list");
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
-
+onMounted(() => {
+  if (traceStore.currentTrace.traceIds && traceStore.currentTrace.traceIds[0]) {
+    traceId.value = traceStore.currentTrace.traceIds[0].value;
+  }
+});
 function handleClick(ids: string[]) {
   let copyValue = null;
   if (ids.length === 1) {
@@ -113,9 +122,9 @@ function handleClick(ids: string[]) {
   copy(copyValue);
 }
 
-function changeTraceId(i: string) {
-  traceId.value = i;
-  traceStore.getTraceSpans({ traceId: i });
+function changeTraceId(opt: Option[]) {
+  traceId.value = opt[0].value;
+  traceStore.getTraceSpans({ traceId: opt[0].value });
 }
 
 // function searchTraceLogs() {
@@ -160,7 +169,7 @@ function changeTraceId(i: string) {
   color: inherit;
   border: 1px solid;
   border-radius: 4px;
-  margin: 0 10px;
+  width: 300px;
 }
 
 .trace-log-btn {
