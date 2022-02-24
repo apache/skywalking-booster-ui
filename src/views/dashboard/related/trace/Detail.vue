@@ -11,92 +11,96 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div
-    class="trace-detail-wrapper clear"
-    v-if="traceStore.currentTrace.endpointNames"
-  >
-    <h5 class="mb-5 mt-0">
-      <Icon
-        icon="clear"
-        v-if="traceStore.currentTrace.isError"
-        class="red mr-5 sm"
-      />
-      <span class="vm">{{ traceStore.currentTrace.endpointNames[0] }}</span>
-      <!-- <div class="trace-log-btn bg-blue r mr-10" @click="searchTraceLogs">
+  <div class="trace-detail">
+    <div
+      class="trace-detail-wrapper clear"
+      v-if="traceStore.currentTrace.endpointNames"
+    >
+      <h5 class="mb-5 mt-0">
+        <Icon
+          icon="clear"
+          v-if="traceStore.currentTrace.isError"
+          class="red mr-5 sm"
+        />
+        <span class="vm">{{ traceStore.currentTrace.endpointNames[0] }}</span>
+        <!-- <div class="trace-log-btn bg-blue r mr-10" @click="searchTraceLogs">
         {{ t("viewLogs") }}
       </div> -->
-    </h5>
-    <div class="mb-5 blue sm">
-      <Selector
-        size="small"
-        :value="
-          traceStore.currentTrace.traceIds &&
-          traceStore.currentTrace.traceIds[0] &&
-          traceStore.currentTrace.traceIds[0].value
-        "
-        :options="traceStore.currentTrace.traceIds"
-        @change="changeTraceId"
-        class="trace-detail-ids"
-      />
-      <Icon
-        size="sm"
-        class="icon grey link-hover cp ml-5"
-        iconName="review-list"
-        @click="handleClick"
-      />
-    </div>
-    <div class="flex-h item">
-      <div>
-        <div class="tag mr-5">{{ t("start") }}</div>
-        <span class="mr-15 sm">
-          {{ dateFormat(parseInt(traceStore.currentTrace.start)) }}
-        </span>
-        <div class="tag mr-5">{{ t("duration") }}</div>
-        <span class="mr-15 sm">{{ traceStore.currentTrace.duration }} ms</span>
-        <div class="tag mr-5">{{ t("spans") }}</div>
-        <span class="sm">{{ traceStore.traceSpans.length }}</span>
+      </h5>
+      <div class="mb-5 blue sm">
+        <Selector
+          size="small"
+          :value="
+            traceStore.currentTrace.traceIds &&
+            traceStore.currentTrace.traceIds[0] &&
+            traceStore.currentTrace.traceIds[0].value
+          "
+          :options="traceStore.currentTrace.traceIds"
+          @change="changeTraceId"
+          class="trace-detail-ids"
+        />
+        <Icon
+          size="sm"
+          class="icon grey link-hover cp ml-5"
+          iconName="review-list"
+          @click="handleClick"
+        />
       </div>
-      <div>
-        <el-button
-          class="grey"
-          :class="{ ghost: displayMode !== 'list' }"
-          @click="displayMode = 'list'"
-        >
-          <Icon class="mr-5" size="sm" iconName="list-bulleted" />
-          {{ t("list") }}
-        </el-button>
-        <el-button
-          class="grey"
-          :class="{ ghost: displayMode !== 'tree' }"
-          @click="displayMode = 'tree'"
-        >
-          <Icon class="mr-5" size="sm" iconName="issue-child" />
-          {{ t("tree") }}
-        </el-button>
-        <el-button
-          class="grey"
-          :class="{ ghost: displayMode !== 'table' }"
-          @click="displayMode = 'table'"
-        >
-          <Icon class="mr-5" size="sm" iconName="table" />
-          {{ t("table") }}
-        </el-button>
-        <el-button
-          class="grey"
-          :class="{ ghost: displayMode !== 'statistics' }"
-          @click="displayMode = 'statistics'"
-        >
-          <Icon class="mr-5" size="sm" iconName="statistics-bulleted" />
-          {{ t("statistics") }}
-        </el-button>
+      <div class="flex-h item">
+        <div>
+          <div class="tag mr-5">{{ t("start") }}</div>
+          <span class="mr-15 sm">
+            {{ dateFormat(parseInt(traceStore.currentTrace.start)) }}
+          </span>
+          <div class="tag mr-5">{{ t("duration") }}</div>
+          <span class="mr-15 sm"
+            >{{ traceStore.currentTrace.duration }} ms</span
+          >
+          <div class="tag mr-5">{{ t("spans") }}</div>
+          <span class="sm">{{ traceStore.traceSpans.length }}</span>
+        </div>
+        <div>
+          <el-button
+            class="grey"
+            :class="{ ghost: displayMode !== 'list' }"
+            @click="displayMode = 'list'"
+          >
+            <Icon class="mr-5" size="sm" iconName="list-bulleted" />
+            {{ t("list") }}
+          </el-button>
+          <el-button
+            class="grey"
+            :class="{ ghost: displayMode !== 'tree' }"
+            @click="displayMode = 'tree'"
+          >
+            <Icon class="mr-5" size="sm" iconName="issue-child" />
+            {{ t("tree") }}
+          </el-button>
+          <el-button
+            class="grey"
+            :class="{ ghost: displayMode !== 'table' }"
+            @click="displayMode = 'table'"
+          >
+            <Icon class="mr-5" size="sm" iconName="table" />
+            {{ t("table") }}
+          </el-button>
+          <el-button
+            class="grey"
+            :class="{ ghost: displayMode !== 'statistics' }"
+            @click="displayMode = 'statistics'"
+          >
+            <Icon class="mr-5" size="sm" iconName="statistics-bulleted" />
+            {{ t("statistics") }}
+          </el-button>
+        </div>
       </div>
     </div>
+    <List
+      v-if="displayMode == 'list' && traceStore.currentTrace.endpointNames"
+      :data="traceStore.traceSpans"
+      :traceId="traceStore.currentTrace.traceIds[0].value"
+    />
   </div>
-  <List
-    v-if="displayMode == 'list' && traceStore.currentTrace.endpointNames"
-    :data="traceStore.traceSpans"
-    :traceId="traceStore.currentTrace.traceIds[0].value"
-  />
 </template>
 <script lang="ts" setup>
 import dayjs from "dayjs";
@@ -141,6 +145,11 @@ function changeTraceId(opt: Option[]) {
 //     }
 </script>
 <style lang="scss" scoped>
+.trace-detail {
+  height: 100%;
+  width: 100%;
+}
+
 .trace-detail-wrapper {
   font-size: 12px;
   padding: 5px 10px;

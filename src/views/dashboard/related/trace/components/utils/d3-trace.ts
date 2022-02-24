@@ -18,6 +18,7 @@
 import * as d3 from "d3";
 import d3tip from "d3-tip";
 import { Span, Trace } from "@/types/trace";
+import { func } from "vue-types";
 
 const type = {
   MQ: "#bf99f8",
@@ -49,7 +50,7 @@ export default class ListGraph {
   constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
     this.handleSelectSpan = handleSelectSpan;
     this.el = el;
-    this.width = el.clientWidth;
+    this.width = el.clientWidth - 20;
     this.height = el.clientHeight;
     this.svg = d3
       .select(this.el)
@@ -61,23 +62,23 @@ export default class ListGraph {
     this.tip = (d3tip as any)()
       .attr("class", "d3-tip")
       .offset([-8, 0])
-      .html(
-        (d: any) => `
-      <div class="mb-5">${d.data.label}</div>
-      ${
-        d.data.dur
-          ? '<div class="sm">SelfDuration: ' + d.data.dur + "ms</div>"
-          : ""
-      }
-      ${
-        d.data.endTime - d.data.startTime
-          ? '<div class="sm">TotalDuration: ' +
-            (d.data.endTime - d.data.startTime) +
-            "ms</div>"
-          : ""
-      }
-      `
-      );
+      .html((d: any) => {
+        return `
+          <div class="mb-5">${d.data.label}</div>
+          ${
+            d.data.dur
+              ? '<div class="sm">SelfDuration: ' + d.data.dur + "ms</div>"
+              : ""
+          }
+          ${
+            d.data.endTime - d.data.startTime
+              ? '<div class="sm">TotalDuration: ' +
+                (d.data.endTime - d.data.startTime) +
+                "ms</div>"
+              : ""
+          }
+          `;
+      });
     this.svg.call(this.tip);
   }
   diagonal(d: any) {
@@ -135,6 +136,7 @@ export default class ListGraph {
     scope.update(d);
   }
   update(source: any, callback: any) {
+    const t = this;
     const nodes = this.root.descendants();
     let index = -1;
     this.root.eachBefore((n: any) => {
@@ -150,11 +152,11 @@ export default class ListGraph {
       .attr("transform", `translate(${source.y0},${source.x0})`)
       .attr("class", "trace-node")
       .style("opacity", 0)
-      .on("mouseover", (d: Trace) => {
-        this.tip.show(d, this);
+      .on("mouseover", function (event: any, d: Trace) {
+        t.tip.show(d, this);
       })
-      .on("mouseout", (d: Trace) => {
-        this.tip.hide(d, this);
+      .on("mouseout", function (event: any, d: Trace) {
+        t.tip.hide(d, this);
       })
       .on("click", (d: Trace) => {
         if (this.handleSelectSpan) {

@@ -11,24 +11,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="time-charts scroll_hide">
+  <div class="time-charts">
     <div class="trace-t-loading" v-show="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
-    <transition-group name="fade" tag="a" class="mb-5">
+    <div class="service-code">
       <span
-        class="time-charts-item mr-10"
-        v-for="(i, index) in data"
+        class="time-charts-item mr-5"
+        v-for="(i, index) in list"
         :key="index"
         :style="`color:${computedScale(index)}`"
       >
-        <svg class="icon vm mr-5 sm">
-          <use xlink:href="#issue-open-m"></use>
-        </svg>
+        <Icon iconName="issue-open-m" class="mr-5" size="sm" />
         <span>{{ i }}</span>
       </span>
-    </transition-group>
-    <a class="rk-btn r vm tc" @click="downloadTrace">{{ t("exportImage") }}</a>
+      <el-button class="btn" type="primary" @click="downloadTrace">
+        {{ t("exportImage") }}
+      </el-button>
+    </div>
     <div class="trace-list">
       <div ref="traceList"></div>
     </div>
@@ -41,9 +41,8 @@ import _ from "lodash";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import ListGraph from "./utils/d3-trace";
-import copy from "@/utils/copy";
-import { Span, Trace } from "@/types/trace";
-import { Option } from "@/types/app";
+import { Span } from "@/types/trace";
+
 /* global defineProps, Nullable*/
 const props = defineProps({
   data: { type: Array as PropType<Span[]>, default: () => [] },
@@ -55,7 +54,7 @@ const showDetail = ref<boolean>(false);
 const fixSpansSize = ref<number>(0);
 const segmentId = ref<any>([]);
 const currentSpan = ref<Array<Span>>([]);
-const list = ref<any>([]);
+const list = ref<string[]>([]);
 const tree = ref<any>(null);
 const traceList = ref<Nullable<HTMLDivElement>>(null);
 
@@ -141,7 +140,7 @@ function changeTree() {
   if (props.data.length === 0) {
     return [];
   }
-  list.value = Array.from(new Set(props.data.map((i: any) => i.serviceCode)));
+  list.value = Array.from(new Set(props.data.map((i: Span) => i.serviceCode)));
   segmentId.value = [];
   const segmentGroup: any = {};
   const segmentIdGroup: any = [];
@@ -335,9 +334,10 @@ watch(
 <style lang="scss" scoped>
 .time-charts {
   overflow: auto;
-  padding: 10px 30px;
+  padding: 10px;
   position: relative;
-  min-height: 150px;
+  height: calc(100% - 95px);
+  width: 100%;
 }
 
 .trace-node .group {
@@ -386,5 +386,9 @@ watch(
   white-space: pre;
   overflow: auto;
   font-family: monospace;
+}
+
+.btn {
+  float: right;
 }
 </style>
