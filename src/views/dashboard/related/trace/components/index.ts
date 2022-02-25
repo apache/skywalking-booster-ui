@@ -18,9 +18,11 @@
 import List from "./List.vue";
 import Tree from "./Tree.vue";
 import Table from "./table/Index.vue";
+import Statistics from "./Statistics.vue";
 
 export default {
   List,
   Tree,
   Table,
+  Statistics,
 };

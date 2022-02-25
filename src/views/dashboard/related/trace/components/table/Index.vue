@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-detail-chart-table">
+  <div class="trace-table">
     <div class="rk-trace-t-loading" v-show="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
@@ -124,5 +124,11 @@ watch(
   width: 100%;
   text-align: center;
   margin-top: 10px;
+}
+
+.trace-table {
+  padding: 10px;
+  height: calc(100% - 95px);
+  width: 100%;
 }
 </style>

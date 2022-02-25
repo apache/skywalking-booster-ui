@@ -136,6 +136,7 @@ function sortStatistics(key: string) {
   font-size: 12px;
   height: 100%;
   overflow: auto;
+  width: 100%;
 }
 
 .trace-header {
