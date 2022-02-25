@@ -1,0 +1,160 @@
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+
+<template>
+  <div class="trace">
+    <div class="trace-header">
+      <div class="method" :style="`width: ${method}px`">
+        <span class="r cp" ref="dragger">
+          <svg class="icon">
+            <use xlink:href="#settings_ethernet"></use>
+          </svg>
+        </span>
+        {{ headerData[0].value }}
+      </div>
+      <div
+        :class="item.label"
+        v-for="(item, index) in headerData.slice(1)"
+        :key="index"
+      >
+        {{ item.value }}
+      </div>
+    </div>
+    <table-item
+      :method="method"
+      v-for="(item, index) in tableData"
+      :data="item"
+      :key="'key' + index"
+      :type="type"
+    />
+    <slot></slot>
+  </div>
+</template>
+<script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import type { PropType } from "vue";
+import TableItem from "./TableItem.vue";
+import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
+import { Option } from "@/types/app";
+
+/* global defineProps, Nullable */
+const props = defineProps({
+  tableData: { type: Array as PropType<any>, default: () => [] },
+  type: { type: String, default: "" },
+});
+const method = ref<number>(300);
+const componentKey = ref<number>(300);
+const flag = ref<boolean>(true);
+const dragger = ref<Nullable<HTMLSpanElement>>(null);
+let headerData: (Option & { key?: string })[] = TraceConstant;
+if (props.type === "profile") {
+  headerData = ProfileConstant;
+}
+if (props.type === "statistics") {
+  headerData = StatisticsConstant;
+}
+onMounted(() => {
+  if (props.type === "statistics") {
+    return;
+  }
+  const drag: any = dragger.value;
+  drag.onmousedown = (event: any) => {
+    const diffX = event.clientX;
+    const copy = method.value;
+    document.onmousemove = (documentEvent) => {
+      const moveX = documentEvent.clientX - diffX;
+      method.value = copy + moveX;
+    };
+    document.onmouseup = () => {
+      document.onmousemove = null;
+      document.onmouseup = null;
+    };
+  };
+});
+function sortStatistics(key: string) {
+  const element = props.tableData;
+  for (let i = 0; i < element.length; i++) {
+    for (let j = 0; j < element.length - i - 1; j++) {
+      let val1;
+      let val2;
+      if (key === "maxTime") {
+        val1 = element[j].maxTime;
+        val2 = element[j + 1].maxTime;
+      }
+      if (key === "minTime") {
+        val1 = element[j].minTime;
+        val2 = element[j + 1].minTime;
+      }
+      if (key === "avgTime") {
+        val1 = element[j].avgTime;
+        val2 = element[j + 1].avgTime;
+      }
+      if (key === "sumTime") {
+        val1 = element[j].sumTime;
+        val2 = element[j + 1].sumTime;
+      }
+      if (key === "count") {
+        val1 = element[j].count;
+        val2 = element[j + 1].count;
+      }
+      if (flag.value) {
+        if (val1 < val2) {
+          const tmp = element[j];
+          element[j] = element[j + 1];
+          element[j + 1] = tmp;
+        }
+      } else {
+        if (val1 > val2) {
+          const tmp = element[j];
+          element[j] = element[j + 1];
+          element[j + 1] = tmp;
+        }
+      }
+    }
+  }
+  this.tableData = element;
+  this.componentKey += 1;
+  this.flag = !this.flag;
+}
+</script>
+<style lang="scss" scoped>
+@import "./table.scss";
+
+.trace {
+  font-size: 12px;
+  height: 100%;
+  overflow: auto;
+}
+
+.trace-header {
+  white-space: nowrap;
+  user-select: none;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.trace-header div {
+  display: inline-block;
+  background-color: #f3f4f9;
+  padding: 0 4px;
+  border: 1px solid transparent;
+  border-right: 1px dotted silver;
+  overflow: hidden;
+  line-height: 30px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

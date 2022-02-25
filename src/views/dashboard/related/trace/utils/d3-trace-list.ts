@@ -239,7 +239,6 @@ export default class ListGraph {
       )
       .on("click", (d: any) => {
         this.click(d, this);
-        // (d3 as any).event.stopPropagation();
       });
     node
       .transition()

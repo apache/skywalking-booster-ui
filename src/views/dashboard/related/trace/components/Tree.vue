@@ -24,18 +24,18 @@ limitations under the License. -->
       </span>
     </div>
     <div style="padding: 10px 0">
-      <a class="trace-tree-btn mr-10" @click="tree.setDefault()">
+      <a class="trace-tree-btn mr-10" @click="charts.tree.setDefault()">
         {{ t("default") }}
       </a>
-      <a class="trace-tree-btn mr-10" @click="tree.getTopSlow()">
+      <a class="trace-tree-btn mr-10" @click="charts.tree.getTopSlow()">
         {{ t("topSlow") }}
       </a>
-      <a class="trace-tree-btn mr-10" @click="tree.getTopChild()">
+      <a class="trace-tree-btn mr-10" @click="charts.tree.getTopChild()">
         {{ t("topChildren") }}
       </a>
     </div>
     <div class="trace-tree">
-      <Graph :data="data" :traceId="traceId" type="Tree" />
+      <Graph ref="charts" :data="data" :traceId="traceId" type="Tree" />
     </div>
   </div>
 </template>
@@ -54,7 +54,7 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const list = ref<string[]>([]);
-const tree = ref<any>(null);
+const charts = ref<any>(null);
 
 onMounted(() => {
   list.value = Array.from(new Set(props.data.map((i: Span) => i.serviceCode)));

@@ -25,7 +25,7 @@ import ListGraph from "../utils/d3-trace-list";
 import TreeGraph from "../utils/d3-trace-tree";
 import { Span } from "@/types/trace";
 
-/* global defineProps, Nullable*/
+/* global defineProps, Nullable, defineExpose*/
 const props = defineProps({
   data: { type: Array as PropType<Span[]>, default: () => [] },
   traceId: { type: String, default: "" },
@@ -38,7 +38,9 @@ const segmentId = ref<any>([]);
 const currentSpan = ref<Array<Span>>([]);
 const tree = ref<any>(null);
 const traceGraph = ref<Nullable<HTMLDivElement>>(null);
-
+defineExpose({
+  tree,
+});
 onMounted(() => {
   loading.value = true;
   changeTree();

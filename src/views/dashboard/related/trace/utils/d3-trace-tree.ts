@@ -18,7 +18,6 @@
 import * as d3 from "d3";
 import d3tip from "d3-tip";
 import { Trace, Span } from "@/types/trace";
-import { style } from "d3";
 
 export default class TraceMap {
   private i = 0;
@@ -53,10 +52,11 @@ export default class TraceMap {
     this.topSlow = [];
     this.topChild = [];
     this.width = el.clientWidth - 20;
-    this.height = el.clientHeight;
+    this.height = el.clientHeight - 30;
     this.body = d3
       .select(this.el)
       .append("svg")
+      .attr("class", "d3-trace-tree")
       .attr("width", this.width)
       .attr("height", this.height);
     this.tip = (d3tip as any)()
@@ -186,7 +186,6 @@ export default class TraceMap {
         }
       })
       .on("click", function (d: any) {
-        (d3 as any).event.stopPropagation();
         that.handleSelectSpan(d);
       });
 
@@ -289,7 +288,6 @@ export default class TraceMap {
       )
       .attr("cursor", "pointer")
       .on("click", (d: any) => {
-        (d3 as any).event.stopPropagation();
         click(d);
       });
     const nodeExit = node
@@ -320,9 +318,9 @@ export default class TraceMap {
         const o = { x: source.x0, y: source.y0 };
         return diagonal(o, o);
       })
+      .attr("stroke", "rgba(0, 0, 0, 0.1)")
       .style("stroke-width", 1.5)
-      .style("fill", "none")
-      .attr("stroke", "rgba(0, 0, 0, 0.1)");
+      .style("fill", "none");
 
     const linkUpdate = linkEnter.merge(link);
     linkUpdate

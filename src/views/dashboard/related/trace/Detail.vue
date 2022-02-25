@@ -100,6 +100,8 @@ limitations under the License. -->
       :is="displayMode"
       :data="traceStore.traceSpans"
       :traceId="traceStore.currentTrace.traceIds[0].value"
+      :showBtnDetail="false"
+      HeaderType="trace"
     />
   </div>
 </template>

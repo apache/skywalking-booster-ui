@@ -31,6 +31,7 @@ limitations under the License. -->
       :key="item.i"
       @click="clickGrid(item)"
       :class="{ active: dashboardStore.activedGridItem === item.i }"
+      drag-ignore-from="svg.d3-trace-tree"
     >
       <component :is="item.type" :data="item" />
     </grid-item>

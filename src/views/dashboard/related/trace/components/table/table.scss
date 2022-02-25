@@ -14,13 +14,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+.argument {
+  width: 150px;
+}
 
-import List from "./List.vue";
-import Tree from "./Tree.vue";
-import Table from "./table/Index.vue";
+.start-time {
+  width: 150px;
+}
 
-export default {
-  List,
-  Tree,
-  Table,
-};
+.exec-ms {
+  width: 80px;
+}
+
+.exec-percent {
+  width: 100px;
+}
+
+.self {
+  width: 100px;
+}
+
+.api {
+  width: 120px;
+}
+
+.agent {
+  width: 150px;
+}
+
+.application {
+  width: 150px;
+  text-align: center;
+}
+
+.max-time {
+  width: 150px;
+}
+
+.method {
+  width: 300px;
+}
+
+.avg-time {
+  width: 150px;
+}
+
+.min-time {
+  width: 150px;
+}
+
+.count {
+  width: 120px;
+}
+
+.sum-time {
+  width: 150px;
+}
+
+.type {
+  width: 60px;
+}
