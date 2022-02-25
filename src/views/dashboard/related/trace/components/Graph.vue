@@ -14,7 +14,7 @@ limitations under the License. -->
   <div class="trace-t-loading" v-show="loading">
     <Icon iconName="spinner" size="sm" />
   </div>
-  <div ref="traceGraph"></div>
+  <div ref="traceGraph" class="d3-graph"></div>
 </template>
 <script lang="ts" setup>
 import { ref, watch, onBeforeUnmount, onMounted } from "vue";
@@ -62,7 +62,11 @@ onMounted(() => {
     );
   }
   loading.value = false;
+  window.addEventListener("resize", resize);
 });
+function resize() {
+  tree.value.resize();
+}
 function handleSelectSpan(i: any) {
   currentSpan.value = i.data;
   showDetail.value = true;
@@ -263,6 +267,7 @@ function collapse(d: Span) {
 }
 onBeforeUnmount(() => {
   d3.selectAll(".d3-tip").remove();
+  window.removeEventListener("resize", resize);
 });
 watch(
   () => props.data,
@@ -286,6 +291,10 @@ watch(
 );
 </script>
 <style lang="scss" scoped>
+.d3-graph {
+  height: 100%;
+}
+
 .trace-node .group {
   cursor: pointer;
   fill-opacity: 0;

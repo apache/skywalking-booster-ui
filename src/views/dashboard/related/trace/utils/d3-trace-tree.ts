@@ -18,6 +18,7 @@
 import * as d3 from "d3";
 import d3tip from "d3-tip";
 import { Trace, Span } from "@/types/trace";
+import { style } from "d3";
 
 export default class TraceMap {
   private i = 0;
@@ -51,8 +52,8 @@ export default class TraceMap {
     this.i = 0;
     this.topSlow = [];
     this.topChild = [];
-    this.width = el.clientWidth;
-    this.height = el.clientHeight - 28;
+    this.width = el.clientWidth - 20;
+    this.height = el.clientHeight;
     this.body = d3
       .select(this.el)
       .append("svg")
@@ -87,12 +88,10 @@ export default class TraceMap {
     if (!this.el) {
       return;
     }
-    // reset svg size
     this.width = this.el.clientWidth;
-    this.height = this.el.clientHeight - 28;
+    this.height = this.el.clientHeight + 100;
     this.body.attr("width", this.width).attr("height", this.height);
     this.body.select("g").attr("transform", () => `translate(160, 0)`);
-    // reset zoom function for translate
     const transform = d3.zoomTransform(this.body).translate(0, 0);
     d3.zoom().transform(this.body, transform);
   }
@@ -280,8 +279,6 @@ export default class TraceMap {
       .attr("transform", function (d: any) {
         return "translate(" + d.y + "," + d.x + ")";
       });
-
-    // Update the node attributes and style
     nodeUpdate
       .select("circle.node")
       .attr("r", 5)
@@ -295,8 +292,6 @@ export default class TraceMap {
         (d3 as any).event.stopPropagation();
         click(d);
       });
-
-    // Remove any exiting nodes
     const nodeExit = node
       .exit()
       .transition()
@@ -312,7 +307,7 @@ export default class TraceMap {
 
     const link = this.svg
       .selectAll("path.tree-link")
-      .data(links, function (d: any) {
+      .data(links, function (d: { id: string }) {
         return d.id;
       })
       .style("stroke-width", 1.5);
@@ -325,7 +320,9 @@ export default class TraceMap {
         const o = { x: source.x0, y: source.y0 };
         return diagonal(o, o);
       })
-      .style("stroke-width", 1.5);
+      .style("stroke-width", 1.5)
+      .style("fill", "none")
+      .attr("stroke", "rgba(0, 0, 0, 0.1)");
 
     const linkUpdate = linkEnter.merge(link);
     linkUpdate
@@ -334,6 +331,16 @@ export default class TraceMap {
       .attr("d", function (d: any) {
         return diagonal(d, d.parent);
       });
+    link
+      .exit()
+      .transition()
+      .duration(600)
+      .attr("d", function () {
+        const o = { x: source.x, y: source.y };
+        return diagonal(o, o);
+      })
+      .style("stroke-width", 1.5)
+      .remove();
 
     nodes.forEach(function (d: any) {
       d.x0 = d.x;
@@ -398,12 +405,9 @@ export default class TraceMap {
     return d3
       .zoom()
       .scaleExtent([0.3, 10])
-      .on("zoom", () => {
-        g.attr(
-          "transform",
-          `translate(${(d3 as any).event.transform.x + 120},${
-            (d3 as any).event.transform.y
-          })scale(${(d3 as any).event.transform.k})`
+      .on("zoom", (d: any) => {
+        g.attr("transform", d3.zoomTransform(this.svg.node())).attr(
+          `translate(${d.transform.x},${d.transform.y})scale(${d.transform.k})`
         );
       });
   }

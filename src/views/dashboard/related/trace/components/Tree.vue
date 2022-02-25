@@ -23,16 +23,18 @@ limitations under the License. -->
         <span>{{ i }}</span>
       </span>
     </div>
-    <div style="padding: 0 30px">
-      <a class="trace-tree-btn mr-10" @click="tree.setDefault()">Default</a>
+    <div style="padding: 10px 0">
+      <a class="trace-tree-btn mr-10" @click="tree.setDefault()">
+        {{ t("default") }}
+      </a>
       <a class="trace-tree-btn mr-10" @click="tree.getTopSlow()">
-        Top 5 of slow
+        {{ t("topSlow") }}
       </a>
       <a class="trace-tree-btn mr-10" @click="tree.getTopChild()">
-        Top 5 of children
+        {{ t("topChildren") }}
       </a>
     </div>
-    <div class="trace-tree" style="height: 100%">
+    <div class="trace-tree">
       <Graph :data="data" :traceId="traceId" type="Tree" />
     </div>
   </div>
@@ -66,6 +68,11 @@ function computedScale(i: number) {
 }
 </script>
 <style lang="scss" scoped>
+.trace-tree {
+  height: 100%;
+  overflow: auto;
+}
+
 .trace-tree-btn {
   display: inline-block;
   border-radius: 4px;
@@ -75,7 +82,7 @@ function computedScale(i: number) {
   font-size: 11px;
 }
 
-.time-charts {
+.trace-tree-charts {
   overflow: auto;
   padding: 10px;
   position: relative;

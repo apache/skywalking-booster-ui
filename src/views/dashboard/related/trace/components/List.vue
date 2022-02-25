@@ -11,10 +11,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="time-charts">
+  <div class="charts">
     <div>
       <span
-        class="time-charts-item mr-5"
+        class="charts-item mr-5"
         v-for="(i, index) in list"
         :key="index"
         :style="`color:${computedScale(index)}`"
@@ -26,7 +26,7 @@ limitations under the License. -->
         {{ t("exportImage") }}
       </el-button>
     </div>
-    <div class="trace-chart">
+    <div>
       <Graph :data="data" :traceId="traceId" type="List" />
     </div>
   </div>
@@ -56,6 +56,7 @@ function computedScale(i: number) {
     .interpolator(d3.interpolateCool);
   return sequentialScale(i);
 }
+
 function downloadTrace() {
   const serializer = new XMLSerializer();
   const svgNode: any = d3.select(".trace-list-dowanload").node();
@@ -84,23 +85,19 @@ function downloadTrace() {
 }
 </script>
 <style lang="scss" scoped>
-.time-charts {
+.charts {
   overflow: auto;
   padding: 10px;
   height: calc(100% - 95px);
   width: 100%;
 }
 
-.time-charts-item {
+.charts-item {
   display: inline-block;
   padding: 2px 8px;
   border: 1px solid;
   font-size: 11px;
   border-radius: 4px;
-}
-
-.trace-chart {
-  fill: rgba(0, 0, 0, 0);
 }
 
 .btn {
