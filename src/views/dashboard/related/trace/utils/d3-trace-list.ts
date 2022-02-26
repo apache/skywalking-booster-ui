@@ -147,7 +147,7 @@ export default class ListGraph {
       .on("mouseout", function (event: any, d: Trace) {
         t.tip.hide(d, this);
       })
-      .on("click", (d: Trace) => {
+      .on("click", (event: any, d: Trace) => {
         if (this.handleSelectSpan) {
           this.handleSelectSpan(d);
         }

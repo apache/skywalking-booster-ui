@@ -37,7 +37,7 @@ import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import { Span } from "@/types/trace";
-import Graph from "./Graph.vue";
+import Graph from "./D3Graph/Index.vue";
 
 /* global defineProps*/
 const props = defineProps({

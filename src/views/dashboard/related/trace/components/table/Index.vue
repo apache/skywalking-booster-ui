@@ -77,27 +77,6 @@ function handleSelectSpan(data: any[]) {
   emit("select", data);
 }
 
-function showCurrentSpanDetail(title: string, text: string) {
-  const textLineNumber = text.split("\n").length;
-  let textHeight = textLineNumber * 20.2 + 10;
-  const tmpHeight = window.innerHeight * 0.9;
-  textHeight = textHeight >= tmpHeight ? tmpHeight : textHeight;
-  // this.$modal.show('dialog', {
-  //   title,
-  //   text: `<div style="height:${textHeight}px">${text}</div>`,
-  //   buttons: [
-  //     {
-  //       title: 'Copy',
-  //       handler: () => {
-  //         this.copy(text);
-  //       },
-  //     },
-  //     {
-  //       title: 'Close',
-  //     },
-  //   ],
-  // });
-}
 function handleViewSpan() {
   showDetail.value = true;
 }

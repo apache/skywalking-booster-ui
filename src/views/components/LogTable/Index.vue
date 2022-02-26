@@ -38,17 +38,28 @@ limitations under the License. -->
         v-for="(item, index) in tableData"
         :data="item"
         :key="'browser' + index"
+        @select="setCurrentLog"
       />
     </div>
     <div v-else>
-      <LogServiceItem
+      <LogService
         v-for="(item, index) in tableData"
         :data="item"
         :key="'service' + index"
         :noLink="noLink"
+        @select="setCurrentLog"
       />
     </div>
     <slot></slot>
+    <el-dialog
+      v-model="showDetail"
+      :destroy-on-close="true"
+      fullscreen
+      @closed="showDetail = false"
+      :title="t('logDetail')"
+    >
+      <LogDetail :currentLog="currentLog" />
+    </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
@@ -56,7 +67,8 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { ServiceLogConstants, BrowserLogConstants } from "./data";
 import LogBrowser from "./LogBrowser.vue";
-import LogServiceItem from "./LogService.vue";
+import LogService from "./LogService.vue";
+import LogDetail from "./LogDetail.vue";
 
 /*global defineProps, Nullable */
 const props = defineProps({
@@ -65,10 +77,17 @@ const props = defineProps({
   noLink: { type: Boolean, default: true },
 });
 const { t } = useI18n();
+const currentLog = ref<any>({});
+const showDetail = ref<boolean>(false);
 const dragger = ref<Nullable<HTMLSpanElement>>(null);
 // const method = ref<number>(380);
 const columns: any[] =
   props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
+
+function setCurrentLog(log: any) {
+  showDetail.value = true;
+  currentLog.value = log;
+}
 </script>
 <style lang="scss" scoped>
 .log {

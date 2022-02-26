@@ -41,7 +41,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import * as d3 from "d3";
-import Graph from "./Graph.vue";
+import Graph from "./D3Graph/Index.vue";
 import type { PropType } from "vue";
 import { Span } from "@/types/trace";
 import { useI18n } from "vue-i18n";

@@ -15,15 +15,24 @@ limitations under the License. -->
     <Icon iconName="spinner" size="sm" />
   </div>
   <div ref="traceGraph" class="d3-graph"></div>
+  <el-dialog
+    v-model="showDetail"
+    :destroy-on-close="true"
+    fullscreen
+    @closed="showDetail = false"
+  >
+    <SpanDetail :currentSpan="currentSpan" />
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import { ref, watch, onBeforeUnmount, onMounted } from "vue";
 import type { PropType } from "vue";
 import _ from "lodash";
 import * as d3 from "d3";
-import ListGraph from "../utils/d3-trace-list";
-import TreeGraph from "../utils/d3-trace-tree";
+import ListGraph from "../../utils/d3-trace-list";
+import TreeGraph from "../../utils/d3-trace-tree";
 import { Span } from "@/types/trace";
+import SpanDetail from "./SpanDetail.vue";
 
 /* global defineProps, Nullable, defineExpose*/
 const props = defineProps({

@@ -36,7 +36,7 @@ limitations under the License. -->
         >
           <div>
             <el-pagination
-              v-model:currentPage="traceStore.conditions.paging.pageNum"
+              v-model:currentPage="pageNum"
               v-model:page-size="pageSize"
               :small="true"
               :total="traceStore.traceSpanLogsTotal"
@@ -210,6 +210,7 @@ export default defineComponent({
       showTraceLogs,
       turnLogsPage,
       pageSize,
+      pageNum,
     };
   },
 });
