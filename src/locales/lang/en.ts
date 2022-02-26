@@ -323,7 +323,7 @@ const msg = {
   addTraceID: "Please input a trace ID",
   addKeywordsOfContent: "Please input a keyword of content",
   addExcludingKeywordsOfContent: "Please input a keyword of excluding content",
-  noticeTag: "Please press enter after inputting a tag(key=value).",
+  noticeTag: "Please press Enter after inputting a tag(key=value).",
   conditionNotice:
     "Notice: Please press enter after inputting a tag, key of content, exclude key of content.",
   cacheModalTitle: "Clear cache reminder",

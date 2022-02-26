@@ -185,7 +185,7 @@ export default class TraceMap {
           that.timeTip.hide(d, _node[0].children[1]);
         }
       })
-      .on("click", function (d: any) {
+      .on("click", function (event: any, d: any) {
         that.handleSelectSpan(d);
       });
 

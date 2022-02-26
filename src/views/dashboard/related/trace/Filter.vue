@@ -48,6 +48,12 @@ limitations under the License. -->
       <span class="grey mr-5">{{ t("traceID") }}:</span>
       <el-input v-model="traceId" class="traceId" />
     </div>
+    <div class="mr-5">
+      <span class="sm b grey mr-5">{{ t("duration") }}:</span>
+      <el-input class="inputs mr-5" v-model="minTraceDuration" />
+      <span class="grey mr-5">-</span>
+      <el-input class="inputs" v-model="maxTraceDuration" />
+    </div>
   </div>
   <div class="flex-h">
     <!-- <div class="mr-5">
@@ -59,12 +65,6 @@ limitations under the License. -->
         @input="changeTimeRange"
       />
     </div> -->
-    <div class="mr-5">
-      <span class="sm b grey mr-5">{{ t("duration") }}:</span>
-      <el-input class="inputs mr-5" v-model="minTraceDuration" />
-      <span class="grey mr-5">-</span>
-      <el-input class="inputs" v-model="maxTraceDuration" />
-    </div>
     <ConditionTags :type="'TRACE'" @update="updateTags" />
     <el-button
       class="search-btn"
@@ -77,7 +77,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { Status } from "../../data";
@@ -109,9 +109,14 @@ const state = reactive<any>({
 //   appStore.durationRow.start,
 //   appStore.durationRow.end,
 // ]);
-getInstances();
-getEndpoints();
-searchTraces();
+init();
+function init() {
+  if (dashboardStore.entity === EntityType[0].value) {
+    getEndpoints();
+    getInstances();
+  }
+  searchTraces();
+}
 
 async function getEndpoints() {
   const resp = await traceStore.getEndpoints();
@@ -131,7 +136,9 @@ async function getInstances() {
 }
 function searchTraces() {
   traceStore.setTraceCondition({
-    serviceId: selectorStore.currentService.id || 0,
+    serviceId: selectorStore.currentService
+      ? selectorStore.currentService.id
+      : "",
     traceId: traceId.value || undefined,
     endpointId: state.endpoint.id || undefined,
     serviceInstanceId: state.instance.id || undefined,
@@ -158,6 +165,15 @@ function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
   tagsList.value = data.tagsList;
   tagsMap.value = data.tagsMap;
 }
+watch(
+  () => selectorStore.currentService,
+  () => {
+    if (dashboardStore.entity !== EntityType[0].value) {
+      return;
+    }
+    init();
+  }
+);
 </script>
 <style lang="scss" scoped>
 .inputs {

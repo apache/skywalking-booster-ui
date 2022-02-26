@@ -212,3 +212,4 @@ export const QueryOrders = [
   { label: "startTime", value: "BY_START_TIME" },
   { label: "duration", value: "BY_DURATION" },
 ];
+export const TraceEntitys = ["All", "Service", "ServiceInstance", "Endpoint"];
