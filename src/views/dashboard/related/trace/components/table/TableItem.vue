@@ -49,7 +49,7 @@ limitations under the License. -->
   </div>
   <div v-else>
     <div
-      @click="showSelectSpan"
+      @click="viewSpanDetail"
       :class="[
         'trace-item',
         'level' + (data.level - 1),
@@ -64,14 +64,13 @@ limitations under the License. -->
           width: `${method}px`,
         }"
       >
-        <svg
-          class="icon vm cp trans"
+        <Icon
           :style="!displayChildren ? 'transform: rotate(-90deg);' : ''"
           @click.stop="toggle"
           v-if="data.children && data.children.length"
-        >
-          <use xlink:href="#arrow-down"></use>
-        </svg>
+          iconName="arrow-down"
+          size="sm"
+        />
         <el-tooltip :content="data.endpointName" placement="bottom">
           <span>
             {{ data.endpointName }}
@@ -108,7 +107,7 @@ limitations under the License. -->
         </el-tooltip>
       </div>
       <div class="application" v-show="type === 'profile'">
-        <span @click="viewSpanDetail">{{ $t("view") }}</span>
+        <span @click="viewSpanDetail">{{ t("view") }}</span>
       </div>
     </div>
     <div
@@ -123,12 +122,22 @@ limitations under the License. -->
         :type="type"
       />
     </div>
+    <el-dialog
+      v-model="showDetail"
+      :destroy-on-close="true"
+      fullscreen
+      @closed="showDetail = false"
+    >
+      <SpanDetail :currentSpan="data" />
+    </el-dialog>
   </div>
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
+import { useI18n } from "vue-i18n";
 import { ref, watch, computed, defineComponent } from "vue";
 import type { PropType } from "vue";
+import SpanDetail from "../D3Graph/SpanDetail.vue";
 
 const props = {
   data: { type: Object as PropType<any>, default: () => ({}) },
@@ -139,9 +148,12 @@ export default defineComponent({
   name: "TableItem",
   props,
   emits: ["select"],
+  components: { SpanDetail },
   setup(props, { emit }) {
     /* global Nullable */
     const displayChildren = ref<boolean>(true);
+    const showDetail = ref<boolean>(false);
+    const { t } = useI18n();
     const traceItem = ref<Nullable<HTMLDivElement>>(null);
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
@@ -184,6 +196,7 @@ export default defineComponent({
       traceItem.value.style.background = "rgba(0, 0, 0, 0.1)";
     }
     function viewSpanDetail() {
+      showDetail.value = true;
       showSelectSpan();
       emit("select", props.data);
     }
@@ -202,6 +215,8 @@ export default defineComponent({
       toggle,
       dateFormat,
       showSelectSpan,
+      showDetail,
+      t,
     };
   },
 });
