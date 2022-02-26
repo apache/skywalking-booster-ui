@@ -14,36 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export type Service = {
-  id?: string;
-  label: string;
-  value: string;
-  layers?: string[];
-  normal?: boolean;
-  group?: string;
+const censor = (key: any, value: any) => {
+  if (typeof value === "function") {
+    return Function.prototype.toString.call(value);
+  }
+  return value;
 };
-
-export type Instance = {
-  value: string;
-  label: string;
-  layer?: string;
-  language?: string;
-  instanceUUID?: string;
-  attributes?: { name: string; value: string }[];
-};
-
-export type Endpoint = {
-  id?: string;
-  label: string;
-  value: string;
-};
-
-export type Service = {
-  id: string;
-  value: string;
-  label: string;
-  group: string;
-  normal: boolean;
-  layers: string[];
-  shortName: string;
+export const formatJson = (data: JSON) => {
+  return JSON.stringify(data, censor, 2);
 };

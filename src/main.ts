@@ -21,8 +21,7 @@ import { store } from "./store";
 import components from "@/components";
 import i18n from "./locales";
 import "element-plus/dist/index.css";
-import "./styles/lib.scss";
-import "./styles/reset.scss";
+import "./styles/index.scss";
 import ElementPlus from "element-plus";
 
 const app = createApp(App);

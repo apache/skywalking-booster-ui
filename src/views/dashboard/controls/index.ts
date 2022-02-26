@@ -14,36 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export type Service = {
-  id?: string;
-  label: string;
-  value: string;
-  layers?: string[];
-  normal?: boolean;
-  group?: string;
-};
+import Topology from "./Topology.vue";
+import Tab from "./Tab.vue";
+import Widget from "./Widget.vue";
+import Trace from "./Trace.vue";
 
-export type Instance = {
-  value: string;
-  label: string;
-  layer?: string;
-  language?: string;
-  instanceUUID?: string;
-  attributes?: { name: string; value: string }[];
-};
-
-export type Endpoint = {
-  id?: string;
-  label: string;
-  value: string;
-};
-
-export type Service = {
-  id: string;
-  value: string;
-  label: string;
-  group: string;
-  normal: boolean;
-  layers: string[];
-  shortName: string;
-};
+export default { Tab, Widget, Trace, Topology };

@@ -31,6 +31,7 @@ limitations under the License. -->
       :key="item.i"
       @click="clickGrid(item)"
       :class="{ active: dashboardStore.activedGridItem === item.i }"
+      drag-ignore-from="svg.d3-trace-tree"
     >
       <component :is="item.type" :data="item" />
     </grid-item>
@@ -40,13 +41,11 @@ limitations under the License. -->
 import { defineComponent } from "vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
-import Widget from "../controls/Widget.vue";
-import Tab from "../controls/Tab.vue";
-import Topology from "../controls/Topology.vue";
+import controls from "../controls/index";
 
 export default defineComponent({
   name: "Layout",
-  components: { Widget, Tab, Topology },
+  components: { ...controls },
   setup() {
     const dashboardStore = useDashboardStore();
     function layoutUpdatedEvent(newLayout: LayoutConfig[]) {

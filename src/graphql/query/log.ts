@@ -14,36 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export type Service = {
-  id?: string;
-  label: string;
-  value: string;
-  layers?: string[];
-  normal?: boolean;
-  group?: string;
-};
 
-export type Instance = {
-  value: string;
-  label: string;
-  layer?: string;
-  language?: string;
-  instanceUUID?: string;
-  attributes?: { name: string; value: string }[];
-};
+import {
+  QueryBrowserErrorLogs,
+  QueryServiceLogs,
+  QueryLogsByKeywords,
+} from "../fragments/log";
 
-export type Endpoint = {
-  id?: string;
-  label: string;
-  value: string;
-};
-
-export type Service = {
-  id: string;
-  value: string;
-  label: string;
-  group: string;
-  normal: boolean;
-  layers: string[];
-  shortName: string;
-};
+export const queryBrowserErrorLogs = `query queryBrowserErrorLogs(${QueryBrowserErrorLogs.variable}) {
+  ${QueryBrowserErrorLogs.query}}`;
+export const queryServiceLogs = `query queryLogs(${QueryServiceLogs.variable}) {${QueryServiceLogs.query}}`;
+export const queryLogsByKeywords = `query queryLogsByKeywords {${QueryLogsByKeywords.query}}`;

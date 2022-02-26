@@ -165,11 +165,11 @@ export const SortOrder = [
 export const ToolIcons = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
-  // { name: "insert_image", content: "Add Image", id: "addImage" },
+  { name: "device_hub", content: "Add Topology", id: "topology" },
+  { name: "merge", content: "Add Trace", id: "trace" },
   // { name: "save_alt", content: "Export", id: "export" },
   // { name: "folder_open", content: "Import", id: "import" },
   // { name: "settings", content: "Settings", id: "settings" },
-  { name: "device_hub", content: "Add Topology", id: "topology" },
   // { name: "save", content: "Apply", id: "apply" },
 ];
 export const ScopeType = [
@@ -203,3 +203,13 @@ export const Colors: any = {
   black: "#000",
   orange: "#E6A23C",
 };
+export const Status = [
+  { label: "All", value: "ALL" },
+  { label: "Success", value: "SUCCESS" },
+  { label: "Error", value: "ERROR" },
+];
+export const QueryOrders = [
+  { label: "startTime", value: "BY_START_TIME" },
+  { label: "duration", value: "BY_DURATION" },
+];
+export const TraceEntitys = ["All", "Service", "ServiceInstance", "Endpoint"];

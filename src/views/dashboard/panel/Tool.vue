@@ -84,8 +84,10 @@ limitations under the License. -->
           size="sm"
           :iconName="t.name"
           v-if="
-            t.id !== 'topology' ||
-            (t.id === 'topology' && hasTopology.includes(dashboardStore.entity))
+            !['topology', 'trace'].includes(t.id) ||
+            (t.id === 'topology' &&
+              hasTopology.includes(dashboardStore.entity)) ||
+            (t.id === 'trace' && TraceEntitys.includes(dashboardStore.entity))
           "
         />
       </span>
@@ -98,7 +100,7 @@ import { reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { EntityType, ToolIcons, hasTopology } from "../data";
+import { EntityType, ToolIcons, hasTopology, TraceEntitys } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
@@ -290,8 +292,8 @@ function clickIcons(t: { id: string; content: string; name: string }) {
     case "addTab":
       dashboardStore.addControl("Tab");
       break;
-    case "addImage":
-      dashboardStore.addControl("Image");
+    case "trace":
+      dashboardStore.addControl("Trace");
       break;
     case "topology":
       dashboardStore.addControl("Topology");
@@ -351,7 +353,6 @@ async function fetchPods(type: string, serviceId: string, setPod: boolean) {
   }
   if (resp.errors) {
     ElMessage.error(resp.errors);
-    return;
   }
 }
 watch(

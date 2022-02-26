@@ -14,36 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export type Service = {
-  id?: string;
-  label: string;
-  value: string;
-  layers?: string[];
-  normal?: boolean;
-  group?: string;
-};
 
-export type Instance = {
-  value: string;
-  label: string;
-  layer?: string;
-  language?: string;
-  instanceUUID?: string;
-  attributes?: { name: string; value: string }[];
-};
+import { Traces, TraceSpans } from "../fragments/trace";
 
-export type Endpoint = {
-  id?: string;
-  label: string;
-  value: string;
-};
+export const queryTraces = `query queryTraces(${Traces.variable}) {${Traces.query}}`;
 
-export type Service = {
-  id: string;
-  value: string;
-  label: string;
-  group: string;
-  normal: boolean;
-  layers: string[];
-  shortName: string;
-};
+export const queryTrace = `query queryTrace(${TraceSpans.variable}) {${TraceSpans.query}}`;

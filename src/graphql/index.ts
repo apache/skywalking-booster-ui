@@ -20,12 +20,16 @@ import * as app from "./query/app";
 import * as selector from "./query/selector";
 import * as dashboard from "./query/dashboard";
 import * as topology from "./query/topology";
+import * as trace from "./query/trace";
+import * as log from "./query/log";
 
 const query: { [key: string]: string } = {
   ...app,
   ...selector,
   ...dashboard,
   ...topology,
+  ...trace,
+  ...log,
 };
 class Graphql {
   private queryData = "";
