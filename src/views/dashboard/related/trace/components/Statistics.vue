@@ -17,7 +17,11 @@ limitations under the License. -->
     <div class="trace-t-loading" v-show="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
-    <TableContainer :tableData="tableData" type="statistics" HeaderType>
+    <TableContainer
+      :tableData="tableData"
+      type="statistics"
+      :HeaderType="HeaderType"
+    >
       <div class="trace-tips" v-if="!tableData.length">{{ $t("noData") }}</div>
     </TableContainer>
   </div>

@@ -300,4 +300,15 @@ export default class ListGraph {
       callback();
     }
   }
+  resize() {
+    if (!this.el) {
+      return;
+    }
+    this.width = this.el.clientWidth - 20;
+    this.height = this.el.clientHeight;
+    this.svg.attr("width", this.width).attr("height", this.height);
+    this.svg.select("g").attr("transform", () => `translate(160, 0)`);
+    const transform = d3.zoomTransform(this.svg).translate(0, 0);
+    d3.zoom().transform(this.svg, transform);
+  }
 }
