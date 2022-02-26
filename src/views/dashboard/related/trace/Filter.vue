@@ -14,21 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h row">
-    <div class="mr-5">
+    <div class="mr-5" v-if="dashboardStore.entity === EntityType[0].value">
       <span class="grey mr-5">{{ t("instance") }}:</span>
       <Selector
         size="small"
-        :value="state.instance"
+        :value="state.instance.value"
         :options="traceStore.instances"
         placeholder="Select a instance"
         @change="changeField('instance', $event)"
       />
     </div>
-    <div class="mr-5">
+    <div class="mr-5" v-if="dashboardStore.entity === EntityType[0].value">
       <span class="grey mr-5">{{ t("endpoint") }}:</span>
       <Selector
         size="small"
-        :value="state.endpoint"
+        :value="state.endpoint.value"
         :options="traceStore.endpoints"
         placeholder="Select a endpoint"
         @change="changeField('endpoint', $event)"
@@ -38,7 +38,7 @@ limitations under the License. -->
       <span class="grey mr-5">{{ t("status") }}:</span>
       <Selector
         size="small"
-        :value="state.status"
+        :value="state.status.value"
         :options="Status"
         placeholder="Select a status"
         @change="changeField('status', $event)"
@@ -82,14 +82,17 @@ import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { Status } from "../../data";
 import { useTraceStore } from "@/store/modules/trace";
+import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
+import { EntityType } from "../../data";
 
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
+const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
 const traceId = ref<string>("");
 const minTraceDuration = ref<string>("");
@@ -97,23 +100,42 @@ const maxTraceDuration = ref<string>("");
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
 const state = reactive<any>({
-  status: "ALL",
-  instance: "",
-  endpoint: "",
+  status: { label: "All", value: "ALL" },
+  instance: { label: "", value: "" },
+  endpoint: { label: "", value: "" },
 });
 
 // const dateTime = computed(() => [
 //   appStore.durationRow.start,
 //   appStore.durationRow.end,
 // ]);
+getInstances();
+getEndpoints();
 searchTraces();
+
+async function getEndpoints() {
+  const resp = await traceStore.getEndpoints();
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  state.endpoint = traceStore.endpoints[0];
+}
+async function getInstances() {
+  const resp = await traceStore.getInstances();
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  state.instance = traceStore.instances[0];
+}
 function searchTraces() {
-  traceStore.setCondition({
+  traceStore.setTraceCondition({
     serviceId: selectorStore.currentService.id || 0,
     traceId: traceId.value || undefined,
-    endpointId: state.endpoint || undefined,
-    serviceInstanceId: state.instance || undefined,
-    traceState: state.status || "ALL",
+    endpointId: state.endpoint.id || undefined,
+    serviceInstanceId: state.instance.id || undefined,
+    traceState: state.status.value || "ALL",
     queryDuration: appStore.durationTime,
     minTraceDuration: appStore.minTraceDuration || undefined,
     maxTraceDuration: appStore.maxTraceDuration || undefined,
@@ -130,7 +152,7 @@ async function queryTraces() {
   }
 }
 function changeField(type: string, opt: any[]) {
-  state[type] = opt[0].value;
+  state[type] = opt[0];
 }
 function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
   tagsList.value = data.tagsList;

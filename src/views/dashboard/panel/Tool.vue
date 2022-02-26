@@ -351,7 +351,6 @@ async function fetchPods(type: string, serviceId: string, setPod: boolean) {
   }
   if (resp.errors) {
     ElMessage.error(resp.errors);
-    return;
   }
 }
 watch(

@@ -339,6 +339,8 @@ watch(
 }
 
 .trace-list .trace-node rect {
+  cursor: pointer;
+
   &:hover {
     fill: rgba(0, 0, 0, 0.05);
   }

@@ -32,11 +32,8 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <div class="trace-t-loading" v-show="loading">
-      <Icon iconName="spinner" size="sm" />
-    </div>
-    <div class="trace-t-wrapper">
-      <table class="list">
+    <div class="trace-t-wrapper" v-loading="loading">
+      <table class="list" v-if="traceStore.traceList.length">
         <tr
           class="trace-tr cp"
           v-for="(i, index) in traceStore.traceList"
@@ -67,6 +64,7 @@ limitations under the License. -->
           </td>
         </tr>
       </table>
+      <div class="no-data" v-else>{{ t("noData") }}</div>
     </div>
   </div>
 </template>
@@ -74,12 +72,14 @@ limitations under the License. -->
 <script lang="ts" setup>
 import dayjs from "dayjs";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { ElMessage } from "element-plus";
 import { QueryOrders } from "../../data";
 import { Option } from "@/types/app";
 import { Trace } from "@/types/trace";
 
+const { t } = useI18n();
 const traceStore = useTraceStore();
 const loading = ref<boolean>(false);
 const selectedKey = ref<string>("");
@@ -95,25 +95,30 @@ function searchTrace() {
 }
 
 function updatePage(p: number) {
-  traceStore.setCondition({
+  traceStore.setTraceCondition({
     paging: { pageNum: p, pageSize: pageSize.value, needTotal: true },
   });
   searchTrace();
 }
 
 function changeSort(opt: Option[]) {
-  traceStore.setCondition({
+  traceStore.setTraceCondition({
     queryOrder: opt[0].value,
     paging: { pageNum: 1, pageSize: pageSize.value, needTotal: true },
   });
   searchTrace();
 }
 
-function selectTrace(i: Trace) {
-  this.setCurrentTrace(i);
+async function selectTrace(i: Trace) {
+  traceStore.setCurrentTrace(i);
   selectedKey.value = i.key;
   if (i.traceIds.length) {
-    traceStore.getTraceSpans({ traceId: i.traceIds[0] });
+    const res = await traceStore.getTraceSpans({
+      traceId: i.traceIds[0].value,
+    });
+    if (res.errors) {
+      ElMessage.error(res.errors);
+    }
   }
 }
 
@@ -198,5 +203,11 @@ async function queryTraces() {
   padding-left: 5px;
   background-color: #40454e;
   color: #eee;
+}
+
+.no-data {
+  padding-top: 50px;
+  width: 100%;
+  text-align: center;
 }
 </style>

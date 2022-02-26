@@ -33,7 +33,11 @@ limitations under the License. -->
         >
           {{ t("tagsLink") }}
         </a>
-        <Icon iconName="help" class="mr-5" />
+        <el-tooltip :content="t('traceTagsTip')">
+          <span>
+            <Icon class="icon-help mr-5" iconName="help" size="middle" />
+          </span>
+        </el-tooltip>
         <b>{{ t("noticeTag") }}</b>
       </span>
     </div>
@@ -59,8 +63,8 @@ function removeTags(index: number) {
   updateTags();
   localStorage.setItem("traceTags", JSON.stringify(this.tagsList));
 }
-function addLabels(event: KeyboardEvent) {
-  if (event.keyCode !== 13 || !this.tags) {
+function addLabels() {
+  if (!tags.value) {
     return;
   }
   tagsList.value.push(tags.value);
@@ -69,9 +73,9 @@ function addLabels(event: KeyboardEvent) {
 }
 function updateTags() {
   const tagsMap = tagsList.value.map((item: string) => {
-    const label = item.substring(0, item.indexOf("="));
+    const key = item.substring(0, item.indexOf("="));
     return {
-      label,
+      key,
       value: item.substring(item.indexOf("=") + 1, item.length),
     };
   });
@@ -93,9 +97,8 @@ function updateTags() {
   border-radius: 3px;
   overflow: hidden;
   border: 1px dashed #aaa;
-  color: #eee;
   font-size: 12px;
-  margin: 0 2px;
+  margin: 3px 2px 0 2px;
 }
 
 .trace-new-tag {
@@ -127,5 +130,9 @@ function updateTags() {
   .selected {
     color: #3d444f;
   }
+}
+
+.icon-help {
+  cursor: pointer;
 }
 </style>

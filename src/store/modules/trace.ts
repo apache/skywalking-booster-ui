@@ -62,8 +62,8 @@ export const traceStore = defineStore({
     selectorStore: useSelectorStore(),
   }),
   actions: {
-    setCondition(data: any) {
-      this.condition = data;
+    setTraceCondition(data: any) {
+      this.condition = { ...this.condition, ...data };
     },
     setCurrentTrace(trace: Trace) {
       this.currentTrace = trace;
@@ -72,30 +72,33 @@ export const traceStore = defineStore({
       this.traceSpans = spans;
     },
     async getInstances() {
-      const res: AxiosResponse = await graphql
-        .query("queryServiceInstance")
-        .params({ serviceId: this.selectorStore.currentService });
+      const res: AxiosResponse = await graphql.query("queryInstances").params({
+        serviceId: this.selectorStore.currentService.id,
+        duration: this.durationTime,
+      });
 
       if (res.data.errors) {
         return res.data;
       }
-      this.instances = [{ value: 0, label: "All" }, ...res.data.data.pods] || [
-        { value: 0, label: "All" },
-      ];
+      this.instances = [
+        { value: "0", label: "All" },
+        ...res.data.data.pods,
+      ] || [{ value: " 0", label: "All" }];
       return res.data;
     },
     async getEndpoints() {
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
-        serviceId: this.selectorStore.currentService,
+        serviceId: this.selectorStore.currentService.id,
         duration: this.durationTime,
         keyword: "",
       });
       if (res.data.errors) {
         return res.data;
       }
-      this.endpoints = [{ value: 0, label: "All" }, ...res.data.data.pods] || [
-        { value: 0, label: "All" },
-      ];
+      this.endpoints = [
+        { value: "0", label: "All" },
+        ...res.data.data.pods,
+      ] || [{ value: "0", label: "All" }];
       return res.data;
     },
     async getTraces() {
@@ -103,6 +106,13 @@ export const traceStore = defineStore({
         .query("queryTraces")
         .params({ condition: this.condition });
       if (res.data.errors) {
+        return res.data;
+      }
+      if (!res.data.data.data.traces.length) {
+        this.traceTotal = 0;
+        this.traceList = [];
+        this.setCurrentTrace({});
+        this.setTraceSpans([]);
         return res.data;
       }
       this.getTraceSpans({ traceId: res.data.data.data.traces[0].traceIds[0] });
@@ -114,6 +124,7 @@ export const traceStore = defineStore({
       });
       this.traceTotal = res.data.data.data.total;
       this.setCurrentTrace(res.data.data.data.traces[0] || {});
+      return res.data;
     },
     async getTraceSpans(params: { traceId: string }) {
       const res: AxiosResponse = await graphql
@@ -123,6 +134,7 @@ export const traceStore = defineStore({
         return res.data;
       }
       this.setTraceSpans(res.data.data.trace.spans || []);
+      return res.data;
     },
     async getSpanLogs(params: any) {
       const res: AxiosResponse = await graphql

@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-detail">
+  <div class="trace-detail" v-loading="loading">
     <div
       class="trace-detail-wrapper clear"
       v-if="traceStore.currentTrace.endpointNames"
@@ -122,6 +122,7 @@ limitations under the License. -->
         </div>
       </div>
     </div>
+    <div class="no-data" v-else>{{ t("noData") }}</div>
     <component
       v-if="traceStore.currentTrace.endpointNames"
       :is="displayMode"
@@ -154,6 +155,7 @@ export default defineComponent({
   setup() {
     const { t } = useI18n();
     const traceStore = useTraceStore();
+    const loading = ref<boolean>(false);
     const traceId = ref<string>("");
     const displayMode = ref<string>("List");
     const pageNum = ref<number>(1);
@@ -174,10 +176,12 @@ export default defineComponent({
 
     async function changeTraceId(opt: Option[]) {
       traceId.value = opt[0].value;
+      loading.value = true;
       const res = await traceStore.getTraceSpans({ traceId: opt[0].value });
       if (res.errors) {
         ElMessage.error(res.errors);
       }
+      loading.value = false;
     }
 
     async function searchTraceLogs() {
@@ -211,6 +215,7 @@ export default defineComponent({
       turnLogsPage,
       pageSize,
       pageNum,
+      loading,
     };
   },
 });
@@ -264,5 +269,11 @@ export default defineComponent({
   padding: 0px 7px;
   background-color: #40454e;
   color: #eee;
+}
+
+.no-data {
+  padding-top: 50px;
+  width: 100%;
+  text-align: center;
 }
 </style>
