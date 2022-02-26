@@ -275,7 +275,11 @@ const ok = (leaveOpened: boolean) => {
       show.value = range.value;
     }, 1);
 };
-const setDates = (d: Date) => {
+const setDates = (d: Date, pos: string) => {
+  if (pos === "left") {
+    dates.value[0] = d;
+    return;
+  }
   dates.value[1] = d;
 };
 const dc = (e: any) => {
