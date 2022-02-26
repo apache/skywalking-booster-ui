@@ -15,12 +15,23 @@ limitations under the License. -->
 
 <template>
   <div class="trace">
-    <div class="trace-header">
+    <div class="trace-header" v-if="type === 'statistics'">
+      <div :class="item.label" v-for="(item, index) in headerData" :key="index">
+        {{ item.value }}
+        <span
+          class="r cp"
+          @click="sortStatistics(item.key)"
+          :key="componentKey"
+          v-if="item.key !== 'endpointName' && item.key !== 'type'"
+        >
+          <Icon iconName="sort" size="sm" />
+        </span>
+      </div>
+    </div>
+    <div class="trace-header" v-else>
       <div class="method" :style="`width: ${method}px`">
         <span class="r cp" ref="dragger">
-          <svg class="icon">
-            <use xlink:href="#settings_ethernet"></use>
-          </svg>
+          <Icon iconName="settings_ethernet" size="sm" />
         </span>
         {{ headerData[0].value }}
       </div>
@@ -47,19 +58,19 @@ import { ref, onMounted } from "vue";
 import type { PropType } from "vue";
 import TableItem from "./TableItem.vue";
 import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
-import { Option } from "@/types/app";
 
 /* global defineProps, Nullable */
 const props = defineProps({
   tableData: { type: Array as PropType<any>, default: () => [] },
   type: { type: String, default: "" },
+  HeaderType: { type: String, default: "" },
 });
 const method = ref<number>(300);
 const componentKey = ref<number>(300);
 const flag = ref<boolean>(true);
 const dragger = ref<Nullable<HTMLSpanElement>>(null);
-let headerData: (Option & { key?: string })[] = TraceConstant;
-if (props.type === "profile") {
+let headerData: any[] = TraceConstant;
+if (props.HeaderType === "profile") {
   headerData = ProfileConstant;
 }
 if (props.type === "statistics") {

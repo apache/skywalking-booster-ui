@@ -13,11 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-table">
-    <div class="rk-trace-t-loading" v-show="loading">
+  <div class="trace-statistics">
+    <div class="trace-t-loading" v-show="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
-    <TableContainer :tableData="tableData" :type="HeaderType">
+    <TableContainer :tableData="tableData" type="statistics" HeaderType>
       <div class="trace-tips" v-if="!tableData.length">{{ $t("noData") }}</div>
     </TableContainer>
   </div>
@@ -106,3 +106,16 @@ watch(
   }
 );
 </script>
+<style lang="scss" scoped>
+.trace-tips {
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.trace-statistics {
+  padding: 10px;
+  height: calc(100% - 95px);
+  width: 100%;
+}
+</style>
