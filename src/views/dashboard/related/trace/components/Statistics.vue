@@ -29,7 +29,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, watch, onMounted } from "vue";
 import type { PropType } from "vue";
-import TableContainer from "./table/TableContainer.vue";
+import TableContainer from "./Table/TableContainer.vue";
 import traceTable from "../utils/trace-table";
 import { StatisticsSpan, Span, StatisticsGroupRef } from "@/types/trace";
 
