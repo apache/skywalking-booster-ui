@@ -15,25 +15,25 @@
  * limitations under the License.
  */
 export type Service = {
-  id: string;
+  id?: string;
   label: string;
   value: string;
-  layers: string[];
-  normal: boolean;
-  group: string;
+  layers?: string[];
+  normal?: boolean;
+  group?: string;
 };
 
 export type Instance = {
   value: string;
   label: string;
-  layer: string;
-  language: string;
-  instanceUUID: string;
-  attributes: { name: string; value: string }[];
+  layer?: string;
+  language?: string;
+  instanceUUID?: string;
+  attributes?: { name: string; value: string }[];
 };
 
 export type Endpoint = {
-  id: string;
+  id?: string;
   label: string;
   value: string;
 };

@@ -16,7 +16,7 @@
  */
 import { defineStore } from "pinia";
 import { Duration } from "@/types/app";
-import { Instance, Endpoint } from "@/types/selector";
+import { Instance, Endpoint, Service } from "@/types/selector";
 import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
@@ -25,6 +25,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 
 interface TraceState {
+  services: Service[];
   instances: Instance[];
   endpoints: Endpoint[];
   traceList: Trace[];
@@ -44,8 +45,9 @@ interface TraceState {
 export const traceStore = defineStore({
   id: "trace",
   state: (): TraceState => ({
-    instances: [],
-    endpoints: [],
+    services: [{ value: "0", label: "All" }],
+    instances: [{ value: "0", label: "All" }],
+    endpoints: [{ value: "0", label: "All" }],
     traceList: [],
     traceSpans: [],
     traceTotal: 0,
@@ -70,6 +72,19 @@ export const traceStore = defineStore({
     },
     setTraceSpans(spans: Span) {
       this.traceSpans = spans;
+    },
+    async getServices(layer: string) {
+      const res: AxiosResponse = await graphql.query("queryServices").params({
+        layer,
+      });
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.services = [
+        { value: "0", label: "All" },
+        ...res.data.data.services,
+      ] || [{ value: "0", label: "All" }];
+      return res.data;
     },
     async getInstances() {
       const res: AxiosResponse = await graphql.query("queryInstances").params({

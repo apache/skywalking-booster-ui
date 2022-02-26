@@ -14,7 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h row">
-    <div class="mr-5" v-if="dashboardStore.entity === EntityType[0].value">
+    <div class="mr-5" v-if="dashboardStore.entity === EntityType[1].value">
+      <span class="grey mr-5">{{ t("service") }}:</span>
+      <Selector
+        size="small"
+        :value="state.service.value"
+        :options="traceStore.services"
+        placeholder="Select a service"
+        @change="changeField('service', $event)"
+      />
+    </div>
+    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[3].value">
       <span class="grey mr-5">{{ t("instance") }}:</span>
       <Selector
         size="small"
@@ -24,7 +34,7 @@ limitations under the License. -->
         @change="changeField('instance', $event)"
       />
     </div>
-    <div class="mr-5" v-if="dashboardStore.entity === EntityType[0].value">
+    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[2].value">
       <span class="grey mr-5">{{ t("endpoint") }}:</span>
       <Selector
         size="small"
@@ -48,12 +58,6 @@ limitations under the License. -->
       <span class="grey mr-5">{{ t("traceID") }}:</span>
       <el-input v-model="traceId" class="traceId" />
     </div>
-    <div class="mr-5">
-      <span class="sm b grey mr-5">{{ t("duration") }}:</span>
-      <el-input class="inputs mr-5" v-model="minTraceDuration" />
-      <span class="grey mr-5">-</span>
-      <el-input class="inputs" v-model="maxTraceDuration" />
-    </div>
   </div>
   <div class="flex-h">
     <!-- <div class="mr-5">
@@ -65,6 +69,12 @@ limitations under the License. -->
         @input="changeTimeRange"
       />
     </div> -->
+    <div class="mr-5">
+      <span class="sm b grey mr-5">{{ t("duration") }}:</span>
+      <el-input class="inputs mr-5" v-model="minTraceDuration" />
+      <span class="grey mr-5">-</span>
+      <el-input class="inputs" v-model="maxTraceDuration" />
+    </div>
     <ConditionTags :type="'TRACE'" @update="updateTags" />
     <el-button
       class="search-btn"
@@ -101,8 +111,9 @@ const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
 const state = reactive<any>({
   status: { label: "All", value: "ALL" },
-  instance: { label: "", value: "" },
-  endpoint: { label: "", value: "" },
+  instance: { value: "0", label: "All" },
+  endpoint: { value: "0", label: "All" },
+  service: { value: "0", label: "All" },
 });
 
 // const dateTime = computed(() => [
@@ -111,11 +122,32 @@ const state = reactive<any>({
 // ]);
 init();
 function init() {
-  if (dashboardStore.entity === EntityType[0].value) {
-    getEndpoints();
-    getInstances();
-  }
   searchTraces();
+  if (dashboardStore.entity === EntityType[1].value) {
+    getServices();
+    return;
+  }
+  if (dashboardStore.entity === EntityType[2].value) {
+    getInstances();
+    return;
+  }
+  if (dashboardStore.entity === EntityType[3].value) {
+    getEndpoints();
+    return;
+  }
+  if (dashboardStore.entity === EntityType[0].value) {
+    getInstances();
+    getEndpoints();
+  }
+}
+
+async function getServices() {
+  const resp = await traceStore.getServices(dashboardStore.layerId);
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  state.service = traceStore.services[0];
 }
 
 async function getEndpoints() {
@@ -135,13 +167,21 @@ async function getInstances() {
   state.instance = traceStore.instances[0];
 }
 function searchTraces() {
+  let endpoint = "",
+    instance = "";
+  if (dashboardStore.entity === EntityType[2].value) {
+    endpoint = selectorStore.currentPod.id;
+  }
+  if (dashboardStore.entity === EntityType[3].value) {
+    instance = selectorStore.currentPod.id;
+  }
   traceStore.setTraceCondition({
     serviceId: selectorStore.currentService
       ? selectorStore.currentService.id
-      : "",
+      : state.service.id,
     traceId: traceId.value || undefined,
-    endpointId: state.endpoint.id || undefined,
-    serviceInstanceId: state.instance.id || undefined,
+    endpointId: endpoint || state.endpoint.id || undefined,
+    serviceInstanceId: instance || state.instance.id || undefined,
     traceState: state.status.value || "ALL",
     queryDuration: appStore.durationTime,
     minTraceDuration: appStore.minTraceDuration || undefined,
@@ -160,6 +200,10 @@ async function queryTraces() {
 }
 function changeField(type: string, opt: any[]) {
   state[type] = opt[0];
+  if (type === "service") {
+    getEndpoints();
+    getInstances();
+  }
 }
 function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
   tagsList.value = data.tagsList;
@@ -189,7 +233,7 @@ watch(
 }
 
 .search-btn {
-  margin-left: 50px;
+  margin-left: 20px;
   cursor: pointer;
 }
 </style>
