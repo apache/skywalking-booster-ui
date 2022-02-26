@@ -17,7 +17,7 @@
 
 import List from "./List.vue";
 import Tree from "./Tree.vue";
-import Table from "./Table/Index.vue";
+import Table from "./TableGraph/Index.vue";
 import Statistics from "./Statistics.vue";
 
 export default {
