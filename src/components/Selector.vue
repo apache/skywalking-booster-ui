@@ -35,7 +35,6 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import type { PropType } from "vue";
-import { ElSelect, ElOption } from "element-plus";
 
 interface Option {
   label: string;

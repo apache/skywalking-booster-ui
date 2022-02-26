@@ -23,9 +23,36 @@ limitations under the License. -->
           class="red mr-5 sm"
         />
         <span class="vm">{{ traceStore.currentTrace.endpointNames[0] }}</span>
-        <!-- <div class="trace-log-btn bg-blue r mr-10" @click="searchTraceLogs">
-        {{ t("viewLogs") }}
-      </div> -->
+        <div class="trace-log-btn">
+          <el-button class="mr-10" type="primary" @click="searchTraceLogs">
+            {{ t("viewLogs") }}
+          </el-button>
+        </div>
+        <el-dialog
+          v-model="showTraceLogs"
+          :destroy-on-close="true"
+          fullscreen
+          @closed="showTraceLogs = false"
+        >
+          <div>
+            <el-pagination
+              v-model:currentPage="traceStore.conditions.paging.pageNum"
+              v-model:page-size="pageSize"
+              :small="true"
+              :total="traceStore.traceSpanLogsTotal"
+              @current-change="turnLogsPage"
+            />
+            <LogTable
+              :tableData="traceStore.traceSpanLogs || []"
+              :type="`service`"
+              :noLink="true"
+            >
+              <div class="log-tips" v-if="!traceStore.traceSpanLogs.length">
+                {{ t("noData") }}
+              </div>
+            </LogTable>
+          </div>
+        </el-dialog>
       </h5>
       <div class="mb-5 blue sm">
         <Selector
@@ -114,20 +141,27 @@ import { Option } from "@/types/app";
 import copy from "@/utils/copy";
 import List from "./components/List.vue";
 import graphs from "./components/index";
+import LogTable from "@/views/components/LogTable/Index.vue";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "TraceDetail",
   components: {
     ...graphs,
     List,
+    LogTable,
   },
   setup() {
     const { t } = useI18n();
     const traceStore = useTraceStore();
     const traceId = ref<string>("");
     const displayMode = ref<string>("List");
+    const pageNum = ref<number>(1);
+    const pageSize = 10;
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
+    const showTraceLogs = ref<boolean>(false);
+
     function handleClick(ids: string[]) {
       let copyValue = null;
       if (ids.length === 1) {
@@ -138,22 +172,33 @@ export default defineComponent({
       copy(copyValue);
     }
 
-    function changeTraceId(opt: Option[]) {
+    async function changeTraceId(opt: Option[]) {
       traceId.value = opt[0].value;
-      traceStore.getTraceSpans({ traceId: opt[0].value });
+      const res = await traceStore.getTraceSpans({ traceId: opt[0].value });
+      if (res.errors) {
+        ElMessage.error(res.errors);
+      }
     }
 
-    // function searchTraceLogs() {
-    //       this.showTraceLogs = true;
-    //       this.GET_TRACE_SPAN_LOGS({
-    //         condition: {
-    //           relatedTrace: {
-    //             traceId: this.traceId || traceStore.current.traceIds[0],
-    //           },
-    //           paging: { pageNum: this.pageNum, pageSize: this.pageSize, needTotal: true },
-    //         },
-    //       });
-    //     }
+    async function searchTraceLogs() {
+      showTraceLogs.value = true;
+      const res = await traceStore.getSpanLogs({
+        condition: {
+          relatedTrace: {
+            traceId: traceId.value || traceStore.currentTrace.traceIds[0],
+          },
+          paging: { pageNum: pageNum.value, pageSize, needTotal: true },
+        },
+      });
+      if (res.errors) {
+        ElMessage.error(res.errors);
+      }
+    }
+
+    function turnLogsPage(page: number) {
+      pageNum.value = page;
+      searchTraceLogs();
+    }
     return {
       traceStore,
       displayMode,
@@ -161,6 +206,10 @@ export default defineComponent({
       changeTraceId,
       handleClick,
       t,
+      searchTraceLogs,
+      showTraceLogs,
+      turnLogsPage,
+      pageSize,
     };
   },
 });
@@ -205,16 +254,7 @@ export default defineComponent({
 }
 
 .trace-log-btn {
-  padding: 3px 9px;
-  background-color: #484b55;
-  border-radius: 4px;
-  color: #eee;
-  font-weight: normal;
-  cursor: pointer;
-
-  &.bg-blue {
-    background-color: #448dfe;
-  }
+  float: right;
 }
 
 .tag {

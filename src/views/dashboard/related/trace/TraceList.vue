@@ -96,7 +96,7 @@ function searchTrace() {
 
 function updatePage(p: number) {
   traceStore.setCondition({
-    paging: { pageNum: p, pageSize: 15, needTotal: true },
+    paging: { pageNum: p, pageSize: pageSize.value, needTotal: true },
   });
   searchTrace();
 }
@@ -104,7 +104,7 @@ function updatePage(p: number) {
 function changeSort(opt: Option[]) {
   traceStore.setCondition({
     queryOrder: opt[0].value,
-    paging: { pageNum: 1, pageSize: 15, needTotal: true },
+    paging: { pageNum: 1, pageSize: pageSize.value, needTotal: true },
   });
   searchTrace();
 }

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-table">
-    <div class="rk-trace-t-loading" v-show="loading">
+    <div class="trace-t-loading" v-show="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
     <TableContainer
@@ -29,7 +29,6 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, watch, onMounted } from "vue";
 import type { PropType } from "vue";
-import copy from "@/utils/copy";
 import TableContainer from "./TableContainer.vue";
 import traceTable from "../../utils/trace-table";
 

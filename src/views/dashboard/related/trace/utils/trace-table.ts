@@ -31,7 +31,7 @@ export default class TraceUtil {
 
   public static changeTree(data: Span[], cureentTraceId: string) {
     const segmentIdList: Span[] = [];
-    const traceTreeRef: any = this.changeTreeCore(data, cureentTraceId);
+    const traceTreeRef: any = this.changeTreeCore(data);
     traceTreeRef.segmentIdGroup.forEach((segmentId: string) => {
       if (traceTreeRef.segmentMap.get(segmentId).refs) {
         traceTreeRef.segmentMap.get(segmentId).refs.forEach((ref: Ref) => {
@@ -58,13 +58,10 @@ export default class TraceUtil {
     return segmentIdList;
   }
 
-  public static changeStatisticsTree(
-    data: Span[],
-    cureentTraceId: string
-  ): Map<string, Span[]> {
+  public static changeStatisticsTree(data: Span[]): Map<string, Span[]> {
     const result = new Map<string, Span[]>();
-    const traceTreeRef = this.changeTreeCore(data, cureentTraceId);
-    traceTreeRef.segmentMap.forEach((span, segmentId) => {
+    const traceTreeRef = this.changeTreeCore(data);
+    traceTreeRef.segmentMap.forEach((span) => {
       const groupRef = span.endpointName + ":" + span.type;
       if (span.children && span.children.length > 0) {
         this.calculationChildren(span.children, result);
@@ -80,10 +77,7 @@ export default class TraceUtil {
     return result;
   }
 
-  private static changeTreeCore(
-    data: Span[],
-    cureentTraceId: string
-  ): TraceTreeRef {
+  private static changeTreeCore(data: Span[]): TraceTreeRef {
     // set a breakpoint at this line
     if (data.length === 0) {
       return {

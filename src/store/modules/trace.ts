@@ -32,8 +32,8 @@ interface TraceState {
   traceSpans: Span[];
   currentTrace: Trace | any;
   conditions: any;
-  // traceSpanLogs: any[];
-  // traceSpanLogsTotal: number;
+  traceSpanLogs: any[];
+  traceSpanLogsTotal: number;
   // traceListErrors: string;
   // traceSpanErrors: string;
   // traceSpanLogErrors: string;
@@ -56,6 +56,8 @@ export const traceStore = defineStore({
       queryOrder: "BY_START_TIME",
       paging: { pageNum: 1, pageSize: 15, needTotal: true },
     },
+    traceSpanLogs: [],
+    traceSpanLogsTotal: 0,
     durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
   }),
@@ -121,6 +123,19 @@ export const traceStore = defineStore({
         return res.data;
       }
       this.setTraceSpans(res.data.data.trace.spans || []);
+    },
+    async getSpanLogs(params: any) {
+      const res: AxiosResponse = await graphql
+        .query("queryServiceLogs")
+        .params(params);
+      if (res.data.errors) {
+        this.traceSpanLogs = [];
+        this.traceSpanLogsTotal = 0;
+        return res.data;
+      }
+      this.traceSpanLogs = res.data.data.queryLogs.logs || [];
+      this.traceSpanLogsTotal = res.data.data.queryLogs.total;
+      return res.data;
     },
   },
 });
