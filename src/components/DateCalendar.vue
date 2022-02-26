@@ -351,7 +351,7 @@ watch(
   }
 );
 const parse = (num: number): number => {
-  return Math.floor(num / 1000);
+  return num / 100000;
 };
 const start = computed(() => {
   return parse(Number(props.dates[0]));
@@ -547,10 +547,12 @@ const ok = (info: any) => {
     state.minute,
     state.second
   );
-  if (props.left && Math.floor(_time.getTime() / 1000) > end.value) {
-    emit("setDates", _time);
+  if (props.left && _time.getTime() / 100000 < end.value) {
+    emit("setDates", _time, "left");
   }
-  emit("input", _time);
+  if (props.right && _time.getTime() / 100000 > start.value) {
+    emit("setDates", _time, "right");
+  }
   emit("ok", info === "h");
 };
 onMounted(() => {
