@@ -13,8 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h">
-    <div class="mr-5">
+  <div class="flex-h header">
+    <div class="mr-10">
       <span class="grey mr-5">{{ t("service") }}:</span>
       <Selector
         size="small"
@@ -24,9 +24,9 @@ limitations under the License. -->
         @change="changeService"
       />
     </div>
-    <div class="mr-5">
-      <span class="sm b grey mr-5">{{ t("endpointName") }}:</span>
-      <el-input class="inputs mr-5" v-model="endpointName" />
+    <div class="mr-10">
+      <span class="grey mr-5">{{ t("endpointName") }}:</span>
+      <el-input v-model="endpointName" class="name" />
     </div>
     <el-button
       class="search-btn"
@@ -45,19 +45,51 @@ limitations under the License. -->
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProfileStore } from "@/store/modules/profile";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { ElMessage } from "element-plus";
 
 const profileStore = useProfileStore();
+const dashboardStore = useDashboardStore();
 const { t } = useI18n();
 const service = ref<any>({});
 const endpointName = ref<string>("");
 
+getServices();
+
+async function getServices() {
+  const res = await profileStore.getServices(dashboardStore.layerId);
+
+  if (res.errors) {
+    ElMessage.error(res.errors);
+    return;
+  }
+  service.value = profileStore.services[0];
+  searchTasks();
+}
+
 function changeService(opt: any[]) {
   service.value = opt[0];
 }
-function searchTasks() {
+async function searchTasks() {
   profileStore.setConditions({
     serviceId: service.value.id,
     endpointName: endpointName.value,
   });
+  const res = await profileStore.getTaskList();
+
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
 }
 </script>
+<style lang="scss" scoped>
+.header {
+  padding: 10px;
+  font-size: 12px;
+  border-bottom: 1px solid #dcdfe6;
+}
+
+.name {
+  width: 270px;
+}
+</style>

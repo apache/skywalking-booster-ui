@@ -93,6 +93,8 @@ const msg = {
   default: "Default",
   topSlow: "Top 5 of slow",
   topChildren: "Top 5 of children",
+  taskList: "Task List",
+  sampledTraces: "Sampled Traces",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

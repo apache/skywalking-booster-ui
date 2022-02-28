@@ -24,13 +24,16 @@ limitations under the License. -->
         <span @click="removeWidget">{{ t("delete") }}</span>
       </div>
     </el-popover>
-    <div class="header">header</div>
+    <Header />
+    <Content />
   </div>
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import Header from "../related/profile/Header.vue";
+import Content from "../related/profile/Content.vue";
 
 /*global defineProps */
 const props = defineProps({

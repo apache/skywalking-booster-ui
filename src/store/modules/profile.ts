@@ -35,9 +35,9 @@ interface ProfileState {
   condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
   segmentList: Trace[];
-  currentSegment: Nullable<Trace>;
+  currentSegment: Trace | Record<string, never>;
   segmentSpans: SegmentSpan[];
-  currentSpan: Nullable<SegmentSpan>;
+  currentSpan: SegmentSpan | Record<string, never>;
   analyzeTrees: ProfileAnalyzationTrees;
   taskLogs: TaskLog[];
 }
@@ -50,9 +50,9 @@ export const traceStore = defineStore({
     condition: { serviceId: "", endpointName: "" },
     taskList: [],
     segmentList: [],
-    currentSegment: null,
+    currentSegment: {},
     segmentSpans: [],
-    currentSpan: null,
+    currentSpan: {},
     analyzeTrees: [],
     taskLogs: [],
   }),
@@ -62,6 +62,9 @@ export const traceStore = defineStore({
         ...this.condition,
         ...data,
       };
+    },
+    setCurrentSegment(s: Trace) {
+      this.currentSegment = s;
     },
     async getServices(layer: string) {
       const res: AxiosResponse = await graphql.query("queryServices").params({
@@ -89,6 +92,8 @@ export const traceStore = defineStore({
       if (!list.length) {
         return res.data;
       }
+      this.getSegmentList({ taskID: list[0].id });
+      return res.data;
     },
     async getSegmentList(params: { taskID: string }) {
       const res: AxiosResponse = await graphql
@@ -105,6 +110,7 @@ export const traceStore = defineStore({
 
       if (segmentList[0]) {
         this.currentSegment = segmentList[0];
+        this.getSegmentSpans({ segmentId: segmentList[0].segmentId });
       } else {
         this.currentSegment = null;
       }
