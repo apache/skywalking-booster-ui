@@ -18,5 +18,6 @@ import Topology from "./Topology.vue";
 import Tab from "./Tab.vue";
 import Widget from "./Widget.vue";
 import Trace from "./Trace.vue";
+import Profile from "./Profile.vue";
 
-export default { Tab, Widget, Trace, Topology };
+export default { Tab, Widget, Trace, Topology, Profile };
