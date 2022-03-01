@@ -13,14 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div
-    class="profile-trace-dashboard flex-v"
-    v-if="profileStore.currentSegment"
-  >
+  <div class="profile-trace-dashboard" v-if="profileStore.currentSegment">
     <div class="profile-trace-detail-wrapper">
       <Selector
         size="small"
-        :value="traceId"
+        :value="traceId || (traceIds[0] && traceIds[0].value) || ''"
         :options="traceIds"
         placeholder="Select a trace id"
         @change="changeTraceId"
@@ -159,7 +156,7 @@ function updateTimeRange() {
 .profile-trace-dashboard {
   padding: 5px;
   flex-shrink: 0;
-  height: calc(50% + 95);
+  height: 50%;
   overflow: auto;
   width: 100%;
 }

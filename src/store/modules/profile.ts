@@ -40,6 +40,7 @@ interface ProfileState {
   currentSpan: SegmentSpan | Record<string, never>;
   analyzeTrees: ProfileAnalyzationTrees;
   taskLogs: TaskLog[];
+  highlightTop: boolean;
 }
 
 export const traceStore = defineStore({
@@ -55,6 +56,7 @@ export const traceStore = defineStore({
     currentSpan: {},
     analyzeTrees: [],
     taskLogs: [],
+    highlightTop: true,
   }),
   actions: {
     setConditions(data: { serviceId?: string; endpointName?: string }) {
@@ -68,6 +70,9 @@ export const traceStore = defineStore({
     },
     setCurrentSegment(s: Trace) {
       this.currentSegment = s;
+    },
+    setHighlightTop() {
+      this.highlightTop = !this.highlightTop;
     },
     async getServices(layer: string) {
       const res: AxiosResponse = await graphql.query("queryServices").params({

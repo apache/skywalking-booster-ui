@@ -30,7 +30,7 @@ limitations under the License. -->
     </div>
     <div class="trace-header" v-else>
       <div class="method" :style="`width: ${method}px`">
-        <span class="r cp" ref="dragger">
+        <span class="cp dragger" ref="dragger">
           <Icon iconName="settings_ethernet" size="sm" />
         </span>
         {{ headerData[0].value }}
@@ -156,6 +156,10 @@ function sortStatistics(key: string) {
   height: 100%;
   overflow: auto;
   width: 100%;
+}
+
+.dragger {
+  float: right;
 }
 
 .trace-header {

@@ -123,14 +123,16 @@ limitations under the License. -->
       </div>
     </div>
     <div class="no-data" v-else>{{ t("noData") }}</div>
-    <component
-      v-if="traceStore.currentTrace.endpointNames"
-      :is="displayMode"
-      :data="traceStore.traceSpans"
-      :traceId="traceStore.currentTrace.traceIds[0].value"
-      :showBtnDetail="false"
-      HeaderType="trace"
-    />
+    <div class="trace-chart">
+      <component
+        v-if="traceStore.currentTrace.endpointNames"
+        :is="displayMode"
+        :data="traceStore.traceSpans"
+        :traceId="traceStore.currentTrace.traceIds[0].value"
+        :showBtnDetail="false"
+        HeaderType="trace"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -225,6 +227,10 @@ export default defineComponent({
   height: 100%;
   width: 100%;
   overflow: hidden;
+}
+
+.trace-chart {
+  height: 100%;
 }
 
 .trace-detail-wrapper {

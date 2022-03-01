@@ -32,13 +32,13 @@ import ThreadStack from "./components/ThreadStack.vue";
 </script>
 <style lang="scss" scoped>
 .content {
-  height: 100%;
+  height: calc(100% - 30px);
   width: 100%;
 }
 
 .item {
   height: 100%;
-  width: calc(100% - 290px);
+  width: calc(100% - 300px);
 }
 
 .list {

@@ -105,8 +105,7 @@ watch(
 }
 
 .trace-table {
-  padding: 10px;
-  height: calc(100% - 95px);
+  height: 100%;
   width: 100%;
 }
 </style>

@@ -15,7 +15,7 @@ limitations under the License. -->
 
 <template>
   <div v-if="type === 'statistics'">
-    <div :class="['trace-item']" ref="traceItem">
+    <div class="trace-item">
       <div :class="['method']">
         <el-tooltip :content="data.groupRef.endpointName" placement="bottom">
           <span>
@@ -49,7 +49,7 @@ limitations under the License. -->
   </div>
   <div v-else>
     <div
-      @click="viewSpanDetail"
+      @click="selectSpan"
       :class="[
         'trace-item',
         'level' + (data.level - 1),
@@ -106,7 +106,7 @@ limitations under the License. -->
           <span>{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
-      <div class="application" v-show="type === 'profile'">
+      <div class="application" v-show="headerType === 'profile'">
         <span @click="viewSpanDetail">{{ t("view") }}</span>
       </div>
     </div>
@@ -120,6 +120,7 @@ limitations under the License. -->
         :key="index"
         :data="child"
         :type="type"
+        :headerType="headerType"
       />
     </div>
     <el-dialog
@@ -183,7 +184,7 @@ export default defineComponent({
     });
 
     function toggle() {
-      displayChildren.value = !this.displayChildren.value;
+      displayChildren.value = !displayChildren.value;
     }
     function showSelectSpan() {
       const items: any = document.querySelectorAll(".trace-item");
@@ -196,11 +197,16 @@ export default defineComponent({
 
       traceItem.value.style.background = "rgba(0, 0, 0, 1)";
     }
+    function selectSpan() {
+      if (props.headerType === "profile") {
+        showSelectSpan();
+        return;
+      }
+      viewSpanDetail();
+    }
     function viewSpanDetail() {
       showSelectSpan();
-      if (props.headerType === "trace") {
-        showDetail.value = true;
-      }
+      showDetail.value = true;
     }
 
     watch(
@@ -218,6 +224,7 @@ export default defineComponent({
       dateFormat,
       showSelectSpan,
       showDetail,
+      selectSpan,
       t,
     };
   },
