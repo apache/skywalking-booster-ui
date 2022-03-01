@@ -143,13 +143,13 @@ const props = {
   data: { type: Object as PropType<any>, default: () => ({}) },
   method: { type: Number, default: 0 },
   type: { type: String, default: "" },
+  headerType: { type: String, default: "" },
 };
 export default defineComponent({
   name: "TableItem",
   props,
-  emits: ["select"],
   components: { SpanDetail },
-  setup(props, { emit }) {
+  setup(props) {
     /* global Nullable */
     const displayChildren = ref<boolean>(true);
     const showDetail = ref<boolean>(false);
@@ -193,12 +193,14 @@ export default defineComponent({
       if (!traceItem.value) {
         return;
       }
-      traceItem.value.style.background = "rgba(0, 0, 0, 0.1)";
+
+      traceItem.value.style.background = "rgba(0, 0, 0, 1)";
     }
     function viewSpanDetail() {
-      showDetail.value = true;
       showSelectSpan();
-      emit("select", props.data);
+      if (props.headerType === "trace") {
+        showDetail.value = true;
+      }
     }
 
     watch(

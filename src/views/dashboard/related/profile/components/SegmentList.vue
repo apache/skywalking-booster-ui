@@ -78,7 +78,7 @@ async function selectTrace(item: Trace) {
 <style lang="scss" scoped>
 .profile-trace-wrapper {
   width: 300px;
-  height: calc((100% - 60px) / 2);
+  height: 50%;
   overflow: auto;
 
   .no-data {

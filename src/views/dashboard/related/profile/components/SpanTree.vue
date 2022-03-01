@@ -45,8 +45,8 @@ limitations under the License. -->
         profileStore.currentSegment.traceIds[0]
       "
       :showBtnDetail="true"
-      :HeaderType="'profile'"
-      @selectSpan="selectSpan"
+      headerType="profile"
+      @select="selectSpan"
     />
   </div>
 </template>

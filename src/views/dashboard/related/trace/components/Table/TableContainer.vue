@@ -43,12 +43,14 @@ limitations under the License. -->
         {{ item.value }}
       </div>
     </div>
-    <table-item
+    <TableItem
       :method="method"
       v-for="(item, index) in tableData"
       :data="item"
       :key="'key' + index"
       :type="type"
+      :headerType="headerType"
+      @click="selectItem(item)"
     />
     <slot></slot>
   </div>
@@ -56,21 +58,24 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import type { PropType } from "vue";
+import { Span } from "@/types/trace";
 import TableItem from "./TableItem.vue";
 import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
 
-/* global defineProps, Nullable */
+/* global defineProps, Nullable, defineEmits */
 const props = defineProps({
   tableData: { type: Array as PropType<any>, default: () => [] },
   type: { type: String, default: "" },
-  HeaderType: { type: String, default: "" },
+  headerType: { type: String, default: "" },
 });
+const emits = defineEmits(["select"]);
 const method = ref<number>(300);
 const componentKey = ref<number>(300);
 const flag = ref<boolean>(true);
 const dragger = ref<Nullable<HTMLSpanElement>>(null);
 let headerData: any[] = TraceConstant;
-if (props.HeaderType === "profile") {
+
+if (props.headerType === "profile") {
   headerData = ProfileConstant;
 }
 if (props.type === "statistics") {
@@ -94,6 +99,9 @@ onMounted(() => {
     };
   };
 });
+function selectItem(span: Span) {
+  emits("select", span);
+}
 function sortStatistics(key: string) {
   const element = props.tableData;
   for (let i = 0; i < element.length; i++) {

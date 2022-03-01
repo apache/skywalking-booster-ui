@@ -210,8 +210,8 @@ export const Status = [
   { label: "Error", value: "ERROR" },
 ];
 export const QueryOrders = [
-  { label: "startTime", value: "BY_START_TIME" },
-  { label: "duration", value: "BY_DURATION" },
+  { label: "Start Time", value: "BY_START_TIME" },
+  { label: "Duration", value: "BY_DURATION" },
 ];
 export const TraceEntitys = ["All", "Service", "ServiceInstance", "Endpoint"];
 export const ProfileMode: any[] = [

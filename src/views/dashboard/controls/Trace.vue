@@ -20,8 +20,8 @@ limitations under the License. -->
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
         </span>
       </template>
-      <div class="tools">
-        <span @click="removeWidget">{{ t("delete") }}</span>
+      <div class="tools" @click="removeWidget">
+        <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
     <div class="header">
