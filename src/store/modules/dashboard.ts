@@ -96,7 +96,7 @@ export const dashboardStore = defineStore({
         };
       }
       if (type === "Trace" || type === "Profile") {
-        newItem.h = 24;
+        newItem.h = 36;
       }
       this.layout = this.layout.map((d: LayoutConfig) => {
         d.y = d.y + newItem.h;

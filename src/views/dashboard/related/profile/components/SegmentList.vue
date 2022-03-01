@@ -42,8 +42,8 @@ limitations under the License. -->
               <span class="b">{{ i.endpointNames[0] }}</span>
             </div>
             <div class="grey ell sm">
-              <span class="tag mr-10 sm">{{ i.duration }} ms</span
-              >{{ dateFormat(parseInt(i.start)) }}
+              <span class="tag mr-10 sm"> {{ i.duration }} ms </span>
+              {{ dateFormat(parseInt(i.start)) }}
             </div>
           </td>
         </tr>
@@ -56,7 +56,6 @@ import { ref } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useProfileStore } from "@/store/modules/profile";
-import { TaskLog, SegmentSpan } from "@/types/profile";
 import { Trace } from "@/types/trace";
 import { ElMessage } from "element-plus";
 
@@ -78,8 +77,8 @@ async function selectTrace(item: Trace) {
 </script>
 <style lang="scss" scoped>
 .profile-trace-wrapper {
-  width: 280px;
-  height: calc((100% - 95px) / 2);
+  width: 300px;
+  height: calc((100% - 60px) / 2);
   overflow: auto;
 
   .no-data {

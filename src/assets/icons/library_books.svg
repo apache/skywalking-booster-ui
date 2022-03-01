@@ -5,44 +5,13 @@ The ASF licenses this file to You under the Apache License, Version 2.0
 (the "License"); you may not use this file except in compliance with
 the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+     http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<template>
-  <div class="flex-h content">
-    <div class="list">
-      <TaskList />
-      <SegmentList />
-    </div>
-    <div class="item">
-      <SpanTree />
-      <ThreadStack />
-    </div>
-  </div>
-</template>
-<script lang="ts" setup>
-import TaskList from "./components/TaskList.vue";
-import SegmentList from "./components/SegmentList.vue";
-import SpanTree from "./components/SpanTree.vue";
-import ThreadStack from "./components/ThreadStack.vue";
-</script>
-<style lang="scss" scoped>
-.content {
-  height: 100%;
-  width: 100%;
-}
-
-.item {
-  height: 100%;
-  width: calc(100% - 290px);
-}
-
-.list {
-  width: 300px;
-  height: 100%;
-}
-</style>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+<path d="M18.984 6.984v-1.969h-9.984v1.969h9.984zM15 15v-2.016h-6v2.016h6zM18.984 11.016v-2.016h-9.984v2.016h9.984zM20.016 2.016q0.797 0 1.383 0.586t0.586 1.383v12q0 0.797-0.586 1.406t-1.383 0.609h-12q-0.797 0-1.406-0.609t-0.609-1.406v-12q0-0.797 0.609-1.383t1.406-0.586h12zM3.984 6v14.016h14.016v1.969h-14.016q-0.797 0-1.383-0.586t-0.586-1.383v-14.016h1.969z"></path>
+</svg>

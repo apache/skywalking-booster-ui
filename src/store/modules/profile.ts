@@ -23,7 +23,7 @@ import {
   ProfileAnalyzationTrees,
   TaskLog,
 } from "@/types/profile";
-import { Trace } from "@/types/trace";
+import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
@@ -62,6 +62,9 @@ export const traceStore = defineStore({
         ...this.condition,
         ...data,
       };
+    },
+    setCurrentSpan(span: Span) {
+      this.currentSpan = span;
     },
     setCurrentSegment(s: Trace) {
       this.currentSegment = s;

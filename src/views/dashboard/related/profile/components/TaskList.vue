@@ -36,7 +36,7 @@ limitations under the License. -->
               <div class="ell">
                 <span>{{ i.endpointName }}</span>
                 <a class="profile-btn r" @click="viewTask($event, i)">
-                  <Icon iconName="library_books" />
+                  <Icon iconName="library_books" size="middle" />
                 </a>
               </div>
               <div class="grey ell sm">
@@ -51,6 +51,74 @@ limitations under the License. -->
       </div>
     </div>
   </div>
+  <el-dialog
+    v-model="viewDetail"
+    :destroy-on-close="true"
+    fullscreen
+    @closed="viewDetail = false"
+  >
+    <div class="profile-detail flex-v">
+      <div>
+        <h5 class="mb-10">{{ t("task") }}.</h5>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("service") }}:</span>
+          <span class="g-sm-8 wba">{{ service }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("endpoint") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.endpointName }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
+          <span class="g-sm-8 wba">
+            {{ dateFormat(selectedTask.startTime) }}
+          </span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span
+          ><span class="g-sm-8 wba">{{ selectedTask.duration }} min</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("minThreshold") }}:</span>
+          <span class="g-sm-8 wba">
+            {{ selectedTask.minDurationThreshold }} ms
+          </span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("dumpPeriod") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.dumpPeriod }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("maxSamplingCount") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.maxSamplingCount }}</span>
+        </div>
+      </div>
+      <div>
+        <h5
+          class="mb-10 mt-10"
+          v-show="selectedTask.logs && selectedTask.logs.length"
+        >
+          {{ t("logs") }}.
+        </h5>
+        <div
+          class="log-item"
+          v-for="(i, index) in Object.keys(instanceLogs)"
+          :key="index"
+        >
+          <div class="mb-10 sm">
+            <span class="mr-10 grey">{{ t("instance") }}:</span>
+            <span>{{ i }}</span>
+          </div>
+          <div v-for="(d, index) in instanceLogs[i]" :key="index">
+            <span class="mr-10 grey">{{ t("operationType") }}:</span>
+            <span class="mr-20">{{ d.operationType }}</span>
+            <span class="mr-10 grey">{{ t("time") }}:</span>
+            <span>{{ dateFormat(d.operationTime) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
@@ -65,8 +133,9 @@ const profileStore = useProfileStore();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 const viewDetail = ref<boolean>(false);
+const service = ref<string>("");
 const selectedTask = ref<TaskListItem | Record<string, never>>({});
-const instanceLogs = ref<TaskLog | Record<string, never>>({});
+const instanceLogs = ref<TaskLog | any>({});
 
 async function changeTask(item: TaskListItem) {
   selectedTask.value = item;
@@ -79,6 +148,10 @@ async function changeTask(item: TaskListItem) {
 async function viewTask(e: Event, item: TaskListItem) {
   window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
   viewDetail.value = true;
+  selectedTask.value = item;
+  service.value = (
+    profileStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}
+  ).label;
   const res = await profileStore.getTaskLogs({ taskID: item.id });
 
   if (res.errors) {
@@ -88,14 +161,13 @@ async function viewTask(e: Event, item: TaskListItem) {
   item.logs = profileStore.taskLogs;
   instanceLogs.value = {};
   for (const d of item.logs) {
-    let name: any = instanceLogs.value[d.instanceName];
     if (instanceLogs.value[d.instanceName]) {
-      name.push({
+      instanceLogs.value[d.instanceName].push({
         operationType: d.operationType,
         operationTime: d.operationTime,
       });
     } else {
-      name = [
+      instanceLogs.value[d.instanceName] = [
         { operationType: d.operationType, operationTime: d.operationTime },
       ];
     }
@@ -105,65 +177,70 @@ async function viewTask(e: Event, item: TaskListItem) {
 </script>
 <style lang="scss" scoped>
 .profile-task-list {
-  width: 280px;
-  height: calc((100% - 95px) / 2);
+  width: 300px;
+  height: calc((100% - 60px) / 2);
   overflow: auto;
+}
 
-  .no-data {
-    text-align: center;
-    margin-top: 10px;
+.item span {
+  height: 21px;
+}
+
+.profile-td {
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+
+  &.selected {
+    background-color: #ededed;
   }
+}
 
-  .profile-t-wrapper {
-    overflow: auto;
-    flex-grow: 1;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-  }
+.no-data {
+  text-align: center;
+  margin-top: 10px;
+}
 
-  .profile-t {
-    width: 100%;
-    border-spacing: 0;
-    table-layout: fixed;
-    flex-grow: 1;
-    position: relative;
-  }
+.profile-t-wrapper {
+  overflow: auto;
+  flex-grow: 1;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
 
-  .profile-tr {
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
-    }
-  }
+.profile-t {
+  width: 100%;
+  border-spacing: 0;
+  table-layout: fixed;
+  flex-grow: 1;
+  position: relative;
+}
 
-  .profile-td {
-    padding: 5px 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-
-    &.selected {
-      background-color: #ededed;
-    }
-  }
-
-  .profile-t-tool {
-    padding: 5px 10px;
-    font-weight: bold;
-    border-right: 1px solid rgba(0, 0, 0, 0.07);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-    background: #f3f4f9;
-  }
-
-  .log-item {
-    margin-top: 20px;
-  }
-
-  .profile-btn {
-    color: #3d444f;
-    padding: 1px 3px;
-    border-radius: 2px;
-    font-size: 12px;
+.profile-tr {
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
   }
 }
 
 .profile-segment {
   border-top: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.profile-t-tool {
+  padding: 5px 10px;
+  font-weight: bold;
+  border-right: 1px solid rgba(0, 0, 0, 0.07);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  background: #f3f4f9;
+}
+
+.log-item {
+  margin-top: 20px;
+}
+
+.profile-btn {
+  color: #3d444f;
+  padding: 1px 3px;
+  border-radius: 2px;
+  font-size: 12px;
+  float: right;
 }
 </style>
