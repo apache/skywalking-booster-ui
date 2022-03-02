@@ -84,10 +84,13 @@ limitations under the License. -->
           size="sm"
           :iconName="t.name"
           v-if="
-            !['topology', 'trace'].includes(t.id) ||
+            !['topology', 'trace', 'profile'].includes(t.id) ||
             (t.id === 'topology' &&
               hasTopology.includes(dashboardStore.entity)) ||
-            (t.id === 'trace' && TraceEntitys.includes(dashboardStore.entity))
+            (t.id === 'trace' &&
+              TraceEntitys.includes(dashboardStore.entity)) ||
+            (t.id === 'profile' &&
+              dashboardStore.entity === EntityType[0].value)
           "
         />
       </span>
@@ -294,6 +297,9 @@ function clickIcons(t: { id: string; content: string; name: string }) {
       break;
     case "trace":
       dashboardStore.addControl("Trace");
+      break;
+    case "profile":
+      dashboardStore.addControl("Profile");
       break;
     case "topology":
       dashboardStore.addControl("Topology");

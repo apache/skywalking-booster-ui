@@ -129,7 +129,7 @@ async function queryTraces() {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .trace-t-tool {
   background-color: rgba(196, 200, 225, 0.2);
   justify-content: space-between;

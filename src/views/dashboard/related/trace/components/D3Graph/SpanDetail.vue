@@ -15,45 +15,45 @@ limitations under the License. -->
 <template>
   <div>
     <h5 class="mb-15">{{ t("tags") }}.</h5>
-    <div class="mb-10 clear">
+    <div class="mb-10 clear item">
       <span class="g-sm-4 grey">{{ t("service") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.serviceCode }}</span>
     </div>
-    <div class="mb-10 clear">
+    <div class="mb-10 clear item">
       <span class="g-sm-4 grey">{{ t("instance") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.serviceInstanceName }}</span>
     </div>
-    <div class="mb-10 clear">
+    <div class="mb-10 clear item">
       <span class="g-sm-4 grey">{{ t("endpoint") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.label }}</span>
     </div>
-    <div class="mb-10 clear">
+    <div class="mb-10 clear item">
       <span class="g-sm-4 grey">{{ t("spanType") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.type }}</span>
     </div>
-    <div class="mb-10 clear">
+    <div class="mb-10 clear item">
       <span class="g-sm-4 grey">{{ t("component") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.component }}</span>
     </div>
-    <div class="mb-10 clear">
+    <div class="mb-10 clear item">
       <span class="g-sm-4 grey">Peer:</span>
       <span class="g-sm-8 wba">{{ currentSpan.peer || "No Peer" }}</span>
     </div>
-    <div class="mb-10 clear">
+    <div class="mb-10 clear item">
       <span class="g-sm-4 grey">{{ t("error") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.isError }}</span>
     </div>
-    <div class="mb-10 clear" v-for="i in currentSpan.tags" :key="i.key">
+    <div class="mb-10 clear item" v-for="i in currentSpan.tags" :key="i.key">
       <span class="g-sm-4 grey">{{ i.key }}:</span>
       <span class="g-sm-8 wba">
         {{ i.value }}
-        <svg
+        <span
           v-if="i.key === 'db.statement'"
-          class="icon vm grey link-hover cp ml-5"
+          class="grey link-hover cp ml-5"
           @click="copy(i.value)"
         >
-          <use xlink:href="#review-list"></use>
-        </svg>
+          <Icon iconName="review-list" />
+        </span>
       </span>
     </div>
     <h5 class="mb-10" v-if="currentSpan.logs" v-show="currentSpan.logs.length">
@@ -71,19 +71,15 @@ limitations under the License. -->
             class="r rk-sidebox-magnify"
             @click="showCurrentSpanDetail(_i.value)"
           >
-            <svg class="icon">
-              <use xlink:href="#magnify"></use>
-            </svg>
+            <Icon iconName="magnify" />
           </span>
         </div>
         <pre class="pl-15 mt-0 mb-0 sm oa">{{ _i.value }}</pre>
       </div>
     </div>
-    <div @click="getTaceLogs()">
-      <el-button class="popup-btn" type="primary">
-        {{ t("relatedTraceLogs") }}
-      </el-button>
-    </div>
+    <el-button class="popup-btn" type="primary" @click="getTaceLogs">
+      {{ t("relatedTraceLogs") }}
+    </el-button>
   </div>
   <el-dialog
     v-model="showRelatedLogs"
@@ -160,5 +156,17 @@ function showCurrentSpanDetail(text: string) {
   margin-top: 40px;
   width: 100%;
   text-align: center;
+}
+
+.item span {
+  height: 21px;
+}
+
+.link-hover {
+  cursor: pointer;
+}
+
+.link-hover:hover {
+  color: #448dfe;
 }
 </style>

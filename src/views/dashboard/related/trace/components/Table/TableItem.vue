@@ -15,7 +15,7 @@ limitations under the License. -->
 
 <template>
   <div v-if="type === 'statistics'">
-    <div :class="['trace-item']" ref="traceItem">
+    <div class="trace-item">
       <div :class="['method']">
         <el-tooltip :content="data.groupRef.endpointName" placement="bottom">
           <span>
@@ -49,13 +49,12 @@ limitations under the License. -->
   </div>
   <div v-else>
     <div
-      @click="viewSpanDetail"
+      @click="selectSpan"
       :class="[
         'trace-item',
         'level' + (data.level - 1),
         { 'trace-item-error': data.isError },
       ]"
-      ref="traceItem"
     >
       <div
         :class="['method', 'level' + (data.level - 1)]"
@@ -106,7 +105,7 @@ limitations under the License. -->
           <span>{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
-      <div class="application" v-show="type === 'profile'">
+      <div class="application" v-show="headerType === 'profile'">
         <span @click="viewSpanDetail">{{ t("view") }}</span>
       </div>
     </div>
@@ -120,6 +119,8 @@ limitations under the License. -->
         :key="index"
         :data="child"
         :type="type"
+        :headerType="headerType"
+        @select="selectedItem(child)"
       />
     </div>
     <el-dialog
@@ -143,6 +144,7 @@ const props = {
   data: { type: Object as PropType<any>, default: () => ({}) },
   method: { type: Number, default: 0 },
   type: { type: String, default: "" },
+  headerType: { type: String, default: "" },
 };
 export default defineComponent({
   name: "TableItem",
@@ -154,7 +156,6 @@ export default defineComponent({
     const displayChildren = ref<boolean>(true);
     const showDetail = ref<boolean>(false);
     const { t } = useI18n();
-    const traceItem = ref<Nullable<HTMLDivElement>>(null);
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
     const selfTime = computed(() => (props.data.dur ? props.data.dur : 0));
@@ -183,30 +184,38 @@ export default defineComponent({
     });
 
     function toggle() {
-      displayChildren.value = !this.displayChildren.value;
+      displayChildren.value = !displayChildren.value;
     }
-    function showSelectSpan() {
+    function showSelectSpan(dom: any) {
+      if (!dom) {
+        return;
+      }
       const items: any = document.querySelectorAll(".trace-item");
       for (const item of items) {
         item.style.background = "#fff";
       }
-      if (!traceItem.value) {
+      dom.style.background = "rgba(0, 0, 0, 0.1)";
+    }
+    function selectSpan(event: any) {
+      const dom = event.path.find((d: any) =>
+        d.className.includes("trace-item")
+      );
+
+      emit("select", props.data);
+      if (props.headerType === "profile") {
+        showSelectSpan(dom);
         return;
       }
-      traceItem.value.style.background = "rgba(0, 0, 0, 0.1)";
-    }
-    function viewSpanDetail() {
-      showDetail.value = true;
-      showSelectSpan();
-      emit("select", props.data);
+      viewSpanDetail(dom);
     }
 
-    watch(
-      () => props.data,
-      () => {
-        showSelectSpan();
-      }
-    );
+    function selectedItem(data: any) {
+      emit("select", data);
+    }
+    function viewSpanDetail(dom: any) {
+      showSelectSpan(dom);
+      showDetail.value = true;
+    }
     return {
       displayChildren,
       outterPercent,
@@ -216,6 +225,8 @@ export default defineComponent({
       dateFormat,
       showSelectSpan,
       showDetail,
+      selectSpan,
+      selectedItem,
       t,
     };
   },

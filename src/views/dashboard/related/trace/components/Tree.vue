@@ -86,7 +86,7 @@ function computedScale(i: number) {
   overflow: auto;
   padding: 10px;
   position: relative;
-  height: calc(100% - 95px);
+  height: 100%;
   width: 100%;
 }
 

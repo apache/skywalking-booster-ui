@@ -20,7 +20,8 @@ limitations under the License. -->
     <TableContainer
       :tableData="tableData"
       type="table"
-      :HeaderType="HeaderType"
+      :headerType="headerType"
+      @select="handleSelectSpan"
     >
       <div class="trace-tips" v-if="!tableData.length">{{ $t("noData") }}</div>
     </TableContainer>
@@ -31,27 +32,26 @@ import { ref, watch, onMounted } from "vue";
 import type { PropType } from "vue";
 import TableContainer from "./TableContainer.vue";
 import traceTable from "../../utils/trace-table";
+import { Span } from "@/types/trace";
 
 /* global defineProps, defineEmits */
 const props = defineProps({
   data: { type: Array as PropType<any>, default: () => [] },
   traceId: { type: String, default: "" },
   showBtnDetail: { type: Boolean, default: false },
-  HeaderType: { type: String, default: "" },
+  headerType: { type: String, default: "" },
 });
 const emit = defineEmits(["select", "view", "load"]);
 const loading = ref<boolean>(true);
 const tableData = ref<any>([]);
 const showDetail = ref<boolean>(false);
-const currentSpan = ref<any[]>([]);
+const currentSpan = ref<Span | any>({});
 
 onMounted(() => {
   tableData.value = formatData(
     traceTable.changeTree(props.data, props.traceId)
   );
   loading.value = false;
-  emit("select", handleSelectSpan);
-  emit("view", handleViewSpan);
   emit("load", () => {
     loading.value = true;
   });
@@ -69,16 +69,12 @@ function formatData(arr: any[], level = 1, totalExec?: number) {
   return arr;
 }
 
-function handleSelectSpan(data: any[]) {
+function handleSelectSpan(data: Span) {
   currentSpan.value = data;
   if (!props.showBtnDetail) {
     showDetail.value = true;
   }
   emit("select", data);
-}
-
-function handleViewSpan() {
-  showDetail.value = true;
 }
 
 watch(
@@ -109,8 +105,7 @@ watch(
 }
 
 .trace-table {
-  padding: 10px;
-  height: calc(100% - 95px);
+  height: 100%;
   width: 100%;
 }
 </style>

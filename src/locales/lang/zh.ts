@@ -93,6 +93,8 @@ const msg = {
   topSlow: "迟缓的前5名",
   topChildren: "小孩数量的前5名",
   showDepth: "展示深度选择器",
+  taskList: "任务列表",
+  sampledTraces: "采样的追踪",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

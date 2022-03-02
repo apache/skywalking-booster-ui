@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-wrapper flex-v">
+  <div class="profile-wrapper flex-v">
     <el-popover placement="bottom" trigger="click" :width="100">
       <template #reference>
         <span class="delete cp">
@@ -24,22 +24,16 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
-    <div class="header">
-      <Filter />
-    </div>
-    <div class="trace flex-h">
-      <TraceList />
-      <TraceDetail />
-    </div>
+    <Header />
+    <Content />
   </div>
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import Filter from "../related/trace/Filter.vue";
-import TraceList from "../related/trace/TraceList.vue";
-import TraceDetail from "../related/trace/Detail.vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import Header from "../related/profile/Header.vue";
+import Content from "../related/profile/Content.vue";
 
 /*global defineProps */
 const props = defineProps({
@@ -56,7 +50,7 @@ function removeWidget() {
 }
 </script>
 <style lang="scss" scoped>
-.trace-wrapper {
+.profile-wrapper {
   width: 100%;
   height: 100%;
   font-size: 12px;
