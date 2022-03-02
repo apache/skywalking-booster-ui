@@ -553,6 +553,9 @@ const ok = (info: any) => {
   if (props.right && _time.getTime() / 100000 > start.value) {
     emit("setDates", _time, "right");
   }
+  if (!(props.left && props.right)) {
+    emit("setDates", _time);
+  }
   emit("ok", info === "h");
 };
 onMounted(() => {

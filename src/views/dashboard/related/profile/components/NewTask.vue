@@ -118,10 +118,12 @@ function changeMaxSamplingCount(opt: any[]) {
 
 async function createTask() {
   emits("close");
+  const date =
+    monitorTime.value === "0" ? appStore.durationRow.start : time.value;
   const params = {
     serviceId: selectorStore.currentService.id,
     endpointName: endpointName.value,
-    startTime: time.value.getTime(),
+    startTime: date.getTime(),
     duration: Number(monitorDuration.value),
     minDurationThreshold: Number(minThreshold.value),
     dumpPeriod: Number(dumpPeriod.value),
