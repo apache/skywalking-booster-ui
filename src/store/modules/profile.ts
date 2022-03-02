@@ -22,6 +22,7 @@ import {
   SegmentSpan,
   ProfileAnalyzationTrees,
   TaskLog,
+  ProfileTaskCreationRequest,
 } from "@/types/profile";
 import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
@@ -98,6 +99,10 @@ export const traceStore = defineStore({
       const list = res.data.data.taskList;
       this.taskList = list;
       if (!list.length) {
+        this.segmentList = [];
+        this.segmentSpans = [];
+        this.analyzeTrees = [];
+
         return res.data;
       }
       this.getSegmentList({ taskID: list[0].id });
@@ -115,7 +120,12 @@ export const traceStore = defineStore({
       const { segmentList } = res.data.data;
 
       this.segmentList = segmentList;
+      if (!segmentList.length) {
+        this.segmentSpans = [];
+        this.analyzeTrees = [];
 
+        return res.data;
+      }
       if (segmentList[0]) {
         this.currentSegment = segmentList[0];
         this.getSegmentSpans({ segmentId: segmentList[0].segmentId });
@@ -135,10 +145,12 @@ export const traceStore = defineStore({
       const { segment } = res.data.data;
       if (!segment) {
         this.segmentSpans = [];
+        this.analyzeTrees = [];
         return res.data;
       }
       this.segmentSpans = segment.spans;
       if (!(segment.spans && segment.spans.length)) {
+        this.analyzeTrees = [];
         return res.data;
       }
       const index = segment.spans.length - 1 || 0;
@@ -169,10 +181,10 @@ export const traceStore = defineStore({
       this.analyzeTrees = analyze.trees;
       return res.data;
     },
-    async createTask(param: any) {
+    async createTask(param: ProfileTaskCreationRequest) {
       const res: AxiosResponse = await graphql
         .query("saveProfileTask")
-        .params({ param });
+        .params({ creationRequest: param });
 
       if (res.data.errors) {
         return res.data;

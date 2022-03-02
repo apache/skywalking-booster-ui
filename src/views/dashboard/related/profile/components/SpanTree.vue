@@ -56,7 +56,7 @@ import Selector from "@/components/Selector.vue";
 import { Span } from "@/types/trace";
 import { Option } from "@/types/app";
 import { ElMessage } from "element-plus";
-import { ProfileMode } from "../../../data";
+import { ProfileMode } from "./data";
 
 const { t } = useI18n();
 const profileStore = useProfileStore();

@@ -214,7 +214,3 @@ export const QueryOrders = [
   { label: "Duration", value: "BY_DURATION" },
 ];
 export const TraceEntitys = ["All", "Service", "ServiceInstance", "Endpoint"];
-export const ProfileMode: any[] = [
-  { label: "Include Children", value: "include" },
-  { label: "Exclude Children", value: "exclude" },
-];

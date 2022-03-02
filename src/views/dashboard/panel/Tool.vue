@@ -84,10 +84,13 @@ limitations under the License. -->
           size="sm"
           :iconName="t.name"
           v-if="
-            !['topology', 'trace'].includes(t.id) ||
+            !['topology', 'trace', 'profile'].includes(t.id) ||
             (t.id === 'topology' &&
               hasTopology.includes(dashboardStore.entity)) ||
-            (t.id === 'trace' && TraceEntitys.includes(dashboardStore.entity))
+            (t.id === 'trace' &&
+              TraceEntitys.includes(dashboardStore.entity)) ||
+            (t.id === 'profile' &&
+              dashboardStore.entity === EntityType[0].value)
           "
         />
       </span>

@@ -58,3 +58,13 @@ export interface SegmentSpan {
   tags: any[];
   logs: any[];
 }
+
+export interface ProfileTaskCreationRequest {
+  serviceId: string;
+  endpointName: string;
+  startTime: number;
+  duration: number;
+  minDurationThreshold: number;
+  dumpPeriod: number;
+  maxSamplingCount: number;
+}
