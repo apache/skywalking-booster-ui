@@ -19,16 +19,34 @@ limitations under the License. -->
       <SegmentList />
     </div>
     <div class="item">
-      <SpanTree />
-      <ThreadStack />
+      <SpanTree @loading="loadTrees" />
+      <div class="thread-stack">
+        <StackTable
+          v-if="profileStore.analyzeTrees.length"
+          :data="profileStore.analyzeTrees"
+          :highlightTop="profileStore.highlightTop"
+        />
+        <div class="t-loading" v-show="loading">
+          <Icon :loading="true" iconName="spinner" size="middle" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import { ref } from "vue";
 import TaskList from "./components/TaskList.vue";
 import SegmentList from "./components/SegmentList.vue";
 import SpanTree from "./components/SpanTree.vue";
-import ThreadStack from "./components/ThreadStack.vue";
+import StackTable from "./components/Stack/Index.vue";
+import { useProfileStore } from "@/store/modules/profile";
+
+const loading = ref<boolean>(false);
+const profileStore = useProfileStore();
+
+function loadTrees(l: boolean) {
+  loading.value = l;
+}
 </script>
 <style lang="scss" scoped>
 .content {
@@ -44,5 +62,22 @@ import ThreadStack from "./components/ThreadStack.vue";
 .list {
   width: 300px;
   height: 100%;
+}
+
+.thread-stack {
+  padding: 5px 12px;
+  height: calc(50% - 50px);
+  overflow: auto;
+  width: 100%;
+}
+
+.t-loading {
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  height: 70px;
+  margin-top: 40px;
+  line-height: 88px;
+  overflow: hidden;
 }
 </style>

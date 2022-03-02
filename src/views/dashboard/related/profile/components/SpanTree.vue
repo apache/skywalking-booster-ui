@@ -58,11 +58,12 @@ import { Option } from "@/types/app";
 import { ElMessage } from "element-plus";
 import { ProfileMode } from "./data";
 
+/* global defineEmits*/
+const emits = defineEmits(["loading"]);
 const { t } = useI18n();
 const profileStore = useProfileStore();
 const mode = ref<string>("include");
 const message = ref<string>("");
-const loading = ref<boolean>(false);
 const timeRange = ref<Array<{ start: number; end: number }>>([]);
 const traceId = ref<string>("");
 const traceIds = computed(() =>
@@ -86,13 +87,13 @@ function changeTraceId(opt: Option[]) {
 }
 
 async function analyzeProfile() {
-  loading.value = true;
+  emits("loading", true);
   updateTimeRange();
   const res = await profileStore.getProfileAnalyze({
     segmentId: profileStore.currentSegment.segmentId,
     timeRanges: timeRange.value,
   });
-  loading.value = false;
+  emits("loading", false);
   if (res.errors) {
     ElMessage.error(res.errors);
   }
