@@ -50,7 +50,7 @@ limitations under the License. -->
       :key="'key' + index"
       :type="type"
       :headerType="headerType"
-      @click="selectItem(item)"
+      @select="selectItem"
     />
     <slot></slot>
   </div>

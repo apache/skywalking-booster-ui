@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="rk-profile-task">
+  <div class="profile-task">
     <div>
       <div class="label">{{ t("endpointName") }}</div>
       <el-input v-model="endpointName" class="profile-input" />
@@ -28,7 +28,7 @@ limitations under the License. -->
           :options="InitTaskField.monitorTimeEn"
           @change="changeMonitorTime"
         />
-        <span>
+        <span class="date">
           <TimePicker
             :value="time"
             position="bottom"
@@ -144,6 +144,15 @@ function changeTimeRange(val: Date) {
 }
 </script>
 <style lang="scss" scoped>
+.profile-task {
+  margin: 0 auto;
+  width: 300px;
+}
+
+.date {
+  font-size: 12px;
+}
+
 .label {
   margin-top: 10px;
   font-size: 14px;
@@ -156,15 +165,5 @@ function changeTimeRange(val: Date) {
 .create-task-btn {
   width: 300px;
   margin-top: 50px;
-}
-
-.message-tip {
-  font-size: 14px;
-  color: red;
-  margin-top: 10px;
-}
-
-.monitor-time-radio {
-  display: inline;
 }
 </style>

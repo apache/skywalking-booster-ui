@@ -128,7 +128,6 @@ const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 async function getTaceLogs() {
   showRelatedLogs.value = true;
-  console.log(props.currentSpan);
   const res = await traceStore.getSpanLogs({
     condition: {
       relatedTrace: {

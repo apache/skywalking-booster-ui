@@ -55,7 +55,6 @@ limitations under the License. -->
         'level' + (data.level - 1),
         { 'trace-item-error': data.isError },
       ]"
-      ref="traceItem"
     >
       <div
         :class="['method', 'level' + (data.level - 1)]"
@@ -121,6 +120,7 @@ limitations under the License. -->
         :data="child"
         :type="type"
         :headerType="headerType"
+        @select="selectedItem(child)"
       />
     </div>
     <el-dialog
@@ -149,13 +149,13 @@ const props = {
 export default defineComponent({
   name: "TableItem",
   props,
+  emits: ["select"],
   components: { SpanDetail },
-  setup(props) {
+  setup(props, { emit }) {
     /* global Nullable */
     const displayChildren = ref<boolean>(true);
     const showDetail = ref<boolean>(false);
     const { t } = useI18n();
-    const traceItem = ref<Nullable<HTMLDivElement>>(null);
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
     const selfTime = computed(() => (props.data.dur ? props.data.dur : 0));
@@ -186,35 +186,36 @@ export default defineComponent({
     function toggle() {
       displayChildren.value = !displayChildren.value;
     }
-    function showSelectSpan() {
+    function showSelectSpan(dom: any) {
+      if (!dom) {
+        return;
+      }
       const items: any = document.querySelectorAll(".trace-item");
       for (const item of items) {
         item.style.background = "#fff";
       }
-      if (!traceItem.value) {
-        return;
-      }
+      dom.style.background = "rgba(0, 0, 0, 0.1)";
+    }
+    function selectSpan(event: any) {
+      const dom = event.path.find((d: any) =>
+        d.className.includes("trace-item")
+      );
 
-      traceItem.value.style.background = "rgba(0, 0, 0, 1)";
-    }
-    function selectSpan() {
+      emit("select", props.data);
       if (props.headerType === "profile") {
-        showSelectSpan();
+        showSelectSpan(dom);
         return;
       }
-      viewSpanDetail();
+      viewSpanDetail(dom);
     }
-    function viewSpanDetail() {
-      showSelectSpan();
+
+    function selectedItem(data: any) {
+      emit("select", data);
+    }
+    function viewSpanDetail(dom: any) {
+      showSelectSpan(dom);
       showDetail.value = true;
     }
-
-    watch(
-      () => props.data,
-      () => {
-        showSelectSpan();
-      }
-    );
     return {
       displayChildren,
       outterPercent,
@@ -225,6 +226,7 @@ export default defineComponent({
       showSelectSpan,
       showDetail,
       selectSpan,
+      selectedItem,
       t,
     };
   },

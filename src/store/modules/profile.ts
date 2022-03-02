@@ -166,11 +166,12 @@ export const traceStore = defineStore({
         .params(params);
 
       if (res.data.errors) {
-        this.segmentSpans = [];
+        this.analyzeTrees = [];
         return res.data;
       }
       const { analyze, tip } = res.data.data;
       if (tip) {
+        this.analyzeTrees = [];
         return res.data;
       }
 

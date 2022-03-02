@@ -27,7 +27,7 @@ limitations under the License. -->
         Self Duration (ms)
         <a
           class="profile-set-btn"
-          @click="updateHighlightTop()"
+          @click="updateHighlightTop"
           title="Highlight top 10 slow methods"
           :style="{ color: highlightTop ? '#448dfe' : '#484b55' }"
         >
