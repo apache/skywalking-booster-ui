@@ -146,7 +146,7 @@ function changeTimeRange(val: Date) {
 <style lang="scss" scoped>
 .profile-task {
   margin: 0 auto;
-  width: 300px;
+  width: 350px;
 }
 
 .date {
