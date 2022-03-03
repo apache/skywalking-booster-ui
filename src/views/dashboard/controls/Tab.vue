@@ -164,6 +164,7 @@ export default defineComponent({
       () => dashboardStore.activedGridItem,
       (data) => {
         if (!data) {
+          activeTabWidget.value = "";
           return;
         }
         const i = data.split("-");
