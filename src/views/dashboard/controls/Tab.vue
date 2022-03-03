@@ -56,7 +56,9 @@ limitations under the License. -->
       :row-height="10"
       :is-draggable="true"
       :is-resizable="true"
-      @layout-updated="layoutUpdatedEvent"
+      :vertical-compact="true"
+      :use-css-transforms="true"
+      :responsive="true"
     >
       <grid-item
         v-for="item in dashboardStore.currentTabItems"
@@ -80,7 +82,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { ref, watch, reactive, defineComponent, toRefs } from "vue";
+import { ref, watch, defineComponent, toRefs } from "vue";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -116,7 +118,13 @@ export default defineComponent({
     function clickTabs(e: Event, idx: number) {
       e.stopPropagation();
       activeTabIndex.value = idx;
-      dashboardStore.activeGridItem(idx);
+      dashboardStore.activeGridItem(
+        `${props.data.i}-${activeTabIndex.value}-0`
+      );
+      dashboardStore.setCurrentTabItems(
+        dashboardStore.layout[props.data.i].children[activeTabIndex.value]
+          .children
+      );
     }
     function removeTab(e: Event) {
       e.stopPropagation();
@@ -146,6 +154,14 @@ export default defineComponent({
         `${props.data.i}-${activeTabIndex.value}-${item.i}`
       );
     }
+    function breakpointChangedEvent(newBreakpoint: any, newLayout: any) {
+      console.log(
+        "BREAKPOINT CHANGED breakpoint=",
+        newBreakpoint,
+        ", layout: ",
+        newLayout
+      );
+    }
     document.body.addEventListener("click", handleClick, false);
     watch(
       () => dashboardStore.activedGridItem,
@@ -170,6 +186,7 @@ export default defineComponent({
       removeTab,
       clickTabs,
       layoutUpdatedEvent,
+      breakpointChangedEvent,
       ...toRefs(props),
       activeTabWidget,
       dashboardStore,

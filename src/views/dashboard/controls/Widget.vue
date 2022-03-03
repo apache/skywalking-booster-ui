@@ -128,6 +128,9 @@ export default defineComponent({
     watch(
       () => [props.data.metricTypes, props.data.metrics],
       () => {
+        if (!dashboardStore.selectedGrid) {
+          return;
+        }
         if (props.data.i !== dashboardStore.selectedGrid.i) {
           return;
         }
