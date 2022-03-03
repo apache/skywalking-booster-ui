@@ -313,7 +313,7 @@ function setTabControls(id: string) {
       dashboardStore.addTabControls("Topology");
       break;
     default:
-      dashboardStore.addControl("Widget");
+      break;
   }
 }
 

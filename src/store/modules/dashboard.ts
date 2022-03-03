@@ -156,7 +156,6 @@ export const dashboardStore = defineStore({
           d.y = d.y + newItem.h;
           return d;
         });
-        console.log(type);
         items.push(newItem);
         this.layout[idx].children[tabIndex].children = items;
       }
@@ -173,7 +172,24 @@ export const dashboardStore = defineStore({
       }
       this.layout[idx].activedTabIndex = index;
     },
+    removeTab(item: LayoutConfig) {
+      this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
+    },
     removeControls(item: LayoutConfig) {
+      const actived = this.activedGridItem.split("-");
+      const index = this.layout.findIndex(
+        (d: LayoutConfig) => actived[0] === d.i
+      );
+
+      if (actived.length === 3) {
+        const tabIndex = Number(actived[1]);
+        const itemIndex = this.layout[index].children[
+          tabIndex
+        ].children.findIndex((d: LayoutConfig) => actived[2] === d.i);
+
+        this.layout[index].children[tabIndex].children.splice(itemIndex, 1);
+        return;
+      }
       this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
     },
     removeTabItem(item: LayoutConfig, index: number) {
@@ -226,11 +242,17 @@ export const dashboardStore = defineStore({
       );
 
       if (actived.length === 3) {
-        this.layout[index].children[actived[1]].children[actived[2]] = {
-          ...this.layout[index],
+        const tabIndex = Number(actived[1]);
+        const itemIndex = this.layout[index].children[
+          tabIndex
+        ].children.findIndex((d: LayoutConfig) => actived[2] === d.i);
+
+        this.layout[index].children[tabIndex].children[itemIndex] = {
+          ...this.layout[index].children[tabIndex].children[itemIndex],
           ...param,
         };
-        this.selectedGrid = this.layout[index];
+        this.selectedGrid =
+          this.layout[index].children[tabIndex].children[itemIndex];
         return;
       }
       this.layout[index] = {

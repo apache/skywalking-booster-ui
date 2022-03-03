@@ -122,7 +122,7 @@ export default defineComponent({
       dashboardStore.activeGridItem(idx);
     }
     function removeTab() {
-      dashboardStore.removeControls(props.data);
+      dashboardStore.removeTab(props.data);
     }
     function deleteTabItem(idx: number) {
       dashboardStore.removeTabItem(props.data, idx);
