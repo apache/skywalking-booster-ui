@@ -165,9 +165,9 @@ export const SortOrder = [
 export const ToolIcons = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
-  { name: "device_hub", content: "Add Topology", id: "topology" },
-  { name: "merge", content: "Add Trace", id: "trace" },
-  { name: "timeline", content: "Add Profile", id: "profile" },
+  { name: "device_hub", content: "Add Topology", id: "addTopology" },
+  { name: "merge", content: "Add Trace", id: "addTrace" },
+  { name: "timeline", content: "Add Profile", id: "addProfile" },
   // { name: "save_alt", content: "Export", id: "export" },
   // { name: "folder_open", content: "Import", id: "import" },
   // { name: "settings", content: "Settings", id: "settings" },

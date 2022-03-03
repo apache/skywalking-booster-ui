@@ -71,7 +71,8 @@ export const dashboardStore = defineStore({
         metrics: [""],
       };
       if (type === "Tab") {
-        newItem.h = 24;
+        newItem.h = 36;
+        newItem.activedTabIndex = 0;
         newItem.children = [
           {
             name: "Tab1",
@@ -96,14 +97,15 @@ export const dashboardStore = defineStore({
         };
       }
       if (type === "Trace" || type === "Profile") {
-        newItem.h = 36;
+        newItem.h = 24;
       }
+      this.activedGridItem = newItem.i;
+      this.selectedGrid = newItem;
       this.layout = this.layout.map((d: LayoutConfig) => {
         d.y = d.y + newItem.h;
         return d;
       });
       this.layout.push(newItem);
-      this.activedGridItem = newItem.i;
     },
     addTabItem(item: LayoutConfig) {
       const idx = this.layout.findIndex((d: LayoutConfig) => d.i === item.i);
@@ -117,7 +119,7 @@ export const dashboardStore = defineStore({
       };
       this.layout[idx].children?.push(i);
     },
-    addTabWidget(tabIndex: number) {
+    addTabControls(type: string) {
       const activedGridItem = this.activedGridItem.split("-")[0];
       const idx = this.layout.findIndex(
         (d: LayoutConfig) => d.i === activedGridItem
@@ -125,31 +127,51 @@ export const dashboardStore = defineStore({
       if (idx < 0) {
         return;
       }
+      const tabIndex = this.layout[idx].activedTabIndex;
       const { children } = this.layout[idx].children[tabIndex];
-      const newWidget = {
-        x: 0,
-        y: 0,
-        w: 24,
-        h: 12,
+      const newItem: LayoutConfig = {
+        ...NewControl,
         i: String(children.length),
-        type: "Widget",
-        widget: {
-          title: "Title",
-        },
-        graph: {},
-        standard: {},
+        type,
+        metricTypes: [""],
+        metrics: [""],
       };
+      if (type === "Topology") {
+        newItem.w = 4;
+        newItem.h = 6;
+        newItem.graph = {
+          fontColor: "white",
+          backgroundColor: "green",
+          iconTheme: true,
+          content: "Topology",
+          fontSize: 18,
+          showDepth: true,
+        };
+      }
+      if (type === "Trace" || type === "Profile") {
+        newItem.h = 24;
+      }
       if (this.layout[idx].children) {
         const items = children.map((d: LayoutConfig) => {
-          d.y = d.y + newWidget.h;
+          d.y = d.y + newItem.h;
           return d;
         });
-        items.push(newWidget);
+        console.log(type);
+        items.push(newItem);
         this.layout[idx].children[tabIndex].children = items;
       }
     },
     activeGridItem(index: string) {
       this.activedGridItem = index;
+    },
+    setActiveTabIndex(index: number) {
+      const idx = this.layout.findIndex(
+        (d: LayoutConfig) => d.i === this.activedGridItem
+      );
+      if (idx < 0) {
+        return;
+      }
+      this.layout[idx].activedTabIndex = index;
     },
     removeControls(item: LayoutConfig) {
       this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);

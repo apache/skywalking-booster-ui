@@ -288,20 +288,50 @@ function changePods(pod: Option[]) {
 }
 
 function clickIcons(t: { id: string; content: string; name: string }) {
-  switch (t.id) {
+  if (
+    dashboardStore.selectedGrid &&
+    dashboardStore.selectedGrid.type === "Tab"
+  ) {
+    setTabControls(t.id);
+    return;
+  }
+  setControls(t.id);
+}
+
+function setTabControls(id: string) {
+  switch (id) {
+    case "addWidget":
+      dashboardStore.addTabControls("Widget");
+      break;
+    case "addTrace":
+      dashboardStore.addTabControls("Trace");
+      break;
+    case "addProfile":
+      dashboardStore.addTabControls("Profile");
+      break;
+    case "addTopology":
+      dashboardStore.addTabControls("Topology");
+      break;
+    default:
+      dashboardStore.addControl("Widget");
+  }
+}
+
+function setControls(id: string) {
+  switch (id) {
     case "addWidget":
       dashboardStore.addControl("Widget");
       break;
     case "addTab":
       dashboardStore.addControl("Tab");
       break;
-    case "trace":
+    case "addTrace":
       dashboardStore.addControl("Trace");
       break;
-    case "profile":
+    case "addProfile":
       dashboardStore.addControl("Profile");
       break;
-    case "topology":
+    case "addTopology":
       dashboardStore.addControl("Topology");
       break;
     case "settings":

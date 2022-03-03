@@ -136,7 +136,7 @@ limitations under the License. -->
 <script lang="ts">
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
-import { ref, watch, computed, defineComponent } from "vue";
+import { ref, computed, defineComponent } from "vue";
 import type { PropType } from "vue";
 import SpanDetail from "../D3Graph/SpanDetail.vue";
 
@@ -152,7 +152,6 @@ export default defineComponent({
   emits: ["select"],
   components: { SpanDetail },
   setup(props, { emit }) {
-    /* global Nullable */
     const displayChildren = ref<boolean>(true);
     const showDetail = ref<boolean>(false);
     const { t } = useI18n();
