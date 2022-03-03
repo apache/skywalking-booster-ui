@@ -43,6 +43,7 @@ interface DashboardState {
   durationTime: Duration;
   selectorStore: any;
   showTopology: boolean;
+  currentTabItems: LayoutConfig[];
 }
 
 export const dashboardStore = defineStore({
@@ -57,6 +58,7 @@ export const dashboardStore = defineStore({
     durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
     showTopology: false,
+    currentTabItems: [],
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -158,6 +160,7 @@ export const dashboardStore = defineStore({
         });
         items.push(newItem);
         this.layout[idx].children[tabIndex].children = items;
+        this.currentTabItems = items;
       }
     },
     activeGridItem(index: string) {
@@ -172,7 +175,13 @@ export const dashboardStore = defineStore({
       }
       this.layout[idx].activedTabIndex = index;
     },
+    setCurrentTabItems(items: LayoutConfig[]) {
+      this.currentTabItems = items;
+    },
     removeTab(item: LayoutConfig) {
+      if (this.selectedGrid && this.selectedGrid.i === item.i) {
+        this.selectedGrid = null;
+      }
       this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
     },
     removeControls(item: LayoutConfig) {
@@ -181,6 +190,9 @@ export const dashboardStore = defineStore({
         (d: LayoutConfig) => actived[0] === d.i
       );
 
+      if (this.selectedGrid.i === item.i) {
+        this.selectedGrid = null;
+      }
       if (actived.length === 3) {
         const tabIndex = Number(actived[1]);
         const itemIndex = this.layout[index].children[
@@ -188,12 +200,18 @@ export const dashboardStore = defineStore({
         ].children.findIndex((d: LayoutConfig) => actived[2] === d.i);
 
         this.layout[index].children[tabIndex].children.splice(itemIndex, 1);
+        this.setCurrentTabItems(this.layout[index].children[tabIndex].children);
         return;
       }
       this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
     },
     removeTabItem(item: LayoutConfig, index: number) {
       const idx = this.layout.findIndex((d: LayoutConfig) => d.i === item.i);
+      for (const item of this.layout[idx].children[index].children) {
+        if (this.selectedGrid.i === item.i) {
+          this.selectedGrid = null;
+        }
+      }
       if (this.layout[idx].children) {
         this.layout[idx].children?.splice(index, 1);
       }

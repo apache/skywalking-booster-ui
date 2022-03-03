@@ -33,7 +33,7 @@ limitations under the License. -->
           v-show="activeTabIndex === idx"
           size="sm"
           iconName="cancel"
-          @click="deleteTabItem(idx)"
+          @click="deleteTabItem($event, idx)"
         />
       </span>
       <span class="tab-icons">
@@ -50,8 +50,8 @@ limitations under the License. -->
   </div>
   <div class="tab-layout">
     <grid-layout
-      v-if="state.layout.length"
-      v-model:layout="state.layout"
+      v-if="dashboardStore.currentTabItems.length"
+      v-model:layout="dashboardStore.currentTabItems"
       :col-num="24"
       :row-height="10"
       :is-draggable="true"
@@ -59,7 +59,7 @@ limitations under the License. -->
       @layout-updated="layoutUpdatedEvent"
     >
       <grid-item
-        v-for="item in state.layout"
+        v-for="item in dashboardStore.currentTabItems"
         :x="item.x"
         :y="item.y"
         :w="item.w"
@@ -105,26 +105,25 @@ export default defineComponent({
     const activeTabIndex = ref<number>(0);
     const activeTabWidget = ref<string>("");
     const editTabIndex = ref<number>(NaN); // edit tab item name
-    const state = reactive<{
-      layout: LayoutConfig[];
-    }>({
-      layout:
-        dashboardStore.layout[props.data.i].children[activeTabIndex.value]
-          .children,
-    });
+    dashboardStore.setCurrentTabItems(
+      dashboardStore.layout[props.data.i].children[activeTabIndex.value]
+        .children
+    );
 
     function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
-      state.layout = newLayout;
+      dashboardStore.setCurrentTabItems(newLayout);
     }
     function clickTabs(e: Event, idx: number) {
       e.stopPropagation();
       activeTabIndex.value = idx;
       dashboardStore.activeGridItem(idx);
     }
-    function removeTab() {
+    function removeTab(e: Event) {
+      e.stopPropagation();
       dashboardStore.removeTab(props.data);
     }
-    function deleteTabItem(idx: number) {
+    function deleteTabItem(e: Event, idx: number) {
+      e.stopPropagation();
       dashboardStore.removeTabItem(props.data, idx);
     }
     function addTabItem() {
@@ -148,18 +147,6 @@ export default defineComponent({
       );
     }
     document.body.addEventListener("click", handleClick, false);
-
-    const items =
-      dashboardStore.layout[props.data.i].children[activeTabIndex.value] || {};
-    watch(
-      () => items.children,
-      (data) => {
-        if (!data) {
-          return data;
-        }
-        state.layout = data;
-      }
-    );
     watch(
       () => dashboardStore.activedGridItem,
       (data) => {
@@ -185,7 +172,7 @@ export default defineComponent({
       layoutUpdatedEvent,
       ...toRefs(props),
       activeTabWidget,
-      state,
+      dashboardStore,
       activeTabIndex,
       editTabIndex,
     };

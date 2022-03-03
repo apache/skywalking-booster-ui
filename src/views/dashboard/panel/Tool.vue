@@ -313,6 +313,7 @@ function setTabControls(id: string) {
       dashboardStore.addTabControls("Topology");
       break;
     default:
+      ElMessage.info("Don't support this control");
       break;
   }
 }
