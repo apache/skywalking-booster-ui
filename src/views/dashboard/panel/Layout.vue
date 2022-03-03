@@ -19,7 +19,6 @@ limitations under the License. -->
     :row-height="10"
     :is-draggable="true"
     :is-resizable="true"
-    :responsive="true"
     @layout-updated="layoutUpdatedEvent"
   >
     <grid-item

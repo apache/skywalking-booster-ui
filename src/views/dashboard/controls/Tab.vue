@@ -56,9 +56,8 @@ limitations under the License. -->
       :row-height="10"
       :is-draggable="true"
       :is-resizable="true"
-      :vertical-compact="true"
-      :use-css-transforms="true"
       :responsive="true"
+      @layout-updated="layoutUpdatedEvent"
     >
       <grid-item
         v-for="item in dashboardStore.currentTabItems"
@@ -112,15 +111,12 @@ export default defineComponent({
         .children
     );
 
-    function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
-      dashboardStore.setCurrentTabItems(newLayout);
-    }
     function clickTabs(e: Event, idx: number) {
       e.stopPropagation();
       activeTabIndex.value = idx;
-      dashboardStore.activeGridItem(
-        `${props.data.i}-${activeTabIndex.value}-0`
-      );
+      dashboardStore.activeGridItem(props.data.i);
+      dashboardStore.selectWidget(props.data);
+      dashboardStore.setActiveTabIndex(idx);
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[props.data.i].children[activeTabIndex.value]
           .children
@@ -154,13 +150,8 @@ export default defineComponent({
         `${props.data.i}-${activeTabIndex.value}-${item.i}`
       );
     }
-    function breakpointChangedEvent(newBreakpoint: any, newLayout: any) {
-      console.log(
-        "BREAKPOINT CHANGED breakpoint=",
-        newBreakpoint,
-        ", layout: ",
-        newLayout
-      );
+    function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
+      dashboardStore.setCurrentTabItems(newLayout);
     }
     document.body.addEventListener("click", handleClick, false);
     watch(
@@ -179,14 +170,13 @@ export default defineComponent({
       }
     );
     return {
+      layoutUpdatedEvent,
       clickTabGrid,
       editTabName,
       addTabItem,
       deleteTabItem,
       removeTab,
       clickTabs,
-      layoutUpdatedEvent,
-      breakpointChangedEvent,
       ...toRefs(props),
       activeTabWidget,
       dashboardStore,
@@ -203,7 +193,7 @@ export default defineComponent({
 
   span {
     display: inline-block;
-    padding: 0 10px;
+    padding: 0 20px;
     margin: 0 10px;
     height: 40px;
     line-height: 40px;

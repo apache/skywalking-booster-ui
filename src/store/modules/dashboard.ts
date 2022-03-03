@@ -207,9 +207,11 @@ export const dashboardStore = defineStore({
     },
     removeTabItem(item: LayoutConfig, index: number) {
       const idx = this.layout.findIndex((d: LayoutConfig) => d.i === item.i);
-      for (const item of this.layout[idx].children[index].children) {
-        if (this.selectedGrid.i === item.i) {
-          this.selectedGrid = null;
+      if (this.selectedGrid) {
+        for (const item of this.layout[idx].children[index].children) {
+          if (this.selectedGrid.i === item.i) {
+            this.selectedGrid = null;
+          }
         }
       }
       if (this.layout[idx].children) {
@@ -271,6 +273,7 @@ export const dashboardStore = defineStore({
         };
         this.selectedGrid =
           this.layout[index].children[tabIndex].children[itemIndex];
+        this.setCurrentTabItems(this.layout[index].children[tabIndex].children);
         return;
       }
       this.layout[index] = {
