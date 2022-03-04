@@ -50,7 +50,7 @@ limitations under the License. -->
   </div>
   <div class="tab-layout">
     <grid-layout
-      v-if="dashboardStore.currentTabItems"
+      v-if="dashboardStore.currentTabItems.length"
       v-model:layout="dashboardStore.currentTabItems"
       :col-num="24"
       :row-height="10"
@@ -74,6 +74,7 @@ limitations under the License. -->
           :is="item.type"
           :data="item"
           :activeIndex="`${data.i}-${activeTabIndex}-${item.i}`"
+          :needQuery="needQuery"
         />
       </grid-item>
     </grid-layout>
@@ -106,6 +107,7 @@ export default defineComponent({
     const activeTabIndex = ref<number>(0);
     const activeTabWidget = ref<string>("");
     const editTabIndex = ref<number>(NaN); // edit tab item name
+    const needQuery = ref<boolean>(false);
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
     );
@@ -125,6 +127,7 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
+      needQuery.value = true;
     }
     function removeTab(e: Event) {
       e.stopPropagation();
@@ -191,6 +194,7 @@ export default defineComponent({
       dashboardStore,
       activeTabIndex,
       editTabIndex,
+      needQuery,
     };
   },
 });

@@ -190,7 +190,7 @@ export const dashboardStore = defineStore({
         (d: LayoutConfig) => actived[0] === d.i
       );
 
-      if (this.selectedGrid.i === item.i) {
+      if (this.selectedGrid && this.selectedGrid.i === item.i) {
         this.selectedGrid = null;
       }
       if (actived.length === 3) {

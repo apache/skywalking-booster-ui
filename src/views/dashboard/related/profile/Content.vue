@@ -65,8 +65,8 @@ function loadTrees(l: boolean) {
 }
 
 .thread-stack {
-  padding: 5px 12px;
-  height: calc(50% - 50px);
+  padding: 5px;
+  height: calc(50% - 20px);
   overflow: auto;
   width: 100%;
 }
@@ -75,6 +75,6 @@ function loadTrees(l: boolean) {
   text-align: center;
   width: 100%;
   overflow: hidden;
-  height: calc(50% - 50px);
+  height: calc(50% - 20px);
 }
 </style>
