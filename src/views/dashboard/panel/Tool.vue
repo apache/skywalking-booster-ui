@@ -295,6 +295,10 @@ function clickIcons(t: { id: string; content: string; name: string }) {
     setTabControls(t.id);
     return;
   }
+  if (dashboardStore.activedGridItem.split("-").length === 3) {
+    setTabControls(t.id);
+    return;
+  }
   setControls(t.id);
 }
 
