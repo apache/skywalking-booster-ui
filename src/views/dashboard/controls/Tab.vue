@@ -33,38 +33,62 @@ limitations under the License. -->
           v-show="activeTabIndex === idx"
           size="sm"
           iconName="cancel"
-          @click="deleteTabItem(idx)"
+          @click="deleteTabItem($event, idx)"
         />
       </span>
       <span class="tab-icons">
-        <el-tooltip effect="dark" content="Add tab items" placement="bottom">
+        <el-tooltip content="Add tab items" placement="bottom">
           <i @click="addTabItem">
             <Icon size="middle" iconName="add" />
-          </i>
-        </el-tooltip>
-        <el-tooltip effect="dark" content="Add widgets" placement="bottom">
-          <i @click="addTabWidget">
-            <Icon size="middle" iconName="playlist_add" />
           </i>
         </el-tooltip>
       </span>
     </div>
     <div class="operations">
-      <Icon size="sm" iconName="clearclose" @click="removeTab" />
+      <el-popover
+        placement="bottom"
+        trigger="click"
+        :width="200"
+        v-model:visible="showTools"
+      >
+        <template #reference>
+          <span>
+            <Icon
+              iconName="ellipsis_v"
+              size="middle"
+              class="operation"
+              @click="showTools = true"
+            />
+          </span>
+        </template>
+        <div
+          class="tools"
+          @click="
+            canEditTabName = true;
+            showTools = false;
+          "
+        >
+          <span class="edit-tab">{{ t("editTab") }}</span>
+        </div>
+        <div class="tools" @click="removeTab">
+          <span>{{ t("delete") }}</span>
+        </div>
+      </el-popover>
     </div>
   </div>
-  <div class="tab-layout">
+  <div class="tab-layout" @click="handleClick">
     <grid-layout
-      v-if="state.layout.length"
-      v-model:layout="state.layout"
+      v-if="dashboardStore.currentTabItems.length"
+      v-model:layout="dashboardStore.currentTabItems"
       :col-num="24"
       :row-height="10"
       :is-draggable="true"
       :is-resizable="true"
+      :responsive="true"
       @layout-updated="layoutUpdatedEvent"
     >
       <grid-item
-        v-for="item in state.layout"
+        v-for="item in dashboardStore.currentTabItems"
         :x="item.x"
         :y="item.y"
         :w="item.w"
@@ -74,103 +98,147 @@ limitations under the License. -->
         @click="clickTabGrid($event, item)"
         :class="{ active: activeTabWidget === item.i }"
       >
-        <Widget
+        <component
+          :is="item.type"
           :data="item"
           :activeIndex="`${data.i}-${activeTabIndex}-${item.i}`"
+          :needQuery="needQuery"
         />
       </grid-item>
     </grid-layout>
     <div class="no-data-tips" v-else>Please add widgets.</div>
   </div>
 </template>
-<script lang="ts" setup>
-import { ref, watch, reactive } from "vue";
+<script lang="ts">
+import { ref, watch, defineComponent, toRefs } from "vue";
+import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
-import Widget from "./Widget.vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
-/*global defineProps */
-const props = defineProps({
+import Topology from "./Topology.vue";
+import Widget from "./Widget.vue";
+import Trace from "./Trace.vue";
+import Profile from "./Profile.vue";
+
+const props = {
   data: {
     type: Object as PropType<LayoutConfig>,
     default: () => ({ children: [] }),
   },
   active: { type: Boolean, default: false },
-});
-const dashboardStore = useDashboardStore();
-const activeTabIndex = ref<number>(0);
-const activeTabWidget = ref<string>("0");
-const editTabIndex = ref<number>(NaN); // edit tab item name
-const state = reactive<{
-  layout: LayoutConfig[];
-}>({
-  layout:
-    dashboardStore.layout[props.data.i].children[activeTabIndex.value].children,
-});
+};
+export default defineComponent({
+  name: "Tab",
+  components: { Topology, Widget, Trace, Profile },
+  props,
+  setup(props) {
+    const { t } = useI18n();
+    const dashboardStore = useDashboardStore();
+    const activeTabIndex = ref<number>(0);
+    const activeTabWidget = ref<string>("");
+    const editTabIndex = ref<number>(NaN); // edit tab item name
+    const canEditTabName = ref<boolean>(false);
+    const needQuery = ref<boolean>(false);
+    const showTools = ref<boolean>(false);
+    const l = dashboardStore.layout.findIndex(
+      (d: LayoutConfig) => d.i === props.data.i
+    );
+    dashboardStore.setCurrentTabItems(
+      dashboardStore.layout[l].children[activeTabIndex.value].children
+    );
 
-function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
-  state.layout = newLayout;
-}
-function clickTabs(e: Event, idx: number) {
-  e.stopPropagation();
-  activeTabIndex.value = idx;
-}
-function removeTab() {
-  dashboardStore.removeControls(props.data);
-}
-function deleteTabItem(idx: number) {
-  dashboardStore.removeTabItem(props.data, idx);
-}
-function addTabItem() {
-  dashboardStore.addTabItem(props.data);
-}
-function editTabName(el: Event, index: number) {
-  el.stopPropagation();
-  editTabIndex.value = index;
-}
-function handleClick(el: any) {
-  if (el.target.className === "tab-name") {
-    return;
-  }
-  editTabIndex.value = NaN;
-}
-function addTabWidget(e: Event) {
-  e.stopPropagation();
-  activeTabWidget.value = String(state.layout.length);
-  dashboardStore.addTabWidget(activeTabIndex.value);
-  dashboardStore.activeGridItem(
-    `${props.data.i}-${activeTabIndex.value}-${activeTabWidget.value}`
-  );
-}
-function clickTabGrid(e: Event, item: LayoutConfig) {
-  e.stopPropagation();
-  activeTabWidget.value = item.i;
-  dashboardStore.activeGridItem(
-    `${props.data.i}-${activeTabIndex.value}-${item.i}`
-  );
-}
-document.body.addEventListener("click", handleClick, false);
-
-const children = ref(
-  dashboardStore.layout[props.data.i].children[activeTabIndex.value].children
-);
-watch(
-  () => children.value,
-  (data) => {
-    state.layout = data;
-  }
-);
-watch(
-  () => dashboardStore.activedGridItem,
-  (data) => {
-    const i = data.split("-");
-    if (i[0] === props.data.i && activeTabIndex.value === Number(i[1])) {
-      activeTabWidget.value = i[2];
-    } else {
-      activeTabWidget.value = "";
+    function clickTabs(e: Event, idx: number) {
+      e.stopPropagation();
+      activeTabIndex.value = idx;
+      dashboardStore.activeGridItem(props.data.i);
+      dashboardStore.selectWidget(props.data);
+      dashboardStore.setActiveTabIndex(idx);
+      const l = dashboardStore.layout.findIndex(
+        (d: LayoutConfig) => d.i === props.data.i
+      );
+      dashboardStore.setCurrentTabItems(
+        dashboardStore.layout[l].children[activeTabIndex.value].children
+      );
+      needQuery.value = true;
     }
-  }
-);
+    function removeTab(e: Event) {
+      e.stopPropagation();
+      dashboardStore.removeTab(props.data);
+    }
+    function deleteTabItem(e: Event, idx: number) {
+      e.stopPropagation();
+      dashboardStore.removeTabItem(props.data, idx);
+    }
+    function addTabItem() {
+      dashboardStore.addTabItem(props.data);
+    }
+    function editTabName(el: Event, index: number) {
+      if (!canEditTabName.value) {
+        editTabIndex.value = NaN;
+        return;
+      }
+      editTabIndex.value = index;
+    }
+    function handleClick(el: any) {
+      if (["tab-name", "edit-tab"].includes(el.target.className)) {
+        return;
+      }
+      canEditTabName.value = false;
+      editTabIndex.value = NaN;
+    }
+    function clickTabGrid(e: Event, item: LayoutConfig) {
+      e.stopPropagation();
+      activeTabWidget.value = item.i;
+      dashboardStore.activeGridItem(
+        `${props.data.i}-${activeTabIndex.value}-${item.i}`
+      );
+      handleClick(e);
+    }
+    function layoutUpdatedEvent() {
+      const l = dashboardStore.layout.findIndex(
+        (d: LayoutConfig) => d.i === props.data.i
+      );
+      dashboardStore.setCurrentTabItems(
+        dashboardStore.layout[l].children[activeTabIndex.value].children
+      );
+    }
+    document.body.addEventListener("click", handleClick, false);
+    watch(
+      () => dashboardStore.activedGridItem,
+      (data) => {
+        if (!data) {
+          activeTabWidget.value = "";
+          return;
+        }
+        const i = data.split("-");
+        if (i[0] === props.data.i && activeTabIndex.value === Number(i[1])) {
+          activeTabWidget.value = i[2];
+        } else {
+          activeTabWidget.value = "";
+        }
+      }
+    );
+    return {
+      handleClick,
+      layoutUpdatedEvent,
+      clickTabGrid,
+      editTabName,
+      addTabItem,
+      deleteTabItem,
+      removeTab,
+      clickTabs,
+      ...toRefs(props),
+      activeTabWidget,
+      dashboardStore,
+      activeTabIndex,
+      editTabIndex,
+      needQuery,
+      canEditTabName,
+      showTools,
+      t,
+    };
+  },
+});
 </script>
 <style lang="scss" scoped>
 .tabs {
@@ -218,10 +286,6 @@ watch(
   }
 }
 
-.el-input__inner {
-  border: none !important;
-}
-
 .operations {
   color: #aaa;
   cursor: pointer;
@@ -262,5 +326,18 @@ watch(
   font-size: 14px;
   padding-top: 30px;
   color: #888;
+}
+
+.tools {
+  padding: 5px 0;
+  color: #999;
+  cursor: pointer;
+  position: relative;
+  text-align: center;
+
+  &:hover {
+    color: #409eff;
+    background-color: #eee;
+  }
 }
 </style>

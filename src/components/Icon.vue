@@ -21,7 +21,7 @@ limitations under the License. -->
       lg: size === 'lg',
       xl: size === 'xl',
       logo: size === 'logo',
-      loading: loading,
+      loading,
     }"
   >
     <use :xlink:href="`#${iconName}`"></use>
@@ -71,6 +71,17 @@ defineProps({
   &.xl {
     height: 30px;
     width: 30px;
+  }
+}
+@keyframes loading {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+
+  to {
+    -webkit-transform: rotate(1turn);
+    transform: rotate(1turn);
   }
 }
 </style>

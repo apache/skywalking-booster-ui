@@ -75,6 +75,7 @@ function handleClick(e: any) {
   e.stopPropagation();
   if (e.target.className === "ds-main") {
     dashboardStore.activeGridItem("");
+    dashboardStore.selectWidget(null);
   }
 }
 </script>

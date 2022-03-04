@@ -53,6 +53,7 @@ export default defineComponent({
     }
     function clickGrid(item: LayoutConfig) {
       dashboardStore.activeGridItem(item.i);
+      dashboardStore.selectWidget(item);
     }
     return {
       dashboardStore,

@@ -95,6 +95,7 @@ const msg = {
   showDepth: "展示深度选择器",
   taskList: "任务列表",
   sampledTraces: "采样的追踪",
+  editTab: "开启编辑Tab的名称",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",
