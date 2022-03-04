@@ -95,7 +95,7 @@ export const dashboardStore = defineStore({
           showDepth: true,
         };
       }
-      if (type === "Trace" || type === "Profile") {
+      if (type === "Trace" || type === "Profile" || type === "Log") {
         newItem.h = 36;
       }
       this.layout = this.layout.map((d: LayoutConfig) => {

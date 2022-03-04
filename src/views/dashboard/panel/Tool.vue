@@ -301,6 +301,9 @@ function clickIcons(t: { id: string; content: string; name: string }) {
     case "profile":
       dashboardStore.addControl("Profile");
       break;
+    case "log":
+      dashboardStore.addControl("Log");
+      break;
     case "topology":
       dashboardStore.addControl("Topology");
       break;

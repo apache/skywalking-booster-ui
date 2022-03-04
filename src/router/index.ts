@@ -21,7 +21,7 @@ import { routesMesh } from "./serviceMesh";
 import { routesDatabase } from "./database";
 import { routesInfra } from "./infrastructure";
 import { routesDashboard } from "./dashboard";
-import { routesLog } from "./log";
+// import { routesLog } from "./log";
 import { routesEvent } from "./event";
 import { routesAlert } from "./alert";
 import { routesSetting } from "./setting";
@@ -34,7 +34,6 @@ const routes: Array<RouteRecordRaw> = [
   ...routesDatabase,
   ...routesInfra,
   ...routesDashboard,
-  ...routesLog,
   ...routesEvent,
   ...routesAlert,
   ...routesSetting,
