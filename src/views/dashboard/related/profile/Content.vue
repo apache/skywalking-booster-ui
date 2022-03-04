@@ -73,11 +73,8 @@ function loadTrees(l: boolean) {
 
 .t-loading {
   text-align: center;
-  position: absolute;
   width: 100%;
-  height: 70px;
-  margin-top: 40px;
-  line-height: 88px;
   overflow: hidden;
+  height: calc(50% - 50px);
 }
 </style>

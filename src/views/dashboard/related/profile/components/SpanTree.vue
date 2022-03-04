@@ -35,16 +35,18 @@ limitations under the License. -->
         {{ t("analyze") }}
       </el-button>
     </div>
-    <Table
-      :data="profileStore.segmentSpans"
-      :traceId="
-        profileStore.currentSegment.traceIds &&
-        profileStore.currentSegment.traceIds[0]
-      "
-      :showBtnDetail="true"
-      headerType="profile"
-      @select="selectSpan"
-    />
+    <div class="profile-table">
+      <Table
+        :data="profileStore.segmentSpans"
+        :traceId="
+          profileStore.currentSegment.traceIds &&
+          profileStore.currentSegment.traceIds[0]
+        "
+        :showBtnDetail="true"
+        headerType="profile"
+        @select="selectSpan"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -158,8 +160,12 @@ function updateTimeRange() {
   padding: 5px;
   flex-shrink: 0;
   height: 50%;
-  overflow: auto;
   width: 100%;
+}
+
+.profile-table {
+  height: calc(100% - 30px);
+  overflow: auto;
 }
 
 .profile-trace-detail-wrapper {

@@ -50,7 +50,7 @@ limitations under the License. -->
   </div>
   <div class="tab-layout">
     <grid-layout
-      v-if="dashboardStore.currentTabItems.length"
+      v-if="dashboardStore.currentTabItems"
       v-model:layout="dashboardStore.currentTabItems"
       :col-num="24"
       :row-height="10"
@@ -106,9 +106,11 @@ export default defineComponent({
     const activeTabIndex = ref<number>(0);
     const activeTabWidget = ref<string>("");
     const editTabIndex = ref<number>(NaN); // edit tab item name
+    const l = dashboardStore.layout.findIndex(
+      (d: LayoutConfig) => d.i === props.data.i
+    );
     dashboardStore.setCurrentTabItems(
-      dashboardStore.layout[props.data.i].children[activeTabIndex.value]
-        .children
+      dashboardStore.layout[l].children[activeTabIndex.value].children
     );
 
     function clickTabs(e: Event, idx: number) {
@@ -117,9 +119,11 @@ export default defineComponent({
       dashboardStore.activeGridItem(props.data.i);
       dashboardStore.selectWidget(props.data);
       dashboardStore.setActiveTabIndex(idx);
+      const l = dashboardStore.layout.findIndex(
+        (d: LayoutConfig) => d.i === props.data.i
+      );
       dashboardStore.setCurrentTabItems(
-        dashboardStore.layout[props.data.i].children[activeTabIndex.value]
-          .children
+        dashboardStore.layout[l].children[activeTabIndex.value].children
       );
     }
     function removeTab(e: Event) {
@@ -150,8 +154,13 @@ export default defineComponent({
         `${props.data.i}-${activeTabIndex.value}-${item.i}`
       );
     }
-    function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
-      dashboardStore.setCurrentTabItems(newLayout);
+    function layoutUpdatedEvent() {
+      const l = dashboardStore.layout.findIndex(
+        (d: LayoutConfig) => d.i === props.data.i
+      );
+      dashboardStore.setCurrentTabItems(
+        dashboardStore.layout[l].children[activeTabIndex.value].children
+      );
     }
     document.body.addEventListener("click", handleClick, false);
     watch(
