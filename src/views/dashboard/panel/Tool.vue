@@ -107,7 +107,6 @@ import { EntityType, ToolIcons, hasTopology, TraceEntitys } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
-import { Service } from "@/types/selector";
 
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
@@ -260,7 +259,7 @@ async function getServices() {
   }
 }
 
-async function changeService(service: Service[]) {
+async function changeService(service: any) {
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
@@ -270,7 +269,7 @@ async function changeService(service: Service[]) {
   }
 }
 
-function changeDestService(service: Service[]) {
+function changeDestService(service: any) {
   if (service[0]) {
     states.currentDestService = service[0].value;
     selectorStore.setCurrentDestService(service[0]);
@@ -279,7 +278,7 @@ function changeDestService(service: Service[]) {
   }
 }
 
-function changePods(pod: Option[]) {
+function changePods(pod: any) {
   if (pod[0]) {
     selectorStore.setCurrentPod(pod[0]);
   } else {
