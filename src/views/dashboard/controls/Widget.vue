@@ -77,6 +77,7 @@ const props = {
     default: () => ({ widget: {} }),
   },
   activeIndex: { type: String, default: "" },
+  needQuery: { type: Boolean, default: false },
 };
 export default defineComponent({
   name: "Widget",
@@ -93,7 +94,7 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
-    if (dashboardStore.entity === EntityType[1].value) {
+    if (dashboardStore.entity === EntityType[1].value || props.needQuery) {
       queryMetrics();
     }
 
@@ -128,7 +129,10 @@ export default defineComponent({
     watch(
       () => [props.data.metricTypes, props.data.metrics],
       () => {
-        if (props.data.i !== dashboardStore.selectedGrid.i) {
+        if (
+          dashboardStore.selectedGrid &&
+          props.data.i !== dashboardStore.selectedGrid.i
+        ) {
           return;
         }
         if (TableChartTypes.includes(dashboardStore.selectedGrid.graph.type)) {

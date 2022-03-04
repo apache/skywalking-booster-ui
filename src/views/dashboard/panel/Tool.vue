@@ -107,7 +107,6 @@ import { EntityType, ToolIcons, hasTopology, TraceEntitys } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
-import { Service } from "@/types/selector";
 
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
@@ -260,7 +259,7 @@ async function getServices() {
   }
 }
 
-async function changeService(service: Service[]) {
+async function changeService(service: any) {
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
@@ -270,7 +269,7 @@ async function changeService(service: Service[]) {
   }
 }
 
-function changeDestService(service: Service[]) {
+function changeDestService(service: any) {
   if (service[0]) {
     states.currentDestService = service[0].value;
     selectorStore.setCurrentDestService(service[0]);
@@ -279,7 +278,7 @@ function changeDestService(service: Service[]) {
   }
 }
 
-function changePods(pod: Option[]) {
+function changePods(pod: any) {
   if (pod[0]) {
     selectorStore.setCurrentPod(pod[0]);
   } else {
@@ -288,20 +287,55 @@ function changePods(pod: Option[]) {
 }
 
 function clickIcons(t: { id: string; content: string; name: string }) {
-  switch (t.id) {
+  if (
+    dashboardStore.selectedGrid &&
+    dashboardStore.selectedGrid.type === "Tab"
+  ) {
+    setTabControls(t.id);
+    return;
+  }
+  if (dashboardStore.activedGridItem.split("-").length === 3) {
+    setTabControls(t.id);
+    return;
+  }
+  setControls(t.id);
+}
+
+function setTabControls(id: string) {
+  switch (id) {
+    case "addWidget":
+      dashboardStore.addTabControls("Widget");
+      break;
+    case "addTrace":
+      dashboardStore.addTabControls("Trace");
+      break;
+    case "addProfile":
+      dashboardStore.addTabControls("Profile");
+      break;
+    case "addTopology":
+      dashboardStore.addTabControls("Topology");
+      break;
+    default:
+      ElMessage.info("Don't support this control");
+      break;
+  }
+}
+
+function setControls(id: string) {
+  switch (id) {
     case "addWidget":
       dashboardStore.addControl("Widget");
       break;
     case "addTab":
       dashboardStore.addControl("Tab");
       break;
-    case "trace":
+    case "addTrace":
       dashboardStore.addControl("Trace");
       break;
-    case "profile":
+    case "addProfile":
       dashboardStore.addControl("Profile");
       break;
-    case "topology":
+    case "addTopology":
       dashboardStore.addControl("Topology");
       break;
     case "settings":

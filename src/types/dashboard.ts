@@ -27,6 +27,7 @@ export interface LayoutConfig {
   type: string;
   metricTypes: string[];
   children?: any;
+  activedTabIndex?: number;
 }
 
 export interface WidgetConfig {

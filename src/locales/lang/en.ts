@@ -95,6 +95,7 @@ const msg = {
   topChildren: "Top 5 of children",
   taskList: "Task List",
   sampledTraces: "Sampled Traces",
+  editTab: "Enable editing tab names",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

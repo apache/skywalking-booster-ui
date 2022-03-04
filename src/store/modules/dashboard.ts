@@ -43,6 +43,7 @@ interface DashboardState {
   durationTime: Duration;
   selectorStore: any;
   showTopology: boolean;
+  currentTabItems: LayoutConfig[];
 }
 
 export const dashboardStore = defineStore({
@@ -57,6 +58,7 @@ export const dashboardStore = defineStore({
     durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
     showTopology: false,
+    currentTabItems: [],
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -71,7 +73,8 @@ export const dashboardStore = defineStore({
         metrics: [""],
       };
       if (type === "Tab") {
-        newItem.h = 24;
+        newItem.h = 36;
+        newItem.activedTabIndex = 0;
         newItem.children = [
           {
             name: "Tab1",
@@ -96,14 +99,15 @@ export const dashboardStore = defineStore({
         };
       }
       if (type === "Trace" || type === "Profile") {
-        newItem.h = 36;
+        newItem.h = 24;
       }
+      this.activedGridItem = newItem.i;
+      this.selectedGrid = newItem;
       this.layout = this.layout.map((d: LayoutConfig) => {
         d.y = d.y + newItem.h;
         return d;
       });
       this.layout.push(newItem);
-      this.activedGridItem = newItem.i;
     },
     addTabItem(item: LayoutConfig) {
       const idx = this.layout.findIndex((d: LayoutConfig) => d.i === item.i);
@@ -117,7 +121,7 @@ export const dashboardStore = defineStore({
       };
       this.layout[idx].children?.push(i);
     },
-    addTabWidget(tabIndex: number) {
+    addTabControls(type: string) {
       const activedGridItem = this.activedGridItem.split("-")[0];
       const idx = this.layout.findIndex(
         (d: LayoutConfig) => d.i === activedGridItem
@@ -125,37 +129,91 @@ export const dashboardStore = defineStore({
       if (idx < 0) {
         return;
       }
+      const tabIndex = this.layout[idx].activedTabIndex;
       const { children } = this.layout[idx].children[tabIndex];
-      const newWidget = {
-        x: 0,
-        y: 0,
-        w: 24,
-        h: 12,
+      const newItem: LayoutConfig = {
+        ...NewControl,
         i: String(children.length),
-        type: "Widget",
-        widget: {
-          title: "Title",
-        },
-        graph: {},
-        standard: {},
+        type,
+        metricTypes: [""],
+        metrics: [""],
       };
+      if (type === "Topology") {
+        newItem.w = 4;
+        newItem.h = 6;
+        newItem.graph = {
+          fontColor: "white",
+          backgroundColor: "green",
+          iconTheme: true,
+          content: "Topology",
+          fontSize: 18,
+          showDepth: true,
+        };
+      }
+      if (type === "Trace" || type === "Profile") {
+        newItem.h = 24;
+      }
       if (this.layout[idx].children) {
         const items = children.map((d: LayoutConfig) => {
-          d.y = d.y + newWidget.h;
+          d.y = d.y + newItem.h;
           return d;
         });
-        items.push(newWidget);
+        items.push(newItem);
         this.layout[idx].children[tabIndex].children = items;
+        this.currentTabItems = items;
       }
     },
     activeGridItem(index: string) {
       this.activedGridItem = index;
     },
+    setActiveTabIndex(index: number) {
+      const idx = this.layout.findIndex(
+        (d: LayoutConfig) => d.i === this.activedGridItem
+      );
+      if (idx < 0) {
+        return;
+      }
+      this.layout[idx].activedTabIndex = index;
+    },
+    setCurrentTabItems(items: LayoutConfig[]) {
+      this.currentTabItems = items;
+    },
+    removeTab(item: LayoutConfig) {
+      if (this.selectedGrid && this.selectedGrid.i === item.i) {
+        this.selectedGrid = null;
+      }
+      this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
+    },
     removeControls(item: LayoutConfig) {
+      const actived = this.activedGridItem.split("-");
+      const index = this.layout.findIndex(
+        (d: LayoutConfig) => actived[0] === d.i
+      );
+
+      if (this.selectedGrid && this.selectedGrid.i === item.i) {
+        this.selectedGrid = null;
+      }
+      if (actived.length === 3) {
+        const tabIndex = Number(actived[1]);
+        const itemIndex = this.layout[index].children[
+          tabIndex
+        ].children.findIndex((d: LayoutConfig) => actived[2] === d.i);
+
+        this.layout[index].children[tabIndex].children.splice(itemIndex, 1);
+        this.setCurrentTabItems(this.layout[index].children[tabIndex].children);
+        return;
+      }
       this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
     },
     removeTabItem(item: LayoutConfig, index: number) {
       const idx = this.layout.findIndex((d: LayoutConfig) => d.i === item.i);
+      if (this.selectedGrid) {
+        for (const item of this.layout[idx].children[index].children) {
+          if (this.selectedGrid.i === item.i) {
+            this.selectedGrid = null;
+          }
+        }
+      }
       if (this.layout[idx].children) {
         this.layout[idx].children?.splice(index, 1);
       }
@@ -204,11 +262,18 @@ export const dashboardStore = defineStore({
       );
 
       if (actived.length === 3) {
-        this.layout[index].children[actived[1]].children[actived[2]] = {
-          ...this.layout[index],
+        const tabIndex = Number(actived[1]);
+        const itemIndex = this.layout[index].children[
+          tabIndex
+        ].children.findIndex((d: LayoutConfig) => actived[2] === d.i);
+
+        this.layout[index].children[tabIndex].children[itemIndex] = {
+          ...this.layout[index].children[tabIndex].children[itemIndex],
           ...param,
         };
-        this.selectedGrid = this.layout[index];
+        this.selectedGrid =
+          this.layout[index].children[tabIndex].children[itemIndex];
+        this.setCurrentTabItems(this.layout[index].children[tabIndex].children);
         return;
       }
       this.layout[index] = {
