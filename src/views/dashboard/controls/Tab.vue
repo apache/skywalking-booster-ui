@@ -45,10 +45,38 @@ limitations under the License. -->
       </span>
     </div>
     <div class="operations">
-      <Icon size="sm" iconName="clearclose" @click="removeTab" />
+      <el-popover
+        placement="bottom"
+        trigger="click"
+        :width="200"
+        v-model:visible="showTools"
+      >
+        <template #reference>
+          <span>
+            <Icon
+              iconName="ellipsis_v"
+              size="middle"
+              class="operation"
+              @click="showTools = true"
+            />
+          </span>
+        </template>
+        <div
+          class="tools"
+          @click="
+            canEditTabName = true;
+            showTools = false;
+          "
+        >
+          <span class="edit-tab">{{ t("editTab") }}</span>
+        </div>
+        <div class="tools" @click="removeTab">
+          <span>{{ t("delete") }}</span>
+        </div>
+      </el-popover>
     </div>
   </div>
-  <div class="tab-layout">
+  <div class="tab-layout" @click="handleClick">
     <grid-layout
       v-if="dashboardStore.currentTabItems.length"
       v-model:layout="dashboardStore.currentTabItems"
@@ -83,6 +111,7 @@ limitations under the License. -->
 </template>
 <script lang="ts">
 import { ref, watch, defineComponent, toRefs } from "vue";
+import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -103,11 +132,14 @@ export default defineComponent({
   components: { Topology, Widget, Trace, Profile },
   props,
   setup(props) {
+    const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     const activeTabIndex = ref<number>(0);
     const activeTabWidget = ref<string>("");
     const editTabIndex = ref<number>(NaN); // edit tab item name
+    const canEditTabName = ref<boolean>(false);
     const needQuery = ref<boolean>(false);
+    const showTools = ref<boolean>(false);
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
     );
@@ -141,13 +173,17 @@ export default defineComponent({
       dashboardStore.addTabItem(props.data);
     }
     function editTabName(el: Event, index: number) {
-      el.stopPropagation();
+      if (!canEditTabName.value) {
+        editTabIndex.value = NaN;
+        return;
+      }
       editTabIndex.value = index;
     }
     function handleClick(el: any) {
-      if (el.target.className === "tab-name") {
+      if (["tab-name", "edit-tab"].includes(el.target.className)) {
         return;
       }
+      canEditTabName.value = false;
       editTabIndex.value = NaN;
     }
     function clickTabGrid(e: Event, item: LayoutConfig) {
@@ -156,6 +192,7 @@ export default defineComponent({
       dashboardStore.activeGridItem(
         `${props.data.i}-${activeTabIndex.value}-${item.i}`
       );
+      handleClick(e);
     }
     function layoutUpdatedEvent() {
       const l = dashboardStore.layout.findIndex(
@@ -182,6 +219,7 @@ export default defineComponent({
       }
     );
     return {
+      handleClick,
       layoutUpdatedEvent,
       clickTabGrid,
       editTabName,
@@ -195,6 +233,9 @@ export default defineComponent({
       activeTabIndex,
       editTabIndex,
       needQuery,
+      canEditTabName,
+      showTools,
+      t,
     };
   },
 });
@@ -206,7 +247,7 @@ export default defineComponent({
 
   span {
     display: inline-block;
-    padding: 0 20px;
+    padding: 0 10px;
     margin: 0 10px;
     height: 40px;
     line-height: 40px;
@@ -285,5 +326,18 @@ export default defineComponent({
   font-size: 14px;
   padding-top: 30px;
   color: #888;
+}
+
+.tools {
+  padding: 5px 0;
+  color: #999;
+  cursor: pointer;
+  position: relative;
+  text-align: center;
+
+  &:hover {
+    color: #409eff;
+    background-color: #eee;
+  }
 }
 </style>
