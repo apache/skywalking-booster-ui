@@ -119,7 +119,7 @@ import { useLogStore } from "@/store/modules/log";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
-import ConditionTags from "@/views/components/ConditionTags.vue";
+import ConditionTags from "@/views/dashboard/related/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 

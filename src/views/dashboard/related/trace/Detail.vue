@@ -144,7 +144,7 @@ import { Option } from "@/types/app";
 import copy from "@/utils/copy";
 import List from "./components/List.vue";
 import graphs from "./components/index";
-import LogTable from "@/views/components/LogTable/Index.vue";
+import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
 import { ElMessage } from "element-plus";
 
 export default defineComponent({

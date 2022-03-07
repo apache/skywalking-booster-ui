@@ -113,7 +113,7 @@ import dayjs from "dayjs";
 import { useTraceStore } from "@/store/modules/trace";
 import copy from "@/utils/copy";
 import { ElMessage } from "element-plus";
-import LogTable from "@/views/components/LogTable/Index.vue";
+import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
 
 /* global defineProps */
 const props = defineProps({

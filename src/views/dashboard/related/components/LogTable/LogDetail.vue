@@ -41,7 +41,7 @@ import { computed } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import dayjs from "dayjs";
-import { ServiceLogDetail } from "@/views/components/LogTable/data";
+import { ServiceLogDetail } from "./data";
 
 /*global defineProps */
 const props = defineProps({
