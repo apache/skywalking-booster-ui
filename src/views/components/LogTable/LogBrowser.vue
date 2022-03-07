@@ -29,9 +29,11 @@ limitations under the License. -->
     >
       <span v-if="item.label === 'time'">{{ dateFormat(data.time) }}</span>
       <span v-else-if="item.label === 'errorUrl'">{{ data.pagePath }}</span>
-      <span v-else v-tooltip:bottom="data[item.label] || '-'">{{
-        data[item.label] || "-"
-      }}</span>
+      <el-tooltip v-else :content="data[item.label] || '-'">
+        <span>
+          {{ data[item.label] || "-" }}
+        </span>
+      </el-tooltip>
     </div>
   </div>
 </template>

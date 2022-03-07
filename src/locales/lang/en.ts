@@ -324,11 +324,12 @@ const msg = {
   logContentEmpty: "The content of the log should not be empty.",
   debug: "Debug",
   addTraceID: "Please input a trace ID",
+  addTags: "Please input a tag",
   addKeywordsOfContent: "Please input a keyword of content",
   addExcludingKeywordsOfContent: "Please input a keyword of excluding content",
   noticeTag: "Please press Enter after inputting a tag(key=value).",
   conditionNotice:
-    "Notice: Please press enter after inputting a tag, key of content, exclude key of content.",
+    "Notice: Please press Enter after inputting a tag, key of content, exclude key of content(key=value).",
   cacheModalTitle: "Clear cache reminder",
   yes: "Yes",
   no: "No",

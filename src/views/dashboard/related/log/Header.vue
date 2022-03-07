@@ -19,7 +19,7 @@ limitations under the License. -->
       <Selector
         size="small"
         :value="state.service.value"
-        :options="traceStore.services"
+        :options="logStore.services"
         placeholder="Select a service"
         @change="changeField('service', $event)"
       />
@@ -29,7 +29,7 @@ limitations under the License. -->
       <Selector
         size="small"
         :value="state.instance.value"
-        :options="traceStore.instances"
+        :options="logStore.instances"
         placeholder="Select a instance"
         @change="changeField('instance', $event)"
       />
@@ -39,48 +39,73 @@ limitations under the License. -->
       <Selector
         size="small"
         :value="state.endpoint.value"
-        :options="traceStore.endpoints"
+        :options="logStore.endpoints"
         placeholder="Select a endpoint"
         @change="changeField('endpoint', $event)"
       />
     </div>
-    <div class="mr-5">
-      <span class="grey mr-5">{{ t("status") }}:</span>
-      <Selector
-        size="small"
-        :value="state.status.value"
-        :options="Status"
-        placeholder="Select a status"
-        @change="changeField('status', $event)"
-      />
-    </div>
-    <div class="mr-5">
+  </div>
+  <div class="row tips">
+    <b>{{ t("conditionNotice") }}</b>
+  </div>
+  <div class="flex-h row">
+    <div class="mr-5 traceId">
       <span class="grey mr-5">{{ t("traceID") }}:</span>
-      <el-input v-model="traceId" class="traceId" />
+      <el-input v-model="traceId" class="inputs-max" />
     </div>
+    <ConditionTags :type="'LOG'" @update="updateTags" />
   </div>
   <div class="flex-h">
-    <!-- <div class="mr-5">
-      <span class="grey mr-5">{{ t("timeRange") }}:</span>
-      <TimePicker
-        :value="dateTime"
-        position="bottom"
-        format="YYYY-MM-DD HH:mm"
-        @input="changeTimeRange"
+    <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
+      <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
+      <span class="log-tags">
+        <span
+          class="selected"
+          v-for="(item, index) in keywordsOfContent"
+          :key="`keywordsOfContent${index}`"
+        >
+          <span>{{ item }}</span>
+          <span class="remove-icon" @click="removeContent(index)">×</span>
+        </span>
+      </span>
+      <el-input
+        class="inputs-max"
+        :placeholder="t('addKeywordsOfContent')"
+        v-model="contentStr"
+        @change="addLabels('keywordsOfContent')"
       />
-    </div> -->
-    <div class="mr-5">
-      <span class="sm b grey mr-5">{{ t("duration") }}:</span>
-      <el-input class="inputs mr-5" v-model="minTraceDuration" />
-      <span class="grey mr-5">-</span>
-      <el-input class="inputs" v-model="maxTraceDuration" />
     </div>
-    <ConditionTags :type="'TRACE'" @update="updateTags" />
+    <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
+      <span class="grey mr-5"> {{ t("excludingKeywordsOfContent") }}: </span>
+      <span class="log-tags">
+        <span
+          class="selected"
+          v-for="(item, index) in excludingKeywordsOfContent"
+          :key="`excludingKeywordsOfContent${index}`"
+        >
+          <span>{{ item }}</span>
+          <span class="remove-icon" @click="removeExcludeContent(index)">
+            ×
+          </span>
+        </span>
+      </span>
+      <el-input
+        class="inputs-max"
+        :placeholder="t('addExcludingKeywordsOfContent')"
+        v-model="excludingContentStr"
+        @keyup="addLabels('excludingKeywordsOfContent')"
+      />
+      <el-tooltip :content="t('keywordsOfContentLogTips')">
+        <span class="log-tips" v-show="!logStore.supportQueryLogsByKeywords">
+          <Icon icon="help" class="mr-5" />
+        </span>
+      </el-tooltip>
+    </div>
     <el-button
       class="search-btn"
       size="small"
       type="primary"
-      @click="searchTraces"
+      @click="searchLogs"
     >
       {{ t("search") }}
     </el-button>
@@ -90,8 +115,7 @@ limitations under the License. -->
 import { ref, reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
-import { Status } from "../../data";
-import { useTraceStore } from "@/store/modules/trace";
+import { useLogStore } from "@/store/modules/log";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -103,12 +127,14 @@ const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
-const traceStore = useTraceStore();
+const logStore = useLogStore();
 const traceId = ref<string>("");
-const minTraceDuration = ref<string>("");
-const maxTraceDuration = ref<string>("");
+const keywordsOfContent = ref<string[]>([]);
+const excludingKeywordsOfContent = ref<string[]>([]);
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
+const contentStr = ref<string>("");
+const excludingContentStr = ref<string>("");
 const state = reactive<any>({
   status: { label: "All", value: "ALL" },
   instance: { value: "0", label: "All" },
@@ -116,13 +142,15 @@ const state = reactive<any>({
   service: { value: "0", label: "All" },
 });
 
-// const dateTime = computed(() => [
-//   appStore.durationRow.start,
-//   appStore.durationRow.end,
-// ]);
 init();
-function init() {
-  searchTraces();
+async function init() {
+  const resp = await logStore.queryLogsByKeywords();
+
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  searchLogs();
   if (dashboardStore.entity === EntityType[1].value) {
     getServices();
     return;
@@ -142,31 +170,31 @@ function init() {
 }
 
 async function getServices() {
-  const resp = await traceStore.getServices(dashboardStore.layerId);
+  const resp = await logStore.getServices(dashboardStore.layerId);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.service = traceStore.services[0];
+  state.service = logStore.services[0];
 }
 
 async function getEndpoints() {
-  const resp = await traceStore.getEndpoints();
+  const resp = await logStore.getEndpoints();
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.endpoint = traceStore.endpoints[0];
+  state.endpoint = logStore.endpoints[0];
 }
 async function getInstances() {
-  const resp = await traceStore.getInstances();
+  const resp = await logStore.getInstances();
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.instance = traceStore.instances[0];
+  state.instance = logStore.instances[0];
 }
-function searchTraces() {
+function searchLogs() {
   let endpoint = "",
     instance = "";
   if (dashboardStore.entity === EntityType[2].value) {
@@ -175,25 +203,23 @@ function searchTraces() {
   if (dashboardStore.entity === EntityType[3].value) {
     instance = selectorStore.currentPod.id;
   }
-  traceStore.setTraceCondition({
+  logStore.setLogCondition({
     serviceId: selectorStore.currentService
       ? selectorStore.currentService.id
       : state.service.id,
-    traceId: traceId.value || undefined,
     endpointId: endpoint || state.endpoint.id || undefined,
     serviceInstanceId: instance || state.instance.id || undefined,
-    traceState: state.status.value || "ALL",
     queryDuration: appStore.durationTime,
-    minTraceDuration: appStore.minTraceDuration || undefined,
-    maxTraceDuration: appStore.maxTraceDuration || undefined,
-    queryOrder: "BY_DURATION",
+    keywordsOfContent: keywordsOfContent.value,
+    excludingKeywordsOfContent: excludingKeywordsOfContent.value,
     tags: tagsMap.value.length ? tagsMap.value : undefined,
     paging: { pageNum: 1, pageSize: 15, needTotal: true },
+    relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
   });
-  queryTraces();
+  queryLogs();
 }
-async function queryTraces() {
-  const res = await traceStore.getTraces();
+async function queryLogs() {
+  const res = await logStore.getLogs();
   if (res && res.errors) {
     ElMessage.error(res.errors);
   }
@@ -208,6 +234,42 @@ function changeField(type: string, opt: any) {
 function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
   tagsList.value = data.tagsList;
   tagsMap.value = data.tagsMap;
+}
+function removeContent(index: number) {
+  const keywordsOfContentList = keywordsOfContent.value || [];
+  keywordsOfContentList.splice(index, 1);
+  logStore.setLogCondition({
+    keywordsOfContent: keywordsOfContentList,
+  });
+  contentStr.value = "";
+}
+function addLabels(type: string) {
+  if (type === "keywordsOfContent" && !contentStr.value) {
+    return;
+  }
+  if (type === "excludingKeywordsOfContent" && !excludingContentStr.value) {
+    return;
+  }
+  if (type === "keywordsOfContent") {
+    keywordsOfContent.value.push(contentStr.value);
+    logStore.setLogCondition({
+      [type]: keywordsOfContent.value,
+    });
+    contentStr.value = "";
+  } else if (type === "excludingKeywordsOfContent") {
+    excludingKeywordsOfContent.value.push(excludingContentStr.value);
+    logStore.setLogCondition({
+      [type]: excludingKeywordsOfContent.value,
+    });
+    excludingContentStr.value = "";
+  }
+}
+function removeExcludeContent(index: number) {
+  excludingKeywordsOfContent.value.splice(index, 1);
+  logStore.setLogCondition({
+    excludingKeywordsOfContent: excludingKeywordsOfContent.value,
+  });
+  excludingContentStr.value = "";
 }
 watch(
   () => selectorStore.currentService,
@@ -228,12 +290,54 @@ watch(
   margin-bottom: 5px;
 }
 
-.traceId {
+.inputs-max {
   width: 270px;
+}
+
+.traceId {
+  margin-top: 2px;
 }
 
 .search-btn {
   margin-left: 20px;
+  cursor: pointer;
+}
+
+.tips {
+  color: #888;
+}
+
+.log-tag {
+  width: 30%;
+  border-style: unset;
+  outline: 0;
+  border: 1px solid #ccc;
+  height: 30px;
+  padding: 0 5px;
+}
+
+.log-tags {
+  padding: 1px 5px 0 0;
+  border-radius: 3px;
+  height: 24px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.selected {
+  display: inline-block;
+  padding: 0 3px;
+  border-radius: 3px;
+  overflow: hidden;
+  color: #3d444f;
+  border: 1px dashed #aaa;
+  font-size: 12px;
+  margin: 0 2px;
+}
+
+.remove-icon {
+  display: inline-block;
+  margin-left: 3px;
   cursor: pointer;
 }
 </style>
