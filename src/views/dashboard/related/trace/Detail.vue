@@ -166,7 +166,7 @@ export default defineComponent({
       dayjs(date).format(pattern);
     const showTraceLogs = ref<boolean>(false);
 
-    function handleClick(ids: string[]) {
+    function handleClick(ids: string[] | any) {
       let copyValue = null;
       if (ids.length === 1) {
         copyValue = ids[0];
@@ -176,7 +176,7 @@ export default defineComponent({
       copy(copyValue);
     }
 
-    async function changeTraceId(opt: Option[]) {
+    async function changeTraceId(opt: Option[] | any) {
       traceId.value = opt[0].value;
       loading.value = true;
       const res = await traceStore.getTraceSpans({ traceId: opt[0].value });

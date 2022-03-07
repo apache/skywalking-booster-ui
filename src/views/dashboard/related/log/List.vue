@@ -1,0 +1,69 @@
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+<template>
+  <div>
+    <div class="log-t-loading" v-show="loading">
+      <Icon iconName="spinner" />
+    </div>
+    <LogTable :tableData="logStore.logs || []" :type="type" :noLink="true">
+      <div class="log-tips" v-if="!logStore.logs.length">{{ t("noData") }}</div>
+    </LogTable>
+    <div class="mt-5 mb-5">
+      <el-pagination
+        v-model:currentPage="logStore.conditions.paging.pageNum"
+        v-model:page-size="pageSize"
+        layout="prev, pager, next, jumper"
+        :total="logStore.logsTotal"
+        @current-change="updatePage"
+        :style="`float: right`"
+      />
+    </div>
+  </div>
+</template>
+<script lang="ts" setup>
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import LogTable from "@/views/components/LogTable/Index.vue";
+import { useLogStore } from "@/store/modules/log";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { ElMessage } from "element-plus";
+
+/* global defineProps*/
+defineProps({
+  traceId: { type: String, default: "" },
+});
+const { t } = useI18n();
+const logStore = useLogStore();
+const dashboardStore = useDashboardStore();
+const loading = ref<boolean>(false);
+const type = ref<string>(
+  dashboardStore.layerId === "BROWSER" ? "browser" : "service"
+);
+const pageSize = ref<number>(15);
+function updatePage(p: number) {
+  logStore.setLogCondition({
+    paging: { pageNum: p, pageSize: pageSize.value, needTotal: true },
+  });
+  queryLogs();
+}
+async function queryLogs() {
+  loading.value = true;
+  const res = await logStore.getLogs();
+  if (res && res.errors) {
+    ElMessage.error(res.errors);
+  }
+  loading.value = false;
+}
+</script>

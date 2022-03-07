@@ -38,7 +38,7 @@ import dayjs from "dayjs";
 import { ServiceLogConstants } from "./data";
 /*global defineProps, defineEmits */
 const props = defineProps({
-  data: { type: Array as any, default: () => [] },
+  data: { type: Object as any, default: () => ({}) },
   noLink: { type: Boolean, default: true },
 });
 const emit = defineEmits(["select"]);

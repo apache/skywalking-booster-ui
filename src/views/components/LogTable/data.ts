@@ -48,11 +48,11 @@ export const ServiceLogConstants = [
 export const ServiceLogDetail = [
   {
     label: "serviceName",
-    value: "currentService",
+    value: "service",
   },
   {
     label: "serviceInstanceName",
-    value: "currentInstance",
+    value: "instance",
   },
   {
     label: "timestamp",
