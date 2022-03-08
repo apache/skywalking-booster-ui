@@ -141,7 +141,6 @@ const contentStr = ref<string>("");
 const excludingContentStr = ref<string>("");
 const isBrowser = ref<boolean>(dashboardStore.layerId === "BROWSER");
 const state = reactive<any>({
-  status: { label: "All", value: "ALL" },
   instance: { value: "0", label: "All" },
   endpoint: { value: "0", label: "All" },
   service: { value: "0", label: "All" },
@@ -155,6 +154,9 @@ async function init() {
     ElMessage.error(resp.errors);
     return;
   }
+  state.instance = { value: "0", label: "All" };
+  state.endpoint = { value: "0", label: "All" };
+  state.service = { value: "0", label: "All" };
   searchLogs();
   if (dashboardStore.entity === EntityType[1].value) {
     getServices();
