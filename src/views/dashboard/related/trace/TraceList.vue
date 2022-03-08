@@ -101,7 +101,7 @@ function updatePage(p: number) {
   searchTrace();
 }
 
-function changeSort(opt: Option[]) {
+function changeSort(opt: Option[] | any) {
   traceStore.setTraceCondition({
     queryOrder: opt[0].value,
     paging: { pageNum: 1, pageSize: pageSize.value, needTotal: true },

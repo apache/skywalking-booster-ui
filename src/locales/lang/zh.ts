@@ -325,10 +325,12 @@ const msg = {
   logContentEmpty: "日志数据的内容不应该是空。",
   debug: "调试",
   addTraceID: "请输入一个Trace ID",
+  addTags: "请输入一个标签",
   addKeywordsOfContent: "请输入一个内容关键词",
   addExcludingKeywordsOfContent: "请输入一个内容不包含的关键词",
   noticeTag: "请输入一个标签(key=value)之后回车",
-  conditionNotice: "请输入一个标签、内容关键词或者内容不包含的关键词之后回车",
+  conditionNotice:
+    "请输入一个标签、内容关键词或者内容不包含的关键词(key=value)之后回车",
   cacheModalTitle: "清除缓存提醒",
   yes: "是的",
   no: "不",

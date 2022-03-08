@@ -14,50 +14,44 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div @click="showSelectSpan" :class="['log-item', 'clearfix']" ref="logItem">
-    <div
-      v-for="(item, index) in columns"
-      :key="index"
-      :class="[
-        'method',
-        ['message', 'stack'].includes(item.label) ? 'autoHeight' : '',
-      ]"
-      :style="{
-        lineHeight: 1.3,
-        width: `${item.drag ? item.method : ''}px`,
-      }"
-    >
-      <span v-if="item.label === 'time'">{{ dateFormat(data.time) }}</span>
-      <span v-else-if="item.label === 'errorUrl'">{{ data.pagePath }}</span>
-      <span v-else v-tooltip:bottom="data[item.label] || '-'">{{
-        data[item.label] || "-"
-      }}</span>
+  <div @click="showSelectSpan" class="log-item">
+    <div v-for="(item, index) in columns" :key="index" :class="item.label">
+      <span v-if="item.label === 'timestamp'">
+        {{ dateFormat(data.timestamp) }}
+      </span>
+      <span v-else-if="item.label === 'tags'">
+        {{ tags }}
+      </span>
+      <router-link
+        v-else-if="item.label === 'traceId' && !noLink"
+        :to="{ name: 'trace', query: { traceid: data[item.label] } }"
+      >
+        <span :class="noLink ? '' : 'blue'">{{ data[item.label] }}</span>
+      </router-link>
+      <span v-else>{{ data[item.label] }}</span>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import { computed } from "vue";
 import dayjs from "dayjs";
-import { BrowserLogConstants } from "./data";
-
-/*global defineProps, defineEmits, NodeListOf  */
+import { ServiceLogConstants } from "./data";
+/*global defineProps, defineEmits */
 const props = defineProps({
-  data: { type: Array as any, default: () => [] },
+  data: { type: Object as any, default: () => ({}) },
+  noLink: { type: Boolean, default: true },
 });
-const columns = BrowserLogConstants;
 const emit = defineEmits(["select"]);
-
+const columns = ServiceLogConstants;
+const tags = computed(() => {
+  if (!props.data.tags) {
+    return "";
+  }
+  return String(props.data.tags.map((d: any) => `${d.key}=${d.value}`));
+});
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
-
 function showSelectSpan() {
-  const items: NodeListOf<any> = document.querySelectorAll(".log-item");
-
-  for (const item of items) {
-    item.style.background = "#fff";
-  }
-  const logItem: any = this.$refs.logItem;
-
-  logItem.style.background = "rgba(0, 0, 0, 0.1)";
   emit("select", props.data);
 }
 </script>
@@ -66,18 +60,35 @@ function showSelectSpan() {
   white-space: nowrap;
   position: relative;
   cursor: pointer;
-}
 
-.log-item.selected {
-  background: rgba(0, 0, 0, 0.04);
-}
+  .traceId {
+    width: 390px;
+    cursor: pointer;
 
-.log-item:not(.level0):hover {
-  background: rgba(0, 0, 0, 0.04);
+    span {
+      display: inline-block;
+      width: 100%;
+      line-height: 30px;
+    }
+
+    .blue {
+      color: #448dfe;
+    }
+  }
+
+  .content,
+  .tags {
+    width: 300px;
+  }
+
+  .serviceInstanceName,
+  .serviceName {
+    width: 200px;
+  }
 }
 
 .log-item:hover {
-  background: rgba(0, 0, 0, 0.04) !important;
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .log-item > div {
@@ -93,7 +104,7 @@ function showSelectSpan() {
 }
 
 .log-item .text {
-  width: 100% !important;
+  width: 100%;
   display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -101,7 +112,7 @@ function showSelectSpan() {
 }
 
 .log-item > div.method {
-  padding: 7px 5px;
-  line-height: 30px;
+  height: 100%;
+  padding: 3px 8px;
 }
 </style>

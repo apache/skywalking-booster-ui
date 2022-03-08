@@ -119,6 +119,7 @@ import Topology from "./Topology.vue";
 import Widget from "./Widget.vue";
 import Trace from "./Trace.vue";
 import Profile from "./Profile.vue";
+import Log from "./Log.vue";
 
 const props = {
   data: {
@@ -129,7 +130,7 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile },
+  components: { Topology, Widget, Trace, Profile, Log },
   props,
   setup(props) {
     const { t } = useI18n();

@@ -19,22 +19,20 @@ limitations under the License. -->
       v-for="(item, index) in columns"
       :key="index"
     >
-      <template>
-        <span class="g-sm-4 grey">{{ t(item.value) }}:</span>
-        <span v-if="item.label === 'timestamp'" class="g-sm-8">
-          {{ dateFormat(currentLog[item.label]) }}
-        </span>
-        <textarea
-          class="content"
-          :readonly="true"
-          v-else-if="item.label === 'content'"
-          :value="currentLog[item.label]"
-        />
-        <span v-else-if="item.label === 'tags'" class="g-sm-8">
-          <div v-for="(d, index) in logTags" :key="index">{{ d }}</div>
-        </span>
-        <span v-else class="g-sm-8">{{ currentLog[item.label] }}</span>
-      </template>
+      <span class="g-sm-4 grey">{{ t(item.value) }}:</span>
+      <span v-if="item.label === 'timestamp'" class="g-sm-8 mb-10">
+        {{ dateFormat(currentLog[item.label]) }}
+      </span>
+      <textarea
+        class="content mb-10"
+        :readonly="true"
+        v-else-if="item.label === 'content'"
+        :value="currentLog[item.label]"
+      />
+      <span v-else-if="item.label === 'tags'" class="g-sm-8 mb-10">
+        <div v-for="(d, index) in logTags" :key="index">{{ d }}</div>
+      </span>
+      <span v-else class="g-sm-8 mb-10">{{ currentLog[item.label] }}</span>
     </div>
   </div>
 </template>
@@ -43,7 +41,7 @@ import { computed } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import dayjs from "dayjs";
-import { ServiceLogDetail } from "@/views/components/LogTable/data";
+import { ServiceLogDetail } from "./data";
 
 /*global defineProps */
 const props = defineProps({

@@ -95,7 +95,7 @@ import { useTraceStore } from "@/store/modules/trace";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
-import ConditionTags from "@/views/components/ConditionTags.vue";
+import ConditionTags from "@/views/dashboard/related/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 
@@ -198,7 +198,7 @@ async function queryTraces() {
     ElMessage.error(res.errors);
   }
 }
-function changeField(type: string, opt: any[]) {
+function changeField(type: string, opt: any) {
   state[type] = opt[0];
   if (type === "service") {
     getEndpoints();

@@ -48,11 +48,11 @@ export const ServiceLogConstants = [
 export const ServiceLogDetail = [
   {
     label: "serviceName",
-    value: "currentService",
+    value: "service",
   },
   {
     label: "serviceInstanceName",
-    value: "currentInstance",
+    value: "instance",
   },
   {
     label: "timestamp",
@@ -96,19 +96,15 @@ export const BrowserLogConstants = [
   {
     label: "message",
     value: "message",
-    drag: true,
+    // drag: true,
     method: 350,
   },
   {
     label: "stack",
     value: "stack",
-    drag: true,
+    // drag: true,
     method: 350,
   },
-  // {
-  //   label: 'pagePath',
-  //   value: 'Page Path',
-  // },
   {
     label: "category",
     value: "category",

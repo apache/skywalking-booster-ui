@@ -168,6 +168,7 @@ export const ToolIcons = [
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "timeline", content: "Add Profile", id: "addProfile" },
+  { name: "assignment", content: "Add Log", id: "addLog" },
   // { name: "save_alt", content: "Export", id: "export" },
   // { name: "folder_open", content: "Import", id: "import" },
   // { name: "settings", content: "Settings", id: "settings" },

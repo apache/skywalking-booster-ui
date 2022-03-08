@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h" :class="{ light: theme === 'light' }">
-    <div class="mr-10 pt-5">
+    <div class="mr-5">
       <span class="sm grey" v-show="theme === 'dark'">{{ t("tags") }}: </span>
       <span
         class="trace-tags"
@@ -25,7 +25,12 @@ limitations under the License. -->
           <span class="remove-icon" @click="removeTags(index)">×</span>
         </span>
       </span>
-      <el-input v-model="tags" class="trace-new-tag" @change="addLabels" />
+      <el-input
+        v-model="tags"
+        class="trace-new-tag"
+        @change="addLabels"
+        :placeholder="t('addTags')"
+      />
       <span class="tags-tip">
         <a
           target="blank"
@@ -38,7 +43,7 @@ limitations under the License. -->
             <Icon class="icon-help mr-5" iconName="help" size="middle" />
           </span>
         </el-tooltip>
-        <b>{{ t("noticeTag") }}</b>
+        <b v-if="type === 'TRACE'">{{ t("noticeTag") }}</b>
       </span>
     </div>
   </div>
