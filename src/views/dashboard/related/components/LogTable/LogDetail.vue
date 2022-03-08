@@ -47,7 +47,6 @@ import { ServiceLogDetail } from "./data";
 const props = defineProps({
   currentLog: { type: Object as PropType<any>, default: () => ({}) },
 });
-console.log(props.currentLog);
 const { t } = useI18n();
 const columns = ServiceLogDetail;
 const logTags = computed(() => {

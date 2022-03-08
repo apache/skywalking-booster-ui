@@ -96,19 +96,15 @@ export const BrowserLogConstants = [
   {
     label: "message",
     value: "message",
-    drag: true,
+    // drag: true,
     method: 350,
   },
   {
     label: "stack",
     value: "stack",
-    drag: true,
+    // drag: true,
     method: 350,
   },
-  // {
-  //   label: 'pagePath',
-  //   value: 'Page Path',
-  // },
   {
     label: "category",
     value: "category",

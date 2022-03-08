@@ -38,6 +38,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import { ref } from "vue";
 import dayjs from "dayjs";
 import { BrowserLogConstants } from "./data";
 
@@ -47,6 +48,7 @@ const props = defineProps({
 });
 const columns = BrowserLogConstants;
 const emit = defineEmits(["select"]);
+const logItem = ref<any>(null);
 
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
@@ -57,9 +59,8 @@ function showSelectSpan() {
   for (const item of items) {
     item.style.background = "#fff";
   }
-  const logItem: any = this.$refs.logItem;
 
-  logItem.style.background = "rgba(0, 0, 0, 0.1)";
+  logItem.value.style.background = "rgba(0, 0, 0, 0.1)";
   emit("select", props.data);
 }
 </script>

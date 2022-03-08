@@ -26,7 +26,7 @@ limitations under the License. -->
         v-else-if="item.label === 'traceId' && !noLink"
         :to="{ name: 'trace', query: { traceid: data[item.label] } }"
       >
-        <span>{{ data[item.label] }}</span>
+        <span :class="noLink ? '' : 'blue'">{{ data[item.label] }}</span>
       </router-link>
       <span v-else>{{ data[item.label] }}</span>
     </div>
@@ -63,13 +63,16 @@ function showSelectSpan() {
 
   .traceId {
     width: 390px;
-    color: #448dfe;
     cursor: pointer;
 
     span {
       display: inline-block;
       width: 100%;
       line-height: 30px;
+    }
+
+    .blue {
+      color: #448dfe;
     }
   }
 

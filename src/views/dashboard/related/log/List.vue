@@ -67,3 +67,10 @@ async function queryLogs() {
   loading.value = false;
 }
 </script>
+<style lang="scss" scoped>
+.log-tips {
+  width: 100%;
+  text-align: center;
+  margin: 50px 0;
+}
+</style>

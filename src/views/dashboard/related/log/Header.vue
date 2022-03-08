@@ -25,7 +25,9 @@ limitations under the License. -->
       />
     </div>
     <div class="mr-5" v-if="dashboardStore.entity !== EntityType[3].value">
-      <span class="grey mr-5">{{ t("instance") }}:</span>
+      <span class="grey mr-5">
+        {{ isBrowser ? t("version") : t("instance") }}:
+      </span>
       <Selector
         size="small"
         :value="state.instance.value"
@@ -35,7 +37,9 @@ limitations under the License. -->
       />
     </div>
     <div class="mr-5" v-if="dashboardStore.entity !== EntityType[2].value">
-      <span class="grey mr-5">{{ t("endpoint") }}:</span>
+      <span class="grey mr-5"
+        >{{ isBrowser ? t("page") : t("endpoint") }}:</span
+      >
       <Selector
         size="small"
         :value="state.endpoint.value"
@@ -49,13 +53,13 @@ limitations under the License. -->
     <b>{{ t("conditionNotice") }}</b>
   </div>
   <div class="flex-h row">
-    <div class="mr-5 traceId">
+    <div class="mr-5 traceId" v-show="!isBrowser">
       <span class="grey mr-5">{{ t("traceID") }}:</span>
       <el-input v-model="traceId" class="inputs-max" />
     </div>
     <ConditionTags :type="'LOG'" @update="updateTags" />
   </div>
-  <div class="flex-h">
+  <div class="flex-h" v-show="!isBrowser">
     <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
       <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
       <span class="log-tags">
@@ -93,7 +97,7 @@ limitations under the License. -->
         class="inputs-max"
         :placeholder="t('addExcludingKeywordsOfContent')"
         v-model="excludingContentStr"
-        @keyup="addLabels('excludingKeywordsOfContent')"
+        @change="addLabels('excludingKeywordsOfContent')"
       />
       <el-tooltip :content="t('keywordsOfContentLogTips')">
         <span class="log-tips" v-show="!logStore.supportQueryLogsByKeywords">
@@ -135,6 +139,7 @@ const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
 const contentStr = ref<string>("");
 const excludingContentStr = ref<string>("");
+const isBrowser = ref<boolean>(dashboardStore.layerId === "BROWSER");
 const state = reactive<any>({
   status: { label: "All", value: "ALL" },
   instance: { value: "0", label: "All" },
@@ -284,7 +289,7 @@ watch(
     if (dashboardStore.entity !== EntityType[0].value) {
       return;
     }
-    init();
+    searchLogs();
   }
 );
 </script>
