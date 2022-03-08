@@ -150,7 +150,7 @@ export const dashboardStore = defineStore({
           showDepth: true,
         };
       }
-      if (type === "Trace" || type === "Profile") {
+      if (type === "Trace" || type === "Profile" || type === "Log") {
         newItem.h = 24;
       }
       if (this.layout[idx].children) {

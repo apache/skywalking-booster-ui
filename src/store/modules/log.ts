@@ -22,6 +22,7 @@ import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
+import { useDashboardStore } from "@/store/modules/dashboard";
 
 interface LogState {
   services: Service[];
@@ -33,6 +34,7 @@ interface LogState {
   supportQueryLogsByKeywords: boolean;
   logs: any[];
   logsTotal: number;
+  loadLogs: boolean;
 }
 
 export const logStore = defineStore({
@@ -50,6 +52,7 @@ export const logStore = defineStore({
     selectorStore: useSelectorStore(),
     logs: [],
     logsTotal: 0,
+    loadLogs: false,
   }),
   actions: {
     setLogCondition(data: any) {
@@ -111,22 +114,33 @@ export const logStore = defineStore({
       return res.data;
     },
     async getLogs() {
+      const dashboardStore = useDashboardStore();
+      if (dashboardStore.layerId === "BROWSER") {
+        return this.getBrowserLogs();
+      }
+      return this.getServiceLogs();
+    },
+    async getServiceLogs() {
+      this.loadLogs = true;
       const res: AxiosResponse = await graphql
         .query("queryServiceLogs")
         .params({ condition: this.conditions });
-
+      this.loadLogs = false;
       if (res.data.errors) {
         return res.data;
       }
+
       this.logs = res.data.data.queryLogs.logs;
       this.logsTotal = res.data.data.queryLogs.total;
       return res.data;
     },
     async getBrowserLogs() {
+      this.loadLogs = true;
       const res: AxiosResponse = await graphql
         .query("queryBrowserErrorLogs")
         .params({ condition: this.conditions });
 
+      this.loadLogs = false;
       if (res.data.errors) {
         return res.data;
       }

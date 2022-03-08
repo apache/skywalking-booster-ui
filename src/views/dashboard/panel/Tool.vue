@@ -309,6 +309,9 @@ function setTabControls(id: string) {
     case "addTrace":
       dashboardStore.addTabControls("Trace");
       break;
+    case "addLog":
+      dashboardStore.addTabControls("Log");
+      break;
     case "addProfile":
       dashboardStore.addTabControls("Profile");
       break;
@@ -335,10 +338,10 @@ function setControls(id: string) {
     case "addProfile":
       dashboardStore.addControl("Profile");
       break;
-    case "log":
+    case "addLog":
       dashboardStore.addControl("Log");
       break;
-    case "topology":
+    case "addTopology":
       dashboardStore.addControl("Topology");
       break;
     case "settings":

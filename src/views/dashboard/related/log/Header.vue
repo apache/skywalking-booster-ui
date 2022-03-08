@@ -224,13 +224,6 @@ function searchLogs() {
   queryLogs();
 }
 async function queryLogs() {
-  if (dashboardStore.layerId === "Browser") {
-    const res = await logStore.getBrowserLogs();
-    if (res && res.errors) {
-      ElMessage.error(res.errors);
-    }
-    return;
-  }
   const res = await logStore.getLogs();
   if (res && res.errors) {
     ElMessage.error(res.errors);
@@ -289,7 +282,7 @@ watch(
     if (dashboardStore.entity !== EntityType[0].value) {
       return;
     }
-    searchLogs();
+    init();
   }
 );
 </script>
