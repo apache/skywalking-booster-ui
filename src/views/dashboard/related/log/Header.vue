@@ -158,6 +158,10 @@ async function init() {
   state.endpoint = { value: "0", label: "All" };
   state.service = { value: "0", label: "All" };
   searchLogs();
+  fetchSelectors();
+}
+
+function fetchSelectors() {
   if (dashboardStore.entity === EntityType[1].value) {
     getServices();
     return;
@@ -281,7 +285,15 @@ function removeExcludeContent(index: number) {
 watch(
   () => selectorStore.currentService,
   () => {
-    if (dashboardStore.entity !== EntityType[0].value) {
+    if (dashboardStore.entity === EntityType[0].value) {
+      init();
+    }
+  }
+);
+watch(
+  () => [selectorStore.currentPod],
+  () => {
+    if (dashboardStore.entity === EntityType[0].value) {
       return;
     }
     init();
