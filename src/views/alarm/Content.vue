@@ -17,7 +17,7 @@ limitations under the License. -->
     <div
       v-for="(i, index) in alarmStore.alarms"
       :key="index"
-      class="mb-10 clear timeline-item"
+      class="clear timeline-item"
       @click="showDetails(i)"
     >
       <div class="g-sm-3 grey sm hide-xs time-line tr">
@@ -43,30 +43,97 @@ limitations under the License. -->
       </div>
     </div>
   </div>
+  <el-dialog
+    v-model="isShowDetails"
+    :title="t('alarmDetail')"
+    fullscreen
+    :destroy-on-close="true"
+    @closed="isShowDetails = false"
+  >
+    <div
+      class="mb-10 clear alarm-detail"
+      v-for="(item, index) in AlarmDetailCol"
+      :key="index"
+    >
+      <span class="g-sm-2 grey">{{ t(item.value) }}:</span>
+      <span v-if="item.label === 'startTime'">
+        {{ dateFormat(currentDetail[item.label]) }}
+      </span>
+      <span v-else-if="item.label === 'tags'">
+        <div v-for="(d, index) in alarmTags" :key="index">{{ d }}</div>
+      </span>
+      <span v-else-if="item.label === 'events'" class="event-detail">
+        <div>
+          <ul>
+            <li>
+              <span
+                v-for="(i, index) of EventsDetailHeaders"
+                :class="i.class"
+                :key="i.class + index"
+              >
+                {{ t(i.text) }}
+              </span>
+            </li>
+            <li
+              v-for="event in currentEvents"
+              :key="event.uuid"
+              @click="viewEventDetail(event)"
+            >
+              <span
+                v-for="(d, index) of EventsDetailHeaders"
+                :class="d.class"
+                :key="event.uuid + index"
+              >
+                <span v-if="d.class === 'startTime' || d.class === 'endTime'">
+                  {{ dateFormat(event[d.class]) }}
+                </span>
+                <span v-else>
+                  {{ event[d.class] }}
+                </span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </span>
+      <span v-else>{{ currentDetail[item.label] }}</span>
+    </div>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
-import { Alarm } from "@/types/alarm";
+import { Alarm, Event } from "@/types/alarm";
 import { useAlarmStore } from "@/store/modules/alarm";
+import { EventsDetailHeaders, AlarmDetailCol } from "./data";
 
 const { t } = useI18n();
 const alarmStore = useAlarmStore();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
+const isShowDetails = ref<boolean>(false);
+const showEventDetails = ref<boolean>(false);
 const currentDetail = ref<Alarm | any>({});
 const alarmTags = ref<string[]>([]);
+const currentEvents = ref<any[]>([]);
+const currentEvent = ref<Event | any>({});
 
 function showDetails(item: Alarm) {
+  isShowDetails.value = true;
   currentDetail.value = item;
+  currentEvents.value = item.events;
   alarmTags.value = currentDetail.value.tags.map(
     (d: { key: string; value: string }) => {
       return `${d.key} = ${d.value}`;
     }
   );
 }
+
+function viewEventDetail(event: Event) {
+  currentEvent.value = event;
+  showEventDetails.value = true;
+}
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 @import "./index.scss";
 </style>

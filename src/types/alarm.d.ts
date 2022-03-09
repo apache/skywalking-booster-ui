@@ -26,7 +26,7 @@ export interface Alarm {
   startTime: string;
   scope: string;
   tags: Array<{ key: string; value: string }>;
-  events: any[];
+  events: Event[];
 }
 
 export interface Event {
