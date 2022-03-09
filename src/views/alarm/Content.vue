@@ -98,6 +98,50 @@ limitations under the License. -->
       <span v-else>{{ currentDetail[item.label] }}</span>
     </div>
   </el-dialog>
+  <el-dialog
+    v-model="showEventDetails"
+    :title="t('eventDetail')"
+    fullscreen
+    :destroy-on-close="true"
+    @closed="showEventDetails = false"
+  >
+    <div class="event-detail">
+      <div
+        class="mb-10"
+        v-for="(eventKey, index) in EventsDetailKeys"
+        :key="index"
+      >
+        <span class="keys">{{ t(eventKey.text) }}</span>
+        <span v-if="eventKey.class === 'parameters'">
+          <span v-for="(d, index) of currentEvent[eventKey.class]" :key="index">
+            {{ d.key }}={{ d.value }};
+          </span>
+        </span>
+        <span
+          v-else-if="
+            eventKey.class === 'startTime' || eventKey.class === 'endTime'
+          "
+        >
+          {{ dateFormat(currentEvent[eventKey.class]) }}
+        </span>
+        <span v-else-if="eventKey.class === 'source'" class="source">
+          <span
+            >{{ t("currentService") }}:
+            {{ currentEvent[eventKey.class].service }}</span
+          >
+          <div v-show="currentEvent[eventKey.class].endpoint">
+            {{ t("currentEndpoint") }}:
+            {{ currentEvent[eventKey.class].endpoint }}
+          </div>
+          <div v-show="currentEvent[eventKey.class].serviceInstance">
+            {{ t("currentInstance") }}:
+            {{ currentEvent[eventKey.class].serviceInstance }}
+          </div>
+        </span>
+        <span v-else>{{ currentEvent[eventKey.class] }}</span>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
@@ -105,7 +149,7 @@ import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { Alarm, Event } from "@/types/alarm";
 import { useAlarmStore } from "@/store/modules/alarm";
-import { EventsDetailHeaders, AlarmDetailCol } from "./data";
+import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys } from "./data";
 
 const { t } = useI18n();
 const alarmStore = useAlarmStore();

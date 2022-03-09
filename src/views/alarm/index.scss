@@ -93,23 +93,23 @@
       border-bottom: 1px solid #ccc;
       overflow: hidden;
     }
-
-    .uuid {
-      width: 280px;
-    }
   }
+}
 
-  .keys {
-    font-weight: bold;
-    display: inline-block;
-    width: 120px;
-  }
+.keys {
+  font-weight: bold;
+  display: inline-block;
+  width: 120px;
+}
 
-  .source > span {
-    display: inline-block;
-  }
+.source > span {
+  display: inline-block;
+}
 
-  .source > div {
-    padding-left: 120px;
-  }
+.source > div {
+  padding-left: 120px;
+}
+
+.uuid {
+  width: 280px;
 }
