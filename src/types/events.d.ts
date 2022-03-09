@@ -37,3 +37,9 @@ export interface QueryEventCondition {
   order: string;
   paging: { pageNum: number; pageSize: number; needTotal: boolean };
 }
+
+type SourceInput = {
+  service: string;
+  serviceInstance: string;
+  endpoint: string;
+};

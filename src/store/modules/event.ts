@@ -89,14 +89,28 @@ export const eventStore = defineStore({
       return res.data;
     },
     async getEvents() {
+      this.loading = true;
       const res: AxiosResponse = await graphql
         .query("queryEvents")
         .params({ condition: this.condition });
+      this.loading = false;
       if (res.data.errors) {
         return res.data;
       }
       if (res.data.data.fetchEvents) {
-        this.events = res.data.data.fetchEvents.events;
+        this.events = (res.data.data.fetchEvents.events || []).map(
+          (item: Event) => {
+            let scope = "Service";
+            if (item.source.serviceInstance) {
+              scope = "ServiceInstance";
+            }
+            if (item.source.endpoint) {
+              scope = "Endpoint";
+            }
+            item.scope = scope;
+            return item;
+          }
+        );
         this.total = res.data.data.fetchEvents.total;
       }
       return res.data;

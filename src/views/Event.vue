@@ -15,11 +15,13 @@ limitations under the License. -->
 <template>
   <div class="event flex-v">
     <Header />
+    <Content />
   </div>
 </template>
 <script lang="ts" setup>
 import { useAppStoreWithOut } from "@/store/modules/app";
 import Header from "./event/Header.vue";
+import Content from "./event/Content.vue";
 
 const appStore = useAppStoreWithOut();
 
