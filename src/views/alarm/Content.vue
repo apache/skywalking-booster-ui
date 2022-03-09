@@ -18,12 +18,11 @@ limitations under the License. -->
       v-for="(i, index) in alarmStore.alarms"
       :key="index"
       class="clear timeline-item"
-      @click="showDetails(i)"
     >
       <div class="g-sm-3 grey sm hide-xs time-line tr">
         {{ dateFormat(parseInt(i.startTime)) }}
       </div>
-      <div class="timeline-table-i g-sm-9">
+      <div class="timeline-table-i g-sm-9" @click="showDetails(i)">
         <div class="message mb-5 b">
           {{ i.message }}
         </div>
@@ -42,6 +41,7 @@ limitations under the License. -->
         </div>
       </div>
     </div>
+    <div v-if="!alarmStore.alarms.length" class="tips">{{ t("noData") }}</div>
   </div>
   <el-dialog
     v-model="isShowDetails"
@@ -126,15 +126,15 @@ limitations under the License. -->
         </span>
         <span v-else-if="eventKey.class === 'source'" class="source">
           <span
-            >{{ t("currentService") }}:
+            >{{ t("service") }}:
             {{ currentEvent[eventKey.class].service }}</span
           >
           <div v-show="currentEvent[eventKey.class].endpoint">
-            {{ t("currentEndpoint") }}:
+            {{ t("endpoint") }}:
             {{ currentEvent[eventKey.class].endpoint }}
           </div>
           <div v-show="currentEvent[eventKey.class].serviceInstance">
-            {{ t("currentInstance") }}:
+            {{ t("instance") }}:
             {{ currentEvent[eventKey.class].serviceInstance }}
           </div>
         </span>
@@ -180,4 +180,11 @@ function viewEventDetail(event: Event) {
 </script>
 <style lang="scss" scoped>
 @import "./index.scss";
+
+.tips {
+  width: 100%;
+  margin: 20px 0;
+  text-align: center;
+  font-size: 14px;
+}
 </style>

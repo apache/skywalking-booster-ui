@@ -22,7 +22,7 @@ limitations under the License. -->
           :options="AlarmOptions"
           placeholder="Select a layer"
           @change="changeEntity"
-          class="selectors"
+          class="alarm-tool-input"
           size="small"
         />
       </div>
@@ -34,16 +34,18 @@ limitations under the License. -->
           @change="refreshAlarms({ pageNum: 1 })"
         />
       </div>
-      <el-pagination
-        v-model:currentPage="pageNum"
-        v-model:page-size="pageSize"
-        layout="prev, pager, next, jumper"
-        :total="alarmStore.total"
-        @current-change="changePage"
-        :pager-count="5"
-        small
-        :style="`--el-pagination-bg-color: #f0f2f5; --el-pagination-button-disabled-bg-color: #f0f2f5;`"
-      />
+      <div class="pagination">
+        <el-pagination
+          v-model:currentPage="pageNum"
+          v-model:page-size="pageSize"
+          layout="prev, jumper, total, next"
+          :total="alarmStore.total"
+          @current-change="changePage"
+          :pager-count="5"
+          small
+          :style="`--el-pagination-bg-color: #f0f2f5; --el-pagination-button-disabled-bg-color: #f0f2f5;`"
+        />
+      </div>
     </div>
     <ConditionTags
       :type="'ALARM'"
@@ -91,6 +93,7 @@ async function refreshAlarms(param: { pageNum: number; tagsMap?: any }) {
 
 function changeEntity(param: any) {
   entity.value = param[0].value;
+  refreshAlarms({ pageNum: 1 });
 }
 
 function changePage(p: number) {
@@ -104,9 +107,7 @@ function changePage(p: number) {
   border-bottom: 1px solid #c1c5ca41;
   background-color: #f0f2f5;
   padding: 10px;
-  // color: #efefef;
-  flex-shrink: 0;
-  justify-content: space-between;
+  position: relative;
 }
 
 .alarm-tool-input {
@@ -115,5 +116,11 @@ function changePage(p: number) {
   padding: 2px 5px;
   width: 250px;
   border-radius: 3px;
+}
+
+.pagination {
+  position: absolute;
+  top: 10px;
+  right: 5px;
 }
 </style>

@@ -187,7 +187,7 @@ const msg = {
   list: "List",
   tree: "Tree",
   filterScope: "Filter Scope",
-  searchKeyword: "Search Keyword",
+  searchKeyword: "Keyword",
   quarterHourCutTip: "Last 15 mins",
   halfHourCutTip: "Last 30 mins",
   hourCutTip: "Last 1 hour",
