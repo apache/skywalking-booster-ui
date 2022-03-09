@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 module.exports = {
-  outputDir: "lib",
+  outputDir: "dist",
   productionSourceMap: false,
   devServer: {
     proxy: {
