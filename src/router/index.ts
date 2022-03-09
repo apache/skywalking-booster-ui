@@ -21,7 +21,6 @@ import { routesMesh } from "./serviceMesh";
 import { routesDatabase } from "./database";
 import { routesInfra } from "./infrastructure";
 import { routesDashboard } from "./dashboard";
-// import { routesLog } from "./log";
 import { routesEvent } from "./event";
 import { routesSetting } from "./setting";
 import { routesAlarm } from "./alarm";
@@ -32,9 +31,9 @@ const routes: Array<RouteRecordRaw> = [
   ...routesDatabase,
   ...routesInfra,
   ...routesDashboard,
+  ...routesAlarm,
   ...routesEvent,
   ...routesSetting,
-  ...routesAlarm,
 ];
 
 const router = createRouter({

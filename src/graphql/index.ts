@@ -23,6 +23,7 @@ import * as topology from "./query/topology";
 import * as trace from "./query/trace";
 import * as log from "./query/log";
 import * as profile from "./query/profile";
+import * as alarm from "./query/alarm";
 
 const query: { [key: string]: string } = {
   ...app,
@@ -32,6 +33,7 @@ const query: { [key: string]: string } = {
   ...trace,
   ...log,
   ...profile,
+  ...alarm,
 };
 class Graphql {
   private queryData = "";
