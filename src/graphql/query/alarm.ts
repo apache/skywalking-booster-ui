@@ -14,29 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
 
-export const routesAlarm: Array<RouteRecordRaw> = [
-  {
-    path: "",
-    name: "Alarm",
-    meta: {
-      title: "alarm",
-      icon: "spam",
-      hasGroup: false,
-      exact: true,
-    },
-    component: Layout,
-    children: [
-      {
-        path: "/alarm",
-        name: "Alarm",
-        meta: {
-          exact: false,
-        },
-        component: () => import("@/views/Alarm.vue"),
-      },
-    ],
-  },
-];
+import { Alarm } from "../fragments/alarm";
+
+export const queryAlarms = `query queryAlarms(${Alarm.variable}) {${Alarm.query}}`;

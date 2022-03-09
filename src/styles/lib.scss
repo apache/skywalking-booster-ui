@@ -146,6 +146,12 @@
 .mr-20 {
   margin-right: 20px;
 }
+
+.clear::after {
+  display: table;
+  content: "";
+  clear: both;
+}
 @keyframes loading {
   0% {
     transform: rotate(0deg);

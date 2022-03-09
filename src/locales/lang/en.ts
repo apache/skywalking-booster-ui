@@ -223,7 +223,7 @@ const msg = {
   view: "View",
   timeTips: "Time interval cannot exceed 60 days",
   standardAPM: "Standard",
-  entityType: "Entity type",
+  entityType: "Entity Type",
   maxItemNum: "Max number of Item",
   independentSelector: "Selectors",
   unknownMetrics: "Unknown Metrics",

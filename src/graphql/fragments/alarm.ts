@@ -14,29 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
 
-export const routesAlarm: Array<RouteRecordRaw> = [
-  {
-    path: "",
-    name: "Alarm",
-    meta: {
-      title: "alarm",
-      icon: "spam",
-      hasGroup: false,
-      exact: true,
-    },
-    component: Layout,
-    children: [
-      {
-        path: "/alarm",
-        name: "Alarm",
-        meta: {
-          exact: false,
-        },
-        component: () => import("@/views/Alarm.vue"),
-      },
-    ],
-  },
-];
+export const Alarm = {
+  variable:
+    "$keyword: String, $scope: Scope, $duration:Duration!, $tags:[AlarmTag], $paging: Pagination!",
+  query: `
+    getAlarm(keyword: $keyword, scope: $scope, duration: $duration, paging: $paging, tags: $tags) {
+      items: msgs {
+        key: id
+        message
+        startTime
+        scope
+        tags {
+          key
+          value
+        }
+        events {
+          uuid
+          source {
+            service serviceInstance endpoint
+          }
+          name
+          type
+          message
+          parameters {
+            key
+            value
+          }
+          startTime
+          endTime
+        }
+      }
+      total
+    }`,
+};

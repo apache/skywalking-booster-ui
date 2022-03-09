@@ -43,7 +43,7 @@ limitations under the License. -->
             <Icon class="icon-help mr-5" iconName="help" size="middle" />
           </span>
         </el-tooltip>
-        <b v-if="type === 'TRACE'">{{ t("noticeTag") }}</b>
+        <b v-if="type !== 'LOG'">{{ t("noticeTag") }}</b>
       </span>
     </div>
   </div>
@@ -59,7 +59,6 @@ defineProps({
 });
 const { t } = useI18n();
 const theme = ref<string>("dark");
-const type = ref<string>("");
 const tags = ref<string>("");
 const tagsList = ref<string[]>([]);
 
