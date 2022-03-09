@@ -13,15 +13,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="about">{{ props.msg }}</div>
+  <div class="event flex-v">
+    <Header />
+  </div>
 </template>
 <script lang="ts" setup>
 import { useAppStoreWithOut } from "@/store/modules/app";
+import Header from "./event/Header.vue";
 
 const appStore = useAppStoreWithOut();
-appStore.setPageTitle("Log");
-/*global defineProps */
-const props = defineProps({
-  msg: String,
-});
+
+appStore.setPageTitle("Events");
 </script>
+<style lang="scss" scoped>
+.event {
+  flex-grow: 1;
+  height: 100%;
+  font-size: 12px;
+}
+</style>

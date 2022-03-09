@@ -14,34 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
-
-export const routesLog: Array<RouteRecordRaw> = [
-  {
-    path: "",
-    name: "Logs",
-    meta: {
-      title: "logs",
-      icon: "assignment",
-      hasGroup: false,
-      exact: false,
-    },
-    component: Layout,
-    children: [
-      {
-        path: "/log",
-        name: "Logs",
-        meta: {
-          title: "log",
-          exact: false,
-        },
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () =>
-          import(/* webpackChunkName: "about" */ "@/views/Log.vue"),
-      },
-    ],
-  },
-];
+export const FetchEvents = {
+  variable: ["$condition: EventQueryCondition"],
+  query: `
+  fetchEvents: queryEvents(condition: $condition) {
+    events {
+      uuid
+      source {
+        service
+        serviceInstance
+        endpoint
+      }
+      name
+      type
+      message
+      parameters {
+        key
+        value
+      }
+      startTime
+      endTime
+    }
+    total
+  }`,
+};
