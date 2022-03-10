@@ -21,7 +21,13 @@ limitations under the License. -->
     </router-view>
   </section>
 </template>
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useAppStoreWithOut } from "@/store/modules/app";
+
+const appStore = useAppStoreWithOut();
+
+appStore.queryOAPTimeInfo();
+</script>
 <style lang="scss" scoped>
 .app-main {
   height: calc(100% - 40px);

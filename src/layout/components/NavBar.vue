@@ -70,7 +70,7 @@ const handleReload = () => {
   const time: Date[] = [new Date(new Date().getTime() - gap), new Date()];
   appStore.setDuration(timeFormat(time));
 };
-function changeTimeRange(val: Date[]) {
+function changeTimeRange(val: Date[] | any) {
   timeRange.value =
     val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
   if (timeRange.value) {

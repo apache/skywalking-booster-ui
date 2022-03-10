@@ -19,9 +19,9 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import { Duration, DurationTime } from "@/types/app";
 import getLocalTime from "@/utils/localtime";
-import getDurationRow from "@/utils/dateTime";
 import { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
+import { TimeType } from "@/constants/data";
 /*global Nullable*/
 interface AppState {
   durationRow: any;
@@ -37,7 +37,11 @@ interface AppState {
 export const appStore = defineStore({
   id: "app",
   state: (): AppState => ({
-    durationRow: getDurationRow(),
+    durationRow: {
+      start: new Date(new Date().getTime() - 1800000),
+      end: new Date(),
+      step: TimeType.MINUTE_TIME,
+    },
     utc: "",
     utcHour: 0,
     utcMin: 0,
