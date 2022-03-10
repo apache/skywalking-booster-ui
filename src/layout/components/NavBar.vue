@@ -46,11 +46,9 @@ const route = useRoute();
 const pageName = ref<string>("");
 const timeRange = ref<number>(0);
 const theme = ref<string>("light");
-let utc = localStorage.getItem("utc") || "";
+let utc = appStore.utc || "";
 if (!utc.includes(":")) {
-  utc =
-    (localStorage.getItem("utc") || -(new Date().getTimezoneOffset() / 60)) +
-    ":0";
+  utc = (appStore.utc || -(new Date().getTimezoneOffset() / 60)) + ":0";
 }
 const utcArr = (utc || "").split(":");
 const utcHour = isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]);

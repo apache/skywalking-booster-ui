@@ -14,9 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
-
 const getLocalTime = (utc: string, time: Date): Date => {
   const utcArr = utc.split(":");
   const utcHour = isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]);
@@ -26,33 +23,6 @@ const getLocalTime = (utc: string, time: Date): Date => {
   const offset = d.getTimezoneOffset() * 60000;
   const utcTime = len + offset;
   return new Date(utcTime + 3600000 * utcHour + utcMin * 60000);
-};
-
-const setTimezoneOffset = () => {
-  window.localStorage.setItem(
-    "utc",
-    -(new Date().getTimezoneOffset() / 60) + ":0"
-  );
-};
-
-export const queryOAPTimeInfo = async (): Promise<void> => {
-  let utc = window.localStorage.getItem("utc");
-  if (!utc) {
-    const res: AxiosResponse = await graphql
-      .query("queryOAPTimeInfo")
-      .params({});
-    if (
-      !res.data ||
-      !res.data.data ||
-      !res.data.data.getTimeInfo ||
-      !res.data.data.getTimeInfo.timezone
-    ) {
-      setTimezoneOffset();
-      return;
-    }
-    utc = res.data.data.getTimeInfo.timezone / 100 + ":0";
-    window.localStorage.setItem("utc", utc);
-  }
 };
 
 export default getLocalTime;

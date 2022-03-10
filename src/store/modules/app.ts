@@ -16,9 +16,11 @@
  */
 import { defineStore } from "pinia";
 import { store } from "@/store";
+import graphql from "@/graphql";
 import { Duration, DurationTime } from "@/types/app";
 import getLocalTime from "@/utils/localtime";
 import getDurationRow from "@/utils/dateTime";
+import { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 /*global Nullable*/
 interface AppState {
@@ -116,7 +118,6 @@ export const appStore = defineStore({
       this.utcMin = utcMin;
       this.utcHour = utcHour;
       this.utc = `${utcHour}:${utcMin}`;
-      localStorage.setItem("utc", this.utc);
     },
     setEventStack(funcs: (() => void)[]): void {
       this.eventStack = funcs;
@@ -138,6 +139,21 @@ export const appStore = defineStore({
           }),
         500
       );
+    },
+    async queryOAPTimeInfo() {
+      const res: AxiosResponse = await graphql
+        .query("queryOAPTimeInfo")
+        .params({});
+      if (
+        !res.data ||
+        !res.data.data ||
+        !res.data.data.getTimeInfo ||
+        !res.data.data.getTimeInfo.timezone
+      ) {
+        this.utc = -(new Date().getTimezoneOffset() / 60) + ":0";
+        return;
+      }
+      this.utc = res.data.data.getTimeInfo.timezone / 100 + ":0";
     },
   },
 });

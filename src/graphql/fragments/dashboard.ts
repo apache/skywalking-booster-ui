@@ -18,6 +18,7 @@ export const TypeOfMetrics = {
   variable: "$name: String!",
   query: `typeOfMetrics(name: $name)`,
 };
+
 export const listMetrics = {
   variable: "$regex: String",
   query: `
@@ -27,5 +28,14 @@ export const listMetrics = {
     type
     catalog
   }
+  `,
+};
+
+export const getAllTemplates = {
+  query: `
+    getAllTemplates {
+      id,
+      configuration,
+    }
   `,
 };
