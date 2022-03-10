@@ -38,7 +38,7 @@ export const eventStore = defineStore({
     loading: false,
     events: [],
     total: 0,
-    services: [{ value: "", label: "All" }],
+    services: [{ value: "", label: "" }],
     instances: [{ value: "", label: "All" }],
     endpoints: [{ value: "", label: "All" }],
     condition: {

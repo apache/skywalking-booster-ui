@@ -29,7 +29,7 @@ limitations under the License. -->
       <div class="mr-5">
         <span class="grey">{{ t("service") }}: </span>
         <Selector
-          v-model="state.service.value"
+          v-model="state.service"
           :options="eventStore.services"
           placeholder="Select a service"
           @change="selectService"
@@ -40,7 +40,7 @@ limitations under the License. -->
       <div class="mr-5">
         <span class="grey mr-5">{{ t("instance") }}: </span>
         <Selector
-          v-model="state.instance.value"
+          v-model="state.instance"
           :options="eventStore.instances"
           placeholder="Select a instance"
           @change="selectInstance"
@@ -51,7 +51,7 @@ limitations under the License. -->
       <div class="mr-5">
         <span class="grey mr-5">{{ t("endpoint") }}: </span>
         <Selector
-          v-model="state.endpoint.value"
+          v-model="state.endpoint"
           :options="eventStore.endpoints"
           placeholder="Select a endpoint"
           @change="selectEndpoint"
@@ -71,7 +71,7 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <div class="flex-h mt-5">
+    <div class="mt-5">
       <el-pagination
         v-model:currentPage="pageNum"
         v-model:page-size="pageSize"
@@ -82,12 +82,12 @@ limitations under the License. -->
         small
         :style="`--el-pagination-bg-color: #f0f2f5; --el-pagination-button-disabled-bg-color: #f0f2f5;`"
       />
-      <div>
+      <!-- <div>
         <el-button class="search" type="primary" @click="queryEvents">
           <Icon iconName="search" class="mr-5" />
           <span class="vm">{{ t("search") }}</span>
         </el-button>
-      </div>
+      </div> -->
     </div>
   </nav>
 </template>
@@ -108,16 +108,16 @@ const state = reactive<{
   currentLayer: string;
   layers: string[];
   eventType: string;
-  service: { id: string; value: string; label: string };
-  instance: { id: string; value: string; label: string };
-  endpoint: { id: string; value: string; label: string };
+  service: string;
+  instance: string;
+  endpoint: string;
 }>({
   currentLayer: "",
   layers: [],
   eventType: "",
-  service: { id: "", value: "", label: "" },
-  instance: { id: "", value: "", label: "" },
-  endpoint: { id: "", value: "", label: "" },
+  service: "",
+  instance: "",
+  endpoint: "",
 });
 
 getSelectors();
@@ -127,14 +127,7 @@ async function getSelectors() {
   if (!state.currentLayer) {
     return;
   }
-  await getServices();
-  if (!state.service.id) {
-    queryEvents();
-    return;
-  }
-  getEndpoints();
-  getInstances();
-  queryEvents();
+  getServices();
 }
 
 async function getServices() {
@@ -143,24 +136,31 @@ async function getServices() {
     ElMessage.error(resp.errors);
     return;
   }
-  state.service = eventStore.services[0];
+  state.service = eventStore.services[0].value;
+  if (!eventStore.services[0].id) {
+    queryEvents();
+    return;
+  }
+  getEndpoints(eventStore.services[0].id);
+  getInstances(eventStore.services[0].id);
+  queryEvents();
 }
 
-async function getEndpoints() {
-  const resp = await eventStore.getEndpoints(state.service.id);
+async function getEndpoints(id: string) {
+  const resp = await eventStore.getEndpoints(id);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.endpoint = eventStore.endpoints[0];
+  state.endpoint = eventStore.endpoints[0].value;
 }
-async function getInstances() {
-  const resp = await eventStore.getInstances(state.service.id);
+async function getInstances(id: string) {
+  const resp = await eventStore.getInstances(id);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.instance = eventStore.instances[0];
+  state.instance = eventStore.instances[0].value;
 }
 
 async function getLayers() {
@@ -183,9 +183,9 @@ async function queryEvents() {
       needTotal: true,
     },
     source: {
-      service: state.service.value || "",
-      endpoint: state.endpoint.value || "",
-      serviceInstance: state.instance.value || "",
+      service: state.service || "",
+      endpoint: state.endpoint || "",
+      serviceInstance: state.instance || "",
     },
     type: state.eventType || undefined,
   });
@@ -198,32 +198,31 @@ async function queryEvents() {
 async function selectLayer(opt: any) {
   state.currentLayer = opt[0].value;
   await getServices();
-  if (!state.service.id) {
-    return;
-  }
-  getEndpoints();
-  getInstances();
 }
 
 function selectService(opt: any) {
-  state.service = opt[0];
-  if (!state.service.id) {
+  state.service = opt[0].value;
+  queryEvents();
+  if (!opt[0].id) {
     return;
   }
-  getEndpoints();
-  getInstances();
+  getEndpoints(opt[0].id);
+  getInstances(opt[0].id);
 }
 
 function selectInstance(opt: any) {
-  state.instance = opt[0];
+  state.instance = opt[0].value;
+  queryEvents();
 }
 
 function selectEndpoint(opt: any) {
-  state.endpoint = opt[0];
+  state.endpoint = opt[0].value;
+  queryEvents();
 }
 
 function selectType(opt: any) {
   state.eventType = opt[0].value;
+  queryEvents();
 }
 
 function updatePage(p: number) {

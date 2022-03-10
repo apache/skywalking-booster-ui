@@ -72,15 +72,15 @@ limitations under the License. -->
         >
         <span v-else-if="eventKey.class === 'source'" class="source">
           <span
-            >{{ t("currentService") }}:
+            >{{ t("service") }}:
             {{ currentEvent[eventKey.class].service }}</span
           >
           <div v-show="currentEvent[eventKey.class].endpoint">
-            {{ t("currentEndpoint") }}:
+            {{ t("endpoint") }}:
             {{ currentEvent[eventKey.class].endpoint }}
           </div>
           <div v-show="currentEvent[eventKey.class].serviceInstance">
-            {{ t("currentInstance") }}:
+            {{ t("instance") }}:
             {{ currentEvent[eventKey.class].serviceInstance }}
           </div>
         </span>
