@@ -124,9 +124,6 @@ getSelectors();
 
 async function getSelectors() {
   await getLayers();
-  if (!state.currentLayer) {
-    return;
-  }
   getServices();
 }
 
@@ -169,10 +166,13 @@ async function getLayers() {
     ElMessage.error(resp.errors);
     return;
   }
-  state.currentLayer = resp.data.layers[0] || "";
-  state.layers = resp.data.layers.map((d: string) => {
-    return { label: d, value: d };
-  });
+  state.currentLayer = "";
+  state.layers = [
+    { label: "All", value: "" },
+    ...resp.data.layers.map((d: string) => {
+      return { label: d, value: d };
+    }),
+  ];
 }
 
 async function queryEvents() {
