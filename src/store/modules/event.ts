@@ -38,7 +38,7 @@ export const eventStore = defineStore({
     loading: false,
     events: [],
     total: 0,
-    services: [{ value: "", label: "" }],
+    services: [{ value: "", label: "All" }],
     instances: [{ value: "", label: "All" }],
     endpoints: [{ value: "", label: "All" }],
     condition: {
@@ -51,6 +51,10 @@ export const eventStore = defineStore({
       this.condition = { ...this.condition, ...data };
     },
     async getServices(layer: string) {
+      if (!layer) {
+        this.services = [{ value: "", label: "All" }];
+        return new Promise((resolve) => resolve([]));
+      }
       const res: AxiosResponse = await graphql.query("queryServices").params({
         layer,
       });
