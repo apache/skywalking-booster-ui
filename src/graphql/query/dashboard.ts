@@ -14,14 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  TypeOfMetrics,
-  queryHeatMap,
-  listMetrics,
-} from "../fragments/dashboard";
+import { TypeOfMetrics, listMetrics } from "../fragments/dashboard";
 
 export const queryTypeOfMetrics = `query typeOfMetrics(${TypeOfMetrics.variable}) {${TypeOfMetrics.query}}`;
-
-export const readHeatMap = `query queryData(${queryHeatMap.variable}) {${queryHeatMap.query}}`;
 
 export const queryMetrics = `query queryData(${listMetrics.variable}) {${listMetrics.query}}`;

@@ -29,18 +29,3 @@ export const listMetrics = {
   }
   `,
 };
-
-export const queryHeatMap = {
-  variable: ["$condition: MetricsCondition!, $duration: Duration!"],
-  query: `
-  readHeatMap: readHeatMap(condition: $condition, duration: $duration) {
-    values {
-      id
-      values
-    }
-    buckets {
-      min
-      max
-    }
-  }`,
-};
