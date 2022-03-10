@@ -24,6 +24,7 @@ import * as trace from "./query/trace";
 import * as log from "./query/log";
 import * as profile from "./query/profile";
 import * as alarm from "./query/alarm";
+import * as event from "./query/event";
 
 const query: { [key: string]: string } = {
   ...app,
@@ -34,6 +35,7 @@ const query: { [key: string]: string } = {
   ...log,
   ...profile,
   ...alarm,
+  ...event,
 };
 class Graphql {
   private queryData = "";

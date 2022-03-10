@@ -14,29 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
+import { FetchEvents } from "../fragments/event";
 
-export const routesEvent: Array<RouteRecordRaw> = [
-  {
-    path: "",
-    name: "Events",
-    meta: {
-      title: "events",
-      icon: "av_timer",
-      hasGroup: false,
-      exact: true,
-    },
-    component: Layout,
-    children: [
-      {
-        path: "/events",
-        name: "Events",
-        meta: {
-          exact: false,
-        },
-        component: () => import("@/views/Event.vue"),
-      },
-    ],
-  },
-];
+export const queryEvents = `query queryData(${FetchEvents.variable}) {${FetchEvents.query}}`;

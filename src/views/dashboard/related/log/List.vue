@@ -14,10 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <div class="log-t-loading" v-show="logStore.loadLogs">
-      <Icon iconName="spinner" size="lg" />
-    </div>
-    <LogTable :tableData="logStore.logs || []" :type="type" :noLink="true">
+    <LogTable
+      v-loading="logStore.loadLogs"
+      :tableData="logStore.logs || []"
+      :type="type"
+      :noLink="true"
+    >
       <div class="log-tips" v-if="!logStore.logs.length">{{ t("noData") }}</div>
     </LogTable>
     <div class="mt-5 mb-5">
@@ -65,9 +67,5 @@ async function queryLogs() {
   width: 100%;
   text-align: center;
   margin: 50px 0;
-}
-
-.log-t-loading {
-  text-align: center;
 }
 </style>

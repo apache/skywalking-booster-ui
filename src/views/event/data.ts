@@ -14,29 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
-
-export const routesEvent: Array<RouteRecordRaw> = [
-  {
-    path: "",
-    name: "Events",
-    meta: {
-      title: "events",
-      icon: "av_timer",
-      hasGroup: false,
-      exact: true,
-    },
-    component: Layout,
-    children: [
-      {
-        path: "/events",
-        name: "Events",
-        meta: {
-          exact: false,
-        },
-        component: () => import("@/views/Event.vue"),
-      },
-    ],
-  },
+export const EventsDetailKeys = [
+  { text: "eventID", class: "uuid" },
+  { text: "eventName", class: "name" },
+  { text: "eventsType", class: "type" },
+  { text: "startTime", class: "startTime" },
+  { text: "endTime", class: "endTime" },
+  { text: "eventsMessage", class: "message" },
+  { text: "eventSource", class: "source" },
+];
+export const EventTypes = [
+  { label: "All", value: "" },
+  { label: "Normal", value: "Normal" },
+  { label: "Error", value: "Error" },
 ];

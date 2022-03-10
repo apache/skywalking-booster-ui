@@ -179,7 +179,7 @@ function viewEventDetail(event: Event) {
 }
 </script>
 <style lang="scss" scoped>
-@import "./index.scss";
+@import "../components/style.scss";
 
 .tips {
   width: 100%;
