@@ -30,12 +30,3 @@ export const listMetrics = {
   }
   `,
 };
-
-export const getAllTemplates = {
-  query: `
-    getAllTemplates {
-      id,
-      configuration,
-    }
-  `,
-};

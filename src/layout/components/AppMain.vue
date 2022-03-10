@@ -22,11 +22,22 @@ limitations under the License. -->
   </section>
 </template>
 <script lang="ts" setup>
+import { ElMessage } from "element-plus";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
 const appStore = useAppStoreWithOut();
 
 appStore.queryOAPTimeInfo();
+fetchTemplates();
+async function fetchTemplates() {
+  const res = await appStore.getAllTemplates();
+
+  if (res.errors) {
+    ElMessage.error(res.errors);
+    return;
+  }
+  // sessionStorage.setItem("templates", "[]");
+}
 </script>
 <style lang="scss" scoped>
 .app-main {

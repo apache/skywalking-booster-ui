@@ -22,6 +22,7 @@ import getLocalTime from "@/utils/localtime";
 import { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
+import { getAllTemplates } from "@/graphql/fragments/app";
 /*global Nullable*/
 interface AppState {
   durationRow: any;
@@ -108,7 +109,6 @@ export const appStore = defineStore({
   actions: {
     setDuration(data: Duration): void {
       this.durationRow = data;
-      localStorage.setItem("durationRow", JSON.stringify(data, null, 0));
       if ((window as any).axiosCancel.length !== 0) {
         for (const event of (window as any).axiosCancel) {
           setTimeout(event(), 0);
@@ -148,16 +148,21 @@ export const appStore = defineStore({
       const res: AxiosResponse = await graphql
         .query("queryOAPTimeInfo")
         .params({});
-      if (
-        !res.data ||
-        !res.data.data ||
-        !res.data.data.getTimeInfo ||
-        !res.data.data.getTimeInfo.timezone
-      ) {
+      if (res.data.errors) {
         this.utc = -(new Date().getTimezoneOffset() / 60) + ":0";
-        return;
+        return res.data;
       }
       this.utc = res.data.data.getTimeInfo.timezone / 100 + ":0";
+
+      return res.data;
+    },
+    async getAllTemplates() {
+      const res: AxiosResponse = await graphql.query("getTemplates").params({});
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      return res.data;
     },
   },
 });

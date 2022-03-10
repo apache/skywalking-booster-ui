@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OAPTimeInfo, OAPVersion } from "../fragments/app";
+import { OAPTimeInfo, OAPVersion, getAllTemplates } from "../fragments/app";
 
 export const queryOAPTimeInfo = `query queryOAPTimeInfo {${OAPTimeInfo.query}}`;
 
 export const queryOAPVersion = `query ${OAPVersion.query}`;
+
+export const getTemplates = `query queryTemplates {${getAllTemplates.query}}`;

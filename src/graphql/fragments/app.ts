@@ -26,3 +26,12 @@ export const OAPTimeInfo = {
 export const OAPVersion = {
   query: `version { version }`,
 };
+
+export const getAllTemplates = {
+  query: `
+    getAllTemplates {
+      id,
+      configuration,
+    }
+  `,
+};

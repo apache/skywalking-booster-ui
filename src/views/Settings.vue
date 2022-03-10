@@ -76,7 +76,6 @@ import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import timeFormat from "@/utils/timeFormat";
-import { ElSwitch } from "element-plus";
 
 const { t, locale } = useI18n();
 const state = reactive<{ timer: ReturnType<typeof setInterval> | null }>({
