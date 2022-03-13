@@ -48,7 +48,7 @@ export const ConfigData: any = {
     showYAxis: true,
   },
   standard: {
-    sortOrder: "DEC",
+    sortOrder: "DES",
     unit: "min",
   },
   children: [],
@@ -72,7 +72,7 @@ export const ConfigData1: any = {
     showYAxis: true,
   },
   standard: {
-    sortOrder: "DEC",
+    sortOrder: "DES",
     unit: "min",
   },
   children: [],
@@ -96,7 +96,7 @@ export const ConfigData2: any = {
     showYAxis: true,
   },
   standard: {
-    sortOrder: "DEC",
+    sortOrder: "DES",
     unit: "min",
   },
   children: [],

@@ -85,11 +85,3 @@ export const RespFields: any = {
     refId
   }`,
 };
-export enum CalculationType {
-  Plus = "+",
-  Minus = "-",
-  Multiplication = "*",
-  Division = "/",
-  "Convert Unix Timestamp(milliseconds)" = "milliseconds",
-  "Convert Unix Timestamp(seconds)" = "seconds",
-}

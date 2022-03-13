@@ -15,7 +15,14 @@ limitations under the License. -->
 <template>
   <div class="widget">
     <div class="header flex-h">
-      <div>{{ data.widget?.title || "" }}</div>
+      <div>
+        <span>
+          {{ data.widget?.title || "" }}
+        </span>
+        <span class="unit" v-show="data.standard?.unit">
+          ({{ data.standard?.unit }})
+        </span>
+      </div>
       <div>
         <el-tooltip :content="data.widget?.tips">
           <span>
@@ -222,5 +229,10 @@ export default defineComponent({
   width: 100%;
   text-align: center;
   padding-top: 20px;
+}
+
+.unit {
+  display: inline-block;
+  margin-left: 5px;
 }
 </style>

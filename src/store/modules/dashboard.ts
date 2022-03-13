@@ -129,7 +129,7 @@ export const dashboardStore = defineStore({
       if (idx < 0) {
         return;
       }
-      const tabIndex = this.layout[idx].activedTabIndex;
+      const tabIndex = this.layout[idx].activedTabIndex || 0;
       const { children } = this.layout[idx].children[tabIndex];
       const newItem: LayoutConfig = {
         ...NewControl,

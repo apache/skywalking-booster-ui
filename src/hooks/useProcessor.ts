@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import dayjs from "dayjs";
 import { RespFields, MetricQueryTypes } from "./data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -62,7 +63,7 @@ export function useQueryProcessor(config: any) {
         normal: selectorStore.currentService.normal,
         scope: dashboardStore.entity,
         topN: 10,
-        order: "DES",
+        order: config.standard.sortOrder || "DES",
       };
     } else {
       if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
@@ -142,7 +143,7 @@ export function useSourceProcessor(
 
     if (type === MetricQueryTypes.ReadMetricsValues) {
       source[m] = resp.data[keys[index]].values.values.map(
-        (d: { value: number }) => d.value
+        (d: { value: number }) => aggregation(d.value, config.standard)
       );
     }
     if (type === MetricQueryTypes.ReadLabeledMetricsValues) {
@@ -154,8 +155,8 @@ export function useSourceProcessor(
         .split(",")
         .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
       for (const item of resVal) {
-        const values = item.values.values.map(
-          (d: { value: number }) => d.value
+        const values = item.values.values.map((d: { value: number }) =>
+          aggregation(Number(d.value), config.standard)
         );
 
         const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
@@ -167,13 +168,22 @@ export function useSourceProcessor(
       }
     }
     if (type === MetricQueryTypes.ReadMetricsValue) {
-      source[m] = Object.values(resp.data)[0];
+      source[m] = aggregation(
+        Number(Object.values(resp.data)[0]),
+        config.standard
+      );
     }
     if (
       type === MetricQueryTypes.SortMetrics ||
       type === MetricQueryTypes.ReadSampledRecords
     ) {
-      source[m] = Object.values(resp.data)[0] || [];
+      source[m] = (Object.values(resp.data)[0] || []).map(
+        (d: { value: unknown; name: string }) => {
+          d.value = aggregation(Number(d.value), config.standard);
+
+          return d;
+        }
+      );
     }
     if (type === MetricQueryTypes.READHEATMAP) {
       const resVal = Object.values(resp.data)[0] || {};
@@ -296,4 +306,35 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   const queryStr = `query queryData(${variables}) {${fragmentList.join(" ")}}`;
 
   return { queryStr, conditions };
+}
+
+function aggregation(val: number, standard: any): number | string {
+  let data: number | string = val;
+
+  if (!isNaN(standard.plus)) {
+    data = val + Number(standard.plus);
+    return data;
+  }
+  if (!isNaN(standard.minus)) {
+    data = val - Number(standard.plus);
+    return data;
+  }
+  if (!isNaN(standard.multiply)) {
+    data = val * Number(standard.multiply);
+    return data;
+  }
+  if (!isNaN(standard.divide)) {
+    data = val / Number(standard.divide);
+    return data;
+  }
+  if (standard.milliseconds) {
+    data = dayjs(val).format("YYYY-MM-DD HH:mm:ss");
+    return data;
+  }
+  if (standard.milliseconds) {
+    data = dayjs.unix(val).format("YYYY-MM-DD HH:mm:ss");
+    return data;
+  }
+
+  return data;
 }

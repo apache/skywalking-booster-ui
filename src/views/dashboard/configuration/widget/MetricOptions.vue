@@ -256,7 +256,8 @@ function changeMetricType(index: number, opt: Option[] | any) {
   queryMetrics();
 }
 async function queryMetrics() {
-  const params = useQueryProcessor(states);
+  const { standard } = dashboardStore.selectedGrid;
+  const params = useQueryProcessor({ ...states, standard });
   if (!params) {
     emit("update", {});
     return;
@@ -269,7 +270,6 @@ async function queryMetrics() {
     ElMessage.error(json.errors);
     return;
   }
-  const { standard } = dashboardStore.selectedGrid;
   const source = useSourceProcessor(json, { ...states, standard });
   emit("update", source);
 }

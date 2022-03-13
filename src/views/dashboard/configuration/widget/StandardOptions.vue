@@ -17,106 +17,97 @@ limitations under the License. -->
     <span class="label">{{ t("unit") }}</span>
     <el-input
       class="input"
-      v-model="state.unit"
+      v-model="selectedGrid.standard.unit"
       size="small"
       placeholder="Please input Unit"
-      @change="changeStandardOpt({ unit: state.unit })"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("sortOrder") }}</span>
     <Selector
-      :value="state.sortOrder"
+      :value="sortOrder"
       :options="SortOrder"
       size="small"
       placeholder="Select a sort order"
       class="selector"
-      @change="changeStandardOpt({ sortOrder: state.sortOrder })"
+      @change="changeStandardOpt({ sortOrder })"
     />
   </div>
-  <div class="item">
+  <div class="item" v-show="percentile">
     <span class="label">{{ t("labels") }}</span>
     <el-input
       class="input"
-      v-model="state.metricLabels"
+      v-model="selectedGrid.standard.metricLabels"
       size="small"
       placeholder="auto"
-      @change="changeStandardOpt({ metricLabels: state.metricLabels })"
     />
   </div>
-  <div class="item">
+  <div class="item" v-show="percentile">
     <span class="label">{{ t("labelsIndex") }}</span>
     <el-input
       class="input"
-      v-model="state.labelsIndex"
+      v-model="selectedGrid.standard.labelsIndex"
       size="small"
       placeholder="auto"
-      @change="changeStandardOpt({ labelsIndex: state.labelsIndex })"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("plus") }}</span>
     <el-input
       class="input"
-      v-model="state.plus"
+      v-model="selectedGrid.standard.plus"
       size="small"
       placeholder="none"
-      @change="changeStandardOpt({ plus: state.plus })"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("minus") }}</span>
     <el-input
       class="input"
-      v-model="state.minus"
+      v-model="selectedGrid.standard.minus"
       size="small"
       placeholder="none"
-      @change="changeStandardOpt({ minus: state.minus })"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("multiply") }}</span>
     <el-input
       class="input"
-      v-model="state.multiply"
+      v-model="selectedGrid.standard.multiply"
       size="small"
       placeholder="none"
-      @change="changeStandardOpt({ multiply: state.multiply })"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("divide") }}</span>
     <el-input
       class="input"
-      v-model="state.divide"
+      v-model="selectedGrid.standard.divide"
       size="small"
       placeholder="none"
-      @change="changeStandardOpt({ divide: state.divide })"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("convertToMilliseconds") }}</span>
     <el-input
       class="input"
-      v-model="state.milliseconds"
+      v-model="selectedGrid.standard.milliseconds"
       size="small"
       placeholder="none"
-      @change="changeStandardOpt({ milliseconds: state.milliseconds })"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("convertToSeconds") }}</span>
     <el-input
       class="input"
-      v-model="state.seconds"
+      v-model="selectedGrid.standard.seconds"
       size="small"
       placeholder="none"
-      @change="changeStandardOpt({ seconds: state.seconds })"
     />
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { SortOrder } from "../../data";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -124,18 +115,10 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 const dashboardStore = useDashboardStore();
 const { selectedGrid } = dashboardStore;
 const { t } = useI18n();
-const state = reactive({
-  unit: selectedGrid.standard.unit,
-  labelsIndex: selectedGrid.standard.labelsIndex,
-  metricLabels: selectedGrid.standard.metricLabels,
-  plus: "",
-  minus: "",
-  multiply: "",
-  divide: "",
-  milliseconds: "",
-  seconds: "",
-  sortOrder: selectedGrid.standard.sortOrder,
-});
+const percentile = ref<boolean>(
+  selectedGrid.metricTypes.includes("readLabeledMetricsValues")
+);
+const sortOrder = ref<string>(selectedGrid.standard.sortOrder || "DES");
 
 function changeStandardOpt(param: { [key: string]: unknown }) {
   const standard = {
