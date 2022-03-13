@@ -111,7 +111,12 @@ export default defineComponent({
       if (!json) {
         return;
       }
-      state.source = useSourceProcessor(json, props.data);
+      const d = {
+        metrics: props.data.metrics,
+        metricTypes: props.data.metricTypes,
+        standard: props.data.standard,
+      };
+      state.source = useSourceProcessor(json, d);
     }
 
     function removeWidget() {

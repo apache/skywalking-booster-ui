@@ -38,8 +38,8 @@ export interface WidgetConfig {
 export interface StandardConfig {
   sortOrder?: string;
   unit?: string;
-  max?: string;
-  min?: string;
+  labelsIndex?: string;
+  metricLabels?: string;
   plus?: string;
   minus?: string;
   multiply?: string;

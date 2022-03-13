@@ -14,10 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OAPTimeInfo, OAPVersion, getAllTemplates } from "../fragments/app";
+import {
+  OAPTimeInfo,
+  OAPVersion,
+  getAllTemplates,
+  addTemplate,
+  changeTemplate,
+  deleteTemplate,
+} from "../fragments/app";
 
 export const queryOAPTimeInfo = `query queryOAPTimeInfo {${OAPTimeInfo.query}}`;
 
 export const queryOAPVersion = `query ${OAPVersion.query}`;
 
 export const getTemplates = `query queryTemplates {${getAllTemplates.query}}`;
+
+export const addNewTemplate = `query queryAlarms(${addTemplate.variable}) {${addTemplate.query}}`;
+
+export const updateTemplate = `query queryAlarms(${changeTemplate.variable}) {${changeTemplate.query}}`;
+
+export const removeTemplate = `query queryAlarms(${deleteTemplate.variable}) {${deleteTemplate.query}}`;

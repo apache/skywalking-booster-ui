@@ -199,7 +199,10 @@ function changeChartType(item: Option) {
   }
 }
 
-function changeMetrics(index: number, arr: (Option & { type: string })[]) {
+function changeMetrics(
+  index: number,
+  arr: (Option & { type: string })[] | any
+) {
   if (!arr.length) {
     states.metricTypeList = [];
     states.metricTypes = [];
@@ -224,7 +227,7 @@ function changeMetrics(index: number, arr: (Option & { type: string })[]) {
   queryMetrics();
 }
 
-function changeMetricType(index: number, opt: Option[]) {
+function changeMetricType(index: number, opt: Option[] | any) {
   const metric =
     states.metricList.filter(
       (d: Option) => states.metrics[index] === d.value
@@ -266,7 +269,8 @@ async function queryMetrics() {
     ElMessage.error(json.errors);
     return;
   }
-  const source = useSourceProcessor(json, states);
+  const { standard } = dashboardStore.selectedGrid;
+  const source = useSourceProcessor(json, { ...states, standard });
   emit("update", source);
 }
 

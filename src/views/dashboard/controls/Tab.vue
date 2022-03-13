@@ -84,7 +84,6 @@ limitations under the License. -->
       :row-height="10"
       :is-draggable="true"
       :is-resizable="true"
-      :responsive="true"
       @layout-updated="layoutUpdatedEvent"
     >
       <grid-item
@@ -144,9 +143,11 @@ export default defineComponent({
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
     );
-    dashboardStore.setCurrentTabItems(
-      dashboardStore.layout[l].children[activeTabIndex.value].children
-    );
+    if (dashboardStore.layout[l].children.length) {
+      dashboardStore.setCurrentTabItems(
+        dashboardStore.layout[l].children[activeTabIndex.value].children
+      );
+    }
 
     function clickTabs(e: Event, idx: number) {
       e.stopPropagation();

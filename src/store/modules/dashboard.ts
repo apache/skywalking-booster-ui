@@ -20,7 +20,6 @@ import { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
 import query from "@/graphql/fetch";
 import {
-  ConfigData,
   ConfigData1,
   ConfigData2,
   ConfigData3,
@@ -28,6 +27,7 @@ import {
   ConfigData5,
   ConfigData6,
 } from "../data";
+import { ServiceLayout } from "@/constants/templates";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
@@ -49,7 +49,7 @@ interface DashboardState {
 export const dashboardStore = defineStore({
   id: "dashboard",
   state: (): DashboardState => ({
-    layout: [ConfigData],
+    layout: ServiceLayout.configuration.children,
     showConfig: false,
     selectedGrid: null,
     entity: "",
@@ -240,7 +240,7 @@ export const dashboardStore = defineStore({
         this.layout = ConfigData3;
       }
       if (type == "Service") {
-        this.layout = [ConfigData];
+        this.layout = ServiceLayout.configuration.children;
       }
       if (type == "ServiceRelation") {
         this.layout = [ConfigData4];

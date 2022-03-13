@@ -35,23 +35,23 @@ limitations under the License. -->
     />
   </div>
   <div class="item">
-    <span class="label">{{ t("max") }}</span>
+    <span class="label">{{ t("labels") }}</span>
     <el-input
       class="input"
-      v-model="state.max"
+      v-model="state.metricLabels"
       size="small"
       placeholder="auto"
-      @change="changeStandardOpt({ max: state.max })"
+      @change="changeStandardOpt({ metricLabels: state.metricLabels })"
     />
   </div>
   <div class="item">
-    <span class="label">{{ t("min") }}</span>
+    <span class="label">{{ t("labelsIndex") }}</span>
     <el-input
       class="input"
-      v-model="state.min"
+      v-model="state.labelsIndex"
       size="small"
       placeholder="auto"
-      @change="changeStandardOpt({ min: state.min })"
+      @change="changeStandardOpt({ labelsIndex: state.labelsIndex })"
     />
   </div>
   <div class="item">
@@ -126,8 +126,8 @@ const { selectedGrid } = dashboardStore;
 const { t } = useI18n();
 const state = reactive({
   unit: selectedGrid.standard.unit,
-  max: "",
-  min: "",
+  labelsIndex: selectedGrid.standard.labelsIndex,
+  metricLabels: selectedGrid.standard.metricLabels,
   plus: "",
   minus: "",
   multiply: "",
