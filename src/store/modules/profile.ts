@@ -44,7 +44,7 @@ interface ProfileState {
   highlightTop: boolean;
 }
 
-export const traceStore = defineStore({
+export const profileStore = defineStore({
   id: "profile",
   state: (): ProfileState => ({
     services: [{ value: "0", label: "All" }],
@@ -208,5 +208,5 @@ export const traceStore = defineStore({
 });
 
 export function useProfileStore(): any {
-  return traceStore(store);
+  return profileStore(store);
 }

@@ -38,7 +38,7 @@ interface LogState {
 }
 
 export const logStore = defineStore({
-  id: "trace",
+  id: "log",
   state: (): LogState => ({
     services: [{ value: "0", label: "All" }],
     instances: [{ value: "0", label: "All" }],
@@ -101,7 +101,7 @@ export const logStore = defineStore({
       ] || [{ value: "0", label: "All" }];
       return res.data;
     },
-    async queryLogsByKeywords() {
+    async getLogsByKeywords() {
       const res: AxiosResponse = await graphql
         .query("queryLogsByKeywords")
         .params({});

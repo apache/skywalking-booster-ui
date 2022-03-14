@@ -333,6 +333,31 @@ export const ServiceLayout = {
             ],
           },
           {
+            name: "Topology",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 4,
+                h: 6,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Topology",
+                widget: {},
+                graph: {
+                  fontColor: "white",
+                  backgroundColor: "green",
+                  iconTheme: true,
+                  content: "Topology",
+                  fontSize: 18,
+                  showDepth: true,
+                },
+                standard: {},
+              },
+            ],
+          },
+          {
             name: "Trace",
             children: [
               {
