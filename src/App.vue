@@ -15,7 +15,6 @@ limitations under the License. -->
 <template>
   <router-view :key="$route.fullPath" />
 </template>
-
 <style>
 #app {
   color: #2c3e50;

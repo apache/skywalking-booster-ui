@@ -229,28 +229,6 @@ export const dashboardStore = defineStore({
     },
     setEntity(type: string) {
       this.entity = type;
-      // todo
-      if (type === "ServiceInstance") {
-        this.layout = InstanceLayout.configuration.children;
-      }
-      if (type === "Endpoint") {
-        this.layout = EndpointLayout.configuration.children;
-      }
-      if (type == "All") {
-        this.layout = AllLayout.configuration.children;
-      }
-      if (type == "Service") {
-        this.layout = ServiceLayout.configuration.children;
-      }
-      if (type == "ServiceRelation") {
-        this.layout = ServiceRelationLayout.configuration.children;
-      }
-      if (type == "ServiceInstanceRelation") {
-        this.layout = InstanceRelationLayout.configuration.children;
-      }
-      if (type == "EndpointRelation") {
-        this.layout = EndpointRelationLayout.configuration.children;
-      }
     },
     setTopology(show: boolean) {
       this.showTopology = show;
@@ -302,6 +280,50 @@ export const dashboardStore = defineStore({
     }) {
       const res: AxiosResponse = await query(param);
       return res.data;
+    },
+    async getAllTemplates() {
+      const res: AxiosResponse = await graphql.query("getTemplates").params({});
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      return res.data;
+    },
+    async fetchTemplates() {
+      const res = await this.getAllTemplates();
+
+      if (res.errors) {
+        return res;
+      }
+      const data = [
+        ServiceLayout,
+        AllLayout,
+        EndpointLayout,
+        InstanceLayout,
+        ServiceRelationLayout,
+        InstanceRelationLayout,
+        EndpointRelationLayout,
+      ].map((t: any) => {
+        t.configuration = JSON.stringify(t.configuration);
+        return t;
+      });
+      const list = [];
+      for (const t of data) {
+        const c = JSON.parse(t.configuration);
+        const key = [c.layer, c.entity, c.name.split(" ").join("-")].join("_");
+
+        list.push({
+          id: t.id,
+          layer: c.layer,
+          entity: c.entity,
+          name: c.name,
+          date: c.date,
+        });
+        console.log(key);
+        sessionStorage.setItem(key, JSON.stringify(t));
+      }
+      sessionStorage.setItem("dashboards", JSON.stringify(list));
+      return res;
     },
   },
 });

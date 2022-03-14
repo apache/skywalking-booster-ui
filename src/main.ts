@@ -23,11 +23,15 @@ import i18n from "./locales";
 import "element-plus/dist/index.css";
 import "./styles/index.scss";
 import ElementPlus from "element-plus";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
+const appStore = useAppStoreWithOut();
 const app = createApp(App);
 
 app.use(ElementPlus, { size: "small", zIndex: 3000 });
 app.use(components);
 app.use(i18n);
 app.use(store);
-app.use(router).mount("#app");
+appStore.queryOAPTimeInfo().then(() => {
+  app.use(router).mount("#app");
+});

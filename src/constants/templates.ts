@@ -17,7 +17,10 @@
 export const AllLayout = {
   id: "0",
   configuration: {
-    name: "Global",
+    name: "All Layout",
+    layer: "GENERAL",
+    entity: "All",
+    date: new Date().getTime(),
     isRoot: true,
     children: [
       {
@@ -172,7 +175,10 @@ export const AllLayout = {
 export const ServiceLayout = {
   id: "1",
   configuration: {
-    name: "Service",
+    name: "Service Layout",
+    layer: "GENERAL",
+    entity: "Service",
+    date: new Date().getTime(),
     isRoot: true,
     children: [
       {
@@ -556,7 +562,10 @@ export const ServiceLayout = {
 export const EndpointLayout = {
   id: "2",
   configuration: {
-    name: "Endpoint",
+    name: "Endpoint Layout",
+    layer: "GENERAL",
+    entity: "Endpoint",
+    date: new Date().getTime(),
     isRoot: true,
     children: [
       {
@@ -731,7 +740,10 @@ export const EndpointLayout = {
 export const InstanceLayout = {
   id: "3",
   configuration: {
-    name: "Instance",
+    name: "Instance Layout",
+    layer: "GENERAL",
+    entity: "ServiceInstance",
+    date: new Date().getTime(),
     isRoot: true,
     children: [
       {
@@ -882,6 +894,9 @@ export const ServiceRelationLayout = {
   id: "4",
   configuration: {
     name: "Service Relation Layout",
+    layer: "GENERAL",
+    entity: "ServiceRelation",
+    date: new Date().getTime(),
     isRoot: true,
     children: [
       {
@@ -957,6 +972,9 @@ export const InstanceRelationLayout = {
   id: "5",
   configuration: {
     name: "Service Instance Relation Layout",
+    layer: "GENERAL",
+    entity: "ServiceInstanceRelation",
+    date: new Date().getTime(),
     isRoot: true,
     children: [
       {
@@ -987,6 +1005,9 @@ export const EndpointRelationLayout = {
   id: "5",
   configuration: {
     name: "Endpoint Relation Layout",
+    layer: "GENERAL",
+    entity: "EndpointRelation",
+    date: new Date().getTime(),
     isRoot: true,
     children: [
       {

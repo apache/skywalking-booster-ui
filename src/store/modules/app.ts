@@ -22,7 +22,6 @@ import getLocalTime from "@/utils/localtime";
 import { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
-import { getAllTemplates } from "@/graphql/fragments/app";
 /*global Nullable*/
 interface AppState {
   durationRow: any;
@@ -154,14 +153,6 @@ export const appStore = defineStore({
       }
       this.utc = res.data.data.getTimeInfo.timezone / 100 + ":0";
 
-      return res.data;
-    },
-    async getAllTemplates() {
-      const res: AxiosResponse = await graphql.query("getTemplates").params({});
-
-      if (res.data.errors) {
-        return res.data;
-      }
       return res.data;
     },
   },

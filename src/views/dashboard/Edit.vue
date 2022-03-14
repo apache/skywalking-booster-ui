@@ -39,6 +39,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import GridLayout from "./panel/Layout.vue";
 // import { LayoutConfig } from "@/types/dashboard";
 import Tool from "./panel/Tool.vue";
@@ -47,30 +48,32 @@ import TopologyConfig from "./configuration/Topology.vue";
 import Topology from "./related/topology/Index.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { ElMessage } from "element-plus";
 
 const dashboardStore = useDashboardStore();
 const appStore = useAppStoreWithOut();
 const { t } = useI18n();
-// fetch layout data from serve side
-// const layout: any[] = [
-//   { x: 0, y: 0, w: 4, h: 12, i: "0" },
-//   { x: 4, y: 0, w: 4, h: 12, i: "1" },
-//   { x: 8, y: 0, w: 4, h: 15, i: "2" },
-//   { x: 12, y: 0, w: 4, h: 9, i: "3" },
-//   { x: 16, y: 0, w: 4, h: 9, i: "4" },
-//   { x: 20, y: 0, w: 4, h: 9, i: "5" },
-//   { x: 0, y: 12, w: 4, h: 15, i: "7" },
-//   { x: 4, y: 12, w: 4, h: 15, i: "8" },
-//   { x: 8, y: 15, w: 4, h: 12, i: "9" },
-//   { x: 12, y: 9, w: 4, h: 12, i: "10" },
-//   { x: 16, y: 9, w: 4, h: 12, i: "11" },
-//   { x: 20, y: 9, w: 4, h: 15, i: "12" },
-//   { x: 0, y: 27, w: 4, h: 12, i: "14" },
-//   { x: 4, y: 27, w: 4, h: 12, i: "15" },
-//   { x: 8, y: 27, w: 4, h: 15, i: "16" },
-// ];
-// dashboardStore.setLayout(layout);
+const p = useRoute().params;
+const layoutKey = `${p.layerId}_${p.entity}_${p.name}`;
+
 appStore.setPageTitle("Dashboard Name");
+setTemplate();
+
+async function setTemplate() {
+  if (!sessionStorage.getItem("dashboards")) {
+    const res = await dashboardStore.fetchTemplates();
+    if (res.errors) {
+      dashboardStore.setLayout([]);
+      ElMessage.error(res.errors);
+      return;
+    }
+  }
+  const c: { configuration: string; id: string } = JSON.parse(
+    sessionStorage.getItem(layoutKey) || "{}"
+  );
+  const layout = JSON.parse(c.configuration || "") || {};
+  dashboardStore.setLayout(layout.children || []);
+}
 function handleClick(e: any) {
   e.stopPropagation();
   if (e.target.className === "ds-main") {
