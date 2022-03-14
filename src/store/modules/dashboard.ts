@@ -20,14 +20,14 @@ import { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
 import query from "@/graphql/fetch";
 import {
-  ConfigData1,
-  ConfigData2,
-  ConfigData3,
-  ConfigData4,
-  ConfigData5,
-  ConfigData6,
-} from "../data";
-import { ServiceLayout } from "@/constants/templates";
+  ServiceLayout,
+  AllLayout,
+  EndpointLayout,
+  InstanceLayout,
+  ServiceRelationLayout,
+  InstanceRelationLayout,
+  EndpointRelationLayout,
+} from "@/constants/templates";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
@@ -231,25 +231,25 @@ export const dashboardStore = defineStore({
       this.entity = type;
       // todo
       if (type === "ServiceInstance") {
-        this.layout = [ConfigData1];
+        this.layout = InstanceLayout.configuration.children;
       }
       if (type === "Endpoint") {
-        this.layout = [ConfigData2];
+        this.layout = EndpointLayout.configuration.children;
       }
       if (type == "All") {
-        this.layout = ConfigData3;
+        this.layout = AllLayout.configuration.children;
       }
       if (type == "Service") {
         this.layout = ServiceLayout.configuration.children;
       }
       if (type == "ServiceRelation") {
-        this.layout = [ConfigData4];
+        this.layout = ServiceRelationLayout.configuration.children;
       }
       if (type == "ServiceInstanceRelation") {
-        this.layout = [ConfigData6];
+        this.layout = InstanceRelationLayout.configuration.children;
       }
       if (type == "EndpointRelation") {
-        this.layout = [ConfigData5];
+        this.layout = EndpointRelationLayout.configuration.children;
       }
     },
     setTopology(show: boolean) {

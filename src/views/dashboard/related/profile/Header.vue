@@ -83,7 +83,8 @@ searchTasks();
 // }
 async function searchTasks() {
   profileStore.setConditions({
-    serviceId: selectorStore.currentService.id,
+    serviceId:
+      (selectorStore.currentService && selectorStore.currentService.id) || "",
     endpointName: endpointName.value,
   });
   const res = await profileStore.getTaskList();

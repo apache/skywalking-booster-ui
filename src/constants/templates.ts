@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const All = {
+export const AllLayout = {
   id: "0",
   configuration: {
     name: "Global",
@@ -34,68 +34,134 @@ export const All = {
         metricTypes: [],
         children: [
           {
-            x: 0,
-            y: 0,
-            w: 8,
-            h: 12,
-            i: "0",
-            metrics: ["all_heatmap"],
-            metricTypes: ["readHeatMap"],
-            type: "Widget",
-            widget: {
-              title: "all_heatmap",
-              tips: "Tooltip",
-            },
-            graph: {
-              type: "HeatMap",
-            },
-            standard: {
-              unit: "ms",
-            },
+            name: "Overview",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 8,
+                h: 12,
+                i: "0",
+                metrics: ["all_heatmap"],
+                metricTypes: ["readHeatMap"],
+                type: "Widget",
+                widget: {
+                  title: "all_heatmap",
+                  tips: "Tooltip",
+                },
+                graph: {
+                  type: "HeatMap",
+                },
+                standard: {
+                  unit: "ms",
+                },
+              },
+              {
+                x: 8,
+                y: 0,
+                w: 8,
+                h: 12,
+                i: "1",
+                metrics: ["all_percentile"],
+                metricTypes: ["readLabeledMetricsValues"],
+                type: "Widget",
+                widget: {
+                  title: "Global Response Latency",
+                  tips: "Tooltip",
+                },
+                graph: {
+                  type: "Line",
+                },
+                standard: {
+                  unit: "percentile in ms",
+                  metricLabels: "P50, P75, P90, P95, P99",
+                  labelsIndex: "0, 1, 2, 3, 4",
+                },
+              },
+            ],
           },
           {
-            x: 0,
-            y: 0,
-            w: 8,
-            h: 12,
-            i: "1",
-            metrics: ["all_percentile"],
-            metricTypes: ["readLabeledMetricsValues"],
-            type: "Widget",
-            widget: {
-              title: "Global Response Latency",
-              tips: "Tooltip",
-            },
-            graph: {
-              type: "Line",
-            },
-            standard: {
-              unit: "percentile in ms",
-              metricLabels: "P50, P75, P90, P95, P99",
-              labelsIndex: "0, 1, 2, 3, 4",
-            },
+            name: "Services",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 24,
+                h: 12,
+                i: "0",
+                metrics: ["service_sla"],
+                metricTypes: ["readMetricsValues"],
+                type: "Widget",
+                widget: {},
+                graph: {
+                  type: "ServiceList",
+                  dashboardName: "123",
+                  fontSize: 12,
+                },
+                standard: {},
+              },
+            ],
           },
           {
-            x: 0,
-            y: 0,
-            w: 8,
-            h: 12,
-            i: "3",
-            metrics: ["service_cpm"],
-            metricTypes: ["readMetricsValues"],
-            type: "Widget",
-            widget: {
-              title: "Service List",
-              tips: "Tooltip",
-            },
-            graph: {
-              type: "ServiceList",
-              dashboardName: "123",
-              fontSize: 12,
-            },
-            standard: {
-              unit: "percentile in ms",
-            },
+            name: "Topology",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 4,
+                h: 6,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Topology",
+                widget: {},
+                graph: {
+                  fontColor: "white",
+                  backgroundColor: "green",
+                  iconTheme: true,
+                  content: "Topology",
+                  fontSize: 18,
+                  showDepth: true,
+                },
+                standard: {},
+              },
+            ],
+          },
+          {
+            name: "Trace",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 24,
+                h: 40,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Trace",
+                widget: {},
+                graph: {},
+                standard: {},
+              },
+            ],
+          },
+          {
+            name: "Log",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 24,
+                h: 40,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Log",
+                widget: {},
+                graph: {},
+                standard: {},
+              },
+            ],
           },
         ],
       },
@@ -162,6 +228,7 @@ export const ServiceLayout = {
                 graph: {
                   type: "Card",
                   fontSize: 20,
+                  textAlign: "center",
                 },
                 standard: {
                   divide: "10000",
@@ -183,6 +250,7 @@ export const ServiceLayout = {
                 graph: {
                   type: "Card",
                   fontSize: 20,
+                  textAlign: "center",
                 },
                 standard: {
                   unit: "%",
@@ -205,6 +273,7 @@ export const ServiceLayout = {
                 graph: {
                   type: "Card",
                   fontSize: 20,
+                  textAlign: "center",
                 },
                 standard: {
                   unit: "CPM / PPM",
@@ -359,7 +428,7 @@ export const ServiceLayout = {
               {
                 x: 0,
                 y: 0,
-                w: 16,
+                w: 24,
                 h: 12,
                 i: "0",
                 metrics: ["endpoint_sla"],
@@ -381,7 +450,7 @@ export const ServiceLayout = {
               {
                 x: 0,
                 y: 0,
-                w: 16,
+                w: 24,
                 h: 12,
                 i: "0",
                 metrics: ["service_instance_sla"],
@@ -431,7 +500,7 @@ export const ServiceLayout = {
                 x: 0,
                 y: 0,
                 w: 24,
-                h: 36,
+                h: 40,
                 i: "0",
                 metrics: [],
                 metricTypes: [],
@@ -449,7 +518,7 @@ export const ServiceLayout = {
                 x: 0,
                 y: 0,
                 w: 24,
-                h: 36,
+                h: 40,
                 i: "0",
                 metrics: [],
                 metricTypes: [],
@@ -467,7 +536,7 @@ export const ServiceLayout = {
                 x: 0,
                 y: 0,
                 w: 24,
-                h: 36,
+                h: 40,
                 i: "0",
                 metrics: [],
                 metricTypes: [],
@@ -479,6 +548,467 @@ export const ServiceLayout = {
             ],
           },
         ],
+      },
+    ],
+  },
+};
+
+export const EndpointLayout = {
+  id: "2",
+  configuration: {
+    name: "Endpoint",
+    isRoot: true,
+    children: [
+      {
+        x: 0,
+        y: 0,
+        w: 24,
+        h: 45,
+        i: "0",
+        type: "Tab",
+        widget: {},
+        graph: {},
+        standard: {},
+        metrics: [],
+        metricTypes: [],
+        children: [
+          {
+            name: "Overview",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 8,
+                h: 12,
+                i: "0",
+                metrics: ["endpoint_cpm"],
+                metricTypes: ["sortMetrics"],
+                type: "Widget",
+                widget: {},
+                graph: {
+                  type: "TopList",
+                  dashboardName: "123",
+                  fontSize: 12,
+                },
+                standard: {
+                  unit: "CPM / PPM",
+                },
+              },
+              {
+                x: 8,
+                y: 0,
+                w: 8,
+                h: 12,
+                i: "1",
+                metrics: ["endpoint_sla"],
+                metricTypes: ["sortMetrics"],
+                type: "Widget",
+                widget: {
+                  title: "Successful Rate in Current Service",
+                },
+                graph: {
+                  type: "TopList",
+                  dashboardName: "123",
+                  fontSize: 12,
+                },
+                standard: {
+                  unit: "%",
+                  divide: 100,
+                },
+              },
+              {
+                x: 16,
+                y: 0,
+                w: 8,
+                h: 12,
+                i: "2",
+                metrics: ["endpoint_sla"],
+                metricTypes: ["readMetricsValues"],
+                type: "Widget",
+                widget: {
+                  title: "Successful Rate in Current Service",
+                },
+                graph: {
+                  type: "Line",
+                  dashboardName: "123",
+                  fontSize: 12,
+                },
+                standard: {
+                  unit: "%",
+                  divide: 100,
+                },
+              },
+              {
+                x: 0,
+                y: 12,
+                w: 8,
+                h: 12,
+                i: "3",
+                metrics: ["endpoint_percentile"],
+                metricTypes: ["readLabeledMetricsValues"],
+                type: "Widget",
+                widget: {
+                  title: "Endpoint Response Time Percentile",
+                },
+                graph: {
+                  type: "Line",
+                },
+                standard: {
+                  unit: "ms",
+                  metricLabels: "P50, P75, P90, P95, P99",
+                  labelsIndex: "0, 1, 2, 3, 4",
+                },
+              },
+            ],
+          },
+          {
+            name: "Topology",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 4,
+                h: 6,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Topology",
+                widget: {},
+                graph: {
+                  fontColor: "white",
+                  backgroundColor: "green",
+                  iconTheme: true,
+                  content: "Topology",
+                  fontSize: 18,
+                  showDepth: true,
+                },
+                standard: {},
+              },
+            ],
+          },
+          {
+            name: "Trace",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 24,
+                h: 40,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Trace",
+                widget: {},
+                graph: {},
+                standard: {},
+              },
+            ],
+          },
+          {
+            name: "Log",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 24,
+                h: 40,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Log",
+                widget: {},
+                graph: {},
+                standard: {},
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const InstanceLayout = {
+  id: "3",
+  configuration: {
+    name: "Instance",
+    isRoot: true,
+    children: [
+      {
+        x: 0,
+        y: 0,
+        w: 24,
+        h: 45,
+        i: "0",
+        type: "Tab",
+        widget: {},
+        graph: {},
+        standard: {},
+        metrics: [],
+        metricTypes: [],
+        children: [
+          {
+            name: "Overview",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 8,
+                h: 12,
+                i: "0",
+                metrics: ["service_instance_cpm"],
+                metricTypes: ["readMetricsValues"],
+                type: "Widget",
+                widget: {},
+                graph: {
+                  type: "Line",
+                  dashboardName: "123",
+                  fontSize: 12,
+                },
+                standard: {
+                  unit: "CPM / PPM",
+                },
+              },
+              {
+                x: 8,
+                y: 0,
+                w: 8,
+                h: 12,
+                i: "2",
+                metrics: ["instance_jvm_memory_heap"],
+                metricTypes: ["readMetricsValues"],
+                type: "Widget",
+                widget: {},
+                graph: {
+                  type: "Line",
+                  dashboardName: "123",
+                  fontSize: 12,
+                },
+                standard: {
+                  unit: "%",
+                  divide: 100,
+                },
+              },
+              {
+                x: 16,
+                y: 0,
+                w: 8,
+                h: 12,
+                i: "3",
+                metrics: [
+                  "instance_jvm_class_loaded_class_count",
+                  "instance_jvm_class_total_unloaded_class_count",
+                ],
+                metricTypes: ["readMetricsValues", "readMetricsValues"],
+                type: "Widget",
+                widget: {
+                  title: "JVM Class Count (Java Service)",
+                },
+                graph: {
+                  type: "Line",
+                },
+                standard: {},
+              },
+            ],
+          },
+          {
+            name: "Topology",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 4,
+                h: 6,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Topology",
+                widget: {},
+                graph: {
+                  fontColor: "white",
+                  backgroundColor: "green",
+                  iconTheme: true,
+                  content: "Topology",
+                  fontSize: 18,
+                  showDepth: true,
+                },
+                standard: {},
+              },
+            ],
+          },
+          {
+            name: "Trace",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 24,
+                h: 40,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Trace",
+                widget: {},
+                graph: {},
+                standard: {},
+              },
+            ],
+          },
+          {
+            name: "Log",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 24,
+                h: 40,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Log",
+                widget: {},
+                graph: {},
+                standard: {},
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const ServiceRelationLayout = {
+  id: "4",
+  configuration: {
+    name: "Service Relation Layout",
+    isRoot: true,
+    children: [
+      {
+        x: 0,
+        y: 0,
+        w: 24,
+        h: 45,
+        i: "0",
+        type: "Tab",
+        widget: {},
+        graph: {},
+        standard: {},
+        metrics: [],
+        metricTypes: [],
+        children: [
+          {
+            name: "Overview",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 8,
+                h: 12,
+                i: "0",
+                metrics: ["service_relation_server_resp_time"],
+                metricTypes: ["readMetricsValues"],
+                type: "Widget",
+                widget: {
+                  title: "service_relation_server_resp_time",
+                  tips: "Tooltip",
+                },
+                graph: {
+                  type: "Line",
+                },
+                standard: {
+                  unit: "min",
+                },
+                children: [],
+              },
+            ],
+          },
+          {
+            name: "Topology",
+            children: [
+              {
+                x: 0,
+                y: 0,
+                w: 4,
+                h: 6,
+                i: "0",
+                metrics: [],
+                metricTypes: [],
+                type: "Topology",
+                widget: {},
+                graph: {
+                  fontColor: "white",
+                  backgroundColor: "green",
+                  iconTheme: true,
+                  content: "Topology",
+                  fontSize: 18,
+                  showDepth: true,
+                },
+                standard: {},
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+export const InstanceRelationLayout = {
+  id: "5",
+  configuration: {
+    name: "Service Instance Relation Layout",
+    isRoot: true,
+    children: [
+      {
+        x: 0,
+        y: 0,
+        w: 8,
+        h: 12,
+        i: "0",
+        metrics: ["service_instance_relation_server_cpm"],
+        metricTypes: ["readMetricsValues"],
+        type: "Widget",
+        widget: {
+          title: "service_instance_relation_server_cpm",
+          tips: "Tooltip",
+        },
+        graph: {
+          type: "Line",
+        },
+        standard: {
+          unit: "min",
+        },
+        children: [],
+      },
+    ],
+  },
+};
+export const EndpointRelationLayout = {
+  id: "5",
+  configuration: {
+    name: "Endpoint Relation Layout",
+    isRoot: true,
+    children: [
+      {
+        x: 0,
+        y: 0,
+        w: 8,
+        h: 12,
+        i: "0",
+        metrics: ["endpoint_relation_cpm"],
+        metricTypes: ["readMetricsValues"],
+        type: "Widget",
+        widget: {
+          title: "endpoint_relation_cpm",
+          tips: "Tooltip",
+        },
+        graph: {
+          type: "Line",
+        },
+        standard: {
+          unit: "min",
+        },
+        children: [],
       },
     ],
   },
