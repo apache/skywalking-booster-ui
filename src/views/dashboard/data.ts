@@ -152,7 +152,6 @@ export const EntityType = [
   },
   { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },
 ];
-export const hasTopology = ["All", "Service", "ServiceRelation", "Endpoint"];
 export const TableEntity: any = {
   InstanceList: EntityType[3].value,
   EndpointList: EntityType[2].value,
@@ -162,18 +161,51 @@ export const SortOrder = [
   { label: "DES", value: "DES" },
   { label: "ASC", value: "ASC" },
 ];
-export const ToolIcons = [
+export const AllTools = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "device_hub", content: "Add Topology", id: "addTopology" },
+  { name: "merge", content: "Add Trace", id: "addTrace" },
+  { name: "assignment", content: "Add Log", id: "addLog" },
+  { name: "save", content: "Apply", id: "apply" },
+];
+export const ServiceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "timeline", content: "Add Profile", id: "addProfile" },
   { name: "assignment", content: "Add Log", id: "addLog" },
-  // { name: "save_alt", content: "Export", id: "export" },
-  // { name: "folder_open", content: "Import", id: "import" },
-  // { name: "settings", content: "Settings", id: "settings" },
-  // { name: "save", content: "Apply", id: "apply" },
+  { name: "save", content: "Apply", id: "apply" },
 ];
+export const InstanceTools = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "device_hub", content: "Add Topology", id: "addTopology" },
+  { name: "merge", content: "Add Trace", id: "addTrace" },
+  { name: "assignment", content: "Add Log", id: "addLog" },
+  { name: "save", content: "Apply", id: "apply" },
+];
+export const EndpointTools = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "device_hub", content: "Add Topology", id: "addTopology" },
+  { name: "merge", content: "Add Trace", id: "addTrace" },
+  { name: "assignment", content: "Add Log", id: "addLog" },
+  { name: "save", content: "Apply", id: "apply" },
+];
+export const ServiceRelationTools = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "device_hub", content: "Add Topology", id: "addTopology" },
+  { name: "save", content: "Apply", id: "apply" },
+];
+export const PodRelationTools = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "save", content: "Apply", id: "apply" },
+];
+
 export const ScopeType = [
   { value: "Service", label: "Service", key: 1 },
   { value: "Endpoint", label: "Endpoint", key: 3 },
@@ -214,4 +246,3 @@ export const QueryOrders = [
   { label: "Start Time", value: "BY_START_TIME" },
   { label: "Duration", value: "BY_DURATION" },
 ];
-export const TraceEntitys = ["All", "Service", "ServiceInstance", "Endpoint"];

@@ -75,35 +75,30 @@ limitations under the License. -->
     <div class="tool-icons">
       <span
         @click="clickIcons(t)"
-        v-for="(t, index) in ToolIcons"
+        v-for="(t, index) in toolIcons"
         :key="index"
         :title="t.content"
       >
-        <Icon
-          class="icon-btn"
-          size="sm"
-          :iconName="t.name"
-          v-if="
-            !['topology', 'trace', 'profile'].includes(t.id) ||
-            (t.id === 'topology' &&
-              hasTopology.includes(dashboardStore.entity)) ||
-            (t.id === 'trace' &&
-              TraceEntitys.includes(dashboardStore.entity)) ||
-            (t.id === 'profile' &&
-              dashboardStore.entity === EntityType[0].value)
-          "
-        />
+        <Icon class="icon-btn" size="sm" :iconName="t.name" />
       </span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch } from "vue";
+import { reactive, watch, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { EntityType, ToolIcons, hasTopology, TraceEntitys } from "../data";
+import {
+  EntityType,
+  AllTools,
+  ServiceTools,
+  InstanceTools,
+  EndpointTools,
+  PodRelationTools,
+  ServiceRelationTools,
+} from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
@@ -113,6 +108,7 @@ const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
 const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
+const toolIcons = ref<any[]>(PodRelationTools);
 const states = reactive<{
   destService: string;
   destPod: string;
@@ -137,6 +133,7 @@ dashboardStore.setEntity(String(params.entity));
 initSelector();
 
 function initSelector() {
+  getTools();
   if (params.serviceId) {
     setSelector();
   } else {
@@ -399,6 +396,27 @@ async function fetchPods(type: string, serviceId: string, setPod: boolean) {
   }
   if (resp.errors) {
     ElMessage.error(resp.errors);
+  }
+}
+function getTools() {
+  switch (dashboardStore.entity) {
+    case EntityType[1].value:
+      toolIcons.value = AllTools;
+      break;
+    case EntityType[0].value:
+      toolIcons.value = ServiceTools;
+      break;
+    case EntityType[2].value:
+      toolIcons.value = EndpointTools;
+      break;
+    case EntityType[3].value:
+      toolIcons.value = InstanceTools;
+      break;
+    case EntityType[4].value:
+      toolIcons.value = ServiceRelationTools;
+      break;
+    default:
+      toolIcons.value = PodRelationTools;
   }
 }
 watch(
