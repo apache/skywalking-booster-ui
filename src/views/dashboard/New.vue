@@ -84,10 +84,10 @@ onBeforeMount(async () => {
     return { label: d, value: d };
   });
 });
-function changeLayer(opt: { label: string; value: string }[]) {
+function changeLayer(opt: { label: string; value: string }[] | any) {
   states.selectedLayer = opt[0].value;
 }
-function changeEntity(opt: { label: string; value: string }[]) {
+function changeEntity(opt: { label: string; value: string }[] | any) {
   states.entity = opt[0].value;
 }
 </script>

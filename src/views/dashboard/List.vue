@@ -20,6 +20,7 @@ limitations under the License. -->
         placeholder="Please input"
         class="input-with-search"
         size="small"
+        @change="searchDashboards"
       >
         <template #append>
           <el-button size="small">
@@ -108,7 +109,7 @@ async function setList() {
       return;
     }
   }
-  dashboards.value = JSON.parse(sessionStorage.getItem("dashboards") || "");
+  dashboards.value = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
 }
 const handleEdit = (row: { name: string; layer: string; entity: string }) => {
   router.push(
@@ -125,6 +126,12 @@ const handleDelete = (
     `${row.layer}_${row.entity}_${row.name.split(" ").join("-")}`
   );
 };
+function searchDashboards() {
+  const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
+  dashboards.value = list.filter((d: { name: string }) =>
+    d.name.includes(searchText.value)
+  );
+}
 </script>
 <style lang="scss" scoped>
 .header {
