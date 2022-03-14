@@ -43,13 +43,9 @@ limitations under the License. -->
         <el-table-column fixed prop="name" label="Name" />
         <el-table-column prop="layer" label="Layer" />
         <el-table-column prop="entity" label="Entity" />
-        <el-table-column prop="date" label="Date" />
         <el-table-column label="Operations">
           <template #default="scope">
-            <el-button
-              size="small"
-              @click="handleEdit(scope.$index, scope.row)"
-            >
+            <el-button size="small" @click="handleEdit(scope.row)">
               {{ t("view") }}
             </el-button>
             <!-- <el-button
@@ -58,13 +54,16 @@ limitations under the License. -->
             >
               {{ t("edit") }}
             </el-button> -->
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
+            <el-popconfirm
+              title="Are you sure to delete this?"
+              @confirm="handleDelete(scope.$index, scope.row)"
             >
-              {{ t("delete") }}
-            </el-button>
+              <template #reference>
+                <el-button size="small" type="danger">
+                  {{ t("delete") }}
+                </el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -78,6 +77,7 @@ import { ElTable, ElTableColumn, ElButton, ElInput } from "element-plus";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { ElMessage } from "element-plus";
+import router from "@/router";
 
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
@@ -110,11 +110,20 @@ async function setList() {
   }
   dashboards.value = JSON.parse(sessionStorage.getItem("dashboards") || "");
 }
-const handleEdit = (index: number, row: any) => {
-  console.log(index, row);
+const handleEdit = (row: { name: string; layer: string; entity: string }) => {
+  router.push(
+    `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
+  );
 };
-const handleDelete = (index: number, row: any) => {
-  console.log(index, row);
+const handleDelete = (
+  index: number,
+  row: { name: string; layer: string; entity: string }
+) => {
+  dashboards.value.splice(index, 1);
+  sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
+  sessionStorage.removeItem(
+    `${row.layer}_${row.entity}_${row.name.split(" ").join("-")}`
+  );
 };
 </script>
 <style lang="scss" scoped>

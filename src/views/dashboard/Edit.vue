@@ -71,7 +71,7 @@ async function setTemplate() {
   const c: { configuration: string; id: string } = JSON.parse(
     sessionStorage.getItem(layoutKey) || "{}"
   );
-  const layout = JSON.parse(c.configuration || "") || {};
+  const layout = JSON.parse(c.configuration || "{}");
   dashboardStore.setLayout(layout.children || []);
 }
 function handleClick(e: any) {
