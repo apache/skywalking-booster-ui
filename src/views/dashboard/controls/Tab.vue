@@ -257,7 +257,7 @@ export default defineComponent({
   }
 
   .tab-name {
-    max-width: 80px;
+    max-width: 130px;
     height: 20px;
     line-height: 20px;
     outline: none;

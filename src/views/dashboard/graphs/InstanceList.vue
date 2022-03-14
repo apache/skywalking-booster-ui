@@ -18,13 +18,13 @@ limitations under the License. -->
       <el-input
         v-model="searchText"
         placeholder="Please input instance name"
-        class="input-with-search"
         size="small"
         @change="searchList"
+        class="inputs"
       >
         <template #append>
           <el-button size="small" @click="searchList">
-            <Icon size="lg" iconName="search" />
+            <Icon size="sm" iconName="search" />
           </el-button>
         </template>
       </el-input>
@@ -66,6 +66,7 @@ limitations under the License. -->
     <el-pagination
       class="pagination"
       background
+      small
       layout="prev, pager, next"
       :page-size="pageSize"
       :total="searchInstances.length"
@@ -138,7 +139,7 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
       currentInstances,
-      dashboardStore.selectedGrid,
+      props.config,
       EntityType[3].value
     );
     const json = await dashboardStore.fetchMetricValue(params);
@@ -147,11 +148,7 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
       ElMessage.error(json.errors);
       return;
     }
-    instances.value = usePodsSource(
-      currentInstances,
-      json,
-      dashboardStore.selectedGrid
-    );
+    instances.value = usePodsSource(currentInstances, json, props.config);
     return;
   }
   instances.value = currentInstances;
@@ -181,5 +178,9 @@ watch(
 
 .chart {
   height: 40px;
+}
+
+.inputs {
+  width: 300px;
 }
 </style>

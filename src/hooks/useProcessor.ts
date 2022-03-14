@@ -226,7 +226,6 @@ export function useQueryPodsMetrics(
   };
   const variables: string[] = [`$duration: Duration!`];
   const { currentService } = selectorStore;
-
   const fragmentList = pods.map(
     (
       d: (Instance | Endpoint | Service) & { normal: boolean },

@@ -120,6 +120,7 @@ export default defineComponent({
     }
 
     function applyConfig() {
+      console.log(dashboardStore.selectedGrid);
       dashboardStore.setConfigs(dashboardStore.selectedGrid);
       dashboardStore.setConfigPanel(false);
     }

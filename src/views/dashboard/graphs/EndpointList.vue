@@ -18,13 +18,13 @@ limitations under the License. -->
       <el-input
         v-model="searchText"
         placeholder="Please input endpoint name"
-        class="input-with-search"
         size="small"
         @change="searchList"
+        class="inputs"
       >
         <template #append>
           <el-button size="small" @click="searchList">
-            <Icon size="lg" iconName="search" />
+            <Icon size="sm" iconName="search" />
           </el-button>
         </template>
       </el-input>
@@ -66,6 +66,7 @@ limitations under the License. -->
     <el-pagination
       class="pagination"
       background
+      small
       layout="prev, pager, next"
       :page-size="pageSize"
       :total="selectorStore.pods.length"
@@ -134,7 +135,7 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
       currentPods,
-      dashboardStore.selectedGrid,
+      props.config,
       EntityType[2].value
     );
     const json = await dashboardStore.fetchMetricValue(params);
@@ -143,11 +144,7 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
       ElMessage.error(json.errors);
       return;
     }
-    endpoints.value = usePodsSource(
-      currentPods,
-      json,
-      dashboardStore.selectedGrid
-    );
+    endpoints.value = usePodsSource(currentPods, json, props.config);
     return;
   }
   endpoints.value = currentPods;
@@ -176,5 +173,9 @@ watch(
 
 .chart {
   height: 39px;
+}
+
+.inputs {
+  width: 300px;
 }
 </style>
