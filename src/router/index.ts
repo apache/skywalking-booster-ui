@@ -52,7 +52,7 @@ router.beforeEach((to, from, next) => {
     (window as any).axiosCancel = [];
   }
   if (to.path === "/") {
-    next({ path: "/generalService" });
+    next({ path: "/general" });
   } else {
     next();
   }

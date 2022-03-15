@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 const msg = {
-  generalService: "General Service",
+  general: "General Service",
   services: "Services",
   service: "Service",
   traces: "Traces",
@@ -96,6 +96,8 @@ const msg = {
   taskList: "Task List",
   sampledTraces: "Sampled Traces",
   editTab: "Enable editing tab names",
+  label: "Name",
+  id: "ID",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",
@@ -234,7 +236,7 @@ const msg = {
   parentService: "Parent Service",
   isParentService: "Set Parent Service",
   noneParentService: "No Parent Service",
-  serviceGroup: "Service Group",
+  group: "Service Group",
   endpointFilter: "Endpoint Filter",
   databaseView: "Database",
   browserView: "Browser",

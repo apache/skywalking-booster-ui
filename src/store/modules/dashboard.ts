@@ -317,9 +317,8 @@ export const dashboardStore = defineStore({
           layer: c.layer,
           entity: c.entity,
           name: c.name,
-          date: c.date,
+          isRoot: c.isRoot,
         });
-        console.log(key);
         sessionStorage.setItem(key, JSON.stringify(t));
       }
       sessionStorage.setItem("dashboards", JSON.stringify(list));

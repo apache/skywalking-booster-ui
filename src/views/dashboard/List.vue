@@ -95,7 +95,7 @@ appStore.setPageTitle("Dashboard List");
 //  # - browser
 //  # - skywalking
 const { t } = useI18n();
-const dashboards = ref<any[]>([]);
+const dashboards = ref<{ name: string; layer: string; entity: string }[]>([]);
 const searchText = ref<string>("");
 
 setList();

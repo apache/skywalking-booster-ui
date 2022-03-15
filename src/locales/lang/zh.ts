@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 const msg = {
-  generalService: "普通服务",
+  general: "普通服务",
   services: "服务",
   traces: "跟踪",
   metrics: "指标",
@@ -96,6 +96,8 @@ const msg = {
   taskList: "任务列表",
   sampledTraces: "采样的追踪",
   editTab: "开启编辑Tab的名称",
+  label: "名称",
+  id: "ID",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",
@@ -236,7 +238,7 @@ const msg = {
   parentService: "父级服务",
   isParentService: "设置父服务",
   noneParentService: "不设置父服务",
-  serviceGroup: "服务组",
+  group: "服务组",
   endpointFilter: "端点过滤器",
   databaseView: "数据库视图",
   browserView: "浏览器视图",

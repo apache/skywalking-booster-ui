@@ -177,7 +177,8 @@ async function setSelector() {
   selectorStore.setCurrentService(currentService);
   selectorStore.setCurrentDestService(currentDestService);
   states.currentService = selectorStore.currentService.value;
-  states.currentDestService = selectorStore.currentDestService.value;
+  states.currentDestService =
+    selectorStore.currentDestService && selectorStore.currentDestService.value;
 }
 
 async function setSourceSelector() {
