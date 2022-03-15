@@ -19,7 +19,6 @@ limitations under the License. -->
     :row-height="10"
     :is-draggable="true"
     :is-resizable="true"
-    @layout-updated="layoutUpdatedEvent"
   >
     <grid-item
       v-for="item in dashboardStore.layout"
@@ -49,6 +48,7 @@ export default defineComponent({
   setup() {
     const dashboardStore = useDashboardStore();
     function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
+      console.log(newLayout);
       dashboardStore.setLayout(newLayout);
     }
     function clickGrid(item: LayoutConfig) {

@@ -174,7 +174,7 @@ export const AllLayout = {
 export const ServiceLayout = {
   id: "1",
   configuration: {
-    name: "Service Layout",
+    name: "Service Root Layout",
     layer: "GENERAL",
     entity: "Service",
     isRoot: true,

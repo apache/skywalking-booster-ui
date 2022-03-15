@@ -30,3 +30,41 @@ export const listMetrics = {
   }
   `,
 };
+
+export const getAllTemplates = {
+  query: `
+    getAllTemplates {
+      id,
+      configuration,
+    }
+  `,
+};
+
+export const addTemplate = {
+  variable: "$setting: NewDashboardSetting!",
+  query: `
+  addTemplate(setting: $setting) {
+        id
+        status
+        message
+    }`,
+};
+export const changeTemplate = {
+  variable: "$setting: DashboardSetting!",
+  query: `
+  changeTemplate(setting: $setting) {
+        id
+        status
+        message
+    }`,
+};
+
+export const deleteTemplate = {
+  variable: "$id: String!",
+  query: `
+  disableTemplate(id: $id) {
+        id
+        status
+        message
+    }`,
+};

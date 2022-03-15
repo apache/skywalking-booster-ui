@@ -85,6 +85,11 @@ const onCreate = () => {
     ElMessage.error("The dashboard name cannot be duplicate.");
     return;
   }
+  dashboardStore.setCurrentDashboard({
+    name: states.name,
+    entity: states.entity,
+    layer: states.selectedLayer,
+  });
   const name = states.name.split(" ").join("-");
   const path = `/dashboard/${states.selectedLayer}/${states.entity}/${name}`;
   router.push(path);

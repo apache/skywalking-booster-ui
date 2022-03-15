@@ -14,8 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TypeOfMetrics, listMetrics } from "../fragments/dashboard";
+import {
+  TypeOfMetrics,
+  listMetrics,
+  getAllTemplates,
+  addTemplate,
+  changeTemplate,
+  deleteTemplate,
+} from "../fragments/dashboard";
 
 export const queryTypeOfMetrics = `query typeOfMetrics(${TypeOfMetrics.variable}) {${TypeOfMetrics.query}}`;
 
 export const queryMetrics = `query queryData(${listMetrics.variable}) {${listMetrics.query}}`;
+
+export const addNewTemplate = `mutation template(${addTemplate.variable}) {${addTemplate.query}}`;
+
+export const updateTemplate = `mutation template(${changeTemplate.variable}) {${changeTemplate.query}}`;
+
+export const removeTemplate = `mutation template(${deleteTemplate.variable}) {${deleteTemplate.query}}`;
+
+export const getTemplates = `query templates {${getAllTemplates.query}}`;

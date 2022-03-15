@@ -51,7 +51,7 @@ limitations under the License. -->
             </el-button>
             <el-popconfirm
               title="Are you sure to delete this?"
-              @confirm="handleDelete(scope.$index, scope.row)"
+              @confirm="handleDelete(scope.row)"
             >
               <template #reference>
                 <el-button size="small" type="danger">
@@ -98,20 +98,24 @@ async function setList() {
   dashboards.value = dashboardStore.dashboards;
 }
 const handleEdit = (row: { name: string; layer: string; entity: string }) => {
+  dashboardStore.setCurrentDashboard(row);
   router.push(
     `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
   );
 };
-const handleDelete = (
-  index: number,
-  row: { name: string; layer: string; entity: string }
-) => {
-  dashboards.value.splice(index, 1);
+async function handleDelete(row: {
+  name: string;
+  layer: string;
+  entity: string;
+}) {
+  dashboardStore.setCurrentDashboard(row);
+  await dashboardStore.deleteDashbaord();
+  dashboards.value = dashboardStore.dashboards;
   sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
   sessionStorage.removeItem(
     `${row.layer}_${row.entity}_${row.name.split(" ").join("-")}`
   );
-};
+}
 function searchDashboards() {
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   dashboards.value = list.filter((d: { name: string }) =>

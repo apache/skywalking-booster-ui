@@ -19,15 +19,15 @@ import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
 import query from "@/graphql/fetch";
-import {
-  ServiceLayout,
-  AllLayout,
-  EndpointLayout,
-  InstanceLayout,
-  ServiceRelationLayout,
-  InstanceRelationLayout,
-  EndpointRelationLayout,
-} from "@/constants/templates";
+// import {
+//   ServiceLayout,
+//   AllLayout,
+//   EndpointLayout,
+//   InstanceLayout,
+//   ServiceRelationLayout,
+//   InstanceRelationLayout,
+//   EndpointRelationLayout,
+// } from "@/constants/templates";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
@@ -45,13 +45,19 @@ interface DashboardState {
   selectorStore: any;
   showTopology: boolean;
   currentTabItems: LayoutConfig[];
-  dashboards: { name: string; layer: string; entity: string }[];
+  dashboards: { name: string; layer: string; entity: string; id: string }[];
+  currentDashboard: Nullable<{
+    name: string;
+    layer: string;
+    entity: string;
+    id: string;
+  }>;
 }
 
 export const dashboardStore = defineStore({
   id: "dashboard",
   state: (): DashboardState => ({
-    layout: ServiceLayout.configuration.children,
+    layout: [],
     showConfig: false,
     selectedGrid: null,
     entity: "",
@@ -62,10 +68,20 @@ export const dashboardStore = defineStore({
     showTopology: false,
     currentTabItems: [],
     dashboards: [],
+    currentDashboard: null,
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
       this.layout = data;
+    },
+    setCurrentDashboard(item: {
+      name: string;
+      layer: string;
+      entity: string;
+      id: string;
+    }) {
+      console.log(item);
+      this.currentDashboard = item;
     },
     addControl(type: string) {
       const newItem: LayoutConfig = {
@@ -290,18 +306,19 @@ export const dashboardStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      const data = [
-        ServiceLayout,
-        AllLayout,
-        EndpointLayout,
-        InstanceLayout,
-        ServiceRelationLayout,
-        InstanceRelationLayout,
-        EndpointRelationLayout,
-      ].map((t: any) => {
-        t.configuration = JSON.stringify(t.configuration);
-        return t;
-      });
+      // const data = [
+      //   ServiceLayout,
+      //   AllLayout,
+      //   EndpointLayout,
+      //   InstanceLayout,
+      //   ServiceRelationLayout,
+      //   InstanceRelationLayout,
+      //   EndpointRelationLayout,
+      // ].map((t: any) => {
+      //   t.configuration = JSON.stringify(t.configuration);
+      //   return t;
+      // });
+      const data = res.data.data.getAllTemplates;
       const list = [];
       for (const t of data) {
         const c = JSON.parse(t.configuration);
@@ -331,6 +348,94 @@ export const dashboardStore = defineStore({
       this.dashboards = JSON.parse(
         sessionStorage.getItem("dashboards") || "[]"
       );
+    },
+    async saveDashboard() {
+      if (!this.currentDashboard.name) {
+        ElMessage.error("The dashboard name is needed.");
+        return;
+      }
+      const c = {
+        ...this.currentDashboard,
+        isRoot: false,
+        children: this.layout,
+      };
+      let res: AxiosResponse;
+      let json;
+
+      if (this.currentDashboard.id) {
+        res = await graphql.query("updateTemplate").params({
+          setting: {
+            id: this.currentDashboard.id,
+            configuration: JSON.stringify(c),
+          },
+        });
+        json = res.data.data.changeTemplate;
+      } else {
+        const index = this.dashboards.findIndex(
+          (d: { name: string; entity: string; layer: string; id: string }) =>
+            d.name === this.currentDashboard.name &&
+            d.entity === this.currentDashboard.entity &&
+            d.layer === this.currentDashboard.layerId
+        );
+        if (index > -1) {
+          ElMessage.error("The dashboard name cannot be duplicate.");
+          return;
+        }
+        res = await graphql
+          .query("addNewTemplate")
+          .params({ setting: { configuration: JSON.stringify(c) } });
+
+        json = res.data.data.addTemplate;
+      }
+      if (res.data.errors) {
+        ElMessage.error(res.data.errors);
+        return res.data;
+      }
+      if (!json.status) {
+        ElMessage.error(json.message);
+        return;
+      }
+      ElMessage.success("Saved successfully");
+
+      this.dashboards.push({
+        id: json.id,
+        name,
+        layer: this.layerId,
+        entity: this.entity,
+        isRoot: true,
+      });
+      const key = [
+        this.layer,
+        this.entity,
+        this.currentDashboard.name.split(" ").join("-"),
+      ].join("_");
+      const l = { id: json.id, configuration: c };
+      sessionStorage.setItem(key, JSON.stringify(l));
+      sessionStorage.setItem("dashboards", JSON.stringify(this.dashboards));
+    },
+    async deleteDashbaord() {
+      const res: AxiosResponse = await graphql
+        .query("removeTemplate")
+        .params({ id: this.currentDashboard.id });
+
+      if (res.data.errors) {
+        ElMessage.error(res.data.errors);
+        return res.data;
+      }
+      const json = res.data.data.disableTemplate;
+      if (!json.status) {
+        ElMessage.error(json.message);
+        return res.data;
+      }
+      this.dashboards = this.dashboards.filter(
+        (d: any) => d.id !== this.currentDashboard.id
+      );
+      const key = [
+        this.currentDashboard.layer,
+        this.currentDashboard.entity,
+        this.currentDashboard.name.split(" ").join("-"),
+      ].join("_");
+      sessionStorage.removeItem(key);
     },
   },
 });
