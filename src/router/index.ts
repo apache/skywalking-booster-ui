@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-// import Layout from "@/layout/Index.vue";
-import { routesGen } from "./generalService";
+import { routesGen } from "./general";
 import { routesMesh } from "./serviceMesh";
 import { routesDatabase } from "./database";
 import { routesInfra } from "./infrastructure";

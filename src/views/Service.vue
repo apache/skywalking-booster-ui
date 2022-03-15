@@ -14,7 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="service-table">
-    <el-table :data="selectorStore.services" :border="true">
+    <div class="search">
+      <el-input
+        v-model="searchText"
+        placeholder="Please input name"
+        class="input-with-search"
+        size="small"
+        @change="searchServices"
+      >
+        <template #append>
+          <el-button size="small">
+            <Icon size="sm" iconName="search" />
+          </el-button>
+        </template>
+      </el-input>
+    </div>
+    <el-table
+      :data="services"
+      :span-method="objectSpanMethod"
+      :border="true"
+      :style="{ fontSize: '14px' }"
+    >
       <el-table-column
         v-for="(h, index) in tableHeader"
         :label="t(h)"
@@ -45,6 +65,7 @@ import { ElMessage } from "element-plus";
 import { EntityType } from "./dashboard/data";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { Service } from "@/types/selector";
 import router from "@/router";
 
 const route = useRoute();
@@ -53,7 +74,7 @@ const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const tableHeader = ["group", "label", "id"];
-const path = [
+const routeNames = [
   "GeneralServices",
   "Database",
   "MeshServices",
@@ -64,6 +85,9 @@ const dashboards = ref<
   { name: string; layer: string; entity: string; isRoot: boolean }[]
 >([]);
 const layer = ref<string>("GENERAL");
+const searchText = ref<string>("");
+const services = ref<Service[]>([]);
+const groups = ref<any>({});
 
 getServices();
 setList();
@@ -81,10 +105,57 @@ async function setList() {
 }
 async function getServices() {
   setLayer(String(route.name));
-  const res = selectorStore.fetchServices(layer.value);
+  const res = await selectorStore.fetchServices(layer.value);
   if (res.errors) {
     ElMessage.error(res.errors);
+    services.value = [];
+    return;
   }
+  const map: { [key: string]: any[] } = selectorStore.services.reduce(
+    (result: { [key: string]: any[] }, item: any) => {
+      item.group = item.group || "";
+      if (result[item.group]) {
+        item.merge = true;
+      } else {
+        item.merge = false;
+        result[item.group] = [];
+      }
+      result[item.group].push(item);
+      return result;
+    },
+    {}
+  );
+  services.value = Object.values(map).flat(1);
+  const obj = {} as any;
+  for (const s of services.value) {
+    s.group = s.group || "";
+    if (!obj[s.group]) {
+      obj[s.group] = 1;
+    } else {
+      obj[s.group]++;
+    }
+    groups.value[s.group] = obj[s.group];
+  }
+}
+
+function objectSpanMethod(param: any): any {
+  if (param.columnIndex !== 0) {
+    return;
+  }
+  if (param.row.merge) {
+    return {
+      rowspan: 0,
+      colspan: 0,
+    };
+  } else {
+    return { rowspan: groups.value[param.row.group], colspan: 1 };
+  }
+}
+
+function searchServices() {
+  services.value = dashboardStore.services.filter((s: Service) =>
+    s.label.includes(searchText.value)
+  );
 }
 
 function visitLayout(row: { id: string }) {
@@ -94,26 +165,26 @@ function visitLayout(row: { id: string }) {
         d.layer === layer.value && d.entity === EntityType[0].value && d.isRoot
     )[0] || {};
   router.push(
-    `/dashboard/${layer.value}/${EntityType[0].value}/${row.id}/${l.name
+    `/dashboard/${layer.value}/${EntityType[0].value}/${row.id}/${(l.name || "")
       .split(" ")
       .join("-")}`
   );
 }
-function setLayer(p: string) {
-  switch (p) {
-    case path[0]:
+function setLayer(n: string) {
+  switch (n) {
+    case routeNames[0]:
       layer.value = "GENERAL";
       break;
-    case path[1]:
+    case routeNames[1]:
       layer.value = "VIRTUAL_DATABASE";
       break;
-    case path[2]:
+    case routeNames[2]:
       layer.value = "MESH";
       break;
-    case path[3]:
+    case routeNames[3]:
       layer.value = "MESH_CP";
       break;
-    case path[4]:
+    case routeNames[4]:
       layer.value = "MESH_DP";
       break;
     default:
@@ -140,5 +211,16 @@ watch(
 
 .service-table {
   padding: 15px;
+  background-color: #fff;
+  margin: 30px 10px;
+  border-radius: 3px;
+  max-height: 100%;
+  overflow: auto;
+}
+
+.search {
+  margin-bottom: 20px;
+  width: 300px;
+  float: right;
 }
 </style>

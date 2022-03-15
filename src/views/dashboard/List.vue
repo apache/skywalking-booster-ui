@@ -17,7 +17,7 @@ limitations under the License. -->
     <div class="flex-h header" style="margin: 10px 0">
       <el-input
         v-model="searchText"
-        placeholder="Please input"
+        placeholder="Please input name"
         class="input-with-search"
         size="small"
         @change="searchDashboards"
