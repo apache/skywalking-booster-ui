@@ -34,6 +34,7 @@ limitations under the License. -->
       :span-method="objectSpanMethod"
       :border="true"
       :style="{ fontSize: '14px' }"
+      v-loading="loading"
     >
       <el-table-column
         v-for="(h, index) in tableHeader"
@@ -81,6 +82,7 @@ const routeNames = [
   "ControlPanel",
   "DataPanel",
 ];
+const loading = ref<boolean>(false);
 const layer = ref<string>("GENERAL");
 const searchText = ref<string>("");
 const services = ref<Service[]>([]);
@@ -91,12 +93,14 @@ dashboardStore.setDashboards();
 
 async function getServices() {
   setLayer(String(route.name));
+  loading.value = true;
   const res = await selectorStore.fetchServices(layer.value);
   if (res.errors) {
     ElMessage.error(res.errors);
     services.value = [];
     return;
   }
+  loading.value = false;
   const map: { [key: string]: any[] } = selectorStore.services.reduce(
     (result: { [key: string]: any[] }, item: any) => {
       item.group = item.group || "";
@@ -150,6 +154,7 @@ function visitLayout(row: { id: string }) {
       (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
         d.layer === layer.value && d.entity === EntityType[0].value && d.isRoot
     )[0] || {};
+  dashboardStore.setCurrentDashboard(l);
   router.push(
     `/dashboard/${layer.value}/${EntityType[0].value}/${row.id}/${(l.name || "")
       .split(" ")

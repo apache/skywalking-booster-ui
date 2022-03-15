@@ -349,15 +349,61 @@ export const dashboardStore = defineStore({
         sessionStorage.getItem("dashboards") || "[]"
       );
     },
+    async updateDashboard(param: { name: string }) {
+      const key = [
+        this.currentDashboard.layer,
+        this.currentDashboard.entity,
+        this.currentDashboard.name.split(" ").join("-"),
+      ].join("_");
+      const layout = sessionStorage.getItem(key);
+      const c = {
+        isRoot: false,
+        children: layout,
+        ...this.currentDashboard,
+        name: param.name,
+      };
+      const setting = {
+        id: this.currentDashboard.id,
+        configuration: JSON.stringify(c),
+      };
+      const res: AxiosResponse = await graphql.query("updateTemplate").params({
+        setting,
+      });
+      if (res.data.errors) {
+        ElMessage.error(res.data.errors);
+        return res.data;
+      }
+      const json = res.data.data.changeTemplate;
+      if (!json.status) {
+        ElMessage.error(json.message);
+        return;
+      }
+      ElMessage.success("Saved successfully");
+      this.currentDashboard.name = param.name;
+      this.dashboards = this.dashboards.map((d: any) => {
+        if (d.id === this.currentDashboard.id) {
+          d = this.currentDashboard;
+        }
+        return d;
+      });
+      sessionStorage.setItem("dashboards", JSON.stringify(this.dashboards));
+      sessionStorage.removeItem(key);
+      const str = [
+        this.currentDashboard.layer,
+        this.currentDashboard.entity,
+        param.name.split(" ").join("-"),
+      ].join("_");
+      sessionStorage.setItem(str, JSON.stringify(setting));
+    },
     async saveDashboard() {
       if (!this.currentDashboard.name) {
         ElMessage.error("The dashboard name is needed.");
         return;
       }
       const c = {
-        ...this.currentDashboard,
         isRoot: false,
         children: this.layout,
+        ...this.currentDashboard,
       };
       let res: AxiosResponse;
       let json;
@@ -399,7 +445,7 @@ export const dashboardStore = defineStore({
 
       this.dashboards.push({
         id: json.id,
-        name,
+        name: this.currentDashboard.name,
         layer: this.layerId,
         entity: this.entity,
         isRoot: true,
@@ -413,7 +459,7 @@ export const dashboardStore = defineStore({
       sessionStorage.setItem(key, JSON.stringify(l));
       sessionStorage.setItem("dashboards", JSON.stringify(this.dashboards));
     },
-    async deleteDashbaord() {
+    async deleteDashboard() {
       const res: AxiosResponse = await graphql
         .query("removeTemplate")
         .params({ id: this.currentDashboard.id });

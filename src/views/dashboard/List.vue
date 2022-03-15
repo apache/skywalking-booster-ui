@@ -40,18 +40,22 @@ limitations under the License. -->
         :data="dashboards"
         :style="{ width: '100%' }"
         max-height="550"
+        v-loading="loading"
       >
         <el-table-column fixed prop="name" label="Name" />
         <el-table-column prop="layer" label="Layer" />
         <el-table-column prop="entity" label="Entity" />
         <el-table-column label="Operations">
           <template #default="scope">
-            <el-button size="small" @click="handleEdit(scope.row)">
+            <el-button size="small" @click="handleView(scope.$index)">
               {{ t("view") }}
+            </el-button>
+            <el-button size="small" @click="handleEdit(scope.$index)">
+              {{ t("edit") }}
             </el-button>
             <el-popconfirm
               title="Are you sure to delete this?"
-              @confirm="handleDelete(scope.row)"
+              @confirm="handleDelete(scope.$index)"
             >
               <template #reference>
                 <el-button size="small" type="danger">
@@ -72,6 +76,7 @@ import { ElTable, ElTableColumn, ElButton, ElInput } from "element-plus";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import router from "@/router";
+import { ElMessageBox, ElMessage } from "element-plus";
 
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
@@ -90,6 +95,7 @@ appStore.setPageTitle("Dashboard List");
 const { t } = useI18n();
 const dashboards = ref<{ name: string; layer: string; entity: string }[]>([]);
 const searchText = ref<string>("");
+const loading = ref<boolean>(false);
 
 setList();
 
@@ -97,20 +103,39 @@ async function setList() {
   await dashboardStore.setDashboards();
   dashboards.value = dashboardStore.dashboards;
 }
-const handleEdit = (row: { name: string; layer: string; entity: string }) => {
-  dashboardStore.setCurrentDashboard(row);
+const handleView = (index: number) => {
+  const d = dashboards.value[index];
+  dashboardStore.setCurrentDashboard(d);
   router.push(
-    `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
+    `/dashboard/${d.layer}/${d.entity}/${d.name.split(" ").join("-")}`
   );
 };
-async function handleDelete(row: {
-  name: string;
-  layer: string;
-  entity: string;
-}) {
+function handleEdit(index: number) {
+  const d = dashboards.value[index];
+
+  ElMessageBox.prompt("Please input dashboard name", "Edit", {
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+    inputValue: d.name,
+  })
+    .then(({ value }) => {
+      dashboardStore.setCurrentDashboard(d);
+      dashboardStore.updateDashboard({ name: value });
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "Input canceled",
+      });
+    });
+}
+async function handleDelete(index: number) {
+  const row = dashboards.value[index];
   dashboardStore.setCurrentDashboard(row);
-  await dashboardStore.deleteDashbaord();
+  loading.value = true;
+  await dashboardStore.deleteDashboard();
   dashboards.value = dashboardStore.dashboards;
+  loading.value = false;
   sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
   sessionStorage.removeItem(
     `${row.layer}_${row.entity}_${row.name.split(" ").join("-")}`
