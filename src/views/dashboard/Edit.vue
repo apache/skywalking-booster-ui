@@ -41,14 +41,12 @@ limitations under the License. -->
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import GridLayout from "./panel/Layout.vue";
-// import { LayoutConfig } from "@/types/dashboard";
 import Tool from "./panel/Tool.vue";
 import Widget from "./configuration/Widget.vue";
 import TopologyConfig from "./configuration/Topology.vue";
 import Topology from "./related/topology/Index.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { ElMessage } from "element-plus";
 
 const dashboardStore = useDashboardStore();
 const appStore = useAppStoreWithOut();
@@ -60,14 +58,7 @@ appStore.setPageTitle("Dashboard Name");
 setTemplate();
 
 async function setTemplate() {
-  if (!sessionStorage.getItem("dashboards")) {
-    const res = await dashboardStore.fetchTemplates();
-    if (res.errors) {
-      dashboardStore.setLayout([]);
-      ElMessage.error(res.errors);
-      return;
-    }
-  }
+  await dashboardStore.setDashboards();
   const c: { configuration: string; id: string } = JSON.parse(
     sessionStorage.getItem(layoutKey) || "{}"
   );

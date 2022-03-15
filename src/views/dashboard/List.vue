@@ -49,12 +49,6 @@ limitations under the License. -->
             <el-button size="small" @click="handleEdit(scope.row)">
               {{ t("view") }}
             </el-button>
-            <!-- <el-button
-              size="small"
-              @click="handleEdit(scope.$index, scope.row)"
-            >
-              {{ t("edit") }}
-            </el-button> -->
             <el-popconfirm
               title="Are you sure to delete this?"
               @confirm="handleDelete(scope.$index, scope.row)"
@@ -77,7 +71,6 @@ import { useI18n } from "vue-i18n";
 import { ElTable, ElTableColumn, ElButton, ElInput } from "element-plus";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { ElMessage } from "element-plus";
 import router from "@/router";
 
 const appStore = useAppStoreWithOut();
@@ -101,15 +94,8 @@ const searchText = ref<string>("");
 setList();
 
 async function setList() {
-  if (!sessionStorage.getItem("dashboards")) {
-    const res = await dashboardStore.fetchTemplates();
-    if (res.errors) {
-      dashboards.value = [];
-      ElMessage.error(res.errors);
-      return;
-    }
-  }
-  dashboards.value = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
+  await dashboardStore.setDashboards();
+  dashboards.value = dashboardStore.dashboards;
 }
 const handleEdit = (row: { name: string; layer: string; entity: string }) => {
   router.push(

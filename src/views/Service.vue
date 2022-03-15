@@ -81,28 +81,14 @@ const routeNames = [
   "ControlPanel",
   "DataPanel",
 ];
-const dashboards = ref<
-  { name: string; layer: string; entity: string; isRoot: boolean }[]
->([]);
 const layer = ref<string>("GENERAL");
 const searchText = ref<string>("");
 const services = ref<Service[]>([]);
 const groups = ref<any>({});
 
 getServices();
-setList();
+dashboardStore.setDashboards();
 
-async function setList() {
-  if (!sessionStorage.getItem("dashboards")) {
-    const res = await dashboardStore.fetchTemplates();
-    if (res.errors) {
-      dashboards.value = [];
-      ElMessage.error(res.errors);
-      return;
-    }
-  }
-  dashboards.value = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-}
 async function getServices() {
   setLayer(String(route.name));
   const res = await selectorStore.fetchServices(layer.value);
@@ -160,7 +146,7 @@ function searchServices() {
 
 function visitLayout(row: { id: string }) {
   const l =
-    dashboards.value.filter(
+    dashboardStore.dashboards.filter(
       (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
         d.layer === layer.value && d.entity === EntityType[0].value && d.isRoot
     )[0] || {};

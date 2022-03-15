@@ -33,6 +33,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
 import { Duration } from "@/types/app";
 import { AxiosResponse } from "axios";
+import { ElMessage } from "element-plus";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -44,6 +45,7 @@ interface DashboardState {
   selectorStore: any;
   showTopology: boolean;
   currentTabItems: LayoutConfig[];
+  dashboards: { name: string; layer: string; entity: string }[];
 }
 
 export const dashboardStore = defineStore({
@@ -59,6 +61,7 @@ export const dashboardStore = defineStore({
     selectorStore: useSelectorStore(),
     showTopology: false,
     currentTabItems: [],
+    dashboards: [],
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -281,19 +284,11 @@ export const dashboardStore = defineStore({
       const res: AxiosResponse = await query(param);
       return res.data;
     },
-    async getAllTemplates() {
+    async fetchTemplates() {
       const res: AxiosResponse = await graphql.query("getTemplates").params({});
 
       if (res.data.errors) {
         return res.data;
-      }
-      return res.data;
-    },
-    async fetchTemplates() {
-      const res = await this.getAllTemplates();
-
-      if (res.errors) {
-        return res;
       }
       const data = [
         ServiceLayout,
@@ -322,7 +317,20 @@ export const dashboardStore = defineStore({
         sessionStorage.setItem(key, JSON.stringify(t));
       }
       sessionStorage.setItem("dashboards", JSON.stringify(list));
-      return res;
+      return res.data;
+    },
+    async setDashboards() {
+      if (!sessionStorage.getItem("dashboards")) {
+        const res = await this.fetchTemplates();
+        if (res.errors) {
+          this.dashboards = [];
+          ElMessage.error(res.errors);
+          return;
+        }
+      }
+      this.dashboards = JSON.parse(
+        sessionStorage.getItem("dashboards") || "[]"
+      );
     },
   },
 });
