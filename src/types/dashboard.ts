@@ -14,6 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+export type DashboardItem = {
+  id: string;
+  entity: string;
+  layer: string;
+  isRoot: string;
+  name: string;
+};
 export interface LayoutConfig {
   x: number;
   y: number;

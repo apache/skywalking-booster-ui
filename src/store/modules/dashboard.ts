@@ -19,6 +19,7 @@ import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
 import query from "@/graphql/fetch";
+import { DashboardItem } from "@/types/dashboard";
 // import {
 //   ServiceLayout,
 //   AllLayout,
@@ -45,13 +46,8 @@ interface DashboardState {
   selectorStore: any;
   showTopology: boolean;
   currentTabItems: LayoutConfig[];
-  dashboards: { name: string; layer: string; entity: string; id: string }[];
-  currentDashboard: Nullable<{
-    name: string;
-    layer: string;
-    entity: string;
-    id: string;
-  }>;
+  dashboards: DashboardItem[];
+  currentDashboard: Nullable<DashboardItem>;
 }
 
 export const dashboardStore = defineStore({
@@ -74,24 +70,11 @@ export const dashboardStore = defineStore({
     setLayout(data: LayoutConfig[]) {
       this.layout = data;
     },
-    resetDashboards(
-      list: {
-        name: string;
-        layer: string;
-        entity: string;
-        id: string;
-        isRoot: boolean;
-      }[]
-    ) {
+    resetDashboards(list: DashboardItem[]) {
       this.dashboards = list;
       sessionStorage.setItem("dashboards", JSON.stringify(list));
     },
-    setCurrentDashboard(item: {
-      name: string;
-      layer: string;
-      entity: string;
-      id: string;
-    }) {
+    setCurrentDashboard(item: DashboardItem) {
       this.currentDashboard = item;
     },
     addControl(type: string) {
@@ -402,7 +385,7 @@ export const dashboardStore = defineStore({
         json = res.data.changeTemplate;
       } else {
         const index = this.dashboards.findIndex(
-          (d: { name: string; entity: string; layer: string; id: string }) =>
+          (d: DashboardItem) =>
             d.name === this.currentDashboard.name &&
             d.entity === this.currentDashboard.entity &&
             d.layer === this.currentDashboard.layerId

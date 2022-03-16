@@ -38,7 +38,7 @@ limitations under the License. -->
       <el-table
         :border="true"
         :data="dashboards"
-        :style="{ width: '100%' }"
+        :style="{ width: '100%', fontSize: '13px' }"
         max-height="550"
         v-loading="loading"
       >
@@ -83,11 +83,12 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { ElTable, ElTableColumn, ElButton, ElInput } from "element-plus";
+import { ElMessageBox, ElMessage } from "element-plus";
+import type { ElTable } from "element-plus";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import router from "@/router";
-import { ElMessageBox, ElMessage } from "element-plus";
+import { DashboardItem } from "@/types/dashboard";
 
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
@@ -104,9 +105,10 @@ appStore.setPageTitle("Dashboard List");
 //  # - browser
 //  # - skywalking
 const { t } = useI18n();
-const dashboards = ref<{ name: string; layer: string; entity: string }[]>([]);
+const dashboards = ref<DashboardItem[]>([]);
 const searchText = ref<string>("");
 const loading = ref<boolean>(false);
+const multipleTableRef = ref<InstanceType<typeof ElTable>>();
 
 setList();
 
@@ -114,25 +116,13 @@ async function setList() {
   await dashboardStore.setDashboards();
   dashboards.value = dashboardStore.dashboards;
 }
-const handleView = (row: {
-  entity: string;
-  layer: string;
-  name: string;
-  id: string;
-  isRoot: boolean;
-}) => {
+const handleView = (row: DashboardItem) => {
   dashboardStore.setCurrentDashboard(row);
   router.push(
     `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
   );
 };
-async function setRoot(row: {
-  entity: string;
-  layer: string;
-  name: string;
-  id: string;
-  isRoot: boolean;
-}) {
+async function setRoot(row: DashboardItem) {
   const items: any[] = [];
   loading.value = true;
   for (const d of dashboardStore.dashboards) {
@@ -195,12 +185,7 @@ async function setRoot(row: {
   searchDashboards();
   loading.value = false;
 }
-function handleEdit(row: {
-  entity: string;
-  layer: string;
-  name: string;
-  id: string;
-}) {
+function handleEdit(row: DashboardItem) {
   ElMessageBox.prompt("Please input dashboard name", "Edit", {
     confirmButtonText: "OK",
     cancelButtonText: "Cancel",
@@ -216,10 +201,7 @@ function handleEdit(row: {
       });
     });
 }
-async function updateName(
-  d: { entity: string; layer: string; name: string; id: string },
-  value: string
-) {
+async function updateName(d: DashboardItem, value: string) {
   const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
   const layout = sessionStorage.getItem(key) || "{}";
   const c = {
@@ -265,12 +247,7 @@ async function updateName(
   );
   searchText.value = "";
 }
-async function handleDelete(row: {
-  entity: string;
-  layer: string;
-  name: string;
-  id: string;
-}) {
+async function handleDelete(row: DashboardItem) {
   dashboardStore.setCurrentDashboard(row);
   loading.value = true;
   await dashboardStore.deleteDashboard();
