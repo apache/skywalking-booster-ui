@@ -19,7 +19,7 @@ export type DashboardItem = {
   id?: string;
   entity: string;
   layer: string;
-  isRoot: string;
+  isRoot: boolean;
   name: string;
 };
 export interface LayoutConfig {

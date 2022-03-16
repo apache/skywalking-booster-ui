@@ -368,7 +368,6 @@ export const dashboardStore = defineStore({
         return;
       }
       const c = {
-        isRoot: false,
         children: this.layout,
         ...this.currentDashboard,
       };
@@ -384,6 +383,7 @@ export const dashboardStore = defineStore({
         });
         json = res.data.changeTemplate;
       } else {
+        c.isRoot = false;
         const index = this.dashboards.findIndex(
           (d: DashboardItem) =>
             d.name === this.currentDashboard.name &&
@@ -411,15 +411,12 @@ export const dashboardStore = defineStore({
       ElMessage.success("Saved successfully");
 
       this.dashboards.push({
+        ...this.currentDashboard,
         id: json.id,
-        name: this.currentDashboard.name,
-        layer: this.currentDashboard.layer,
-        entity: this.currentDashboard.entity,
-        isRoot: true,
       });
       const key = [
-        this.layer,
-        this.entity,
+        this.currentDashboard.layer,
+        this.currentDashboard.entity,
         this.currentDashboard.name.split(" ").join("-"),
       ].join("_");
       const l = { id: json.id, configuration: c };

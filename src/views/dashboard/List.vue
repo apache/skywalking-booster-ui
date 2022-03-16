@@ -112,6 +112,7 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import router from "@/router";
 import { DashboardItem } from "@/types/dashboard";
 import { saveFile, readFile } from "@/utils/file";
+import { is } from "@/utils/is";
 
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
@@ -154,10 +155,11 @@ async function importTemplates(event: any) {
       name: name,
       layer: layer,
       entity: entity,
-      isRoot: isRoot,
+      isRoot: false,
     };
     if (index > -1) {
       p.id = item.id;
+      p.isRoot = isRoot;
     }
     dashboardStore.setCurrentDashboard(p);
     dashboardStore.setLayout(children);
