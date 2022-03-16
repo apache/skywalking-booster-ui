@@ -92,7 +92,6 @@ export const dashboardStore = defineStore({
       entity: string;
       id: string;
     }) {
-      console.log(item);
       this.currentDashboard = item;
     },
     addControl(type: string) {
@@ -343,7 +342,10 @@ export const dashboardStore = defineStore({
           name: c.name,
           isRoot: c.isRoot,
         });
-        sessionStorage.setItem(key, JSON.stringify(t));
+        sessionStorage.setItem(
+          key,
+          JSON.stringify({ id: t.id, configuration: c })
+        );
       }
       sessionStorage.setItem("dashboards", JSON.stringify(list));
       return res.data;

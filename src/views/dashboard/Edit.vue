@@ -54,7 +54,6 @@ const { t } = useI18n();
 const p = useRoute().params;
 const layoutKey = `${p.layerId}_${p.entity}_${p.name}`;
 
-appStore.setPageTitle("Dashboard Name");
 setTemplate();
 
 async function setTemplate() {
@@ -62,9 +61,10 @@ async function setTemplate() {
   const c: { configuration: string; id: string } = JSON.parse(
     sessionStorage.getItem(layoutKey) || "{}"
   );
-  const layout = JSON.parse(c.configuration || "{}");
+  const layout: any = c.configuration || {};
 
   dashboardStore.setLayout(layout.children || []);
+  appStore.setPageTitle(layout.name);
 }
 function handleClick(e: any) {
   e.stopPropagation();

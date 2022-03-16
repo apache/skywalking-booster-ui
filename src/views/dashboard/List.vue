@@ -43,8 +43,9 @@ limitations under the License. -->
         v-loading="loading"
       >
         <el-table-column fixed prop="name" label="Name" />
-        <el-table-column prop="layer" label="Layer" />
-        <el-table-column prop="entity" label="Entity" />
+        <el-table-column prop="layer" label="Layer" width="200" />
+        <el-table-column prop="entity" label="Entity" width="200" />
+        <el-table-column prop="isRoot" label="Root" width="100" />
         <el-table-column label="Operations">
           <template #default="scope">
             <el-button size="small" @click="handleView(scope.row)">
@@ -59,7 +60,7 @@ limitations under the License. -->
             >
               <template #reference>
                 <el-button size="small">
-                  {{ scope.row.isRoot ? t("setRoot") : t("setNormal") }}
+                  {{ scope.row.isRoot ? t("setNormal") : t("setRoot") }}
                 </el-button>
               </template>
             </el-popconfirm>
@@ -113,11 +114,16 @@ async function setList() {
   await dashboardStore.setDashboards();
   dashboards.value = dashboardStore.dashboards;
 }
-const handleView = (index: number) => {
-  const d = dashboards.value[index];
-  dashboardStore.setCurrentDashboard(d);
+const handleView = (row: {
+  entity: string;
+  layer: string;
+  name: string;
+  id: string;
+  isRoot: boolean;
+}) => {
+  dashboardStore.setCurrentDashboard(row);
   router.push(
-    `/dashboard/${d.layer}/${d.entity}/${d.name.split(" ").join("-")}`
+    `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
   );
 };
 async function setRoot(row: {
@@ -127,7 +133,9 @@ async function setRoot(row: {
   id: string;
   isRoot: boolean;
 }) {
-  const items = dashboardStore.dashboards.map(async (d: any) => {
+  const items: any[] = [];
+  loading.value = true;
+  for (const d of dashboardStore.dashboards) {
     if (d.id === row.id) {
       d.isRoot = !row.isRoot;
       const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
@@ -136,16 +144,22 @@ async function setRoot(row: {
         ...JSON.parse(layout).configuration,
         ...d,
       };
+      delete c.id;
+
       const setting = {
         id: d.id,
         configuration: JSON.stringify(c),
       };
       const res = await dashboardStore.updateDashboard(setting);
-      if (!res.data.changeTemplate.id) {
-        return d;
+      if (res.data.changeTemplate.id) {
+        sessionStorage.setItem(
+          key,
+          JSON.stringify({
+            id: d.id,
+            configuration: c,
+          })
+        );
       }
-      sessionStorage.setItem(key, JSON.stringify(setting));
-      return d;
     }
     if (
       d.layer === row.layer &&
@@ -165,16 +179,21 @@ async function setRoot(row: {
         configuration: JSON.stringify(c),
       };
       const res = await dashboardStore.updateDashboard(setting);
-      if (!res.data.changeTemplate.id) {
-        return d;
+      if (res.data.changeTemplate.id) {
+        sessionStorage.setItem(
+          key,
+          JSON.stringify({
+            id: d.id,
+            configuration: c,
+          })
+        );
       }
-      sessionStorage.setItem(key, JSON.stringify(setting));
-      return d;
     }
-    return d;
-  });
+    items.push(d);
+  }
   dashboardStore.resetDashboards(items);
   searchDashboards();
+  loading.value = false;
 }
 function handleEdit(row: {
   entity: string;
@@ -208,11 +227,14 @@ async function updateName(
     ...d,
     name: value,
   };
+  delete c.id;
   const setting = {
     id: d.id,
     configuration: JSON.stringify(c),
   };
+  loading.value = true;
   const res = await dashboardStore.updateDashboard(setting);
+  loading.value = false;
   if (!res.data.changeTemplate.id) {
     return;
   }
@@ -234,7 +256,13 @@ async function updateName(
     dashboardStore.currentDashboard.entity,
     dashboardStore.currentDashboard.name.split(" ").join("-"),
   ].join("_");
-  sessionStorage.setItem(str, JSON.stringify(setting));
+  sessionStorage.setItem(
+    str,
+    JSON.stringify({
+      id: d.id,
+      configuration: c,
+    })
+  );
   searchText.value = "";
 }
 async function handleDelete(row: {
@@ -277,6 +305,7 @@ function searchDashboards() {
 .table {
   padding: 20px;
   background-color: #fff;
-  border-radius: 3px;
+  box-shadow: 0px 1px 4px 0px #00000029;
+  border-radius: 5px;
 }
 </style>

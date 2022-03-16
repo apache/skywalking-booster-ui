@@ -204,7 +204,8 @@ watch(
   padding: 15px;
   background-color: #fff;
   margin: 30px 10px;
-  border-radius: 3px;
+  box-shadow: 0px 1px 4px 0px #00000029;
+  border-radius: 5px;
   max-height: 100%;
   overflow: auto;
 }
