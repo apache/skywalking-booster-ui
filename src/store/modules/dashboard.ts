@@ -74,6 +74,18 @@ export const dashboardStore = defineStore({
     setLayout(data: LayoutConfig[]) {
       this.layout = data;
     },
+    resetDashboards(
+      list: {
+        name: string;
+        layer: string;
+        entity: string;
+        id: string;
+        isRoot: boolean;
+      }[]
+    ) {
+      this.dashboards = list;
+      sessionStorage.setItem("dashboards", JSON.stringify(list));
+    },
     setCurrentDashboard(item: {
       name: string;
       layer: string;
@@ -349,23 +361,7 @@ export const dashboardStore = defineStore({
         sessionStorage.getItem("dashboards") || "[]"
       );
     },
-    async updateDashboard(param: { name: string }) {
-      const key = [
-        this.currentDashboard.layer,
-        this.currentDashboard.entity,
-        this.currentDashboard.name.split(" ").join("-"),
-      ].join("_");
-      const layout = sessionStorage.getItem(key);
-      const c = {
-        isRoot: false,
-        children: layout,
-        ...this.currentDashboard,
-        name: param.name,
-      };
-      const setting = {
-        id: this.currentDashboard.id,
-        configuration: JSON.stringify(c),
-      };
+    async updateDashboard(setting: { id: string; configuration: string }) {
       const res: AxiosResponse = await graphql.query("updateTemplate").params({
         setting,
       });
@@ -376,24 +372,10 @@ export const dashboardStore = defineStore({
       const json = res.data.data.changeTemplate;
       if (!json.status) {
         ElMessage.error(json.message);
-        return;
+        return res.data;
       }
       ElMessage.success("Saved successfully");
-      this.currentDashboard.name = param.name;
-      this.dashboards = this.dashboards.map((d: any) => {
-        if (d.id === this.currentDashboard.id) {
-          d = this.currentDashboard;
-        }
-        return d;
-      });
-      sessionStorage.setItem("dashboards", JSON.stringify(this.dashboards));
-      sessionStorage.removeItem(key);
-      const str = [
-        this.currentDashboard.layer,
-        this.currentDashboard.entity,
-        param.name.split(" ").join("-"),
-      ].join("_");
-      sessionStorage.setItem(str, JSON.stringify(setting));
+      return res.data;
     },
     async saveDashboard() {
       if (!this.currentDashboard.name) {
@@ -405,17 +387,17 @@ export const dashboardStore = defineStore({
         children: this.layout,
         ...this.currentDashboard,
       };
-      let res: AxiosResponse;
+      let res: any;
       let json;
 
       if (this.currentDashboard.id) {
-        res = await graphql.query("updateTemplate").params({
+        res = await this.updateDashboard({
           setting: {
             id: this.currentDashboard.id,
             configuration: JSON.stringify(c),
           },
         });
-        json = res.data.data.changeTemplate;
+        json = res.data.changeTemplate;
       } else {
         const index = this.dashboards.findIndex(
           (d: { name: string; entity: string; layer: string; id: string }) =>
@@ -433,7 +415,7 @@ export const dashboardStore = defineStore({
 
         json = res.data.data.addTemplate;
       }
-      if (res.data.errors) {
+      if (res.data.errors || res.errors) {
         ElMessage.error(res.data.errors);
         return res.data;
       }

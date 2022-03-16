@@ -98,6 +98,8 @@ const msg = {
   editTab: "Enable editing tab names",
   label: "Name",
   id: "ID",
+  setRoot: "Set this to root",
+  setNormal: "Set this to normal",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

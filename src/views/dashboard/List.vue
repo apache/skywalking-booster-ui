@@ -47,15 +47,25 @@ limitations under the License. -->
         <el-table-column prop="entity" label="Entity" />
         <el-table-column label="Operations">
           <template #default="scope">
-            <el-button size="small" @click="handleView(scope.$index)">
+            <el-button size="small" @click="handleView(scope.row)">
               {{ t("view") }}
             </el-button>
-            <el-button size="small" @click="handleEdit(scope.$index)">
+            <el-button size="small" @click="handleEdit(scope.row)">
               {{ t("edit") }}
             </el-button>
             <el-popconfirm
+              title="Are you sure to set this?"
+              @confirm="setRoot(scope.row)"
+            >
+              <template #reference>
+                <el-button size="small">
+                  {{ scope.row.isRoot ? t("setRoot") : t("setNormal") }}
+                </el-button>
+              </template>
+            </el-popconfirm>
+            <el-popconfirm
               title="Are you sure to delete this?"
-              @confirm="handleDelete(scope.$index)"
+              @confirm="handleDelete(scope.row)"
             >
               <template #reference>
                 <el-button size="small" type="danger">
@@ -110,17 +120,75 @@ const handleView = (index: number) => {
     `/dashboard/${d.layer}/${d.entity}/${d.name.split(" ").join("-")}`
   );
 };
-function handleEdit(index: number) {
-  const d = dashboards.value[index];
-
+async function setRoot(row: {
+  entity: string;
+  layer: string;
+  name: string;
+  id: string;
+  isRoot: boolean;
+}) {
+  const items = dashboardStore.dashboards.map(async (d: any) => {
+    if (d.id === row.id) {
+      d.isRoot = !row.isRoot;
+      const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+      const layout = sessionStorage.getItem(key) || "{}";
+      const c = {
+        ...JSON.parse(layout).configuration,
+        ...d,
+      };
+      const setting = {
+        id: d.id,
+        configuration: JSON.stringify(c),
+      };
+      const res = await dashboardStore.updateDashboard(setting);
+      if (!res.data.changeTemplate.id) {
+        return d;
+      }
+      sessionStorage.setItem(key, JSON.stringify(setting));
+      return d;
+    }
+    if (
+      d.layer === row.layer &&
+      d.entity === row.entity &&
+      !row.isRoot &&
+      d.isRoot
+    ) {
+      d.isRoot = false;
+      const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+      const layout = sessionStorage.getItem(key) || "{}";
+      const c = {
+        ...JSON.parse(layout).configuration,
+        ...d,
+      };
+      const setting = {
+        id: d.id,
+        configuration: JSON.stringify(c),
+      };
+      const res = await dashboardStore.updateDashboard(setting);
+      if (!res.data.changeTemplate.id) {
+        return d;
+      }
+      sessionStorage.setItem(key, JSON.stringify(setting));
+      return d;
+    }
+    return d;
+  });
+  dashboardStore.resetDashboards(items);
+  searchDashboards();
+}
+function handleEdit(row: {
+  entity: string;
+  layer: string;
+  name: string;
+  id: string;
+}) {
   ElMessageBox.prompt("Please input dashboard name", "Edit", {
     confirmButtonText: "OK",
     cancelButtonText: "Cancel",
-    inputValue: d.name,
+    inputValue: row.name,
   })
     .then(({ value }) => {
-      dashboardStore.setCurrentDashboard(d);
-      dashboardStore.updateDashboard({ name: value });
+      updateName(row, value);
     })
     .catch(() => {
       ElMessage({
@@ -129,8 +197,52 @@ function handleEdit(index: number) {
       });
     });
 }
-async function handleDelete(index: number) {
-  const row = dashboards.value[index];
+async function updateName(
+  d: { entity: string; layer: string; name: string; id: string },
+  value: string
+) {
+  const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+  const layout = sessionStorage.getItem(key) || "{}";
+  const c = {
+    ...JSON.parse(layout).configuration,
+    ...d,
+    name: value,
+  };
+  const setting = {
+    id: d.id,
+    configuration: JSON.stringify(c),
+  };
+  const res = await dashboardStore.updateDashboard(setting);
+  if (!res.data.changeTemplate.id) {
+    return;
+  }
+  dashboardStore.setCurrentDashboard({
+    ...d,
+    name: value,
+  });
+  dashboards.value = dashboardStore.dashboards.map((item: any) => {
+    if (dashboardStore.currentDashboard.id === item.id) {
+      item = dashboardStore.currentDashboard;
+    }
+    return item;
+  });
+  dashboardStore.resetDashboards(dashboards.value);
+  sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
+  sessionStorage.removeItem(key);
+  const str = [
+    dashboardStore.currentDashboard.layer,
+    dashboardStore.currentDashboard.entity,
+    dashboardStore.currentDashboard.name.split(" ").join("-"),
+  ].join("_");
+  sessionStorage.setItem(str, JSON.stringify(setting));
+  searchText.value = "";
+}
+async function handleDelete(row: {
+  entity: string;
+  layer: string;
+  name: string;
+  id: string;
+}) {
   dashboardStore.setCurrentDashboard(row);
   loading.value = true;
   await dashboardStore.deleteDashboard();
