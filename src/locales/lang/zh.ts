@@ -100,6 +100,8 @@ const msg = {
   id: "编号",
   setRoot: "设置成为根",
   setNormal: "设置成为普通",
+  export: "导出仪表板模板",
+  import: "导入仪表板模板",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

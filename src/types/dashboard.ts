@@ -16,7 +16,7 @@
  */
 
 export type DashboardItem = {
-  id: string;
+  id?: string;
   entity: string;
   layer: string;
   isRoot: string;

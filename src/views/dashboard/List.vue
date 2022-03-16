@@ -36,12 +36,13 @@ limitations under the License. -->
     </div>
     <div class="table">
       <el-table
-        :border="true"
         :data="dashboards"
         :style="{ width: '100%', fontSize: '13px' }"
-        max-height="550"
         v-loading="loading"
+        ref="multipleTableRef"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column type="selection" width="35" />
         <el-table-column fixed prop="name" label="Name" />
         <el-table-column prop="layer" label="Layer" width="200" />
         <el-table-column prop="entity" label="Entity" width="200" />
@@ -59,7 +60,7 @@ limitations under the License. -->
               @confirm="setRoot(scope.row)"
             >
               <template #reference>
-                <el-button size="small">
+                <el-button size="small" style="width: 120px">
                   {{ scope.row.isRoot ? t("setNormal") : t("setRoot") }}
                 </el-button>
               </template>
@@ -77,6 +78,27 @@ limitations under the License. -->
           </template>
         </el-table-column>
       </el-table>
+      <div class="toggle-selection">
+        <el-button size="default" class="btn" @click="exportTemplates">
+          <Icon class="mr-5" iconName="save_alt" />
+          {{ t("export") }}
+        </el-button>
+        <el-button class="ml-10 btn" size="default">
+          <input
+            id="dashboard-file"
+            class="import-template"
+            type="file"
+            name="file"
+            title=""
+            accept=".json"
+            @change="importTemplates"
+          />
+          <label for="dashboard-file" class="input-label">
+            <Icon class="mr-5" iconName="folder_open" />
+            {{ t("import") }}
+          </label>
+        </el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -89,6 +111,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import router from "@/router";
 import { DashboardItem } from "@/types/dashboard";
+import { saveFile, readFile } from "@/utils/file";
 
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
@@ -109,19 +132,58 @@ const dashboards = ref<DashboardItem[]>([]);
 const searchText = ref<string>("");
 const loading = ref<boolean>(false);
 const multipleTableRef = ref<InstanceType<typeof ElTable>>();
+const multipleSelection = ref<DashboardItem[]>([]);
 
+const handleSelectionChange = (val: DashboardItem[]) => {
+  multipleSelection.value = val;
+};
 setList();
-
 async function setList() {
   await dashboardStore.setDashboards();
   dashboards.value = dashboardStore.dashboards;
 }
-const handleView = (row: DashboardItem) => {
+async function importTemplates(event: any) {
+  const arr: any = await readFile(event);
+  loading.value = true;
+  for (const item of arr) {
+    const { layer, name, entity, isRoot, children } = item.configuration;
+    const index = dashboardStore.dashboards.findIndex(
+      (d: DashboardItem) => d.id === item.id
+    );
+    const p: DashboardItem = {
+      name: name,
+      layer: layer,
+      entity: entity,
+      isRoot: isRoot,
+    };
+    if (index > -1) {
+      p.id = item.id;
+    }
+    dashboardStore.setCurrentDashboard(p);
+    dashboardStore.setLayout(children);
+    await dashboardStore.saveDashboard();
+  }
+  dashboards.value = dashboardStore.dashboards;
+  loading.value = false;
+  const el: any = document.getElementById("dashboard-file");
+  el!.value = "";
+}
+function exportTemplates() {
+  const templates = multipleSelection.value.map((d: DashboardItem) => {
+    const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+    const layout = JSON.parse(sessionStorage.getItem(key) || "{}");
+    return layout;
+  });
+  const name = `dashboards.json`;
+  saveFile(templates, name);
+}
+function handleView(row: DashboardItem) {
   dashboardStore.setCurrentDashboard(row);
   router.push(
     `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
   );
-};
+}
+
 async function setRoot(row: DashboardItem) {
   const items: any[] = [];
   loading.value = true;
@@ -284,5 +346,25 @@ function searchDashboards() {
   background-color: #fff;
   box-shadow: 0px 1px 4px 0px #00000029;
   border-radius: 5px;
+}
+
+.toggle-selection {
+  margin-top: 20px;
+  background-color: #fff;
+}
+
+.btn {
+  width: 220px;
+  font-size: 13px;
+}
+
+.import-template {
+  display: none;
+}
+
+.input-label {
+  display: inline;
+  line-height: inherit;
+  cursor: pointer;
 }
 </style>

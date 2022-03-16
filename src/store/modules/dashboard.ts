@@ -413,8 +413,8 @@ export const dashboardStore = defineStore({
       this.dashboards.push({
         id: json.id,
         name: this.currentDashboard.name,
-        layer: this.layerId,
-        entity: this.entity,
+        layer: this.currentDashboard.layer,
+        entity: this.currentDashboard.entity,
         isRoot: true,
       });
       const key = [

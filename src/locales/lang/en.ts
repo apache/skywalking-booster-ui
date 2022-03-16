@@ -100,6 +100,8 @@ const msg = {
   id: "ID",
   setRoot: "Set this to root",
   setNormal: "Set this to normal",
+  export: "Export Dashboard Templates",
+  import: "Import Dashboard Templates",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",
