@@ -104,6 +104,8 @@ const msg = {
   import: "Import Dashboard Templates",
   yes: "Yes",
   no: "No",
+  tableHeaderCol1: "Name of the first column of the table",
+  tableHeaderCol2: "Name of the second column of the table",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

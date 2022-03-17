@@ -21,13 +21,13 @@ limitations under the License. -->
         :style="`width: ${nameWidth + initWidth}px`"
       >
         <div class="name" :style="`width: ${nameWidth}px`">
-          {{ config.tableHeaderCol1 || $t("name") }}
+          {{ config.tableHeaderCol1 || t("name") }}
           <i class="r cp" ref="draggerName">
             <Icon iconName="settings_ethernet" size="middle" />
           </i>
         </div>
-        <div class="value-col" v-if="config.showTableValues">
-          {{ config.tableHeaderCol2 || $t("value") }}
+        <div class="value-col" v-if="showTableValues">
+          {{ config.tableHeaderCol2 || t("value") }}
         </div>
       </div>
       <div
@@ -37,7 +37,7 @@ limitations under the License. -->
         :style="`width: ${nameWidth + initWidth}px`"
       >
         <div :style="`width: ${nameWidth}px`">{{ key }}</div>
-        <div class="value-col" v-if="config.showTableValues">
+        <div class="value-col" v-if="showTableValues">
           {{ data[key][data[key].length - 1 || 0] }}
         </div>
       </div>
@@ -47,6 +47,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { computed, ref, onMounted } from "vue";
 import type { PropType } from "vue";
+import { useI18n } from "vue-i18n";
 /*global defineProps */
 const props = defineProps({
   data: {
@@ -59,14 +60,20 @@ const props = defineProps({
       tableHeaderCol2: string;
       tableHeaderCol1: string;
     }>,
-    default: () => ({}),
+    default: () => ({ showTableValues: true }),
   },
 });
 /*global Nullable*/
+const { t } = useI18n();
 const chartTable = ref<Nullable<HTMLElement>>(null);
 const initWidth = ref<number>(0);
 const nameWidth = ref<number>(0);
 const draggerName = ref<Nullable<HTMLElement>>(null);
+const showTableValues = ref<boolean>(
+  props.config.showTableValues === undefined
+    ? true
+    : props.config.showTableValues
+);
 onMounted(() => {
   if (!chartTable.value) {
     return;

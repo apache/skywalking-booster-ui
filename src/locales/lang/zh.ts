@@ -104,6 +104,8 @@ const msg = {
   import: "导入仪表板模板",
   yes: "是",
   no: "否",
+  tableHeaderCol1: "表格的第一列的名称",
+  tableHeaderCol2: "表格的第二列的名称",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",
