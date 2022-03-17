@@ -102,6 +102,8 @@ const msg = {
   setNormal: "设置成为普通",
   export: "导出仪表板模板",
   import: "导入仪表板模板",
+  yes: "是",
+  no: "否",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",
@@ -338,8 +340,6 @@ const msg = {
   conditionNotice:
     "请输入一个标签、内容关键词或者内容不包含的关键词(key=value)之后回车",
   cacheModalTitle: "清除缓存提醒",
-  yes: "是的",
-  no: "不",
   cacheReminderContent: "SkyWalking检测到仪表板模板更新，是否需要更新？",
   language: "语言",
 };

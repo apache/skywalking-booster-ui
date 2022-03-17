@@ -102,6 +102,8 @@ const msg = {
   setNormal: "Set this to normal",
   export: "Export Dashboard Templates",
   import: "Import Dashboard Templates",
+  yes: "Yes",
+  no: "No",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",
@@ -337,8 +339,6 @@ const msg = {
   conditionNotice:
     "Notice: Please press Enter after inputting a tag, key of content, exclude key of content(key=value).",
   cacheModalTitle: "Clear cache reminder",
-  yes: "Yes",
-  no: "No",
   cacheReminderContent:
     "SkyWalking detected dashboard template updates, do you want to update?",
   language: "Language",

@@ -20,15 +20,6 @@ import { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
 import query from "@/graphql/fetch";
 import { DashboardItem } from "@/types/dashboard";
-// import {
-//   ServiceLayout,
-//   AllLayout,
-//   EndpointLayout,
-//   InstanceLayout,
-//   ServiceRelationLayout,
-//   InstanceRelationLayout,
-//   EndpointRelationLayout,
-// } from "@/constants/templates";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
@@ -300,18 +291,6 @@ export const dashboardStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      // const data = [
-      //   ServiceLayout,
-      //   AllLayout,
-      //   EndpointLayout,
-      //   InstanceLayout,
-      //   ServiceRelationLayout,
-      //   InstanceRelationLayout,
-      //   EndpointRelationLayout,
-      // ].map((t: any) => {
-      //   t.configuration = JSON.stringify(t.configuration);
-      //   return t;
-      // });
       const data = res.data.data.getAllTemplates;
       const list = [];
       for (const t of data) {

@@ -46,7 +46,11 @@ limitations under the License. -->
         <el-table-column fixed prop="name" label="Name" />
         <el-table-column prop="layer" label="Layer" width="200" />
         <el-table-column prop="entity" label="Entity" width="200" />
-        <el-table-column prop="isRoot" label="Root" width="100" />
+        <el-table-column prop="isRoot" label="Root" width="100">
+          <template #default="scope">
+            {{ scope.row.isRoot ? t("yes") : t("no") }}
+          </template>
+        </el-table-column>
         <el-table-column label="Operations">
           <template #default="scope">
             <el-button size="small" @click="handleView(scope.row)">
@@ -112,11 +116,15 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import router from "@/router";
 import { DashboardItem } from "@/types/dashboard";
 import { saveFile, readFile } from "@/utils/file";
-import { is } from "@/utils/is";
 
+const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
-appStore.setPageTitle("Dashboard List");
+const dashboards = ref<DashboardItem[]>([]);
+const searchText = ref<string>("");
+const loading = ref<boolean>(false);
+const multipleTableRef = ref<InstanceType<typeof ElTable>>();
+const multipleSelection = ref<DashboardItem[]>([]);
 //  # - os-linux
 //  # - k8s
 //  # - general(agent-installed)
@@ -128,13 +136,7 @@ appStore.setPageTitle("Dashboard List");
 //  # - cache
 //  # - browser
 //  # - skywalking
-const { t } = useI18n();
-const dashboards = ref<DashboardItem[]>([]);
-const searchText = ref<string>("");
-const loading = ref<boolean>(false);
-const multipleTableRef = ref<InstanceType<typeof ElTable>>();
-const multipleSelection = ref<DashboardItem[]>([]);
-
+appStore.setPageTitle("Dashboard List");
 const handleSelectionChange = (val: DashboardItem[]) => {
   multipleSelection.value = val;
 };
