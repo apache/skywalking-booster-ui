@@ -139,7 +139,7 @@ export default defineComponent({
       }
     }
     watch(
-      () => [props.data.metricTypes, props.data.metrics],
+      () => [props.data.metricTypes, props.data.metrics, props.data.standard],
       () => {
         if (!dashboardStore.selectedGrid) {
           return;

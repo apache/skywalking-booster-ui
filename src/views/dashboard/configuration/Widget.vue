@@ -31,12 +31,7 @@ limitations under the License. -->
           :is="dashboardStore.selectedGrid.graph.type"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
-          :config="{
-            ...dashboardStore.selectedGrid.graph,
-            i: dashboardStore.selectedGrid.i,
-            metrics: dashboardStore.selectedGrid.metrics,
-            metricTypes: dashboardStore.selectedGrid.metricTypes,
-          }"
+          :config="dashboardStore.selectedGrid"
         />
         <div v-show="!dashboardStore.selectedGrid.graph.type" class="no-data">
           {{ t("noData") }}
@@ -58,7 +53,7 @@ limitations under the License. -->
           <WidgetOptions />
         </el-collapse-item>
         <el-collapse-item :title="t('standardOptions')" name="4">
-          <StandardOptions />
+          <StandardOptions @update="getSource" />
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -101,7 +96,7 @@ export default defineComponent({
     const loading = ref<boolean>(false);
     const states = reactive<{
       activeNames: string;
-      source: any;
+      source: unknown;
       index: string;
       visType: Option[];
     }>({
@@ -120,7 +115,6 @@ export default defineComponent({
     }
 
     function applyConfig() {
-      console.log(dashboardStore.selectedGrid);
       dashboardStore.setConfigs(dashboardStore.selectedGrid);
       dashboardStore.setConfigPanel(false);
     }

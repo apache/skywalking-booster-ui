@@ -40,6 +40,7 @@ limitations under the License. -->
       v-model="selectedGrid.standard.metricLabels"
       size="small"
       placeholder="auto"
+      @change="changeStandardOpt"
     />
   </div>
   <div class="item" v-show="percentile">
@@ -49,6 +50,7 @@ limitations under the License. -->
       v-model="selectedGrid.standard.labelsIndex"
       size="small"
       placeholder="auto"
+      @change="changeStandardOpt"
     />
   </div>
   <div class="item">
@@ -58,6 +60,7 @@ limitations under the License. -->
       v-model="selectedGrid.standard.plus"
       size="small"
       placeholder="none"
+      @change="changeStandardOpt"
     />
   </div>
   <div class="item">
@@ -67,6 +70,7 @@ limitations under the License. -->
       v-model="selectedGrid.standard.minus"
       size="small"
       placeholder="none"
+      @change="changeStandardOpt"
     />
   </div>
   <div class="item">
@@ -76,6 +80,7 @@ limitations under the License. -->
       v-model="selectedGrid.standard.multiply"
       size="small"
       placeholder="none"
+      @change="changeStandardOpt"
     />
   </div>
   <div class="item">
@@ -85,6 +90,7 @@ limitations under the License. -->
       v-model="selectedGrid.standard.divide"
       size="small"
       placeholder="none"
+      @change="changeStandardOpt"
     />
   </div>
   <div class="item">
@@ -94,6 +100,7 @@ limitations under the License. -->
       v-model="selectedGrid.standard.milliseconds"
       size="small"
       placeholder="none"
+      @change="changeStandardOpt"
     />
   </div>
   <div class="item">
@@ -103,6 +110,7 @@ limitations under the License. -->
       v-model="selectedGrid.standard.seconds"
       size="small"
       placeholder="none"
+      @change="changeStandardOpt"
     />
   </div>
 </template>
@@ -111,21 +119,46 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { SortOrder } from "../../data";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
+import { ElMessage } from "element-plus";
 
+/*global defineEmits */
+const { t } = useI18n();
+const emit = defineEmits(["update", "loading"]);
 const dashboardStore = useDashboardStore();
 const { selectedGrid } = dashboardStore;
-const { t } = useI18n();
 const percentile = ref<boolean>(
   selectedGrid.metricTypes.includes("readLabeledMetricsValues")
 );
 const sortOrder = ref<string>(selectedGrid.standard.sortOrder || "DES");
 
-function changeStandardOpt(param: { [key: string]: unknown }) {
-  const standard = {
-    ...selectedGrid.standard,
-    ...param,
-  };
-  dashboardStore.selectWidget({ ...selectedGrid, standard });
+function changeStandardOpt(param?: any) {
+  let standard = dashboardStore.selectedGrid.standard;
+  if (param) {
+    standard = {
+      ...dashboardStore.selectedGrid.standard,
+      ...param,
+    };
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, standard });
+  }
+  queryMetrics();
+}
+async function queryMetrics() {
+  const params = useQueryProcessor(dashboardStore.selectedGrid);
+  if (!params) {
+    emit("update", {});
+    return;
+  }
+
+  emit("loading", true);
+  const json = await dashboardStore.fetchMetricValue(params);
+  emit("loading", false);
+  if (json.errors) {
+    ElMessage.error(json.errors);
+    return;
+  }
+  const source = useSourceProcessor(json, dashboardStore.selectedGrid);
+  emit("update", source);
 }
 </script>
 <style lang="scss" scoped>

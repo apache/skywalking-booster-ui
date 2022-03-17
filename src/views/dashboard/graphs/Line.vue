@@ -37,8 +37,6 @@ const props = defineProps({
       smooth: false,
       showSymbol: false,
       opacity: 0.4,
-      showXAxis: true,
-      showYAxis: true,
     }),
   },
 });
@@ -175,7 +173,7 @@ function getOption() {
     },
     xAxis: {
       type: "category",
-      show: props.config.showXAxis,
+      show: true,
       axisTick: {
         lineStyle: { color: "#c1c5ca41" },
         alignWithLabel: true,
@@ -192,7 +190,7 @@ function getOption() {
       axisLabel: {
         color: "#9da5b2",
         fontSize: "11",
-        show: props.config.showYAxis,
+        show: true,
       },
     },
     series: temp,
