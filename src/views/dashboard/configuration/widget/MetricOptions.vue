@@ -13,14 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div v-show="states.isTable" class="ds-name">
+  <div v-if="states.isTable && dashboardList.length" class="ds-name">
     <div>{{ t("dashboards") }}</div>
-    <el-input
-      v-model="states.dashboardName"
-      placeholder="Please input dashboard name"
+    <Selector
+      :value="states.dashboardName"
+      :options="dashboardList"
+      size="small"
+      placeholder="Please select a dashboard name"
       @change="changeDashboard"
       class="selectors"
-      size="small"
     />
   </div>
   <div>{{ t("metrics") }}</div>
@@ -100,6 +101,7 @@ import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
 import { useI18n } from "vue-i18n";
+import { DashboardItem } from "@/types/dashboard";
 
 /*global defineEmits */
 const { t } = useI18n();
@@ -123,6 +125,26 @@ const states = reactive<{
   metricList: [],
   dashboardName: graph.dashboardName,
 });
+const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
+const dashboardList = list.reduce(
+  (
+    prev: (DashboardItem & { label: string; value: string })[],
+    d: DashboardItem
+  ) => {
+    if (
+      d.entity === dashboardStore.entity &&
+      d.layer === dashboardStore.layerId
+    ) {
+      prev.push({
+        ...d,
+        value: d.name,
+        label: d.name,
+      });
+    }
+    return prev;
+  },
+  []
+);
 
 states.isTable = TableChartTypes.includes(graph.type);
 states.visTypes = setVisTypes();
@@ -274,7 +296,8 @@ async function queryMetrics() {
   emit("update", source);
 }
 
-function changeDashboard() {
+function changeDashboard(opt: any) {
+  states.dashboardName = opt[0].value;
   const graph = {
     ...dashboardStore.selectedGrid.graph,
     dashboardName: states.dashboardName,

@@ -19,6 +19,7 @@ limitations under the License. -->
     :row-height="10"
     :is-draggable="true"
     :is-resizable="true"
+    v-if="dashboardStore.layout.length"
   >
     <grid-item
       v-for="item in dashboardStore.layout"
@@ -35,6 +36,7 @@ limitations under the License. -->
       <component :is="item.type" :data="item" />
     </grid-item>
   </grid-layout>
+  <div class="no-data-tips" v-else>Please add widgets.</div>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -48,7 +50,6 @@ export default defineComponent({
   setup() {
     const dashboardStore = useDashboardStore();
     function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
-      console.log(newLayout);
       dashboardStore.setLayout(newLayout);
     }
     function clickGrid(item: LayoutConfig) {
@@ -77,5 +78,13 @@ export default defineComponent({
 
 .vue-grid-item.active {
   border: 1px solid #409eff;
+}
+
+.no-data-tips {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  padding-top: 30px;
+  color: #888;
 }
 </style>

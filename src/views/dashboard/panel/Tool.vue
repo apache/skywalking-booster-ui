@@ -86,7 +86,7 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, ref } from "vue";
+import { reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -423,12 +423,7 @@ function getTools() {
       toolIcons.value = PodRelationTools;
   }
 }
-watch(
-  () => appStore.durationTime,
-  () => {
-    initSelector();
-  }
-);
+appStore.setEventStack([initSelector]);
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {
