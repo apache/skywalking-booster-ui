@@ -76,7 +76,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import graphs from "../graphs";
 import { useI18n } from "vue-i18n";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
-import { EntityType, TableChartTypes } from "../data";
+import { EntityType, ListChartTypes } from "../data";
 
 const props = {
   data: {
@@ -147,7 +147,7 @@ export default defineComponent({
         if (props.data.i !== dashboardStore.selectedGrid.i) {
           return;
         }
-        if (TableChartTypes.includes(dashboardStore.selectedGrid.graph.type)) {
+        if (ListChartTypes.includes(dashboardStore.selectedGrid.graph.type)) {
           return;
         }
         queryMetrics();

@@ -13,11 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div v-if="states.isTable && dashboardList.length" class="ds-name">
+  <div v-if="states.isList && states.dashboardList.length" class="ds-name">
     <div>{{ t("dashboards") }}</div>
     <Selector
       :value="states.dashboardName"
-      :options="dashboardList"
+      :options="states.dashboardList"
       size="small"
       placeholder="Please select a dashboard name"
       @change="changeDashboard"
@@ -43,13 +43,13 @@ limitations under the License. -->
       :options="states.metricTypeList[index]"
       size="small"
       :disabled="
-        dashboardStore.selectedGrid.graph.type && !states.isTable && index !== 0
+        dashboardStore.selectedGrid.graph.type && !states.isList && index !== 0
       "
       @change="changeMetricType(index, $event)"
       class="selectors"
     />
     <span
-      v-show="states.isTable || states.metricTypes[0] === 'readMetricsValues'"
+      v-show="states.isList || states.metricTypes[0] === 'readMetricsValues'"
     >
       <Icon
         class="cp mr-5"
@@ -89,13 +89,13 @@ import { Option } from "@/types/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import {
   MetricTypes,
-  TableChartTypes,
+  ListChartTypes,
   MetricCatalog,
   DefaultGraphConfig,
   EntityType,
   ChartTypes,
   PodsChartTypes,
-  TableEntity,
+  ListEntity,
 } from "../../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
@@ -113,46 +113,31 @@ const states = reactive<{
   metricTypes: string[];
   metricTypeList: Option[][];
   visTypes: Option[];
-  isTable: boolean;
+  isList: boolean;
   metricList: (Option & { type: string })[];
   dashboardName: string;
+  dashboardList: (DashboardItem & { label: string; value: string })[];
 }>({
   metrics: metrics && metrics.length ? metrics : [""],
   metricTypes: metricTypes && metricTypes.length ? metricTypes : [""],
   metricTypeList: [],
   visTypes: [],
-  isTable: false,
+  isList: false,
   metricList: [],
   dashboardName: graph.dashboardName,
+  dashboardList: [],
 });
-const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-const dashboardList = list.reduce(
-  (
-    prev: (DashboardItem & { label: string; value: string })[],
-    d: DashboardItem
-  ) => {
-    if (
-      d.entity === dashboardStore.entity &&
-      d.layer === dashboardStore.layerId
-    ) {
-      prev.push({
-        ...d,
-        value: d.name,
-        label: d.name,
-      });
-    }
-    return prev;
-  },
-  []
-);
 
-states.isTable = TableChartTypes.includes(graph.type);
+states.isList = ListChartTypes.includes(graph.type);
 states.visTypes = setVisTypes();
+
+setDashboards();
 setMetricType();
 
 async function setMetricType(catalog?: string) {
-  if (states.isTable) {
-    catalog = catalog || TableEntity[graph.type];
+  const { graph } = dashboardStore.selectedGrid;
+  if (states.isList) {
+    catalog = catalog || ListEntity[graph.type];
   } else {
     catalog = catalog || dashboardStore.entity;
   }
@@ -166,18 +151,61 @@ async function setMetricType(catalog?: string) {
   );
   const metrics: any = states.metricList.filter(
     (d: { value: string; type: string }) => {
-      const metric = states.metrics.filter((m: string) => m === d.value)[0];
-      if (metric) {
+      const index = states.metrics.findIndex((m: string) => m === d.value);
+      if (index > -1) {
         return d;
       }
     }
   );
+
+  if (metrics.length) {
+    states.metrics = metrics.map((d: { value: string }) => d.value);
+  } else {
+    states.metrics = [""];
+    states.metricTypes = [""];
+  }
+  dashboardStore.selectWidget({
+    ...dashboardStore.selectedGrid,
+    metrics,
+    metricTypes,
+  });
   for (const metric of metrics) {
-    states.metricTypeList.push(MetricTypes[metric.type]);
+    if (states.metrics.includes(metric)) {
+      states.metricTypeList.push(MetricTypes[metric.type]);
+    }
   }
   if (states.metrics && states.metrics[0]) {
     queryMetrics();
+  } else {
+    emit("update", {});
   }
+}
+
+function setDashboards() {
+  const { graph } = dashboardStore.selectedGrid;
+  const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
+  states.dashboardList = list.reduce(
+    (
+      prev: (DashboardItem & { label: string; value: string })[],
+      d: DashboardItem
+    ) => {
+      if (d.layer === dashboardStore.layerId) {
+        if (
+          (d.entity === EntityType[0].value && graph.type === "ServiceList") ||
+          (d.entity === EntityType[2].value && graph.type === "EndpointList") ||
+          (d.entity === EntityType[3].value && graph.type === "InstanceList")
+        ) {
+          prev.push({
+            ...d,
+            value: d.name,
+            label: d.name,
+          });
+        }
+      }
+      return prev;
+    },
+    []
+  );
 }
 
 function setVisTypes() {
@@ -190,7 +218,7 @@ function setVisTypes() {
     );
   } else {
     graphs = ChartTypes.filter(
-      (d: Option) => !TableChartTypes.includes(d.value)
+      (d: Option) => !ListChartTypes.includes(d.value)
     );
   }
 
@@ -199,10 +227,9 @@ function setVisTypes() {
 
 function changeChartType(item: Option) {
   const graph = DefaultGraphConfig[item.value];
-  states.isTable = TableChartTypes.includes(graph.type);
   dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
-  states.isTable = TableChartTypes.includes(graph.type);
-  if (states.isTable) {
+  states.isList = ListChartTypes.includes(graph.type);
+  if (states.isList) {
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       metrics: [""],
@@ -216,11 +243,9 @@ function changeChartType(item: Option) {
     EndpointList: EntityType[2].value,
     ServiceList: EntityType[0].value,
   };
-  if (catalog[graph.type]) {
-    setMetricType(catalog[graph.type]);
-  } else {
-    setMetricType();
-  }
+  setMetricType(catalog[graph.type]);
+  setDashboards();
+  states.dashboardName = "";
 }
 
 function changeMetrics(
@@ -236,6 +261,7 @@ function changeMetrics(
     });
     return;
   }
+  console.log(arr);
   states.metrics[index] = arr[0].value;
   const typeOfMetrics = arr[0].type;
 
@@ -245,7 +271,7 @@ function changeMetrics(
     ...dashboardStore.selectedGrid,
     ...{ metricTypes: states.metricTypes, metrics: states.metrics },
   });
-  if (states.isTable) {
+  if (states.isList) {
     return;
   }
   queryMetrics();
@@ -256,7 +282,7 @@ function changeMetricType(index: number, opt: Option[] | any) {
     states.metricList.filter(
       (d: Option) => states.metrics[index] === d.value
     )[0] || {};
-  if (states.isTable) {
+  if (states.isList) {
     states.metricTypes[index] = opt[0].value;
     states.metricTypeList[index] = (MetricTypes as any)[metric.type];
   } else {
@@ -274,7 +300,7 @@ function changeMetricType(index: number, opt: Option[] | any) {
     ...dashboardStore.selectedGrid,
     ...{ metricTypes: states.metricTypes },
   });
-  if (states.isTable) {
+  if (states.isList) {
     return;
   }
   queryMetrics();
@@ -311,7 +337,7 @@ function changeDashboard(opt: any) {
 }
 function addMetric() {
   states.metrics.push("");
-  if (!states.isTable) {
+  if (!states.isList) {
     states.metricTypes.push(states.metricTypes[0]);
     states.metricTypeList.push(states.metricTypeList[0]);
     return;

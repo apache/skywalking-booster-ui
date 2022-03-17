@@ -21,13 +21,13 @@ limitations under the License. -->
         :style="`width: ${nameWidth + initWidth}px`"
       >
         <div class="name" :style="`width: ${nameWidth}px`">
-          {{ config.tableHeaderCol1 || t("name") }}
+          {{ config.graph.tableHeaderCol1 || t("name") }}
           <i class="r cp" ref="draggerName">
             <Icon iconName="settings_ethernet" size="middle" />
           </i>
         </div>
         <div class="value-col" v-if="showTableValues">
-          {{ config.tableHeaderCol2 || t("value") }}
+          {{ config.graph.tableHeaderCol2 || t("value") }}
         </div>
       </div>
       <div
@@ -38,7 +38,11 @@ limitations under the License. -->
       >
         <div :style="`width: ${nameWidth}px`">{{ key }}</div>
         <div class="value-col" v-if="showTableValues">
-          {{ data[key][data[key].length - 1 || 0] }}
+          {{
+            config.metricTypes[0] === "readMetricsValue"
+              ? data[key]
+              : data[key][data[key].length - 1 || 0]
+          }}
         </div>
       </div>
     </div>
@@ -56,32 +60,32 @@ const props = defineProps({
   },
   config: {
     type: Object as PropType<{
-      showTableValues: boolean;
-      tableHeaderCol2: string;
-      tableHeaderCol1: string;
+      graph: {
+        showTableValues: boolean;
+        tableHeaderCol2: string;
+        tableHeaderCol1: string;
+      };
+      metricTypes: string[];
     }>,
     default: () => ({ showTableValues: true }),
   },
 });
+
 /*global Nullable*/
 const { t } = useI18n();
 const chartTable = ref<Nullable<HTMLElement>>(null);
 const initWidth = ref<number>(0);
 const nameWidth = ref<number>(0);
 const draggerName = ref<Nullable<HTMLElement>>(null);
-const showTableValues = ref<boolean>(
-  props.config.showTableValues === undefined
-    ? true
-    : props.config.showTableValues
-);
+const showTableValues = ref<boolean>(props.config.graph.showTableValues);
 onMounted(() => {
   if (!chartTable.value) {
     return;
   }
-  const width = props.config.showTableValues
+  const width = props.config.graph.showTableValues
     ? chartTable.value.offsetWidth / 2
     : chartTable.value.offsetWidth;
-  initWidth.value = props.config.showTableValues
+  initWidth.value = props.config.graph.showTableValues
     ? chartTable.value.offsetWidth / 2
     : 0;
   nameWidth.value = width - 5;
@@ -102,8 +106,12 @@ onMounted(() => {
   };
 });
 const dataKeys = computed(() => {
+  if (props.config.metricTypes[0] === "readMetricsValue") {
+    const keys = Object.keys(props.data || {});
+    return keys;
+  }
   const keys = Object.keys(props.data || {}).filter(
-    (i: any) => Array.isArray(props.data[i]) && props.data[i].length
+    (i: string) => Array.isArray(props.data[i]) && props.data[i].length
   );
   return keys;
 });

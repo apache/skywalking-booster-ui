@@ -65,6 +65,13 @@ async function setTemplate() {
 
   dashboardStore.setLayout(layout.children || []);
   appStore.setPageTitle(layout.name);
+  if (!dashboardStore.currentDashboard) {
+    dashboardStore.setCurrentDashboard({
+      layer: p.layerId,
+      entity: p.layerId,
+      name: p.name,
+    });
+  }
 }
 function handleClick(e: any) {
   e.stopPropagation();

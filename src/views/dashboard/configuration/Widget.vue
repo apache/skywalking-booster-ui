@@ -53,7 +53,7 @@ limitations under the License. -->
           <WidgetOptions />
         </el-collapse-item>
         <el-collapse-item :title="t('standardOptions')" name="4">
-          <StandardOptions @update="getSource" />
+          <StandardOptions @update="getSource" @loading="setLoading" />
         </el-collapse-item>
       </el-collapse>
     </div>

@@ -17,7 +17,7 @@
 
 export const PodsChartTypes = ["EndpointList", "InstanceList"];
 
-export const TableChartTypes = ["EndpointList", "InstanceList", "ServiceList"];
+export const ListChartTypes = ["EndpointList", "InstanceList", "ServiceList"];
 
 export const ChartTypes = [
   { label: "Bar", value: "Bar" },
@@ -152,7 +152,7 @@ export const EntityType = [
   },
   { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },
 ];
-export const TableEntity: any = {
+export const ListEntity: any = {
   InstanceList: EntityType[3].value,
   EndpointList: EntityType[2].value,
   ServiceList: EntityType[0].value,
