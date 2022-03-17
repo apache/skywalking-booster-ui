@@ -218,6 +218,8 @@ function changeChartType(item: Option) {
   };
   if (catalog[graph.type]) {
     setMetricType(catalog[graph.type]);
+  } else {
+    setMetricType();
   }
 }
 
