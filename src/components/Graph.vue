@@ -42,6 +42,9 @@ onMounted(async () => {
   setTimeout(() => {
     const instance = getInstance();
 
+    if (!instance) {
+      return;
+    }
     instance.on("click", (params: any) => {
       emits("select", params);
     });

@@ -39,7 +39,7 @@ limitations under the License. -->
   <div class="no-data-tips" v-else>Please add widgets.</div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onBeforeUnmount } from "vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
 import controls from "../controls/index";
@@ -56,6 +56,9 @@ export default defineComponent({
       dashboardStore.activeGridItem(item.i);
       dashboardStore.selectWidget(item);
     }
+    onBeforeUnmount(() => {
+      dashboardStore.setLayout([]);
+    });
     return {
       dashboardStore,
       layoutUpdatedEvent,

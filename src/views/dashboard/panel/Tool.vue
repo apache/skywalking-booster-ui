@@ -108,7 +108,8 @@ const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
 const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
-const toolIcons = ref<any[]>(PodRelationTools);
+const toolIcons =
+  ref<{ name: string; content: string; id: string }[]>(PodRelationTools);
 const states = reactive<{
   destService: string;
   destPod: string;
@@ -129,6 +130,7 @@ const states = reactive<{
 
 dashboardStore.setLayer(String(params.layerId));
 dashboardStore.setEntity(String(params.entity));
+appStore.setEventStack([initSelector]);
 
 initSelector();
 
@@ -423,7 +425,6 @@ function getTools() {
       toolIcons.value = PodRelationTools;
   }
 }
-appStore.setEventStack([initSelector]);
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {
