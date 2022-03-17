@@ -40,6 +40,7 @@ limitations under the License. -->
         :style="{ width: '100%', fontSize: '13px' }"
         v-loading="loading"
         ref="multipleTableRef"
+        :default-sort="{ prop: 'name' }"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="35" />
@@ -173,7 +174,12 @@ async function importTemplates(event: any) {
   el!.value = "";
 }
 function exportTemplates() {
-  const templates = multipleSelection.value.map((d: DashboardItem) => {
+  const arr = multipleSelection.value.sort(
+    (a: DashboardItem, b: DashboardItem) => {
+      return a.name.localeCompare(b.name);
+    }
+  );
+  const templates = arr.map((d: DashboardItem) => {
     const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
     const layout = JSON.parse(sessionStorage.getItem(key) || "{}");
     return layout;
