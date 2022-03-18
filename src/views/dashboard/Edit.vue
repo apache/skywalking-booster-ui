@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Tool />
+  <Tool v-if="p.entity" />
   <div class="ds-main" @click="handleClick">
     <grid-layout />
     <el-dialog
@@ -38,6 +38,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import GridLayout from "./panel/Layout.vue";
@@ -52,14 +53,18 @@ const dashboardStore = useDashboardStore();
 const appStore = useAppStoreWithOut();
 const { t } = useI18n();
 const p = useRoute().params;
-const layoutKey = `${p.layerId}_${p.entity}_${p.name}`;
+const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
 
 setTemplate();
 
 async function setTemplate() {
   await dashboardStore.setDashboards();
+  if (dashboardStore.currentDashboard) {
+    const { layer, entity, name } = dashboardStore.currentDashboard;
+    layoutKey.value = `${layer}_${entity}_${name.split(" ").join("-")}`;
+  }
   const c: { configuration: string; id: string } = JSON.parse(
-    sessionStorage.getItem(layoutKey) || "{}"
+    sessionStorage.getItem(layoutKey.value) || "{}"
   );
   const layout: any = c.configuration || {};
   dashboardStore.setLayout(layout.children || []);
@@ -74,6 +79,8 @@ async function setTemplate() {
       isRoot: layout.isRoot,
     });
   }
+  dashboardStore.setLayer(dashboardStore.currentDashboard.layer);
+  dashboardStore.setEntity(dashboardStore.currentDashboard.entity);
 }
 function handleClick(e: any) {
   e.stopPropagation();

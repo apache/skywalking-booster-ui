@@ -49,7 +49,9 @@ limitations under the License. -->
         <el-table-column prop="entity" label="Entity" width="200" />
         <el-table-column prop="isRoot" label="Root" width="100">
           <template #default="scope">
-            {{ scope.row.isRoot ? t("yes") : t("no") }}
+            <span>
+              {{ scope.row.isRoot ? t("yes") : t("no") }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="Operations">
@@ -63,6 +65,7 @@ limitations under the License. -->
             <el-popconfirm
               title="Are you sure to set this?"
               @confirm="setRoot(scope.row)"
+              v-if="scope.row.entity === EntityType[1].value"
             >
               <template #reference>
                 <el-button size="small" style="width: 120px">
@@ -118,6 +121,7 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import router from "@/router";
 import { DashboardItem } from "@/types/dashboard";
 import { saveFile, readFile } from "@/utils/file";
+import { EntityType } from "./data";
 
 /*global Nullable*/
 const { t } = useI18n();

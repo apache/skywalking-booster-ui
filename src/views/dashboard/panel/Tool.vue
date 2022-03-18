@@ -128,8 +128,6 @@ const states = reactive<{
   currentDestPod: "",
 });
 
-dashboardStore.setLayer(String(params.layerId));
-dashboardStore.setEntity(String(params.entity));
 appStore.setEventStack([initSelector]);
 
 initSelector();
@@ -405,7 +403,7 @@ async function fetchPods(type: string, serviceId: string, setPod: boolean) {
   }
 }
 function getTools() {
-  switch (dashboardStore.entity) {
+  switch (params.entity) {
     case EntityType[1].value:
       toolIcons.value = AllTools;
       break;
