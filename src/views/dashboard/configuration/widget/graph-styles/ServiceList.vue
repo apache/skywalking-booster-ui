@@ -14,6 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
+    <span class="label">{{ t("showGroup") }}</span>
+    <el-switch
+      v-model="selectedGrid.graph.showGroup"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateConfig({ showGroup: selectedGrid.graph.showGroup })"
+    />
+  </div>
+  <div>
     <span class="label">{{ t("fontSize") }}</span>
     <el-slider
       class="slider"
@@ -38,6 +47,7 @@ const { selectedGrid } = dashboardStore;
 const fontSize = ref(selectedGrid.graph.fontSize);
 
 function updateConfig(param: { [key: string]: unknown }) {
+  const { selectedGrid } = dashboardStore;
   const graph = {
     ...selectedGrid.graph,
     ...param,

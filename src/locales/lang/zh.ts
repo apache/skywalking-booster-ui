@@ -109,6 +109,7 @@ const msg = {
   showXAxis: "显示X轴",
   showYAxis: "显示Y轴",
   nameError: "仪表板名称不能重复",
+  showGroup: "显示分组",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

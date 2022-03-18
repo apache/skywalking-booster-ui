@@ -107,6 +107,7 @@ export interface ServiceListConfig {
   type?: string;
   dashboardName: string;
   fontSize: number;
+  showGroup: boolean;
 }
 
 export interface InstanceListConfig {

@@ -96,6 +96,7 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     fontSize: 12,
     showXAxis: false,
     showYAxis: false,
+    showGroup: true,
   },
   HeatMap: {
     type: "HeatMap",

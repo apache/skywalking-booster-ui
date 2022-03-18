@@ -109,6 +109,7 @@ const msg = {
   showXAxis: "Show X Axis",
   showYAxis: "Show Y Axis",
   nameError: "The dashboard name cannot be duplicate",
+  showGroup: "Show Group",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",
