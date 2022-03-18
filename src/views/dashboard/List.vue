@@ -43,7 +43,7 @@ limitations under the License. -->
         :default-sort="{ prop: 'name' }"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="35" />
+        <el-table-column type="selection" width="55" />
         <el-table-column prop="name" label="Name" />
         <el-table-column prop="layer" label="Layer" width="200" />
         <el-table-column prop="entity" label="Entity" width="200" />

@@ -155,8 +155,12 @@ function visitLayout(row: { id: string }) {
         d.layer === layer.value && d.entity === EntityType[0].value && d.isRoot
     )[0] || {};
   dashboardStore.setCurrentDashboard(l);
+  if (!l.name) {
+    ElMessage.info("Please set a root dashboard");
+    return;
+  }
   router.push(
-    `/dashboard/${layer.value}/${EntityType[0].value}/${row.id}/${(l.name || "")
+    `/dashboard/${layer.value}/${EntityType[0].value}/${row.id}/${l.name
       .split(" ")
       .join("-")}`
   );
