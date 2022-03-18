@@ -36,10 +36,11 @@ limitations under the License. -->
       <component :is="item.type" :data="item" />
     </grid-item>
   </grid-layout>
-  <div class="no-data-tips" v-else>Please add widgets.</div>
+  <div class="no-data-tips" v-else>{{ t("noWidget") }}</div>
 </template>
 <script lang="ts">
 import { defineComponent, onBeforeUnmount } from "vue";
+import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
 import controls from "../controls/index";
@@ -48,6 +49,7 @@ export default defineComponent({
   name: "Layout",
   components: { ...controls },
   setup() {
+    const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
       dashboardStore.setLayout(newLayout);
@@ -63,6 +65,7 @@ export default defineComponent({
       dashboardStore,
       layoutUpdatedEvent,
       clickGrid,
+      t,
     };
   },
 });

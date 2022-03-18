@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div>
+  <div class="item">
     <span class="label">{{ t("showGroup") }}</span>
     <el-switch
       v-model="selectedGrid.graph.showGroup"
@@ -22,7 +22,7 @@ limitations under the License. -->
       @change="updateConfig({ showGroup: selectedGrid.graph.showGroup })"
     />
   </div>
-  <div>
+  <div class="item">
     <span class="label">{{ t("fontSize") }}</span>
     <el-slider
       class="slider"
@@ -66,5 +66,9 @@ function updateConfig(param: { [key: string]: unknown }) {
   font-weight: 500;
   display: block;
   margin-bottom: 5px;
+}
+
+.item {
+  margin-top: 5px;
 }
 </style>

@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="list">
+  <div class="table">
     <div class="search">
       <el-input
         v-model="searchText"
@@ -29,7 +29,7 @@ limitations under the License. -->
         </template>
       </el-input>
     </div>
-    <div class="table">
+    <div class="list">
       <el-table
         v-loading="chartLoading"
         :data="services"
@@ -231,9 +231,5 @@ watch(
 
 .inputs {
   width: 300px;
-}
-
-.table {
-  margin: 10px 0;
 }
 </style>

@@ -29,40 +29,42 @@ limitations under the License. -->
         </template>
       </el-input>
     </div>
-    <el-table v-loading="chartLoading" :data="endpoints" style="width: 100%">
-      <el-table-column label="Endpoints">
-        <template #default="scope">
-          <router-link
-            class="link"
-            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${selectorStore.currentService.id}/${scope.row.id}/${config.dashboardName}`"
-            :style="{ fontSize: `${config.fontSize}px` }"
-          >
-            {{ scope.row.label }}
-          </router-link>
-        </template>
-      </el-table-column>
-      <el-table-column
-        v-for="(metric, index) in config.metrics"
-        :label="metric"
-        :key="metric + index"
-      >
-        <template #default="scope">
-          <div class="chart">
-            <Line
-              v-if="config.metricTypes[index] === 'readMetricsValues'"
-              :data="{ [metric]: scope.row[metric] }"
-              :intervalTime="intervalTime"
-              :config="{ showXAxis: false, showYAxis: false }"
-            />
-            <Card
-              v-else
-              :data="{ [metric]: scope.row[metric] }"
-              :config="{ textAlign: 'left' }"
-            />
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="list">
+      <el-table v-loading="chartLoading" :data="endpoints" style="width: 100%">
+        <el-table-column label="Endpoints">
+          <template #default="scope">
+            <router-link
+              class="link"
+              :to="`/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${selectorStore.currentService.id}/${scope.row.id}/${config.dashboardName}`"
+              :style="{ fontSize: `${config.fontSize}px` }"
+            >
+              {{ scope.row.label }}
+            </router-link>
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-for="(metric, index) in config.metrics"
+          :label="metric"
+          :key="metric + index"
+        >
+          <template #default="scope">
+            <div class="chart">
+              <Line
+                v-if="config.metricTypes[index] === 'readMetricsValues'"
+                :data="{ [metric]: scope.row[metric] }"
+                :intervalTime="intervalTime"
+                :config="{ showXAxis: false, showYAxis: false }"
+              />
+              <Card
+                v-else
+                :data="{ [metric]: scope.row[metric] }"
+                :config="{ textAlign: 'left' }"
+              />
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     <el-pagination
       class="pagination"
       background

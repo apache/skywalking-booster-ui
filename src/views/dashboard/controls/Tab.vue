@@ -34,9 +34,10 @@ limitations under the License. -->
           size="sm"
           iconName="cancel"
           @click="deleteTabItem($event, idx)"
+          v-if="routeParams.entity"
         />
       </span>
-      <span class="tab-icons">
+      <span class="tab-icons" v-if="routeParams.entity">
         <el-tooltip content="Add tab items" placement="bottom">
           <i @click="addTabItem">
             <Icon size="middle" iconName="add" />
@@ -44,7 +45,7 @@ limitations under the License. -->
         </el-tooltip>
       </span>
     </div>
-    <div class="operations">
+    <div class="operations" v-if="routeParams.entity">
       <el-popover
         placement="bottom"
         trigger="click"
@@ -105,12 +106,13 @@ limitations under the License. -->
         />
       </grid-item>
     </grid-layout>
-    <div class="no-data-tips" v-else>Please add widgets.</div>
+    <div class="no-data-tips" v-else>{{ t("noWidget") }}</div>
   </div>
 </template>
 <script lang="ts">
 import { ref, watch, defineComponent, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -133,6 +135,7 @@ export default defineComponent({
   props,
   setup(props) {
     const { t } = useI18n();
+    const routeParams = useRoute().params;
     const dashboardStore = useDashboardStore();
     const activeTabIndex = ref<number>(0);
     const activeTabWidget = ref<string>("");
@@ -237,6 +240,7 @@ export default defineComponent({
       needQuery,
       canEditTabName,
       showTools,
+      routeParams,
       t,
     };
   },

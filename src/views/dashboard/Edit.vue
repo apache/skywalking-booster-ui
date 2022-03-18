@@ -14,7 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <Tool v-if="p.entity" />
-  <div class="ds-main" @click="handleClick">
+  <div
+    class="ds-main"
+    @click="handleClick"
+    :style="{ height: p.entity ? 'calc(100% - 45px)' : '100%' }"
+  >
     <grid-layout />
     <el-dialog
       v-model="dashboardStore.showConfig"
@@ -92,18 +96,6 @@ function handleClick(e: any) {
 </script>
 <style lang="scss" scoped>
 .ds-main {
-  height: calc(100% - 45px);
   overflow: auto;
-}
-
-.layout {
-  height: 100%;
-  flex-grow: 2;
-  overflow: hidden;
-}
-
-.grids {
-  height: 100%;
-  overflow-y: auto;
 }
 </style>

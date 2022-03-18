@@ -27,7 +27,12 @@ limitations under the License. -->
             />
           </span>
         </el-tooltip>
-        <el-popover placement="bottom" trigger="click" :width="100">
+        <el-popover
+          placement="bottom"
+          trigger="click"
+          :width="100"
+          v-if="routeParams.entity"
+        >
           <template #reference>
             <span>
               <Icon iconName="ellipsis_v" size="middle" class="operation" />
@@ -64,6 +69,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
+import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { Colors } from "../data";
@@ -76,6 +82,7 @@ const props = defineProps({
   activeIndex: { type: String, default: "" },
 });
 const { t } = useI18n();
+const routeParams = useRoute().params;
 const dashboardStore = useDashboardStore();
 
 function editConfig() {

@@ -14,16 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <Edit v-if="dashboardStore.currentDashboard" />
-  <div class="no-root" v-else>Please set a root dashboard for {{ layer }}</div>
+  <div class="no-root" v-else>{{ t("noRoot") }}{{ layer }}</div>
 </template>
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { EntityType } from "./dashboard/data";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Edit from "./dashboard/Edit.vue";
 
+const { t } = useI18n();
 const route = useRoute();
 const dashboardStore = useDashboardStore();
 const routeNames = [
@@ -89,5 +91,9 @@ watch(
   width: 100%;
   text-align: center;
   color: #888;
+}
+
+.layer {
+  height: 100%;
 }
 </style>
