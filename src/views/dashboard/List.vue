@@ -155,7 +155,7 @@ async function importTemplates(event: any) {
     const { layer, name, entity } = item.configuration;
     const index = dashboardStore.dashboards.findIndex(
       (d: DashboardItem) =>
-        d.name === name && d.entity === entity && d.layer === layer
+        d.name === name && d.entity === entity && d.layer === layer && !item.id
     );
     if (index > -1) {
       return ElMessage.error("The dashboard name cannot be duplicate.");
