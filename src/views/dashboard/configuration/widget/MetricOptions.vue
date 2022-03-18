@@ -147,7 +147,20 @@ async function setMetricType(catalog?: string) {
     return;
   }
   states.metricList = (json.data.metrics || []).filter(
-    (d: { catalog: string }) => catalog === (MetricCatalog as any)[d.catalog]
+    (d: { catalog: string; type: string }) => {
+      if (states.isList || graph.type === "Table") {
+        if (
+          d.type === "REGULAR_VALUE" &&
+          catalog === (MetricCatalog as any)[d.catalog]
+        ) {
+          return d;
+        }
+      } else {
+        if (catalog === (MetricCatalog as any)[d.catalog]) {
+          return d;
+        }
+      }
+    }
   );
   const metrics: any = states.metricList.filter(
     (d: { value: string; type: string }) => {
@@ -169,9 +182,11 @@ async function setMetricType(catalog?: string) {
     metrics,
     metricTypes,
   });
+  states.metricTypeList = [];
   for (const metric of metrics) {
-    if (states.metrics.includes(metric)) {
-      states.metricTypeList.push(MetricTypes[metric.type]);
+    if (states.metrics.includes(metric.value)) {
+      const arr = setMetricTypeList(metric.type);
+      states.metricTypeList.push(arr);
     }
   }
   if (states.metrics && states.metrics[0]) {
@@ -264,7 +279,7 @@ function changeMetrics(
   states.metrics[index] = arr[0].value;
   const typeOfMetrics = arr[0].type;
 
-  states.metricTypeList[index] = MetricTypes[typeOfMetrics];
+  states.metricTypeList[index] = setMetricTypeList(typeOfMetrics);
   states.metricTypes[index] = MetricTypes[typeOfMetrics][0].value;
   dashboardStore.selectWidget({
     ...dashboardStore.selectedGrid,
@@ -281,16 +296,17 @@ function changeMetricType(index: number, opt: Option[] | any) {
     states.metricList.filter(
       (d: Option) => states.metrics[index] === d.value
     )[0] || {};
+  const l = setMetricTypeList(metric.type);
   if (states.isList) {
     states.metricTypes[index] = opt[0].value;
-    states.metricTypeList[index] = (MetricTypes as any)[metric.type];
+    states.metricTypeList[index] = l;
   } else {
     states.metricTypes = states.metricTypes.map((d: string) => {
       d = opt[0].value;
       return d;
     });
     states.metricTypeList = states.metricTypeList.map((d: Option[]) => {
-      d = (MetricTypes as any)[metric.type];
+      d = l;
 
       return d;
     });
@@ -346,6 +362,21 @@ function addMetric() {
 function deleteMetric(index: number) {
   states.metrics.splice(index, 1);
   states.metricTypes.splice(index, 1);
+}
+function setMetricTypeList(type: string) {
+  if (type !== "REGULAR_VALUE") {
+    return MetricTypes[type];
+  }
+  if (states.isList || dashboardStore.selectedGrid.graph.type === "Table") {
+    return [
+      { label: "read all values in the duration", value: "readMetricsValues" },
+      {
+        label: "read the single value in the duration",
+        value: "readMetricsValue",
+      },
+    ];
+  }
+  return MetricTypes[type];
 }
 </script>
 <style lang="scss" scoped>
