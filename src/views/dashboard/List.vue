@@ -63,23 +63,23 @@ limitations under the License. -->
               {{ t("edit") }}
             </el-button>
             <el-popconfirm
-              title="Are you sure to set this?"
-              @confirm="setRoot(scope.row)"
-              v-if="scope.row.entity === EntityType[1].value"
-            >
-              <template #reference>
-                <el-button size="small" style="width: 120px">
-                  {{ scope.row.isRoot ? t("setNormal") : t("setRoot") }}
-                </el-button>
-              </template>
-            </el-popconfirm>
-            <el-popconfirm
               title="Are you sure to delete this?"
               @confirm="handleDelete(scope.row)"
             >
               <template #reference>
                 <el-button size="small" type="danger">
                   {{ t("delete") }}
+                </el-button>
+              </template>
+            </el-popconfirm>
+            <el-popconfirm
+              title="Are you sure to set this?"
+              @confirm="setRoot(scope.row)"
+              v-if="scope.row.entity === EntityType[1].value"
+            >
+              <template #reference>
+                <el-button size="small" style="width: 120px" type="danger">
+                  {{ scope.row.isRoot ? t("setNormal") : t("setRoot") }}
                 </el-button>
               </template>
             </el-popconfirm>
