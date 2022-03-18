@@ -44,7 +44,7 @@ limitations under the License. -->
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="35" />
-        <el-table-column fixed prop="name" label="Name" />
+        <el-table-column prop="name" label="Name" />
         <el-table-column prop="layer" label="Layer" width="200" />
         <el-table-column prop="entity" label="Entity" width="200" />
         <el-table-column prop="isRoot" label="Root" width="100">
@@ -90,6 +90,7 @@ limitations under the License. -->
         </el-button>
         <el-button class="ml-10 btn" size="default">
           <input
+            ref="dashboardFile"
             id="dashboard-file"
             class="import-template"
             type="file"
@@ -118,6 +119,7 @@ import router from "@/router";
 import { DashboardItem } from "@/types/dashboard";
 import { saveFile, readFile } from "@/utils/file";
 
+/*global Nullable*/
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
@@ -126,6 +128,7 @@ const searchText = ref<string>("");
 const loading = ref<boolean>(false);
 const multipleTableRef = ref<InstanceType<typeof ElTable>>();
 const multipleSelection = ref<DashboardItem[]>([]);
+const dashboardFile = ref<Nullable<HTMLDivElement>>(null);
 //  # - os-linux
 //  # - k8s
 //  # - general(agent-installed)
@@ -148,6 +151,16 @@ async function setList() {
 }
 async function importTemplates(event: any) {
   const arr: any = await readFile(event);
+  for (const item of arr) {
+    const { layer, name, entity } = item.configuration;
+    const index = dashboardStore.dashboards.findIndex(
+      (d: DashboardItem) =>
+        d.name === name && d.entity === entity && d.layer === layer
+    );
+    if (index > -1) {
+      return ElMessage.error("The dashboard name cannot be duplicate.");
+    }
+  }
   loading.value = true;
   for (const item of arr) {
     const { layer, name, entity, isRoot, children } = item.configuration;
@@ -170,8 +183,7 @@ async function importTemplates(event: any) {
   }
   dashboards.value = dashboardStore.dashboards;
   loading.value = false;
-  const el: any = document.getElementById("dashboard-file");
-  el!.value = "";
+  dashboardFile.value = null;
 }
 function exportTemplates() {
   const arr = multipleSelection.value.sort(
@@ -186,6 +198,9 @@ function exportTemplates() {
   });
   const name = `dashboards.json`;
   saveFile(templates, name);
+  setTimeout(() => {
+    multipleTableRef.value!.clearSelection();
+  }, 2000);
 }
 function handleView(row: DashboardItem) {
   dashboardStore.setCurrentDashboard(row);
@@ -373,8 +388,9 @@ function searchDashboards() {
 }
 
 .input-label {
-  display: inline;
-  line-height: inherit;
+  line-height: 30px;
+  height: 30px;
+  width: 220px;
   cursor: pointer;
 }
 </style>
