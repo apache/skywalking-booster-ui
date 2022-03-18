@@ -355,10 +355,8 @@ export const dashboardStore = defineStore({
 
       if (this.currentDashboard.id) {
         res = await this.updateDashboard({
-          setting: {
-            id: this.currentDashboard.id,
-            configuration: JSON.stringify(c),
-          },
+          id: this.currentDashboard.id,
+          configuration: JSON.stringify(c),
         });
         json = res.data.changeTemplate;
       } else {
@@ -387,18 +385,26 @@ export const dashboardStore = defineStore({
         ElMessage.error(json.message);
         return;
       }
-      ElMessage.success("Saved successfully");
-
-      this.dashboards.push({
-        ...this.currentDashboard,
-        id: json.id,
-      });
+      if (!this.currentDashboard.id) {
+        ElMessage.success("Saved successfully");
+      }
       const key = [
         this.currentDashboard.layer,
         this.currentDashboard.entity,
         this.currentDashboard.name.split(" ").join("-"),
       ].join("_");
+      if (this.currentDashboard.id) {
+        sessionStorage.removeItem(key);
+        this.dashboards = this.dashboards.filter(
+          (d: DashboardItem) => d.id !== this.currentDashboard.id
+        );
+      }
+      this.dashboards.push({
+        ...this.currentDashboard,
+        id: json.id,
+      });
       const l = { id: json.id, configuration: c };
+
       sessionStorage.setItem(key, JSON.stringify(l));
       sessionStorage.setItem("dashboards", JSON.stringify(this.dashboards));
     },

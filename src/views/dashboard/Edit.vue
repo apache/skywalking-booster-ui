@@ -62,14 +62,16 @@ async function setTemplate() {
     sessionStorage.getItem(layoutKey) || "{}"
   );
   const layout: any = c.configuration || {};
-
   dashboardStore.setLayout(layout.children || []);
   appStore.setPageTitle(layout.name);
+
   if (!dashboardStore.currentDashboard) {
     dashboardStore.setCurrentDashboard({
       layer: p.layerId,
-      entity: p.layerId,
+      entity: p.entity,
       name: p.name,
+      id: c.id,
+      isRoot: layout.isRoot,
     });
   }
 }

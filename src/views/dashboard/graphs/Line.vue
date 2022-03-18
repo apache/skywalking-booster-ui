@@ -79,10 +79,10 @@ function getOption() {
       name: i,
       type: "line",
       symbol: "circle",
-      barMaxWidth: 10,
+      symbolSize: 8,
+      showSymbol: props.config.showSymbol,
       step: props.config.step,
       smooth: props.config.smooth,
-      showSymbol: props.config.showSymbol,
       lineStyle: {
         width: 1.5,
         type: "solid",
