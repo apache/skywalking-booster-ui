@@ -106,6 +106,8 @@ const msg = {
   no: "否",
   tableHeaderCol1: "表格的第一列的名称",
   tableHeaderCol2: "表格的第二列的名称",
+  showXAxis: "显示X轴",
+  showYAxis: "显示Y轴",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

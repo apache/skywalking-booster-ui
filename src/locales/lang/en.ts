@@ -106,6 +106,8 @@ const msg = {
   no: "No",
   tableHeaderCol1: "Name of the first column of the table",
   tableHeaderCol2: "Name of the second column of the table",
+  showXAxis: "Show X Axis",
+  showYAxis: "Show Y Axis",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

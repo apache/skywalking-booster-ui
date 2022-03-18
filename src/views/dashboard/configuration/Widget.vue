@@ -31,7 +31,13 @@ limitations under the License. -->
           :is="dashboardStore.selectedGrid.graph.type"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
-          :config="dashboardStore.selectedGrid"
+          :config="{
+            ...dashboardStore.selectedGrid.graph,
+            i: dashboardStore.selectedGrid.i,
+            metrics: dashboardStore.selectedGrid.metrics,
+            metricTypes: dashboardStore.selectedGrid.metricTypes,
+            standard: dashboardStore.selectedGrid.standard,
+          }"
         />
         <div v-show="!dashboardStore.selectedGrid.graph.type" class="no-data">
           {{ t("noData") }}

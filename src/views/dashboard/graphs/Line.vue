@@ -37,6 +37,8 @@ const props = defineProps({
       smooth: false,
       showSymbol: false,
       opacity: 0.4,
+      showXAxis: true,
+      showYAxis: true,
     }),
   },
 });
@@ -76,11 +78,11 @@ function getOption() {
       ]),
       name: i,
       type: "line",
-      symbol: "none",
+      symbol: "circle",
       barMaxWidth: 10,
       step: props.config.step,
       smooth: props.config.smooth,
-      showSymbol: true,
+      showSymbol: props.config.showSymbol,
       lineStyle: {
         width: 1.5,
         type: "solid",
@@ -173,7 +175,7 @@ function getOption() {
     },
     xAxis: {
       type: "category",
-      show: true,
+      show: props.config.showXAxis,
       axisTick: {
         lineStyle: { color: "#c1c5ca41" },
         alignWithLabel: true,
@@ -190,7 +192,7 @@ function getOption() {
       axisLabel: {
         color: "#9da5b2",
         fontSize: "11",
-        show: true,
+        show: props.config.showYAxis,
       },
     },
     series: temp,

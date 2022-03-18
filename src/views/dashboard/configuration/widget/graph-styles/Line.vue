@@ -14,6 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
+    <span class="label">{{ t("showXAxis") }}</span>
+    <el-switch
+      v-model="selectedGrid.graph.showXAxis"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateConfig({ showXAxis: selectedGrid.graph.showXAxis })"
+    />
+  </div>
+  <div>
+    <span class="label">{{ t("showYAxis") }}</span>
+    <el-switch
+      v-model="selectedGrid.graph.showYAxis"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateConfig({ showYAxis: selectedGrid.graph.showYAxis })"
+    />
+  </div>
+  <div>
     <span class="label">{{ t("smooth") }}</span>
     <el-switch
       v-model="smooth"

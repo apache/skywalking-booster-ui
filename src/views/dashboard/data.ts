@@ -87,11 +87,15 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     type: "EndpointList",
     dashboardName: "",
     fontSize: 12,
+    showXAxis: false,
+    showYAxis: false,
   },
   ServiceList: {
     type: "ServiceList",
     dashboardName: "",
     fontSize: 12,
+    showXAxis: false,
+    showYAxis: false,
   },
   HeatMap: {
     type: "HeatMap",
