@@ -173,6 +173,12 @@ export default defineComponent({
     function deleteTabItem(e: Event, idx: number) {
       e.stopPropagation();
       dashboardStore.removeTabItem(props.data, idx);
+      const kids = dashboardStore.layout[l].children[0];
+      const arr = (kids && kids.children) || [];
+      dashboardStore.setCurrentTabItems(arr);
+      dashboardStore.activeGridItem(0);
+      activeTabIndex.value = 0;
+      needQuery.value = true;
     }
     function addTabItem() {
       dashboardStore.addTabItem(props.data);

@@ -99,6 +99,7 @@ const props = defineProps({
         i: string;
         metrics: string[];
         metricTypes: string[];
+        isEdit: boolean;
       }
     >,
     default: () => ({
@@ -132,6 +133,9 @@ async function queryInstance() {
   }
   searchInstances.value = selectorStore.pods;
   instances.value = searchInstances.value.splice(0, pageSize);
+  if (props.config.isEdit) {
+    return;
+  }
   queryInstanceMetrics(instances.value);
 }
 

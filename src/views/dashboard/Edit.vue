@@ -60,10 +60,10 @@ const p = useRoute().params;
 const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
 
 setTemplate();
-
 async function setTemplate() {
   await dashboardStore.setDashboards();
-  if (dashboardStore.currentDashboard) {
+
+  if (!p.entity) {
     const { layer, entity, name } = dashboardStore.currentDashboard;
     layoutKey.value = `${layer}_${entity}_${name.split(" ").join("-")}`;
   }
@@ -83,8 +83,6 @@ async function setTemplate() {
       isRoot: layout.isRoot,
     });
   }
-  dashboardStore.setLayer(dashboardStore.currentDashboard.layer);
-  dashboardStore.setEntity(dashboardStore.currentDashboard.entity);
 }
 function handleClick(e: any) {
   e.stopPropagation();

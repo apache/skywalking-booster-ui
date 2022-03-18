@@ -37,6 +37,7 @@ limitations under the License. -->
             metrics: dashboardStore.selectedGrid.metrics,
             metricTypes: dashboardStore.selectedGrid.metricTypes,
             standard: dashboardStore.selectedGrid.standard,
+            isEdit: true,
           }"
         />
         <div v-show="!dashboardStore.selectedGrid.graph.type" class="no-data">

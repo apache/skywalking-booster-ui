@@ -128,6 +128,8 @@ const states = reactive<{
   currentDestPod: "",
 });
 
+dashboardStore.setLayer(params.layerId);
+dashboardStore.setEntity(params.entity);
 appStore.setEventStack([initSelector]);
 
 initSelector();

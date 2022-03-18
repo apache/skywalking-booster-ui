@@ -102,6 +102,7 @@ const props = defineProps({
         i: string;
         metrics: string[];
         metricTypes: string[];
+        isEdit: boolean;
       }
     >,
     default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
@@ -129,6 +130,9 @@ async function queryEndpoints() {
   }
   searchEndpoints.value = selectorStore.pods;
   endpoints.value = selectorStore.pods.splice(0, pageSize);
+  if (props.config.isEdit) {
+    return;
+  }
   queryEndpointMetrics(endpoints.value);
 }
 async function queryEndpointMetrics(currentPods: Endpoint[]) {

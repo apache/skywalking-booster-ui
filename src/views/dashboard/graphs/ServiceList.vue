@@ -47,7 +47,9 @@ limitations under the License. -->
           <template #default="scope">
             <router-link
               class="link"
-              :to="`/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${scope.row.id}/${config.dashboardName}`"
+              :to="`/dashboard/${dashboardStore.layerId}/${
+                EntityType[0].value
+              }/${scope.row.id}/${config.dashboardName.split(' ').join('-')}`"
               :key="1"
               :style="{ fontSize: `${config.fontSize}px` }"
             >
@@ -115,6 +117,7 @@ const props = defineProps({
         i: string;
         metrics: string[];
         metricTypes: string[];
+        isEdit: boolean;
       }
     >,
     default: () => ({ dashboardName: "", fontSize: 12 }),
@@ -165,7 +168,9 @@ async function queryServices() {
     }
     groups.value[s.group] = obj[s.group];
   }
-
+  if (props.config.isEdit) {
+    return;
+  }
   queryServiceMetrics(services.value);
 }
 async function queryServiceMetrics(currentServices: Service[]) {

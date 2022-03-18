@@ -179,8 +179,8 @@ async function setMetricType(catalog?: string) {
   }
   dashboardStore.selectWidget({
     ...dashboardStore.selectedGrid,
-    metrics,
-    metricTypes,
+    metrics: states.metrics,
+    metricTypes: states.metricTypes,
   });
   states.metricTypeList = [];
   for (const metric of metrics) {
@@ -321,6 +321,9 @@ function changeMetricType(index: number, opt: Option[] | any) {
   queryMetrics();
 }
 async function queryMetrics() {
+  if (states.isList) {
+    return;
+  }
   const { standard } = dashboardStore.selectedGrid;
   const params = useQueryProcessor({ ...states, standard });
   if (!params) {
