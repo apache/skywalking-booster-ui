@@ -82,7 +82,7 @@ const onCreate = () => {
       states.selectedLayer === d.layer
   );
   if (index > -1) {
-    ElMessage.error("The dashboard name cannot be duplicate.");
+    ElMessage.error(t("nameError"));
     return;
   }
   dashboardStore.setCurrentDashboard({

@@ -108,6 +108,7 @@ const msg = {
   tableHeaderCol2: "Name of the second column of the table",
   showXAxis: "Show X Axis",
   showYAxis: "Show Y Axis",
+  nameError: "The dashboard name cannot be duplicate",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

@@ -158,7 +158,7 @@ async function importTemplates(event: any) {
         d.name === name && d.entity === entity && d.layer === layer && !item.id
     );
     if (index > -1) {
-      return ElMessage.error("The dashboard name cannot be duplicate.");
+      return ElMessage.error(t("nameError"));
     }
   }
   loading.value = true;

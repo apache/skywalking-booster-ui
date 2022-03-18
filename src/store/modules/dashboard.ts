@@ -26,6 +26,7 @@ import { NewControl } from "../data";
 import { Duration } from "@/types/app";
 import { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
+import { useI18n } from "vue-i18n";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -368,7 +369,8 @@ export const dashboardStore = defineStore({
             d.layer === this.currentDashboard.layerId
         );
         if (index > -1) {
-          ElMessage.error("The dashboard name cannot be duplicate.");
+          const { t } = useI18n();
+          ElMessage.error(t("nameError"));
           return;
         }
         res = await graphql

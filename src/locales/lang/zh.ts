@@ -108,6 +108,7 @@ const msg = {
   tableHeaderCol2: "表格的第二列的名称",
   showXAxis: "显示X轴",
   showYAxis: "显示Y轴",
+  nameError: "仪表板名称不能重复",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",
