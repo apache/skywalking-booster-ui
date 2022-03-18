@@ -261,7 +261,6 @@ function changeMetrics(
     });
     return;
   }
-  console.log(arr);
   states.metrics[index] = arr[0].value;
   const typeOfMetrics = arr[0].type;
 

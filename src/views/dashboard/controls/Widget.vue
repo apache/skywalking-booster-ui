@@ -101,7 +101,11 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
-    if (dashboardStore.entity === EntityType[1].value || props.needQuery) {
+    if (
+      dashboardStore.entity === EntityType[1].value ||
+      props.needQuery ||
+      !dashboardStore.currentDashboard.id
+    ) {
       queryMetrics();
     }
 
@@ -154,7 +158,11 @@ export default defineComponent({
       }
     );
     watch(
-      () => [selectorStore.currentService, selectorStore.currentDestService],
+      () => [
+        selectorStore.currentService,
+        selectorStore.currentDestService,
+        appStore.durationTime,
+      ],
       () => {
         if (
           dashboardStore.entity === EntityType[0].value ||
