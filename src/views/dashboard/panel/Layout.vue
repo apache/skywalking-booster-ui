@@ -42,6 +42,7 @@ limitations under the License. -->
 import { defineComponent, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useSelectorStore } from "@/store/modules/selectors";
 import { LayoutConfig } from "@/types/dashboard";
 import controls from "../controls/index";
 
@@ -51,6 +52,7 @@ export default defineComponent({
   setup() {
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
+    const selectorStore = useSelectorStore();
     function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
       dashboardStore.setLayout(newLayout);
     }
@@ -60,6 +62,8 @@ export default defineComponent({
     }
     onBeforeUnmount(() => {
       dashboardStore.setLayout([]);
+      selectorStore.setCurrentService(null);
+      selectorStore.setCurrentPod(null);
     });
     return {
       dashboardStore,

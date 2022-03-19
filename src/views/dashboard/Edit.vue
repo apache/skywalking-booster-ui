@@ -78,7 +78,7 @@ async function setTemplate() {
     dashboardStore.setCurrentDashboard({
       layer: p.layerId,
       entity: p.entity,
-      name: p.name,
+      name: String(p.name).split("-").join(" "),
       id: c.id,
       isRoot: layout.isRoot,
     });
