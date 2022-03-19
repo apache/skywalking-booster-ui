@@ -122,6 +122,7 @@ import router from "@/router";
 import { DashboardItem } from "@/types/dashboard";
 import { saveFile, readFile } from "@/utils/file";
 import { EntityType } from "./data";
+import { findLastKey } from "lodash";
 
 /*global Nullable*/
 const { t } = useI18n();
@@ -241,34 +242,34 @@ async function setRoot(row: DashboardItem) {
           })
         );
       }
-    }
-    if (
-      d.layer === row.layer &&
-      d.entity === row.entity &&
-      d.id !== row.id &&
-      !row.isRoot &&
-      d.isRoot
-    ) {
-      d.isRoot = false;
-      const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
-      const layout = sessionStorage.getItem(key) || "{}";
-      const c = {
-        ...JSON.parse(layout).configuration,
-        ...d,
-      };
-      const setting = {
-        id: d.id,
-        configuration: JSON.stringify(c),
-      };
-      const res = await dashboardStore.updateDashboard(setting);
-      if (res.data.changeTemplate.id) {
-        sessionStorage.setItem(
-          key,
-          JSON.stringify({
-            id: d.id,
-            configuration: c,
-          })
-        );
+    } else {
+      if (
+        d.layer === row.layer &&
+        d.entity === row.entity &&
+        row.isRoot === false &&
+        d.isRoot === true
+      ) {
+        d.isRoot = false;
+        const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+        const layout = sessionStorage.getItem(key) || "{}";
+        const c = {
+          ...JSON.parse(layout).configuration,
+          ...d,
+        };
+        const setting = {
+          id: d.id,
+          configuration: JSON.stringify(c),
+        };
+        const res = await dashboardStore.updateDashboard(setting);
+        if (res.data.changeTemplate.id) {
+          sessionStorage.setItem(
+            key,
+            JSON.stringify({
+              id: d.id,
+              configuration: c,
+            })
+          );
+        }
       }
     }
     items.push(d);

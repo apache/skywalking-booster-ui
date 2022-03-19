@@ -73,6 +73,8 @@ function setLayer(n: string) {
       layer.value = "GENERAL";
       break;
   }
+  dashboardStore.setLayer(layer.value);
+  dashboardStore.setEntity(EntityType[1].value);
   // appStore.setPageTitle(layer.value);
 }
 watch(
