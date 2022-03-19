@@ -75,4 +75,8 @@ function updateConfig(param: { [key: string]: unknown }) {
   display: block;
   margin-bottom: 5px;
 }
+
+.item {
+  margin-top: 10px;
+}
 </style>

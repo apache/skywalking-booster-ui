@@ -19,7 +19,7 @@ limitations under the License. -->
     :row-height="10"
     :is-draggable="true"
     :is-resizable="true"
-    @layout-updated="layoutUpdatedEvent"
+    v-if="dashboardStore.layout.length"
   >
     <grid-item
       v-for="item in dashboardStore.layout"
@@ -36,10 +36,13 @@ limitations under the License. -->
       <component :is="item.type" :data="item" />
     </grid-item>
   </grid-layout>
+  <div class="no-data-tips" v-else>{{ t("noWidget") }}</div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onBeforeUnmount } from "vue";
+import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useSelectorStore } from "@/store/modules/selectors";
 import { LayoutConfig } from "@/types/dashboard";
 import controls from "../controls/index";
 
@@ -47,7 +50,9 @@ export default defineComponent({
   name: "Layout",
   components: { ...controls },
   setup() {
+    const { t } = useI18n();
     const dashboardStore = useDashboardStore();
+    const selectorStore = useSelectorStore();
     function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
       dashboardStore.setLayout(newLayout);
     }
@@ -55,10 +60,16 @@ export default defineComponent({
       dashboardStore.activeGridItem(item.i);
       dashboardStore.selectWidget(item);
     }
+    onBeforeUnmount(() => {
+      dashboardStore.setLayout([]);
+      selectorStore.setCurrentService(null);
+      selectorStore.setCurrentPod(null);
+    });
     return {
       dashboardStore,
       layoutUpdatedEvent,
       clickGrid,
+      t,
     };
   },
 });
@@ -77,5 +88,13 @@ export default defineComponent({
 
 .vue-grid-item.active {
   border: 1px solid #409eff;
+}
+
+.no-data-tips {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  padding-top: 30px;
+  color: #888;
 }
 </style>

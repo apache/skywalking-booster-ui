@@ -14,7 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="log-wrapper flex-v">
-    <el-popover placement="bottom" trigger="click" :width="100">
+    <el-popover
+      placement="bottom"
+      trigger="click"
+      :width="100"
+      v-if="routeParams.entity"
+    >
       <template #reference>
         <span class="delete cp">
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
@@ -34,6 +39,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Header from "../related/log/Header.vue";
 import List from "../related/log/List.vue";
@@ -47,6 +53,7 @@ const props = defineProps({
   activeIndex: { type: String, default: "" },
 });
 const { t } = useI18n();
+const routeParams = useRoute().params;
 const dashboardStore = useDashboardStore();
 
 function removeWidget() {

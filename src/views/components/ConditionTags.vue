@@ -65,7 +65,6 @@ const tagsList = ref<string[]>([]);
 function removeTags(index: number) {
   tagsList.value.splice(index, 1);
   updateTags();
-  localStorage.setItem("traceTags", JSON.stringify(this.tagsList));
 }
 function addLabels() {
   if (!tags.value) {

@@ -14,7 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="profile-wrapper flex-v">
-    <el-popover placement="bottom" trigger="click" :width="100">
+    <el-popover
+      placement="bottom"
+      trigger="click"
+      :width="100"
+      v-if="routeParams.entity"
+    >
       <template #reference>
         <span class="delete cp">
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
@@ -34,6 +39,7 @@ import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Header from "../related/profile/Header.vue";
 import Content from "../related/profile/Content.vue";
+import { useRoute } from "vue-router";
 
 /*global defineProps */
 const props = defineProps({
@@ -44,6 +50,7 @@ const props = defineProps({
   activeIndex: { type: String, default: "" },
 });
 const { t } = useI18n();
+const routeParams = useRoute().params;
 const dashboardStore = useDashboardStore();
 function removeWidget() {
   dashboardStore.removeControls(props.data);

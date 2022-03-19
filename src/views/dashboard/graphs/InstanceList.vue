@@ -18,54 +18,57 @@ limitations under the License. -->
       <el-input
         v-model="searchText"
         placeholder="Please input instance name"
-        class="input-with-search"
         size="small"
         @change="searchList"
+        class="inputs"
       >
         <template #append>
           <el-button size="small" @click="searchList">
-            <Icon size="lg" iconName="search" />
+            <Icon size="sm" iconName="search" />
           </el-button>
         </template>
       </el-input>
     </div>
-    <el-table v-loading="chartLoading" :data="instances" style="width: 100%">
-      <el-table-column label="Service Instances">
-        <template #default="scope">
-          <router-link
-            class="link"
-            :to="`/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${selectorStore.currentService.id}/${scope.row.id}/${config.dashboardName}`"
-            :style="{ fontSize: `${config.fontSize}px` }"
-          >
-            {{ scope.row.label }}
-          </router-link>
-        </template>
-      </el-table-column>
-      <el-table-column
-        v-for="(metric, index) in config.metrics"
-        :label="metric"
-        :key="metric + index"
-      >
-        <template #default="scope">
-          <div class="chart">
-            <Line
-              v-if="config.metricTypes[index] === 'readMetricsValues'"
-              :data="metric ? { [metric]: scope.row[metric] } : {}"
-              :intervalTime="intervalTime"
-              :config="{ showXAxis: false, showYAxis: false }"
-            />
-            <Card
-              v-else
-              :data="{ [metric]: scope.row[metric] }"
-              :config="{ textAlign: 'left' }"
-            />
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="list">
+      <el-table v-loading="chartLoading" :data="instances" style="width: 100%">
+        <el-table-column label="Service Instances">
+          <template #default="scope">
+            <router-link
+              class="link"
+              :to="`/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${selectorStore.currentService.id}/${scope.row.id}/${config.dashboardName}`"
+              :style="{ fontSize: `${config.fontSize}px` }"
+            >
+              {{ scope.row.label }}
+            </router-link>
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-for="(metric, index) in config.metrics"
+          :label="metric"
+          :key="metric + index"
+        >
+          <template #default="scope">
+            <div class="chart">
+              <Line
+                v-if="config.metricTypes[index] === 'readMetricsValues'"
+                :data="metric ? { [metric]: scope.row[metric] } : {}"
+                :intervalTime="intervalTime"
+                :config="{ showXAxis: false, showYAxis: false }"
+              />
+              <Card
+                v-else
+                :data="{ [metric]: scope.row[metric] }"
+                :config="{ textAlign: 'left' }"
+              />
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     <el-pagination
       class="pagination"
       background
+      small
       layout="prev, pager, next"
       :page-size="pageSize"
       :total="searchInstances.length"
@@ -96,6 +99,7 @@ const props = defineProps({
         i: string;
         metrics: string[];
         metricTypes: string[];
+        isEdit: boolean;
       }
     >,
     default: () => ({
@@ -129,6 +133,9 @@ async function queryInstance() {
   }
   searchInstances.value = selectorStore.pods;
   instances.value = searchInstances.value.splice(0, pageSize);
+  if (props.config.isEdit) {
+    return;
+  }
   queryInstanceMetrics(instances.value);
 }
 
@@ -138,7 +145,7 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
       currentInstances,
-      dashboardStore.selectedGrid,
+      props.config,
       EntityType[3].value
     );
     const json = await dashboardStore.fetchMetricValue(params);
@@ -147,11 +154,7 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
       ElMessage.error(json.errors);
       return;
     }
-    instances.value = usePodsSource(
-      currentInstances,
-      json,
-      dashboardStore.selectedGrid
-    );
+    instances.value = usePodsSource(currentInstances, json, props.config);
     return;
   }
   instances.value = currentInstances;
@@ -181,5 +184,9 @@ watch(
 
 .chart {
   height: 40px;
+}
+
+.inputs {
+  width: 300px;
 }
 </style>

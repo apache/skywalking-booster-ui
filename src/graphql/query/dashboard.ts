@@ -16,12 +16,21 @@
  */
 import {
   TypeOfMetrics,
-  queryHeatMap,
   listMetrics,
+  getAllTemplates,
+  addTemplate,
+  changeTemplate,
+  deleteTemplate,
 } from "../fragments/dashboard";
 
 export const queryTypeOfMetrics = `query typeOfMetrics(${TypeOfMetrics.variable}) {${TypeOfMetrics.query}}`;
 
-export const readHeatMap = `query queryData(${queryHeatMap.variable}) {${queryHeatMap.query}}`;
-
 export const queryMetrics = `query queryData(${listMetrics.variable}) {${listMetrics.query}}`;
+
+export const addNewTemplate = `mutation template(${addTemplate.variable}) {${addTemplate.query}}`;
+
+export const updateTemplate = `mutation template(${changeTemplate.variable}) {${changeTemplate.query}}`;
+
+export const removeTemplate = `mutation template(${deleteTemplate.variable}) {${deleteTemplate.query}}`;
+
+export const getTemplates = `query templates {${getAllTemplates.query}}`;

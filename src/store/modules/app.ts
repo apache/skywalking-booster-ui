@@ -16,10 +16,12 @@
  */
 import { defineStore } from "pinia";
 import { store } from "@/store";
+import graphql from "@/graphql";
 import { Duration, DurationTime } from "@/types/app";
 import getLocalTime from "@/utils/localtime";
-import getDurationRow from "@/utils/dateTime";
+import { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
+import { TimeType } from "@/constants/data";
 /*global Nullable*/
 interface AppState {
   durationRow: any;
@@ -35,7 +37,11 @@ interface AppState {
 export const appStore = defineStore({
   id: "app",
   state: (): AppState => ({
-    durationRow: getDurationRow(),
+    durationRow: {
+      start: new Date(new Date().getTime() - 1800000),
+      end: new Date(),
+      step: TimeType.MINUTE_TIME,
+    },
     utc: "",
     utcHour: 0,
     utcMin: 0,
@@ -102,7 +108,6 @@ export const appStore = defineStore({
   actions: {
     setDuration(data: Duration): void {
       this.durationRow = data;
-      localStorage.setItem("durationRow", JSON.stringify(data, null, 0));
       if ((window as any).axiosCancel.length !== 0) {
         for (const event of (window as any).axiosCancel) {
           setTimeout(event(), 0);
@@ -116,7 +121,6 @@ export const appStore = defineStore({
       this.utcMin = utcMin;
       this.utcHour = utcHour;
       this.utc = `${utcHour}:${utcMin}`;
-      localStorage.setItem("utc", this.utc);
     },
     setEventStack(funcs: (() => void)[]): void {
       this.eventStack = funcs;
@@ -138,6 +142,18 @@ export const appStore = defineStore({
           }),
         500
       );
+    },
+    async queryOAPTimeInfo() {
+      const res: AxiosResponse = await graphql
+        .query("queryOAPTimeInfo")
+        .params({});
+      if (res.data.errors) {
+        this.utc = -(new Date().getTimezoneOffset() / 60) + ":0";
+        return res.data;
+      }
+      this.utc = res.data.data.getTimeInfo.timezone / 100 + ":0";
+
+      return res.data;
     },
   },
 });

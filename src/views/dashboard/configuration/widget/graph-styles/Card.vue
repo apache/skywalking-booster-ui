@@ -20,8 +20,8 @@ limitations under the License. -->
       v-model="fontSize"
       show-input
       input-size="small"
-      :min="10"
-      :max="20"
+      :min="12"
+      :max="50"
       :step="1"
       @change="updateConfig({ fontSize })"
     />

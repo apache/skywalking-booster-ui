@@ -75,35 +75,30 @@ limitations under the License. -->
     <div class="tool-icons">
       <span
         @click="clickIcons(t)"
-        v-for="(t, index) in ToolIcons"
+        v-for="(t, index) in toolIcons"
         :key="index"
         :title="t.content"
       >
-        <Icon
-          class="icon-btn"
-          size="sm"
-          :iconName="t.name"
-          v-if="
-            !['topology', 'trace', 'profile'].includes(t.id) ||
-            (t.id === 'topology' &&
-              hasTopology.includes(dashboardStore.entity)) ||
-            (t.id === 'trace' &&
-              TraceEntitys.includes(dashboardStore.entity)) ||
-            (t.id === 'profile' &&
-              dashboardStore.entity === EntityType[0].value)
-          "
-        />
+        <Icon class="icon-btn" size="sm" :iconName="t.name" />
       </span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch } from "vue";
+import { reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { EntityType, ToolIcons, hasTopology, TraceEntitys } from "../data";
+import {
+  EntityType,
+  AllTools,
+  ServiceTools,
+  InstanceTools,
+  EndpointTools,
+  PodRelationTools,
+  ServiceRelationTools,
+} from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
@@ -113,6 +108,8 @@ const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
 const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
+const toolIcons =
+  ref<{ name: string; content: string; id: string }[]>(PodRelationTools);
 const states = reactive<{
   destService: string;
   destPod: string;
@@ -131,12 +128,14 @@ const states = reactive<{
   currentDestPod: "",
 });
 
-dashboardStore.setLayer(String(params.layerId));
-dashboardStore.setEntity(String(params.entity));
+dashboardStore.setLayer(params.layerId);
+dashboardStore.setEntity(params.entity);
+appStore.setEventStack([initSelector]);
 
 initSelector();
 
 function initSelector() {
+  getTools();
   if (params.serviceId) {
     setSelector();
   } else {
@@ -180,7 +179,8 @@ async function setSelector() {
   selectorStore.setCurrentService(currentService);
   selectorStore.setCurrentDestService(currentDestService);
   states.currentService = selectorStore.currentService.value;
-  states.currentDestService = selectorStore.currentDestService.value;
+  states.currentDestService =
+    selectorStore.currentDestService && selectorStore.currentDestService.value;
 }
 
 async function setSourceSelector() {
@@ -318,6 +318,9 @@ function setTabControls(id: string) {
     case "addTopology":
       dashboardStore.addTabControls("Topology");
       break;
+    case "apply":
+      dashboardStore.saveDashboard();
+      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -344,8 +347,8 @@ function setControls(id: string) {
     case "addTopology":
       dashboardStore.addControl("Topology");
       break;
-    case "settings":
-      dashboardStore.setConfigPanel(true);
+    case "apply":
+      dashboardStore.saveDashboard();
       break;
     default:
       dashboardStore.addControl("Widget");
@@ -401,12 +404,27 @@ async function fetchPods(type: string, serviceId: string, setPod: boolean) {
     ElMessage.error(resp.errors);
   }
 }
-watch(
-  () => appStore.durationTime,
-  () => {
-    initSelector();
+function getTools() {
+  switch (params.entity) {
+    case EntityType[1].value:
+      toolIcons.value = AllTools;
+      break;
+    case EntityType[0].value:
+      toolIcons.value = ServiceTools;
+      break;
+    case EntityType[2].value:
+      toolIcons.value = EndpointTools;
+      break;
+    case EntityType[3].value:
+      toolIcons.value = InstanceTools;
+      break;
+    case EntityType[4].value:
+      toolIcons.value = ServiceRelationTools;
+      break;
+    default:
+      toolIcons.value = PodRelationTools;
   }
-);
+}
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {

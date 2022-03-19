@@ -17,6 +17,9 @@ limitations under the License. -->
     <div class="graph" v-loading="loading">
       <div class="header">
         <span>{{ dashboardStore.selectedGrid.widget.title }}</span>
+        <span v-show="dashboardStore.selectedGrid.standard.unit" class="unit">
+          ({{ dashboardStore.selectedGrid.standard.unit }})
+        </span>
         <div class="tips" v-show="dashboardStore.selectedGrid.widget.tips">
           <el-tooltip :content="dashboardStore.selectedGrid.widget.tips">
             <Icon iconName="info_outline" size="sm" />
@@ -33,6 +36,8 @@ limitations under the License. -->
             i: dashboardStore.selectedGrid.i,
             metrics: dashboardStore.selectedGrid.metrics,
             metricTypes: dashboardStore.selectedGrid.metricTypes,
+            standard: dashboardStore.selectedGrid.standard,
+            isEdit: true,
           }"
         />
         <div v-show="!dashboardStore.selectedGrid.graph.type" class="no-data">
@@ -55,7 +60,7 @@ limitations under the License. -->
           <WidgetOptions />
         </el-collapse-item>
         <el-collapse-item :title="t('standardOptions')" name="4">
-          <StandardOptions />
+          <StandardOptions @update="getSource" @loading="setLoading" />
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -98,7 +103,7 @@ export default defineComponent({
     const loading = ref<boolean>(false);
     const states = reactive<{
       activeNames: string;
-      source: any;
+      source: unknown;
       index: string;
       visType: Option[];
     }>({
@@ -208,5 +213,10 @@ export default defineComponent({
 
 .ds-name {
   margin-bottom: 10px;
+}
+
+.unit {
+  display: inline-block;
+  margin-left: 5px;
 }
 </style>

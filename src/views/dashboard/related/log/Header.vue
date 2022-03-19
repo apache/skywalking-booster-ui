@@ -148,7 +148,7 @@ const state = reactive<any>({
 
 init();
 async function init() {
-  const resp = await logStore.queryLogsByKeywords();
+  const resp = await logStore.getLogsByKeywords();
 
   if (resp.errors) {
     ElMessage.error(resp.errors);

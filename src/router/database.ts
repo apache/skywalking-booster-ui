@@ -36,17 +36,7 @@ export const routesDatabase: Array<RouteRecordRaw> = [
           headPath: "/database",
           exact: true,
         },
-        component: () => import("@/views/service/Service.vue"),
-      },
-      {
-        path: "/database/:id/:type",
-        name: "DatabasePanel",
-        meta: {
-          title: "databasePanel",
-          headPath: "/database",
-          exact: true,
-        },
-        component: () => import("@/views/service/Panel.vue"),
+        component: () => import("@/views/Layer.vue"),
       },
     ],
   },

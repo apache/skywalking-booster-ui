@@ -24,7 +24,7 @@ limitations under the License. -->
         @input="changeTimeRange"
       />
       <span>
-        UTC{{ utcHour >= 0 ? "+" : ""
+        UTC{{ appStore.utcHour >= 0 ? "+" : ""
         }}{{ `${appStore.utcHour}:${appStore.utcMin}` }}
       </span>
       <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
@@ -46,17 +46,6 @@ const route = useRoute();
 const pageName = ref<string>("");
 const timeRange = ref<number>(0);
 const theme = ref<string>("light");
-let utc = localStorage.getItem("utc") || "";
-if (!utc.includes(":")) {
-  utc =
-    (localStorage.getItem("utc") || -(new Date().getTimezoneOffset() / 60)) +
-    ":0";
-}
-const utcArr = (utc || "").split(":");
-const utcHour = isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]);
-const utcMin = isNaN(Number(utcArr[1])) ? 0 : Number(utcArr[1]);
-
-appStore.setUTC(utcHour, utcMin);
 
 const setConfig = (value: string) => {
   pageName.value = value || "";
@@ -72,7 +61,7 @@ const handleReload = () => {
   const time: Date[] = [new Date(new Date().getTime() - gap), new Date()];
   appStore.setDuration(timeFormat(time));
 };
-function changeTimeRange(val: Date[]) {
+function changeTimeRange(val: Date[] | any) {
   timeRange.value =
     val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
   if (timeRange.value) {

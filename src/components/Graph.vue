@@ -20,7 +20,6 @@ import { watch, ref, Ref, onMounted, onBeforeUnmount, unref } from "vue";
 import type { PropType } from "vue";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
-import { useTimeoutFn } from "@/hooks/useTimeout";
 
 /*global Nullable, defineProps, defineEmits*/
 const emits = defineEmits(["select"]);
@@ -40,9 +39,12 @@ const props = defineProps({
 onMounted(async () => {
   await setOptions(props.option);
   addResizeListener(unref(chartRef), resize);
-  useTimeoutFn(() => {
+  setTimeout(() => {
     const instance = getInstance();
 
+    if (!instance) {
+      return;
+    }
     instance.on("click", (params: any) => {
       emits("select", params);
     });

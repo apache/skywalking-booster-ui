@@ -14,6 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+export type DashboardItem = {
+  id?: string;
+  entity: string;
+  layer: string;
+  isRoot: boolean;
+  name: string;
+};
 export interface LayoutConfig {
   x: number;
   y: number;
@@ -38,8 +46,8 @@ export interface WidgetConfig {
 export interface StandardConfig {
   sortOrder?: string;
   unit?: string;
-  max?: string;
-  min?: string;
+  labelsIndex?: string;
+  metricLabels?: string;
   plus?: string;
   minus?: string;
   multiply?: string;
@@ -99,6 +107,7 @@ export interface ServiceListConfig {
   type?: string;
   dashboardName: string;
   fontSize: number;
+  showGroup: boolean;
 }
 
 export interface InstanceListConfig {

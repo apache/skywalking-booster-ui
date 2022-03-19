@@ -20,9 +20,9 @@ import Layout from "@/layout/Index.vue";
 export const routesGen: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "GeneralService",
+    name: "General",
     meta: {
-      title: "generalService",
+      title: "general",
       icon: "chart",
       hasGroup: false,
       exact: true,
@@ -30,24 +30,14 @@ export const routesGen: Array<RouteRecordRaw> = [
     component: Layout,
     children: [
       {
-        path: "/generalService",
-        name: "Services",
+        path: "/general",
+        name: "GeneralServices",
         meta: {
           title: "services",
-          headPath: "/generalService/service",
+          headPath: "/general/service",
           exact: true,
         },
-        component: () => import("@/views/service/Service.vue"),
-      },
-      {
-        path: "/generalService/service/:id/:type",
-        name: "GeneralServicePanel",
-        meta: {
-          title: "generalServicePanel",
-          headPath: "/generalService/service",
-          exact: true,
-        },
-        component: () => import("@/views/service/Panel.vue"),
+        component: () => import("@/views/Layer.vue"),
       },
     ],
   },

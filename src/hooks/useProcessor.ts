@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import dayjs from "dayjs";
 import { RespFields, MetricQueryTypes } from "./data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Instance, Endpoint, Service } from "@/types/selector";
+import { StandardConfig } from "@/types/dashboard";
 
 export function useQueryProcessor(config: any) {
   if (!(config.metrics && config.metrics[0])) {
@@ -46,7 +48,6 @@ export function useQueryProcessor(config: any) {
   }
   const fragment = config.metrics.map((name: string, index: number) => {
     const metricType = config.metricTypes[index] || "";
-    const labels = ["0", "1", "2", "3", "4"];
     if (
       [
         MetricQueryTypes.ReadSampledRecords,
@@ -62,10 +63,13 @@ export function useQueryProcessor(config: any) {
         normal: selectorStore.currentService.normal,
         scope: dashboardStore.entity,
         topN: 10,
-        order: "DES",
+        order: config.standard.sortOrder || "DES",
       };
     } else {
       if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
+        const labels = (config.labelsIndex || "")
+          .split(",")
+          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
         variables.push(`$labels${index}: [String!]!`);
         conditions[`labels${index}`] = labels;
       }
@@ -121,7 +125,11 @@ export function useQueryProcessor(config: any) {
 }
 export function useSourceProcessor(
   resp: { errors: string; data: { [key: string]: any } },
-  config: { metrics: string[]; metricTypes: string[] }
+  config: {
+    metrics: string[];
+    metricTypes: string[];
+    standard: StandardConfig;
+  }
 ) {
   if (resp.errors) {
     ElMessage.error(resp.errors);
@@ -135,16 +143,20 @@ export function useSourceProcessor(
 
     if (type === MetricQueryTypes.ReadMetricsValues) {
       source[m] = resp.data[keys[index]].values.values.map(
-        (d: { value: number }) => d.value
+        (d: { value: number }) => aggregation(d.value, config.standard)
       );
     }
     if (type === MetricQueryTypes.ReadLabeledMetricsValues) {
       const resVal = Object.values(resp.data)[0] || [];
-      const labelsIdx = ["0", "1", "2", "3", "4"];
-      const labels = ["P50", "P75", "P90", "P95", "P99"];
+      const labels = (config.standard.metricLabels || "")
+        .split(",")
+        .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+      const labelsIdx = (config.standard.labelsIndex || "")
+        .split(",")
+        .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
       for (const item of resVal) {
-        const values = item.values.values.map(
-          (d: { value: number }) => d.value
+        const values = item.values.values.map((d: { value: number }) =>
+          aggregation(Number(d.value), config.standard)
         );
 
         const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
@@ -156,13 +168,22 @@ export function useSourceProcessor(
       }
     }
     if (type === MetricQueryTypes.ReadMetricsValue) {
-      source[m] = Object.values(resp.data)[0];
+      source[m] = aggregation(
+        Number(Object.values(resp.data)[0]),
+        config.standard
+      );
     }
     if (
       type === MetricQueryTypes.SortMetrics ||
       type === MetricQueryTypes.ReadSampledRecords
     ) {
-      source[m] = Object.values(resp.data)[0] || [];
+      source[m] = (Object.values(resp.data)[0] || []).map(
+        (d: { value: unknown; name: string }) => {
+          d.value = aggregation(Number(d.value), config.standard);
+
+          return d;
+        }
+      );
     }
     if (type === MetricQueryTypes.READHEATMAP) {
       const resVal = Object.values(resp.data)[0] || {};
@@ -205,7 +226,6 @@ export function useQueryPodsMetrics(
   };
   const variables: string[] = [`$duration: Duration!`];
   const { currentService } = selectorStore;
-
   const fragmentList = pods.map(
     (
       d: (Instance | Endpoint | Service) & { normal: boolean },
@@ -285,4 +305,35 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   const queryStr = `query queryData(${variables}) {${fragmentList.join(" ")}}`;
 
   return { queryStr, conditions };
+}
+
+function aggregation(val: number, standard: any): number | string {
+  let data: number | string = val;
+
+  if (!isNaN(standard.plus)) {
+    data = val + Number(standard.plus);
+    return data;
+  }
+  if (!isNaN(standard.minus)) {
+    data = val - Number(standard.plus);
+    return data;
+  }
+  if (!isNaN(standard.multiply)) {
+    data = val * Number(standard.multiply);
+    return data;
+  }
+  if (!isNaN(standard.divide)) {
+    data = val / Number(standard.divide);
+    return data;
+  }
+  if (standard.milliseconds) {
+    data = dayjs(val).format("YYYY-MM-DD HH:mm:ss");
+    return data;
+  }
+  if (standard.milliseconds) {
+    data = dayjs.unix(val).format("YYYY-MM-DD HH:mm:ss");
+    return data;
+  }
+
+  return data;
 }

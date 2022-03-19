@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <section class="app-main">
+  <section class="app-main flex-v">
     <router-view v-slot="{ Component }" :key="$route.fullPath">
       <keep-alive>
         <component :is="Component" />
@@ -21,7 +21,19 @@ limitations under the License. -->
     </router-view>
   </section>
 </template>
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { ElMessage } from "element-plus";
+import { useAppStoreWithOut } from "@/store/modules/app";
+
+const appStore = useAppStoreWithOut();
+if (!appStore.utc) {
+  const res = appStore.queryOAPTimeInfo();
+
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
+}
+</script>
 <style lang="scss" scoped>
 .app-main {
   height: calc(100% - 40px);

@@ -13,14 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div v-show="states.isTable" class="ds-name">
+  <div v-if="states.isList && states.dashboardList.length" class="ds-name">
     <div>{{ t("dashboards") }}</div>
-    <el-input
-      v-model="states.dashboardName"
-      placeholder="Please input dashboard name"
+    <Selector
+      :value="states.dashboardName"
+      :options="states.dashboardList"
+      size="small"
+      placeholder="Please select a dashboard name"
       @change="changeDashboard"
       class="selectors"
-      size="small"
     />
   </div>
   <div>{{ t("metrics") }}</div>
@@ -42,13 +43,13 @@ limitations under the License. -->
       :options="states.metricTypeList[index]"
       size="small"
       :disabled="
-        dashboardStore.selectedGrid.graph.type && !states.isTable && index !== 0
+        dashboardStore.selectedGrid.graph.type && !states.isList && index !== 0
       "
       @change="changeMetricType(index, $event)"
       class="selectors"
     />
     <span
-      v-show="states.isTable || states.metricTypes[0] === 'readMetricsValues'"
+      v-show="states.isList || states.metricTypes[0] === 'readMetricsValues'"
     >
       <Icon
         class="cp mr-5"
@@ -88,18 +89,19 @@ import { Option } from "@/types/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import {
   MetricTypes,
-  TableChartTypes,
+  ListChartTypes,
   MetricCatalog,
   DefaultGraphConfig,
   EntityType,
   ChartTypes,
   PodsChartTypes,
-  TableEntity,
+  ListEntity,
 } from "../../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
 import { useI18n } from "vue-i18n";
+import { DashboardItem } from "@/types/dashboard";
 
 /*global defineEmits */
 const { t } = useI18n();
@@ -111,26 +113,31 @@ const states = reactive<{
   metricTypes: string[];
   metricTypeList: Option[][];
   visTypes: Option[];
-  isTable: boolean;
+  isList: boolean;
   metricList: (Option & { type: string })[];
   dashboardName: string;
+  dashboardList: (DashboardItem & { label: string; value: string })[];
 }>({
   metrics: metrics && metrics.length ? metrics : [""],
   metricTypes: metricTypes && metricTypes.length ? metricTypes : [""],
   metricTypeList: [],
   visTypes: [],
-  isTable: false,
+  isList: false,
   metricList: [],
   dashboardName: graph.dashboardName,
+  dashboardList: [],
 });
 
-states.isTable = TableChartTypes.includes(graph.type);
+states.isList = ListChartTypes.includes(graph.type);
 states.visTypes = setVisTypes();
+
+setDashboards();
 setMetricType();
 
 async function setMetricType(catalog?: string) {
-  if (states.isTable) {
-    catalog = catalog || TableEntity[graph.type];
+  const { graph } = dashboardStore.selectedGrid;
+  if (states.isList) {
+    catalog = catalog || ListEntity[graph.type];
   } else {
     catalog = catalog || dashboardStore.entity;
   }
@@ -140,22 +147,80 @@ async function setMetricType(catalog?: string) {
     return;
   }
   states.metricList = (json.data.metrics || []).filter(
-    (d: { catalog: string }) => catalog === (MetricCatalog as any)[d.catalog]
+    (d: { catalog: string; type: string }) => {
+      if (states.isList || graph.type === "Table") {
+        if (
+          d.type === "REGULAR_VALUE" &&
+          catalog === (MetricCatalog as any)[d.catalog]
+        ) {
+          return d;
+        }
+      } else {
+        if (catalog === (MetricCatalog as any)[d.catalog]) {
+          return d;
+        }
+      }
+    }
   );
   const metrics: any = states.metricList.filter(
     (d: { value: string; type: string }) => {
-      const metric = states.metrics.filter((m: string) => m === d.value)[0];
-      if (metric) {
+      const index = states.metrics.findIndex((m: string) => m === d.value);
+      if (index > -1) {
         return d;
       }
     }
   );
+
+  if (metrics.length) {
+    states.metrics = metrics.map((d: { value: string }) => d.value);
+  } else {
+    states.metrics = [""];
+    states.metricTypes = [""];
+  }
+  dashboardStore.selectWidget({
+    ...dashboardStore.selectedGrid,
+    metrics: states.metrics,
+    metricTypes: states.metricTypes,
+  });
+  states.metricTypeList = [];
   for (const metric of metrics) {
-    states.metricTypeList.push(MetricTypes[metric.type]);
+    if (states.metrics.includes(metric.value)) {
+      const arr = setMetricTypeList(metric.type);
+      states.metricTypeList.push(arr);
+    }
   }
   if (states.metrics && states.metrics[0]) {
     queryMetrics();
+  } else {
+    emit("update", {});
   }
+}
+
+function setDashboards() {
+  const { graph } = dashboardStore.selectedGrid;
+  const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
+  states.dashboardList = list.reduce(
+    (
+      prev: (DashboardItem & { label: string; value: string })[],
+      d: DashboardItem
+    ) => {
+      if (d.layer === dashboardStore.layerId) {
+        if (
+          (d.entity === EntityType[0].value && graph.type === "ServiceList") ||
+          (d.entity === EntityType[2].value && graph.type === "EndpointList") ||
+          (d.entity === EntityType[3].value && graph.type === "InstanceList")
+        ) {
+          prev.push({
+            ...d,
+            value: d.name,
+            label: d.name,
+          });
+        }
+      }
+      return prev;
+    },
+    []
+  );
 }
 
 function setVisTypes() {
@@ -168,7 +233,7 @@ function setVisTypes() {
     );
   } else {
     graphs = ChartTypes.filter(
-      (d: Option) => !TableChartTypes.includes(d.value)
+      (d: Option) => !ListChartTypes.includes(d.value)
     );
   }
 
@@ -177,10 +242,9 @@ function setVisTypes() {
 
 function changeChartType(item: Option) {
   const graph = DefaultGraphConfig[item.value];
-  states.isTable = TableChartTypes.includes(graph.type);
   dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
-  states.isTable = TableChartTypes.includes(graph.type);
-  if (states.isTable) {
+  states.isList = ListChartTypes.includes(graph.type);
+  if (states.isList) {
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       metrics: [""],
@@ -194,12 +258,15 @@ function changeChartType(item: Option) {
     EndpointList: EntityType[2].value,
     ServiceList: EntityType[0].value,
   };
-  if (catalog[graph.type]) {
-    setMetricType(catalog[graph.type]);
-  }
+  setMetricType(catalog[graph.type]);
+  setDashboards();
+  states.dashboardName = "";
 }
 
-function changeMetrics(index: number, arr: (Option & { type: string })[]) {
+function changeMetrics(
+  index: number,
+  arr: (Option & { type: string })[] | any
+) {
   if (!arr.length) {
     states.metricTypeList = [];
     states.metricTypes = [];
@@ -212,33 +279,34 @@ function changeMetrics(index: number, arr: (Option & { type: string })[]) {
   states.metrics[index] = arr[0].value;
   const typeOfMetrics = arr[0].type;
 
-  states.metricTypeList[index] = MetricTypes[typeOfMetrics];
+  states.metricTypeList[index] = setMetricTypeList(typeOfMetrics);
   states.metricTypes[index] = MetricTypes[typeOfMetrics][0].value;
   dashboardStore.selectWidget({
     ...dashboardStore.selectedGrid,
     ...{ metricTypes: states.metricTypes, metrics: states.metrics },
   });
-  if (states.isTable) {
+  if (states.isList) {
     return;
   }
   queryMetrics();
 }
 
-function changeMetricType(index: number, opt: Option[]) {
+function changeMetricType(index: number, opt: Option[] | any) {
   const metric =
     states.metricList.filter(
       (d: Option) => states.metrics[index] === d.value
     )[0] || {};
-  if (states.isTable) {
+  const l = setMetricTypeList(metric.type);
+  if (states.isList) {
     states.metricTypes[index] = opt[0].value;
-    states.metricTypeList[index] = (MetricTypes as any)[metric.type];
+    states.metricTypeList[index] = l;
   } else {
     states.metricTypes = states.metricTypes.map((d: string) => {
       d = opt[0].value;
       return d;
     });
     states.metricTypeList = states.metricTypeList.map((d: Option[]) => {
-      d = (MetricTypes as any)[metric.type];
+      d = l;
 
       return d;
     });
@@ -247,13 +315,17 @@ function changeMetricType(index: number, opt: Option[]) {
     ...dashboardStore.selectedGrid,
     ...{ metricTypes: states.metricTypes },
   });
-  if (states.isTable) {
+  if (states.isList) {
     return;
   }
   queryMetrics();
 }
 async function queryMetrics() {
-  const params = useQueryProcessor(states);
+  if (states.isList) {
+    return;
+  }
+  const { standard } = dashboardStore.selectedGrid;
+  const params = useQueryProcessor({ ...states, standard });
   if (!params) {
     emit("update", {});
     return;
@@ -266,11 +338,12 @@ async function queryMetrics() {
     ElMessage.error(json.errors);
     return;
   }
-  const source = useSourceProcessor(json, states);
+  const source = useSourceProcessor(json, { ...states, standard });
   emit("update", source);
 }
 
-function changeDashboard() {
+function changeDashboard(opt: any) {
+  states.dashboardName = opt[0].value;
   const graph = {
     ...dashboardStore.selectedGrid.graph,
     dashboardName: states.dashboardName,
@@ -282,7 +355,7 @@ function changeDashboard() {
 }
 function addMetric() {
   states.metrics.push("");
-  if (!states.isTable) {
+  if (!states.isList) {
     states.metricTypes.push(states.metricTypes[0]);
     states.metricTypeList.push(states.metricTypeList[0]);
     return;
@@ -292,6 +365,21 @@ function addMetric() {
 function deleteMetric(index: number) {
   states.metrics.splice(index, 1);
   states.metricTypes.splice(index, 1);
+}
+function setMetricTypeList(type: string) {
+  if (type !== "REGULAR_VALUE") {
+    return MetricTypes[type];
+  }
+  if (states.isList || dashboardStore.selectedGrid.graph.type === "Table") {
+    return [
+      { label: "read all values in the duration", value: "readMetricsValues" },
+      {
+        label: "read the single value in the duration",
+        value: "readMetricsValue",
+      },
+    ];
+  }
+  return MetricTypes[type];
 }
 </script>
 <style lang="scss" scoped>

@@ -16,6 +16,7 @@ limitations under the License. -->
 <template>
   <div
     class="chart-card"
+    :class="{ center: config.textAlign === 'center' }"
     :style="{ fontSize: `${config.fontSize}px`, textAlign: config.textAlign }"
   >
     {{
@@ -52,12 +53,15 @@ const singleVal = computed(() => props.data[key.value]);
 </script>
 <style lang="scss" scoped>
 .chart-card {
-  box-sizing: border-box;
   color: #333;
+  height: 100%;
+}
+
+.center {
+  box-sizing: border-box;
   display: -webkit-box;
   -webkit-box-orient: horizontal;
   -webkit-box-pack: center;
   -webkit-box-align: center;
-  height: 100%;
 }
 </style>

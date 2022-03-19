@@ -13,8 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Tool />
-  <div class="ds-main" @click="handleClick">
+  <Tool v-if="p.entity" />
+  <div
+    class="ds-main"
+    @click="handleClick"
+    :style="{ height: p.entity ? 'calc(100% - 45px)' : '100%' }"
+  >
     <grid-layout />
     <el-dialog
       v-model="dashboardStore.showConfig"
@@ -38,9 +42,10 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import GridLayout from "./panel/Layout.vue";
-// import { LayoutConfig } from "@/types/dashboard";
 import Tool from "./panel/Tool.vue";
 import Widget from "./configuration/Widget.vue";
 import TopologyConfig from "./configuration/Topology.vue";
@@ -51,26 +56,34 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 const dashboardStore = useDashboardStore();
 const appStore = useAppStoreWithOut();
 const { t } = useI18n();
-// fetch layout data from serve side
-// const layout: any[] = [
-//   { x: 0, y: 0, w: 4, h: 12, i: "0" },
-//   { x: 4, y: 0, w: 4, h: 12, i: "1" },
-//   { x: 8, y: 0, w: 4, h: 15, i: "2" },
-//   { x: 12, y: 0, w: 4, h: 9, i: "3" },
-//   { x: 16, y: 0, w: 4, h: 9, i: "4" },
-//   { x: 20, y: 0, w: 4, h: 9, i: "5" },
-//   { x: 0, y: 12, w: 4, h: 15, i: "7" },
-//   { x: 4, y: 12, w: 4, h: 15, i: "8" },
-//   { x: 8, y: 15, w: 4, h: 12, i: "9" },
-//   { x: 12, y: 9, w: 4, h: 12, i: "10" },
-//   { x: 16, y: 9, w: 4, h: 12, i: "11" },
-//   { x: 20, y: 9, w: 4, h: 15, i: "12" },
-//   { x: 0, y: 27, w: 4, h: 12, i: "14" },
-//   { x: 4, y: 27, w: 4, h: 12, i: "15" },
-//   { x: 8, y: 27, w: 4, h: 15, i: "16" },
-// ];
-// dashboardStore.setLayout(layout);
-appStore.setPageTitle("Dashboard Name");
+const p = useRoute().params;
+const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
+
+setTemplate();
+async function setTemplate() {
+  await dashboardStore.setDashboards();
+
+  if (!p.entity) {
+    const { layer, entity, name } = dashboardStore.currentDashboard;
+    layoutKey.value = `${layer}_${entity}_${name.split(" ").join("-")}`;
+  }
+  const c: { configuration: string; id: string } = JSON.parse(
+    sessionStorage.getItem(layoutKey.value) || "{}"
+  );
+  const layout: any = c.configuration || {};
+  dashboardStore.setLayout(layout.children || []);
+  appStore.setPageTitle(layout.name);
+
+  if (!dashboardStore.currentDashboard) {
+    dashboardStore.setCurrentDashboard({
+      layer: p.layerId,
+      entity: p.entity,
+      name: String(p.name).split("-").join(" "),
+      id: c.id,
+      isRoot: layout.isRoot,
+    });
+  }
+}
 function handleClick(e: any) {
   e.stopPropagation();
   if (e.target.className === "ds-main") {
@@ -81,18 +94,6 @@ function handleClick(e: any) {
 </script>
 <style lang="scss" scoped>
 .ds-main {
-  height: calc(100% - 45px);
   overflow: auto;
-}
-
-.layout {
-  height: 100%;
-  flex-grow: 2;
-  overflow: hidden;
-}
-
-.grids {
-  height: 100%;
-  overflow-y: auto;
 }
 </style>

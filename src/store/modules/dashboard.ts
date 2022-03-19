@@ -19,20 +19,14 @@ import { store } from "@/store";
 import { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
 import query from "@/graphql/fetch";
-import {
-  ConfigData,
-  ConfigData1,
-  ConfigData2,
-  ConfigData3,
-  ConfigData4,
-  ConfigData5,
-  ConfigData6,
-} from "../data";
+import { DashboardItem } from "@/types/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl } from "../data";
 import { Duration } from "@/types/app";
 import { AxiosResponse } from "axios";
+import { ElMessage } from "element-plus";
+import { useI18n } from "vue-i18n";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -44,12 +38,14 @@ interface DashboardState {
   selectorStore: any;
   showTopology: boolean;
   currentTabItems: LayoutConfig[];
+  dashboards: DashboardItem[];
+  currentDashboard: Nullable<DashboardItem>;
 }
 
 export const dashboardStore = defineStore({
   id: "dashboard",
   state: (): DashboardState => ({
-    layout: [ConfigData],
+    layout: [],
     showConfig: false,
     selectedGrid: null,
     entity: "",
@@ -59,10 +55,19 @@ export const dashboardStore = defineStore({
     selectorStore: useSelectorStore(),
     showTopology: false,
     currentTabItems: [],
+    dashboards: [],
+    currentDashboard: null,
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
       this.layout = data;
+    },
+    resetDashboards(list: DashboardItem[]) {
+      this.dashboards = list;
+      sessionStorage.setItem("dashboards", JSON.stringify(list));
+    },
+    setCurrentDashboard(item: DashboardItem) {
+      this.currentDashboard = item;
     },
     addControl(type: string) {
       const newItem: LayoutConfig = {
@@ -129,7 +134,7 @@ export const dashboardStore = defineStore({
       if (idx < 0) {
         return;
       }
-      const tabIndex = this.layout[idx].activedTabIndex;
+      const tabIndex = this.layout[idx].activedTabIndex || 0;
       const { children } = this.layout[idx].children[tabIndex];
       const newItem: LayoutConfig = {
         ...NewControl,
@@ -229,28 +234,6 @@ export const dashboardStore = defineStore({
     },
     setEntity(type: string) {
       this.entity = type;
-      // todo
-      if (type === "ServiceInstance") {
-        this.layout = [ConfigData1];
-      }
-      if (type === "Endpoint") {
-        this.layout = [ConfigData2];
-      }
-      if (type == "All") {
-        this.layout = ConfigData3;
-      }
-      if (type == "Service") {
-        this.layout = [ConfigData];
-      }
-      if (type == "ServiceRelation") {
-        this.layout = [ConfigData4];
-      }
-      if (type == "ServiceInstanceRelation") {
-        this.layout = [ConfigData6];
-      }
-      if (type == "EndpointRelation") {
-        this.layout = [ConfigData5];
-      }
     },
     setTopology(show: boolean) {
       this.showTopology = show;
@@ -302,6 +285,154 @@ export const dashboardStore = defineStore({
     }) {
       const res: AxiosResponse = await query(param);
       return res.data;
+    },
+    async fetchTemplates() {
+      const res: AxiosResponse = await graphql.query("getTemplates").params({});
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      const data = res.data.data.getAllTemplates;
+      const list = [];
+      for (const t of data) {
+        const c = JSON.parse(t.configuration);
+        const key = [c.layer, c.entity, c.name.split(" ").join("-")].join("_");
+
+        list.push({
+          id: t.id,
+          layer: c.layer,
+          entity: c.entity,
+          name: c.name,
+          isRoot: c.isRoot,
+        });
+        sessionStorage.setItem(
+          key,
+          JSON.stringify({ id: t.id, configuration: c })
+        );
+      }
+      sessionStorage.setItem("dashboards", JSON.stringify(list));
+      return res.data;
+    },
+    async setDashboards() {
+      if (!sessionStorage.getItem("dashboards")) {
+        const res = await this.fetchTemplates();
+        if (res.errors) {
+          this.dashboards = [];
+          ElMessage.error(res.errors);
+          return;
+        }
+      }
+      this.dashboards = JSON.parse(
+        sessionStorage.getItem("dashboards") || "[]"
+      );
+    },
+    async updateDashboard(setting: { id: string; configuration: string }) {
+      const res: AxiosResponse = await graphql.query("updateTemplate").params({
+        setting,
+      });
+      if (res.data.errors) {
+        ElMessage.error(res.data.errors);
+        return res.data;
+      }
+      const json = res.data.data.changeTemplate;
+      if (!json.status) {
+        ElMessage.error(json.message);
+        return res.data;
+      }
+      ElMessage.success("Saved successfully");
+      return res.data;
+    },
+    async saveDashboard() {
+      if (!this.currentDashboard.name) {
+        ElMessage.error("The dashboard name is needed.");
+        return;
+      }
+      const c = {
+        children: this.layout,
+        ...this.currentDashboard,
+      };
+      let res: any;
+      let json;
+
+      if (this.currentDashboard.id) {
+        res = await this.updateDashboard({
+          id: this.currentDashboard.id,
+          configuration: JSON.stringify(c),
+        });
+        json = res.data.changeTemplate;
+      } else {
+        c.isRoot = false;
+        const index = this.dashboards.findIndex(
+          (d: DashboardItem) =>
+            d.name === this.currentDashboard.name &&
+            d.entity === this.currentDashboard.entity &&
+            d.layer === this.currentDashboard.layerId
+        );
+        if (index > -1) {
+          const { t } = useI18n();
+          ElMessage.error(t("nameError"));
+          return;
+        }
+        res = await graphql
+          .query("addNewTemplate")
+          .params({ setting: { configuration: JSON.stringify(c) } });
+
+        json = res.data.data.addTemplate;
+      }
+      if (res.data.errors || res.errors) {
+        ElMessage.error(res.data.errors);
+        return res.data;
+      }
+      if (!json.status) {
+        ElMessage.error(json.message);
+        return;
+      }
+      if (!this.currentDashboard.id) {
+        ElMessage.success("Saved successfully");
+      }
+      const key = [
+        this.currentDashboard.layer,
+        this.currentDashboard.entity,
+        this.currentDashboard.name.split(" ").join("-"),
+      ].join("_");
+      if (this.currentDashboard.id) {
+        sessionStorage.removeItem(key);
+        this.dashboards = this.dashboards.filter(
+          (d: DashboardItem) => d.id !== this.currentDashboard.id
+        );
+      }
+      this.dashboards.push({
+        ...this.currentDashboard,
+        id: json.id,
+      });
+      const l = { id: json.id, configuration: c };
+
+      sessionStorage.setItem(key, JSON.stringify(l));
+      sessionStorage.setItem("dashboards", JSON.stringify(this.dashboards));
+    },
+    async deleteDashboard() {
+      const res: AxiosResponse = await graphql
+        .query("removeTemplate")
+        .params({ id: this.currentDashboard.id });
+
+      if (res.data.errors) {
+        ElMessage.error(res.data.errors);
+        return res.data;
+      }
+      const json = res.data.data.disableTemplate;
+      if (!json.status) {
+        ElMessage.error(json.message);
+        return res.data;
+      }
+      this.dashboards = this.dashboards.filter(
+        (d: any) => d.id !== this.currentDashboard.id
+      );
+      const key = [
+        this.currentDashboard.layer,
+        this.currentDashboard.entity,
+        this.currentDashboard.name.split(" ").join("-"),
+      ].join("_");
+      sessionStorage.removeItem(key);
     },
   },
 });

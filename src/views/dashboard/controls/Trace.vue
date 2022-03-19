@@ -20,7 +20,7 @@ limitations under the License. -->
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
         </span>
       </template>
-      <div class="tools" @click="removeWidget">
+      <div class="tools" @click="removeWidget" v-if="routeParams.entity">
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
@@ -35,6 +35,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
+import { useRoute } from "vue-router";
 import Filter from "../related/trace/Filter.vue";
 import TraceList from "../related/trace/TraceList.vue";
 import TraceDetail from "../related/trace/Detail.vue";
@@ -50,6 +51,7 @@ const props = defineProps({
   activeIndex: { type: String, default: "" },
 });
 const { t } = useI18n();
+const routeParams = useRoute().params;
 const dashboardStore = useDashboardStore();
 function removeWidget() {
   dashboardStore.removeControls(props.data);

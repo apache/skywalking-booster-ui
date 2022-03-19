@@ -15,7 +15,14 @@ limitations under the License. -->
 <template>
   <div class="widget">
     <div class="header flex-h">
-      <div>{{ data.widget?.title || "" }}</div>
+      <div>
+        <span>
+          {{ data.widget?.title || "" }}
+        </span>
+        <span class="unit" v-show="data.standard?.unit">
+          ({{ data.standard?.unit }})
+        </span>
+      </div>
       <div>
         <el-tooltip :content="data.widget?.tips">
           <span>
@@ -27,7 +34,12 @@ limitations under the License. -->
             />
           </span>
         </el-tooltip>
-        <el-popover placement="bottom" trigger="click" :width="100">
+        <el-popover
+          placement="bottom"
+          trigger="click"
+          :width="100"
+          v-if="routeParams.entity"
+        >
           <template #reference>
             <span>
               <Icon iconName="ellipsis_v" size="middle" class="operation" />
@@ -62,6 +74,7 @@ limitations under the License. -->
 <script lang="ts">
 import { toRefs, reactive, defineComponent, ref, watch } from "vue";
 import type { PropType } from "vue";
+import { useRoute } from "vue-router";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -69,7 +82,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import graphs from "../graphs";
 import { useI18n } from "vue-i18n";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
-import { EntityType, TableChartTypes } from "../data";
+import { EntityType, ListChartTypes } from "../data";
 
 const props = {
   data: {
@@ -85,6 +98,7 @@ export default defineComponent({
   props,
   setup(props) {
     const { t } = useI18n();
+    const routeParams = useRoute().params;
     const loading = ref<boolean>(false);
     const state = reactive<{ source: { [key: string]: unknown } }>({
       source: {},
@@ -94,7 +108,11 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
-    if (dashboardStore.entity === EntityType[1].value || props.needQuery) {
+    if (
+      dashboardStore.entity === EntityType[1].value ||
+      props.needQuery ||
+      !dashboardStore.currentDashboard.id
+    ) {
       queryMetrics();
     }
 
@@ -111,7 +129,12 @@ export default defineComponent({
       if (!json) {
         return;
       }
-      state.source = useSourceProcessor(json, props.data);
+      const d = {
+        metrics: props.data.metrics,
+        metricTypes: props.data.metricTypes,
+        standard: props.data.standard,
+      };
+      state.source = useSourceProcessor(json, d);
     }
 
     function removeWidget() {
@@ -127,22 +150,26 @@ export default defineComponent({
       }
     }
     watch(
-      () => [props.data.metricTypes, props.data.metrics],
+      () => [props.data.metricTypes, props.data.metrics, props.data.standard],
       () => {
-        if (
-          dashboardStore.selectedGrid &&
-          props.data.i !== dashboardStore.selectedGrid.i
-        ) {
+        if (!dashboardStore.selectedGrid) {
           return;
         }
-        if (TableChartTypes.includes(dashboardStore.selectedGrid.graph.type)) {
+        if (props.data.i !== dashboardStore.selectedGrid.i) {
+          return;
+        }
+        if (ListChartTypes.includes(dashboardStore.selectedGrid.graph.type)) {
           return;
         }
         queryMetrics();
       }
     );
     watch(
-      () => [selectorStore.currentService, selectorStore.currentDestService],
+      () => [
+        selectorStore.currentService,
+        selectorStore.currentDestService,
+        appStore.durationTime,
+      ],
       () => {
         if (
           dashboardStore.entity === EntityType[0].value ||
@@ -169,6 +196,7 @@ export default defineComponent({
       editConfig,
       data,
       loading,
+      routeParams,
       t,
     };
   },
@@ -217,5 +245,10 @@ export default defineComponent({
   width: 100%;
   text-align: center;
   padding-top: 20px;
+}
+
+.unit {
+  display: inline-block;
+  margin-left: 5px;
 }
 </style>

@@ -14,31 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Duration } from "@/types/app";
-import { TimeType } from "@/constants/data";
 
-/**
- * init or generate durationRow Obj and save localStorage.
- */
-const getDurationRow = (): Duration => {
-  const durationRowString = localStorage.getItem("durationRow");
-  let durationRow: Duration;
-  if (durationRowString && durationRowString !== "") {
-    durationRow = JSON.parse(durationRowString);
-    durationRow = {
-      start: new Date(durationRow.start),
-      end: new Date(durationRow.end),
-      step: durationRow.step,
+export const readFile = (event: any) => {
+  return new Promise((resolve) => {
+    const { files } = event.target;
+    if (files.length < 1) {
+      return;
+    }
+    const file = files[0];
+    const reader: FileReader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function () {
+      if (typeof this.result === "string") {
+        resolve(JSON.parse(this.result));
+      }
     };
-  } else {
-    durationRow = {
-      start: new Date(new Date().getTime() - 900000),
-      end: new Date(),
-      step: TimeType.MINUTE_TIME,
-    };
-    localStorage.setItem("durationRow", JSON.stringify(durationRow, null, 0));
-  }
-  return durationRow;
+  });
 };
-
-export default getDurationRow;
+export const saveFile = (data: any, name: string) => {
+  const newData = JSON.stringify(data);
+  const tagA = document.createElement("a");
+  tagA.download = name;
+  tagA.style.display = "none";
+  const blob = new Blob([newData]);
+  tagA.href = URL.createObjectURL(blob);
+  document.body.appendChild(tagA);
+  tagA.click();
+  document.body.removeChild(tagA);
+};

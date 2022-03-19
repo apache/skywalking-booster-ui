@@ -18,6 +18,7 @@ export const TypeOfMetrics = {
   variable: "$name: String!",
   query: `typeOfMetrics(name: $name)`,
 };
+
 export const listMetrics = {
   variable: "$regex: String",
   query: `
@@ -30,17 +31,40 @@ export const listMetrics = {
   `,
 };
 
-export const queryHeatMap = {
-  variable: ["$condition: MetricsCondition!, $duration: Duration!"],
+export const getAllTemplates = {
   query: `
-  readHeatMap: readHeatMap(condition: $condition, duration: $duration) {
-    values {
-      id
-      values
+    getAllTemplates {
+      id,
+      configuration,
     }
-    buckets {
-      min
-      max
-    }
-  }`,
+  `,
+};
+
+export const addTemplate = {
+  variable: "$setting: NewDashboardSetting!",
+  query: `
+  addTemplate(setting: $setting) {
+        id
+        status
+        message
+    }`,
+};
+export const changeTemplate = {
+  variable: "$setting: DashboardSetting!",
+  query: `
+  changeTemplate(setting: $setting) {
+        id
+        status
+        message
+    }`,
+};
+
+export const deleteTemplate = {
+  variable: "$id: String!",
+  query: `
+  disableTemplate(id: $id) {
+        id
+        status
+        message
+    }`,
 };
