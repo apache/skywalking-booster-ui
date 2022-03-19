@@ -214,6 +214,7 @@ function handleView(row: DashboardItem) {
 }
 
 async function setRoot(row: DashboardItem) {
+  console.log(row);
   const items: any[] = [];
   loading.value = true;
   for (const d of dashboardStore.dashboards) {
@@ -245,6 +246,7 @@ async function setRoot(row: DashboardItem) {
     if (
       d.layer === row.layer &&
       d.entity === row.entity &&
+      d.id !== row.id &&
       !row.isRoot &&
       d.isRoot
     ) {

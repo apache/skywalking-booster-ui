@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <Edit v-if="dashboardStore.currentDashboard" />
-  <div class="no-root" v-else>{{ t("noRoot") }}{{ layer }}</div>
+  <div class="no-root" v-else>{{ t("noRoot") }} {{ layer }}</div>
 </template>
 
 <script lang="ts" setup>
