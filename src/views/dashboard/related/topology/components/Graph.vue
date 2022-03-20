@@ -95,8 +95,8 @@ const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
 const dashboardStore = useDashboardStore();
-const height = ref<number>(document.body.clientHeight);
-const width = ref<number>(document.body.clientWidth);
+const height = ref<number>(0);
+const width = ref<number>(0);
 const loading = ref<boolean>(false);
 const simulation = ref<any>(null);
 const svg = ref<Nullable<any>>(null);
@@ -128,7 +128,7 @@ onMounted(async () => {
     ElMessage.error(resp.errors);
   }
   const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
-    height: 0,
+    height: 40,
     width: 0,
   };
   height.value = dom.height - 40;

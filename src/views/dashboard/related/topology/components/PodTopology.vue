@@ -96,8 +96,8 @@ const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
 const loading = ref<boolean>(false);
-const height = ref<number>(document.body.clientHeight);
-const width = ref<number>(document.body.clientWidth);
+const height = ref<number>(0);
+const width = ref<number>(0);
 const showSettings = ref<boolean>(false);
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
@@ -120,11 +120,11 @@ async function loadTopology(id: string) {
     ElMessage.error(resp.errors);
   }
   const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
-    height: 0,
-    width: 0,
+    height: 70,
+    width: 5,
   };
-  height.value = dom.height - 40;
-  width.value = dom.width;
+  height.value = dom.height - 70;
+  width.value = dom.width - 5;
 }
 
 function inspect() {
