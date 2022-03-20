@@ -92,8 +92,7 @@ export const dashboardStore = defineStore({
         ];
       }
       if (type === "Topology") {
-        newItem.w = 4;
-        newItem.h = 6;
+        newItem.h = 36;
         newItem.graph = {
           fontColor: "white",
           backgroundColor: "green",

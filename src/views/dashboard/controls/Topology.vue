@@ -13,58 +13,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="topology">
-    <div class="header flex-h">
-      <div>{{ data.widget?.title || "" }}</div>
-      <div>
-        <el-tooltip :content="data.widget?.tips">
-          <span>
-            <Icon
-              iconName="info_outline"
-              size="sm"
-              class="operation"
-              v-show="data.widget?.tips"
-            />
-          </span>
-        </el-tooltip>
-        <el-popover
-          placement="bottom"
-          trigger="click"
-          :width="100"
-          v-if="routeParams.entity"
-        >
-          <template #reference>
-            <span>
-              <Icon iconName="ellipsis_v" size="middle" class="operation" />
-            </span>
-          </template>
-          <div class="tools" @click="editConfig">
-            <span>{{ t("edit") }}</span>
-          </div>
-          <div class="tools" @click="removeTopo">
-            <span>{{ t("delete") }}</span>
-          </div>
-        </el-popover>
-      </div>
-    </div>
-    <div
-      class="body"
-      @click="ViewTopology"
-      :style="{ backgroundColor: Colors[data.graph.backgroundColor] }"
+  <div class="topology flex-v">
+    <el-popover
+      placement="bottom"
+      trigger="click"
+      :width="100"
+      v-if="routeParams.entity"
     >
-      <Icon
-        :iconName="data.graph.iconTheme ? 'topology-light' : 'topology-dark'"
-        size="middle"
-      />
-      <div
-        :style="{
-          color: Colors[data.graph.fontColor],
-          fontSize: data.graph.fontSize + 'px',
-        }"
-      >
-        {{ data.graph.content }}
+      <template #reference>
+        <span class="delete cp">
+          <Icon iconName="ellipsis_v" size="middle" class="operation" />
+        </span>
+      </template>
+      <div class="tools" @click="removeTopo">
+        <span>{{ t("delete") }}</span>
       </div>
-    </div>
+    </el-popover>
+    <Topology />
   </div>
 </template>
 <script lang="ts" setup>
@@ -72,7 +37,7 @@ import type { PropType } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { Colors } from "../data";
+import Topology from "../related/topology/Index.vue";
 /*global defineProps */
 const props = defineProps({
   data: {
@@ -85,33 +50,29 @@ const { t } = useI18n();
 const routeParams = useRoute().params;
 const dashboardStore = useDashboardStore();
 
-function editConfig() {
-  dashboardStore.setConfigPanel(true);
-  dashboardStore.selectWidget(props.data);
-}
-function ViewTopology() {
-  dashboardStore.setTopology(true);
-}
 function removeTopo() {
   dashboardStore.removeControls(props.data);
 }
 </script>
 <style lang="scss" scoped>
 .topology {
-  font-size: 12px;
   height: 100%;
+  background-color: #333840;
+  width: 100%;
+  font-size: 12px;
+  position: relative;
+}
+
+.delete {
+  position: absolute;
+  top: 5px;
+  right: 3px;
 }
 
 .header {
-  height: 30px;
-  padding: 5px;
-  width: 100%;
-  border-bottom: 1px solid #eee;
-  justify-content: space-between;
-}
-
-.operation {
-  cursor: pointer;
+  padding: 10px;
+  font-size: 12px;
+  border-bottom: 1px solid #dcdfe6;
 }
 
 .tools {
@@ -125,19 +86,6 @@ function removeTopo() {
     color: #409eff;
     background-color: #eee;
   }
-}
-
-.body {
-  text-align: center;
-  width: 100%;
-  height: calc(100% - 30px);
-  cursor: pointer;
-  box-sizing: border-box;
-  color: #333;
-  display: -webkit-box;
-  -webkit-box-orient: horizontal;
-  -webkit-box-pack: center;
-  -webkit-box-align: center;
 }
 
 .no-data {

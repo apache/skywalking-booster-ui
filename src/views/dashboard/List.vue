@@ -122,7 +122,6 @@ import router from "@/router";
 import { DashboardItem } from "@/types/dashboard";
 import { saveFile, readFile } from "@/utils/file";
 import { EntityType } from "./data";
-import { findLastKey } from "lodash";
 
 /*global Nullable*/
 const { t } = useI18n();

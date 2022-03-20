@@ -453,7 +453,7 @@ async function freshNodes() {
   update();
 }
 
-async function changeDepth(opt: Option[]) {
+async function changeDepth(opt: Option[] | any) {
   depth.value = opt[0].value;
   await getTopology();
   freshNodes();
@@ -463,8 +463,16 @@ onBeforeUnmount(() => {
 });
 </script>
 <style lang="scss">
+.topo-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .micro-topo-chart {
   position: relative;
+  height: calc(100% - 40px);
+  overflow: auto;
 
   .setting {
     position: absolute;
@@ -510,8 +518,8 @@ onBeforeUnmount(() => {
 
   .tool {
     position: absolute;
-    top: 22px;
-    right: 0;
+    top: 35px;
+    right: 10px;
   }
 
   .switch-icon {
@@ -522,11 +530,6 @@ onBeforeUnmount(() => {
     display: inline-block;
     padding: 5px 8px 8px;
     border-radius: 3px;
-  }
-
-  .topo-svg {
-    display: block;
-    width: 100%;
   }
 
   .topo-line {
