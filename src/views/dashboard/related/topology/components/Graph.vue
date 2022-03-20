@@ -88,8 +88,8 @@ const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
 const dashboardStore = useDashboardStore();
-const height = ref<number>(document.body.clientHeight - 90);
-const width = ref<number>(document.body.clientWidth - 40);
+const height = ref<number>(document.body.clientHeight);
+const width = ref<number>(document.body.clientWidth);
 const loading = ref<boolean>(false);
 const simulation = ref<any>(null);
 const svg = ref<Nullable<any>>(null);
@@ -410,8 +410,8 @@ function setConfig() {
   showSetting.value = !showSetting.value;
 }
 function resize() {
-  height.value = document.body.clientHeight - 90;
-  width.value = document.body.clientWidth - 40;
+  height.value = document.body.clientHeight;
+  width.value = document.body.clientWidth;
   svg.value.attr("height", height.value).attr("width", width.value);
 }
 function updateSettings(config: any) {
@@ -476,10 +476,10 @@ onBeforeUnmount(() => {
 
   .setting {
     position: absolute;
-    top: 70px;
-    right: 0;
+    top: 80px;
+    right: 10px;
     width: 400px;
-    height: 700px;
+    height: 600px;
     background-color: #2b3037;
     overflow: auto;
     padding: 0 15px;
