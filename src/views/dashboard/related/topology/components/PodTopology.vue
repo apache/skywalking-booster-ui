@@ -89,8 +89,8 @@ const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
 const loading = ref<boolean>(false);
-const height = ref<number>(document.body.clientHeight - 150);
-const width = ref<number>(document.body.clientWidth - 40);
+const height = ref<number>(document.body.clientHeight);
+const width = ref<number>(document.body.clientWidth);
 const showSettings = ref<boolean>(false);
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
@@ -112,6 +112,12 @@ async function loadTopology(id: string) {
   if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
+  const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
+    height: 0,
+    width: 0,
+  };
+  height.value = dom.height - 40;
+  width.value = dom.width;
 }
 
 function inspect() {
@@ -176,7 +182,7 @@ function selectNodeLink(d: any) {
   operationsPos.y = d.event.event.clientY;
 }
 
-async function changeDepth(opt: Option[]) {
+async function changeDepth(opt: Option[] | any) {
   depth.value = opt[0].value;
   loadTopology(selectorStore.currentPod.id);
 }
@@ -212,8 +218,8 @@ function handleClick(event: any) {
 
 .settings {
   position: absolute;
-  top: 40px;
-  right: 0;
+  top: 60px;
+  right: 10px;
   width: 400px;
   height: 700px;
   background-color: #2b3037;
@@ -228,7 +234,8 @@ function handleClick(event: any) {
 
 .tool {
   text-align: right;
-  margin-top: 10px;
+  margin-top: 40px;
+  margin-right: 10px;
   position: relative;
 }
 

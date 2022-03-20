@@ -123,7 +123,7 @@ onMounted(async () => {
     height: 0,
     width: 0,
   };
-  height.value = dom.height;
+  height.value = dom.height - 40;
   width.value = dom.width;
   window.addEventListener("resize", resize);
   svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
@@ -475,8 +475,9 @@ onBeforeUnmount(() => {
 
 .micro-topo-chart {
   position: relative;
-  height: 100%;
+  height: calc(100% - 30px);
   overflow: auto;
+  margin-top: 30px;
 
   .setting {
     position: absolute;

@@ -14,21 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="topology flex-v">
-    <el-popover
-      placement="bottom"
-      trigger="click"
-      :width="100"
-      v-if="routeParams.entity"
-    >
-      <template #reference>
-        <span class="delete cp">
-          <Icon iconName="ellipsis_v" size="middle" class="operation" />
-        </span>
-      </template>
-      <div class="tools" @click="removeTopo">
-        <span>{{ t("delete") }}</span>
-      </div>
-    </el-popover>
+    <div class="operation">
+      <el-popover
+        placement="bottom"
+        trigger="click"
+        :width="100"
+        v-if="routeParams.entity"
+      >
+        <template #reference>
+          <span>
+            <Icon iconName="ellipsis_v" size="middle" />
+          </span>
+        </template>
+        <div class="tools" @click="editConfig">
+          <span>{{ t("edit") }}</span>
+        </div>
+        <div class="tools" @click="removeTopo">
+          <span>{{ t("delete") }}</span>
+        </div>
+      </el-popover>
+    </div>
     <Topology />
   </div>
 </template>
@@ -54,6 +59,10 @@ const dashboardStore = useDashboardStore();
 function removeTopo() {
   dashboardStore.removeControls(props.data);
 }
+function editConfig() {
+  dashboardStore.setConfigPanel(true);
+  dashboardStore.selectWidget(props.data);
+}
 </script>
 <style lang="scss" scoped>
 .topology {
@@ -64,16 +73,11 @@ function removeTopo() {
   position: relative;
 }
 
-.delete {
+.operation {
   position: absolute;
   top: 5px;
   right: 3px;
-}
-
-.header {
-  padding: 10px;
-  font-size: 12px;
-  border-bottom: 1px solid #dcdfe6;
+  cursor: pointer;
 }
 
 .tools {
