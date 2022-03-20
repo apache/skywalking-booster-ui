@@ -64,7 +64,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
+import { ref, onMounted, onBeforeUnmount, reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
@@ -95,8 +95,8 @@ const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
 const dashboardStore = useDashboardStore();
-const height = ref<number>(0);
-const width = ref<number>(0);
+const height = ref<number>(100);
+const width = ref<number>(100);
 const loading = ref<boolean>(false);
 const simulation = ref<any>(null);
 const svg = ref<Nullable<any>>(null);
@@ -120,7 +120,6 @@ const items = ref<
 const depth = ref<number>(props.config.graph.depth || 2);
 
 onMounted(async () => {
-  console.log(props.config.graph);
   loading.value = true;
   const resp = await getTopology();
   loading.value = false;
@@ -473,6 +472,12 @@ async function changeDepth(opt: Option[] | any) {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
+watch(
+  () => [selectorStore.currentService, selectorStore.currentDestService],
+  () => {
+    freshNodes();
+  }
+);
 </script>
 <style lang="scss">
 .topo-svg {

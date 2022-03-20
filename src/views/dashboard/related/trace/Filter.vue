@@ -210,7 +210,16 @@ function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
   tagsMap.value = data.tagsMap;
 }
 watch(
-  () => selectorStore.currentService,
+  () => [selectorStore.currentPod],
+  () => {
+    if (dashboardStore.entity === EntityType[0].value) {
+      return;
+    }
+    init();
+  }
+);
+watch(
+  () => [selectorStore.currentService],
   () => {
     if (dashboardStore.entity !== EntityType[0].value) {
       return;

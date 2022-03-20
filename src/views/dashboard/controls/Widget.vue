@@ -165,11 +165,7 @@ export default defineComponent({
       }
     );
     watch(
-      () => [
-        selectorStore.currentService,
-        selectorStore.currentDestService,
-        appStore.durationTime,
-      ],
+      () => [selectorStore.currentService, selectorStore.currentDestService],
       () => {
         if (
           dashboardStore.entity === EntityType[0].value ||

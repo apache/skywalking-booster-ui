@@ -71,6 +71,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import { watch } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { ref, onMounted, reactive } from "vue";
@@ -96,8 +97,8 @@ const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
 const loading = ref<boolean>(false);
-const height = ref<number>(0);
-const width = ref<number>(0);
+const height = ref<number>(100);
+const width = ref<number>(100);
 const showSettings = ref<boolean>(false);
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
@@ -215,11 +216,19 @@ function handleClick(event: any) {
     topologyStore.setLink(null);
   }
 }
+watch(
+  () => [selectorStore.currentPod],
+  () => {
+    loadTopology(selectorStore.currentPod.id);
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
+  }
+);
 </script>
 <style lang="scss" scoped>
 .sankey {
   margin-top: 10px;
-  background-color: #333840;
+  background-color: #333840 !important;
   color: #ddd;
 }
 
