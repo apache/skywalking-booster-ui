@@ -16,8 +16,7 @@ limitations under the License. -->
   <div class="tool">
     <span
       v-show="
-        dashboardStore.entity === EntityType[2].value &&
-        dashboardStore.selectedGrid.showDepth
+        dashboardStore.entity === EntityType[2].value && config.graph.showDepth
       "
     >
       <span class="label">{{ t("currentDepth") }}</span>
@@ -47,6 +46,7 @@ limitations under the License. -->
     class="sankey"
     :style="`height:${height}px;width:${width}px;`"
     v-loading="loading"
+    element-loading-background="rgba(0, 0, 0, 0)"
     @click="handleClick"
   >
     <Sankey @click="selectNodeLink" />
@@ -72,36 +72,47 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import { watch } from "vue";
+import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { ref, onMounted, reactive } from "vue";
 import { Option } from "@/types/app";
 import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import { EntityType, DepthList } from "../../../data";
 import { ElMessage } from "element-plus";
 import Sankey from "./Sankey.vue";
 import Settings from "./Settings.vue";
 import router from "@/router";
 
+/*global defineProps */
+const props = defineProps({
+  config: {
+    type: Object as PropType<any>,
+    default: () => ({ graph: {} }),
+  },
+});
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
+const appStore = useAppStoreWithOut();
 const loading = ref<boolean>(false);
-const height = ref<number>(document.body.clientHeight - 150);
-const width = ref<number>(document.body.clientWidth - 40);
+const height = ref<number>(100);
+const width = ref<number>(100);
 const showSettings = ref<boolean>(false);
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
-const depth = ref<string>(dashboardStore.selectedGrid.depth || "3");
+const depth = ref<number>(props.config.graph.depth || 3);
 const items = [
   { id: "inspect", title: "Inspect", func: inspect },
   { id: "dashboard", title: "View Dashboard", func: goDashboard },
   { id: "alarm", title: "View Alarm", func: goAlarm },
 ];
 
-onMounted(async () => {
+onMounted(() => {
   loadTopology(selectorStore.currentPod && selectorStore.currentPod.id);
 });
 
@@ -112,6 +123,12 @@ async function loadTopology(id: string) {
   if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
+  const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
+    height: 70,
+    width: 5,
+  };
+  height.value = dom.height - 70;
+  width.value = dom.width - 5;
 }
 
 function inspect() {
@@ -176,7 +193,7 @@ function selectNodeLink(d: any) {
   operationsPos.y = d.event.event.clientY;
 }
 
-async function changeDepth(opt: Option[]) {
+async function changeDepth(opt: Option[] | any) {
   depth.value = opt[0].value;
   loadTopology(selectorStore.currentPod.id);
 }
@@ -190,7 +207,7 @@ async function getTopology(id: string) {
         Number(depth.value)
       );
       break;
-    case EntityType[4].value:
+    case EntityType[3].value:
       resp = await topologyStore.getInstanceTopology();
       break;
   }
@@ -202,20 +219,36 @@ function handleClick(event: any) {
     topologyStore.setLink(null);
   }
 }
+watch(
+  () => [selectorStore.currentPod],
+  () => {
+    loadTopology(selectorStore.currentPod.id);
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
+  }
+);
+watch(
+  () => appStore.durationTime,
+  () => {
+    loadTopology(selectorStore.currentPod.id);
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
+  }
+);
 </script>
 <style lang="scss" scoped>
 .sankey {
   margin-top: 10px;
-  background-color: #333840;
+  background-color: #333840 !important;
   color: #ddd;
 }
 
 .settings {
   position: absolute;
-  top: 40px;
-  right: 0;
+  top: 60px;
+  right: 10px;
   width: 400px;
-  height: 700px;
+  height: 500px;
   background-color: #2b3037;
   overflow: auto;
   padding: 0 15px;
@@ -228,7 +261,8 @@ function handleClick(event: any) {
 
 .tool {
   text-align: right;
-  margin-top: 10px;
+  margin-top: 40px;
+  margin-right: 10px;
   position: relative;
 }
 

@@ -112,6 +112,7 @@ const msg = {
   noRoot: "请设置根仪表板，为",
   showGroup: "显示分组",
   noWidget: "请添加组件",
+  rename: "重命名",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

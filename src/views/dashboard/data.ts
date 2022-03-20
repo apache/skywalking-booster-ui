@@ -186,7 +186,6 @@ export const ServiceTools = [
 export const InstanceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
-  { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "save", content: "Apply", id: "apply" },
@@ -229,19 +228,10 @@ export enum LegendOpt {
   VALUE = "value",
   CONDITION = "condition",
 }
-export const DepthList = ["1", "2", "3", "4", "5"].map((item: string) => ({
+export const DepthList = [1, 2, 3, 4, 5].map((item: number) => ({
   value: item,
   label: item,
 }));
-export const Colors: any = {
-  green: "#67C23A",
-  blue: "#409EFF",
-  red: "#F56C6C",
-  grey: "#909399",
-  white: "#fff",
-  black: "#000",
-  orange: "#E6A23C",
-};
 export const Status = [
   { label: "All", value: "ALL" },
   { label: "Success", value: "SUCCESS" },

@@ -82,7 +82,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { Option } from "@/types/app";
 import graphs from "../graphs";
 import configs from "./widget/graph-styles";
-import WidgetOptions from "./components/WidgetOptions.vue";
+import WidgetOptions from "./widget/WidgetOptions.vue";
 import StandardOptions from "./widget/StandardOptions.vue";
 import MetricOptions from "./widget/MetricOptions.vue";
 

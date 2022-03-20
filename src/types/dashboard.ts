@@ -129,6 +129,6 @@ export interface TopologyConfig {
   iconTheme?: boolean;
   content?: string;
   fontSize?: number;
-  depth?: string;
+  depth?: number;
   showDepth?: boolean;
 }

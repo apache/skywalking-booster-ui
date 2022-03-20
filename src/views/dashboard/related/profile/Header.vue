@@ -56,9 +56,14 @@ import { useProfileStore } from "@/store/modules/profile";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import NewTask from "./components/NewTask.vue";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { useAppStoreWithOut } from "@/store/modules/app";
+import { EntityType } from "../../data";
 
 const profileStore = useProfileStore();
+const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
+const dashboardStore = useDashboardStore();
 const { t } = useI18n();
 // const service = ref<any>({});
 const endpointName = ref<string>("");
@@ -102,6 +107,14 @@ watch(
   () => selectorStore.currentService,
   () => {
     searchTasks();
+  }
+);
+watch(
+  () => appStore.durationTime,
+  () => {
+    if (dashboardStore.entity === EntityType[1].value) {
+      searchTasks();
+    }
   }
 );
 </script>

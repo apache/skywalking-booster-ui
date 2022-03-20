@@ -17,13 +17,14 @@ limitations under the License. -->
     ref="chart"
     class="micro-topo-chart"
     v-loading="loading"
+    element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
     <div class="setting" v-show="showSetting">
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
     <div class="tool">
-      <span v-show="dashboardStore.selectedGrid.showDepth">
+      <span v-show="config.graph.showDepth">
         <span class="label">{{ t("currentDepth") }}</span>
         <Selector
           class="inputs"
@@ -63,7 +64,8 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
+import type { PropType } from "vue";
+import { ref, onMounted, onBeforeUnmount, reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
@@ -82,14 +84,22 @@ import { ElMessage } from "element-plus";
 import Settings from "./Settings.vue";
 import { Option } from "@/types/app";
 import { Service } from "@/types/selector";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
-/*global Nullable */
+/*global Nullable, defineProps */
+const props = defineProps({
+  config: {
+    type: Object as PropType<any>,
+    default: () => ({ graph: {} }),
+  },
+});
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
 const dashboardStore = useDashboardStore();
-const height = ref<number>(document.body.clientHeight - 90);
-const width = ref<number>(document.body.clientWidth - 40);
+const appStore = useAppStoreWithOut();
+const height = ref<number>(100);
+const width = ref<number>(100);
 const loading = ref<boolean>(false);
 const simulation = ref<any>(null);
 const svg = ref<Nullable<any>>(null);
@@ -110,7 +120,7 @@ const items = ref<
   { id: "inspect", title: "Inspect", func: handleInspect },
   { id: "alarm", title: "Alarm", func: handleGoAlarm },
 ]);
-const depth = ref<string>(dashboardStore.selectedGrid.depth || "2");
+const depth = ref<number>(props.config.graph.depth || 2);
 
 onMounted(async () => {
   loading.value = true;
@@ -119,19 +129,23 @@ onMounted(async () => {
   if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
+  const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
+    height: 40,
+    width: 0,
+  };
+  height.value = dom.height - 40;
+  width.value = dom.width;
   window.addEventListener("resize", resize);
-  svg.value = d3
-    .select(chart.value)
-    .append("svg")
-    .attr("class", "topo-svg")
-    .attr("height", height.value)
-    .attr("width", width.value);
+  svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
   await init();
   update();
 });
 async function init() {
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
-  graph.value = svg.value.append("g").attr("class", "topo-svg-graph");
+  graph.value = svg.value
+    .append("g")
+    .attr("class", "topo-svg-graph")
+    .attr("transform", `translate(0, -100)`);
   graph.value.call(tip.value);
   simulation.value = simulationInit(
     d3,
@@ -410,8 +424,8 @@ function setConfig() {
   showSetting.value = !showSetting.value;
 }
 function resize() {
-  height.value = document.body.clientHeight - 90;
-  width.value = document.body.clientWidth - 40;
+  height.value = document.body.clientHeight;
+  width.value = document.body.clientWidth;
   svg.value.attr("height", height.value).attr("width", width.value);
 }
 function updateSettings(config: any) {
@@ -453,7 +467,7 @@ async function freshNodes() {
   update();
 }
 
-async function changeDepth(opt: Option[]) {
+async function changeDepth(opt: Option[] | any) {
   depth.value = opt[0].value;
   await getTopology();
   freshNodes();
@@ -461,17 +475,40 @@ async function changeDepth(opt: Option[]) {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", resize);
 });
+watch(
+  () => [selectorStore.currentService, selectorStore.currentDestService],
+  () => {
+    freshNodes();
+  }
+);
+watch(
+  () => appStore.durationTime,
+  () => {
+    if (dashboardStore.entity === EntityType[1].value) {
+      init();
+    }
+  }
+);
 </script>
 <style lang="scss">
+.topo-svg {
+  width: 100%;
+  height: calc(100% - 5px);
+  cursor: move;
+}
+
 .micro-topo-chart {
   position: relative;
+  height: calc(100% - 30px);
+  overflow: auto;
+  margin-top: 30px;
 
   .setting {
     position: absolute;
-    top: 70px;
-    right: 0;
+    top: 80px;
+    right: 10px;
     width: 400px;
-    height: 700px;
+    height: 600px;
     background-color: #2b3037;
     overflow: auto;
     padding: 0 15px;
@@ -510,8 +547,8 @@ onBeforeUnmount(() => {
 
   .tool {
     position: absolute;
-    top: 22px;
-    right: 0;
+    top: 35px;
+    right: 10px;
   }
 
   .switch-icon {
@@ -522,11 +559,6 @@ onBeforeUnmount(() => {
     display: inline-block;
     padding: 5px 8px 8px;
     border-radius: 3px;
-  }
-
-  .topo-svg {
-    display: block;
-    width: 100%;
   }
 
   .topo-line {

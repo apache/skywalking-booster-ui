@@ -27,6 +27,7 @@ import { Duration } from "@/types/app";
 import { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
+import { EntityType } from "@/views/dashboard/data";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -92,15 +93,15 @@ export const dashboardStore = defineStore({
         ];
       }
       if (type === "Topology") {
-        newItem.w = 4;
-        newItem.h = 6;
+        newItem.h = 36;
         newItem.graph = {
-          fontColor: "white",
-          backgroundColor: "green",
-          iconTheme: true,
-          content: "Topology",
-          fontSize: 18,
           showDepth: true,
+          depth:
+            this.entity === EntityType[1].value
+              ? 1
+              : this.entity === EntityType[0].value
+              ? 2
+              : 3,
         };
       }
       if (type === "Trace" || type === "Profile" || type === "Log") {
@@ -144,19 +145,13 @@ export const dashboardStore = defineStore({
         metrics: [""],
       };
       if (type === "Topology") {
-        newItem.w = 4;
-        newItem.h = 6;
+        newItem.h = 32;
         newItem.graph = {
-          fontColor: "white",
-          backgroundColor: "green",
-          iconTheme: true,
-          content: "Topology",
-          fontSize: 18,
           showDepth: true,
         };
       }
       if (type === "Trace" || type === "Profile" || type === "Log") {
-        newItem.h = 24;
+        newItem.h = 32;
       }
       if (this.layout[idx].children) {
         const items = children.map((d: LayoutConfig) => {

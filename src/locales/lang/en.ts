@@ -112,6 +112,7 @@ const msg = {
   showGroup: "Show Group",
   noRoot: "Please set a root dashboard for",
   noWidget: "Please add widgets.",
+  rename: "Rename",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",
