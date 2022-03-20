@@ -119,19 +119,23 @@ onMounted(async () => {
   if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
+  const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
+    height: 0,
+    width: 0,
+  };
+  height.value = dom.height;
+  width.value = dom.width;
   window.addEventListener("resize", resize);
-  svg.value = d3
-    .select(chart.value)
-    .append("svg")
-    .attr("class", "topo-svg")
-    .attr("height", height.value)
-    .attr("width", width.value);
+  svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
   await init();
   update();
 });
 async function init() {
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
-  graph.value = svg.value.append("g").attr("class", "topo-svg-graph");
+  graph.value = svg.value
+    .append("g")
+    .attr("class", "topo-svg-graph")
+    .attr("transform", `translate(0, -100)`);
   graph.value.call(tip.value);
   simulation.value = simulationInit(
     d3,
@@ -464,14 +468,14 @@ onBeforeUnmount(() => {
 </script>
 <style lang="scss">
 .topo-svg {
-  display: block;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 5px);
+  cursor: move;
 }
 
 .micro-topo-chart {
   position: relative;
-  height: calc(100% - 40px);
+  height: 100%;
   overflow: auto;
 
   .setting {

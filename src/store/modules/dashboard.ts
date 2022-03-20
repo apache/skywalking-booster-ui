@@ -143,19 +143,13 @@ export const dashboardStore = defineStore({
         metrics: [""],
       };
       if (type === "Topology") {
-        newItem.w = 4;
-        newItem.h = 6;
+        newItem.h = 32;
         newItem.graph = {
-          fontColor: "white",
-          backgroundColor: "green",
-          iconTheme: true,
-          content: "Topology",
-          fontSize: 18,
           showDepth: true,
         };
       }
       if (type === "Trace" || type === "Profile" || type === "Log") {
-        newItem.h = 24;
+        newItem.h = 32;
       }
       if (this.layout[idx].children) {
         const items = children.map((d: LayoutConfig) => {

@@ -60,7 +60,7 @@ limitations under the License. -->
               {{ t("view") }}
             </el-button>
             <el-button size="small" @click="handleEdit(scope.row)">
-              {{ t("edit") }}
+              {{ t("rename") }}
             </el-button>
             <el-popconfirm
               title="Are you sure to delete this?"
@@ -133,17 +133,7 @@ const loading = ref<boolean>(false);
 const multipleTableRef = ref<InstanceType<typeof ElTable>>();
 const multipleSelection = ref<DashboardItem[]>([]);
 const dashboardFile = ref<Nullable<HTMLDivElement>>(null);
-//  # - os-linux
-//  # - k8s
-//  # - general(agent-installed)
-//  # - faas
-//  # - mesh
-//  # - mesh-cp
-//  # - mesh-dp
-//  # - database
-//  # - cache
-//  # - browser
-//  # - skywalking
+
 appStore.setPageTitle("Dashboard List");
 const handleSelectionChange = (val: DashboardItem[]) => {
   multipleSelection.value = val;

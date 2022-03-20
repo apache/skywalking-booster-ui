@@ -38,6 +38,7 @@ import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Topology from "../related/topology/Index.vue";
+
 /*global defineProps */
 const props = defineProps({
   data: {
@@ -56,9 +57,9 @@ function removeTopo() {
 </script>
 <style lang="scss" scoped>
 .topology {
-  height: 100%;
   background-color: #333840;
   width: 100%;
+  height: 100%;
   font-size: 12px;
   position: relative;
 }

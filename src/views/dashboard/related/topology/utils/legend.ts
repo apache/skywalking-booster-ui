@@ -28,14 +28,14 @@ export default function topoLegend(
       .attr("width", 30)
       .attr("height", 30)
       .attr("x", clientWidth - (item === "CUBEERROR" ? 340 : 440))
-      .attr("y", clientHeight - 50)
+      .attr("y", clientHeight + 50)
       .attr("xlink:href", () =>
         item === "CUBEERROR" ? icons.CUBEERROR : icons.CUBE
       );
     graph
       .append("text")
       .attr("x", clientWidth - (item === "CUBEERROR" ? 310 : 410))
-      .attr("y", clientHeight - 30)
+      .attr("y", clientHeight + 70)
       .text(() => {
         const l = config || [];
         const str = l
