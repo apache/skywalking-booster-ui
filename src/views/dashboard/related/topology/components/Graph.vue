@@ -17,6 +17,7 @@ limitations under the License. -->
     ref="chart"
     class="micro-topo-chart"
     v-loading="loading"
+    element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
     <div class="setting" v-show="showSetting">

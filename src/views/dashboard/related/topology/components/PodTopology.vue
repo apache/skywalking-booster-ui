@@ -46,6 +46,7 @@ limitations under the License. -->
     class="sankey"
     :style="`height:${height}px;width:${width}px;`"
     v-loading="loading"
+    element-loading-background="rgba(0, 0, 0, 0)"
     @click="handleClick"
   >
     <Sankey @click="selectNodeLink" />
