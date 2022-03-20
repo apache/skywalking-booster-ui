@@ -35,7 +35,11 @@ limitations under the License. -->
           <template #default="scope">
             <router-link
               class="link"
-              :to="`/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${selectorStore.currentService.id}/${scope.row.id}/${config.dashboardName}`"
+              :to="`/dashboard/${dashboardStore.layerId}/${
+                EntityType[2].value
+              }/${selectorStore.currentService.id}/${
+                scope.row.id
+              }/${config.dashboardName.split(' ').join('-')}`"
               :style="{ fontSize: `${config.fontSize}px` }"
             >
               {{ scope.row.label }}

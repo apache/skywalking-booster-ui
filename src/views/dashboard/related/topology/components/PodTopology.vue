@@ -80,6 +80,7 @@ import { Option } from "@/types/app";
 import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import { EntityType, DepthList } from "../../../data";
 import { ElMessage } from "element-plus";
 import Sankey from "./Sankey.vue";
@@ -97,6 +98,7 @@ const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
+const appStore = useAppStoreWithOut();
 const loading = ref<boolean>(false);
 const height = ref<number>(100);
 const width = ref<number>(100);
@@ -219,6 +221,14 @@ function handleClick(event: any) {
 }
 watch(
   () => [selectorStore.currentPod],
+  () => {
+    loadTopology(selectorStore.currentPod.id);
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
+  }
+);
+watch(
+  () => appStore.durationTime,
   () => {
     loadTopology(selectorStore.currentPod.id);
     topologyStore.setNode(null);

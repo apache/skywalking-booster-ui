@@ -84,6 +84,7 @@ import { ElMessage } from "element-plus";
 import Settings from "./Settings.vue";
 import { Option } from "@/types/app";
 import { Service } from "@/types/selector";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -96,6 +97,7 @@ const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
 const dashboardStore = useDashboardStore();
+const appStore = useAppStoreWithOut();
 const height = ref<number>(100);
 const width = ref<number>(100);
 const loading = ref<boolean>(false);
@@ -477,6 +479,14 @@ watch(
   () => [selectorStore.currentService, selectorStore.currentDestService],
   () => {
     freshNodes();
+  }
+);
+watch(
+  () => appStore.durationTime,
+  () => {
+    if (dashboardStore.entity === EntityType[1].value) {
+      init();
+    }
   }
 );
 </script>

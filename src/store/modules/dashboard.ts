@@ -98,9 +98,9 @@ export const dashboardStore = defineStore({
           showDepth: true,
           depth:
             this.entity === EntityType[1].value
-              ? 2
-              : this.entity === EntityType[0].value
               ? 1
+              : this.entity === EntityType[0].value
+              ? 2
               : 3,
         };
       }

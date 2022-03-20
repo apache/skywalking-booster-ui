@@ -299,6 +299,14 @@ watch(
     init();
   }
 );
+watch(
+  () => appStore.durationTime,
+  () => {
+    if (dashboardStore.entity === EntityType[1].value) {
+      init();
+    }
+  }
+);
 </script>
 <style lang="scss" scoped>
 .inputs {
