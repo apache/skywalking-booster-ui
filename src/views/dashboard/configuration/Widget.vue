@@ -81,10 +81,10 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Option } from "@/types/app";
 import graphs from "../graphs";
-import configs from "./widget/graph-styles";
-import WidgetOptions from "./components/WidgetOptions.vue";
-import StandardOptions from "./widget/StandardOptions.vue";
-import MetricOptions from "./widget/MetricOptions.vue";
+import configs from "./graph-styles";
+import WidgetOptions from "./WidgetOptions.vue";
+import StandardOptions from "./StandardOptions.vue";
+import MetricOptions from "./MetricOptions.vue";
 
 export default defineComponent({
   name: "ConfigEdit",
