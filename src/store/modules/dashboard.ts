@@ -27,6 +27,7 @@ import { Duration } from "@/types/app";
 import { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
+import { EntityType } from "@/views/dashboard/data";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -94,12 +95,13 @@ export const dashboardStore = defineStore({
       if (type === "Topology") {
         newItem.h = 36;
         newItem.graph = {
-          fontColor: "white",
-          backgroundColor: "green",
-          iconTheme: true,
-          content: "Topology",
-          fontSize: 18,
           showDepth: true,
+          depth:
+            this.entity === EntityType[1].value
+              ? 2
+              : this.entity === EntityType[0].value
+              ? 1
+              : 3,
         };
       }
       if (type === "Trace" || type === "Profile" || type === "Log") {

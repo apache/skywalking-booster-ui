@@ -34,7 +34,7 @@ limitations under the License. -->
         </div>
       </el-popover>
     </div>
-    <Topology />
+    <Topology :config="props.data" />
   </div>
 </template>
 <script lang="ts" setup>

@@ -23,7 +23,7 @@ limitations under the License. -->
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
     <div class="tool">
-      <span v-show="dashboardStore.selectedGrid.showDepth">
+      <span v-show="config.graph.showDepth">
         <span class="label">{{ t("currentDepth") }}</span>
         <Selector
           class="inputs"
@@ -63,6 +63,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import type { PropType } from "vue";
 import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
@@ -83,7 +84,13 @@ import Settings from "./Settings.vue";
 import { Option } from "@/types/app";
 import { Service } from "@/types/selector";
 
-/*global Nullable */
+/*global Nullable, defineProps */
+const props = defineProps({
+  config: {
+    type: Object as PropType<any>,
+    default: () => ({ graph: {} }),
+  },
+});
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const topologyStore = useTopologyStore();
@@ -110,9 +117,10 @@ const items = ref<
   { id: "inspect", title: "Inspect", func: handleInspect },
   { id: "alarm", title: "Alarm", func: handleGoAlarm },
 ]);
-const depth = ref<string>(dashboardStore.selectedGrid.depth || "2");
+const depth = ref<number>(props.config.graph.depth || 2);
 
 onMounted(async () => {
+  console.log(props.config.graph);
   loading.value = true;
   const resp = await getTopology();
   loading.value = false;

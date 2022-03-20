@@ -16,8 +16,7 @@ limitations under the License. -->
   <div class="tool">
     <span
       v-show="
-        dashboardStore.entity === EntityType[2].value &&
-        dashboardStore.selectedGrid.showDepth
+        dashboardStore.entity === EntityType[2].value && config.graph.showDepth
       "
     >
       <span class="label">{{ t("currentDepth") }}</span>
@@ -72,6 +71,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { ref, onMounted, reactive } from "vue";
 import { Option } from "@/types/app";
@@ -84,6 +84,13 @@ import Sankey from "./Sankey.vue";
 import Settings from "./Settings.vue";
 import router from "@/router";
 
+/*global defineProps */
+const props = defineProps({
+  config: {
+    type: Object as PropType<any>,
+    default: () => ({ graph: {} }),
+  },
+});
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
@@ -94,14 +101,14 @@ const width = ref<number>(document.body.clientWidth);
 const showSettings = ref<boolean>(false);
 const settings = ref<any>({});
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
-const depth = ref<string>(dashboardStore.selectedGrid.depth || "3");
+const depth = ref<number>(props.config.graph.depth || 3);
 const items = [
   { id: "inspect", title: "Inspect", func: inspect },
   { id: "dashboard", title: "View Dashboard", func: goDashboard },
   { id: "alarm", title: "View Alarm", func: goAlarm },
 ];
 
-onMounted(async () => {
+onMounted(() => {
   loadTopology(selectorStore.currentPod && selectorStore.currentPod.id);
 });
 
@@ -196,7 +203,7 @@ async function getTopology(id: string) {
         Number(depth.value)
       );
       break;
-    case EntityType[4].value:
+    case EntityType[3].value:
       resp = await topologyStore.getInstanceTopology();
       break;
   }
@@ -221,7 +228,7 @@ function handleClick(event: any) {
   top: 60px;
   right: 10px;
   width: 400px;
-  height: 700px;
+  height: 500px;
   background-color: #2b3037;
   overflow: auto;
   padding: 0 15px;

@@ -13,18 +13,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <PodTopology v-if="isSankey" />
-  <Graph v-else />
+  <PodTopology :config="config" v-if="isSankey" />
+  <Graph :config="config" v-else />
 </template>
 <script lang="ts" setup>
+import type { PropType } from "vue";
 import { ref } from "vue";
 import Graph from "./components/Graph.vue";
 import PodTopology from "./components/PodTopology.vue";
 import { EntityType } from "../../data";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
+/*global defineProps */
+defineProps({
+  config: {
+    type: Object as PropType<any>,
+    default: () => ({ graph: {} }),
+  },
+});
 const dashboardStore = useDashboardStore();
+console.log(dashboardStore.entity);
 const isSankey = ref<boolean>(
-  [EntityType[2].value, EntityType[4].value].includes(dashboardStore.entity)
+  [EntityType[2].value, EntityType[3].value].includes(dashboardStore.entity)
 );
 </script>
