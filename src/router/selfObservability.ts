@@ -33,7 +33,7 @@ export const routesSelf: Array<RouteRecordRaw> = [
         path: "/self/skyWalkingServer",
         name: "SkyWalkingServer",
         meta: {
-          title: "SkyWalking Server",
+          title: "skyWalkingServer",
           headPath: "/mesh/services",
         },
         component: () => import("@/views/Layer.vue"),
