@@ -86,6 +86,7 @@ import { ElMessage } from "element-plus";
 import Sankey from "./Sankey.vue";
 import Settings from "./Settings.vue";
 import router from "@/router";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 /*global defineProps */
 const props = defineProps({
@@ -150,8 +151,14 @@ function goDashboard() {
     dashboardStore.entity === EntityType[2].value
       ? EntityType[2].value
       : EntityType[3].value;
+  const d = getDashboard({
+    name: settings.value.nodeDashboard,
+    layer: dashboardStore.layerId,
+    entity,
+  });
   dashboardStore.setEntity(entity);
-  const path = `/dashboard/${dashboardStore.layerId}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${settings.value.nodeDashboard}`;
+  dashboardStore.setCurrentDashboard(d);
+  const path = `/dashboard/${d.layer}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${d.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
   topologyStore.setNode(null);
@@ -183,8 +190,13 @@ function selectNodeLink(d: any) {
       dashboardStore.entity === EntityType[2].value
         ? EntityType[6].value
         : EntityType[5].value;
+    const p = getDashboard({
+      name: settings.value.linkDashboard,
+      layer: dashboardStore.layerId,
+      entity,
+    });
     dashboardStore.setEntity(entity);
-    const path = `/dashboard/${dashboardStore.layerId}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${settings.value.linkDashboard}`;
+    const path = `/dashboard/${p.layer}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${p.name}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
     return;

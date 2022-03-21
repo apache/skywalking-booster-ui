@@ -103,6 +103,7 @@ import { Service } from "@/types/selector";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
 import router from "@/router";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 /*global defineProps */
 const props = defineProps({
@@ -173,10 +174,16 @@ async function queryServices() {
 }
 
 function clickService(scope: any) {
-  dashboardStore.setEntity(EntityType[0].value);
-  const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${
-    scope.row.id
-  }/${props.config.dashboardName.split(" ").join("-")}`;
+  const d = getDashboard({
+    name: props.config.dashboardName,
+    layer: dashboardStore.layerId,
+    entity: EntityType[0].value,
+  });
+  dashboardStore.setCurrentDashboard(d);
+  dashboardStore.setEntity(d.entity);
+  const path = `/dashboard/${d.layer}/${d.entity}/${scope.row.id}/${d.name
+    .split(" ")
+    .join("-")}`;
 
   router.push(path);
 }

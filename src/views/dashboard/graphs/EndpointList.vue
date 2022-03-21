@@ -91,6 +91,7 @@ import Line from "./Line.vue";
 import Card from "./Card.vue";
 import { EntityType } from "../data";
 import router from "@/router";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 /*global defineProps */
 const props = defineProps({
@@ -157,11 +158,17 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
   endpoints.value = currentPods;
 }
 function clickEndpoint(scope: any) {
+  const d = getDashboard({
+    name: props.config.dashboardName,
+    layer: dashboardStore.layerId,
+    entity: EntityType[2].value,
+  });
   dashboardStore.setEntity(EntityType[2].value);
+  dashboardStore.setCurrentDashboard(d);
   router.push(
-    `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${
-      selectorStore.currentService.id
-    }/${scope.row.id}/${props.config.dashboardName.split(" ").join("-")}`
+    `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${
+      scope.row.id
+    }/${d.name.split(" ").join("-")}`
   );
 }
 function changePage(pageIndex: number) {

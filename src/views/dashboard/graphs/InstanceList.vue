@@ -91,6 +91,7 @@ import { Instance } from "@/types/selector";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
 import router from "@/router";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 /*global defineProps */
 const props = defineProps({
@@ -162,11 +163,17 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
 }
 
 function clickInstance(scope: any) {
-  dashboardStore.setEntity(EntityType[3].value);
+  const d = getDashboard({
+    name: props.config.dashboardName,
+    layer: dashboardStore.layerId,
+    entity: EntityType[3].value,
+  });
+  dashboardStore.setCurrentDashboard(d);
+  dashboardStore.setEntity(d.entity);
   router.push(
-    `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${
-      selectorStore.currentService.id
-    }/${scope.row.id}/${props.config.dashboardName.split(" ").join("-")}`
+    `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${
+      scope.row.id
+    }/${d.name.split(" ").join("-")}`
   );
 }
 
