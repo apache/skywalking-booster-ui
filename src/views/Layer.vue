@@ -34,6 +34,11 @@ const routeNames = [
   "MeshServices",
   "ControlPanel",
   "DataPanel",
+  "Linux",
+  "SkyWalkingServer",
+  "Satellite",
+  "Functions",
+  "Browser",
 ];
 const layer = ref<string>("GENERAL");
 getDashboard();
@@ -68,6 +73,21 @@ function setLayer(n: string) {
       break;
     case routeNames[4]:
       layer.value = "MESH_DP";
+      break;
+    case routeNames[5]:
+      layer.value = "OS_LINUX";
+      break;
+    case routeNames[6]:
+      layer.value = "SO11Y_OAP";
+      break;
+    case routeNames[7]:
+      layer.value = "SO11Y_SATELLITE";
+      break;
+    case routeNames[8]:
+      layer.value = "FAAS";
+      break;
+    case routeNames[9]:
+      layer.value = "BROWSER";
       break;
     default:
       layer.value = "GENERAL";

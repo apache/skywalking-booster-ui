@@ -33,13 +33,17 @@ limitations under the License. -->
       <template v-for="(menu, index) in routes" :key="index">
         <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
           <template #title>
-            <router-link :to="menu.path" :exact="menu.meta.exact || false">
+            <router-link
+              class="items"
+              :to="menu.path"
+              :exact="menu.meta.exact || false"
+            >
               <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
                 <Icon size="lg" :iconName="menu.meta.icon" />
               </el-icon>
-              <span :class="isCollapse ? 'collapse' : ''">{{
-                t(menu.meta.title)
-              }}</span>
+              <span :class="isCollapse ? 'collapse' : ''">
+                {{ t(menu.meta.title) }}
+              </span>
             </router-link>
           </template>
           <el-menu-item-group>
@@ -48,7 +52,11 @@ limitations under the License. -->
               :index="m.name"
               :key="idx"
             >
-              <router-link :to="m.path" :exact="m.meta.exact || false">
+              <router-link
+                class="items"
+                :to="m.path"
+                :exact="m.meta.exact || false"
+              >
                 <span>{{ t(m.meta.title) }}</span>
               </router-link>
             </el-menu-item>
@@ -59,13 +67,21 @@ limitations under the License. -->
           @click="changePage(menu)"
           v-else
         >
-          <el-icon class="menu-icons" :style="{ margin: '-10px 12px 0 0' }">
-            <router-link :to="menu.children[0].path" :exact="menu.meta.exact">
+          <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
+            <router-link
+              class="items"
+              :to="menu.children[0].path"
+              :exact="menu.meta.exact"
+            >
               <Icon size="lg" :iconName="menu.meta.icon" />
             </router-link>
           </el-icon>
           <template #title>
-            <router-link :to="menu.children[0].path" :exact="menu.meta.exact">
+            <router-link
+              class="items"
+              :to="menu.children[0].path"
+              :exact="menu.meta.exact"
+            >
               <span>{{ t(menu.meta.title) }}</span>
             </router-link>
           </template>
@@ -99,7 +115,7 @@ const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
   ? ref("light")
   : ref("black");
 const routes = ref<any>(useRouter().options.routes);
-const isCollapse = ref(true);
+const isCollapse = ref(false);
 const controlMenu = () => {
   isCollapse.value = !isCollapse.value;
 };
@@ -171,5 +187,10 @@ span.collapse {
 
 .el-icon.el-sub-menu__icon-arrow {
   height: 12px;
+}
+
+.items {
+  display: inline-block;
+  width: 100%;
 }
 </style>

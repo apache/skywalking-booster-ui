@@ -17,44 +17,36 @@
 import { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
 
-export const routesInfra: Array<RouteRecordRaw> = [
+export const routesSelf: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "Infrastructure",
+    name: "SelfObservability",
+    redirect: "/self/skyWalkingServer",
     meta: {
-      title: "infrastructure",
-      icon: "scatter_plot",
-      exact: true,
+      title: "selfObservability",
+      icon: "logo",
       hasGroup: true,
     },
-    redirect: "/infrastructure",
     component: Layout,
     children: [
       {
-        path: "/infrastructure",
-        name: "Linux",
+        path: "/self/skyWalkingServer",
+        name: "SkyWalkingServer",
         meta: {
-          title: "linux",
+          title: "skyWalkingServer",
+          headPath: "/mesh/services",
         },
         component: () => import("@/views/Layer.vue"),
-        // component: () => import("@/views/infrastructure/Infrastructure.vue"),
       },
-      // {
-      //   path: "/infrastructure/vm",
-      //   name: "VirtualMachine",
-      //   meta: {
-      //     title: "virtualMachine",
-      //   },
-      //   component: () => import("@/views/infrastructure/Infrastructure.vue"),
-      // },
-      // {
-      //   path: "/infrastructure/k8s",
-      //   name: "Kubernetes",
-      //   meta: {
-      //     title: "kubernetes",
-      //   },
-      //   component: () => import("@/views/infrastructure/Infrastructure.vue"),
-      // },
+      {
+        path: "/self/satellite",
+        name: "Satellite",
+        meta: {
+          title: "satellite",
+          headPath: "/mesh/controlPanel",
+        },
+        component: () => import("@/views/Layer.vue"),
+      },
     ],
   },
 ];

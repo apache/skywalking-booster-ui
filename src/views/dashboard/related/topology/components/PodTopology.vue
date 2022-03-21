@@ -189,8 +189,8 @@ function selectNodeLink(d: any) {
   }
   topologyStore.setNode(d.data);
   topologyStore.setLink(null);
-  operationsPos.x = d.event.event.clientX;
-  operationsPos.y = d.event.event.clientY;
+  operationsPos.x = d.event.event.clientX - 200;
+  operationsPos.y = d.event.event.clientY - 150;
 }
 
 async function changeDepth(opt: Option[] | any) {

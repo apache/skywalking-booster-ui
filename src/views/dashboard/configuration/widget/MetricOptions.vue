@@ -90,12 +90,11 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import {
   MetricTypes,
   ListChartTypes,
-  MetricCatalog,
   DefaultGraphConfig,
   EntityType,
   ChartTypes,
   PodsChartTypes,
-  ListEntity,
+  MetricsType,
 } from "../../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
@@ -134,13 +133,8 @@ states.visTypes = setVisTypes();
 setDashboards();
 setMetricType();
 
-async function setMetricType(catalog?: string) {
+async function setMetricType() {
   const { graph } = dashboardStore.selectedGrid;
-  if (states.isList) {
-    catalog = catalog || ListEntity[graph.type];
-  } else {
-    catalog = catalog || dashboardStore.entity;
-  }
   const json = await dashboardStore.fetchMetricList();
   if (json.errors) {
     ElMessage.error(json.errors);
@@ -149,16 +143,11 @@ async function setMetricType(catalog?: string) {
   states.metricList = (json.data.metrics || []).filter(
     (d: { catalog: string; type: string }) => {
       if (states.isList || graph.type === "Table") {
-        if (
-          d.type === "REGULAR_VALUE" &&
-          catalog === (MetricCatalog as any)[d.catalog]
-        ) {
+        if (d.type === MetricsType.REGULAR_VALUE) {
           return d;
         }
       } else {
-        if (catalog === (MetricCatalog as any)[d.catalog]) {
-          return d;
-        }
+        return d;
       }
     }
   );
@@ -253,12 +242,7 @@ function changeChartType(item: Option) {
     states.metrics = [""];
     states.metricTypes = [""];
   }
-  const catalog: { [key: string]: string } = {
-    InstanceList: EntityType[3].value,
-    EndpointList: EntityType[2].value,
-    ServiceList: EntityType[0].value,
-  };
-  setMetricType(catalog[graph.type]);
+  setMetricType();
   setDashboards();
   states.dashboardName = "";
 }
@@ -367,7 +351,7 @@ function deleteMetric(index: number) {
   states.metricTypes.splice(index, 1);
 }
 function setMetricTypeList(type: string) {
-  if (type !== "REGULAR_VALUE") {
+  if (type !== MetricsType.REGULAR_VALUE) {
     return MetricTypes[type];
   }
   if (states.isList || dashboardStore.selectedGrid.graph.type === "Table") {

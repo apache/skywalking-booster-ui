@@ -57,7 +57,7 @@ export function useQueryProcessor(config: any) {
       variables.push(`$condition${index}: TopNCondition!`);
       conditions[`condition${index}`] = {
         name,
-        parentService: ["Service", "All"].includes(dashboardStore.entity)
+        parentService: ["All"].includes(dashboardStore.entity)
           ? null
           : selectorStore.currentService.value,
         normal: selectorStore.currentService.normal,

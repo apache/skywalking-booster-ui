@@ -23,7 +23,7 @@ export const routesDatabase: Array<RouteRecordRaw> = [
     name: "Database",
     meta: {
       title: "database",
-      icon: "epic",
+      icon: "bar_chart",
     },
     redirect: "/database",
     component: Layout,
