@@ -118,6 +118,7 @@ const msg = {
   skyWalkingServer: "Sky Walking Server",
   functions: "Functions",
   browser: "Browser",
+  linux: "Linux",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

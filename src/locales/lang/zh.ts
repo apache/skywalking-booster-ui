@@ -117,6 +117,7 @@ const msg = {
   satellite: "Satellite",
   skyWalkingServer: "Sky Walking服务",
   functions: "Functions",
+  linux: "Linux",
   browser: "浏览器",
   hourTip: "选择小时",
   minuteTip: "选择分钟",

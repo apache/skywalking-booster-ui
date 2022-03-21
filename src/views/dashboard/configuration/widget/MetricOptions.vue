@@ -90,12 +90,10 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import {
   MetricTypes,
   ListChartTypes,
-  MetricCatalog,
   DefaultGraphConfig,
   EntityType,
   ChartTypes,
   PodsChartTypes,
-  ListEntity,
   MetricsType,
 } from "../../data";
 import { ElMessage } from "element-plus";
@@ -135,13 +133,8 @@ states.visTypes = setVisTypes();
 setDashboards();
 setMetricType();
 
-async function setMetricType(catalog?: string) {
+async function setMetricType() {
   const { graph } = dashboardStore.selectedGrid;
-  if (states.isList) {
-    catalog = catalog || ListEntity[graph.type];
-  } else {
-    catalog = catalog || dashboardStore.entity;
-  }
   const json = await dashboardStore.fetchMetricList();
   if (json.errors) {
     ElMessage.error(json.errors);
@@ -249,12 +242,7 @@ function changeChartType(item: Option) {
     states.metrics = [""];
     states.metricTypes = [""];
   }
-  const catalog: { [key: string]: string } = {
-    InstanceList: EntityType[3].value,
-    EndpointList: EntityType[2].value,
-    ServiceList: EntityType[0].value,
-  };
-  setMetricType(catalog[graph.type]);
+  setMetricType();
   setDashboards();
   states.dashboardName = "";
 }

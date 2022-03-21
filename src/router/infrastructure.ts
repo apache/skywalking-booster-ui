@@ -25,7 +25,7 @@ export const routesInfra: Array<RouteRecordRaw> = [
       title: "infrastructure",
       icon: "scatter_plot",
       exact: true,
-      hasGroup: false,
+      hasGroup: true,
     },
     redirect: "/infrastructure",
     component: Layout,
