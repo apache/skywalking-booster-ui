@@ -92,6 +92,7 @@ limitations under the License. -->
           v-model="dashboardStore.editMode"
           active-text="Edit"
           inactive-text="View"
+          @change="changeMode"
         />
       </div>
     </div>
@@ -300,6 +301,14 @@ function changePods(pod: any) {
   } else {
     selectorStore.setCurrentPod("");
   }
+}
+
+function changeMode() {
+  if (dashboardStore.editMode) {
+    ElMessage.warning("You enter edit mode");
+    return;
+  }
+  ElMessage.warning("You enter view mode");
 }
 
 function clickIcons(t: { id: string; content: string; name: string }) {
