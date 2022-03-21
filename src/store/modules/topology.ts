@@ -23,6 +23,8 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { AxiosResponse } from "axios";
 import query from "@/graphql/fetch";
+import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
+import { ElMessage } from "element-plus";
 
 interface MetricVal {
   [key: string]: { values: { id: string; value: unknown }[] };
@@ -399,6 +401,37 @@ export const topologyStore = defineStore({
       }
       this.setNodeMetrics(res.data.data);
       return res.data;
+    },
+    async getLinkClientMetrics(linkClientMetrics: string[]) {
+      const idsC = this.calls
+        .filter((i: Call) => i.detectPoints.includes("CLIENT"))
+        .map((b: Call) => b.id);
+      const param = await useQueryTopologyMetrics(linkClientMetrics, idsC);
+      const res = await this.getCallClientMetrics(param);
+
+      if (res.errors) {
+        ElMessage.error(res.errors);
+      }
+    },
+    async getLinkServerMetrics(linkServerMetrics: string[]) {
+      const idsS = this.calls
+        .filter((i: Call) => i.detectPoints.includes("SERVER"))
+        .map((b: Call) => b.id);
+      const param = await useQueryTopologyMetrics(linkServerMetrics, idsS);
+      const res = await this.getCallServerMetrics(param);
+
+      if (res.errors) {
+        ElMessage.error(res.errors);
+      }
+    },
+    async queryNodeMetrics(nodeMetrics: string[]) {
+      const ids = this.nodes.map((d: Node) => d.id);
+      const param = await useQueryTopologyMetrics(nodeMetrics, ids);
+      const res = await this.getNodeMetrics(param);
+
+      if (res.errors) {
+        ElMessage.error(res.errors);
+      }
     },
     async getLegendMetrics(param: {
       queryStr: string;

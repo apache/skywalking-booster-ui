@@ -43,7 +43,7 @@ limitations under the License. -->
     >
       <Icon size="middle" iconName="keyboard_backspace" />
     </span>
-    <div class="settings" v-show="showSettings">
+    <div class="settings" v-if="showSettings">
       <Settings @update="updateConfig" />
     </div>
   </div>
@@ -109,7 +109,7 @@ const loading = ref<boolean>(false);
 const height = ref<number>(100);
 const width = ref<number>(100);
 const showSettings = ref<boolean>(false);
-const settings = ref<any>({});
+const settings = ref<any>(props.config);
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
 const depth = ref<number>(props.config.graph.depth || 3);
 const items = [
@@ -135,6 +135,9 @@ async function loadTopology(id: string) {
   };
   height.value = dom.height - 70;
   width.value = dom.width - 5;
+  topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics);
+  topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics);
+  topologyStore.queryNodeMetrics(settings.value.nodeMetrics);
 }
 
 function inspect() {
@@ -172,6 +175,7 @@ function goDashboard() {
 function setConfig() {
   topologyStore.setNode(null);
   showSettings.value = !showSettings.value;
+  dashboardStore.selectWidget(props.config);
 }
 
 function updateConfig(config: any) {
@@ -236,6 +240,7 @@ function handleClick(event: any) {
   if (event.target.nodeName === "svg") {
     topologyStore.setNode(null);
     topologyStore.setLink(null);
+    dashboardStore.selectWidget(props.config);
   }
 }
 watch(

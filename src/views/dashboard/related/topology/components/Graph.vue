@@ -20,7 +20,7 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <div class="setting" v-show="showSetting">
+    <div class="setting" v-if="showSetting">
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
     <div class="tool">
@@ -118,7 +118,7 @@ const anchor = ref<any>(null);
 const arrow = ref<any>(null);
 const legend = ref<any>(null);
 const showSetting = ref<boolean>(false);
-const settings = ref<any>({});
+const settings = ref<any>(props.config);
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
 const items = ref<
   { id: string; title: string; func: any; dashboard?: string }[]
@@ -135,6 +135,9 @@ onMounted(async () => {
   if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
+  topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics);
+  topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics);
+  topologyStore.queryNodeMetrics(settings.value.nodeMetrics);
   const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
     height: 40,
     width: 0,
@@ -172,6 +175,7 @@ async function init() {
     event.preventDefault();
     topologyStore.setNode(null);
     topologyStore.setLink(null);
+    dashboardStore.selectWidget(props.config);
   });
 }
 function ticked() {
@@ -460,6 +464,7 @@ async function getTopology() {
 }
 function setConfig() {
   showSetting.value = !showSetting.value;
+  dashboardStore.selectWidget(props.config);
 }
 function resize() {
   height.value = document.body.clientHeight;

@@ -176,6 +176,11 @@ limitations under the License. -->
       {{ t("setLegend") }}
     </el-button>
   </div>
+  <div>
+    <el-button @click="saveConfig" class="save-btn" size="small" type="primary">
+      {{ t("apply") }}
+    </el-button>
+  </div>
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
@@ -186,7 +191,7 @@ import { ElMessage } from "element-plus";
 import { MetricCatalog, ScopeType, MetricConditions } from "../../../data";
 import { Option } from "@/types/app";
 import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
-import { Node, Call } from "@/types/topology";
+import { Node } from "@/types/topology";
 import { DashboardItem } from "@/types/dashboard";
 import { EntityType, LegendOpt, MetricsType } from "../../../data";
 
@@ -195,12 +200,16 @@ const emit = defineEmits(["update", "updateNodes"]);
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const topologyStore = useTopologyStore();
+const { selectedGrid } = dashboardStore;
+const isService = [EntityType[0].value, EntityType[1].value].includes(
+  dashboardStore.entity
+);
 const items = reactive<
   {
     scope: string;
     dashboard: string;
   }[]
->([{ scope: "", dashboard: "" }]);
+>((isService && selectedGrid.nodeDashboard) || [{ scope: "", dashboard: "" }]);
 const states = reactive<{
   linkDashboard: string;
   nodeDashboard: {
@@ -215,22 +224,19 @@ const states = reactive<{
   linkDashboards: (DashboardItem & { label: string; value: string })[];
   nodeDashboards: (DashboardItem & { label: string; value: string })[];
 }>({
-  linkDashboard: "",
-  nodeDashboard: [],
-  linkServerMetrics: [],
-  linkClientMetrics: [],
-  nodeMetrics: [],
+  linkDashboard: selectedGrid.linkDashboard || "",
+  nodeDashboard: selectedGrid.nodeDashboard || [],
+  linkServerMetrics: selectedGrid.linkServerMetrics || [],
+  linkClientMetrics: selectedGrid.linkClientMetrics || [],
+  nodeMetrics: selectedGrid.nodeMetrics || [],
   nodeMetricList: [],
   linkMetricList: [],
   linkDashboards: [],
   nodeDashboards: [],
 });
-const isService = [EntityType[0].value, EntityType[1].value].includes(
-  dashboardStore.entity
-);
 const legend = reactive<{
   metric: { name: string; condition: string; value: string }[];
-}>({ metric: [{ name: "", condition: "", value: "" }] });
+}>({ metric: selectedGrid.legend || [{ name: "", condition: "", value: "" }] });
 
 getMetricList();
 async function getMetricList() {
@@ -275,8 +281,7 @@ async function setLegend() {
     (d: any) => d.name && d.value && d.condition
   );
   const names = metrics.map((d: any) => d.name);
-
-  emit("update", {
+  const p = {
     linkDashboard: states.linkDashboard,
     nodeDashboard: isService
       ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
@@ -285,7 +290,10 @@ async function setLegend() {
     linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
     legend: metrics,
-  });
+  };
+
+  emit("update", p);
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, ...p });
   const ids = topologyStore.nodes.map((d: Node) => d.id);
   const param = await useQueryTopologyMetrics(names, ids);
   const res = await topologyStore.getLegendMetrics(param);
@@ -335,7 +343,7 @@ function deleteItem(index: number) {
   updateSettings();
 }
 function updateSettings() {
-  emit("update", {
+  const param = {
     linkDashboard: states.linkDashboard,
     nodeDashboard: isService
       ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
@@ -344,7 +352,9 @@ function updateSettings() {
     linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
     legend: legend.metric,
-  });
+  };
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, ...param });
+  emit("update", param);
 }
 async function changeLinkServerMetrics(options: Option[] | any) {
   states.linkServerMetrics = options.map((d: Option) => d.value);
@@ -353,15 +363,7 @@ async function changeLinkServerMetrics(options: Option[] | any) {
     topologyStore.setLinkServerMetrics({});
     return;
   }
-  const idsS = topologyStore.calls
-    .filter((i: Call) => i.detectPoints.includes("SERVER"))
-    .map((b: Call) => b.id);
-  const param = await useQueryTopologyMetrics(states.linkServerMetrics, idsS);
-  const res = await topologyStore.getCallServerMetrics(param);
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
+  topologyStore.getLinkServerMetrics(states.linkServerMetrics);
 }
 async function changeLinkClientMetrics(options: Option[] | any) {
   states.linkClientMetrics = options.map((d: Option) => d.value);
@@ -370,16 +372,9 @@ async function changeLinkClientMetrics(options: Option[] | any) {
     topologyStore.setLinkClientMetrics({});
     return;
   }
-  const idsC = topologyStore.calls
-    .filter((i: Call) => i.detectPoints.includes("CLIENT"))
-    .map((b: Call) => b.id);
-  const param = await useQueryTopologyMetrics(states.linkClientMetrics, idsC);
-  const res = await topologyStore.getCallClientMetrics(param);
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
+  topologyStore.getLinkClientMetrics(states.linkClientMetrics);
 }
+
 async function changeNodeMetrics(options: Option[] | any) {
   states.nodeMetrics = options.map((d: Option) => d.value);
   updateSettings();
@@ -387,19 +382,17 @@ async function changeNodeMetrics(options: Option[] | any) {
     topologyStore.setNodeMetrics({});
     return;
   }
-  const ids = topologyStore.nodes.map((d: Node) => d.id);
-  const param = await useQueryTopologyMetrics(states.nodeMetrics, ids);
-  const res = await topologyStore.getNodeMetrics(param);
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
+  topologyStore.queryNodeMetrics(states.nodeMetrics);
 }
 function deleteMetric(index: number) {
   legend.metric.splice(index, 1);
 }
 function addMetric() {
   legend.metric.push({ name: "", condition: "", value: "" });
+}
+function saveConfig() {
+  console.log(dashboardStore.selectedGrid);
+  dashboardStore.setConfigs(dashboardStore.selectedGrid);
 }
 </script>
 <style lang="scss" scoped>
@@ -438,5 +431,9 @@ function addMetric() {
 
 .delete {
   margin: 0 3px;
+}
+
+.save-btn {
+  margin-top: 20px;
 }
 </style>
