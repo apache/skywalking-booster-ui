@@ -239,6 +239,7 @@ function handleLinkClick(event: any, d: Call) {
     dashboardStore.entity === EntityType[1].value
       ? EntityType[0].value
       : dashboardStore.entity;
+  dashboardStore.setEntity(`${e}Relation`);
   const path = `/dashboard/${dashboardStore.layerId}/${e}Relation/${
     d.source.id
   }/${d.target.id}/${settings.value.linkDashboard.split(" ").join("-")}`;
@@ -373,6 +374,7 @@ async function handleInspect() {
   update();
 }
 function handleGoEndpoint(name: string) {
+  dashboardStore.setEntity(EntityType[2].value);
   const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${
     topologyStore.node.id
   }/${name.split(" ").join("-")}`;
@@ -381,6 +383,7 @@ function handleGoEndpoint(name: string) {
   window.open(routeUrl.href, "_blank");
 }
 function handleGoInstance(name: string) {
+  dashboardStore.setEntity(EntityType[3].value);
   const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${
     topologyStore.node.id
   }/${name.split(" ").join("-")}`;
@@ -389,6 +392,7 @@ function handleGoInstance(name: string) {
   window.open(routeUrl.href, "_blank");
 }
 function handleGoDashboard(name: string) {
+  dashboardStore.setEntity(EntityType[0].value);
   const path = `/dashboard/${dashboardStore.layerId}/Service/${
     topologyStore.node.id
   }/${name.split(" ").join("-")}`;

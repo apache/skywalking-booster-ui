@@ -33,17 +33,13 @@ limitations under the License. -->
       <el-table v-loading="chartLoading" :data="instances" style="width: 100%">
         <el-table-column label="Service Instances">
           <template #default="scope">
-            <router-link
+            <span
               class="link"
-              :to="`/dashboard/${dashboardStore.layerId}/${
-                EntityType[3].value
-              }/${selectorStore.currentService.id}/${
-                scope.row.id
-              }/${config.dashboardName.split(' ').join('-')}`"
+              @click="clickInstance"
               :style="{ fontSize: `${config.fontSize}px` }"
             >
               {{ scope.row.label }}
-            </router-link>
+            </span>
           </template>
         </el-table-column>
         <el-table-column
@@ -94,6 +90,7 @@ import { InstanceListConfig } from "@/types/dashboard";
 import { Instance } from "@/types/selector";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
+import router from "@/router";
 
 /*global defineProps */
 const props = defineProps({
@@ -162,6 +159,15 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
     return;
   }
   instances.value = currentInstances;
+}
+
+function clickInstance(scope: any) {
+  dashboardStore.setEntity(EntityType[3].value);
+  router.push(
+    `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${
+      selectorStore.currentService.id
+    }/${scope.row.id}/${props.config.dashboardName.split(" ").join("-")}`
+  );
 }
 
 function changePage(pageIndex: number) {

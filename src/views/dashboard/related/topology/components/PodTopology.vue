@@ -150,6 +150,7 @@ function goDashboard() {
     dashboardStore.entity === EntityType[2].value
       ? EntityType[2].value
       : EntityType[3].value;
+  dashboardStore.setEntity(entity);
   const path = `/dashboard/${dashboardStore.layerId}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${settings.value.nodeDashboard}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
@@ -182,6 +183,7 @@ function selectNodeLink(d: any) {
       dashboardStore.entity === EntityType[2].value
         ? EntityType[6].value
         : EntityType[5].value;
+    dashboardStore.setEntity(entity);
     const path = `/dashboard/${dashboardStore.layerId}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${settings.value.linkDashboard}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");

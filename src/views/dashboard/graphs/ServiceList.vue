@@ -45,16 +45,13 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column label="Service Names">
           <template #default="scope">
-            <router-link
+            <span
               class="link"
-              :to="`/dashboard/${dashboardStore.layerId}/${
-                EntityType[0].value
-              }/${scope.row.id}/${config.dashboardName.split(' ').join('-')}`"
-              :key="1"
               :style="{ fontSize: `${config.fontSize}px` }"
+              @click="clickService(scope)"
             >
               {{ scope.row.label }}
-            </router-link>
+            </span>
           </template>
         </el-table-column>
         <el-table-column
@@ -105,6 +102,7 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { Service } from "@/types/selector";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
+import router from "@/router";
 
 /*global defineProps */
 const props = defineProps({
@@ -172,6 +170,15 @@ async function queryServices() {
     return;
   }
   queryServiceMetrics(services.value);
+}
+
+function clickService(scope: any) {
+  dashboardStore.setEntity(EntityType[0].value);
+  const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${
+    scope.row.id
+  }/${props.config.dashboardName.split(" ").join("-")}`;
+
+  router.push(path);
 }
 async function queryServiceMetrics(currentServices: Service[]) {
   const { metrics } = props.config;
