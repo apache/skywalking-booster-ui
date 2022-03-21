@@ -72,7 +72,7 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <div class="tool-icons">
+    <div class="tool-icons" v-if="dashboardStore.editMode">
       <span
         @click="clickIcons(t)"
         v-for="(t, index) in toolIcons"
@@ -127,9 +127,10 @@ const states = reactive<{
   currentDestService: "",
   currentDestPod: "",
 });
-
-dashboardStore.setLayer(params.layerId);
-dashboardStore.setEntity(params.entity);
+if (params.layerId) {
+  dashboardStore.setLayer(params.layerId);
+  dashboardStore.setEntity(params.entity);
+}
 appStore.setEventStack([initSelector]);
 
 initSelector();

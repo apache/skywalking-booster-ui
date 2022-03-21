@@ -46,9 +46,11 @@ const layer = ref<string>("GENERAL");
 getDashboard();
 
 async function getDashboard() {
+  setLayer(String(route.name));
+  dashboardStore.setLayer(layer.value);
+  dashboardStore.setEntity(EntityType[0].value);
   dashboardStore.setMode(false);
   dashboardStore.setCurrentDashboard(null);
-  setLayer(String(route.name));
   await dashboardStore.setDashboards();
   const index = dashboardStore.dashboards.findIndex(
     (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
@@ -97,8 +99,6 @@ function setLayer(n: string) {
       layer.value = "GENERAL";
       break;
   }
-  dashboardStore.setLayer(layer.value);
-  dashboardStore.setEntity(EntityType[1].value);
 }
 watch(
   () => route.name,
