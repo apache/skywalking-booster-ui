@@ -115,7 +115,7 @@ const msg = {
   rename: "Rename",
   selfObservability: "Self Observability",
   satellite: "Satellite",
-  skyWalkingServer: "Sky Walking Server",
+  skyWalkingServer: "SkyWalking Server",
   functions: "Functions",
   browser: "Browser",
   linux: "Linux",
