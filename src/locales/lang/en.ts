@@ -119,6 +119,8 @@ const msg = {
   functions: "Functions",
   browser: "Browser",
   linux: "Linux",
+  editWarning: "You are entering edit mode",
+  viewWarning: "You are entering view mode",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

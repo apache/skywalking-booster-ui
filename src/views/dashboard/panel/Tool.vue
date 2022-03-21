@@ -305,10 +305,10 @@ function changePods(pod: any) {
 
 function changeMode() {
   if (dashboardStore.editMode) {
-    ElMessage.warning("You enter edit mode");
+    ElMessage.warning(t("editWarning"));
     return;
   }
-  ElMessage.warning("You enter view mode");
+  ElMessage.warning(t("viewWarning"));
 }
 
 function clickIcons(t: { id: string; content: string; name: string }) {

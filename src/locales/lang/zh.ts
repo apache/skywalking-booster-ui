@@ -119,6 +119,8 @@ const msg = {
   functions: "Functions",
   linux: "Linux",
   browser: "浏览器",
+  editWarning: "你正在进入编辑模式",
+  viewWarning: "你正在进入预览模式",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",
