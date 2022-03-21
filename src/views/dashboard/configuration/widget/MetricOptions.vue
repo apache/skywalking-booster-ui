@@ -150,16 +150,11 @@ async function setMetricType(catalog?: string) {
   states.metricList = (json.data.metrics || []).filter(
     (d: { catalog: string; type: string }) => {
       if (states.isList || graph.type === "Table") {
-        if (
-          d.type === MetricsType.REGULAR_VALUE &&
-          catalog === (MetricCatalog as any)[d.catalog]
-        ) {
+        if (d.type === MetricsType.REGULAR_VALUE) {
           return d;
         }
       } else {
-        if (catalog === (MetricCatalog as any)[d.catalog]) {
-          return d;
-        }
+        return d;
       }
     }
   );

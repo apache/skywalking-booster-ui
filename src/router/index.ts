@@ -23,12 +23,18 @@ import { routesDashboard } from "./dashboard";
 import { routesEvent } from "./event";
 import { routesSetting } from "./setting";
 import { routesAlarm } from "./alarm";
+import { routesSelf } from "./selfObservability";
+import { routesFunctions } from "./functions";
+import { routesBrowser } from "./browser";
 
 const routes: Array<RouteRecordRaw> = [
   ...routesGen,
   ...routesMesh,
-  ...routesDatabase,
+  ...routesFunctions,
   ...routesInfra,
+  ...routesBrowser,
+  ...routesDatabase,
+  ...routesSelf,
   ...routesDashboard,
   ...routesAlarm,
   ...routesEvent,

@@ -17,44 +17,27 @@
 import { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
 
-export const routesInfra: Array<RouteRecordRaw> = [
+export const routesBrowser: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "Infrastructure",
+    name: "Browser",
     meta: {
-      title: "infrastructure",
-      icon: "scatter_plot",
-      exact: true,
-      hasGroup: false,
+      title: "browser",
+      icon: "epic",
     },
-    redirect: "/infrastructure",
+    redirect: "/browser",
     component: Layout,
     children: [
       {
-        path: "/infrastructure",
-        name: "Linux",
+        path: "/browser",
+        name: "Browser",
         meta: {
-          title: "linux",
+          title: "browser",
+          headPath: "/browser",
+          exact: true,
         },
         component: () => import("@/views/Layer.vue"),
-        // component: () => import("@/views/infrastructure/Infrastructure.vue"),
       },
-      // {
-      //   path: "/infrastructure/vm",
-      //   name: "VirtualMachine",
-      //   meta: {
-      //     title: "virtualMachine",
-      //   },
-      //   component: () => import("@/views/infrastructure/Infrastructure.vue"),
-      // },
-      // {
-      //   path: "/infrastructure/k8s",
-      //   name: "Kubernetes",
-      //   meta: {
-      //     title: "kubernetes",
-      //   },
-      //   component: () => import("@/views/infrastructure/Infrastructure.vue"),
-      // },
     ],
   },
 ];
