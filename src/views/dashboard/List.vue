@@ -61,7 +61,7 @@ limitations under the License. -->
         <el-table-column label="Operations">
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.row)">
-              {{ t("edit") }}
+              {{ t("rename") }}
             </el-button>
             <el-button size="small" @click="handleRename(scope.row)">
               {{ t("rename") }}

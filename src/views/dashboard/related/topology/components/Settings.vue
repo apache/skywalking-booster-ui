@@ -374,7 +374,6 @@ async function changeLinkClientMetrics(options: Option[] | any) {
   }
   topologyStore.getLinkClientMetrics(states.linkClientMetrics);
 }
-
 async function changeNodeMetrics(options: Option[] | any) {
   states.nodeMetrics = options.map((d: Option) => d.value);
   updateSettings();
