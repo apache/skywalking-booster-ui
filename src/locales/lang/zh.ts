@@ -115,7 +115,7 @@ const msg = {
   rename: "重命名",
   selfObservability: "自观性",
   satellite: "Satellite",
-  skyWalkingServer: "SkyWalking服务",
+  skyWalkingServer: "Sky Walking服务",
   functions: "Functions",
   browser: "浏览器",
   hourTip: "选择小时",
