@@ -13,11 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Tool v-if="p.entity" />
+  <Tool v-if="dashboardStore.editMode" />
   <div
     class="ds-main"
     @click="handleClick"
-    :style="{ height: p.entity ? 'calc(100% - 45px)' : '100%' }"
+    :style="{ height: dashboardStore.editMode ? 'calc(100% - 45px)' : '100%' }"
   >
     <grid-layout />
     <el-dialog

@@ -18,7 +18,7 @@ limitations under the License. -->
       placement="bottom"
       trigger="click"
       :width="100"
-      v-if="routeParams.entity"
+      v-if="dashboardStore.editMode"
     >
       <template #reference>
         <span class="delete cp">
@@ -39,7 +39,6 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Header from "../related/log/Header.vue";
 import List from "../related/log/List.vue";
@@ -53,7 +52,6 @@ const props = defineProps({
   activeIndex: { type: String, default: "" },
 });
 const { t } = useI18n();
-const routeParams = useRoute().params;
 const dashboardStore = useDashboardStore();
 
 function removeWidget() {

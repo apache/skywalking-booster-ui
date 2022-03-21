@@ -46,6 +46,7 @@ const layer = ref<string>("GENERAL");
 getDashboard();
 
 async function getDashboard() {
+  dashboardStore.setMode(false);
   dashboardStore.setCurrentDashboard(null);
   setLayer(String(route.name));
   await dashboardStore.setDashboards();

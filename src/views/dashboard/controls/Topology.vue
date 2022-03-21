@@ -19,7 +19,7 @@ limitations under the License. -->
         placement="bottom"
         trigger="click"
         :width="100"
-        v-if="routeParams.entity"
+        v-if="dashboardStore.editMode"
       >
         <template #reference>
           <span>
@@ -39,7 +39,6 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Topology from "../related/topology/Index.vue";
@@ -53,7 +52,6 @@ const props = defineProps({
   activeIndex: { type: String, default: "" },
 });
 const { t } = useI18n();
-const routeParams = useRoute().params;
 const dashboardStore = useDashboardStore();
 
 function removeTopo() {
