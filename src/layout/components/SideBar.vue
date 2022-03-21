@@ -99,7 +99,7 @@ const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
   ? ref("light")
   : ref("black");
 const routes = ref<any>(useRouter().options.routes);
-const isCollapse = ref(true);
+const isCollapse = ref(false);
 const controlMenu = () => {
   isCollapse.value = !isCollapse.value;
 };

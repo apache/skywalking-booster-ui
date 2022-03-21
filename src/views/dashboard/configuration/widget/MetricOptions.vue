@@ -96,6 +96,7 @@ import {
   ChartTypes,
   PodsChartTypes,
   ListEntity,
+  MetricsType,
 } from "../../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
@@ -150,7 +151,7 @@ async function setMetricType(catalog?: string) {
     (d: { catalog: string; type: string }) => {
       if (states.isList || graph.type === "Table") {
         if (
-          d.type === "REGULAR_VALUE" &&
+          d.type === MetricsType.REGULAR_VALUE &&
           catalog === (MetricCatalog as any)[d.catalog]
         ) {
           return d;
@@ -367,7 +368,7 @@ function deleteMetric(index: number) {
   states.metricTypes.splice(index, 1);
 }
 function setMetricTypeList(type: string) {
-  if (type !== "REGULAR_VALUE") {
+  if (type !== MetricsType.REGULAR_VALUE) {
     return MetricTypes[type];
   }
   if (states.isList || dashboardStore.selectedGrid.graph.type === "Table") {

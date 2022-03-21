@@ -239,7 +239,9 @@ function handleLinkClick(event: any, d: Call) {
     dashboardStore.entity === EntityType[1].value
       ? EntityType[0].value
       : dashboardStore.entity;
-  const path = `/dashboard/${dashboardStore.layerId}/${e}Relation/${d.source.id}/${d.target.id}/${settings.value.linkDashboard}`;
+  const path = `/dashboard/${dashboardStore.layerId}/${e}Relation/${
+    d.source.id
+  }/${d.target.id}/${settings.value.linkDashboard.split(" ").join("-")}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
 }
@@ -371,19 +373,25 @@ async function handleInspect() {
   update();
 }
 function handleGoEndpoint(name: string) {
-  const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${topologyStore.node.id}/${name}`;
+  const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${
+    topologyStore.node.id
+  }/${name.split(" ").join("-")}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
 }
 function handleGoInstance(name: string) {
-  const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${topologyStore.node.id}/${name}`;
+  const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${
+    topologyStore.node.id
+  }/${name.split(" ").join("-")}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
 }
 function handleGoDashboard(name: string) {
-  const path = `/dashboard/${dashboardStore.layerId}/Service/${topologyStore.node.id}/${name}`;
+  const path = `/dashboard/${dashboardStore.layerId}/Service/${
+    topologyStore.node.id
+  }/${name.split(" ").join("-")}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");

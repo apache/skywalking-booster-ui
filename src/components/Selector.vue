@@ -37,8 +37,8 @@ import { ref, watch } from "vue";
 import type { PropType } from "vue";
 
 interface Option {
-  label: string;
-  value: string;
+  label: string | number;
+  value: string | number;
 }
 
 /*global  defineProps, defineEmits*/
@@ -49,11 +49,14 @@ const props = defineProps({
     default: () => [],
   },
   value: {
-    type: [Array, String, Number] as PropType<any>,
+    type: [Array, String, Number, undefined] as PropType<any>,
     default: () => [],
   },
   size: { type: null, default: "default" },
-  placeholder: { type: String, default: "Select a option" },
+  placeholder: {
+    type: [String, Number] as PropType<string | number>,
+    default: "Select a option",
+  },
   borderRadius: { type: Number, default: 3 },
   multiple: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
@@ -61,7 +64,7 @@ const props = defineProps({
 
 const selected = ref<string[] | string>(props.value);
 function changeSelected() {
-  const options = props.options.filter((d: Option) =>
+  const options = props.options.filter((d: any) =>
     props.multiple
       ? selected.value.includes(d.value)
       : selected.value === d.value

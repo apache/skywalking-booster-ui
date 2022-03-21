@@ -16,11 +16,12 @@ limitations under the License. -->
   <div class="link-settings">
     <h5 class="title">{{ t("callSettings") }}</h5>
     <div class="label">{{ t("linkDashboard") }}</div>
-    <el-input
-      v-model="states.linkDashboard"
-      placeholder="Please input a dashboard name for calls"
-      @change="updateSettings"
+    <Selector
+      :value="states.linkDashboard"
+      :options="states.linkDashboards"
       size="small"
+      placeholder="Please input a dashboard name for calls"
+      @change="changeLinkDashboard"
       class="inputs"
     />
     <div class="label">{{ t("linkServerMetrics") }}</div>
@@ -51,16 +52,17 @@ limitations under the License. -->
   <div class="node-settings">
     <h5 class="title">{{ t("nodeSettings") }}</h5>
     <div class="label">{{ t("nodeDashboard") }}</div>
-    <el-input
-      v-show="!isServer"
-      v-model="states.nodeDashboard"
-      placeholder="Please input a dashboard name for nodes"
-      @change="updateSettings"
+    <Selector
+      v-show="!isService"
+      :value="states.nodeDashboard"
+      :options="states.nodeDashboards"
       size="small"
+      placeholder="Please input a dashboard name for nodes"
+      @change="changeNodeDashboard"
       class="inputs"
     />
     <div
-      v-show="isServer"
+      v-show="isService"
       v-for="(item, index) in items"
       :key="index"
       class="metric-item"
@@ -73,11 +75,12 @@ limitations under the License. -->
         @change="changeScope(index, $event)"
         class="item mr-5"
       />
-      <el-input
-        v-model="item.dashboard"
+      <Selector
+        :value="item.dashboard"
+        :options="states.nodeDashboards"
+        size="small"
         placeholder="Please input a dashboard name for nodes"
         @change="updateNodeDashboards(index, $event)"
-        size="small"
         class="item mr-5"
       />
       <span>
@@ -108,7 +111,7 @@ limitations under the License. -->
       @change="changeNodeMetrics"
     />
   </div>
-  <div class="legend-settings" v-show="isServer">
+  <div class="legend-settings" v-show="isService">
     <h5 class="title">{{ t("legendSettings") }}</h5>
     <div class="label">{{ t("conditions") }}</div>
     <div v-for="(metric, index) of legend.metric" :key="metric.name + index">
@@ -184,7 +187,8 @@ import { MetricCatalog, ScopeType, MetricConditions } from "../../../data";
 import { Option } from "@/types/app";
 import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
 import { Node, Call } from "@/types/topology";
-import { EntityType, LegendOpt } from "../../../data";
+import { DashboardItem } from "@/types/dashboard";
+import { EntityType, LegendOpt, MetricsType } from "../../../data";
 
 /*global defineEmits */
 const emit = defineEmits(["update", "updateNodes"]);
@@ -208,6 +212,8 @@ const states = reactive<{
   nodeMetrics: string[];
   nodeMetricList: Option[];
   linkMetricList: Option[];
+  linkDashboards: (DashboardItem & { label: string; value: string })[];
+  nodeDashboards: (DashboardItem & { label: string; value: string })[];
 }>({
   linkDashboard: "",
   nodeDashboard: [],
@@ -216,8 +222,10 @@ const states = reactive<{
   nodeMetrics: [],
   nodeMetricList: [],
   linkMetricList: [],
+  linkDashboards: [],
+  nodeDashboards: [],
 });
-const isServer = [EntityType[0].value, EntityType[1].value].includes(
+const isService = [EntityType[0].value, EntityType[1].value].includes(
   dashboardStore.entity
 );
 const legend = reactive<{
@@ -226,6 +234,7 @@ const legend = reactive<{
 
 getMetricList();
 async function getMetricList() {
+  const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   const json = await dashboardStore.fetchMetricList();
   if (json.errors) {
     ElMessage.error(json.errors);
@@ -237,18 +246,28 @@ async function getMetricList() {
       : dashboardStore.entity === EntityType[4].value
       ? EntityType[3].value
       : dashboardStore.entity;
-  states.nodeMetricList = (json.data.metrics || []).filter(
-    (d: { catalog: string }) => entity === (MetricCatalog as any)[d.catalog]
+  states.linkDashboards = list.reduce(
+    (
+      prev: (DashboardItem & { label: string; value: string })[],
+      d: DashboardItem
+    ) => {
+      if (
+        d.layer === dashboardStore.layerId &&
+        d.entity === entity + "Relation"
+      ) {
+        prev.push({ ...d, label: d.name, value: d.name });
+      }
+      return prev;
+    },
+    []
   );
-  const e =
-    dashboardStore.entity === EntityType[1].value
-      ? EntityType[0].value
-      : dashboardStore.entity === EntityType[4].value
-      ? EntityType[3].value
-      : dashboardStore.entity;
+  states.nodeMetricList = (json.data.metrics || []).filter(
+    (d: { type: string }) => d.type === MetricsType.REGULAR_VALUE
+  );
   states.linkMetricList = (json.data.metrics || []).filter(
-    (d: { catalog: string }) =>
-      e + "Relation" === (MetricCatalog as any)[d.catalog]
+    (d: { catalog: string; type: string }) =>
+      entity + "Relation" === (MetricCatalog as any)[d.catalog] &&
+      d.type === MetricsType.REGULAR_VALUE
   );
 }
 async function setLegend() {
@@ -259,7 +278,7 @@ async function setLegend() {
 
   emit("update", {
     linkDashboard: states.linkDashboard,
-    nodeDashboard: isServer
+    nodeDashboard: isService
       ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
       : states.nodeDashboard,
     linkServerMetrics: states.linkServerMetrics,
@@ -276,15 +295,34 @@ async function setLegend() {
   }
   emit("updateNodes");
 }
+function changeNodeDashboard(opt: any) {
+  states.nodeDashboard = opt[0].value;
+}
+function changeLinkDashboard(opt: any) {
+  states.linkDashboard = opt[0].value;
+}
 function changeLegend(type: string, opt: any, index: number) {
   (legend.metric[index] as any)[type] = opt[0].value || opt;
 }
-function changeScope(index: number, opt: Option[]) {
+function changeScope(index: number, opt: Option[] | any) {
   items[index].scope = opt[0].value;
-  items[index].dashboard = "";
+  const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
+  states.nodeDashboards = list.reduce(
+    (
+      prev: (DashboardItem & { label: string; value: string })[],
+      d: DashboardItem
+    ) => {
+      if (d.layer === dashboardStore.layerId && d.entity === opt[0].value) {
+        prev.push({ ...d, label: d.name, value: d.name });
+      }
+      return prev;
+    },
+    []
+  );
+  items[index].dashboard = states.nodeDashboards[0].value;
 }
-function updateNodeDashboards(index: number, content: string) {
-  items[index].dashboard = content;
+function updateNodeDashboards(index: number, content: Option[] | any) {
+  items[index].dashboard = content[0].value;
   updateSettings();
 }
 function addItem() {
@@ -297,7 +335,7 @@ function deleteItem(index: number) {
 function updateSettings() {
   emit("update", {
     linkDashboard: states.linkDashboard,
-    nodeDashboard: isServer
+    nodeDashboard: isService
       ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
       : states.nodeDashboard,
     linkServerMetrics: states.linkServerMetrics,
@@ -306,7 +344,7 @@ function updateSettings() {
     legend: legend.metric,
   });
 }
-async function changeLinkServerMetrics(options: Option[]) {
+async function changeLinkServerMetrics(options: Option[] | any) {
   states.linkServerMetrics = options.map((d: Option) => d.value);
   updateSettings();
   if (!states.linkServerMetrics.length) {
@@ -323,7 +361,7 @@ async function changeLinkServerMetrics(options: Option[]) {
     ElMessage.error(res.errors);
   }
 }
-async function changeLinkClientMetrics(options: Option[]) {
+async function changeLinkClientMetrics(options: Option[] | any) {
   states.linkClientMetrics = options.map((d: Option) => d.value);
   updateSettings();
   if (!states.linkClientMetrics.length) {
@@ -340,7 +378,7 @@ async function changeLinkClientMetrics(options: Option[]) {
     ElMessage.error(res.errors);
   }
 }
-async function changeNodeMetrics(options: Option[]) {
+async function changeNodeMetrics(options: Option[] | any) {
   states.nodeMetrics = options.map((d: Option) => d.value);
   updateSettings();
   if (!states.nodeMetrics.length) {
