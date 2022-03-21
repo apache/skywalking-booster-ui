@@ -213,7 +213,7 @@ function handleNodeClick(d: Node & { x: number; y: number }) {
   topologyStore.setNode(d);
   topologyStore.setLink(null);
   operationsPos.x = d.x;
-  operationsPos.y = d.y - 60;
+  operationsPos.y = d.y - 70;
   if (d.layer === String(dashboardStore.layerId)) {
     return;
   }
