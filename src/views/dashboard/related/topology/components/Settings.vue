@@ -297,9 +297,11 @@ async function setLegend() {
 }
 function changeNodeDashboard(opt: any) {
   states.nodeDashboard = opt[0].value;
+  updateSettings();
 }
 function changeLinkDashboard(opt: any) {
   states.linkDashboard = opt[0].value;
+  updateSettings();
 }
 function changeLegend(type: string, opt: any, index: number) {
   (legend.metric[index] as any)[type] = opt[0].value || opt;
