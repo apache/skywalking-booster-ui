@@ -34,7 +34,12 @@ limitations under the License. -->
           @change="changeDepth"
         />
       </span>
-      <span class="switch-icon ml-5" title="Settings" @click="setConfig">
+      <span
+        class="switch-icon ml-5"
+        title="Settings"
+        @click="setConfig"
+        v-if="dashboardStore.editMode"
+      >
         <Icon size="middle" iconName="settings" />
       </span>
       <span

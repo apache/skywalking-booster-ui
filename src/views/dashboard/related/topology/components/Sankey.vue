@@ -26,6 +26,7 @@ const emit = defineEmits(["click"]);
 const topologyStore = useTopologyStore();
 const option = computed(() => getOption());
 
+console.log(topologyStore.nodes);
 function getOption() {
   return {
     tooltip: {
