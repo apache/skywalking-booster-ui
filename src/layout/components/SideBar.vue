@@ -129,7 +129,7 @@ const filterMenus = (menus: any[]) => {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .side-bar {
   position: relative;
   height: 100%;

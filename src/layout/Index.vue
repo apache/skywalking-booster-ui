@@ -24,10 +24,11 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { AppMain, SideBar, NavBar } from "./components";
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .app-wrapper {
   height: 100%;
 }
+
 .main-container {
   flex-grow: 2;
   height: 100%;

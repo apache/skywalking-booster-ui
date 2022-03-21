@@ -85,6 +85,7 @@ import Settings from "./Settings.vue";
 import { Option } from "@/types/app";
 import { Service } from "@/types/selector";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -239,9 +240,15 @@ function handleLinkClick(event: any, d: Call) {
     dashboardStore.entity === EntityType[1].value
       ? EntityType[0].value
       : dashboardStore.entity;
-  const path = `/dashboard/${dashboardStore.layerId}/${e}Relation/${
-    d.source.id
-  }/${d.target.id}/${settings.value.linkDashboard.split(" ").join("-")}`;
+  const p = getDashboard({
+    name: settings.value.linkDashboard,
+    layer: dashboardStore.layerId,
+    entity: `${e}Relation`,
+  });
+  dashboardStore.setEntity(p.entity);
+  const path = `/dashboard/${p.layer}/${e}Relation/${d.source.id}/${
+    d.target.id
+  }/${p.name.split(" ").join("-")}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
 }
@@ -373,15 +380,27 @@ async function handleInspect() {
   update();
 }
 function handleGoEndpoint(name: string) {
-  const path = `/dashboard/${dashboardStore.layerId}/Endpoint/${
-    topologyStore.node.id
-  }/${name.split(" ").join("-")}`;
+  const p = getDashboard({
+    name,
+    layer: dashboardStore.layerId,
+    entity: EntityType[2].value,
+  });
+  dashboardStore.setEntity(p.entity);
+  const path = `/dashboard/${p.layer}/Endpoint/${topologyStore.node.id}/${name
+    .split(" ")
+    .join("-")}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
 }
 function handleGoInstance(name: string) {
-  const path = `/dashboard/${dashboardStore.layerId}/ServiceInstance/${
+  const p = getDashboard({
+    name,
+    layer: dashboardStore.layerId,
+    entity: EntityType[3].value,
+  });
+  dashboardStore.setEntity(p.entity);
+  const path = `/dashboard/${p.layer}/ServiceInstance/${
     topologyStore.node.id
   }/${name.split(" ").join("-")}`;
   const routeUrl = router.resolve({ path });
@@ -389,9 +408,15 @@ function handleGoInstance(name: string) {
   window.open(routeUrl.href, "_blank");
 }
 function handleGoDashboard(name: string) {
-  const path = `/dashboard/${dashboardStore.layerId}/Service/${
-    topologyStore.node.id
-  }/${name.split(" ").join("-")}`;
+  const p = getDashboard({
+    name,
+    layer: dashboardStore.layerId,
+    entity: EntityType[0].value,
+  });
+  dashboardStore.setEntity(p.entity);
+  const path = `/dashboard/${p.layer}/Service/${topologyStore.node.id}/${name
+    .split(" ")
+    .join("-")}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");

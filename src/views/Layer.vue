@@ -23,11 +23,13 @@ import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { EntityType } from "./dashboard/data";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import Edit from "./dashboard/Edit.vue";
 
 const { t } = useI18n();
 const route = useRoute();
 const dashboardStore = useDashboardStore();
+const appStore = useAppStoreWithOut();
 const routeNames = [
   "GeneralServices",
   "Database",
@@ -44,8 +46,11 @@ const layer = ref<string>("GENERAL");
 getDashboard();
 
 async function getDashboard() {
-  dashboardStore.setCurrentDashboard(null);
   setLayer(String(route.name));
+  dashboardStore.setLayer(layer.value);
+  dashboardStore.setEntity(EntityType[0].value);
+  dashboardStore.setMode(false);
+  dashboardStore.setCurrentDashboard(null);
   await dashboardStore.setDashboards();
   const index = dashboardStore.dashboards.findIndex(
     (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
@@ -56,6 +61,7 @@ async function getDashboard() {
   }
   const d = dashboardStore.dashboards[index];
   dashboardStore.setCurrentDashboard(d);
+  appStore.setPageTitle(d.name);
 }
 function setLayer(n: string) {
   switch (n) {
@@ -93,9 +99,6 @@ function setLayer(n: string) {
       layer.value = "GENERAL";
       break;
   }
-  dashboardStore.setLayer(layer.value);
-  dashboardStore.setEntity(EntityType[1].value);
-  // appStore.setPageTitle(layer.value);
 }
 watch(
   () => route.name,

@@ -41,6 +41,7 @@ interface DashboardState {
   currentTabItems: LayoutConfig[];
   dashboards: DashboardItem[];
   currentDashboard: Nullable<DashboardItem>;
+  editMode: boolean;
 }
 
 export const dashboardStore = defineStore({
@@ -58,10 +59,14 @@ export const dashboardStore = defineStore({
     currentTabItems: [],
     dashboards: [],
     currentDashboard: null,
+    editMode: false,
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
       this.layout = data;
+    },
+    setMode(mode: boolean) {
+      this.editMode = mode;
     },
     resetDashboards(list: DashboardItem[]) {
       this.dashboards = list;

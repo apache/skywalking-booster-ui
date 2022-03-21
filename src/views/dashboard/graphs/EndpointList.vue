@@ -33,17 +33,13 @@ limitations under the License. -->
       <el-table v-loading="chartLoading" :data="endpoints" style="width: 100%">
         <el-table-column label="Endpoints">
           <template #default="scope">
-            <router-link
+            <span
               class="link"
-              :to="`/dashboard/${dashboardStore.layerId}/${
-                EntityType[2].value
-              }/${selectorStore.currentService.id}/${
-                scope.row.id
-              }/${config.dashboardName.split(' ').join('-')}`"
+              @click="clickEndpoint"
               :style="{ fontSize: `${config.fontSize}px` }"
             >
               {{ scope.row.label }}
-            </router-link>
+            </span>
           </template>
         </el-table-column>
         <el-table-column
@@ -94,6 +90,8 @@ import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import Line from "./Line.vue";
 import Card from "./Card.vue";
 import { EntityType } from "../data";
+import router from "@/router";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 /*global defineProps */
 const props = defineProps({
@@ -158,6 +156,20 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
     return;
   }
   endpoints.value = currentPods;
+}
+function clickEndpoint(scope: any) {
+  const d = getDashboard({
+    name: props.config.dashboardName,
+    layer: dashboardStore.layerId,
+    entity: EntityType[2].value,
+  });
+  dashboardStore.setEntity(EntityType[2].value);
+  dashboardStore.setCurrentDashboard(d);
+  router.push(
+    `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${
+      scope.row.id
+    }/${d.name.split(" ").join("-")}`
+  );
 }
 function changePage(pageIndex: number) {
   endpoints.value = searchEndpoints.value.splice(pageIndex - 1, pageSize);

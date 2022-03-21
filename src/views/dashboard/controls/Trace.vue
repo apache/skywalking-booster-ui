@@ -14,13 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-wrapper flex-v">
-    <el-popover placement="bottom" trigger="click" :width="100">
+    <el-popover
+      placement="bottom"
+      trigger="click"
+      :width="100"
+      v-if="dashboardStore.editMode"
+    >
       <template #reference>
         <span class="delete cp">
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
         </span>
       </template>
-      <div class="tools" @click="removeWidget" v-if="routeParams.entity">
+      <div class="tools" @click="removeWidget">
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
@@ -35,7 +40,6 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { useRoute } from "vue-router";
 import Filter from "../related/trace/Filter.vue";
 import TraceList from "../related/trace/TraceList.vue";
 import TraceDetail from "../related/trace/Detail.vue";
@@ -51,7 +55,6 @@ const props = defineProps({
   activeIndex: { type: String, default: "" },
 });
 const { t } = useI18n();
-const routeParams = useRoute().params;
 const dashboardStore = useDashboardStore();
 function removeWidget() {
   dashboardStore.removeControls(props.data);

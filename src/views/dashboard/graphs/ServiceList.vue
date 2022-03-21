@@ -45,16 +45,13 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column label="Service Names">
           <template #default="scope">
-            <router-link
+            <span
               class="link"
-              :to="`/dashboard/${dashboardStore.layerId}/${
-                EntityType[0].value
-              }/${scope.row.id}/${config.dashboardName.split(' ').join('-')}`"
-              :key="1"
               :style="{ fontSize: `${config.fontSize}px` }"
+              @click="clickService(scope)"
             >
               {{ scope.row.label }}
-            </router-link>
+            </span>
           </template>
         </el-table-column>
         <el-table-column
@@ -105,6 +102,8 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { Service } from "@/types/selector";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
+import router from "@/router";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 /*global defineProps */
 const props = defineProps({
@@ -172,6 +171,21 @@ async function queryServices() {
     return;
   }
   queryServiceMetrics(services.value);
+}
+
+function clickService(scope: any) {
+  const d = getDashboard({
+    name: props.config.dashboardName,
+    layer: dashboardStore.layerId,
+    entity: EntityType[0].value,
+  });
+  dashboardStore.setCurrentDashboard(d);
+  dashboardStore.setEntity(d.entity);
+  const path = `/dashboard/${d.layer}/${d.entity}/${scope.row.id}/${d.name
+    .split(" ")
+    .join("-")}`;
+
+  router.push(path);
 }
 async function queryServiceMetrics(currentServices: Service[]) {
   const { metrics } = props.config;

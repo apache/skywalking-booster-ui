@@ -225,6 +225,7 @@ const states = reactive<{
   linkDashboards: [],
   nodeDashboards: [],
 });
+console.log(dashboardStore.selectedGrid);
 const isService = [EntityType[0].value, EntityType[1].value].includes(
   dashboardStore.entity
 );

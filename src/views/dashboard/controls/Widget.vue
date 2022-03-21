@@ -38,7 +38,7 @@ limitations under the License. -->
           placement="bottom"
           trigger="click"
           :width="100"
-          v-if="routeParams.entity"
+          v-if="dashboardStore.editMode"
         >
           <template #reference>
             <span>
@@ -74,7 +74,6 @@ limitations under the License. -->
 <script lang="ts">
 import { toRefs, reactive, defineComponent, ref, watch } from "vue";
 import type { PropType } from "vue";
-import { useRoute } from "vue-router";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -98,7 +97,6 @@ export default defineComponent({
   props,
   setup(props) {
     const { t } = useI18n();
-    const routeParams = useRoute().params;
     const loading = ref<boolean>(false);
     const state = reactive<{ source: { [key: string]: unknown } }>({
       source: {},
@@ -196,7 +194,7 @@ export default defineComponent({
       editConfig,
       data,
       loading,
-      routeParams,
+      dashboardStore,
       t,
     };
   },
