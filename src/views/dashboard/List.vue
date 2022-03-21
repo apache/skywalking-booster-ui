@@ -44,7 +44,11 @@ limitations under the License. -->
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="name" label="Name" />
+        <el-table-column prop="name" label="Name">
+          <template #default="scope">
+            <span @click="handleView(scope.row)">{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="layer" label="Layer" width="200" />
         <el-table-column prop="entity" label="Entity" width="200" />
         <el-table-column prop="isRoot" label="Root" width="100">
@@ -56,10 +60,10 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column label="Operations">
           <template #default="scope">
-            <el-button size="small" @click="handleView(scope.row)">
+            <el-button size="small" @click="handleEdit(scope.row)">
               {{ t("edit") }}
             </el-button>
-            <el-button size="small" @click="handleEdit(scope.row)">
+            <el-button size="small" @click="handleRename(scope.row)">
               {{ t("rename") }}
             </el-button>
             <el-popconfirm
@@ -196,7 +200,20 @@ function exportTemplates() {
     multipleTableRef.value!.clearSelection();
   }, 2000);
 }
+function handleEdit(row: DashboardItem) {
+  dashboardStore.setMode(true);
+  dashboardStore.setEntity(row.entity);
+  dashboardStore.setLayer(row.layer);
+  dashboardStore.setCurrentDashboard(row);
+  router.push(
+    `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
+  );
+}
+
 function handleView(row: DashboardItem) {
+  dashboardStore.setMode(false);
+  dashboardStore.setEntity(row.entity);
+  dashboardStore.setLayer(row.layer);
   dashboardStore.setCurrentDashboard(row);
   router.push(
     `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
@@ -267,7 +284,7 @@ async function setRoot(row: DashboardItem) {
   searchDashboards();
   loading.value = false;
 }
-function handleEdit(row: DashboardItem) {
+function handleRename(row: DashboardItem) {
   ElMessageBox.prompt("Please input dashboard name", "Edit", {
     confirmButtonText: "OK",
     cancelButtonText: "Cancel",

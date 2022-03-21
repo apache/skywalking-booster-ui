@@ -59,7 +59,7 @@ export const dashboardStore = defineStore({
     currentTabItems: [],
     dashboards: [],
     currentDashboard: null,
-    editMode: true,
+    editMode: false,
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
