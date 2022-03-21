@@ -33,6 +33,6 @@ defineProps({
 });
 const dashboardStore = useDashboardStore();
 const isSankey = ref<boolean>(
-  [EntityType[2].value, EntityType[4].value].includes(dashboardStore.entity)
+  [EntityType[2].value, EntityType[3].value].includes(dashboardStore.entity)
 );
 </script>
