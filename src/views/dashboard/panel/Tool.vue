@@ -79,7 +79,11 @@ limitations under the License. -->
         :key="index"
         :title="t.content"
       >
-        <Icon class="icon-btn" size="sm" :iconName="t.name" />
+        <el-tooltip :content="t.content" placement="bottom">
+          <i>
+            <Icon class="icon-btn" size="sm" :iconName="t.name" />
+          </i>
+        </el-tooltip>
       </span>
     </div>
   </div>
