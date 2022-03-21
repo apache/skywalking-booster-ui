@@ -72,19 +72,28 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <div class="tool-icons" v-if="dashboardStore.editMode">
-      <span
-        @click="clickIcons(t)"
-        v-for="(t, index) in toolIcons"
-        :key="index"
-        :title="t.content"
-      >
-        <el-tooltip :content="t.content" placement="bottom">
-          <i>
-            <Icon class="icon-btn" size="sm" :iconName="t.name" />
-          </i>
-        </el-tooltip>
-      </span>
+    <div class="flex-h tools">
+      <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
+        <span
+          @click="clickIcons(t)"
+          v-for="(t, index) in toolIcons"
+          :key="index"
+          :title="t.content"
+        >
+          <el-tooltip :content="t.content" placement="bottom">
+            <i>
+              <Icon class="icon-btn" size="sm" :iconName="t.name" />
+            </i>
+          </el-tooltip>
+        </span>
+      </div>
+      <div class="switch">
+        <el-switch
+          v-model="dashboardStore.editMode"
+          active-text="Edit"
+          inactive-text="View"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -106,7 +115,9 @@ import {
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
@@ -434,10 +445,15 @@ function getTools() {
 <style lang="scss" scoped>
 .dashboard-tool {
   text-align: right;
-  padding: 5px;
+  padding: 3px 5px 5px 5px;
   background: rgb(240, 242, 245);
   border-bottom: 1px solid #dfe4e8;
   justify-content: space-between;
+}
+
+.switch {
+  padding-top: 2px;
+  margin: 0 10px;
 }
 
 .label {
@@ -448,6 +464,10 @@ function getTools() {
 
 .tool-icons {
   margin-top: 2px;
+}
+
+.tools {
+  justify-content: space-between;
 }
 
 .icon-btn {
