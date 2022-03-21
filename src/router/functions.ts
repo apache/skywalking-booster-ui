@@ -23,7 +23,7 @@ export const routesFunctions: Array<RouteRecordRaw> = [
     name: "Functions",
     meta: {
       title: "functions",
-      icon: "epic",
+      icon: "cloud_queue",
     },
     redirect: "/functions",
     component: Layout,

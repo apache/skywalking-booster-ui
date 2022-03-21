@@ -67,7 +67,7 @@ limitations under the License. -->
           @click="changePage(menu)"
           v-else
         >
-          <el-icon class="menu-icons" :style="{ margin: '-10px 12px 0 0' }">
+          <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
             <router-link
               class="items"
               :to="menu.children[0].path"

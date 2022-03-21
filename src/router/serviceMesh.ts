@@ -24,7 +24,7 @@ export const routesMesh: Array<RouteRecordRaw> = [
     redirect: "/mesh/services",
     meta: {
       title: "serviceMesh",
-      icon: "bar_chart",
+      icon: "epic",
       hasGroup: true,
     },
     component: Layout,

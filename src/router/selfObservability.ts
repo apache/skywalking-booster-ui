@@ -24,7 +24,7 @@ export const routesSelf: Array<RouteRecordRaw> = [
     redirect: "/self/skyWalkingServer",
     meta: {
       title: "selfObservability",
-      icon: "bar_chart",
+      icon: "logo",
       hasGroup: true,
     },
     component: Layout,

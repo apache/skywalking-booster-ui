@@ -23,7 +23,7 @@ export const routesBrowser: Array<RouteRecordRaw> = [
     name: "Browser",
     meta: {
       title: "browser",
-      icon: "epic",
+      icon: "language",
     },
     redirect: "/browser",
     component: Layout,
