@@ -163,6 +163,10 @@ function clickEndpoint(scope: any) {
     layer: dashboardStore.layerId,
     entity: EntityType[2].value,
   });
+  if (!d) {
+    ElMessage.error("No this dashboard");
+    return;
+  }
   dashboardStore.setEntity(EntityType[2].value);
   dashboardStore.setCurrentDashboard(d);
   router.push(
