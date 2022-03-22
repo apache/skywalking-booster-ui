@@ -20,7 +20,7 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <div class="setting" v-show="showSetting">
+    <div class="setting" v-if="showSetting">
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
     <div class="tool">
@@ -34,7 +34,12 @@ limitations under the License. -->
           @change="changeDepth"
         />
       </span>
-      <span class="switch-icon ml-5" title="Settings" @click="setConfig">
+      <span
+        class="switch-icon ml-5"
+        title="Settings"
+        @click="setConfig"
+        v-if="dashboardStore.editMode"
+      >
         <Icon size="middle" iconName="settings" />
       </span>
       <span
@@ -113,14 +118,11 @@ const anchor = ref<any>(null);
 const arrow = ref<any>(null);
 const legend = ref<any>(null);
 const showSetting = ref<boolean>(false);
-const settings = ref<any>({});
+const settings = ref<any>(props.config);
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
 const items = ref<
   { id: string; title: string; func: any; dashboard?: string }[]
->([
-  { id: "inspect", title: "Inspect", func: handleInspect },
-  { id: "alarm", title: "Alarm", func: handleGoAlarm },
-]);
+>([]);
 const depth = ref<number>(props.config.graph.depth || 2);
 
 onMounted(async () => {
@@ -130,6 +132,9 @@ onMounted(async () => {
   if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
+  topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+  topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+  topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
   const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
     height: 40,
     width: 0,
@@ -140,6 +145,7 @@ onMounted(async () => {
   svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
   await init();
   update();
+  setNodeTools(settings.value.nodeDashboard);
 });
 async function init() {
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
@@ -167,6 +173,7 @@ async function init() {
     event.preventDefault();
     topologyStore.setNode(null);
     topologyStore.setLink(null);
+    dashboardStore.selectWidget(props.config);
   });
 }
 function ticked() {
@@ -236,6 +243,7 @@ function handleLinkClick(event: any, d: Call) {
   if (!settings.value.linkDashboard) {
     return;
   }
+  const origin = dashboardStore.entity;
   const e =
     dashboardStore.entity === EntityType[1].value
       ? EntityType[0].value
@@ -251,6 +259,7 @@ function handleLinkClick(event: any, d: Call) {
   }/${p.name.split(" ").join("-")}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
+  dashboardStore.setEntity(origin);
 }
 function update() {
   // node element
@@ -271,7 +280,7 @@ function update() {
         const nodeMetrics: string[] = settings.value.nodeMetrics || [];
         const html = nodeMetrics.map((m) => {
           const metric =
-            topologyStore.nodeMetrics[m].values.filter(
+            topologyStore.nodeMetricValue[m].values.filter(
               (val: { id: string; value: unknown }) => val.id === data.id
             )[0] || {};
           const val = m.includes("_sla") ? metric.value / 100 : metric.value;
@@ -380,6 +389,7 @@ async function handleInspect() {
   update();
 }
 function handleGoEndpoint(name: string) {
+  const origin = dashboardStore.entity;
   const p = getDashboard({
     name,
     layer: dashboardStore.layerId,
@@ -392,8 +402,10 @@ function handleGoEndpoint(name: string) {
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
+  dashboardStore.setEntity(origin);
 }
 function handleGoInstance(name: string) {
+  const origin = dashboardStore.entity;
   const p = getDashboard({
     name,
     layer: dashboardStore.layerId,
@@ -406,8 +418,10 @@ function handleGoInstance(name: string) {
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
+  dashboardStore.setEntity(origin);
 }
 function handleGoDashboard(name: string) {
+  const origin = dashboardStore.entity;
   const p = getDashboard({
     name,
     layer: dashboardStore.layerId,
@@ -420,6 +434,7 @@ function handleGoDashboard(name: string) {
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
+  dashboardStore.setEntity(origin);
 }
 function handleGoAlarm() {
   const path = `/alarm`;
@@ -455,6 +470,7 @@ async function getTopology() {
 }
 function setConfig() {
   showSetting.value = !showSetting.value;
+  dashboardStore.selectWidget(props.config);
 }
 function resize() {
   height.value = document.body.clientHeight;
@@ -462,16 +478,19 @@ function resize() {
   svg.value.attr("height", height.value).attr("width", width.value);
 }
 function updateSettings(config: any) {
+  settings.value = config;
+  setNodeTools(config.nodeDashboard);
+}
+function setNodeTools(nodeDashboard: any) {
   items.value = [
     { id: "inspect", title: "Inspect", func: handleInspect },
     { id: "alarm", title: "Alarm", func: handleGoAlarm },
   ];
-  settings.value = config;
-  for (const item of config.nodeDashboard) {
+  for (const item of nodeDashboard) {
     if (item.scope === EntityType[0].value) {
       items.value.push({
         id: "dashboard",
-        title: "Dashboard",
+        title: "Service Dashboard",
         func: handleGoDashboard,
         ...item,
       });
@@ -479,7 +498,7 @@ function updateSettings(config: any) {
     if (item.scope === EntityType[2].value) {
       items.value.push({
         id: "endpoint",
-        title: "Endpoint",
+        title: "Endpoint Dashboard",
         func: handleGoEndpoint,
         ...item,
       });
@@ -487,7 +506,7 @@ function updateSettings(config: any) {
     if (item.scope === EntityType[3].value) {
       items.value.push({
         id: "instance",
-        title: "Service Instance",
+        title: "Service Instance Dashboard",
         func: handleGoInstance,
         ...item,
       });
@@ -567,7 +586,6 @@ watch(
     span {
       display: block;
       height: 30px;
-      width: 140px;
       line-height: 30px;
       text-align: center;
     }

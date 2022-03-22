@@ -28,7 +28,12 @@ limitations under the License. -->
         @change="changeDepth"
       />
     </span>
-    <span class="switch-icon ml-5" title="Settings" @click="setConfig">
+    <span
+      class="switch-icon ml-5"
+      title="Settings"
+      @click="setConfig"
+      v-if="dashboardStore.editMode"
+    >
       <Icon size="middle" iconName="settings" />
     </span>
     <span
@@ -38,7 +43,7 @@ limitations under the License. -->
     >
       <Icon size="middle" iconName="keyboard_backspace" />
     </span>
-    <div class="settings" v-show="showSettings">
+    <div class="settings" v-if="showSettings">
       <Settings @update="updateConfig" />
     </div>
   </div>
@@ -104,7 +109,7 @@ const loading = ref<boolean>(false);
 const height = ref<number>(100);
 const width = ref<number>(100);
 const showSettings = ref<boolean>(false);
-const settings = ref<any>({});
+const settings = ref<any>(props.config);
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
 const depth = ref<number>(props.config.graph.depth || 3);
 const items = [
@@ -130,6 +135,9 @@ async function loadTopology(id: string) {
   };
   height.value = dom.height - 70;
   width.value = dom.width - 5;
+  topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+  topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+  topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
 }
 
 function inspect() {
@@ -158,7 +166,9 @@ function goDashboard() {
   });
   dashboardStore.setEntity(entity);
   dashboardStore.setCurrentDashboard(d);
-  const path = `/dashboard/${d.layer}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${d.name}`;
+  const path = `/dashboard/${d.layer}/${entity}/${
+    topologyStore.node.serviceId
+  }/${topologyStore.node.id}/${d.name.split(" ").join("-")}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
   topologyStore.setNode(null);
@@ -167,6 +177,7 @@ function goDashboard() {
 function setConfig() {
   topologyStore.setNode(null);
   showSettings.value = !showSettings.value;
+  dashboardStore.selectWidget(props.config);
 }
 
 function updateConfig(config: any) {
@@ -196,7 +207,9 @@ function selectNodeLink(d: any) {
       entity,
     });
     dashboardStore.setEntity(entity);
-    const path = `/dashboard/${p.layer}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${p.name}`;
+    const path = `/dashboard/${p.layer}/${entity}/${sourceObj.serviceId}/${
+      sourceObj.id
+    }/${targetObj.serviceId}/${targetObj.id}/${p.name.split(" ").join("-")}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
     return;
@@ -221,7 +234,7 @@ async function getTopology(id: string) {
         Number(depth.value)
       );
       break;
-    case EntityType[3].value:
+    case EntityType[4].value:
       resp = await topologyStore.getInstanceTopology();
       break;
   }
@@ -231,6 +244,7 @@ function handleClick(event: any) {
   if (event.target.nodeName === "svg") {
     topologyStore.setNode(null);
     topologyStore.setLink(null);
+    dashboardStore.selectWidget(props.config);
   }
 }
 watch(
@@ -262,10 +276,10 @@ watch(
   top: 60px;
   right: 10px;
   width: 400px;
-  height: 500px;
+  height: 600px;
   background-color: #2b3037;
   overflow: auto;
-  padding: 0 15px;
+  padding: 10px 15px;
   border-radius: 3px;
   color: #ccc;
   transition: all 0.5ms linear;

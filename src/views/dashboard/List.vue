@@ -46,7 +46,9 @@ limitations under the License. -->
         <el-table-column type="selection" width="55" />
         <el-table-column prop="name" label="Name">
           <template #default="scope">
-            <span @click="handleView(scope.row)">{{ scope.row.name }}</span>
+            <span class="cp" @click="handleView(scope.row)">{{
+              scope.row.name
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="layer" label="Layer" width="200" />

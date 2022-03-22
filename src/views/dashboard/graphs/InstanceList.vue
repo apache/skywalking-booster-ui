@@ -35,7 +35,7 @@ limitations under the License. -->
           <template #default="scope">
             <span
               class="link"
-              @click="clickInstance"
+              @click="clickInstance(scope)"
               :style="{ fontSize: `${config.fontSize}px` }"
             >
               {{ scope.row.label }}

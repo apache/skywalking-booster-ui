@@ -186,7 +186,7 @@ import { ElMessage } from "element-plus";
 import { MetricCatalog, ScopeType, MetricConditions } from "../../../data";
 import { Option } from "@/types/app";
 import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
-import { Node, Call } from "@/types/topology";
+import { Node } from "@/types/topology";
 import { DashboardItem } from "@/types/dashboard";
 import { EntityType, LegendOpt, MetricsType } from "../../../data";
 
@@ -195,12 +195,16 @@ const emit = defineEmits(["update", "updateNodes"]);
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const topologyStore = useTopologyStore();
+const { selectedGrid } = dashboardStore;
+const isService = [EntityType[0].value, EntityType[1].value].includes(
+  dashboardStore.entity
+);
 const items = reactive<
   {
     scope: string;
     dashboard: string;
   }[]
->([{ scope: "", dashboard: "" }]);
+>((isService && selectedGrid.nodeDashboard) || [{ scope: "", dashboard: "" }]);
 const states = reactive<{
   linkDashboard: string;
   nodeDashboard: {
@@ -215,23 +219,19 @@ const states = reactive<{
   linkDashboards: (DashboardItem & { label: string; value: string })[];
   nodeDashboards: (DashboardItem & { label: string; value: string })[];
 }>({
-  linkDashboard: "",
-  nodeDashboard: [],
-  linkServerMetrics: [],
-  linkClientMetrics: [],
-  nodeMetrics: [],
+  linkDashboard: selectedGrid.linkDashboard || "",
+  nodeDashboard: selectedGrid.nodeDashboard || [],
+  linkServerMetrics: selectedGrid.linkServerMetrics || [],
+  linkClientMetrics: selectedGrid.linkClientMetrics || [],
+  nodeMetrics: selectedGrid.nodeMetrics || [],
   nodeMetricList: [],
   linkMetricList: [],
   linkDashboards: [],
   nodeDashboards: [],
 });
-console.log(dashboardStore.selectedGrid);
-const isService = [EntityType[0].value, EntityType[1].value].includes(
-  dashboardStore.entity
-);
 const legend = reactive<{
   metric: { name: string; condition: string; value: string }[];
-}>({ metric: [{ name: "", condition: "", value: "" }] });
+}>({ metric: selectedGrid.legend || [{ name: "", condition: "", value: "" }] });
 
 getMetricList();
 async function getMetricList() {
@@ -270,24 +270,26 @@ async function getMetricList() {
       entity + "Relation" === (MetricCatalog as any)[d.catalog] &&
       d.type === MetricsType.REGULAR_VALUE
   );
+  if (isService) {
+    return;
+  }
+  states.nodeDashboards = list.reduce(
+    (
+      prev: (DashboardItem & { label: string; value: string })[],
+      d: DashboardItem
+    ) => {
+      if (d.layer === dashboardStore.layerId && d.entity === entity) {
+        prev.push({ ...d, label: d.name, value: d.name });
+      }
+      return prev;
+    },
+    []
+  );
 }
 async function setLegend() {
-  const metrics = legend.metric.filter(
-    (d: any) => d.name && d.value && d.condition
-  );
-  const names = metrics.map((d: any) => d.name);
-
-  emit("update", {
-    linkDashboard: states.linkDashboard,
-    nodeDashboard: isService
-      ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
-      : states.nodeDashboard,
-    linkServerMetrics: states.linkServerMetrics,
-    linkClientMetrics: states.linkClientMetrics,
-    nodeMetrics: states.nodeMetrics,
-    legend: metrics,
-  });
+  updateSettings();
   const ids = topologyStore.nodes.map((d: Node) => d.id);
+  const names = dashboardStore.selectedGrid.legend.map((d: any) => d.name);
   const param = await useQueryTopologyMetrics(names, ids);
   const res = await topologyStore.getLegendMetrics(param);
 
@@ -298,9 +300,11 @@ async function setLegend() {
 }
 function changeNodeDashboard(opt: any) {
   states.nodeDashboard = opt[0].value;
+  updateSettings();
 }
 function changeLinkDashboard(opt: any) {
   states.linkDashboard = opt[0].value;
+  updateSettings();
 }
 function changeLegend(type: string, opt: any, index: number) {
   (legend.metric[index] as any)[type] = opt[0].value || opt;
@@ -321,6 +325,7 @@ function changeScope(index: number, opt: Option[] | any) {
     []
   );
   items[index].dashboard = states.nodeDashboards[0].value;
+  updateSettings();
 }
 function updateNodeDashboards(index: number, content: Option[] | any) {
   items[index].dashboard = content[0].value;
@@ -334,7 +339,10 @@ function deleteItem(index: number) {
   updateSettings();
 }
 function updateSettings() {
-  emit("update", {
+  const metrics = legend.metric.filter(
+    (d: any) => d.name && d.value && d.condition
+  );
+  const param = {
     linkDashboard: states.linkDashboard,
     nodeDashboard: isService
       ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
@@ -342,8 +350,11 @@ function updateSettings() {
     linkServerMetrics: states.linkServerMetrics,
     linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
-    legend: legend.metric,
-  });
+    legend: metrics,
+  };
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, ...param });
+  dashboardStore.setConfigs({ ...dashboardStore.selectedGrid, ...param });
+  emit("update", param);
 }
 async function changeLinkServerMetrics(options: Option[] | any) {
   states.linkServerMetrics = options.map((d: Option) => d.value);
@@ -352,15 +363,7 @@ async function changeLinkServerMetrics(options: Option[] | any) {
     topologyStore.setLinkServerMetrics({});
     return;
   }
-  const idsS = topologyStore.calls
-    .filter((i: Call) => i.detectPoints.includes("SERVER"))
-    .map((b: Call) => b.id);
-  const param = await useQueryTopologyMetrics(states.linkServerMetrics, idsS);
-  const res = await topologyStore.getCallServerMetrics(param);
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
+  topologyStore.getLinkServerMetrics(states.linkServerMetrics);
 }
 async function changeLinkClientMetrics(options: Option[] | any) {
   states.linkClientMetrics = options.map((d: Option) => d.value);
@@ -369,30 +372,16 @@ async function changeLinkClientMetrics(options: Option[] | any) {
     topologyStore.setLinkClientMetrics({});
     return;
   }
-  const idsC = topologyStore.calls
-    .filter((i: Call) => i.detectPoints.includes("CLIENT"))
-    .map((b: Call) => b.id);
-  const param = await useQueryTopologyMetrics(states.linkClientMetrics, idsC);
-  const res = await topologyStore.getCallClientMetrics(param);
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
+  topologyStore.getLinkClientMetrics(states.linkClientMetrics);
 }
 async function changeNodeMetrics(options: Option[] | any) {
   states.nodeMetrics = options.map((d: Option) => d.value);
   updateSettings();
   if (!states.nodeMetrics.length) {
-    topologyStore.setNodeMetrics({});
+    topologyStore.setNodeMetricValue({});
     return;
   }
-  const ids = topologyStore.nodes.map((d: Node) => d.id);
-  const param = await useQueryTopologyMetrics(states.nodeMetrics, ids);
-  const res = await topologyStore.getNodeMetrics(param);
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
+  topologyStore.queryNodeMetrics(states.nodeMetrics);
 }
 function deleteMetric(index: number) {
   legend.metric.splice(index, 1);

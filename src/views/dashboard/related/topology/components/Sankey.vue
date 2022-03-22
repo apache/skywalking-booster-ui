@@ -105,10 +105,10 @@ function linkTooltip(data: Call) {
 }
 
 function nodeTooltip(data: Node) {
-  const nodeMetrics: string[] = Object.keys(topologyStore.nodeMetrics);
+  const nodeMetrics: string[] = Object.keys(topologyStore.nodeMetricValue);
   const html = nodeMetrics.map((m) => {
     const metric =
-      topologyStore.nodeMetrics[m].values.filter(
+      topologyStore.nodeMetricValue[m].values.filter(
         (val: { id: string; value: unknown }) => val.id === data.id
       )[0] || {};
     const val = m.includes("_sla") ? metric.value / 100 : metric.value;
