@@ -135,9 +135,9 @@ async function loadTopology(id: string) {
   };
   height.value = dom.height - 70;
   width.value = dom.width - 5;
-  topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics);
-  topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics);
-  topologyStore.queryNodeMetrics(settings.value.nodeMetrics);
+  topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+  topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+  topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
 }
 
 function inspect() {

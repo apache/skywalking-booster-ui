@@ -132,9 +132,9 @@ onMounted(async () => {
   if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
-  topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics);
-  topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics);
-  topologyStore.queryNodeMetrics(settings.value.nodeMetrics);
+  topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+  topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+  topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
   const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
     height: 40,
     width: 0,
@@ -243,6 +243,7 @@ function handleLinkClick(event: any, d: Call) {
   if (!settings.value.linkDashboard) {
     return;
   }
+  const origin = dashboardStore.entity;
   const e =
     dashboardStore.entity === EntityType[1].value
       ? EntityType[0].value
@@ -258,6 +259,7 @@ function handleLinkClick(event: any, d: Call) {
   }/${p.name.split(" ").join("-")}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
+  dashboardStore.setEntity(origin);
 }
 function update() {
   // node element
@@ -387,6 +389,7 @@ async function handleInspect() {
   update();
 }
 function handleGoEndpoint(name: string) {
+  const origin = dashboardStore.entity;
   const p = getDashboard({
     name,
     layer: dashboardStore.layerId,
@@ -399,8 +402,10 @@ function handleGoEndpoint(name: string) {
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
+  dashboardStore.setEntity(origin);
 }
 function handleGoInstance(name: string) {
+  const origin = dashboardStore.entity;
   const p = getDashboard({
     name,
     layer: dashboardStore.layerId,
@@ -413,8 +418,10 @@ function handleGoInstance(name: string) {
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
+  dashboardStore.setEntity(origin);
 }
 function handleGoDashboard(name: string) {
+  const origin = dashboardStore.entity;
   const p = getDashboard({
     name,
     layer: dashboardStore.layerId,
@@ -427,6 +434,7 @@ function handleGoDashboard(name: string) {
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
+  dashboardStore.setEntity(origin);
 }
 function handleGoAlarm() {
   const path = `/alarm`;

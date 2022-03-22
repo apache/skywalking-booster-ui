@@ -403,6 +403,10 @@ export const topologyStore = defineStore({
       return res.data;
     },
     async getLinkClientMetrics(linkClientMetrics: string[]) {
+      if (!linkClientMetrics.length) {
+        this.setLinkClientMetrics({});
+        return;
+      }
       const idsC = this.calls
         .filter((i: Call) => i.detectPoints.includes("CLIENT"))
         .map((b: Call) => b.id);
@@ -414,6 +418,10 @@ export const topologyStore = defineStore({
       }
     },
     async getLinkServerMetrics(linkServerMetrics: string[]) {
+      if (!linkServerMetrics.length) {
+        this.setLinkServerMetrics({});
+        return;
+      }
       const idsS = this.calls
         .filter((i: Call) => i.detectPoints.includes("SERVER"))
         .map((b: Call) => b.id);
@@ -425,6 +433,10 @@ export const topologyStore = defineStore({
       }
     },
     async queryNodeMetrics(nodeMetrics: string[]) {
+      if (!nodeMetrics.length) {
+        this.setNodeMetricValue({});
+        return;
+      }
       const ids = this.nodes.map((d: Node) => d.id);
       const param = await useQueryTopologyMetrics(nodeMetrics, ids);
       const res = await this.getNodeMetricValue(param);
