@@ -226,7 +226,10 @@ function objectSpanMethod(param: any): any {
   }
 }
 function changePage(pageIndex: number) {
-  services.value = selectorStore.services.splice(pageIndex - 1, pageSize);
+  services.value = services.value.splice(
+    (pageIndex - 1 || 0) * pageSize,
+    pageSize * (pageIndex || 1)
+  );
 }
 function searchList() {
   searchServices.value = selectorStore.services.filter((d: { label: string }) =>

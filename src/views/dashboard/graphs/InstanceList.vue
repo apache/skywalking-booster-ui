@@ -180,7 +180,10 @@ function clickInstance(scope: any) {
 }
 
 function changePage(pageIndex: number) {
-  instances.value = searchInstances.value.splice(pageIndex - 1, pageSize);
+  instances.value = searchInstances.value.splice(
+    (pageIndex - 1 || 0) * pageSize,
+    pageSize * (pageIndex || 1)
+  );
 }
 
 function searchList() {

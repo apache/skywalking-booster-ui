@@ -174,7 +174,10 @@ function clickEndpoint(scope: any) {
   );
 }
 function changePage(pageIndex: number) {
-  endpoints.value = searchEndpoints.value.splice(pageIndex - 1, pageSize);
+  endpoints.value = searchEndpoints.value.splice(
+    (pageIndex - 1 || 0) * pageSize,
+    pageSize * (pageIndex || 1)
+  );
 }
 function searchList() {
   const currentEndpoints = selectorStore.pods.filter((d: { label: string }) =>

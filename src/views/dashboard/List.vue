@@ -378,7 +378,10 @@ function searchDashboards(pageIndex?: any) {
   const arr = list.filter((d: { name: string }) =>
     d.name.includes(searchText.value)
   );
-  dashboards.value = arr.splice(pageIndex || 0, pageSize);
+  dashboards.value = arr.splice(
+    (pageIndex - 1 || 0) * pageSize,
+    pageSize * (pageIndex || 1)
+  );
 }
 
 function reloadTemplates() {
