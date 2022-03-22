@@ -389,10 +389,6 @@ function deleteMetric(index: number) {
 function addMetric() {
   legend.metric.push({ name: "", condition: "", value: "" });
 }
-function saveConfig() {
-  console.log(dashboardStore.selectedGrid);
-  dashboardStore.setConfigs(dashboardStore.selectedGrid);
-}
 </script>
 <style lang="scss" scoped>
 .link-settings {
