@@ -53,8 +53,9 @@ limitations under the License. -->
     >
       <Icon
         class="cp mr-5"
-        v-show="
-          index === states.metrics.length - 1 && states.metrics.length < 5
+        v-if="
+          index === states.metrics.length - 1 &&
+          states.metrics.length < defaultLen
         "
         iconName="add_circle_outlinecontrol_point"
         size="middle"
@@ -84,7 +85,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { Option } from "@/types/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import {
@@ -128,6 +129,7 @@ const states = reactive<{
 });
 
 states.isList = ListChartTypes.includes(graph.type);
+const defaultLen = ref<number>(states.isList ? 5 : 10);
 states.visTypes = setVisTypes();
 
 setDashboards();
@@ -241,10 +243,12 @@ function changeChartType(item: Option) {
     });
     states.metrics = [""];
     states.metricTypes = [""];
+    defaultLen.value = 5;
   }
   setMetricType();
   setDashboards();
   states.dashboardName = "";
+  defaultLen.value = 10;
 }
 
 function changeMetrics(
