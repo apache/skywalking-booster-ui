@@ -105,8 +105,9 @@ export default defineComponent({
     const appStore = useAppStoreWithOut();
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
+    const isList = ListChartTypes.includes(props.data.graph.type || "");
 
-    if (props.needQuery || !dashboardStore.currentDashboard.id) {
+    if ((props.needQuery || !dashboardStore.currentDashboard.id) && !isList) {
       queryMetrics();
     }
 
@@ -152,7 +153,10 @@ export default defineComponent({
         if (props.data.i !== dashboardStore.selectedGrid.i) {
           return;
         }
-        if (ListChartTypes.includes(dashboardStore.selectedGrid.graph.type)) {
+        if (
+          ListChartTypes.includes(dashboardStore.selectedGrid.graph.type) ||
+          isList
+        ) {
           return;
         }
         queryMetrics();
@@ -161,6 +165,9 @@ export default defineComponent({
     watch(
       () => [selectorStore.currentService, selectorStore.currentDestService],
       () => {
+        if (isList) {
+          return;
+        }
         if (
           dashboardStore.entity === EntityType[0].value ||
           dashboardStore.entity === EntityType[4].value

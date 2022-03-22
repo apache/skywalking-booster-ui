@@ -191,6 +191,12 @@ watch(
     }
   }
 );
+watch(
+  () => [selectorStore.currentService],
+  () => {
+    queryEndpoints();
+  }
+);
 </script>
 <style lang="scss" scoped>
 @import "./style.scss";

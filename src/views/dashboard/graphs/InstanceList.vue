@@ -182,6 +182,7 @@ function clickInstance(scope: any) {
 function changePage(pageIndex: number) {
   instances.value = searchInstances.value.splice(pageIndex - 1, pageSize);
 }
+
 function searchList() {
   searchInstances.value = selectorStore.pods.filter((d: { label: string }) =>
     d.label.includes(searchText.value)
@@ -195,6 +196,12 @@ watch(
     if (dashboardStore.showConfig) {
       queryInstanceMetrics(instances.value);
     }
+  }
+);
+watch(
+  () => [selectorStore.currentService],
+  () => {
+    queryInstance();
   }
 );
 </script>
