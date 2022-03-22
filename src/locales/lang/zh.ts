@@ -121,6 +121,8 @@ const msg = {
   browser: "浏览器",
   editWarning: "你正在进入编辑模式",
   viewWarning: "你正在进入预览模式",
+  virtualDatabase: "虚拟数据库",
+  reloadDashboards: "重新加载仪表盘",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

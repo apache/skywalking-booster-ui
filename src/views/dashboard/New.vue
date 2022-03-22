@@ -90,7 +90,7 @@ const onCreate = () => {
     entity: states.entity,
     layer: states.selectedLayer,
   });
-  const name = states.name.split(" ").join("-");
+  const name = states.name;
   const path = `/dashboard/${states.selectedLayer}/${states.entity}/${name}`;
   router.push(path);
 };

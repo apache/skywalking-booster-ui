@@ -163,16 +163,21 @@ function clickEndpoint(scope: any) {
     layer: dashboardStore.layerId,
     entity: EntityType[2].value,
   });
+  if (!d) {
+    ElMessage.error("No this dashboard");
+    return;
+  }
   dashboardStore.setEntity(EntityType[2].value);
   dashboardStore.setCurrentDashboard(d);
   router.push(
-    `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${
-      scope.row.id
-    }/${d.name.split(" ").join("-")}`
+    `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${scope.row.id}/${d.name}`
   );
 }
 function changePage(pageIndex: number) {
-  endpoints.value = searchEndpoints.value.splice(pageIndex - 1, pageSize);
+  endpoints.value = searchEndpoints.value.splice(
+    (pageIndex - 1 || 0) * pageSize,
+    pageSize * (pageIndex || 1)
+  );
 }
 function searchList() {
   const currentEndpoints = selectorStore.pods.filter((d: { label: string }) =>
@@ -187,6 +192,12 @@ watch(
     if (dashboardStore.showConfig) {
       queryEndpointMetrics(endpoints.value);
     }
+  }
+);
+watch(
+  () => [selectorStore.currentService],
+  () => {
+    queryEndpoints();
   }
 );
 </script>

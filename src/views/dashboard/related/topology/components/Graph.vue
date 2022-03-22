@@ -254,9 +254,7 @@ function handleLinkClick(event: any, d: Call) {
     entity: `${e}Relation`,
   });
   dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/${e}Relation/${d.source.id}/${
-    d.target.id
-  }/${p.name.split(" ").join("-")}`;
+  const path = `/dashboard/${p.layer}/${e}Relation/${d.source.id}/${d.target.id}/${p.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
   dashboardStore.setEntity(origin);
@@ -396,9 +394,7 @@ function handleGoEndpoint(name: string) {
     entity: EntityType[2].value,
   });
   dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/Endpoint/${topologyStore.node.id}/${name
-    .split(" ")
-    .join("-")}`;
+  const path = `/dashboard/${p.layer}/Endpoint/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
@@ -412,9 +408,7 @@ function handleGoInstance(name: string) {
     entity: EntityType[3].value,
   });
   dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/ServiceInstance/${
-    topologyStore.node.id
-  }/${name.split(" ").join("-")}`;
+  const path = `/dashboard/${p.layer}/ServiceInstance/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
@@ -428,9 +422,7 @@ function handleGoDashboard(name: string) {
     entity: EntityType[0].value,
   });
   dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/Service/${topologyStore.node.id}/${name
-    .split(" ")
-    .join("-")}`;
+  const path = `/dashboard/${p.layer}/Service/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
@@ -448,7 +440,7 @@ async function backToTopology() {
   const resp = await getTopology();
   loading.value = false;
 
-  if (resp.errors) {
+  if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
   await init();
@@ -473,8 +465,12 @@ function setConfig() {
   dashboardStore.selectWidget(props.config);
 }
 function resize() {
-  height.value = document.body.clientHeight;
-  width.value = document.body.clientWidth;
+  const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
+    height: 40,
+    width: 0,
+  };
+  height.value = dom.height - 40;
+  width.value = dom.width;
   svg.value.attr("height", height.value).attr("width", width.value);
 }
 function updateSettings(config: any) {

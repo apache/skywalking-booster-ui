@@ -179,11 +179,13 @@ function clickService(scope: any) {
     layer: dashboardStore.layerId,
     entity: EntityType[0].value,
   });
+  if (!d) {
+    ElMessage.error("No this dashboard");
+    return;
+  }
   dashboardStore.setCurrentDashboard(d);
   dashboardStore.setEntity(d.entity);
-  const path = `/dashboard/${d.layer}/${d.entity}/${scope.row.id}/${d.name
-    .split(" ")
-    .join("-")}`;
+  const path = `/dashboard/${d.layer}/${d.entity}/${scope.row.id}/${d.name}`;
 
   router.push(path);
 }
@@ -224,7 +226,10 @@ function objectSpanMethod(param: any): any {
   }
 }
 function changePage(pageIndex: number) {
-  services.value = selectorStore.services.splice(pageIndex - 1, pageSize);
+  services.value = services.value.splice(
+    (pageIndex - 1 || 0) * pageSize,
+    pageSize * (pageIndex || 1)
+  );
 }
 function searchList() {
   searchServices.value = selectorStore.services.filter((d: { label: string }) =>

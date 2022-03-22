@@ -49,7 +49,7 @@ limitations under the License. -->
   </div>
   <div
     class="sankey"
-    :style="`height:${height}px;width:${width}px;`"
+    :style="`height:${height - 30}px;width:${width}px;`"
     v-loading="loading"
     element-loading-background="rgba(0, 0, 0, 0)"
     @click="handleClick"
@@ -120,6 +120,7 @@ const items = [
 
 onMounted(() => {
   loadTopology(selectorStore.currentPod && selectorStore.currentPod.id);
+  window.addEventListener("resize", resize);
 });
 
 async function loadTopology(id: string) {
@@ -138,6 +139,15 @@ async function loadTopology(id: string) {
   topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
   topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
   topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+}
+
+function resize() {
+  const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
+    height: 40,
+    width: 0,
+  };
+  height.value = dom.height - 40;
+  width.value = dom.width;
 }
 
 function inspect() {
@@ -166,9 +176,7 @@ function goDashboard() {
   });
   dashboardStore.setEntity(entity);
   dashboardStore.setCurrentDashboard(d);
-  const path = `/dashboard/${d.layer}/${entity}/${
-    topologyStore.node.serviceId
-  }/${topologyStore.node.id}/${d.name.split(" ").join("-")}`;
+  const path = `/dashboard/${d.layer}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${d.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
   topologyStore.setNode(null);
@@ -207,9 +215,7 @@ function selectNodeLink(d: any) {
       entity,
     });
     dashboardStore.setEntity(entity);
-    const path = `/dashboard/${p.layer}/${entity}/${sourceObj.serviceId}/${
-      sourceObj.id
-    }/${targetObj.serviceId}/${targetObj.id}/${p.name.split(" ").join("-")}`;
+    const path = `/dashboard/${p.layer}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${p.name}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
     return;
@@ -233,6 +239,9 @@ async function getTopology(id: string) {
         [id],
         Number(depth.value)
       );
+      break;
+    case EntityType[5].value:
+      resp = await topologyStore.getInstanceTopology();
       break;
     case EntityType[4].value:
       resp = await topologyStore.getInstanceTopology();

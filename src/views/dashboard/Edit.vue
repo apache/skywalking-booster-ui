@@ -55,7 +55,7 @@ async function setTemplate() {
 
   if (!p.entity) {
     const { layer, entity, name } = dashboardStore.currentDashboard;
-    layoutKey.value = `${layer}_${entity}_${name.split(" ").join("-")}`;
+    layoutKey.value = `${layer}_${entity}_${name}`;
   }
   const c: { configuration: string; id: string } = JSON.parse(
     sessionStorage.getItem(layoutKey.value) || "{}"

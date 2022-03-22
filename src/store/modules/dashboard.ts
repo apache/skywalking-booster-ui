@@ -296,7 +296,7 @@ export const dashboardStore = defineStore({
       const list = [];
       for (const t of data) {
         const c = JSON.parse(t.configuration);
-        const key = [c.layer, c.entity, c.name.split(" ").join("-")].join("_");
+        const key = [c.layer, c.entity, c.name].join("_");
 
         list.push({
           id: t.id,
@@ -321,6 +321,17 @@ export const dashboardStore = defineStore({
           ElMessage.error(res.errors);
           return;
         }
+      }
+      this.dashboards = JSON.parse(
+        sessionStorage.getItem("dashboards") || "[]"
+      );
+    },
+    async resetTemplates() {
+      const res = await this.fetchTemplates();
+      if (res.errors) {
+        this.dashboards = [];
+        ElMessage.error(res.errors);
+        return;
       }
       this.dashboards = JSON.parse(
         sessionStorage.getItem("dashboards") || "[]"
@@ -385,7 +396,7 @@ export const dashboardStore = defineStore({
       }
       if (!json.status) {
         ElMessage.error(json.message);
-        return;
+        return json;
       }
       if (!this.currentDashboard.id) {
         ElMessage.success("Saved successfully");
@@ -393,22 +404,21 @@ export const dashboardStore = defineStore({
       const key = [
         this.currentDashboard.layer,
         this.currentDashboard.entity,
-        this.currentDashboard.name.split(" ").join("-"),
+        this.currentDashboard.name,
       ].join("_");
+      this.currentDashboard.id = json.id;
       if (this.currentDashboard.id) {
         sessionStorage.removeItem(key);
         this.dashboards = this.dashboards.filter(
           (d: DashboardItem) => d.id !== this.currentDashboard.id
         );
       }
-      this.dashboards.push({
-        ...this.currentDashboard,
-        id: json.id,
-      });
+      this.dashboards.push(this.currentDashboard);
       const l = { id: json.id, configuration: c };
 
       sessionStorage.setItem(key, JSON.stringify(l));
       sessionStorage.setItem("dashboards", JSON.stringify(this.dashboards));
+      return json;
     },
     async deleteDashboard() {
       const res: AxiosResponse = await graphql
@@ -430,7 +440,7 @@ export const dashboardStore = defineStore({
       const key = [
         this.currentDashboard.layer,
         this.currentDashboard.entity,
-        this.currentDashboard.name.split(" ").join("-"),
+        this.currentDashboard.name,
       ].join("_");
       sessionStorage.removeItem(key);
     },

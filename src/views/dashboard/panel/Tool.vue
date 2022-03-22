@@ -110,13 +110,15 @@ import {
   ServiceTools,
   InstanceTools,
   EndpointTools,
-  PodRelationTools,
+  EndpointRelationTools,
+  InstanceRelationTools,
   ServiceRelationTools,
 } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
 import { useI18n } from "vue-i18n";
+import { useThrottleFn } from "@vueuse/core";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -124,8 +126,9 @@ const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
 const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
-const toolIcons =
-  ref<{ name: string; content: string; id: string }[]>(PodRelationTools);
+const toolIcons = ref<{ name: string; content: string; id: string }[]>(
+  EndpointRelationTools
+);
 const states = reactive<{
   destService: string;
   destPod: string;
@@ -143,6 +146,7 @@ const states = reactive<{
   currentDestService: "",
   currentDestPod: "",
 });
+const applyDashboard = useThrottleFn(dashboardStore.saveDashboard, 3000);
 if (params.layerId) {
   dashboardStore.setLayer(params.layerId);
   dashboardStore.setEntity(params.entity);
@@ -344,7 +348,7 @@ function setTabControls(id: string) {
       dashboardStore.addTabControls("Topology");
       break;
     case "apply":
-      dashboardStore.saveDashboard();
+      applyDashboard();
       break;
     default:
       ElMessage.info("Don't support this control");
@@ -373,7 +377,7 @@ function setControls(id: string) {
       dashboardStore.addControl("Topology");
       break;
     case "apply":
-      dashboardStore.saveDashboard();
+      applyDashboard();
       break;
     default:
       dashboardStore.addControl("Widget");
@@ -446,8 +450,14 @@ function getTools() {
     case EntityType[4].value:
       toolIcons.value = ServiceRelationTools;
       break;
+    case EntityType[5].value:
+      toolIcons.value = InstanceRelationTools;
+      break;
+    case EntityType[6].value:
+      toolIcons.value = EndpointRelationTools;
+      break;
     default:
-      toolIcons.value = PodRelationTools;
+      toolIcons.value = EndpointRelationTools;
   }
 }
 </script>
@@ -501,6 +511,6 @@ function getTools() {
 }
 
 .selectorPod {
-  width: 340px;
+  width: 300px;
 }
 </style>

@@ -18,7 +18,7 @@ limitations under the License. -->
       <el-input
         v-model="searchText"
         placeholder="Please input name"
-        class="input-with-search"
+        class="input-with-search ml-10"
         size="small"
         @change="searchDashboards"
       >
@@ -28,6 +28,10 @@ limitations under the License. -->
           </el-button>
         </template>
       </el-input>
+      <el-button class="ml-10" size="small" @click="reloadTemplates">
+        <Icon size="sm" iconName="retry" class="reload" />
+        {{ t("reloadDashboards") }}
+      </el-button>
       <router-link to="/dashboard/new">
         <el-button size="small" type="primary">
           + {{ t("newDashboard") }}
@@ -37,7 +41,7 @@ limitations under the License. -->
     <div class="table">
       <el-table
         :data="dashboards"
-        :style="{ width: '100%', fontSize: '13px' }"
+        :style="{ fontSize: '13px', width: '100%' }"
         v-loading="loading"
         ref="multipleTableRef"
         :default-sort="{ prop: 'name' }"
@@ -46,21 +50,21 @@ limitations under the License. -->
         <el-table-column type="selection" width="55" />
         <el-table-column prop="name" label="Name">
           <template #default="scope">
-            <span class="cp" @click="handleView(scope.row)">{{
+            <span class="cp name" @click="handleView(scope.row)">{{
               scope.row.name
             }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="layer" label="Layer" width="200" />
         <el-table-column prop="entity" label="Entity" width="200" />
-        <el-table-column prop="isRoot" label="Root" width="100">
+        <el-table-column prop="isRoot" label="Root" width="60">
           <template #default="scope">
             <span>
               {{ scope.row.isRoot ? t("yes") : t("no") }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="Operations">
+        <el-table-column label="Operations" width="350">
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.row)">
               {{ t("edit") }}
@@ -113,6 +117,17 @@ limitations under the License. -->
             {{ t("import") }}
           </label>
         </el-button>
+        <el-pagination
+          class="pagination"
+          background
+          small
+          layout="prev, pager, next"
+          :page-size="pageSize"
+          :total="dashboardStore.dashboards.length"
+          @current-change="changePage"
+          @prev-click="changePage"
+          @next-click="changePage"
+        />
       </div>
     </div>
   </div>
@@ -133,6 +148,7 @@ import { EntityType } from "./data";
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
+const pageSize = 18;
 const dashboards = ref<DashboardItem[]>([]);
 const searchText = ref<string>("");
 const loading = ref<boolean>(false);
@@ -147,7 +163,7 @@ const handleSelectionChange = (val: DashboardItem[]) => {
 setList();
 async function setList() {
   await dashboardStore.setDashboards();
-  dashboards.value = dashboardStore.dashboards;
+  searchDashboards();
 }
 async function importTemplates(event: any) {
   const arr: any = await readFile(event);
@@ -168,7 +184,7 @@ async function importTemplates(event: any) {
       (d: DashboardItem) => d.id === item.id
     );
     const p: DashboardItem = {
-      name: name,
+      name: name.split(" ").join("-"),
       layer: layer,
       entity: entity,
       isRoot: false,
@@ -192,7 +208,7 @@ function exportTemplates() {
     }
   );
   const templates = arr.map((d: DashboardItem) => {
-    const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+    const key = [d.layer, d.entity, d.name].join("_");
     const layout = JSON.parse(sessionStorage.getItem(key) || "{}");
     return layout;
   });
@@ -207,9 +223,7 @@ function handleEdit(row: DashboardItem) {
   dashboardStore.setEntity(row.entity);
   dashboardStore.setLayer(row.layer);
   dashboardStore.setCurrentDashboard(row);
-  router.push(
-    `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
-  );
+  router.push(`/dashboard/${row.layer}/${row.entity}/${row.name}`);
 }
 
 function handleView(row: DashboardItem) {
@@ -217,9 +231,7 @@ function handleView(row: DashboardItem) {
   dashboardStore.setEntity(row.entity);
   dashboardStore.setLayer(row.layer);
   dashboardStore.setCurrentDashboard(row);
-  router.push(
-    `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
-  );
+  router.push(`/dashboard/${row.layer}/${row.entity}/${row.name}`);
 }
 
 async function setRoot(row: DashboardItem) {
@@ -228,7 +240,7 @@ async function setRoot(row: DashboardItem) {
   for (const d of dashboardStore.dashboards) {
     if (d.id === row.id) {
       d.isRoot = !row.isRoot;
-      const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+      const key = [d.layer, d.entity, d.name].join("_");
       const layout = sessionStorage.getItem(key) || "{}";
       const c = {
         ...JSON.parse(layout).configuration,
@@ -258,7 +270,7 @@ async function setRoot(row: DashboardItem) {
         d.isRoot === true
       ) {
         d.isRoot = false;
-        const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+        const key = [d.layer, d.entity, d.name].join("_");
         const layout = sessionStorage.getItem(key) || "{}";
         const c = {
           ...JSON.parse(layout).configuration,
@@ -303,7 +315,11 @@ function handleRename(row: DashboardItem) {
     });
 }
 async function updateName(d: DashboardItem, value: string) {
-  const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+  if (new RegExp(/\s/).test(value)) {
+    ElMessage.error("The name cannot contain spaces, carriage returns, etc");
+    return;
+  }
+  const key = [d.layer, d.entity, d.name].join("_");
   const layout = sessionStorage.getItem(key) || "{}";
   const c = {
     ...JSON.parse(layout).configuration,
@@ -337,7 +353,7 @@ async function updateName(d: DashboardItem, value: string) {
   const str = [
     dashboardStore.currentDashboard.layer,
     dashboardStore.currentDashboard.entity,
-    dashboardStore.currentDashboard.name.split(" ").join("-"),
+    dashboardStore.currentDashboard.name,
   ].join("_");
   sessionStorage.setItem(
     str,
@@ -355,15 +371,26 @@ async function handleDelete(row: DashboardItem) {
   dashboards.value = dashboardStore.dashboards;
   loading.value = false;
   sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
-  sessionStorage.removeItem(
-    `${row.layer}_${row.entity}_${row.name.split(" ").join("-")}`
-  );
+  sessionStorage.removeItem(`${row.layer}_${row.entity}_${row.name}`);
 }
-function searchDashboards() {
+function searchDashboards(pageIndex?: any) {
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-  dashboards.value = list.filter((d: { name: string }) =>
+  const arr = list.filter((d: { name: string }) =>
     d.name.includes(searchText.value)
   );
+  dashboards.value = arr.splice(
+    (pageIndex - 1 || 0) * pageSize,
+    pageSize * (pageIndex || 1)
+  );
+}
+
+async function reloadTemplates() {
+  loading.value = true;
+  await dashboardStore.resetTemplates();
+  loading.value = false;
+}
+function changePage(pageIndex: number) {
+  searchDashboards(pageIndex);
 }
 </script>
 <style lang="scss" scoped>
@@ -373,11 +400,12 @@ function searchDashboards() {
 
 .dashboard-list {
   padding: 20px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .input-with-search {
-  width: 300px;
-  margin-left: 20px;
+  width: 250px;
 }
 
 .table {
@@ -385,11 +413,17 @@ function searchDashboards() {
   background-color: #fff;
   box-shadow: 0px 1px 4px 0px #00000029;
   border-radius: 5px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .toggle-selection {
   margin-top: 20px;
   background-color: #fff;
+}
+
+.pagination {
+  float: right;
 }
 
 .btn {
@@ -406,5 +440,13 @@ function searchDashboards() {
   height: 30px;
   width: 220px;
   cursor: pointer;
+}
+
+.name {
+  color: #409eff;
+}
+
+.reload {
+  margin-right: 3px;
 }
 </style>
