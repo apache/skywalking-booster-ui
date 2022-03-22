@@ -448,7 +448,7 @@ async function backToTopology() {
   const resp = await getTopology();
   loading.value = false;
 
-  if (resp.errors) {
+  if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
   await init();
