@@ -117,6 +117,17 @@ limitations under the License. -->
             {{ t("import") }}
           </label>
         </el-button>
+        <el-pagination
+          class="pagination"
+          background
+          small
+          layout="prev, pager, next"
+          :page-size="pageSize"
+          :total="dashboardStore.dashboards.length"
+          @current-change="changePage"
+          @prev-click="changePage"
+          @next-click="changePage"
+        />
       </div>
     </div>
   </div>
@@ -137,6 +148,7 @@ import { EntityType } from "./data";
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
+const pageSize = 18;
 const dashboards = ref<DashboardItem[]>([]);
 const searchText = ref<string>("");
 const loading = ref<boolean>(false);
@@ -151,7 +163,7 @@ const handleSelectionChange = (val: DashboardItem[]) => {
 setList();
 async function setList() {
   await dashboardStore.setDashboards();
-  dashboards.value = dashboardStore.dashboards;
+  searchDashboards();
 }
 async function importTemplates(event: any) {
   const arr: any = await readFile(event);
@@ -361,15 +373,19 @@ async function handleDelete(row: DashboardItem) {
   sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
   sessionStorage.removeItem(`${row.layer}_${row.entity}_${row.name}`);
 }
-function searchDashboards() {
+function searchDashboards(pageIndex?: number) {
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-  dashboards.value = list.filter((d: { name: string }) =>
+  const arr = list.filter((d: { name: string }) =>
     d.name.includes(searchText.value)
   );
+  dashboards.value = arr.splice(pageIndex || 0, pageSize);
 }
 
 function reloadTemplates() {
   dashboardStore.resetTemplates();
+}
+function changePage(pageIndex: number) {
+  searchDashboards(pageIndex);
 }
 </script>
 <style lang="scss" scoped>
@@ -399,6 +415,10 @@ function reloadTemplates() {
 .toggle-selection {
   margin-top: 20px;
   background-color: #fff;
+}
+
+.pagination {
+  float: right;
 }
 
 .btn {

@@ -394,9 +394,7 @@ function handleGoEndpoint(name: string) {
     entity: EntityType[2].value,
   });
   dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/Endpoint/${topologyStore.node.id}/${name
-    .split(" ")
-    .join("-")}`;
+  const path = `/dashboard/${p.layer}/Endpoint/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
@@ -424,9 +422,7 @@ function handleGoDashboard(name: string) {
     entity: EntityType[0].value,
   });
   dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/Service/${topologyStore.node.id}/${name
-    .split(" ")
-    .join("-")}`;
+  const path = `/dashboard/${p.layer}/Service/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");

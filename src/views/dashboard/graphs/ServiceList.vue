@@ -185,9 +185,7 @@ function clickService(scope: any) {
   }
   dashboardStore.setCurrentDashboard(d);
   dashboardStore.setEntity(d.entity);
-  const path = `/dashboard/${d.layer}/${d.entity}/${scope.row.id}/${d.name
-    .split(" ")
-    .join("-")}`;
+  const path = `/dashboard/${d.layer}/${d.entity}/${scope.row.id}/${d.name}`;
 
   router.push(path);
 }
