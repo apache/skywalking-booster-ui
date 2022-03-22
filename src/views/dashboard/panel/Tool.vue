@@ -110,7 +110,8 @@ import {
   ServiceTools,
   InstanceTools,
   EndpointTools,
-  PodRelationTools,
+  EndpointRelationTools,
+  InstanceRelationTools,
   ServiceRelationTools,
 } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -124,8 +125,9 @@ const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
 const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
-const toolIcons =
-  ref<{ name: string; content: string; id: string }[]>(PodRelationTools);
+const toolIcons = ref<{ name: string; content: string; id: string }[]>(
+  EndpointRelationTools
+);
 const states = reactive<{
   destService: string;
   destPod: string;
@@ -446,8 +448,14 @@ function getTools() {
     case EntityType[4].value:
       toolIcons.value = ServiceRelationTools;
       break;
+    case EntityType[5].value:
+      toolIcons.value = InstanceRelationTools;
+      break;
+    case EntityType[6].value:
+      toolIcons.value = EndpointRelationTools;
+      break;
     default:
-      toolIcons.value = PodRelationTools;
+      toolIcons.value = EndpointRelationTools;
   }
 }
 </script>
@@ -501,6 +509,6 @@ function getTools() {
 }
 
 .selectorPod {
-  width: 340px;
+  width: 300px;
 }
 </style>

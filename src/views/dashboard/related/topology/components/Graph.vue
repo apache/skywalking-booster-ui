@@ -473,8 +473,12 @@ function setConfig() {
   dashboardStore.selectWidget(props.config);
 }
 function resize() {
-  height.value = document.body.clientHeight;
-  width.value = document.body.clientWidth;
+  const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
+    height: 40,
+    width: 0,
+  };
+  height.value = dom.height - 40;
+  width.value = dom.width;
   svg.value.attr("height", height.value).attr("width", width.value);
 }
 function updateSettings(config: any) {

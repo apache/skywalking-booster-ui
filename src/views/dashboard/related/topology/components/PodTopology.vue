@@ -234,6 +234,9 @@ async function getTopology(id: string) {
         Number(depth.value)
       );
       break;
+    case EntityType[5].value:
+      resp = await topologyStore.getInstanceTopology();
+      break;
     case EntityType[4].value:
       resp = await topologyStore.getInstanceTopology();
       break;

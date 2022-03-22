@@ -204,9 +204,16 @@ export const ServiceRelationTools = [
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "save", content: "Apply", id: "apply" },
 ];
-export const PodRelationTools = [
+
+export const EndpointRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "save", content: "Apply", id: "apply" },
+];
+export const InstanceRelationTools = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "save", content: "Apply", id: "apply" },
 ];
 
