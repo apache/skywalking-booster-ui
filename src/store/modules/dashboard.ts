@@ -406,16 +406,14 @@ export const dashboardStore = defineStore({
         this.currentDashboard.entity,
         this.currentDashboard.name,
       ].join("_");
+      this.currentDashboard.id = json.id;
       if (this.currentDashboard.id) {
         sessionStorage.removeItem(key);
         this.dashboards = this.dashboards.filter(
           (d: DashboardItem) => d.id !== this.currentDashboard.id
         );
       }
-      this.dashboards.push({
-        ...this.currentDashboard,
-        id: json.id,
-      });
+      this.dashboards.push(this.currentDashboard);
       const l = { id: json.id, configuration: c };
 
       sessionStorage.setItem(key, JSON.stringify(l));
