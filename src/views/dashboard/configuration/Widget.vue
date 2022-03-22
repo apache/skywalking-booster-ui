@@ -65,7 +65,7 @@ limitations under the License. -->
       </el-collapse>
     </div>
     <div class="footer">
-      <el-button size="small">
+      <el-button size="small" @click="cancelConfig">
         {{ t("cancel") }}
       </el-button>
       <el-button size="small" type="primary" @click="applyConfig">
@@ -112,6 +112,7 @@ export default defineComponent({
       index: dashboardStore.selectedGrid.i,
       visType: [],
     });
+    const originConfig = dashboardStore.selectedGrid;
 
     function getSource(source: unknown) {
       states.source = source;
@@ -126,6 +127,11 @@ export default defineComponent({
       dashboardStore.setConfigPanel(false);
     }
 
+    function cancelConfig() {
+      dashboardStore.selectWidget(originConfig);
+      dashboardStore.setConfigPanel(false);
+    }
+
     return {
       states,
       loading,
@@ -134,6 +140,7 @@ export default defineComponent({
       configHeight,
       dashboardStore,
       applyConfig,
+      cancelConfig,
       getSource,
       setLoading,
     };
