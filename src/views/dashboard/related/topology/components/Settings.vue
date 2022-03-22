@@ -325,6 +325,7 @@ function changeScope(index: number, opt: Option[] | any) {
     []
   );
   items[index].dashboard = states.nodeDashboards[0].value;
+  updateSettings();
 }
 function updateNodeDashboards(index: number, content: Option[] | any) {
   items[index].dashboard = content[0].value;

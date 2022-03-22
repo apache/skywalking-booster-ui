@@ -122,10 +122,7 @@ const settings = ref<any>(props.config);
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
 const items = ref<
   { id: string; title: string; func: any; dashboard?: string }[]
->([
-  { id: "inspect", title: "Inspect", func: handleInspect },
-  { id: "alarm", title: "Alarm", func: handleGoAlarm },
-]);
+>([]);
 const depth = ref<number>(props.config.graph.depth || 2);
 
 onMounted(async () => {
@@ -148,6 +145,7 @@ onMounted(async () => {
   svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
   await init();
   update();
+  setNodeTools(settings.value.nodeDashboard);
 });
 async function init() {
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
@@ -472,16 +470,19 @@ function resize() {
   svg.value.attr("height", height.value).attr("width", width.value);
 }
 function updateSettings(config: any) {
+  settings.value = config;
+  setNodeTools(config.nodeDashboard);
+}
+function setNodeTools(nodeDashboard: any) {
   items.value = [
     { id: "inspect", title: "Inspect", func: handleInspect },
     { id: "alarm", title: "Alarm", func: handleGoAlarm },
   ];
-  settings.value = config;
-  for (const item of config.nodeDashboard) {
+  for (const item of nodeDashboard) {
     if (item.scope === EntityType[0].value) {
       items.value.push({
         id: "dashboard",
-        title: "Dashboard",
+        title: "Service Dashboard",
         func: handleGoDashboard,
         ...item,
       });
@@ -489,7 +490,7 @@ function updateSettings(config: any) {
     if (item.scope === EntityType[2].value) {
       items.value.push({
         id: "endpoint",
-        title: "Endpoint",
+        title: "Endpoint Dashboard",
         func: handleGoEndpoint,
         ...item,
       });
@@ -497,7 +498,7 @@ function updateSettings(config: any) {
     if (item.scope === EntityType[3].value) {
       items.value.push({
         id: "instance",
-        title: "Service Instance",
+        title: "Service Instance Dashboard",
         func: handleGoInstance,
         ...item,
       });
@@ -577,7 +578,6 @@ watch(
     span {
       display: block;
       height: 30px;
-      width: 140px;
       line-height: 30px;
       text-align: center;
     }
