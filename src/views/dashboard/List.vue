@@ -384,8 +384,10 @@ function searchDashboards(pageIndex?: any) {
   );
 }
 
-function reloadTemplates() {
-  dashboardStore.resetTemplates();
+async function reloadTemplates() {
+  loading.value = true;
+  await dashboardStore.resetTemplates();
+  loading.value = false;
 }
 function changePage(pageIndex: number) {
   searchDashboards(pageIndex);
