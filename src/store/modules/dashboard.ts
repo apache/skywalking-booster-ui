@@ -326,6 +326,17 @@ export const dashboardStore = defineStore({
         sessionStorage.getItem("dashboards") || "[]"
       );
     },
+    async resetTemplates() {
+      const res = await this.fetchTemplates();
+      if (res.errors) {
+        this.dashboards = [];
+        ElMessage.error(res.errors);
+        return;
+      }
+      this.dashboards = JSON.parse(
+        sessionStorage.getItem("dashboards") || "[]"
+      );
+    },
     async updateDashboard(setting: { id: string; configuration: string }) {
       const res: AxiosResponse = await graphql.query("updateTemplate").params({
         setting,

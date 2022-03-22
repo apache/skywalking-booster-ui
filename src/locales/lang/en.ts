@@ -122,6 +122,7 @@ const msg = {
   editWarning: "You are entering edit mode",
   viewWarning: "You are entering view mode",
   virtualDatabase: "Virtual Database",
+  reloadDashboards: "Reload dashboards",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

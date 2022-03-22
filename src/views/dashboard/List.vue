@@ -18,7 +18,7 @@ limitations under the License. -->
       <el-input
         v-model="searchText"
         placeholder="Please input name"
-        class="input-with-search"
+        class="input-with-search ml-10"
         size="small"
         @change="searchDashboards"
       >
@@ -28,6 +28,10 @@ limitations under the License. -->
           </el-button>
         </template>
       </el-input>
+      <el-button class="ml-10" size="small" @click="reloadTemplates">
+        <Icon size="sm" iconName="retry" class="reload" />
+        {{ t("reloadDashboards") }}
+      </el-button>
       <router-link to="/dashboard/new">
         <el-button size="small" type="primary">
           + {{ t("newDashboard") }}
@@ -37,7 +41,7 @@ limitations under the License. -->
     <div class="table">
       <el-table
         :data="dashboards"
-        :style="{ width: '100%', fontSize: '13px' }"
+        :style="{ fontSize: '13px', width: '100%' }"
         v-loading="loading"
         ref="multipleTableRef"
         :default-sort="{ prop: 'name' }"
@@ -46,21 +50,21 @@ limitations under the License. -->
         <el-table-column type="selection" width="55" />
         <el-table-column prop="name" label="Name">
           <template #default="scope">
-            <span class="cp" @click="handleView(scope.row)">{{
+            <span class="cp name" @click="handleView(scope.row)">{{
               scope.row.name
             }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="layer" label="Layer" width="200" />
         <el-table-column prop="entity" label="Entity" width="200" />
-        <el-table-column prop="isRoot" label="Root" width="100">
+        <el-table-column prop="isRoot" label="Root" width="60">
           <template #default="scope">
             <span>
               {{ scope.row.isRoot ? t("yes") : t("no") }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="Operations">
+        <el-table-column label="Operations" width="350">
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.row)">
               {{ t("edit") }}
@@ -365,6 +369,10 @@ function searchDashboards() {
     d.name.includes(searchText.value)
   );
 }
+
+function reloadTemplates() {
+  dashboardStore.resetTemplates();
+}
 </script>
 <style lang="scss" scoped>
 .header {
@@ -373,11 +381,12 @@ function searchDashboards() {
 
 .dashboard-list {
   padding: 20px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .input-with-search {
-  width: 300px;
-  margin-left: 20px;
+  width: 250px;
 }
 
 .table {
@@ -385,6 +394,8 @@ function searchDashboards() {
   background-color: #fff;
   box-shadow: 0px 1px 4px 0px #00000029;
   border-radius: 5px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .toggle-selection {
@@ -406,5 +417,13 @@ function searchDashboards() {
   height: 30px;
   width: 220px;
   cursor: pointer;
+}
+
+.name {
+  color: #409eff;
+}
+
+.reload {
+  margin-right: 3px;
 }
 </style>
