@@ -118,6 +118,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
 import { useI18n } from "vue-i18n";
+import { useThrottleFn } from "@vueuse/core";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -145,6 +146,7 @@ const states = reactive<{
   currentDestService: "",
   currentDestPod: "",
 });
+const applyDashboard = useThrottleFn(dashboardStore.saveDashboard, 3000);
 if (params.layerId) {
   dashboardStore.setLayer(params.layerId);
   dashboardStore.setEntity(params.entity);
@@ -346,7 +348,7 @@ function setTabControls(id: string) {
       dashboardStore.addTabControls("Topology");
       break;
     case "apply":
-      dashboardStore.saveDashboard();
+      applyDashboard();
       break;
     default:
       ElMessage.info("Don't support this control");
@@ -375,7 +377,7 @@ function setControls(id: string) {
       dashboardStore.addControl("Topology");
       break;
     case "apply":
-      dashboardStore.saveDashboard();
+      applyDashboard();
       break;
     default:
       dashboardStore.addControl("Widget");

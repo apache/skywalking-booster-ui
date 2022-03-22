@@ -396,7 +396,7 @@ export const dashboardStore = defineStore({
       }
       if (!json.status) {
         ElMessage.error(json.message);
-        return;
+        return json;
       }
       if (!this.currentDashboard.id) {
         ElMessage.success("Saved successfully");
@@ -418,6 +418,7 @@ export const dashboardStore = defineStore({
 
       sessionStorage.setItem(key, JSON.stringify(l));
       sessionStorage.setItem("dashboards", JSON.stringify(this.dashboards));
+      return json;
     },
     async deleteDashboard() {
       const res: AxiosResponse = await graphql

@@ -373,7 +373,7 @@ async function handleDelete(row: DashboardItem) {
   sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
   sessionStorage.removeItem(`${row.layer}_${row.entity}_${row.name}`);
 }
-function searchDashboards(pageIndex?: number) {
+function searchDashboards(pageIndex?: any) {
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   const arr = list.filter((d: { name: string }) =>
     d.name.includes(searchText.value)
