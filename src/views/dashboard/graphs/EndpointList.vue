@@ -170,9 +170,7 @@ function clickEndpoint(scope: any) {
   dashboardStore.setEntity(EntityType[2].value);
   dashboardStore.setCurrentDashboard(d);
   router.push(
-    `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${
-      scope.row.id
-    }/${d.name.split(" ").join("-")}`
+    `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${scope.row.id}/${d.name}`
   );
 }
 function changePage(pageIndex: number) {

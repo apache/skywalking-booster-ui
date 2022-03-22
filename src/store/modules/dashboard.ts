@@ -296,7 +296,7 @@ export const dashboardStore = defineStore({
       const list = [];
       for (const t of data) {
         const c = JSON.parse(t.configuration);
-        const key = [c.layer, c.entity, c.name.split(" ").join("-")].join("_");
+        const key = [c.layer, c.entity, c.name].join("_");
 
         list.push({
           id: t.id,
@@ -404,7 +404,7 @@ export const dashboardStore = defineStore({
       const key = [
         this.currentDashboard.layer,
         this.currentDashboard.entity,
-        this.currentDashboard.name.split(" ").join("-"),
+        this.currentDashboard.name,
       ].join("_");
       if (this.currentDashboard.id) {
         sessionStorage.removeItem(key);
@@ -441,7 +441,7 @@ export const dashboardStore = defineStore({
       const key = [
         this.currentDashboard.layer,
         this.currentDashboard.entity,
-        this.currentDashboard.name.split(" ").join("-"),
+        this.currentDashboard.name,
       ].join("_");
       sessionStorage.removeItem(key);
     },

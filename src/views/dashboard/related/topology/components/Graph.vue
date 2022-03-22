@@ -254,9 +254,7 @@ function handleLinkClick(event: any, d: Call) {
     entity: `${e}Relation`,
   });
   dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/${e}Relation/${d.source.id}/${
-    d.target.id
-  }/${p.name.split(" ").join("-")}`;
+  const path = `/dashboard/${p.layer}/${e}Relation/${d.source.id}/${d.target.id}/${p.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
   dashboardStore.setEntity(origin);
@@ -412,9 +410,7 @@ function handleGoInstance(name: string) {
     entity: EntityType[3].value,
   });
   dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/ServiceInstance/${
-    topologyStore.node.id
-  }/${name.split(" ").join("-")}`;
+  const path = `/dashboard/${p.layer}/ServiceInstance/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");

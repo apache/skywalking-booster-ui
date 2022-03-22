@@ -175,9 +175,7 @@ function clickInstance(scope: any) {
   dashboardStore.setCurrentDashboard(d);
   dashboardStore.setEntity(d.entity);
   router.push(
-    `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${
-      scope.row.id
-    }/${d.name.split(" ").join("-")}`
+    `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${scope.row.id}/${d.name}`
   );
 }
 

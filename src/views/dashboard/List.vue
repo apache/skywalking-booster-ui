@@ -172,7 +172,7 @@ async function importTemplates(event: any) {
       (d: DashboardItem) => d.id === item.id
     );
     const p: DashboardItem = {
-      name: name,
+      name: name.split(" ").join("-"),
       layer: layer,
       entity: entity,
       isRoot: false,
@@ -196,7 +196,7 @@ function exportTemplates() {
     }
   );
   const templates = arr.map((d: DashboardItem) => {
-    const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+    const key = [d.layer, d.entity, d.name].join("_");
     const layout = JSON.parse(sessionStorage.getItem(key) || "{}");
     return layout;
   });
@@ -211,9 +211,7 @@ function handleEdit(row: DashboardItem) {
   dashboardStore.setEntity(row.entity);
   dashboardStore.setLayer(row.layer);
   dashboardStore.setCurrentDashboard(row);
-  router.push(
-    `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
-  );
+  router.push(`/dashboard/${row.layer}/${row.entity}/${row.name}`);
 }
 
 function handleView(row: DashboardItem) {
@@ -221,9 +219,7 @@ function handleView(row: DashboardItem) {
   dashboardStore.setEntity(row.entity);
   dashboardStore.setLayer(row.layer);
   dashboardStore.setCurrentDashboard(row);
-  router.push(
-    `/dashboard/${row.layer}/${row.entity}/${row.name.split(" ").join("-")}`
-  );
+  router.push(`/dashboard/${row.layer}/${row.entity}/${row.name}`);
 }
 
 async function setRoot(row: DashboardItem) {
@@ -232,7 +228,7 @@ async function setRoot(row: DashboardItem) {
   for (const d of dashboardStore.dashboards) {
     if (d.id === row.id) {
       d.isRoot = !row.isRoot;
-      const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+      const key = [d.layer, d.entity, d.name].join("_");
       const layout = sessionStorage.getItem(key) || "{}";
       const c = {
         ...JSON.parse(layout).configuration,
@@ -262,7 +258,7 @@ async function setRoot(row: DashboardItem) {
         d.isRoot === true
       ) {
         d.isRoot = false;
-        const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+        const key = [d.layer, d.entity, d.name].join("_");
         const layout = sessionStorage.getItem(key) || "{}";
         const c = {
           ...JSON.parse(layout).configuration,
@@ -307,7 +303,11 @@ function handleRename(row: DashboardItem) {
     });
 }
 async function updateName(d: DashboardItem, value: string) {
-  const key = [d.layer, d.entity, d.name.split(" ").join("-")].join("_");
+  if (new RegExp(/\s/).test(value)) {
+    ElMessage.error("The name cannot contain spaces, carriage returns, etc");
+    return;
+  }
+  const key = [d.layer, d.entity, d.name].join("_");
   const layout = sessionStorage.getItem(key) || "{}";
   const c = {
     ...JSON.parse(layout).configuration,
@@ -341,7 +341,7 @@ async function updateName(d: DashboardItem, value: string) {
   const str = [
     dashboardStore.currentDashboard.layer,
     dashboardStore.currentDashboard.entity,
-    dashboardStore.currentDashboard.name.split(" ").join("-"),
+    dashboardStore.currentDashboard.name,
   ].join("_");
   sessionStorage.setItem(
     str,
@@ -359,9 +359,7 @@ async function handleDelete(row: DashboardItem) {
   dashboards.value = dashboardStore.dashboards;
   loading.value = false;
   sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
-  sessionStorage.removeItem(
-    `${row.layer}_${row.entity}_${row.name.split(" ").join("-")}`
-  );
+  sessionStorage.removeItem(`${row.layer}_${row.entity}_${row.name}`);
 }
 function searchDashboards() {
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
