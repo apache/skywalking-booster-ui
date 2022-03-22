@@ -24,6 +24,7 @@ export const routesDatabase: Array<RouteRecordRaw> = [
     meta: {
       title: "database",
       icon: "bar_chart",
+      hasGroup: true,
     },
     redirect: "/database",
     component: Layout,
@@ -32,7 +33,7 @@ export const routesDatabase: Array<RouteRecordRaw> = [
         path: "/database",
         name: "Database",
         meta: {
-          title: "database",
+          title: "virtualDatabase",
           headPath: "/database",
           exact: true,
         },

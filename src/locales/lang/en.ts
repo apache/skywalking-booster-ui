@@ -121,6 +121,7 @@ const msg = {
   linux: "Linux",
   editWarning: "You are entering edit mode",
   viewWarning: "You are entering view mode",
+  virtualDatabase: "Virtual Database",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",
