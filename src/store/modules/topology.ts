@@ -34,7 +34,7 @@ interface TopologyState {
   call: Nullable<Call>;
   calls: Call[];
   nodes: Node[];
-  nodeMetrics: MetricVal;
+  nodeMetricValue: MetricVal;
   linkServerMetrics: MetricVal;
   linkClientMetrics: MetricVal;
 }
@@ -46,7 +46,7 @@ export const topologyStore = defineStore({
     nodes: [],
     node: null,
     call: null,
-    nodeMetrics: {},
+    nodeMetricValue: {},
     linkServerMetrics: {},
     linkClientMetrics: {},
   }),
@@ -105,8 +105,8 @@ export const topologyStore = defineStore({
       this.calls = calls;
       this.nodes = nodes;
     },
-    setNodeMetrics(m: { id: string; value: unknown }[]) {
-      this.nodeMetrics = m;
+    setNodeMetricValue(m: { id: string; value: unknown }[]) {
+      this.nodeMetricValue = m;
     },
     setLinkServerMetrics(m: { id: string; value: unknown }[]) {
       this.linkServerMetrics = m;
@@ -390,7 +390,7 @@ export const topologyStore = defineStore({
 
       return { calls, nodes };
     },
-    async getNodeMetrics(param: {
+    async getNodeMetricValue(param: {
       queryStr: string;
       conditions: { [key: string]: unknown };
     }) {
@@ -399,7 +399,7 @@ export const topologyStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.setNodeMetrics(res.data.data);
+      this.setNodeMetricValue(res.data.data);
       return res.data;
     },
     async getLinkClientMetrics(linkClientMetrics: string[]) {
@@ -427,7 +427,7 @@ export const topologyStore = defineStore({
     async queryNodeMetrics(nodeMetrics: string[]) {
       const ids = this.nodes.map((d: Node) => d.id);
       const param = await useQueryTopologyMetrics(nodeMetrics, ids);
-      const res = await this.getNodeMetrics(param);
+      const res = await this.getNodeMetricValue(param);
 
       if (res.errors) {
         ElMessage.error(res.errors);

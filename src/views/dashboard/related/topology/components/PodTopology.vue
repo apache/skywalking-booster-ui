@@ -272,10 +272,10 @@ watch(
   top: 60px;
   right: 10px;
   width: 400px;
-  height: 500px;
+  height: 600px;
   background-color: #2b3037;
   overflow: auto;
-  padding: 0 15px;
+  padding: 10px 15px;
   border-radius: 3px;
   color: #ccc;
   transition: all 0.5ms linear;

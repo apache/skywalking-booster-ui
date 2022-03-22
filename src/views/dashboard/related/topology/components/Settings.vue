@@ -176,11 +176,6 @@ limitations under the License. -->
       {{ t("setLegend") }}
     </el-button>
   </div>
-  <div>
-    <el-button @click="saveConfig" class="save-btn" size="small" type="primary">
-      {{ t("apply") }}
-    </el-button>
-  </div>
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
@@ -275,26 +270,26 @@ async function getMetricList() {
       entity + "Relation" === (MetricCatalog as any)[d.catalog] &&
       d.type === MetricsType.REGULAR_VALUE
   );
+  if (isService) {
+    return;
+  }
+  states.nodeDashboards = list.reduce(
+    (
+      prev: (DashboardItem & { label: string; value: string })[],
+      d: DashboardItem
+    ) => {
+      if (d.layer === dashboardStore.layerId && d.entity === entity) {
+        prev.push({ ...d, label: d.name, value: d.name });
+      }
+      return prev;
+    },
+    []
+  );
 }
 async function setLegend() {
-  const metrics = legend.metric.filter(
-    (d: any) => d.name && d.value && d.condition
-  );
-  const names = metrics.map((d: any) => d.name);
-  const p = {
-    linkDashboard: states.linkDashboard,
-    nodeDashboard: isService
-      ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
-      : states.nodeDashboard,
-    linkServerMetrics: states.linkServerMetrics,
-    linkClientMetrics: states.linkClientMetrics,
-    nodeMetrics: states.nodeMetrics,
-    legend: metrics,
-  };
-
-  emit("update", p);
-  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, ...p });
+  updateSettings();
   const ids = topologyStore.nodes.map((d: Node) => d.id);
+  const names = dashboardStore.selectedGrid.legend.map((d: any) => d.name);
   const param = await useQueryTopologyMetrics(names, ids);
   const res = await topologyStore.getLegendMetrics(param);
 
@@ -343,6 +338,9 @@ function deleteItem(index: number) {
   updateSettings();
 }
 function updateSettings() {
+  const metrics = legend.metric.filter(
+    (d: any) => d.name && d.value && d.condition
+  );
   const param = {
     linkDashboard: states.linkDashboard,
     nodeDashboard: isService
@@ -351,9 +349,10 @@ function updateSettings() {
     linkServerMetrics: states.linkServerMetrics,
     linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
-    legend: legend.metric,
+    legend: metrics,
   };
   dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, ...param });
+  dashboardStore.setConfigs({ ...dashboardStore.selectedGrid, ...param });
   emit("update", param);
 }
 async function changeLinkServerMetrics(options: Option[] | any) {
@@ -378,7 +377,7 @@ async function changeNodeMetrics(options: Option[] | any) {
   states.nodeMetrics = options.map((d: Option) => d.value);
   updateSettings();
   if (!states.nodeMetrics.length) {
-    topologyStore.setNodeMetrics({});
+    topologyStore.setNodeMetricValue({});
     return;
   }
   topologyStore.queryNodeMetrics(states.nodeMetrics);
@@ -430,9 +429,5 @@ function saveConfig() {
 
 .delete {
   margin: 0 3px;
-}
-
-.save-btn {
-  margin-top: 20px;
 }
 </style>

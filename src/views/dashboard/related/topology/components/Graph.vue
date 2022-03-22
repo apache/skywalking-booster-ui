@@ -280,7 +280,7 @@ function update() {
         const nodeMetrics: string[] = settings.value.nodeMetrics || [];
         const html = nodeMetrics.map((m) => {
           const metric =
-            topologyStore.nodeMetrics[m].values.filter(
+            topologyStore.nodeMetricValue[m].values.filter(
               (val: { id: string; value: unknown }) => val.id === data.id
             )[0] || {};
           const val = m.includes("_sla") ? metric.value / 100 : metric.value;
