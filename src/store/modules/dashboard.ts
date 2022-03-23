@@ -227,6 +227,7 @@ export const dashboardStore = defineStore({
       this.showConfig = show;
     },
     selectWidget(item: Nullable<LayoutConfig>) {
+      console.log(item);
       this.selectedGrid = item;
     },
     setLayer(id: string) {

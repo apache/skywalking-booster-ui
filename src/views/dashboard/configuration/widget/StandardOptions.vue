@@ -33,7 +33,7 @@ limitations under the License. -->
       @change="changeStandardOpt({ sortOrder })"
     />
   </div>
-  <div class="item" v-show="percentile">
+  <div class="item">
     <span class="label">{{ t("labels") }}</span>
     <el-input
       class="input"
@@ -43,7 +43,7 @@ limitations under the License. -->
       @change="changeStandardOpt"
     />
   </div>
-  <div class="item" v-show="percentile">
+  <div class="item">
     <span class="label">{{ t("labelsIndex") }}</span>
     <el-input
       class="input"
@@ -134,7 +134,7 @@ const emit = defineEmits(["update", "loading"]);
 const dashboardStore = useDashboardStore();
 const { selectedGrid } = dashboardStore;
 const percentile = ref<boolean>(
-  selectedGrid.metricTypes.includes("readLabeledMetricsValues")
+  dashboardStore.selectedGrid.metricTypes.includes("readLabeledMetricsValues")
 );
 const sortOrder = ref<string>(selectedGrid.standard.sortOrder || "DES");
 

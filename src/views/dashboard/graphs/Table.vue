@@ -21,13 +21,13 @@ limitations under the License. -->
         :style="`width: ${nameWidth + initWidth}px`"
       >
         <div class="name" :style="`width: ${nameWidth}px`">
-          {{ config.graph.tableHeaderCol1 || t("name") }}
+          {{ config.tableHeaderCol1 || t("name") }}
           <i class="r cp" ref="draggerName">
             <Icon iconName="settings_ethernet" size="middle" />
           </i>
         </div>
         <div class="value-col" v-if="showTableValues">
-          {{ config.graph.tableHeaderCol2 || t("value") }}
+          {{ config.tableHeaderCol2 || t("value") }}
         </div>
       </div>
       <div
@@ -60,11 +60,9 @@ const props = defineProps({
   },
   config: {
     type: Object as PropType<{
-      graph: {
-        showTableValues: boolean;
-        tableHeaderCol2: string;
-        tableHeaderCol1: string;
-      };
+      showTableValues: boolean;
+      tableHeaderCol2: string;
+      tableHeaderCol1: string;
       metricTypes: string[];
     }>,
     default: () => ({ showTableValues: true }),
@@ -77,15 +75,15 @@ const chartTable = ref<Nullable<HTMLElement>>(null);
 const initWidth = ref<number>(0);
 const nameWidth = ref<number>(0);
 const draggerName = ref<Nullable<HTMLElement>>(null);
-const showTableValues = ref<boolean>(props.config.graph.showTableValues);
+const showTableValues = ref<boolean>(props.config.showTableValues || false);
 onMounted(() => {
   if (!chartTable.value) {
     return;
   }
-  const width = props.config.graph.showTableValues
+  const width = props.config.showTableValues
     ? chartTable.value.offsetWidth / 2
     : chartTable.value.offsetWidth;
-  initWidth.value = props.config.graph.showTableValues
+  initWidth.value = props.config.showTableValues
     ? chartTable.value.offsetWidth / 2
     : 0;
   nameWidth.value = width - 5;
