@@ -46,6 +46,7 @@ limitations under the License. -->
         ref="multipleTableRef"
         :default-sort="{ prop: 'name' }"
         @selection-change="handleSelectionChange"
+        height="637px"
       >
         <el-table-column type="selection" width="55" />
         <el-table-column prop="name" label="Name">
@@ -214,9 +215,9 @@ function exportTemplates() {
   });
   const name = `dashboards.json`;
   saveFile(templates, name);
-  // setTimeout(() => {
-  //   multipleTableRef.value!.clearSelection();
-  // }, 2000);
+  setTimeout(() => {
+    multipleTableRef.value!.clearSelection();
+  }, 2000);
 }
 function handleEdit(row: DashboardItem) {
   dashboardStore.setMode(true);
