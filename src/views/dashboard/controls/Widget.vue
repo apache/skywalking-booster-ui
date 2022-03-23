@@ -66,6 +66,7 @@ limitations under the License. -->
           i: data.i,
         }"
         :standard="data.standard"
+        :needQuery="needQuery"
       />
     </div>
     <div v-else class="no-data">{{ t("noData") }}</div>
@@ -153,6 +154,7 @@ export default defineComponent({
         if (props.data.i !== dashboardStore.selectedGrid.i) {
           return;
         }
+        const isList = ListChartTypes.includes(props.data.graph.type || "");
         if (
           ListChartTypes.includes(dashboardStore.selectedGrid.graph.type) ||
           isList
@@ -165,6 +167,7 @@ export default defineComponent({
     watch(
       () => [selectorStore.currentService, selectorStore.currentDestService],
       () => {
+        const isList = ListChartTypes.includes(props.data.graph.type || "");
         if (isList) {
           return;
         }

@@ -46,6 +46,7 @@ limitations under the License. -->
         ref="multipleTableRef"
         :default-sort="{ prop: 'name' }"
         @selection-change="handleSelectionChange"
+        height="637px"
       >
         <el-table-column type="selection" width="55" />
         <el-table-column prop="name" label="Name">

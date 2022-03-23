@@ -101,6 +101,7 @@ export const selectorStore = defineStore({
       keyword?: string;
       serviceId?: string;
       isRelation?: boolean;
+      limit?: number;
     }): Promise<Nullable<AxiosResponse>> {
       if (!params) {
         params = {};
@@ -113,6 +114,7 @@ export const selectorStore = defineStore({
         serviceId,
         duration: this.durationTime,
         keyword: params.keyword || "",
+        limit: params.limit,
       });
       if (!res.data.errors) {
         if (params.isRelation) {

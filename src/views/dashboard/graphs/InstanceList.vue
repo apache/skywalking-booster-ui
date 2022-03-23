@@ -42,6 +42,20 @@ limitations under the License. -->
             </span>
           </template>
         </el-table-column>
+        <el-table-column label="Service Instances">
+          <template #default="scope">
+            <div class="attributes" v-if="scope.row.attributes.length">
+              <div
+                v-for="(attr, index) in scope.row.attributes"
+                :key="attr.name + index"
+                :style="{ fontSize: `${config.fontSize}px` }"
+              >
+                {{ attr.name }}: {{ attr.value || null }}
+              </div>
+            </div>
+            <div v-else>No Data</div>
+          </template>
+        </el-table-column>
         <el-table-column
           v-for="(metric, index) in config.metrics"
           :label="metric"
@@ -113,6 +127,7 @@ const props = defineProps({
     }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+  needQuery: { type: Boolean, default: false },
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
@@ -122,15 +137,18 @@ const searchInstances = ref<Instance[]>([]); // all instances
 const pageSize = 5;
 const searchText = ref<string>("");
 
-queryInstance();
-
+if (props.needQuery) {
+  queryInstance();
+}
 async function queryInstance() {
   chartLoading.value = true;
   const resp = await selectorStore.getServiceInstances();
 
   chartLoading.value = false;
-  if (resp.errors) {
+  if (resp && resp.errors) {
     ElMessage.error(resp.errors);
+    searchInstances.value = [];
+    instances.value = [];
     return;
   }
   searchInstances.value = selectorStore.pods;
@@ -178,6 +196,7 @@ function clickInstance(scope: any) {
 function changePage(pageIndex: number) {
   instances.value = searchInstances.value.splice(pageIndex - 1, pageSize);
 }
+
 function searchList() {
   searchInstances.value = selectorStore.pods.filter((d: { label: string }) =>
     d.label.includes(searchText.value)
@@ -193,6 +212,12 @@ watch(
     }
   }
 );
+watch(
+  () => selectorStore.currentService,
+  () => {
+    queryInstance();
+  }
+);
 </script>
 <style lang="scss" scoped>
 @import "./style.scss";
@@ -203,5 +228,10 @@ watch(
 
 .inputs {
   width: 300px;
+}
+
+.attributes {
+  max-height: 80px;
+  overflow: auto;
 }
 </style>

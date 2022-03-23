@@ -318,11 +318,11 @@ function aggregation(val: number, standard: any): number | string {
     data = val - Number(standard.plus);
     return data;
   }
-  if (!isNaN(standard.multiply)) {
+  if (!isNaN(standard.multiply) && standard.divide !== 0) {
     data = val * Number(standard.multiply);
     return data;
   }
-  if (!isNaN(standard.divide)) {
+  if (!isNaN(standard.divide) && standard.divide !== 0) {
     data = val / Number(standard.divide);
     return data;
   }

@@ -72,7 +72,7 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <div class="flex-h tools">
+    <div class="flex-h tools" v-loading="loading">
       <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
         <span
           @click="clickIcons(t)"
@@ -118,7 +118,6 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
 import { useI18n } from "vue-i18n";
-import { useThrottleFn } from "@vueuse/core";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -128,6 +127,7 @@ const params = useRoute().params;
 const toolIcons = ref<{ name: string; content: string; id: string }[]>(
   EndpointRelationTools
 );
+const loading = ref<boolean>(false);
 const states = reactive<{
   destService: string;
   destPod: string;
@@ -145,7 +145,6 @@ const states = reactive<{
   currentDestService: "",
   currentDestPod: "",
 });
-const applyDashboard = useThrottleFn(dashboardStore.saveDashboard, 3000);
 
 setCurrentDashboard();
 appStore.setEventStack([initSelector]);
@@ -329,7 +328,13 @@ function changeMode() {
   ElMessage.warning(t("viewWarning"));
 }
 
-function clickIcons(t: { id: string; content: string; name: string }) {
+async function clickIcons(t: { id: string; content: string; name: string }) {
+  if (t.id === "apply") {
+    loading.value = true;
+    await dashboardStore.saveDashboard();
+    loading.value = false;
+    return;
+  }
   if (
     dashboardStore.selectedGrid &&
     dashboardStore.selectedGrid.type === "Tab"
@@ -361,9 +366,6 @@ function setTabControls(id: string) {
     case "addTopology":
       dashboardStore.addTabControls("Topology");
       break;
-    case "apply":
-      applyDashboard();
-      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -389,9 +391,6 @@ function setControls(id: string) {
       break;
     case "addTopology":
       dashboardStore.addControl("Topology");
-      break;
-    case "apply":
-      applyDashboard();
       break;
     default:
       dashboardStore.addControl("Widget");

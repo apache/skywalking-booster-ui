@@ -144,8 +144,15 @@ async function setMetricType() {
   }
   states.metricList = (json.data.metrics || []).filter(
     (d: { catalog: string; type: string }) => {
-      if (states.isList || graph.type === "Table") {
+      if (states.isList) {
         if (d.type === MetricsType.REGULAR_VALUE) {
+          return d;
+        }
+      } else if (graph.type === "Table") {
+        if (
+          d.type === MetricsType.LABELED_VALUE ||
+          d.type === MetricsType.REGULAR_VALUE
+        ) {
           return d;
         }
       } else {

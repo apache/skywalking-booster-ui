@@ -110,6 +110,7 @@ const props = defineProps({
     default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+  needQuery: { type: Boolean, default: false },
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
@@ -117,13 +118,18 @@ const chartLoading = ref<boolean>(false);
 const endpoints = ref<Endpoint[]>([]);
 const searchEndpoints = ref<Endpoint[]>([]);
 const pageSize = 5;
+const total = 10;
 const searchText = ref<string>("");
 
-queryEndpoints();
-
-async function queryEndpoints() {
+if (props.needQuery) {
+  queryEndpoints(total);
+}
+async function queryEndpoints(limit?: number) {
   chartLoading.value = true;
-  const resp = await selectorStore.getEndpoints();
+  const resp = await selectorStore.getEndpoints({
+    limit,
+    keyword: searchText.value,
+  });
 
   chartLoading.value = false;
   if (resp.errors) {
@@ -132,7 +138,7 @@ async function queryEndpoints() {
   }
   searchEndpoints.value = selectorStore.pods;
   endpoints.value = selectorStore.pods.splice(0, pageSize);
-  if (props.config.isEdit) {
+  if (props.config.isEdit || !endpoints.value.length) {
     return;
   }
   queryEndpointMetrics(endpoints.value);
@@ -177,12 +183,9 @@ function changePage(pageIndex: number) {
     pageSize * (pageIndex || 1)
   );
 }
-function searchList() {
-  const currentEndpoints = selectorStore.pods.filter((d: { label: string }) =>
-    d.label.includes(searchText.value)
-  );
-  searchEndpoints.value = currentEndpoints;
-  endpoints.value = currentEndpoints.splice(0, pageSize);
+async function searchList() {
+  const limit = searchText.value ? undefined : total;
+  await queryEndpoints(limit);
 }
 watch(
   () => [props.config.metricTypes, props.config.metrics],
@@ -193,9 +196,9 @@ watch(
   }
 );
 watch(
-  () => [selectorStore.currentService],
+  () => selectorStore.currentService,
   () => {
-    queryEndpoints();
+    queryEndpoints(total);
   }
 );
 </script>

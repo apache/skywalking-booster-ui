@@ -293,7 +293,7 @@ export const dashboardStore = defineStore({
         return res.data;
       }
       const data = res.data.data.getAllTemplates;
-      const list = [];
+      let list = [];
       for (const t of data) {
         const c = JSON.parse(t.configuration);
         const key = [c.layer, c.entity, c.name].join("_");
@@ -310,6 +310,17 @@ export const dashboardStore = defineStore({
           JSON.stringify({ id: t.id, configuration: c })
         );
       }
+      list = list.sort((a, b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      });
       sessionStorage.setItem("dashboards", JSON.stringify(list));
       return res.data;
     },
