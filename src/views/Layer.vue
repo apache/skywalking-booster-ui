@@ -14,101 +14,61 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <Edit v-if="dashboardStore.currentDashboard" />
-  <div class="no-root" v-else>{{ t("noRoot") }} {{ layer }}</div>
+  <div v-else class="no-root">
+    {{ t("noRoot") }} {{ dashboardStore.layerId }}
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
 import { EntityType } from "./dashboard/data";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { useAppStoreWithOut } from "@/store/modules/app";
 import Edit from "./dashboard/Edit.vue";
+import { useI18n } from "vue-i18n";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
-const { t } = useI18n();
 const route = useRoute();
-const dashboardStore = useDashboardStore();
+const { t } = useI18n();
 const appStore = useAppStoreWithOut();
-const routeNames = [
-  "GeneralServices",
-  "Database",
-  "MeshServices",
-  "ControlPanel",
-  "DataPanel",
-  "Linux",
-  "SkyWalkingServer",
-  "Satellite",
-  "Functions",
-  "Browser",
-];
+const dashboardStore = useDashboardStore();
+const routesMap: { [key: string]: string } = {
+  GeneralServices: "GENERAL",
+  Database: "VIRTUAL_DATABASE",
+  MESH: "MESH",
+  ControlPanel: "MESH_CP",
+  DataPanel: "MESH_DP",
+  Linux: "OS_LINUX",
+  SkyWalkingServer: "SO11Y_OAP",
+  Satellite: "SO11Y_SATELLITE",
+  Functions: "FAAS",
+  Browser: "BROWSER",
+  Kubernetes: "K8S",
+};
 const layer = ref<string>("GENERAL");
+
 getDashboard();
 
 async function getDashboard() {
-  setLayer(String(route.name));
+  layer.value = routesMap[String(route.name)];
   dashboardStore.setLayer(layer.value);
-  dashboardStore.setEntity(EntityType[0].value);
+  dashboardStore.setEntity(EntityType[1].value);
   dashboardStore.setMode(false);
-  dashboardStore.setCurrentDashboard(null);
   await dashboardStore.setDashboards();
   const index = dashboardStore.dashboards.findIndex(
     (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
-      d.layer === layer.value && d.entity === EntityType[1].value && d.isRoot
+      d.layer === dashboardStore.layerId &&
+      d.entity === EntityType[1].value &&
+      d.isRoot
   );
   if (index < 0) {
+    appStore.setPageTitle(dashboardStore.layer);
+    dashboardStore.setCurrentDashboard(null);
     return;
   }
-  const d = dashboardStore.dashboards[index];
-  dashboardStore.setCurrentDashboard(d);
-  appStore.setPageTitle(d.name);
+  const item = dashboardStore.dashboards[index];
+  dashboardStore.setCurrentDashboard(item);
 }
-function setLayer(n: string) {
-  switch (n) {
-    case routeNames[0]:
-      layer.value = "GENERAL";
-      break;
-    case routeNames[1]:
-      layer.value = "VIRTUAL_DATABASE";
-      break;
-    case routeNames[2]:
-      layer.value = "MESH";
-      break;
-    case routeNames[3]:
-      layer.value = "MESH_CP";
-      break;
-    case routeNames[4]:
-      layer.value = "MESH_DP";
-      break;
-    case routeNames[5]:
-      layer.value = "OS_LINUX";
-      break;
-    case routeNames[6]:
-      layer.value = "SO11Y_OAP";
-      break;
-    case routeNames[7]:
-      layer.value = "SO11Y_SATELLITE";
-      break;
-    case routeNames[8]:
-      layer.value = "FAAS";
-      break;
-    case routeNames[9]:
-      layer.value = "BROWSER";
-      break;
-    default:
-      layer.value = "GENERAL";
-      break;
-  }
-}
-watch(
-  () => route.name,
-  (name: unknown) => {
-    if (!name) {
-      return;
-    }
-    getDashboard();
-  }
-);
 </script>
 <style lang="scss" scoped>
 .no-root {
@@ -116,9 +76,5 @@ watch(
   width: 100%;
   text-align: center;
   color: #888;
-}
-
-.layer {
-  height: 100%;
 }
 </style>

@@ -13,9 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Tool />
+  <Tool v-if="dashboardStore.currentDashboard" />
   <div
     class="ds-main"
+    v-if="dashboardStore.currentDashboard"
     @click="handleClick"
     :style="{ height: dashboardStore.editMode ? 'calc(100% - 45px)' : '100%' }"
   >
@@ -54,6 +55,9 @@ async function setTemplate() {
   await dashboardStore.setDashboards();
 
   if (!p.entity) {
+    if (!dashboardStore.currentDashboard) {
+      return;
+    }
     const { layer, entity, name } = dashboardStore.currentDashboard;
     layoutKey.value = `${layer}_${entity}_${name}`;
   }
@@ -63,17 +67,17 @@ async function setTemplate() {
   const layout: any = c.configuration || {};
   dashboardStore.setLayout(layout.children || []);
   appStore.setPageTitle(layout.name);
-
-  if (!dashboardStore.currentDashboard) {
+  if (p.entity) {
     dashboardStore.setCurrentDashboard({
       layer: p.layerId,
       entity: p.entity,
-      name: String(p.name).split("-").join(" "),
+      name: p.name,
       id: c.id,
       isRoot: layout.isRoot,
     });
   }
 }
+
 function handleClick(e: any) {
   e.stopPropagation();
   if (e.target.className === "ds-main") {

@@ -167,8 +167,6 @@ function clickEndpoint(scope: any) {
     ElMessage.error("No this dashboard");
     return;
   }
-  dashboardStore.setEntity(EntityType[2].value);
-  dashboardStore.setCurrentDashboard(d);
   router.push(
     `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${scope.row.id}/${d.name}`
   );

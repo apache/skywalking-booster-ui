@@ -387,42 +387,21 @@ async function handleInspect() {
   update();
 }
 function handleGoEndpoint(name: string) {
-  const origin = dashboardStore.entity;
-  const p = getDashboard({
-    name,
-    layer: dashboardStore.layerId,
-    entity: EntityType[2].value,
-  });
-  dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/Endpoint/${topologyStore.node.id}/${name}`;
+  const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
   dashboardStore.setEntity(origin);
 }
 function handleGoInstance(name: string) {
-  const origin = dashboardStore.entity;
-  const p = getDashboard({
-    name,
-    layer: dashboardStore.layerId,
-    entity: EntityType[3].value,
-  });
-  dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/ServiceInstance/${topologyStore.node.id}/${name}`;
+  const path = `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
   dashboardStore.setEntity(origin);
 }
 function handleGoDashboard(name: string) {
-  const origin = dashboardStore.entity;
-  const p = getDashboard({
-    name,
-    layer: dashboardStore.layerId,
-    entity: EntityType[0].value,
-  });
-  dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/Service/${topologyStore.node.id}/${name}`;
+  const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${name}`;
   const routeUrl = router.resolve({ path });
 
   window.open(routeUrl.href, "_blank");
@@ -482,6 +461,9 @@ function setNodeTools(nodeDashboard: any) {
     { id: "inspect", title: "Inspect", func: handleInspect },
     { id: "alarm", title: "Alarm", func: handleGoAlarm },
   ];
+  if (!(nodeDashboard && nodeDashboard.length)) {
+    return;
+  }
   for (const item of nodeDashboard) {
     if (item.scope === EntityType[0].value) {
       items.value.push({

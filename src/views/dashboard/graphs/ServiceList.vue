@@ -183,8 +183,6 @@ function clickService(scope: any) {
     ElMessage.error("No this dashboard");
     return;
   }
-  dashboardStore.setCurrentDashboard(d);
-  dashboardStore.setEntity(d.entity);
   const path = `/dashboard/${d.layer}/${d.entity}/${scope.row.id}/${d.name}`;
 
   router.push(path);

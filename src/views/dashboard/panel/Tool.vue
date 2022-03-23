@@ -125,7 +125,6 @@ const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
-const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
 const toolIcons = ref<{ name: string; content: string; id: string }[]>(
   EndpointRelationTools
 );
@@ -140,19 +139,16 @@ const states = reactive<{
 }>({
   destService: "",
   destPod: "",
-  key: (type && type.key) || 0,
+  key: 0,
   currentService: "",
   currentPod: "",
   currentDestService: "",
   currentDestPod: "",
 });
 const applyDashboard = useThrottleFn(dashboardStore.saveDashboard, 3000);
-if (params.layerId) {
-  dashboardStore.setLayer(params.layerId);
-  dashboardStore.setEntity(params.entity);
-}
-appStore.setEventStack([initSelector]);
 
+setCurrentDashboard();
+appStore.setEventStack([initSelector]);
 initSelector();
 
 function initSelector() {
@@ -162,6 +158,17 @@ function initSelector() {
   } else {
     getServices();
   }
+}
+
+function setCurrentDashboard() {
+  if (params.layerId) {
+    dashboardStore.setLayer(params.layerId);
+    dashboardStore.setEntity(params.entity);
+  }
+  const type = EntityType.filter(
+    (d: Option) => d.value === dashboardStore.entity
+  )[0];
+  states.key = (type && type.key) || 0;
 }
 
 async function setSelector() {
@@ -199,7 +206,8 @@ async function setSelector() {
   }
   selectorStore.setCurrentService(currentService);
   selectorStore.setCurrentDestService(currentDestService);
-  states.currentService = selectorStore.currentService.value;
+  states.currentService =
+    selectorStore.currentService && selectorStore.currentService.value;
   states.currentDestService =
     selectorStore.currentDestService && selectorStore.currentDestService.value;
 }
@@ -265,14 +273,20 @@ async function getServices() {
   selectorStore.setCurrentDestService(
     selectorStore.services.length ? selectorStore.services[1] : null
   );
+  if (!selectorStore.currentService) {
+    return;
+  }
   states.currentService = selectorStore.currentService.value;
-  states.currentDestService = selectorStore.currentDestService.value;
   const e = dashboardStore.entity.split("Relation")[0];
   if (
     [EntityType[2].value, EntityType[3].value].includes(dashboardStore.entity)
   ) {
     fetchPods(e, selectorStore.currentService.id, true);
   }
+  if (!selectorStore.currentDestService) {
+    return;
+  }
+  states.currentDestService = selectorStore.currentDestService.value;
   if (
     [EntityType[5].value, EntityType[6].value].includes(dashboardStore.entity)
   ) {
