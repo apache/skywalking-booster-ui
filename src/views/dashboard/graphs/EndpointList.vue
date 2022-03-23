@@ -110,6 +110,7 @@ const props = defineProps({
     default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+  needQuery: { type: Boolean, default: false },
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
@@ -119,8 +120,9 @@ const searchEndpoints = ref<Endpoint[]>([]);
 const pageSize = 5;
 const searchText = ref<string>("");
 
-queryEndpoints();
-
+if (props.needQuery) {
+  queryEndpoints();
+}
 async function queryEndpoints() {
   chartLoading.value = true;
   const resp = await selectorStore.getEndpoints();
@@ -193,7 +195,7 @@ watch(
   }
 );
 watch(
-  () => [selectorStore.currentService],
+  () => selectorStore.currentService,
   () => {
     queryEndpoints();
   }

@@ -113,6 +113,7 @@ const props = defineProps({
     }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+  needQuery: { type: Boolean, default: false },
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
@@ -122,15 +123,18 @@ const searchInstances = ref<Instance[]>([]); // all instances
 const pageSize = 5;
 const searchText = ref<string>("");
 
-queryInstance();
-
+if (props.needQuery) {
+  queryInstance();
+}
 async function queryInstance() {
   chartLoading.value = true;
   const resp = await selectorStore.getServiceInstances();
 
   chartLoading.value = false;
-  if (resp.errors) {
+  if (resp && resp.errors) {
     ElMessage.error(resp.errors);
+    searchInstances.value = [];
+    instances.value = [];
     return;
   }
   searchInstances.value = selectorStore.pods;
@@ -191,6 +195,12 @@ watch(
     if (dashboardStore.showConfig) {
       queryInstanceMetrics(instances.value);
     }
+  }
+);
+watch(
+  () => selectorStore.currentService,
+  () => {
+    queryInstance();
   }
 );
 </script>
