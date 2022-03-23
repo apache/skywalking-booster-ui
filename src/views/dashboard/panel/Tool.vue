@@ -127,6 +127,7 @@ const params = useRoute().params;
 const toolIcons = ref<{ name: string; content: string; id: string }[]>(
   EndpointRelationTools
 );
+const limit = ref<number>(10);
 const loading = ref<boolean>(false);
 const states = reactive<{
   destService: string;
@@ -401,7 +402,7 @@ async function fetchPods(type: string, serviceId: string, setPod: boolean) {
   let resp;
   switch (type) {
     case EntityType[2].value:
-      resp = await selectorStore.getEndpoints({ serviceId });
+      resp = await selectorStore.getEndpoints({ serviceId, limit });
       if (setPod) {
         selectorStore.setCurrentPod(
           selectorStore.pods.length ? selectorStore.pods[0] : null
@@ -419,7 +420,11 @@ async function fetchPods(type: string, serviceId: string, setPod: boolean) {
       }
       break;
     case EntityType[6].value:
-      resp = await selectorStore.getEndpoints({ serviceId, isRelation: true });
+      resp = await selectorStore.getEndpoints({
+        serviceId,
+        isRelation: true,
+        limit,
+      });
       if (setPod) {
         selectorStore.setCurrentDestPod(
           selectorStore.destPods.length ? selectorStore.destPods[0] : null

@@ -42,7 +42,7 @@ limitations under the License. -->
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="Service Instances">
+        <el-table-column label="Attributes">
           <template #default="scope">
             <div class="attributes" v-if="scope.row.attributes.length">
               <div
@@ -186,6 +186,10 @@ function clickInstance(scope: any) {
     layer: dashboardStore.layerId,
     entity: EntityType[3].value,
   });
+  if (!d) {
+    ElMessage.error("No this dashboard");
+    return;
+  }
   router.push(
     `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${
       scope.row.id
