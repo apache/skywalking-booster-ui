@@ -43,6 +43,7 @@ const routeNames = [
   "Satellite",
   "Functions",
   "Browser",
+  "Kubernetes",
 ];
 const layer = ref<string>("GENERAL");
 
@@ -100,6 +101,9 @@ function setLayer(n: string) {
       break;
     case routeNames[9]:
       layer.value = "BROWSER";
+      break;
+    case routeNames[10]:
+      layer.value = "K8S";
       break;
     default:
       layer.value = "GENERAL";

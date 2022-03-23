@@ -119,7 +119,6 @@ import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
 import { useI18n } from "vue-i18n";
 import { useThrottleFn } from "@vueuse/core";
-import getDashboard from "@/hooks/useDashboardsSession";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -274,15 +273,20 @@ async function getServices() {
   selectorStore.setCurrentDestService(
     selectorStore.services.length ? selectorStore.services[1] : null
   );
+  if (!selectorStore.currentService) {
+    return;
+  }
   states.currentService = selectorStore.currentService.value;
-  states.currentDestService =
-    selectorStore.currentDestService && selectorStore.currentDestService.value;
   const e = dashboardStore.entity.split("Relation")[0];
   if (
     [EntityType[2].value, EntityType[3].value].includes(dashboardStore.entity)
   ) {
     fetchPods(e, selectorStore.currentService.id, true);
   }
+  if (!selectorStore.currentDestService) {
+    return;
+  }
+  states.currentDestService = selectorStore.currentDestService.value;
   if (
     [EntityType[5].value, EntityType[6].value].includes(dashboardStore.entity)
   ) {

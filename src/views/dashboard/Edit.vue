@@ -55,6 +55,9 @@ async function setTemplate() {
   await dashboardStore.setDashboards();
 
   if (!p.entity) {
+    if (!dashboardStore.currentDashboard) {
+      return;
+    }
     const { layer, entity, name } = dashboardStore.currentDashboard;
     layoutKey.value = `${layer}_${entity}_${name}`;
   }

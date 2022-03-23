@@ -27,17 +27,24 @@ export const routesInfra: Array<RouteRecordRaw> = [
       exact: true,
       hasGroup: true,
     },
-    redirect: "/infrastructure",
+    redirect: "/linux",
     component: Layout,
     children: [
       {
-        path: "/infrastructure",
+        path: "/linux",
         name: "Linux",
         meta: {
           title: "linux",
         },
         component: () => import("@/views/Layer.vue"),
-        // component: () => import("@/views/infrastructure/Infrastructure.vue"),
+      },
+      {
+        path: "/kubernetes",
+        name: "Kubernetes",
+        meta: {
+          title: "kubernetes",
+        },
+        component: () => import("@/views/Layer.vue"),
       },
       // {
       //   path: "/infrastructure/vm",
