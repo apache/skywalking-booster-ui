@@ -13,9 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Tool />
+  <Tool v-if="dashboardStore.currentDashboard" />
   <div
     class="ds-main"
+    v-if="dashboardStore.currentDashboard"
     @click="handleClick"
     :style="{ height: dashboardStore.editMode ? 'calc(100% - 45px)' : '100%' }"
   >
@@ -42,18 +43,35 @@ import TopologyConfig from "./configuration/Topology.vue";
 import WidgetConfig from "./configuration/Widget.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { EntityType } from "./data";
 
+/*global defineEmits */
+const emit = defineEmits(["update"]);
 const dashboardStore = useDashboardStore();
 const appStore = useAppStoreWithOut();
 const { t } = useI18n();
 const p = useRoute().params;
 const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
-
+dashboardStore.setCurrentDashboard({});
 setTemplate();
 async function setTemplate() {
   await dashboardStore.setDashboards();
 
   if (!p.entity) {
+    const index = dashboardStore.dashboards.findIndex(
+      (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
+        d.layer === dashboardStore.layerId &&
+        d.entity === EntityType[1].value &&
+        d.isRoot
+    );
+    if (index < 0) {
+      appStore.setPageTitle(dashboardStore.layer);
+      dashboardStore.setCurrentDashboard(null);
+      emit("update", false);
+      return;
+    }
+    const item = dashboardStore.dashboards[index];
+    dashboardStore.setCurrentDashboard(item);
     const { layer, entity, name } = dashboardStore.currentDashboard;
     layoutKey.value = `${layer}_${entity}_${name}`;
   }
@@ -64,16 +82,18 @@ async function setTemplate() {
   dashboardStore.setLayout(layout.children || []);
   appStore.setPageTitle(layout.name);
 
-  if (!dashboardStore.currentDashboard) {
+  if (p.entity) {
     dashboardStore.setCurrentDashboard({
       layer: p.layerId,
       entity: p.entity,
-      name: String(p.name).split("-").join(" "),
+      name: p.name,
       id: c.id,
       isRoot: layout.isRoot,
     });
   }
+  emit("update", true);
 }
+
 function handleClick(e: any) {
   e.stopPropagation();
   if (e.target.className === "ds-main") {

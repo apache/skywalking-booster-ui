@@ -119,13 +119,13 @@ import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
 import { useI18n } from "vue-i18n";
 import { useThrottleFn } from "@vueuse/core";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
-const type = EntityType.filter((d: Option) => d.value === params.entity)[0];
 const toolIcons = ref<{ name: string; content: string; id: string }[]>(
   EndpointRelationTools
 );
@@ -140,19 +140,16 @@ const states = reactive<{
 }>({
   destService: "",
   destPod: "",
-  key: (type && type.key) || 0,
+  key: 0,
   currentService: "",
   currentPod: "",
   currentDestService: "",
   currentDestPod: "",
 });
 const applyDashboard = useThrottleFn(dashboardStore.saveDashboard, 3000);
-if (params.layerId) {
-  dashboardStore.setLayer(params.layerId);
-  dashboardStore.setEntity(params.entity);
-}
-appStore.setEventStack([initSelector]);
 
+setCurrentDashboard();
+appStore.setEventStack([initSelector]);
 initSelector();
 
 function initSelector() {
@@ -162,6 +159,23 @@ function initSelector() {
   } else {
     getServices();
   }
+}
+
+function setCurrentDashboard() {
+  if (params.layerId) {
+    dashboardStore.setLayer(params.layerId);
+    dashboardStore.setEntity(params.entity);
+    const item = getDashboard({
+      name: String(params.name),
+      layer: dashboardStore.layerId,
+      entity: EntityType[3].value,
+    });
+    dashboardStore.setCurrentDashboard(item || null);
+  }
+  const type = EntityType.filter(
+    (d: Option) => d.value === dashboardStore.entity
+  )[0];
+  states.key = (type && type.key) || 0;
 }
 
 async function setSelector() {
@@ -266,7 +280,8 @@ async function getServices() {
     selectorStore.services.length ? selectorStore.services[1] : null
   );
   states.currentService = selectorStore.currentService.value;
-  states.currentDestService = selectorStore.currentDestService.value;
+  states.currentDestService =
+    selectorStore.currentDestService && selectorStore.currentDestService.value;
   const e = dashboardStore.entity.split("Relation")[0];
   if (
     [EntityType[2].value, EntityType[3].value].includes(dashboardStore.entity)

@@ -13,23 +13,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Edit v-if="dashboardStore.currentDashboard" />
-  <div class="no-root" v-else>{{ t("noRoot") }} {{ layer }}</div>
+  <Edit v-if="hasRoot" @update="changeStatus" />
+  <div class="no-root" v-else>
+    {{ t("noRoot") }} {{ dashboardStore.layerId }}
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
 import { EntityType } from "./dashboard/data";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { useAppStoreWithOut } from "@/store/modules/app";
 import Edit from "./dashboard/Edit.vue";
+import { useI18n } from "vue-i18n";
 
-const { t } = useI18n();
 const route = useRoute();
+const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const appStore = useAppStoreWithOut();
 const routeNames = [
   "GeneralServices",
   "Database",
@@ -43,25 +43,19 @@ const routeNames = [
   "Browser",
 ];
 const layer = ref<string>("GENERAL");
+const hasRoot = ref<boolean>(false);
+
 getDashboard();
 
 async function getDashboard() {
   setLayer(String(route.name));
   dashboardStore.setLayer(layer.value);
-  dashboardStore.setEntity(EntityType[0].value);
+  dashboardStore.setEntity(EntityType[1].value);
   dashboardStore.setMode(false);
-  dashboardStore.setCurrentDashboard(null);
-  await dashboardStore.setDashboards();
-  const index = dashboardStore.dashboards.findIndex(
-    (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
-      d.layer === layer.value && d.entity === EntityType[1].value && d.isRoot
-  );
-  if (index < 0) {
-    return;
-  }
-  const d = dashboardStore.dashboards[index];
-  dashboardStore.setCurrentDashboard(d);
-  appStore.setPageTitle(d.name);
+}
+
+function changeStatus(p: boolean) {
+  hasRoot.value = p;
 }
 function setLayer(n: string) {
   switch (n) {
@@ -100,15 +94,6 @@ function setLayer(n: string) {
       break;
   }
 }
-watch(
-  () => route.name,
-  (name: unknown) => {
-    if (!name) {
-      return;
-    }
-    getDashboard();
-  }
-);
 </script>
 <style lang="scss" scoped>
 .no-root {
@@ -116,9 +101,5 @@ watch(
   width: 100%;
   text-align: center;
   color: #888;
-}
-
-.layer {
-  height: 100%;
 }
 </style>
