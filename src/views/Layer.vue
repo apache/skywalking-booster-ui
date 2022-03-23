@@ -13,8 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Edit v-if="hasRoot" @update="changeStatus" />
-  <div class="no-root" v-else>
+  <Edit v-if="dashboardStore.currentDashboard" />
+  <div v-else class="no-root">
     {{ t("noRoot") }} {{ dashboardStore.layerId }}
   </div>
 </template>
@@ -26,9 +26,11 @@ import { EntityType } from "./dashboard/data";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Edit from "./dashboard/Edit.vue";
 import { useI18n } from "vue-i18n";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 const route = useRoute();
 const { t } = useI18n();
+const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
 const routeNames = [
   "GeneralServices",
@@ -43,7 +45,6 @@ const routeNames = [
   "Browser",
 ];
 const layer = ref<string>("GENERAL");
-const hasRoot = ref<boolean>(false);
 
 getDashboard();
 
@@ -52,11 +53,22 @@ async function getDashboard() {
   dashboardStore.setLayer(layer.value);
   dashboardStore.setEntity(EntityType[1].value);
   dashboardStore.setMode(false);
+  await dashboardStore.setDashboards();
+  const index = dashboardStore.dashboards.findIndex(
+    (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
+      d.layer === dashboardStore.layerId &&
+      d.entity === EntityType[1].value &&
+      d.isRoot
+  );
+  if (index < 0) {
+    appStore.setPageTitle(dashboardStore.layer);
+    dashboardStore.setCurrentDashboard(null);
+    return;
+  }
+  const item = dashboardStore.dashboards[index];
+  dashboardStore.setCurrentDashboard(item);
 }
 
-function changeStatus(p: boolean) {
-  hasRoot.value = p;
-}
 function setLayer(n: string) {
   switch (n) {
     case routeNames[0]:

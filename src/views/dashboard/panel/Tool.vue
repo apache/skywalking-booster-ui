@@ -165,12 +165,6 @@ function setCurrentDashboard() {
   if (params.layerId) {
     dashboardStore.setLayer(params.layerId);
     dashboardStore.setEntity(params.entity);
-    const item = getDashboard({
-      name: String(params.name),
-      layer: dashboardStore.layerId,
-      entity: EntityType[3].value,
-    });
-    dashboardStore.setCurrentDashboard(item || null);
   }
   const type = EntityType.filter(
     (d: Option) => d.value === dashboardStore.entity
@@ -213,7 +207,8 @@ async function setSelector() {
   }
   selectorStore.setCurrentService(currentService);
   selectorStore.setCurrentDestService(currentDestService);
-  states.currentService = selectorStore.currentService.value;
+  states.currentService =
+    selectorStore.currentService && selectorStore.currentService.value;
   states.currentDestService =
     selectorStore.currentDestService && selectorStore.currentDestService.value;
 }
