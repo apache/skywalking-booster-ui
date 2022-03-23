@@ -55,61 +55,67 @@ limitations under the License. -->
   </div>
   <div class="item">
     <span class="label">{{ t("plus") }}</span>
-    <el-input
+    <el-input-number
       class="input"
       v-model="selectedGrid.standard.plus"
+      :min="0"
       size="small"
-      placeholder="none"
+      placeholder="Please input"
       @change="changeStandardOpt"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("minus") }}</span>
-    <el-input
+    <el-input-number
       class="input"
       v-model="selectedGrid.standard.minus"
+      :min="0"
       size="small"
-      placeholder="none"
+      placeholder="Please input"
       @change="changeStandardOpt"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("multiply") }}</span>
-    <el-input
+    <el-input-number
       class="input"
       v-model="selectedGrid.standard.multiply"
+      :min="1"
       size="small"
-      placeholder="none"
+      placeholder="Please input"
       @change="changeStandardOpt"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("divide") }}</span>
-    <el-input
+    <el-input-number
       class="input"
       v-model="selectedGrid.standard.divide"
       size="small"
-      placeholder="none"
+      placeholder="Please input"
+      :min="1"
       @change="changeStandardOpt"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("convertToMilliseconds") }}</span>
-    <el-input
+    <el-input-number
       class="input"
+      :min="0"
       v-model="selectedGrid.standard.milliseconds"
       size="small"
-      placeholder="none"
+      placeholder="Please input"
       @change="changeStandardOpt"
     />
   </div>
   <div class="item">
     <span class="label">{{ t("convertToSeconds") }}</span>
-    <el-input
+    <el-input-number
       class="input"
+      :min="0"
       v-model="selectedGrid.standard.seconds"
       size="small"
-      placeholder="none"
+      placeholder="Please input"
       @change="changeStandardOpt"
     />
   </div>

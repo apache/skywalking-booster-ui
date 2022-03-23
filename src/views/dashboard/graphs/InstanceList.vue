@@ -44,15 +44,16 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column label="Service Instances">
           <template #default="scope">
-            <div class="attributes">
+            <div class="attributes" v-if="scope.row.attributes.length">
               <div
                 v-for="(attr, index) in scope.row.attributes"
                 :key="attr.name + index"
                 :style="{ fontSize: `${config.fontSize}px` }"
               >
-                {{ attr.name }}: {{ attr.value }}
+                {{ attr.name }}: {{ attr.value || null }}
               </div>
             </div>
+            <div v-else>No Data</div>
           </template>
         </el-table-column>
         <el-table-column

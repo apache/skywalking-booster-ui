@@ -330,6 +330,10 @@ function changeMode() {
 }
 
 function clickIcons(t: { id: string; content: string; name: string }) {
+  if (t.id === "apply") {
+    applyDashboard();
+    return;
+  }
   if (
     dashboardStore.selectedGrid &&
     dashboardStore.selectedGrid.type === "Tab"
@@ -361,9 +365,6 @@ function setTabControls(id: string) {
     case "addTopology":
       dashboardStore.addTabControls("Topology");
       break;
-    case "apply":
-      applyDashboard();
-      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -389,9 +390,6 @@ function setControls(id: string) {
       break;
     case "addTopology":
       dashboardStore.addControl("Topology");
-      break;
-    case "apply":
-      applyDashboard();
       break;
     default:
       dashboardStore.addControl("Widget");

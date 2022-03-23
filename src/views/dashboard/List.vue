@@ -214,9 +214,9 @@ function exportTemplates() {
   });
   const name = `dashboards.json`;
   saveFile(templates, name);
-  setTimeout(() => {
-    multipleTableRef.value!.clearSelection();
-  }, 2000);
+  // setTimeout(() => {
+  //   multipleTableRef.value!.clearSelection();
+  // }, 2000);
 }
 function handleEdit(row: DashboardItem) {
   dashboardStore.setMode(true);
