@@ -133,9 +133,6 @@ const { t } = useI18n();
 const emit = defineEmits(["update", "loading"]);
 const dashboardStore = useDashboardStore();
 const { selectedGrid } = dashboardStore;
-const percentile = ref<boolean>(
-  dashboardStore.selectedGrid.metricTypes.includes("readLabeledMetricsValues")
-);
 const sortOrder = ref<string>(selectedGrid.standard.sortOrder || "DES");
 
 function changeStandardOpt(param?: any) {

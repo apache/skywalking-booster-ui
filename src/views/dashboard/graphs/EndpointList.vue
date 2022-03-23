@@ -92,7 +92,6 @@ import Card from "./Card.vue";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
-import { number } from "echarts/core";
 
 /*global defineProps */
 const props = defineProps({
@@ -119,10 +118,11 @@ const chartLoading = ref<boolean>(false);
 const endpoints = ref<Endpoint[]>([]);
 const searchEndpoints = ref<Endpoint[]>([]);
 const pageSize = 5;
+const total = 10;
 const searchText = ref<string>("");
 
 if (props.needQuery) {
-  queryEndpoints(10);
+  queryEndpoints(total);
 }
 async function queryEndpoints(limit?: number) {
   chartLoading.value = true;
@@ -184,7 +184,7 @@ function changePage(pageIndex: number) {
   );
 }
 async function searchList() {
-  const limit = searchText.value ? undefined : 10;
+  const limit = searchText.value ? undefined : total;
   await queryEndpoints(limit);
 }
 watch(
@@ -198,7 +198,7 @@ watch(
 watch(
   () => selectorStore.currentService,
   () => {
-    queryEndpoints(10);
+    queryEndpoints(total);
   }
 );
 </script>
