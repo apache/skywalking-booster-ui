@@ -73,7 +73,6 @@ export const dashboardStore = defineStore({
       sessionStorage.setItem("dashboards", JSON.stringify(list));
     },
     setCurrentDashboard(item: DashboardItem) {
-      console.log(item);
       this.currentDashboard = item;
     },
     addControl(type: string) {
