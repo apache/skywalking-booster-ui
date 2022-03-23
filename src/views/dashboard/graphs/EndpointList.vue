@@ -92,6 +92,7 @@ import Card from "./Card.vue";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
+import { number } from "echarts/core";
 
 /*global defineProps */
 const props = defineProps({
@@ -121,11 +122,14 @@ const pageSize = 5;
 const searchText = ref<string>("");
 
 if (props.needQuery) {
-  queryEndpoints();
+  queryEndpoints(10);
 }
-async function queryEndpoints() {
+async function queryEndpoints(limit?: number) {
   chartLoading.value = true;
-  const resp = await selectorStore.getEndpoints();
+  const resp = await selectorStore.getEndpoints({
+    limit,
+    keyword: searchText.value,
+  });
 
   chartLoading.value = false;
   if (resp.errors) {
@@ -134,7 +138,7 @@ async function queryEndpoints() {
   }
   searchEndpoints.value = selectorStore.pods;
   endpoints.value = selectorStore.pods.splice(0, pageSize);
-  if (props.config.isEdit) {
+  if (props.config.isEdit || !endpoints.value.length) {
     return;
   }
   queryEndpointMetrics(endpoints.value);
@@ -179,12 +183,9 @@ function changePage(pageIndex: number) {
     pageSize * (pageIndex || 1)
   );
 }
-function searchList() {
-  const currentEndpoints = selectorStore.pods.filter((d: { label: string }) =>
-    d.label.includes(searchText.value)
-  );
-  searchEndpoints.value = currentEndpoints;
-  endpoints.value = currentEndpoints.splice(0, pageSize);
+async function searchList() {
+  const limit = searchText.value ? undefined : 10;
+  await queryEndpoints(limit);
 }
 watch(
   () => [props.config.metricTypes, props.config.metrics],
@@ -197,7 +198,7 @@ watch(
 watch(
   () => selectorStore.currentService,
   () => {
-    queryEndpoints();
+    queryEndpoints(10);
   }
 );
 </script>
