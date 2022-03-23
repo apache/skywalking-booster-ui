@@ -149,7 +149,10 @@ async function setMetricType() {
           return d;
         }
       } else if (graph.type === "Table") {
-        if (d.type === MetricsType.LABELED_VALUE) {
+        if (
+          d.type === MetricsType.LABELED_VALUE ||
+          d.type === MetricsType.REGULAR_VALUE
+        ) {
           return d;
         }
       } else {
