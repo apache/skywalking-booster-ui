@@ -113,7 +113,6 @@ export default defineComponent({
     }
 
     async function queryMetrics() {
-      console.log(props.data);
       const params = await useQueryProcessor(props.data);
 
       if (!params) {

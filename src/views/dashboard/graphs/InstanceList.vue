@@ -42,6 +42,19 @@ limitations under the License. -->
             </span>
           </template>
         </el-table-column>
+        <el-table-column label="Service Instances">
+          <template #default="scope">
+            <div class="attributes">
+              <div
+                v-for="(attr, index) in scope.row.attributes"
+                :key="attr.name + index"
+                :style="{ fontSize: `${config.fontSize}px` }"
+              >
+                {{ attr.name }}: {{ attr.value }}
+              </div>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column
           v-for="(metric, index) in config.metrics"
           :label="metric"
@@ -182,6 +195,7 @@ function clickInstance(scope: any) {
 function changePage(pageIndex: number) {
   instances.value = searchInstances.value.splice(pageIndex - 1, pageSize);
 }
+
 function searchList() {
   searchInstances.value = selectorStore.pods.filter((d: { label: string }) =>
     d.label.includes(searchText.value)
@@ -213,5 +227,10 @@ watch(
 
 .inputs {
   width: 300px;
+}
+
+.attributes {
+  max-height: 80px;
+  overflow: auto;
 }
 </style>
