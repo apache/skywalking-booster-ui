@@ -116,7 +116,6 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const endpoints = ref<Endpoint[]>([]);
-const searchEndpoints = ref<Endpoint[]>([]);
 const pageSize = 5;
 const total = 10;
 const searchText = ref<string>("");
@@ -136,7 +135,6 @@ async function queryEndpoints(limit?: number) {
     ElMessage.error(resp.errors);
     return;
   }
-  searchEndpoints.value = selectorStore.pods;
   endpoints.value = selectorStore.pods.splice(0, pageSize);
   if (props.config.isEdit || !endpoints.value.length) {
     return;
@@ -178,7 +176,7 @@ function clickEndpoint(scope: any) {
   );
 }
 function changePage(pageIndex: number) {
-  endpoints.value = searchEndpoints.value.splice(
+  endpoints.value = selectorStore.pods.splice(
     (pageIndex - 1 || 0) * pageSize,
     pageSize * (pageIndex || 1)
   );

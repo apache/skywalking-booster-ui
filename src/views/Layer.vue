@@ -43,7 +43,8 @@ const routesMap: { [key: string]: string } = {
   Satellite: "SO11Y_SATELLITE",
   Functions: "FAAS",
   Browser: "BROWSER",
-  Kubernetes: "K8S",
+  KubernetesCluster: "K8S",
+  KubernetesService: "K8S_SERVICE",
 };
 const layer = ref<string>("GENERAL");
 
