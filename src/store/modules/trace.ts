@@ -80,10 +80,7 @@ export const traceStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.services = [
-        { value: "0", label: "All" },
-        ...res.data.data.services,
-      ] || [{ value: "0", label: "All" }];
+      this.services = res.data.data.services;
       return res.data;
     },
     async getInstances() {

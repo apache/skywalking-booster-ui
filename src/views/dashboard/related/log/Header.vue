@@ -143,7 +143,7 @@ const isBrowser = ref<boolean>(dashboardStore.layerId === "BROWSER");
 const state = reactive<any>({
   instance: { value: "0", label: "All" },
   endpoint: { value: "0", label: "All" },
-  service: { value: "0", label: "All" },
+  service: { value: "", label: "" },
 });
 
 init();
@@ -154,11 +154,10 @@ async function init() {
     ElMessage.error(resp.errors);
     return;
   }
+  await fetchSelectors();
+  await searchLogs();
   state.instance = { value: "0", label: "All" };
   state.endpoint = { value: "0", label: "All" };
-  state.service = { value: "0", label: "All" };
-  searchLogs();
-  fetchSelectors();
 }
 
 function fetchSelectors() {
