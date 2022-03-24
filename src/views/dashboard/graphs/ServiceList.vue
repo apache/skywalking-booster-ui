@@ -143,7 +143,7 @@ async function queryServices() {
     ElMessage.error(resp.errors);
   }
   setServices(selectorStore.services);
-  if (props.config.isEdit) {
+  if (!services.value.length || props.config.isEdit) {
     return;
   }
   queryServiceMetrics(services.value);
@@ -232,8 +232,7 @@ function objectSpanMethod(param: any): any {
       colspan: 0,
     };
   }
-  console.log(groups.value);
-  return { rowspan: 5, colspan: 1 };
+  return { rowspan: groups.value[param.row.group], colspan: 1 };
 }
 function changePage(pageIndex: number) {
   services.value = sortServices.value.filter((d: Service, index: number) => {
@@ -254,9 +253,10 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    if (dashboardStore.showConfig) {
-      queryServiceMetrics(services.value);
+    if (!services.value.length) {
+      return;
     }
+    queryServiceMetrics(services.value);
   }
 );
 </script>

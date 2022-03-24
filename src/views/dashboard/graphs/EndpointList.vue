@@ -120,9 +120,8 @@ const pageSize = 5;
 const total = 10;
 const searchText = ref<string>("");
 
-if (props.needQuery) {
-  queryEndpoints(total);
-}
+queryEndpoints(total);
+
 async function queryEndpoints(limit?: number) {
   chartLoading.value = true;
   const resp = await selectorStore.getEndpoints({
@@ -136,13 +135,13 @@ async function queryEndpoints(limit?: number) {
     return;
   }
   endpoints.value = selectorStore.pods.splice(0, pageSize);
-  if (props.config.isEdit || !endpoints.value.length) {
+  if (!endpoints.value.length || props.config.isEdit) {
     return;
   }
-  queryEndpointMetrics(endpoints.value);
+  await queryEndpointMetrics(endpoints.value);
 }
 async function queryEndpointMetrics(currentPods: Endpoint[]) {
-  const { metrics } = props.config;
+  const metrics = props.config.metrics.filter((d: string) => d);
 
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
@@ -188,9 +187,10 @@ async function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    if (dashboardStore.showConfig) {
-      queryEndpointMetrics(endpoints.value);
+    if (!endpoints.value.length) {
+      return;
     }
+    queryEndpointMetrics(endpoints.value);
   }
 );
 watch(

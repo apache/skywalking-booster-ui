@@ -137,9 +137,7 @@ const searchInstances = ref<Instance[]>([]); // all instances
 const pageSize = 5;
 const searchText = ref<string>("");
 
-if (props.needQuery) {
-  queryInstance();
-}
+queryInstance();
 async function queryInstance() {
   chartLoading.value = true;
   const resp = await selectorStore.getServiceInstances();
@@ -153,7 +151,7 @@ async function queryInstance() {
   }
   searchInstances.value = selectorStore.pods;
   instances.value = searchInstances.value.splice(0, pageSize);
-  if (props.config.isEdit) {
+  if (!instances.value.length || props.config.isEdit) {
     return;
   }
   queryInstanceMetrics(instances.value);
@@ -211,9 +209,10 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    if (dashboardStore.showConfig) {
-      queryInstanceMetrics(instances.value);
+    if (!instances.value.length) {
+      return;
     }
+    queryInstanceMetrics(instances.value);
   }
 );
 watch(
