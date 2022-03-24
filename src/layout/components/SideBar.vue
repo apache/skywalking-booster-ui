@@ -101,6 +101,18 @@ limitations under the License. -->
         @click="controlMenu"
       />
     </div>
+    <div class="version">
+      <el-popover
+        trigger="hover"
+        width="250"
+        placement="right"
+        :content="appStore.version"
+      >
+        <template #reference>
+          {{ t("version") }}
+        </template>
+      </el-popover>
+    </div>
   </div>
 </template>
 
@@ -108,7 +120,10 @@ limitations under the License. -->
 import { ref } from "vue";
 import { useRouter, RouteRecordRaw } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { useAppStoreWithOut } from "@/store/modules/app";
+import { ElMessage } from "element-plus";
 
+const appStore = useAppStoreWithOut();
 const { t } = useI18n();
 const name = ref<any>(String(useRouter().currentRoute.value.name));
 const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
@@ -119,6 +134,7 @@ const isCollapse = ref(false);
 const controlMenu = () => {
   isCollapse.value = !isCollapse.value;
 };
+getVersion();
 const changePage = (menu: RouteRecordRaw) => {
   theme.value = ["VirtualMachine", "Kubernetes"].includes(String(menu.name))
     ? "light"
@@ -127,6 +143,12 @@ const changePage = (menu: RouteRecordRaw) => {
 const filterMenus = (menus: any[]) => {
   return menus.filter((d) => d.meta && !d.meta.notShow);
 };
+async function getVersion() {
+  const res = await appStore.fetchVersion();
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -192,5 +214,14 @@ span.collapse {
 .items {
   display: inline-block;
   width: 100%;
+}
+
+.version {
+  color: #eee;
+  position: fixed;
+  bottom: 20px;
+  left: 10px;
+  font-size: 10px;
+  cursor: pointer;
 }
 </style>
