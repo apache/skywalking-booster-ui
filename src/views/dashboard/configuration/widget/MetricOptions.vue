@@ -369,6 +369,10 @@ function deleteMetric(index: number) {
   if (states.metrics.length === 1) {
     states.metrics = [""];
     states.metricTypes = [""];
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+    });
     return;
   }
   states.metrics.splice(index, 1);
