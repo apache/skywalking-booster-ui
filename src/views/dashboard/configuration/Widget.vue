@@ -136,7 +136,7 @@ export default defineComponent({
     }
 
     function setStatus(p: boolean) {
-      isEdit.value = p;
+      isEdit.value = true;
     }
 
     function cancelConfig() {

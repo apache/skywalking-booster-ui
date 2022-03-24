@@ -122,6 +122,7 @@ const props = defineProps({
     default: () => ({ dashboardName: "", fontSize: 12 }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+  isEdit: { type: Boolean, default: false },
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
@@ -143,9 +144,6 @@ async function queryServices() {
     ElMessage.error(resp.errors);
   }
   setServices(selectorStore.services);
-  if (!services.value.length || props.config.isEdit) {
-    return;
-  }
   queryServiceMetrics(services.value);
 }
 
@@ -182,7 +180,6 @@ function setServices(arr: (Service & { merge: boolean })[]) {
   services.value = sortServices.value.filter(
     (d: Service, index: number) => index < pageSize
   );
-  console.log(services.value);
 }
 
 function clickService(scope: any) {
@@ -200,6 +197,9 @@ function clickService(scope: any) {
   router.push(path);
 }
 async function queryServiceMetrics(currentServices: Service[]) {
+  if (!currentServices.length) {
+    return;
+  }
   const { metrics } = props.config;
 
   if (metrics.length && metrics[0]) {
@@ -253,9 +253,6 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    if (!services.value.length) {
-      return;
-    }
     queryServiceMetrics(services.value);
   }
 );

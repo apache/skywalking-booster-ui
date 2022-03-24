@@ -82,6 +82,7 @@ function showSelectSpan() {
   }
 
   .serviceInstanceName,
+  .endpointName,
   .serviceName {
     width: 200px;
   }
@@ -98,6 +99,7 @@ function showSelectSpan() {
   border: 1px solid transparent;
   border-right: 1px dotted silver;
   overflow: hidden;
+  height: 30px;
   line-height: 30px;
   text-overflow: ellipsis;
   white-space: nowrap;

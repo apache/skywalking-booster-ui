@@ -128,6 +128,7 @@ const props = defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   needQuery: { type: Boolean, default: false },
+  isEdit: { type: Boolean, default: false },
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
@@ -151,14 +152,11 @@ async function queryInstance() {
   }
   searchInstances.value = selectorStore.pods;
   instances.value = searchInstances.value.splice(0, pageSize);
-  if (!instances.value.length || props.config.isEdit) {
-    return;
-  }
   queryInstanceMetrics(instances.value);
 }
 
 async function queryInstanceMetrics(currentInstances: Instance[]) {
-  if (!instances.value.length) {
+  if (!currentInstances.length) {
     return;
   }
   const { metrics } = props.config;

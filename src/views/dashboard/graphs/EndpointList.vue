@@ -111,7 +111,7 @@ const props = defineProps({
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   isEdit: { type: Boolean, default: false },
 });
-const emit = defineEmits(["changeOpt"]);
+// const emit = defineEmits(["changeOpt"]);
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
@@ -187,8 +187,10 @@ async function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   async () => {
-    await queryEndpointMetrics(endpoints.value);
-    emit("changeOpt", false);
+    if (props.isEdit) {
+      queryEndpointMetrics(endpoints.value);
+    }
+    // emit("changeOpt", false);
   }
 );
 watch(
