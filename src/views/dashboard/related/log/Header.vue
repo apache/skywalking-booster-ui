@@ -186,18 +186,20 @@ async function getServices() {
     return;
   }
   state.service = logStore.services[0];
+  getInstances(state.service.id);
+  getEndpoints(state.service.id);
 }
 
-async function getEndpoints() {
-  const resp = await logStore.getEndpoints();
+async function getEndpoints(id?: string) {
+  const resp = await logStore.getEndpoints(id);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
   state.endpoint = logStore.endpoints[0];
 }
-async function getInstances() {
-  const resp = await logStore.getInstances();
+async function getInstances(id?: string) {
+  const resp = await logStore.getInstances(id);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
@@ -237,8 +239,8 @@ async function queryLogs() {
 function changeField(type: string, opt: any) {
   state[type] = opt[0];
   if (type === "service") {
-    getEndpoints();
-    getInstances();
+    getEndpoints(state.service.id);
+    getInstances(state.service.id);
   }
 }
 function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {

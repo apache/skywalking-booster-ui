@@ -83,9 +83,12 @@ export const traceStore = defineStore({
       this.services = res.data.data.services;
       return res.data;
     },
-    async getInstances() {
+    async getInstances(id: string) {
+      const serviceId = this.selectorStore.currentService
+        ? this.selectorStore.currentService.id
+        : id;
       const res: AxiosResponse = await graphql.query("queryInstances").params({
-        serviceId: this.selectorStore.currentService.id,
+        serviceId: serviceId,
         duration: this.durationTime,
       });
 
@@ -98,9 +101,12 @@ export const traceStore = defineStore({
       ] || [{ value: " 0", label: "All" }];
       return res.data;
     },
-    async getEndpoints() {
+    async getEndpoints(id: string) {
+      const serviceId = this.selectorStore.currentService
+        ? this.selectorStore.currentService.id
+        : id;
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
-        serviceId: this.selectorStore.currentService.id,
+        serviceId,
         duration: this.durationTime,
         keyword: "",
       });
