@@ -93,7 +93,7 @@ import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
 
-/*global defineProps, defineEmits */
+/*global defineProps */
 const props = defineProps({
   data: {
     type: Object,

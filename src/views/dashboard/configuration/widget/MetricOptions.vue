@@ -283,7 +283,7 @@ function changeMetrics(
     ...{ metricTypes: states.metricTypes, metrics: states.metrics },
   });
   if (states.isList) {
-    emit("changeOpt", true);
+    emit("changeOpt");
     return;
   }
   queryMetrics();
@@ -314,7 +314,7 @@ function changeMetricType(index: number, opt: Option[] | any) {
     ...{ metricTypes: states.metricTypes },
   });
   if (states.isList) {
-    emit("changeOpt", true);
+    emit("changeOpt");
     return;
   }
   queryMetrics();

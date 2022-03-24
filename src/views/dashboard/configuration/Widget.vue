@@ -131,11 +131,11 @@ export default defineComponent({
 
     function applyConfig() {
       dashboardStore.setConfigPanel(false);
-      setStatus(true);
+      setStatus();
       dashboardStore.setConfigs(dashboardStore.selectedGrid);
     }
 
-    function setStatus(p: boolean) {
+    function setStatus() {
       isEdit.value = true;
     }
 
