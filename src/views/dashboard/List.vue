@@ -203,6 +203,9 @@ async function importTemplates(event: any) {
   dashboardFile.value = null;
 }
 function exportTemplates() {
+  if (!multipleSelection.value.length) {
+    return;
+  }
   const arr = multipleSelection.value.sort(
     (a: DashboardItem, b: DashboardItem) => {
       return a.name.localeCompare(b.name);

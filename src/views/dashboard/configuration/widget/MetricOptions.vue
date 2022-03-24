@@ -13,15 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div v-if="states.isList && states.dashboardList.length" class="ds-name">
+  <div v-if="states.isList" class="ds-name">
     <div>{{ t("dashboards") }}</div>
     <Selector
-      :value="states.dashboardName"
+      :value="states.dashboardName || ''"
       :options="states.dashboardList"
       size="small"
       placeholder="Please select a dashboard name"
       @change="changeDashboard"
       class="selectors"
+      :clearable="true"
     />
   </div>
   <div>{{ t("metrics") }}</div>
@@ -63,7 +64,6 @@ limitations under the License. -->
       />
       <Icon
         class="cp"
-        v-show="states.metrics.length > 1"
         iconName="remove_circle_outline"
         size="middle"
         @click="deleteMetric(index)"
@@ -105,7 +105,7 @@ import { DashboardItem } from "@/types/dashboard";
 
 /*global defineEmits */
 const { t } = useI18n();
-const emit = defineEmits(["update", "loading"]);
+const emit = defineEmits(["update", "loading", "changeOpt"]);
 const dashboardStore = useDashboardStore();
 const { metrics, metricTypes, graph } = dashboardStore.selectedGrid;
 const states = reactive<{
@@ -116,7 +116,7 @@ const states = reactive<{
   isList: boolean;
   metricList: (Option & { type: string })[];
   dashboardName: string;
-  dashboardList: (DashboardItem & { label: string; value: string })[];
+  dashboardList: ((DashboardItem & { label: string; value: string }) | any)[];
 }>({
   metrics: metrics && metrics.length ? metrics : [""],
   metricTypes: metricTypes && metricTypes.length ? metricTypes : [""],
@@ -125,11 +125,11 @@ const states = reactive<{
   isList: false,
   metricList: [],
   dashboardName: graph.dashboardName,
-  dashboardList: [],
+  dashboardList: [{ label: "", value: "" }],
 });
 
 states.isList = ListChartTypes.includes(graph.type);
-const defaultLen = ref<number>(states.isList ? 5 : 10);
+const defaultLen = ref<number>(states.isList ? 5 : 20);
 states.visTypes = setVisTypes();
 
 setDashboards();
@@ -197,7 +197,7 @@ async function setMetricType() {
 function setDashboards() {
   const { graph } = dashboardStore.selectedGrid;
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-  states.dashboardList = list.reduce(
+  const arr = list.reduce(
     (
       prev: (DashboardItem & { label: string; value: string })[],
       d: DashboardItem
@@ -219,6 +219,8 @@ function setDashboards() {
     },
     []
   );
+
+  states.dashboardList = arr.length ? arr : [{ label: "", value: "" }];
 }
 
 function setVisTypes() {
@@ -281,6 +283,7 @@ function changeMetrics(
     ...{ metricTypes: states.metricTypes, metrics: states.metrics },
   });
   if (states.isList) {
+    emit("changeOpt");
     return;
   }
   queryMetrics();
@@ -311,6 +314,7 @@ function changeMetricType(index: number, opt: Option[] | any) {
     ...{ metricTypes: states.metricTypes },
   });
   if (states.isList) {
+    emit("changeOpt");
     return;
   }
   queryMetrics();
@@ -338,7 +342,11 @@ async function queryMetrics() {
 }
 
 function changeDashboard(opt: any) {
-  states.dashboardName = opt[0].value;
+  if (!opt[0]) {
+    states.dashboardName = "";
+  } else {
+    states.dashboardName = opt[0].value;
+  }
   const graph = {
     ...dashboardStore.selectedGrid.graph,
     dashboardName: states.dashboardName,
@@ -358,6 +366,15 @@ function addMetric() {
   states.metricTypes.push("");
 }
 function deleteMetric(index: number) {
+  if (states.metrics.length === 1) {
+    states.metrics = [""];
+    states.metricTypes = [""];
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+    });
+    return;
+  }
   states.metrics.splice(index, 1);
   states.metricTypes.splice(index, 1);
 }

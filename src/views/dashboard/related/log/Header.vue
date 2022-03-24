@@ -143,7 +143,7 @@ const isBrowser = ref<boolean>(dashboardStore.layerId === "BROWSER");
 const state = reactive<any>({
   instance: { value: "0", label: "All" },
   endpoint: { value: "0", label: "All" },
-  service: { value: "0", label: "All" },
+  service: { value: "", label: "" },
 });
 
 init();
@@ -154,11 +154,10 @@ async function init() {
     ElMessage.error(resp.errors);
     return;
   }
+  await fetchSelectors();
+  await searchLogs();
   state.instance = { value: "0", label: "All" };
   state.endpoint = { value: "0", label: "All" };
-  state.service = { value: "0", label: "All" };
-  searchLogs();
-  fetchSelectors();
 }
 
 function fetchSelectors() {
@@ -187,18 +186,20 @@ async function getServices() {
     return;
   }
   state.service = logStore.services[0];
+  getInstances(state.service.id);
+  getEndpoints(state.service.id);
 }
 
-async function getEndpoints() {
-  const resp = await logStore.getEndpoints();
+async function getEndpoints(id?: string) {
+  const resp = await logStore.getEndpoints(id);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
   state.endpoint = logStore.endpoints[0];
 }
-async function getInstances() {
-  const resp = await logStore.getInstances();
+async function getInstances(id?: string) {
+  const resp = await logStore.getInstances(id);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
@@ -238,8 +239,8 @@ async function queryLogs() {
 function changeField(type: string, opt: any) {
   state[type] = opt[0];
   if (type === "service") {
-    getEndpoints();
-    getInstances();
+    getEndpoints(state.service.id);
+    getInstances(state.service.id);
   }
 }
 function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {

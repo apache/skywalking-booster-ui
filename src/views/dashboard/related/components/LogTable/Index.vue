@@ -114,6 +114,7 @@ function setCurrentLog(log: any) {
   }
 
   .serviceInstanceName,
+  .endpointName,
   .serviceName {
     width: 200px;
   }

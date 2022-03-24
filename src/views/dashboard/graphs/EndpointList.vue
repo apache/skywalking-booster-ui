@@ -104,26 +104,24 @@ const props = defineProps({
         i: string;
         metrics: string[];
         metricTypes: string[];
-        isEdit: boolean;
       }
     >,
     default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-  needQuery: { type: Boolean, default: false },
+  isEdit: { type: Boolean, default: false },
 });
+// const emit = defineEmits(["changeOpt"]);
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const endpoints = ref<Endpoint[]>([]);
-const searchEndpoints = ref<Endpoint[]>([]);
 const pageSize = 5;
 const total = 10;
 const searchText = ref<string>("");
 
-if (props.needQuery) {
-  queryEndpoints(total);
-}
+queryEndpoints(total);
+
 async function queryEndpoints(limit?: number) {
   chartLoading.value = true;
   const resp = await selectorStore.getEndpoints({
@@ -136,15 +134,14 @@ async function queryEndpoints(limit?: number) {
     ElMessage.error(resp.errors);
     return;
   }
-  searchEndpoints.value = selectorStore.pods;
   endpoints.value = selectorStore.pods.splice(0, pageSize);
-  if (props.config.isEdit || !endpoints.value.length) {
-    return;
-  }
-  queryEndpointMetrics(endpoints.value);
+  await queryEndpointMetrics(endpoints.value);
 }
 async function queryEndpointMetrics(currentPods: Endpoint[]) {
-  const { metrics } = props.config;
+  if (!currentPods.length) {
+    return;
+  }
+  const metrics = props.config.metrics.filter((d: string) => d);
 
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
@@ -178,7 +175,7 @@ function clickEndpoint(scope: any) {
   );
 }
 function changePage(pageIndex: number) {
-  endpoints.value = searchEndpoints.value.splice(
+  endpoints.value = selectorStore.pods.splice(
     (pageIndex - 1 || 0) * pageSize,
     pageSize * (pageIndex || 1)
   );
@@ -189,10 +186,11 @@ async function searchList() {
 }
 watch(
   () => [props.config.metricTypes, props.config.metrics],
-  () => {
-    if (dashboardStore.showConfig) {
+  async () => {
+    if (props.isEdit) {
       queryEndpointMetrics(endpoints.value);
     }
+    // emit("changeOpt", false);
   }
 );
 watch(

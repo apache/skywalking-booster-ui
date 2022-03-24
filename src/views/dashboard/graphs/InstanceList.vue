@@ -42,20 +42,6 @@ limitations under the License. -->
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="Service Instances">
-          <template #default="scope">
-            <div class="attributes" v-if="scope.row.attributes.length">
-              <div
-                v-for="(attr, index) in scope.row.attributes"
-                :key="attr.name + index"
-                :style="{ fontSize: `${config.fontSize}px` }"
-              >
-                {{ attr.name }}: {{ attr.value || null }}
-              </div>
-            </div>
-            <div v-else>No Data</div>
-          </template>
-        </el-table-column>
         <el-table-column
           v-for="(metric, index) in config.metrics"
           :label="metric"
@@ -77,6 +63,25 @@ limitations under the License. -->
             </div>
           </template>
         </el-table-column>
+        <el-table-column label="Attributes" :width="100">
+          <template #default="scope">
+            <el-popover placement="left" :width="400" trigger="click">
+              <template #reference>
+                <span class="link">{{ t("viewAttributes") }}</span>
+              </template>
+              <div class="attributes" v-if="scope.row.attributes.length">
+                <div
+                  v-for="(attr, index) in scope.row.attributes"
+                  :key="attr.name + index"
+                  :style="{ fontSize: `${config.fontSize}px` }"
+                  class="mt-5"
+                >
+                  {{ attr.name }}: {{ attr.value || null }}
+                </div>
+              </div>
+            </el-popover>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <el-pagination
@@ -94,6 +99,7 @@ limitations under the License. -->
 </template>
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import Line from "./Line.vue";
@@ -128,7 +134,9 @@ const props = defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   needQuery: { type: Boolean, default: false },
+  isEdit: { type: Boolean, default: false },
 });
+const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
@@ -137,9 +145,7 @@ const searchInstances = ref<Instance[]>([]); // all instances
 const pageSize = 5;
 const searchText = ref<string>("");
 
-if (props.needQuery) {
-  queryInstance();
-}
+queryInstance();
 async function queryInstance() {
   chartLoading.value = true;
   const resp = await selectorStore.getServiceInstances();
@@ -153,13 +159,13 @@ async function queryInstance() {
   }
   searchInstances.value = selectorStore.pods;
   instances.value = searchInstances.value.splice(0, pageSize);
-  if (props.config.isEdit) {
-    return;
-  }
   queryInstanceMetrics(instances.value);
 }
 
 async function queryInstanceMetrics(currentInstances: Instance[]) {
+  if (!currentInstances.length) {
+    return;
+  }
   const { metrics } = props.config;
 
   if (metrics.length && metrics[0]) {
@@ -186,6 +192,10 @@ function clickInstance(scope: any) {
     layer: dashboardStore.layerId,
     entity: EntityType[3].value,
   });
+  if (!d) {
+    ElMessage.error("No this dashboard");
+    return;
+  }
   router.push(
     `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${
       scope.row.id
@@ -207,9 +217,7 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    if (dashboardStore.showConfig) {
-      queryInstanceMetrics(instances.value);
-    }
+    queryInstanceMetrics(instances.value);
   }
 );
 watch(
@@ -231,7 +239,7 @@ watch(
 }
 
 .attributes {
-  max-height: 80px;
+  max-height: 400px;
   overflow: auto;
 }
 </style>

@@ -17,43 +17,34 @@
 import { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
 
-export const routesInfra: Array<RouteRecordRaw> = [
+export const routesK8s: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "Infrastructure",
+    name: "Kubernetes",
     meta: {
-      title: "infrastructure",
-      icon: "scatter_plot",
-      exact: true,
+      title: "kubernetes",
+      icon: "donut_small",
       hasGroup: true,
     },
-    redirect: "/linux",
+    redirect: "/kubernetes/cluster",
     component: Layout,
     children: [
       {
-        path: "/linux",
-        name: "Linux",
+        path: "/kubernetes/cluster",
+        name: "KubernetesCluster",
         meta: {
-          title: "linux",
+          title: "kubernetesCluster",
         },
         component: () => import("@/views/Layer.vue"),
       },
-      // {
-      //   path: "/infrastructure/vm",
-      //   name: "VirtualMachine",
-      //   meta: {
-      //     title: "virtualMachine",
-      //   },
-      //   component: () => import("@/views/infrastructure/Infrastructure.vue"),
-      // },
-      // {
-      //   path: "/infrastructure/k8s",
-      //   name: "Kubernetes",
-      //   meta: {
-      //     title: "kubernetes",
-      //   },
-      //   component: () => import("@/views/infrastructure/Infrastructure.vue"),
-      // },
+      {
+        path: "/kubernetes/service",
+        name: "KubernetesService",
+        meta: {
+          title: "kubernetesService",
+        },
+        component: () => import("@/views/Layer.vue"),
+      },
     ],
   },
 ];

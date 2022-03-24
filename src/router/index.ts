@@ -26,11 +26,13 @@ import { routesAlarm } from "./alarm";
 import { routesSelf } from "./selfObservability";
 import { routesFunctions } from "./functions";
 import { routesBrowser } from "./browser";
+import { routesK8s } from "./k8s";
 
 const routes: Array<RouteRecordRaw> = [
   ...routesGen,
   ...routesMesh,
   ...routesFunctions,
+  ...routesK8s,
   ...routesInfra,
   ...routesBrowser,
   ...routesDatabase,

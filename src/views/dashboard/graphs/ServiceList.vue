@@ -122,15 +122,16 @@ const props = defineProps({
     default: () => ({ dashboardName: "", fontSize: 12 }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+  isEdit: { type: Boolean, default: false },
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const pageSize = 5;
 const services = ref<Service[]>([]);
-const searchServices = ref<Service[]>([]);
 const searchText = ref<string>("");
 const groups = ref<any>({});
+const sortServices = ref<(Service & { merge: boolean })[]>([]);
 
 queryServices();
 
@@ -142,7 +143,13 @@ async function queryServices() {
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
-  const map: { [key: string]: any[] } = selectorStore.services.reduce(
+  setServices(selectorStore.services);
+  queryServiceMetrics(services.value);
+}
+
+function setServices(arr: (Service & { merge: boolean })[]) {
+  groups.value = {};
+  const map: { [key: string]: any[] } = arr.reduce(
     (result: { [key: string]: any[] }, item: any) => {
       item.group = item.group || "";
       if (result[item.group]) {
@@ -156,21 +163,23 @@ async function queryServices() {
     },
     {}
   );
-  services.value = Object.values(map).flat(1).splice(0, pageSize);
+  sortServices.value = Object.values(map).flat(1);
   const obj = {} as any;
-  for (const s of services.value) {
+  for (const s of sortServices.value) {
     s.group = s.group || "";
     if (!obj[s.group]) {
       obj[s.group] = 1;
     } else {
+      if (obj[s.group] % 5 === 0) {
+        s.merge = false;
+      }
       obj[s.group]++;
     }
     groups.value[s.group] = obj[s.group];
   }
-  if (props.config.isEdit) {
-    return;
-  }
-  queryServiceMetrics(services.value);
+  services.value = sortServices.value.filter(
+    (d: Service, index: number) => index < pageSize
+  );
 }
 
 function clickService(scope: any) {
@@ -188,6 +197,9 @@ function clickService(scope: any) {
   router.push(path);
 }
 async function queryServiceMetrics(currentServices: Service[]) {
+  if (!currentServices.length) {
+    return;
+  }
   const { metrics } = props.config;
 
   if (metrics.length && metrics[0]) {
@@ -219,28 +231,29 @@ function objectSpanMethod(param: any): any {
       rowspan: 0,
       colspan: 0,
     };
-  } else {
-    return { rowspan: groups.value[param.row.group], colspan: 1 };
   }
+  return { rowspan: groups.value[param.row.group], colspan: 1 };
 }
 function changePage(pageIndex: number) {
-  services.value = services.value.splice(
-    (pageIndex - 1 || 0) * pageSize,
-    pageSize * (pageIndex || 1)
-  );
+  services.value = sortServices.value.filter((d: Service, index: number) => {
+    if (
+      index >= (pageIndex - 1 || 0) * pageSize &&
+      index < pageSize * (pageIndex || 1)
+    ) {
+      return d;
+    }
+  });
 }
 function searchList() {
-  searchServices.value = selectorStore.services.filter((d: { label: string }) =>
+  const searchServices = sortServices.value.filter((d: { label: string }) =>
     d.label.includes(searchText.value)
   );
-  services.value = searchServices.value.splice(0, pageSize);
+  services.value = searchServices.splice(0, pageSize);
 }
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    if (dashboardStore.showConfig) {
-      queryServiceMetrics(services.value);
-    }
+    queryServiceMetrics(services.value);
   }
 );
 </script>

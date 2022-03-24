@@ -22,6 +22,7 @@ limitations under the License. -->
     :multiple="multiple"
     :disabled="disabled"
     :style="{ borderRadius }"
+    :clearable="clearable"
   >
     <el-option
       v-for="item in options"
@@ -60,6 +61,7 @@ const props = defineProps({
   borderRadius: { type: Number, default: 3 },
   multiple: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
+  clearable: { type: Boolean, default: false },
 });
 
 const selected = ref<string[] | string>(props.value);

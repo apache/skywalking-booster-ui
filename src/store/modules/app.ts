@@ -32,6 +32,7 @@ interface AppState {
   timer: Nullable<any>;
   autoRefresh: boolean;
   pageTitle: string;
+  version: string;
 }
 
 export const appStore = defineStore({
@@ -49,6 +50,7 @@ export const appStore = defineStore({
     timer: null,
     autoRefresh: false,
     pageTitle: "",
+    version: "",
   }),
   getters: {
     duration(): Duration {
@@ -153,6 +155,16 @@ export const appStore = defineStore({
       }
       this.utc = res.data.data.getTimeInfo.timezone / 100 + ":0";
 
+      return res.data;
+    },
+    async fetchVersion(): Promise<void> {
+      const res: AxiosResponse = await graphql
+        .query("queryOAPVersion")
+        .params({});
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.version = res.data.data.version;
       return res.data;
     },
   },

@@ -113,7 +113,7 @@ const state = reactive<any>({
   status: { label: "All", value: "ALL" },
   instance: { value: "0", label: "All" },
   endpoint: { value: "0", label: "All" },
-  service: { value: "0", label: "All" },
+  service: { value: "", label: "" },
 });
 
 // const dateTime = computed(() => [
@@ -121,24 +121,21 @@ const state = reactive<any>({
 //   appStore.durationRow.end,
 // ]);
 init();
-function init() {
-  searchTraces();
+async function init() {
   if (dashboardStore.entity === EntityType[1].value) {
-    getServices();
-    return;
+    await getServices();
   }
   if (dashboardStore.entity === EntityType[2].value) {
-    getInstances();
-    return;
+    await getInstances();
   }
   if (dashboardStore.entity === EntityType[3].value) {
-    getEndpoints();
-    return;
+    await getEndpoints();
   }
   if (dashboardStore.entity === EntityType[0].value) {
-    getInstances();
-    getEndpoints();
+    await getInstances();
+    await getEndpoints();
   }
+  await searchTraces();
 }
 
 async function getServices() {
@@ -148,18 +145,20 @@ async function getServices() {
     return;
   }
   state.service = traceStore.services[0];
+  getEndpoints(state.service.id);
+  getInstances(state.service.id);
 }
 
-async function getEndpoints() {
-  const resp = await traceStore.getEndpoints();
+async function getEndpoints(id?: string) {
+  const resp = await traceStore.getEndpoints(id);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
   state.endpoint = traceStore.endpoints[0];
 }
-async function getInstances() {
-  const resp = await traceStore.getInstances();
+async function getInstances(id?: string) {
+  const resp = await traceStore.getInstances(id);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
@@ -201,8 +200,8 @@ async function queryTraces() {
 function changeField(type: string, opt: any) {
   state[type] = opt[0];
   if (type === "service") {
-    getEndpoints();
-    getInstances();
+    getEndpoints(state.service.id);
+    getInstances(state.service.id);
   }
 }
 function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
