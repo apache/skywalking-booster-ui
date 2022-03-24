@@ -40,14 +40,15 @@ export default class ListGraph {
   constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
     this.handleSelectSpan = handleSelectSpan;
     this.el = el;
-    this.width = el.clientWidth - 20;
+    this.width = el.clientWidth - 10;
     this.height = el.clientHeight;
     this.svg = d3
       .select(this.el)
       .append("svg")
       .attr("class", "trace-list-dowanload")
       .attr("width", this.width)
-      .attr("height", this.height);
+      .attr("height", this.height)
+      .attr("transform", `translate(-5, 0)`);
     this.tip = (d3tip as any)()
       .attr("class", "d3-tip")
       .offset([-8, 0])
@@ -220,7 +221,7 @@ export default class ListGraph {
     nodeEnter
       .transition()
       .duration(400)
-      .attr("transform", (d: any) => `translate(${d.y},${d.x})`)
+      .attr("transform", (d: any) => `translate(${d.y + 10},${d.x})`)
       .style("opacity", 1);
     nodeEnter
       .append("circle")
@@ -243,7 +244,7 @@ export default class ListGraph {
     node
       .transition()
       .duration(400)
-      .attr("transform", (d: any) => `translate(${d.y},${d.x})`)
+      .attr("transform", (d: any) => `translate(${d.y + 10},${d.x})`)
       .style("opacity", 1)
       .select("circle")
       .attr("fill", (d: any) =>
@@ -273,8 +274,9 @@ export default class ListGraph {
       .attr("fill", "rgba(0,0,0,0)")
       .attr("stroke", "rgba(0, 0, 0, 0.1)")
       .attr("stroke-width", 2)
+      .attr("transform", `translate(10, 0)`)
       .attr("d", () => {
-        const o = { x: source.x0 + 35, y: source.y0 };
+        const o = { x: source.x0 + 40, y: source.y0 };
         return this.diagonal({ source: o, target: o });
       })
       .transition()

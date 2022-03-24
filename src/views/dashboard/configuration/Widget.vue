@@ -90,7 +90,6 @@ import configs from "./widget/graph-styles";
 import WidgetOptions from "./widget/WidgetOptions.vue";
 import StandardOptions from "./widget/StandardOptions.vue";
 import MetricOptions from "./widget/MetricOptions.vue";
-import { ListChartTypes } from "../data";
 
 export default defineComponent({
   name: "ConfigEdit",
