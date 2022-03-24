@@ -220,8 +220,8 @@ span.collapse {
   color: #eee;
   position: fixed;
   bottom: 20px;
-  left: 10px;
-  font-size: 10px;
+  left: 20px;
+  font-size: 12px;
   cursor: pointer;
 }
 </style>
