@@ -38,7 +38,7 @@ const props = defineProps({
 
 onMounted(async () => {
   await setOptions(props.option);
-  addResizeListener(unref(chartRef), resize);
+  chartRef.value && addResizeListener(unref(chartRef), resize);
   setTimeout(() => {
     const instance = getInstance();
 

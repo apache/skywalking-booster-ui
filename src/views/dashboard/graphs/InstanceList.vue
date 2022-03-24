@@ -158,6 +158,9 @@ async function queryInstance() {
 }
 
 async function queryInstanceMetrics(currentInstances: Instance[]) {
+  if (!instances.value.length) {
+    return;
+  }
   const { metrics } = props.config;
 
   if (metrics.length && metrics[0]) {
@@ -209,9 +212,6 @@ function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   () => {
-    if (!instances.value.length) {
-      return;
-    }
     queryInstanceMetrics(instances.value);
   }
 );

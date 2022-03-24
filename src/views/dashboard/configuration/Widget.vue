@@ -37,8 +37,9 @@ limitations under the License. -->
             metrics: dashboardStore.selectedGrid.metrics,
             metricTypes: dashboardStore.selectedGrid.metricTypes,
             standard: dashboardStore.selectedGrid.standard,
-            isEdit: true,
           }"
+          :isEdit="isEdit"
+          @changeOpt="setStatus"
         />
         <div v-show="!dashboardStore.selectedGrid.graph.type" class="no-data">
           {{ t("noData") }}
@@ -51,7 +52,11 @@ limitations under the License. -->
         :style="{ '--el-collapse-header-font-size': '15px' }"
       >
         <el-collapse-item :title="t('selectVisualization')" name="1">
-          <MetricOptions @update="getSource" @loading="setLoading" />
+          <MetricOptions
+            @update="getSource"
+            @changeOpt="setStatus"
+            @loading="setLoading"
+          />
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="2">
           <component :is="`${dashboardStore.selectedGrid.graph.type}Config`" />
@@ -85,6 +90,7 @@ import configs from "./widget/graph-styles";
 import WidgetOptions from "./widget/WidgetOptions.vue";
 import StandardOptions from "./widget/StandardOptions.vue";
 import MetricOptions from "./widget/MetricOptions.vue";
+import { ListChartTypes } from "../data";
 
 export default defineComponent({
   name: "ConfigEdit",
@@ -101,6 +107,7 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
     const loading = ref<boolean>(false);
+    const isEdit = ref<boolean>(false);
     const states = reactive<{
       activeNames: string;
       source: unknown;
@@ -123,8 +130,13 @@ export default defineComponent({
     }
 
     function applyConfig() {
-      dashboardStore.setConfigs(dashboardStore.selectedGrid);
       dashboardStore.setConfigPanel(false);
+      setStatus(true);
+      dashboardStore.setConfigs(dashboardStore.selectedGrid);
+    }
+
+    function setStatus(p: boolean) {
+      isEdit.value = p;
     }
 
     function cancelConfig() {
@@ -143,6 +155,8 @@ export default defineComponent({
       cancelConfig,
       getSource,
       setLoading,
+      setStatus,
+      isEdit,
     };
   },
 });

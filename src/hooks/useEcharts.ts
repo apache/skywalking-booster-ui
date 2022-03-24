@@ -96,6 +96,7 @@ export function useECharts(
   }
 
   function setOptions(options: ECOption, clear = true) {
+    console.log(options);
     cacheOptions.value = options;
     if (unref(elRef)?.offsetHeight === 0) {
       useTimeoutFn(() => {

@@ -93,7 +93,7 @@ import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
 
-/*global defineProps */
+/*global defineProps, defineEmits */
 const props = defineProps({
   data: {
     type: Object,
@@ -104,14 +104,14 @@ const props = defineProps({
         i: string;
         metrics: string[];
         metricTypes: string[];
-        isEdit: boolean;
       }
     >,
     default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-  needQuery: { type: Boolean, default: false },
+  isEdit: { type: Boolean, default: false },
 });
+const emit = defineEmits(["changeOpt"]);
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
@@ -135,12 +135,12 @@ async function queryEndpoints(limit?: number) {
     return;
   }
   endpoints.value = selectorStore.pods.splice(0, pageSize);
-  if (!endpoints.value.length || props.config.isEdit) {
-    return;
-  }
   await queryEndpointMetrics(endpoints.value);
 }
 async function queryEndpointMetrics(currentPods: Endpoint[]) {
+  if (!currentPods.length) {
+    return;
+  }
   const metrics = props.config.metrics.filter((d: string) => d);
 
   if (metrics.length && metrics[0]) {
@@ -186,11 +186,9 @@ async function searchList() {
 }
 watch(
   () => [props.config.metricTypes, props.config.metrics],
-  () => {
-    if (!endpoints.value.length) {
-      return;
-    }
-    queryEndpointMetrics(endpoints.value);
+  async () => {
+    await queryEndpointMetrics(endpoints.value);
+    emit("changeOpt", false);
   }
 );
 watch(
