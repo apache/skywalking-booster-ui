@@ -35,7 +35,7 @@ const dashboardStore = useDashboardStore();
 const routesMap: { [key: string]: string } = {
   GeneralServices: "GENERAL",
   Database: "VIRTUAL_DATABASE",
-  MESH: "MESH",
+  MeshServices: "MESH",
   ControlPanel: "MESH_CP",
   DataPanel: "MESH_DP",
   Linux: "OS_LINUX",
@@ -52,6 +52,7 @@ getDashboard();
 
 async function getDashboard() {
   layer.value = routesMap[String(route.name)];
+  console.log(layer.value);
   dashboardStore.setLayer(layer.value);
   dashboardStore.setEntity(EntityType[1].value);
   dashboardStore.setMode(false);
