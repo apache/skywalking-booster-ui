@@ -23,6 +23,7 @@ limitations under the License. -->
       placeholder="Please input a dashboard name for calls"
       @change="changeLinkDashboard"
       class="inputs"
+      :clearable="true"
     />
     <div class="label">{{ t("linkServerMetrics") }}</div>
     <Selector
@@ -86,7 +87,6 @@ limitations under the License. -->
       <span>
         <Icon
           class="cp mr-5"
-          v-show="items.length > 1"
           iconName="remove_circle_outline"
           size="middle"
           @click="deleteItem(index)"
@@ -144,7 +144,6 @@ limitations under the License. -->
           iconName="remove_circle_outline"
           size="middle"
           @click="deleteMetric(index)"
-          v-show="legend.metric.length > 1"
         />
         <Icon
           class="cp"
@@ -196,6 +195,10 @@ const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const topologyStore = useTopologyStore();
 const { selectedGrid } = dashboardStore;
+const nodeDashboard =
+  selectedGrid.nodeDashboard && selectedGrid.nodeDashboard.length
+    ? selectedGrid.nodeDashboard
+    : "";
 const isService = [EntityType[0].value, EntityType[1].value].includes(
   dashboardStore.entity
 );
@@ -204,7 +207,7 @@ const items = reactive<
     scope: string;
     dashboard: string;
   }[]
->((isService && selectedGrid.nodeDashboard) || [{ scope: "", dashboard: "" }]);
+>(isService && nodeDashboard ? nodeDashboard : [{ scope: "", dashboard: "" }]);
 const states = reactive<{
   linkDashboard: string;
   nodeDashboard: {
@@ -229,9 +232,12 @@ const states = reactive<{
   linkDashboards: [],
   nodeDashboards: [],
 });
+const l = selectedGrid.legend && selectedGrid.legend.length;
 const legend = reactive<{
   metric: { name: string; condition: string; value: string }[];
-}>({ metric: selectedGrid.legend || [{ name: "", condition: "", value: "" }] });
+}>({
+  metric: l ? selectedGrid.legend : [{ name: "", condition: "", value: "" }],
+});
 
 getMetricList();
 async function getMetricList() {
@@ -335,6 +341,9 @@ function addItem() {
   items.push({ scope: "", dashboard: "" });
 }
 function deleteItem(index: number) {
+  if (items.length === 1) {
+    items.push({ scope: "", dashboard: "" });
+  }
   items.splice(index, 1);
   updateSettings();
 }
@@ -384,6 +393,10 @@ async function changeNodeMetrics(options: Option[] | any) {
   topologyStore.queryNodeMetrics(states.nodeMetrics);
 }
 function deleteMetric(index: number) {
+  if (legend.metric.length === 1) {
+    legend.metric = [{ name: "", condition: "", value: "" }];
+    return;
+  }
   legend.metric.splice(index, 1);
 }
 function addMetric() {

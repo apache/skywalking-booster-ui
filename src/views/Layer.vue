@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Edit v-if="dashboardStore.currentDashboard" />
+  <Dashboard v-if="dashboardStore.currentDashboard" />
   <div v-else class="no-root">
     {{ t("noRoot") }} {{ dashboardStore.layerId }}
   </div>
@@ -24,7 +24,7 @@ import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { EntityType } from "./dashboard/data";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import Edit from "./dashboard/Edit.vue";
+import Dashboard from "./dashboard/Edit.vue";
 import { useI18n } from "vue-i18n";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
@@ -52,7 +52,6 @@ getDashboard();
 
 async function getDashboard() {
   layer.value = routesMap[String(route.name)];
-  console.log(layer.value);
   dashboardStore.setLayer(layer.value);
   dashboardStore.setEntity(EntityType[1].value);
   dashboardStore.setMode(false);

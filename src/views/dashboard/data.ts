@@ -23,10 +23,10 @@ export const ChartTypes = [
   { label: "Bar", value: "Bar" },
   { label: "Line", value: "Line" },
   { label: "Area", value: "Area" },
-  // { label: "Pie", value: "Pie" },
   { label: "Card", value: "Card" },
   { label: "Top List", value: "TopList" },
   { label: "Table", value: "Table" },
+  { label: "Text", value: "Text" },
   { label: "Heatmap", value: "Heatmap" },
   { label: "Service List", value: "ServiceList" },
   { label: "Endpoint List", value: "EndpointList" },
@@ -169,6 +169,7 @@ export const SortOrder = [
 export const AllTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
@@ -177,6 +178,7 @@ export const AllTools = [
 export const ServiceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "timeline", content: "Add Profile", id: "addProfile" },
@@ -186,6 +188,7 @@ export const ServiceTools = [
 export const InstanceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "save", content: "Apply", id: "apply" },
@@ -193,6 +196,7 @@ export const InstanceTools = [
 export const EndpointTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
@@ -201,6 +205,7 @@ export const EndpointTools = [
 export const ServiceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "save", content: "Apply", id: "apply" },
 ];
@@ -208,11 +213,13 @@ export const ServiceRelationTools = [
 export const EndpointRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
   { name: "save", content: "Apply", id: "apply" },
 ];
 export const InstanceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "save", content: "Apply", id: "apply" },
 ];
@@ -248,3 +255,12 @@ export const QueryOrders = [
   { label: "Start Time", value: "BY_START_TIME" },
   { label: "Duration", value: "BY_DURATION" },
 ];
+export const TextColors: { [key: string]: string } = {
+  green: "#67C23A",
+  blue: "#409EFF",
+  red: "#F56C6C",
+  grey: "#909399",
+  white: "#fff",
+  black: "#000",
+  orange: "#E6A23C",
+};

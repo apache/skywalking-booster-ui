@@ -14,25 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const NewControl = {
-  x: 0,
-  y: 0,
-  w: 24,
-  h: 12,
-  i: "0",
-  type: "Widget",
-  widget: {
-    title: "",
-  },
-  graph: {},
-  standard: {},
-  metrics: [""],
-  metricTypes: [""],
-};
-export const TextConfig = {
-  fontColor: "white",
-  backgroundColor: "green",
-  content: "Text",
-  fontSize: 14,
-  textAlign: "left",
+
+import Text from "./Text.vue";
+import Widget from "./Widget.vue";
+import Topology from "./Topology.vue";
+
+export default {
+  Text,
+  Widget,
+  Topology,
 };

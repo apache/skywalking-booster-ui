@@ -91,6 +91,14 @@ export interface CardConfig {
   textAlign?: "center" | "right" | "left";
 }
 
+export interface TextConfig {
+  fontSize: number;
+  backgroundColor: string;
+  textAlign: string;
+  fontColor: string;
+  content: string;
+}
+
 export interface TableConfig {
   type?: string;
   showTableValues: boolean;

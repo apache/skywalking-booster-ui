@@ -125,6 +125,7 @@ const msg = {
   kubernetesService: "Service",
   kubernetesCluster: "Cluster",
   kubernetes: "Kubernetes",
+  textUrl: "Text Hyperlink",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

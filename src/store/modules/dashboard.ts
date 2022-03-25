@@ -22,7 +22,7 @@ import query from "@/graphql/fetch";
 import { DashboardItem } from "@/types/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
-import { NewControl } from "../data";
+import { NewControl, TextConfig } from "../data";
 import { Duration } from "@/types/app";
 import { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
@@ -112,6 +112,10 @@ export const dashboardStore = defineStore({
       if (type === "Trace" || type === "Profile" || type === "Log") {
         newItem.h = 36;
       }
+      if (type === "Text") {
+        newItem.h = 6;
+        newItem.graph = TextConfig;
+      }
       this.activedGridItem = newItem.i;
       this.selectedGrid = newItem;
       this.layout = this.layout.map((d: LayoutConfig) => {
@@ -158,6 +162,10 @@ export const dashboardStore = defineStore({
       if (type === "Trace" || type === "Profile" || type === "Log") {
         newItem.h = 32;
       }
+      if (type === "Text") {
+        newItem.h = 6;
+        newItem.graph = TextConfig;
+      }
       if (this.layout[idx].children) {
         const items = children.map((d: LayoutConfig) => {
           d.y = d.y + newItem.h;
@@ -171,10 +179,9 @@ export const dashboardStore = defineStore({
     activeGridItem(index: string) {
       this.activedGridItem = index;
     },
-    setActiveTabIndex(index: number) {
-      const idx = this.layout.findIndex(
-        (d: LayoutConfig) => d.i === this.activedGridItem
-      );
+    setActiveTabIndex(index: number, target?: number) {
+      const m = target || this.activedGridItem;
+      const idx = this.layout.findIndex((d: LayoutConfig) => d.i === m);
       if (idx < 0) {
         return;
       }

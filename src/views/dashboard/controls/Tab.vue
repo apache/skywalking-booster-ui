@@ -121,6 +121,7 @@ import Widget from "./Widget.vue";
 import Trace from "./Trace.vue";
 import Profile from "./Profile.vue";
 import Log from "./Log.vue";
+import Text from "./Text.vue";
 
 const props = {
   data: {
@@ -131,7 +132,7 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile, Log },
+  components: { Topology, Widget, Trace, Profile, Log, Text },
   props,
   setup(props) {
     const { t } = useI18n();
@@ -149,6 +150,7 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
+      dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
     }
 
     function clickTabs(e: Event, idx: number) {
