@@ -324,7 +324,7 @@ watch(
 
 .operations-list {
   position: absolute;
-  padding: 10px;
+  padding: 10px 0;
   color: #333;
   cursor: pointer;
   background-color: #fff;
@@ -335,7 +335,8 @@ watch(
     height: 30px;
     width: 140px;
     line-height: 30px;
-    text-align: center;
+    text-align: left;
+    padding-left: 15px;
   }
 
   span:hover {

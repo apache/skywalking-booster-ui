@@ -555,17 +555,18 @@ watch(
 
   .operations-list {
     position: absolute;
-    padding: 10px;
     color: #333;
     cursor: pointer;
     background-color: #fff;
     border-radius: 3px;
+    padding: 10px 0;
 
     span {
       display: block;
       height: 30px;
       line-height: 30px;
-      text-align: center;
+      text-align: left;
+      padding-left: 15px;
     }
 
     span:hover {
