@@ -30,7 +30,7 @@ limitations under the License. -->
         @change="changeConfigs(index, { unit: currentMetricConfig.unit })"
       />
     </div>
-    <div class="item mb-10">
+    <div class="item mb-10" v-show="metricType === 'readLabeledMetricsValues'">
       <span class="label">{{ t("labels") }}</span>
       <el-input
         class="input"
@@ -40,7 +40,7 @@ limitations under the License. -->
         @change="changeConfigs(index, { label: currentMetricConfig.label })"
       />
     </div>
-    <div class="item mb-10">
+    <div class="item mb-10" v-show="metricType === 'readLabeledMetricsValues'">
       <span class="label">{{ t("labelsIndex") }}</span>
       <el-input
         class="input"
@@ -64,7 +64,10 @@ limitations under the License. -->
         :clearable="true"
       />
     </div>
-    <div class="item">
+    <div
+      class="item"
+      v-show="['sortMetrics', 'readLabeledMetricsValues'].includes(metricType)"
+    >
       <span class="label">{{ t("sortOrder") }}</span>
       <Selector
         :value="currentMetric.sortOrder || 'DES'"
@@ -97,6 +100,9 @@ const { t } = useI18n();
 const emit = defineEmits(["update", "close"]);
 const dashboardStore = useDashboardStore();
 const currentMetric = ref<MetricConfigOpt>(props.currentMetricConfig);
+const metricType = ref<string>(
+  dashboardStore.selectedGrid.metricTypes[props.index]
+);
 
 function changeConfigs(index: number, param: { [key: string]: string }) {
   const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
