@@ -30,6 +30,17 @@ limitations under the License. -->
     />
   </div>
   <div class="item">
+    <span class="label">{{ t("textAlign") }}</span>
+    <Selector
+      :value="textAlign"
+      :options="AlignStyle"
+      size="small"
+      placeholder="Select a color"
+      class="input"
+      @change="changeConfig({ textAlign: $event[0].value })"
+    />
+  </div>
+  <div class="item">
     <span class="label">{{ t("backgroundColors") }}</span>
     <Selector
       :value="backgroundColor"
@@ -85,6 +96,7 @@ const backgroundColor = ref(originConfig.graph.backgroundColor || "green");
 const fontColor = ref(originConfig.graph.fontColor || "white");
 const content = ref<string>(originConfig.graph.content || "");
 const fontSize = ref<number>(originConfig.graph.fontSize || 12);
+const textAlign = ref(originConfig.graph.textAlign || "left");
 const Colors = [
   {
     label: "Green",
@@ -96,6 +108,14 @@ const Colors = [
   { label: "White", value: "white" },
   { label: "Black", value: "black" },
   { label: "Orange", value: "orange" },
+];
+const AlignStyle = [
+  {
+    label: "Left",
+    value: "left",
+  },
+  { label: "Center", value: "center" },
+  { label: "Right", value: "right" },
 ];
 function changeConfig(param: { [key: string]: unknown }) {
   const { selectedGrid } = dashboardStore;

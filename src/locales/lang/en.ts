@@ -126,6 +126,7 @@ const msg = {
   kubernetesCluster: "Cluster",
   kubernetes: "Kubernetes",
   textUrl: "Text Hyperlink",
+  textAlign: "Text Align",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",
