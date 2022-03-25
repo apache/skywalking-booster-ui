@@ -13,174 +13,125 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="item">
-    <span class="label">{{ t("unit") }}</span>
-    <el-input
-      class="input"
-      v-model="selectedGrid.standard.unit"
-      size="small"
-      placeholder="Please input Unit"
+  <div class="config-panel">
+    <Icon
+      class="cp mr-5 close"
+      iconName="cancel"
+      size="middle"
+      @click="closePopper"
     />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("sortOrder") }}</span>
-    <Selector
-      :value="sortOrder"
-      :options="SortOrder"
-      size="small"
-      placeholder="Select a sort order"
-      class="selector"
-      @change="changeStandardOpt({ sortOrder })"
-    />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("labels") }}</span>
-    <el-input
-      class="input"
-      v-model="selectedGrid.standard.metricLabels"
-      size="small"
-      placeholder="auto"
-      @change="changeStandardOpt"
-    />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("labelsIndex") }}</span>
-    <el-input
-      class="input"
-      v-model="selectedGrid.standard.labelsIndex"
-      size="small"
-      placeholder="auto"
-      @change="changeStandardOpt"
-    />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("plus") }}</span>
-    <el-input-number
-      class="input"
-      v-model="selectedGrid.standard.plus"
-      :min="0"
-      size="small"
-      placeholder="Please input"
-      @change="changeStandardOpt"
-    />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("minus") }}</span>
-    <el-input-number
-      class="input"
-      v-model="selectedGrid.standard.minus"
-      :min="0"
-      size="small"
-      placeholder="Please input"
-      @change="changeStandardOpt"
-    />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("multiply") }}</span>
-    <el-input-number
-      class="input"
-      v-model="selectedGrid.standard.multiply"
-      :min="1"
-      size="small"
-      placeholder="Please input"
-      @change="changeStandardOpt"
-    />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("divide") }}</span>
-    <el-input-number
-      class="input"
-      v-model="selectedGrid.standard.divide"
-      size="small"
-      placeholder="Please input"
-      :min="1"
-      @change="changeStandardOpt"
-    />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("convertToMilliseconds") }}</span>
-    <el-input-number
-      class="input"
-      :min="0"
-      v-model="selectedGrid.standard.milliseconds"
-      size="small"
-      placeholder="Please input"
-      @change="changeStandardOpt"
-    />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("convertToSeconds") }}</span>
-    <el-input-number
-      class="input"
-      :min="0"
-      v-model="selectedGrid.standard.seconds"
-      size="small"
-      placeholder="Please input"
-      @change="changeStandardOpt"
-    />
+    <div class="item mb-10">
+      <span class="label">{{ t("unit") }}</span>
+      <el-input
+        class="input"
+        v-model="currentMetric.unit"
+        size="small"
+        placeholder="Please input unit"
+        @change="changeConfigs(index, { unit: currentMetricConfig.unit })"
+      />
+    </div>
+    <div class="item mb-10">
+      <span class="label">{{ t("metricLabel") }}</span>
+      <el-input
+        class="input"
+        v-model="currentMetric.label"
+        size="small"
+        placeholder="Please input a name"
+        @change="changeConfigs(index, { label: currentMetricConfig.label })"
+      />
+    </div>
+    <div class="item mb-10">
+      <span class="label">{{ t("labelsIndex") }}</span>
+      <el-input
+        class="input"
+        v-model="currentMetric.labelsIndex"
+        size="small"
+        placeholder="auto"
+        @change="
+          changeConfigs(index, { label: currentMetricConfig.labelsIndex })
+        "
+      />
+    </div>
+    <div class="item mb-10">
+      <span class="label">{{ t("aggregation") }}</span>
+      <Selector
+        :value="currentMetric.calculation"
+        :options="CalculationOpts"
+        size="small"
+        placeholder="Select a option"
+        @change="changeConfigs(index, { calculation: $event[0].value })"
+        class="aggregation"
+        :clearable="true"
+      />
+    </div>
+    <div class="item">
+      <span class="label">{{ t("sortOrder") }}</span>
+      <Selector
+        :value="currentMetric.sortOrder || 'DES'"
+        :options="SortOrder"
+        size="small"
+        placeholder="Select a sort order"
+        class="aggregation"
+        @change="changeConfigs(index, { sortOrder: $event[0].value })"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
+import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import { SortOrder } from "../../data";
+import { SortOrder, CalculationOpts } from "../../data";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
-import { ElMessage } from "element-plus";
+import { MetricConfigOpt } from "@/types/dashboard";
 
-/*global defineEmits */
+/*global defineEmits, defineProps */
+const props = defineProps({
+  currentMetricConfig: {
+    type: Object as PropType<MetricConfigOpt>,
+    default: () => ({ unit: "" }),
+  },
+  index: { type: Number, default: 0 },
+});
 const { t } = useI18n();
-const emit = defineEmits(["update", "loading"]);
+const emit = defineEmits(["update", "close"]);
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
-const sortOrder = ref<string>(selectedGrid.standard.sortOrder || "DES");
+const currentMetric = ref<MetricConfigOpt>(props.currentMetricConfig);
 
-function changeStandardOpt(param?: any) {
-  let standard = dashboardStore.selectedGrid.standard;
-  if (param) {
-    standard = {
-      ...dashboardStore.selectedGrid.standard,
-      ...param,
-    };
-    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, standard });
-  }
-  queryMetrics();
+function changeConfigs(index: number, param: { [key: string]: string }) {
+  const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
+  metricConfig[index] = { ...metricConfig[index], ...param };
+  dashboardStore.selectWidget({
+    ...dashboardStore.selectedGrid,
+    metricConfig,
+  });
+  console.log(dashboardStore.selectedGrid);
+  emit("update");
 }
-async function queryMetrics() {
-  const params = useQueryProcessor(dashboardStore.selectedGrid);
-  if (!params) {
-    emit("update", {});
-    return;
-  }
 
-  emit("loading", true);
-  const json = await dashboardStore.fetchMetricValue(params);
-  emit("loading", false);
-  if (json.errors) {
-    ElMessage.error(json.errors);
-    return;
-  }
-  const source = useSourceProcessor(json, dashboardStore.selectedGrid);
-  emit("update", source);
+function closePopper() {
+  emit("close");
 }
 </script>
 <style lang="scss" scoped>
+.config-panel {
+  padding: 10px 5px;
+  position: relative;
+}
+
 .label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
+  width: 150px;
+  display: inline-block;
+  font-size: 12px;
 }
 
-.input {
-  width: 500px;
+.close {
+  position: absolute;
+  top: -8px;
+  right: -15px;
 }
 
-.item {
-  margin-bottom: 10px;
-}
-
-.selector {
-  width: 500px;
+.aggregation {
+  width: 365px;
 }
 </style>

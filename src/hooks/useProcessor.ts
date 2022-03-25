@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 import dayjs from "dayjs";
-import { RespFields, MetricQueryTypes } from "./data";
+import { RespFields, MetricQueryTypes, Calculations } from "./data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Instance, Endpoint, Service } from "@/types/selector";
-import { StandardConfig } from "@/types/dashboard";
+import { MetricConfigOpt } from "@/types/dashboard";
 
 export function useQueryProcessor(config: any) {
   if (!(config.metrics && config.metrics[0])) {
@@ -48,6 +48,7 @@ export function useQueryProcessor(config: any) {
   }
   const fragment = config.metrics.map((name: string, index: number) => {
     const metricType = config.metricTypes[index] || "";
+    const c = (config.metricConfig && config.metricConfig[index]) || {};
     if (
       [
         MetricQueryTypes.ReadSampledRecords,
@@ -63,7 +64,7 @@ export function useQueryProcessor(config: any) {
         normal: selectorStore.currentService.normal,
         scope: dashboardStore.entity,
         topN: 10,
-        order: config.standard.sortOrder || "DES",
+        order: c.sortOrder || "DES",
       };
     } else {
       if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
@@ -128,7 +129,7 @@ export function useSourceProcessor(
   config: {
     metrics: string[];
     metricTypes: string[];
-    standard: StandardConfig;
+    metricConfig: MetricConfigOpt[];
   }
 ) {
   if (resp.errors) {
@@ -140,23 +141,24 @@ export function useSourceProcessor(
 
   config.metricTypes.forEach((type: string, index) => {
     const m = config.metrics[index];
+    const c = (config.metricConfig && config.metricConfig[index]) || {};
 
     if (type === MetricQueryTypes.ReadMetricsValues) {
       source[m] = resp.data[keys[index]].values.values.map(
-        (d: { value: number }) => aggregation(d.value, config.standard)
+        (d: { value: number }) => aggregation(d.value, c)
       );
     }
     if (type === MetricQueryTypes.ReadLabeledMetricsValues) {
       const resVal = Object.values(resp.data)[0] || [];
-      const labels = (config.standard.metricLabels || "")
+      const labels = (c.label || "")
         .split(",")
         .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-      const labelsIdx = (config.standard.labelsIndex || "")
+      const labelsIdx = (c.labelsIndex || "")
         .split(",")
         .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
       for (const item of resVal) {
         const values = item.values.values.map((d: { value: number }) =>
-          aggregation(Number(d.value), config.standard)
+          aggregation(Number(d.value), c)
         );
 
         const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
@@ -168,10 +170,7 @@ export function useSourceProcessor(
       }
     }
     if (type === MetricQueryTypes.ReadMetricsValue) {
-      source[m] = aggregation(
-        Number(Object.values(resp.data)[0]),
-        config.standard
-      );
+      source[m] = aggregation(Number(Object.values(resp.data)[0]), c);
     }
     if (
       type === MetricQueryTypes.SortMetrics ||
@@ -179,7 +178,7 @@ export function useSourceProcessor(
     ) {
       source[m] = (Object.values(resp.data)[0] || []).map(
         (d: { value: unknown; name: string }) => {
-          d.value = aggregation(Number(d.value), config.standard);
+          d.value = aggregation(Number(d.value), c);
 
           return d;
         }
@@ -307,33 +306,28 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   return { queryStr, conditions };
 }
 
-function aggregation(val: number, standard: any): number | string {
+function aggregation(val: number, config: any): number | string {
   let data: number | string = val;
 
-  if (!isNaN(standard.plus)) {
-    data = val + Number(standard.plus);
-    return data;
+  switch (config.calculation) {
+    case Calculations.Percentage:
+      data = val / 100;
+      break;
+    case Calculations.ByteToKB:
+      data = val / 1024;
+      break;
+    case Calculations.Apdex:
+      data = val / 10000;
+      break;
+    case Calculations.ConvertSeconds:
+      data = dayjs(val).format("YYYY-MM-DD HH:mm:ss");
+      break;
+    case Calculations.ConvertMilliseconds:
+      data = dayjs.unix(val).format("YYYY-MM-DD HH:mm:ss");
+      break;
+    default:
+      data;
+      break;
   }
-  if (!isNaN(standard.minus)) {
-    data = val - Number(standard.plus);
-    return data;
-  }
-  if (!isNaN(standard.multiply) && standard.divide !== 0) {
-    data = val * Number(standard.multiply);
-    return data;
-  }
-  if (!isNaN(standard.divide) && standard.divide !== 0) {
-    data = val / Number(standard.divide);
-    return data;
-  }
-  if (standard.milliseconds) {
-    data = dayjs(val).format("YYYY-MM-DD HH:mm:ss");
-    return data;
-  }
-  if (standard.milliseconds) {
-    data = dayjs.unix(val).format("YYYY-MM-DD HH:mm:ss");
-    return data;
-  }
-
   return data;
 }

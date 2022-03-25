@@ -264,3 +264,11 @@ export const TextColors: { [key: string]: string } = {
   black: "#000",
   orange: "#E6A23C",
 };
+
+export const CalculationOpts = [
+  { label: "Percentage", value: "percentage" },
+  { label: "ByteToKB", value: "byteToKB" },
+  { label: "ConvertMilliseconds", value: "convertMilliseconds" },
+  { label: "ConvertSeconds", value: "convertSeconds" },
+  { label: "Apdex", value: "apdex" },
+];

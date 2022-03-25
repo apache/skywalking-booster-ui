@@ -22,6 +22,14 @@ export enum MetricQueryTypes {
   READHEATMAP = "readHeatMap",
   ReadSampledRecords = "readSampledRecords",
 }
+
+export enum Calculations {
+  Percentage = "percentage",
+  ByteToKB = "byteToKB",
+  Apdex = "apdex",
+  ConvertSeconds = "convertSeconds",
+  ConvertMilliseconds = "convertMilliseconds",
+}
 export enum sizeEnum {
   XS = "XS",
   SM = "SM",

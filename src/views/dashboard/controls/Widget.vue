@@ -128,7 +128,7 @@ export default defineComponent({
       const d = {
         metrics: props.data.metrics,
         metricTypes: props.data.metricTypes,
-        standard: props.data.standard,
+        metricConfig: props.data.metricConfig || [],
       };
       state.source = useSourceProcessor(json, d);
     }

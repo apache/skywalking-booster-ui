@@ -49,6 +49,14 @@ limitations under the License. -->
       @change="changeMetricType(index, $event)"
       class="selectors"
     />
+    <el-popover placement="top" :width="400" :visible="showConfig">
+      <template #reference>
+        <span @click="setMetricConfig(index)">
+          <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
+        </span>
+      </template>
+      <StandardOptions @update="queryMetrics" @close="showConfig = false" />
+    </el-popover>
     <span
       v-show="states.isList || states.metricTypes[0] === 'readMetricsValues'"
     >
@@ -101,13 +109,15 @@ import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
 import { useI18n } from "vue-i18n";
-import { DashboardItem } from "@/types/dashboard";
+import { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
+import StandardOptions from "./StandardOptions.vue";
 
 /*global defineEmits */
 const { t } = useI18n();
 const emit = defineEmits(["update", "loading", "changeOpt"]);
 const dashboardStore = useDashboardStore();
 const { metrics, metricTypes, graph } = dashboardStore.selectedGrid;
+const showConfig = ref<boolean>(false);
 const states = reactive<{
   metrics: string[];
   metricTypes: string[];
@@ -126,6 +136,13 @@ const states = reactive<{
   metricList: [],
   dashboardName: graph.dashboardName,
   dashboardList: [{ label: "", value: "" }],
+});
+const currentMetricConfig = ref<MetricConfigOpt>({
+  unit: "",
+  label: "",
+  labelsIndex: "",
+  calculation: "",
+  sortOrder: "DES",
 });
 
 states.isList = ListChartTypes.includes(graph.type);
@@ -323,8 +340,8 @@ async function queryMetrics() {
   if (states.isList) {
     return;
   }
-  const { standard } = dashboardStore.selectedGrid;
-  const params = useQueryProcessor({ ...states, standard });
+  const { metricConfig } = dashboardStore.selectedGrid;
+  const params = useQueryProcessor({ ...states, metricConfig });
   if (!params) {
     emit("update", {});
     return;
@@ -337,7 +354,7 @@ async function queryMetrics() {
     ElMessage.error(json.errors);
     return;
   }
-  const source = useSourceProcessor(json, { ...states, standard });
+  const source = useSourceProcessor(json, { ...states, metricConfig });
   emit("update", source);
 }
 
@@ -392,6 +409,28 @@ function setMetricTypeList(type: string) {
     ];
   }
   return MetricTypes[type];
+}
+function setMetricConfig(index: number) {
+  showConfig.value = true;
+  const n = {
+    unit: "",
+    label: "",
+    calculation: "",
+    labelsIndex: "",
+    sortOrder: "DES",
+  };
+  if (
+    !dashboardStore.selectedGrid.metricConfig ||
+    !dashboardStore.selectedGrid.metricConfig[index]
+  ) {
+    currentMetricConfig.value = n;
+    return;
+  }
+  currentMetricConfig.value = {
+    ...n,
+    ...dashboardStore.selectedGrid.metricConfig[index],
+  };
+  showConfig.value = true;
 }
 </script>
 <style lang="scss" scoped>
