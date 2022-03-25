@@ -30,7 +30,6 @@ limitations under the License. -->
           class="inputs"
           :value="depth"
           :options="DepthList"
-          placeholder="Select a option"
           @change="changeDepth"
         />
       </span>
@@ -377,10 +376,12 @@ async function handleInspect() {
   topologyStore.setNode(null);
   topologyStore.setLink(null);
   loading.value = true;
-  const resp = await topologyStore.getServicesTopology([id]);
+  const resp = await topologyStore.getDepthServiceTopology(
+    [id],
+    Number(depth.value)
+  );
   loading.value = false;
-
-  if (resp.errors) {
+  if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
   await init();
@@ -566,7 +567,7 @@ watch(
       height: 30px;
       line-height: 30px;
       text-align: left;
-      padding-left: 15px;
+      padding: 0 15px;
     }
 
     span:hover {
