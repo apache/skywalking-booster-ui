@@ -31,7 +31,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { computed, PropType } from "vue";
-import { CardConfig, StandardConfig } from "@/types/dashboard";
+import { CardConfig, MetricConfigOpt } from "@/types/dashboard";
 
 /*global defineProps */
 const props = defineProps({
@@ -44,7 +44,7 @@ const props = defineProps({
     default: () => ({ fontSize: 12, showUint: true, textAlign: "center" }),
   },
   standard: {
-    type: Object as PropType<StandardConfig>,
+    type: Object as PropType<MetricConfigOpt>,
     default: () => ({ unit: "" }),
   },
 });

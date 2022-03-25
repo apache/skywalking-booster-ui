@@ -104,6 +104,7 @@ import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
+import { MetricConfigOpt } from "@/types/dashboard";
 
 /*global defineProps */
 const props = defineProps({
@@ -123,6 +124,10 @@ const props = defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   isEdit: { type: Boolean, default: false },
+  standard: {
+    type: Object as PropType<MetricConfigOpt[]>,
+    default: () => ({ unit: "" }),
+  },
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
@@ -201,7 +206,7 @@ async function queryServiceMetrics(currentServices: Service[]) {
     return;
   }
   const { metrics } = props.config;
-
+  console.log(props.config);
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
       currentServices,
@@ -214,7 +219,10 @@ async function queryServiceMetrics(currentServices: Service[]) {
       ElMessage.error(json.errors);
       return;
     }
-    services.value = usePodsSource(currentServices, json, props.config);
+    services.value = usePodsSource(currentServices, json, {
+      ...props.config,
+      metricConfig: props.standard || [],
+    });
     return;
   }
   services.value = currentServices;

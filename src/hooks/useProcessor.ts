@@ -257,7 +257,11 @@ export function useQueryPodsMetrics(
 export function usePodsSource(
   pods: Array<Instance | Endpoint>,
   resp: { errors: string; data: { [key: string]: any } },
-  config: { metrics: string[]; metricTypes: string[] }
+  config: {
+    metrics: string[];
+    metricTypes: string[];
+    metricConfig: MetricConfigOpt[];
+  }
 ): any {
   if (resp.errors) {
     ElMessage.error(resp.errors);
@@ -265,13 +269,14 @@ export function usePodsSource(
   }
   const data = pods.map((d: Instance | any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
+      const c = (config.metricConfig && config.metricConfig[index]) || {};
       const key = name + idx + index;
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValue) {
-        d[name] = resp.data[key];
+        d[name] = aggregation(resp.data[key], c);
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
-        d[name] = resp.data[key].values.values.map(
-          (d: { value: number }) => d.value
+        d[name] = resp.data[key].values.values.map((d: { value: number }) =>
+          aggregation(d.value, c)
         );
       }
     });
@@ -307,7 +312,7 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
 }
 
 function aggregation(val: number, config: any): number | string {
-  let data: number | string = val;
+  let data: number | string = Number(val);
 
   switch (config.calculation) {
     case Calculations.Percentage:
@@ -329,5 +334,7 @@ function aggregation(val: number, config: any): number | string {
       data;
       break;
   }
+
+  console.log(data);
   return data;
 }

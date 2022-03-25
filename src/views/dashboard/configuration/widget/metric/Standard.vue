@@ -105,7 +105,6 @@ function changeConfigs(index: number, param: { [key: string]: string }) {
     ...dashboardStore.selectedGrid,
     metricConfig,
   });
-  console.log(dashboardStore.selectedGrid);
   emit("update");
 }
 

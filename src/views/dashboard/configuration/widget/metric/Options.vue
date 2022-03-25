@@ -55,7 +55,7 @@ limitations under the License. -->
           <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
         </span>
       </template>
-      <StandardOptions @update="queryMetrics" @close="showConfig = false" />
+      <Standard @update="queryMetrics" @close="showConfig = false" />
     </el-popover>
     <span
       v-show="states.isList || states.metricTypes[0] === 'readMetricsValues'"
@@ -110,7 +110,7 @@ import Icon from "@/components/Icon.vue";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
 import { useI18n } from "vue-i18n";
 import { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
-import StandardOptions from "./StandardOptions.vue";
+import Standard from "./Standard.vue";
 
 /*global defineEmits */
 const { t } = useI18n();

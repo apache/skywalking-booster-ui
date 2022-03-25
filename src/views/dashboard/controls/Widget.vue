@@ -65,7 +65,7 @@ limitations under the License. -->
           metricTypes: data.metricTypes,
           i: data.i,
         }"
-        :standard="data.standard"
+        :standard="data.metricConfig"
         :needQuery="needQuery"
       />
     </div>
