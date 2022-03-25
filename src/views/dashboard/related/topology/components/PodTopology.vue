@@ -336,7 +336,7 @@ watch(
     width: 140px;
     line-height: 30px;
     text-align: left;
-    padding-left: 15px;
+    padding: 0 15px;
   }
 
   span:hover {
