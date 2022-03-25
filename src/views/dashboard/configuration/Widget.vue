@@ -36,7 +36,7 @@ limitations under the License. -->
             i: dashboardStore.selectedGrid.i,
             metrics: dashboardStore.selectedGrid.metrics,
             metricTypes: dashboardStore.selectedGrid.metricTypes,
-            standard: dashboardStore.selectedGrid.standard,
+            metricConfig: dashboardStore.selectedGrid.metricConfig,
           }"
           :isEdit="isEdit"
           @changeOpt="setStatus"

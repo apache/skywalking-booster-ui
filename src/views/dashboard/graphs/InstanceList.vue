@@ -112,6 +112,7 @@ import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
+import { MetricConfigOpt } from "@/types/dashboard";
 
 /*global defineProps */
 const props = defineProps({
@@ -122,7 +123,7 @@ const props = defineProps({
         metrics: string[];
         metricTypes: string[];
         isEdit: boolean;
-      }
+      } & { metricConfig: MetricConfigOpt[] }
     >,
     default: () => ({
       dashboardName: "",
@@ -144,6 +145,7 @@ const instances = ref<Instance[]>([]); // current instances
 const searchInstances = ref<Instance[]>([]); // all instances
 const pageSize = 5;
 const searchText = ref<string>("");
+const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
 
 queryInstance();
 async function queryInstance() {
@@ -180,7 +182,10 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
       ElMessage.error(json.errors);
       return;
     }
-    instances.value = usePodsSource(currentInstances, json, props.config);
+    instances.value = usePodsSource(currentInstances, json, {
+      ...props.config,
+      metricConfig: metricConfig.value,
+    });
     return;
   }
   instances.value = currentInstances;

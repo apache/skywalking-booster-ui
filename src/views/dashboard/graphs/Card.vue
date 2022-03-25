@@ -26,11 +26,13 @@ limitations under the License. -->
         ? null
         : singleVal.toFixed(2)
     }}
-    <span v-show="config.showUint">{{ standard.unit }}</span>
+    <span v-show="config.showUint">
+      <i v-for="(m, index) in metricConfig" :key="index">{{ m.unit }}</i>
+    </span>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, PropType } from "vue";
+import { computed, PropType, ref } from "vue";
 import { CardConfig, MetricConfigOpt } from "@/types/dashboard";
 
 /*global defineProps */
@@ -40,14 +42,11 @@ const props = defineProps({
     default: () => ({}),
   },
   config: {
-    type: Object as PropType<CardConfig>,
+    type: Object as PropType<CardConfig & { metricConfig?: MetricConfigOpt[] }>,
     default: () => ({ fontSize: 12, showUint: true, textAlign: "center" }),
   },
-  standard: {
-    type: Object as PropType<MetricConfigOpt>,
-    default: () => ({ unit: "" }),
-  },
 });
+const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
 const key = computed(() => Object.keys(props.data)[0]);
 const singleVal = computed(() => props.data[key.value]);
 </script>

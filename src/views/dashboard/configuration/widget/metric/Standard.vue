@@ -31,7 +31,7 @@ limitations under the License. -->
       />
     </div>
     <div class="item mb-10">
-      <span class="label">{{ t("metricLabel") }}</span>
+      <span class="label">{{ t("labels") }}</span>
       <el-input
         class="input"
         v-model="currentMetric.label"
@@ -60,7 +60,7 @@ limitations under the License. -->
         size="small"
         placeholder="Select a option"
         @change="changeConfigs(index, { calculation: $event[0].value })"
-        class="aggregation"
+        class="selectors"
         :clearable="true"
       />
     </div>
@@ -71,7 +71,7 @@ limitations under the License. -->
         :options="SortOrder"
         size="small"
         placeholder="Select a sort order"
-        class="aggregation"
+        class="selectors"
         @change="changeConfigs(index, { sortOrder: $event[0].value })"
       />
     </div>
@@ -130,7 +130,7 @@ function closePopper() {
   right: -15px;
 }
 
-.aggregation {
+.selectors {
   width: 365px;
 }
 </style>

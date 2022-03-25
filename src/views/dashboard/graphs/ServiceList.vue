@@ -118,16 +118,12 @@ const props = defineProps({
         metrics: string[];
         metricTypes: string[];
         isEdit: boolean;
-      }
+      } & { metricConfig: MetricConfigOpt[] }
     >,
     default: () => ({ dashboardName: "", fontSize: 12 }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   isEdit: { type: Boolean, default: false },
-  standard: {
-    type: Object as PropType<MetricConfigOpt[]>,
-    default: () => ({ unit: "" }),
-  },
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
@@ -137,6 +133,7 @@ const services = ref<Service[]>([]);
 const searchText = ref<string>("");
 const groups = ref<any>({});
 const sortServices = ref<(Service & { merge: boolean })[]>([]);
+const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
 
 queryServices();
 
@@ -206,7 +203,7 @@ async function queryServiceMetrics(currentServices: Service[]) {
     return;
   }
   const { metrics } = props.config;
-  console.log(props.config);
+
   if (metrics.length && metrics[0]) {
     const params = await useQueryPodsMetrics(
       currentServices,
@@ -221,7 +218,7 @@ async function queryServiceMetrics(currentServices: Service[]) {
     }
     services.value = usePodsSource(currentServices, json, {
       ...props.config,
-      metricConfig: props.standard || [],
+      metricConfig: metricConfig.value || [],
     });
     return;
   }

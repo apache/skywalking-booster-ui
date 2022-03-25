@@ -92,6 +92,7 @@ import Card from "./Card.vue";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
+import { MetricConfigOpt } from "@/types/dashboard";
 
 /*global defineProps */
 const props = defineProps({
@@ -104,7 +105,7 @@ const props = defineProps({
         i: string;
         metrics: string[];
         metricTypes: string[];
-      }
+      } & { metricConfig: MetricConfigOpt[] }
     >,
     default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
   },
@@ -119,6 +120,7 @@ const endpoints = ref<Endpoint[]>([]);
 const pageSize = 5;
 const total = 10;
 const searchText = ref<string>("");
+const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
 
 queryEndpoints(total);
 
@@ -155,7 +157,10 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
       ElMessage.error(json.errors);
       return;
     }
-    endpoints.value = usePodsSource(currentPods, json, props.config);
+    endpoints.value = usePodsSource(currentPods, json, {
+      ...props.config,
+      metricConfig: metricConfig.value,
+    });
     return;
   }
   endpoints.value = currentPods;
