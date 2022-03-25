@@ -133,7 +133,6 @@ const services = ref<Service[]>([]);
 const searchText = ref<string>("");
 const groups = ref<any>({});
 const sortServices = ref<(Service & { merge: boolean })[]>([]);
-const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
 
 queryServices();
 
@@ -216,9 +215,10 @@ async function queryServiceMetrics(currentServices: Service[]) {
       ElMessage.error(json.errors);
       return;
     }
+    const metricConfig = props.config.metricConfig || [];
     services.value = usePodsSource(currentServices, json, {
       ...props.config,
-      metricConfig: metricConfig.value || [],
+      metricConfig: metricConfig || [],
     });
     return;
   }

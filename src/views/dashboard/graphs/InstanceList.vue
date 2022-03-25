@@ -145,7 +145,6 @@ const instances = ref<Instance[]>([]); // current instances
 const searchInstances = ref<Instance[]>([]); // all instances
 const pageSize = 5;
 const searchText = ref<string>("");
-const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
 
 queryInstance();
 async function queryInstance() {
@@ -182,9 +181,10 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
       ElMessage.error(json.errors);
       return;
     }
+    const metricConfig = props.config.metricConfig || [];
     instances.value = usePodsSource(currentInstances, json, {
       ...props.config,
-      metricConfig: metricConfig.value,
+      metricConfig,
     });
     return;
   }

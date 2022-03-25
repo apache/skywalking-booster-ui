@@ -120,7 +120,6 @@ const endpoints = ref<Endpoint[]>([]);
 const pageSize = 5;
 const total = 10;
 const searchText = ref<string>("");
-const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
 
 queryEndpoints(total);
 
@@ -157,9 +156,10 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
       ElMessage.error(json.errors);
       return;
     }
+    const metricConfig = props.config.metricConfig || [];
     endpoints.value = usePodsSource(currentPods, json, {
       ...props.config,
-      metricConfig: metricConfig.value,
+      metricConfig: metricConfig,
     });
     return;
   }
