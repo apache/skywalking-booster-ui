@@ -64,6 +64,14 @@ limitations under the License. -->
       @change="changeConfig({ fontColor: $event[0].value })"
     />
   </div>
+  <div class="footer">
+    <el-button size="small" @click="cancelConfig">
+      {{ t("cancel") }}
+    </el-button>
+    <el-button size="small" type="primary" @click="applyConfig">
+      {{ t("apply") }}
+    </el-button>
+  </div>
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
@@ -71,12 +79,12 @@ import { ref } from "vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
-const url = ref(selectedGrid.graph.url || "");
-const backgroundColor = ref(selectedGrid.graph.backgroundColor || "green");
-const fontColor = ref(selectedGrid.graph.fontColor || "white");
-const content = ref<string>(selectedGrid.graph.content || "");
-const fontSize = ref<number>(selectedGrid.graph.fontSize || 12);
+const originConfig = dashboardStore.selectedGrid;
+const url = ref(originConfig.graph.url || "");
+const backgroundColor = ref(originConfig.graph.backgroundColor || "green");
+const fontColor = ref(originConfig.graph.fontColor || "white");
+const content = ref<string>(originConfig.graph.content || "");
+const fontSize = ref<number>(originConfig.graph.fontSize || 12);
 const Colors = [
   {
     label: "Green",
@@ -96,6 +104,15 @@ function changeConfig(param: { [key: string]: unknown }) {
     ...param,
   };
   dashboardStore.selectWidget({ ...selectedGrid, graph });
+}
+function applyConfig() {
+  dashboardStore.setConfigPanel(false);
+  dashboardStore.setConfigs(dashboardStore.selectedGrid);
+}
+
+function cancelConfig() {
+  dashboardStore.selectWidget(originConfig);
+  dashboardStore.setConfigPanel(false);
 }
 </script>
 <style lang="scss" scoped>
@@ -117,5 +134,16 @@ function changeConfig(param: { [key: string]: unknown }) {
 
 .item {
   margin-bottom: 10px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  border-top: 1px solid #eee;
+  padding: 10px;
+  text-align: right;
+  width: 100%;
+  background-color: #fff;
 }
 </style>

@@ -36,7 +36,6 @@ limitations under the License. -->
     </div>
     <div
       class="body"
-      @click="ViewText"
       :style="{ backgroundColor: TextColors[data.graph.backgroundColor] }"
     >
       <div
@@ -45,9 +44,9 @@ limitations under the License. -->
           fontSize: data.graph.fontSize + 'px',
         }"
       >
-        <router-link :to="data.graph.textUrl || ''">
+        <a :href="data.graph.url" target="_blank">
           {{ data.graph.content }}
-        </router-link>
+        </a>
       </div>
     </div>
   </div>
@@ -76,8 +75,13 @@ function editConfig() {
   dashboardStore.setConfigPanel(true);
   dashboardStore.selectWidget(props.data);
 }
-function ViewText() {
-  dashboardStore.setTopology(true);
+function viewText() {
+  const path = props.data.graph.url;
+  console.log(path);
+  if (!path) {
+    return;
+  }
+  window.open(path, "_blank");
 }
 </script>
 <style lang="scss" scoped>
