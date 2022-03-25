@@ -221,7 +221,7 @@ export default class ListGraph {
     nodeEnter
       .transition()
       .duration(400)
-      .attr("transform", (d: any) => `translate(${d.y + 10},${d.x})`)
+      .attr("transform", (d: any) => `translate(${d.y + 5},${d.x})`)
       .style("opacity", 1);
     nodeEnter
       .append("circle")
@@ -244,7 +244,7 @@ export default class ListGraph {
     node
       .transition()
       .duration(400)
-      .attr("transform", (d: any) => `translate(${d.y + 10},${d.x})`)
+      .attr("transform", (d: any) => `translate(${d.y + 5},${d.x})`)
       .style("opacity", 1)
       .select("circle")
       .attr("fill", (d: any) =>
@@ -274,7 +274,7 @@ export default class ListGraph {
       .attr("fill", "rgba(0,0,0,0)")
       .attr("stroke", "rgba(0, 0, 0, 0.1)")
       .attr("stroke-width", 2)
-      .attr("transform", `translate(10, 0)`)
+      .attr("transform", `translate(5, 0)`)
       .attr("d", () => {
         const o = { x: source.x0 + 40, y: source.y0 };
         return this.diagonal({ source: o, target: o });

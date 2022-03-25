@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Topology from "./Topology.vue";
-import Tab from "./Tab.vue";
-import Widget from "./Widget.vue";
-import Trace from "./Trace.vue";
-import Profile from "./Profile.vue";
-import Log from "./Log.vue";
-import Text from "./Text.vue";
 
-export default { Tab, Widget, Trace, Topology, Profile, Log, Text };
+import Text from "./Text.vue";
+import Widget from "./Widget.vue";
+import Topology from "./Topology.vue";
+
+export default {
+  Text,
+  Widget,
+  Topology,
+};

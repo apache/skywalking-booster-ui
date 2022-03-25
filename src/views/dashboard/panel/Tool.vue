@@ -367,6 +367,9 @@ function setTabControls(id: string) {
     case "addTopology":
       dashboardStore.addTabControls("Topology");
       break;
+    case "addText":
+      dashboardStore.addTabControls("Text");
+      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -392,6 +395,9 @@ function setControls(id: string) {
       break;
     case "addTopology":
       dashboardStore.addControl("Topology");
+      break;
+    case "addText":
+      dashboardStore.addControl("Text");
       break;
     default:
       dashboardStore.addControl("Widget");

@@ -28,63 +28,71 @@ limitations under the License. -->
       :destroy-on-close="true"
       @closed="dashboardStore.setConfigPanel(false)"
     >
-      <TopologyConfig v-if="dashboardStore.selectedGrid.type === 'Topology'" />
-      <WidgetConfig v-else />
+      <component :is="dashboardStore.selectedGrid.type" />
     </el-dialog>
   </div>
 </template>
-<script lang="ts" setup>
-import { ref } from "vue";
+<script lang="ts">
+import { ref, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import GridLayout from "./panel/Layout.vue";
 import Tool from "./panel/Tool.vue";
-import TopologyConfig from "./configuration/Topology.vue";
-import WidgetConfig from "./configuration/Widget.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import Configuration from "./configuration";
 
-const dashboardStore = useDashboardStore();
-const appStore = useAppStoreWithOut();
-const { t } = useI18n();
-const p = useRoute().params;
-const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
+export default defineComponent({
+  name: "Dashboard",
+  components: { ...Configuration, GridLayout, Tool },
+  setup() {
+    const dashboardStore = useDashboardStore();
+    const appStore = useAppStoreWithOut();
+    const { t } = useI18n();
+    const p = useRoute().params;
+    const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
+    setTemplate();
+    async function setTemplate() {
+      await dashboardStore.setDashboards();
 
-setTemplate();
-async function setTemplate() {
-  await dashboardStore.setDashboards();
-
-  if (!p.entity) {
-    if (!dashboardStore.currentDashboard) {
-      return;
+      if (!p.entity) {
+        if (!dashboardStore.currentDashboard) {
+          return;
+        }
+        const { layer, entity, name } = dashboardStore.currentDashboard;
+        layoutKey.value = `${layer}_${entity}_${name}`;
+      }
+      const c: { configuration: string; id: string } = JSON.parse(
+        sessionStorage.getItem(layoutKey.value) || "{}"
+      );
+      const layout: any = c.configuration || {};
+      dashboardStore.setLayout(layout.children || []);
+      appStore.setPageTitle(layout.name);
+      if (p.entity) {
+        dashboardStore.setCurrentDashboard({
+          layer: p.layerId,
+          entity: p.entity,
+          name: p.name,
+          id: c.id,
+          isRoot: layout.isRoot,
+        });
+      }
     }
-    const { layer, entity, name } = dashboardStore.currentDashboard;
-    layoutKey.value = `${layer}_${entity}_${name}`;
-  }
-  const c: { configuration: string; id: string } = JSON.parse(
-    sessionStorage.getItem(layoutKey.value) || "{}"
-  );
-  const layout: any = c.configuration || {};
-  dashboardStore.setLayout(layout.children || []);
-  appStore.setPageTitle(layout.name);
-  if (p.entity) {
-    dashboardStore.setCurrentDashboard({
-      layer: p.layerId,
-      entity: p.entity,
-      name: p.name,
-      id: c.id,
-      isRoot: layout.isRoot,
-    });
-  }
-}
+    function handleClick(e: any) {
+      e.stopPropagation();
+      if (e.target.className === "ds-main") {
+        dashboardStore.activeGridItem("");
+        dashboardStore.selectWidget(null);
+      }
+    }
 
-function handleClick(e: any) {
-  e.stopPropagation();
-  if (e.target.className === "ds-main") {
-    dashboardStore.activeGridItem("");
-    dashboardStore.selectWidget(null);
-  }
-}
+    return {
+      t,
+      handleClick,
+      dashboardStore,
+    };
+  },
+});
 </script>
 <style lang="scss" scoped>
 .ds-main {

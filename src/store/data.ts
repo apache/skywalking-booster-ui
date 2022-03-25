@@ -29,3 +29,10 @@ export const NewControl = {
   metrics: [""],
   metricTypes: [""],
 };
+export const TextConfig = {
+  fontColor: "white",
+  backgroundColor: "green",
+  content: "Text",
+  fontSize: 14,
+  textAlign: "left",
+};

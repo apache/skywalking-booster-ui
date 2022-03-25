@@ -125,6 +125,7 @@ const msg = {
   kubernetesService: "服务",
   kubernetesCluster: "集群",
   kubernetes: "Kubernetes",
+  textUrl: "文本超链接",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",
