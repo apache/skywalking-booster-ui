@@ -179,10 +179,9 @@ export const dashboardStore = defineStore({
     activeGridItem(index: string) {
       this.activedGridItem = index;
     },
-    setActiveTabIndex(index: number) {
-      const idx = this.layout.findIndex(
-        (d: LayoutConfig) => d.i === this.activedGridItem
-      );
+    setActiveTabIndex(index: number, target?: number) {
+      const m = target || this.activedGridItem;
+      const idx = this.layout.findIndex((d: LayoutConfig) => d.i === m);
       if (idx < 0) {
         return;
       }

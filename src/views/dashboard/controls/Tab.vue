@@ -150,6 +150,7 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
+      dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
     }
 
     function clickTabs(e: Event, idx: number) {
