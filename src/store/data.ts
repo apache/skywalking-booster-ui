@@ -22,7 +22,7 @@ export const NewControl = {
   i: "0",
   type: "Widget",
   widget: {
-    title: "Title",
+    title: "",
   },
   graph: {},
   standard: {},

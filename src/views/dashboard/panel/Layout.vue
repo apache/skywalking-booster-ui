@@ -59,6 +59,9 @@ export default defineComponent({
     function clickGrid(item: LayoutConfig) {
       dashboardStore.activeGridItem(item.i);
       dashboardStore.selectWidget(item);
+      if (item.type === "Tab") {
+        dashboardStore.setActiveTabIndex(0);
+      }
     }
     onBeforeUnmount(() => {
       dashboardStore.setLayout([]);

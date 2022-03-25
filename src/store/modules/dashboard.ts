@@ -164,6 +164,7 @@ export const dashboardStore = defineStore({
       }
       if (type === "Text") {
         newItem.h = 6;
+        newItem.graph = TextConfig;
       }
       if (this.layout[idx].children) {
         const items = children.map((d: LayoutConfig) => {
