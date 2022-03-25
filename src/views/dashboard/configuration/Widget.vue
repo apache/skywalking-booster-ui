@@ -64,9 +64,6 @@ limitations under the License. -->
         <el-collapse-item :title="t('widgetOptions')" name="3">
           <WidgetOptions />
         </el-collapse-item>
-        <el-collapse-item :title="t('standardOptions')" name="4">
-          <StandardOptions @update="getSource" @loading="setLoading" />
-        </el-collapse-item>
       </el-collapse>
     </div>
     <div class="footer">
@@ -88,16 +85,14 @@ import { Option } from "@/types/app";
 import graphs from "../graphs";
 import configs from "./widget/graph-styles";
 import WidgetOptions from "./widget/WidgetOptions.vue";
-import StandardOptions from "./widget/StandardOptions.vue";
-import MetricOptions from "./widget/MetricOptions.vue";
+import MetricOptions from "./widget/metric/MetricOptions.vue";
 
 export default defineComponent({
-  name: "ConfigEdit",
+  name: "WidgetEdit",
   components: {
     ...graphs,
     ...configs,
     WidgetOptions,
-    StandardOptions,
     MetricOptions,
   },
   setup() {

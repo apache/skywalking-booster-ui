@@ -81,7 +81,7 @@ limitations under the License. -->
 import { ref } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import { SortOrder, CalculationOpts } from "../../data";
+import { SortOrder, CalculationOpts } from "../../../data";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { MetricConfigOpt } from "@/types/dashboard";
 
