@@ -57,7 +57,6 @@ limitations under the License. -->
       </template>
       <Standard
         @update="queryMetrics"
-        @close="showConfig = false"
         :currentMetricConfig="currentMetricConfig"
         :index="index"
       />
@@ -122,7 +121,6 @@ const { t } = useI18n();
 const emit = defineEmits(["update", "loading", "changeOpt"]);
 const dashboardStore = useDashboardStore();
 const { metrics, metricTypes, graph } = dashboardStore.selectedGrid;
-const showConfig = ref<boolean>(false);
 const states = reactive<{
   metrics: string[];
   metricTypes: string[];
@@ -425,7 +423,6 @@ function setMetricTypeList(type: string) {
   return MetricTypes[type];
 }
 function setMetricConfig(index: number) {
-  showConfig.value = true;
   const n = {
     unit: "",
     label: "",
@@ -444,7 +441,6 @@ function setMetricConfig(index: number) {
     ...n,
     ...dashboardStore.selectedGrid.metricConfig[index],
   };
-  showConfig.value = true;
 }
 </script>
 <style lang="scss" scoped>

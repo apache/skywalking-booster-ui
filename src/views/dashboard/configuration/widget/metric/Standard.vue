@@ -14,12 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="config-panel">
-    <Icon
-      class="cp mr-5 close"
-      iconName="cancel"
-      size="middle"
-      @click="closePopper"
-    />
     <div class="item mb-10">
       <span class="label">{{ t("unit") }}</span>
       <el-input
@@ -54,12 +48,10 @@ limitations under the License. -->
     </div>
     <div class="item mb-10">
       <span class="label">{{ t("aggregation") }}</span>
-      <Selector
+      <SelectSingle
         :value="currentMetric.calculation"
         :options="CalculationOpts"
-        size="small"
-        placeholder="Select a option"
-        @change="changeConfigs(index, { calculation: $event[0].value })"
+        @change="changeConfigs(index, { calculation: $event })"
         class="selectors"
         :clearable="true"
       />
@@ -69,13 +61,11 @@ limitations under the License. -->
       v-show="['sortMetrics', 'readLabeledMetricsValues'].includes(metricType)"
     >
       <span class="label">{{ t("sortOrder") }}</span>
-      <Selector
+      <SelectSingle
         :value="currentMetric.sortOrder || 'DES'"
         :options="SortOrder"
-        size="small"
-        placeholder="Select a sort order"
         class="selectors"
-        @change="changeConfigs(index, { sortOrder: $event[0].value })"
+        @change="changeConfigs(index, { sortOrder: $event })"
       />
     </div>
   </div>
@@ -97,7 +87,7 @@ const props = defineProps({
   index: { type: Number, default: 0 },
 });
 const { t } = useI18n();
-const emit = defineEmits(["update", "close"]);
+const emit = defineEmits(["update"]);
 const dashboardStore = useDashboardStore();
 const currentMetric = ref<MetricConfigOpt>(props.currentMetricConfig);
 const metricType = ref<string>(
@@ -112,10 +102,6 @@ function changeConfigs(index: number, param: { [key: string]: string }) {
     metricConfig,
   });
   emit("update");
-}
-
-function closePopper() {
-  emit("close");
 }
 </script>
 <style lang="scss" scoped>
