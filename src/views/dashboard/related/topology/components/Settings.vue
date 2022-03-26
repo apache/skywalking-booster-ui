@@ -416,10 +416,22 @@ function updateSettings(config?: { [key: string]: MetricConfigOpt[] }) {
   dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, ...param });
   dashboardStore.setConfigs({ ...dashboardStore.selectedGrid, ...param });
   emit("update", param);
+  console.log(dashboardStore.selectedGrid);
 }
 function updateLinkServerMetrics(options: Option[] | any) {
-  states.linkServerMetrics = options.map((d: Option) => d.value);
-  changeLinkServerMetrics();
+  const opt = options.map((d: Option) => d.value);
+  const index = states.linkServerMetrics.findIndex(
+    (d: any) => !opt.includes(d)
+  );
+  states.linkServerMetrics = opt;
+  if (index < 0) {
+    changeLinkServerMetrics();
+    return;
+  }
+  const config = (
+    dashboardStore.selectedGrid.linkServerMetricConfig || []
+  ).splice(index, 1);
+  changeLinkServerMetrics({ linkServerMetricConfig: config });
 }
 async function changeLinkServerMetrics(config?: {
   [key: string]: MetricConfigOpt[];
@@ -432,8 +444,19 @@ async function changeLinkServerMetrics(config?: {
   topologyStore.getLinkServerMetrics(states.linkServerMetrics);
 }
 function updateLinkClientMetrics(options: Option[] | any) {
-  states.linkClientMetrics = options.map((d: Option) => d.value);
-  changeLinkClientMetrics();
+  const opt = options.map((d: Option) => d.value);
+  const index = states.linkClientMetrics.findIndex(
+    (d: any) => !opt.includes(d)
+  );
+  states.linkClientMetrics = opt;
+  if (index < 0) {
+    changeLinkClientMetrics();
+    return;
+  }
+  const config = (
+    dashboardStore.selectedGrid.linkClientMetricConfig || []
+  ).splice(index, 1);
+  changeLinkClientMetrics({ linkClientMetricConfig: config });
 }
 async function changeLinkClientMetrics(config?: {
   [key: string]: MetricConfigOpt[];
@@ -446,8 +469,18 @@ async function changeLinkClientMetrics(config?: {
   topologyStore.getLinkClientMetrics(states.linkClientMetrics);
 }
 function updateNodeMetrics(options: Option[] | any) {
-  states.nodeMetrics = options.map((d: Option) => d.value);
-  changeNodeMetrics();
+  const opt = options.map((d: Option) => d.value);
+  const index = states.nodeMetrics.findIndex((d: any) => !opt.includes(d));
+  states.nodeMetrics = opt;
+  if (index < 0) {
+    changeNodeMetrics();
+    return;
+  }
+  const config = (dashboardStore.selectedGrid.nodeMetricConfig || []).splice(
+    index,
+    1
+  );
+  changeNodeMetrics({ nodeMetricConfig: config });
 }
 async function changeNodeMetrics(config?: {
   [key: string]: MetricConfigOpt[];

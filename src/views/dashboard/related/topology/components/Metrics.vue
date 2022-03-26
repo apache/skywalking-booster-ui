@@ -119,10 +119,11 @@ function changeMetric(val: string) {
   currentIndex.value = index || 0;
   const config = getMetricConfig.value;
 
-  currentConfig.value = config[index] || {
+  currentConfig.value = {
     unit: "",
     label: "",
     calculation: "",
+    ...config[index],
   };
 }
 watch(

@@ -244,7 +244,7 @@ export enum LegendOpt {
 }
 export const DepthList = [1, 2, 3, 4, 5].map((item: number) => ({
   value: item,
-  label: item,
+  label: String(item),
 }));
 export const Status = [
   { label: "All", value: "ALL" },
