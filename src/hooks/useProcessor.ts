@@ -330,6 +330,9 @@ export function aggregation(val: number, config: any): number | string {
     case Calculations.ConvertMilliseconds:
       data = dayjs.unix(val).format("YYYY-MM-DD HH:mm:ss");
       break;
+    case Calculations.Precision:
+      data = data.toFixed(2);
+      break;
     default:
       data;
       break;

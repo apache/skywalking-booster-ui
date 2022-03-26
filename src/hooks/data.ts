@@ -27,6 +27,7 @@ export enum Calculations {
   Percentage = "percentage",
   ByteToKB = "byteToKB",
   Apdex = "apdex",
+  Precision = "precision",
   ConvertSeconds = "convertSeconds",
   ConvertMilliseconds = "convertMilliseconds",
 }

@@ -44,7 +44,7 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column
           v-for="(metric, index) in config.metrics"
-          :label="metric"
+          :label="`${metric} ${getUnit(index)}`"
           :key="metric + index"
         >
           <template #default="scope">
@@ -217,6 +217,18 @@ function searchList() {
     d.label.includes(searchText.value)
   );
   instances.value = searchInstances.value.splice(0, pageSize);
+}
+
+function getUnit(index: number) {
+  const u =
+    (props.config.metricConfig &&
+      props.config.metricConfig[index] &&
+      props.config.metricConfig[index].unit) ||
+    "";
+  if (u) {
+    return `(${u})`;
+  }
+  return u;
 }
 
 watch(

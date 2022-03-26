@@ -95,7 +95,6 @@ const metricType = ref<string>(
 );
 
 function changeConfigs(index: number, param: { [key: string]: string }) {
-  console.log(param);
   const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
   metricConfig[index] = { ...metricConfig[index], ...param };
 

@@ -96,7 +96,7 @@ export interface AreaConfig {
 export interface CardConfig {
   type?: string;
   fontSize?: number;
-  showUint?: boolean;
+  showUnit?: boolean;
   textAlign?: "center" | "right" | "left";
 }
 

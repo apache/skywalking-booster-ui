@@ -128,6 +128,7 @@ const msg = {
   textUrl: "Text Hyperlink",
   textAlign: "Text Align",
   metricLabel: "Metric Label",
+  showUnit: "Show Unit",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

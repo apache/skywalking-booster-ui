@@ -26,6 +26,15 @@ limitations under the License. -->
       @change="updateConfig({ fontSize })"
     />
   </div>
+  <div class="item">
+    <span class="label">{{ t("showUnit") }}</span>
+    <el-switch
+      v-model="showUnit"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateConfig({ showUnit })"
+    />
+  </div>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
@@ -36,13 +45,14 @@ const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const { selectedGrid } = dashboardStore;
 const fontSize = ref(selectedGrid.graph.fontSize);
+const showUnit = ref<boolean>(selectedGrid.graph.showUnit);
 
 function updateConfig(param: { [key: string]: unknown }) {
   const graph = {
-    ...selectedGrid.graph,
+    ...dashboardStore.selectedGrid.graph,
     ...param,
   };
-  dashboardStore.selectWidget({ ...selectedGrid, graph });
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
 }
 </script>
 <style lang="scss" scoped>

@@ -274,4 +274,5 @@ export const CalculationOpts = [
     value: "convertMilliseconds",
   },
   { label: "Convert seconds to YYYY-MM-DD HH:mm:ss", value: "convertSeconds" },
+  { label: "Precision is 2", value: "precision" },
 ];
