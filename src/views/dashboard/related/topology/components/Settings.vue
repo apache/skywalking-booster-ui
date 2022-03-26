@@ -403,6 +403,7 @@ function updateSettings(config?: { [key: string]: MetricConfigOpt[] }) {
     (d: any) => d.name && d.value && d.condition
   );
   const param = {
+    ...dashboardStore.selectedGrid,
     linkDashboard: states.linkDashboard,
     nodeDashboard: isService
       ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
@@ -413,8 +414,8 @@ function updateSettings(config?: { [key: string]: MetricConfigOpt[] }) {
     legend: metrics,
     ...config,
   };
-  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, ...param });
-  dashboardStore.setConfigs({ ...dashboardStore.selectedGrid, ...param });
+  dashboardStore.selectWidget(param);
+  dashboardStore.setConfigs(param);
   emit("update", param);
 }
 function updateLinkServerMetrics(options: Option[] | any) {

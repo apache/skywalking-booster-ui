@@ -125,7 +125,6 @@ function changeMetric(val: string) {
     calculation: "",
     ...config[index],
   };
-  console.log(currentConfig.value);
 }
 watch(
   () => props.type,
@@ -143,7 +142,6 @@ watch(
       calculation: "",
       ...config[0],
     };
-    console.log(config);
   }
 );
 </script>
