@@ -157,7 +157,7 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
       return;
     }
     const metricConfig = props.config.metricConfig || [];
-    console.log(props.config.metricConfig);
+
     endpoints.value = usePodsSource(currentPods, json, {
       ...props.config,
       metricConfig: metricConfig,
@@ -193,9 +193,7 @@ async function searchList() {
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   async () => {
-    if (props.isEdit) {
-      queryEndpointMetrics(endpoints.value);
-    }
+    queryEndpointMetrics(endpoints.value);
     // emit("changeOpt", false);
   }
 );

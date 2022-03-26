@@ -97,11 +97,8 @@ const metricType = ref<string>(
 function changeConfigs(index: number, param: { [key: string]: string }) {
   const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
   metricConfig[index] = { ...metricConfig[index], ...param };
-  dashboardStore.selectWidget({
-    ...dashboardStore.selectedGrid,
-    metricConfig,
-  });
-  emit("update");
+
+  emit("update", metricConfig);
 }
 </script>
 <style lang="scss" scoped>

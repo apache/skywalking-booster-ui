@@ -118,6 +118,7 @@ function removeSelected() {
 }
 
 .rk-opt-wrapper {
+  color: #606266;
   position: absolute;
   top: 26px;
   left: 0;
