@@ -13,17 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="rk-bar-select cp flex-h" :class="{ active: visible }">
-    <div class="rk-bar-i" @click="visible = !visible">
+  <div class="bar-select cp flex-h" :class="{ active: visible }">
+    <div class="bar-i" @click="setPopper">
       <span v-if="selected.value">
         {{ selected.label }}
       </span>
       <span class="no-data" v-else>Please select a option</span>
-      <span class="remove-icon" @click="removeSelected">×</span>
+      <span class="remove-icon" @click="removeSelected" v-if="clearable">
+        ×
+      </span>
     </div>
-    <div class="rk-opt-wrapper" v-show="visible">
+    <div class="opt-wrapper" v-show="visible">
       <div
-        class="rk-opt ell"
+        class="opt ell"
         @click="handleSelect(i)"
         :class="{ 'select-disabled': selected.value === i.value }"
         v-for="i in options"
@@ -35,7 +37,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import type { PropType } from "vue";
 import { Option } from "@/types/app";
 
@@ -59,15 +61,30 @@ const selected = ref<Option>(opt || { label: "", value: "" });
 function handleSelect(i: Option) {
   selected.value = i;
   emit("change", i.value);
-  visible.value = false;
 }
 function removeSelected() {
   selected.value = { label: "", value: "" };
   emit("change", "");
 }
+watch(
+  () => props.value,
+  (data) => {
+    const opt = props.options.find((d: Option) => data === d.value);
+    selected.value = opt || { label: "", value: "" };
+  }
+);
+document.body.addEventListener("click", handleClick, false);
+
+function handleClick() {
+  visible.value = false;
+}
+function setPopper(event: any) {
+  event.stopPropagation();
+  visible.value = !visible.value;
+}
 </script>
 <style lang="scss" scoped>
-.rk-bar-select {
+.bar-select {
   position: relative;
   justify-content: space-between;
   border: 1px solid #ddd;
@@ -92,7 +109,7 @@ function removeSelected() {
   color: #c0c4cc;
 }
 
-.rk-bar-i {
+.bar-i {
   height: 100%;
   width: 100%;
   padding: 2px 10px;
@@ -117,7 +134,7 @@ function removeSelected() {
   cursor: pointer;
 }
 
-.rk-opt-wrapper {
+.opt-wrapper {
   color: #606266;
   position: absolute;
   top: 26px;
@@ -145,7 +162,7 @@ function removeSelected() {
   }
 }
 
-.rk-opt {
+.opt {
   padding: 7px 15px;
 
   &.select-disabled {

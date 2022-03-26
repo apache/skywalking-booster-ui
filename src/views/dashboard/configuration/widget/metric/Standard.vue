@@ -21,7 +21,7 @@ limitations under the License. -->
         v-model="currentMetric.unit"
         size="small"
         placeholder="Please input unit"
-        @change="changeConfigs(index, { unit: currentMetricConfig.unit })"
+        @change="changeConfigs(index, { unit: currentMetric.unit })"
       />
     </div>
     <div class="item mb-10" v-show="metricType === 'readLabeledMetricsValues'">
@@ -31,7 +31,7 @@ limitations under the License. -->
         v-model="currentMetric.label"
         size="small"
         placeholder="Please input a name"
-        @change="changeConfigs(index, { label: currentMetricConfig.label })"
+        @change="changeConfigs(index, { label: currentMetric.label })"
       />
     </div>
     <div class="item mb-10" v-show="metricType === 'readLabeledMetricsValues'">
@@ -42,7 +42,7 @@ limitations under the License. -->
         size="small"
         placeholder="auto"
         @change="
-          changeConfigs(index, { label: currentMetricConfig.labelsIndex })
+          changeConfigs(index, { labelsIndex: currentMetric.labelsIndex })
         "
       />
     </div>
@@ -58,7 +58,7 @@ limitations under the License. -->
     </div>
     <div
       class="item"
-      v-show="['sortMetrics', 'readLabeledMetricsValues'].includes(metricType)"
+      v-show="['sortMetrics', 'readSampledRecords'].includes(metricType)"
     >
       <span class="label">{{ t("sortOrder") }}</span>
       <SelectSingle
@@ -95,10 +95,15 @@ const metricType = ref<string>(
 );
 
 function changeConfigs(index: number, param: { [key: string]: string }) {
+  console.log(param);
   const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
   metricConfig[index] = { ...metricConfig[index], ...param };
 
-  emit("update", metricConfig);
+  dashboardStore.selectWidget({
+    ...dashboardStore.selectedGrid,
+    metricConfig,
+  });
+  emit("update");
 }
 </script>
 <style lang="scss" scoped>

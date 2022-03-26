@@ -56,7 +56,7 @@ limitations under the License. -->
         </span>
       </template>
       <Standard
-        @update="queryListMetrics"
+        @update="queryMetrics"
         :currentMetricConfig="currentMetricConfig"
         :index="index"
       />
@@ -338,12 +338,6 @@ function changeMetricType(index: number, opt: Option[] | any) {
     return;
   }
   queryMetrics();
-}
-async function queryListMetrics(metricConfig: MetricConfigOpt[]) {
-  dashboardStore.selectWidget({
-    ...dashboardStore.selectedGrid,
-    metricConfig,
-  });
 }
 async function queryMetrics() {
   if (states.isList) {

@@ -68,7 +68,7 @@ export function useQueryProcessor(config: any) {
       };
     } else {
       if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
-        const labels = (config.labelsIndex || "")
+        const labels = (c.labelsIndex || "")
           .split(",")
           .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
         variables.push(`$labels${index}: [String!]!`);
@@ -311,7 +311,7 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   return { queryStr, conditions };
 }
 
-function aggregation(val: number, config: any): number | string {
+export function aggregation(val: number, config: any): number | string {
   let data: number | string = Number(val);
 
   switch (config.calculation) {

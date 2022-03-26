@@ -25,7 +25,27 @@ limitations under the License. -->
       class="inputs"
       :clearable="true"
     />
-    <div class="label">{{ t("linkServerMetrics") }}</div>
+    <div class="label">
+      <span>{{ t("linkServerMetrics") }}</span>
+      <el-popover
+        placement="left"
+        :width="400"
+        trigger="click"
+        effect="dark"
+        v-if="states.linkServerMetrics.length"
+      >
+        <template #reference>
+          <span @click="setConfigType('linkServerMetricConfig')">
+            <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
+          </span>
+        </template>
+        <Metrics
+          :type="configType"
+          :metrics="states.linkServerMetrics"
+          @update="changeLinkServerMetrics"
+        />
+      </el-popover>
+    </div>
     <Selector
       class="inputs"
       :multiple="true"
@@ -33,11 +53,29 @@ limitations under the License. -->
       :options="states.linkMetricList"
       size="small"
       placeholder="Select metrics"
-      @change="changeLinkServerMetrics"
+      @change="updateLinkServerMetrics"
     />
     <span v-show="dashboardStore.entity !== EntityType[2].value">
       <div class="label">
-        {{ t("linkClientMetrics") }}
+        <span>{{ t("linkClientMetrics") }}</span>
+        <el-popover
+          placement="left"
+          :width="400"
+          trigger="click"
+          effect="dark"
+          v-if="states.linkClientMetrics.length"
+        >
+          <template #reference>
+            <span @click="setConfigType('linkClientMetricConfig')">
+              <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
+            </span>
+          </template>
+          <Metrics
+            :type="configType"
+            :metrics="states.linkClientMetrics"
+            @update="changeLinkClientMetrics"
+          />
+        </el-popover>
       </div>
       <Selector
         class="inputs"
@@ -46,7 +84,7 @@ limitations under the License. -->
         :options="states.linkMetricList"
         size="small"
         placeholder="Select metrics"
-        @change="changeLinkClientMetrics"
+        @change="updateLinkClientMetrics"
       />
     </span>
   </div>
@@ -100,7 +138,27 @@ limitations under the License. -->
         />
       </span>
     </div>
-    <div class="label">{{ t("nodeMetrics") }}</div>
+    <div class="label">
+      <span>{{ t("nodeMetrics") }}</span>
+      <el-popover
+        placement="left"
+        :width="400"
+        trigger="click"
+        effect="dark"
+        v-if="states.nodeMetrics.length"
+      >
+        <template #reference>
+          <span @click="setConfigType('nodeMetricConfig')">
+            <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
+          </span>
+        </template>
+        <Metrics
+          :type="configType"
+          :metrics="states.nodeMetrics"
+          @update="changeNodeMetrics"
+        />
+      </el-popover>
+    </div>
     <Selector
       class="inputs"
       :multiple="true"
@@ -108,7 +166,7 @@ limitations under the License. -->
       :options="states.nodeMetricList"
       size="small"
       placeholder="Select metrics"
-      @change="changeNodeMetrics"
+      @change="updateNodeMetrics"
     />
   </div>
   <div class="legend-settings" v-show="isService">
@@ -177,7 +235,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useTopologyStore } from "@/store/modules/topology";
@@ -186,8 +244,9 @@ import { MetricCatalog, ScopeType, MetricConditions } from "../../../data";
 import { Option } from "@/types/app";
 import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
 import { Node } from "@/types/topology";
-import { DashboardItem } from "@/types/dashboard";
+import { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
 import { EntityType, LegendOpt, MetricsType } from "../../../data";
+import Metrics from "./Metrics.vue";
 
 /*global defineEmits */
 const emit = defineEmits(["update", "updateNodes"]);
@@ -238,6 +297,7 @@ const legend = reactive<{
 }>({
   metric: l ? selectedGrid.legend : [{ name: "", condition: "", value: "" }],
 });
+const configType = ref<string>("");
 
 getMetricList();
 async function getMetricList() {
@@ -347,7 +407,7 @@ function deleteItem(index: number) {
   items.splice(index, 1);
   updateSettings();
 }
-function updateSettings() {
+function updateSettings(config?: { [key: string]: MetricConfigOpt[] }) {
   const metrics = legend.metric.filter(
     (d: any) => d.name && d.value && d.condition
   );
@@ -360,32 +420,48 @@ function updateSettings() {
     linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
     legend: metrics,
+    ...config,
   };
   dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, ...param });
   dashboardStore.setConfigs({ ...dashboardStore.selectedGrid, ...param });
   emit("update", param);
 }
-async function changeLinkServerMetrics(options: Option[] | any) {
+function updateLinkServerMetrics(options: Option[] | any) {
   states.linkServerMetrics = options.map((d: Option) => d.value);
-  updateSettings();
+  changeLinkServerMetrics();
+}
+async function changeLinkServerMetrics(config?: {
+  [key: string]: MetricConfigOpt[];
+}) {
+  updateSettings(config);
   if (!states.linkServerMetrics.length) {
     topologyStore.setLinkServerMetrics({});
     return;
   }
   topologyStore.getLinkServerMetrics(states.linkServerMetrics);
 }
-async function changeLinkClientMetrics(options: Option[] | any) {
+function updateLinkClientMetrics(options: Option[] | any) {
   states.linkClientMetrics = options.map((d: Option) => d.value);
-  updateSettings();
+  changeLinkClientMetrics();
+}
+async function changeLinkClientMetrics(config?: {
+  [key: string]: MetricConfigOpt[];
+}) {
+  updateSettings(config);
   if (!states.linkClientMetrics.length) {
     topologyStore.setLinkClientMetrics({});
     return;
   }
   topologyStore.getLinkClientMetrics(states.linkClientMetrics);
 }
-async function changeNodeMetrics(options: Option[] | any) {
+function updateNodeMetrics(options: Option[] | any) {
   states.nodeMetrics = options.map((d: Option) => d.value);
-  updateSettings();
+  changeNodeMetrics();
+}
+async function changeNodeMetrics(config?: {
+  [key: string]: MetricConfigOpt[];
+}) {
+  updateSettings(config);
   if (!states.nodeMetrics.length) {
     topologyStore.setNodeMetricValue({});
     return;
@@ -401,6 +477,9 @@ function deleteMetric(index: number) {
 }
 function addMetric() {
   legend.metric.push({ name: "", condition: "", value: "" });
+}
+function setConfigType(type: string) {
+  configType.value = type;
 }
 </script>
 <style lang="scss" scoped>
