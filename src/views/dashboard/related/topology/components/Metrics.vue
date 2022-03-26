@@ -117,7 +117,7 @@ function changeMetric(val: string) {
   currentMetric.value = val;
   const index = metrics.value.findIndex((d: Option) => d.value === val);
   currentIndex.value = index || 0;
-  const config = getMetricConfig.value;
+  const config = getMetricConfig.value || [];
 
   currentConfig.value = {
     unit: "",
@@ -125,6 +125,7 @@ function changeMetric(val: string) {
     calculation: "",
     ...config[index],
   };
+  console.log(currentConfig.value);
 }
 watch(
   () => props.type,
@@ -134,14 +135,15 @@ watch(
     });
     metrics.value = m.length ? m : [{ label: "", value: "" }];
     currentMetric.value = metrics.value[0].value;
-    const config = getMetricConfig.value;
+    const config = getMetricConfig.value || [];
     currentIndex.value = 0;
-    currentConfig.value = config[0] || {
+    currentConfig.value = {
       unit: "",
       label: "",
       calculation: "",
+      ...config[0],
     };
-    console.log(currentConfig.value);
+    console.log(config);
   }
 );
 </script>

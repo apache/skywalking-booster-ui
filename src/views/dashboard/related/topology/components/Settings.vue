@@ -416,7 +416,6 @@ function updateSettings(config?: { [key: string]: MetricConfigOpt[] }) {
   dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, ...param });
   dashboardStore.setConfigs({ ...dashboardStore.selectedGrid, ...param });
   emit("update", param);
-  console.log(dashboardStore.selectedGrid);
 }
 function updateLinkServerMetrics(options: Option[] | any) {
   const opt = options.map((d: Option) => d.value);
@@ -428,9 +427,8 @@ function updateLinkServerMetrics(options: Option[] | any) {
     changeLinkServerMetrics();
     return;
   }
-  const config = (
-    dashboardStore.selectedGrid.linkServerMetricConfig || []
-  ).splice(index, 1);
+  const origin = dashboardStore.selectedGrid.linkServerMetricConfig || [];
+  const config = origin.length === 1 ? [] : origin.splice(index, 1);
   changeLinkServerMetrics({ linkServerMetricConfig: config });
 }
 async function changeLinkServerMetrics(config?: {
@@ -453,9 +451,8 @@ function updateLinkClientMetrics(options: Option[] | any) {
     changeLinkClientMetrics();
     return;
   }
-  const config = (
-    dashboardStore.selectedGrid.linkClientMetricConfig || []
-  ).splice(index, 1);
+  const origin = dashboardStore.selectedGrid.linkClientMetricConfig || [];
+  const config = origin.length === 1 ? [] : origin.splice(index, 1);
   changeLinkClientMetrics({ linkClientMetricConfig: config });
 }
 async function changeLinkClientMetrics(config?: {
@@ -476,10 +473,8 @@ function updateNodeMetrics(options: Option[] | any) {
     changeNodeMetrics();
     return;
   }
-  const config = (dashboardStore.selectedGrid.nodeMetricConfig || []).splice(
-    index,
-    1
-  );
+  const origin = dashboardStore.selectedGrid.nodeMetricConfig || [];
+  const config = origin.length === 1 ? [] : origin.splice(index, 1);
   changeNodeMetrics({ nodeMetricConfig: config });
 }
 async function changeNodeMetrics(config?: {
