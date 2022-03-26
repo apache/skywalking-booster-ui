@@ -36,7 +36,7 @@ limitations under the License. -->
       >
         <template #reference>
           <span @click="setConfigType('linkServerMetricConfig')">
-            <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
+            <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
         <Metrics
@@ -67,7 +67,7 @@ limitations under the License. -->
         >
           <template #reference>
             <span @click="setConfigType('linkClientMetricConfig')">
-              <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
+              <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
             </span>
           </template>
           <Metrics
@@ -149,7 +149,7 @@ limitations under the License. -->
       >
         <template #reference>
           <span @click="setConfigType('nodeMetricConfig')">
-            <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
+            <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
         <Metrics
