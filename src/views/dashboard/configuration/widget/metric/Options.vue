@@ -389,11 +389,19 @@ function deleteMetric(index: number) {
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+      metricConfig: [],
     });
     return;
   }
   states.metrics.splice(index, 1);
   states.metricTypes.splice(index, 1);
+  const config = dashboardStore.selectedGrid.metricConfig || [];
+  const metricConfig = config[index] ? config.splice(index, 1) : config;
+  dashboardStore.selectWidget({
+    ...dashboardStore.selectedGrid,
+    ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+    metricConfig,
+  });
 }
 function setMetricTypeList(type: string) {
   if (type !== MetricsType.REGULAR_VALUE) {
