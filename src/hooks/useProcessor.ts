@@ -335,6 +335,5 @@ function aggregation(val: number, config: any): number | string {
       break;
   }
 
-  console.log(data);
   return data;
 }

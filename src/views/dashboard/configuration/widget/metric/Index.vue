@@ -49,13 +49,18 @@ limitations under the License. -->
       @change="changeMetricType(index, $event)"
       class="selectors"
     />
-    <el-popover placement="top" :width="400" :visible="showConfig">
+    <el-popover placement="top" :width="400" trigger="click">
       <template #reference>
         <span @click="setMetricConfig(index)">
           <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
         </span>
       </template>
-      <Standard @update="queryMetrics" @close="showConfig = false" />
+      <Standard
+        @update="queryMetrics"
+        @close="showConfig = false"
+        :currentMetricConfig="currentMetricConfig"
+        :index="index"
+      />
     </el-popover>
     <span
       v-show="states.isList || states.metricTypes[0] === 'readMetricsValues'"
@@ -402,6 +407,7 @@ function deleteMetric(index: number) {
     ...{ metricTypes: states.metricTypes, metrics: states.metrics },
     metricConfig,
   });
+  console.log(dashboardStore.selectedGrid);
 }
 function setMetricTypeList(type: string) {
   if (type !== MetricsType.REGULAR_VALUE) {

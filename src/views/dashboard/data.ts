@@ -267,8 +267,11 @@ export const TextColors: { [key: string]: string } = {
 
 export const CalculationOpts = [
   { label: "Percentage", value: "percentage" },
-  { label: "ByteToKB", value: "byteToKB" },
-  { label: "ConvertMilliseconds", value: "convertMilliseconds" },
-  { label: "ConvertSeconds", value: "convertSeconds" },
+  { label: "Byte to KB", value: "byteToKB" },
   { label: "Apdex", value: "apdex" },
+  {
+    label: "Convert milliseconds to YYYY-MM-DD HH:mm:ss",
+    value: "convertMilliseconds",
+  },
+  { label: "Convert seconds to YYYY-MM-DD HH:mm:ss", value: "convertSeconds" },
 ];

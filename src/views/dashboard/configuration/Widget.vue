@@ -85,7 +85,7 @@ import { Option } from "@/types/app";
 import graphs from "../graphs";
 import configs from "./widget/graph-styles";
 import WidgetOptions from "./widget/WidgetOptions.vue";
-import MetricOptions from "./widget/metric/Options.vue";
+import MetricOptions from "./widget/metric/Index.vue";
 
 export default defineComponent({
   name: "WidgetEdit",
