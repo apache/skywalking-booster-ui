@@ -36,7 +36,16 @@ export interface LayoutConfig {
   metricTypes: string[];
   children?: any;
   activedTabIndex?: number;
+  metricConfig?: MetricConfigOpt[];
 }
+
+export type MetricConfigOpt = {
+  unit: string;
+  label: string;
+  calculation: string;
+  labelsIndex: string;
+  sortOrder: string;
+};
 
 export interface WidgetConfig {
   title?: string;
@@ -87,7 +96,7 @@ export interface AreaConfig {
 export interface CardConfig {
   type?: string;
   fontSize?: number;
-  showUint?: boolean;
+  showUnit?: boolean;
   textAlign?: "center" | "right" | "left";
 }
 

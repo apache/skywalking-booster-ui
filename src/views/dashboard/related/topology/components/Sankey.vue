@@ -17,11 +17,19 @@ limitations under the License. -->
   <Graph :option="option" @select="clickChart" />
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, PropType } from "vue";
 import { useTopologyStore } from "@/store/modules/topology";
 import { Node, Call } from "@/types/topology";
+import { MetricConfigOpt } from "@/types/dashboard";
+import { aggregation } from "@/hooks/useProcessor";
 
-/*global defineEmits */
+/*global defineEmits, defineProps */
+const props = defineProps({
+  settings: {
+    type: Object as PropType<any>,
+    default: () => ({}),
+  },
+});
 const emit = defineEmits(["click"]);
 const topologyStore = useTopologyStore();
 const option = computed(() => getOption());
@@ -77,23 +85,34 @@ function getOption() {
 function linkTooltip(data: Call) {
   const clientMetrics: string[] = Object.keys(topologyStore.linkClientMetrics);
   const serverMetrics: string[] = Object.keys(topologyStore.linkServerMetrics);
-  const htmlServer = serverMetrics.map((m) => {
-    const metric = topologyStore.linkServerMetrics[m].values.filter(
-      (val: { id: string; value: unknown }) => val.id === data.id
-    )[0];
+  const linkServerMetricConfig: MetricConfigOpt[] =
+    props.settings.linkServerMetricConfig || [];
+  const linkClientMetricConfig: MetricConfigOpt[] =
+    props.settings.linkClientMetricConfig || [];
+
+  const htmlServer = serverMetrics.map((m, index) => {
+    const metric =
+      topologyStore.linkServerMetrics[m].values.find(
+        (val: { id: string; value: unknown }) => val.id === data.id
+      ) || {};
     if (metric) {
-      const val = m.includes("_sla") ? metric.value / 100 : metric.value;
-      return ` <div><span>${m}: </span>${val}</div>`;
+      const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
+      const v = aggregation(metric.value, opt);
+      return ` <div class="mb-5"><span class="grey">${
+        opt.label || m
+      }: </span>${v} ${opt.unit || ""}</div>`;
     }
   });
-  const htmlClient = clientMetrics.map((m) => {
-    const metric = topologyStore.linkClientMetrics[m].values.filter(
-      (val: { id: string; value: unknown }) => val.id === data.id
-    )[0];
-    if (metric) {
-      const val = m.includes("_sla") ? metric.value / 100 : metric.value;
-      return ` <div><span>${m}: </span>${val}</div>`;
-    }
+  const htmlClient = clientMetrics.map((m, index) => {
+    const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
+    const metric =
+      topologyStore.linkClientMetrics[m].values.find(
+        (val: { id: string; value: unknown }) => val.id === data.id
+      ) || {};
+    const v = aggregation(metric.value, opt);
+    return ` <div class="mb-5"><span class="grey">${
+      opt.label || m
+    }: </span>${v} ${opt.unit || ""}</div>`;
   });
   const html = [
     `<div>${data.sourceObj.serviceName} -> ${data.targetObj.serviceName}</div>`,
@@ -106,13 +125,17 @@ function linkTooltip(data: Call) {
 
 function nodeTooltip(data: Node) {
   const nodeMetrics: string[] = Object.keys(topologyStore.nodeMetricValue);
-  const html = nodeMetrics.map((m) => {
+  const nodeMetricConfig = props.settings.nodeMetricConfig || [];
+  const html = nodeMetrics.map((m, index) => {
     const metric =
-      topologyStore.nodeMetricValue[m].values.filter(
+      topologyStore.nodeMetricValue[m].values.find(
         (val: { id: string; value: unknown }) => val.id === data.id
-      )[0] || {};
-    const val = m.includes("_sla") ? metric.value / 100 : metric.value;
-    return ` <div><span>${m}: </span>${val}</div>`;
+      ) || {};
+    const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
+    const v = aggregation(metric.value, opt);
+    return ` <div class="mb-5"><span class="grey">${
+      opt.label || m
+    }: </span>${v} ${opt.unit || ""}</div>`;
   });
   return [` <div><span>name: </span>${data.serviceName}</div>`, ...html].join(
     " "

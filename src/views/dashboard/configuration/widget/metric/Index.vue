@@ -49,6 +49,18 @@ limitations under the License. -->
       @change="changeMetricType(index, $event)"
       class="selectors"
     />
+    <el-popover placement="top" :width="400" trigger="click">
+      <template #reference>
+        <span @click="setMetricConfig(index)">
+          <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
+        </span>
+      </template>
+      <Standard
+        @update="queryMetrics"
+        :currentMetricConfig="currentMetricConfig"
+        :index="index"
+      />
+    </el-popover>
     <span
       v-show="states.isList || states.metricTypes[0] === 'readMetricsValues'"
     >
@@ -96,12 +108,13 @@ import {
   ChartTypes,
   PodsChartTypes,
   MetricsType,
-} from "../../data";
+} from "../../../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
 import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
 import { useI18n } from "vue-i18n";
-import { DashboardItem } from "@/types/dashboard";
+import { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
+import Standard from "./Standard.vue";
 
 /*global defineEmits */
 const { t } = useI18n();
@@ -126,6 +139,13 @@ const states = reactive<{
   metricList: [],
   dashboardName: graph.dashboardName,
   dashboardList: [{ label: "", value: "" }],
+});
+const currentMetricConfig = ref<MetricConfigOpt>({
+  unit: "",
+  label: "",
+  labelsIndex: "",
+  calculation: "",
+  sortOrder: "DES",
 });
 
 states.isList = ListChartTypes.includes(graph.type);
@@ -323,8 +343,8 @@ async function queryMetrics() {
   if (states.isList) {
     return;
   }
-  const { standard } = dashboardStore.selectedGrid;
-  const params = useQueryProcessor({ ...states, standard });
+  const { metricConfig } = dashboardStore.selectedGrid;
+  const params = useQueryProcessor({ ...states, metricConfig });
   if (!params) {
     emit("update", {});
     return;
@@ -337,7 +357,7 @@ async function queryMetrics() {
     ElMessage.error(json.errors);
     return;
   }
-  const source = useSourceProcessor(json, { ...states, standard });
+  const source = useSourceProcessor(json, { ...states, metricConfig });
   emit("update", source);
 }
 
@@ -372,11 +392,20 @@ function deleteMetric(index: number) {
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+      metricConfig: [],
     });
     return;
   }
   states.metrics.splice(index, 1);
   states.metricTypes.splice(index, 1);
+  const config = dashboardStore.selectedGrid.metricConfig || [];
+  const metricConfig = config[index] ? config.splice(index, 1) : config;
+  dashboardStore.selectWidget({
+    ...dashboardStore.selectedGrid,
+    ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+    metricConfig,
+  });
+  console.log(dashboardStore.selectedGrid);
 }
 function setMetricTypeList(type: string) {
   if (type !== MetricsType.REGULAR_VALUE) {
@@ -392,6 +421,26 @@ function setMetricTypeList(type: string) {
     ];
   }
   return MetricTypes[type];
+}
+function setMetricConfig(index: number) {
+  const n = {
+    unit: "",
+    label: "",
+    calculation: "",
+    labelsIndex: "",
+    sortOrder: "DES",
+  };
+  if (
+    !dashboardStore.selectedGrid.metricConfig ||
+    !dashboardStore.selectedGrid.metricConfig[index]
+  ) {
+    currentMetricConfig.value = n;
+    return;
+  }
+  currentMetricConfig.value = {
+    ...n,
+    ...dashboardStore.selectedGrid.metricConfig[index],
+  };
 }
 </script>
 <style lang="scss" scoped>

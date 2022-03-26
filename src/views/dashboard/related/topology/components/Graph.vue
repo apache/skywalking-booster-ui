@@ -90,6 +90,8 @@ import { Option } from "@/types/app";
 import { Service } from "@/types/selector";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import getDashboard from "@/hooks/useDashboardsSession";
+import { MetricConfigOpt } from "@/types/dashboard";
+import { aggregation } from "@/hooks/useProcessor";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -275,13 +277,17 @@ function update() {
       handleNodeClick: handleNodeClick,
       tipHtml: (data: Node) => {
         const nodeMetrics: string[] = settings.value.nodeMetrics || [];
-        const html = nodeMetrics.map((m) => {
+        const nodeMetricConfig = settings.value.nodeMetricConfig || [];
+        const html = nodeMetrics.map((m, index) => {
           const metric =
-            topologyStore.nodeMetricValue[m].values.filter(
+            topologyStore.nodeMetricValue[m].values.find(
               (val: { id: string; value: unknown }) => val.id === data.id
-            )[0] || {};
-          const val = m.includes("_sla") ? metric.value / 100 : metric.value;
-          return ` <div class="mb-5"><span class="grey">${m}: </span>${val}</div>`;
+            ) || {};
+          const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
+          const v = aggregation(metric.value, opt);
+          return ` <div class="mb-5"><span class="grey">${
+            opt.label || m
+          }: </span>${v} ${opt.unit || ""}</div>`;
         });
         return [
           ` <div class="mb-5"><span class="grey">name: </span>${data.name}</div>`,
@@ -306,24 +312,34 @@ function update() {
       tipHtml: (data: Call) => {
         const linkClientMetrics: string[] =
           settings.value.linkClientMetrics || [];
+        const linkServerMetricConfig: MetricConfigOpt[] =
+          settings.value.linkServerMetricConfig || [];
+        const linkClientMetricConfig: MetricConfigOpt[] =
+          settings.value.linkClientMetricConfig || [];
         const linkServerMetrics: string[] =
           settings.value.linkServerMetrics || [];
-        const htmlServer = linkServerMetrics.map((m) => {
-          const metric = topologyStore.linkServerMetrics[m].values.filter(
+        const htmlServer = linkServerMetrics.map((m, index) => {
+          const metric = topologyStore.linkServerMetrics[m].values.find(
             (val: { id: string; value: unknown }) => val.id === data.id
-          )[0];
+          );
           if (metric) {
-            const val = m.includes("_sla") ? metric.value / 100 : metric.value;
-            return ` <div class="mb-5"><span class="grey">${m}: </span>${val}</div>`;
+            const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
+            const v = aggregation(metric.value, opt);
+            return ` <div class="mb-5"><span class="grey">${
+              opt.label || m
+            }: </span>${v} ${opt.unit || ""}</div>`;
           }
         });
-        const htmlClient = linkClientMetrics.map((m) => {
-          const metric = topologyStore.linkClientMetrics[m].values.filter(
+        const htmlClient = linkClientMetrics.map((m: string, index: number) => {
+          const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
+          const metric = topologyStore.linkClientMetrics[m].values.find(
             (val: { id: string; value: unknown }) => val.id === data.id
-          )[0];
+          );
           if (metric) {
-            const val = m.includes("_sla") ? metric.value / 100 : metric.value;
-            return ` <div class="mb-5"><span class="grey">${m}: </span>${val}</div>`;
+            const v = aggregation(metric.value, opt);
+            return ` <div class="mb-5"><span class="grey">${
+              opt.label || m
+            }: </span>${v} ${opt.unit || ""}</div>`;
           }
         });
         const html = [

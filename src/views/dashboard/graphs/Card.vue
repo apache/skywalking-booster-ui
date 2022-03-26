@@ -26,12 +26,14 @@ limitations under the License. -->
         ? null
         : singleVal.toFixed(2)
     }}
-    <span v-show="config.showUint">{{ standard.unit }}</span>
+    <span v-show="config.showUnit">
+      {{ metricConfig[0]?.unit }}
+    </span>
   </div>
 </template>
 <script lang="ts" setup>
 import { computed, PropType } from "vue";
-import { CardConfig, StandardConfig } from "@/types/dashboard";
+import { CardConfig, MetricConfigOpt } from "@/types/dashboard";
 
 /*global defineProps */
 const props = defineProps({
@@ -40,14 +42,16 @@ const props = defineProps({
     default: () => ({}),
   },
   config: {
-    type: Object as PropType<CardConfig>,
-    default: () => ({ fontSize: 12, showUint: true, textAlign: "center" }),
-  },
-  standard: {
-    type: Object as PropType<StandardConfig>,
-    default: () => ({ unit: "" }),
+    type: Object as PropType<CardConfig & { metricConfig?: MetricConfigOpt[] }>,
+    default: () => ({
+      fontSize: 12,
+      showUnit: true,
+      textAlign: "center",
+      metricConfig: [],
+    }),
   },
 });
+const metricConfig = computed(() => props.config.metricConfig || []);
 const key = computed(() => Object.keys(props.data)[0]);
 const singleVal = computed(() => props.data[key.value]);
 </script>

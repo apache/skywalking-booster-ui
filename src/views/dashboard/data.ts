@@ -244,7 +244,7 @@ export enum LegendOpt {
 }
 export const DepthList = [1, 2, 3, 4, 5].map((item: number) => ({
   value: item,
-  label: item,
+  label: String(item),
 }));
 export const Status = [
   { label: "All", value: "ALL" },
@@ -264,3 +264,15 @@ export const TextColors: { [key: string]: string } = {
   black: "#000",
   orange: "#E6A23C",
 };
+
+export const CalculationOpts = [
+  { label: "Percentage", value: "percentage" },
+  { label: "Byte to KB", value: "byteToKB" },
+  { label: "Apdex", value: "apdex" },
+  {
+    label: "Convert milliseconds to YYYY-MM-DD HH:mm:ss",
+    value: "convertMilliseconds",
+  },
+  { label: "Convert seconds to YYYY-MM-DD HH:mm:ss", value: "convertSeconds" },
+  { label: "Precision is 2", value: "precision" },
+];

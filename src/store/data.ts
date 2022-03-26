@@ -28,6 +28,7 @@ export const NewControl = {
   standard: {},
   metrics: [""],
   metricTypes: [""],
+  metricConfig: [],
 };
 export const TextConfig = {
   fontColor: "white",

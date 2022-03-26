@@ -44,7 +44,7 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column
           v-for="(metric, index) in config.metrics"
-          :label="metric"
+          :label="`${metric} ${getUnit(index)}`"
           :key="metric + index"
         >
           <template #default="scope">
@@ -92,6 +92,7 @@ import Card from "./Card.vue";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
+import { MetricConfigOpt } from "@/types/dashboard";
 
 /*global defineProps */
 const props = defineProps({
@@ -104,7 +105,7 @@ const props = defineProps({
         i: string;
         metrics: string[];
         metricTypes: string[];
-      }
+      } & { metricConfig: MetricConfigOpt[] }
     >,
     default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
   },
@@ -155,7 +156,12 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
       ElMessage.error(json.errors);
       return;
     }
-    endpoints.value = usePodsSource(currentPods, json, props.config);
+    const metricConfig = props.config.metricConfig || [];
+
+    endpoints.value = usePodsSource(currentPods, json, {
+      ...props.config,
+      metricConfig: metricConfig,
+    });
     return;
   }
   endpoints.value = currentPods;
@@ -184,12 +190,21 @@ async function searchList() {
   const limit = searchText.value ? undefined : total;
   await queryEndpoints(limit);
 }
+function getUnit(index: number) {
+  const u =
+    (props.config.metricConfig &&
+      props.config.metricConfig[index] &&
+      props.config.metricConfig[index].unit) ||
+    "";
+  if (u) {
+    return `(${u})`;
+  }
+  return u;
+}
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   async () => {
-    if (props.isEdit) {
-      queryEndpointMetrics(endpoints.value);
-    }
+    queryEndpointMetrics(endpoints.value);
     // emit("changeOpt", false);
   }
 );

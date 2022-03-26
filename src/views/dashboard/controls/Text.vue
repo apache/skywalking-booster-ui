@@ -36,18 +36,17 @@ limitations under the License. -->
     </div>
     <div
       class="body"
-      :style="{ backgroundColor: TextColors[data.graph.backgroundColor] }"
+      :class="data.graph.textAlign === 'center' ? 'center' : ''"
+      :style="{
+        backgroundColor: TextColors[data.graph.backgroundColor],
+        color: TextColors[data.graph.fontColor],
+        fontSize: data.graph.fontSize + 'px',
+        textAlign: data.graph.textAlign,
+      }"
     >
-      <div
-        :style="{
-          color: TextColors[data.graph.fontColor],
-          fontSize: data.graph.fontSize + 'px',
-        }"
-      >
-        <a :href="data.graph.url" target="_blank">
-          {{ data.graph.content }}
-        </a>
-      </div>
+      <a :href="data.graph.url" target="_blank">
+        {{ data.graph.content }}
+      </a>
     </div>
   </div>
 </template>
@@ -75,14 +74,6 @@ function editConfig() {
   dashboardStore.setConfigPanel(true);
   dashboardStore.selectWidget(props.data);
 }
-function viewText() {
-  const path = props.data.graph.url;
-  console.log(path);
-  if (!path) {
-    return;
-  }
-  window.open(path, "_blank");
-}
 </script>
 <style lang="scss" scoped>
 .topology {
@@ -97,21 +88,21 @@ function viewText() {
 
 .header {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 5px;
+  right: 5px;
 }
 
 .body {
   text-align: center;
   width: 100%;
   height: 100%;
+  line-height: 100%;
   cursor: pointer;
-  box-sizing: border-box;
-  color: #333;
-  display: -webkit-box;
   -webkit-box-orient: horizontal;
   -webkit-box-pack: center;
-  -webkit-box-align: center;
+  box-sizing: border-box;
+  display: -webkit-box;
+  // -webkit-box-align: left;
 }
 
 .tools {

@@ -64,8 +64,8 @@ limitations under the License. -->
           metrics: data.metrics,
           metricTypes: data.metricTypes,
           i: data.i,
+          metricConfig: data.metricConfig,
         }"
-        :standard="data.standard"
         :needQuery="needQuery"
       />
     </div>
@@ -128,7 +128,7 @@ export default defineComponent({
       const d = {
         metrics: props.data.metrics,
         metricTypes: props.data.metricTypes,
-        standard: props.data.standard,
+        metricConfig: props.data.metricConfig || [],
       };
       state.source = useSourceProcessor(json, d);
     }

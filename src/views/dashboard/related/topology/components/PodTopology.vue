@@ -54,7 +54,7 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     @click="handleClick"
   >
-    <Sankey @click="selectNodeLink" />
+    <Sankey @click="selectNodeLink" :settings="settings" />
   </div>
   <div
     class="operations-list"
