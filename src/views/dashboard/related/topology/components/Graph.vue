@@ -331,7 +331,7 @@ function update() {
           }
         });
         const htmlClient = linkClientMetrics.map((m: string, index: number) => {
-          const opt: MetricConfigOpt = linkClientMetricConfig[index];
+          const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
           const metric = topologyStore.linkClientMetrics[m].values.find(
             (val: { id: string; value: unknown }) => val.id === data.id
           );

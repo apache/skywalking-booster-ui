@@ -126,9 +126,9 @@ function changeMetric(val: string) {
   };
 }
 watch(
-  () => props.metrics,
-  (arr) => {
-    const m = arr.map((d: string) => {
+  () => props.type,
+  () => {
+    const m = props.metrics.map((d: string) => {
       return { label: d, value: d };
     });
     metrics.value = m.length ? m : [{ label: "", value: "" }];
@@ -140,6 +140,7 @@ watch(
       label: "",
       calculation: "",
     };
+    console.log(currentConfig.value);
   }
 );
 </script>

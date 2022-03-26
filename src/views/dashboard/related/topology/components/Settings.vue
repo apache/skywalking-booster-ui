@@ -215,15 +215,6 @@ limitations under the License. -->
       </span>
       <div v-show="index !== legend.metric.length - 1">&&</div>
     </div>
-    <!-- <div class="label">{{ t("conditions") }}</div>
-    <Selector
-      class="inputs"
-      :value="legend.condition"
-      :options="LegendConditions"
-      size="small"
-      placeholder="Select a condition"
-      @change="changeCondition"
-    /> -->
     <el-button
       @click="setLegend"
       class="legend-btn"
