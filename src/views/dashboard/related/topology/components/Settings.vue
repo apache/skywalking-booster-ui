@@ -398,7 +398,7 @@ function deleteItem(index: number) {
   items.splice(index, 1);
   updateSettings();
 }
-function updateSettings(config?: { [key: string]: MetricConfigOpt[] }) {
+function updateSettings(metricConfig?: { [key: string]: MetricConfigOpt[] }) {
   const metrics = legend.metric.filter(
     (d: any) => d.name && d.value && d.condition
   );
@@ -412,7 +412,7 @@ function updateSettings(config?: { [key: string]: MetricConfigOpt[] }) {
     linkClientMetrics: states.linkClientMetrics,
     nodeMetrics: states.nodeMetrics,
     legend: metrics,
-    ...config,
+    ...metricConfig,
   };
   dashboardStore.selectWidget(param);
   dashboardStore.setConfigs(param);
