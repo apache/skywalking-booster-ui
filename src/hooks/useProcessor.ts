@@ -62,7 +62,9 @@ export function useQueryProcessor(config: any) {
         parentService: ["All"].includes(dashboardStore.entity)
           ? null
           : selectorStore.currentService.value,
-        normal: selectorStore.currentService.normal,
+        normal: selectorStore.currentService
+          ? selectorStore.currentService.normal
+          : true,
         scope: config.catalog || dashboardStore.entity,
         topN: 10,
         order: c.sortOrder || "DES",
