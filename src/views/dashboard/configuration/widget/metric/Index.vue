@@ -159,8 +159,8 @@ states.visTypes = setVisTypes();
 setDashboards();
 setMetricType();
 
-async function setMetricType() {
-  const { graph } = dashboardStore.selectedGrid;
+async function setMetricType(chart?: any) {
+  const graph = chart || dashboardStore.selectedGrid.graph;
   const json = await dashboardStore.fetchMetricList();
   if (json.errors) {
     ElMessage.error(json.errors);
@@ -203,6 +203,7 @@ async function setMetricType() {
     ...dashboardStore.selectedGrid,
     metrics: states.metrics,
     metricTypes: states.metricTypes,
+    graph,
   });
   states.metricTypeList = [];
   for (const metric of metrics) {
@@ -266,7 +267,6 @@ function setVisTypes() {
 
 function changeChartType(item: Option) {
   const graph = DefaultGraphConfig[item.value];
-  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
   states.isList = ListChartTypes.includes(graph.type);
   if (states.isList) {
     dashboardStore.selectWidget({
@@ -278,7 +278,7 @@ function changeChartType(item: Option) {
     states.metricTypes = [""];
     defaultLen.value = 5;
   }
-  setMetricType();
+  setMetricType(graph);
   setDashboards();
   states.dashboardName = "";
   defaultLen.value = 10;

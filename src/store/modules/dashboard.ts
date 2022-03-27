@@ -76,9 +76,10 @@ export const dashboardStore = defineStore({
       this.currentDashboard = item;
     },
     addControl(type: string) {
+      const arr = this.layout.map((d: any) => Number(d.i));
       const newItem: LayoutConfig = {
         ...NewControl,
-        i: String(this.layout.length),
+        i: String(Math.max(...arr) + 1),
         type,
         metricTypes: [""],
         metrics: [""],
@@ -146,9 +147,10 @@ export const dashboardStore = defineStore({
       }
       const tabIndex = this.layout[idx].activedTabIndex || 0;
       const { children } = this.layout[idx].children[tabIndex];
+      const arr = children.map((d: any) => Number(d.i));
       const newItem: LayoutConfig = {
         ...NewControl,
-        i: String(children.length),
+        i: String(Math.max(...arr) + 1),
         type,
         metricTypes: [""],
         metrics: [""],

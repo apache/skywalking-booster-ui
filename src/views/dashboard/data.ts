@@ -67,7 +67,7 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     type: "Card",
     fontSize: 14,
     textAlign: "center",
-    showUint: true,
+    showUnit: true,
   },
   Table: {
     type: "Table",
