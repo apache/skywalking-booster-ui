@@ -106,11 +106,12 @@ const getMetricConfig = computed(() => {
 });
 
 function changeConfigs(param: { [key: string]: string }) {
-  const metricConfig = getMetricConfig.value;
+  const metricConfig = getMetricConfig.value || [];
   metricConfig[currentIndex.value] = {
     ...metricConfig[currentIndex.value],
     ...param,
   };
+  currentConfig.value = metricConfig[currentIndex.value];
   emit("update", { [props.type]: metricConfig });
 }
 function changeMetric(val: string) {
