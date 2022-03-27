@@ -111,7 +111,11 @@ import {
 } from "../../../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
-import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
+import {
+  useQueryProcessor,
+  useSourceProcessor,
+  useGetMetricEntity,
+} from "@/hooks/useProcessor";
 import { useI18n } from "vue-i18n";
 import { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
 import Standard from "./Standard.vue";
@@ -343,8 +347,9 @@ async function queryMetrics() {
   if (states.isList) {
     return;
   }
-  const { metricConfig } = dashboardStore.selectedGrid;
-  const params = useQueryProcessor({ ...states, metricConfig });
+  const { metricConfig, metricTypes, metrics } = dashboardStore.selectedGrid;
+  const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
+  const params = useQueryProcessor({ ...states, metricConfig, catalog });
   if (!params) {
     emit("update", {});
     return;

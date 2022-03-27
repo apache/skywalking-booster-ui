@@ -22,6 +22,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Instance, Endpoint, Service } from "@/types/selector";
 import { MetricConfigOpt } from "@/types/dashboard";
+import { MetricCatalog } from "@/views/dashboard/data";
 
 export function useQueryProcessor(config: any) {
   if (!(config.metrics && config.metrics[0])) {
@@ -62,7 +63,7 @@ export function useQueryProcessor(config: any) {
           ? null
           : selectorStore.currentService.value,
         normal: selectorStore.currentService.normal,
-        scope: dashboardStore.entity,
+        scope: config.catalog || dashboardStore.entity,
         topN: 10,
         order: c.sortOrder || "DES",
       };
@@ -339,4 +340,28 @@ export function aggregation(val: number, config: any): number | string {
   }
 
   return data;
+}
+
+export async function useGetMetricEntity(metric: string, metricType: any) {
+  if (!metric || !metricType) {
+    return;
+  }
+  let catalog = "";
+  const dashboardStore = useDashboardStore();
+  if (
+    [
+      MetricQueryTypes.ReadSampledRecords,
+      MetricQueryTypes.SortMetrics,
+    ].includes(metricType)
+  ) {
+    const res = await dashboardStore.fetchMetricList(metric);
+    if (res.errors) {
+      ElMessage.error(res.errors);
+      return;
+    }
+    const c: string = res.data.metrics[0].catalog;
+    catalog = (MetricCatalog as any)[c];
+  }
+
+  return catalog;
 }

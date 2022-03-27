@@ -81,7 +81,11 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import graphs from "../graphs";
 import { useI18n } from "vue-i18n";
-import { useQueryProcessor, useSourceProcessor } from "@/hooks/useProcessor";
+import {
+  useQueryProcessor,
+  useSourceProcessor,
+  useGetMetricEntity,
+} from "@/hooks/useProcessor";
 import { EntityType, ListChartTypes } from "../data";
 
 const props = {
@@ -113,7 +117,9 @@ export default defineComponent({
     }
 
     async function queryMetrics() {
-      const params = await useQueryProcessor(props.data);
+      const { metricTypes, metrics } = props.data;
+      const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
+      const params = await useQueryProcessor({ ...props.data, catalog });
 
       if (!params) {
         state.source = {};
