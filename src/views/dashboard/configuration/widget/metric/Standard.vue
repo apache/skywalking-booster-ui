@@ -71,7 +71,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { SortOrder, CalculationOpts } from "../../../data";
@@ -104,6 +104,12 @@ function changeConfigs(index: number, param: { [key: string]: string }) {
   });
   emit("update");
 }
+watch(
+  () => props.currentMetricConfig,
+  () => {
+    currentMetric.value = props.currentMetricConfig;
+  }
+);
 </script>
 <style lang="scss" scoped>
 .config-panel {
