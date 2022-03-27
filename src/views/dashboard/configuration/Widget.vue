@@ -17,9 +17,6 @@ limitations under the License. -->
     <div class="graph" v-loading="loading">
       <div class="header">
         <span>{{ dashboardStore.selectedGrid.widget.title }}</span>
-        <span v-show="dashboardStore.selectedGrid.standard.unit" class="unit">
-          ({{ dashboardStore.selectedGrid.standard.unit }})
-        </span>
         <div class="tips" v-show="dashboardStore.selectedGrid.widget.tips">
           <el-tooltip :content="dashboardStore.selectedGrid.widget.tips">
             <Icon iconName="info_outline" size="sm" />
