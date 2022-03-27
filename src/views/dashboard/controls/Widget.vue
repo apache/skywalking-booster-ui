@@ -19,9 +19,6 @@ limitations under the License. -->
         <span>
           {{ data.widget?.title || "" }}
         </span>
-        <span class="unit" v-show="data.standard?.unit">
-          ({{ data.standard?.unit }})
-        </span>
       </div>
       <div>
         <el-tooltip :content="data.widget?.tips">
