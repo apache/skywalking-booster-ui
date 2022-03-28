@@ -143,7 +143,7 @@ const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const instances = ref<Instance[]>([]); // current instances
 const searchInstances = ref<Instance[]>([]); // all instances
-const pageSize = 5;
+const pageSize = 15;
 const searchText = ref<string>("");
 
 queryInstance();

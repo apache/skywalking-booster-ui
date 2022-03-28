@@ -98,7 +98,6 @@ limitations under the License. -->
     </div>
   </div>
 </template>
-
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import { useRoute } from "vue-router";

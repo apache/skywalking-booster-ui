@@ -117,8 +117,8 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const endpoints = ref<Endpoint[]>([]);
-const pageSize = 5;
-const total = 10;
+const pageSize = 15;
+const total = 15;
 const searchText = ref<string>("");
 
 queryEndpoints(total);

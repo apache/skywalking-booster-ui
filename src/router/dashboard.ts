@@ -68,7 +68,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "/dashboard/:layerId/:entity/:serviceId/:destServiceId/:name",
+        path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
         component: () => import("@/views/dashboard/Edit.vue"),
         name: "ViewServiceRelation",
         meta: {
