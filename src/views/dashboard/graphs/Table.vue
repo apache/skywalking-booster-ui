@@ -15,35 +15,28 @@ limitations under the License. -->
 
 <template>
   <div class="chart-table">
-    <div ref="chartTable">
-      <div class="row header flex-h" :style="`width: 100%`">
-        <div class="name" :style="`width: ${nameWidth}px`">
-          {{ config.tableHeaderCol1 || t("name") }}
-        </div>
-        <div class="value-col" v-if="config.showTableValues">
-          {{ config.tableHeaderCol2 || t("value") }}
-        </div>
+    <div class="row header flex-h">
+      <div class="name" :style="`width: ${nameWidth}`">
+        {{ config.tableHeaderCol1 || t("name") }}
       </div>
-      <div
-        class="row flex-h"
-        v-for="key in dataKeys"
-        :key="key"
-        :style="`width: 100%`"
-      >
-        <div :style="`width: ${nameWidth}px`">{{ key }}</div>
-        <div class="value-col" v-if="config.showTableValues">
-          {{
-            config.metricTypes[0] === "readMetricsValue"
-              ? data[key]
-              : data[key][data[key].length - 1 || 0]
-          }}
-        </div>
+      <div class="value-col" v-if="config.showTableValues">
+        {{ config.tableHeaderCol2 || t("value") }}
+      </div>
+    </div>
+    <div class="row flex-h" v-for="key in dataKeys" :key="key">
+      <div class="name" :style="`width: ${nameWidth}`">{{ key }}</div>
+      <div class="value-col" v-if="config.showTableValues">
+        {{
+          config.metricTypes[0] === "readMetricsValue"
+            ? data[key]
+            : data[key][data[key].length - 1 || 0]
+        }}
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, ref, onMounted } from "vue";
+import { computed } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 /*global defineProps */
@@ -63,39 +56,10 @@ const props = defineProps({
   },
 });
 
-/*global Nullable*/
 const { t } = useI18n();
-const chartTable = ref<Nullable<HTMLElement>>(null);
-const initWidth = ref<number>(0);
-const nameWidth = ref<number>(0);
-const draggerName = ref<Nullable<HTMLElement>>(null);
-onMounted(() => {
-  if (!chartTable.value) {
-    return;
-  }
-  const width = props.config.showTableValues
-    ? chartTable.value.offsetWidth / 2
-    : chartTable.value.offsetWidth;
-  initWidth.value = props.config.showTableValues
-    ? chartTable.value.offsetWidth / 2
-    : 0;
-  nameWidth.value = width - 5;
-  if (!draggerName.value) {
-    return;
-  }
-  draggerName.value.onmousedown = (event: MouseEvent) => {
-    const diffX = event.clientX;
-    const copy = nameWidth;
-    document.onmousemove = (documentEvent) => {
-      const moveX = documentEvent.clientX - diffX;
-      nameWidth.value = Number(copy) + Number(moveX);
-    };
-    document.onmouseup = () => {
-      document.onmousemove = null;
-      document.onmouseup = null;
-    };
-  };
-});
+const nameWidth = computed(() =>
+  props.config.showTableValues ? "80%" : "100%"
+);
 const dataKeys = computed(() => {
   if (props.config.metricTypes[0] === "readMetricsValue") {
     const keys = Object.keys(props.data || {});
@@ -120,6 +84,7 @@ const dataKeys = computed(() => {
   .row {
     border-left: 1px solid #ccc;
     height: 20px;
+    width: 100%;
 
     div {
       overflow: hidden;
