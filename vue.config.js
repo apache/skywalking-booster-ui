@@ -27,7 +27,7 @@ module.exports = {
   },
   chainWebpack: (config) => {
     config.plugin("html").tap((args) => {
-      args[0].title = "SkyWalking";
+      args[0].title = "Apache SkyWalking";
       return args;
     });
     const svgRule = config.module.rule("svg");

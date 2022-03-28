@@ -55,8 +55,8 @@ defineProps({
   }
 
   &.lg {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
   }
 
   &.loading {
