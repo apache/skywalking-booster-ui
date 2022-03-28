@@ -16,17 +16,11 @@ limitations under the License. -->
 <template>
   <div class="chart-table">
     <div ref="chartTable">
-      <div
-        class="row header flex-h"
-        :style="`width: ${nameWidth + initWidth}px`"
-      >
+      <div class="row header flex-h" :style="`width: 100%`">
         <div class="name" :style="`width: ${nameWidth}px`">
           {{ config.tableHeaderCol1 || t("name") }}
-          <i class="r cp" ref="draggerName">
-            <Icon iconName="settings_ethernet" size="middle" />
-          </i>
         </div>
-        <div class="value-col" v-if="showTableValues">
+        <div class="value-col" v-if="config.showTableValues">
           {{ config.tableHeaderCol2 || t("value") }}
         </div>
       </div>
@@ -34,10 +28,10 @@ limitations under the License. -->
         class="row flex-h"
         v-for="key in dataKeys"
         :key="key"
-        :style="`width: ${nameWidth + initWidth}px`"
+        :style="`width: 100%`"
       >
         <div :style="`width: ${nameWidth}px`">{{ key }}</div>
-        <div class="value-col" v-if="showTableValues">
+        <div class="value-col" v-if="config.showTableValues">
           {{
             config.metricTypes[0] === "readMetricsValue"
               ? data[key]
@@ -75,7 +69,6 @@ const chartTable = ref<Nullable<HTMLElement>>(null);
 const initWidth = ref<number>(0);
 const nameWidth = ref<number>(0);
 const draggerName = ref<Nullable<HTMLElement>>(null);
-const showTableValues = ref<boolean>(props.config.showTableValues || false);
 onMounted(() => {
   if (!chartTable.value) {
     return;
