@@ -153,7 +153,7 @@ async function init() {
   graph.value = svg.value
     .append("g")
     .attr("class", "topo-svg-graph")
-    .attr("transform", `translate(0, -100)`);
+    .attr("transform", `translate(-100, -100)`);
   graph.value.call(tip.value);
   simulation.value = simulationInit(
     d3,
@@ -532,7 +532,7 @@ watch(
   () => appStore.durationTime,
   () => {
     if (dashboardStore.entity === EntityType[1].value) {
-      init();
+      freshNodes();
     }
   }
 );
