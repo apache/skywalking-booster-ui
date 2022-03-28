@@ -31,7 +31,10 @@ export const routesDashboard: Array<RouteRecordRaw> = [
     children: [
       {
         path: "/dashboard/list",
-        component: () => import("@/views/dashboard/List.vue"),
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/List.vue"
+          ),
         name: "List",
         meta: {
           title: "dashboardList",
@@ -40,7 +43,10 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "/dashboard/new",
-        component: () => import("@/views/dashboard/New.vue"),
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/New.vue"
+          ),
         name: "New",
         meta: {
           title: "dashboardNew",
@@ -49,7 +55,10 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "/dashboard/:layerId/:entity/:name",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
         name: "Create",
         meta: {
           title: "dashboardEdit",
@@ -59,7 +68,10 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "/dashboard/:layerId/:entity/:serviceId/:name",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
         name: "View",
         meta: {
           title: "dashboardEdit",
@@ -69,7 +81,10 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
         name: "ViewServiceRelation",
         meta: {
           title: "dashboardEdit",
@@ -79,7 +94,10 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
         name: "ViewPod",
         meta: {
           title: "dashboardEdit",
@@ -89,7 +107,10 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
         name: "ViewPodRelation",
         meta: {
           title: "dashboardEdit",

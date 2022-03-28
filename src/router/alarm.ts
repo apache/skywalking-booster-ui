@@ -35,7 +35,8 @@ export const routesAlarm: Array<RouteRecordRaw> = [
         meta: {
           exact: false,
         },
-        component: () => import("@/views/Alarm.vue"),
+        component: () =>
+          import(/* webpackChunkName: "alarms" */ "@/views/Alarm.vue"),
       },
     ],
   },

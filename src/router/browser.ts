@@ -36,7 +36,8 @@ export const routesBrowser: Array<RouteRecordRaw> = [
           headPath: "/browser",
           exact: true,
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
     ],
   },

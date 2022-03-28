@@ -36,7 +36,8 @@ export const routesMesh: Array<RouteRecordRaw> = [
           title: "services",
           headPath: "/mesh/services",
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/mesh/controlPanel",
@@ -45,7 +46,8 @@ export const routesMesh: Array<RouteRecordRaw> = [
           title: "controlPanel",
           headPath: "/mesh/controlPanel",
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/mesh/dataPanel",

@@ -37,7 +37,8 @@ export const routesDatabase: Array<RouteRecordRaw> = [
           headPath: "/database",
           exact: true,
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
     ],
   },
