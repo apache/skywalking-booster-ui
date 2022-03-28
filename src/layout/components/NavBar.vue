@@ -30,6 +30,20 @@ limitations under the License. -->
       <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
+      <span class="version ml-5 cp">
+        <el-popover
+          trigger="hover"
+          width="250"
+          placement="left-end"
+          :content="appStore.version"
+        >
+          <template #reference>
+            <span>
+              <Icon iconName="info_outline" size="middle" />
+            </span>
+          </template>
+        </el-popover>
+      </span>
     </div>
   </div>
 </template>
@@ -39,6 +53,7 @@ import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import timeFormat from "@/utils/timeFormat";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { ElMessage } from "element-plus";
 
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
@@ -47,6 +62,7 @@ const pageName = ref<string>("");
 const timeRange = ref<number>(0);
 const theme = ref<string>("light");
 
+getVersion();
 const setConfig = (value: string) => {
   pageName.value = value || "";
   theme.value = route.path.includes("/infrastructure/") ? "dark" : "light";
@@ -76,6 +92,12 @@ watch(
     setConfig(String(title));
   }
 );
+async function getVersion() {
+  const res = await appStore.fetchVersion();
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
+}
 </script>
 <style lang="scss" scoped>
 .nav-bar {

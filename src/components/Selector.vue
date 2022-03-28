@@ -23,6 +23,9 @@ limitations under the License. -->
     :disabled="disabled"
     :style="{ borderRadius }"
     :clearable="clearable"
+    :remote="isRemote"
+    :reserve-keyword="isRemote"
+    :remote-method="remoteMethod"
   >
     <el-option
       v-for="item in options"
@@ -43,7 +46,7 @@ interface Option {
 }
 
 /*global  defineProps, defineEmits*/
-const emit = defineEmits(["change"]);
+const emit = defineEmits(["change", "query"]);
 const props = defineProps({
   options: {
     type: Array as PropType<(Option & { disabled: boolean })[]>,
@@ -62,6 +65,7 @@ const props = defineProps({
   multiple: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   clearable: { type: Boolean, default: false },
+  isRemote: { type: Boolean, default: false },
 });
 
 const selected = ref<string[] | string>(props.value);
@@ -73,6 +77,13 @@ function changeSelected() {
   );
   emit("change", options);
 }
+
+function remoteMethod(query: string) {
+  if (props.isRemote) {
+    emit("query", query);
+  }
+}
+
 watch(
   () => props.value,
   (data) => {

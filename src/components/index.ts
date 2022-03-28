@@ -19,7 +19,7 @@ import TimePicker from "./TimePicker.vue";
 import Selector from "./Selector.vue";
 import Graph from "./Graph.vue";
 import Radio from "./Radio.vue";
-import SelectSingle from "./Select.vue";
+import SelectSingle from "./SelectSingle.vue";
 import type { App } from "vue";
 import VueGridLayout from "vue-grid-layout";
 

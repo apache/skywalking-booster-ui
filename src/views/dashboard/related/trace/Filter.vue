@@ -41,7 +41,9 @@ limitations under the License. -->
         :value="state.endpoint.value"
         :options="traceStore.endpoints"
         placeholder="Select a endpoint"
+        :isRemote="true"
         @change="changeField('endpoint', $event)"
+        @query="searchEndpoints"
       />
     </div>
     <div class="mr-5">
@@ -149,8 +151,8 @@ async function getServices() {
   getInstances(state.service.id);
 }
 
-async function getEndpoints(id?: string) {
-  const resp = await traceStore.getEndpoints(id);
+async function getEndpoints(id?: string, keyword?: string) {
+  const resp = await traceStore.getEndpoints(id, keyword);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
@@ -207,6 +209,12 @@ function changeField(type: string, opt: any) {
 function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
   tagsList.value = data.tagsList;
   tagsMap.value = data.tagsMap;
+}
+async function searchEndpoints(keyword: string) {
+  const resp = await traceStore.getEndpoints(state.service.id, keyword);
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+  }
 }
 watch(
   () => [selectorStore.currentPod],

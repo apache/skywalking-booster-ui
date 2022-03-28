@@ -86,14 +86,14 @@ export const logStore = defineStore({
       ] || [{ value: " 0", label: "All" }];
       return res.data;
     },
-    async getEndpoints(id: string) {
+    async getEndpoints(id: string, keyword?: string) {
       const serviceId = this.selectorStore.currentService
         ? this.selectorStore.currentService.id
         : id;
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: this.durationTime,
-        keyword: "",
+        keyword: keyword || "",
       });
       if (res.data.errors) {
         return res.data;

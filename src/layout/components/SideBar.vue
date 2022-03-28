@@ -13,109 +13,93 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="side-bar flex-v">
-    <div>
-      <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
-        <Icon
-          :size="isCollapse ? 'xl' : 'logo'"
-          :iconName="isCollapse ? 'logo' : 'logo-sw'"
-        />
-      </div>
-      <el-menu
-        active-text-color="#448dfe"
-        background-color="#252a2f"
-        class="el-menu-vertical"
-        :default-active="name"
-        text-color="#efefef"
-        :unique-opened="true"
-        :collapse="isCollapse"
-        :style="{ border: 'none' }"
-      >
-        <template v-for="(menu, index) in routes" :key="index">
-          <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
-            <template #title>
-              <router-link
-                class="items"
-                :to="menu.path"
-                :exact="menu.meta.exact || false"
-              >
-                <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
-                  <Icon size="lg" :iconName="menu.meta.icon" />
-                </el-icon>
-                <span :class="isCollapse ? 'collapse' : ''">
-                  {{ t(menu.meta.title) }}
-                </span>
-              </router-link>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item
-                v-for="(m, idx) in filterMenus(menu.children)"
-                :index="m.name"
-                :key="idx"
-              >
-                <router-link
-                  class="items"
-                  :to="m.path"
-                  :exact="m.meta.exact || false"
-                >
-                  <span>{{ t(m.meta.title) }}</span>
-                </router-link>
-              </el-menu-item>
-            </el-menu-item-group>
-          </el-sub-menu>
-          <el-menu-item
-            :index="String(menu.name)"
-            @click="changePage(menu)"
-            v-else
-          >
-            <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
-              <router-link
-                class="items"
-                :to="menu.children[0].path"
-                :exact="menu.meta.exact"
-              >
-                <Icon size="lg" :iconName="menu.meta.icon" />
-              </router-link>
-            </el-icon>
-            <template #title>
-              <router-link
-                class="items"
-                :to="menu.children[0].path"
-                :exact="menu.meta.exact"
-              >
-                <span>{{ t(menu.meta.title) }}</span>
-              </router-link>
-            </template>
-          </el-menu-item>
-        </template>
-      </el-menu>
-      <div
-        class="menu-control"
-        :class="isCollapse ? 'collapse' : ''"
-        :style="{
-          color: theme === 'light' ? '#eee' : '#252a2f',
-        }"
-      >
-        <Icon
-          size="middle"
-          iconName="format_indent_decrease"
-          @click="controlMenu"
-        />
-      </div>
+  <div class="side-bar">
+    <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
+      <Icon
+        :size="isCollapse ? 'xl' : 'logo'"
+        :iconName="isCollapse ? 'logo' : 'logo-sw'"
+      />
     </div>
-    <div class="version">
-      <el-popover
-        trigger="hover"
-        width="250"
-        placement="right"
-        :content="appStore.version"
-      >
-        <template #reference>
-          <span>
-            <Icon iconName="version" size="middle" />
-          </span>
-        </template>
-      </el-popover>
+    <el-menu
+      active-text-color="#448dfe"
+      background-color="#252a2f"
+      class="el-menu-vertical"
+      :default-active="name"
+      text-color="#efefef"
+      :unique-opened="true"
+      :collapse="isCollapse"
+      :style="{ border: 'none' }"
+    >
+      <template v-for="(menu, index) in routes" :key="index">
+        <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
+          <template #title>
+            <router-link
+              class="items"
+              :to="menu.path"
+              :exact="menu.meta.exact || false"
+            >
+              <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
+                <Icon size="lg" :iconName="menu.meta.icon" />
+              </el-icon>
+              <span :class="isCollapse ? 'collapse' : ''">
+                {{ t(menu.meta.title) }}
+              </span>
+            </router-link>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item
+              v-for="(m, idx) in filterMenus(menu.children)"
+              :index="m.name"
+              :key="idx"
+            >
+              <router-link
+                class="items"
+                :to="m.path"
+                :exact="m.meta.exact || false"
+              >
+                <span>{{ t(m.meta.title) }}</span>
+              </router-link>
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-sub-menu>
+        <el-menu-item
+          :index="String(menu.name)"
+          @click="changePage(menu)"
+          v-else
+        >
+          <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
+            <router-link
+              class="items"
+              :to="menu.children[0].path"
+              :exact="menu.meta.exact"
+            >
+              <Icon size="lg" :iconName="menu.meta.icon" />
+            </router-link>
+          </el-icon>
+          <template #title>
+            <router-link
+              class="items"
+              :to="menu.children[0].path"
+              :exact="menu.meta.exact"
+            >
+              <span>{{ t(menu.meta.title) }}</span>
+            </router-link>
+          </template>
+        </el-menu-item>
+      </template>
+    </el-menu>
+    <div
+      class="menu-control"
+      :class="isCollapse ? 'collapse' : ''"
+      :style="{
+        color: theme === 'light' ? '#eee' : '#252a2f',
+      }"
+    >
+      <Icon
+        size="middle"
+        iconName="format_indent_decrease"
+        @click="controlMenu"
+      />
     </div>
   </div>
 </template>
@@ -124,11 +108,8 @@ limitations under the License. -->
 import { ref } from "vue";
 import { useRouter, RouteRecordRaw } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
 
-const appStore = useAppStoreWithOut();
 const { t } = useI18n();
 const name = ref<any>(String(useRouter().currentRoute.value.name));
 const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
@@ -139,7 +120,6 @@ const isCollapse = ref(false);
 const controlMenu = () => {
   isCollapse.value = !isCollapse.value;
 };
-getVersion();
 const changePage = (menu: RouteRecordRaw) => {
   theme.value = ["VirtualMachine", "Kubernetes"].includes(String(menu.name))
     ? "light"
@@ -148,23 +128,15 @@ const changePage = (menu: RouteRecordRaw) => {
 const filterMenus = (menus: any[]) => {
   return menus.filter((d) => d.meta && !d.meta.notShow);
 };
-async function getVersion() {
-  const res = await appStore.fetchVersion();
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
-}
 </script>
 
 <style lang="scss" scoped>
 .side-bar {
-  position: relative;
   background: #252a2f;
   height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
   min-height: 700px;
-  justify-content: space-between;
+  position: relative;
+  margin-bottom: 100px;
 }
 
 .el-menu-vertical:not(.el-menu--collapse) {
@@ -192,7 +164,7 @@ span.collapse {
 }
 
 .menu-control {
-  position: fixed;
+  position: absolute;
   top: 8px;
   left: 200px;
   cursor: pointer;
@@ -220,5 +192,13 @@ span.collapse {
   cursor: pointer;
   padding-left: 23px;
   margin-bottom: 10px;
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+}
+
+.empty {
+  width: 100%;
+  height: 60px;
 }
 </style>

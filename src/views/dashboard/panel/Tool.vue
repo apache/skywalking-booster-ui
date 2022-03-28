@@ -40,7 +40,11 @@ limitations under the License. -->
           size="small"
           placeholder="Select a data"
           @change="changePods"
+          @query="searchPods"
           class="selectorPod"
+          :isRemote="
+            ['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)
+          "
         />
       </div>
       <div class="selectors-item" v-if="states.key === 2 || states.key === 4">
@@ -60,15 +64,17 @@ limitations under the License. -->
             dashboardStore.entity === "EndpointRelation"
               ? "$DestinationEndpoint"
               : "$DestinationServiceInstance"
-          }}</span
-        >
+          }}
+        </span>
         <Selector
           v-model="states.currentDestPod"
           :options="selectorStore.destPods"
           size="small"
           placeholder="Select a data"
-          @change="changePods"
+          @change="changeDestPods"
           class="selectorPod"
+          @query="searchDestPods"
+          :isRemote="dashboardStore.entity === 'EndpointRelation'"
         />
       </div>
     </div>
@@ -126,7 +132,6 @@ const params = useRoute().params;
 const toolIcons = ref<{ name: string; content: string; id: string }[]>(
   EndpointRelationTools
 );
-const limit = ref<number>(10);
 const loading = ref<boolean>(false);
 const states = reactive<{
   destService: string;
@@ -320,6 +325,14 @@ function changePods(pod: any) {
   }
 }
 
+function changeDestPods(pod: any) {
+  if (pod[0]) {
+    selectorStore.setCurrentDestPod(pod[0]);
+  } else {
+    selectorStore.setCurrentDestPod(null);
+  }
+}
+
 function changeMode() {
   if (dashboardStore.editMode) {
     ElMessage.warning(t("editWarning"));
@@ -403,11 +416,16 @@ function setControls(id: string) {
   }
 }
 
-async function fetchPods(type: string, serviceId: string, setPod: boolean) {
+async function fetchPods(
+  type: string,
+  serviceId: string,
+  setPod: boolean,
+  param?: { keyword?: string }
+) {
   let resp;
   switch (type) {
     case EntityType[2].value:
-      resp = await selectorStore.getEndpoints({ serviceId, limit });
+      resp = await selectorStore.getEndpoints({ serviceId, ...param });
       if (setPod) {
         selectorStore.setCurrentPod(
           selectorStore.pods.length ? selectorStore.pods[0] : null
@@ -428,7 +446,7 @@ async function fetchPods(type: string, serviceId: string, setPod: boolean) {
       resp = await selectorStore.getEndpoints({
         serviceId,
         isRelation: true,
-        limit,
+        ...param,
       });
       if (setPod) {
         selectorStore.setCurrentDestPod(
@@ -482,6 +500,23 @@ function getTools() {
     default:
       toolIcons.value = EndpointRelationTools;
   }
+}
+function searchPods(query: string) {
+  const param = {
+    keyword: query,
+  };
+  fetchPods(EntityType[2].value, selectorStore.currentService.id, false, param);
+}
+function searchDestPods(query: string) {
+  const param = {
+    keyword: query,
+  };
+  fetchPods(
+    EntityType[6].value,
+    selectorStore.currentDestService.id,
+    false,
+    param
+  );
 }
 </script>
 <style lang="scss" scoped>

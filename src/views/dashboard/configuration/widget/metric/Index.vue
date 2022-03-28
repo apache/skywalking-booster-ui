@@ -219,8 +219,8 @@ async function setMetricType(chart?: any) {
   }
 }
 
-function setDashboards() {
-  const { graph } = dashboardStore.selectedGrid;
+function setDashboards(type?: string) {
+  const graph = type || dashboardStore.selectedGrid.graph;
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   const arr = list.reduce(
     (
@@ -279,7 +279,7 @@ function changeChartType(item: Option) {
     defaultLen.value = 5;
   }
   setMetricType(graph);
-  setDashboards();
+  setDashboards(graph.type);
   states.dashboardName = "";
   defaultLen.value = 10;
 }
