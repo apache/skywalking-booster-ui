@@ -101,7 +101,6 @@ limitations under the License. -->
         @click="controlMenu"
       />
     </div>
-    <!-- <div class="empty"></div> -->
   </div>
 </template>
 

@@ -52,7 +52,7 @@ export const Instances = {
 export const Endpoints = {
   variable: "$serviceId: ID!, $keyword: String!",
   query: `
-  pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 100) {
+  pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 20) {
     id
     value: name
      label: name
