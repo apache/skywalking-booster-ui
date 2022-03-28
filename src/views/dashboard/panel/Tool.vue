@@ -42,7 +42,9 @@ limitations under the License. -->
           @change="changePods"
           @query="searchPods"
           class="selectorPod"
-          :isRemote="true"
+          :isRemote="
+            ['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)
+          "
         />
       </div>
       <div class="selectors-item" v-if="states.key === 2 || states.key === 4">
@@ -62,8 +64,8 @@ limitations under the License. -->
             dashboardStore.entity === "EndpointRelation"
               ? "$DestinationEndpoint"
               : "$DestinationServiceInstance"
-          }}</span
-        >
+          }}
+        </span>
         <Selector
           v-model="states.currentDestPod"
           :options="selectorStore.destPods"
@@ -71,6 +73,8 @@ limitations under the License. -->
           placeholder="Select a data"
           @change="changePods"
           class="selectorPod"
+          @query="searchPods"
+          :isRemote="dashboardStore.entity === 'EndpointRelation'"
         />
       </div>
     </div>

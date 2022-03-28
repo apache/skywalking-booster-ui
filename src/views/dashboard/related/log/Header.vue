@@ -46,6 +46,8 @@ limitations under the License. -->
         :options="logStore.endpoints"
         placeholder="Select a endpoint"
         @change="changeField('endpoint', $event)"
+        :isRemote="true"
+        @query="searchEndpoints"
       />
     </div>
   </div>
@@ -241,6 +243,12 @@ function changeField(type: string, opt: any) {
   if (type === "service") {
     getEndpoints(state.service.id);
     getInstances(state.service.id);
+  }
+}
+async function searchEndpoints(keyword: string) {
+  const resp = await logStore.getEndpoints(state.service.id, keyword);
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
   }
 }
 function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
