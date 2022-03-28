@@ -35,7 +35,8 @@ export const routesEvent: Array<RouteRecordRaw> = [
         meta: {
           exact: false,
         },
-        component: () => import("@/views/Event.vue"),
+        component: () =>
+          import(/* webpackChunkName: "events" */ "@/views/Event.vue"),
       },
     ],
   },

@@ -36,7 +36,8 @@ export const routesFunctions: Array<RouteRecordRaw> = [
           headPath: "/functions",
           exact: true,
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
     ],
   },

@@ -36,7 +36,8 @@ export const routesInfra: Array<RouteRecordRaw> = [
         meta: {
           title: "linux",
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       // {
       //   path: "/infrastructure/vm",

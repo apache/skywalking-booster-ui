@@ -38,7 +38,8 @@ export const routesSetting: Array<RouteRecordRaw> = [
           hasGroup: false,
           exact: false,
         },
-        component: () => import("@/views/Settings.vue"),
+        component: () =>
+          import(/* webpackChunkName: "settings" */ "@/views/Settings.vue"),
       },
     ],
   },

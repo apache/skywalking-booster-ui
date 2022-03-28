@@ -36,7 +36,8 @@ export const routesSelf: Array<RouteRecordRaw> = [
           title: "skyWalkingServer",
           headPath: "/mesh/services",
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/self/satellite",
@@ -45,7 +46,8 @@ export const routesSelf: Array<RouteRecordRaw> = [
           title: "satellite",
           headPath: "/mesh/controlPanel",
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
     ],
   },

@@ -39,24 +39,24 @@ module.exports = {
     config.resolve.alias.set("vue-i18n", "vue-i18n/dist/vue-i18n.cjs.js");
   },
   configureWebpack: (config) => {
+    config.performance = {
+      hints: false,
+    };
     config.optimization = {
       splitChunks: {
         chunks: "all",
+        minSize: 20000,
+        maxSize: 2000000,
         cacheGroups: {
           echarts: {
             name: "echarts",
             test: /[\\/]node_modules[\\/]echarts[\\/]/,
-            priority: 1,
+            priority: 20,
           },
           elementPlus: {
-            name: "element-plus",
+            name: "elementPlus",
             test: /[\\/]node_modules[\\/]element-plus[\\/]/,
-            priority: 2,
-          },
-          three: {
-            name: "three",
-            test: /[\\/]node_modules[\\/]three[\\/]/,
-            priority: 3,
+            priority: 19,
           },
         },
       },

@@ -35,7 +35,8 @@ export const routesK8s: Array<RouteRecordRaw> = [
         meta: {
           title: "kubernetesCluster",
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/kubernetes/service",
@@ -43,7 +44,8 @@ export const routesK8s: Array<RouteRecordRaw> = [
         meta: {
           title: "kubernetesService",
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
     ],
   },
