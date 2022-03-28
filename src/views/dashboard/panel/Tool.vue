@@ -71,9 +71,9 @@ limitations under the License. -->
           :options="selectorStore.destPods"
           size="small"
           placeholder="Select a data"
-          @change="changePods"
+          @change="changeDestPods"
           class="selectorPod"
-          @query="searchPods"
+          @query="searchDestPods"
           :isRemote="dashboardStore.entity === 'EndpointRelation'"
         />
       </div>
@@ -325,6 +325,14 @@ function changePods(pod: any) {
   }
 }
 
+function changeDestPods(pod: any) {
+  if (pod[0]) {
+    selectorStore.setCurrentDestPod(pod[0]);
+  } else {
+    selectorStore.setCurrentDestPod(null);
+  }
+}
+
 function changeMode() {
   if (dashboardStore.editMode) {
     ElMessage.warning(t("editWarning"));
@@ -497,9 +505,15 @@ function searchPods(query: string) {
   const param = {
     keyword: query,
   };
+  fetchPods(EntityType[2].value, selectorStore.currentService.id, false, param);
+}
+function searchDestPods(query: string) {
+  const param = {
+    keyword: query,
+  };
   fetchPods(
-    dashboardStore.entity,
-    selectorStore.currentService.id,
+    EntityType[6].value,
+    selectorStore.currentDestService.id,
     false,
     param
   );
