@@ -153,7 +153,7 @@ async function init() {
   graph.value = svg.value
     .append("g")
     .attr("class", "topo-svg-graph")
-    .attr("transform", `translate(0, -100)`);
+    .attr("transform", `translate(-100, -100)`);
   graph.value.call(tip.value);
   simulation.value = simulationInit(
     d3,
@@ -221,7 +221,7 @@ function dragended(d: any) {
 function handleNodeClick(d: Node & { x: number; y: number }) {
   topologyStore.setNode(d);
   topologyStore.setLink(null);
-  operationsPos.x = d.x;
+  operationsPos.x = d.x - 100;
   operationsPos.y = d.y - 70;
   if (d.layer === String(dashboardStore.layerId)) {
     return;
@@ -255,7 +255,7 @@ function handleLinkClick(event: any, d: Call) {
     entity: `${e}Relation`,
   });
   dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/${p.layer}/${e}Relation/${d.source.id}/${d.target.id}/${p.name}`;
+  const path = `/dashboard/related/${p.layer}/${e}Relation/${d.source.id}/${d.target.id}/${p.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
   dashboardStore.setEntity(origin);
@@ -532,7 +532,7 @@ watch(
   () => appStore.durationTime,
   () => {
     if (dashboardStore.entity === EntityType[1].value) {
-      init();
+      freshNodes();
     }
   }
 );

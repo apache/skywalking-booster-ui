@@ -123,3 +123,21 @@ code,
 pre {
   font-family: Consolas, Menlo, Courier, monospace;
 }
+
+.el-menu {
+  --el-menu-item-height: 50px;
+}
+
+.el-menu-item-group__title {
+  display: none;
+}
+
+.el-sub-menu .el-menu-item {
+  height: 40px;
+  line-height: 40px;
+  padding-left: 52px !important;
+}
+
+.el-icon.menu-icons {
+  margin-right: 8px !important;
+}
