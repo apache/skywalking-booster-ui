@@ -20,32 +20,25 @@ export default function topoLegend(
   graph: any,
   clientHeight: number,
   clientWidth: number,
-  config: any
+  description: any
 ) {
   for (const item of ["CUBE", "CUBEERROR"]) {
     graph
       .append("image")
       .attr("width", 30)
       .attr("height", 30)
-      .attr("x", clientWidth - (item === "CUBEERROR" ? 340 : 440))
+      .attr("x", clientWidth - (item === "CUBEERROR" ? 200 : 410))
       .attr("y", clientHeight + 50)
       .attr("xlink:href", () =>
         item === "CUBEERROR" ? icons.CUBEERROR : icons.CUBE
       );
     graph
       .append("text")
-      .attr("x", clientWidth - (item === "CUBEERROR" ? 310 : 410))
+      .attr("x", clientWidth - (item === "CUBEERROR" ? 170 : 380))
       .attr("y", clientHeight + 70)
       .text(() => {
-        const l = config || [];
-        const str = l
-          .map((d: any) => `${d.name} ${d.condition} ${d.value}`)
-          .join(" and ");
-        return item === "CUBEERROR"
-          ? config && config.length
-            ? `Unhealthy (${str})`
-            : "Unhealthy"
-          : "Healthy";
+        const desc = description || {};
+        return item === "CUBEERROR" ? desc.unhealthy || "" : desc.healthy || "";
       })
       .style("fill", "#efeff1")
       .style("font-size", "11px");
