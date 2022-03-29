@@ -145,12 +145,12 @@ async function queryServices() {
     ElMessage.error(resp.errors);
   }
   sortServices.value = selectorStore.services.sort((a: any, b: any) => {
-    const nameA = a.group.toUpperCase();
-    const nameB = b.group.toUpperCase();
-    if (nameA < nameB) {
+    const groupA = a.group.toUpperCase();
+    const groupB = b.group.toUpperCase();
+    if (groupA < groupB) {
       return -1;
     }
-    if (nameA > nameB) {
+    if (groupA > groupB) {
       return 1;
     }
     return 0;

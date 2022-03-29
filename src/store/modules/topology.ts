@@ -394,7 +394,6 @@ export const topologyStore = defineStore({
       queryStr: string;
       conditions: { [key: string]: unknown };
     }) {
-      console.log(param);
       const res: AxiosResponse = await query(param);
 
       if (res.data.errors) {
