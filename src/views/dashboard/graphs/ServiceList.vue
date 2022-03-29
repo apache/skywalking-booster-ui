@@ -128,7 +128,7 @@ const props = defineProps({
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
-const pageSize = 15;
+const pageSize = 10;
 const services = ref<Service[]>([]);
 const searchText = ref<string>("");
 const groups = ref<any>({});
@@ -241,12 +241,8 @@ function objectSpanMethod(param: any): any {
 }
 function changePage(pageIndex: number) {
   services.value = sortServices.value.filter((d: Service, index: number) => {
-    if (
-      index >= (pageIndex - 1 || 0) * pageSize &&
-      index < pageSize * (pageIndex || 1)
-    ) {
-      return d;
-    }
+    index >= (pageIndex - 1 || 0) * pageSize &&
+      index < pageSize * (pageIndex || 1);
   });
 }
 function searchList() {

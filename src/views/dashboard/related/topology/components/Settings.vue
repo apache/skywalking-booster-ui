@@ -192,6 +192,7 @@ limitations under the License. -->
       <el-input
         v-model="metric.value"
         placeholder="Please input a value"
+        type="number"
         @change="changeLegend(LegendOpt.VALUE, $event, index)"
         size="small"
         class="item"
