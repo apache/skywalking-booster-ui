@@ -410,7 +410,6 @@ function deleteMetric(index: number) {
     ...{ metricTypes: states.metricTypes, metrics: states.metrics },
     metricConfig,
   });
-  console.log(dashboardStore.selectedGrid);
 }
 function setMetricTypeList(type: string) {
   if (type !== MetricsType.REGULAR_VALUE) {

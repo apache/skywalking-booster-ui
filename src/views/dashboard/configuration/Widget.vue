@@ -16,9 +16,9 @@ limitations under the License. -->
   <div class="widget-config flex-v">
     <div class="graph" v-loading="loading">
       <div class="header">
-        <span>{{ dashboardStore.selectedGrid.widget.title }}</span>
+        <span>{{ dashboardStore.selectedGrid.widget.title || "" }}</span>
         <div class="tips" v-show="dashboardStore.selectedGrid.widget.tips">
-          <el-tooltip :content="dashboardStore.selectedGrid.widget.tips">
+          <el-tooltip :content="dashboardStore.selectedGrid.widget.tips || ''">
             <Icon iconName="info_outline" size="sm" />
           </el-tooltip>
         </div>

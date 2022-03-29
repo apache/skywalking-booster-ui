@@ -128,7 +128,7 @@ const props = defineProps({
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
-const pageSize = 15;
+const pageSize = 10;
 const services = ref<Service[]>([]);
 const searchText = ref<string>("");
 const groups = ref<any>({});
@@ -144,8 +144,21 @@ async function queryServices() {
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
-  setServices(selectorStore.services);
-  queryServiceMetrics(services.value);
+  sortServices.value = selectorStore.services.sort((a: any, b: any) => {
+    const groupA = a.group.toUpperCase();
+    const groupB = b.group.toUpperCase();
+    if (groupA < groupB) {
+      return -1;
+    }
+    if (groupA > groupB) {
+      return 1;
+    }
+    return 0;
+  });
+  const s = sortServices.value.filter(
+    (d: Service, index: number) => index < pageSize
+  );
+  setServices(s);
 }
 
 function setServices(arr: (Service & { merge: boolean })[]) {
@@ -164,23 +177,19 @@ function setServices(arr: (Service & { merge: boolean })[]) {
     },
     {}
   );
-  sortServices.value = Object.values(map).flat(1);
+  const list = Object.values(map).flat(1);
   const obj = {} as any;
-  for (const s of sortServices.value) {
+  for (const s of list) {
     s.group = s.group || "";
     if (!obj[s.group]) {
       obj[s.group] = 1;
     } else {
-      if (obj[s.group] % 5 === 0) {
-        s.merge = false;
-      }
       obj[s.group]++;
     }
     groups.value[s.group] = obj[s.group];
   }
-  services.value = sortServices.value.filter(
-    (d: Service, index: number) => index < pageSize
-  );
+  services.value = list;
+  queryServiceMetrics(services.value);
 }
 
 function clickService(scope: any) {
@@ -240,20 +249,22 @@ function objectSpanMethod(param: any): any {
   return { rowspan: groups.value[param.row.group], colspan: 1 };
 }
 function changePage(pageIndex: number) {
-  services.value = sortServices.value.filter((d: Service, index: number) => {
-    if (
-      index >= (pageIndex - 1 || 0) * pageSize &&
-      index < pageSize * (pageIndex || 1)
-    ) {
+  const arr = sortServices.value.filter((d: Service, index: number) => {
+    if (index >= (pageIndex - 1) * pageSize && index < pageSize * pageIndex) {
       return d;
     }
   });
+
+  setServices(arr);
 }
 function searchList() {
   const searchServices = sortServices.value.filter((d: { label: string }) =>
     d.label.includes(searchText.value)
   );
-  services.value = searchServices.splice(0, pageSize);
+  const services = searchServices.filter(
+    (d: unknown, index: number) => index < pageSize
+  );
+  setServices(services);
 }
 function getUnit(index: number) {
   const u =

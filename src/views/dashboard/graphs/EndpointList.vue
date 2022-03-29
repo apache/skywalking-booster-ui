@@ -117,16 +117,14 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const endpoints = ref<Endpoint[]>([]);
-const pageSize = 15;
-const total = 15;
+const pageSize = 10;
 const searchText = ref<string>("");
 
-queryEndpoints(total);
+queryEndpoints();
 
-async function queryEndpoints(limit?: number) {
+async function queryEndpoints() {
   chartLoading.value = true;
   const resp = await selectorStore.getEndpoints({
-    limit,
     keyword: searchText.value,
   });
 
@@ -135,8 +133,10 @@ async function queryEndpoints(limit?: number) {
     ElMessage.error(resp.errors);
     return;
   }
-  endpoints.value = selectorStore.pods.splice(0, pageSize);
-  await queryEndpointMetrics(endpoints.value);
+  endpoints.value = selectorStore.pods.filter(
+    (d: unknown, index: number) => index < pageSize
+  );
+  queryEndpointMetrics(endpoints.value);
 }
 async function queryEndpointMetrics(currentPods: Endpoint[]) {
   if (!currentPods.length) {
@@ -181,14 +181,15 @@ function clickEndpoint(scope: any) {
   );
 }
 function changePage(pageIndex: number) {
-  endpoints.value = selectorStore.pods.splice(
-    (pageIndex - 1 || 0) * pageSize,
-    pageSize * (pageIndex || 1)
-  );
+  endpoints.value = selectorStore.pods.filter((d: unknown, index: number) => {
+    if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
+      return d;
+    }
+  });
+  queryEndpointMetrics(endpoints.value);
 }
 async function searchList() {
-  const limit = searchText.value ? undefined : total;
-  await queryEndpoints(limit);
+  await queryEndpoints();
 }
 function getUnit(index: number) {
   const u =
@@ -211,7 +212,7 @@ watch(
 watch(
   () => selectorStore.currentService,
   () => {
-    queryEndpoints(total);
+    queryEndpoints();
   }
 );
 </script>

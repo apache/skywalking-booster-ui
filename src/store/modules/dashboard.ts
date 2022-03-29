@@ -217,12 +217,10 @@ export const dashboardStore = defineStore({
       }
       if (actived.length === 3) {
         const tabIndex = Number(actived[1]);
-        const itemIndex = this.layout[index].children[
-          tabIndex
-        ].children.findIndex((d: LayoutConfig) => actived[2] === d.i);
-
-        this.layout[index].children[tabIndex].children.splice(itemIndex, 1);
-        this.setCurrentTabItems(this.layout[index].children[tabIndex].children);
+        this.currentTabItems = this.currentTabItems.filter(
+          (d: LayoutConfig) => actived[2] !== d.i
+        );
+        this.layout[index].children[tabIndex].children = this.currentTabItems;
         return;
       }
       this.layout = this.layout.filter((d: LayoutConfig) => d.i !== item.i);
@@ -260,7 +258,6 @@ export const dashboardStore = defineStore({
       const index = this.layout.findIndex(
         (d: LayoutConfig) => actived[0] === d.i
       );
-
       if (actived.length === 3) {
         const tabIndex = Number(actived[1]);
         const itemIndex = this.layout[index].children[

@@ -15,12 +15,12 @@ limitations under the License. -->
 
 <template>
   <div class="top-list">
-    <div class="chart-slow-i" v-for="(i, index) in datas" :key="index">
+    <div class="chart-slow-i" v-for="(i, index) in data[key]" :key="index">
       <div class="ell tools flex-h">
         <div>
           <span class="calls mr-10">{{ i.value }}</span>
           <span class="cp mr-20">
-            {{ i.name + getTraceId(i) }}
+            {{ i.name }}
           </span>
         </div>
         <div>
@@ -28,14 +28,14 @@ limitations under the License. -->
             iconName="review-list"
             size="middle"
             class="cp"
-            @click="handleClick((i.traceIds && i.traceIds[0]) || i.name)"
+            @click="handleClick(i.name)"
           />
         </div>
       </div>
       <el-progress
         :stroke-width="6"
         :percentage="(i.value / maxValue) * 100"
-        color="#bf99f8"
+        :color="TextColors[config.color]"
         :show-text="false"
       />
     </div>
@@ -45,6 +45,7 @@ limitations under the License. -->
 import type { PropType } from "vue";
 import { computed } from "vue";
 import copy from "@/utils/copy";
+import { TextColors } from "@/views/dashboard/data";
 /*global defineProps */
 const props = defineProps({
   data: {
@@ -54,42 +55,18 @@ const props = defineProps({
     default: () => ({}),
   },
   config: {
-    type: Object as PropType<{ sortOrder: string }>,
-    default: () => ({}),
+    type: Object as PropType<{ color: string }>,
+    default: () => ({ color: "purple" }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
-const key = computed(() => Object.keys(props.data)[0]);
+const key = computed(() => Object.keys(props.data)[0] || "");
 const maxValue = computed(() => {
   if (!(props.data[key.value] && props.data[key.value].length)) {
     return 0;
   }
   const temp: number[] = props.data[key.value].map((i: any) => i.value);
   return Math.max.apply(null, temp);
-});
-const getTraceId = (i: { [key: string]: (number | string)[] }): string => {
-  return i.traceIds && i.traceIds[0] ? ` - ${i.traceIds[0]}` : "";
-};
-const datas = computed(() => {
-  if (!(props.data[key.value] && props.data[key.value].length)) {
-    return [];
-  }
-  const { sortOrder } = props.config;
-  const val: any = props.data[key.value];
-
-  switch (sortOrder) {
-    case "DES":
-      val.sort((a: any, b: any) => b.value - a.value);
-      break;
-    case "ASC":
-      val.sort((a: any, b: any) => a.value - b.value);
-      break;
-    default:
-      val.sort((a: any, b: any) => b.value - a.value);
-      break;
-  }
-
-  return val;
 });
 function handleClick(i: string) {
   copy(i);

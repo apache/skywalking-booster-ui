@@ -90,7 +90,7 @@ limitations under the License. -->
       small
       layout="prev, pager, next"
       :page-size="pageSize"
-      :total="searchInstances.length"
+      :total="selectorStore.pods.length"
       @current-change="changePage"
       @prev-click="changePage"
       @next-click="changePage"
@@ -142,8 +142,7 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const instances = ref<Instance[]>([]); // current instances
-const searchInstances = ref<Instance[]>([]); // all instances
-const pageSize = 15;
+const pageSize = 10;
 const searchText = ref<string>("");
 
 queryInstance();
@@ -154,12 +153,12 @@ async function queryInstance() {
   chartLoading.value = false;
   if (resp && resp.errors) {
     ElMessage.error(resp.errors);
-    searchInstances.value = [];
     instances.value = [];
     return;
   }
-  searchInstances.value = selectorStore.pods;
-  instances.value = searchInstances.value.splice(0, pageSize);
+  instances.value = selectorStore.pods.filter(
+    (d: unknown, index: number) => index < pageSize
+  );
   queryInstanceMetrics(instances.value);
 }
 
@@ -209,14 +208,22 @@ function clickInstance(scope: any) {
 }
 
 function changePage(pageIndex: number) {
-  instances.value = searchInstances.value.splice(pageIndex - 1, pageSize);
+  instances.value = selectorStore.pods.filter((d: unknown, index: number) => {
+    if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
+      return d;
+    }
+  });
+  queryInstanceMetrics(instances.value);
 }
 
 function searchList() {
-  searchInstances.value = selectorStore.pods.filter((d: { label: string }) =>
+  const searchInstances = selectorStore.pods.filter((d: { label: string }) =>
     d.label.includes(searchText.value)
   );
-  instances.value = searchInstances.value.splice(0, pageSize);
+  instances.value = searchInstances.filter(
+    (d: unknown, index: number) => index < pageSize
+  );
+  queryInstanceMetrics(instances.value);
 }
 
 function getUnit(index: number) {

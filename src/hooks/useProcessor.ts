@@ -66,7 +66,7 @@ export function useQueryProcessor(config: any) {
           ? selectorStore.currentService.normal
           : true,
         scope: config.catalog || dashboardStore.entity,
-        topN: 10,
+        topN: c.topN || 10,
         order: c.sortOrder || "DES",
       };
     } else {

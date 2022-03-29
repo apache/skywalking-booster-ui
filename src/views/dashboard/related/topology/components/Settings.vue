@@ -192,6 +192,7 @@ limitations under the License. -->
       <el-input
         v-model="metric.value"
         placeholder="Please input a value"
+        type="number"
         @change="changeLegend(LegendOpt.VALUE, $event, index)"
         size="small"
         class="item"
@@ -215,6 +216,20 @@ limitations under the License. -->
       </span>
       <div v-show="index !== legend.metric.length - 1">&&</div>
     </div>
+    <div class="label">Healthy Description</div>
+    <el-input
+      v-model="description.healthy"
+      placeholder="Please input description"
+      size="small"
+      class="mt-5"
+    />
+    <div class="label">Unhealthy Description</div>
+    <el-input
+      v-model="description.unhealthy"
+      placeholder="Please input description"
+      size="small"
+      class="mt-5"
+    />
     <el-button
       @click="setLegend"
       class="legend-btn"
@@ -289,6 +304,7 @@ const legend = reactive<{
   metric: l ? selectedGrid.legend : [{ name: "", condition: "", value: "" }],
 });
 const configType = ref<string>("");
+const description = reactive<any>(selectedGrid.description || {});
 
 getMetricList();
 async function getMetricList() {
@@ -347,6 +363,10 @@ async function setLegend() {
   updateSettings();
   const ids = topologyStore.nodes.map((d: Node) => d.id);
   const names = dashboardStore.selectedGrid.legend.map((d: any) => d.name);
+  if (!names.length) {
+    emit("updateNodes");
+    return;
+  }
   const param = await useQueryTopologyMetrics(names, ids);
   const res = await topologyStore.getLegendMetrics(param);
 
@@ -413,6 +433,7 @@ function updateSettings(metricConfig?: { [key: string]: MetricConfigOpt[] }) {
     nodeMetrics: states.nodeMetrics,
     legend: metrics,
     ...metricConfig,
+    description,
   };
   dashboardStore.selectWidget(param);
   dashboardStore.setConfigs(param);
@@ -509,7 +530,7 @@ function setConfigType(type: string) {
 
 .inputs {
   margin-top: 8px;
-  width: 370px;
+  width: 355px;
 }
 
 .item {
