@@ -118,15 +118,13 @@ const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const endpoints = ref<Endpoint[]>([]);
 const pageSize = 15;
-const total = 15;
 const searchText = ref<string>("");
 
-queryEndpoints(total);
+queryEndpoints();
 
-async function queryEndpoints(limit?: number) {
+async function queryEndpoints() {
   chartLoading.value = true;
   const resp = await selectorStore.getEndpoints({
-    limit,
     keyword: searchText.value,
   });
 
@@ -187,8 +185,7 @@ function changePage(pageIndex: number) {
   );
 }
 async function searchList() {
-  const limit = searchText.value ? undefined : total;
-  await queryEndpoints(limit);
+  await queryEndpoints();
 }
 function getUnit(index: number) {
   const u =
@@ -211,7 +208,7 @@ watch(
 watch(
   () => selectorStore.currentService,
   () => {
-    queryEndpoints(total);
+    queryEndpoints();
   }
 );
 </script>
