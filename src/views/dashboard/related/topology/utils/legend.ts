@@ -42,7 +42,7 @@ export default function topoLegend(
           .map((d: any) => `${d.name} ${d.condition} ${d.value}`)
           .join(" and ");
         return item === "CUBEERROR"
-          ? config
+          ? config && config.length
             ? `Unhealthy (${str})`
             : "Unhealthy"
           : "Healthy";

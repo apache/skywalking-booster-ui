@@ -55,11 +55,10 @@ export default (d3: any, graph: any, funcs: any, tip: any, legend: any) => {
       }
       let c = true;
       for (const l of legend) {
-        const val = l.name.includes("_sla") ? d[l.name] / 100 : d[l.name];
         if (l.condition === "<") {
-          c = c && val < Number(l.value);
+          c = c && d[l.name] < Number(l.value);
         } else {
-          c = c && val > Number(l.value);
+          c = c && d[l.name] > Number(l.value);
         }
       }
       return c && d.isReal ? icons.CUBEERROR : icons.CUBE;
