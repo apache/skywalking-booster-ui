@@ -208,10 +208,11 @@ function clickInstance(scope: any) {
 }
 
 function changePage(pageIndex: number) {
-  instances.value = selectorStore.pods.filter(
-    (d: unknown, index: number) =>
-      index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize
-  );
+  instances.value = selectorStore.pods.filter((d: unknown, index: number) => {
+    if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
+      return d;
+    }
+  });
   queryInstanceMetrics(instances.value);
 }
 

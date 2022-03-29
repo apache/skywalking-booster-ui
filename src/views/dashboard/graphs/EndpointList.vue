@@ -181,10 +181,11 @@ function clickEndpoint(scope: any) {
   );
 }
 function changePage(pageIndex: number) {
-  endpoints.value = selectorStore.pods.filter(
-    (d: unknown, index: number) =>
-      index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize
-  );
+  endpoints.value = selectorStore.pods.filter((d: unknown, index: number) => {
+    if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
+      return d;
+    }
+  });
   queryEndpointMetrics(endpoints.value);
 }
 async function searchList() {
