@@ -77,6 +77,7 @@ export const DefaultGraphConfig: { [key: string]: any } = {
   },
   TopList: {
     type: "TopList",
+    color: "purple",
   },
   InstanceList: {
     type: "InstanceList",
@@ -263,6 +264,7 @@ export const TextColors: { [key: string]: string } = {
   white: "#fff",
   black: "#000",
   orange: "#E6A23C",
+  purple: "#bf99f8",
 };
 
 export const CalculationOpts = [

@@ -13,17 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div>
-    <span class="label">{{ t("maxItemNum") }}</span>
-    <el-input
-      class="input"
-      v-model="topN"
+  <div class="item">
+    <span class="label">{{ t("backgroundColors") }}</span>
+    <Selector
+      :value="color"
+      :options="Colors"
       size="small"
-      placeholder="none"
-      type="number"
-      :min="1"
-      :max="100"
-      @change="updateConfig({ topN })"
+      placeholder="Select a color"
+      class="input"
+      @change="updateConfig({ color: $event[0].value })"
     />
   </div>
 </template>
@@ -35,14 +33,24 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const { selectedGrid } = dashboardStore;
-const topN = ref(selectedGrid.graph.topN);
+const color = ref(selectedGrid.graph.color || "purple");
+const Colors = [
+  { label: "Purple", value: "purple" },
+  {
+    label: "Green",
+    value: "green",
+  },
+  { label: "Blue", value: "blue" },
+  { label: "Red", value: "red" },
+  { label: "Orange", value: "orange" },
+];
 
 function updateConfig(param: { [key: string]: unknown }) {
   const graph = {
-    ...selectedGrid.graph,
+    ...dashboardStore.selectedGrid.graph,
     ...param,
   };
-  dashboardStore.selectWidget({ ...selectedGrid, graph });
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
 }
 </script>
 <style lang="scss" scoped>
@@ -51,5 +59,9 @@ function updateConfig(param: { [key: string]: unknown }) {
   font-weight: 500;
   display: block;
   margin-bottom: 5px;
+}
+
+.input {
+  width: 500px;
 }
 </style>

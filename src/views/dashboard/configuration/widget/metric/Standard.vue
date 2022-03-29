@@ -56,10 +56,7 @@ limitations under the License. -->
         :clearable="true"
       />
     </div>
-    <div
-      class="item"
-      v-show="['sortMetrics', 'readSampledRecords'].includes(metricType)"
-    >
+    <div class="item" v-show="isTopn">
       <span class="label">{{ t("sortOrder") }}</span>
       <SelectSingle
         :value="currentMetric.sortOrder || 'DES'"
@@ -68,10 +65,22 @@ limitations under the License. -->
         @change="changeConfigs(index, { sortOrder: $event })"
       />
     </div>
+    <div class="item" v-show="isTopn">
+      <span class="label">{{ t("maxItemNum") }}</span>
+      <el-input-number
+        class="selectors"
+        v-model="currentMetric.topN"
+        size="small"
+        placeholder="none"
+        :min="1"
+        :max="100"
+        @change="changeConfigs(index, { topN: currentMetric.topN || 10 })"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { SortOrder, CalculationOpts } from "../../../data";
@@ -89,12 +98,22 @@ const props = defineProps({
 const { t } = useI18n();
 const emit = defineEmits(["update"]);
 const dashboardStore = useDashboardStore();
-const currentMetric = ref<MetricConfigOpt>(props.currentMetricConfig);
+const currentMetric = ref<MetricConfigOpt>({
+  ...props.currentMetricConfig,
+  topN: props.currentMetricConfig.topN || 10,
+});
 const metricType = ref<string>(
   dashboardStore.selectedGrid.metricTypes[props.index]
 );
-
-function changeConfigs(index: number, param: { [key: string]: string }) {
+const isTopn = computed(() =>
+  ["sortMetrics", "readSampledRecords"].includes(
+    dashboardStore.selectedGrid.metricTypes[props.index]
+  )
+);
+function changeConfigs(
+  index: number,
+  param: { [key: string]: string | number }
+) {
   const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
   metricConfig[index] = { ...metricConfig[index], ...param };
 
@@ -107,7 +126,10 @@ function changeConfigs(index: number, param: { [key: string]: string }) {
 watch(
   () => props.currentMetricConfig,
   () => {
-    currentMetric.value = props.currentMetricConfig;
+    currentMetric.value = {
+      ...props.currentMetricConfig,
+      topN: props.currentMetricConfig.topN || 10,
+    };
   }
 );
 </script>
