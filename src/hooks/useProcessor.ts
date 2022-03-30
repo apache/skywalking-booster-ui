@@ -28,6 +28,9 @@ export function useQueryProcessor(config: any) {
   if (!(config.metrics && config.metrics[0])) {
     return;
   }
+  if (!(config.metricTypes && config.metricTypes[0])) {
+    return;
+  }
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
@@ -221,6 +224,12 @@ export function useQueryPodsMetrics(
   config: { metrics: string[]; metricTypes: string[] },
   scope: string
 ) {
+  if (!(config.metrics && config.metrics[0])) {
+    return;
+  }
+  if (!(config.metricTypes && config.metricTypes[0])) {
+    return;
+  }
   const appStore = useAppStoreWithOut();
   const selectorStore = useSelectorStore();
   const conditions: { [key: string]: unknown } = {

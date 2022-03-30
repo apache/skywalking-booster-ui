@@ -166,9 +166,9 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
   if (!currentInstances.length) {
     return;
   }
-  const { metrics } = props.config;
+  const { metrics, metricTypes } = props.config;
 
-  if (metrics.length && metrics[0]) {
+  if (metrics.length && metrics[0] && metricTypes.length && metricTypes[0]) {
     const params = await useQueryPodsMetrics(
       currentInstances,
       props.config,

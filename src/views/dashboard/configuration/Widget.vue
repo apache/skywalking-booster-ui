@@ -16,20 +16,20 @@ limitations under the License. -->
   <div class="widget-config flex-v">
     <div class="graph" v-loading="loading">
       <div class="header">
-        <span>{{ dashboardStore.selectedGrid.widget.title || "" }}</span>
-        <div class="tips" v-show="dashboardStore.selectedGrid.widget.tips">
-          <el-tooltip :content="dashboardStore.selectedGrid.widget.tips || ''">
+        <span>{{ widget.title || "" }}</span>
+        <div class="tips" v-show="widget.tips">
+          <el-tooltip :content="widget.tips || ''">
             <Icon iconName="info_outline" size="sm" />
           </el-tooltip>
         </div>
       </div>
       <div class="render-chart">
         <component
-          :is="dashboardStore.selectedGrid.graph.type"
+          :is="graph.type"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
           :config="{
-            ...dashboardStore.selectedGrid.graph,
+            ...graph,
             i: dashboardStore.selectedGrid.i,
             metrics: dashboardStore.selectedGrid.metrics,
             metricTypes: dashboardStore.selectedGrid.metricTypes,
@@ -38,7 +38,7 @@ limitations under the License. -->
           :isEdit="isEdit"
           @changeOpt="setStatus"
         />
-        <div v-show="!dashboardStore.selectedGrid.graph.type" class="no-data">
+        <div v-show="!graph.type" class="no-data">
           {{ t("noData") }}
         </div>
       </div>
@@ -56,7 +56,7 @@ limitations under the License. -->
           />
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="2">
-          <component :is="`${dashboardStore.selectedGrid.graph.type}Config`" />
+          <component :is="`${graph.type}Config`" />
         </el-collapse-item>
         <el-collapse-item :title="t('widgetOptions')" name="3">
           <WidgetOptions />
@@ -74,7 +74,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { reactive, defineComponent, ref } from "vue";
+import { reactive, defineComponent, ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -111,6 +111,8 @@ export default defineComponent({
       visType: [],
     });
     const originConfig = dashboardStore.selectedGrid;
+    const widget = computed(() => dashboardStore.selectedGrid.widget || {});
+    const graph = computed(() => dashboardStore.selectedGrid.graph || {});
 
     function getSource(source: unknown) {
       states.source = source;
@@ -148,6 +150,8 @@ export default defineComponent({
       setLoading,
       setStatus,
       isEdit,
+      widget,
+      graph,
     };
   },
 });

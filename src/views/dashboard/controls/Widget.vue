@@ -17,17 +17,17 @@ limitations under the License. -->
     <div class="header flex-h">
       <div>
         <span>
-          {{ data.widget?.title || "" }}
+          {{ widget.title || "" }}
         </span>
       </div>
       <div>
-        <el-tooltip :content="data.widget?.tips">
+        <el-tooltip :content="widget.tips || ''">
           <span>
             <Icon
               iconName="info_outline"
               size="sm"
               class="operation"
-              v-show="data.widget?.tips"
+              v-show="widget.tips"
             />
           </span>
         </el-tooltip>
@@ -51,15 +51,15 @@ limitations under the License. -->
         </el-popover>
       </div>
     </div>
-    <div class="body" v-if="data.graph?.type" v-loading="loading">
+    <div class="body" v-if="graph.type" v-loading="loading">
       <component
-        :is="data.graph.type"
+        :is="graph.type"
         :intervalTime="appStore.intervalTime"
         :data="state.source"
         :config="{
           ...data.graph,
-          metrics: data.metrics,
-          metricTypes: data.metricTypes,
+          metrics: data.metrics || [''],
+          metricTypes: data.metricTypes || [''],
           i: data.i,
           metricConfig: data.metricConfig,
         }"
@@ -70,7 +70,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { toRefs, reactive, defineComponent, ref, watch } from "vue";
+import { toRefs, reactive, defineComponent, ref, watch, computed } from "vue";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -88,7 +88,7 @@ import { EntityType, ListChartTypes } from "../data";
 const props = {
   data: {
     type: Object as PropType<LayoutConfig>,
-    default: () => ({ widget: {} }),
+    default: () => ({ widget: {}, graph: {} }),
   },
   activeIndex: { type: String, default: "" },
   needQuery: { type: Boolean, default: false },
@@ -107,14 +107,19 @@ export default defineComponent({
     const appStore = useAppStoreWithOut();
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
-    const isList = ListChartTypes.includes(props.data.graph.type || "");
+    const graph = computed(() => props.data.graph || {});
+    const widget = computed(() => props.data.widget || {});
+    const isList = ListChartTypes.includes(
+      (props.data.graph && props.data.graph.type) || ""
+    );
 
     if ((props.needQuery || !dashboardStore.currentDashboard.id) && !isList) {
       queryMetrics();
     }
 
     async function queryMetrics() {
-      const { metricTypes, metrics } = props.data;
+      const metricTypes = props.data.metricTypes || [];
+      const metrics = props.data.metrics || [];
       const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
       const params = await useQueryProcessor({ ...props.data, catalog });
 
@@ -129,8 +134,8 @@ export default defineComponent({
         return;
       }
       const d = {
-        metrics: props.data.metrics,
-        metricTypes: props.data.metricTypes,
+        metrics: props.data.metrics || [],
+        metricTypes: props.data.metricTypes || [],
         metricConfig: props.data.metricConfig || [],
       };
       state.source = useSourceProcessor(json, d);
@@ -149,7 +154,7 @@ export default defineComponent({
       }
     }
     watch(
-      () => [props.data.metricTypes, props.data.metrics, props.data.standard],
+      () => [props.data.metricTypes, props.data.metrics],
       () => {
         if (!dashboardStore.selectedGrid) {
           return;
@@ -157,7 +162,9 @@ export default defineComponent({
         if (props.data.i !== dashboardStore.selectedGrid.i) {
           return;
         }
-        const isList = ListChartTypes.includes(props.data.graph.type || "");
+        const isList = ListChartTypes.includes(
+          (props.data.graph && props.data.graph.type) || ""
+        );
         if (
           ListChartTypes.includes(dashboardStore.selectedGrid.graph.type) ||
           isList
@@ -170,7 +177,9 @@ export default defineComponent({
     watch(
       () => [selectorStore.currentService, selectorStore.currentDestService],
       () => {
-        const isList = ListChartTypes.includes(props.data.graph.type || "");
+        const isList = ListChartTypes.includes(
+          (props.data.graph && props.data.graph.type) || ""
+        );
         if (isList) {
           return;
         }
@@ -209,6 +218,8 @@ export default defineComponent({
       loading,
       dashboardStore,
       t,
+      graph,
+      widget,
     };
   },
 });

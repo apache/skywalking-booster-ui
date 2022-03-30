@@ -21,14 +21,6 @@ export const NewControl = {
   h: 12,
   i: "0",
   type: "Widget",
-  widget: {
-    title: "",
-  },
-  graph: {},
-  standard: {},
-  metrics: [""],
-  metricTypes: [""],
-  metricConfig: [],
 };
 export const TextConfig = {
   fontColor: "white",

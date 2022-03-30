@@ -96,7 +96,13 @@ const props = defineProps({
         metricTypes: string[];
       } & { metricConfig: MetricConfigOpt[] }
     >,
-    default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
+    default: () => ({
+      metrics: [],
+      metricTypes: [],
+      dashboardName: "",
+      fontSize: 12,
+      i: "",
+    }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   isEdit: { type: Boolean, default: false },
@@ -128,9 +134,9 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
   if (!currentPods.length) {
     return;
   }
-  const metrics = props.config.metrics.filter((d: string) => d);
-
-  if (metrics.length && metrics[0]) {
+  const metrics = (props.config.metrics || []).filter((d: string) => d);
+  const metricTypes = props.config.metricTypes || [];
+  if (metrics.length && metrics[0] && metricTypes.length && metricTypes[0]) {
     const params = await useQueryPodsMetrics(
       currentPods,
       props.config,
