@@ -36,7 +36,6 @@ limitations under the License. -->
     </div>
     <div
       class="body"
-      :class="graph.textAlign === 'center' ? 'center' : ''"
       :style="{
         backgroundColor: TextColors[graph.backgroundColor],
         color: TextColors[graph.fontColor],
@@ -95,16 +94,11 @@ function editConfig() {
 }
 
 .body {
-  text-align: center;
+  padding: 5px 20px 0 10px;
   width: 100%;
   height: 100%;
   line-height: 100%;
   cursor: pointer;
-  -webkit-box-orient: horizontal;
-  -webkit-box-pack: center;
-  box-sizing: border-box;
-  display: -webkit-box;
-  // -webkit-box-align: left;
 }
 
 .tools {

@@ -23,7 +23,7 @@ export const routesDatabase: Array<RouteRecordRaw> = [
     name: "Database",
     meta: {
       title: "database",
-      icon: "bar_chart",
+      icon: "storage",
       hasGroup: true,
     },
     redirect: "/database",
