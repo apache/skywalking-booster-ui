@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div
-    v-if="isRight"
+    v-if="available"
     ref="chartRef"
     :style="`height:${height};width:${width};`"
   ></div>
-  <div v-else>No Data</div>
+  <div v-else class="no-data">No Data</div>
 </template>
 <script lang="ts" setup>
 import {
@@ -48,12 +48,11 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const isRight = computed(
+const available = computed(
   () =>
     props.option.series && props.option.series[0] && props.option.series[0].data
 );
 onMounted(async () => {
-  console.log(props.option);
   await setOptions(props.option);
   chartRef.value && addResizeListener(unref(chartRef), resize);
   setTimeout(() => {
@@ -82,3 +81,14 @@ onBeforeUnmount(() => {
   removeResizeListener(unref(chartRef), resize);
 });
 </script>
+<style lang="scss" scoped>
+.no-data {
+  font-size: 12px;
+  height: 100%;
+  box-sizing: border-box;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+}
+</style>

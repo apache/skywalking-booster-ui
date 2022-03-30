@@ -25,7 +25,7 @@ limitations under the License. -->
       {{ metricConfig[0]?.unit }}
     </span>
   </div>
-  <div class="center chart-card" v-else>No Data</div>
+  <div class="center no-data" v-else>No Data</div>
 </template>
 <script lang="ts" setup>
 import { computed, PropType } from "vue";
@@ -63,5 +63,10 @@ const singleVal = computed(() => Number(props.data[key.value]));
   -webkit-box-orient: horizontal;
   -webkit-box-pack: center;
   -webkit-box-align: center;
+}
+
+.no-data {
+  height: 100%;
+  color: #666;
 }
 </style>
