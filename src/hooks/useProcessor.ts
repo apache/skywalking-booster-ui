@@ -236,7 +236,7 @@ export function useQueryPodsMetrics(
     duration: appStore.durationTime,
   };
   const variables: string[] = [`$duration: Duration!`];
-  const { currentService } = selectorStore;
+  const currentService = selectorStore.currentService || {};
   const fragmentList = pods.map(
     (
       d: (Instance | Endpoint | Service) & { normal: boolean },

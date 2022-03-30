@@ -50,7 +50,9 @@ const props = defineProps({
 });
 const available = computed(
   () =>
-    props.option.series && props.option.series[0] && props.option.series[0].data
+    Array.isArray(props.option.series) &&
+    props.option.series[0] &&
+    props.option.series[0].data
 );
 onMounted(async () => {
   await setOptions(props.option);

@@ -61,7 +61,6 @@ const props = defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
-console.log(props.config.color);
 const key = computed(() => Object.keys(props.data)[0] || "");
 const available = computed(
   () =>
