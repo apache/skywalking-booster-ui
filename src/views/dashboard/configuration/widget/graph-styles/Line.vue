@@ -16,19 +16,19 @@ limitations under the License. -->
   <div>
     <span class="label">{{ t("showXAxis") }}</span>
     <el-switch
-      v-model="selectedGrid.graph.showXAxis"
+      v-model="graph.showXAxis"
       active-text="Yes"
       inactive-text="No"
-      @change="updateConfig({ showXAxis: selectedGrid.graph.showXAxis })"
+      @change="updateConfig({ showXAxis: graph.showXAxis })"
     />
   </div>
   <div>
     <span class="label">{{ t("showYAxis") }}</span>
     <el-switch
-      v-model="selectedGrid.graph.showYAxis"
+      v-model="graph.showYAxis"
       active-text="Yes"
       inactive-text="No"
-      @change="updateConfig({ showYAxis: selectedGrid.graph.showYAxis })"
+      @change="updateConfig({ showYAxis: graph.showYAxis })"
     />
   </div>
   <div>
@@ -60,23 +60,23 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
-const smooth = ref(selectedGrid.graph.smooth);
-const showSymbol = ref(selectedGrid.graph.showSymbol);
-const step = ref(selectedGrid.graph.step);
+const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+const smooth = ref(graph.value.smooth);
+const showSymbol = ref(graph.value.showSymbol);
+const step = ref(graph.value.step);
 
 function updateConfig(param: { [key: string]: unknown }) {
   const graph = {
-    ...selectedGrid.graph,
+    ...dashboardStore.selectedGrid.graph,
     ...param,
   };
-  dashboardStore.selectWidget({ ...selectedGrid, graph });
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
 }
 </script>
 <style lang="scss" scoped>

@@ -30,15 +30,15 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
-const showBackground = ref(selectedGrid.graph.showBackground || false);
+const graph = dashboardStore.selectedGrid.graph;
+const showBackground = ref(graph.showBackground || false);
 
 function changeConfig(param: { [key: string]: unknown }) {
   const graph = {
-    ...selectedGrid.graph,
+    ...dashboardStore.selectedGrid.graph,
     ...param,
   };
-  dashboardStore.selectWidget({ ...selectedGrid, graph });
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
 }
 </script>
 <style lang="scss" scoped>

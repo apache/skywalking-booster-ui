@@ -32,8 +32,8 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
-const color = ref(selectedGrid.graph.color || "purple");
+const graph = dashboardStore.selectedGrid.graph || {};
+const color = ref(graph.color || "purple");
 const Colors = [
   { label: "Purple", value: "purple" },
   {

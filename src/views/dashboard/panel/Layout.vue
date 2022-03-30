@@ -17,8 +17,8 @@ limitations under the License. -->
     v-model:layout="dashboardStore.layout"
     :col-num="24"
     :row-height="10"
-    :is-draggable="true"
-    :is-resizable="true"
+    :is-draggable="dashboardStore.editMode"
+    :is-resizable="dashboardStore.editMode"
     v-if="dashboardStore.layout.length"
   >
     <grid-item

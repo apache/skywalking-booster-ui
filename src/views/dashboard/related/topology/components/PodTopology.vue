@@ -16,7 +16,9 @@ limitations under the License. -->
   <div class="tool">
     <span
       v-show="
-        dashboardStore.entity === EntityType[2].value && config.graph.showDepth
+        dashboardStore.entity === EntityType[2].value &&
+        config.graph &&
+        config.graph.showDepth
       "
     >
       <span class="label">{{ t("currentDepth") }}</span>
@@ -111,7 +113,9 @@ const width = ref<number>(100);
 const showSettings = ref<boolean>(false);
 const settings = ref<any>(props.config);
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
-const depth = ref<number>(props.config.graph.depth || 3);
+const depth = ref<number>(
+  (props.config.graph && props.config.graph.depth) || 3
+);
 const items = [
   { id: "inspect", title: "Inspect", func: inspect },
   { id: "dashboard", title: "View Dashboard", func: goDashboard },

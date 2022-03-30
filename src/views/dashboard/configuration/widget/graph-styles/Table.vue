@@ -50,17 +50,17 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
-const showTableValues = ref(selectedGrid.graph.showTableValues);
-const tableHeaderCol1 = ref(selectedGrid.graph.tableHeaderCol1);
-const tableHeaderCol2 = ref(selectedGrid.graph.tableHeaderCol2);
+const graph = dashboardStore.selectedGrid.graph || {};
+const showTableValues = ref(graph.showTableValues);
+const tableHeaderCol1 = ref(graph.tableHeaderCol1);
+const tableHeaderCol2 = ref(graph.tableHeaderCol2);
 
 function updateConfig(param: { [key: string]: unknown }) {
   const graph = {
-    ...selectedGrid.graph,
+    ...dashboardStore.selectedGrid.graph,
     ...param,
   };
-  dashboardStore.selectWidget({ ...selectedGrid, graph });
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
 }
 </script>
 <style lang="scss" scoped>
