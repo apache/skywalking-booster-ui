@@ -165,10 +165,8 @@ export default defineComponent({
         const isList = ListChartTypes.includes(
           (props.data.graph && props.data.graph.type) || ""
         );
-        if (
-          ListChartTypes.includes(dashboardStore.selectedGrid.graph.type) ||
-          isList
-        ) {
+        const chart = dashboardStore.selectedGrid.graph || {};
+        if (ListChartTypes.includes(chart.type) || isList) {
           return;
         }
         queryMetrics();
