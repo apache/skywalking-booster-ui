@@ -66,7 +66,7 @@ limitations under the License. -->
         :needQuery="needQuery"
       />
     </div>
-    <div v-else class="no-data">{{ t("noData") }}</div>
+    <div v-else class="no-data">{{ t("noGraph") }}</div>
   </div>
 </template>
 <script lang="ts">

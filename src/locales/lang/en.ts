@@ -129,6 +129,7 @@ const msg = {
   textAlign: "Text Align",
   metricLabel: "Metric Label",
   showUnit: "Show Unit",
+  noGraph: "No Graph",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",
