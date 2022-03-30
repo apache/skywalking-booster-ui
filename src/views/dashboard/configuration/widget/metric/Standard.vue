@@ -103,13 +103,10 @@ const currentMetric = ref<MetricConfigOpt>({
   ...props.currentMetricConfig,
   topN: props.currentMetricConfig.topN || 10,
 });
-const metricType = ref<string>(
-  dashboardStore.selectedGrid.metricTypes[props.index]
-);
+const metricTypes = dashboardStore.selectedGrid.metricTypes || [];
+const metricType = ref<string>(metricTypes[props.index]);
 const isTopn = computed(() =>
-  ["sortMetrics", "readSampledRecords"].includes(
-    dashboardStore.selectedGrid.metricTypes[props.index]
-  )
+  ["sortMetrics", "readSampledRecords"].includes(metricTypes[props.index])
 );
 function changeConfigs(
   index: number,
