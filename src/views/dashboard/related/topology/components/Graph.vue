@@ -24,7 +24,7 @@ limitations under the License. -->
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
     <div class="tool">
-      <span v-show="config.graph.showDepth">
+      <span v-show="graphConfig.showDepth">
         <span class="label">{{ t("currentDepth") }}</span>
         <Selector
           class="inputs"
@@ -69,7 +69,14 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { ref, onMounted, onBeforeUnmount, reactive, watch } from "vue";
+import {
+  ref,
+  onMounted,
+  onBeforeUnmount,
+  reactive,
+  watch,
+  computed,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
@@ -111,7 +118,7 @@ const loading = ref<boolean>(false);
 const simulation = ref<any>(null);
 const svg = ref<Nullable<any>>(null);
 const chart = ref<Nullable<HTMLDivElement>>(null);
-const tip = ref<any>(null);
+const tip = ref<Nullable<HTMLDivElement>>(null);
 const graph = ref<any>(null);
 const node = ref<any>(null);
 const link = ref<any>(null);
@@ -124,7 +131,8 @@ const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
 const items = ref<
   { id: string; title: string; func: any; dashboard?: string }[]
 >([]);
-const depth = ref<number>(props.config.graph.depth || 2);
+const graphConfig = computed(() => props.config.graph || {});
+const depth = ref<number>(graphConfig.value.depth || 2);
 
 onMounted(async () => {
   loading.value = true;
