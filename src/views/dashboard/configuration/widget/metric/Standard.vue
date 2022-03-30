@@ -56,7 +56,7 @@ limitations under the License. -->
         :clearable="true"
       />
     </div>
-    <div class="item" v-show="isTopn">
+    <div class="item mb-10" v-show="isTopn">
       <span class="label">{{ t("sortOrder") }}</span>
       <SelectSingle
         :value="currentMetric.sortOrder || 'DES'"
@@ -67,11 +67,12 @@ limitations under the License. -->
     </div>
     <div class="item" v-show="isTopn">
       <span class="label">{{ t("maxItemNum") }}</span>
-      <el-input-number
+      <el-input
         class="selectors"
         v-model="currentMetric.topN"
         size="small"
         placeholder="none"
+        type="number"
         :min="1"
         :max="100"
         @change="changeConfigs(index, { topN: currentMetric.topN || 10 })"
@@ -102,13 +103,10 @@ const currentMetric = ref<MetricConfigOpt>({
   ...props.currentMetricConfig,
   topN: props.currentMetricConfig.topN || 10,
 });
-const metricType = ref<string>(
-  dashboardStore.selectedGrid.metricTypes[props.index]
-);
+const metricTypes = dashboardStore.selectedGrid.metricTypes || [];
+const metricType = ref<string>(metricTypes[props.index]);
 const isTopn = computed(() =>
-  ["sortMetrics", "readSampledRecords"].includes(
-    dashboardStore.selectedGrid.metricTypes[props.index]
-  )
+  ["sortMetrics", "readSampledRecords"].includes(metricTypes[props.index])
 );
 function changeConfigs(
   index: number,

@@ -48,9 +48,9 @@ import { Option } from "@/types/app";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
-const showDepth = ref<boolean>(selectedGrid.graph.showDepth);
-const depth = ref<number>(selectedGrid.graph.depth || 2);
+const graph = dashboardStore.selectedGrid.graph || {};
+const showDepth = ref<boolean>(graph.showDepth);
+const depth = ref<number>(graph.depth || 2);
 
 function applyConfig() {
   dashboardStore.setConfigs(dashboardStore.selectedGrid);

@@ -210,9 +210,9 @@ async function queryServiceMetrics(currentServices: Service[]) {
   if (!currentServices.length) {
     return;
   }
-  const { metrics } = props.config;
+  const { metrics, metricTypes } = props.config;
 
-  if (metrics.length && metrics[0]) {
+  if (metrics.length && metrics[0] && metricTypes.length && metricTypes[0]) {
     const params = await useQueryPodsMetrics(
       currentServices,
       props.config,

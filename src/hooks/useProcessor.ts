@@ -28,6 +28,9 @@ export function useQueryProcessor(config: any) {
   if (!(config.metrics && config.metrics[0])) {
     return;
   }
+  if (!(config.metricTypes && config.metricTypes[0])) {
+    return;
+  }
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
@@ -221,13 +224,19 @@ export function useQueryPodsMetrics(
   config: { metrics: string[]; metricTypes: string[] },
   scope: string
 ) {
+  if (!(config.metrics && config.metrics[0])) {
+    return;
+  }
+  if (!(config.metricTypes && config.metricTypes[0])) {
+    return;
+  }
   const appStore = useAppStoreWithOut();
   const selectorStore = useSelectorStore();
   const conditions: { [key: string]: unknown } = {
     duration: appStore.durationTime,
   };
   const variables: string[] = [`$duration: Duration!`];
-  const { currentService } = selectorStore;
+  const currentService = selectorStore.currentService || {};
   const fragmentList = pods.map(
     (
       d: (Instance | Endpoint | Service) & { normal: boolean },
@@ -323,6 +332,12 @@ export function aggregation(val: number, config: any): number | string {
       break;
     case Calculations.ByteToKB:
       data = val / 1024;
+      break;
+    case Calculations.ByteToMB:
+      data = val / 1024 / 1024;
+      break;
+    case Calculations.ByteToGB:
+      data = val / 1024 / 1024 / 1024;
       break;
     case Calculations.Apdex:
       data = val / 10000;

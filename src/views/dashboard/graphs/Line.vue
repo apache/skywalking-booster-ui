@@ -153,7 +153,7 @@ function getOption() {
         color: "#ccc",
       },
       enterable: true,
-      extraCssText: "max-height: 300px; overflow: auto;",
+      extraCssText: "max-height: 300px; overflow: auto; border: none",
     },
     legend: {
       type: "scroll",

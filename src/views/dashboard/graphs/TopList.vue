@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="top-list">
+  <div class="top-list" v-if="available">
     <div class="chart-slow-i" v-for="(i, index) in data[key]" :key="index">
       <div class="ell tools flex-h">
         <div>
@@ -35,11 +35,12 @@ limitations under the License. -->
       <el-progress
         :stroke-width="6"
         :percentage="(i.value / maxValue) * 100"
-        :color="TextColors[config.color]"
+        :color="TextColors[config.color || 'purple']"
         :show-text="false"
       />
     </div>
   </div>
+  <div class="center no-data" v-else>No Data</div>
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
@@ -61,6 +62,12 @@ const props = defineProps({
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
 const key = computed(() => Object.keys(props.data)[0] || "");
+const available = computed(
+  () =>
+    Array.isArray(props.data[key.value]) &&
+    props.data[key.value][0] &&
+    props.data[key.value][0].value
+);
 const maxValue = computed(() => {
   if (!(props.data[key.value] && props.data[key.value].length)) {
     return 0;
@@ -113,5 +120,15 @@ function handleClick(i: string) {
   background-color: #fff;
   will-change: opacity, background-color;
   transition: opacity 0.3s, background-color 0.3s;
+}
+
+.no-data {
+  height: 100%;
+  color: #666;
+  box-sizing: border-box;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
 }
 </style>

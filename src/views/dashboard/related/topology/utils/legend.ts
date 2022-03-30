@@ -27,15 +27,15 @@ export default function topoLegend(
       .append("image")
       .attr("width", 30)
       .attr("height", 30)
-      .attr("x", clientWidth - (item === "CUBEERROR" ? 200 : 410))
-      .attr("y", clientHeight + 50)
+      .attr("x", clientWidth - 140)
+      .attr("y", clientHeight + (item === "CUBEERROR" ? 50 : 0))
       .attr("xlink:href", () =>
         item === "CUBEERROR" ? icons.CUBEERROR : icons.CUBE
       );
     graph
       .append("text")
-      .attr("x", clientWidth - (item === "CUBEERROR" ? 170 : 380))
-      .attr("y", clientHeight + 70)
+      .attr("x", clientWidth - 110)
+      .attr("y", clientHeight + (item === "CUBEERROR" ? 70 : 20))
       .text(() => {
         const desc = description || {};
         return item === "CUBEERROR" ? desc.unhealthy || "" : desc.healthy || "";

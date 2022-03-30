@@ -15,21 +15,17 @@ limitations under the License. -->
 
 <template>
   <div
+    v-if="!isNaN(singleVal)"
     class="chart-card"
     :class="{ center: config.textAlign === 'center' }"
     :style="{ fontSize: `${config.fontSize}px`, textAlign: config.textAlign }"
   >
-    {{
-      typeof singleVal === "string"
-        ? singleVal
-        : isNaN(singleVal)
-        ? null
-        : singleVal.toFixed(2)
-    }}
+    {{ singleVal.toFixed(2) }}
     <span v-show="config.showUnit">
       {{ metricConfig[0]?.unit }}
     </span>
   </div>
+  <div class="center no-data" v-else>No Data</div>
 </template>
 <script lang="ts" setup>
 import { computed, PropType } from "vue";
@@ -53,7 +49,7 @@ const props = defineProps({
 });
 const metricConfig = computed(() => props.config.metricConfig || []);
 const key = computed(() => Object.keys(props.data)[0]);
-const singleVal = computed(() => props.data[key.value]);
+const singleVal = computed(() => Number(props.data[key.value]));
 </script>
 <style lang="scss" scoped>
 .chart-card {
@@ -67,5 +63,10 @@ const singleVal = computed(() => props.data[key.value]);
   -webkit-box-orient: horizontal;
   -webkit-box-pack: center;
   -webkit-box-align: center;
+}
+
+.no-data {
+  height: 100%;
+  color: #666;
 }
 </style>

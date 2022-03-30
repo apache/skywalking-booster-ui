@@ -43,9 +43,7 @@ limitations under the License. -->
       :value="states.metricTypes[index]"
       :options="states.metricTypeList[index]"
       size="small"
-      :disabled="
-        dashboardStore.selectedGrid.graph.type && !states.isList && index !== 0
-      "
+      :disabled="graph.type && !states.isList && index !== 0"
       @change="changeMetricType(index, $event)"
       class="selectors"
     />
@@ -85,11 +83,11 @@ limitations under the License. -->
   <div>{{ t("visualization") }}</div>
   <div class="chart-types">
     <span
-      v-for="(type, index) in states.visTypes"
+      v-for="(type, index) in setVisTypes"
       :key="index"
       @click="changeChartType(type)"
       :class="{
-        active: type.value === dashboardStore.selectedGrid.graph.type,
+        active: type.value === graph.type,
       }"
     >
       {{ type.label }}
@@ -97,7 +95,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
 import { Option } from "@/types/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import {
@@ -124,24 +122,26 @@ import Standard from "./Standard.vue";
 const { t } = useI18n();
 const emit = defineEmits(["update", "loading", "changeOpt"]);
 const dashboardStore = useDashboardStore();
-const { metrics, metricTypes, graph } = dashboardStore.selectedGrid;
+const metrics = computed(() => dashboardStore.selectedGrid.metrics || []);
+const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+const metricTypes = computed(
+  () => dashboardStore.selectedGrid.metricTypes || []
+);
 const states = reactive<{
   metrics: string[];
   metricTypes: string[];
   metricTypeList: Option[][];
-  visTypes: Option[];
   isList: boolean;
   metricList: (Option & { type: string })[];
   dashboardName: string;
   dashboardList: ((DashboardItem & { label: string; value: string }) | any)[];
 }>({
-  metrics: metrics && metrics.length ? metrics : [""],
-  metricTypes: metricTypes && metricTypes.length ? metricTypes : [""],
+  metrics: metrics.value.length ? metrics.value : [""],
+  metricTypes: metricTypes.value.length ? metricTypes.value : [""],
   metricTypeList: [],
-  visTypes: [],
   isList: false,
   metricList: [],
-  dashboardName: graph.dashboardName,
+  dashboardName: graph.value.dashboardName,
   dashboardList: [{ label: "", value: "" }],
 });
 const currentMetricConfig = ref<MetricConfigOpt>({
@@ -152,15 +152,33 @@ const currentMetricConfig = ref<MetricConfigOpt>({
   sortOrder: "DES",
 });
 
-states.isList = ListChartTypes.includes(graph.type);
+states.isList = ListChartTypes.includes(graph.value.type);
 const defaultLen = ref<number>(states.isList ? 5 : 20);
-states.visTypes = setVisTypes();
-
 setDashboards();
 setMetricType();
 
+const setVisTypes = computed(() => {
+  let graphs = [];
+  if (dashboardStore.entity === EntityType[0].value) {
+    graphs = ChartTypes.filter(
+      (d: Option) =>
+        ![ChartTypes[7].value, ChartTypes[8].value].includes(d.value)
+    );
+  } else if (dashboardStore.entity === EntityType[1].value) {
+    graphs = ChartTypes.filter(
+      (d: Option) => !PodsChartTypes.includes(d.value)
+    );
+  } else {
+    graphs = ChartTypes.filter(
+      (d: Option) => !ListChartTypes.includes(d.value)
+    );
+  }
+
+  return graphs;
+});
+
 async function setMetricType(chart?: any) {
-  const graph = chart || dashboardStore.selectedGrid.graph;
+  const g = chart || dashboardStore.selectedGrid.graph || {};
   const json = await dashboardStore.fetchMetricList();
   if (json.errors) {
     ElMessage.error(json.errors);
@@ -172,7 +190,7 @@ async function setMetricType(chart?: any) {
         if (d.type === MetricsType.REGULAR_VALUE) {
           return d;
         }
-      } else if (graph.type === "Table") {
+      } else if (g.type === "Table") {
         if (
           d.type === MetricsType.LABELED_VALUE ||
           d.type === MetricsType.REGULAR_VALUE
@@ -203,7 +221,7 @@ async function setMetricType(chart?: any) {
     ...dashboardStore.selectedGrid,
     metrics: states.metrics,
     metricTypes: states.metricTypes,
-    graph,
+    graph: g,
   });
   states.metricTypeList = [];
   for (const metric of metrics) {
@@ -220,7 +238,7 @@ async function setMetricType(chart?: any) {
 }
 
 function setDashboards(type?: string) {
-  const graph = type || dashboardStore.selectedGrid.graph;
+  const chart = type || dashboardStore.selectedGrid.graph || {};
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   const arr = list.reduce(
     (
@@ -229,9 +247,9 @@ function setDashboards(type?: string) {
     ) => {
       if (d.layer === dashboardStore.layerId) {
         if (
-          (d.entity === EntityType[0].value && graph.type === "ServiceList") ||
-          (d.entity === EntityType[2].value && graph.type === "EndpointList") ||
-          (d.entity === EntityType[3].value && graph.type === "InstanceList")
+          (d.entity === EntityType[0].value && chart.type === "ServiceList") ||
+          (d.entity === EntityType[2].value && chart.type === "EndpointList") ||
+          (d.entity === EntityType[3].value && chart.type === "InstanceList")
         ) {
           prev.push({
             ...d,
@@ -248,26 +266,9 @@ function setDashboards(type?: string) {
   states.dashboardList = arr.length ? arr : [{ label: "", value: "" }];
 }
 
-function setVisTypes() {
-  let graphs = [];
-  if (dashboardStore.entity === EntityType[0].value) {
-    graphs = ChartTypes.filter((d: Option) => d.value !== ChartTypes[7].value);
-  } else if (dashboardStore.entity === EntityType[1].value) {
-    graphs = ChartTypes.filter(
-      (d: Option) => !PodsChartTypes.includes(d.value)
-    );
-  } else {
-    graphs = ChartTypes.filter(
-      (d: Option) => !ListChartTypes.includes(d.value)
-    );
-  }
-
-  return graphs;
-}
-
 function changeChartType(item: Option) {
-  const graph = DefaultGraphConfig[item.value];
-  states.isList = ListChartTypes.includes(graph.type);
+  const chart = DefaultGraphConfig[item.value] || {};
+  states.isList = ListChartTypes.includes(chart.type);
   if (states.isList) {
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
@@ -278,8 +279,8 @@ function changeChartType(item: Option) {
     states.metricTypes = [""];
     defaultLen.value = 5;
   }
-  setMetricType(graph);
-  setDashboards(graph.type);
+  setMetricType(chart);
+  setDashboards(chart.type);
   states.dashboardName = "";
   defaultLen.value = 10;
 }
@@ -415,7 +416,7 @@ function setMetricTypeList(type: string) {
   if (type !== MetricsType.REGULAR_VALUE) {
     return MetricTypes[type];
   }
-  if (states.isList || dashboardStore.selectedGrid.graph.type === "Table") {
+  if (states.isList || graph.value.type === "Table") {
     return [
       { label: "read all values in the duration", value: "readMetricsValues" },
       {

@@ -13,10 +13,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div ref="chartRef" :style="`height:${height};width:${width};`"></div>
+  <div
+    v-if="available"
+    ref="chartRef"
+    :style="`height:${height};width:${width};`"
+  ></div>
+  <div v-else class="no-data">No Data</div>
 </template>
 <script lang="ts" setup>
-import { watch, ref, Ref, onMounted, onBeforeUnmount, unref } from "vue";
+import {
+  watch,
+  ref,
+  Ref,
+  onMounted,
+  onBeforeUnmount,
+  unref,
+  computed,
+} from "vue";
 import type { PropType } from "vue";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
@@ -31,11 +44,16 @@ const props = defineProps({
   height: { type: String, default: "100%" },
   width: { type: String, default: "100%" },
   option: {
-    type: Object as PropType<{ [key: string]: unknown }>,
+    type: Object as PropType<{ [key: string]: any }>,
     default: () => ({}),
   },
 });
-
+const available = computed(
+  () =>
+    Array.isArray(props.option.series) &&
+    props.option.series[0] &&
+    props.option.series[0].data
+);
 onMounted(async () => {
   await setOptions(props.option);
   chartRef.value && addResizeListener(unref(chartRef), resize);
@@ -65,3 +83,14 @@ onBeforeUnmount(() => {
   removeResizeListener(unref(chartRef), resize);
 });
 </script>
+<style lang="scss" scoped>
+.no-data {
+  font-size: 12px;
+  height: 100%;
+  box-sizing: border-box;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+}
+</style>

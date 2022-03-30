@@ -26,6 +26,8 @@ export enum MetricQueryTypes {
 export enum Calculations {
   Percentage = "percentage",
   ByteToKB = "byteToKB",
+  ByteToMB = "ByteToMB",
+  ByteToGB = "ByteToGB",
   Apdex = "apdex",
   Precision = "precision",
   ConvertSeconds = "convertSeconds",

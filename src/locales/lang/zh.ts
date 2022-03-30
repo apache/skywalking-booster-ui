@@ -129,6 +129,7 @@ const msg = {
   textAlign: "文本对齐",
   metricLabel: "指标标签",
   showUnit: "显示单位",
+  noGraph: "无图表",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

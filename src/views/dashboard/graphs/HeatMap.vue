@@ -18,7 +18,6 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { PropType } from "vue";
-import { StandardConfig } from "@/types/dashboard";
 
 /*global defineProps */
 const props = defineProps({
@@ -31,11 +30,7 @@ const props = defineProps({
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   config: {
     type: Object as PropType<any>,
-    default: () => ({}),
-  },
-  standard: {
-    type: Object as PropType<StandardConfig>,
-    default: () => ({}),
+    default: () => ({ metrics: [] }),
   },
 });
 const option = computed(() => getOption());

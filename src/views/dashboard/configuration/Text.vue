@@ -91,12 +91,13 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const originConfig = dashboardStore.selectedGrid;
+const graph = originConfig.graph || {};
 const url = ref(originConfig.graph.url || "");
-const backgroundColor = ref(originConfig.graph.backgroundColor || "green");
-const fontColor = ref(originConfig.graph.fontColor || "white");
-const content = ref<string>(originConfig.graph.content || "");
-const fontSize = ref<number>(originConfig.graph.fontSize || 12);
-const textAlign = ref(originConfig.graph.textAlign || "left");
+const backgroundColor = ref(graph.backgroundColor || "green");
+const fontColor = ref(graph.fontColor || "white");
+const content = ref<string>(graph.content || "");
+const fontSize = ref<number>(graph.fontSize || 12);
+const textAlign = ref(graph.textAlign || "left");
 const Colors = [
   {
     label: "Green",

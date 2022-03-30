@@ -137,13 +137,15 @@ function getOption() {
     color,
     tooltip: {
       trigger: "axis",
-      // backgroundColor: "rgb(50,50,50)",
-      // textStyle: {
-      //   fontSize: 13,
-      //   color: "#ccc",
-      // },
-      // enterable: true,
-      // extraCssText: "max-height: 300px; overflow: auto;",
+      zlevel: 1000,
+      z: 60,
+      backgroundColor: "rgb(50,50,50)",
+      textStyle: {
+        fontSize: 13,
+        color: "#ccc",
+      },
+      enterable: true,
+      extraCssText: "max-height: 300px; overflow: auto; border: none",
     },
     legend: {
       type: "scroll",

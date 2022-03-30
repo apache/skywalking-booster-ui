@@ -65,17 +65,6 @@ limitations under the License. -->
         </el-table-column>
       </el-table>
     </div>
-    <el-pagination
-      class="pagination"
-      background
-      small
-      layout="prev, pager, next"
-      :page-size="pageSize"
-      :total="selectorStore.pods.length"
-      @current-change="changePage"
-      @prev-click="changePage"
-      @next-click="changePage"
-    />
   </div>
 </template>
 <script setup lang="ts">
@@ -107,7 +96,13 @@ const props = defineProps({
         metricTypes: string[];
       } & { metricConfig: MetricConfigOpt[] }
     >,
-    default: () => ({ dashboardName: "", fontSize: 12, i: "" }),
+    default: () => ({
+      metrics: [],
+      metricTypes: [],
+      dashboardName: "",
+      fontSize: 12,
+      i: "",
+    }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   isEdit: { type: Boolean, default: false },
@@ -117,7 +112,6 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const endpoints = ref<Endpoint[]>([]);
-const pageSize = 10;
 const searchText = ref<string>("");
 
 queryEndpoints();
@@ -133,18 +127,16 @@ async function queryEndpoints() {
     ElMessage.error(resp.errors);
     return;
   }
-  endpoints.value = selectorStore.pods.filter(
-    (d: unknown, index: number) => index < pageSize
-  );
+  endpoints.value = selectorStore.pods;
   queryEndpointMetrics(endpoints.value);
 }
 async function queryEndpointMetrics(currentPods: Endpoint[]) {
   if (!currentPods.length) {
     return;
   }
-  const metrics = props.config.metrics.filter((d: string) => d);
-
-  if (metrics.length && metrics[0]) {
+  const metrics = (props.config.metrics || []).filter((d: string) => d);
+  const metricTypes = props.config.metricTypes || [];
+  if (metrics.length && metrics[0] && metricTypes.length && metricTypes[0]) {
     const params = await useQueryPodsMetrics(
       currentPods,
       props.config,
@@ -179,14 +171,6 @@ function clickEndpoint(scope: any) {
   router.push(
     `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${scope.row.id}/${d.name}`
   );
-}
-function changePage(pageIndex: number) {
-  endpoints.value = selectorStore.pods.filter((d: unknown, index: number) => {
-    if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
-      return d;
-    }
-  });
-  queryEndpointMetrics(endpoints.value);
 }
 async function searchList() {
   await queryEndpoints();

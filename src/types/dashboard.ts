@@ -28,13 +28,12 @@ export interface LayoutConfig {
   w: number;
   h: number;
   i: string;
-  widget: WidgetConfig;
-  graph: GraphConfig;
-  standard: StandardConfig;
-  metrics: string[];
+  widget?: WidgetConfig;
+  graph?: GraphConfig;
+  metrics?: string[];
   type: string;
-  metricTypes: string[];
-  children?: any;
+  metricTypes?: string[];
+  children?: { name: string; children: LayoutConfig[] }[];
   activedTabIndex?: number;
   metricConfig?: MetricConfigOpt[];
 }
@@ -51,20 +50,6 @@ export type MetricConfigOpt = {
 export interface WidgetConfig {
   title?: string;
   tips?: string;
-}
-
-export interface StandardConfig {
-  sortOrder?: string;
-  unit?: string;
-  labelsIndex?: string;
-  metricLabels?: string;
-  plus?: string;
-  minus?: string;
-  multiply?: string;
-  divide?: string;
-  milliseconds?: string;
-  seconds?: string;
-  maxItemNum?: number;
 }
 
 export type GraphConfig =
