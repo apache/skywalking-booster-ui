@@ -349,6 +349,9 @@ async function queryMetrics() {
     return;
   }
   const { metricConfig, metricTypes, metrics } = dashboardStore.selectedGrid;
+  if (!(metrics && metrics[0] && metricTypes && metricTypes[0])) {
+    return;
+  }
   const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
   const params = useQueryProcessor({ ...states, metricConfig, catalog });
   if (!params) {

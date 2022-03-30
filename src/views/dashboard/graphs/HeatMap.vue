@@ -36,8 +36,11 @@ const props = defineProps({
 const option = computed(() => getOption());
 
 function getOption() {
-  const metric = props.config.metrics[0];
-  const nodes = (props.data[metric] && props.data[metric].nodes) || [];
+  const metric = props.config.metrics && props.config.metrics[0];
+  let nodes: any = [];
+  if (metric) {
+    nodes = (props.data[metric] && props.data[metric].nodes) || [];
+  }
   const source = (nodes || []).map((d: number[]) => d[2]);
   const maxItem = Math.max(...source);
   const minItem = Math.min(...source);
