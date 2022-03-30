@@ -324,6 +324,12 @@ export function aggregation(val: number, config: any): number | string {
     case Calculations.ByteToKB:
       data = val / 1024;
       break;
+    case Calculations.ByteToMB:
+      data = val / 1024 / 1024;
+      break;
+    case Calculations.ByteToGB:
+      data = val / 1024 / 1024 / 1024;
+      break;
     case Calculations.Apdex:
       data = val / 10000;
       break;
