@@ -311,7 +311,7 @@ const msg = {
   keywordsOfContentLogTips:
     "Current storage of SkyWalking OAP server does not support this.",
   setEvent: "Set Event",
-  viewAttributes: "View Attributes",
+  viewAttributes: "View",
   serviceEvents: "Service Events",
   select: "Select",
   eventID: "Event ID",

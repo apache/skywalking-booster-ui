@@ -310,7 +310,7 @@ const msg = {
     "只有core/default/searchableLogsTags中定义的标记才可搜索。查看配置词汇表页面上的更多详细信息。",
   keywordsOfContentLogTips: "SkyWalking OAP服务器的当前存储不支持此操作",
   setEvent: "设置事件",
-  viewAttributes: "实例属性",
+  viewAttributes: "查看",
   serviceEvents: "服务事件",
   select: "选择",
   eventID: "事件ID",

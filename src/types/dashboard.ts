@@ -72,6 +72,7 @@ export interface LineConfig extends AreaConfig {
   step?: boolean;
   showXAxis?: boolean;
   showYAxis?: boolean;
+  smallTips?: boolean;
 }
 
 export interface AreaConfig {

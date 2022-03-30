@@ -53,7 +53,12 @@ limitations under the License. -->
                 v-if="config.metricTypes[index] === 'readMetricsValues'"
                 :data="{ [metric]: scope.row[metric] }"
                 :intervalTime="intervalTime"
-                :config="{ showXAxis: false, showYAxis: false }"
+                :config="{
+                  showXAxis: false,
+                  showYAxis: false,
+                  smallTips: true,
+                  showSymbol: true,
+                }"
               />
               <Card
                 v-else
@@ -204,7 +209,7 @@ watch(
 @import "./style.scss";
 
 .chart {
-  height: 39px;
+  height: 60px;
 }
 
 .inputs {
