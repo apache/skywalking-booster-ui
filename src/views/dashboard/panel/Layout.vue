@@ -17,8 +17,8 @@ limitations under the License. -->
     v-model:layout="dashboardStore.layout"
     :col-num="24"
     :row-height="10"
-    :is-draggable="true"
-    :is-resizable="true"
+    :is-draggable="dashboardStore.editMode"
+    :is-resizable="dashboardStore.editMode"
     v-if="dashboardStore.layout.length"
   >
     <grid-item
@@ -86,7 +86,7 @@ export default defineComponent({
 .vue-grid-item:not(.vue-grid-placeholder) {
   background: #fff;
   box-shadow: 0px 1px 4px 0px #00000029;
-  border-radius: 5px;
+  border-radius: 3px;
 }
 
 .vue-grid-item.active {

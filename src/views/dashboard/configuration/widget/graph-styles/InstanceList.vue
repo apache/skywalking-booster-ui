@@ -34,15 +34,15 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
-const fontSize = ref(selectedGrid.graph.fontSize);
+const graph = dashboardStore.selectedGrid.graph;
+const fontSize = ref(graph.fontSize);
 
 function updateConfig(param: { [key: string]: unknown }) {
   const graph = {
-    ...selectedGrid.graph,
+    ...dashboardStore.selectedGrid.graph,
     ...param,
   };
-  dashboardStore.selectWidget({ ...selectedGrid, graph });
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
 }
 </script>
 <style lang="scss" scoped>

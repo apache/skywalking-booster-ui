@@ -13,12 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div
-    v-if="available"
-    ref="chartRef"
-    :style="`height:${height};width:${width};`"
-  ></div>
-  <div v-else class="no-data">No Data</div>
+  <div ref="chartRef" :style="`height:${height};width:${width};`">
+    <div v-if="!available" class="no-data">No Data</div>
+  </div>
 </template>
 <script lang="ts" setup>
 import {
@@ -50,9 +47,10 @@ const props = defineProps({
 });
 const available = computed(
   () =>
-    Array.isArray(props.option.series) &&
-    props.option.series[0] &&
-    props.option.series[0].data
+    (Array.isArray(props.option.series) &&
+      props.option.series[0] &&
+      props.option.series[0].data) ||
+    (Array.isArray(props.option.series.data) && props.option.series.data[0])
 );
 onMounted(async () => {
   await setOptions(props.option);
@@ -92,5 +90,6 @@ onBeforeUnmount(() => {
   -webkit-box-orient: horizontal;
   -webkit-box-pack: center;
   -webkit-box-align: center;
+  color: #666;
 }
 </style>

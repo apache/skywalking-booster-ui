@@ -165,7 +165,7 @@ span.collapse {
 
 .menu-control {
   position: absolute;
-  top: 8px;
+  top: 7px;
   left: 200px;
   cursor: pointer;
   transition: all 0.2s linear;

@@ -39,6 +39,7 @@ const props = defineProps({
       opacity: 0.4,
       showXAxis: true,
       showYAxis: true,
+      smallTips: false,
     }),
   },
 });
@@ -79,7 +80,7 @@ function getOption() {
       name: i,
       type: "line",
       symbol: "circle",
-      symbolSize: 8,
+      symbolSize: 6,
       showSymbol: props.config.showSymbol,
       step: props.config.step,
       smooth: props.config.smooth,
@@ -141,20 +142,31 @@ function getOption() {
       ];
       break;
   }
+  const tooltip = {
+    trigger: "axis",
+    backgroundColor: "rgb(50,50,50)",
+    textStyle: {
+      fontSize: 12,
+      color: "#ccc",
+    },
+    enterable: true,
+    extraCssText: "max-height: 300px; overflow: auto; border: none;",
+  };
+  const tips = {
+    formatter(params: any) {
+      return `${params[0].value[1]}`;
+    },
+    extraCssText: `height: 20px; padding:0 2px;`,
+    trigger: "axis",
+    textStyle: {
+      fontSize: 12,
+      color: "#333",
+    },
+  };
+
   return {
     color,
-    tooltip: {
-      trigger: "axis",
-      zlevel: 1000,
-      z: 60,
-      backgroundColor: "rgb(50,50,50)",
-      textStyle: {
-        fontSize: 13,
-        color: "#ccc",
-      },
-      enterable: true,
-      extraCssText: "max-height: 300px; overflow: auto; border: none",
-    },
+    tooltip: props.config.smallTips ? tips : tooltip,
     legend: {
       type: "scroll",
       show: keys.length === 1 ? false : true,

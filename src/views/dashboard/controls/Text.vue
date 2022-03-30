@@ -36,21 +36,21 @@ limitations under the License. -->
     </div>
     <div
       class="body"
-      :class="data.graph.textAlign === 'center' ? 'center' : ''"
       :style="{
-        backgroundColor: TextColors[data.graph.backgroundColor],
-        color: TextColors[data.graph.fontColor],
-        fontSize: data.graph.fontSize + 'px',
-        textAlign: data.graph.textAlign,
+        backgroundColor: TextColors[graph.backgroundColor],
+        color: TextColors[graph.fontColor],
+        fontSize: graph.fontSize + 'px',
+        textAlign: graph.textAlign,
       }"
     >
-      <a :href="data.graph.url" target="_blank">
-        {{ data.graph.content }}
+      <a :href="graph.url" target="_blank">
+        {{ graph.content }}
       </a>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import { computed } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -65,6 +65,7 @@ const props = defineProps({
   activeIndex: { type: String, default: "" },
 });
 const { t } = useI18n();
+const graph = computed(() => props.data.graph || {});
 const dashboardStore = useDashboardStore();
 
 function removeTopo() {
@@ -93,16 +94,11 @@ function editConfig() {
 }
 
 .body {
-  text-align: center;
+  padding: 5px 20px 0 10px;
   width: 100%;
   height: 100%;
   line-height: 100%;
   cursor: pointer;
-  -webkit-box-orient: horizontal;
-  -webkit-box-pack: center;
-  box-sizing: border-box;
-  display: -webkit-box;
-  // -webkit-box-align: left;
 }
 
 .tools {

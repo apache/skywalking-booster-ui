@@ -16,10 +16,10 @@ limitations under the License. -->
   <div class="item">
     <span class="label">{{ t("showGroup") }}</span>
     <el-switch
-      v-model="selectedGrid.graph.showGroup"
+      v-model="graph.showGroup"
       active-text="Yes"
       inactive-text="No"
-      @change="updateConfig({ showGroup: selectedGrid.graph.showGroup })"
+      @change="updateConfig({ showGroup: graph.showGroup })"
     />
   </div>
   <div class="item">
@@ -37,14 +37,14 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
-const fontSize = ref(selectedGrid.graph.fontSize);
+const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+const fontSize = ref(graph.value.fontSize);
 
 function updateConfig(param: { [key: string]: unknown }) {
   const { selectedGrid } = dashboardStore;

@@ -43,9 +43,9 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
-const fontSize = ref(selectedGrid.graph.fontSize);
-const showUnit = ref<boolean>(selectedGrid.graph.showUnit);
+const graph = dashboardStore.selectedGrid.graph || {};
+const fontSize = ref(graph.fontSize);
+const showUnit = ref<boolean>(graph.showUnit);
 
 function updateConfig(param: { [key: string]: unknown }) {
   const graph = {
