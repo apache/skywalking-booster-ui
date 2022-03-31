@@ -68,7 +68,7 @@ export function useQueryProcessor(config: any) {
         normal: selectorStore.currentService
           ? selectorStore.currentService.normal
           : true,
-        scope: config.catalog || dashboardStore.entity,
+        scope: config.catalog,
         topN: c.topN || 10,
         order: c.sortOrder || "DES",
       };

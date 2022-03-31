@@ -80,24 +80,39 @@ limitations under the License. -->
     </div>
     <div class="flex-h tools" v-loading="loading">
       <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
-        <span
-          @click="clickIcons(t)"
-          v-for="(t, index) in toolIcons"
-          :key="index"
-          :title="t.content"
-        >
-          <el-tooltip :content="t.content" placement="bottom">
-            <i>
-              <Icon class="icon-btn" size="sm" :iconName="t.name" />
-            </i>
-          </el-tooltip>
-        </span>
+        <el-dropdown content="Controls" placement="bottom">
+          <i>
+            <Icon class="icon-btn" size="sm" iconName="control" />
+          </i>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                @click="clickIcons(t)"
+                v-for="(t, index) in toolIcons"
+                :key="index"
+                :title="t.content"
+              >
+                <Icon class="mr-5" size="middle" :iconName="t.name" />
+                <span>{{ t.content }}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-tooltip content="Apply" placement="bottom">
+          <i>
+            <Icon class="icon-btn" size="sm" iconName="save" />
+          </i>
+        </el-tooltip>
       </div>
       <div class="switch">
         <el-switch
           v-model="dashboardStore.editMode"
           active-text="Edit"
           inactive-text="View"
+          size="small"
+          inline-prompt
+          active-color="#409eff"
+          inactive-color="#999"
           @change="changeMode"
         />
       </div>
@@ -105,7 +120,8 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, unref } from "vue";
+import { ClickOutside as vClickOutside } from "element-plus";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
