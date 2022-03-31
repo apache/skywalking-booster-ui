@@ -80,24 +80,39 @@ limitations under the License. -->
     </div>
     <div class="flex-h tools" v-loading="loading">
       <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
-        <span
-          @click="clickIcons(t)"
-          v-for="(t, index) in toolIcons"
-          :key="index"
-          :title="t.content"
-        >
-          <el-tooltip :content="t.content" placement="bottom">
-            <i>
-              <Icon class="icon-btn" size="sm" :iconName="t.name" />
-            </i>
-          </el-tooltip>
-        </span>
+        <el-dropdown content="Controls" placement="bottom">
+          <i>
+            <Icon class="icon-btn" size="sm" iconName="control" />
+          </i>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                @click="clickIcons(t)"
+                v-for="(t, index) in toolIcons"
+                :key="index"
+                :title="t.content"
+              >
+                <Icon class="mr-5" size="middle" :iconName="t.name" />
+                <span>{{ t.content }}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-tooltip content="Apply" placement="bottom">
+          <i @click="applyDashboard">
+            <Icon class="icon-btn" size="sm" iconName="save" />
+          </i>
+        </el-tooltip>
       </div>
       <div class="switch">
         <el-switch
           v-model="dashboardStore.editMode"
           active-text="Edit"
           inactive-text="View"
+          size="small"
+          inline-prompt
+          active-color="#409eff"
+          inactive-color="#999"
           @change="changeMode"
         />
       </div>
@@ -341,13 +356,13 @@ function changeMode() {
   ElMessage.warning(t("viewWarning"));
 }
 
+async function applyDashboard() {
+  loading.value = true;
+  await dashboardStore.saveDashboard();
+  loading.value = false;
+}
+
 async function clickIcons(t: { id: string; content: string; name: string }) {
-  if (t.id === "apply") {
-    loading.value = true;
-    await dashboardStore.saveDashboard();
-    loading.value = false;
-    return;
-  }
   if (
     dashboardStore.selectedGrid &&
     dashboardStore.selectedGrid.type === "Tab"
@@ -545,6 +560,7 @@ function searchDestPods(query: string) {
 
 .tools {
   justify-content: space-between;
+  height: auto;
 }
 
 .icon-btn {

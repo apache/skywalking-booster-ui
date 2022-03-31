@@ -150,12 +150,14 @@ function getOption() {
       color: "#ccc",
     },
     enterable: true,
+    confine: true,
     extraCssText: "max-height: 300px; overflow: auto; border: none;",
   };
   const tips = {
     formatter(params: any) {
       return `${params[0].value[1]}`;
     },
+    confine: true,
     extraCssText: `height: 20px; padding:0 2px;`,
     trigger: "axis",
     textStyle: {

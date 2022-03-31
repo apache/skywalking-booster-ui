@@ -21,7 +21,9 @@ limitations under the License. -->
         v-model="currentMetric.unit"
         size="small"
         placeholder="Please input unit"
-        @change="changeConfigs(index, { unit: currentMetric.unit })"
+        @change="
+          updateConfig(index, { unit: encodeURIComponent(currentMetric.unit) })
+        "
       />
     </div>
     <div class="item mb-10" v-show="metricType === 'readLabeledMetricsValues'">
@@ -31,7 +33,11 @@ limitations under the License. -->
         v-model="currentMetric.label"
         size="small"
         placeholder="Please input a name"
-        @change="changeConfigs(index, { label: currentMetric.label })"
+        @change="
+          updateConfig(index, {
+            label: encodeURIComponent(currentMetric.label),
+          })
+        "
       />
     </div>
     <div class="item mb-10" v-show="metricType === 'readLabeledMetricsValues'">
@@ -42,7 +48,9 @@ limitations under the License. -->
         size="small"
         placeholder="auto"
         @change="
-          changeConfigs(index, { labelsIndex: currentMetric.labelsIndex })
+          updateConfig(index, {
+            labelsIndex: encodeURIComponent(currentMetric.labelsIndex),
+          })
         "
       />
     </div>
@@ -108,13 +116,21 @@ const metricType = ref<string>(metricTypes[props.index]);
 const isTopn = computed(() =>
   ["sortMetrics", "readSampledRecords"].includes(metricTypes[props.index])
 );
+function updateConfig(index: number, param: { [key: string]: string }) {
+  const key = Object.keys(param)[0];
+  if (!key) {
+    return;
+  }
+  changeConfigs(index, { key: decodeURIComponent(param[key]) });
+}
 function changeConfigs(
   index: number,
   param: { [key: string]: string | number }
 ) {
   const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
-  metricConfig[index] = { ...metricConfig[index], ...param };
 
+  metricConfig[index] = { ...metricConfig[index], ...param };
+  currentMetric.value = metricConfig[index];
   dashboardStore.selectWidget({
     ...dashboardStore.selectedGrid,
     metricConfig,

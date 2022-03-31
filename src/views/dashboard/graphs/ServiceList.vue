@@ -55,8 +55,8 @@ limitations under the License. -->
           </template>
         </el-table-column>
         <el-table-column
-          v-for="(metric, index) in config.metrics"
-          :label="`${metric} ${getUnit(index)}`"
+          v-for="(metric, index) in colMetrics"
+          :label="`${metric} ${decodeURIComponent(getUnit(index))}`"
           :key="metric + index"
         >
           <template #default="scope">
@@ -96,7 +96,7 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { watch, ref } from "vue";
+import { watch, ref, computed } from "vue";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import { ServiceListConfig } from "@/types/dashboard";
@@ -138,6 +138,9 @@ const services = ref<Service[]>([]);
 const searchText = ref<string>("");
 const groups = ref<any>({});
 const sortServices = ref<(Service & { merge: boolean })[]>([]);
+const colMetrics = computed(() =>
+  props.config.metrics.filter((d: string) => d)
+);
 
 queryServices();
 
@@ -278,9 +281,9 @@ function getUnit(index: number) {
       props.config.metricConfig[index].unit) ||
     "";
   if (u) {
-    return `(${u})`;
+    return `(${encodeURIComponent(u)})`;
   }
-  return u;
+  return encodeURIComponent("");
 }
 watch(
   () => [props.config.metricTypes, props.config.metrics],
