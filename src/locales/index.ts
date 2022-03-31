@@ -23,13 +23,12 @@ const messages = {
   zh,
 };
 
-const savedLanguage = window.localStorage.getItem("lang");
+const savedLanguage = window.localStorage.getItem("language");
 let language = navigator.language.split("-")[0];
 if (!savedLanguage) {
-  window.localStorage.setItem("lang", language);
+  window.localStorage.setItem("language", language);
 }
 language = savedLanguage ? savedLanguage : language;
-
 const i18n = createI18n({
   locale: language,
   messages,

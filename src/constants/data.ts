@@ -19,3 +19,8 @@ export enum TimeType {
   HOUR_TIME = "HOUR",
   DAY_TIME = "DAY",
 }
+
+export const Languages = [
+  { label: "English", value: "en" },
+  { label: "Chinese", value: "zh" },
+];
