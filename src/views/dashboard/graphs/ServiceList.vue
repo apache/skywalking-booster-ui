@@ -55,7 +55,7 @@ limitations under the License. -->
           </template>
         </el-table-column>
         <el-table-column
-          v-for="(metric, index) in config.metrics"
+          v-for="(metric, index) in colMetrics"
           :label="`${metric} ${getUnit(index)}`"
           :key="metric + index"
         >
@@ -96,7 +96,7 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { watch, ref } from "vue";
+import { watch, ref, computed } from "vue";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import { ServiceListConfig } from "@/types/dashboard";
@@ -138,6 +138,9 @@ const services = ref<Service[]>([]);
 const searchText = ref<string>("");
 const groups = ref<any>({});
 const sortServices = ref<(Service & { merge: boolean })[]>([]);
+const colMetrics = computed(() =>
+  props.config.metrics.filter((d: string) => d)
+);
 
 queryServices();
 
