@@ -27,47 +27,34 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import Dashboard from "./dashboard/Edit.vue";
 import { useI18n } from "vue-i18n";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { RoutesMap } from "@/constants/data";
 
 const route = useRoute();
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
-const routesMap: { [key: string]: string } = {
-  GeneralServices: "GENERAL",
-  Database: "VIRTUAL_DATABASE",
-  MeshServices: "MESH",
-  ControlPanel: "MESH_CP",
-  DataPanel: "MESH_DP",
-  Linux: "OS_LINUX",
-  SkyWalkingServer: "SO11Y_OAP",
-  Satellite: "SO11Y_SATELLITE",
-  Functions: "FAAS",
-  Browser: "BROWSER",
-  KubernetesCluster: "K8S",
-  KubernetesService: "K8S_SERVICE",
-};
 const layer = ref<string>("GENERAL");
 
 getDashboard();
 
 async function getDashboard() {
-  layer.value = routesMap[String(route.name)];
+  layer.value = RoutesMap[String(route.name)];
   dashboardStore.setLayer(layer.value);
-  dashboardStore.setEntity(EntityType[1].value);
   dashboardStore.setMode(false);
   await dashboardStore.setDashboards();
-  const index = dashboardStore.dashboards.findIndex(
+  const item = dashboardStore.dashboards.find(
     (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
       d.layer === dashboardStore.layerId &&
-      d.entity === EntityType[1].value &&
+      [EntityType[0].value, EntityType[1].value].includes(d.entity) &&
       d.isRoot
   );
-  if (index < 0) {
+  if (!item) {
     appStore.setPageTitle(dashboardStore.layer);
     dashboardStore.setCurrentDashboard(null);
+    dashboardStore.setEntity(EntityType[1].value);
     return;
   }
-  const item = dashboardStore.dashboards[index];
+  dashboardStore.setEntity(item.entity);
   dashboardStore.setCurrentDashboard(item);
 }
 </script>

@@ -24,3 +24,18 @@ export const Languages = [
   { label: "English", value: "en" },
   { label: "Chinese", value: "zh" },
 ];
+
+export const RoutesMap: { [key: string]: string } = {
+  GeneralServices: "GENERAL",
+  Database: "VIRTUAL_DATABASE",
+  MeshServices: "MESH",
+  ControlPanel: "MESH_CP",
+  DataPanel: "MESH_DP",
+  Linux: "OS_LINUX",
+  SkyWalkingServer: "SO11Y_OAP",
+  Satellite: "SO11Y_SATELLITE",
+  Functions: "FAAS",
+  Browser: "BROWSER",
+  KubernetesCluster: "K8S",
+  KubernetesService: "K8S_SERVICE",
+};

@@ -86,7 +86,11 @@ limitations under the License. -->
             <el-popconfirm
               title="Are you sure to set this?"
               @confirm="setRoot(scope.row)"
-              v-if="scope.row.entity === EntityType[1].value"
+              v-if="
+                [EntityType[0].value, EntityType[1].value].includes(
+                  scope.row.entity
+                )
+              "
             >
               <template #reference>
                 <el-button size="small" style="width: 120px" type="danger">
@@ -269,7 +273,7 @@ async function setRoot(row: DashboardItem) {
     } else {
       if (
         d.layer === row.layer &&
-        d.entity === row.entity &&
+        [EntityType[0].value, EntityType[1].value].includes(d.entity) &&
         row.isRoot === false &&
         d.isRoot === true
       ) {
