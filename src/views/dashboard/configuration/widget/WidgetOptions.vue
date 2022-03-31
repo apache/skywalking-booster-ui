@@ -20,7 +20,7 @@ limitations under the License. -->
       v-model="title"
       size="small"
       placeholder="Please input title"
-      @change="updateWidgetConfig({ title })"
+      @change="updateWidgetConfig({ title: encodeURIComponent(title) })"
     />
   </div>
   <div class="item">
@@ -30,7 +30,7 @@ limitations under the License. -->
       v-model="tips"
       size="small"
       placeholder="Please input tips"
-      @change="updateWidgetConfig({ tips })"
+      @change="updateWidgetConfig({ tips: encodeURIComponent(tips) })"
     />
   </div>
 </template>
@@ -46,10 +46,14 @@ const widget = dashboardStore.selectedGrid.widget || {};
 const title = ref<string>(widget.title || "");
 const tips = ref<string>(widget.tips || "");
 
-function updateWidgetConfig(param: { [key: string]: unknown }) {
+function updateWidgetConfig(param: { [key: string]: string }) {
+  const key = Object.keys(param)[0];
+  if (!key) {
+    return;
+  }
   const widget = {
     ...dashboardStore.selectedGrid.widget,
-    ...param,
+    [key]: decodeURIComponent(param[key]),
   };
   dashboardStore.selectWidget({ ...selectedGrid, widget });
 }

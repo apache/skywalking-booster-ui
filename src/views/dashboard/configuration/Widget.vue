@@ -16,10 +16,12 @@ limitations under the License. -->
   <div class="widget-config flex-v">
     <div class="graph" v-loading="loading">
       <div class="header">
-        <span>{{ widget.title || "" }}</span>
+        <span>{{ decodeURIComponent(title) }}</span>
         <div class="tips" v-show="widget.tips">
-          <el-tooltip :content="widget.tips || ''">
-            <Icon iconName="info_outline" size="sm" />
+          <el-tooltip :content="decodeURIComponent(tips) || ''">
+            <span>
+              <Icon iconName="info_outline" size="sm" />
+            </span>
           </el-tooltip>
         </div>
       </div>
@@ -113,6 +115,8 @@ export default defineComponent({
     const originConfig = dashboardStore.selectedGrid;
     const widget = computed(() => dashboardStore.selectedGrid.widget || {});
     const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+    const title = computed(() => encodeURIComponent(widget.value.title || ""));
+    const tips = computed(() => encodeURIComponent(widget.value.tips || ""));
 
     function getSource(source: unknown) {
       states.source = source;
@@ -152,6 +156,8 @@ export default defineComponent({
       isEdit,
       widget,
       graph,
+      title,
+      tips,
     };
   },
 });

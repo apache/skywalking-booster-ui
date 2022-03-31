@@ -22,13 +22,14 @@ limitations under the License. -->
   >
     {{ singleVal.toFixed(2) }}
     <span v-show="config.showUnit">
-      {{ metricConfig[0]?.unit }}
+      {{ decodeURIComponent(unit) }}
     </span>
   </div>
-  <div class="center no-data" v-else>No Data</div>
+  <div class="center no-data" v-else>{{ t("noData") }}</div>
 </template>
 <script lang="ts" setup>
 import { computed, PropType } from "vue";
+import { useI18n } from "vue-i18n";
 import { CardConfig, MetricConfigOpt } from "@/types/dashboard";
 
 /*global defineProps */
@@ -47,9 +48,13 @@ const props = defineProps({
     }),
   },
 });
+const { t } = useI18n();
 const metricConfig = computed(() => props.config.metricConfig || []);
 const key = computed(() => Object.keys(props.data)[0]);
 const singleVal = computed(() => Number(props.data[key.value]));
+const unit = computed(
+  () => metricConfig.value[0] && encodeURIComponent(metricConfig.value[0].unit)
+);
 </script>
 <style lang="scss" scoped>
 .chart-card {
