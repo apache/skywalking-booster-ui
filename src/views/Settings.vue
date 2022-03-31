@@ -14,18 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="settings">
-    <!-- <div class="flex-h item">
-      <span class="label">{{ t("version") }}</span>
-      <span>{{ rocketbotGlobal.version }}</span>
-    </div> -->
     <div class="flex-h item">
       <span class="label">{{ t("language") }}</span>
-      <el-switch
+      <Selector
         v-model="lang"
+        :options="Languages"
+        placeholder="Select a language"
         @change="setLang"
-        active-text="En"
-        inactive-text="Zh"
-        style="height: 25px"
+        size="small"
+        style="font-size: 14px"
       />
     </div>
     <div class="flex-h item">
@@ -76,12 +73,14 @@ import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import timeFormat from "@/utils/timeFormat";
+import { Languages } from "@/constants/data";
+import Selector from "@/components/Selector.vue";
 
 const { t, locale } = useI18n();
 const state = reactive<{ timer: ReturnType<typeof setInterval> | null }>({
   timer: null,
 });
-const lang = ref<boolean>(locale.value === "zh" ? false : true);
+const lang = ref<string>(locale.value || "en");
 const autoTime = ref<number>(6);
 const auto = ref<boolean>(false);
 const appStore = useAppStoreWithOut();
@@ -123,13 +122,8 @@ const changeAutoTime = () => {
   }
 };
 const setLang = (): void => {
-  if (lang.value) {
-    locale.value = "en";
-    window.localStorage.setItem("lang", "en");
-  } else {
-    locale.value = "zh";
-    window.localStorage.setItem("lang", "zh");
-  }
+  locale.value = lang.value;
+  window.localStorage.setItem("language", lang.value);
 };
 const setUTCHour = () => {
   if (utcHour.value < -12) {
@@ -184,7 +178,6 @@ const setUTCMin = () => {
 
 .settings {
   color: #222;
-  font-family: inherit;
   font-size: 14px;
   padding: 20px;
 

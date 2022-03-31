@@ -49,7 +49,7 @@ interface Option {
 const emit = defineEmits(["change", "query"]);
 const props = defineProps({
   options: {
-    type: Array as PropType<(Option & { disabled: boolean })[]>,
+    type: Array as PropType<(Option & { disabled?: boolean })[]>,
     default: () => [],
   },
   value: {
