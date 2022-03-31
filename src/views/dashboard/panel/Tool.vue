@@ -99,7 +99,7 @@ limitations under the License. -->
           </template>
         </el-dropdown>
         <el-tooltip content="Apply" placement="bottom">
-          <i>
+          <i @click="applyDashboard">
             <Icon class="icon-btn" size="sm" iconName="save" />
           </i>
         </el-tooltip>
@@ -120,8 +120,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, unref } from "vue";
-import { ClickOutside as vClickOutside } from "element-plus";
+import { reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -357,13 +356,13 @@ function changeMode() {
   ElMessage.warning(t("viewWarning"));
 }
 
+async function applyDashboard() {
+  loading.value = true;
+  await dashboardStore.saveDashboard();
+  loading.value = false;
+}
+
 async function clickIcons(t: { id: string; content: string; name: string }) {
-  if (t.id === "apply") {
-    loading.value = true;
-    await dashboardStore.saveDashboard();
-    loading.value = false;
-    return;
-  }
   if (
     dashboardStore.selectedGrid &&
     dashboardStore.selectedGrid.type === "Tab"
@@ -561,6 +560,7 @@ function searchDestPods(query: string) {
 
 .tools {
   justify-content: space-between;
+  height: auto;
 }
 
 .icon-btn {
