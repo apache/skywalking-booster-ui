@@ -44,7 +44,7 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column
           v-for="(metric, index) in colMetrics"
-          :label="`${metric} ${getUnit(index)}`"
+          :label="`${metric} ${decodeURIComponent(getUnit(index))}`"
           :key="metric + index"
         >
           <template #default="scope">
@@ -188,9 +188,9 @@ function getUnit(index: number) {
       props.config.metricConfig[index].unit) ||
     "";
   if (u) {
-    return `(${u})`;
+    return `(${encodeURIComponent(u)})`;
   }
-  return u;
+  return encodeURIComponent("");
 }
 watch(
   () => [props.config.metricTypes, props.config.metrics],
