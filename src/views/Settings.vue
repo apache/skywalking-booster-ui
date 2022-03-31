@@ -14,10 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="settings">
-    <!-- <div class="flex-h item">
-      <span class="label">{{ t("version") }}</span>
-      <span>{{ rocketbotGlobal.version }}</span>
-    </div> -->
     <div class="flex-h item">
       <span class="label">{{ t("language") }}</span>
       <el-switch
