@@ -166,9 +166,9 @@ const states = reactive<{
   currentDestPod: "",
 });
 const key = computed(() => {
-  const type = EntityType.filter(
+  const type = EntityType.find(
     (d: Option) => d.value === dashboardStore.entity
-  )[0];
+  );
 
   return (type && type.key) || 0;
 });
