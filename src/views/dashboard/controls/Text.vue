@@ -38,12 +38,17 @@ limitations under the License. -->
       class="body"
       :style="{
         backgroundColor: TextColors[graph.backgroundColor],
-        color: TextColors[graph.fontColor],
-        fontSize: graph.fontSize + 'px',
         textAlign: graph.textAlign,
       }"
     >
-      <a :href="graph.url" target="_blank">
+      <a
+        :href="graph.url"
+        target="_blank"
+        :style="{
+          color: TextColors[graph.fontColor],
+          fontSize: graph.fontSize + 'px',
+        }"
+      >
         {{ graph.content }}
       </a>
     </div>
