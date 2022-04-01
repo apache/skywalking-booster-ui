@@ -169,7 +169,6 @@ const key = computed(() => {
   const type = EntityType.find(
     (d: Option) => d.value === dashboardStore.entity
   );
-
   return (type && type.key) || 0;
 });
 
@@ -268,9 +267,9 @@ async function setDestSelector() {
     return;
   }
   const destPod = params.destPodId || selectorStore.destPods[0].id;
-  const currentDestPod = selectorStore.destPods.filter(
+  const currentDestPod = selectorStore.destPods.find(
     (d: { id: string }) => d.id === destPod
-  )[0];
+  );
   if (currentDestPod) {
     selectorStore.setCurrentDestPod(currentDestPod);
     states.currentDestPod = currentDestPod.label;
@@ -278,7 +277,7 @@ async function setDestSelector() {
 }
 
 async function getServices() {
-  if (key.value === 10 || key.value === 0) {
+  if (key.value === 10) {
     return;
   }
   if (!dashboardStore.layerId) {
