@@ -26,7 +26,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-show="metricType === 'readLabeledMetricsValues'">
+    <div class="item mb-10" v-if="hasLabel">
       <span class="label">{{ t("labels") }}</span>
       <el-input
         class="input"
@@ -40,7 +40,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-show="metricType === 'readLabeledMetricsValues'">
+    <div class="item mb-10" v-if="metricType === 'readLabeledMetricsValues'">
       <span class="label">{{ t("labelsIndex") }}</span>
       <el-input
         class="input"
@@ -95,6 +95,7 @@ import { useI18n } from "vue-i18n";
 import { SortOrder, CalculationOpts } from "../../../data";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { MetricConfigOpt } from "@/types/dashboard";
+import { ListChartTypes } from "../../../data";
 
 /*global defineEmits, defineProps */
 const props = defineProps({
@@ -113,6 +114,13 @@ const currentMetric = ref<MetricConfigOpt>({
 });
 const metricTypes = dashboardStore.selectedGrid.metricTypes || [];
 const metricType = ref<string>(metricTypes[props.index]);
+const hasLabel = computed(() => {
+  const graph = dashboardStore.selectedGrid.graph || {};
+  return (
+    ListChartTypes.includes(graph.type) ||
+    metricType.value === "readLabeledMetricsValues"
+  );
+});
 const isTopn = computed(() =>
   ["sortMetrics", "readSampledRecords"].includes(metricTypes[props.index])
 );
@@ -121,7 +129,7 @@ function updateConfig(index: number, param: { [key: string]: string }) {
   if (!key) {
     return;
   }
-  changeConfigs(index, { key: decodeURIComponent(param[key]) });
+  changeConfigs(index, { [key]: decodeURIComponent(param[key]) });
 }
 function changeConfigs(
   index: number,
@@ -130,7 +138,6 @@ function changeConfigs(
   const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
 
   metricConfig[index] = { ...metricConfig[index], ...param };
-  currentMetric.value = metricConfig[index];
   dashboardStore.selectWidget({
     ...dashboardStore.selectedGrid,
     metricConfig,
