@@ -34,7 +34,8 @@ limitations under the License. -->
         <el-popover
           trigger="hover"
           width="250"
-          placement="left-end"
+          placement="bottom"
+          effect="light"
           :content="appStore.version"
         >
           <template #reference>
