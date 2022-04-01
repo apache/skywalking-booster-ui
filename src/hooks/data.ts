@@ -32,6 +32,7 @@ export enum Calculations {
   Precision = "precision",
   ConvertSeconds = "convertSeconds",
   ConvertMilliseconds = "convertMilliseconds",
+  MsTos = "msTos",
 }
 export enum sizeEnum {
   XS = "XS",

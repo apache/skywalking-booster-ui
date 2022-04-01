@@ -351,6 +351,9 @@ export function aggregation(val: number, config: any): number | string {
     case Calculations.Precision:
       data = data.toFixed(2);
       break;
+    case Calculations.MsTos:
+      data = val / 1000;
+      break;
     default:
       data;
       break;
