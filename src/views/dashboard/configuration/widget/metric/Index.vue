@@ -120,7 +120,7 @@ import Standard from "./Standard.vue";
 
 /*global defineEmits */
 const { t } = useI18n();
-const emit = defineEmits(["update", "loading", "changeOpt"]);
+const emit = defineEmits(["update", "loading"]);
 const dashboardStore = useDashboardStore();
 const metrics = computed(() => dashboardStore.selectedGrid.metrics || []);
 const graph = computed(() => dashboardStore.selectedGrid.graph || {});
@@ -308,7 +308,6 @@ function changeMetrics(
     ...{ metricTypes: states.metricTypes, metrics: states.metrics },
   });
   if (states.isList) {
-    emit("changeOpt");
     return;
   }
   queryMetrics();
@@ -339,7 +338,6 @@ function changeMetricType(index: number, opt: Option[] | any) {
     ...{ metricTypes: states.metricTypes },
   });
   if (states.isList) {
-    emit("changeOpt");
     return;
   }
   queryMetrics();
