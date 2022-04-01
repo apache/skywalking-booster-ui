@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
     <div class="flex-h">
-      <div class="selectors-item" v-if="states.key !== 10">
+      <div class="selectors-item" v-if="key !== 10">
         <span class="label">$Service</span>
         <Selector
           v-model="states.currentService"
@@ -26,7 +26,7 @@ limitations under the License. -->
           class="selectors"
         />
       </div>
-      <div class="selectors-item" v-if="states.key === 3 || states.key === 4">
+      <div class="selectors-item" v-if="key === 3 || key === 4">
         <span class="label">
           {{
             ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
@@ -47,7 +47,7 @@ limitations under the License. -->
           "
         />
       </div>
-      <div class="selectors-item" v-if="states.key === 2 || states.key === 4">
+      <div class="selectors-item" v-if="key === 2 || key === 4">
         <span class="label">$DestinationService</span>
         <Selector
           v-model="states.currentDestService"
@@ -58,7 +58,7 @@ limitations under the License. -->
           class="selectors"
         />
       </div>
-      <div class="selectors-item" v-if="states.key === 4">
+      <div class="selectors-item" v-if="key === 4">
         <span class="label">
           {{
             dashboardStore.entity === "EndpointRelation"
@@ -120,7 +120,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -165,6 +165,13 @@ const states = reactive<{
   currentDestService: "",
   currentDestPod: "",
 });
+const key = computed(() => {
+  const type = EntityType.filter(
+    (d: Option) => d.value === dashboardStore.entity
+  )[0];
+
+  return (type && type.key) || 0;
+});
 
 setCurrentDashboard();
 appStore.setEventStack([initSelector]);
@@ -184,10 +191,6 @@ function setCurrentDashboard() {
     dashboardStore.setLayer(params.layerId);
     dashboardStore.setEntity(params.entity);
   }
-  const type = EntityType.filter(
-    (d: Option) => d.value === dashboardStore.entity
-  )[0];
-  states.key = (type && type.key) || 0;
 }
 
 async function setSelector() {
