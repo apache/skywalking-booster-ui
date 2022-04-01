@@ -140,6 +140,7 @@ function getOption() {
       zlevel: 1000,
       z: 60,
       backgroundColor: "rgb(50,50,50)",
+      confine: true,
       textStyle: {
         fontSize: 13,
         color: "#ccc",

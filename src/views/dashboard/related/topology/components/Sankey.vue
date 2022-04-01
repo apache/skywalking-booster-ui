@@ -38,6 +38,7 @@ function getOption() {
   return {
     tooltip: {
       trigger: "item",
+      confine: true,
     },
     series: {
       type: "sankey",

@@ -20,6 +20,20 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
+    <div class="legend">
+      <div>
+        <img :src="icons.CUBE" />
+        <span>
+          {{ settings.description ? settings.description.healthy || "" : "" }}
+        </span>
+      </div>
+      <div>
+        <img :src="icons.CUBEERROR" />
+        <span>
+          {{ settings.description ? settings.description.unhealthy || "" : "" }}
+        </span>
+      </div>
+    </div>
     <div class="setting" v-if="showSetting">
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
@@ -84,7 +98,6 @@ import zoom from "../utils/zoom";
 import { simulationInit, simulationSkip } from "../utils/simulation";
 import nodeElement from "../utils/nodeElement";
 import { linkElement, anchorElement, arrowMarker } from "../utils/linkElement";
-import topoLegend from "../utils/legend";
 import { Node, Call } from "@/types/topology";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useTopologyStore } from "@/store/modules/topology";
@@ -99,6 +112,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { MetricConfigOpt } from "@/types/dashboard";
 import { aggregation } from "@/hooks/useProcessor";
+import icons from "@/assets/img/icons";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -124,7 +138,6 @@ const node = ref<any>(null);
 const link = ref<any>(null);
 const anchor = ref<any>(null);
 const arrow = ref<any>(null);
-const legend = ref<any>(null);
 const showSetting = ref<boolean>(false);
 const settings = ref<any>(props.config);
 const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
@@ -174,14 +187,6 @@ async function init() {
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
   arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
   svg.value.call(zoom(d3, graph.value));
-  // legend
-  legend.value = graph.value.append("g").attr("class", "topo-legend");
-  topoLegend(
-    legend.value,
-    height.value,
-    width.value,
-    settings.value.description
-  );
   svg.value.on("click", (event: any) => {
     event.stopPropagation();
     event.preventDefault();
@@ -562,6 +567,29 @@ watch(
   height: calc(100% - 30px);
   overflow: auto;
   margin-top: 30px;
+
+  .legend {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    color: #ccc;
+
+    div {
+      margin-bottom: 8px;
+    }
+
+    img {
+      width: 32px;
+      float: left;
+    }
+
+    span {
+      display: inline-block;
+      height: 32px;
+      line-height: 32px;
+      margin-left: 5px;
+    }
+  }
 
   .setting {
     position: absolute;
