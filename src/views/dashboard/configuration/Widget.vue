@@ -37,8 +37,6 @@ limitations under the License. -->
             metricTypes: dashboardStore.selectedGrid.metricTypes,
             metricConfig: dashboardStore.selectedGrid.metricConfig,
           }"
-          :isEdit="isEdit"
-          @changeOpt="setStatus"
         />
         <div v-show="!graph.type" class="no-data">
           {{ t("noData") }}
@@ -51,11 +49,7 @@ limitations under the License. -->
         :style="{ '--el-collapse-header-font-size': '15px' }"
       >
         <el-collapse-item :title="t('selectVisualization')" name="1">
-          <MetricOptions
-            @update="getSource"
-            @changeOpt="setStatus"
-            @loading="setLoading"
-          />
+          <MetricOptions @update="getSource" @loading="setLoading" />
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="2">
           <component :is="`${graph.type}Config`" />
@@ -100,7 +94,6 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
     const loading = ref<boolean>(false);
-    const isEdit = ref<boolean>(false);
     const states = reactive<{
       activeNames: string;
       source: unknown;
@@ -128,12 +121,7 @@ export default defineComponent({
 
     function applyConfig() {
       dashboardStore.setConfigPanel(false);
-      setStatus();
       dashboardStore.setConfigs(dashboardStore.selectedGrid);
-    }
-
-    function setStatus() {
-      isEdit.value = true;
     }
 
     function cancelConfig() {
@@ -152,8 +140,6 @@ export default defineComponent({
       cancelConfig,
       getSource,
       setLoading,
-      setStatus,
-      isEdit,
       widget,
       graph,
       title,

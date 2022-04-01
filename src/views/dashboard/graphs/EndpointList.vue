@@ -44,7 +44,9 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column
           v-for="(metric, index) in colMetrics"
-          :label="`${metric} ${decodeURIComponent(getUnit(index))}`"
+          :label="`${decodeURIComponent(
+            getLabel(metric, index)
+          )} ${decodeURIComponent(getUnit(index))}`"
           :key="metric + index"
         >
           <template #default="scope">
@@ -110,7 +112,6 @@ const props = defineProps({
     }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-  isEdit: { type: Boolean, default: false },
 });
 // const emit = defineEmits(["changeOpt"]);
 const selectorStore = useSelectorStore();
@@ -183,20 +184,28 @@ async function searchList() {
 }
 function getUnit(index: number) {
   const u =
-    (props.config.metricConfig &&
-      props.config.metricConfig[index] &&
-      props.config.metricConfig[index].unit) ||
-    "";
+    props.config.metricConfig &&
+    props.config.metricConfig[index] &&
+    props.config.metricConfig[index].unit;
   if (u) {
     return `(${encodeURIComponent(u)})`;
   }
   return encodeURIComponent("");
 }
+function getLabel(metric: string, index: number) {
+  const label =
+    props.config.metricConfig &&
+    props.config.metricConfig[index] &&
+    props.config.metricConfig[index].label;
+  if (label) {
+    return encodeURIComponent(label);
+  }
+  return encodeURIComponent(metric);
+}
 watch(
   () => [props.config.metricTypes, props.config.metrics],
   async () => {
     queryEndpointMetrics(endpoints.value);
-    // emit("changeOpt", false);
   }
 );
 watch(
