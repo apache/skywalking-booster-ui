@@ -109,11 +109,14 @@ export default defineComponent({
     const selectorStore = useSelectorStore();
     const graph = computed(() => props.data.graph || {});
     const widget = computed(() => props.data.widget || {});
-    const isList = ListChartTypes.includes(
-      (props.data.graph && props.data.graph.type) || ""
+    const isList = computed(() =>
+      ListChartTypes.includes((props.data.graph && props.data.graph.type) || "")
     );
 
-    if ((props.needQuery || !dashboardStore.currentDashboard.id) && !isList) {
+    if (
+      (props.needQuery || !dashboardStore.currentDashboard.id) &&
+      !isList.value
+    ) {
       queryMetrics();
     }
 
@@ -162,11 +165,8 @@ export default defineComponent({
         if (props.data.i !== dashboardStore.selectedGrid.i) {
           return;
         }
-        const isList = ListChartTypes.includes(
-          (props.data.graph && props.data.graph.type) || ""
-        );
         const chart = dashboardStore.selectedGrid.graph || {};
-        if (ListChartTypes.includes(chart.type) || isList) {
+        if (ListChartTypes.includes(chart.type) || isList.value) {
           return;
         }
         queryMetrics();
@@ -175,10 +175,7 @@ export default defineComponent({
     watch(
       () => [selectorStore.currentService, selectorStore.currentDestService],
       () => {
-        const isList = ListChartTypes.includes(
-          (props.data.graph && props.data.graph.type) || ""
-        );
-        if (isList) {
+        if (isList.value) {
           return;
         }
         if (
@@ -195,12 +192,18 @@ export default defineComponent({
         if (dashboardStore.entity === EntityType[0].value) {
           return;
         }
+        if (isList.value) {
+          return;
+        }
         queryMetrics();
       }
     );
     watch(
       () => appStore.durationTime,
       () => {
+        if (isList.value) {
+          return;
+        }
         if (dashboardStore.entity === EntityType[1].value) {
           queryMetrics();
         }

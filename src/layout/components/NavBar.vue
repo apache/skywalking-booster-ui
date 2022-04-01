@@ -66,7 +66,7 @@ const theme = ref<string>("light");
 getVersion();
 const setConfig = (value: string) => {
   pageName.value = value || "";
-  theme.value = route.path.includes("/infrastructure/") ? "dark" : "light";
+  // theme.value = route.path.includes("/infrastructure/") ? "dark" : "light";
 };
 const time = computed(() => [
   appStore.durationRow.start,
@@ -94,6 +94,9 @@ watch(
   }
 );
 async function getVersion() {
+  if (appStore.version) {
+    return;
+  }
   const res = await appStore.fetchVersion();
   if (res.errors) {
     ElMessage.error(res.errors);

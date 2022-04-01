@@ -143,7 +143,6 @@ const sortServices = ref<(Service & { merge: boolean })[]>([]);
 const colMetrics = computed(() =>
   props.config.metrics.filter((d: string) => d)
 );
-
 queryServices();
 
 async function queryServices() {
@@ -296,9 +295,22 @@ function getLabel(metric: string, index: number) {
   }
   return encodeURIComponent(metric);
 }
+
 watch(
-  () => [props.config.metricTypes, props.config.metrics],
-  () => {
+  () => [...(props.config.metricTypes || []), ...(props.config.metrics || [])],
+  (data, old) => {
+    if (JSON.stringify(data) === JSON.stringify(old)) {
+      return;
+    }
+    queryServiceMetrics(services.value);
+  }
+);
+watch(
+  () => [...(props.config.metricConfig || [])],
+  (data, old) => {
+    if (JSON.stringify(data) === JSON.stringify(old)) {
+      return;
+    }
     queryServiceMetrics(services.value);
   }
 );
