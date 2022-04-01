@@ -94,6 +94,9 @@ watch(
   }
 );
 async function getVersion() {
+  if (appStore.version) {
+    return;
+  }
   const res = await appStore.fetchVersion();
   if (res.errors) {
     ElMessage.error(res.errors);

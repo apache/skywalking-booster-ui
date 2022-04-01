@@ -245,9 +245,9 @@ async function setSourceSelector() {
     return;
   }
   const pod = params.podId || selectorStore.pods[0].id;
-  const currentPod = selectorStore.pods.filter(
+  const currentPod = selectorStore.pods.find(
     (d: { id: string }) => d.id === pod
-  )[0];
+  );
   if (currentPod) {
     selectorStore.setCurrentPod(currentPod);
     states.currentPod = currentPod.label;
@@ -278,6 +278,9 @@ async function setDestSelector() {
 }
 
 async function getServices() {
+  if (key.value === 10 || key.value === 0) {
+    return;
+  }
   if (!dashboardStore.layerId) {
     return;
   }
