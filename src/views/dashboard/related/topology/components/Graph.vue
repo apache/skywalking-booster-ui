@@ -20,6 +20,20 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
+    <div class="legend">
+      <div>
+        <img :src="icons.CUBE" />
+        <span>
+          {{ settings.description ? settings.description.healthy || "" : "" }}
+        </span>
+      </div>
+      <div>
+        <img :src="icons.CUBEERROR" />
+        <span>
+          {{ settings.description ? settings.description.unhealthy || "" : "" }}
+        </span>
+      </div>
+    </div>
     <div class="setting" v-if="showSetting">
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
@@ -99,6 +113,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { MetricConfigOpt } from "@/types/dashboard";
 import { aggregation } from "@/hooks/useProcessor";
+import icons from "@/assets/img/icons";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -562,6 +577,29 @@ watch(
   height: calc(100% - 30px);
   overflow: auto;
   margin-top: 30px;
+
+  .legend {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    color: #ccc;
+
+    div {
+      margin-bottom: 5px;
+    }
+
+    img {
+      width: 32px;
+    }
+
+    span {
+      display: inline-block;
+      height: 32px;
+      line-height: 32px;
+      float: right;
+      margin-left: 5px;
+    }
+  }
 
   .setting {
     position: absolute;
