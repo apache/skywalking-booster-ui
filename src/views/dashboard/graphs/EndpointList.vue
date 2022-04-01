@@ -203,8 +203,11 @@ function getLabel(metric: string, index: number) {
   return encodeURIComponent(metric);
 }
 watch(
-  () => [props.config.metricTypes, props.config.metrics],
-  async () => {
+  () => [...(props.config.metricTypes || []), ...(props.config.metrics || [])],
+  (data, old) => {
+    if (JSON.stringify(data) === JSON.stringify(old)) {
+      return;
+    }
     queryEndpointMetrics(endpoints.value);
   }
 );
@@ -212,6 +215,15 @@ watch(
   () => selectorStore.currentService,
   () => {
     queryEndpoints();
+  }
+);
+watch(
+  () => [...(props.config.metricConfig || [])],
+  (data, old) => {
+    if (JSON.stringify(data) === JSON.stringify(old)) {
+      return;
+    }
+    queryEndpointMetrics(endpoints.value);
   }
 );
 </script>
