@@ -142,7 +142,6 @@ const props = defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   needQuery: { type: Boolean, default: false },
-  isEdit: { type: Boolean, default: false },
 });
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
@@ -152,8 +151,10 @@ const instances = ref<Instance[]>([]); // current instances
 const pageSize = 10;
 const searchText = ref<string>("");
 const colMetrics = computed(() => props.config.metrics.map((d: string) => d));
+if (props.needQuery) {
+  queryInstance();
+}
 
-queryInstance();
 async function queryInstance() {
   chartLoading.value = true;
   const resp = await selectorStore.getServiceInstances();
