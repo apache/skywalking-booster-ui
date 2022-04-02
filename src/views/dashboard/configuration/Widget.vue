@@ -37,6 +37,7 @@ limitations under the License. -->
             metricTypes: dashboardStore.selectedGrid.metricTypes,
             metricConfig: dashboardStore.selectedGrid.metricConfig,
           }"
+          :needQuery="true"
         />
         <div v-show="!graph.type" class="no-data">
           {{ t("noData") }}

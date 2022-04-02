@@ -120,7 +120,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, computed } from "vue";
+import { reactive, ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -169,7 +169,6 @@ const key = computed(() => {
   const type = EntityType.find(
     (d: Option) => d.value === dashboardStore.entity
   );
-
   return (type && type.key) || 0;
 });
 
@@ -268,9 +267,9 @@ async function setDestSelector() {
     return;
   }
   const destPod = params.destPodId || selectorStore.destPods[0].id;
-  const currentDestPod = selectorStore.destPods.filter(
+  const currentDestPod = selectorStore.destPods.find(
     (d: { id: string }) => d.id === destPod
-  )[0];
+  );
   if (currentDestPod) {
     selectorStore.setCurrentDestPod(currentDestPod);
     states.currentDestPod = currentDestPod.label;
@@ -278,18 +277,18 @@ async function setDestSelector() {
 }
 
 async function getServices() {
-  if (key.value === 10 || key.value === 0) {
+  if (!dashboardStore.entity) {
     return;
   }
   if (!dashboardStore.layerId) {
     return;
   }
+  if (dashboardStore.entity === EntityType[1].value) {
+    return;
+  }
   const json = await selectorStore.fetchServices(dashboardStore.layerId);
   if (json.errors) {
     ElMessage.error(json.errors);
-    return;
-  }
-  if (dashboardStore.entity === EntityType[1].value) {
     return;
   }
   selectorStore.setCurrentService(
@@ -539,6 +538,15 @@ function searchDestPods(query: string) {
     param
   );
 }
+watch(
+  () => dashboardStore.entity,
+  (newVal, oldVal) => {
+    if (newVal === oldVal) {
+      return;
+    }
+    getServices();
+  }
+);
 </script>
 <style lang="scss" scoped>
 .dashboard-tool {

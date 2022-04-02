@@ -48,6 +48,7 @@ limitations under the License. -->
             getLabel(metric, index)
           )} ${decodeURIComponent(getUnit(index))}`"
           :key="metric + index"
+          min-width="120"
         >
           <template #default="scope">
             <div class="chart">
@@ -70,7 +71,7 @@ limitations under the License. -->
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Attributes" :width="100">
+        <el-table-column label="Attributes">
           <template #default="scope">
             <el-popover placement="left" :width="400" trigger="click">
               <template #reference>
@@ -142,7 +143,6 @@ const props = defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   needQuery: { type: Boolean, default: false },
-  isEdit: { type: Boolean, default: false },
 });
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
@@ -152,8 +152,10 @@ const instances = ref<Instance[]>([]); // current instances
 const pageSize = 10;
 const searchText = ref<string>("");
 const colMetrics = computed(() => props.config.metrics.map((d: string) => d));
+if (props.needQuery) {
+  queryInstance();
+}
 
-queryInstance();
 async function queryInstance() {
   chartLoading.value = true;
   const resp = await selectorStore.getServiceInstances();

@@ -53,6 +53,9 @@ const available = computed(
     (Array.isArray(props.option.series.data) && props.option.series.data[0])
 );
 onMounted(async () => {
+  if (!available.value) {
+    return;
+  }
   await setOptions(props.option);
   chartRef.value && addResizeListener(unref(chartRef), resize);
   setTimeout(() => {
@@ -70,6 +73,9 @@ onMounted(async () => {
 watch(
   () => props.option,
   (newVal, oldVal) => {
+    if (!available.value) {
+      return;
+    }
     if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
       return;
     }

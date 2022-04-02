@@ -111,9 +111,10 @@ const props = defineProps({
       i: "",
     }),
   },
+  needQuery: { type: Boolean, default: false },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
-// const emit = defineEmits(["changeOpt"]);
+
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
@@ -121,8 +122,9 @@ const endpoints = ref<Endpoint[]>([]);
 const searchText = ref<string>("");
 const colMetrics = computed(() => props.config.metrics.map((d: string) => d));
 
-queryEndpoints();
-
+if (props.needQuery) {
+  queryEndpoints();
+}
 async function queryEndpoints() {
   chartLoading.value = true;
   const resp = await selectorStore.getEndpoints({
