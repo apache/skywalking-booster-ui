@@ -114,7 +114,7 @@ const props = defineProps({
   needQuery: { type: Boolean, default: false },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
-// const emit = defineEmits(["changeOpt"]);
+
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
