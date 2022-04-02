@@ -48,6 +48,7 @@ limitations under the License. -->
             getLabel(metric, index)
           )} ${decodeURIComponent(getUnit(index))}`"
           :key="metric + index"
+          min-width="120"
         >
           <template #default="scope">
             <div class="chart">
@@ -70,7 +71,7 @@ limitations under the License. -->
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Attributes" :width="100">
+        <el-table-column label="Attributes">
           <template #default="scope">
             <el-popover placement="left" :width="400" trigger="click">
               <template #reference>
