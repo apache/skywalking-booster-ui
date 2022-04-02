@@ -149,6 +149,11 @@ const depth = ref<number>(graphConfig.value.depth || 2);
 
 onMounted(async () => {
   loading.value = true;
+  const json = await selectorStore.fetchServices(dashboardStore.layerId);
+  if (json.errors) {
+    ElMessage.error(json.errors);
+    return;
+  }
   const resp = await getTopology();
   loading.value = false;
   if (resp && resp.errors) {
