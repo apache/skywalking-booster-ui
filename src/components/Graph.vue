@@ -28,6 +28,7 @@ import {
   computed,
 } from "vue";
 import type { PropType } from "vue";
+import _ from "lodash";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
 
@@ -71,15 +72,15 @@ onMounted(async () => {
 });
 
 watch(
-  () => props.option,
-  (newVal, oldVal) => {
+  () => _.cloneDeepWith(props.option),
+  (data, old) => {
     if (!available.value) {
       return;
     }
-    if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
+    if (data === old) {
       return;
     }
-    setOptions(newVal);
+    setOptions(data);
   }
 );
 
