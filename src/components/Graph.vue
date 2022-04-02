@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div ref="chartRef" :style="`height:${height};width:${width};`">
+  <div class="chart" ref="chartRef" :style="`height:${height};width:${width};`">
     <div v-if="!available" class="no-data">No Data</div>
   </div>
 </template>
@@ -97,5 +97,9 @@ onBeforeUnmount(() => {
   -webkit-box-pack: center;
   -webkit-box-align: center;
   color: #666;
+}
+
+.chart {
+  overflow: hidden;
 }
 </style>
