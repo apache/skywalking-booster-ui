@@ -38,7 +38,7 @@ limitations under the License. -->
       class="body"
       :style="{
         backgroundColor: TextColors[graph.backgroundColor],
-        textAlign: graph.textAlign,
+        justifyContent: graph.textAlign,
       }"
     >
       <a
@@ -99,11 +99,12 @@ function editConfig() {
 }
 
 .body {
-  padding: 5px 20px 0 10px;
+  padding: 0 20px 0 10px;
   width: 100%;
   height: 100%;
-  line-height: 100%;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .tools {
