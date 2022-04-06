@@ -201,7 +201,7 @@ const msg = {
   dayCutTip: "最近1天",
   weekCutTip: "最近1周",
   monthCutTip: "最近1月",
-  serverZone: "时区",
+  serverZone: "OAP Server 时区",
   exportImage: "导出为图片",
   object: "粒度",
   profile: "性能剖析",
