@@ -109,6 +109,8 @@ const msg = {
   showGroup: "显示分组",
   noWidget: "请添加组件",
   rename: "重命名",
+  deleteTitle: "确定删除吗？",
+  rootTitle: "确定设置为Root吗？",
   selfObservability: "自监控",
   satellite: "Satellite",
   skyWalkingServer: "SkyWalking服务",

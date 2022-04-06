@@ -111,6 +111,8 @@ const msg = {
   noRoot: "Please set a root dashboard for",
   noWidget: "Please add widgets.",
   rename: "Rename",
+  deleteTitle: "Are you sure to delete this?",
+  rootTitle: "Are you sure to set this?",
   selfObservability: "Self Observability",
   satellite: "Satellite",
   skyWalkingServer: "SkyWalking Server",

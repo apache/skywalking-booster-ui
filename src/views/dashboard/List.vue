@@ -51,12 +51,12 @@ limitations under the License. -->
         <el-table-column type="selection" width="55" />
         <el-table-column prop="name" label="Name">
           <template #default="scope">
-            <span class="cp name" @click="handleView(scope.row)">{{
-              scope.row.name
-            }}</span>
+            <span class="cp name" @click="handleView(scope.row)">
+              {{ scope.row.name }}
+            </span>
           </template>
         </el-table-column>
-        <el-table-column prop="layer" label="Layer" width="200" />
+        <el-table-column prop="layer" label="Layer" width="120" />
         <el-table-column prop="entity" label="Entity" width="200" />
         <el-table-column prop="isRoot" label="Root" width="60">
           <template #default="scope">
@@ -74,7 +74,7 @@ limitations under the License. -->
               {{ t("rename") }}
             </el-button>
             <el-popconfirm
-              title="Are you sure to delete this?"
+              :title="t('deleteTitle')"
               @confirm="handleDelete(scope.row)"
             >
               <template #reference>
@@ -84,7 +84,7 @@ limitations under the License. -->
               </template>
             </el-popconfirm>
             <el-popconfirm
-              title="Are you sure to set this?"
+              :title="t('rootTitle')"
               @confirm="setRoot(scope.row)"
               v-if="
                 [EntityType[0].value, EntityType[1].value].includes(
@@ -93,7 +93,7 @@ limitations under the License. -->
               "
             >
               <template #reference>
-                <el-button size="small" style="width: 120px" type="danger">
+                <el-button size="small" style="width: 110px" type="danger">
                   {{ scope.row.isRoot ? t("setNormal") : t("setRoot") }}
                 </el-button>
               </template>
