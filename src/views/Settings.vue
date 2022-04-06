@@ -177,7 +177,7 @@ const setUTCMin = () => {
 }
 
 .settings {
-  color: #222;
+  color: #606266;
   font-size: 13px;
   padding: 20px;
 
@@ -198,6 +198,7 @@ const setUTCMin = () => {
     width: 160px;
     display: inline-block;
     font-weight: 500;
+    color: #000;
   }
 }
 </style>
