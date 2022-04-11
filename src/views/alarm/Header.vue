@@ -29,6 +29,7 @@ limitations under the License. -->
       <div class="mr-10 ml-10">
         <span class="grey">{{ t("searchKeyword") }}: </span>
         <el-input
+          size="small"
           v-model="keyword"
           class="alarm-tool-input"
           @change="refreshAlarms({ pageNum: 1 })"

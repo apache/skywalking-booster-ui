@@ -26,6 +26,7 @@ limitations under the License. -->
         </span>
       </span>
       <el-input
+        size="small"
         v-model="tags"
         class="trace-new-tag"
         @change="addLabels"

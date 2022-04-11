@@ -14,6 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
+const AutoImport = require("unplugin-auto-import/webpack");
+const Components = require("unplugin-vue-components/webpack");
+const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
+
 module.exports = {
   outputDir: "dist",
   productionSourceMap: false,
@@ -24,6 +30,9 @@ module.exports = {
         changeOrigin: true,
       },
     },
+  },
+  css: {
+    extract: { ignoreOrder: true },
   },
   chainWebpack: (config) => {
     config.plugin("html").tap((args) => {
@@ -46,20 +55,62 @@ module.exports = {
       splitChunks: {
         chunks: "all",
         minSize: 20000,
-        maxSize: 2000000,
+        minChunks: 1,
+        maxAsyncRequests: 30,
+        maxInitialRequests: 30,
+        enforceSizeThreshold: 50000,
         cacheGroups: {
           echarts: {
             name: "echarts",
-            test: /[\\/]node_modules[\\/]echarts[\\/]/,
-            priority: 20,
+            test: /[\\/]node_modules[\\/]echarts|zrender[\\/]/,
+            priority: 30,
           },
           elementPlus: {
-            name: "elementPlus",
-            test: /[\\/]node_modules[\\/]element-plus[\\/]/,
-            priority: 19,
+            name: "element-plus",
+            test: /[\\/]node_modules[\\/]element-plus|@element-plus[\\/]/,
+            priority: 10,
+          },
+          defaultVendors: {
+            name: "chunk-vendors",
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            chunks: "async",
+          },
+          default: {
+            name: "chunk-commons",
+            minSize: 0,
+            minChunks: 2,
+            priority: -20,
           },
         },
       },
     };
+    config.plugins.push(
+      AutoImport({
+        imports: ["vue"],
+        resolvers: [
+          ElementPlusResolver({
+            importStyle: "css",
+            exclude: new RegExp(/^(?!.*loading-directive).*$/),
+          }),
+        ],
+        dts: "./src/types/auto-imports.d.ts",
+      }),
+      Components({
+        resolvers: [ElementPlusResolver({ importStyle: "css" })],
+        dts: "./src/types/components.d.ts",
+      })
+    );
+    if (process.env.NODE_ENV === "production") {
+      const productionGzipExtensions = ["html", "js", "css"];
+      config.plugins.push(
+        new CompressionWebpackPlugin({
+          filename: "[path][base].gz",
+          algorithm: "gzip",
+          test: new RegExp("\\.(" + productionGzipExtensions.join("|") + ")$"),
+          threshold: 10240,
+        })
+      );
+    }
   },
 };

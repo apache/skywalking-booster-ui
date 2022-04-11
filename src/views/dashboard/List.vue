@@ -28,7 +28,7 @@ limitations under the License. -->
           </el-button>
         </template>
       </el-input>
-      <el-button class="ml-10" size="small" @click="reloadTemplates">
+      <el-button class="ml-10 reload-btn" size="small" @click="reloadTemplates">
         <Icon size="sm" iconName="retry" class="reload" />
         {{ t("reloadDashboards") }}
       </el-button>
@@ -47,6 +47,7 @@ limitations under the License. -->
         :default-sort="{ prop: 'name' }"
         @selection-change="handleSelectionChange"
         height="637px"
+        size="small"
       >
         <el-table-column type="selection" width="55" />
         <el-table-column prop="name" label="Name">
@@ -456,5 +457,10 @@ function changePage(pageIndex: number) {
 
 .reload {
   margin-right: 3px;
+}
+
+.reload-btn {
+  display: inline-block;
+  margin-left: 10px;
 }
 </style>

@@ -16,21 +16,6 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-header:
-  license:
-    spdx-id: Apache-2.0
-    copyright-owner: Apache Software Foundation
 
-  paths-ignore:
-    - 'lib'
-    - 'dist'
-    - 'LICENSE'
-    - '.gitignore'
-    - '.prettierrc'
-    - '.browserslistrc'
-    - 'src/types/auto-imports.d.ts'
-    - 'src/types/components.d.ts'
-    - '**/*.md'
-    - '**/*.json'
-
-  comment: on-failure
+/src/types/auto-imports.d.ts
+/src/types/components.d.ts

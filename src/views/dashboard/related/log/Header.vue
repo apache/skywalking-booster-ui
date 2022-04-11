@@ -57,7 +57,7 @@ limitations under the License. -->
   <div class="flex-h row">
     <div class="mr-5 traceId" v-show="!isBrowser">
       <span class="grey mr-5">{{ t("traceID") }}:</span>
-      <el-input v-model="traceId" class="inputs-max" />
+      <el-input v-model="traceId" class="inputs-max" size="small" />
     </div>
     <ConditionTags :type="'LOG'" @update="updateTags" />
   </div>
@@ -75,6 +75,7 @@ limitations under the License. -->
         </span>
       </span>
       <el-input
+        size="small"
         class="inputs-max"
         :placeholder="t('addKeywordsOfContent')"
         v-model="contentStr"
@@ -97,6 +98,7 @@ limitations under the License. -->
       </span>
       <el-input
         class="inputs-max"
+        size="small"
         :placeholder="t('addExcludingKeywordsOfContent')"
         v-model="excludingContentStr"
         @change="addLabels('excludingKeywordsOfContent')"
