@@ -28,6 +28,8 @@ header:
     - '.gitignore'
     - '.prettierrc'
     - '.browserslistrc'
+    - 'src/types/auto-imports.d.ts'
+    - 'src/types/components.d.ts'
     - '**/*.md'
     - '**/*.json'
 
