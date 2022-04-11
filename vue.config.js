@@ -77,11 +77,11 @@ module.exports = {
             exclude: new RegExp(/^(?!.*loading-directive).*$/),
           }),
         ],
-        dts: "auto-imports.d.ts",
+        dts: "./src/types/auto-imports.d.ts",
       }),
       Components({
         resolvers: [ElementPlusResolver({ importStyle: "css" })],
-        dts: "components.d.ts",
+        dts: "./src/types/components.d.ts",
       })
     );
     if (process.env.NODE_ENV === "production") {
