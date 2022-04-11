@@ -31,6 +31,9 @@ module.exports = {
       },
     },
   },
+  css: {
+    extract: { ignoreOrder: true },
+  },
   chainWebpack: (config) => {
     config.plugin("html").tap((args) => {
       args[0].title = "Apache SkyWalking";
