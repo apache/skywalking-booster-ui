@@ -28,7 +28,7 @@ limitations under the License. -->
           </el-button>
         </template>
       </el-input>
-      <el-button class="ml-10" size="small" @click="reloadTemplates">
+      <el-button class="ml-10 reload-btn" size="small" @click="reloadTemplates">
         <Icon size="sm" iconName="retry" class="reload" />
         {{ t("reloadDashboards") }}
       </el-button>
@@ -456,5 +456,10 @@ function changePage(pageIndex: number) {
 
 .reload {
   margin-right: 3px;
+}
+
+.reload-btn {
+  display: inline-block;
+  margin-left: 10px;
 }
 </style>

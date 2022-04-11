@@ -16,6 +16,9 @@
  */
 
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
+const AutoImport = require("unplugin-auto-import/webpack");
+const Components = require("unplugin-vue-components/webpack");
+const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
 
 module.exports = {
   outputDir: "dist",
@@ -62,6 +65,22 @@ module.exports = {
         },
       },
     };
+    config.plugins.push(
+      AutoImport({
+        imports: ["vue"],
+        resolvers: [
+          ElementPlusResolver({
+            importStyle: "css",
+            exclude: new RegExp(/^(?!.*loading-directive).*$/),
+          }),
+        ],
+        dts: "auto-imports.d.ts",
+      }),
+      Components({
+        resolvers: [ElementPlusResolver({ importStyle: "css" })],
+        dts: "components.d.ts",
+      })
+    );
     if (process.env.NODE_ENV === "production") {
       const productionGzipExtensions = ["html", "js", "css"];
       config.plugins.push(

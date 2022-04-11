@@ -17,7 +17,7 @@ limitations under the License. -->
   <div class="profile-task">
     <div>
       <div class="label">{{ t("endpointName") }}</div>
-      <el-input v-model="endpointName" class="profile-input" />
+      <el-input v-model="endpointName" class="profile-input" size="small" />
     </div>
     <div>
       <div class="label">{{ t("monitorTime") }}</div>
@@ -49,7 +49,12 @@ limitations under the License. -->
     </div>
     <div>
       <div class="label">{{ t("minThreshold") }} (ms)</div>
-      <el-input-number class="profile-input" :min="0" v-model="minThreshold" />
+      <el-input-number
+        size="small"
+        class="profile-input"
+        :min="0"
+        v-model="minThreshold"
+      />
     </div>
     <div>
       <div class="label">{{ t("dumpPeriod") }}</div>

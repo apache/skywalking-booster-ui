@@ -58,7 +58,7 @@ limitations under the License. -->
     </div>
     <div class="mr-5">
       <span class="grey mr-5">{{ t("traceID") }}:</span>
-      <el-input v-model="traceId" class="traceId" />
+      <el-input size="small" v-model="traceId" class="traceId" />
     </div>
   </div>
   <div class="flex-h">
@@ -73,9 +73,9 @@ limitations under the License. -->
     </div> -->
     <div class="mr-5">
       <span class="sm b grey mr-5">{{ t("duration") }}:</span>
-      <el-input class="inputs mr-5" v-model="minTraceDuration" />
+      <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
       <span class="grey mr-5">-</span>
-      <el-input class="inputs" v-model="maxTraceDuration" />
+      <el-input size="small" class="inputs" v-model="maxTraceDuration" />
     </div>
     <ConditionTags :type="'TRACE'" @update="updateTags" />
     <el-button

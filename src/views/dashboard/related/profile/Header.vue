@@ -26,7 +26,7 @@ limitations under the License. -->
     </div> -->
     <div class="mr-10">
       <span class="grey mr-5">{{ t("endpointName") }}:</span>
-      <el-input v-model="endpointName" class="name" />
+      <el-input v-model="endpointName" class="name" size="small" />
     </div>
     <el-button
       class="search-btn"
