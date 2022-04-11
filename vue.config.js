@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
+
 module.exports = {
   outputDir: "dist",
   productionSourceMap: false,
@@ -45,8 +48,6 @@ module.exports = {
     config.optimization = {
       splitChunks: {
         chunks: "all",
-        minSize: 20000,
-        maxSize: 2000000,
         cacheGroups: {
           echarts: {
             name: "echarts",
@@ -54,12 +55,23 @@ module.exports = {
             priority: 20,
           },
           elementPlus: {
-            name: "elementPlus",
+            name: "element-plus",
             test: /[\\/]node_modules[\\/]element-plus[\\/]/,
             priority: 19,
           },
         },
       },
     };
+    if (process.env.NODE_ENV === "production") {
+      const productionGzipExtensions = ["html", "js", "css"];
+      config.plugins.push(
+        new CompressionWebpackPlugin({
+          filename: "[path][base].gz",
+          algorithm: "gzip",
+          test: new RegExp("\\.(" + productionGzipExtensions.join("|") + ")$"),
+          threshold: 10240,
+        })
+      );
+    }
   },
 };
