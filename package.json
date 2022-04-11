@@ -139,7 +139,7 @@
     "package.json": [
       "prettier --write"
     ],
-    "*.{scss,less,style}": [
+    "*.{scss,less,styl}": [
       "stylelint --fix",
       "prettier --write"
     ],
