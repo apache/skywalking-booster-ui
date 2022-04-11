@@ -54,16 +54,33 @@ module.exports = {
     config.optimization = {
       splitChunks: {
         chunks: "all",
+        minSize: 20000,
+        minChunks: 1,
+        maxAsyncRequests: 30,
+        maxInitialRequests: 30,
+        enforceSizeThreshold: 50000,
         cacheGroups: {
           echarts: {
             name: "echarts",
-            test: /[\\/]node_modules[\\/]echarts[\\/]/,
-            priority: 20,
+            test: /[\\/]node_modules[\\/]echarts|zrender[\\/]/,
+            priority: 30,
           },
           elementPlus: {
             name: "element-plus",
-            test: /[\\/]node_modules[\\/]element-plus[\\/]/,
-            priority: 19,
+            test: /[\\/]node_modules[\\/]element-plus|@element-plus[\\/]/,
+            priority: 10,
+          },
+          defaultVendors: {
+            name: "chunk-vendors",
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            chunks: "async",
+          },
+          default: {
+            name: "chunk-commons",
+            minSize: 0,
+            minChunks: 2,
+            priority: -20,
           },
         },
       },
