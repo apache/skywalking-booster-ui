@@ -217,12 +217,23 @@ async function setSelector() {
     return;
   }
   let currentService, currentDestService;
-  for (const d of selectorStore.services) {
-    if (d.id === String(params.serviceId)) {
-      currentService = d;
+  if (states.currentService) {
+    for (const d of selectorStore.services) {
+      if (d.value === states.currentService) {
+        currentService = d;
+      }
+      if (d.value === states.currentDestService) {
+        currentDestService = d;
+      }
     }
-    if (d.id === String(params.destServiceId)) {
-      currentDestService = d;
+  } else {
+    for (const d of selectorStore.services) {
+      if (d.id === String(params.serviceId)) {
+        currentService = d;
+      }
+      if (d.id === String(params.destServiceId)) {
+        currentDestService = d;
+      }
     }
   }
   selectorStore.setCurrentService(currentService);
@@ -244,9 +255,14 @@ async function setSourceSelector() {
     return;
   }
   const pod = params.podId || selectorStore.pods[0].id;
-  const currentPod = selectorStore.pods.find(
-    (d: { id: string }) => d.id === pod
-  );
+  let currentPod;
+  if (states.currentPod) {
+    currentPod = selectorStore.pods.find(
+      (d: { id: string }) => d.label === states.currentPod
+    );
+  } else {
+    currentPod = selectorStore.pods.find((d: { id: string }) => d.id === pod);
+  }
   if (currentPod) {
     selectorStore.setCurrentPod(currentPod);
     states.currentPod = currentPod.label;
@@ -267,9 +283,16 @@ async function setDestSelector() {
     return;
   }
   const destPod = params.destPodId || selectorStore.destPods[0].id;
-  const currentDestPod = selectorStore.destPods.find(
-    (d: { id: string }) => d.id === destPod
-  );
+  let currentDestPod = "";
+  if (states.currentDestPod) {
+    currentDestPod = selectorStore.pods.find(
+      (d: { id: string }) => d.label === states.currentDestPod
+    );
+  } else {
+    currentDestPod = selectorStore.destPods.find(
+      (d: { id: string }) => d.id === destPod
+    );
+  }
   if (currentDestPod) {
     selectorStore.setCurrentDestPod(currentDestPod);
     states.currentDestPod = currentDestPod.label;
@@ -291,12 +314,24 @@ async function getServices() {
     ElMessage.error(json.errors);
     return;
   }
-  selectorStore.setCurrentService(
-    selectorStore.services.length ? selectorStore.services[0] : null
-  );
-  selectorStore.setCurrentDestService(
-    selectorStore.services.length ? selectorStore.services[1] : null
-  );
+  let s;
+  if (states.currentService) {
+    s = (selectorStore.services || []).find(
+      (d) => d.label === states.currentService
+    );
+  } else {
+    s = (selectorStore.services || []).find((d, index) => index === 0);
+  }
+  selectorStore.setCurrentService(s || null);
+  let d;
+  if (states.currentService) {
+    d = (selectorStore.services || []).find(
+      (d) => d.label === states.currentDestService
+    );
+  } else {
+    d = (selectorStore.services || []).find((d, index) => index === 1);
+  }
+  selectorStore.setCurrentDestService(d || null);
   if (!selectorStore.currentService) {
     return;
   }
@@ -447,18 +482,26 @@ async function fetchPods(
     case EntityType[2].value:
       resp = await selectorStore.getEndpoints({ serviceId, ...param });
       if (setPod) {
-        selectorStore.setCurrentPod(
-          selectorStore.pods.length ? selectorStore.pods[0] : null
-        );
+        let p;
+        if (states.currentPod) {
+          p = selectorStore.pods.find((d) => d.label === states.currentPod);
+        } else {
+          p = selectorStore.pods.find((d, index) => index === 0);
+        }
+        selectorStore.setCurrentPod(p || null);
         states.currentPod = selectorStore.currentPod.label;
       }
       break;
     case EntityType[3].value:
       resp = await selectorStore.getServiceInstances({ serviceId });
       if (setPod) {
-        selectorStore.setCurrentPod(
-          selectorStore.pods.length ? selectorStore.pods[0] : null
-        );
+        let p;
+        if (states.currentPod) {
+          p = selectorStore.pods.find((d) => d.label === states.currentPod);
+        } else {
+          p = selectorStore.pods.find((d, index) => index === 0);
+        }
+        selectorStore.setCurrentPod(p || null);
         states.currentPod = selectorStore.currentPod.label;
       }
       break;
@@ -469,9 +512,13 @@ async function fetchPods(
         ...param,
       });
       if (setPod) {
-        selectorStore.setCurrentDestPod(
-          selectorStore.destPods.length ? selectorStore.destPods[0] : null
-        );
+        let p;
+        if (states.currentDestPod) {
+          p = selectorStore.pods.find((d) => d.label === states.currentDestPod);
+        } else {
+          p = selectorStore.pods.find((d, index) => index === 0);
+        }
+        selectorStore.setCurrentDestPod(p || null);
         states.currentDestPod = selectorStore.currentDestPod.label;
       }
       break;
@@ -481,9 +528,13 @@ async function fetchPods(
         isRelation: true,
       });
       if (setPod) {
-        selectorStore.setCurrentDestPod(
-          selectorStore.destPods.length ? selectorStore.destPods[0] : null
-        );
+        let p;
+        if (states.currentDestPod) {
+          p = selectorStore.pods.find((d) => d.label === states.currentDestPod);
+        } else {
+          p = selectorStore.pods.find((d, index) => index === 0);
+        }
+        selectorStore.setCurrentDestPod(p || null);
         states.currentDestPod = selectorStore.currentDestPod.label;
       }
       break;
