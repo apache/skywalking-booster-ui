@@ -82,7 +82,7 @@ const state = reactive<{ timer: ReturnType<typeof setInterval> | null }>({
 });
 const lang = ref<string>(locale.value || "en");
 const autoTime = ref<number>(6);
-const auto = ref<boolean>(false);
+const auto = ref<boolean>(appStore.autoRefresh || false);
 const appStore = useAppStoreWithOut();
 const utcArr = appStore.utc.split(":");
 const utcHour = ref<number>(isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]));
