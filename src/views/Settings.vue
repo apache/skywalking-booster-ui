@@ -77,13 +77,13 @@ import { Languages } from "@/constants/data";
 import Selector from "@/components/Selector.vue";
 
 const { t, locale } = useI18n();
+const appStore = useAppStoreWithOut();
 const state = reactive<{ timer: ReturnType<typeof setInterval> | null }>({
   timer: null,
 });
 const lang = ref<string>(locale.value || "en");
 const autoTime = ref<number>(6);
 const auto = ref<boolean>(appStore.autoRefresh || false);
-const appStore = useAppStoreWithOut();
 const utcArr = appStore.utc.split(":");
 const utcHour = ref<number>(isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]));
 const utcMin = ref<number>(isNaN(Number(utcArr[1])) ? 0 : Number(utcArr[1]));
