@@ -53,9 +53,7 @@ export default defineComponent({
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
-    // function layoutUpdatedEvent(newLayout: LayoutConfig[]) {
-    //   dashboardStore.setLayout(newLayout);
-    // }
+
     function clickGrid(item: LayoutConfig) {
       dashboardStore.activeGridItem(item.i);
       dashboardStore.selectWidget(item);
