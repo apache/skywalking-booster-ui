@@ -266,11 +266,12 @@ export const CalculationOpts = [
   { label: "Byte to KB", value: "byteToKB" },
   { label: "Byte to MB", value: "byteToMB" },
   { label: "Byte to GB", value: "byteToGB" },
+  { label: "Average", value: "average" },
   {
-    label: "Convert milliseconds to YYYY-MM-DD HH:mm:ss",
+    label: "Milliseconds to YYYY-MM-DD HH:mm:ss",
     value: "convertMilliseconds",
   },
-  { label: "Convert seconds to YYYY-MM-DD HH:mm:ss", value: "convertSeconds" },
+  { label: "Seconds to YYYY-MM-DD HH:mm:ss", value: "convertSeconds" },
   { label: "Precision is 2", value: "precision" },
   { label: "Milliseconds to seconds", value: "msTos" },
 ];
