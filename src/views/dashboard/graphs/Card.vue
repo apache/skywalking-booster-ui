@@ -17,8 +17,10 @@ limitations under the License. -->
   <div
     v-if="!isNaN(singleVal)"
     class="chart-card"
-    :class="{ center: config.textAlign === 'center' }"
-    :style="{ fontSize: `${config.fontSize}px`, textAlign: config.textAlign }"
+    :style="{
+      fontSize: `${config.fontSize}px`,
+      justifyContent: config.textAlign || 'center',
+    }"
   >
     {{ singleVal.toFixed(2) }}
     <span v-show="config.showUnit">
@@ -52,7 +54,6 @@ const { t } = useI18n();
 const metricConfig = computed(() => props.config.metricConfig || []);
 const key = computed(() => Object.keys(props.data)[0]);
 const singleVal = computed(() => Number(props.data[key.value]));
-console.log(props.data);
 const unit = computed(
   () => metricConfig.value[0] && encodeURIComponent(metricConfig.value[0].unit)
 );
@@ -60,15 +61,10 @@ const unit = computed(
 <style lang="scss" scoped>
 .chart-card {
   color: #333;
+  width: 100%;
   height: 100%;
-}
-
-.center {
-  box-sizing: border-box;
-  display: -webkit-box;
-  -webkit-box-orient: horizontal;
-  -webkit-box-pack: center;
-  -webkit-box-align: center;
+  display: flex;
+  align-items: center;
 }
 
 .no-data {

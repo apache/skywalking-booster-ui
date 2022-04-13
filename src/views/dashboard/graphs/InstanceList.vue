@@ -60,7 +60,7 @@ limitations under the License. -->
                   showXAxis: false,
                   showYAxis: false,
                   smallTips: true,
-                  showSymbol: true,
+                  showlabels: false,
                 }"
               />
               <Card

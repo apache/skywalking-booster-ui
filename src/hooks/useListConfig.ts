@@ -23,6 +23,12 @@ export function useListConfig(config: any, index: number) {
   const line =
     config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues &&
     calculation !== Calculations.Average;
+  const isAvg =
+    config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues &&
+    calculation === Calculations.Average;
 
-  return { isLinear: line };
+  return {
+    isLinear: line,
+    isAvg,
+  };
 }

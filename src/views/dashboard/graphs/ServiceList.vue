@@ -65,7 +65,9 @@ limitations under the License. -->
             <div class="chart">
               <Line
                 v-if="useListConfig(config, index).isLinear"
-                :data="{ [metric]: scope.row[metric] }"
+                :data="{
+                  [metric]: scope.row[metric] && scope.row[metric].values,
+                }"
                 :intervalTime="intervalTime"
                 :config="{
                   showXAxis: false,
@@ -74,6 +76,35 @@ limitations under the License. -->
                   showlabels: false,
                 }"
               />
+              <el-popover
+                v-else-if="useListConfig(config, index).isAvg"
+                placement="left"
+                :width="400"
+                trigger="click"
+              >
+                <template #reference>
+                  <Card
+                    :data="{
+                      [metric]: scope.row[metric] && scope.row[metric].avg,
+                    }"
+                    :config="{ textAlign: 'left' }"
+                  />
+                </template>
+                <div class="view-line">
+                  <Line
+                    :data="{
+                      [metric]: scope.row[metric] && scope.row[metric].values,
+                    }"
+                    :intervalTime="intervalTime"
+                    :config="{
+                      showXAxis: false,
+                      showYAxis: false,
+                      smallTips: true,
+                      showlabels: false,
+                    }"
+                  />
+                </div>
+              </el-popover>
               <Card
                 v-else
                 :data="{ [metric]: scope.row[metric] }"
@@ -241,6 +272,7 @@ async function queryServiceMetrics(currentServices: Service[]) {
     });
     return;
   }
+  console.log(services.value);
   services.value = currentServices;
 }
 function objectSpanMethod(param: any): any {
@@ -320,10 +352,15 @@ watch(
 @import "./style.scss";
 
 .chart {
-  height: 60px;
+  height: 40px;
 }
 
 .inputs {
   width: 300px;
+}
+
+.view-line {
+  width: 300px;
+  height: 200px;
 }
 </style>

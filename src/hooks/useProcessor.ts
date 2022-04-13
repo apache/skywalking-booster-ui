@@ -284,7 +284,13 @@ export function usePodsSource(
         d[name] = aggregation(resp.data[key], c);
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
-        d[name] = calculateExp(resp.data[key].values.values, c);
+        d[name] = {};
+        if (c.calculation === Calculations.Average) {
+          d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
+        }
+        d[name]["values"] = resp.data[key].values.values.map(
+          (val: { value: number }) => aggregation(val.value, c)
+        );
       }
     });
 
@@ -338,7 +344,7 @@ function calculateExp(
   return data;
 }
 
-function aggregation(
+export function aggregation(
   val: number,
   config: { calculation: string }
 ): number | string {
