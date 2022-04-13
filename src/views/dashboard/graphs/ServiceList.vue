@@ -64,14 +64,14 @@ limitations under the License. -->
           <template #default="scope">
             <div class="chart">
               <Line
-                v-if="config.metricTypes[index] === 'readMetricsValues'"
+                v-if="useListConfig(config, index).isLinear"
                 :data="{ [metric]: scope.row[metric] }"
                 :intervalTime="intervalTime"
                 :config="{
                   showXAxis: false,
                   showYAxis: false,
                   smallTips: true,
-                  showSymbol: true,
+                  showlabels: false,
                 }"
               />
               <Card
@@ -108,6 +108,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { Service } from "@/types/selector";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
+import { useListConfig } from "@/hooks/useListConfig";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";

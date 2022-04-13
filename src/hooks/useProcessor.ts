@@ -318,16 +318,21 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   return { queryStr, conditions };
 }
 function calculateExp(
-  arr: number[],
+  arr: any[],
   config: { calculation: string }
 ): (number | string)[] {
-  let data: (number | string)[] = arr;
+  let data: (number | string)[] = [];
   switch (config.calculation) {
     case Calculations.Average:
-      data = [arr.reduce((a, b) => a + b) / arr.length];
+      data = [
+        (
+          arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) /
+          arr.length
+        ).toFixed(2),
+      ];
       break;
     default:
-      data = arr.map((d) => aggregation(d, config));
+      data = arr.map((d) => aggregation(d.value, config));
       break;
   }
   return data;
@@ -341,19 +346,19 @@ function aggregation(
 
   switch (config.calculation) {
     case Calculations.Percentage:
-      data = val / 100;
+      data = (val / 100).toFixed(2);
       break;
     case Calculations.ByteToKB:
-      data = val / 1024;
+      data = (val / 1024).toFixed(2);
       break;
     case Calculations.ByteToMB:
-      data = val / 1024 / 1024;
+      data = (val / 1024 / 1024).toFixed(2);
       break;
     case Calculations.ByteToGB:
-      data = val / 1024 / 1024 / 1024;
+      data = (val / 1024 / 1024 / 1024).toFixed(2);
       break;
     case Calculations.Apdex:
-      data = val / 10000;
+      data = (val / 10000).toFixed(2);
       break;
     case Calculations.ConvertSeconds:
       data = dayjs(val).format("YYYY-MM-DD HH:mm:ss");
@@ -365,7 +370,7 @@ function aggregation(
       data = data.toFixed(2);
       break;
     case Calculations.MsTos:
-      data = val / 1000;
+      data = (val / 1000).toFixed(2);
       break;
     default:
       data;

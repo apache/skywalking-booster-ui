@@ -52,6 +52,7 @@ const { t } = useI18n();
 const metricConfig = computed(() => props.config.metricConfig || []);
 const key = computed(() => Object.keys(props.data)[0]);
 const singleVal = computed(() => Number(props.data[key.value]));
+console.log(props.data);
 const unit = computed(
   () => metricConfig.value[0] && encodeURIComponent(metricConfig.value[0].unit)
 );

@@ -52,7 +52,7 @@ limitations under the License. -->
           <template #default="scope">
             <div class="chart">
               <Line
-                v-if="config.metricTypes[index] === 'readMetricsValues'"
+                v-if="useListConfig(config, index).isLinear"
                 :data="{ [metric]: scope.row[metric] }"
                 :intervalTime="intervalTime"
                 :config="{
@@ -83,6 +83,7 @@ import { EndpointListConfig } from "@/types/dashboard";
 import { Endpoint } from "@/types/selector";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
+import { useListConfig } from "@/hooks/useListConfig";
 import Line from "./Line.vue";
 import Card from "./Card.vue";
 import { EntityType } from "../data";

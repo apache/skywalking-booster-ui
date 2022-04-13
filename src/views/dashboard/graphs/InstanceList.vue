@@ -53,7 +53,7 @@ limitations under the License. -->
           <template #default="scope">
             <div class="chart">
               <Line
-                v-if="config.metricTypes[index] === 'readMetricsValues'"
+                v-if="useListConfig(config, index).isLinear"
                 :data="metric ? { [metric]: scope.row[metric] } : {}"
                 :intervalTime="intervalTime"
                 :config="{
@@ -121,6 +121,7 @@ import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { MetricConfigOpt } from "@/types/dashboard";
+import { useListConfig } from "@/hooks/useListConfig";
 
 /*global defineProps */
 const props = defineProps({

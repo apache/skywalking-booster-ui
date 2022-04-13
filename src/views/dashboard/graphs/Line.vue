@@ -40,6 +40,7 @@ const props = defineProps({
       showXAxis: true,
       showYAxis: true,
       smallTips: false,
+      showlabels: true,
     }),
   },
 });
@@ -185,7 +186,8 @@ function getOption() {
       left: 0,
       right: 10,
       bottom: 5,
-      containLabel: true,
+      containLabel:
+        props.config.showlabels === undefined ? true : props.config.showlabels,
     },
     xAxis: {
       type: "category",
@@ -199,6 +201,7 @@ function getOption() {
       axisLabel: { color: "#9da5b2", fontSize: "11" },
     },
     yAxis: {
+      show: props.config.showYAxis,
       type: "value",
       axisLine: { show: false },
       axisTick: { show: false },
