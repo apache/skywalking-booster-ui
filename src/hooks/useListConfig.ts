@@ -26,7 +26,6 @@ export function useListConfig(config: any, index: number) {
   const isAvg =
     config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues &&
     calculation === Calculations.Average;
-
   return {
     isLinear: line,
     isAvg,

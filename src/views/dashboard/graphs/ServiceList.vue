@@ -76,35 +76,44 @@ limitations under the License. -->
                   showlabels: false,
                 }"
               />
-              <el-popover
+              <span
+                class="item flex-h"
                 v-else-if="useListConfig(config, index).isAvg"
-                placement="left"
-                :width="400"
-                trigger="click"
               >
-                <template #reference>
+                <el-popover placement="left" :width="400" trigger="click">
+                  <template #reference>
+                    <span class="trend">
+                      <Icon
+                        iconName="timeline"
+                        size="middle"
+                        style="color: #409eff"
+                      />
+                    </span>
+                  </template>
+                  <div class="view-line">
+                    <Line
+                      :data="{
+                        [metric]: scope.row[metric] && scope.row[metric].values,
+                      }"
+                      :intervalTime="intervalTime"
+                      :config="{
+                        showXAxis: true,
+                        showYAxis: true,
+                        smallTips: false,
+                        showlabels: true,
+                      }"
+                    />
+                  </div>
+                </el-popover>
+                <span class="value">
                   <Card
                     :data="{
                       [metric]: scope.row[metric] && scope.row[metric].avg,
                     }"
                     :config="{ textAlign: 'left' }"
                   />
-                </template>
-                <div class="view-line">
-                  <Line
-                    :data="{
-                      [metric]: scope.row[metric] && scope.row[metric].values,
-                    }"
-                    :intervalTime="intervalTime"
-                    :config="{
-                      showXAxis: false,
-                      showYAxis: false,
-                      smallTips: true,
-                      showlabels: false,
-                    }"
-                  />
-                </div>
-              </el-popover>
+                </span>
+              </span>
               <Card
                 v-else
                 :data="{ [metric]: scope.row[metric] }"
@@ -272,7 +281,7 @@ async function queryServiceMetrics(currentServices: Service[]) {
     });
     return;
   }
-  console.log(services.value);
+
   services.value = currentServices;
 }
 function objectSpanMethod(param: any): any {
@@ -360,7 +369,26 @@ watch(
 }
 
 .view-line {
-  width: 300px;
+  width: 380px;
   height: 200px;
+}
+
+.item {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+.trend {
+  width: 30px;
+  display: inline-block;
+  height: 100%;
+  cursor: pointer;
+}
+
+.value {
+  display: inline-block;
+  width: calc(100% - 30px);
+  height: 100%;
 }
 </style>
