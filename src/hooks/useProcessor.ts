@@ -388,7 +388,7 @@ export function aggregation(
       data = (val / 1024 / 1024 / 1024).toFixed(2);
       break;
     case Calculations.Apdex:
-      data = (val / 10000).toFixed(2);
+      data = val / 10000;
       break;
     case Calculations.ConvertSeconds:
       data = dayjs(val).format("YYYY-MM-DD HH:mm:ss");
