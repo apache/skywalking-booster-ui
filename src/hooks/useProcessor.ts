@@ -330,36 +330,22 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   return { queryStr, conditions };
 }
 function calculateExp(
-  arr: any[],
+  arr: { value: number }[],
   config: { calculation: string }
 ): (number | string)[] {
+  const sum = arr
+    .map((d: { value: number }) => d.value)
+    .reduce((a, b) => a + b);
   let data: (number | string)[] = [];
   switch (config.calculation) {
     case Calculations.Average:
-      data = [
-        (
-          arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) /
-          arr.length
-        ).toFixed(2),
-      ];
+      data = [(sum / arr.length).toFixed(2)];
       break;
     case Calculations.PercentageAvg:
-      data = [
-        (
-          arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) /
-          arr.length /
-          100
-        ).toFixed(2),
-      ];
+      data = [(sum / arr.length / 100).toFixed(2)];
       break;
     case Calculations.ApdexAvg:
-      data = [
-        (
-          arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) /
-          arr.length /
-          10000
-        ).toFixed(2),
-      ];
+      data = [(sum / arr.length / 10000).toFixed(2)];
       break;
     default:
       data = arr.map((d) => aggregation(d.value, config));
@@ -378,6 +364,9 @@ export function aggregation(
     case Calculations.Percentage:
       data = (val / 100).toFixed(2);
       break;
+    case Calculations.PercentageAvg:
+      data = (val / 100).toFixed(2);
+      break;
     case Calculations.ByteToKB:
       data = (val / 1024).toFixed(2);
       break;
@@ -388,6 +377,9 @@ export function aggregation(
       data = (val / 1024 / 1024 / 1024).toFixed(2);
       break;
     case Calculations.Apdex:
+      data = val / 10000;
+      break;
+    case Calculations.ApdexAvg:
       data = val / 10000;
       break;
     case Calculations.ConvertSeconds:
