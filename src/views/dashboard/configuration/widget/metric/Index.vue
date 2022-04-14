@@ -466,7 +466,7 @@ function setMetricConfig(index: number) {
 .chart-types {
   span {
     display: inline-block;
-    padding: 5px 10px;
+    padding: 2px 10px;
     border: 1px solid #ccc;
     background-color: #fff;
     border-right: 0;

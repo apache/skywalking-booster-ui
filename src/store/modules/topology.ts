@@ -75,7 +75,7 @@ export const topologyStore = defineStore({
     setTopology(data: { nodes: Node[]; calls: Call[] }) {
       const obj = {} as any;
       const services = useSelectorStore().services;
-      const nodes = data.nodes.reduce((prev: Node[], next: Node) => {
+      const nodes = (data.nodes || []).reduce((prev: Node[], next: Node) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
           const s = services.filter((d: Service) => d.id === next.id)[0] || {};
@@ -84,7 +84,7 @@ export const topologyStore = defineStore({
         }
         return prev;
       }, []);
-      const calls = data.calls.reduce((prev: Call[], next: Call) => {
+      const calls = (data.calls || []).reduce((prev: Call[], next: Call) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
           next.value = next.value || 1;
@@ -117,7 +117,7 @@ export const topologyStore = defineStore({
     async getDepthServiceTopology(serviceIds: string[], depth: number) {
       const res = await this.getServicesTopology(serviceIds);
       if (depth > 1) {
-        const ids = res.nodes
+        const ids = (res.nodes || [])
           .map((item: Node) => item.id)
           .filter((d: string) => !serviceIds.includes(d));
         if (!ids.length) {

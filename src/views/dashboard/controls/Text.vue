@@ -105,6 +105,7 @@ function editConfig() {
   cursor: pointer;
   display: flex;
   align-items: center;
+  overflow: auto;
 }
 
 .tools {

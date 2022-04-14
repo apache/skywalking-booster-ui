@@ -17,11 +17,13 @@ limitations under the License. -->
   <div
     v-if="!isNaN(singleVal)"
     class="chart-card"
-    :class="{ center: config.textAlign === 'center' }"
-    :style="{ fontSize: `${config.fontSize}px`, textAlign: config.textAlign }"
+    :style="{
+      fontSize: `${config.fontSize}px`,
+      justifyContent: config.textAlign || 'center',
+    }"
   >
     {{ singleVal.toFixed(2) }}
-    <span v-show="config.showUnit">
+    <span class="unit" v-show="config.showUnit">
       {{ decodeURIComponent(unit) }}
     </span>
   </div>
@@ -59,19 +61,19 @@ const unit = computed(
 <style lang="scss" scoped>
 .chart-card {
   color: #333;
+  width: 100%;
   height: 100%;
-}
-
-.center {
-  box-sizing: border-box;
-  display: -webkit-box;
-  -webkit-box-orient: horizontal;
-  -webkit-box-pack: center;
-  -webkit-box-align: center;
+  display: flex;
+  align-items: center;
 }
 
 .no-data {
   height: 100%;
   color: #666;
+}
+
+.unit {
+  display: inline-block;
+  margin-left: 2px;
 }
 </style>

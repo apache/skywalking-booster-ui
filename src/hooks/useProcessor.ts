@@ -150,9 +150,7 @@ export function useSourceProcessor(
     const c = (config.metricConfig && config.metricConfig[index]) || {};
 
     if (type === MetricQueryTypes.ReadMetricsValues) {
-      source[m] = resp.data[keys[index]].values.values.map(
-        (d: { value: number }) => aggregation(d.value, c)
-      );
+      source[m] = calculateExp(resp.data[keys[index]].values.values, c);
     }
     if (type === MetricQueryTypes.ReadLabeledMetricsValues) {
       const resVal = Object.values(resp.data)[0] || [];
@@ -166,7 +164,6 @@ export function useSourceProcessor(
         const values = item.values.values.map((d: { value: number }) =>
           aggregation(Number(d.value), c)
         );
-
         const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
         if (labels[indexNum] && indexNum > -1) {
           source[labels[indexNum]] = values;
@@ -287,8 +284,12 @@ export function usePodsSource(
         d[name] = aggregation(resp.data[key], c);
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
-        d[name] = resp.data[key].values.values.map((d: { value: number }) =>
-          aggregation(d.value, c)
+        d[name] = {};
+        if (c.calculation === Calculations.Average) {
+          d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
+        }
+        d[name]["values"] = resp.data[key].values.values.map(
+          (val: { value: number }) => aggregation(val.value, c)
         );
       }
     });
@@ -322,25 +323,48 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
 
   return { queryStr, conditions };
 }
+function calculateExp(
+  arr: any[],
+  config: { calculation: string }
+): (number | string)[] {
+  let data: (number | string)[] = [];
+  switch (config.calculation) {
+    case Calculations.Average:
+      data = [
+        (
+          arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) /
+          arr.length
+        ).toFixed(2),
+      ];
+      break;
+    default:
+      data = arr.map((d) => aggregation(d.value, config));
+      break;
+  }
+  return data;
+}
 
-export function aggregation(val: number, config: any): number | string {
+export function aggregation(
+  val: number,
+  config: { calculation: string }
+): number | string {
   let data: number | string = Number(val);
 
   switch (config.calculation) {
     case Calculations.Percentage:
-      data = val / 100;
+      data = (val / 100).toFixed(2);
       break;
     case Calculations.ByteToKB:
-      data = val / 1024;
+      data = (val / 1024).toFixed(2);
       break;
     case Calculations.ByteToMB:
-      data = val / 1024 / 1024;
+      data = (val / 1024 / 1024).toFixed(2);
       break;
     case Calculations.ByteToGB:
-      data = val / 1024 / 1024 / 1024;
+      data = (val / 1024 / 1024 / 1024).toFixed(2);
       break;
     case Calculations.Apdex:
-      data = val / 10000;
+      data = (val / 10000).toFixed(2);
       break;
     case Calculations.ConvertSeconds:
       data = dayjs(val).format("YYYY-MM-DD HH:mm:ss");
@@ -352,7 +376,7 @@ export function aggregation(val: number, config: any): number | string {
       data = data.toFixed(2);
       break;
     case Calculations.MsTos:
-      data = val / 1000;
+      data = (val / 1000).toFixed(2);
       break;
     default:
       data;

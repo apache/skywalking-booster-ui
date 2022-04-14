@@ -42,34 +42,11 @@ limitations under the License. -->
             </span>
           </template>
         </el-table-column>
-        <el-table-column
-          v-for="(metric, index) in colMetrics"
-          :label="`${decodeURIComponent(
-            getLabel(metric, index)
-          )} ${decodeURIComponent(getUnit(index))}`"
-          :key="metric + index"
-        >
-          <template #default="scope">
-            <div class="chart">
-              <Line
-                v-if="config.metricTypes[index] === 'readMetricsValues'"
-                :data="{ [metric]: scope.row[metric] }"
-                :intervalTime="intervalTime"
-                :config="{
-                  showXAxis: false,
-                  showYAxis: false,
-                  smallTips: true,
-                  showSymbol: true,
-                }"
-              />
-              <Card
-                v-else
-                :data="{ [metric]: scope.row[metric] }"
-                :config="{ textAlign: 'left' }"
-              />
-            </div>
-          </template>
-        </el-table-column>
+        <ColumnGraph
+          :intervalTime="intervalTime"
+          :colMetrics="colMetrics"
+          :config="config"
+        />
       </el-table>
     </div>
   </div>
@@ -83,12 +60,11 @@ import { EndpointListConfig } from "@/types/dashboard";
 import { Endpoint } from "@/types/selector";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
-import Line from "./Line.vue";
-import Card from "./Card.vue";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { MetricConfigOpt } from "@/types/dashboard";
+import ColumnGraph from "./components/ColumnGraph.vue";
 
 /*global defineProps */
 const props = defineProps({
@@ -183,26 +159,6 @@ function clickEndpoint(scope: any) {
 }
 async function searchList() {
   await queryEndpoints();
-}
-function getUnit(index: number) {
-  const u =
-    props.config.metricConfig &&
-    props.config.metricConfig[index] &&
-    props.config.metricConfig[index].unit;
-  if (u) {
-    return `(${encodeURIComponent(u)})`;
-  }
-  return encodeURIComponent("");
-}
-function getLabel(metric: string, index: number) {
-  const label =
-    props.config.metricConfig &&
-    props.config.metricConfig[index] &&
-    props.config.metricConfig[index].label;
-  if (label) {
-    return encodeURIComponent(label);
-  }
-  return encodeURIComponent(metric);
 }
 watch(
   () => [...(props.config.metricTypes || []), ...(props.config.metrics || [])],

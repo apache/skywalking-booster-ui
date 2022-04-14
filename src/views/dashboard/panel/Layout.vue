@@ -66,6 +66,7 @@ export default defineComponent({
       selectorStore.setCurrentService(null);
       selectorStore.setCurrentPod(null);
       dashboardStore.setEntity("");
+      dashboardStore.setConfigPanel(false);
     });
     return {
       dashboardStore,
