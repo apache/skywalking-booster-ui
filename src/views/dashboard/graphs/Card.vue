@@ -23,7 +23,7 @@ limitations under the License. -->
     }"
   >
     {{ singleVal.toFixed(2) }}
-    <span v-show="config.showUnit">
+    <span class="unit" v-show="config.showUnit">
       {{ decodeURIComponent(unit) }}
     </span>
   </div>
@@ -70,5 +70,10 @@ const unit = computed(
 .no-data {
   height: 100%;
   color: #666;
+}
+
+.unit {
+  display: inline-block;
+  margin-left: 2px;
 }
 </style>

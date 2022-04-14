@@ -54,7 +54,7 @@ limitations under the License. -->
             </span>
           </template>
         </el-table-column>
-        <MetricGraph
+        <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
           :config="config"
@@ -87,7 +87,7 @@ import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { MetricConfigOpt } from "@/types/dashboard";
-import MetricGraph from "./components/MetricGraph.vue";
+import ColumnGraph from "./components/ColumnGraph.vue";
 
 /*global defineProps */
 const props = defineProps({
