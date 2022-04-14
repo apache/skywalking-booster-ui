@@ -54,74 +54,11 @@ limitations under the License. -->
             </span>
           </template>
         </el-table-column>
-        <el-table-column
-          v-for="(metric, index) in colMetrics"
-          :label="`${decodeURIComponent(
-            getLabel(metric, index)
-          )} ${decodeURIComponent(getUnit(index))}`"
-          :key="metric + index"
-        >
-          <template #default="scope">
-            <div class="chart">
-              <Line
-                v-if="useListConfig(config, index).isLinear"
-                :data="{
-                  [metric]: scope.row[metric] && scope.row[metric].values,
-                }"
-                :intervalTime="intervalTime"
-                :config="{
-                  showXAxis: false,
-                  showYAxis: false,
-                  smallTips: true,
-                  showlabels: false,
-                }"
-              />
-              <span
-                class="item flex-h"
-                v-else-if="useListConfig(config, index).isAvg"
-              >
-                <el-popover placement="left" :width="400" trigger="click">
-                  <template #reference>
-                    <span class="trend">
-                      <Icon
-                        iconName="timeline"
-                        size="middle"
-                        style="color: #409eff"
-                      />
-                    </span>
-                  </template>
-                  <div class="view-line">
-                    <Line
-                      :data="{
-                        [metric]: scope.row[metric] && scope.row[metric].values,
-                      }"
-                      :intervalTime="intervalTime"
-                      :config="{
-                        showXAxis: true,
-                        showYAxis: true,
-                        smallTips: false,
-                        showlabels: true,
-                      }"
-                    />
-                  </div>
-                </el-popover>
-                <span class="value">
-                  <Card
-                    :data="{
-                      [metric]: scope.row[metric] && scope.row[metric].avg,
-                    }"
-                    :config="{ textAlign: 'left' }"
-                  />
-                </span>
-              </span>
-              <Card
-                v-else
-                :data="{ [metric]: scope.row[metric] }"
-                :config="{ textAlign: 'left' }"
-              />
-            </div>
-          </template>
-        </el-table-column>
+        <MetricGraph
+          :intervalTime="intervalTime"
+          :colMetrics="colMetrics"
+          :config="config"
+        />
       </el-table>
     </div>
     <el-pagination
@@ -142,17 +79,15 @@ import { watch, ref, computed } from "vue";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import { ServiceListConfig } from "@/types/dashboard";
-import Line from "./Line.vue";
-import Card from "./Card.vue";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { Service } from "@/types/selector";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
-import { useListConfig } from "@/hooks/useListConfig";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { MetricConfigOpt } from "@/types/dashboard";
+import MetricGraph from "./components/MetricGraph.vue";
 
 /*global defineProps */
 const props = defineProps({
@@ -317,26 +252,6 @@ function searchList() {
   );
   setServices(services);
 }
-function getUnit(index: number) {
-  const u =
-    props.config.metricConfig &&
-    props.config.metricConfig[index] &&
-    props.config.metricConfig[index].unit;
-  if (u) {
-    return `(${encodeURIComponent(u)})`;
-  }
-  return encodeURIComponent("");
-}
-function getLabel(metric: string, index: number) {
-  const label =
-    props.config.metricConfig &&
-    props.config.metricConfig[index] &&
-    props.config.metricConfig[index].label;
-  if (label) {
-    return encodeURIComponent(label);
-  }
-  return encodeURIComponent(metric);
-}
 
 watch(
   () => [...(props.config.metricTypes || []), ...(props.config.metrics || [])],
@@ -360,35 +275,7 @@ watch(
 <style lang="scss" scoped>
 @import "./style.scss";
 
-.chart {
-  height: 40px;
-}
-
 .inputs {
   width: 300px;
-}
-
-.view-line {
-  width: 380px;
-  height: 200px;
-}
-
-.item {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-}
-
-.trend {
-  width: 30px;
-  display: inline-block;
-  height: 100%;
-  cursor: pointer;
-}
-
-.value {
-  display: inline-block;
-  width: calc(100% - 30px);
-  height: 100%;
 }
 </style>

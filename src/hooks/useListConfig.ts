@@ -15,16 +15,17 @@
  * limitations under the License.
  */
 import { MetricQueryTypes, Calculations } from "./data";
-export function useListConfig(config: any, index: number) {
+export function useListConfig(config: any, index: string) {
+  const i = Number(index);
   const calculation =
     config.metricConfig &&
-    config.metricConfig[index] &&
-    config.metricConfig[index].calculation;
+    config.metricConfig[i] &&
+    config.metricConfig[i].calculation;
   const line =
-    config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues &&
+    config.metricTypes[i] === MetricQueryTypes.ReadMetricsValues &&
     calculation !== Calculations.Average;
   const isAvg =
-    config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues &&
+    config.metricTypes[i] === MetricQueryTypes.ReadMetricsValues &&
     calculation === Calculations.Average;
   return {
     isLinear: line,
