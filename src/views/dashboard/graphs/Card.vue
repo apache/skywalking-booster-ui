@@ -23,7 +23,7 @@ limitations under the License. -->
     }"
   >
     {{ singleVal.toFixed(2) }}
-    <span class="unit" v-show="config.showUnit">
+    <span class="unit" v-show="config.showUnit && unit">
       {{ decodeURIComponent(unit) }}
     </span>
   </div>
@@ -55,7 +55,9 @@ const metricConfig = computed(() => props.config.metricConfig || []);
 const key = computed(() => Object.keys(props.data)[0]);
 const singleVal = computed(() => Number(props.data[key.value]));
 const unit = computed(
-  () => metricConfig.value[0] && encodeURIComponent(metricConfig.value[0].unit)
+  () =>
+    metricConfig.value[0] &&
+    encodeURIComponent(metricConfig.value[0].unit || "")
 );
 </script>
 <style lang="scss" scoped>
