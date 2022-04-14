@@ -17,16 +17,21 @@
 import { MetricQueryTypes, Calculations } from "./data";
 export function useListConfig(config: any, index: string) {
   const i = Number(index);
+  const types = [
+    Calculations.Average,
+    Calculations.ApdexAvg,
+    Calculations.PercentageAvg,
+  ];
   const calculation =
     config.metricConfig &&
     config.metricConfig[i] &&
     config.metricConfig[i].calculation;
   const line =
     config.metricTypes[i] === MetricQueryTypes.ReadMetricsValues &&
-    calculation !== Calculations.Average;
+    !types.includes(calculation);
   const isAvg =
     config.metricTypes[i] === MetricQueryTypes.ReadMetricsValues &&
-    calculation === Calculations.Average;
+    types.includes(calculation);
   return {
     isLinear: line,
     isAvg,

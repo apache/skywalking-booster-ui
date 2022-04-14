@@ -278,14 +278,20 @@ export function usePodsSource(
   }
   const data = pods.map((d: Instance | any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
-      const c = (config.metricConfig && config.metricConfig[index]) || {};
+      const c: any = (config.metricConfig && config.metricConfig[index]) || {};
       const key = name + idx + index;
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValue) {
         d[name] = aggregation(resp.data[key], c);
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
         d[name] = {};
-        if (c.calculation === Calculations.Average) {
+        if (
+          [
+            Calculations.Average,
+            Calculations.ApdexAvg,
+            Calculations.PercentageAvg,
+          ].includes(c.calculation)
+        ) {
           d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
         }
         d[name]["values"] = resp.data[key].values.values.map(
@@ -334,6 +340,24 @@ function calculateExp(
         (
           arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) /
           arr.length
+        ).toFixed(2),
+      ];
+      break;
+    case Calculations.PercentageAvg:
+      data = [
+        (
+          arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) /
+          arr.length /
+          100
+        ).toFixed(2),
+      ];
+      break;
+    case Calculations.ApdexAvg:
+      data = [
+        (
+          arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) /
+          arr.length /
+          10000
         ).toFixed(2),
       ];
       break;
