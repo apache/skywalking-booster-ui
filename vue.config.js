@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-const CompressionWebpackPlugin = require("compression-webpack-plugin");
 const AutoImport = require("unplugin-auto-import/webpack");
 const Components = require("unplugin-vue-components/webpack");
 const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
@@ -101,16 +100,5 @@ module.exports = {
         dts: "./src/types/components.d.ts",
       })
     );
-    if (process.env.NODE_ENV === "production") {
-      const productionGzipExtensions = ["html", "js", "css"];
-      config.plugins.push(
-        new CompressionWebpackPlugin({
-          filename: "[path][base].gz",
-          algorithm: "gzip",
-          test: new RegExp("\\.(" + productionGzipExtensions.join("|") + ")$"),
-          threshold: 10240,
-        })
-      );
-    }
   },
 };
