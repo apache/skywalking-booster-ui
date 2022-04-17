@@ -1,0 +1,29 @@
+:root {
+    --spp-white: #e9ebfc;
+    --spp-light-grey: #cacaca;
+    --spp-grey: #a7aebb;
+    --spp-light-blue: #747990;
+    --spp-blue: #3d444f;
+    --spp-red: #e1483b;
+    --spp-green: #182d34;
+    --spp-dark-green: #172127;
+    --spp-darkest-green: #0d1216;
+    --spp-other-green: #24343d;
+    --nice-black: #1a1a1a;
+}
+
+.side-bar {
+    background: var(--spp-other-green) !important;
+}
+
+.el-menu {
+    background-color: var(--spp-other-green) !important;
+}
+
+.el-sub-menu__title {
+    background-color: var(--spp-other-green) !important;
+}
+
+.el-menu-item.is-active {
+    color: var(--spp-red) !important;
+}
