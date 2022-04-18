@@ -32,6 +32,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface ProfileState {
   endpoints: Endpoint[];
+  taskEndpoints: Endpoint[];
   durationTime: Duration;
   condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
@@ -48,6 +49,7 @@ export const profileStore = defineStore({
   id: "profile",
   state: (): ProfileState => ({
     endpoints: [{ value: "", label: "All" }],
+    taskEndpoints: [{ value: "", label: "All" }],
     durationTime: useAppStoreWithOut().durationTime,
     condition: { serviceId: "", endpointName: "" },
     taskList: [],
@@ -85,6 +87,18 @@ export const profileStore = defineStore({
         return res.data;
       }
       this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods];
+      return res.data;
+    },
+    async getTaskEndpoints(serviceId: string, keyword?: string) {
+      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
+        serviceId,
+        duration: this.durationTime,
+        keyword: keyword || "",
+      });
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.taskEndpoints = [{ value: "", label: "All" }, ...res.data.data.pods];
       return res.data;
     },
     async getTaskList() {

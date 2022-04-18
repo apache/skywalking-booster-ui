@@ -21,5 +21,6 @@ import Trace from "./Trace.vue";
 import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
+import Ebpf from "./Ebpf.vue";
 
-export default { Tab, Widget, Trace, Topology, Profile, Log, Text };
+export default { Tab, Widget, Trace, Topology, Profile, Log, Text, Ebpf };

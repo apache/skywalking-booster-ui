@@ -21,7 +21,7 @@ limitations under the License. -->
         class="profile-input"
         size="small"
         :value="endpointName"
-        :options="profileStore.taskEndpoints"
+        :options="eBPFStore.taskEndpoints"
         placeholder="Select a endpoint"
         :isRemote="true"
         @change="changeEndpoint"
@@ -95,14 +95,14 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useProfileStore } from "@/store/modules/profile";
+import { useEbpfStore } from "@/store/modules/ebpf";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { ElMessage } from "element-plus";
 import { InitTaskField } from "./data";
 /* global defineEmits */
 const emits = defineEmits(["close"]);
-const profileStore = useProfileStore();
+const eBPFStore = useEbpfStore();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const { t } = useI18n();
@@ -119,13 +119,13 @@ async function searchEndpoints(keyword: string) {
     return;
   }
   const service = selectorStore.currentService.value;
-  const res = await profileStore.getEndpoints(service, keyword);
+  const res = await eBPFStore.getEndpoints(service, keyword);
 
   if (res.errors) {
     ElMessage.error(res.errors);
     return;
   }
-  endpointName.value = profileStore.taskEndpoints[0].value;
+  endpointName.value = eBPFStore.taskEndpoints[0].value;
 }
 
 function changeMonitorTime(opt: string) {
@@ -161,7 +161,7 @@ async function createTask() {
     dumpPeriod: Number(dumpPeriod.value),
     maxSamplingCount: Number(maxSamplingCount.value),
   };
-  const res = await profileStore.createTask(params);
+  const res = await eBPFStore.createTask(params);
   if (res.errors) {
     ElMessage.error(res.errors);
     return;

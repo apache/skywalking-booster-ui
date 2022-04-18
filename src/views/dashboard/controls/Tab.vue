@@ -122,6 +122,7 @@ import Trace from "./Trace.vue";
 import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
+import Ebpf from "./Ebpf.vue";
 
 const props = {
   data: {
@@ -132,7 +133,7 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile, Log, Text },
+  components: { Topology, Widget, Trace, Profile, Log, Text, Ebpf },
   props,
   setup(props) {
     const { t } = useI18n();

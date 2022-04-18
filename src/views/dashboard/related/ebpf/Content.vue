@@ -13,38 +13,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-radio-group v-model="selected" @change="checked">
-    <el-radio v-for="item in options" :key="item.value" :label="item.value">
-      {{ item.label }}
-    </el-radio>
-  </el-radio-group>
+  <div>content</div>
 </template>
-<script lang="ts" setup>
-import { ref } from "vue";
-import type { PropType } from "vue";
-
-interface Option {
-  label: string;
-  value: string;
-}
-
-/*global  defineProps, defineEmits */
-const emit = defineEmits(["change"]);
-const props = defineProps({
-  options: {
-    type: Array as PropType<Option[]>,
-    default: () => [],
-  },
-  value: {
-    type: String as PropType<string>,
-    default: "",
-  },
-  size: { type: null, default: "default" },
-});
-
-const selected = ref<string>(props.value);
-
-function checked(opt: unknown) {
-  emit("change", opt);
-}
-</script>
