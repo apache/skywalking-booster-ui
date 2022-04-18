@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h header">
-    <el-button class="search-btn" size="small" @click="createTask">
+    <div>eBPF Profile</div>
+    <el-button class="new-btn" size="small" @click="createTask">
       {{ t("newTask") }}
     </el-button>
   </div>
@@ -43,18 +44,14 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const { t } = useI18n();
-const endpointName = ref<string>("");
 const newTask = ref<boolean>(false);
 
-// searchTasks();
+searchTasks();
 
 async function searchTasks() {
-  ebpfStore.setConditions({
-    serviceId:
-      (selectorStore.currentService && selectorStore.currentService.id) || "",
-    endpointName: endpointName.value,
-  });
-  const res = await ebpfStore.getTaskList();
+  const serviceId =
+    (selectorStore.currentService && selectorStore.currentService.id) || "";
+  const res = await ebpfStore.getTaskList(serviceId);
 
   if (res.errors) {
     ElMessage.error(res.errors);
@@ -66,7 +63,7 @@ async function createTask() {
     return;
   }
   newTask.value = true;
-  await ebpfStore.getCreateTaskData(selectorStore.currentService.id);
+  ebpfStore.getCreateTaskData(selectorStore.currentService.id);
 }
 
 watch(
@@ -93,5 +90,9 @@ watch(
 
 .name {
   width: 270px;
+}
+
+.new-btn {
+  float: right;
 }
 </style>

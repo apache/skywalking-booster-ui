@@ -124,9 +124,8 @@ async function createTask() {
     ElMessage.error(res.errors);
     return;
   }
-  const { tip } = res.data;
-  if (tip) {
-    ElMessage.error(tip);
+  if (!res.data.createTaskData.status) {
+    ElMessage.error(res.data.createTaskData.errorReason);
     return;
   }
   ElMessage.success("Task created successfully");

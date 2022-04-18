@@ -15,8 +15,14 @@
  * limitations under the License.
  */
 
-import { queryCreateTaskData, createEBPFTask } from "../fragments/ebpf";
+import {
+  queryCreateTaskData,
+  createEBPFTask,
+  queryEBPFTasks,
+} from "../fragments/ebpf";
 
 export const getCreateTaskData = `query queryCreateTaskData(${queryCreateTaskData.variable}) {${queryCreateTaskData.query}}`;
 
 export const saveEBPFTask = `mutation createEBPFTask(${createEBPFTask.variable}) {${createEBPFTask.query}}`;
+
+export const getEBPFTasks = `query queryEBPFTasks(${queryEBPFTasks.variable}) {${queryEBPFTasks.query}}`;

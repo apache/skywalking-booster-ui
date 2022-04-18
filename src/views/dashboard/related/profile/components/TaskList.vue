@@ -36,7 +36,7 @@ limitations under the License. -->
               <div class="ell">
                 <span>{{ i.endpointName }}</span>
                 <a class="profile-btn r" @click="viewTask($event, i)">
-                  <Icon iconName="library_books" size="middle" />
+                  <Icon iconName="view" size="middle" />
                 </a>
               </div>
               <div class="grey ell sm">

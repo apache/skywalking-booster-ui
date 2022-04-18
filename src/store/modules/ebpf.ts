@@ -31,7 +31,6 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface EbpfStore {
   durationTime: Duration;
-  condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
   segmentList: Trace[];
   currentSegment: Trace | Record<string, never>;
@@ -48,7 +47,6 @@ export const ebpfStore = defineStore({
   id: "eBPF",
   state: (): EbpfStore => ({
     durationTime: useAppStoreWithOut().durationTime,
-    condition: { serviceId: "", endpointName: "" },
     taskList: [],
     segmentList: [],
     currentSegment: {},
@@ -61,12 +59,6 @@ export const ebpfStore = defineStore({
     couldProfiling: false,
   }),
   actions: {
-    setConditions(data: { serviceId?: string; endpointName?: string }) {
-      this.condition = {
-        ...this.condition,
-        ...data,
-      };
-    },
     setCurrentSpan(span: Span) {
       this.currentSpan = span;
     },
@@ -91,24 +83,16 @@ export const ebpfStore = defineStore({
       });
       return res.data;
     },
-    async getTaskList() {
+    async getTaskList(serviceId: string) {
       const res: AxiosResponse = await graphql
-        .query("getProfileTaskList")
-        .params(this.condition);
+        .query("getEBPFTasks")
+        .params({ serviceId });
 
       if (res.data.errors) {
         return res.data;
       }
-      const list = res.data.data.taskList;
-      this.taskList = list;
-      if (!list.length) {
-        this.segmentList = [];
-        this.segmentSpans = [];
-        this.analyzeTrees = [];
+      this.taskList = res.data.data.queryEBPFTasks || [];
 
-        return res.data;
-      }
-      this.getSegmentList({ taskID: list[0].id });
       return res.data;
     },
     async getSegmentList(params: { taskID: string }) {

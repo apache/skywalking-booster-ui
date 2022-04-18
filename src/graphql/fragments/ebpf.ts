@@ -32,3 +32,16 @@ export const createEBPFTask = {
     id
   }`,
 };
+export const queryEBPFTasks = {
+  variable: "$serviceId: ID!",
+  query: `
+  queryEBPFTasks: queryEBPFProfilingTasks(serviceId: $serviceId) {
+    taskId
+    processLabels
+    taskStartTime
+    triggerType
+    fixedTriggerDuration
+    targetType
+    createTime
+  }`,
+};
