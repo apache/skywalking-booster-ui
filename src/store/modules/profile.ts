@@ -16,7 +16,7 @@
  */
 import { defineStore } from "pinia";
 import { Duration } from "@/types/app";
-import { Service } from "@/types/selector";
+import { Endpoint } from "@/types/selector";
 import {
   TaskListItem,
   SegmentSpan,
@@ -31,7 +31,7 @@ import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface ProfileState {
-  services: Service[];
+  endpoints: Endpoint[];
   durationTime: Duration;
   condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
@@ -47,7 +47,7 @@ interface ProfileState {
 export const profileStore = defineStore({
   id: "profile",
   state: (): ProfileState => ({
-    services: [{ value: "0", label: "All" }],
+    endpoints: [{ value: "", label: "All" }],
     durationTime: useAppStoreWithOut().durationTime,
     condition: { serviceId: "", endpointName: "" },
     taskList: [],
@@ -75,14 +75,16 @@ export const profileStore = defineStore({
     setHighlightTop() {
       this.highlightTop = !this.highlightTop;
     },
-    async getServices(layer: string) {
-      const res: AxiosResponse = await graphql.query("queryServices").params({
-        layer,
+    async getEndpoints(serviceId: string, keyword?: string) {
+      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
+        serviceId,
+        duration: this.durationTime,
+        keyword: keyword || "",
       });
       if (res.data.errors) {
         return res.data;
       }
-      this.services = res.data.data.services;
+      this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods];
       return res.data;
     },
     async getTaskList() {

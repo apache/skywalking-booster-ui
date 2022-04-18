@@ -14,19 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h header">
-    <!-- <div class="mr-10" v-if="dashboardStore.entity==='All'">
-      <span class="grey mr-5">{{ t("service") }}:</span>
-      <Selector
-        size="small"
-        :value="service.value"
-        :options="profileStore.services"
-        placeholder="Select a service"
-        @change="changeService"
-      />
-    </div> -->
     <div class="mr-10">
       <span class="grey mr-5">{{ t("endpointName") }}:</span>
-      <el-input v-model="endpointName" class="name" size="small" />
+      <Selector
+        class="name"
+        size="small"
+        :value="endpointName"
+        :options="profileStore.endpoints"
+        placeholder="Select a endpoint"
+        :isRemote="true"
+        @change="changeEndpoint"
+        @query="searchEndpoints"
+      />
     </div>
     <el-button
       class="search-btn"
@@ -65,27 +64,30 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const { t } = useI18n();
-// const service = ref<any>({});
 const endpointName = ref<string>("");
 const newTask = ref<boolean>(false);
 
 searchTasks();
-// getServices();
+searchEndpoints("");
 
-// async function getServices() {
-//   const res = await profileStore.getServices(dashboardStore.layerId);
+async function searchEndpoints(keyword: string) {
+  if (!selectorStore.currentService) {
+    return;
+  }
+  const service = selectorStore.currentService.value;
+  const res = await profileStore.getEndpoints(service, keyword);
 
-//   if (res.errors) {
-//     ElMessage.error(res.errors);
-//     return;
-//   }
-//   service.value = profileStore.services[0];
-//   searchTasks();
-// }
+  if (res.errors) {
+    ElMessage.error(res.errors);
+    return;
+  }
+  endpointName.value = profileStore.endpoints[0].value;
+}
 
-// function changeService(opt: any[]) {
-//   service.value = opt[0];
-// }
+function changeEndpoint(opt: any[]) {
+  endpointName.value = opt[0].value;
+}
+
 async function searchTasks() {
   profileStore.setConditions({
     serviceId:
