@@ -14,25 +14,35 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="profile-task">
+  <div class="ebpf-task" v-if="eBPFStore.couldProfiling">
     <div>
-      <div class="label">{{ t("endpointName") }}</div>
+      <div class="label">{{ t("labels") }}</div>
       <Selector
         class="profile-input"
         size="small"
-        :value="endpointName"
-        :options="eBPFStore.taskEndpoints"
-        placeholder="Select a endpoint"
+        :value="labels"
+        :options="eBPFStore.labels"
+        placeholder="Select labels"
+        :multiple="true"
+        @change="changeLabel"
+      />
+    </div>
+    <div>
+      <div class="label">{{ t("labels") }}</div>
+      <Selector
+        class="profile-input"
+        size="small"
+        :value="type"
+        :options="TargetTypes"
+        placeholder="Select a type"
         :isRemote="true"
-        @change="changeEndpoint"
-        @query="searchEndpoints"
+        @change="changeType"
       />
     </div>
     <div>
       <div class="label">{{ t("monitorTime") }}</div>
       <div>
         <Radio
-          class="mb-5"
           :value="monitorTime"
           :options="InitTaskField.monitorTimeEn"
           @change="changeMonitorTime"
@@ -49,40 +59,14 @@ limitations under the License. -->
     </div>
     <div>
       <div class="label">{{ t("monitorDuration") }}</div>
-      <Radio
-        class="mb-5"
-        :value="monitorDuration"
-        :options="InitTaskField.monitorDuration"
-        @change="changeMonitorDuration"
-      />
-    </div>
-    <div>
-      <div class="label">{{ t("minThreshold") }} (ms)</div>
-      <el-input-number
-        size="small"
+      <el-input
         class="profile-input"
-        :min="0"
-        v-model="minThreshold"
-      />
-    </div>
-    <div>
-      <div class="label">{{ t("dumpPeriod") }}</div>
-      <Radio
-        class="mb-5"
-        :value="dumpPeriod"
-        :options="InitTaskField.dumpPeriod"
-        @change="changeDumpPeriod"
-      />
-    </div>
-    <div>
-      <div class="label">{{ t("maxSamplingCount") }}</div>
-      <Selector
+        v-model="monitorDuration"
         size="small"
-        :value="maxSamplingCount"
-        :options="InitTaskField.maxSamplingCount"
-        placeholder="Select a data"
-        @change="changeMaxSamplingCount"
-        class="profile-input"
+        placeholder="none"
+        type="number"
+        :min="1"
+        :max="60"
       />
     </div>
     <div>
@@ -91,6 +75,7 @@ limitations under the License. -->
       </el-button>
     </div>
   </div>
+  <div v-else>Don't have process could profiling</div>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
@@ -99,67 +84,40 @@ import { useEbpfStore } from "@/store/modules/ebpf";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { ElMessage } from "element-plus";
-import { InitTaskField } from "./data";
+import { InitTaskField, TargetTypes } from "./data";
 /* global defineEmits */
 const emits = defineEmits(["close"]);
 const eBPFStore = useEbpfStore();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const { t } = useI18n();
-const endpointName = ref<string>("");
+const labels = ref<string[]>([]);
+const type = ref<string>(TargetTypes[0].value);
 const monitorTime = ref<string>(InitTaskField.monitorTimeEn[0].value);
-const monitorDuration = ref<string>(InitTaskField.monitorDuration[0].value);
+const monitorDuration = ref<number>(10);
 const time = ref<Date>(appStore.durationRow.start);
-const minThreshold = ref<number>(0);
-const dumpPeriod = ref<string>(InitTaskField.dumpPeriod[0].value);
-const maxSamplingCount = ref<string>(InitTaskField.maxSamplingCount[0].value);
-
-async function searchEndpoints(keyword: string) {
-  if (!selectorStore.currentService) {
-    return;
-  }
-  const service = selectorStore.currentService.value;
-  const res = await eBPFStore.getEndpoints(service, keyword);
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-    return;
-  }
-  endpointName.value = eBPFStore.taskEndpoints[0].value;
-}
 
 function changeMonitorTime(opt: string) {
   monitorTime.value = opt;
 }
 
-function changeMonitorDuration(val: string) {
-  monitorDuration.value = val;
+function changeLabel(opt: any[]) {
+  labels.value = opt.map((d) => d.value);
 }
 
-function changeDumpPeriod(val: string) {
-  dumpPeriod.value = val;
-}
-
-function changeMaxSamplingCount(opt: any[]) {
-  maxSamplingCount.value = opt[0].value;
-}
-
-function changeEndpoint(opt: any[]) {
-  endpointName.value = opt[0].value;
+function changeType(opt: any[]) {
+  type.value = opt[0].value;
 }
 
 async function createTask() {
-  emits("close");
   const date =
     monitorTime.value === "0" ? appStore.durationRow.start : time.value;
   const params = {
     serviceId: selectorStore.currentService.id,
-    endpointName: endpointName.value,
+    processLabels: labels.value,
     startTime: date.getTime(),
-    duration: Number(monitorDuration.value),
-    minDurationThreshold: Number(minThreshold.value),
-    dumpPeriod: Number(dumpPeriod.value),
-    maxSamplingCount: Number(maxSamplingCount.value),
+    duration: monitorDuration.value * 60,
+    targetType: "ON_CPU",
   };
   const res = await eBPFStore.createTask(params);
   if (res.errors) {
@@ -172,13 +130,14 @@ async function createTask() {
     return;
   }
   ElMessage.success("Task created successfully");
+  emits("close");
 }
 function changeTimeRange(val: Date) {
   time.value = val;
 }
 </script>
 <style lang="scss" scoped>
-.profile-task {
+.ebpf-task {
   margin: 0 auto;
   width: 400px;
 }

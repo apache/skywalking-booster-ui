@@ -16,14 +16,13 @@
  */
 import { defineStore } from "pinia";
 import { Duration, Option } from "@/types/app";
-import { Endpoint } from "@/types/selector";
 import {
   TaskListItem,
   SegmentSpan,
   ProfileAnalyzationTrees,
   TaskLog,
-  ProfileTaskCreationRequest,
 } from "@/types/profile";
+import { EBPFTaskCreationRequest } from "@/types/ebpf";
 import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
@@ -31,8 +30,6 @@ import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface EbpfStore {
-  endpoints: Endpoint[];
-  taskEndpoints: Endpoint[];
   durationTime: Duration;
   condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
@@ -44,13 +41,12 @@ interface EbpfStore {
   taskLogs: TaskLog[];
   highlightTop: boolean;
   labels: Option[];
+  couldProfiling: boolean;
 }
 
 export const ebpfStore = defineStore({
-  id: "profile",
+  id: "eBPF",
   state: (): EbpfStore => ({
-    endpoints: [{ value: "", label: "All" }],
-    taskEndpoints: [{ value: "", label: "All" }],
     durationTime: useAppStoreWithOut().durationTime,
     condition: { serviceId: "", endpointName: "" },
     taskList: [],
@@ -62,6 +58,7 @@ export const ebpfStore = defineStore({
     taskLogs: [],
     highlightTop: true,
     labels: [{ value: "", label: "" }],
+    couldProfiling: false,
   }),
   actions: {
     setConditions(data: { serviceId?: string; endpointName?: string }) {
@@ -79,28 +76,19 @@ export const ebpfStore = defineStore({
     setHighlightTop() {
       this.highlightTop = !this.highlightTop;
     },
-    async getEndpoints(serviceId: string, keyword?: string) {
-      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
-        serviceId,
-        duration: this.durationTime,
-        keyword: keyword || "",
-      });
+    async getCreateTaskData(serviceId: string) {
+      const res: AxiosResponse = await graphql
+        .query("getCreateTaskData")
+        .params({ serviceId });
+
       if (res.data.errors) {
         return res.data;
       }
-      this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods];
-      return res.data;
-    },
-    async getTaskEndpoints(serviceId: string, keyword?: string) {
-      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
-        serviceId,
-        duration: this.durationTime,
-        keyword: keyword || "",
+      const json = res.data.data.createTaskData;
+      this.couldProfiling = json.couldProfiling || [];
+      this.labels = json.processLabels.map((d: string) => {
+        return { label: d, value: d };
       });
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.taskEndpoints = [{ value: "", label: "All" }, ...res.data.data.pods];
       return res.data;
     },
     async getTaskList() {
@@ -197,15 +185,16 @@ export const ebpfStore = defineStore({
       this.analyzeTrees = analyze.trees;
       return res.data;
     },
-    async createTask(param: ProfileTaskCreationRequest) {
+    async createTask(param: EBPFTaskCreationRequest) {
       const res: AxiosResponse = await graphql
-        .query("saveProfileTask")
-        .params({ creationRequest: param });
+        .query("saveEBPFTask")
+        .params({ request: param });
 
       if (res.data.errors) {
         return res.data;
       }
-      this.getTaskList();
+      console.log(res.data.data);
+      // this.getTaskList();
       return res.data;
     },
     async getTaskLogs(param: { taskID: string }) {

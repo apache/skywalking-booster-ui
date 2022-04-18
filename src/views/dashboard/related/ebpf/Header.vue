@@ -14,27 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h header">
-    <div class="mr-10">
-      <span class="grey mr-5">{{ t("endpointName") }}:</span>
-      <Selector
-        class="name"
-        size="small"
-        :value="endpointName"
-        :options="ebpfStore.endpoints"
-        placeholder="Select a endpoint"
-        :isRemote="true"
-        @change="changeEndpoint"
-        @query="searchEndpoints"
-      />
-    </div>
-    <el-button
-      class="search-btn"
-      size="small"
-      type="primary"
-      @click="searchTasks"
-    >
-      {{ t("search") }}
-    </el-button>
     <el-button class="search-btn" size="small" @click="createTask">
       {{ t("newTask") }}
     </el-button>
@@ -67,26 +46,7 @@ const { t } = useI18n();
 const endpointName = ref<string>("");
 const newTask = ref<boolean>(false);
 
-searchTasks();
-searchEndpoints("");
-
-async function searchEndpoints(keyword: string) {
-  if (!selectorStore.currentService) {
-    return;
-  }
-  const service = selectorStore.currentService.value;
-  const res = await ebpfStore.getEndpoints(service, keyword);
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-    return;
-  }
-  endpointName.value = ebpfStore.endpoints[0].value;
-}
-
-function changeEndpoint(opt: any[]) {
-  endpointName.value = opt[0].value;
-}
+// searchTasks();
 
 async function searchTasks() {
   ebpfStore.setConditions({
@@ -101,8 +61,12 @@ async function searchTasks() {
   }
 }
 
-function createTask() {
+async function createTask() {
+  if (!selectorStore.currentService) {
+    return;
+  }
   newTask.value = true;
+  await ebpfStore.getCreateTaskData(selectorStore.currentService.id);
 }
 
 watch(

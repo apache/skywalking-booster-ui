@@ -28,8 +28,9 @@ export const NewTaskField = {
   maxSamplingCount: { key: 5, label: "5" },
 };
 
+export const TargetTypes = [{ label: "ON_CPU", value: "ON_CPU" }];
+
 export const InitTaskField = {
-  serviceSource: [{ key: "", label: "None" }],
   monitorTimeEn: [
     { value: "0", label: "monitor now" },
     { value: "1", label: "set start time" },
@@ -42,22 +43,5 @@ export const InitTaskField = {
     { value: "5", label: "5 min" },
     { value: "10", label: "10 min" },
     { value: "15", label: "15 min" },
-  ],
-  dumpPeriod: [
-    { value: "10", label: "10 ms" },
-    { value: "20", label: "20 ms" },
-    { value: "50", label: "50 ms" },
-    { value: "100", label: "100 ms" },
-  ],
-  maxSamplingCount: [
-    { value: "1", label: "1" },
-    { value: "2", label: "2" },
-    { value: "3", label: "3" },
-    { value: "4", label: "4" },
-    { value: "5", label: "5" },
-    { value: "6", label: "6" },
-    { value: "7", label: "7" },
-    { value: "8", label: "8" },
-    { value: "9", label: "9" },
   ],
 };
