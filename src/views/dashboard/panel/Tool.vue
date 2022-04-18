@@ -435,6 +435,9 @@ function setTabControls(id: string) {
     case "addProfile":
       dashboardStore.addTabControls("Profile");
       break;
+    case "addEbpf":
+      dashboardStore.addTabControls("Ebpf");
+      break;
     case "addTopology":
       dashboardStore.addTabControls("Topology");
       break;
@@ -460,6 +463,9 @@ function setControls(id: string) {
       break;
     case "addProfile":
       dashboardStore.addControl("Profile");
+      break;
+    case "addEbpf":
+      dashboardStore.addTabControls("Ebpf");
       break;
     case "addLog":
       dashboardStore.addControl("Log");
