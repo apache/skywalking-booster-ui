@@ -258,7 +258,7 @@ async function setSourceSelector() {
   let currentPod;
   if (states.currentPod) {
     currentPod = selectorStore.pods.find(
-      (d: { id: string }) => d.label === states.currentPod
+      (d: { label: string }) => d.label === states.currentPod
     );
   } else {
     currentPod = selectorStore.pods.find((d: { id: string }) => d.id === pod);
@@ -283,10 +283,10 @@ async function setDestSelector() {
     return;
   }
   const destPod = params.destPodId || selectorStore.destPods[0].id;
-  let currentDestPod = "";
+  let currentDestPod = { label: "" };
   if (states.currentDestPod) {
     currentDestPod = selectorStore.pods.find(
-      (d: { id: string }) => d.label === states.currentDestPod
+      (d: { label: string }) => d.label === states.currentDestPod
     );
   } else {
     currentDestPod = selectorStore.destPods.find(
@@ -317,19 +317,23 @@ async function getServices() {
   let s;
   if (states.currentService) {
     s = (selectorStore.services || []).find(
-      (d) => d.label === states.currentService
+      (d: { label: string }) => d.label === states.currentService
     );
   } else {
-    s = (selectorStore.services || []).find((d, index) => index === 0);
+    s = (selectorStore.services || []).find(
+      (d: unknown, index: number) => index === 0
+    );
   }
   selectorStore.setCurrentService(s || null);
   let d;
   if (states.currentService) {
     d = (selectorStore.services || []).find(
-      (d) => d.label === states.currentDestService
+      (d: { label: string }) => d.label === states.currentDestService
     );
   } else {
-    d = (selectorStore.services || []).find((d, index) => index === 1);
+    d = (selectorStore.services || []).find(
+      (d: unknown, index: number) => index === 1
+    );
   }
   selectorStore.setCurrentDestService(d || null);
   if (!selectorStore.currentService) {
@@ -484,9 +488,13 @@ async function fetchPods(
       if (setPod) {
         let p;
         if (states.currentPod) {
-          p = selectorStore.pods.find((d) => d.label === states.currentPod);
+          p = selectorStore.pods.find(
+            (d: { label: unknown }) => d.label === states.currentPod
+          );
         } else {
-          p = selectorStore.pods.find((d, index) => index === 0);
+          p = selectorStore.pods.find(
+            (d: unknown, index: number) => index === 0
+          );
         }
         selectorStore.setCurrentPod(p || null);
         states.currentPod = selectorStore.currentPod.label;
@@ -497,9 +505,13 @@ async function fetchPods(
       if (setPod) {
         let p;
         if (states.currentPod) {
-          p = selectorStore.pods.find((d) => d.label === states.currentPod);
+          p = selectorStore.pods.find(
+            (d: { label: string }) => d.label === states.currentPod
+          );
         } else {
-          p = selectorStore.pods.find((d, index) => index === 0);
+          p = selectorStore.pods.find(
+            (d: { label: string }, index: number) => index === 0
+          );
         }
         selectorStore.setCurrentPod(p || null);
         states.currentPod = selectorStore.currentPod.label;
@@ -514,9 +526,13 @@ async function fetchPods(
       if (setPod) {
         let p;
         if (states.currentDestPod) {
-          p = selectorStore.pods.find((d) => d.label === states.currentDestPod);
+          p = selectorStore.pods.find(
+            (d: { label: string }) => d.label === states.currentDestPod
+          );
         } else {
-          p = selectorStore.pods.find((d, index) => index === 0);
+          p = selectorStore.pods.find(
+            (d: { label: string }, index: number) => index === 0
+          );
         }
         selectorStore.setCurrentDestPod(p || null);
         states.currentDestPod = selectorStore.currentDestPod.label;
@@ -530,9 +546,13 @@ async function fetchPods(
       if (setPod) {
         let p;
         if (states.currentDestPod) {
-          p = selectorStore.pods.find((d) => d.label === states.currentDestPod);
+          p = selectorStore.pods.find(
+            (d: { label: string }) => d.label === states.currentDestPod
+          );
         } else {
-          p = selectorStore.pods.find((d, index) => index === 0);
+          p = selectorStore.pods.find(
+            (d: { label: string }, index: number) => index === 0
+          );
         }
         selectorStore.setCurrentDestPod(p || null);
         states.currentDestPod = selectorStore.currentDestPod.label;
