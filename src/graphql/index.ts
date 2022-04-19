@@ -51,7 +51,12 @@ class Graphql {
           query: query[this.queryData],
           variables: variablesData,
         },
-        { cancelToken: cancelToken() }
+        {
+          cancelToken: cancelToken(),
+          headers: {
+            Authorization: "Basic c2t5d2Fsa2luZzpza3l3YWxraW5n",
+          },
+        }
       )
       .then((res: AxiosResponse) => {
         if (res.data.errors) {

@@ -24,7 +24,12 @@ async function query(param: {
   const res: AxiosResponse = await axios.post(
     "/graphql",
     { query: param.queryStr, variables: { ...param.conditions } },
-    { cancelToken: cancelToken() }
+    {
+      cancelToken: cancelToken(),
+      headers: {
+        Authorization: "Basic c2t5d2Fsa2luZzpza3l3YWxraW5n",
+      },
+    }
   );
   if (res.data.errors) {
     res.data.errors = res.data.errors
