@@ -105,12 +105,10 @@ import { ref } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
-import { useAppStoreWithOut } from "@/store/modules/app";
 import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
 
 const { t } = useI18n();
-const appStore = useAppStoreWithOut();
 const ebpfStore = useEbpfStore();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
@@ -121,7 +119,6 @@ async function changeTask(item: EBPFTaskList) {
   selectedTask.value = item;
   const res = await ebpfStore.getEBPFSchedules({
     taskId: item.taskId,
-    duration: appStore.durationTime,
   });
   if (res.errors) {
     ElMessage.error(res.errors);

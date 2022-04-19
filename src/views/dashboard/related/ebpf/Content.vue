@@ -31,4 +31,9 @@ import EBPFTree from "./components/EBPFTree.vue";
   height: calc(100% - 30px);
   width: 100%;
 }
+
+.vis-graph {
+  height: 100%;
+  width: calc(100% - 300px);
+}
 </style>

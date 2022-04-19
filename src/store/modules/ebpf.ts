@@ -1,3 +1,4 @@
+import { TaskListItem } from "./../../types/profile.d";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,13 +17,12 @@
  */
 import { defineStore } from "pinia";
 import { Duration, Option } from "@/types/app";
+import { ProfileAnalyzationTrees } from "@/types/profile";
 import {
-  TaskListItem,
-  SegmentSpan,
-  ProfileAnalyzationTrees,
-  TaskLog,
-} from "@/types/profile";
-import { EBPFTaskCreationRequest, EBPFProfilingSchedule } from "@/types/ebpf";
+  EBPFTaskCreationRequest,
+  EBPFProfilingSchedule,
+  EBPFTaskList,
+} from "@/types/ebpf";
 import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
@@ -31,13 +31,10 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface EbpfStore {
   durationTime: Duration;
-  taskList: TaskListItem[];
+  taskList: EBPFTaskList[];
   eBPFSchedules: EBPFProfilingSchedule[];
   currentSchedule: EBPFProfilingSchedule | Record<string, never>;
-  segmentSpans: SegmentSpan[];
-  currentSpan: SegmentSpan | Record<string, never>;
   analyzeTrees: ProfileAnalyzationTrees;
-  taskLogs: TaskLog[];
   highlightTop: boolean;
   labels: Option[];
   couldProfiling: boolean;
@@ -50,10 +47,7 @@ export const ebpfStore = defineStore({
     taskList: [],
     eBPFSchedules: [],
     currentSchedule: {},
-    segmentSpans: [],
-    currentSpan: {},
     analyzeTrees: [],
-    taskLogs: [],
     highlightTop: true,
     labels: [{ value: "", label: "" }],
     couldProfiling: false,
@@ -103,13 +97,17 @@ export const ebpfStore = defineStore({
         return res.data;
       }
       this.taskList = res.data.data.queryEBPFTasks || [];
-
+      if (!this.taskList.length) {
+        return res.data;
+      }
+      this.getEBPFSchedules({ taskId: this.taskList[0].taskId });
       return res.data;
     },
-    async getEBPFSchedules(params: { taskID: string; duration: Duration }) {
+    async getEBPFSchedules(params: { taskId: string; duration?: Duration }) {
+      const duration = useAppStoreWithOut().durationTime;
       const res: AxiosResponse = await graphql
         .query("getEBPFSchedules")
-        .params(params);
+        .params({ ...params, duration });
 
       if (res.data.errors) {
         this.eBPFSchedules = [];

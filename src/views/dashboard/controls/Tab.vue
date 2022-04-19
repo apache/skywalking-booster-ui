@@ -97,7 +97,7 @@ limitations under the License. -->
         :key="item.i"
         @click="clickTabGrid($event, item)"
         :class="{ active: activeTabWidget === item.i }"
-        drag-ignore-from="svg.d3-trace-tree, .dragger, .micro-topo-chart"
+        :drag-ignore-from="dragIgnoreFrom"
       >
         <component
           :is="item.type"
@@ -123,6 +123,7 @@ import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
+import { dragIgnoreFrom } from "../data";
 
 const props = {
   data: {
@@ -249,6 +250,7 @@ export default defineComponent({
       canEditTabName,
       showTools,
       t,
+      dragIgnoreFrom,
     };
   },
 });

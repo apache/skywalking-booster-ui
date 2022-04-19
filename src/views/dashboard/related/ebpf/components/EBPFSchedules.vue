@@ -13,5 +13,58 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div>schedule</div>
+  <div ref="timeline" class="schedules"></div>
 </template>
+<script lang="ts" setup>
+import { ref, watch } from "vue";
+import dayjs from "dayjs";
+import { useEbpfStore } from "@/store/modules/ebpf";
+import { EBPFProfilingSchedule } from "@/types/ebpf";
+import { DataSet, Timeline } from "vis-timeline/standalone";
+import "vis-timeline/styles/vis-timeline-graph2d.css";
+
+const ebpfStore = useEbpfStore();
+/*global Nullable */
+const timeline = ref<Nullable<HTMLDivElement>>(null);
+const visGraph = ref<Nullable<any>>(null);
+const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
+  dayjs(date).format(pattern);
+
+function visTimeline() {
+  if (visGraph.value) {
+    visGraph.value.destroy();
+  }
+  const schedules = ebpfStore.eBPFSchedules.map(
+    (d: EBPFProfilingSchedule, index: number) => {
+      return {
+        id: index + 1,
+        content: "schedule" + index,
+        start: dateFormat(d.startTime),
+        end: dateFormat(d.endTime),
+      };
+    }
+  );
+  const items: any = new DataSet(schedules);
+  const options = {
+    editable: true,
+    selectable: true,
+  };
+  if (!timeline.value) {
+    return;
+  }
+  visGraph.value = new Timeline(timeline.value, items, options);
+}
+
+watch(
+  () => ebpfStore.eBPFSchedules,
+  () => {
+    visTimeline();
+  }
+);
+</script>
+<style lang="scss" scoped>
+.schedules {
+  width: 100%;
+  height: 400px;
+}
+</style>

@@ -38,7 +38,21 @@ export interface EBPFTaskList {
 export interface EBPFProfilingSchedule {
   scheduleId: string;
   taskId: string;
-  process: string;
+  process: Process;
   endTime: number;
   startTime: number;
 }
+
+type Process = {
+  id: string;
+  name: string;
+  serviceId: string;
+  serviceName: string;
+  instanceId: string;
+  instanceName: string;
+  layer: string;
+  agentId: string;
+  detectType: string;
+  attributes: { name: string; value: string };
+  labels: string[];
+};
