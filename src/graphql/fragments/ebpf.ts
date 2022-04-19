@@ -37,6 +37,8 @@ export const queryEBPFTasks = {
   query: `
   queryEBPFTasks: queryEBPFProfilingTasks(serviceId: $serviceId) {
     taskId
+    serviceName
+    serviceId
     processLabels
     taskStartTime
     triggerType

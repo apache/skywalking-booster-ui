@@ -22,3 +22,15 @@ export interface EBPFTaskCreationRequest {
   duration: number;
   targetType: string;
 }
+
+export interface EBPFTaskList {
+  taskId: string;
+  serviceName: string;
+  serviceId: string;
+  processLabels: string[];
+  taskStartTime: number;
+  fixedTriggerDuration: number;
+  targetType: string;
+  createTime: number;
+  triggerType: string;
+}

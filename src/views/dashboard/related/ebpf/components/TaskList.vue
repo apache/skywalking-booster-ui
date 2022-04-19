@@ -30,12 +30,12 @@ limitations under the License. -->
             <td
               class="profile-td"
               :class="{
-                selected: selectedTask.id === i.id,
+                selected: selectedTask.taskId === i.id,
               }"
             >
               <div class="ell">
                 <span>{{ i.processLabels.join(" ") }}</span>
-                <a class="profile-btn r">
+                <a class="profile-btn r" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
                 </a>
               </div>
@@ -53,24 +53,71 @@ limitations under the License. -->
       </div>
     </div>
   </div>
+  <el-dialog
+    v-model="viewDetail"
+    :destroy-on-close="true"
+    fullscreen
+    @closed="viewDetail = false"
+  >
+    <div class="profile-detail flex-v">
+      <div>
+        <h5 class="mb-10">{{ t("task") }}.</h5>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("taskId") }}:</span>
+          <span class="g-sm-8 wba">
+            {{ selectedTask.taskId }}
+          </span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("service") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.serviceName }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("labels") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.processLabels }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
+          <span class="g-sm-8 wba">
+            {{ dateFormat(selectedTask.taskStartTime) }}
+          </span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span>
+          <span class="g-sm-8 wba">
+            {{ selectedTask.fixedTriggerDuration / 60 }} min
+          </span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("triggerType") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.triggerType }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("targetType") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.targetType }}</span>
+        </div>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
-import { TaskListItem } from "@/types/profile";
+import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
 
 const { t } = useI18n();
 const ebpfStore = useEbpfStore();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
-const selectedTask = ref<TaskListItem | Record<string, never>>({});
+const selectedTask = ref<EBPFTaskList | Record<string, never>>({});
+const viewDetail = ref<boolean>(false);
 
-async function changeTask(item: TaskListItem) {
+async function changeTask(item: EBPFTaskList) {
   selectedTask.value = item;
-  const res = await ebpfStore.getSegmentList({ taskID: item.id });
+  const res = await ebpfStore.getSegmentList({ taskID: item.taskId });
   if (res.errors) {
     ElMessage.error(res.errors);
   }
