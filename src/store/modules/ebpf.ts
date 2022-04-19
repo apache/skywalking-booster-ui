@@ -22,7 +22,7 @@ import {
   ProfileAnalyzationTrees,
   TaskLog,
 } from "@/types/profile";
-import { EBPFTaskCreationRequest } from "@/types/ebpf";
+import { EBPFTaskCreationRequest, EBPFProfilingSchedule } from "@/types/ebpf";
 import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
@@ -32,8 +32,8 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 interface EbpfStore {
   durationTime: Duration;
   taskList: TaskListItem[];
-  segmentList: Trace[];
-  currentSegment: Trace | Record<string, never>;
+  eBPFSchedules: EBPFProfilingSchedule[];
+  currentSchedule: EBPFProfilingSchedule | Record<string, never>;
   segmentSpans: SegmentSpan[];
   currentSpan: SegmentSpan | Record<string, never>;
   analyzeTrees: ProfileAnalyzationTrees;
@@ -48,8 +48,8 @@ export const ebpfStore = defineStore({
   state: (): EbpfStore => ({
     durationTime: useAppStoreWithOut().durationTime,
     taskList: [],
-    segmentList: [],
-    currentSegment: {},
+    eBPFSchedules: [],
+    currentSchedule: {},
     segmentSpans: [],
     currentSpan: {},
     analyzeTrees: [],
@@ -62,8 +62,8 @@ export const ebpfStore = defineStore({
     setCurrentSpan(span: Span) {
       this.currentSpan = span;
     },
-    setCurrentSegment(s: Trace) {
-      this.currentSegment = s;
+    setCurrentSchedule(s: Trace) {
+      this.currentSchedule = s;
     },
     setHighlightTop() {
       this.highlightTop = !this.highlightTop;
@@ -83,6 +83,17 @@ export const ebpfStore = defineStore({
       });
       return res.data;
     },
+    async createTask(param: EBPFTaskCreationRequest) {
+      const res: AxiosResponse = await graphql
+        .query("saveEBPFTask")
+        .params({ request: param });
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.getTaskList(param.serviceId);
+      return res.data;
+    },
     async getTaskList(serviceId: string) {
       const res: AxiosResponse = await graphql
         .query("getEBPFTasks")
@@ -95,61 +106,38 @@ export const ebpfStore = defineStore({
 
       return res.data;
     },
-    async getSegmentList(params: { taskID: string }) {
+    async getEBPFSchedules(params: { taskID: string; duration: Duration }) {
       const res: AxiosResponse = await graphql
-        .query("getProfileTaskSegmentList")
+        .query("getEBPFSchedules")
         .params(params);
 
       if (res.data.errors) {
-        this.segmentList = [];
+        this.eBPFSchedules = [];
         return res.data;
       }
-      const { segmentList } = res.data.data;
+      const { eBPFSchedules } = res.data.data;
 
-      this.segmentList = segmentList;
-      if (!segmentList.length) {
-        this.segmentSpans = [];
+      this.eBPFSchedules = eBPFSchedules;
+      if (!eBPFSchedules.length) {
+        this.eBPFSchedules = [];
         this.analyzeTrees = [];
 
         return res.data;
       }
-      if (segmentList[0]) {
-        this.currentSegment = segmentList[0];
-        this.getSegmentSpans({ segmentId: segmentList[0].segmentId });
-      } else {
-        this.currentSegment = null;
-      }
+      // if (eBPFSchedules[0]) {
+      //   this.currentSchedule = eBPFSchedules[0];
+      //   this.getEBPFAnalyze({ scheduleIdList: eBPFSchedules[0].segmentId });
+      // } else {
+      //   this.currentSchedule = null;
+      // }
       return res.data;
     },
-    async getSegmentSpans(params: { segmentId: string }) {
-      const res: AxiosResponse = await graphql
-        .query("queryProfileSegment")
-        .params(params);
-      if (res.data.errors) {
-        this.segmentSpans = [];
-        return res.data;
-      }
-      const { segment } = res.data.data;
-      if (!segment) {
-        this.segmentSpans = [];
-        this.analyzeTrees = [];
-        return res.data;
-      }
-      this.segmentSpans = segment.spans;
-      if (!(segment.spans && segment.spans.length)) {
-        this.analyzeTrees = [];
-        return res.data;
-      }
-      const index = segment.spans.length - 1 || 0;
-      this.currentSpan = segment.spans[index];
-      return res.data;
-    },
-    async getProfileAnalyze(params: {
-      segmentId: string;
+    async getEBPFAnalyze(params: {
+      scheduleIdList: string[];
       timeRanges: Array<{ start: number; end: number }>;
     }) {
       const res: AxiosResponse = await graphql
-        .query("getProfileAnalyze")
+        .query("getEBPFResult")
         .params(params);
 
       if (res.data.errors) {
@@ -167,29 +155,6 @@ export const ebpfStore = defineStore({
         return res.data;
       }
       this.analyzeTrees = analyze.trees;
-      return res.data;
-    },
-    async createTask(param: EBPFTaskCreationRequest) {
-      const res: AxiosResponse = await graphql
-        .query("saveEBPFTask")
-        .params({ request: param });
-
-      if (res.data.errors) {
-        return res.data;
-      }
-      console.log(res.data.data);
-      // this.getTaskList();
-      return res.data;
-    },
-    async getTaskLogs(param: { taskID: string }) {
-      const res: AxiosResponse = await graphql
-        .query("getProfileTaskLogs")
-        .params(param);
-
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.taskLogs = res.data.data.taskLogs;
       return res.data;
     },
   },

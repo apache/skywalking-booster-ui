@@ -47,3 +47,47 @@ export const queryEBPFTasks = {
     createTime
   }`,
 };
+export const queryEBPFSchedules = {
+  variable: "$taskId: ID!, $duration: Duration!",
+  query: `
+  eBPFSchedules: queryEBPFProfilingSchedules(taskId: $taskId, duration: $duration) {
+    scheduleId
+    taskId
+    process {
+      id
+      name
+      serviceId
+      serviceName
+      instanceId
+      instanceName
+      layer
+      agentId
+      detectType
+      attributes {
+        name
+        value
+      }
+      labels
+    }
+    startTime
+    endTime
+  }`,
+};
+
+export const analysisEBPFResult = {
+  variable:
+    "$scheduleIdList: [ID!]!, $timeRanges: [EBPFProfilingAnalyzeTimeRange!]!",
+  query: `
+  analysisEBPFResult: analysisEBPFProfilingResult(scheduleIdList: $scheduleIdList, timeRanges: $timeRanges) {
+    tip
+    trees {
+      elements {
+        id
+        parentId
+        symbol
+        stackType
+        dumpCount
+      }
+    }
+  }`,
+};

@@ -30,7 +30,7 @@ limitations under the License. -->
             <td
               class="profile-td"
               :class="{
-                selected: selectedTask.taskId === i.id,
+                selected: selectedTask.taskId === i.taskId,
               }"
             >
               <div class="ell">
@@ -105,10 +105,12 @@ import { ref } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
 
 const { t } = useI18n();
+const appStore = useAppStoreWithOut();
 const ebpfStore = useEbpfStore();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
@@ -117,7 +119,10 @@ const viewDetail = ref<boolean>(false);
 
 async function changeTask(item: EBPFTaskList) {
   selectedTask.value = item;
-  const res = await ebpfStore.getSegmentList({ taskID: item.taskId });
+  const res = await ebpfStore.getEBPFSchedules({
+    taskId: item.taskId,
+    duration: appStore.durationTime,
+  });
   if (res.errors) {
     ElMessage.error(res.errors);
   }
@@ -126,7 +131,7 @@ async function changeTask(item: EBPFTaskList) {
 <style lang="scss" scoped>
 .profile-task-list {
   width: 300px;
-  height: calc((100% - 60px) / 2);
+  height: calc(100% - 30px);
   overflow: auto;
 }
 
@@ -168,20 +173,12 @@ async function changeTask(item: EBPFTaskList) {
   }
 }
 
-.profile-segment {
-  border-top: 1px solid rgba(0, 0, 0, 0.07);
-}
-
 .profile-t-tool {
   padding: 5px 10px;
   font-weight: bold;
   border-right: 1px solid rgba(0, 0, 0, 0.07);
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   background: #f3f4f9;
-}
-
-.log-item {
-  margin-top: 20px;
 }
 
 .profile-btn {

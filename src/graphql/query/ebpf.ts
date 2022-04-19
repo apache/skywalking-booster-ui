@@ -19,6 +19,8 @@ import {
   queryCreateTaskData,
   createEBPFTask,
   queryEBPFTasks,
+  queryEBPFSchedules,
+  analysisEBPFResult,
 } from "../fragments/ebpf";
 
 export const getCreateTaskData = `query queryCreateTaskData(${queryCreateTaskData.variable}) {${queryCreateTaskData.query}}`;
@@ -26,3 +28,7 @@ export const getCreateTaskData = `query queryCreateTaskData(${queryCreateTaskDat
 export const saveEBPFTask = `mutation createEBPFTask(${createEBPFTask.variable}) {${createEBPFTask.query}}`;
 
 export const getEBPFTasks = `query queryEBPFTasks(${queryEBPFTasks.variable}) {${queryEBPFTasks.query}}`;
+
+export const getEBPFSchedules = `query queryEBPFSchedules(${queryEBPFSchedules.variable}) {${queryEBPFSchedules.query}}`;
+
+export const getEBPFResult = `query analysisEBPFResult(${analysisEBPFResult.variable}) {${analysisEBPFResult.query}}`;

@@ -13,22 +13,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h content">
-    <TaskList />
-    <div class="vis-graph">
-      <EBPFSchedules />
-      <EBPFTree />
-    </div>
-  </div>
+  <div>tree</div>
 </template>
-<script lang="ts" setup>
-import TaskList from "./components/TaskList.vue";
-import EBPFSchedules from "./components/EBPFSchedules.vue";
-import EBPFTree from "./components/EBPFTree.vue";
-</script>
-<style lang="scss" scoped>
-.content {
-  height: calc(100% - 30px);
-  width: 100%;
-}
-</style>

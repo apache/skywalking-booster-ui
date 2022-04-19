@@ -34,3 +34,11 @@ export interface EBPFTaskList {
   createTime: number;
   triggerType: string;
 }
+
+export interface EBPFProfilingSchedule {
+  scheduleId: string;
+  taskId: string;
+  process: string;
+  endTime: number;
+  startTime: number;
+}
