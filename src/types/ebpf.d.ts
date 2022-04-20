@@ -43,7 +43,7 @@ export interface EBPFProfilingSchedule {
   startTime: number;
 }
 
-type Process = {
+export type Process = {
   id: string;
   name: string;
   serviceId: string;

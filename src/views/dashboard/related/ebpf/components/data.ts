@@ -45,3 +45,7 @@ export const InitTaskField = {
     { value: "15", label: "15 min" },
   ],
 };
+export const TableHeader = [
+  { property: "name", label: "Name" },
+  { property: "instanceName", label: "Instance Name" },
+];

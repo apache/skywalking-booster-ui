@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="flex-h content">
     <TaskList />
-    <div class="vis-graph">
+    <div class="vis-graph ml-5">
       <EBPFSchedules />
       <EBPFTree />
     </div>

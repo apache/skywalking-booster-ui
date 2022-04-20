@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="flex-h header">
     <div>eBPF Profile</div>
-    <el-button class="new-btn" size="small" @click="createTask">
+    <el-button type="primary" size="small" @click="createTask">
       {{ t("newTask") }}
     </el-button>
   </div>
@@ -83,9 +83,10 @@ watch(
 </script>
 <style lang="scss" scoped>
 .header {
-  padding: 10px;
+  padding: 5px 20px 5px 10px;
   font-size: 12px;
   border-bottom: 1px solid #dcdfe6;
+  justify-content: space-between;
 }
 
 .name {
