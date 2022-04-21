@@ -57,7 +57,7 @@ export const routesSelf: Array<RouteRecordRaw> = [
           headPath: "/mesh/controlPanel",
         },
         component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/FullScroll.vue"),
+          import(/* webpackChunkName: "layer" */ "@/views/Fullscroll.vue"),
       },
     ],
   },
