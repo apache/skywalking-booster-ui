@@ -33,6 +33,7 @@ declare module '@vue/runtime-core' {
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    FullVue: typeof import('./../components/FullVue.vue')['default']
     Graph: typeof import('./../components/Graph.vue')['default']
     Icon: typeof import('./../components/Icon.vue')['default']
     Loading: typeof import('element-plus/es')['ElLoadingDirective']
