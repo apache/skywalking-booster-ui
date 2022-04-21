@@ -65,7 +65,7 @@ import { useEbpfStore } from "@/store/modules/ebpf";
 import { EBPFProfilingSchedule, Process } from "@/types/ebpf";
 import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
-import type { ElTable } from "element-plus";
+import { ElMessage, ElTable } from "element-plus";
 
 const { t } = useI18n();
 const ebpfStore = useEbpfStore();
@@ -133,6 +133,13 @@ async function analyzeEBPF() {
     scheduleIdList,
     timeRanges,
   });
+  if (res.data.errors) {
+    ElMessage.error(res.data.errors);
+    return;
+  }
+  if (res.data.analysisEBPFResult.tip) {
+    ElMessage.info(res.data.analysisEBPFResult.tip);
+  }
 }
 
 function visTimeline() {

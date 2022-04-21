@@ -17,14 +17,14 @@ limitations under the License. -->
     <TaskList />
     <div class="vis-graph ml-5">
       <EBPFSchedules />
-      <EBPFTree />
+      <EBPFStack />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import TaskList from "./components/TaskList.vue";
 import EBPFSchedules from "./components/EBPFSchedules.vue";
-import EBPFTree from "./components/EBPFTree.vue";
+import EBPFStack from "./components/EBPFStack.vue";
 </script>
 <style lang="scss" scoped>
 .content {

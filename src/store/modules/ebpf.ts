@@ -122,12 +122,6 @@ export const ebpfStore = defineStore({
 
         return res.data;
       }
-      // if (eBPFSchedules[0]) {
-      //   this.currentSchedule = eBPFSchedules[0];
-      //   this.getEBPFAnalyze({ scheduleIdList: eBPFSchedules[0].segmentId });
-      // } else {
-      //   this.currentSchedule = null;
-      // }
       return res.data;
     },
     async getEBPFAnalyze(params: {
@@ -142,17 +136,17 @@ export const ebpfStore = defineStore({
         this.analyzeTrees = [];
         return res.data;
       }
-      const { analyze, tip } = res.data.data;
+      const { analysisEBPFResult, tip } = res.data.data;
       if (tip) {
         this.analyzeTrees = [];
         return res.data;
       }
 
-      if (!analyze) {
+      if (!analysisEBPFResult) {
         this.analyzeTrees = [];
         return res.data;
       }
-      this.analyzeTrees = analyze.trees;
+      this.analyzeTrees = analysisEBPFResult.trees[0].elements;
       return res.data;
     },
   },
