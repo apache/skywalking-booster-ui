@@ -100,9 +100,7 @@ async function analyzeEBPF() {
   let arr: string[] = [];
   if (selectedLabels.value.includes("0")) {
     arr = labels.value.map((d: Option) => d.value);
-    arr.pop();
   }
-  console.log(arr);
   const ranges: { start: number; end: number }[] = [];
   const scheduleIdList = ebpfStore.eBPFSchedules.flatMap(
     (d: EBPFProfilingSchedule) => {
