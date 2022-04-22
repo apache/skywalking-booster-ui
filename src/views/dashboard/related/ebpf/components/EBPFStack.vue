@@ -21,7 +21,6 @@ import * as d3 from "d3";
 import { flamegraph } from "d3-flame-graph";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { StackElement } from "@/types/ebpf";
-import { json } from "./json";
 import "d3-flame-graph/dist/d3-flamegraph.css";
 
 /*global Nullable*/
@@ -48,17 +47,12 @@ function drawGraph() {
     .transitionEase(d3.easeCubic as any)
     .sort(true)
     .title("")
-    .onClick(onClick)
+    // .onClick(onClick)
     .selfValue(false)
     .setColorMapper((d, originalColor) =>
       d.highlight ? "#6aff8f" : originalColor
     );
-  // stackTree.value = (json as any);
-  console.log(stackTree.value);
-  d3.select("#graph-stack")
-    .datum(stackTree.value)
-    .call(flameChart.value)
-    .call(invokeFind);
+  d3.select("#graph-stack").datum(stackTree.value).call(flameChart.value);
 }
 
 function onClick(d: any) {
@@ -72,36 +66,35 @@ function resetZoom() {
   flameChart.value.resetZoom();
 }
 
-function invokeFind() {
-  const searchId = parseInt(location.hash.substring(1), 10);
-  if (searchId) {
-    find(searchId);
-  }
-}
-function find(id: number) {
-  var elem = flameChart.value.findById(id);
-  if (elem) {
-    flameChart.value.zoomTo(elem);
-  }
-}
-
 function processTree(arr: StackElement[]) {
   const copyArr = JSON.parse(JSON.stringify(arr));
   const obj: any = {};
   let res = null;
+  let min = 1;
+  let max = 1;
   for (const item of copyArr) {
     item.originId = item.id;
-    item.value = item.dumpCount;
     item.name = item.symbol;
     delete item.id;
     obj[item.originId] = item;
+    if (item.dumpCount > max) {
+      max = item.dumpCount;
+    }
+    if (item.dumpCount < min) {
+      min = item.dumpCount;
+    }
   }
+  const scale = d3.scaleLinear().domain([min, max]).range([1, 100]);
   for (const item of copyArr) {
     if (item.parentId === "0") {
       res = item;
+      res.value = Number(scale(item.dumpCount).toFixed(4));
     }
     for (const key in obj) {
       if (item.originId === obj[key].parentId) {
+        const val = Number(scale(obj[key].dumpCount).toFixed(4));
+
+        obj[key].value = val;
         if (item.children) {
           item.children.push(obj[key]);
         } else {
@@ -110,8 +103,26 @@ function processTree(arr: StackElement[]) {
       }
     }
   }
+  treeForeach([res], (node: StackElement) => {
+    if (node.children) {
+      let val = 0;
+      for (const child of node.children) {
+        val = child.value + val;
+      }
+      node.value = val;
+    }
+  });
   return res;
 }
+
+function treeForeach(tree: StackElement[], func: (node: StackElement) => void) {
+  for (const data of tree) {
+    data.children && treeForeach(data.children, func);
+    func(data);
+  }
+  return tree;
+}
+
 watch(
   () => ebpfStore.analyzeTrees,
   () => {
