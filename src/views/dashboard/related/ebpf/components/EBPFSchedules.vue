@@ -82,13 +82,6 @@ const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
 
 function changeLabels(opt: any[]) {
   const arr = opt.map((d) => d.value);
-
-  // if (arr.includes("0")) {
-  //   selectedLabels.value = labels.value.map((d: Option) => d.value);
-
-  //   return;
-  // }
-  // selectedLabels.value = Array.from(new Set(arr));
   selectedLabels.value = arr;
 }
 

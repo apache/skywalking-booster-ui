@@ -56,3 +56,14 @@ export type Process = {
   attributes: { name: string; value: string };
   labels: string[];
 };
+export type StackElement = {
+  id: string;
+  originId: string;
+  name: string;
+  parentId: string;
+  symbol: string;
+  dumpCount: number;
+  stackType: string;
+  value: number;
+  children?: StackElement[];
+};
