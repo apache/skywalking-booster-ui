@@ -18,6 +18,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import * as d3 from "d3";
+import d3tip from "d3-tip";
 import { flamegraph } from "d3-flame-graph";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { StackElement } from "@/types/ebpf";
@@ -47,23 +48,19 @@ function drawGraph() {
     .transitionEase(d3.easeCubic as any)
     .sort(true)
     .title("")
-    // .onClick(onClick)
     .selfValue(false)
     .setColorMapper((d, originalColor) =>
       d.highlight ? "#6aff8f" : originalColor
     );
+  const tip = (d3tip as any)()
+    .attr("class", "d3-tip")
+    .direction("w")
+    .html(
+      (d: { data: StackElement }) =>
+        `<div class="mb-5">Symbol: ${d.data.name}</div><div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
+    );
+  flameChart.value.tooltip(tip);
   d3.select("#graph-stack").datum(stackTree.value).call(flameChart.value);
-}
-
-function onClick(d: any) {
-  console.info(`Clicked on ${d.data.name}, id: "${d.data.value}"`);
-}
-
-function resetZoom() {
-  if (!flameChart.value) {
-    return;
-  }
-  flameChart.value.resetZoom();
 }
 
 function processTree(arr: StackElement[]) {
@@ -84,11 +81,10 @@ function processTree(arr: StackElement[]) {
       min = item.dumpCount;
     }
   }
-  const scale = d3.scaleLinear().domain([min, max]).range([1, 100]);
+  const scale = d3.scaleLinear().domain([min, max]).range([1, 150]);
   for (const item of copyArr) {
     if (item.parentId === "0") {
       res = item;
-      res.value = Number(scale(item.dumpCount).toFixed(4));
     }
     for (const key in obj) {
       if (item.originId === obj[key].parentId) {
