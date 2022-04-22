@@ -118,10 +118,9 @@ export const ebpfStore = defineStore({
       this.eBPFSchedules = eBPFSchedules;
       if (!eBPFSchedules.length) {
         this.eBPFSchedules = [];
-        this.analyzeTrees = [];
-
         return res.data;
       }
+      this.analyzeTrees = [];
       return res.data;
     },
     async getEBPFAnalyze(params: {
@@ -136,13 +135,12 @@ export const ebpfStore = defineStore({
         this.analyzeTrees = [];
         return res.data;
       }
-      const { analysisEBPFResult, tip } = res.data.data;
-      if (tip) {
+      const { analysisEBPFResult } = res.data.data;
+      if (!analysisEBPFResult) {
         this.analyzeTrees = [];
         return res.data;
       }
-
-      if (!analysisEBPFResult) {
+      if (analysisEBPFResult.tip) {
         this.analyzeTrees = [];
         return res.data;
       }

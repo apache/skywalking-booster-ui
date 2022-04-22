@@ -17,7 +17,9 @@ limitations under the License. -->
     <TaskList />
     <div class="vis-graph ml-5">
       <EBPFSchedules />
-      <EBPFStack />
+      <div class="stack">
+        <EBPFStack />
+      </div>
     </div>
   </div>
 </template>
@@ -35,5 +37,10 @@ import EBPFStack from "./components/EBPFStack.vue";
 .vis-graph {
   height: 100%;
   width: calc(100% - 300px);
+}
+
+.stack {
+  width: 100%;
+  overflow: auto;
 }
 </style>

@@ -81,10 +81,12 @@ function processTree(arr: StackElement[]) {
       min = item.dumpCount;
     }
   }
-  const scale = d3.scaleLinear().domain([min, max]).range([1, 150]);
+  const scale = d3.scaleLinear().domain([min, max]).range([1, 200]);
   for (const item of copyArr) {
     if (item.parentId === "0") {
+      const val = Number(scale(item.dumpCount).toFixed(4));
       res = item;
+      res.value = val;
     }
     for (const key in obj) {
       if (item.originId === obj[key].parentId) {
@@ -105,9 +107,10 @@ function processTree(arr: StackElement[]) {
       for (const child of node.children) {
         val = child.value + val;
       }
-      node.value = val;
+      node.value = node.value < val ? val : node.value;
     }
   });
+
   return res;
 }
 

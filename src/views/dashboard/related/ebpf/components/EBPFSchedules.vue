@@ -78,7 +78,7 @@ const labels = ref<Option[]>([{ label: "All", value: "0" }]);
 const processes = ref<Process[]>([]);
 const selectedLabels = ref<string[]>(["0"]);
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
+  new Date(dayjs(date).format(pattern));
 
 function changeLabels(opt: any[]) {
   const arr = opt.map((d) => d.value);
@@ -131,7 +131,7 @@ async function analyzeEBPF() {
     return;
   }
   if (res.data.analysisEBPFResult.tip) {
-    ElMessage.info(res.data.analysisEBPFResult.tip);
+    ElMessage.error(res.data.analysisEBPFResult.tip);
   }
 }
 
@@ -158,6 +158,8 @@ function visTimeline() {
   const items: any = new DataSet(schedules);
   const options = {
     height: 250,
+    width: "100%",
+    locale: "en",
   };
   if (!timeline.value) {
     return;
