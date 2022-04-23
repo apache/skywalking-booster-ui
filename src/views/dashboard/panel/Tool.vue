@@ -103,21 +103,7 @@ limitations under the License. -->
             <Icon class="icon-btn" size="sm" iconName="save" />
           </i>
         </el-tooltip>
-      </div>
-
-      <div class="switch">
-        <span style="margin-right: 5px">Toggle full view</span>
-        <el-switch
-          v-model="dashboardStore.fullView"
-          active-text="Full view"
-          inactive-text="FV"
-          size="small"
-          inline-prompt
-          active-color="#409eff"
-          inactive-color="#999"
-          @change="toggleFullView"
-        />
-      </div>
+      </div>      
       <div class="switch">
         <el-switch
           v-model="dashboardStore.editMode"
