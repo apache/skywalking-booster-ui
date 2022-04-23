@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h tab-header">
+  <div ref="tabRef" class="flex-h tab-header">
     <div class="tabs">
       <span
         v-for="(child, idx) in data.children || []"
@@ -87,31 +87,63 @@ limitations under the License. -->
       :is-resizable="dashboardStore.editMode"
       @layout-updated="layoutUpdatedEvent"
     >
-      <grid-item
-        v-for="item in dashboardStore.currentTabItems"
-        :x="item.x"
-        :y="item.y"
-        :w="item.w"
-        :h="item.h"
-        :i="item.i"
-        :key="item.i"
-        @click="clickTabGrid($event, item)"
-        :class="{ active: activeTabWidget === item.i }"
-        drag-ignore-from="svg.d3-trace-tree, .dragger, .micro-topo-chart"
-      >
-        <component
-          :is="item.type"
-          :data="item"
-          :activeIndex="`${data.i}-${activeTabIndex}-${item.i}`"
-          :needQuery="needQuery"
-        />
-      </grid-item>
+      <div class="scroll-snap-container" v-if="dashboardStore.fullView">
+        <div
+          v-if="dashboardStore.currentTabItems.length > 1"
+          class="scroll-handler__wrapper"
+        >
+          <div
+            @click="scrollToGraph(item.i)"
+            v-for="item in dashboardStore.currentTabItems"
+            :key="item.i"
+            :class="[currentItem === `tabitem${item.i}` ? 'active': '']"
+            class="scroll-to"
+          ></div>
+        </div>
+        <div
+          class="tabitem"
+          :id="`tabitem${item.i}`"
+          v-for="item in dashboardStore.currentTabItems"
+          :key="item.i"
+        >
+          <component
+            :is="item.type"
+            :data="item"
+            :activeIndex="`${data.i}-${activeTabIndex}-${item.i}`"
+            :needQuery="needQuery"
+            @click="clickTabGrid($event, item)"
+            :class="{ active: activeTabWidget === item.i }"
+          />
+        </div>
+      </div>
+
+      <template v-else>
+        <grid-item
+          v-for="item in dashboardStore.currentTabItems"
+          :x="item.x"
+          :y="item.y"
+          :w="item.w"
+          :h="item.h"
+          :i="item.i"
+          :key="item.i"
+          @click="clickTabGrid($event, item)"
+          :class="{ active: activeTabWidget === item.i }"
+          drag-ignore-from="svg.d3-trace-tree, .dragger, .micro-topo-chart"
+        >
+          <component
+            :is="item.type"
+            :data="item"
+            :activeIndex="`${data.i}-${activeTabIndex}-${item.i}`"
+            :needQuery="needQuery"
+          />
+        </grid-item>
+      </template>
     </grid-layout>
     <div class="no-data-tips" v-else>{{ t("noWidget") }}</div>
   </div>
 </template>
 <script lang="ts">
-import { ref, watch, defineComponent, toRefs } from "vue";
+import { ref, watch, onMounted, defineComponent, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
@@ -122,6 +154,7 @@ import Trace from "./Trace.vue";
 import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
+import FullVueWrapper from "@/components/FullVueWrapper.vue";
 
 const props = {
   data: {
@@ -132,7 +165,7 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile, Log, Text },
+  components: { Topology, Widget, Trace, Profile, Log, Text, FullVueWrapper },
   props,
   setup(props) {
     const { t } = useI18n();
@@ -143,6 +176,8 @@ export default defineComponent({
     const canEditTabName = ref<boolean>(false);
     const needQuery = ref<boolean>(false);
     const showTools = ref<boolean>(false);
+    const tabRef = ref<any>("");
+    const currentItem = ref("");
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
     );
@@ -151,7 +186,34 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
       dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
+      setTimeout(() => {
+        observeItems()
+      }, 1500)
     }
+    function scrollToGraph(e: any) {
+      document?.getElementById(`tabitem${e}`)?.scrollIntoView();
+    }
+
+    function observeItems() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((element) => {
+          console.log("Inter ratio:", element.intersectionRatio, 'Ele:', element.target.id);
+          if (element.intersectionRatio > 0) {
+            currentItem.value = element.target.id;
+            console.log(element.target.id)
+          }
+        });
+      });
+      document.querySelectorAll(".tabitem").forEach((element) => {
+        observer.observe(element);
+      });
+    }
+
+    watch(() => dashboardStore.currentTabItems, () => {
+      setTimeout(() => {
+        observeItems();
+      }, 500)
+    } )
 
     function clickTabs(e: Event, idx: number) {
       e.stopPropagation();
@@ -165,7 +227,7 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
-      needQuery.value = true;
+      needQuery.value = true; 
     }
     function removeTab(e: Event) {
       e.stopPropagation();
@@ -230,7 +292,13 @@ export default defineComponent({
         }
       }
     );
+    onMounted(() => {
+      tabRef?.value["parentElement"]?.classList?.toggle("item");
+      console.log(tabRef.value);
+    });
     return {
+      currentItem,
+      scrollToGraph,
       handleClick,
       layoutUpdatedEvent,
       clickTabGrid,
@@ -240,6 +308,7 @@ export default defineComponent({
       removeTab,
       clickTabs,
       ...toRefs(props),
+      tabRef,
       activeTabWidget,
       dashboardStore,
       activeTabIndex,
@@ -253,6 +322,53 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
+.tab-layout::-webkit-scrollbar {
+  display: none !important;
+}
+.scroll-snap-container {
+  position: relative;
+  height: 80vh;
+  display: block;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-points-y: repeat(100%);
+  scroll-snap-destination: 0 0;
+  scroll-snap-type: y mandatory;
+  scroll-snap-type: mandatory;
+  scroll-behavior: smooth;
+}
+.scroll-snap-container::-webkit-scrollbar {
+  display: none;
+}
+.tabitem {
+  scroll-snap-align: start;
+  height: 100%;
+}
+.scroll-handler__wrapper {
+  z-index: 20;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  right: 0;
+  top: 40vh;
+  height: auto;
+  width: 20px;  
+  .scroll-to {
+    opacity: 0.5;
+    width: 10px;
+    height: 10px;
+    margin: 5px 0;
+    border-radius: 50%;
+    cursor: pointer;
+    background: #4f4f4f;
+  }
+  .scroll-to.active {
+    opacity: 1;
+    padding: 6px;
+    background: #252a2f;
+  }
+}
 .tabs {
   height: 40px;
   color: #ccc;
