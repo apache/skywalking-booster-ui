@@ -104,6 +104,20 @@ limitations under the License. -->
           </i>
         </el-tooltip>
       </div>
+
+      <div class="switch">
+        <span style="margin-right: 5px">Toggle full view</span>
+        <el-switch
+          v-model="dashboardStore.fullView"
+          active-text="Full view"
+          inactive-text="FV"
+          size="small"
+          inline-prompt
+          active-color="#409eff"
+          inactive-color="#999"
+          @change="toggleFullView"
+        />
+      </div>
       <div class="switch">
         <el-switch
           v-model="dashboardStore.editMode"
@@ -121,7 +135,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { reactive, ref, computed, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import {
@@ -144,6 +158,13 @@ const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
+const path = useRoute();
+const router = useRouter();
+if (!path.path.includes("fullview")) {
+  dashboardStore.setViewMode(false)
+}else{
+  dashboardStore.setViewMode(true)
+}
 const toolIcons = ref<{ name: string; content: string; id: string }[]>(
   EndpointRelationTools
 );
@@ -387,7 +408,16 @@ function changeDestPods(pod: any) {
     selectorStore.setCurrentDestPod(null);
   }
 }
-
+function toggleFullView(e) {
+  dashboardStore.setViewMode(e);
+  if (dashboardStore.fullView) {
+    const newPath = path.path.replace("dashboard", "fullview");
+    router.push(newPath);
+  } else {
+    const newPath = path.path.replace("fullview", "dashboard");
+    router.push(newPath);
+  }
+}
 function changeMode() {
   if (dashboardStore.editMode) {
     ElMessage.warning(t("editWarning"));

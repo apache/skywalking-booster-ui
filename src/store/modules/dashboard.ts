@@ -38,6 +38,7 @@ interface DashboardState {
   durationTime: Duration;
   selectorStore: any;
   showTopology: boolean;
+  fullView: boolean;
   currentTabItems: LayoutConfig[];
   dashboards: DashboardItem[];
   currentDashboard: Nullable<DashboardItem>;
@@ -56,6 +57,7 @@ export const dashboardStore = defineStore({
     durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
     showTopology: false,
+    fullView: false,
     currentTabItems: [],
     dashboards: [],
     currentDashboard: null,
@@ -67,6 +69,9 @@ export const dashboardStore = defineStore({
     },
     setMode(mode: boolean) {
       this.editMode = mode;
+    },
+    setViewMode(mode: boolean) {
+      this.fullView = mode;
     },
     resetDashboards(list: DashboardItem[]) {
       this.dashboards = list;
