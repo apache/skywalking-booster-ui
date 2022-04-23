@@ -154,7 +154,6 @@ import Trace from "./Trace.vue";
 import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
-import FullVueWrapper from "@/components/FullVueWrapper.vue";
 
 const props = {
   data: {
@@ -165,7 +164,7 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile, Log, Text, FullVueWrapper },
+  components: { Topology, Widget, Trace, Profile, Log, Text},
   props,
   setup(props) {
     const { t } = useI18n();
@@ -196,11 +195,9 @@ export default defineComponent({
 
     function observeItems() {
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach((element) => {
-          console.log("Inter ratio:", element.intersectionRatio, 'Ele:', element.target.id);
+        entries.forEach((element) => {          
           if (element.intersectionRatio > 0) {
             currentItem.value = element.target.id;
-            console.log(element.target.id)
           }
         });
       });
@@ -294,7 +291,6 @@ export default defineComponent({
     );
     onMounted(() => {
       tabRef?.value["parentElement"]?.classList?.toggle("item");
-      console.log(tabRef.value);
     });
     return {
       currentItem,
