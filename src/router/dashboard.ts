@@ -67,12 +67,38 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: "/fullview/:layerId/:entity/:name",
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "FullViewCreate",
+        meta: {
+          title: "dashboardEdit",
+          exact: false,
+          notShow: true,
+        },
+      },
+      {
         path: "/dashboard/:layerId/:entity/:serviceId/:name",
         component: () =>
           import(
             /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
           ),
         name: "View",
+        meta: {
+          title: "dashboardEdit",
+          exact: false,
+          notShow: true,
+        },
+      },
+      {
+        path: "/fullview/:layerId/:entity/:serviceId/:name",
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "FullViewView",
         meta: {
           title: "dashboardEdit",
           exact: false,
@@ -93,6 +119,19 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: "/fullview/related/:layerId/:entity/:serviceId/:destServiceId/:name",
+        component: () =>
+          import(
+            /* webpackChunkName: "FullViewdashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "FullViewViewServiceRelation",
+        meta: {
+          title: "dashboardEdit",
+          exact: false,
+          notShow: true,
+        },
+      },
+      {
         path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
         component: () =>
           import(
@@ -106,12 +145,38 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: "/fullview/:layerId/:entity/:serviceId/:podId/:name",
+        component: () =>
+          import(
+            /* webpackChunkName: "FullViewdashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "FullViewViewPod",
+        meta: {
+          title: "dashboardEdit",
+          exact: false,
+          notShow: true,
+        },
+      },
+      {
         path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
         component: () =>
           import(
             /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
           ),
         name: "ViewPodRelation",
+        meta: {
+          title: "dashboardEdit",
+          exact: true,
+          notShow: true,
+        },
+      },
+      {
+        path: "/fullview/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
+        component: () =>
+          import(
+            /* webpackChunkName: "FullViewdashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "FullViewViewPodRelation",
         meta: {
           title: "dashboardEdit",
           exact: true,
