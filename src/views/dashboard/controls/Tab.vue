@@ -190,6 +190,9 @@ export default defineComponent({
     const tabObserveContainer = ref<any>(null);
     const currentItem = ref("");
     const lastItem = ref("");
+    const refScrollTimeOut = ref();
+    const currentScrollY = ref(0);
+
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
     );
@@ -313,6 +316,12 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
+    }    
+    function scrollToFirstGraph(scrollUp: boolean) {
+      const graphs = JSON.parse(JSON.stringify(dashboardStore.currentTabItems));      
+      if (scrollUp) {
+        document?.getElementById(`tabitem${graphs[0].i}`)?.scrollIntoView();
+      }
     }
     document.body.addEventListener("click", handleClick, false);
     watch(
@@ -332,9 +341,19 @@ export default defineComponent({
     );
     onMounted(() => {
       tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
-        // debounce(() => {
-        //   console.log("Yeah!");
-        // }, 100);
+        if (refScrollTimeOut.value) {
+          clearTimeout(refScrollTimeOut.value)
+        }
+        // console.log("WindowScrollY Outside:", tabObserveContainer.value);
+        refScrollTimeOut.value = window.setTimeout(() => {
+          if (tabObserveContainer.value?.scrollTop === currentScrollY.value) {          
+            scrollToFirstGraph(true)
+            console.log("Scrolled Down!")
+          }
+          currentScrollY.value = tabObserveContainer.value?.scrollTop
+          console.log("CurrentScrollY:", currentScrollY.value);
+
+        }, 100);
       });
       tabRef?.value["parentElement"]?.classList?.toggle("item");
       if (dashboardStore.fullView) {
