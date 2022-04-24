@@ -67,7 +67,7 @@ export default defineComponent({
       }
     );
     function scrollToGraph(e: any) {
-      console.log(currentItem.value)
+      // console.log(currentItem.value)
       document?.getElementById(`item${e}`)?.scrollIntoView();
     }
     function observeItems() {
@@ -113,7 +113,8 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     right: 0;
-    top: 40vh;
+    // top: 50%;
+    transform: translateY(60%);
     height: auto;
     width: 20px;
     .full-scroll-to {
