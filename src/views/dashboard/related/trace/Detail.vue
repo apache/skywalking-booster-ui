@@ -191,7 +191,7 @@ export default defineComponent({
       const res = await traceStore.getSpanLogs({
         condition: {
           relatedTrace: {
-            traceId: traceId.value || traceStore.currentTrace.traceIds[0],
+            traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
           },
           paging: { pageNum: pageNum.value, pageSize, needTotal: true },
         },
