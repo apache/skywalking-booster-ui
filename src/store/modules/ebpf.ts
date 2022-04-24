@@ -93,7 +93,7 @@ export const ebpfStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.taskList = res.data.data.queryEBPFTasks || [];
+      this.taskList = res.data.data.queryEBPFTasks.reverse() || [];
       if (!this.taskList.length) {
         return res.data;
       }
