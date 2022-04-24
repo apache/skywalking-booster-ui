@@ -218,11 +218,12 @@ export default defineComponent({
         if (immediate && !timeout) func.apply(context, args);
       };
     }
-    function observeItems(kill = false) {
+    function observeItems(kill = false) {      
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(
           (element) => {
             if (element.isIntersecting && element.intersectionRatio > 0) {
+              console.log("Last Value:", lastItem.value);
               setTimeout(() => {
                 currentItem.value = element.target.id;
               }, 200);
@@ -254,6 +255,7 @@ export default defineComponent({
               dashboardStore.currentTabItems.length - 1
             ].i
           }`;
+          console.log(lastItem.value)
         }, 500);
       }
     );
