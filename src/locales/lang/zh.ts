@@ -133,6 +133,7 @@ const msg = {
   triggerType: "触发类型",
   targetType: "目标类型",
   processSelect: "点击选择进程",
+  ebpfTip: "没有进程可以分析",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

@@ -134,6 +134,7 @@ const msg = {
   taskId: "Task ID",
   triggerType: "Trigger Type",
   targetType: "Target Type",
+  ebpfTip: "Don't have process could profiling",
   processSelect: "Click to select processes",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

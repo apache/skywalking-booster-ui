@@ -76,7 +76,7 @@ limitations under the License. -->
       </el-button>
     </div>
   </div>
-  <div v-else>Don't have process could profiling</div>
+  <div v-else>{{ t("ebpfTip") }}</div>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
@@ -115,8 +115,7 @@ async function createTask() {
     ElMessage.warning("no labels");
     return;
   }
-  const date =
-    monitorTime.value === "0" ? appStore.durationRow.start : time.value;
+  const date = monitorTime.value === "0" ? new Date() : time.value;
   const params = {
     serviceId: selectorStore.currentService.id,
     processLabels: labels.value,
