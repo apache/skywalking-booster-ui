@@ -31,7 +31,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { ref, watch, reactive, defineComponent } from "vue";
+import { ref, watch, onMounted, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -50,7 +50,7 @@ export default defineComponent({
   components: { ...Configuration, ...controls },
   setup() {
     const dashboardStore = useDashboardStore();
-    const tobewatched = reactive(dashboardStore);
+    // const tobewatched = reactive(dashboardStore);
     // const appStore = useAppStoreWithOut();
     const { t } = useI18n();
     const p = useRoute().params;
@@ -58,20 +58,22 @@ export default defineComponent({
     // setTemplate();
     const currentItem = ref("");
     watch(
-      () => tobewatched.layout,
+      () => dashboardStore.layout,
       () => {
+        // console.log('Watching:',currentItem.value)
         setTimeout(() => {
           observeItems();
         }, 500);
       }
     );
     function scrollToGraph(e: any) {
+      console.log(currentItem.value)
       document?.getElementById(`item${e}`)?.scrollIntoView();
     }
     function observeItems() {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((element) => {
-          if (element.intersectionRatio > 0) {
+          if (element.intersectionRatio > 0) {            
             currentItem.value = element.target.id;
           }
         });
@@ -80,6 +82,9 @@ export default defineComponent({
         observer.observe(element);
       });
     }
+    onMounted(()=>{
+      observeItems()
+    })
     return {
       t,
       dashboardStore,

@@ -248,7 +248,7 @@ export default defineComponent({
       () => {
         setTimeout(() => {
           observeItems();
-          console.log("Last Value:", lastItem.value);
+          // console.log("Last Value:", lastItem.value);
         }, 500);
       }
     );
