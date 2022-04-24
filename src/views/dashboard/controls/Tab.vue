@@ -204,7 +204,19 @@ export default defineComponent({
     function scrollToGraph(e: any) {
       document?.getElementById(`tabitem${e}`)?.scrollIntoView();
     }
-
+    function debounce(func: any, wait: number, immediate: boolean) {
+      let timeout: any;
+      return function () {
+        let context = this,
+          args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(function () {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        }, wait);
+        if (immediate && !timeout) func.apply(context, args);
+      };
+    }
     function observeItems(kill = false) {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(
@@ -226,8 +238,8 @@ export default defineComponent({
       });
       if (kill) {
         document.querySelectorAll(".tabitem").forEach((element) => {
-        observer.unobserve(element);
-      });
+          observer.unobserve(element);
+        });
       }
     }
 
@@ -318,9 +330,12 @@ export default defineComponent({
       }
     );
     onMounted(() => {
+      window.addEventListener("scroll", (e) => {
+        console.log(e);
+      });
       tabRef?.value["parentElement"]?.classList?.toggle("item");
       if (dashboardStore.fullView) {
-        console.log("Tab Osbercve:", tabObserveContainer);
+        // console.log("Tab Osbercve:", tabObserveContainer);
       }
     });
     onBeforeUnmount(() => {
@@ -371,6 +386,10 @@ export default defineComponent({
 }
 .scroll-snap-container::-webkit-scrollbar {
   display: none;
+}
+.scroll-snap-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .tabitem {
   scroll-snap-align: start;
