@@ -109,6 +109,7 @@ export const ebpfStore = defineStore({
         this.eBPFSchedules = [];
         return res.data;
       }
+      this.tip = "";
       const { eBPFSchedules } = res.data.data;
 
       this.eBPFSchedules = eBPFSchedules;
