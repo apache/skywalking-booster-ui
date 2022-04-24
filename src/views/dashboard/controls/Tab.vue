@@ -205,7 +205,7 @@ export default defineComponent({
       document?.getElementById(`tabitem${e}`)?.scrollIntoView();
     }
 
-    function observeItems() {
+    function observeItems(kill = false) {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(
           (element) => {
@@ -224,6 +224,11 @@ export default defineComponent({
       document.querySelectorAll(".tabitem").forEach((element) => {
         observer.observe(element);
       });
+      if (kill) {
+        document.querySelectorAll(".tabitem").forEach((element) => {
+        observer.unobserve(element);
+      });
+      }
     }
 
     watch(
@@ -319,7 +324,7 @@ export default defineComponent({
       }
     });
     onBeforeUnmount(() => {
-      observeItems.unobserve();
+      observeItems(true);
     });
     return {
       currentItem,
