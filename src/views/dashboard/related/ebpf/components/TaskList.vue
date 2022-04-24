@@ -103,7 +103,7 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
@@ -126,6 +126,12 @@ async function changeTask(item: EBPFTaskList) {
     ElMessage.error(res.errors);
   }
 }
+watch(
+  () => ebpfStore.taskList,
+  () => {
+    selectedTask.value = ebpfStore.taskList[0] || {};
+  }
+);
 </script>
 <style lang="scss" scoped>
 .profile-task-list {

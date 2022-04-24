@@ -117,7 +117,7 @@ const handleSelectionChange = (arr: Process[]) => {
 };
 
 async function analyzeEBPF() {
-  let arr: string[] = [];
+  let arr: string[] = selectedLabels.value;
   if (selectedLabels.value.includes("0")) {
     arr = labels.value.map((d: Option) => d.value);
   }
@@ -125,7 +125,7 @@ async function analyzeEBPF() {
   const scheduleIdList = ebpfStore.eBPFSchedules.flatMap(
     (d: EBPFProfilingSchedule) => {
       const l = d.process.labels.find((d: string) => arr.includes(d));
-      const i = selectedLabels.value.includes(d.process.id);
+      const i = selectedProcesses.value.includes(d.process.id);
       if (l || i) {
         ranges.push({
           start: d.startTime,
@@ -164,6 +164,7 @@ function visTimeline() {
     visGraph.value.destroy();
   }
   labels.value = [{ label: "All", value: "0" }];
+  selectedLabels.value = ["0"];
   processes.value = [];
   const schedules = ebpfStore.eBPFSchedules.map(
     (d: EBPFProfilingSchedule, index: number) => {
