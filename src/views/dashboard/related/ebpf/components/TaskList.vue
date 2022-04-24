@@ -128,8 +128,9 @@ async function changeTask(item: EBPFTaskList) {
 <style lang="scss" scoped>
 .profile-task-list {
   width: 300px;
-  height: calc(100% - 30px);
+  height: calc(100% - 10px);
   overflow: auto;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .item span {
@@ -153,7 +154,6 @@ async function changeTask(item: EBPFTaskList) {
 .profile-t-wrapper {
   overflow: auto;
   flex-grow: 1;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .profile-t {
@@ -162,6 +162,7 @@ async function changeTask(item: EBPFTaskList) {
   table-layout: fixed;
   flex-grow: 1;
   position: relative;
+  border: none;
 }
 
 .profile-tr {
