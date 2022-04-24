@@ -68,6 +68,7 @@ limitations under the License. -->
         :min="1"
         :max="60"
       />
+      Min
     </div>
     <div>
       <el-button @click="createTask" type="primary" class="create-task-btn">
