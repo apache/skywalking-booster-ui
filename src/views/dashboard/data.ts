@@ -184,7 +184,7 @@ export const ServiceTools = [
   { name: "device_hub", content: "Topology", id: "addTopology" },
   { name: "merge", content: "Trace", id: "addTrace" },
   { name: "timeline", content: "Trace Profile", id: "addProfile" },
-  { name: "timeline", content: "eBPF Profile", id: "addEbpf" },
+  { name: "insert_chart", content: "eBPF Profile", id: "addEbpf" },
   { name: "assignment", content: "Log", id: "addLog" },
 ];
 export const InstanceTools = [
