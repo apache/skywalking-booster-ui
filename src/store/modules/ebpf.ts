@@ -38,6 +38,7 @@ interface EbpfStore {
   highlightTop: boolean;
   labels: Option[];
   couldProfiling: boolean;
+  tip: string;
 }
 
 export const ebpfStore = defineStore({
@@ -51,6 +52,7 @@ export const ebpfStore = defineStore({
     highlightTop: true,
     labels: [{ value: "", label: "" }],
     couldProfiling: false,
+    tip: "",
   }),
   actions: {
     setCurrentSpan(span: Span) {
@@ -136,6 +138,7 @@ export const ebpfStore = defineStore({
         return res.data;
       }
       const { analysisEBPFResult } = res.data.data;
+      this.tip = analysisEBPFResult.tip;
       if (!analysisEBPFResult) {
         this.analyzeTrees = [];
         return res.data;

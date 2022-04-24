@@ -66,4 +66,5 @@ export type StackElement = {
   stackType: string;
   value: number;
   children?: StackElement[];
+  instanceName: string;
 };

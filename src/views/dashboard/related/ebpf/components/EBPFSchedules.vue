@@ -157,9 +157,6 @@ async function analyzeEBPF() {
     ElMessage.error(res.data.errors);
     return;
   }
-  if (res.data.analysisEBPFResult.tip) {
-    ElMessage.error(res.data.analysisEBPFResult.tip);
-  }
 }
 
 function visTimeline() {
@@ -183,15 +180,16 @@ function visTimeline() {
     }
   );
   searchProcesses();
-  const items: any = new DataSet(schedules);
-  const options = {
-    height: 250,
-    width: "100%",
-    locale: "en",
-  };
   if (!timeline.value) {
     return;
   }
+  const h = timeline.value.getBoundingClientRect().height;
+  const items: any = new DataSet(schedules);
+  const options = {
+    height: h,
+    width: "100%",
+    locale: "en",
+  };
   visGraph.value = new Timeline(timeline.value, items, options);
 }
 
@@ -200,8 +198,10 @@ function changePage(pageIndex: number) {
 }
 
 function searchProcesses(pageIndex?: any) {
-  const arr = processes.value.filter((d: { name: string }) =>
-    d.name.includes(searchText.value)
+  const arr = processes.value.filter(
+    (d: { name: string; instanceName: string }) =>
+      d.name.includes(searchText.value) ||
+      d.instanceName.includes(searchText.value)
   );
   currentProcesses.value = arr.splice(
     (pageIndex - 1 || 0) * pageSize,
@@ -222,8 +222,9 @@ watch(
 }
 
 .schedules {
-  width: 100%;
+  width: calc(100% - 5px);
   margin: 0 5px 5px 0;
+  height: calc(100% - 60px);
 }
 
 .inputs {

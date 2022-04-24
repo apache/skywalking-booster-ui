@@ -13,7 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div id="graph-stack" ref="graph"></div>
+  <div id="graph-stack" ref="graph">
+    <span class="tip" v-show="ebpfStore.tip">{{ ebpfStore.tip }}</span>
+  </div>
 </template>
 <script lang="ts" setup>
 import { ref, watch } from "vue";
@@ -132,7 +134,15 @@ watch(
 <style>
 #graph-stack {
   width: 100%;
-  height: 350px;
+  height: 100%;
   cursor: pointer;
+}
+
+.tip {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  color: red;
+  margin-top: 20px;
 }
 </style>
