@@ -223,7 +223,7 @@ export default defineComponent({
         entries.forEach(
           (element) => {
             if (element.isIntersecting && element.intersectionRatio > 0) {
-              console.log("Last Value:", lastItem.value);
+              // console.log("Last Value:", lastItem.value);
               setTimeout(() => {
                 currentItem.value = element.target.id;
               }, 200);
@@ -255,7 +255,7 @@ export default defineComponent({
               dashboardStore.currentTabItems.length - 1
             ].i
           }`;
-          console.log(lastItem.value)
+          // console.log(lastItem.value)
         }, 500);
       }
     );
@@ -339,7 +339,7 @@ export default defineComponent({
     );
     onMounted(() => {
       window.addEventListener("scroll", (e) => {
-        console.log(e);
+        // console.log(e);
       });
       tabRef?.value["parentElement"]?.classList?.toggle("item");
       if (dashboardStore.fullView) {
