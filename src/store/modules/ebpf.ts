@@ -89,6 +89,7 @@ export const ebpfStore = defineStore({
         .query("getEBPFTasks")
         .params({ serviceId });
 
+      this.tip = "";
       if (res.data.errors) {
         return res.data;
       }
@@ -115,7 +116,6 @@ export const ebpfStore = defineStore({
       this.eBPFSchedules = eBPFSchedules;
       if (!eBPFSchedules.length) {
         this.eBPFSchedules = [];
-        return res.data;
       }
       this.analyzeTrees = [];
       return res.data;
