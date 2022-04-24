@@ -98,4 +98,11 @@ export default defineComponent({
 .ds-main {
   overflow: auto;
 }
+.ds-main::-webkit-scrollbar {
+  display: none;
+}
+.ds-main{
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 </style>
