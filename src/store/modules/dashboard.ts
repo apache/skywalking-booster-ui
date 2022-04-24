@@ -114,7 +114,12 @@ export const dashboardStore = defineStore({
               : 3,
         };
       }
-      if (type === "Trace" || type === "Profile" || type === "Log") {
+      if (
+        type === "Trace" ||
+        type === "Profile" ||
+        type === "Log" ||
+        type === "Ebpf"
+      ) {
         newItem.h = 36;
       }
       if (type === "Text") {

@@ -88,7 +88,7 @@ limitations under the License. -->
         </div>
         <div>
           <el-button
-            class="grey"
+            class="grey small"
             :class="{ ghost: displayMode !== 'List' }"
             @click="displayMode = 'List'"
           >
@@ -96,7 +96,7 @@ limitations under the License. -->
             {{ t("list") }}
           </el-button>
           <el-button
-            class="grey"
+            class="grey small"
             :class="{ ghost: displayMode !== 'Tree' }"
             @click="displayMode = 'Tree'"
           >
@@ -104,7 +104,7 @@ limitations under the License. -->
             {{ t("tree") }}
           </el-button>
           <el-button
-            class="grey"
+            class="grey small"
             :class="{ ghost: displayMode !== 'Table' }"
             @click="displayMode = 'Table'"
           >
@@ -112,7 +112,7 @@ limitations under the License. -->
             {{ t("table") }}
           </el-button>
           <el-button
-            class="grey"
+            class="grey small"
             :class="{ ghost: displayMode !== 'Statistics' }"
             @click="displayMode = 'Statistics'"
           >

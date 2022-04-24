@@ -14,6 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@import "./grid.scss";
-@import "./lib.scss";
-@import "./reset.scss";
+
+import {
+  queryCreateTaskData,
+  createEBPFTask,
+  queryEBPFTasks,
+  queryEBPFSchedules,
+  analysisEBPFResult,
+} from "../fragments/ebpf";
+
+export const getCreateTaskData = `query queryCreateTaskData(${queryCreateTaskData.variable}) {${queryCreateTaskData.query}}`;
+
+export const saveEBPFTask = `mutation createEBPFTask(${createEBPFTask.variable}) {${createEBPFTask.query}}`;
+
+export const getEBPFTasks = `query queryEBPFTasks(${queryEBPFTasks.variable}) {${queryEBPFTasks.query}}`;
+
+export const getEBPFSchedules = `query queryEBPFSchedules(${queryEBPFSchedules.variable}) {${queryEBPFSchedules.query}}`;
+
+export const getEBPFResult = `query analysisEBPFResult(${analysisEBPFResult.variable}) {${analysisEBPFResult.query}}`;
