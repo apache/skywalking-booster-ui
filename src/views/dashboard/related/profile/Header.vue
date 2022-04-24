@@ -74,7 +74,7 @@ async function searchEndpoints(keyword: string) {
   if (!selectorStore.currentService) {
     return;
   }
-  const service = selectorStore.currentService.value;
+  const service = selectorStore.currentService.id;
   const res = await profileStore.getEndpoints(service, keyword);
 
   if (res.errors) {

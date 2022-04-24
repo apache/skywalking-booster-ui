@@ -21,7 +21,7 @@ limitations under the License. -->
         class="profile-input"
         size="small"
         :value="endpointName"
-        :options="profileStore.taskEndpoints"
+        :options="profileStore.endpoints"
         placeholder="Select a endpoint"
         :isRemote="true"
         @change="changeEndpoint"
@@ -118,7 +118,7 @@ async function searchEndpoints(keyword: string) {
   if (!selectorStore.currentService) {
     return;
   }
-  const service = selectorStore.currentService.value;
+  const service = selectorStore.currentService.id;
   const res = await profileStore.getEndpoints(service, keyword);
 
   if (res.errors) {
