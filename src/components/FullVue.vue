@@ -14,7 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="scroll-snap-container">
-    <div :id="'item' + item.i" class="item" v-for="item in items" :key="item.i">    
+    <div v-if="items.length > 1" class="scroll-handler__wrapper">
+      <div
+        @click="scrollToGraph(item.i)"
+        v-for="item in items"
+        :key="item.i"
+        :class="[currentItem === `item${item.i}` ? 'active' : '']"
+        class="full-scroll-to"
+      ></div>
+    </div>
+    <div :id="'item' + item.i" class="item" v-for="item in items" :key="item.i">
       <slot v-if="items.length">
         <component :is="item.type" :data="item" />
       </slot>
@@ -56,36 +65,9 @@ export default defineComponent({
         }, 500);
       }
     );
-
-    // async function setTemplate() {
-    //   await dashboardStore.setDashboards();
-
-    //   if (!p.entity) {
-    //     if (!dashboardStore.currentDashboard) {
-    //       return;
-    //     }
-    //     const { layer, entity, name } = dashboardStore.currentDashboard;
-    //     layoutKey.value = `${layer}_${entity}_${name}`;
-    //   }
-    //   const c: { configuration: string; id: string } = JSON.parse(
-    //     sessionStorage.getItem(layoutKey.value) || "{}"
-    //   );
-    //   const layout: any = c.configuration || {};
-    //   dashboardStore.setLayout(layout.children || []);
-    //   appStore.setPageTitle(layout.name);
-
-    //   // observeItems();
-
-    //   if (p.entity) {
-    //     dashboardStore.setCurrentDashboard({
-    //       layer: p.layerId,
-    //       entity: p.entity,
-    //       name: p.name,
-    //       id: c.id,
-    //       isRoot: layout.isRoot,
-    //     });
-    //   }
-    // }
+    function scrollToGraph(e: any) {
+      document?.getElementById(`item${e}`)?.scrollIntoView();
+    }
     function observeItems() {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((element) => {
@@ -102,6 +84,7 @@ export default defineComponent({
       t,
       dashboardStore,
       currentItem,
+      scrollToGraph,
     };
   },
 });
@@ -119,6 +102,30 @@ export default defineComponent({
   scroll-snap-type: y mandatory;
   scroll-snap-type: mandatory;
   scroll-behavior: smooth;
+  .scroll-handler__wrapper {
+    z-index: 20;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    right: 0;
+    top: 40vh;
+    height: auto;
+    width: 20px;
+    .full-scroll-to {
+      opacity: 0.5;
+      width: 10px;
+      height: 10px;
+      margin: 5px 0;
+      border-radius: 50%;
+      cursor: pointer;
+      background: #4f4f4f;
+    }
+    .full-scroll-to.active {
+      opacity: 1;
+      padding: 6px;
+      background: #252a2f;
+    }
+  }
 }
 .scroll-snap-container::-webkit-scrollbar {
   display: none;
