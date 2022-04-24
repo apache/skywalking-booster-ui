@@ -110,6 +110,10 @@ function changeType(opt: any[]) {
 }
 
 async function createTask() {
+  if (!labels.value.length) {
+    ElMessage.warning("no labels");
+    return;
+  }
   const date =
     monitorTime.value === "0" ? appStore.durationRow.start : time.value;
   const params = {

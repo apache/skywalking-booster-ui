@@ -20,7 +20,7 @@ import router from "./router";
 import { store } from "./store";
 import components from "@/components";
 import i18n from "./locales";
-import "./styles/index.scss";
+import "./styles/index.ts";
 
 const app = createApp(App);
 

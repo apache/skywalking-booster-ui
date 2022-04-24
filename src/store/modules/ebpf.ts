@@ -1,4 +1,3 @@
-import { TaskListItem } from "./../../types/profile.d";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -17,11 +16,11 @@ import { TaskListItem } from "./../../types/profile.d";
  */
 import { defineStore } from "pinia";
 import { Duration, Option } from "@/types/app";
-import { ProfileAnalyzationTrees } from "@/types/profile";
 import {
   EBPFTaskCreationRequest,
   EBPFProfilingSchedule,
   EBPFTaskList,
+  AnalyzationTrees,
 } from "@/types/ebpf";
 import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
@@ -34,8 +33,7 @@ interface EbpfStore {
   taskList: EBPFTaskList[];
   eBPFSchedules: EBPFProfilingSchedule[];
   currentSchedule: EBPFProfilingSchedule | Record<string, never>;
-  analyzeTrees: ProfileAnalyzationTrees;
-  highlightTop: boolean;
+  analyzeTrees: AnalyzationTrees[];
   labels: Option[];
   couldProfiling: boolean;
   tip: string;
@@ -49,7 +47,6 @@ export const ebpfStore = defineStore({
     eBPFSchedules: [],
     currentSchedule: {},
     analyzeTrees: [],
-    highlightTop: true,
     labels: [{ value: "", label: "" }],
     couldProfiling: false,
     tip: "",
@@ -61,9 +58,6 @@ export const ebpfStore = defineStore({
     setCurrentSchedule(s: Trace) {
       this.currentSchedule = s;
     },
-    setHighlightTop() {
-      this.highlightTop = !this.highlightTop;
-    },
     async getCreateTaskData(serviceId: string) {
       const res: AxiosResponse = await graphql
         .query("getCreateTaskData")
@@ -73,7 +67,7 @@ export const ebpfStore = defineStore({
         return res.data;
       }
       const json = res.data.data.createTaskData;
-      this.couldProfiling = json.couldProfiling || [];
+      this.couldProfiling = json.couldProfiling || false;
       this.labels = json.processLabels.map((d: string) => {
         return { label: d, value: d };
       });

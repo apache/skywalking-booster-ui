@@ -66,5 +66,11 @@ export type StackElement = {
   stackType: string;
   value: number;
   children?: StackElement[];
-  instanceName: string;
+};
+export type AnalyzationTrees = {
+  id: string;
+  parentId: string;
+  symbol: string;
+  dumpCount: number;
+  stackType: string;
 };
