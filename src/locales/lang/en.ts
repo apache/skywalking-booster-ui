@@ -134,6 +134,7 @@ const msg = {
   taskId: "Task ID",
   triggerType: "Trigger Type",
   targetType: "Target Type",
+  processSelect: "Click to select processes",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

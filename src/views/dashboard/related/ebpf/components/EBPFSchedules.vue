@@ -26,11 +26,24 @@ limitations under the License. -->
     <el-popover placement="bottom" :width="680" trigger="click">
       <template #reference>
         <el-button type="primary" size="small">
-          Click to select processes
+          {{ t("processSelect") }}
         </el-button>
       </template>
+      <el-input
+        v-model="searchText"
+        placeholder="Please input name"
+        class="input-with-search"
+        size="small"
+        @change="searchProcesses"
+      >
+        <template #append>
+          <el-button size="small">
+            <Icon size="sm" iconName="search" />
+          </el-button>
+        </template>
+      </el-input>
       <el-table
-        :data="processes"
+        :data="currentProcesses"
         ref="multipleTableRef"
         @selection-change="handleSelectionChange"
       >
@@ -44,10 +57,21 @@ limitations under the License. -->
         />
         <el-table-column width="300" label="Attributes">
           <template #default="scope">
-            {{ scope.row.attributes.map((d: any) => `${d.name}=${d.value}`).join("; ") }}
+            {{ scope.row.attributes.map((d: {name: string, value: string}) => `${d.name}=${d.value}`).join("; ") }}
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        class="pagination"
+        background
+        small
+        layout="prev, pager, next"
+        :page-size="pageSize"
+        :total="processes.length"
+        @current-change="changePage"
+        @prev-click="changePage"
+        @next-click="changePage"
+      />
     </el-popover>
     <el-button type="primary" size="small" @click="analyzeEBPF">
       {{ t("analyze") }}
@@ -69,6 +93,7 @@ import { ElMessage, ElTable } from "element-plus";
 
 const { t } = useI18n();
 const ebpfStore = useEbpfStore();
+const pageSize = 5;
 /*global Nullable */
 const multipleTableRef = ref<InstanceType<typeof ElTable>>();
 const selectedProcesses = ref<string[]>([]);
@@ -76,7 +101,9 @@ const timeline = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
 const labels = ref<Option[]>([{ label: "All", value: "0" }]);
 const processes = ref<Process[]>([]);
+const currentProcesses = ref<Process[]>([]);
 const selectedLabels = ref<string[]>(["0"]);
+const searchText = ref<string>("");
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   new Date(dayjs(date).format(pattern));
 
@@ -155,6 +182,7 @@ function visTimeline() {
       };
     }
   );
+  searchProcesses();
   const items: any = new DataSet(schedules);
   const options = {
     height: 250,
@@ -165,6 +193,20 @@ function visTimeline() {
     return;
   }
   visGraph.value = new Timeline(timeline.value, items, options);
+}
+
+function changePage(pageIndex: number) {
+  searchProcesses(pageIndex);
+}
+
+function searchProcesses(pageIndex?: any) {
+  const arr = processes.value.filter((d: { name: string }) =>
+    d.name.includes(searchText.value)
+  );
+  currentProcesses.value = arr.splice(
+    (pageIndex - 1 || 0) * pageSize,
+    pageSize * (pageIndex || 1)
+  );
 }
 
 watch(
@@ -186,5 +228,14 @@ watch(
 
 .inputs {
   width: 300px;
+}
+
+.input-with-search {
+  width: 650px;
+  margin-bottom: 5px;
+}
+
+.pagination {
+  margin-top: 10px;
 }
 </style>

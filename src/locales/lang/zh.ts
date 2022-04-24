@@ -132,6 +132,7 @@ const msg = {
   taskId: "任务ID",
   triggerType: "触发类型",
   targetType: "目标类型",
+  processSelect: "点击选择进程",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",
