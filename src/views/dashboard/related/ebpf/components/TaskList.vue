@@ -43,7 +43,9 @@ limitations under the License. -->
                 <span class="mr-10 sm">{{ dateFormat(i.taskStartTime) }}</span>
                 <span class="mr-10 sm">
                   {{
-                    dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000)
+                    dateFormat(
+                      i.taskStartTime + i.fixedTriggerDuration * 60 * 1000
+                    )
                   }}
                 </span>
               </div>
