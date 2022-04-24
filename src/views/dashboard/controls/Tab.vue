@@ -189,6 +189,7 @@ export default defineComponent({
     const tabRef = ref<any>("");
     const tabObserveContainer = ref<any>(null);
     const currentItem = ref("");
+    const lastItem = ref("");
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
     );
@@ -248,6 +249,11 @@ export default defineComponent({
       () => {
         setTimeout(() => {
           observeItems();
+          lastItem.value = `${
+            dashboardStore.currentTabItems[
+              dashboardStore.currentTabItems.length - 1
+            ].i
+          }`;
         }, 500);
       }
     );
