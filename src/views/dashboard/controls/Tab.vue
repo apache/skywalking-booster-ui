@@ -205,19 +205,19 @@ export default defineComponent({
     function scrollToGraph(e: any) {
       document?.getElementById(`tabitem${e}`)?.scrollIntoView();
     }
-    function debounce(func: any, wait: number) {
-      let timeout = null;
-      return function (func, delayMs) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-          func();
-        }, delayMs || 500);
-      };
-    }
-    function scrollDecider() {
-      console.log("runing debounce");
-      console.log(window.scrollY);
-    }
+    // function debounce(func: any, wait: number) {
+    //   let timeout: any = null;
+    //   return function (func, delayMs) {
+    //     clearTimeout(timeout);
+    //     timeout = setTimeout(() => {
+    //       func();
+    //     }, delayMs || 500);
+    //   };
+    // }
+    // function scrollDecider() {
+    //   console.log("runing debounce");
+    //   console.log(window.scrollY);
+    // }
     function observeItems(kill = false) {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((element) => {
@@ -332,9 +332,9 @@ export default defineComponent({
     );
     onMounted(() => {
       tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
-        debounce(() => {
-          console.log("Yeah!");
-        }, 100);
+        // debounce(() => {
+        //   console.log("Yeah!");
+        // }, 100);
       });
       tabRef?.value["parentElement"]?.classList?.toggle("item");
       if (dashboardStore.fullView) {

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="scroll-snap-container">
-    <div :id="'item' + item.i" class="item" v-for="item in items" :key="item.i">
+    <div :id="'item' + item.i" class="item" v-for="item in items" :key="item.i">    
       <slot v-if="items.length">
         <component :is="item.type" :data="item" />
       </slot>
