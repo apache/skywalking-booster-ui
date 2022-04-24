@@ -150,8 +150,7 @@ function changeEndpoint(opt: any[]) {
 
 async function createTask() {
   emits("close");
-  const date =
-    monitorTime.value === "0" ? appStore.durationRow.start : time.value;
+  const date = monitorTime.value === "0" ? new Date() : time.value;
   const params = {
     serviceId: selectorStore.currentService.id,
     endpointName: endpointName.value,

@@ -115,8 +115,7 @@ async function createTask() {
     ElMessage.warning("no labels");
     return;
   }
-  const date =
-    monitorTime.value === "0" ? appStore.durationRow.end : time.value;
+  const date = monitorTime.value === "0" ? new Date() : time.value;
   const params = {
     serviceId: selectorStore.currentService.id,
     processLabels: labels.value,
