@@ -87,7 +87,11 @@ limitations under the License. -->
       :is-resizable="dashboardStore.editMode"
       @layout-updated="layoutUpdatedEvent"
     >
-      <div class="scroll-snap-container" v-if="dashboardStore.fullView">
+      <div
+        ref="tabObserveContainer"
+        class="scroll-snap-container"
+        v-if="dashboardStore.fullView"
+      >
         <div
           v-if="dashboardStore.currentTabItems.length > 1"
           class="scroll-handler__wrapper"
@@ -96,7 +100,7 @@ limitations under the License. -->
             @click="scrollToGraph(item.i)"
             v-for="item in dashboardStore.currentTabItems"
             :key="item.i"
-            :class="[currentItem === `tabitem${item.i}` ? 'active': '']"
+            :class="[currentItem === `tabitem${item.i}` ? 'active' : '']"
             class="scroll-to"
           ></div>
         </div>
@@ -143,7 +147,14 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { ref, watch, onMounted, defineComponent, toRefs } from "vue";
+import {
+  ref,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+  defineComponent,
+  toRefs,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
@@ -164,7 +175,7 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile, Log, Text},
+  components: { Topology, Widget, Trace, Profile, Log, Text },
   props,
   setup(props) {
     const { t } = useI18n();
@@ -176,6 +187,7 @@ export default defineComponent({
     const needQuery = ref<boolean>(false);
     const showTools = ref<boolean>(false);
     const tabRef = ref<any>("");
+    const tabObserveContainer = ref<any>(null);
     const currentItem = ref("");
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
@@ -186,8 +198,8 @@ export default defineComponent({
       );
       dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
       setTimeout(() => {
-        observeItems()
-      }, 1500)
+        observeItems();
+      }, 1500);
     }
     function scrollToGraph(e: any) {
       document?.getElementById(`tabitem${e}`)?.scrollIntoView();
@@ -195,22 +207,33 @@ export default defineComponent({
 
     function observeItems() {
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach((element) => {          
-          if (element.intersectionRatio > 0) {
-            currentItem.value = element.target.id;
+        entries.forEach(
+          (element) => {
+            if (element.isIntersecting && element.intersectionRatio > 0) {
+              setTimeout(() => {
+                currentItem.value = element.target.id;
+              }, 200);
+            }
+          },
+          {
+            // rootMargin: "-60px 0",
+            // container: tabObserveContainer.value
           }
-        });
+        );
       });
       document.querySelectorAll(".tabitem").forEach((element) => {
         observer.observe(element);
       });
     }
 
-    watch(() => dashboardStore.currentTabItems, () => {
-      setTimeout(() => {
-        observeItems();
-      }, 500)
-    } )
+    watch(
+      () => dashboardStore.currentTabItems,
+      () => {
+        setTimeout(() => {
+          observeItems();
+        }, 500);
+      }
+    );
 
     function clickTabs(e: Event, idx: number) {
       e.stopPropagation();
@@ -224,7 +247,7 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
-      needQuery.value = true; 
+      needQuery.value = true;
     }
     function removeTab(e: Event) {
       e.stopPropagation();
@@ -291,9 +314,16 @@ export default defineComponent({
     );
     onMounted(() => {
       tabRef?.value["parentElement"]?.classList?.toggle("item");
+      if (dashboardStore.fullView) {
+        console.log("Tab Osbercve:", tabObserveContainer);
+      }
+    });
+    onBeforeUnmount(() => {
+      observeItems.unobserve();
     });
     return {
       currentItem,
+      tabObserveContainer,
       scrollToGraph,
       handleClick,
       layoutUpdatedEvent,
@@ -340,6 +370,7 @@ export default defineComponent({
 .tabitem {
   scroll-snap-align: start;
   height: 100%;
+  margin: 70px 0;
 }
 .scroll-handler__wrapper {
   z-index: 20;
@@ -349,7 +380,7 @@ export default defineComponent({
   right: 0;
   top: 40vh;
   height: auto;
-  width: 20px;  
+  width: 20px;
   .scroll-to {
     opacity: 0.5;
     width: 10px;
