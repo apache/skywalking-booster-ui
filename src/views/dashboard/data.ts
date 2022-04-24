@@ -183,8 +183,8 @@ export const ServiceTools = [
   { name: "library_books", content: "Text", id: "addText" },
   { name: "device_hub", content: "Topology", id: "addTopology" },
   { name: "merge", content: "Trace", id: "addTrace" },
-  { name: "timeline", content: "Trace Profile", id: "addProfile" },
-  { name: "insert_chart", content: "eBPF Profile", id: "addEbpf" },
+  { name: "timeline", content: "Trace Profiling", id: "addProfile" },
+  { name: "insert_chart", content: "eBPF Profiling", id: "addEbpf" },
   { name: "assignment", content: "Log", id: "addLog" },
 ];
 export const InstanceTools = [

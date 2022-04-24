@@ -43,7 +43,7 @@ function drawGraph() {
 
   const w = (graph.value && graph.value.getBoundingClientRect().width) || 10;
   flameChart.value = flamegraph()
-    .width(w - 10)
+    .width(w - 15)
     .cellHeight(18)
     .transitionDuration(750)
     .minFrameSize(5)

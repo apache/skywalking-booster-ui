@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h header">
-    <div>eBPF Profile</div>
+    <div class="title">eBPF Profiling</div>
     <el-button type="primary" size="small" @click="createTask">
       {{ t("newTask") }}
     </el-button>
@@ -95,5 +95,10 @@ watch(
 
 .new-btn {
   float: right;
+}
+
+.title {
+  font-weight: bold;
+  line-height: 24px;
 }
 </style>

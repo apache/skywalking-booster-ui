@@ -28,7 +28,7 @@ limitations under the License. -->
       />
     </div>
     <div>
-      <div class="label">{{ t("labels") }}</div>
+      <div class="label">{{ t("targetType") }}</div>
       <Selector
         class="profile-input"
         size="small"

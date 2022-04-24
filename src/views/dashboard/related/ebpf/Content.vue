@@ -44,6 +44,7 @@ import EBPFStack from "./components/EBPFStack.vue";
 .item {
   width: 100%;
   overflow: auto;
-  height: 50%;
+  height: calc(50% - 10px);
+  padding-bottom: 10px;
 }
 </style>
