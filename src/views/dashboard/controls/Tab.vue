@@ -205,36 +205,34 @@ export default defineComponent({
     function scrollToGraph(e: any) {
       document?.getElementById(`tabitem${e}`)?.scrollIntoView();
     }
-    function debounce(func: any, wait: number, immediate: boolean) {
-      let timeout: any;
-      return function () {
-        let context = this,
-          args = arguments;
+    function debounce(func: any, wait: number) {
+      let timeout = null;
+      return function (func, delayMs) {
         clearTimeout(timeout);
-        timeout = setTimeout(function () {
-          timeout = null;
-          if (!immediate) func.apply(context, args);
-        }, wait);
-        if (immediate && !timeout) func.apply(context, args);
+        timeout = setTimeout(() => {
+          func();
+        }, delayMs || 500);
       };
     }
-    function observeItems(kill = false) {      
+    function scrollDecider() {
+      console.log("runing debounce");
+      console.log(window.scrollY);
+    }
+    function observeItems(kill = false) {
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach(
-          (element) => {
-            if (element.isIntersecting && element.intersectionRatio > 0) {
-              // console.log("Last Value:", lastItem.value);
-              setTimeout(() => {
-                currentItem.value = element.target.id;
-              }, 200);
-            }
-          },
-          {
-            // rootMargin: "-60px 0",
-            // container: tabObserveContainer.value
+        entries.forEach((element) => {
+          if (element.isIntersecting && element.intersectionRatio > 0) {
+            setTimeout(() => {
+              currentItem.value = element.target.id;
+            }, 200);
           }
-        );
+        });
       });
+      lastItem.value = `${
+        dashboardStore.currentTabItems[
+          dashboardStore.currentTabItems.length - 1
+        ].i
+      }`;
       document.querySelectorAll(".tabitem").forEach((element) => {
         observer.observe(element);
       });
@@ -250,12 +248,7 @@ export default defineComponent({
       () => {
         setTimeout(() => {
           observeItems();
-          lastItem.value = `${
-            dashboardStore.currentTabItems[
-              dashboardStore.currentTabItems.length - 1
-            ].i
-          }`;
-          // console.log(lastItem.value)
+          console.log("Last Value:", lastItem.value);
         }, 500);
       }
     );
@@ -338,8 +331,10 @@ export default defineComponent({
       }
     );
     onMounted(() => {
-      window.addEventListener("scroll", (e) => {
-        // console.log(e);
+      tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
+        debounce(() => {
+          console.log("Yeah!");
+        }, 100);
       });
       tabRef?.value["parentElement"]?.classList?.toggle("item");
       if (dashboardStore.fullView) {
