@@ -189,7 +189,7 @@ export default defineComponent({
     const tabRef = ref<any>("");
     const tabObserveContainer = ref<any>(null);
     const currentItem = ref("");
-    const lastItem = ref("");
+    const firstItem = ref<any>();
     const refScrollTimeOut = ref();
     const currentScrollY = ref(0);
 
@@ -208,20 +208,9 @@ export default defineComponent({
     function scrollToGraph(e: any) {
       document?.getElementById(`tabitem${e}`)?.scrollIntoView();
     }
-    // function debounce(func: any, wait: number) {
-    //   let timeout: any = null;
-    //   return function (func, delayMs) {
-    //     clearTimeout(timeout);
-    //     timeout = setTimeout(() => {
-    //       func();
-    //     }, delayMs || 500);
-    //   };
-    // }
-    // function scrollDecider() {
-    //   console.log("runing debounce");
-    //   console.log(window.scrollY);
-    // }
+  
     function observeItems(kill = false) {
+      const graphs = JSON.parse(JSON.stringify(dashboardStore.currentTabItems));
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((element) => {
           if (element.isIntersecting && element.intersectionRatio > 0) {
@@ -231,11 +220,7 @@ export default defineComponent({
           }
         });
       });
-      lastItem.value = `${
-        dashboardStore.currentTabItems[
-          dashboardStore.currentTabItems.length - 1
-        ].i
-      }`;
+      firstItem.value = document?.getElementById(`tabitem${graphs[0].i}`)      
       document.querySelectorAll(".tabitem").forEach((element) => {
         observer.observe(element);
       });
@@ -250,8 +235,7 @@ export default defineComponent({
       () => dashboardStore.currentTabItems,
       () => {
         setTimeout(() => {
-          observeItems();
-          // console.log("Last Value:", lastItem.value);
+          observeItems();          
         }, 500);
       }
     );
@@ -318,9 +302,11 @@ export default defineComponent({
       );
     }    
     function scrollToFirstGraph(scrollUp: boolean) {
-      const graphs = JSON.parse(JSON.stringify(dashboardStore.currentTabItems));      
-      if (scrollUp) {
-        document?.getElementById(`tabitem${graphs[0].i}`)?.scrollIntoView();
+      const graphs = JSON.parse(JSON.stringify(dashboardStore.currentTabItems));
+      const thereisNextEl = document?.getElementById(`${currentItem.value}`) !== null
+      if (scrollUp && !thereisNextEl) {
+        console.log(firstItem.value)
+        firstItem.value.scrollIntoView();
       }
     }
     document.body.addEventListener("click", handleClick, false);
@@ -346,12 +332,15 @@ export default defineComponent({
         }
         // console.log("WindowScrollY Outside:", tabObserveContainer.value);
         refScrollTimeOut.value = window.setTimeout(() => {
-          if (tabObserveContainer.value?.scrollTop === currentScrollY.value) {          
+          if (
+            tabObserveContainer.value?.scrollTop > currentScrollY.value ||
+            tabObserveContainer.value?.scrollTop === currentScrollY.value
+          ) {
             scrollToFirstGraph(true)
             console.log("Scrolled Down!")
           }
           currentScrollY.value = tabObserveContainer.value?.scrollTop
-          console.log("CurrentScrollY:", currentScrollY.value);
+          console.log("CurrentScrollY:", document?.getElementById(`${currentItem.value}`));
 
         }, 100);
       });
