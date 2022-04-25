@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="scroll-snap-container">
+  <div ref="scrollWrapRef" class="scroll-snap-container">
     <div v-if="items.length > 1" class="scroll-handler__wrapper">
       <div
         @click="scrollToGraph(item.i)"
@@ -50,30 +50,26 @@ export default defineComponent({
   components: { ...Configuration, ...controls },
   setup() {
     const dashboardStore = useDashboardStore();
-    // const tobewatched = reactive(dashboardStore);
-    // const appStore = useAppStoreWithOut();
     const { t } = useI18n();
     const p = useRoute().params;
-    // const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
-    // setTemplate();
     const currentItem = ref("");
+    const initScroll = ref(0);
+    const scrollWrapRef = ref<any>(null);
     watch(
       () => dashboardStore.layout,
       () => {
-        // console.log('Watching:',currentItem.value)
         setTimeout(() => {
           observeItems();
         }, 500);
       }
     );
     function scrollToGraph(e: any) {
-      // console.log(currentItem.value)
       document?.getElementById(`item${e}`)?.scrollIntoView();
     }
     function observeItems() {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((element) => {
-          if (element.intersectionRatio > 0) {            
+          if (element.intersectionRatio > 0) {
             currentItem.value = element.target.id;
           }
         });
@@ -82,14 +78,40 @@ export default defineComponent({
         observer.observe(element);
       });
     }
-    onMounted(()=>{
-      observeItems()
-    })
+    function scrollToFirstGraph(scrollUp: boolean) {
+      // const noNextEl =
+      // document?.getElementById(`${currentItem.value}`)?.nextElementSibling === null;
+      // if (scrollUp && noNextEl) {
+      //   initScroll.value++;
+      //   if (initScroll.value > 1) {
+      //     firstItem.value.scrollIntoView();
+      //     initScroll.value = 0;
+      //   }
+      // }
+    }
+    function initScroller() {
+      scrollWrapRef?.value?.addEventListener("scroll", (e: Event) => {
+        const isBottom =
+          scrollWrapRef?.value?.offsetHeight +
+            scrollWrapRef?.value?.scrollTop +
+            40 >
+          scrollWrapRef?.value?.scrollHeight;
+
+        if (isBottom) {
+          scrollWrapRef?.value.scroll(0, 0);
+        }        
+      });
+    }
+    onMounted(() => {
+      observeItems();
+      initScroller();
+    });
     return {
       t,
       dashboardStore,
       currentItem,
       scrollToGraph,
+      scrollWrapRef,
     };
   },
 });
