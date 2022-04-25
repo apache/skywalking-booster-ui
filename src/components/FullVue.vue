@@ -35,7 +35,6 @@ import { ref, watch, onMounted, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
-// import { useAppStoreWithOut } from "@/store/modules/app";
 import Configuration from "../views/dashboard/configuration";
 import controls from "../views/dashboard/controls/index";
 
@@ -53,7 +52,6 @@ export default defineComponent({
     const { t } = useI18n();
     const p = useRoute().params;
     const currentItem = ref("");
-    const initScroll = ref(0);
     const scrollWrapRef = ref<any>(null);
     watch(
       () => dashboardStore.layout,
@@ -77,18 +75,7 @@ export default defineComponent({
       document.querySelectorAll(".item").forEach((element) => {
         observer.observe(element);
       });
-    }
-    function scrollToFirstGraph(scrollUp: boolean) {
-      // const noNextEl =
-      // document?.getElementById(`${currentItem.value}`)?.nextElementSibling === null;
-      // if (scrollUp && noNextEl) {
-      //   initScroll.value++;
-      //   if (initScroll.value > 1) {
-      //     firstItem.value.scrollIntoView();
-      //     initScroll.value = 0;
-      //   }
-      // }
-    }
+    } 
     function initScroller() {
       scrollWrapRef?.value?.addEventListener("scroll", (e: Event) => {
         const isBottom =

@@ -182,10 +182,7 @@ export default defineComponent({
     const tabRef = ref<any>("");
     const tabObserveContainer = ref<any>(null);
     const currentItem = ref("");
-    const firstItem = ref<any>();
-    const refScrollTimeOut = ref();
-    const currentScrollY = ref(0);
-    const initScroll = ref(0);
+    
 
     const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
     if (dashboardStore.layout[l].children.length) {
@@ -202,18 +199,15 @@ export default defineComponent({
     }
 
     function observeItems(kill = false) {
-      const graphs = JSON.parse(JSON.stringify(dashboardStore.currentTabItems));
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((element) => {
           if (element.isIntersecting && element.intersectionRatio > 0) {
             setTimeout(() => {
               currentItem.value = element.target.id;
-              console.log("219-CurrentEl:", currentItem.value);
             }, 200);
           }
         });
       });
-      firstItem.value = document?.getElementById(`tabitem${graphs[0].i}`);
       document.querySelectorAll(".tabitem").forEach((element) => {
         observer.observe(element);
       });
@@ -292,34 +286,18 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
     }
-    function scrollToFirstGraph(scrollUp: boolean) {
-      const noNextEl =
-        document?.getElementById(`${currentItem.value}`)?.nextElementSibling === null;
-      if (scrollUp && noNextEl) {
-        initScroll.value++;
-        if (initScroll.value > 1) {
-          firstItem.value.scrollIntoView();
-          initScroll.value = 0;
-        }
-      }
-    }
+    
     function initScrollWatcher() {
       tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
-        if (refScrollTimeOut.value) {
-          clearTimeout(refScrollTimeOut.value);
-        }
-        refScrollTimeOut.value = window.setTimeout(() => {
-          if (
-            tabObserveContainer.value?.scrollTop > currentScrollY.value ||
-            tabObserveContainer.value?.scrollTop === currentScrollY.value
-          ) {
-            setTimeout(() => {
-              scrollToFirstGraph(true);
-            }, 200);
-          }
+        const isBottom =
+          tabObserveContainer?.value?.offsetHeight +
+            tabObserveContainer?.value?.scrollTop +
+            70 >
+          tabObserveContainer?.value?.scrollHeight;
 
-          currentScrollY.value = tabObserveContainer.value?.scrollTop;
-        }, 100);
+        if (isBottom) {
+          tabObserveContainer?.value.scroll(0, 0);
+        }
       });
     }
     document.body.addEventListener("click", handleClick, false);
