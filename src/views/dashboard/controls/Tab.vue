@@ -208,7 +208,7 @@ export default defineComponent({
     function scrollToGraph(e: any) {
       document?.getElementById(`tabitem${e}`)?.scrollIntoView();
     }
-  
+
     function observeItems(kill = false) {
       const graphs = JSON.parse(JSON.stringify(dashboardStore.currentTabItems));
       const observer = new IntersectionObserver((entries) => {
@@ -216,11 +216,13 @@ export default defineComponent({
           if (element.isIntersecting && element.intersectionRatio > 0) {
             setTimeout(() => {
               currentItem.value = element.target.id;
+              console.log('219-CurrentEl:',currentItem.value);
+              
             }, 200);
           }
         });
       });
-      firstItem.value = document?.getElementById(`tabitem${graphs[0].i}`)      
+      firstItem.value = document?.getElementById(`tabitem${graphs[0].i}`);
       document.querySelectorAll(".tabitem").forEach((element) => {
         observer.observe(element);
       });
@@ -235,7 +237,7 @@ export default defineComponent({
       () => dashboardStore.currentTabItems,
       () => {
         setTimeout(() => {
-          observeItems();          
+          observeItems();
         }, 500);
       }
     );
@@ -300,15 +302,16 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
-    }    
-    function scrollToFirstGraph(scrollUp: boolean) {
-      const graphs = JSON.parse(JSON.stringify(dashboardStore.currentTabItems));
-      const thereisNextEl = document?.getElementById(`${currentItem.value}`) !== null
-      if (scrollUp && !thereisNextEl) {
+    }
+    function scrollToFirstGraph(scrollUp: boolean) {      
+      const noNextEl =
+        document?.getElementById(`${currentItem.value}`)?.nextElementSibling === null;
+      if (scrollUp && noNextEl) {
         console.log(firstItem.value)
         firstItem.value.scrollIntoView();
       }
     }
+
     document.body.addEventListener("click", handleClick, false);
     watch(
       () => dashboardStore.activedGridItem,
@@ -327,27 +330,26 @@ export default defineComponent({
     );
     onMounted(() => {
       tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
+        const prevScrollY = tabObserveContainer.value.scrollTop
         if (refScrollTimeOut.value) {
-          clearTimeout(refScrollTimeOut.value)
-        }
-        // console.log("WindowScrollY Outside:", tabObserveContainer.value);
+          clearTimeout(refScrollTimeOut.value);
+        }                        
         refScrollTimeOut.value = window.setTimeout(() => {
-          if (
-            tabObserveContainer.value?.scrollTop > currentScrollY.value ||
-            tabObserveContainer.value?.scrollTop === currentScrollY.value
-          ) {
-            scrollToFirstGraph(true)
-            console.log("Scrolled Down!")
-          }
-          currentScrollY.value = tabObserveContainer.value?.scrollTop
-          console.log("CurrentScrollY:", document?.getElementById(`${currentItem.value}`));
-
+          // console.log('prevScroll',prevScrollY, 'currentID:', currentItem.value);
+          if(tabObserveContainer.value?.scrollTop > currentScrollY.value ||
+            tabObserveContainer.value?.scrollTop === currentScrollY.value)
+            {
+              console.log(tabObserveContainer.value?.scrollTop, currentScrollY.value)
+              setTimeout(() =>{
+                scrollToFirstGraph(true)
+              },200)
+              // console.log("scrolled Down:", document?.getElementById(`${currentItem.value}`)?.nextElementSibling, firstItem.value)
+            }
+          
+        currentScrollY.value = tabObserveContainer.value?.scrollTop
         }, 100);
       });
-      tabRef?.value["parentElement"]?.classList?.toggle("item");
-      if (dashboardStore.fullView) {
-        // console.log("Tab Osbercve:", tabObserveContainer);
-      }
+      tabRef?.value["parentElement"]?.classList?.toggle("item");      
     });
     onBeforeUnmount(() => {
       observeItems(true);
