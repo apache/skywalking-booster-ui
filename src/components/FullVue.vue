@@ -75,18 +75,16 @@ export default defineComponent({
       document.querySelectorAll(".item").forEach((element) => {
         observer.observe(element);
       });
-    } 
+    }
     function initScroller() {
       scrollWrapRef?.value?.addEventListener("scroll", (e: Event) => {
         const isBottom =
-          scrollWrapRef?.value?.offsetHeight +
-            scrollWrapRef?.value?.scrollTop +
-            40 >
+          scrollWrapRef?.value?.offsetHeight + scrollWrapRef?.value?.scrollTop + 40 >
           scrollWrapRef?.value?.scrollHeight;
 
         if (isBottom) {
           scrollWrapRef?.value.scroll(0, 0);
-        }        
+        }
       });
     }
     onMounted(() => {

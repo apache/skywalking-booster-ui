@@ -182,7 +182,6 @@ export default defineComponent({
     const tabRef = ref<any>("");
     const tabObserveContainer = ref<any>(null);
     const currentItem = ref("");
-    
 
     const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
     if (dashboardStore.layout[l].children.length) {
@@ -286,7 +285,7 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
     }
-    
+
     function initScrollWatcher() {
       tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
         const isBottom =
