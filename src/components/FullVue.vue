@@ -13,7 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="scroll-snap-container">
+  <div ref="scrollWrapRef" class="scroll-snap-container">
+    <div v-if="items.length > 1" class="scroll-handler__wrapper">
+      <div
+        @click="scrollToGraph(item.i)"
+        v-for="item in items"
+        :key="item.i"
+        :class="[currentItem === `item${item.i}` ? 'active' : '']"
+        class="full-scroll-to"
+      ></div>
+    </div>
     <div :id="'item' + item.i" class="item" v-for="item in items" :key="item.i">
       <slot v-if="items.length">
         <component :is="item.type" :data="item" />
@@ -22,11 +31,10 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { ref, watch, reactive, defineComponent } from "vue";
+import { ref, watch, onMounted, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
-// import { useAppStoreWithOut } from "@/store/modules/app";
 import Configuration from "../views/dashboard/configuration";
 import controls from "../views/dashboard/controls/index";
 
@@ -41,51 +49,21 @@ export default defineComponent({
   components: { ...Configuration, ...controls },
   setup() {
     const dashboardStore = useDashboardStore();
-    const tobewatched = reactive(dashboardStore);
-    // const appStore = useAppStoreWithOut();
     const { t } = useI18n();
     const p = useRoute().params;
-    // const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
-    // setTemplate();
     const currentItem = ref("");
+    const scrollWrapRef = ref<any>(null);
     watch(
-      () => tobewatched.layout,
+      () => dashboardStore.layout,
       () => {
         setTimeout(() => {
           observeItems();
         }, 500);
       }
     );
-
-    // async function setTemplate() {
-    //   await dashboardStore.setDashboards();
-
-    //   if (!p.entity) {
-    //     if (!dashboardStore.currentDashboard) {
-    //       return;
-    //     }
-    //     const { layer, entity, name } = dashboardStore.currentDashboard;
-    //     layoutKey.value = `${layer}_${entity}_${name}`;
-    //   }
-    //   const c: { configuration: string; id: string } = JSON.parse(
-    //     sessionStorage.getItem(layoutKey.value) || "{}"
-    //   );
-    //   const layout: any = c.configuration || {};
-    //   dashboardStore.setLayout(layout.children || []);
-    //   appStore.setPageTitle(layout.name);
-
-    //   // observeItems();
-
-    //   if (p.entity) {
-    //     dashboardStore.setCurrentDashboard({
-    //       layer: p.layerId,
-    //       entity: p.entity,
-    //       name: p.name,
-    //       id: c.id,
-    //       isRoot: layout.isRoot,
-    //     });
-    //   }
-    // }
+    function scrollToGraph(e: any) {
+      document?.getElementById(`item${e}`)?.scrollIntoView();
+    }
     function observeItems() {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((element) => {
@@ -97,11 +75,30 @@ export default defineComponent({
       document.querySelectorAll(".item").forEach((element) => {
         observer.observe(element);
       });
+    } 
+    function initScroller() {
+      scrollWrapRef?.value?.addEventListener("scroll", (e: Event) => {
+        const isBottom =
+          scrollWrapRef?.value?.offsetHeight +
+            scrollWrapRef?.value?.scrollTop +
+            40 >
+          scrollWrapRef?.value?.scrollHeight;
+
+        if (isBottom) {
+          scrollWrapRef?.value.scroll(0, 0);
+        }        
+      });
     }
+    onMounted(() => {
+      observeItems();
+      initScroller();
+    });
     return {
       t,
       dashboardStore,
       currentItem,
+      scrollToGraph,
+      scrollWrapRef,
     };
   },
 });
@@ -119,6 +116,31 @@ export default defineComponent({
   scroll-snap-type: y mandatory;
   scroll-snap-type: mandatory;
   scroll-behavior: smooth;
+  .scroll-handler__wrapper {
+    z-index: 20;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    right: 0;
+    // top: 50%;
+    transform: translateY(60%);
+    height: auto;
+    width: 20px;
+    .full-scroll-to {
+      opacity: 0.5;
+      width: 10px;
+      height: 10px;
+      margin: 5px 0;
+      border-radius: 50%;
+      cursor: pointer;
+      background: #4f4f4f;
+    }
+    .full-scroll-to.active {
+      opacity: 1;
+      padding: 6px;
+      background: #252a2f;
+    }
+  }
 }
 .scroll-snap-container::-webkit-scrollbar {
   display: none;

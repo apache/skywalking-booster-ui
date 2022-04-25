@@ -87,7 +87,11 @@ limitations under the License. -->
       :is-resizable="dashboardStore.editMode"
       @layout-updated="layoutUpdatedEvent"
     >
-      <div class="scroll-snap-container" v-if="dashboardStore.fullView">
+      <div
+        ref="tabObserveContainer"
+        class="scroll-snap-container"
+        v-if="dashboardStore.fullView"
+      >
         <div
           v-if="dashboardStore.currentTabItems.length > 1"
           class="scroll-handler__wrapper"
@@ -96,7 +100,7 @@ limitations under the License. -->
             @click="scrollToGraph(item.i)"
             v-for="item in dashboardStore.currentTabItems"
             :key="item.i"
-            :class="[currentItem === `tabitem${item.i}` ? 'active': '']"
+            :class="[currentItem === `tabitem${item.i}` ? 'active' : '']"
             class="scroll-to"
           ></div>
         </div>
@@ -143,7 +147,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { ref, watch, onMounted, defineComponent, toRefs } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount, defineComponent, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
@@ -154,7 +158,6 @@ import Trace from "./Trace.vue";
 import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
-import FullVueWrapper from "@/components/FullVueWrapper.vue";
 
 const props = {
   data: {
@@ -165,7 +168,7 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile, Log, Text, FullVueWrapper },
+  components: { Topology, Widget, Trace, Profile, Log, Text },
   props,
   setup(props) {
     const { t } = useI18n();
@@ -177,43 +180,52 @@ export default defineComponent({
     const needQuery = ref<boolean>(false);
     const showTools = ref<boolean>(false);
     const tabRef = ref<any>("");
+    const tabObserveContainer = ref<any>(null);
     const currentItem = ref("");
-    const l = dashboardStore.layout.findIndex(
-      (d: LayoutConfig) => d.i === props.data.i
-    );
+    
+
+    const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
     if (dashboardStore.layout[l].children.length) {
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
       dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
       setTimeout(() => {
-        observeItems()
-      }, 1500)
+        observeItems();
+      }, 1500);
     }
     function scrollToGraph(e: any) {
       document?.getElementById(`tabitem${e}`)?.scrollIntoView();
     }
 
-    function observeItems() {
+    function observeItems(kill = false) {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((element) => {
-          console.log("Inter ratio:", element.intersectionRatio, 'Ele:', element.target.id);
-          if (element.intersectionRatio > 0) {
-            currentItem.value = element.target.id;
-            console.log(element.target.id)
+          if (element.isIntersecting && element.intersectionRatio > 0) {
+            setTimeout(() => {
+              currentItem.value = element.target.id;
+            }, 200);
           }
         });
       });
       document.querySelectorAll(".tabitem").forEach((element) => {
         observer.observe(element);
       });
+      if (kill) {
+        document.querySelectorAll(".tabitem").forEach((element) => {
+          observer.unobserve(element);
+        });
+      }
     }
 
-    watch(() => dashboardStore.currentTabItems, () => {
-      setTimeout(() => {
-        observeItems();
-      }, 500)
-    } )
+    watch(
+      () => dashboardStore.currentTabItems,
+      () => {
+        setTimeout(() => {
+          observeItems();
+        }, 500);
+      }
+    );
 
     function clickTabs(e: Event, idx: number) {
       e.stopPropagation();
@@ -227,7 +239,7 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
-      needQuery.value = true; 
+      needQuery.value = true;
     }
     function removeTab(e: Event) {
       e.stopPropagation();
@@ -263,9 +275,7 @@ export default defineComponent({
     function clickTabGrid(e: Event, item: LayoutConfig) {
       e.stopPropagation();
       activeTabWidget.value = item.i;
-      dashboardStore.activeGridItem(
-        `${props.data.i}-${activeTabIndex.value}-${item.i}`
-      );
+      dashboardStore.activeGridItem(`${props.data.i}-${activeTabIndex.value}-${item.i}`);
       handleClick(e);
     }
     function layoutUpdatedEvent() {
@@ -275,6 +285,20 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
+    }
+    
+    function initScrollWatcher() {
+      tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
+        const isBottom =
+          tabObserveContainer?.value?.offsetHeight +
+            tabObserveContainer?.value?.scrollTop +
+            70 >
+          tabObserveContainer?.value?.scrollHeight;
+
+        if (isBottom) {
+          tabObserveContainer?.value.scroll(0, 0);
+        }
+      });
     }
     document.body.addEventListener("click", handleClick, false);
     watch(
@@ -293,11 +317,15 @@ export default defineComponent({
       }
     );
     onMounted(() => {
+      initScrollWatcher();
       tabRef?.value["parentElement"]?.classList?.toggle("item");
-      console.log(tabRef.value);
+    });
+    onBeforeUnmount(() => {
+      observeItems(true);
     });
     return {
       currentItem,
+      tabObserveContainer,
       scrollToGraph,
       handleClick,
       layoutUpdatedEvent,
@@ -341,9 +369,14 @@ export default defineComponent({
 .scroll-snap-container::-webkit-scrollbar {
   display: none;
 }
+.scroll-snap-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 .tabitem {
   scroll-snap-align: start;
   height: 100%;
+  margin: 70px 0;
 }
 .scroll-handler__wrapper {
   z-index: 20;
@@ -353,7 +386,7 @@ export default defineComponent({
   right: 0;
   top: 40vh;
   height: auto;
-  width: 20px;  
+  width: 20px;
   .scroll-to {
     opacity: 0.5;
     width: 10px;
