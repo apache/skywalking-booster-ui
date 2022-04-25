@@ -147,14 +147,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import {
-  ref,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-  defineComponent,
-  toRefs,
-} from "vue";
+import { ref, watch, onMounted, onBeforeUnmount, defineComponent, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
@@ -192,10 +185,9 @@ export default defineComponent({
     const firstItem = ref<any>();
     const refScrollTimeOut = ref();
     const currentScrollY = ref(0);
+    const initScroll = ref(0);
 
-    const l = dashboardStore.layout.findIndex(
-      (d: LayoutConfig) => d.i === props.data.i
-    );
+    const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
     if (dashboardStore.layout[l].children.length) {
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
@@ -216,8 +208,7 @@ export default defineComponent({
           if (element.isIntersecting && element.intersectionRatio > 0) {
             setTimeout(() => {
               currentItem.value = element.target.id;
-              console.log('219-CurrentEl:',currentItem.value);
-              
+              console.log("219-CurrentEl:", currentItem.value);
             }, 200);
           }
         });
@@ -290,9 +281,7 @@ export default defineComponent({
     function clickTabGrid(e: Event, item: LayoutConfig) {
       e.stopPropagation();
       activeTabWidget.value = item.i;
-      dashboardStore.activeGridItem(
-        `${props.data.i}-${activeTabIndex.value}-${item.i}`
-      );
+      dashboardStore.activeGridItem(`${props.data.i}-${activeTabIndex.value}-${item.i}`);
       handleClick(e);
     }
     function layoutUpdatedEvent() {
@@ -303,15 +292,36 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
     }
-    function scrollToFirstGraph(scrollUp: boolean) {      
+    function scrollToFirstGraph(scrollUp: boolean) {
       const noNextEl =
         document?.getElementById(`${currentItem.value}`)?.nextElementSibling === null;
       if (scrollUp && noNextEl) {
-        console.log(firstItem.value)
-        firstItem.value.scrollIntoView();
+        initScroll.value++;
+        if (initScroll.value > 1) {
+          firstItem.value.scrollIntoView();
+          initScroll.value = 0;
+        }
       }
     }
+    function initScrollWatcher() {
+      tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
+        if (refScrollTimeOut.value) {
+          clearTimeout(refScrollTimeOut.value);
+        }
+        refScrollTimeOut.value = window.setTimeout(() => {
+          if (
+            tabObserveContainer.value?.scrollTop > currentScrollY.value ||
+            tabObserveContainer.value?.scrollTop === currentScrollY.value
+          ) {
+            setTimeout(() => {
+              scrollToFirstGraph(true);
+            }, 200);
+          }
 
+          currentScrollY.value = tabObserveContainer.value?.scrollTop;
+        }, 100);
+      });
+    }
     document.body.addEventListener("click", handleClick, false);
     watch(
       () => dashboardStore.activedGridItem,
@@ -329,27 +339,8 @@ export default defineComponent({
       }
     );
     onMounted(() => {
-      tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
-        const prevScrollY = tabObserveContainer.value.scrollTop
-        if (refScrollTimeOut.value) {
-          clearTimeout(refScrollTimeOut.value);
-        }                        
-        refScrollTimeOut.value = window.setTimeout(() => {
-          // console.log('prevScroll',prevScrollY, 'currentID:', currentItem.value);
-          if(tabObserveContainer.value?.scrollTop > currentScrollY.value ||
-            tabObserveContainer.value?.scrollTop === currentScrollY.value)
-            {
-              console.log(tabObserveContainer.value?.scrollTop, currentScrollY.value)
-              setTimeout(() =>{
-                scrollToFirstGraph(true)
-              },200)
-              // console.log("scrolled Down:", document?.getElementById(`${currentItem.value}`)?.nextElementSibling, firstItem.value)
-            }
-          
-        currentScrollY.value = tabObserveContainer.value?.scrollTop
-        }, 100);
-      });
-      tabRef?.value["parentElement"]?.classList?.toggle("item");      
+      initScrollWatcher();
+      tabRef?.value["parentElement"]?.classList?.toggle("item");
     });
     onBeforeUnmount(() => {
       observeItems(true);
