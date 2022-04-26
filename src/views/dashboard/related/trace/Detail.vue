@@ -239,7 +239,7 @@ export default defineComponent({
 }
 
 .trace-chart {
-  height: 100%;
+  height: calc(100% - 100px);
   overflow: auto;
   padding-bottom: 20px;
 }

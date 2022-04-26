@@ -26,7 +26,7 @@ limitations under the License. -->
         {{ t("exportImage") }}
       </el-button>
     </div>
-    <div>
+    <div class="list">
       <Graph :data="data" :traceId="traceId" type="List" />
     </div>
   </div>
@@ -102,5 +102,9 @@ function downloadTrace() {
 
 .btn {
   float: right;
+}
+
+.list {
+  height: calc(100% - 150px);
 }
 </style>
