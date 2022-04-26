@@ -24,7 +24,12 @@ limitations under the License. -->
         />
         <span class="vm">{{ traceStore.currentTrace.endpointNames[0] }}</span>
         <div class="trace-log-btn">
-          <el-button class="mr-10" type="primary" @click="searchTraceLogs">
+          <el-button
+            size="small"
+            class="mr-10"
+            type="primary"
+            @click="searchTraceLogs"
+          >
             {{ t("viewLogs") }}
           </el-button>
         </div>
@@ -88,7 +93,8 @@ limitations under the License. -->
         </div>
         <div>
           <el-button
-            class="grey small"
+            class="grey"
+            size="small"
             :class="{ ghost: displayMode !== 'List' }"
             @click="displayMode = 'List'"
           >
@@ -96,7 +102,8 @@ limitations under the License. -->
             {{ t("list") }}
           </el-button>
           <el-button
-            class="grey small"
+            class="grey"
+            size="small"
             :class="{ ghost: displayMode !== 'Tree' }"
             @click="displayMode = 'Tree'"
           >
@@ -104,7 +111,8 @@ limitations under the License. -->
             {{ t("tree") }}
           </el-button>
           <el-button
-            class="grey small"
+            class="grey"
+            size="small"
             :class="{ ghost: displayMode !== 'Table' }"
             @click="displayMode = 'Table'"
           >
@@ -112,7 +120,8 @@ limitations under the License. -->
             {{ t("table") }}
           </el-button>
           <el-button
-            class="grey small"
+            class="grey"
+            size="small"
             :class="{ ghost: displayMode !== 'Statistics' }"
             @click="displayMode = 'Statistics'"
           >
@@ -230,7 +239,9 @@ export default defineComponent({
 }
 
 .trace-chart {
-  height: 100%;
+  height: calc(100% - 100px);
+  overflow: auto;
+  padding-bottom: 20px;
 }
 
 .trace-detail-wrapper {
