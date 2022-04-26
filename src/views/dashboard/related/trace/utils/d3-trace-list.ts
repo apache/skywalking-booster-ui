@@ -40,10 +40,8 @@ export default class ListGraph {
   constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
     this.handleSelectSpan = handleSelectSpan;
     this.el = el;
-    console.log(el.getBoundingClientRect());
     this.width = el.getBoundingClientRect().width - 10;
     this.height = el.getBoundingClientRect().height - 10;
-    console.log(el);
     this.svg = d3
       .select(this.el)
       .append("svg")
