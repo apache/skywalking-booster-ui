@@ -359,8 +359,8 @@ export default defineComponent({
   overflow-y: scroll;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  // scroll-snap-points-y: repeat(100%);
-  // scroll-snap-destination: 0 0;
+  scroll-snap-points-y: repeat(100%);
+  scroll-snap-destination: 0 0;
   scroll-snap-type: y mandatory;
   scroll-snap-type: mandatory;
   scroll-behavior: smooth;
