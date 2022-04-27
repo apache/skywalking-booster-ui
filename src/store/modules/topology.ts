@@ -410,6 +410,9 @@ export const topologyStore = defineStore({
       const idsC = this.calls
         .filter((i: Call) => i.detectPoints.includes("CLIENT"))
         .map((b: Call) => b.id);
+      if (!idsC.length) {
+        return;
+      }
       const param = await useQueryTopologyMetrics(linkClientMetrics, idsC);
       const res = await this.getCallClientMetrics(param);
 
@@ -425,6 +428,9 @@ export const topologyStore = defineStore({
       const idsS = this.calls
         .filter((i: Call) => i.detectPoints.includes("SERVER"))
         .map((b: Call) => b.id);
+      if (!idsS.length) {
+        return;
+      }
       const param = await useQueryTopologyMetrics(linkServerMetrics, idsS);
       const res = await this.getCallServerMetrics(param);
 
@@ -438,6 +444,9 @@ export const topologyStore = defineStore({
         return;
       }
       const ids = this.nodes.map((d: Node) => d.id);
+      if (!ids.length) {
+        return;
+      }
       const param = await useQueryTopologyMetrics(nodeMetrics, ids);
       const res = await this.getNodeMetricValue(param);
 
