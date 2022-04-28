@@ -108,9 +108,9 @@ export default defineComponent({
         currentItem.value++;
         scrollTo(currentItem.value);
       } else if (currentItem.value === arrayOfItems?.value?.length - 1) {
-        isScrolling.value = false;
+        isScrolling.value = true;
         currentItem.value = 0;
-        scrollWrapRef.value?.scrollTo(0,0)
+        scrollTo(currentItem.value);
       }
     }
     function initScroller() {
@@ -119,10 +119,8 @@ export default defineComponent({
           isScrolling.value = true;
           if (e.deltaY < 0) {
             scrollUp();
-            // scrollUp
           } else {
             scrollDown();
-            // scrollDown
           }
         }
       });
