@@ -53,6 +53,7 @@ export default defineComponent({
     const p = useRoute().params;
     const currentItem = ref("");
     const scrollWrapRef = ref<any>(null);
+    const isScrolling = ref(false)
     watch(
       () => dashboardStore.layout,
       () => {
@@ -90,6 +91,7 @@ export default defineComponent({
     onMounted(() => {
       observeItems();
       initScroller();
+      console.log(scrollWrapRef.value)
     });
     return {
       t,
@@ -106,14 +108,11 @@ export default defineComponent({
 .scroll-snap-container {
   height: 90vh;
   display: block;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-points-y: repeat(100%);
-  scroll-snap-destination: 0 0;
-  scroll-snap-type: y mandatory;
-  scroll-snap-type: mandatory;
   scroll-behavior: smooth;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  perspective: 1000;
+  overflow: hidden;
   .scroll-handler__wrapper {
     z-index: 20;
     position: fixed;
@@ -144,10 +143,10 @@ export default defineComponent({
   display: none;
 }
 .item {
-  scroll-snap-align: start;
+  // scroll-snap-align: start;
   height: 100%;
-  padding: 40px;
-  margin: 40px 0;
+  // padding: 40px;
+  // margin: 40px 0;
   // background: orange;
 }
 </style>
