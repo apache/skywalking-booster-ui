@@ -17,9 +17,9 @@ limitations under the License. -->
     <div v-if="items.length > 1" class="scroll-handler__wrapper">
       <div
         @click="scrollToGraph(item.i)"
-        v-for="item in items"
+        v-for="(item, index) in items"
         :key="item.i"
-        :class="[currentItem === `item${item.i}` ? 'active' : '']"
+        :class="[currentItem === index ? 'active' : '']"
         class="full-scroll-to"
       ></div>
     </div>
@@ -58,7 +58,7 @@ export default defineComponent({
     const { t } = useI18n();
     const p = useRoute().params;
     const arrayOfItems = ref<Element[]>([]);
-    const currentItem = ref<number>(6);
+    const currentItem = ref<number>(0);
     const scrollWrapRef = ref<any>(null);
     const isScrolling = ref(false);
     watch(
@@ -81,31 +81,25 @@ export default defineComponent({
         });
       });
       document.querySelectorAll(".item").forEach((element, index) => {
-        // console.log(element);
         arrayOfItems.value.push(element);
         observer.observe(element);
       });
-      console.log(arrayOfItems.value[0]);
     }
     function scrollTo(index: number) {
       const item: Element = arrayOfItems.value[index];
-      console.log(item);
       arrayOfItems.value[index]?.scrollIntoView();
       if (isScrolling.value) {
         setTimeout(() => {
-          console.log("Ran Timeout");
           isScrolling.value = false;
         }, 1020);
       }
     }
     function scrollUp() {
       if (currentItem.value > 0) {
-        console.log("scrollUP");
         currentItem.value--;
         scrollTo(currentItem.value);
       } else if (currentItem.value === 0) {
         isScrolling.value = false;
-        console.log("At the top, cant scroll");
       }
     }
     function scrollDown() {
@@ -120,7 +114,6 @@ export default defineComponent({
     }
     function initScroller() {
       scrollWrapRef?.value?.addEventListener("wheel", (e: WheelEvent) => {
-        // console.log(isScrolling.value === false, e?.deltaY);
         if (isScrolling.value === false) {
           isScrolling.value = true;
           if (e.deltaY < 0) {
@@ -129,26 +122,13 @@ export default defineComponent({
           } else {
             scrollDown();
             // scrollDown
-            console.log("Scroll Down");
           }
-        }
-        // const isBottom =
-        //   scrollWrapRef?.value?.offsetHeight + scrollWrapRef?.value?.scrollTop + 40 >
-        //   scrollWrapRef?.value?.scrollHeight;
-
-        // if (isBottom) {
-        //   scrollWrapRef?.value.scroll(0, 0);
-        // }
+        }        
       });
     }
     onMounted(() => {
       observeItems();
       initScroller();
-      // console.log("ARRAY OF ITMS::", arrayOfItems.value);
-      // setTimeout(() => {
-      //   console.log("Scroll");
-      //   arrayOfItems.value[currentItem.value]?.scrollIntoView();
-      // },3000);
     });
     return {
       t,
