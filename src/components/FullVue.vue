@@ -40,10 +40,9 @@ import Configuration from "../views/dashboard/configuration";
 import controls from "../views/dashboard/controls/index";
 
 interface Item {
-  id: string,
-  index: number,
-  viewOffset: number
-
+  id: string;
+  index: number;
+  viewOffset: number;
 }
 export default defineComponent({
   name: "FullView",
@@ -58,8 +57,8 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const { t } = useI18n();
     const p = useRoute().params;
-    const arrayOfItems = ref<Item[]>([])
-    const currentItem = ref<number>(0);
+    const arrayOfItems = ref<Element[]>([]);
+    const currentItem = ref<number>(6);
     const scrollWrapRef = ref<any>(null);
     const isScrolling = ref(false);
     watch(
@@ -81,31 +80,56 @@ export default defineComponent({
           }
         });
       });
-      document.querySelectorAll(".item").forEach((element,index) => {        
-        arrayOfItems.value.push({
-          id: element.id,
-          index: index,
-          viewOffset: element?.offsetTop
-        })
+      document.querySelectorAll(".item").forEach((element, index) => {
+        // console.log(element);
+        arrayOfItems.value.push(element);
         observer.observe(element);
       });
-      console.log(arrayOfItems.value[0])
-      document.getElementById(`${arrayOfItems.value[0]}`)?.scrollIntoView()
+      console.log(arrayOfItems.value[0]);
     }
-    function scrollUp(){
-      console.log("scrollUP")
+    function scrollTo(index: number) {
+      const item: Element = arrayOfItems.value[index];
+      console.log(item);
+      arrayOfItems.value[index]?.scrollIntoView();
+      if (isScrolling.value) {
+        setTimeout(() => {
+          console.log("Ran Timeout");
+          isScrolling.value = false;
+        }, 1020);
+      }
+    }
+    function scrollUp() {
+      if (currentItem.value > 0) {
+        console.log("scrollUP");
+        currentItem.value--;
+        scrollTo(currentItem.value);
+      } else if (currentItem.value === 0) {
+        isScrolling.value = false;
+        console.log("At the top, cant scroll");
+      }
+    }
+    function scrollDown() {
+      if (currentItem.value < arrayOfItems?.value?.length - 1) {
+        currentItem.value++;
+        scrollTo(currentItem.value);
+      } else if (currentItem.value === arrayOfItems?.value?.length - 1) {
+        isScrolling.value = false;
+        currentItem.value = 0;
+        scrollTo(currentItem.value);
+      }
     }
     function initScroller() {
       scrollWrapRef?.value?.addEventListener("wheel", (e: WheelEvent) => {
-        console.log(isScrolling.value === false, e?.deltaY );
+        // console.log(isScrolling.value === false, e?.deltaY);
         if (isScrolling.value === false) {
           isScrolling.value = true;
-          if (e.deltaY  < 0) {
-            scrollUp()
+          if (e.deltaY < 0) {
+            scrollUp();
             // scrollUp
           } else {
+            scrollDown();
             // scrollDown
-            console.log("Scroll Down")
+            console.log("Scroll Down");
           }
         }
         // const isBottom =
@@ -120,8 +144,11 @@ export default defineComponent({
     onMounted(() => {
       observeItems();
       initScroller();
-      console.log(arrayOfItems.value);
-      window.arrayOfItems = arrayOfItems.value
+      // console.log("ARRAY OF ITMS::", arrayOfItems.value);
+      // setTimeout(() => {
+      //   console.log("Scroll");
+      //   arrayOfItems.value[currentItem.value]?.scrollIntoView();
+      // },3000);
     });
     return {
       t,
