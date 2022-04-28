@@ -31,6 +31,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
+import * as $ from "jquery";
 import { ref, watch, onMounted, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
@@ -38,8 +39,14 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import Configuration from "../views/dashboard/configuration";
 import controls from "../views/dashboard/controls/index";
 
+interface Item {
+  id: string,
+  index: number,
+  viewOffset: number
+
+}
 export default defineComponent({
-  name: "Dashboard",
+  name: "FullView",
   props: {
     items: {
       type: Array,
@@ -51,9 +58,10 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const { t } = useI18n();
     const p = useRoute().params;
-    const currentItem = ref("");
+    const arrayOfItems = ref<Item[]>([])
+    const currentItem = ref<number>(0);
     const scrollWrapRef = ref<any>(null);
-    const isScrolling = ref(false)
+    const isScrolling = ref(false);
     watch(
       () => dashboardStore.layout,
       () => {
@@ -69,29 +77,51 @@ export default defineComponent({
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((element) => {
           if (element.intersectionRatio > 0) {
-            currentItem.value = element.target.id;
+            // currentItem.value = element.target.id;
           }
         });
       });
-      document.querySelectorAll(".item").forEach((element) => {
+      document.querySelectorAll(".item").forEach((element,index) => {        
+        arrayOfItems.value.push({
+          id: element.id,
+          index: index,
+          viewOffset: element?.offsetTop
+        })
         observer.observe(element);
       });
+      console.log(arrayOfItems.value[0])
+      document.getElementById(`${arrayOfItems.value[0]}`)?.scrollIntoView()
+    }
+    function scrollUp(){
+      console.log("scrollUP")
     }
     function initScroller() {
-      scrollWrapRef?.value?.addEventListener("scroll", (e: Event) => {
-        const isBottom =
-          scrollWrapRef?.value?.offsetHeight + scrollWrapRef?.value?.scrollTop + 40 >
-          scrollWrapRef?.value?.scrollHeight;
-
-        if (isBottom) {
-          scrollWrapRef?.value.scroll(0, 0);
+      scrollWrapRef?.value?.addEventListener("wheel", (e: WheelEvent) => {
+        console.log(isScrolling.value === false, e?.deltaY );
+        if (isScrolling.value === false) {
+          isScrolling.value = true;
+          if (e.deltaY  < 0) {
+            scrollUp()
+            // scrollUp
+          } else {
+            // scrollDown
+            console.log("Scroll Down")
+          }
         }
+        // const isBottom =
+        //   scrollWrapRef?.value?.offsetHeight + scrollWrapRef?.value?.scrollTop + 40 >
+        //   scrollWrapRef?.value?.scrollHeight;
+
+        // if (isBottom) {
+        //   scrollWrapRef?.value.scroll(0, 0);
+        // }
       });
     }
     onMounted(() => {
       observeItems();
       initScroller();
-      console.log(scrollWrapRef.value)
+      console.log(arrayOfItems.value);
+      window.arrayOfItems = arrayOfItems.value
     });
     return {
       t,
