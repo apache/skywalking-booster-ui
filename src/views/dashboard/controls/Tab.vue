@@ -147,7 +147,14 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { ref, watch, onMounted, onBeforeUnmount, defineComponent, toRefs } from "vue";
+import {
+  ref,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+  defineComponent,
+  toRefs,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
@@ -186,7 +193,9 @@ export default defineComponent({
     const currentItem = ref<number>(0);
     const isScrolling = ref(false);
 
-    const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
+    const l = dashboardStore.layout.findIndex(
+      (d: LayoutConfig) => d.i === props.data.i
+    );
     if (dashboardStore.layout[l].children.length) {
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
@@ -221,7 +230,7 @@ export default defineComponent({
         });
       }
     }
-     function scrollUp() {
+    function scrollUp() {
       if (currentItem.value > 0) {
         currentItem.value--;
         scrollTo(currentItem.value);
@@ -237,6 +246,14 @@ export default defineComponent({
         isScrolling.value = true;
         currentItem.value = 0;
         scrollTo(currentItem.value);
+      }
+    }
+    function scrollTo(index: number) {
+      arrayOfItems.value[index]?.scrollIntoView();
+      if (isScrolling.value) {
+        setTimeout(() => {
+          isScrolling.value = false;
+        }, 1020);
       }
     }
     watch(
@@ -296,7 +313,9 @@ export default defineComponent({
     function clickTabGrid(e: Event, item: LayoutConfig) {
       e.stopPropagation();
       activeTabWidget.value = item.i;
-      dashboardStore.activeGridItem(`${props.data.i}-${activeTabIndex.value}-${item.i}`);
+      dashboardStore.activeGridItem(
+        `${props.data.i}-${activeTabIndex.value}-${item.i}`
+      );
       handleClick(e);
     }
     function layoutUpdatedEvent() {
@@ -388,14 +407,11 @@ export default defineComponent({
   position: relative;
   height: 80vh;
   display: block;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-points-y: repeat(100%);
-  scroll-snap-destination: 0 0;
-  scroll-snap-type: y mandatory;
-  scroll-snap-type: mandatory;
   scroll-behavior: smooth;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  perspective: 1000;
+  overflow: hidden;
 }
 .scroll-snap-container::-webkit-scrollbar {
   display: none;
