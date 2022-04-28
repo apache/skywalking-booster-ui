@@ -97,10 +97,10 @@ limitations under the License. -->
           class="scroll-handler__wrapper"
         >
           <div
-            @click="scrollToGraph(item.i)"
-            v-for="item in dashboardStore.currentTabItems"
+            @click="scrollToGraph(item.i, index)"
+            v-for="(item, index) in dashboardStore.currentTabItems"
             :key="item.i"
-            :class="[currentItem === `tabitem${item.i}` ? 'active' : '']"
+            :class="[currentItem === index ? 'active' : '']"
             class="scroll-to"
           ></div>
         </div>
@@ -188,7 +188,6 @@ export default defineComponent({
     const showTools = ref<boolean>(false);
     const tabRef = ref<any>("");
     const tabObserveContainer = ref<any>(null);
-    /** UPDATING  ***/
     const arrayOfItems = ref<Element[]>([]);
     const currentItem = ref<number>(0);
     const isScrolling = ref(false);

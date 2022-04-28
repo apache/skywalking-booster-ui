@@ -39,11 +39,6 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import Configuration from "../views/dashboard/configuration";
 import controls from "../views/dashboard/controls/index";
 
-interface Item {
-  id: string;
-  index: number;
-  viewOffset: number;
-}
 export default defineComponent({
   name: "FullView",
   props: {
@@ -87,7 +82,6 @@ export default defineComponent({
       });
     }
     function scrollTo(index: number) {
-      const item: Element = arrayOfItems.value[index];
       arrayOfItems.value[index]?.scrollIntoView();
       if (isScrolling.value) {
         setTimeout(() => {
