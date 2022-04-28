@@ -89,7 +89,7 @@ limitations under the License. -->
     >
       <div
         ref="tabObserveContainer"
-        class="scroll-snap-container"
+        class="scroll-tab-container"
         v-if="dashboardStore.fullView"
       >
         <div
@@ -402,7 +402,7 @@ export default defineComponent({
 .tab-layout::-webkit-scrollbar {
   display: none !important;
 }
-.scroll-snap-container {
+.scroll-tab-container {
   position: relative;
   height: 80vh;
   display: block;
@@ -412,10 +412,10 @@ export default defineComponent({
   perspective: 1000;
   overflow: hidden;
 }
-.scroll-snap-container::-webkit-scrollbar {
+.scroll-tab-container::-webkit-scrollbar {
   display: none;
 }
-.scroll-snap-container {
+.scroll-tab-container {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
