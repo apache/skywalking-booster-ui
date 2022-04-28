@@ -181,7 +181,10 @@ export default defineComponent({
     const showTools = ref<boolean>(false);
     const tabRef = ref<any>("");
     const tabObserveContainer = ref<any>(null);
-    const currentItem = ref("");
+    /** UPDATING  ***/
+    const arrayOfItems = ref<Element[]>([]);
+    const currentItem = ref<number>(0);
+    const isScrolling = ref(false);
 
     const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
     if (dashboardStore.layout[l].children.length) {
@@ -193,8 +196,9 @@ export default defineComponent({
         observeItems();
       }, 1500);
     }
-    function scrollToGraph(e: any) {
+    function scrollToGraph(e: any, index: number) {
       document?.getElementById(`tabitem${e}`)?.scrollIntoView();
+      currentItem.value = index;
     }
 
     function observeItems(kill = false) {
@@ -202,12 +206,13 @@ export default defineComponent({
         entries.forEach((element) => {
           if (element.isIntersecting && element.intersectionRatio > 0) {
             setTimeout(() => {
-              currentItem.value = element.target.id;
+              // currentItem.value = element.target.id;
             }, 200);
           }
         });
       });
       document.querySelectorAll(".tabitem").forEach((element) => {
+        arrayOfItems.value.push(element);
         observer.observe(element);
       });
       if (kill) {
@@ -216,7 +221,24 @@ export default defineComponent({
         });
       }
     }
-
+     function scrollUp() {
+      if (currentItem.value > 0) {
+        currentItem.value--;
+        scrollTo(currentItem.value);
+      } else if (currentItem.value === 0) {
+        isScrolling.value = false;
+      }
+    }
+    function scrollDown() {
+      if (currentItem.value < arrayOfItems?.value?.length - 1) {
+        currentItem.value++;
+        scrollTo(currentItem.value);
+      } else if (currentItem.value === arrayOfItems?.value?.length - 1) {
+        isScrolling.value = true;
+        currentItem.value = 0;
+        scrollTo(currentItem.value);
+      }
+    }
     watch(
       () => dashboardStore.currentTabItems,
       () => {
@@ -287,15 +309,25 @@ export default defineComponent({
     }
 
     function initScrollWatcher() {
-      tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
-        const isBottom =
-          tabObserveContainer?.value?.offsetHeight +
-            tabObserveContainer?.value?.scrollTop +
-            70 >
-          tabObserveContainer?.value?.scrollHeight;
+      // tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
+      //   const isBottom =
+      //     tabObserveContainer?.value?.offsetHeight +
+      //       tabObserveContainer?.value?.scrollTop +
+      //       70 >
+      //     tabObserveContainer?.value?.scrollHeight;
 
-        if (isBottom) {
-          tabObserveContainer?.value.scroll(0, 0);
+      //   if (isBottom) {
+      //     tabObserveContainer?.value.scroll(0, 0);
+      //   }
+      // });
+      tabObserveContainer?.value?.addEventListener("wheel", (e: WheelEvent) => {
+        if (isScrolling.value === false) {
+          isScrolling.value = true;
+          if (e.deltaY < 0) {
+            scrollUp();
+          } else {
+            scrollDown();
+          }
         }
       });
     }
