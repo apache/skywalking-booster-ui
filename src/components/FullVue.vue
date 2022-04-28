@@ -16,7 +16,7 @@ limitations under the License. -->
   <div ref="scrollWrapRef" class="scroll-snap-container">
     <div v-if="items.length > 1" class="scroll-handler__wrapper">
       <div
-        @click="scrollToGraph(item.i)"
+        @click="scrollToGraph(item.i, index)"
         v-for="(item, index) in items"
         :key="item.i"
         :class="[currentItem === index ? 'active' : '']"
@@ -69,8 +69,9 @@ export default defineComponent({
         }, 500);
       }
     );
-    function scrollToGraph(e: any) {
+    function scrollToGraph(e: any, index: number) {
       document?.getElementById(`item${e}`)?.scrollIntoView();
+      currentItem.value = index;
     }
     function observeItems() {
       const observer = new IntersectionObserver((entries) => {
@@ -109,7 +110,7 @@ export default defineComponent({
       } else if (currentItem.value === arrayOfItems?.value?.length - 1) {
         isScrolling.value = false;
         currentItem.value = 0;
-        scrollTo(currentItem.value);
+        scrollWrapRef.value?.scrollTo(0,0)
       }
     }
     function initScroller() {
@@ -123,7 +124,7 @@ export default defineComponent({
             scrollDown();
             // scrollDown
           }
-        }        
+        }
       });
     }
     onMounted(() => {
