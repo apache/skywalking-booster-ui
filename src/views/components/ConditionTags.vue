@@ -39,7 +39,17 @@ limitations under the License. -->
         >
           {{ t("tagsLink") }}
         </a>
-        <el-tooltip :content="t('traceTagsTip')">
+        <el-tooltip
+          :content="
+            t(
+              type === 'LOG'
+                ? 'logTagsTip'
+                : type === 'TRACE'
+                ? 'traceTagsTip'
+                : 'alarmTagsTip'
+            )
+          "
+        >
           <span>
             <Icon class="icon-help mr-5" iconName="help" size="middle" />
           </span>
