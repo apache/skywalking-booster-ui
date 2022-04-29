@@ -26,7 +26,7 @@ module.exports = {
     proxy: {
       "/graphql": {
         target: `${
-          process.env.SW_PROXY_TARGET || "http://demo.skywalking.apache.org"
+          process.env.SW_PROXY_TARGET || "https://demo.skywalking.apache.org"
         }`,
         changeOrigin: true,
       },
@@ -37,7 +37,7 @@ module.exports = {
   },
   chainWebpack: (config) => {
     config.plugin("html").tap((args) => {
-      args[0].title = "Apache SkyWalking";
+      args[0].title = "Live Dashboard - Source++";
       return args;
     });
     const svgRule = config.module.rule("svg");
