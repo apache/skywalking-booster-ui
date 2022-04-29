@@ -229,7 +229,6 @@ export default defineComponent({
 .widget {
   font-size: 12px;
   height: 100%;
-  //max-height: 300px;
 }
 
 .header {
