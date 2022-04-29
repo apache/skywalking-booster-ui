@@ -22,11 +22,11 @@ limitations under the License. -->
         <Icon iconName="issue-open-m" class="mr-5" size="sm" />
         <span>{{ i }}</span>
       </span>
-      <el-button class="btn" type="primary" @click="downloadTrace">
+      <el-button class="btn" size="small" type="primary" @click="downloadTrace">
         {{ t("exportImage") }}
       </el-button>
     </div>
-    <div>
+    <div class="list">
       <Graph :data="data" :traceId="traceId" type="List" />
     </div>
   </div>
@@ -102,5 +102,9 @@ function downloadTrace() {
 
 .btn {
   float: right;
+}
+
+.list {
+  height: calc(100% - 150px);
 }
 </style>

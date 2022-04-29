@@ -40,8 +40,8 @@ export default class ListGraph {
   constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
     this.handleSelectSpan = handleSelectSpan;
     this.el = el;
-    this.width = el.clientWidth - 10;
-    this.height = el.clientHeight;
+    this.width = el.getBoundingClientRect().width - 10;
+    this.height = el.getBoundingClientRect().height - 10;
     this.svg = d3
       .select(this.el)
       .append("svg")
@@ -306,8 +306,8 @@ export default class ListGraph {
     if (!this.el) {
       return;
     }
-    this.width = this.el.clientWidth - 20;
-    this.height = this.el.clientHeight;
+    this.width = this.el.getBoundingClientRect().width - 20;
+    this.height = this.el.getBoundingClientRect().height - 10;
     this.svg.attr("width", this.width).attr("height", this.height);
     this.svg.select("g").attr("transform", () => `translate(160, 0)`);
     const transform = d3.zoomTransform(this.svg).translate(0, 0);

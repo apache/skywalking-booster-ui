@@ -45,7 +45,7 @@ import { Option } from "@/types/app";
 const emit = defineEmits(["change"]);
 const props = defineProps({
   options: {
-    type: Array as PropType<(Option & { disabled: boolean })[]>,
+    type: Array as PropType<Option[]>,
     default: () => [],
   },
   value: {

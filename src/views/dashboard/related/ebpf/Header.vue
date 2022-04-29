@@ -14,28 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h header">
-    <div class="mr-10">
-      <span class="grey mr-5">{{ t("endpointName") }}:</span>
-      <Selector
-        class="name"
-        size="small"
-        :value="endpointName"
-        :options="profileStore.endpoints"
-        placeholder="Select a endpoint"
-        :isRemote="true"
-        @change="changeEndpoint"
-        @query="searchEndpoints"
-      />
-    </div>
-    <el-button
-      class="search-btn"
-      size="small"
-      type="primary"
-      @click="searchTasks"
-    >
-      {{ t("search") }}
-    </el-button>
-    <el-button class="search-btn" size="small" @click="createTask">
+    <div class="title">eBPF Profiling</div>
+    <el-button type="primary" size="small" @click="createTask">
       {{ t("newTask") }}
     </el-button>
   </div>
@@ -51,7 +31,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useProfileStore } from "@/store/modules/profile";
+import { useEbpfStore } from "@/store/modules/ebpf";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import NewTask from "./components/NewTask.vue";
@@ -59,50 +39,31 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { EntityType } from "../../data";
 
-const profileStore = useProfileStore();
+const ebpfStore = useEbpfStore();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const { t } = useI18n();
-const endpointName = ref<string>("");
 const newTask = ref<boolean>(false);
 
 searchTasks();
-searchEndpoints("");
 
-async function searchEndpoints(keyword: string) {
+async function searchTasks() {
+  const serviceId =
+    (selectorStore.currentService && selectorStore.currentService.id) || "";
+  const res = await ebpfStore.getTaskList(serviceId);
+
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
+}
+
+async function createTask() {
   if (!selectorStore.currentService) {
     return;
   }
-  const service = selectorStore.currentService.id;
-  const res = await profileStore.getEndpoints(service, keyword);
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-    return;
-  }
-  endpointName.value = profileStore.endpoints[0].value;
-}
-
-function changeEndpoint(opt: any[]) {
-  endpointName.value = opt[0].value;
-}
-
-async function searchTasks() {
-  profileStore.setConditions({
-    serviceId:
-      (selectorStore.currentService && selectorStore.currentService.id) || "",
-    endpointName: endpointName.value,
-  });
-  const res = await profileStore.getTaskList();
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
-}
-
-function createTask() {
   newTask.value = true;
+  ebpfStore.getCreateTaskData(selectorStore.currentService.id);
 }
 
 watch(
@@ -122,12 +83,22 @@ watch(
 </script>
 <style lang="scss" scoped>
 .header {
-  padding: 10px;
+  padding: 5px 20px 5px 10px;
   font-size: 12px;
   border-bottom: 1px solid #dcdfe6;
+  justify-content: space-between;
 }
 
 .name {
   width: 270px;
+}
+
+.new-btn {
+  float: right;
+}
+
+.title {
+  font-weight: bold;
+  line-height: 24px;
 }
 </style>
