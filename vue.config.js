@@ -26,7 +26,7 @@ module.exports = {
     proxy: {
       "/graphql": {
         target: `${
-          process.env.SW_PROXY_TARGET || "https://demo.skywalking.apache.org"
+          process.env.SW_PROXY_TARGET || "http://demo.skywalking.apache.org"
         }`,
         changeOrigin: true,
       },
