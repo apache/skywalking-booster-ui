@@ -12,97 +12,97 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<template>
-  <div class="side-bar">
-    <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
-      <Icon
-        :size="isCollapse ? 'xl' : 'logo'"
-        :iconName="isCollapse ? 'logo' : 'logo-sw'"
-      />
-    </div>
-    <el-menu
-      active-text-color="#448dfe"
-      background-color="#252a2f"
-      class="el-menu-vertical"
-      :default-active="name"
-      text-color="#efefef"
-      :unique-opened="true"
-      :collapse="isCollapse"
-      :style="{ border: 'none' }"
-    >
-      <template v-for="(menu, index) in routes" :key="index">
-        <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
-          <template #title>
-            <router-link
-              class="items"
-              :to="menu.path"
-              :exact="menu.meta.exact || false"
-            >
-              <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
-                <Icon size="lg" :iconName="menu.meta.icon" />
-              </el-icon>
-              <span :class="isCollapse ? 'collapse' : ''">
-                {{ t(menu.meta.title) }}
-              </span>
-            </router-link>
-          </template>
-          <el-menu-item-group>
-            <el-menu-item
-              v-for="(m, idx) in filterMenus(menu.children)"
-              :index="m.name"
-              :key="idx"
-            >
-              <router-link
-                class="items"
-                :to="m.path"
-                :exact="m.meta.exact || false"
-              >
-                <span>{{ t(m.meta.title) }}</span>
-              </router-link>
-            </el-menu-item>
-          </el-menu-item-group>
-        </el-sub-menu>
-        <el-menu-item
-          :index="String(menu.name)"
-          @click="changePage(menu)"
-          v-else
-        >
-          <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
-            <router-link
-              class="items"
-              :to="menu.children[0].path"
-              :exact="menu.meta.exact"
-            >
-              <Icon size="lg" :iconName="menu.meta.icon" />
-            </router-link>
-          </el-icon>
-          <template #title>
-            <router-link
-              class="items"
-              :to="menu.children[0].path"
-              :exact="menu.meta.exact"
-            >
-              <span>{{ t(menu.meta.title) }}</span>
-            </router-link>
-          </template>
-        </el-menu-item>
-      </template>
-    </el-menu>
-    <div
-      class="menu-control"
-      :class="isCollapse ? 'collapse' : ''"
-      :style="{
-        color: theme === 'light' ? '#eee' : '#252a2f',
-      }"
-    >
-      <Icon
-        size="middle"
-        iconName="format_indent_decrease"
-        @click="controlMenu"
-      />
-    </div>
-  </div>
-</template>
+<!--<template>-->
+<!--  <div class="side-bar">-->
+<!--    <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">-->
+<!--      <Icon-->
+<!--        :size="isCollapse ? 'xl' : 'logo'"-->
+<!--        :iconName="isCollapse ? 'logo' : 'logo-sw'"-->
+<!--      />-->
+<!--    </div>-->
+<!--    <el-menu-->
+<!--      active-text-color="#448dfe"-->
+<!--      background-color="#252a2f"-->
+<!--      class="el-menu-vertical"-->
+<!--      :default-active="name"-->
+<!--      text-color="#efefef"-->
+<!--      :unique-opened="true"-->
+<!--      :collapse="isCollapse"-->
+<!--      :style="{ border: 'none' }"-->
+<!--    >-->
+<!--      <template v-for="(menu, index) in routes" :key="index">-->
+<!--        <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">-->
+<!--          <template #title>-->
+<!--            <router-link-->
+<!--              class="items"-->
+<!--              :to="menu.path"-->
+<!--              :exact="menu.meta.exact || false"-->
+<!--            >-->
+<!--              <el-icon class="menu-icons" :style="{ marginRight: '12px' }">-->
+<!--                <Icon size="lg" :iconName="menu.meta.icon" />-->
+<!--              </el-icon>-->
+<!--              <span :class="isCollapse ? 'collapse' : ''">-->
+<!--                {{ t(menu.meta.title) }}-->
+<!--              </span>-->
+<!--            </router-link>-->
+<!--          </template>-->
+<!--          <el-menu-item-group>-->
+<!--            <el-menu-item-->
+<!--              v-for="(m, idx) in filterMenus(menu.children)"-->
+<!--              :index="m.name"-->
+<!--              :key="idx"-->
+<!--            >-->
+<!--              <router-link-->
+<!--                class="items"-->
+<!--                :to="m.path"-->
+<!--                :exact="m.meta.exact || false"-->
+<!--              >-->
+<!--                <span>{{ t(m.meta.title) }}</span>-->
+<!--              </router-link>-->
+<!--            </el-menu-item>-->
+<!--          </el-menu-item-group>-->
+<!--        </el-sub-menu>-->
+<!--        <el-menu-item-->
+<!--          :index="String(menu.name)"-->
+<!--          @click="changePage(menu)"-->
+<!--          v-else-->
+<!--        >-->
+<!--          <el-icon class="menu-icons" :style="{ marginRight: '12px' }">-->
+<!--            <router-link-->
+<!--              class="items"-->
+<!--              :to="menu.children[0].path"-->
+<!--              :exact="menu.meta.exact"-->
+<!--            >-->
+<!--              <Icon size="lg" :iconName="menu.meta.icon" />-->
+<!--            </router-link>-->
+<!--          </el-icon>-->
+<!--          <template #title>-->
+<!--            <router-link-->
+<!--              class="items"-->
+<!--              :to="menu.children[0].path"-->
+<!--              :exact="menu.meta.exact"-->
+<!--            >-->
+<!--              <span>{{ t(menu.meta.title) }}</span>-->
+<!--            </router-link>-->
+<!--          </template>-->
+<!--        </el-menu-item>-->
+<!--      </template>-->
+<!--    </el-menu>-->
+<!--    <div-->
+<!--      class="menu-control"-->
+<!--      :class="isCollapse ? 'collapse' : ''"-->
+<!--      :style="{-->
+<!--        color: theme === 'light' ? '#eee' : '#252a2f',-->
+<!--      }"-->
+<!--    >-->
+<!--      <Icon-->
+<!--        size="middle"-->
+<!--        iconName="format_indent_decrease"-->
+<!--        @click="controlMenu"-->
+<!--      />-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</template>-->
 
 <script lang="ts" setup>
 import { ref } from "vue";
@@ -116,7 +116,7 @@ const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
   ? ref("light")
   : ref("black");
 const routes = ref<any>(useRouter().options.routes);
-const isCollapse = ref(false);
+const isCollapse = ref(true);
 const controlMenu = () => {
   isCollapse.value = !isCollapse.value;
 };
@@ -134,9 +134,14 @@ const filterMenus = (menus: any[]) => {
 .side-bar {
   background: #252a2f;
   height: 100%;
-  min-height: 700px;
+  //min-height: 700px;
   position: relative;
   margin-bottom: 100px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  scrollbar-color: #6969dd #e0e0e0;
+  scrollbar-width: thin;
 }
 
 .el-menu-vertical:not(.el-menu--collapse) {

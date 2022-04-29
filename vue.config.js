@@ -21,7 +21,7 @@ const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
 
 module.exports = {
   outputDir: "dist",
-  productionSourceMap: false,
+  productionSourceMap: true,
   devServer: {
     proxy: {
       "/graphql": {

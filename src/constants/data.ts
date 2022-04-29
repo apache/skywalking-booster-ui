@@ -34,7 +34,6 @@ export const RoutesMap: { [key: string]: string } = {
   Linux: "OS_LINUX",
   SkyWalkingServer: "SO11Y_OAP",
   Satellite: "SO11Y_SATELLITE",
-  FullScroll: "SO11Y_SATELLITE",
   Functions: "FAAS",
   Browser: "BROWSER",
   KubernetesCluster: "K8S",

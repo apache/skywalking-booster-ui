@@ -143,6 +143,7 @@ export default defineComponent({
   backface-visibility: hidden;
   perspective: 1000;
   overflow: hidden;
+
   .scroll-handler__wrapper {
     z-index: 20;
     position: fixed;
@@ -150,9 +151,10 @@ export default defineComponent({
     flex-direction: column;
     right: 0;
     // top: 50%;
-    transform: translateY(60%);
+    //transform: translateY(60%);
     height: auto;
     width: 20px;
+
     .full-scroll-to {
       opacity: 0.5;
       width: 10px;
@@ -162,6 +164,7 @@ export default defineComponent({
       cursor: pointer;
       background: #4f4f4f;
     }
+
     .full-scroll-to.active {
       opacity: 1;
       padding: 6px;
@@ -169,9 +172,11 @@ export default defineComponent({
     }
   }
 }
+
 .scroll-snap-container::-webkit-scrollbar {
   display: none;
 }
+
 .item {
   // scroll-snap-align: start;
   height: 100%;

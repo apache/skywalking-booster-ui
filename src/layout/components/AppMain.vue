@@ -36,7 +36,9 @@ if (!appStore.utc) {
 </script>
 <style lang="scss" scoped>
 .app-main {
-  height: calc(100% - 40px);
+  height: 100%;
+  max-height: 375px;
+  max-width: 800px;
   background: #f7f9fa;
 }
 </style>

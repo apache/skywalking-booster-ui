@@ -12,42 +12,42 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<template>
-  <div class="nav-bar flex-h" :class="{ dark: theme === 'dark' }">
-    <div class="title">{{ appStore.pageTitle || t(pageName) }}</div>
-    <div class="app-config">
-      <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
-      <TimePicker
-        :value="time"
-        position="bottom"
-        format="YYYY-MM-DD HH:mm"
-        @input="changeTimeRange"
-      />
-      <span>
-        UTC{{ appStore.utcHour >= 0 ? "+" : ""
-        }}{{ `${appStore.utcHour}:${appStore.utcMin}` }}
-      </span>
-      <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
-        <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
-      </span>
-      <span class="version ml-5 cp">
-        <el-popover
-          trigger="hover"
-          width="250"
-          placement="bottom"
-          effect="light"
-          :content="appStore.version"
-        >
-          <template #reference>
-            <span>
-              <Icon iconName="info_outline" size="middle" />
-            </span>
-          </template>
-        </el-popover>
-      </span>
-    </div>
-  </div>
-</template>
+<!--<template>-->
+<!--  <div class="nav-bar flex-h" :class="{ dark: theme === 'dark' }">-->
+<!--    <div class="title">{{ appStore.pageTitle || t(pageName) }}</div>-->
+<!--    <div class="app-config">-->
+<!--      <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>-->
+<!--      <TimePicker-->
+<!--        :value="time"-->
+<!--        position="bottom"-->
+<!--        format="YYYY-MM-DD HH:mm"-->
+<!--        @input="changeTimeRange"-->
+<!--      />-->
+<!--      <span>-->
+<!--        UTC{{ appStore.utcHour >= 0 ? "+" : ""-->
+<!--        }}{{ `${appStore.utcHour}:${appStore.utcMin}` }}-->
+<!--      </span>-->
+<!--      <span title="refresh" class="ghost ml-5 cp" @click="handleReload">-->
+<!--        <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />-->
+<!--      </span>-->
+<!--      <span class="version ml-5 cp">-->
+<!--        <el-popover-->
+<!--          trigger="hover"-->
+<!--          width="250"-->
+<!--          placement="bottom"-->
+<!--          effect="light"-->
+<!--          :content="appStore.version"-->
+<!--        >-->
+<!--          <template #reference>-->
+<!--            <span>-->
+<!--              <Icon iconName="info_outline" size="middle" />-->
+<!--            </span>-->
+<!--          </template>-->
+<!--        </el-popover>-->
+<!--      </span>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</template>-->
 <script lang="ts" setup>
 import { ref, watch, computed } from "vue";
 import { useRoute } from "vue-router";
