@@ -107,29 +107,19 @@ function getOption() {
   let color: string[] = [];
   switch (keys.length) {
     case 2:
-      color = ["#FF6A84", "#a0b1e6"];
+      color = ["#629755", "#9876AA"];
       break;
     case 1:
-      color = ["#3f96e3"];
+      color = ["#629755"];
       break;
     default:
       color = [
-        "#30A4EB",
-        "#45BFC0",
-        "#FFCC55",
-        "#FF6A84",
-        "#a0a7e6",
-        "#c23531",
-        "#2f4554",
-        "#61a0a8",
-        "#d48265",
-        "#91c7ae",
-        "#749f83",
-        "#ca8622",
-        "#bda29a",
-        "#6e7074",
-        "#546570",
-        "#c4ccd3",
+        "#629755",
+        "#9876AA",
+        "#CC7832",
+        "#8A653B",
+        "#FF0000",
+        "#FFC66D",
       ];
       break;
   }
@@ -143,7 +133,7 @@ function getOption() {
       confine: true,
       textStyle: {
         fontSize: 13,
-        color: "#ccc",
+        color: "#A9B7C6",
       },
       enterable: true,
       extraCssText: "max-height: 300px; overflow: auto; border: none",
@@ -156,7 +146,7 @@ function getOption() {
       left: 0,
       itemWidth: 12,
       textStyle: {
-        color: "#333",
+        color: "#A9B7C6",
       },
     },
     grid: {
@@ -174,14 +164,20 @@ function getOption() {
       },
       splitLine: { show: false },
       axisLine: { lineStyle: { color: "rgba(0,0,0,0)" } },
-      axisLabel: { color: "#9da5b2", fontSize: "11" },
+      axisLabel: {
+        color: "#808080",
+        fontSize: "13",
+      },
     },
     yAxis: {
       type: "value",
       axisLine: { show: false },
       axisTick: { show: false },
       splitLine: { lineStyle: { color: "#c1c5ca41", type: "dashed" } },
-      axisLabel: { color: "#9da5b2", fontSize: "11" },
+      axisLabel: {
+        color: "#808080",
+        fontSize: "13",
+      },
     },
     series: temp,
   };

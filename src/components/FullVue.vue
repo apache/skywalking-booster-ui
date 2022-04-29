@@ -168,7 +168,7 @@ export default defineComponent({
     .full-scroll-to.active {
       opacity: 1;
       padding: 6px;
-      background: #252a2f;
+      background: #9876AA;
     }
   }
 }

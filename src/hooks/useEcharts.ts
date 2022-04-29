@@ -106,7 +106,7 @@ export function useECharts(
     nextTick(() => {
       useTimeoutFn(() => {
         if (!chartInstance) {
-          initCharts(getDarkMode.value as "default");
+          initCharts("default");
 
           if (!chartInstance) return;
         }

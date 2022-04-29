@@ -1,0 +1,390 @@
+:root {
+  --spp-white: #A9B7C6;
+  --spp-light-grey: #A9B7C6;
+  --spp-grey: #A9B7C6;
+  --spp-light-blue: #629755;
+  --spp-blue: #313335;
+  --spp-red: #e1483b;
+  --spp-green: #2b2b2b;
+  --spp-dark-green: #313335;
+  --spp-darkest-green: #313335;
+  --spp-other-green: #2b2b2b;
+  --nice-black: #2b2b2b;
+  --widget-background: #2b2b2b;
+  --border-color: #1a1a1a;
+  --dashboard-tool-background: #1a1a1a;
+}
+
+.el-table {
+  --el-table-tr-bg-color: var(--nice-black);
+  --el-table-header-bg-color: var(--spp-dark-green);
+  --el-table-row-hover-bg-color: var(--spp-other-green);
+  --el-table-border-color: var(--spp-darkest-green);
+  --el-table-bg-color: var(--nice-black);
+}
+
+:root {
+  --el-disabled-bg-color: var(--nice-black);
+}
+
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+  background: var(--spp-other-green);
+}
+
+.el-input__inner {
+  --el-input-bg-color: var(--spp-other-green);
+  //--el-input-border: red !important;
+}
+
+.el-select {
+  --el-select-border-color-hover: var(--spp-light-blue);
+  --el-select-input-focus-border-color: var(--spp-red);
+  --el-input-placeholder-color: red;
+  --el-text-color-placeholder: var(--spp-light-grey);
+  --el-input-border: red;
+  --el-border-color-base: red;
+  --el-input-bg-color: red;
+}
+
+.el-scrollbar {
+  --el-scrollbar-bg-color: var(--spp-light-grey);
+}
+
+.el-select__popper.el-popper[role="tooltip"] {
+  background: var(--spp-other-green);
+}
+
+.el-select-dropdown__item.hover, .el-select-dropdown__item:hover {
+  background: var(--spp-other-green);
+}
+
+.el-select__popper.el-popper[role="tooltip"] {
+  border: 1px solid var(--spp-blue);
+}
+
+.el-popper.is-light {
+  background: var(--nice-black);
+}
+
+.micro-topo-chart .operations-list {
+  background: var(--spp-other-green) !important;
+  color: white !important;
+}
+
+.el-input {
+  --el-input-border: 1px solid var(--spp-blue);
+  --el-input-text-color: var(--spp-white);
+}
+
+.el-select-dropdown__item.selected {
+  color: var(--spp-white);
+}
+
+.el-select__popper.el-popper[role="tooltip"] .el-popper__arrow::before {
+  border: 1px solid var(--spp-blue);
+}
+
+.el-popper.is-light .el-popper__arrow::before {
+  background: var(--spp-other-green);
+}
+
+.el-select-dropdown__item.hover, .el-select-dropdown__item:hover {
+  background: var(--spp-dark-green);
+}
+
+.settings .label {
+  color: var(--spp-white);
+}
+
+.settings i, span {
+  color: var(--spp-light-grey);
+}
+
+.utc-input {
+  color: var(--spp-white) !important;
+}
+
+.settings input {
+  background: var(--spp-dark-green) !important;
+  border: 1px solid var(--spp-blue) !important;
+  color: var(--spp-white);
+}
+
+.auto-time {
+  color: var(--spp-white);
+}
+
+.el-switch__core {
+  --el-switch-off-color: var(--spp-dark-green);
+  --el-switch-on-color: var(--spp-red);
+}
+
+.alarm-tool {
+  background-color: var(--nice-black) !important;
+  border-bottom: 1px solid var(--spp-blue) !important;
+}
+
+.el-dialog {
+  background-color: var(--nice-black);
+}
+
+.el-dialog__title {
+  color: var(--spp-white);
+}
+
+.el-pagination button:disabled {
+  background-color: var(--spp-dark-green);
+}
+
+.timeline-table-i {
+  border-left: 4px solid var(--spp-other-green) !important;
+}
+
+.timeline-table-i::before {
+  background-color: var(--spp-other-green) !important;
+}
+.timeline-table-i::after {
+  background-color: var(--spp-grey) !important;
+}
+
+.settings .label {
+  color: var(--spp-white) !important;
+}
+
+.event-tool {
+  background-color: var(--nice-black) !important;
+}
+
+.el-button {
+  background-color: var(--spp-green);
+  border-color: var(--spp-other-green);
+}
+
+.el-button--danger {
+  background-color: var(--spp-red);
+}
+
+.el-button:focus, .el-button:hover {
+  background-color: var(--spp-darkest-green);
+  border-color: black
+}
+
+.table {
+  background-color: var(--nice-black) !important;
+}
+
+.trace-td.selected {
+  background-color: var(--spp-other-green) !important;
+}
+
+.trace-td.trace-error.selected {
+  background-color: var(--nice-black) !important;
+}
+
+.el-pager li.active {
+  background-color: var(--spp-other-green);
+}
+
+.el-pager li {
+  background-color: var(--spp-green);
+}
+
+.el-pager li.active {
+  color: var(--spp-white);
+}
+
+.el-pager + button.btn-next[type="button"] {
+  background-color: var(--spp-grey);
+}
+
+.toggle-selection {
+  background-color: var(--nice-black) !important;
+}
+
+.side-bar {
+  background-color: var(--spp-other-green) !important;
+}
+
+.bar-select {
+  background: black !important;
+
+  .selected {
+    color: var(--spp-red) !important;
+  }
+}
+
+.nav-bar {
+  background-color: var(--spp-darkest-green) !important;
+  border-bottom: 1px solid var(--spp-darkest-green) !important;
+  color: var(--spp-white) !important;
+}
+
+.nav-bar.dark {
+  background-color: var(--spp-darkest-green) !important;
+  border-bottom: 1px solid var(--spp-green) !important;
+}
+
+.tools {
+  &:hover {
+    color: var(--spp-red) !important;
+  }
+}
+
+.chart-card {
+  color: var(--spp-white) !important;
+}
+
+.profile-item.level0 {
+  &:hover {
+    color: var(--spp-red) !important;
+  }
+}
+
+.name {
+  color: var(--spp-red) !important;
+}
+
+//span.active {
+//  background-color: var(--spp-red) !important;
+//}
+
+.topology {
+  background-color: var(--spp-darkest-green) !important;
+}
+
+.widget {
+  background: var(--widget-background) !important;
+}
+
+.header {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.body {
+  color: var(--spp-blue) !important;
+  background: var(--spp-darkest-green) !important;
+}
+
+.tabs {
+  input {
+    background: inherit !important;
+  }
+
+  input.tab-name {
+    color: var(--spp-white) !important;;
+  }
+
+  span.active {
+    border-bottom: 1px solid var(--spp-red) !important;
+    color: var(--spp-red) !important;
+  }
+}
+
+.tab-header {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.vue-grid-layout {
+  background: var(--spp-darkest-green) !important;
+}
+
+.vue-grid-item:not(.vue-grid-placeholder) {
+  background: var(--spp-darkest-green) !important;
+}
+
+.vue-grid-item.active {
+  border: 1px solid var(--spp-red) !important;
+}
+
+.vue-grid-layout {
+  background: var(--spp-darkest-green) !important;
+}
+
+.vue-grid-item:not(.vue-grid-placeholder) {
+  background: var(--spp-dark-green) !important;
+}
+
+.vue-grid-item.active {
+  border: 1px solid var(--spp-red) !important;
+}
+
+.dashboard-tool {
+  background: var(--dashboard-tool-background) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.micro-topo-chart {
+  .operations-list {
+    span:hover {
+      color: var(--spp-red) !important;
+    }
+  }
+  .switch-icon {
+    background-color: #182d3499 !important;
+  }
+}
+
+.d3-tip {
+  background: var(--spp-green) !important;
+}
+
+.d3-tip:after {
+  color: var(--spp-green) !important;
+}
+
+.sankey {
+  background-color: var(--spp-darkest-green) !important;
+}
+
+.switch-icon {
+  background-color: #182d3499 !important;
+}
+
+.operations-list {
+  span:hover {
+    color: var(--spp-red) !important;
+  }
+}
+
+.link {
+  color: var(--spp-red) !important;
+}
+
+.dark-dialog {
+  background-color: var(--spp-darkest-green) !important;
+  color: #ddd !important;
+
+  .el-loading-mask {
+    background-color: red !important;
+    color: red !important;
+  }
+}
+
+.el-loading-mask {
+  background-color: unset !important;
+  color: unset !important;
+}
+
+.app-main {
+  background: var(--spp-darkest-green) !important;
+}
+
+.opt {
+  &.select-disabled {
+    color: var(--spp-red) !important;
+  }
+}
+
+blockquote {
+  border-left: 4px solid var(--spp-light-grey) !important;
+}
+
+a {
+  color: var(--spp-white) !important;
+}
+
+.timeline-table-i {
+  &::before {
+    background-color: #448dfe !important;
+  }
+}
