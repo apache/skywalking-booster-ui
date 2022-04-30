@@ -414,7 +414,7 @@ export default defineComponent({
 .tabitem {
   scroll-snap-align: start;
   height: 100%;
-  margin: 70px 0;
+  margin: 0 0;
 }
 .scroll-handler__wrapper {
   z-index: 20;
