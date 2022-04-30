@@ -24,7 +24,12 @@ limitations under the License. -->
         />
         <span class="vm">{{ traceStore.currentTrace.endpointNames[0] }}</span>
         <div class="trace-log-btn">
-          <el-button class="mr-10" type="primary" @click="searchTraceLogs">
+          <el-button
+            size="small"
+            class="mr-10"
+            type="primary"
+            @click="searchTraceLogs"
+          >
             {{ t("viewLogs") }}
           </el-button>
         </div>
@@ -89,6 +94,7 @@ limitations under the License. -->
         <div>
           <el-button
             class="grey"
+            size="small"
             :class="{ ghost: displayMode !== 'List' }"
             @click="displayMode = 'List'"
           >
@@ -97,6 +103,7 @@ limitations under the License. -->
           </el-button>
           <el-button
             class="grey"
+            size="small"
             :class="{ ghost: displayMode !== 'Tree' }"
             @click="displayMode = 'Tree'"
           >
@@ -105,6 +112,7 @@ limitations under the License. -->
           </el-button>
           <el-button
             class="grey"
+            size="small"
             :class="{ ghost: displayMode !== 'Table' }"
             @click="displayMode = 'Table'"
           >
@@ -113,6 +121,7 @@ limitations under the License. -->
           </el-button>
           <el-button
             class="grey"
+            size="small"
             :class="{ ghost: displayMode !== 'Statistics' }"
             @click="displayMode = 'Statistics'"
           >
@@ -191,7 +200,7 @@ export default defineComponent({
       const res = await traceStore.getSpanLogs({
         condition: {
           relatedTrace: {
-            traceId: traceId.value || traceStore.currentTrace.traceIds[0],
+            traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
           },
           paging: { pageNum: pageNum.value, pageSize, needTotal: true },
         },
@@ -230,7 +239,9 @@ export default defineComponent({
 }
 
 .trace-chart {
-  height: 100%;
+  height: calc(100% - 100px);
+  overflow: auto;
+  padding-bottom: 20px;
 }
 
 .trace-detail-wrapper {

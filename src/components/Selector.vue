@@ -58,7 +58,7 @@ const props = defineProps({
   },
   size: { type: null, default: "default" },
   placeholder: {
-    type: [String, Number] as PropType<string | number>,
+    type: [String, undefined] as PropType<string>,
     default: "Select a option",
   },
   borderRadius: { type: Number, default: 3 },

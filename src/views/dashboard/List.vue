@@ -44,7 +44,7 @@ limitations under the License. -->
         :style="{ fontSize: '13px', width: '100%' }"
         v-loading="loading"
         ref="multipleTableRef"
-        :default-sort="{ prop: 'name' }"
+        :default-sort="{ prop: 'name', order: 'ascending' }"
         @selection-change="handleSelectionChange"
         height="637px"
         size="small"

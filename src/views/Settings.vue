@@ -84,9 +84,8 @@ const state = reactive<{ timer: ReturnType<typeof setInterval> | null }>({
 const lang = ref<string>(locale.value || "en");
 const autoTime = ref<number>(6);
 const auto = ref<boolean>(appStore.autoRefresh || false);
-const utcArr = appStore.utc.split(":");
-const utcHour = ref<number>(isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]));
-const utcMin = ref<number>(isNaN(Number(utcArr[1])) ? 0 : Number(utcArr[1]));
+const utcHour = ref<number>(appStore.utcHour);
+const utcMin = ref<number>(appStore.utcMin);
 
 appStore.setPageTitle("Setting");
 const handleReload = () => {

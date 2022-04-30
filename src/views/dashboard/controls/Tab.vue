@@ -132,7 +132,7 @@ limitations under the License. -->
           :key="item.i"
           @click="clickTabGrid($event, item)"
           :class="{ active: activeTabWidget === item.i }"
-          drag-ignore-from="svg.d3-trace-tree, .dragger, .micro-topo-chart"
+          :drag-ignore-from="dragIgnoreFrom"
         >
           <component
             :is="item.type"
@@ -165,6 +165,8 @@ import Trace from "./Trace.vue";
 import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
+import Ebpf from "./Ebpf.vue";
+import { dragIgnoreFrom } from "../data";
 
 const props = {
   data: {
@@ -175,7 +177,7 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile, Log, Text },
+  components: { Topology, Widget, Trace, Profile, Log, Text, Ebpf },
   props,
   setup(props) {
     const { t } = useI18n();
@@ -327,17 +329,6 @@ export default defineComponent({
     }
 
     function initScrollWatcher() {
-      // tabObserveContainer?.value?.addEventListener("scroll", (e: Event) => {
-      //   const isBottom =
-      //     tabObserveContainer?.value?.offsetHeight +
-      //       tabObserveContainer?.value?.scrollTop +
-      //       70 >
-      //     tabObserveContainer?.value?.scrollHeight;
-
-      //   if (isBottom) {
-      //     tabObserveContainer?.value.scroll(0, 0);
-      //   }
-      // });
       tabObserveContainer?.value?.addEventListener("wheel", (e: WheelEvent) => {
         if (isScrolling.value === false) {
           isScrolling.value = true;
@@ -394,6 +385,7 @@ export default defineComponent({
       canEditTabName,
       showTools,
       t,
+      dragIgnoreFrom,
     };
   },
 });

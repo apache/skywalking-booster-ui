@@ -13,38 +13,38 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-radio-group v-model="selected" @change="checked">
-    <el-radio v-for="item in options" :key="item.value" :label="item.value">
-      {{ item.label }}
-    </el-radio>
-  </el-radio-group>
+  <div class="flex-h content">
+    <TaskList />
+    <div class="vis-graph ml-5">
+      <div class="item">
+        <EBPFSchedules />
+      </div>
+      <div class="item">
+        <EBPFStack />
+      </div>
+    </div>
+  </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import type { PropType } from "vue";
-
-interface Option {
-  label: string;
-  value: string;
-}
-
-/*global  defineProps, defineEmits */
-const emit = defineEmits(["change"]);
-const props = defineProps({
-  options: {
-    type: Array as PropType<Option[]>,
-    default: () => [],
-  },
-  value: {
-    type: String as PropType<string>,
-    default: "",
-  },
-  size: { type: null, default: "default" },
-});
-
-const selected = ref<string>(props.value);
-
-function checked(opt: unknown) {
-  emit("change", opt);
-}
+import TaskList from "./components/TaskList.vue";
+import EBPFSchedules from "./components/EBPFSchedules.vue";
+import EBPFStack from "./components/EBPFStack.vue";
 </script>
+<style lang="scss" scoped>
+.content {
+  height: calc(100% - 30px);
+  width: 100%;
+}
+
+.vis-graph {
+  height: 100%;
+  width: calc(100% - 300px);
+}
+
+.item {
+  width: 100%;
+  overflow: auto;
+  height: calc(50% - 10px);
+  padding-bottom: 10px;
+}
+</style>

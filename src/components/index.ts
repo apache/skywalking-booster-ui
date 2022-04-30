@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import type { App } from "vue";
 import Icon from "./Icon.vue";
 import TimePicker from "./TimePicker.vue";
 import Selector from "./Selector.vue";
 import Graph from "./Graph.vue";
 import Radio from "./Radio.vue";
 import SelectSingle from "./SelectSingle.vue";
-import type { App } from "vue";
 import VueGridLayout from "vue-grid-layout";
 
 const components: { [key: string]: any } = {

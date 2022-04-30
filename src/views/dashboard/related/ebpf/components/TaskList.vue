@@ -17,32 +17,34 @@ limitations under the License. -->
     <div class="profile-task-wrapper flex-v">
       <div class="profile-t-tool flex-h">{{ t("taskList") }}</div>
       <div class="profile-t-wrapper">
-        <div class="no-data" v-show="!profileStore.taskList.length">
+        <div class="no-data" v-show="!ebpfStore.taskList.length">
           {{ t("noData") }}
         </div>
         <table class="profile-t">
           <tr
             class="profile-tr cp"
-            v-for="(i, index) in profileStore.taskList"
+            v-for="(i, index) in ebpfStore.taskList"
             @click="changeTask(i)"
             :key="index"
           >
             <td
               class="profile-td"
               :class="{
-                selected: selectedTask.id === i.id,
+                selected: selectedTask.taskId === i.taskId,
               }"
             >
               <div class="ell">
-                <span>{{ i.endpointName }}</span>
-                <a class="profile-btn r" @click="viewTask($event, i)">
+                <span>{{ i.processLabels.join(" ") }}</span>
+                <a class="profile-btn r" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
                 </a>
               </div>
               <div class="grey ell sm">
-                <span class="mr-10 sm">{{ dateFormat(i.startTime) }}</span>
+                <span class="mr-10 sm">{{ dateFormat(i.taskStartTime) }}</span>
                 <span class="mr-10 sm">
-                  {{ dateFormat(i.startTime + i.duration * 60 * 1000) }}
+                  {{
+                    dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000)
+                  }}
                 </span>
               </div>
             </td>
@@ -61,125 +63,80 @@ limitations under the License. -->
       <div>
         <h5 class="mb-10">{{ t("task") }}.</h5>
         <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("service") }}:</span>
-          <span class="g-sm-8 wba">{{ service }}</span>
+          <span class="g-sm-4 grey">{{ t("taskId") }}:</span>
+          <span class="g-sm-8 wba">
+            {{ selectedTask.taskId }}
+          </span>
         </div>
         <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("endpoint") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.endpointName }}</span>
+          <span class="g-sm-4 grey">{{ t("service") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.serviceName }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("labels") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.processLabels }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
           <span class="g-sm-8 wba">
-            {{ dateFormat(selectedTask.startTime) }}
+            {{ dateFormat(selectedTask.taskStartTime) }}
           </span>
         </div>
         <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span
-          ><span class="g-sm-8 wba">{{ selectedTask.duration }} min</span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("minThreshold") }}:</span>
+          <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span>
           <span class="g-sm-8 wba">
-            {{ selectedTask.minDurationThreshold }} ms
+            {{ selectedTask.fixedTriggerDuration / 60 }} min
           </span>
         </div>
         <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("dumpPeriod") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.dumpPeriod }}</span>
+          <span class="g-sm-4 grey">{{ t("triggerType") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.triggerType }}</span>
         </div>
         <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("maxSamplingCount") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.maxSamplingCount }}</span>
-        </div>
-      </div>
-      <div>
-        <h5
-          class="mb-10 mt-10"
-          v-show="selectedTask.logs && selectedTask.logs.length"
-        >
-          {{ t("logs") }}.
-        </h5>
-        <div
-          class="log-item"
-          v-for="(i, index) in Object.keys(instanceLogs)"
-          :key="index"
-        >
-          <div class="mb-10 sm">
-            <span class="mr-10 grey">{{ t("instance") }}:</span>
-            <span>{{ i }}</span>
-          </div>
-          <div v-for="(d, index) in instanceLogs[i]" :key="index">
-            <span class="mr-10 grey">{{ t("operationType") }}:</span>
-            <span class="mr-20">{{ d.operationType }}</span>
-            <span class="mr-10 grey">{{ t("time") }}:</span>
-            <span>{{ dateFormat(d.operationTime) }}</span>
-          </div>
+          <span class="g-sm-4 grey">{{ t("targetType") }}:</span>
+          <span class="g-sm-8 wba">{{ selectedTask.targetType }}</span>
         </div>
       </div>
     </div>
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
-import { useProfileStore } from "@/store/modules/profile";
-import { TaskLog, TaskListItem } from "@/types/profile";
+import { useEbpfStore } from "@/store/modules/ebpf";
+import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
 
 const { t } = useI18n();
-const profileStore = useProfileStore();
+const ebpfStore = useEbpfStore();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
+const selectedTask = ref<EBPFTaskList | Record<string, never>>({});
 const viewDetail = ref<boolean>(false);
-const service = ref<string>("");
-const selectedTask = ref<TaskListItem | Record<string, never>>({});
-const instanceLogs = ref<TaskLog | any>({});
 
-async function changeTask(item: TaskListItem) {
+async function changeTask(item: EBPFTaskList) {
   selectedTask.value = item;
-  const res = await profileStore.getSegmentList({ taskID: item.id });
+  const res = await ebpfStore.getEBPFSchedules({
+    taskId: item.taskId,
+  });
   if (res.errors) {
     ElMessage.error(res.errors);
   }
 }
-
-async function viewTask(e: Event, item: TaskListItem) {
-  window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
-  viewDetail.value = true;
-  selectedTask.value = item;
-  service.value = (
-    profileStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}
-  ).label;
-  const res = await profileStore.getTaskLogs({ taskID: item.id });
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-    return;
+watch(
+  () => ebpfStore.taskList,
+  () => {
+    selectedTask.value = ebpfStore.taskList[0] || {};
   }
-  item.logs = profileStore.taskLogs;
-  instanceLogs.value = {};
-  for (const d of item.logs) {
-    if (instanceLogs.value[d.instanceName]) {
-      instanceLogs.value[d.instanceName].push({
-        operationType: d.operationType,
-        operationTime: d.operationTime,
-      });
-    } else {
-      instanceLogs.value[d.instanceName] = [
-        { operationType: d.operationType, operationTime: d.operationTime },
-      ];
-    }
-  }
-  selectedTask.value = item;
-}
+);
 </script>
 <style lang="scss" scoped>
 .profile-task-list {
   width: 300px;
-  height: calc((100% - 60px) / 2);
+  height: calc(100% - 10px);
   overflow: auto;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .item span {
@@ -203,7 +160,6 @@ async function viewTask(e: Event, item: TaskListItem) {
 .profile-t-wrapper {
   overflow: auto;
   flex-grow: 1;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .profile-t {
@@ -212,6 +168,7 @@ async function viewTask(e: Event, item: TaskListItem) {
   table-layout: fixed;
   flex-grow: 1;
   position: relative;
+  border: none;
 }
 
 .profile-tr {
@@ -220,20 +177,12 @@ async function viewTask(e: Event, item: TaskListItem) {
   }
 }
 
-.profile-segment {
-  border-top: 1px solid rgba(0, 0, 0, 0.07);
-}
-
 .profile-t-tool {
   padding: 5px 10px;
   font-weight: bold;
   border-right: 1px solid rgba(0, 0, 0, 0.07);
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   background: #f3f4f9;
-}
-
-.log-item {
-  margin-top: 20px;
 }
 
 .profile-btn {

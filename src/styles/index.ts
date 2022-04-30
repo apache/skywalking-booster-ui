@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Topology from "./Topology.vue";
-import Tab from "./Tab.vue";
-import Widget from "./Widget.vue";
-import Trace from "./Trace.vue";
-import Profile from "./Profile.vue";
-import Log from "./Log.vue";
-import Text from "./Text.vue";
-import Ebpf from "./Ebpf.vue";
-
-export default { Tab, Widget, Trace, Topology, Profile, Log, Text, Ebpf };
+import "element-plus/es/components/message/style/css";
+import "element-plus/es/components/message-box/style/css";
+import "element-plus/es/components/notification/style/css";
+import "./grid.scss";
+import "./lib.scss";
+import "./reset.scss";
+//@import "./spp-light.scss";
+//@import "./spp-dark.scss";
+@import "./jetbrains-dark.scss";
