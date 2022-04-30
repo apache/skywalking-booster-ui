@@ -33,6 +33,7 @@ let portalStyle = reactive({});
 if (query["portal"] === "true") {
   // eslint-disable-next-line no-undef
   portalStyle = reactive({
+    "height": "100%",
     "max-height": "375px",
     "max-width": "800px",
   });
@@ -49,7 +50,7 @@ if (!appStore.utc) {
 </script>
 <style lang="scss" scoped>
 .app-main {
-  height: 100%;
+  height: calc(100% - 40px);
   background: #f7f9fa;
 }
 </style>

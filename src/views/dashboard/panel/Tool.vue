@@ -144,13 +144,10 @@ const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
-const path = useRoute();
-const router = useRouter();
-if (!path.path.includes("fullview")) {
-  dashboardStore.setViewMode(false);
-} else {
-  dashboardStore.setViewMode(true);
-}
+
+const { query } = useRoute();
+dashboardStore.setViewMode(query["fullview"] === "true");
+
 const toolIcons = ref<{ name: string; content: string; id: string }[]>(
   EndpointRelationTools
 );
@@ -398,16 +395,7 @@ function changeDestPods(pod: any) {
     selectorStore.setCurrentDestPod(null);
   }
 }
-function toggleFullView(e) {
-  dashboardStore.setViewMode(e);
-  if (dashboardStore.fullView) {
-    const newPath = path.path.replace("dashboard", "fullview");
-    router.push(newPath);
-  } else {
-    const newPath = path.path.replace("fullview", "dashboard");
-    router.push(newPath);
-  }
-}
+
 function changeMode() {
   if (dashboardStore.editMode) {
     ElMessage.warning(t("editWarning"));
