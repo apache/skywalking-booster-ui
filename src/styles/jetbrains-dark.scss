@@ -13,6 +13,8 @@
   --widget-background: #2b2b2b;
   --border-color: #1a1a1a;
   --dashboard-tool-background: #1a1a1a;
+  --table-header-color: #1a1a1a;
+  --menu-selected-color: #313335;
 }
 
 .el-table {
@@ -205,6 +207,19 @@
   background-color: var(--spp-other-green) !important;
 }
 
+.el-menu {
+  background-color: var(--spp-other-green) !important;
+}
+
+.el-sub-menu__title {
+  background-color: var(--spp-other-green) !important;
+}
+
+.el-menu-item.is-active {
+  color: var(--spp-red) !important;
+  background-color: var(--menu-selected-color) !important;
+}
+
 .bar-select {
   background: black !important;
 
@@ -387,4 +402,13 @@ a {
   &::before {
     background-color: #448dfe !important;
   }
+}
+
+.log-header div {
+  background-color: var(--table-header-color) !important;
+  color: var(--spp-white);
+}
+
+.log-tips {
+  color: red;
 }
