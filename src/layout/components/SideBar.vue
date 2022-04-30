@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="side-bar" v-if="isFullview === false">
+  <div class="side-bar" v-if="isFullview === false" :style="portalStyle">
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon
         :size="isCollapse ? 'xl' : 'logo'"
@@ -110,7 +110,19 @@ import { useRouter, RouteRecordRaw, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import Icon from "@/components/Icon.vue";
 
-const { path } = useRoute();
+const { path, query } = useRoute();
+
+// eslint-disable-next-line no-undef
+let portalStyle = reactive({});
+if (query["portal"] === "true") {
+  // eslint-disable-next-line no-undef
+  portalStyle = reactive({
+    "min-height": "unset",
+    "overflow-y": "scroll",
+    "overflow-x": "hidden",
+  });
+}
+
 const isFullview = computed(() => {
   return path.includes("fullview");
 });
@@ -120,7 +132,7 @@ const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
   ? ref("light")
   : ref("black");
 const routes = ref<any>(useRouter().options.routes);
-const isCollapse = ref(true);
+const isCollapse = ref(query["portal"] === "true");
 const controlMenu = () => {
   isCollapse.value = !isCollapse.value;
 };
@@ -138,14 +150,9 @@ const filterMenus = (menus: any[]) => {
 .side-bar {
   background: #252a2f;
   height: 100%;
-  //min-height: 700px;
+  min-height: 700px;
   position: relative;
   margin-bottom: 100px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-
-  scrollbar-color: #6969dd #e0e0e0;
-  scrollbar-width: thin;
 }
 
 .el-menu-vertical:not(.el-menu--collapse) {
