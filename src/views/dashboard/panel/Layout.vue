@@ -55,9 +55,9 @@ export default defineComponent({
   name: "Layout",
   components: { ...controls, FullVue },
   setup() {
-    const { path } = useRoute();
+    const { query } = useRoute();
     const isFullview = computed(() => {
-      return path.includes("fullview");
+      return query["fullview"] === "true";
     });
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();

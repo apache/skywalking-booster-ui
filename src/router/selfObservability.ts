@@ -49,16 +49,6 @@ export const routesSelf: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
-      {
-        path: "/self/fullScroll",
-        name: "FullScroll",
-        meta: {
-          title: "fullscreen-sample",
-          headPath: "/mesh/controlPanel",
-        },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/FullScroll.vue"),
-      },
     ],
   },
 ];

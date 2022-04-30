@@ -78,45 +78,45 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <!--    <div class="flex-h tools" v-loading="loading">-->
-    <!--      <div class="tool-icons flex-h" v-if="dashboardStore.editMode">-->
-    <!--        <el-dropdown content="Controls" placement="bottom">-->
-    <!--          <i>-->
-    <!--            <Icon class="icon-btn" size="sm" iconName="control" />-->
-    <!--          </i>-->
-    <!--          <template #dropdown>-->
-    <!--            <el-dropdown-menu>-->
-    <!--              <el-dropdown-item-->
-    <!--                @click="clickIcons(t)"-->
-    <!--                v-for="(t, index) in toolIcons"-->
-    <!--                :key="index"-->
-    <!--                :title="t.content"-->
-    <!--              >-->
-    <!--                <Icon class="mr-5" size="middle" :iconName="t.name" />-->
-    <!--                <span>{{ t.content }}</span>-->
-    <!--              </el-dropdown-item>-->
-    <!--            </el-dropdown-menu>-->
-    <!--          </template>-->
-    <!--        </el-dropdown>-->
-    <!--        <el-tooltip content="Apply" placement="bottom" effect="light">-->
-    <!--          <i @click="applyDashboard">-->
-    <!--            <Icon class="icon-btn" size="sm" iconName="save" />-->
-    <!--          </i>-->
-    <!--        </el-tooltip>-->
-    <!--      </div>-->
-    <!--      <div class="switch">-->
-    <!--        <el-switch-->
-    <!--          v-model="dashboardStore.editMode"-->
-    <!--          active-text="Edit"-->
-    <!--          inactive-text="View"-->
-    <!--          size="small"-->
-    <!--          inline-prompt-->
-    <!--          active-color="#409eff"-->
-    <!--          inactive-color="#999"-->
-    <!--          @change="changeMode"-->
-    <!--        />-->
-    <!--      </div>-->
-    <!--    </div>-->
+    <div class="flex-h tools" v-loading="loading" v-if="$route.query['portal'] !== 'true'">
+      <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
+        <el-dropdown content="Controls" placement="bottom">
+          <i>
+            <Icon class="icon-btn" size="sm" iconName="control" />
+          </i>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                @click="clickIcons(t)"
+                v-for="(t, index) in toolIcons"
+                :key="index"
+                :title="t.content"
+              >
+                <Icon class="mr-5" size="middle" :iconName="t.name" />
+                <span>{{ t.content }}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-tooltip content="Apply" placement="bottom" effect="light">
+          <i @click="applyDashboard">
+            <Icon class="icon-btn" size="sm" iconName="save" />
+          </i>
+        </el-tooltip>
+      </div>
+      <div class="switch">
+        <el-switch
+          v-model="dashboardStore.editMode"
+          active-text="Edit"
+          inactive-text="View"
+          size="small"
+          inline-prompt
+          active-color="#409eff"
+          inactive-color="#999"
+          @change="changeMode"
+        />
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>

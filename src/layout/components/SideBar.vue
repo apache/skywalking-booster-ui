@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="side-bar" v-if="isFullview === false" :style="portalStyle">
+  <div class="side-bar" v-if="isPortalView === false" :style="portalStyle">
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon
         :size="isCollapse ? 'xl' : 'logo'"
@@ -123,8 +123,8 @@ if (query["portal"] === "true") {
   });
 }
 
-const isFullview = computed(() => {
-  return path.includes("fullview");
+const isPortalView = computed(() => {
+  return query["portal"] === "true";
 });
 const { t } = useI18n();
 const name = ref<any>(String(useRouter().currentRoute.value.name));
