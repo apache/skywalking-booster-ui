@@ -33,9 +33,9 @@ let portalStyle = reactive({});
 if (query["portal"] === "true") {
   // eslint-disable-next-line no-undef
   portalStyle = reactive({
-    "height": "100%",
-    "max-height": "375px",
-    "max-width": "800px",
+    height: "100%",
+    "max-height": "350px",
+    "max-width": "963px",
   });
 }
 
