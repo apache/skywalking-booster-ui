@@ -117,19 +117,20 @@ function getOption() {
   let color: string[] = [];
   switch (keys.length) {
     case 2:
-      color = ["#629755", "#9876AA"];
+      color = ["#6897BB", "#9876AA"];
       break;
     case 1:
-      color = ["#629755"];
+      color = ["#6897BB"];
       break;
     default:
       color = [
-        "#629755",
+        "#6897BB",
         "#9876AA",
-        "#CC7832",
-        "#8A653B",
-        "#e1483b",
+        "#629755",
         "#FFC66D",
+        "#CC7832",
+        "#e1483b",
+        "#8A653B",
       ];
       break;
   }

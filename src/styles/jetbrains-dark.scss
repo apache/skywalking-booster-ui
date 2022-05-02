@@ -30,7 +30,8 @@
 }
 
 .el-pagination.is-background .el-pager li:not(.disabled).active {
-  background: var(--spp-other-green);
+  background: var(--spp-light-grey);
+  color: ghostwhite !important;
 }
 
 .el-input__inner {
@@ -108,7 +109,7 @@
 }
 
 .settings input {
-  background: var(--spp-dark-green) !important;
+  background: var(--nice-black) !important;
   border: 1px solid var(--spp-blue) !important;
   color: var(--spp-white);
 }
@@ -120,6 +121,20 @@
 .el-switch__core {
   --el-switch-off-color: var(--spp-dark-green);
   --el-switch-on-color: var(--spp-red);
+  background-color: var(--spp-darkest-green) !important;
+  border-color: var(--border-color) !important;
+}
+
+.el-switch__core .el-switch__inner .is-icon, .el-switch__core .el-switch__inner .is-text {
+  color: var(--spp-light-grey);
+}
+
+.el-switch__action {
+  background-color: ghostwhite !important;
+}
+
+.is-checked > .el-switch__core  {
+  background-color: var(--spp-white) !important;
 }
 
 .alarm-tool {
@@ -140,7 +155,7 @@
 }
 
 .timeline-table-i {
-  border-left: 4px solid var(--spp-other-green) !important;
+  border-left: 4px solid var(--border-color) !important;
 }
 
 .timeline-table-i::before {
@@ -184,20 +199,28 @@
   background-color: var(--nice-black) !important;
 }
 
+.el-pagination__jump {
+  color: var(--spp-light-grey) !important;
+}
+
 .el-pager li.active {
-  background-color: var(--spp-other-green);
+  background-color: var(--border-color);
+  color: var(--spp-light-grey) !important;
 }
 
 .el-pager li {
   background-color: var(--spp-green);
+  color: var(--spp-white) !important;
 }
 
-.el-pager li.active {
-  color: var(--spp-white);
+.btn-prev[type="button"] {
+  background-color: var(--border-color);
+  color: var(--spp-light-grey) !important;
 }
 
 .el-pager + button.btn-next[type="button"] {
-  background-color: var(--spp-grey);
+  background-color: var(--border-color);
+  color: var(--spp-light-grey) !important;
 }
 
 .toggle-selection {
@@ -257,10 +280,6 @@
 
 .chart-card {
   color: var(--spp-light-grey) !important;
-}
-
-.unit {
-  color: var(--spp-white) !important;
 }
 
 .profile-item.level0 {
@@ -414,7 +433,7 @@ a {
 
 .timeline-table-i {
   &::before {
-    background-color: #448dfe !important;
+    background-color: var(--spp-white) !important;
   }
 }
 
@@ -480,4 +499,24 @@ a {
 
 .scroll-handler__wrapper .scroll-to.active {
   background-color: var(--border-color) !important;
+}
+
+.el-input-group__append, .el-input-group__prepend {
+  background-color: var(--spp-darkest-green) !important;
+  border-color: var(--spp-darkest-green);
+}
+
+.tabs span.active input.tab-name.view {
+  //background-color: var(--border-color) !important;
+  color: var(--spp-light-grey) !important;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.tab-header {
+  background-color: var(--nice-black) !important;
+}
+
+.timeline-item {
+  color: var(--spp-light-grey) !important;
 }

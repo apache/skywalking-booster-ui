@@ -35,7 +35,7 @@ limitations under the License. -->
       <el-progress
         :stroke-width="6"
         :percentage="(i.value / maxValue) * 100"
-        :color="TextColors[config.color || 'red']"
+        :color="TextColors[config.color || 'purple']"
         :show-text="false"
       />
     </div>
