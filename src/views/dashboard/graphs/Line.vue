@@ -128,7 +128,7 @@ function getOption() {
         "#9876AA",
         "#CC7832",
         "#8A653B",
-        "#FF0000",
+        "#e1483b",
         "#FFC66D",
       ];
       break;

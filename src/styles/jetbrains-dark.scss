@@ -1,5 +1,5 @@
 :root {
-  --spp-white: #A9B7C6;
+  --spp-white: #808080;
   --spp-light-grey: #A9B7C6;
   --spp-grey: #A9B7C6;
   --spp-light-blue: #629755;
@@ -66,6 +66,7 @@
 
 .el-popper.is-light {
   background: var(--nice-black);
+  border: 1px solid var(--border-color) !important;
 }
 
 .micro-topo-chart .operations-list {
@@ -213,11 +214,20 @@
 
 .el-sub-menu__title {
   background-color: var(--spp-other-green) !important;
+
+  &:hover {
+    background-color: var(--dashboard-tool-background) !important;
+  }
+}
+
+.el-menu-item {
+  &:hover {
+    background-color: var(--dashboard-tool-background) !important;
+  }
 }
 
 .el-menu-item.is-active {
-  color: var(--spp-red) !important;
-  background-color: var(--menu-selected-color) !important;
+  background-color: var(--dashboard-tool-background) !important;
 }
 
 .bar-select {
@@ -231,7 +241,7 @@
 .nav-bar {
   background-color: var(--spp-darkest-green) !important;
   border-bottom: 1px solid var(--spp-darkest-green) !important;
-  color: var(--spp-white) !important;
+  color: var(--spp-light-grey) !important;
 }
 
 .nav-bar.dark {
@@ -241,11 +251,15 @@
 
 .tools {
   &:hover {
-    color: var(--spp-red) !important;
+    color: var(--spp-white) !important;
   }
 }
 
 .chart-card {
+  color: var(--spp-light-grey) !important;
+}
+
+.unit {
   color: var(--spp-white) !important;
 }
 
@@ -281,6 +295,10 @@
 }
 
 .tabs {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+
   input {
     background: inherit !important;
   }
@@ -308,7 +326,7 @@
 }
 
 .vue-grid-item.active {
-  border: 1px solid var(--spp-red) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 .vue-grid-layout {
@@ -317,10 +335,6 @@
 
 .vue-grid-item:not(.vue-grid-placeholder) {
   background: var(--spp-dark-green) !important;
-}
-
-.vue-grid-item.active {
-  border: 1px solid var(--spp-red) !important;
 }
 
 .dashboard-tool {
@@ -362,7 +376,7 @@
 }
 
 .link {
-  color: var(--spp-red) !important;
+  color: var(--spp-light-grey) !important;
 }
 
 .dark-dialog {
@@ -411,4 +425,59 @@ a {
 
 .log-tips {
   color: red;
+}
+
+.el-progress-bar__outer {
+  background-color: var(--widget-background) !important;
+}
+
+.menu-control {
+  color: var(--spp-white) !important;
+}
+
+.el-notification {
+  background-color: var(--widget-background) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.el-notification__title {
+  color: var(--spp-white) !important;
+}
+
+.el-notification__content {
+  color: var(--spp-light-grey) !important;
+}
+
+.graph {
+  background-color: var(--widget-background) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.header,
+.footer {
+  background-color: var(--table-header-color) !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+
+.el-collapse-item__header {
+  background-color: var(--spp-darkest-green) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.el-collapse-item__wrap {
+  background-color: var(--widget-background) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.el-collapse-item__content {
+  background-color: var(--dashboard-tool-background) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.attributes {
+  color: var(--spp-light-grey) !important;
+}
+
+.scroll-handler__wrapper .scroll-to.active {
+  background-color: var(--border-color) !important;
 }

@@ -86,7 +86,7 @@ export default defineComponent({
       if (isScrolling.value) {
         setTimeout(() => {
           isScrolling.value = false;
-        }, 600);
+        }, 800);
       }
     }
     function scrollUp() {

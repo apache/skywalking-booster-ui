@@ -46,7 +46,7 @@ limitations under the License. -->
                 <Icon
                   iconName="timeline"
                   size="middle"
-                  style="color: #409eff"
+                  style="color: #629755"
                 />
               </span>
             </template>
