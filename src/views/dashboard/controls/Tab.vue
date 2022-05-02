@@ -424,7 +424,7 @@ export default defineComponent({
   right: 0;
   top: 40vh;
   height: auto;
-  width: 20px;
+  width: 17px;
   .scroll-to {
     opacity: 0.5;
     width: 10px;

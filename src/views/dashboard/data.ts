@@ -253,14 +253,14 @@ export const QueryOrders = [
   { label: "Duration", value: "BY_DURATION" },
 ];
 export const TextColors: { [key: string]: string } = {
-  green: "#67C23A",
+  green: "#629755",
   blue: "#409EFF",
-  red: "#F56C6C",
+  red: "#e1483b",
   grey: "#909399",
   white: "#fff",
   black: "#000",
   orange: "#E6A23C",
-  purple: "#bf99f8",
+  purple: "#9876AA",
 };
 
 export const CalculationOpts = [
