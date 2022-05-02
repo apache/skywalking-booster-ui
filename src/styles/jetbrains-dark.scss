@@ -281,6 +281,10 @@
 }
 
 .tabs {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+
   input {
     background: inherit !important;
   }
