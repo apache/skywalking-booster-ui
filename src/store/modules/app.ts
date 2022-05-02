@@ -97,7 +97,8 @@ export const appStore = defineStore({
       for (let i = 0; i <= endUnix - startUnix; i += interval) {
         const temp: string = dateFormatTime(
           new Date(startUnix + i - utcSpace),
-          this.duration.step
+          this.duration.step,
+          false
         );
         timeIntervals.push(temp);
       }

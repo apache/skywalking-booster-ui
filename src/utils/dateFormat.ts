@@ -63,7 +63,11 @@ export default function dateFormatStep(
   return "";
 }
 
-export const dateFormatTime = (date: Date, step: string): string => {
+export const dateFormatTime = (
+  date: Date,
+  step: string,
+  twentyFourHourTime: boolean
+): string => {
   const year = date.getFullYear();
   const monthTemp = date.getMonth() + 1;
   let month = `${monthTemp}`;
@@ -83,11 +87,26 @@ export const dateFormatTime = (date: Date, step: string): string => {
   }
   const hourTemp = date.getHours();
   let hour = `${hourTemp}`;
-  if (hourTemp < 10) {
-    hour = `0${hourTemp}`;
+  let hourSuffix = "AM";
+  if (twentyFourHourTime) {
+    if (hourTemp < 10) {
+      hour = `0${hourTemp}`;
+    }
+  } else {
+    if (hourTemp === 0) {
+      hour = "12";
+    } else if (hourTemp === 12) {
+      hour = "12";
+      hourSuffix = "PM";
+    } else if (hourTemp > 12) {
+      hour = `${hourTemp - 12}`;
+      hourSuffix = "PM";
+    } else {
+      hour = `${hourTemp}`;
+    }
   }
   if (step === "HOUR") {
-    return `${month}-${day} ${hour}`;
+    return `${month}-${day} ${hour} ${hourSuffix}`;
   }
   const minuteTemp = date.getMinutes();
   let minute = `${minuteTemp}`;
@@ -95,7 +114,7 @@ export const dateFormatTime = (date: Date, step: string): string => {
     minute = `0${minuteTemp}`;
   }
   if (step === "MINUTE") {
-    return `${hour}:${minute}\n${month}-${day}`;
+    return `${hour}:${minute} ${hourSuffix}\n${month}-${day}`;
   }
   return "";
 };

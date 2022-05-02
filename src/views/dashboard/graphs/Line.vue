@@ -191,6 +191,10 @@ function getOption() {
       axisLabel: {
         color: "#808080",
         fontSize: "13",
+        formatter: function (value) {
+          //todo: should only substr if date is current date
+          return (value as string).substring(0, value.indexOf("\n"));
+        },
       },
     },
     yAxis: {
