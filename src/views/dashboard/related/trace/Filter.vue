@@ -14,6 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h row">
+    <div class="flex-h">
+      <el-button type="secondary"> Instance </el-button>
+      <el-button type="secondary"> Status </el-button>
+      <el-button type="secondary"> 
+        <!-- <Icon size="sm" iconName="duration" /> -->
+        Duration
+       </el-button>
+    </div>
     <div class="mr-5" v-if="dashboardStore.entity === EntityType[1].value">
       <span class="grey mr-5">{{ t("service") }}:</span>
       <Selector

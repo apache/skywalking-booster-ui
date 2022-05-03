@@ -266,7 +266,7 @@ export default defineComponent({
       }
     );
 
-    function clickTabs(e: Event, idx: number) {
+    function clickTabs(e: Event, idx: number) {      
       e.stopPropagation();
       activeTabIndex.value = idx;
       dashboardStore.activeGridItem(props.data.i);
@@ -279,6 +279,7 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
       needQuery.value = true;
+      console.log(dashboardStore.layout[0])
     }
     function removeTab(e: Event) {
       e.stopPropagation();
