@@ -62,7 +62,7 @@ limitations under the License. -->
           <Icon size="sm" iconName="av_timer" />
         </el-button>
       </el-tooltip>
-      
+
       <el-tooltip
         v-if="!activeFilter.length || activeFilter === 'traceId'"
         class="box-item"
@@ -74,7 +74,7 @@ limitations under the License. -->
           <Icon size="sm" iconName="timeline" />
         </el-button>
       </el-tooltip>
-      
+
       <el-tooltip
         v-if="!activeFilter.length || activeFilter === 'tags'"
         class="box-item"
@@ -88,12 +88,7 @@ limitations under the License. -->
       </el-tooltip>
     </div>
     <div class="wrap-filters">
-      <div
-        class="filter my-5"
-        v-if="
-          activeFilter === 'service'
-        "
-      >
+      <div class="filter my-5" v-if="activeFilter === 'service'">
         <span class="grey mr-5">{{ t("service") }}:</span>
         <Selector
           size="small"
@@ -105,7 +100,9 @@ limitations under the License. -->
       </div>
       <div
         class="filter my-5"
-        v-if="activeFilter === 'instance' && dashboardStore.entity !== EntityType[3].value"
+        v-if="
+          activeFilter === 'instance' && dashboardStore.entity !== EntityType[3].value
+        "
       >
         <span class="grey mr-5">{{ t("instance") }}:</span>
         <Selector
@@ -149,7 +146,11 @@ limitations under the License. -->
         <span class="grey mr-5">-</span>
         <el-input size="small" class="inputs" v-model="maxTraceDuration" />
       </div>
-      <ConditionTags v-if="activeFilter === 'tags'" :type="'TRACE'" @update="updateTags" />
+      <ConditionTags
+        v-if="activeFilter === 'tags'"
+        :type="'TRACE'"
+        @update="updateTags"
+      />
       <el-button
         v-if="activeFilter"
         class="search-btn"
@@ -167,7 +168,6 @@ limitations under the License. -->
         type="danger"
         @click="cancelSearch"
       >
-        <!-- {{ t("search") }} -->
         <Icon iconSize="sm" iconName="cancel" />
       </el-button>
     </div>
@@ -192,7 +192,7 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 
 const activeFilter = ref<string>("");
-const showAllBtns = ref<boolean>(true);
+// const showAllBtns = ref<boolean>(true);
 function setFilter(filter: string) {
   activeFilter.value = filter;
 }
