@@ -16,6 +16,18 @@ limitations under the License. -->
   <div class="flex-h row">
     <div class="flex-h">
       <el-tooltip
+        v-if="!activeFilter.length || activeFilter === 'service'"
+        class="box-item"
+        effect="dark"
+        content="Service"
+        placement="top-start"
+      >
+        <el-button @click="setFilter('service')" type="secondary">
+          <Icon size="sm" iconName="cloud_queue" />
+        </el-button>
+      </el-tooltip>
+
+      <el-tooltip
         v-if="!activeFilter.length || activeFilter === 'instance'"
         class="box-item"
         effect="dark"
@@ -78,7 +90,9 @@ limitations under the License. -->
     <div class="wrap-filters">
       <div
         class="filter my-5"
-        v-if="activeFilter === 'service' && dashboardStore.entity === EntityType[1].value"
+        v-if="
+          activeFilter === 'service'
+        "
       >
         <span class="grey mr-5">{{ t("service") }}:</span>
         <Selector
@@ -135,7 +149,7 @@ limitations under the License. -->
         <span class="grey mr-5">-</span>
         <el-input size="small" class="inputs" v-model="maxTraceDuration" />
       </div>
-      <ConditionTags v-if="tagsActive" :type="'TRACE'" @update="updateTags" />
+      <ConditionTags v-if="activeFilter === 'tags'" :type="'TRACE'" @update="updateTags" />
       <el-button
         v-if="activeFilter"
         class="search-btn"
