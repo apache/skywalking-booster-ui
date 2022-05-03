@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
-    <div class="flex-h">
+    <div class="flex-h">    
       <div class="selectors-item" v-if="key !== 10">
         <span class="label">$Service</span>
         <Selector
@@ -118,8 +118,10 @@ limitations under the License. -->
       </div>
     </div>
   </div>
+  <Filter />
 </template>
 <script lang="ts" setup>
+import Filter from "../related/trace/Filter.vue";
 import { reactive, ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";

@@ -30,7 +30,8 @@ limitations under the License. -->
       </div>
     </el-popover>
     <div class="header">
-      <Filter />
+    <!-- <h1>Filter</h1> -->
+      <!-- <Filter /> -->
     </div>
     <div class="trace flex-h">
       <TraceList />
@@ -40,7 +41,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import Filter from "../related/trace/Filter.vue";
+// import Filter from "../related/trace/Filter.vue";
 import TraceList from "../related/trace/TraceList.vue";
 import TraceDetail from "../related/trace/Detail.vue";
 import { useI18n } from "vue-i18n";
