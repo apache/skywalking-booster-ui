@@ -26,6 +26,7 @@ limitations under the License. -->
           <Icon size="sm" iconName="storage" />
         </el-button>
       </el-tooltip>
+
       <el-tooltip
         v-if="!activeFilter.length || activeFilter === 'status'"
         class="box-item"
@@ -37,6 +38,7 @@ limitations under the License. -->
           <Icon size="sm" iconName="device_hub" />
         </el-button>
       </el-tooltip>
+
       <el-tooltip
         v-if="!activeFilter.length || activeFilter === 'duration'"
         class="box-item"
@@ -45,14 +47,38 @@ limitations under the License. -->
         placement="top-start"
       >
         <el-button @click="setFilter('duration')" type="secondary">
+          <Icon size="sm" iconName="av_timer" />
+        </el-button>
+      </el-tooltip>
+      
+      <el-tooltip
+        v-if="!activeFilter.length || activeFilter === 'traceId'"
+        class="box-item"
+        effect="dark"
+        content="Trace ID"
+        placement="top-start"
+      >
+        <el-button @click="setFilter('traceId')" type="secondary">
           <Icon size="sm" iconName="timeline" />
+        </el-button>
+      </el-tooltip>
+      
+      <el-tooltip
+        v-if="!activeFilter.length || activeFilter === 'tags'"
+        class="box-item"
+        effect="dark"
+        content="Tags"
+        placement="top-start"
+      >
+        <el-button @click="setFilter('tags')" type="secondary">
+          <Icon size="sm" iconName="epic" />
         </el-button>
       </el-tooltip>
     </div>
     <div class="wrap-filters">
       <div
         class="filter my-5"
-        v-if="serviveActive && dashboardStore.entity === EntityType[1].value"
+        v-if="activeFilter === 'service' && dashboardStore.entity === EntityType[1].value"
       >
         <span class="grey mr-5">{{ t("service") }}:</span>
         <Selector
@@ -65,7 +91,7 @@ limitations under the License. -->
       </div>
       <div
         class="filter my-5"
-        v-if="instanceActive && dashboardStore.entity !== EntityType[3].value"
+        v-if="activeFilter === 'instance' && dashboardStore.entity !== EntityType[3].value"
       >
         <span class="grey mr-5">{{ t("instance") }}:</span>
         <Selector
@@ -76,10 +102,7 @@ limitations under the License. -->
           @change="changeField('instance', $event)"
         />
       </div>
-      <div
-        class="filter my-5"
-        v-if="dashboardStore.entity !== EntityType[2].value"
-      >
+      <div class="filter my-5" v-if="dashboardStore.entity !== EntityType[2].value">
         <span class="grey mr-5">{{ t("endpoint") }}:</span>
         <Selector
           size="small"
@@ -91,7 +114,7 @@ limitations under the License. -->
           @query="searchEndpoints"
         />
       </div>
-      <div v-if="statusActive" class="filter my-5">
+      <div v-if="activeFilter === 'status'" class="filter my-5">
         <span class="grey mr-5">{{ t("status") }}:</span>
         <Selector
           size="small"
@@ -101,12 +124,12 @@ limitations under the License. -->
           @change="changeField('status', $event)"
         />
       </div>
-      <div v-if="traceActive" class="filter my-5">
+      <div v-if="activeFilter === 'traceId'" class="filter my-5">
         <span class="grey mr-5">{{ t("traceID") }}:</span>
         <el-input size="small" v-model="traceId" class="traceId" />
       </div>
 
-      <div v-if="duractionActive" class="filter my-5">
+      <div v-if="activeFilter === 'duration'" class="filter my-5">
         <span class="sm b grey mr-5">{{ t("duration") }}:</span>
         <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
         <span class="grey mr-5">-</span>
@@ -160,7 +183,7 @@ function setFilter(filter: string) {
   activeFilter.value = filter;
 }
 function cancelSearch() {
-  activeFilter.value = ""
+  activeFilter.value = "";
 }
 
 const traceStore = useTraceStore();
