@@ -15,15 +15,25 @@ limitations under the License. -->
 <template>
   <div class="flex-h row">
     <div class="flex-h">
-      <el-button type="secondary"> Instance </el-button>
-      <el-button type="secondary"> Status </el-button>
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="Instance"
+        placement="top-start"
+      >
+      <el-button  @click="instanceActive = !instanceActive" type="secondary">
+        <Icon size="sm" iconName="storage" />
+      </el-button>
+      
+      </el-tooltip>
+      <el-button type="secondary"> Status </el-button> 
       <el-button type="secondary">
         <!-- <Icon size="sm" iconName="duration" /> -->
         Duration
       </el-button>
     </div>
     <div class="wrap-filters">
-      <div class="filter my-5" v-if="dashboardStore.entity === EntityType[1].value">
+      <div class="filter my-5" v-if="serviveActive && dashboardStore.entity === EntityType[1].value ">
         <span class="grey mr-5">{{ t("service") }}:</span>
         <Selector
           size="small"
@@ -33,7 +43,7 @@ limitations under the License. -->
           @change="changeField('service', $event)"
         />
       </div>
-      <div class="filter my-5" v-if="dashboardStore.entity !== EntityType[3].value">
+      <div class="filter my-5" v-if="instanceActive && dashboardStore.entity !== EntityType[3].value">
         <span class="grey mr-5">{{ t("instance") }}:</span>
         <Selector
           size="small"
@@ -55,7 +65,7 @@ limitations under the License. -->
           @query="searchEndpoints"
         />
       </div>
-      <div class="filter my-5">
+      <div v-if="statusActive" class="filter my-5">
         <span class="grey mr-5">{{ t("status") }}:</span>
         <Selector
           size="small"
@@ -65,25 +75,26 @@ limitations under the License. -->
           @change="changeField('status', $event)"
         />
       </div>
-      <div class="filter my-5">
+      <div v-if="traceActive" class="filter my-5">
         <span class="grey mr-5">{{ t("traceID") }}:</span>
         <el-input size="small" v-model="traceId" class="traceId" />
       </div>
 
-      <div class="filter my-5">
+      <div v-if="duractionActive" class="filter my-5">
         <span class="sm b grey mr-5">{{ t("duration") }}:</span>
         <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
         <span class="grey mr-5">-</span>
         <el-input size="small" class="inputs" v-model="maxTraceDuration" />
       </div>
-      <ConditionTags :type="'TRACE'" @update="updateTags" />
+      <ConditionTags v-if="tagsActive" :type="'TRACE'" @update="updateTags" />
       <el-button
         class="search-btn"
         size="small"
         type="primary"
         @click="searchTraces"
       >
-        {{ t("search") }}
+        <!-- {{ t("search") }} -->
+        <Icon iconSize="sm" iconName="cancel" />
       </el-button>
     </div>
   </div>
@@ -106,10 +117,12 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 
+const serviveActive = ref<boolean>(false);
 const duractionActive = ref<boolean>(false);
 const statusActive = ref<boolean>(false);
 const instanceActive = ref<boolean>(false);
 const tagsActive = ref<boolean>(false);
+const traceActive = ref<boolean>(false);
 
 const traceStore = useTraceStore();
 const traceId = ref<string>("");
@@ -271,7 +284,7 @@ watch(
   display: flex;
   flex-wrap: wrap;
   // flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   .filter{
     margin: 5px 0;
   }
