@@ -30,8 +30,7 @@ limitations under the License. -->
       </div>
     </el-popover>
     <div class="header">
-    <!-- <h1>Filter</h1> -->
-      <!-- <Filter /> -->
+    <!-- filter was here -->
     </div>
     <div class="trace flex-h">
       <TraceList />

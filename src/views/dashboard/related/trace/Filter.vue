@@ -16,24 +16,44 @@ limitations under the License. -->
   <div class="flex-h row">
     <div class="flex-h">
       <el-tooltip
+        v-if="!activeFilter.length || activeFilter === 'instance'"
         class="box-item"
         effect="dark"
         content="Instance"
         placement="top-start"
       >
-      <el-button  @click="instanceActive = !instanceActive" type="secondary">
-        <Icon size="sm" iconName="storage" />
-      </el-button>
-      
+        <el-button @click="setFilter('instance')" type="secondary">
+          <Icon size="sm" iconName="storage" />
+        </el-button>
       </el-tooltip>
-      <el-button type="secondary"> Status </el-button> 
-      <el-button type="secondary">
-        <!-- <Icon size="sm" iconName="duration" /> -->
-        Duration
-      </el-button>
+      <el-tooltip
+        v-if="!activeFilter.length || activeFilter === 'status'"
+        class="box-item"
+        effect="dark"
+        content="Status"
+        placement="top-start"
+      >
+        <el-button @click="setFilter('status')" type="secondary">
+          <Icon size="sm" iconName="device_hub" />
+        </el-button>
+      </el-tooltip>
+      <el-tooltip
+        v-if="!activeFilter.length || activeFilter === 'duration'"
+        class="box-item"
+        effect="dark"
+        content="Duration"
+        placement="top-start"
+      >
+        <el-button @click="setFilter('duration')" type="secondary">
+          <Icon size="sm" iconName="timeline" />
+        </el-button>
+      </el-tooltip>
     </div>
     <div class="wrap-filters">
-      <div class="filter my-5" v-if="serviveActive && dashboardStore.entity === EntityType[1].value ">
+      <div
+        class="filter my-5"
+        v-if="serviveActive && dashboardStore.entity === EntityType[1].value"
+      >
         <span class="grey mr-5">{{ t("service") }}:</span>
         <Selector
           size="small"
@@ -43,7 +63,10 @@ limitations under the License. -->
           @change="changeField('service', $event)"
         />
       </div>
-      <div class="filter my-5" v-if="instanceActive && dashboardStore.entity !== EntityType[3].value">
+      <div
+        class="filter my-5"
+        v-if="instanceActive && dashboardStore.entity !== EntityType[3].value"
+      >
         <span class="grey mr-5">{{ t("instance") }}:</span>
         <Selector
           size="small"
@@ -53,7 +76,10 @@ limitations under the License. -->
           @change="changeField('instance', $event)"
         />
       </div>
-      <div class="filter my-5" v-if="dashboardStore.entity !== EntityType[2].value">
+      <div
+        class="filter my-5"
+        v-if="dashboardStore.entity !== EntityType[2].value"
+      >
         <span class="grey mr-5">{{ t("endpoint") }}:</span>
         <Selector
           size="small"
@@ -88,10 +114,21 @@ limitations under the License. -->
       </div>
       <ConditionTags v-if="tagsActive" :type="'TRACE'" @update="updateTags" />
       <el-button
+        v-if="activeFilter"
         class="search-btn"
         size="small"
         type="primary"
         @click="searchTraces"
+      >
+        <!-- {{ t("search") }} -->
+        <Icon iconSize="sm" iconName="search" />
+      </el-button>
+      <el-button
+        v-if="activeFilter"
+        class="search-btn"
+        size="small"
+        type="danger"
+        @click="cancelSearch"
       >
         <!-- {{ t("search") }} -->
         <Icon iconSize="sm" iconName="cancel" />
@@ -117,12 +154,14 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 
-const serviveActive = ref<boolean>(false);
-const duractionActive = ref<boolean>(false);
-const statusActive = ref<boolean>(false);
-const instanceActive = ref<boolean>(false);
-const tagsActive = ref<boolean>(false);
-const traceActive = ref<boolean>(false);
+const activeFilter = ref<string>("");
+const showAllBtns = ref<boolean>(true);
+function setFilter(filter: string) {
+  activeFilter.value = filter;
+}
+function cancelSearch() {
+  activeFilter.value = ""
+}
 
 const traceStore = useTraceStore();
 const traceId = ref<string>("");
@@ -285,7 +324,7 @@ watch(
   flex-wrap: wrap;
   // flex-direction: column;
   align-items: center;
-  .filter{
+  .filter {
     margin: 5px 0;
   }
 }
