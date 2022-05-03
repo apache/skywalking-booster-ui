@@ -17,83 +17,75 @@ limitations under the License. -->
     <div class="flex-h">
       <el-button type="secondary"> Instance </el-button>
       <el-button type="secondary"> Status </el-button>
-      <el-button type="secondary"> 
+      <el-button type="secondary">
         <!-- <Icon size="sm" iconName="duration" /> -->
         Duration
-       </el-button>
+      </el-button>
     </div>
-    <div class="mr-5" v-if="dashboardStore.entity === EntityType[1].value">
-      <span class="grey mr-5">{{ t("service") }}:</span>
-      <Selector
+    <div class="wrap-filters">
+      <div class="filter my-5" v-if="dashboardStore.entity === EntityType[1].value">
+        <span class="grey mr-5">{{ t("service") }}:</span>
+        <Selector
+          size="small"
+          :value="state.service.value"
+          :options="traceStore.services"
+          placeholder="Select a service"
+          @change="changeField('service', $event)"
+        />
+      </div>
+      <div class="filter my-5" v-if="dashboardStore.entity !== EntityType[3].value">
+        <span class="grey mr-5">{{ t("instance") }}:</span>
+        <Selector
+          size="small"
+          :value="state.instance.value"
+          :options="traceStore.instances"
+          placeholder="Select a instance"
+          @change="changeField('instance', $event)"
+        />
+      </div>
+      <div class="filter my-5" v-if="dashboardStore.entity !== EntityType[2].value">
+        <span class="grey mr-5">{{ t("endpoint") }}:</span>
+        <Selector
+          size="small"
+          :value="state.endpoint.value"
+          :options="traceStore.endpoints"
+          placeholder="Select a endpoint"
+          :isRemote="true"
+          @change="changeField('endpoint', $event)"
+          @query="searchEndpoints"
+        />
+      </div>
+      <div class="filter my-5">
+        <span class="grey mr-5">{{ t("status") }}:</span>
+        <Selector
+          size="small"
+          :value="state.status.value"
+          :options="Status"
+          placeholder="Select a status"
+          @change="changeField('status', $event)"
+        />
+      </div>
+      <div class="filter my-5">
+        <span class="grey mr-5">{{ t("traceID") }}:</span>
+        <el-input size="small" v-model="traceId" class="traceId" />
+      </div>
+
+      <div class="filter my-5">
+        <span class="sm b grey mr-5">{{ t("duration") }}:</span>
+        <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
+        <span class="grey mr-5">-</span>
+        <el-input size="small" class="inputs" v-model="maxTraceDuration" />
+      </div>
+      <ConditionTags :type="'TRACE'" @update="updateTags" />
+      <el-button
+        class="search-btn"
         size="small"
-        :value="state.service.value"
-        :options="traceStore.services"
-        placeholder="Select a service"
-        @change="changeField('service', $event)"
-      />
+        type="primary"
+        @click="searchTraces"
+      >
+        {{ t("search") }}
+      </el-button>
     </div>
-    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[3].value">
-      <span class="grey mr-5">{{ t("instance") }}:</span>
-      <Selector
-        size="small"
-        :value="state.instance.value"
-        :options="traceStore.instances"
-        placeholder="Select a instance"
-        @change="changeField('instance', $event)"
-      />
-    </div>
-    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[2].value">
-      <span class="grey mr-5">{{ t("endpoint") }}:</span>
-      <Selector
-        size="small"
-        :value="state.endpoint.value"
-        :options="traceStore.endpoints"
-        placeholder="Select a endpoint"
-        :isRemote="true"
-        @change="changeField('endpoint', $event)"
-        @query="searchEndpoints"
-      />
-    </div>
-    <div class="mr-5">
-      <span class="grey mr-5">{{ t("status") }}:</span>
-      <Selector
-        size="small"
-        :value="state.status.value"
-        :options="Status"
-        placeholder="Select a status"
-        @change="changeField('status', $event)"
-      />
-    </div>
-    <div class="mr-5">
-      <span class="grey mr-5">{{ t("traceID") }}:</span>
-      <el-input size="small" v-model="traceId" class="traceId" />
-    </div>
-  </div>
-  <div class="flex-h">
-    <!-- <div class="mr-5">
-      <span class="grey mr-5">{{ t("timeRange") }}:</span>
-      <TimePicker
-        :value="dateTime"
-        position="bottom"
-        format="YYYY-MM-DD HH:mm"
-        @input="changeTimeRange"
-      />
-    </div> -->
-    <div class="mr-5">
-      <span class="sm b grey mr-5">{{ t("duration") }}:</span>
-      <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
-      <span class="grey mr-5">-</span>
-      <el-input size="small" class="inputs" v-model="maxTraceDuration" />
-    </div>
-    <ConditionTags :type="'TRACE'" @update="updateTags" />
-    <el-button
-      class="search-btn"
-      size="small"
-      type="primary"
-      @click="searchTraces"
-    >
-      {{ t("search") }}
-    </el-button>
   </div>
 </template>
 <script lang="ts" setup>
@@ -113,6 +105,12 @@ const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
+
+const duractionActive = ref<boolean>(false);
+const statusActive = ref<boolean>(false);
+const instanceActive = ref<boolean>(false);
+const tagsActive = ref<boolean>(false);
+
 const traceStore = useTraceStore();
 const traceId = ref<string>("");
 const minTraceDuration = ref<string>("");
@@ -268,4 +266,26 @@ watch(
   margin-left: 20px;
   cursor: pointer;
 }
+.wrap-filters {
+  padding: 0 10px;
+  display: flex;
+  flex-wrap: wrap;
+  // flex-direction: column;
+  align-items: flex-start;
+  .filter{
+    margin: 5px 0;
+  }
+}
 </style>
+
+//
+<div class="flex-h">
+//      <div class="filter my-5">
+//       <span class="grey mr-5">{{ t("timeRange") }}:</span>
+//       <TimePicker
+//         :value="dateTime"
+//         position="bottom"
+//         format="YYYY-MM-DD HH:mm"
+//         @input="changeTimeRange"
+//       />
+//     </div>
