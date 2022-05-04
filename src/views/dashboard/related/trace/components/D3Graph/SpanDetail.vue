@@ -40,7 +40,7 @@ limitations under the License. -->
       <span class="g-sm-8 wba">{{ currentSpan.peer || "No Peer" }}</span>
     </div>
     <div class="mb-10 clear item">
-      <span class="g-sm-4 grey">{{ t("error") }}:</span>
+      <span class="g-sm-4 grey">{{ t("isError") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.isError }}</span>
     </div>
     <div class="mb-10 clear item" v-for="i in currentSpan.tags" :key="i.key">

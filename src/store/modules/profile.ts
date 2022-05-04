@@ -161,7 +161,13 @@ export const profileStore = defineStore({
         this.analyzeTrees = [];
         return res.data;
       }
-      this.segmentSpans = segment.spans;
+      this.segmentSpans = segment.spans.map((d: SegmentSpan) => {
+        return {
+          ...d,
+          segmentId: this.currentSegment.segmentId,
+          traceId: this.currentSegment.traceIds[0],
+        };
+      });
       if (!(segment.spans && segment.spans.length)) {
         this.analyzeTrees = [];
         return res.data;

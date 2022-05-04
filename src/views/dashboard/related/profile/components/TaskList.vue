@@ -124,12 +124,14 @@ limitations under the License. -->
 import { ref } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
+import { useSelectorStore } from "@/store/modules/selectors";
 import { useProfileStore } from "@/store/modules/profile";
 import { TaskLog, TaskListItem } from "@/types/profile";
 import { ElMessage } from "element-plus";
 
 const { t } = useI18n();
 const profileStore = useProfileStore();
+const selectorStore = useSelectorStore();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 const viewDetail = ref<boolean>(false);
@@ -150,7 +152,7 @@ async function viewTask(e: Event, item: TaskListItem) {
   viewDetail.value = true;
   selectedTask.value = item;
   service.value = (
-    profileStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}
+    selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}
   ).label;
   const res = await profileStore.getTaskLogs({ taskID: item.id });
 
