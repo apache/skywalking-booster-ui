@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <el-select
+  ref="customSelector"
     :size="size"
     v-model="selected"
     :placeholder="placeholder"
@@ -37,7 +38,7 @@ limitations under the License. -->
   </el-select>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import type { PropType } from "vue";
 
 interface Option {
@@ -47,6 +48,7 @@ interface Option {
 
 /*global  defineProps, defineEmits*/
 const emit = defineEmits(["change", "query"]);
+const customSelector = ref<string>(null)
 const props = defineProps({
   options: {
     type: Array as PropType<(Option & { disabled?: boolean })[]>,
@@ -84,6 +86,10 @@ function remoteMethod(query: string) {
   }
 }
 
+onMounted(() => {
+  console.log(customSelector.value)
+})
+
 watch(
   () => props.value,
   (data) => {
@@ -94,5 +100,8 @@ watch(
 <style lang="scss" scoped>
 .el-input__inner {
   border-radius: unset !important;
+}
+.el-input.el-input--small.el-input--suffix{
+  height: 18px !important;
 }
 </style>

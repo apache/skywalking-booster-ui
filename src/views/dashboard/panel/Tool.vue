@@ -36,7 +36,7 @@ limitations under the License. -->
           <!-- <span class="label">$Service</span> -->
           <Selector
             v-if="selectedSelector === '$service'"
-            style="margin-left: 20px"
+            style="margin-left: 20px;"
             v-model="states.currentService"
             :options="selectorStore.services"
             size="small"
@@ -81,6 +81,7 @@ limitations under the License. -->
           </span> -->
           <Selector
             v-if="selectedSelector === '$endpoint'"
+            style="margin-left: 20px;"
             v-model="states.currentPod"
             :options="selectorStore.pods"
             size="small"
@@ -761,5 +762,8 @@ watch(
 
 .tool-btn{
   height: 18px;
+}
+.el-input__wrapper{
+  height: 18px !important;
 }
 </style>

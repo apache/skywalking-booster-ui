@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h">
-    <div class="flex-h">
+    <div class="flex-h filter-container">
       <el-tooltip
         v-if="!activeFilter.length || activeFilter === 'service'"
         class="box-item"
@@ -88,7 +88,7 @@ limitations under the License. -->
       </el-tooltip>
     </div>
     <div class="wrap-filters">
-      <div class="filter my-5" v-if="activeFilter === 'service'">
+      <div class="filter" v-if="activeFilter === 'service'">
         <span class="grey mr-5">{{ t("service") }}:</span>
         <Selector
           size="small"
@@ -99,7 +99,7 @@ limitations under the License. -->
         />
       </div>
       <div
-        class="filter my-5"
+        class="filter"
         v-if="
           activeFilter === 'instance' && dashboardStore.entity !== EntityType[3].value
         "
@@ -113,7 +113,7 @@ limitations under the License. -->
           @change="changeField('instance', $event)"
         />
       </div>
-      <div class="filter my-5" v-if="dashboardStore.entity !== EntityType[2].value">
+      <div class="filter" v-if="dashboardStore.entity !== EntityType[2].value">
         <span class="grey mr-5">{{ t("endpoint") }}:</span>
         <Selector
           size="small"
@@ -125,7 +125,7 @@ limitations under the License. -->
           @query="searchEndpoints"
         />
       </div>
-      <div v-if="activeFilter === 'status'" class="filter my-5">
+      <div v-if="activeFilter === 'status'" class="filter">
         <span class="grey mr-5">{{ t("status") }}:</span>
         <Selector
           size="small"
@@ -135,12 +135,12 @@ limitations under the License. -->
           @change="changeField('status', $event)"
         />
       </div>
-      <div v-if="activeFilter === 'traceId'" class="filter my-5">
+      <div v-if="activeFilter === 'traceId'" class="filter">
         <span class="grey mr-5">{{ t("traceID") }}:</span>
         <el-input size="small" v-model="traceId" class="traceId" />
       </div>
 
-      <div v-if="activeFilter === 'duration'" class="filter my-5">
+      <div v-if="activeFilter === 'duration'" class="filter">
         <span class="sm b grey mr-5">{{ t("duration") }}:</span>
         <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
         <span class="grey mr-5">-</span>
@@ -355,6 +355,9 @@ watch(
   margin-left: 20px;  
   cursor: pointer;
 }
+.filter-container{
+  align-items: center;
+}
 .wrap-filters {
   padding: 0 10px;
   display: flex;
@@ -372,7 +375,7 @@ watch(
 
 //
 <div class="flex-h">
-//      <div class="filter my-5">
+//      <div class="filter">
 //       <span class="grey mr-5">{{ t("timeRange") }}:</span>
 //       <TimePicker
 //         :value="dateTime"
