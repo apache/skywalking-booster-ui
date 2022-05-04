@@ -13,8 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-select
-  ref="customSelector"
+  <el-select  
     :size="size"
     v-model="selected"
     :placeholder="placeholder"
@@ -48,7 +47,6 @@ interface Option {
 
 /*global  defineProps, defineEmits*/
 const emit = defineEmits(["change", "query"]);
-const customSelector = ref<string>(null)
 const props = defineProps({
   options: {
     type: Array as PropType<(Option & { disabled?: boolean })[]>,
@@ -85,10 +83,6 @@ function remoteMethod(query: string) {
     emit("query", query);
   }
 }
-
-onMounted(() => {
-  console.log(customSelector.value)
-})
 
 watch(
   () => props.value,

@@ -27,8 +27,7 @@ limitations under the License. -->
               v-if="!selectedSelector.length || selectedSelector === '$service'"
               @click="setSelectedSelector('$service')"
               class="tool-btn"
-              type="secondary"
-              size="xs"
+              size="small"
             >
               <Icon size="sm" iconName="playlist_add" />
             </el-button>
@@ -67,7 +66,6 @@ limitations under the License. -->
               style="margin-left: 4px"
               @click="setSelectedSelector('$endpoint')"
               class="tool-btn"
-              type="secondary"
             >
               <Icon size="sm" iconName="view" />
             </el-button>
