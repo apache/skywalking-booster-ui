@@ -22,12 +22,12 @@ limitations under the License. -->
       <span v-else-if="item.label === 'tags'">
         {{ tags }}
       </span>
-      <router-link
+      <!-- <router-link
         v-else-if="item.label === 'traceId' && !noLink"
         :to="{ name: 'trace', query: { traceid: data[item.label] } }"
       >
         <span :class="noLink ? '' : 'blue'">{{ data[item.label] }}</span>
-      </router-link>
+      </router-link> -->
       <span v-else>{{ data[item.label] }}</span>
     </div>
   </div>
