@@ -29,17 +29,18 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
-    <div class="header">
     <!-- filter was here -->
-    </div>
+    <!-- <div class="header">
+    </div> -->
     <div class="trace flex-h">
-      <TraceList />
-      <TraceDetail />
+      <TraceList @show:trace="showTraceDetails" v-if="traceListActive" />
+      
+      <TraceDetail v-if="!traceListActive" />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
+import type { PropType, ref } from "vue";
 // import Filter from "../related/trace/Filter.vue";
 import TraceList from "../related/trace/TraceList.vue";
 import TraceDetail from "../related/trace/Detail.vue";
@@ -56,8 +57,13 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
+const traceListActive = ref<boolean>(true);
 function removeWidget() {
   dashboardStore.removeControls(props.data);
+}
+function showTraceDetails(){
+  console.log("SHow trace...")
+  traceListActive.value = false
 }
 </script>
 <style lang="scss" scoped>

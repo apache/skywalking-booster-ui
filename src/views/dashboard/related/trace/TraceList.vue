@@ -71,7 +71,7 @@ limitations under the License. -->
 
 <script lang="ts" setup>
 import dayjs from "dayjs";
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { ElMessage } from "element-plus";
@@ -87,6 +87,8 @@ const pageSize = ref<number>(15);
 const pageCount = ref<number>(5);
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
+
+const emit = defineEmits(["show:trace"]);
 
 function searchTrace() {
   loading.value = true;
@@ -110,6 +112,7 @@ function changeSort(opt: Option[] | any) {
 }
 
 async function selectTrace(i: Trace) {
+  emit("show:trace");
   traceStore.setCurrentTrace(i);
   selectedKey.value = i.key;
   if (i.traceIds.length) {
@@ -163,11 +166,13 @@ async function queryTraces() {
 }
 
 .trace-t {
-  width: 420px;
+  width: 100%;
+  // width: 420px;
 }
 
 .list {
-  width: 400px;
+  // width: 400px;
+  width: 100%;
 }
 
 .trace-tr {
