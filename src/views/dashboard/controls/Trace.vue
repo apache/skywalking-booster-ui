@@ -62,7 +62,6 @@ function removeWidget() {
   dashboardStore.removeControls(props.data);
 }
 function showTraceDetails(){
-  console.log("SHow trace...")
   traceListActive.value = false
 }
 </script>
