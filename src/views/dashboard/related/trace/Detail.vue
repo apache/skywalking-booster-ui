@@ -181,9 +181,7 @@ export default defineComponent({
     const pageSize = 10;
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
-    const showTraceLogs = ref<boolean>(false);
-
-    // const emit = defineEmits(["show:list"])
+    const showTraceLogs = ref<boolean>(false);    
 
     function showTraceList() {
       ctx.emit("show:list");

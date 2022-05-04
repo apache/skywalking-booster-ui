@@ -166,12 +166,10 @@ async function queryTraces() {
 }
 
 .trace-t {
-  width: 100%;
-  // width: 420px;
+  width: 100%;  
 }
 
 .list {
-  // width: 400px;
   width: 100%;
 }
 

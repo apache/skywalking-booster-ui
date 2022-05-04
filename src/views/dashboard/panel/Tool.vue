@@ -32,10 +32,9 @@ limitations under the License. -->
               <Icon size="sm" iconName="playlist_add" />
             </el-button>
           </el-tooltip>
-          <!-- <span class="label">$Service</span> -->
           <Selector
             v-if="selectedSelector === '$service'"
-            style="margin-left: 20px;"
+            style="margin-left: 20px"
             v-model="states.currentService"
             :options="selectorStore.services"
             size="small"
@@ -56,7 +55,7 @@ limitations under the License. -->
         </div>
         <div class="selectors-item" v-if="key === 3 || key === 4">
           <el-tooltip
-          v-if="!selectedSelector.length || selectedSelector === '$endpoint'"
+            v-if="!selectedSelector.length || selectedSelector === '$endpoint'"
             class="box-item"
             effect="dark"
             content="Endpoint"
@@ -70,16 +69,9 @@ limitations under the License. -->
               <Icon size="sm" iconName="view" />
             </el-button>
           </el-tooltip>
-          <!-- <span class="label">
-            {{
-              ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
-                ? "$Endpoint"
-                : "$ServiceInstance"
-            }}
-          </span> -->
           <Selector
             v-if="selectedSelector === '$endpoint'"
-            style="margin-left: 20px;"
+            style="margin-left: 20px"
             v-model="states.currentPod"
             :options="selectorStore.pods"
             size="small"
@@ -434,7 +426,7 @@ async function getServices() {
 }
 
 async function changeService(service: any) {
-    selectedSelector.value = ""
+  selectedSelector.value = "";
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
@@ -454,7 +446,7 @@ function changeDestService(service: any) {
 }
 
 function changePods(pod: any) {
-  selectedSelector.value = ""
+  selectedSelector.value = "";
   if (pod[0]) {
     selectorStore.setCurrentPod(pod[0]);
   } else {
@@ -758,10 +750,10 @@ watch(
   width: 300px;
 }
 
-.tool-btn{
+.tool-btn {
   height: 18px;
 }
-.el-input__wrapper{
+.el-input__wrapper {
   height: 18px !important;
 }
 </style>

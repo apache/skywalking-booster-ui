@@ -158,7 +158,6 @@ limitations under the License. -->
         type="primary"
         @click="searchTraces"
       >
-        <!-- {{ t("search") }} -->
         <Icon iconSize="sm" iconName="search" />
       </el-button>
       <el-button
@@ -192,7 +191,6 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 
 const activeFilter = ref<string>("");
-// const showAllBtns = ref<boolean>(true);
 function setFilter(filter: string) {
   activeFilter.value = filter;
 }
@@ -363,7 +361,6 @@ watch(
   padding: 0 10px;
   display: flex;
   flex-wrap: wrap;
-  // flex-direction: column;
   align-items: center;
   .filter {
     margin: 0;
@@ -374,14 +371,3 @@ watch(
 }
 </style>
 
-//
-<div class="flex-h">
-//      <div class="filter">
-//       <span class="grey mr-5">{{ t("timeRange") }}:</span>
-//       <TimePicker
-//         :value="dateTime"
-//         position="bottom"
-//         format="YYYY-MM-DD HH:mm"
-//         @input="changeTimeRange"
-//       />
-//     </div>

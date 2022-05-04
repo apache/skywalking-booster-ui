@@ -29,9 +29,6 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
-    <!-- filter was here -->
-    <!-- <div class="header">
-    </div> -->
     <div class="trace flex-h">
       <TraceList @show:trace="showTraceDetails" v-if="traceListActive" />
       <TraceDetail
@@ -43,7 +40,6 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import type { PropType, ref } from "vue";
-// import Filter from "../related/trace/Filter.vue";
 import TraceList from "../related/trace/TraceList.vue";
 import TraceDetail from "../related/trace/Detail.vue";
 import { useI18n } from "vue-i18n";
