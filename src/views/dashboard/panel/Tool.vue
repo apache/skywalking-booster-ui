@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
-    <div class="dashboard-tool flex-h">
+    <div class="flex-h">
       <div class="flex-h">
         <div class="selectors-item" v-if="key !== 10">
           <el-tooltip
@@ -24,9 +24,11 @@ limitations under the License. -->
             placement="top-start"
           >
             <el-button
-              style="margin-left: 4px"
+              v-if="!selectedSelector.length || selectedSelector === '$service'"
               @click="setSelectedSelector('$service')"
+              class="tool-btn"
               type="secondary"
+              size="xs"
             >
               <Icon size="sm" iconName="playlist_add" />
             </el-button>
@@ -45,7 +47,7 @@ limitations under the License. -->
           <el-button
             style="margin-left: 4px"
             v-if="selectedSelector === '$service'"
-            class="search-btn"
+            class="search-btn tool-btn"
             size="small"
             type="danger"
             @click="closeSelector"
@@ -55,6 +57,7 @@ limitations under the License. -->
         </div>
         <div class="selectors-item" v-if="key === 3 || key === 4">
           <el-tooltip
+          v-if="!selectedSelector.length || selectedSelector === '$endpoint'"
             class="box-item"
             effect="dark"
             content="Endpoint"
@@ -63,6 +66,7 @@ limitations under the License. -->
             <el-button
               style="margin-left: 4px"
               @click="setSelectedSelector('$endpoint')"
+              class="tool-btn"
               type="secondary"
             >
               <Icon size="sm" iconName="view" />
@@ -88,7 +92,7 @@ limitations under the License. -->
               ['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)
             "
           />
-          <!-- <el-button
+          <el-button
             style="margin-left: 4px"
             v-if="selectedSelector === '$endpoint'"
             class="search-btn"
@@ -97,7 +101,7 @@ limitations under the License. -->
             @click="closeSelector"
           >
             <Icon iconSize="sm" iconName="cancel" />
-          </el-button> -->
+          </el-button>
         </div>
         <div class="selectors-item" v-if="key === 2 || key === 4">
           <span class="label">$DestinationService</span>
@@ -431,6 +435,7 @@ async function getServices() {
 }
 
 async function changeService(service: any) {
+    selectedSelector.value = ""
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
@@ -450,6 +455,7 @@ function changeDestService(service: any) {
 }
 
 function changePods(pod: any) {
+  selectedSelector.value = ""
   if (pod[0]) {
     selectorStore.setCurrentPod(pod[0]);
   } else {
@@ -705,6 +711,7 @@ watch(
   background: rgb(240, 242, 245);
   border-bottom: 1px solid #dfe4e8;
   justify-content: space-between;
+  align-items: center;
 }
 
 .switch {
@@ -750,5 +757,9 @@ watch(
 
 .selectorPod {
   width: 300px;
+}
+
+.tool-btn{
+  height: 18px;
 }
 </style>

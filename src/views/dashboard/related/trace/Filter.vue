@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h row">
+  <div class="flex-h">
     <div class="flex-h">
       <el-tooltip
         v-if="!activeFilter.length || activeFilter === 'service'"
@@ -22,7 +22,7 @@ limitations under the License. -->
         content="Service"
         placement="top-start"
       >
-        <el-button @click="setFilter('service')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('service')" type="secondary">
           <Icon size="sm" iconName="cloud_queue" />
         </el-button>
       </el-tooltip>
@@ -34,7 +34,7 @@ limitations under the License. -->
         content="Instance"
         placement="top-start"
       >
-        <el-button @click="setFilter('instance')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('instance')" type="secondary">
           <Icon size="sm" iconName="storage" />
         </el-button>
       </el-tooltip>
@@ -46,7 +46,7 @@ limitations under the License. -->
         content="Status"
         placement="top-start"
       >
-        <el-button @click="setFilter('status')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('status')" type="secondary">
           <Icon size="sm" iconName="device_hub" />
         </el-button>
       </el-tooltip>
@@ -58,7 +58,7 @@ limitations under the License. -->
         content="Duration"
         placement="top-start"
       >
-        <el-button @click="setFilter('duration')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('duration')" type="secondary">
           <Icon size="sm" iconName="av_timer" />
         </el-button>
       </el-tooltip>
@@ -70,7 +70,7 @@ limitations under the License. -->
         content="Trace ID"
         placement="top-start"
       >
-        <el-button @click="setFilter('traceId')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('traceId')" type="secondary">
           <Icon size="sm" iconName="timeline" />
         </el-button>
       </el-tooltip>
@@ -82,7 +82,7 @@ limitations under the License. -->
         content="Tags"
         placement="top-start"
       >
-        <el-button @click="setFilter('tags')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('tags')" type="secondary">
           <Icon size="sm" iconName="epic" />
         </el-button>
       </el-tooltip>
@@ -153,7 +153,7 @@ limitations under the License. -->
       />
       <el-button
         v-if="activeFilter"
-        class="search-btn"
+        class="search-btn filter-btn"
         size="small"
         type="primary"
         @click="searchTraces"
@@ -163,7 +163,7 @@ limitations under the License. -->
       </el-button>
       <el-button
         v-if="activeFilter"
-        class="search-btn"
+        class="search-btn filter-btn"
         size="small"
         type="danger"
         @click="cancelSearch"
@@ -352,7 +352,7 @@ watch(
 }
 
 .search-btn {
-  margin-left: 20px;
+  margin-left: 20px;  
   cursor: pointer;
 }
 .wrap-filters {
@@ -362,8 +362,11 @@ watch(
   // flex-direction: column;
   align-items: center;
   .filter {
-    margin: 5px 0;
+    margin: 0;
   }
+}
+.filter-btn {
+  height: 18px;
 }
 </style>
 
