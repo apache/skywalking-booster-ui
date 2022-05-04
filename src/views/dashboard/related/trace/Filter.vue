@@ -22,7 +22,7 @@ limitations under the License. -->
         content="Service"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('service')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('service')" >
           <Icon size="sm" iconName="cloud_queue" />
         </el-button>
       </el-tooltip>
@@ -34,7 +34,7 @@ limitations under the License. -->
         content="Instance"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('instance')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('instance')" >
           <Icon size="sm" iconName="storage" />
         </el-button>
       </el-tooltip>
@@ -46,7 +46,7 @@ limitations under the License. -->
         content="Status"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('status')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('status')" >
           <Icon size="sm" iconName="device_hub" />
         </el-button>
       </el-tooltip>
@@ -58,7 +58,7 @@ limitations under the License. -->
         content="Duration"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('duration')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('duration')" >
           <Icon size="sm" iconName="av_timer" />
         </el-button>
       </el-tooltip>
@@ -70,7 +70,7 @@ limitations under the License. -->
         content="Trace ID"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('traceId')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('traceId')" >
           <Icon size="sm" iconName="timeline" />
         </el-button>
       </el-tooltip>
@@ -82,7 +82,7 @@ limitations under the License. -->
         content="Tags"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('tags')" type="secondary">
+        <el-button class="filter-btn" @click="setFilter('tags')" >
           <Icon size="sm" iconName="epic" />
         </el-button>
       </el-tooltip>

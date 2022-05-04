@@ -279,7 +279,6 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
       needQuery.value = true;
-      console.log(dashboardStore.layout[0])
     }
     function removeTab(e: Event) {
       e.stopPropagation();
