@@ -34,8 +34,11 @@ limitations under the License. -->
     </div> -->
     <div class="trace flex-h">
       <TraceList @show:trace="showTraceDetails" v-if="traceListActive" />
-      
-      <TraceDetail v-if="!traceListActive" />
+
+      <TraceDetail
+        @show:list="traceListActive = true"
+        v-if="!traceListActive"
+      />
     </div>
   </div>
 </template>
@@ -61,8 +64,8 @@ const traceListActive = ref<boolean>(true);
 function removeWidget() {
   dashboardStore.removeControls(props.data);
 }
-function showTraceDetails(){
-  traceListActive.value = false
+function showTraceDetails() {
+  traceListActive.value = false;
 }
 </script>
 <style lang="scss" scoped>

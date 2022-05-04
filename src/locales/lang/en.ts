@@ -269,6 +269,7 @@ const msg = {
   contentType: "Content Type",
   content: "Content",
   viewLogs: "View Logs",
+  back: "Back",
   logsTagsTip: `Only tags defined in the core/default/searchableLogsTags are searchable.
   Check more details on the Configuration Vocabulary page`,
   keywordsOfContentLogTips:

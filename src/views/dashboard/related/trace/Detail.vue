@@ -28,6 +28,14 @@ limitations under the License. -->
             size="small"
             class="mr-10"
             type="primary"
+            @click="showTraceList"
+          >
+            {{ t("back") }}
+          </el-button>
+          <el-button
+            size="small"
+            class="mr-10"
+            type="primary"
             @click="searchTraceLogs"
           >
             {{ t("viewLogs") }}
@@ -163,7 +171,7 @@ export default defineComponent({
     List,
     LogTable,
   },
-  setup() {
+  setup(props, ctx) {
     const { t } = useI18n();
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
@@ -175,6 +183,11 @@ export default defineComponent({
       dayjs(date).format(pattern);
     const showTraceLogs = ref<boolean>(false);
 
+    // const emit = defineEmits(["show:list"])
+
+    function showTraceList() {
+      ctx.emit("show:list");
+    }
     function handleClick(ids: string[] | any) {
       let copyValue = null;
       if (ids.length === 1) {
@@ -215,6 +228,7 @@ export default defineComponent({
       searchTraceLogs();
     }
     return {
+      showTraceList,
       traceStore,
       displayMode,
       dateFormat,
