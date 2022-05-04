@@ -105,8 +105,12 @@ limitations under the License. -->
           <span>{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
-      <div class="application" v-show="headerType === 'profile'">
-        <span @click="viewSpan($event)">{{ t("view") }}</span>
+      <div
+        class="application"
+        v-show="headerType === 'profile'"
+        @click="viewSpan($event)"
+      >
+        <span>{{ t("view") }}</span>
       </div>
     </div>
     <div
@@ -139,7 +143,6 @@ import { useI18n } from "vue-i18n";
 import { ref, computed, defineComponent } from "vue";
 import type { PropType } from "vue";
 import SpanDetail from "../D3Graph/SpanDetail.vue";
-import { ClickHandler } from "d3-flame-graph";
 
 const props = {
   data: { type: Object as PropType<any>, default: () => ({}) },
@@ -197,7 +200,6 @@ export default defineComponent({
       dom.style.background = "rgba(0, 0, 0, 0.1)";
     }
     function selectSpan(event: any) {
-      console.log(event);
       const dom = event.path.find((d: any) =>
         d.className.includes("trace-item")
       );
