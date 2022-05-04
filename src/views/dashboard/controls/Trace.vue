@@ -34,7 +34,6 @@ limitations under the License. -->
     </div> -->
     <div class="trace flex-h">
       <TraceList @show:trace="showTraceDetails" v-if="traceListActive" />
-
       <TraceDetail
         @show:list="traceListActive = true"
         v-if="!traceListActive"
