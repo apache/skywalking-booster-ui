@@ -242,6 +242,10 @@ const msg = {
   defaultDepth: "Default Depth",
   traceTagsTip: `Only tags defined in the core/default/searchableTracesTags are searchable.
   Check more details on the Configuration Vocabulary page`,
+  logTagsTip: `Only tags defined in the core/default/searchableLogsTags are searchable.
+  Check more details on the Configuration Vocabulary page`,
+  alarmTagsTip: `Only tags defined in the core/default/searchableAlarmTags are searchable.
+  Check more details on the Configuration Vocabulary page`,
   tagsLink: "Configuration Vocabulary page",
   addTag: "Please input a tag",
   log: "Log",
