@@ -122,6 +122,9 @@ export const profileStore = defineStore({
       return res.data;
     },
     async getSegmentList(params: { taskID: string }) {
+      if (!params.taskID) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("getProfileTaskSegmentList")
         .params(params);
@@ -148,6 +151,9 @@ export const profileStore = defineStore({
       return res.data;
     },
     async getSegmentSpans(params: { segmentId: string }) {
+      if (!params.segmentId) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("queryProfileSegment")
         .params(params);
@@ -180,6 +186,12 @@ export const profileStore = defineStore({
       segmentId: string;
       timeRanges: Array<{ start: number; end: number }>;
     }) {
+      if (!params.segmentId) {
+        return new Promise((resolve) => resolve({}));
+      }
+      if (!params.timeRanges.length) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("getProfileAnalyze")
         .params(params);
