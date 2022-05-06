@@ -200,7 +200,7 @@ const appStore = useAppStoreWithOut();
 const params = useRoute().params;
 const selectedSelector = ref<string>("");
 const showFilter = computed(
-  () => dashboardStore.layout[0].activedTabIndex === 2
+  () => dashboardStore.layout[0]?.activedTabIndex === 2
 );
 
 const { query } = useRoute();
