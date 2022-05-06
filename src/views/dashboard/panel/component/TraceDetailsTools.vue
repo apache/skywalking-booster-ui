@@ -1,6 +1,6 @@
 <template>
   <div
-    class="trace-detail-wrapper clear"
+    class="trace-detail-wrapper flex-h clear"
     v-if="traceStore.currentTrace.endpointNames"
   >
     <h5 class="mb-5 mt-0">
@@ -74,7 +74,7 @@
       />
     </div>
     <div class="flex-h item">
-      <div>
+      <!-- <div>
         <div class="tag mr-5">{{ t("start") }}</div>
         <span class="mr-15 sm">
           {{ dateFormat(parseInt(traceStore.currentTrace.start)) }}
@@ -83,7 +83,7 @@
         <span class="mr-15 sm">{{ traceStore.currentTrace.duration }} ms</span>
         <div class="tag mr-5">{{ t("spans") }}</div>
         <span class="sm">{{ traceStore.traceSpans.length }}</span>
-      </div>
+      </div> -->
       <div>
         <el-button
           class="grey"
@@ -235,10 +235,10 @@ export default defineComponent({
 
 .trace-detail-wrapper {
   font-size: 12px;
-  padding: 5px 10px;
+//   padding: 5px 10px;
   border-bottom: 1px solid #eee;
   width: 100%;
-  height: 95px;
+//   height: 95px;
 
   .grey {
     color: #fff;

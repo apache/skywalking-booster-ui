@@ -16,7 +16,10 @@ limitations under the License. -->
   <div class="dashboard-tool flex-h">
     <div class="flex-h">
       <div class="flex-h">
-        <div class="selectors-item" v-if="key !== 10">
+        <div
+          class="selectors-item"
+          v-if="key !== 10 && currentTraceView === 'traceList'"
+        >
           <el-tooltip
             class="box-item"
             effect="dark"
@@ -52,8 +55,8 @@ limitations under the License. -->
           >
             <Icon iconSize="sm" iconName="cancel" />
           </el-button>
-        </div>
-        <div class="selectors-item" v-if="key === 3 || key === 4">
+        </div>        
+        <div class="selectors-item" v-if="(key === 3 || key === 4 ) && currentTraceView === 'traceList' " >        
           <el-tooltip
             v-if="!selectedSelector.length || selectedSelector === '$endpoint'"
             class="box-item"
@@ -69,6 +72,7 @@ limitations under the License. -->
               <Icon size="sm" iconName="view" />
             </el-button>
           </el-tooltip>
+          <span>Inhouse</span>
           <Selector
             v-if="selectedSelector === '$endpoint'"
             style="margin-left: 20px"
