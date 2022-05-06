@@ -89,7 +89,7 @@
           class="grey"
           size="small"
           :class="{ ghost: displayMode !== 'List' }"
-          @click="displayMode = 'List'"
+          @click="changeDisplayMode('List')"
         >
           <Icon class="mr-5" size="sm" iconName="list-bulleted" />
           {{ t("list") }}
@@ -98,7 +98,7 @@
           class="grey"
           size="small"
           :class="{ ghost: displayMode !== 'Tree' }"
-          @click="displayMode = 'Tree'"
+          @click="changeDisplayMode('Tree')"
         >
           <Icon class="mr-5" size="sm" iconName="issue-child" />
           {{ t("tree") }}
@@ -107,7 +107,7 @@
           class="grey"
           size="small"
           :class="{ ghost: displayMode !== 'Table' }"
-          @click="displayMode = 'Table'"
+          @click="changeDisplayMode('Table')"
         >
           <Icon class="mr-5" size="sm" iconName="table" />
           {{ t("table") }}
@@ -116,7 +116,7 @@
           class="grey"
           size="small"
           :class="{ ghost: displayMode !== 'Statistics' }"
-          @click="displayMode = 'Statistics'"
+          @click="changeDisplayMode('Statistics')"
         >
           <Icon class="mr-5" size="sm" iconName="statistics-bulleted" />
           {{ t("statistics") }}
@@ -168,7 +168,9 @@ export default defineComponent({
       }
       copy(copyValue);
     }
-
+    function changeDisplayMode(mode: string) {
+      traceStore.displayMode = mode;
+    }
     async function changeTraceId(opt: Option[] | any) {
       traceId.value = opt[0].value;
       loading.value = true;
@@ -200,6 +202,7 @@ export default defineComponent({
     }
     return {
       showTraceList,
+      changeDisplayMode,
       traceStore,
       displayMode,
       dateFormat,
