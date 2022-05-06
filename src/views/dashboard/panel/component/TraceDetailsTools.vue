@@ -157,7 +157,7 @@ export default defineComponent({
     const showTraceLogs = ref<boolean>(false);
 
     function showTraceList() {
-      ctx.emit("show:list");
+      traceStore.setCurrentView("traceList");
     }
     function handleClick(ids: string[] | any) {
       let copyValue = null;

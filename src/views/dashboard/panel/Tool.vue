@@ -170,8 +170,10 @@ limitations under the License. -->
       </div>
     </div>
     <!-- Trace Details tools here -->
-    <TraceDetailsTools />
-    <Filter v-if="showFilter" />
+    <TraceDetailsTools
+      v-if="showFilter && currentTraceView === 'traceDetails'"
+    />
+    <Filter v-if="showFilter && currentTraceView === 'traceList'" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -180,6 +182,7 @@ import { reactive, ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { useTraceStore } from "@/store/modules/trace";
 import {
   EntityType,
   AllTools,
@@ -194,18 +197,19 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
 import { useI18n } from "vue-i18n";
-import TraceDetailsTools from './component/TraceDetailsTools'
+import TraceDetailsTools from "./component/TraceDetailsTools";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
+const traceStore = useTraceStore();
 const params = useRoute().params;
 const selectedSelector = ref<string>("");
 const showFilter = computed(
   () => dashboardStore.layout[0]?.activedTabIndex === 2
 );
-
+const currentTraceView = computed(() => traceStore.currentView)
 const { query } = useRoute();
 dashboardStore.setViewMode(query["fullview"] === "true");
 

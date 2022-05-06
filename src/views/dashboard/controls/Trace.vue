@@ -39,12 +39,12 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType, ref } from "vue";
+import type { PropType, ref, computed } from "vue";
 import TraceList from "../related/trace/TraceList.vue";
 import TraceDetail from "../related/trace/Detail.vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-
+import { useTraceStore } from "@/store/modules/trace";
 /*global defineProps */
 const props = defineProps({
   data: {
@@ -55,7 +55,11 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const traceListActive = ref<boolean>(true);
+const traceStore = useTraceStore();
+// const traceListActive = ref<boolean>(true);
+const traceListActive = computed(() => {
+  return traceStore.currentView === "traceList";
+});
 function removeWidget() {
   dashboardStore.removeControls(props.data);
 }
