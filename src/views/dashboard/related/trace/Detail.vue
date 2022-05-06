@@ -54,7 +54,7 @@ limitations under the License. -->
               :small="true"
               :total="traceStore.traceSpanLogsTotal"
               @current-change="turnLogsPage"
-            />
+            />            
             <LogTable
               :tableData="traceStore.traceSpanLogs || []"
               :type="`service`"

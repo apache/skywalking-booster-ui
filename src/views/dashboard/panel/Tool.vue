@@ -169,6 +169,7 @@ limitations under the License. -->
         </div>
       </div>
     </div>
+    <!-- Trace Details tools here -->
     <Filter v-if="showFilter" />
   </div>
 </template>
