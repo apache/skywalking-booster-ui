@@ -29,6 +29,7 @@ interface TraceState {
   instances: Instance[];
   endpoints: Endpoint[];
   traceList: Trace[];
+  activeFilter: string;
   displayMode: string;
   currentView: string;
   traceTotal: number;
@@ -50,8 +51,9 @@ export const traceStore = defineStore({
     services: [{ value: "0", label: "All" }],
     instances: [{ value: "0", label: "All" }],
     endpoints: [{ value: "0", label: "All" }],
-    displayMode: "Table",
+    displayMode: "List",
     currentView: "traceList",
+    activeFilter: '',
     traceList: [],
     traceSpans: [],
     traceTotal: 0,
@@ -75,6 +77,9 @@ export const traceStore = defineStore({
       this.displayMode = data;
     },
     setCurrentView(data: string) {
+      this.currentView = data;
+    },
+    setActiveFilter(data: string) {
       this.currentView = data;
     },
     setCurrentTrace(trace: Trace) {

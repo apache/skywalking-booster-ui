@@ -34,6 +34,7 @@ limitations under the License. -->
       />
       <span class="tags-tip">
         <a
+          v-if="false"
           target="blank"
           href="https://github.com/apache/skywalking/blob/master/docs/en/setup/backend/configuration-vocabulary.md"
         >
@@ -54,7 +55,7 @@ limitations under the License. -->
             <Icon class="icon-help mr-5" iconName="help" size="middle" />
           </span>
         </el-tooltip>
-        <b v-if="type !== 'LOG'">{{ t("noticeTag") }}</b>
+        <!-- <b v-if="type !== 'LOG'">{{ t("noticeTag") }}</b> -->
       </span>
     </div>
   </div>
