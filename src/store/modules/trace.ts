@@ -53,7 +53,7 @@ export const traceStore = defineStore({
     endpoints: [{ value: "0", label: "All" }],
     displayMode: "List",
     currentView: "traceList",
-    activeFilter: '',
+    activeFilter: "titi",
     traceList: [],
     traceSpans: [],
     traceTotal: 0,
@@ -80,7 +80,8 @@ export const traceStore = defineStore({
       this.currentView = data;
     },
     setActiveFilter(data: string) {
-      this.currentView = data;
+      if (!data) this.activeFilter = "";
+      this.activeFilter = data;
     },
     setCurrentTrace(trace: Trace) {
       this.currentTrace = trace;

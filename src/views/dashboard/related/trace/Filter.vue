@@ -15,14 +15,38 @@ limitations under the License. -->
 <template>
   <div class="flex-h">
     <div class="flex-h filter-container">
-      <el-tooltip
+      <div v-for="(filter, index) in arrayOfFilters" :key="index" >
+        <el-tooltip
+          v-if="!activeFilter.length || activeFilter === filter.name"        
+          class="box-item"
+          effect="dark"
+          content="Service"
+          placement="top-start"
+        >
+          <el-button
+            type="success"
+            :class="[queriedFilter === filter.name ? 'active-filter' : '']"
+            class="filter-btn mx-3"
+            @click="setFilter(filter.name)"
+          >
+            <Icon size="sm" :iconName="filter.iconName" />
+          </el-button>
+        </el-tooltip>
+      </div>
+      
+      <!-- <el-tooltip
         v-if="!activeFilter.length || activeFilter === 'service'"
         class="box-item"
         effect="dark"
         content="Service"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('service')" >
+        <el-button
+          type="success"
+          :class="[queriedFilter === 'service' ? 'active-filter' : '']"
+          class="filter-btn"
+          @click="setFilter('service')"
+        >
           <Icon size="sm" iconName="cloud_queue" />
         </el-button>
       </el-tooltip>
@@ -34,7 +58,11 @@ limitations under the License. -->
         content="Instance"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('instance')" >
+        <el-button
+          :class="[queriedFilter === 'instance' ? 'active-filter' : '']"
+          class="filter-btn"
+          @click="setFilter('instance')"
+        >
           <Icon size="sm" iconName="storage" />
         </el-button>
       </el-tooltip>
@@ -46,7 +74,11 @@ limitations under the License. -->
         content="Status"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('status')" >
+        <el-button
+          :class="[queriedFilter === 'status' ? 'active-filter' : '']"
+          class="filter-btn"
+          @click="setFilter('status')"
+        >
           <Icon size="sm" iconName="device_hub" />
         </el-button>
       </el-tooltip>
@@ -58,7 +90,11 @@ limitations under the License. -->
         content="Duration"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('duration')" >
+        <el-button
+          :class="[queriedFilter === 'duration' ? 'active-filter' : '']"
+          class="filter-btn"
+          @click="setFilter('duration')"
+        >
           <Icon size="sm" iconName="av_timer" />
         </el-button>
       </el-tooltip>
@@ -70,7 +106,11 @@ limitations under the License. -->
         content="Trace ID"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('traceId')" >
+        <el-button
+          :class="[queriedFilter === 'traceId' ? 'active-filter' : '']"
+          class="filter-btn"
+          @click="setFilter('traceId')"
+        >
           <Icon size="sm" iconName="timeline" />
         </el-button>
       </el-tooltip>
@@ -82,10 +122,14 @@ limitations under the License. -->
         content="Tags"
         placement="top-start"
       >
-        <el-button class="filter-btn" @click="setFilter('tags')" >
+        <el-button
+          :class="[queriedFilter === 'tags' ? 'active-filter' : '']"
+          class="filter-btn"
+          @click="setFilter('tags')"
+        >
           <Icon size="sm" iconName="epic" />
         </el-button>
-      </el-tooltip>
+      </el-tooltip> -->
     </div>
     <div class="wrap-filters">
       <div class="filter" v-if="activeFilter === 'service'">
@@ -101,7 +145,8 @@ limitations under the License. -->
       <div
         class="filter"
         v-if="
-          activeFilter === 'instance' && dashboardStore.entity !== EntityType[3].value
+          activeFilter === 'instance' &&
+          dashboardStore.entity !== EntityType[3].value
         "
       >
         <span class="grey mr-5">{{ t("instance") }}:</span>
@@ -173,7 +218,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { Status } from "../../data";
@@ -185,20 +230,53 @@ import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 
+interface filtersObject {
+  name: string;
+  iconName: string;
+}
+
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
+const traceStore = useTraceStore();
 
+const arrayOfFilters = ref<filtersObject[]>([
+  {
+    name: "service",
+    iconName: "cloud_queue",
+  },
+  {
+    name: "instance",
+    iconName: "storage",
+  },
+  {
+    name: "status",
+    iconName: "device_hub",
+  },
+  {
+    name: "duration",
+    iconName: "av_timer",
+  },
+  {
+    name: "traceId",
+    iconName: "timeline",
+  },
+  {
+    name: "tags",
+    iconName: "epic",
+  },
+]);
 const activeFilter = ref<string>("");
+const queriedFilter = computed(() => traceStore.activeFilter);
 function setFilter(filter: string) {
   activeFilter.value = filter;
 }
 function cancelSearch() {
   activeFilter.value = "";
+  traceStore.activeFilter = "";
 }
 
-const traceStore = useTraceStore();
 const traceId = ref<string>("");
 const minTraceDuration = ref<string>("");
 const maxTraceDuration = ref<string>("");
@@ -261,6 +339,8 @@ async function getInstances(id?: string) {
   state.instance = traceStore.instances[0];
 }
 function searchTraces() {
+  traceStore.setActiveFilter(activeFilter.value);
+  activeFilter.value = "";
   let endpoint = "",
     instance = "";
   if (dashboardStore.entity === EntityType[2].value) {
@@ -293,7 +373,7 @@ async function queryTraces() {
   }
 }
 function changeField(type: string, opt: any) {
-  activeFilter
+  activeFilter;
   state[type] = opt[0];
   if (type === "service") {
     getEndpoints(state.service.id);
@@ -351,10 +431,10 @@ watch(
 }
 
 .search-btn {
-  margin-left: 20px;  
+  margin-left: 20px;
   cursor: pointer;
 }
-.filter-container{
+.filter-container {
   align-items: center;
 }
 .wrap-filters {
@@ -370,6 +450,12 @@ watch(
 }
 .filter-btn {
   height: 18px;
+  margin: 0 5px
+}
+.active-filter.filter-btn {
+  background: #276c04 !important;
+  span {
+    color: #275410 !important;
+  }
 }
 </style>
-
