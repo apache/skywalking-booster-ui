@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-detail" v-loading="loading">
-    <div
+    <!-- <div
       class="trace-detail-wrapper clear"
       v-if="traceStore.currentTrace.endpointNames"
     >
@@ -138,8 +138,9 @@ limitations under the License. -->
           </el-button>
         </div>
       </div>
-    </div>
-    <div class="no-data" v-else>{{ t("noData") }}</div>
+    </div> -->
+    <!-- <div class="no-data" v-else>{{ t("noData") }}</div> -->
+
     <div class="trace-chart">
       <component
         v-if="traceStore.currentTrace.endpointNames"
@@ -163,7 +164,7 @@ import List from "./components/List.vue";
 import graphs from "./components/index";
 import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
 import { ElMessage } from "element-plus";
-
+// import TraceDetailsTools from '@/views/dashboard'
 export default defineComponent({
   name: "TraceDetail",
   components: {

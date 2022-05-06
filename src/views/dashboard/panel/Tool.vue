@@ -170,6 +170,7 @@ limitations under the License. -->
       </div>
     </div>
     <!-- Trace Details tools here -->
+    <TraceDetailsTools />
     <Filter v-if="showFilter" />
   </div>
 </template>
@@ -193,6 +194,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
 import { useI18n } from "vue-i18n";
+import TraceDetailsTools from './component/TraceDetailsTools'
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();

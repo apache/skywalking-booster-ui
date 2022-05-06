@@ -124,6 +124,7 @@
       </div>
     </div>
   </div>
+  <div class="no-data" v-else>{{ t("noData") }}</div>
 </template>
 
 <script lang="ts">
@@ -133,8 +134,6 @@ import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
 import copy from "@/utils/copy";
-import List from "./components/List.vue";
-import graphs from "./components/index";
 import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
 import { ElMessage } from "element-plus";
 
