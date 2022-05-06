@@ -1,15 +1,14 @@
 <template>
   <div
-    class="trace-detail-wrapper flex-h clear"
+    class="trace-detail-wrapper flex-h"
     v-if="traceStore.currentTrace.endpointNames"
   >
-    <h5 class="mb-5 mt-0">
+    <div class="mb-0 mt-0">
       <Icon
         icon="clear"
         v-if="traceStore.currentTrace.isError"
         class="red mr-5 sm"
       />
-      <span class="vm">{{ traceStore.currentTrace.endpointNames[0] }}</span>
       <div class="trace-log-btn">
         <el-button
           size="small"
@@ -53,8 +52,9 @@
           </LogTable>
         </div>
       </el-dialog>
-    </h5>
-    <div class="mb-5 blue sm">
+    </div>
+    <div class="mb- blue sm">
+      <span class="vm">{{ traceStore.currentTrace.endpointNames[0] }}</span>
       <Selector
         size="small"
         :value="
@@ -73,17 +73,7 @@
         @click="handleClick"
       />
     </div>
-    <div class="flex-h item">
-      <!-- <div>
-        <div class="tag mr-5">{{ t("start") }}</div>
-        <span class="mr-15 sm">
-          {{ dateFormat(parseInt(traceStore.currentTrace.start)) }}
-        </span>
-        <div class="tag mr-5">{{ t("duration") }}</div>
-        <span class="mr-15 sm">{{ traceStore.currentTrace.duration }} ms</span>
-        <div class="tag mr-5">{{ t("spans") }}</div>
-        <span class="sm">{{ traceStore.traceSpans.length }}</span>
-      </div> -->
+    <div class="flex-h item">     
       <div>
         <el-button
           class="grey"
@@ -235,10 +225,12 @@ export default defineComponent({
 
 .trace-detail-wrapper {
   font-size: 12px;
-//   padding: 5px 10px;
-  border-bottom: 1px solid #eee;
+  //   padding: 5px 10px;
+  //   height: 95px;
+  //   border-bottom: 1px solid #eee;
   width: 100%;
-//   height: 95px;
+  justify-content: space-between;
+  align-items: center;
 
   .grey {
     color: #fff;
@@ -281,5 +273,8 @@ export default defineComponent({
   padding-top: 50px;
   width: 100%;
   text-align: center;
+}
+.vm{
+  margin-right: 4px;
 }
 </style>

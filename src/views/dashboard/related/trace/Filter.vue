@@ -364,6 +364,8 @@ watch(
   align-items: center;
   .filter {
     margin: 0;
+    display: flex;
+    align-items: center;
   }
 }
 .filter-btn {
