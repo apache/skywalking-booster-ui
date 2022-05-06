@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-detail" v-loading="loading">
-    <div class="trace-chart">
+    <div :class="{ 'full-view': isFullVull }" class="trace-chart">
       <component
         v-if="traceStore.currentTrace.endpointNames"
         :is="traceStore.displayMode"
@@ -27,6 +27,7 @@ limitations under the License. -->
 <script lang="ts">
 import dayjs from "dayjs";
 import { ref, computed, defineComponent } from "vue";
+import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
@@ -48,6 +49,11 @@ export default defineComponent({
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
     const traceId = ref<string>("");
+    const queries = useRoute().query;
+    // console.log("APP::", queries);
+    const isFullVull = computed(() => {
+      return queries?.fullview === "true" && queries?.portal === "true";
+    })
     // const displayMode = ref<string>("List");
     const displayMode = computed(() => {
       return traceStore.displayMode;
@@ -101,6 +107,7 @@ export default defineComponent({
       searchTraceLogs();
     }
     return {
+      isFullVull,
       showTraceList,
       traceStore,
       displayMode,
