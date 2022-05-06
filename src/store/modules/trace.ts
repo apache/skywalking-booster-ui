@@ -71,8 +71,11 @@ export const traceStore = defineStore({
     setTraceCondition(data: any) {
       this.condition = { ...this.condition, ...data };
     },
-    setDisplayMode(data:string){
-      this.displayMode = data
+    setDisplayMode(data: string) {
+      this.displayMode = data;
+    },
+    setCurrentView(data: string) {
+      this.currentView = data;
     },
     setCurrentTrace(trace: Trace) {
       this.currentTrace = trace;
