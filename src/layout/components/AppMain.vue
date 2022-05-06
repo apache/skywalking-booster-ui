@@ -33,11 +33,6 @@ if (!appStore.utc) {
     ElMessage.error(res.errors);
   }
 }
-if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
-  appStore.setIsMobile(true);
-} else {
-  appStore.setIsMobile(false);
-}
 </script>
 <style lang="scss" scoped>
 .app-main {
