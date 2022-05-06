@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-detail" v-loading="loading">
-    <!-- <div
+    <div
       class="trace-detail-wrapper clear"
       v-if="traceStore.currentTrace.endpointNames"
     >
@@ -54,7 +54,7 @@ limitations under the License. -->
               :small="true"
               :total="traceStore.traceSpanLogsTotal"
               @current-change="turnLogsPage"
-            />            
+            />
             <LogTable
               :tableData="traceStore.traceSpanLogs || []"
               :type="`service`"
@@ -138,13 +138,13 @@ limitations under the License. -->
           </el-button>
         </div>
       </div>
-    </div> -->
-    <!-- <div class="no-data" v-else>{{ t("noData") }}</div> -->
+    </div>
+    <div class="no-data" v-else>{{ t("noData") }}</div>
 
     <div class="trace-chart">
       <component
         v-if="traceStore.currentTrace.endpointNames"
-        :is="displayMode"
+        :is="traceStore.displayMode"
         :data="traceStore.traceSpans"
         :traceId="traceStore.currentTrace.traceIds[0].value"
         :showBtnDetail="false"
@@ -155,7 +155,7 @@ limitations under the License. -->
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
-import { ref, defineComponent } from "vue";
+import { ref, computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
@@ -177,12 +177,15 @@ export default defineComponent({
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
     const traceId = ref<string>("");
-    const displayMode = ref<string>("List");
+    // const displayMode = ref<string>("List");
+    const displayMode = computed(() => {
+      return traceStore.displayMode;
+    });
     const pageNum = ref<number>(1);
     const pageSize = 10;
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
-    const showTraceLogs = ref<boolean>(false);    
+    const showTraceLogs = ref<boolean>(false);
 
     function showTraceList() {
       ctx.emit("show:list");

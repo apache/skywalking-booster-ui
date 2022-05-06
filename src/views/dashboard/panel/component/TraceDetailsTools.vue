@@ -129,7 +129,7 @@
 
 <script lang="ts">
 import dayjs from "dayjs";
-import { ref, defineComponent } from "vue";
+import { ref, computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
@@ -147,7 +147,9 @@ export default defineComponent({
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
     const traceId = ref<string>("");
-    const displayMode = ref<string>("List");
+    const displayMode = computed(() => {
+      return traceStore.displayMode;
+    });
     const pageNum = ref<number>(1);
     const pageSize = 10;
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
@@ -214,3 +216,67 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.trace-detail {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.trace-chart {
+  height: calc(100% - 100px);
+  overflow: auto;
+  padding-bottom: 20px;
+}
+
+.trace-detail-wrapper {
+  font-size: 12px;
+  padding: 5px 10px;
+  border-bottom: 1px solid #eee;
+  width: 100%;
+  height: 95px;
+
+  .grey {
+    color: #fff;
+    background-color: #448dfe;
+  }
+
+  .ghost {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+.item {
+  justify-content: space-between;
+}
+
+.trace-detail-ids {
+  background-color: rgba(0, 0, 0, 0);
+  outline: 0;
+  border-style: unset;
+  color: inherit;
+  border: 1px solid;
+  border-radius: 4px;
+  width: 300px;
+}
+
+.trace-log-btn {
+  float: right;
+}
+
+.tag {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 0px 7px;
+  background-color: #40454e;
+  color: #eee;
+}
+
+.no-data {
+  padding-top: 50px;
+  width: 100%;
+  text-align: center;
+}
+</style>

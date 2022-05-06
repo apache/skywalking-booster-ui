@@ -29,6 +29,8 @@ interface TraceState {
   instances: Instance[];
   endpoints: Endpoint[];
   traceList: Trace[];
+  displayMode: string;
+  currentView: string;
   traceTotal: number;
   traceSpans: Span[];
   currentTrace: Trace | any;
@@ -48,6 +50,8 @@ export const traceStore = defineStore({
     services: [{ value: "0", label: "All" }],
     instances: [{ value: "0", label: "All" }],
     endpoints: [{ value: "0", label: "All" }],
+    displayMode: "Table",
+    currentView: "traceList",
     traceList: [],
     traceSpans: [],
     traceTotal: 0,
@@ -66,6 +70,9 @@ export const traceStore = defineStore({
   actions: {
     setTraceCondition(data: any) {
       this.condition = { ...this.condition, ...data };
+    },
+    setDisplayMode(data:string){
+      this.displayMode = data
     },
     setCurrentTrace(trace: Trace) {
       this.currentTrace = trace;
