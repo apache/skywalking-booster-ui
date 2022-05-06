@@ -78,7 +78,7 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <div class="flex-h tools" v-loading="loading">
+    <div class="flex-h tools" v-loading="loading" v-if="!appStore.isMobile">
       <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
         <el-dropdown content="Controls" placement="bottom">
           <i>
