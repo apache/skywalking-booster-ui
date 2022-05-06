@@ -130,7 +130,9 @@ export default defineComponent({
   overflow: auto;
   padding-bottom: 20px;
 }
-
+.trace-chart.full-view{
+  height: calc(100% - 1px) !important;
+}
 .trace-detail-wrapper {
   font-size: 12px;
   padding: 5px 10px;
