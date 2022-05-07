@@ -309,9 +309,15 @@ async function getInstances(id?: string) {
   }
   state.instance = logStore.instances[0];
 }
-function searchLogs() {
-  activeTerms.value.push(currentSearchTerm.value);
-  console.log(activeTerms.value);
+function addToActiveTerms(){
+  activeTerms.value.push(currentSearchTerm.value);  
+}
+function removeFromActiveTerms(){
+  activeTerms.value = activeTerms.value.filter(term => term !== currentSearchTerm.value );  
+}
+function searchLogs() {  
+  addToActiveTerms()
+  currentSearchTerm.value = ""
   let endpoint = "",
     instance = "";
   if (dashboardStore.entity === EntityType[2].value) {
@@ -398,6 +404,7 @@ function setSearchTerm(term: string) {
   currentSearchTerm.value = term;
 }
 function cancelSearchTerm() {
+  removeFromActiveTerms()
   currentSearchTerm.value = "";
 }
 watch(
