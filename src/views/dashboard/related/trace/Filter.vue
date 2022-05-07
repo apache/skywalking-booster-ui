@@ -363,7 +363,7 @@ watch(
   margin: 0 5px;
 }
 .active-filter.filter-btn {
-  background: #276c04 !important;
+  background: rgba(4, 147, 114, 1) !important;
   span {
     color: #275410 !important;
   }

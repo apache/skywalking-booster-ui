@@ -10,22 +10,37 @@
         class="red mr-5 sm"
       />
       <div class="trace-log-btn">
-        <el-button
-          size="small"
-          class="mr-10"
-          type="primary"
-          @click="showTraceList"
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          content="Back"
+          placement="bottom-start"
         >
-          {{ t("back") }}
-        </el-button>
-        <el-button
-          size="small"
-          class="mr-10"
-          type="primary"
-          @click="searchTraceLogs"
+          <el-button
+            size="small"
+            class="mr-10 filter-btn"
+            type="primary"
+            @click="showTraceList"
+          >
+            <Icon iconSize="sm" iconName="chevron-left" />
+          </el-button>
+        </el-tooltip>
+
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          :content="t('viewLogs')"
+          placement="bottom-start"
         >
-          {{ t("viewLogs") }}
-        </el-button>
+          <el-button
+            size="small"
+            class="mr-10 filter-btn"
+            type="primary"
+            @click="searchTraceLogs"
+          >
+            <Icon iconSize="sm" iconName="folder_open" />
+          </el-button>
+        </el-tooltip>
       </div>
       <el-dialog
         v-model="showTraceLogs"
@@ -73,48 +88,74 @@
         @click="handleClick"
       />
     </div>
-    <div class="flex-h item">     
+    <div class="flex-h item">
       <div>
-        <el-button
-          class="grey"
-          size="small"
-          :class="{ ghost: displayMode !== 'List' }"
-          @click="changeDisplayMode('List')"
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          :content="t('list')"
+          placement="bottom-start"
         >
-          <Icon class="mr-5" size="sm" iconName="list-bulleted" />
-          {{ t("list") }}
-        </el-button>
-        <el-button
-          class="grey"
-          size="small"
-          :class="{ ghost: displayMode !== 'Tree' }"
-          @click="changeDisplayMode('Tree')"
+          <el-button
+            class="filter-btn"
+            size="small"
+            :class="{ ghost: displayMode === 'List' }"
+            @click="changeDisplayMode('List')"
+          >
+            <Icon class="mr-5" size="sm" iconName="list-bulleted" />
+          </el-button>
+        </el-tooltip>
+
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          :content="t('tree')"
+          placement="bottom-start"
         >
-          <Icon class="mr-5" size="sm" iconName="issue-child" />
-          {{ t("tree") }}
-        </el-button>
-        <el-button
-          class="grey"
-          size="small"
-          :class="{ ghost: displayMode !== 'Table' }"
-          @click="changeDisplayMode('Table')"
+          <el-button
+            class="filter-btn"
+            size="small"
+            :class="{ ghost: displayMode === 'Tree' }"
+            @click="changeDisplayMode('Tree')"
+          >
+            <Icon class="mr-5" size="sm" iconName="issue-child" />
+          </el-button>
+        </el-tooltip>
+
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          :content="t('table')"
+          placement="bottom-start"
         >
-          <Icon class="mr-5" size="sm" iconName="table" />
-          {{ t("table") }}
-        </el-button>
-        <el-button
-          class="grey"
-          size="small"
-          :class="{ ghost: displayMode !== 'Statistics' }"
-          @click="changeDisplayMode('Statistics')"
+          <el-button
+            class="filter-btn"
+            size="small"
+            :class="{ ghost: displayMode === 'Table' }"
+            @click="changeDisplayMode('Table')"
+          >
+            <Icon class="mr-5" size="sm" iconName="table" />
+          </el-button>
+        </el-tooltip>
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          :content="t('statistics')"
+          placement="bottom-start"
         >
-          <Icon class="mr-5" size="sm" iconName="statistics-bulleted" />
-          {{ t("statistics") }}
-        </el-button>
+          <el-button
+            class="filter-btn"
+            size="small"
+            :class="{ ghost: displayMode === 'Statistics' }"
+            @click="changeDisplayMode('Statistics')"
+          >
+            <Icon class="mr-5" size="sm" iconName="statistics-bulleted" />
+          </el-button>
+        </el-tooltip>
       </div>
     </div>
   </div>
-  <div class="no-data" v-else>{{ t("noData") }}</div>
+  <div class="no-data" v-else>t("noData")</div>
 </template>
 
 <script lang="ts">
@@ -222,15 +263,12 @@ export default defineComponent({
   overflow: auto;
   padding-bottom: 20px;
 }
-.trace-chart.full-view{
+.trace-chart.full-view {
   height: calc(100% - 1px) !important;
 }
 
 .trace-detail-wrapper {
   font-size: 12px;
-  //   padding: 5px 10px;
-  //   height: 95px;
-  //   border-bottom: 1px solid #eee;
   width: 100%;
   justify-content: space-between;
   align-items: center;
@@ -242,7 +280,7 @@ export default defineComponent({
 
   .ghost {
     cursor: pointer;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(4, 147, 114, 1);    
   }
 }
 
@@ -277,7 +315,11 @@ export default defineComponent({
   width: 100%;
   text-align: center;
 }
-.vm{
+.vm {
   margin-right: 4px;
+}
+.filter-btn {
+  height: 18px;
+  margin: 0 5px;
 }
 </style>
