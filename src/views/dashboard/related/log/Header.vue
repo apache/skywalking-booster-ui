@@ -15,36 +15,70 @@ limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
     <div v-if="!currentSearchTerm.length" class="flex-h items-center">
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="Trace ID"
+        placement="bottom-start"
+      >
         <el-button
           type="success"
+          :class="[activeTerms.includes('traceId') ? 'active-toggle' : '']"
           class="toggle-btn mx-3"
           @click="setSearchTerm('traceId')"
         >
           <!-- {{ t("traceID") }} -->
-          Trace ID
+          <Icon iconSize="sm" iconName="timeline" />
         </el-button>
+      </el-tooltip>
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="Tags"
+        placement="bottom-start"
+      >
         <el-button
           type="success"
+          :class="[activeTerms.includes('tags') ? 'active-toggle' : '']"
           class="toggle-btn mx-3"
           @click="setSearchTerm('tags')"
         >
-          Tags
+          <Icon iconSize="sm" iconName="epic" />
         </el-button>
+      </el-tooltip>
+
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="Keywords"
+        placement="bottom-start"
+      >
         <el-button
           type="success"
+          :class="[activeTerms.includes('keywords') ? 'active-toggle' : '']"
           class="toggle-btn mx-3"
           @click="setSearchTerm('keywords')"
         >
-          Keywords
+          <Icon iconSize="sm" iconName="library_books" />
         </el-button>
+      </el-tooltip>
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="Exclude keywords"
+        placement="bottom-start"
+      >
         <el-button
           type="success"
+          :class="[activeTerms.includes('exclude') ? 'active-toggle' : '']"
           class="toggle-btn mx-3"
           @click="setSearchTerm('exclude')"
         >
-          Exclude keywords
+          <Icon iconSize="sm" iconName="issue-child" />
+          <!-- Exclude keywords -->
         </el-button>
-      </div>
+      </el-tooltip>
+    </div>
     <div class="flex-h row">
       <!-- <div
         class="mr-5 flex-h"
@@ -96,7 +130,6 @@ limitations under the License. -->
       <b>{{ t("conditionNotice") }}</b>
     </div> -->
     <div class="flex-h items-center">
-      
       <div class="mr-5 flex-h items-center traceId" v-show="!isBrowser">
         <div class="flex-h items-center" v-if="currentSearchTerm === 'traceId'">
           <span class="grey mr-5">{{ t("traceID") }}:</span>
@@ -214,6 +247,7 @@ const traceId = ref<string>("");
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
 const currentSearchTerm = ref<string>("");
+const activeTerms = ref<string[]>([]);
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
 const contentStr = ref<string>("");
@@ -286,6 +320,8 @@ async function getInstances(id?: string) {
   state.instance = logStore.instances[0];
 }
 function searchLogs() {
+  activeTerms.value.push(currentSearchTerm.value);
+  console.log(activeTerms.value);
   let endpoint = "",
     instance = "";
   if (dashboardStore.entity === EntityType[2].value) {

@@ -15,13 +15,13 @@ limitations under the License. -->
 <template>
   <div class="flex-h">
     <div class="flex-h filter-container">
-      <div v-for="(filter, index) in arrayOfFilters" :key="index" >
+      <div v-for="(filter, index) in arrayOfFilters" :key="index">
         <el-tooltip
-          v-if="!activeFilter.length || activeFilter === filter.name"        
+          v-if="!activeFilter.length || activeFilter === filter.name"
           class="box-item"
           effect="dark"
-          content="Service"
-          placement="top-start"
+          :content="filter.description"
+          placement="bottom-start"
         >
           <el-button
             type="success"
@@ -33,7 +33,7 @@ limitations under the License. -->
           </el-button>
         </el-tooltip>
       </div>
-      
+
       <!-- <el-tooltip
         v-if="!activeFilter.length || activeFilter === 'service'"
         class="box-item"
@@ -233,6 +233,7 @@ import { EntityType } from "../../data";
 interface filtersObject {
   name: string;
   iconName: string;
+  description: string;
 }
 
 const { t } = useI18n();
@@ -245,26 +246,32 @@ const arrayOfFilters = ref<filtersObject[]>([
   {
     name: "service",
     iconName: "cloud_queue",
+    description: "Service",
   },
   {
     name: "instance",
     iconName: "storage",
+    description: "Instance",
   },
   {
     name: "status",
     iconName: "device_hub",
+    description: "Status",
   },
   {
     name: "duration",
     iconName: "av_timer",
+    description: "Duration",
   },
   {
     name: "traceId",
     iconName: "timeline",
+    description: "Trace ID",
   },
   {
     name: "tags",
     iconName: "epic",
+    description: "Tags",
   },
 ]);
 const activeFilter = ref<string>("");
@@ -450,7 +457,7 @@ watch(
 }
 .filter-btn {
   height: 18px;
-  margin: 0 5px
+  margin: 0 5px;
 }
 .active-filter.filter-btn {
   background: #276c04 !important;
