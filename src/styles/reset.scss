@@ -24,13 +24,12 @@ body {
     sans-serif;
   text-rendering: optimizeLegibility;
   text-size-adjust: 100%;
-  min-width: 1024px;
-  height: 100%;
 }
 
 html,
 body {
   height: 100%;
+  overflow-y: hidden;
 }
 
 div,
