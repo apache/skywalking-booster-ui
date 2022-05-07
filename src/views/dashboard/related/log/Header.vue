@@ -14,8 +14,38 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
+    <div v-if="!currentSearchTerm.length" class="flex-h items-center">
+        <el-button
+          type="success"
+          class="toggle-btn mx-3"
+          @click="setSearchTerm('traceId')"
+        >
+          <!-- {{ t("traceID") }} -->
+          Trace ID
+        </el-button>
+        <el-button
+          type="success"
+          class="toggle-btn mx-3"
+          @click="setSearchTerm('tags')"
+        >
+          Tags
+        </el-button>
+        <el-button
+          type="success"
+          class="toggle-btn mx-3"
+          @click="setSearchTerm('keywords')"
+        >
+          Keywords
+        </el-button>
+        <el-button
+          type="success"
+          class="toggle-btn mx-3"
+          @click="setSearchTerm('exclude')"
+        >
+          Exclude keywords
+        </el-button>
+      </div>
     <div class="flex-h row">
-      <!-- <h1>{{EntityType[3].value}}</h1> -->
       <!-- <div
         class="mr-5 flex-h"
         v-if="dashboardStore.entity === EntityType[1].value"
@@ -66,45 +96,14 @@ limitations under the License. -->
       <b>{{ t("conditionNotice") }}</b>
     </div> -->
     <div class="flex-h items-center">
-    <div class="flex-h items-center">
-    <el-button
-          type="success"
-          class="toggle-btn mx-3"
-          @click="setSearchTerm('traceId')"
-        >
-          <!-- {{ t("traceID") }} -->
-          Trace ID
-        </el-button>
-        <el-button
-        type="success"
-        class="toggle-btn mx-3"
-        @click="setSearchTerm('tags')"
-      >
-        Tags
-      </el-button>
-        <el-button
-          type="success"
-          class="toggle-btn mx-3"
-          @click="setSearchTerm('keywords')"
-        >
-          Keywords
-        </el-button>
-        <el-button
-          type="success"
-          class="toggle-btn mx-3"
-          @click="setSearchTerm('exclude')"
-        >
-          Exclude keywords
-        </el-button>
-      </div>
+      
       <div class="mr-5 flex-h items-center traceId" v-show="!isBrowser">
-        
         <div class="flex-h items-center" v-if="currentSearchTerm === 'traceId'">
           <span class="grey mr-5">{{ t("traceID") }}:</span>
           <el-input v-model="traceId" class="inputs-max" size="small" />
         </div>
       </div>
-      
+
       <ConditionTags
         v-if="currentSearchTerm === 'tags'"
         :type="'LOG'"
@@ -112,7 +111,7 @@ limitations under the License. -->
       />
     </div>
 
-    <div class="flex-h items-center" v-show="!isBrowser">      
+    <div class="flex-h items-center" v-show="!isBrowser">
       <div
         class="mr-5 flex-h items-center"
         v-show="
@@ -173,7 +172,7 @@ limitations under the License. -->
       </div>
 
       <!-- Search&cancel buttons -->
-      <div class="flex-h items-center">
+      <div v-if="currentSearchTerm.length" class="flex-h items-center">
         <el-button
           class="search-btn toggle-btn"
           size="small"
@@ -373,7 +372,7 @@ function setSearchTerm(term: string) {
   currentSearchTerm.value = term;
 }
 function cancelSearchTerm() {
-  currentSearchTerm.value = '';
+  currentSearchTerm.value = "";
 }
 watch(
   () => selectorStore.currentService,
