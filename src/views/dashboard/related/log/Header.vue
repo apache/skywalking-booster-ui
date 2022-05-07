@@ -66,26 +66,45 @@ limitations under the License. -->
       <b>{{ t("conditionNotice") }}</b>
     </div> -->
     <div class="flex-h items-center">
-      <div class="mr-5 flex-h items-center traceId" v-show="!isBrowser">
-        <el-button
+    <div class="flex-h items-center">
+    <el-button
           type="success"
           class="toggle-btn mx-3"
           @click="setSearchTerm('traceId')"
         >
-          {{ t("traceID") }}
+          <!-- {{ t("traceID") }} -->
+          Trace ID
         </el-button>
-        <div class="flex-h items-center" v-if="currentSearchTerm === 'traceId'">
-          <span class="grey mr-5">{{ t("traceID") }}:</span>
-          <el-input v-model="traceId" class="inputs-max" size="small" />
-        </div>
-      </div>
-      <el-button
+        <el-button
         type="success"
         class="toggle-btn mx-3"
         @click="setSearchTerm('tags')"
       >
         Tags
       </el-button>
+        <el-button
+          type="success"
+          class="toggle-btn mx-3"
+          @click="setSearchTerm('keywords')"
+        >
+          Keywords
+        </el-button>
+        <el-button
+          type="success"
+          class="toggle-btn mx-3"
+          @click="setSearchTerm('exclude')"
+        >
+          Exclude keywords
+        </el-button>
+      </div>
+      <div class="mr-5 flex-h items-center traceId" v-show="!isBrowser">
+        
+        <div class="flex-h items-center" v-if="currentSearchTerm === 'traceId'">
+          <span class="grey mr-5">{{ t("traceID") }}:</span>
+          <el-input v-model="traceId" class="inputs-max" size="small" />
+        </div>
+      </div>
+      
       <ConditionTags
         v-if="currentSearchTerm === 'tags'"
         :type="'LOG'"
@@ -93,8 +112,14 @@ limitations under the License. -->
       />
     </div>
 
-    <div class="flex-h" v-show="!isBrowser">
-      <div class="mr-5 flex-h" v-show="logStore.supportQueryLogsByKeywords">
+    <div class="flex-h items-center" v-show="!isBrowser">      
+      <div
+        class="mr-5 flex-h items-center"
+        v-show="
+          logStore.supportQueryLogsByKeywords &&
+          currentSearchTerm === 'keywords'
+        "
+      >
         <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
         <span class="log-tags">
           <span
@@ -114,7 +139,12 @@ limitations under the License. -->
           @change="addLabels('keywordsOfContent')"
         />
       </div>
-      <div class="mr-5 flex-h" v-show="logStore.supportQueryLogsByKeywords">
+      <div
+        class="mr-5 flex-h items-center"
+        v-show="
+          logStore.supportQueryLogsByKeywords && currentSearchTerm === 'exclude'
+        "
+      >
         <span class="grey mr-5"> {{ t("excludingKeywordsOfContent") }}: </span>
         <span class="log-tags">
           <span
@@ -141,14 +171,26 @@ limitations under the License. -->
           </span>
         </el-tooltip>
       </div>
-      <el-button
-        class="search-btn"
-        size="small"
-        type="primary"
-        @click="searchLogs"
-      >
-        {{ t("search") }}
-      </el-button>
+
+      <!-- Search&cancel buttons -->
+      <div class="flex-h items-center">
+        <el-button
+          class="search-btn toggle-btn"
+          size="small"
+          type="primary"
+          @click="searchLogs"
+        >
+          <Icon iconSize="sm" iconName="search" />
+        </el-button>
+        <el-button
+          class="search-btn toggle-btn"
+          size="small"
+          type="primary"
+          @click="cancelSearchTerm"
+        >
+          <Icon iconSize="sm" iconName="cancel" />
+        </el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -329,6 +371,9 @@ function removeExcludeContent(index: number) {
 }
 function setSearchTerm(term: string) {
   currentSearchTerm.value = term;
+}
+function cancelSearchTerm() {
+  currentSearchTerm.value = '';
 }
 watch(
   () => selectorStore.currentService,
