@@ -14,12 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h" :class="{ light: theme === 'light' }">
-    <div class="mr-5">
+    <div class="flex-h items-center mr-5">
       <span class="sm grey" v-show="theme === 'dark'">{{ t("tags") }}: </span>
       <span
+        v-if="tagsList.length"
         class="trace-tags"
-        :style="type === 'LOG' ? `min-width: 122px;` : ''"
       >
+        <!-- :style="type === 'LOG' ? `min-width: 122px;` : ''" -->
         <span class="selected" v-for="(item, index) in tagsList" :key="index">
           <span>{{ item }}</span>
           <span class="remove-icon" @click="removeTags(index)">×</span>
@@ -98,6 +99,9 @@ function updateTags() {
 }
 </script>
 <style lang="scss" scoped>
+.items-center{
+  align-items: center;
+}
 .trace-tags {
   padding: 1px 5px 0 0;
   border-radius: 3px;

@@ -13,110 +13,143 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h row">
-    <div class="mr-5" v-if="dashboardStore.entity === EntityType[1].value">
-      <span class="grey mr-5">{{ t("service") }}:</span>
-      <Selector
-        size="small"
-        :value="state.service.value"
-        :options="logStore.services"
-        placeholder="Select a service"
-        @change="changeField('service', $event)"
-      />
-    </div>
-    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[3].value">
-      <span class="grey mr-5">
-        {{ isBrowser ? t("version") : t("instance") }}:
-      </span>
-      <Selector
-        size="small"
-        :value="state.instance.value"
-        :options="logStore.instances"
-        placeholder="Select a instance"
-        @change="changeField('instance', $event)"
-      />
-    </div>
-    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[2].value">
-      <span class="grey mr-5"
-        >{{ isBrowser ? t("page") : t("endpoint") }}:</span
+  <div class="flex-h log-wrapper">
+    <div class="flex-h row">
+      <!-- <h1>{{EntityType[3].value}}</h1> -->
+      <!-- <div
+        class="mr-5 flex-h"
+        v-if="dashboardStore.entity === EntityType[1].value"
       >
-      <Selector
-        size="small"
-        :value="state.endpoint.value"
-        :options="logStore.endpoints"
-        placeholder="Select a endpoint"
-        @change="changeField('endpoint', $event)"
-        :isRemote="true"
-        @query="searchEndpoints"
-      />
-    </div>
-  </div>
-  <div class="row tips">
-    <b>{{ t("conditionNotice") }}</b>
-  </div>
-  <div class="flex-h row">
-    <div class="mr-5 traceId" v-show="!isBrowser">
-      <span class="grey mr-5">{{ t("traceID") }}:</span>
-      <el-input v-model="traceId" class="inputs-max" size="small" />
-    </div>
-    <ConditionTags :type="'LOG'" @update="updateTags" />
-  </div>
-  <div class="flex-h" v-show="!isBrowser">
-    <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
-      <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
-      <span class="log-tags">
-        <span
-          class="selected"
-          v-for="(item, index) in keywordsOfContent"
-          :key="`keywordsOfContent${index}`"
-        >
-          <span>{{ item }}</span>
-          <span class="remove-icon" @click="removeContent(index)">×</span>
+        <span class="grey mr-5">{{ t("service") }}:</span>
+        <Selector
+          size="small"
+          :value="state.service.value"
+          :options="logStore.services"
+          placeholder="Select a service"
+          @change="changeField('service', $event)"
+        />
+      </div> -->
+      <!-- <div
+        class="mr-5 flex-h"
+        v-if="dashboardStore.entity !== EntityType[3].value"
+      >
+        <span class="grey mr-5">
+          {{ isBrowser ? t("version") : t("instance") }}:
         </span>
-      </span>
-      <el-input
-        size="small"
-        class="inputs-max"
-        :placeholder="t('addKeywordsOfContent')"
-        v-model="contentStr"
-        @change="addLabels('keywordsOfContent')"
+        <Selector
+          size="small"
+          :value="state.instance.value"
+          :options="logStore.instances"
+          placeholder="Select a instance"
+          @change="changeField('instance', $event)"
+        />
+      </div> -->
+      <!-- <div
+        class="mr-5 flex-h"
+        v-if="dashboardStore.entity !== EntityType[2].value"
+      >
+        <span class="grey mr-5"
+          >{{ isBrowser ? t("page") : t("endpoint") }}:</span
+        >
+        <Selector
+          size="small"
+          :value="state.endpoint.value"
+          :options="logStore.endpoints"
+          placeholder="Select a endpoint"
+          @change="changeField('endpoint', $event)"
+          :isRemote="true"
+          @query="searchEndpoints"
+        />
+      </div> -->
+    </div>
+    <!-- <div class="row tips">
+      <b>{{ t("conditionNotice") }}</b>
+    </div> -->
+    <div class="flex-h items-center">
+      <div class="mr-5 flex-h items-center traceId" v-show="!isBrowser">
+        <el-button
+          type="success"
+          class="toggle-btn mx-3"
+          @click="setSearchTerm('traceId')"
+        >
+          {{ t("traceID") }}
+        </el-button>
+        <div class="flex-h items-center" v-if="currentSearchTerm === 'traceId'">
+          <span class="grey mr-5">{{ t("traceID") }}:</span>
+          <el-input v-model="traceId" class="inputs-max" size="small" />
+        </div>
+      </div>
+      <el-button
+        type="success"
+        class="toggle-btn mx-3"
+        @click="setSearchTerm('tags')"
+      >
+        Tags
+      </el-button>
+      <ConditionTags
+        v-if="currentSearchTerm === 'tags'"
+        :type="'LOG'"
+        @update="updateTags"
       />
     </div>
-    <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
-      <span class="grey mr-5"> {{ t("excludingKeywordsOfContent") }}: </span>
-      <span class="log-tags">
-        <span
-          class="selected"
-          v-for="(item, index) in excludingKeywordsOfContent"
-          :key="`excludingKeywordsOfContent${index}`"
-        >
-          <span>{{ item }}</span>
-          <span class="remove-icon" @click="removeExcludeContent(index)">
-            ×
+
+    <div class="flex-h" v-show="!isBrowser">
+      <div class="mr-5 flex-h" v-show="logStore.supportQueryLogsByKeywords">
+        <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
+        <span class="log-tags">
+          <span
+            class="selected"
+            v-for="(item, index) in keywordsOfContent"
+            :key="`keywordsOfContent${index}`"
+          >
+            <span>{{ item }}</span>
+            <span class="remove-icon" @click="removeContent(index)">×</span>
           </span>
         </span>
-      </span>
-      <el-input
-        class="inputs-max"
-        size="small"
-        :placeholder="t('addExcludingKeywordsOfContent')"
-        v-model="excludingContentStr"
-        @change="addLabels('excludingKeywordsOfContent')"
-      />
-      <el-tooltip :content="t('keywordsOfContentLogTips')">
-        <span class="log-tips" v-show="!logStore.supportQueryLogsByKeywords">
-          <Icon icon="help" class="mr-5" />
+        <el-input
+          size="small"
+          class="inputs-max"
+          :placeholder="t('addKeywordsOfContent')"
+          v-model="contentStr"
+          @change="addLabels('keywordsOfContent')"
+        />
+      </div>
+      <div class="mr-5 flex-h" v-show="logStore.supportQueryLogsByKeywords">
+        <span class="grey mr-5"> {{ t("excludingKeywordsOfContent") }}: </span>
+        <span class="log-tags">
+          <span
+            class="selected"
+            v-for="(item, index) in excludingKeywordsOfContent"
+            :key="`excludingKeywordsOfContent${index}`"
+          >
+            <span>{{ item }}</span>
+            <span class="remove-icon" @click="removeExcludeContent(index)">
+              ×
+            </span>
+          </span>
         </span>
-      </el-tooltip>
+        <el-input
+          class="inputs-max"
+          size="small"
+          :placeholder="t('addExcludingKeywordsOfContent')"
+          v-model="excludingContentStr"
+          @change="addLabels('excludingKeywordsOfContent')"
+        />
+        <el-tooltip :content="t('keywordsOfContentLogTips')">
+          <span class="log-tips" v-show="!logStore.supportQueryLogsByKeywords">
+            <Icon icon="help" class="mr-5" />
+          </span>
+        </el-tooltip>
+      </div>
+      <el-button
+        class="search-btn"
+        size="small"
+        type="primary"
+        @click="searchLogs"
+      >
+        {{ t("search") }}
+      </el-button>
     </div>
-    <el-button
-      class="search-btn"
-      size="small"
-      type="primary"
-      @click="searchLogs"
-    >
-      {{ t("search") }}
-    </el-button>
   </div>
 </template>
 <script lang="ts" setup>
@@ -139,6 +172,7 @@ const logStore = useLogStore();
 const traceId = ref<string>("");
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
+const currentSearchTerm = ref<string>("");
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
 const contentStr = ref<string>("");
@@ -293,6 +327,9 @@ function removeExcludeContent(index: number) {
   });
   excludingContentStr.value = "";
 }
+function setSearchTerm(term: string) {
+  currentSearchTerm.value = term;
+}
 watch(
   () => selectorStore.currentService,
   () => {
@@ -320,6 +357,12 @@ watch(
 );
 </script>
 <style lang="scss" scoped>
+// .log-wrapper {
+//   width: 600px;
+//   padding-left: 40px;
+//   overflow-x: scroll;
+//   align-items: center;
+// }
 .inputs {
   width: 120px;
 }
@@ -377,5 +420,23 @@ watch(
   display: inline-block;
   margin-left: 3px;
   cursor: pointer;
+}
+
+/* buttons*/
+.el-button span {
+  font-size: 10px !important;
+}
+.toggle-btn {
+  height: 18px;
+  margin: 0 5px;
+}
+.active-toggle.toggle-btn {
+  background: #276c04 !important;
+  span {
+    color: #275410 !important;
+  }
+}
+.items-center {
+  align-items: center;
 }
 </style>

@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="dashboard-tool flex-h">
+  <div class="dashboard-tool flex-h">    
     <div class="flex-h">
       <div class="flex-h">
         <div
@@ -172,7 +172,7 @@ limitations under the License. -->
         </div>
       </div>
     </div>
-    <!-- Trace Details tools here -->
+    <Header v-if="showLogHeader" />
     <TraceDetailsTools
       v-if="showFilter && currentTraceView === 'traceDetails'"
     />
@@ -181,6 +181,8 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import Filter from "../related/trace/Filter.vue";
+import Header from "../related/log/Header.vue";
+
 import { reactive, ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -211,6 +213,9 @@ const params = useRoute().params;
 const selectedSelector = ref<string>("");
 const showFilter = computed(
   () => dashboardStore.layout[0]?.activedTabIndex === 2
+);
+const showLogHeader = computed(
+  () => dashboardStore.layout[0]?.activedTabIndex === 3
 );
 const currentTraceView = computed(() => traceStore.currentView)
 const { query } = useRoute();
