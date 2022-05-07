@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h tab-header">
-    <div class="tabs">
+    <div class="tabs scroll_bar_style">
       <span
         v-for="(child, idx) in data.children || []"
         :key="idx"
@@ -259,6 +259,10 @@ export default defineComponent({
 .tabs {
   height: 40px;
   color: #ccc;
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  overflow-y: hidden;
 
   span {
     display: inline-block;
