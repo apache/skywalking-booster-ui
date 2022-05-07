@@ -15,23 +15,25 @@ limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
     <div v-if="!currentSearchTerm.length" class="flex-h items-center">
-      <el-tooltip
-        class="box-item"
-        effect="dark"
-        content="Trace ID"
-        placement="bottom-start"
-      >
-        <el-button
-          type="success"
-          :class="[activeTerms.includes('traceId') ? 'active-toggle' : '']"
-          class="toggle-btn mx-3"
-          @click="setSearchTerm('traceId')"
+      <div v-for="(item, index) in arrayOfFilters" :key="index">
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          :content="item.description"
+          placement="bottom-start"
         >
-          <!-- {{ t("traceID") }} -->
-          <Icon iconSize="sm" iconName="timeline" />
-        </el-button>
-      </el-tooltip>
-      <el-tooltip
+          <el-button
+            type="success"
+            :class="[activeTerms.includes(item.name) ? 'active-toggle' : '']"
+            class="toggle-btn mx-3"
+            @click="setSearchTerm(item.name)"
+          >
+            <Icon iconSize="sm" :iconName="item.iconName" />
+          </el-button>
+        </el-tooltip>        
+      </div>
+
+      <!-- <el-tooltip
         class="box-item"
         effect="dark"
         content="Tags"
@@ -75,9 +77,9 @@ limitations under the License. -->
           @click="setSearchTerm('exclude')"
         >
           <Icon iconSize="sm" iconName="issue-child" />
-          <!-- Exclude keywords -->
+          
         </el-button>
-      </el-tooltip>
+      </el-tooltip> -->
     </div>
     <div class="flex-h row">
       <!-- <div
@@ -258,7 +260,43 @@ const state = reactive<any>({
   endpoint: { value: "0", label: "All" },
   service: { value: "", label: "" },
 });
-
+interface filtersObject {
+  name: string;
+  iconName: string;
+  description: string;
+}
+const arrayOfFilters = ref<filtersObject[]>([
+  {
+    name: "traceId",
+    iconName: "timeline",
+    description: "Trace ID",
+  },
+  {
+    name: "tags",
+    iconName: "epic",
+    description: "Tags",
+  },
+  {
+    name: "keywords",
+    iconName: "library_books",
+    description: "Keywords",
+  },
+  {
+    name: "exclude",
+    iconName: "issue-child",
+    description: "Exclude keywords",
+  },
+  // {
+  //   name: "traceId",
+  //   iconName: "timeline",
+  //   description: "Trace ID",
+  // },
+  // {
+  //   name: "tags",
+  //   iconName: "epic",
+  //   description: "Tags",
+  // },
+]);
 init();
 async function init() {
   const resp = await logStore.getLogsByKeywords();
