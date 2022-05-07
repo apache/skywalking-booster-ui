@@ -30,56 +30,8 @@ limitations under the License. -->
           >
             <Icon iconSize="sm" :iconName="item.iconName" />
           </el-button>
-        </el-tooltip>        
+        </el-tooltip> 
       </div>
-
-      <!-- <el-tooltip
-        class="box-item"
-        effect="dark"
-        content="Tags"
-        placement="bottom-start"
-      >
-        <el-button
-          type="success"
-          :class="[activeTerms.includes('tags') ? 'active-toggle' : '']"
-          class="toggle-btn mx-3"
-          @click="setSearchTerm('tags')"
-        >
-          <Icon iconSize="sm" iconName="epic" />
-        </el-button>
-      </el-tooltip>
-
-      <el-tooltip
-        class="box-item"
-        effect="dark"
-        content="Keywords"
-        placement="bottom-start"
-      >
-        <el-button
-          type="success"
-          :class="[activeTerms.includes('keywords') ? 'active-toggle' : '']"
-          class="toggle-btn mx-3"
-          @click="setSearchTerm('keywords')"
-        >
-          <Icon iconSize="sm" iconName="library_books" />
-        </el-button>
-      </el-tooltip>
-      <el-tooltip
-        class="box-item"
-        effect="dark"
-        content="Exclude keywords"
-        placement="bottom-start"
-      >
-        <el-button
-          type="success"
-          :class="[activeTerms.includes('exclude') ? 'active-toggle' : '']"
-          class="toggle-btn mx-3"
-          @click="setSearchTerm('exclude')"
-        >
-          <Icon iconSize="sm" iconName="issue-child" />
-          
-        </el-button>
-      </el-tooltip> -->
     </div>
     <div class="flex-h row">
       <!-- <div
