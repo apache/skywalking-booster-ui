@@ -366,7 +366,10 @@ async function changeService(service: any) {
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
-    fetchPods(dashboardStore.entity, selectorStore.currentService.id, true);
+    const e = dashboardStore.entity.split("Relation")[0];
+    selectorStore.setCurrentPod(null);
+    states.currentPod = "";
+    fetchPods(e, selectorStore.currentService.id, true);
   } else {
     selectorStore.setCurrentService(null);
   }
@@ -376,6 +379,9 @@ function changeDestService(service: any) {
   if (service[0]) {
     states.currentDestService = service[0].value;
     selectorStore.setCurrentDestService(service[0]);
+    selectorStore.setCurrentDestPod(null);
+    states.currentDestPod = "";
+    fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
   } else {
     selectorStore.setCurrentDestService(null);
   }
@@ -537,11 +543,11 @@ async function fetchPods(
       if (setPod) {
         let p;
         if (states.currentDestPod) {
-          p = selectorStore.pods.find(
+          p = selectorStore.destPods.find(
             (d: { label: string }) => d.label === states.currentDestPod
           );
         } else {
-          p = selectorStore.pods.find(
+          p = selectorStore.destPods.find(
             (d: { label: string }, index: number) => index === 0
           );
         }
