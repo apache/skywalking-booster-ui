@@ -53,9 +53,6 @@ const available = computed(
     (Array.isArray(props.option.series.data) && props.option.series.data[0])
 );
 onMounted(async () => {
-  if (!available.value) {
-    return;
-  }
   await setOptions(props.option);
   chartRef.value && addResizeListener(unref(chartRef), resize);
   setTimeout(() => {

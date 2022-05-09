@@ -178,8 +178,6 @@ function goDashboard() {
     layer: dashboardStore.layerId,
     entity,
   });
-  dashboardStore.setEntity(entity);
-  dashboardStore.setCurrentDashboard(d);
   const path = `/dashboard/${d.layer}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${d.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
@@ -218,7 +216,6 @@ function selectNodeLink(d: any) {
       layer: dashboardStore.layerId,
       entity,
     });
-    dashboardStore.setEntity(entity);
     const path = `/dashboard/${p.layer}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${p.name}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");

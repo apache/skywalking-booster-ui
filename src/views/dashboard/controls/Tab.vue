@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h tab-header">
-    <div class="tabs scroll_bar_style">
+    <div class="tabs scroll_bar_style" @click="handleClick">
       <span
         v-for="(child, idx) in data.children || []"
         :key="idx"
@@ -26,15 +26,15 @@ limitations under the License. -->
           v-model="child.name"
           placeholder="Please input"
           class="tab-name"
-          :readonly="isNaN(editTabIndex)"
-          :class="{ view: isNaN(editTabIndex) }"
+          :readonly="isNaN(editTabIndex) && !canEditTabName"
+          :class="{ view: !canEditTabName }"
         />
         <Icon
           v-show="activeTabIndex === idx"
           size="sm"
           iconName="cancel"
           @click="deleteTabItem($event, idx)"
-          v-if="dashboardStore.editMode"
+          v-if="dashboardStore.editMode && canEditTabName"
         />
       </span>
       <span class="tab-icons" v-if="dashboardStore.editMode">
@@ -46,35 +46,21 @@ limitations under the License. -->
       </span>
     </div>
     <div class="operations" v-if="dashboardStore.editMode">
-      <el-popover
-        placement="bottom"
-        trigger="click"
-        :width="200"
-        v-model:visible="showTools"
-      >
-        <template #reference>
-          <span>
-            <Icon
-              iconName="ellipsis_v"
-              size="middle"
-              class="operation"
-              @click="showTools = true"
-            />
-          </span>
+      <el-dropdown placement="bottom" trigger="click" :width="200">
+        <span class="icon-operation">
+          <Icon iconName="ellipsis_v" size="middle" />
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="canEditTabName = true">
+              <span class="edit-tab">{{ t("editTab") }}</span>
+            </el-dropdown-item>
+            <el-dropdown-item @click="removeTab">
+              <span>{{ t("delete") }}</span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
         </template>
-        <div
-          class="tools"
-          @click="
-            canEditTabName = true;
-            showTools = false;
-          "
-        >
-          <span class="edit-tab">{{ t("editTab") }}</span>
-        </div>
-        <div class="tools" @click="removeTab">
-          <span>{{ t("delete") }}</span>
-        </div>
-      </el-popover>
+      </el-dropdown>
     </div>
   </div>
   <div class="tab-layout" @click="handleClick">
@@ -144,7 +130,6 @@ export default defineComponent({
     const editTabIndex = ref<number>(NaN); // edit tab item name
     const canEditTabName = ref<boolean>(false);
     const needQuery = ref<boolean>(false);
-    const showTools = ref<boolean>(false);
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
     );
@@ -248,7 +233,6 @@ export default defineComponent({
       editTabIndex,
       needQuery,
       canEditTabName,
-      showTools,
       t,
       dragIgnoreFrom,
     };
@@ -316,6 +300,11 @@ export default defineComponent({
   padding-right: 10px;
 }
 
+.icon-operation {
+  display: inline-block;
+  margin-top: 8px;
+}
+
 .tab-header {
   justify-content: space-between;
   width: 100%;
@@ -348,18 +337,5 @@ export default defineComponent({
   font-size: 14px;
   padding-top: 30px;
   color: #888;
-}
-
-.tools {
-  padding: 5px 0;
-  color: #999;
-  cursor: pointer;
-  position: relative;
-  text-align: center;
-
-  &:hover {
-    color: #409eff;
-    background-color: #eee;
-  }
 }
 </style>
