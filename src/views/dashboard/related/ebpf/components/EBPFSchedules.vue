@@ -220,6 +220,8 @@ watch(
 <style lang="scss" scoped>
 .filters {
   margin: 5px 0;
+  width: 100%;
+  min-width: 560px;
 }
 
 .schedules {

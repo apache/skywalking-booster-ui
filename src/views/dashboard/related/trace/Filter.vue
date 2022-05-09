@@ -62,15 +62,6 @@ limitations under the License. -->
     </div>
   </div>
   <div class="flex-h">
-    <!-- <div class="mr-5">
-      <span class="grey mr-5">{{ t("timeRange") }}:</span>
-      <TimePicker
-        :value="dateTime"
-        position="bottom"
-        format="YYYY-MM-DD HH:mm"
-        @input="changeTimeRange"
-      />
-    </div> -->
     <div class="mr-5">
       <span class="sm b grey mr-5">{{ t("duration") }}:</span>
       <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />

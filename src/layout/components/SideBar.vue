@@ -109,14 +109,21 @@ import { ref } from "vue";
 import { useRouter, RouteRecordRaw } from "vue-router";
 import { useI18n } from "vue-i18n";
 import Icon from "@/components/Icon.vue";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
+const appStore = useAppStoreWithOut();
 const { t } = useI18n();
 const name = ref<any>(String(useRouter().currentRoute.value.name));
 const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
   ? ref("light")
   : ref("black");
 const routes = ref<any>(useRouter().options.routes);
-const isCollapse = ref(false);
+if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+  appStore.setIsMobile(true);
+} else {
+  appStore.setIsMobile(false);
+}
+const isCollapse = ref(appStore.isMobile ? true : false);
 const controlMenu = () => {
   isCollapse.value = !isCollapse.value;
 };
