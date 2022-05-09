@@ -301,7 +301,10 @@ export default defineComponent({
 
   span.active {
     border-bottom: 1px solid #409eff;
-    color: #409eff;
+
+    .tab-name {
+      color: #409eff;
+    }
   }
 }
 
