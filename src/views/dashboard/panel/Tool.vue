@@ -342,7 +342,12 @@ async function getServices() {
   states.currentService = selectorStore.currentService.value;
   const e = dashboardStore.entity.split("Relation")[0];
   if (
-    [EntityType[2].value, EntityType[3].value].includes(dashboardStore.entity)
+    [
+      EntityType[2].value,
+      EntityType[3].value,
+      EntityType[5].value,
+      EntityType[6].value,
+    ].includes(dashboardStore.entity)
   ) {
     fetchPods(e, selectorStore.currentService.id, true);
   }
@@ -552,11 +557,11 @@ async function fetchPods(
       if (setPod) {
         let p;
         if (states.currentDestPod) {
-          p = selectorStore.pods.find(
+          p = selectorStore.destPods.find(
             (d: { label: string }) => d.label === states.currentDestPod
           );
         } else {
-          p = selectorStore.pods.find(
+          p = selectorStore.destPods.find(
             (d: { label: string }, index: number) => index === 0
           );
         }
