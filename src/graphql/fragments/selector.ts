@@ -20,10 +20,10 @@ export const Services = {
   services: listServices(layer: $layer) {
     id
     value: name
-      label: name
-      group
-      layers
-      normal
+    label: name
+    group
+    layers
+    normal
   }
   `,
 };
@@ -36,16 +36,16 @@ export const Instances = {
   variable: "$serviceId: ID!, $duration: Duration!",
   query: `
   pods: listInstances(duration: $duration, serviceId: $serviceId) {
-     id
-     value: name
-      label: name
-      language
-      instanceUUID
-      attributes {
-        name
-        value
-      }
+    id
+    value: name
+    label: name
+    language
+    instanceUUID
+    attributes {
+      name
+      value
     }
+  }
   `,
 };
 export const Endpoints = {
@@ -65,10 +65,10 @@ export const getService = {
   service: getService(serviceId: $serviceId) {
     id
     value: name
-      label: name
-      group
-      layers
-      normal
+    label: name
+    group
+    layers
+    normal
   }
   `,
 };
@@ -95,10 +95,10 @@ export const getEndpoint = {
   query: `
   endpoint: getEndpointInfo(endpointId: $endpointId) {
     id
-     value: name
-      label: name
-      serviceId
-      serviceName
+    value: name
+    label: name
+    serviceId
+    serviceName
   }
   `,
 };
