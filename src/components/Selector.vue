@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-select  
+  <el-select
     :size="size"
     v-model="selected"
     :placeholder="placeholder"
@@ -95,7 +95,7 @@ watch(
 .el-input__inner {
   border-radius: unset !important;
 }
-.el-input.el-input--small.el-input--suffix{
+.el-input.el-input--small.el-input--suffix {
   height: 18px !important;
 }
 </style>
