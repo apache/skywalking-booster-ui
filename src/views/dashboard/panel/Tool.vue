@@ -175,9 +175,6 @@ limitations under the License. -->
         </div>
       </div>
     </div>
-    <!-- <pre>
-    {{dashboardStore.layout[0]}}
-  </pre> -->
     <Header v-if="showLogHeader" />
     <TraceDetailsTools
       v-if="showFilter && currentTraceView === 'traceDetails'"
