@@ -161,6 +161,20 @@ export const traceStore = defineStore({
       this.traceSpanLogsTotal = res.data.data.queryLogs.total;
       return res.data;
     },
+    async getTagKeys() {
+      const res: AxiosResponse = await graphql
+        .query("queryTraceTagKeys")
+        .params({ duration: useAppStoreWithOut().durationTime });
+
+      return res.data;
+    },
+    async getTagValues(tagKey: string) {
+      const res: AxiosResponse = await graphql
+        .query("queryTraceTagValues")
+        .params({ tagKey, duration: useAppStoreWithOut().durationTime });
+
+      return res.data;
+    },
   },
 });
 

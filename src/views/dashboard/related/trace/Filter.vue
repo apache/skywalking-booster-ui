@@ -109,10 +109,6 @@ const state = reactive<any>({
   service: { value: "", label: "" },
 });
 
-// const dateTime = computed(() => [
-//   appStore.durationRow.start,
-//   appStore.durationRow.end,
-// ]);
 init();
 async function init() {
   if (dashboardStore.entity === EntityType[1].value) {

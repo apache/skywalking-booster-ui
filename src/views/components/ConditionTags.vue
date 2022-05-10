@@ -26,12 +26,22 @@ limitations under the License. -->
         </span>
       </span>
       <el-input
+        v-if="type === 'ALARM'"
         size="small"
         v-model="tags"
         class="trace-new-tag"
         @change="addLabels"
         :placeholder="t('addTags')"
       />
+      <span v-else>
+        <el-input
+          size="small"
+          v-model="tags"
+          class="trace-new-tag"
+          @change="addLabels"
+          :placeholder="t('addTags')"
+        />
+      </span>
       <span class="tags-tip">
         <a
           target="blank"
@@ -62,17 +72,24 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useTraceStore } from "@/store/modules/trace";
+import { Option } from "@/types/app";
+import { ElMessage } from "element-plus";
 
 /*global defineEmits, defineProps */
 const emit = defineEmits(["update"]);
 defineProps({
   type: { type: String, default: "TRACE" },
 });
+const traceStore = useTraceStore();
 const { t } = useI18n();
 const theme = ref<string>("dark");
 const tags = ref<string>("");
 const tagsList = ref<string[]>([]);
+const tagKeys = ref<Option[]>([]);
+const tagValues = ref<Option[]>([]);
 
+fetchTagKeys();
 function removeTags(index: number) {
   tagsList.value.splice(index, 1);
   updateTags();
@@ -94,6 +111,35 @@ function updateTags() {
     };
   });
   emit("update", { tagsMap, tagsList: tagsList.value });
+}
+async function fetchTagKeys() {
+  const resp = await traceStore.getTagKeys();
+
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  tagKeys.value = resp.data.tagKeys.map((d: string) => {
+    return {
+      label: d,
+      value: d,
+    };
+  });
+}
+
+async function fetchTagValues() {
+  const resp = await traceStore.getTagValues(tagKeys.value);
+
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  tagValues.value = resp.data.tagValues.map((d: string) => {
+    return {
+      label: d,
+      value: d,
+    };
+  });
 }
 </script>
 <style lang="scss" scoped>
