@@ -57,6 +57,7 @@ function loadTrees(l: boolean) {
 .item {
   height: 100%;
   width: calc(100% - 300px);
+  overflow: auto;
 }
 
 .list {

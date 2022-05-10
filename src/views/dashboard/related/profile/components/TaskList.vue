@@ -140,6 +140,7 @@ const selectedTask = ref<TaskListItem | Record<string, never>>({});
 const instanceLogs = ref<TaskLog | any>({});
 
 async function changeTask(item: TaskListItem) {
+  profileStore.setCurrentSegment({});
   selectedTask.value = item;
   const res = await profileStore.getSegmentList({ taskID: item.id });
   if (res.errors) {

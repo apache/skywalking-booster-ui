@@ -66,6 +66,7 @@ function removeWidget() {
   height: 100%;
   font-size: 12px;
   position: relative;
+  overflow: auto;
 }
 
 .delete {
@@ -78,6 +79,7 @@ function removeWidget() {
   padding: 10px;
   font-size: 12px;
   border-bottom: 1px solid #dcdfe6;
+  min-width: 1200px;
 }
 
 .tools {
@@ -96,5 +98,6 @@ function removeWidget() {
 .trace {
   width: 100%;
   overflow: auto;
+  min-width: 1200px;
 }
 </style>

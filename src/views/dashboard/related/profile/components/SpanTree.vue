@@ -161,6 +161,7 @@ function updateTimeRange() {
   flex-shrink: 0;
   height: 50%;
   width: 100%;
+  min-width: 800px;
 }
 
 .profile-table {
@@ -171,6 +172,7 @@ function updateTimeRange() {
 .profile-trace-detail-wrapper {
   padding: 5px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .profile-trace-detail-ids {

@@ -85,6 +85,9 @@ export const ebpfStore = defineStore({
       return res.data;
     },
     async getTaskList(serviceId: string) {
+      if (!serviceId) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("getEBPFTasks")
         .params({ serviceId });
@@ -101,6 +104,9 @@ export const ebpfStore = defineStore({
       return res.data;
     },
     async getEBPFSchedules(params: { taskId: string; duration?: Duration }) {
+      if (!params.taskId) {
+        return new Promise((resolve) => resolve({}));
+      }
       const duration = useAppStoreWithOut().durationTime;
       const res: AxiosResponse = await graphql
         .query("getEBPFSchedules")
@@ -124,6 +130,12 @@ export const ebpfStore = defineStore({
       scheduleIdList: string[];
       timeRanges: Array<{ start: number; end: number }>;
     }) {
+      if (!params.scheduleIdList.length) {
+        return new Promise((resolve) => resolve({}));
+      }
+      if (!params.timeRanges.length) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("getEBPFResult")
         .params(params);
