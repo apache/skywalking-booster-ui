@@ -39,7 +39,6 @@ interface DashboardState {
   selectorStore: any;
   fullView: boolean;
   currentTabItems: LayoutConfig[];
-  currentTabName: string; // TODO: remove before commit
   showTraceTools: boolean;
   showLogTools: boolean;
   dashboards: DashboardItem[];
@@ -62,7 +61,6 @@ export const dashboardStore = defineStore({
     showTraceTools: false,
     fullView: false,
     currentTabItems: [],
-    currentTabName: '',
     dashboards: [],
     currentDashboard: null,
     editMode: false,
@@ -213,9 +211,6 @@ export const dashboardStore = defineStore({
     },
     setCurrentTabItems(items: LayoutConfig[]) {
       this.currentTabItems = items;
-    },
-    setCurrentTabType(name: string) {
-      this.currentTabName = name
     },
     removeTab(item: LayoutConfig) {
       if (this.selectedGrid && this.selectedGrid.i === item.i) {

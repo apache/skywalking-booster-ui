@@ -33,10 +33,10 @@ limitations under the License. -->
         </el-tooltip> 
       </div>
     </div>
-    <div class="flex-h row">
-      <!-- <div
-        class="mr-5 flex-h"
-        v-if="dashboardStore.entity === EntityType[1].value"
+    <div class="flex-h items-center row">
+      <div
+        class="mr-5 flex-h items-center"
+        v-if="dashboardStore.entity === EntityType[1].value && currentSearchTerm === 'service' "
       >
         <span class="grey mr-5">{{ t("service") }}:</span>
         <Selector
@@ -46,10 +46,10 @@ limitations under the License. -->
           placeholder="Select a service"
           @change="changeField('service', $event)"
         />
-      </div> -->
-      <!-- <div
+      </div>      
+      <div
         class="mr-5 flex-h"
-        v-if="dashboardStore.entity !== EntityType[3].value"
+        v-if="dashboardStore.entity !== EntityType[3].value && currentSearchTerm === 'instance'"
       >
         <span class="grey mr-5">
           {{ isBrowser ? t("version") : t("instance") }}:
@@ -61,10 +61,10 @@ limitations under the License. -->
           placeholder="Select a instance"
           @change="changeField('instance', $event)"
         />
-      </div> -->
-      <!-- <div
-        class="mr-5 flex-h"
-        v-if="dashboardStore.entity !== EntityType[2].value"
+      </div>
+      <div
+        class="mr-5 flex-h items-center"
+        v-if="dashboardStore.entity !== EntityType[2].value  && currentSearchTerm === 'endpoint'"
       >
         <span class="grey mr-5"
           >{{ isBrowser ? t("page") : t("endpoint") }}:</span
@@ -78,7 +78,7 @@ limitations under the License. -->
           :isRemote="true"
           @query="searchEndpoints"
         />
-      </div> -->
+      </div>
     </div>
     <!-- <div class="row tips">
       <b>{{ t("conditionNotice") }}</b>
@@ -238,16 +238,21 @@ const arrayOfFilters = ref<filtersObject[]>([
     iconName: "issue-child",
     description: "Exclude keywords",
   },
-  // {
-  //   name: "traceId",
-  //   iconName: "timeline",
-  //   description: "Trace ID",
-  // },
-  // {
-  //   name: "tags",
-  //   iconName: "epic",
-  //   description: "Tags",
-  // },
+  {
+    name: "instance",
+    iconName: "epic",
+    description: "Instance",
+  },
+  {
+    name: "service",
+    iconName: "settings",
+    description: "Service",
+  },
+  {
+    name: "endpoints",
+    iconName: "timeline",
+    description: "Endpoints",
+  },
 ]);
 init();
 async function init() {

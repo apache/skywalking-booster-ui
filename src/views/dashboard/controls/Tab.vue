@@ -19,7 +19,7 @@ limitations under the License. -->
         v-for="(child, idx) in data.children || []"
         :key="idx"
         :class="{ active: activeTabIndex === idx }"
-        @click="clickTabs($event, idx, child)"
+        @click="clickTabs($event, idx)"
       >
         <input
           @click="editTabName($event, idx)"
@@ -161,10 +161,6 @@ import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
 import { dragIgnoreFrom } from "../data";
 
-interface TabChild {
-  name: string;
-  children: LayoutConfig[];
-}
 const props = {
   data: {
     type: Object as PropType<LayoutConfig>,
@@ -261,7 +257,7 @@ export default defineComponent({
       }
     );
 
-    function clickTabs(e: Event, idx: number, extra: TabChild) {
+    function clickTabs(e: Event, idx: number) {
       e.stopPropagation();
       activeTabIndex.value = idx;
       dashboardStore.activeGridItem(props.data.i);
@@ -273,7 +269,6 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
-      dashboardStore.setCurrentTabType(extra.children[0].type);
       needQuery.value = true;
     }
     function removeTab(e: Event) {
