@@ -186,8 +186,8 @@ limitations under the License. -->
 import Filter from "../related/trace/Filter.vue";
 import Header from "../related/log/Header.vue";
 
-import { reactive, onMounted, ref, computed, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { reactive, ref, computed, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useTraceStore } from "@/store/modules/trace";
