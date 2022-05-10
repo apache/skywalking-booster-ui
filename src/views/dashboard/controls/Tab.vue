@@ -161,6 +161,10 @@ import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
 import { dragIgnoreFrom } from "../data";
 
+interface TabChild {
+  name: string;
+  children: LayoutConfig[];
+}
 const props = {
   data: {
     type: Object as PropType<LayoutConfig>,
@@ -257,7 +261,7 @@ export default defineComponent({
       }
     );
 
-    function clickTabs(e: Event, idx: number, extra: any) {
+    function clickTabs(e: Event, idx: number, extra: TabChild) {
       e.stopPropagation();
       activeTabIndex.value = idx;
       dashboardStore.activeGridItem(props.data.i);
