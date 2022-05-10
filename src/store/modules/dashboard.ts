@@ -212,7 +212,7 @@ export const dashboardStore = defineStore({
     setCurrentTabItems(items: LayoutConfig[]) {
       this.currentTabItems = items;
     },
-    setCurrentTabName(name: string) {
+    setCurrentTabType(name: string) {
       this.currentTabName = name
     },
     removeTab(item: LayoutConfig) {

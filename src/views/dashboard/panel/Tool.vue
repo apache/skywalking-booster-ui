@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="dashboard-tool flex-h">  
+  <div class="dashboard-tool flex-h">
     <div class="flex-h">
       <div class="flex-h">
         <div
@@ -56,7 +56,10 @@ limitations under the License. -->
             <Icon iconSize="sm" iconName="cancel" />
           </el-button>
         </div>
-        <div class="selectors-item" v-if="(key === 3 || key === 4 ) && currentTraceView === 'traceList' " >        
+        <div
+          class="selectors-item"
+          v-if="(key === 3 || key === 4) && currentTraceView === 'traceList'"
+        >
           <el-tooltip
             v-if="!selectedSelector.length || selectedSelector === '$endpoint'"
             class="box-item"
@@ -191,9 +194,9 @@ import { useRoute, useRouter } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useTraceStore } from "@/store/modules/trace";
-onMounted(() =>{
-  console.log(dashboardStore.layout,dashboardStore.currentDashboard)
-})
+onMounted(() => {
+  console.log(dashboardStore.layout, dashboardStore.currentDashboard);
+});
 import {
   EntityType,
   AllTools,
@@ -217,13 +220,9 @@ const appStore = useAppStoreWithOut();
 const traceStore = useTraceStore();
 const params = useRoute().params;
 const selectedSelector = ref<string>("");
-const showFilter = computed(
-  () => dashboardStore.layout[0]?.activedTabIndex === 2
-);
-const showLogHeader = computed(
-  () => dashboardStore.layout[0]?.activedTabIndex === 3
-);
-const currentTraceView = computed(() => traceStore.currentView)
+const showFilter = computed(() => dashboardStore.currentTabName === "Trace");
+const showLogHeader = computed(() => dashboardStore.currentTabName === "Log");
+const currentTraceView = computed(() => traceStore.currentView);
 const { query } = useRoute();
 dashboardStore.setViewMode(query["fullview"] === "true");
 
