@@ -60,7 +60,6 @@ export const queryEBPFSchedules = {
       serviceName
       instanceId
       instanceName
-      layer
       agentId
       detectType
       attributes {
