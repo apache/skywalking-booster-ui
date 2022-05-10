@@ -38,11 +38,13 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
+import type { PropType, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Topology from "../related/topology/Index.vue";
-
+onMounted(() => {
+  console.log("TOPOLOGY COMPONENT!!!");
+});
 /*global defineProps */
 const props = defineProps({
   data: {

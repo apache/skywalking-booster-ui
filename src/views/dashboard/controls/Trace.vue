@@ -39,12 +39,13 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType, ref, computed } from "vue";
+import type { PropType, computed, onMounted, onBeforeUnmount } from "vue";
 import TraceList from "../related/trace/TraceList.vue";
 import TraceDetail from "../related/trace/Detail.vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useTraceStore } from "@/store/modules/trace";
+
 /*global defineProps */
 const props = defineProps({
   data: {
@@ -65,6 +66,13 @@ function removeWidget() {
 function showTraceDetails() {
   traceListActive.value = false;
 }
+
+onMounted(() => {
+  dashboardStore.setTraceTools(true)
+});
+onBeforeUnmount(() => {
+  dashboardStore.setTraceTools(false)
+})
 </script>
 <style lang="scss" scoped>
 .trace-wrapper {
