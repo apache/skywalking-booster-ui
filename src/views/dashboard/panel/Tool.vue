@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="dashboard-tool flex-h">    
+  <div class="dashboard-tool flex-h">  
     <div class="flex-h">
       <div class="flex-h">
         <div
@@ -172,6 +172,9 @@ limitations under the License. -->
         </div>
       </div>
     </div>
+    <!-- <pre>
+    {{dashboardStore.layout[0]}}
+  </pre> -->
     <Header v-if="showLogHeader" />
     <TraceDetailsTools
       v-if="showFilter && currentTraceView === 'traceDetails'"
@@ -183,11 +186,14 @@ limitations under the License. -->
 import Filter from "../related/trace/Filter.vue";
 import Header from "../related/log/Header.vue";
 
-import { reactive, ref, computed, watch } from "vue";
+import { reactive, onMounted, ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useTraceStore } from "@/store/modules/trace";
+onMounted(() =>{
+  console.log(dashboardStore.layout,dashboardStore.currentDashboard)
+})
 import {
   EntityType,
   AllTools,

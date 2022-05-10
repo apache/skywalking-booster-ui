@@ -19,7 +19,7 @@ limitations under the License. -->
         v-for="(child, idx) in data.children || []"
         :key="idx"
         :class="{ active: activeTabIndex === idx }"
-        @click="clickTabs($event, idx)"
+        @click="clickTabs($event, idx, child.name, child)"
       >
         <input
           @click="editTabName($event, idx)"
@@ -266,8 +266,9 @@ export default defineComponent({
       }
     );
 
-    function clickTabs(e: Event, idx: number) {      
+    function clickTabs(e: Event, idx: number, currentTabName:string, extra:any) {      
       e.stopPropagation();
+      console.log(currentTabName, extra)
       activeTabIndex.value = idx;
       dashboardStore.activeGridItem(props.data.i);
       dashboardStore.selectWidget(props.data);
@@ -278,6 +279,7 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
+      dashboardStore.setCurrentTabName(currentTabName)
       needQuery.value = true;
     }
     function removeTab(e: Event) {
@@ -484,7 +486,9 @@ export default defineComponent({
     color: #409eff;
   }
 }
-
+.tab-header .tabs .span.active{
+  color: red !important;
+}
 .operations {
   color: #aaa;
   cursor: pointer;

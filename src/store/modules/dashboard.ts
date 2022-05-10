@@ -40,6 +40,7 @@ interface DashboardState {
   showTopology: boolean;
   fullView: boolean;
   currentTabItems: LayoutConfig[];
+  currentTabName: string;
   dashboards: DashboardItem[];
   currentDashboard: Nullable<DashboardItem>;
   editMode: boolean;
@@ -59,6 +60,7 @@ export const dashboardStore = defineStore({
     showTopology: false,
     fullView: false,
     currentTabItems: [],
+    currentTabName: '',
     dashboards: [],
     currentDashboard: null,
     editMode: false,
@@ -209,6 +211,9 @@ export const dashboardStore = defineStore({
     },
     setCurrentTabItems(items: LayoutConfig[]) {
       this.currentTabItems = items;
+    },
+    setCurrentTabName(name: string) {
+      this.currentTabName = name
     },
     removeTab(item: LayoutConfig) {
       if (this.selectedGrid && this.selectedGrid.i === item.i) {
