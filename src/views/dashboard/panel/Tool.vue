@@ -212,7 +212,6 @@ import { ElMessage } from "element-plus";
 import { Option } from "@/types/app";
 import { useI18n } from "vue-i18n";
 import TraceDetailsTools from "./component/TraceDetailsTools";
-
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
