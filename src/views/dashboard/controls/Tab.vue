@@ -268,7 +268,6 @@ export default defineComponent({
 
     function clickTabs(e: Event, idx: number, extra:any) {      
       e.stopPropagation();
-      console.log(extra.children[0].type)
       activeTabIndex.value = idx;
       dashboardStore.activeGridItem(props.data.i);
       dashboardStore.selectWidget(props.data);

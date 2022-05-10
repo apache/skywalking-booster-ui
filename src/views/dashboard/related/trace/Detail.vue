@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-detail" v-loading="loading">
-    <div :class="{ 'full-view': isFullVull }" class="trace-chart">
+    <div :class="{ 'full-view': isFullView }" class="trace-chart">
       <component
         v-if="traceStore.currentTrace.endpointNames"
         :is="traceStore.displayMode"
@@ -49,12 +49,10 @@ export default defineComponent({
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
     const traceId = ref<string>("");
-    const queries = useRoute().query;
-    // console.log("APP::", queries);
-    const isFullVull = computed(() => {
+    const queries = useRoute().query;    
+    const isFullView = computed(() => {
       return queries?.fullview === "true" && queries?.portal === "true";
-    })
-    // const displayMode = ref<string>("List");
+    })  
     const displayMode = computed(() => {
       return traceStore.displayMode;
     });
@@ -107,7 +105,7 @@ export default defineComponent({
       searchTraceLogs();
     }
     return {
-      isFullVull,
+      isFullView,
       showTraceList,
       traceStore,
       displayMode,
