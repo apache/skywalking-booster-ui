@@ -38,6 +38,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import type { onBeforeUnmount, onMounted} from 'vue'
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 // import Header from "../related/log/Header.vue";
@@ -57,6 +58,12 @@ const dashboardStore = useDashboardStore();
 function removeWidget() {
   dashboardStore.removeControls(props.data);
 }
+onMounted(() => {
+  dashboardStore.setLogTools(true)
+});
+onBeforeUnmount(() => {
+  dashboardStore.setLogTools(false)
+})
 </script>
 <style lang="scss" scoped>
 .log-wrapper {
