@@ -41,7 +41,6 @@ export const Instances = {
       label: name
       language
       instanceUUID
-      layer
       attributes {
         name
         value
@@ -79,16 +78,15 @@ export const getInstance = {
   query: `
   instance: getInstance(instanceId: $instanceId) {
     id
-     value: name
-      label: name
-      language
-      instanceUUID
-      layer
-      attributes {
-        name
-        value
-      }
+    value: name
+    label: name
+    language
+    instanceUUID
+    attributes {
+      name
+      value
     }
+  }
   `,
 };
 
