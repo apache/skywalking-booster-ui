@@ -186,7 +186,7 @@ limitations under the License. -->
 import Filter from "../related/trace/Filter.vue";
 import Header from "../related/log/Header.vue";
 
-import { reactive, ref, computed, watch, onMounted } from "vue";
+import { reactive, ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -213,18 +213,12 @@ const appStore = useAppStoreWithOut();
 const traceStore = useTraceStore();
 const params = useRoute().params;
 const selectedSelector = ref<string>("");
-const showFilter = computed(() =>dashboardStore.showTraceTools);
-const showLogHeader = computed(() => dashboardStore.currentTabName === "Log");
+const showFilter = computed(() => dashboardStore.showTraceTools);
+const showLogHeader = computed(() => dashboardStore.showLogTools);
 const currentTraceView = computed(() => traceStore.currentView);
 const { query } = useRoute();
 dashboardStore.setViewMode(query["fullview"] === "true");
-onMounted(() => {
-  setTimeout(() => {
-    console.log(
-      showFilter.value
-    );
-  }, 1000)
-})
+
 const toolIcons = ref<{ name: string; content: string; id: string }[]>(
   EndpointRelationTools
 );
