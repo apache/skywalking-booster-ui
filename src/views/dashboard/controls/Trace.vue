@@ -56,7 +56,6 @@ const props = defineProps({
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
-// const traceListActive = ref<boolean>(true);
 const traceListActive = computed(() => {
   return traceStore.currentView === "traceList";
 });
