@@ -41,7 +41,6 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const { selectedGrid } = dashboardStore;
 const widget = dashboardStore.selectedGrid.widget || {};
 const title = ref<string>(widget.title || "");
 const tips = ref<string>(widget.tips || "");
@@ -51,6 +50,7 @@ function updateWidgetConfig(param: { [key: string]: string }) {
   if (!key) {
     return;
   }
+  const { selectedGrid } = dashboardStore;
   const widget = {
     ...dashboardStore.selectedGrid.widget,
     [key]: decodeURIComponent(param[key]),

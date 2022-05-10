@@ -178,6 +178,12 @@ function goDashboard() {
     layer: dashboardStore.layerId,
     entity,
   });
+  if (!d) {
+    ElMessage.error(
+      `The dashboard named ${settings.value.nodeDashboard} doesn't exist`
+    );
+    return;
+  }
   const path = `/dashboard/${d.layer}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${d.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
@@ -216,6 +222,12 @@ function selectNodeLink(d: any) {
       layer: dashboardStore.layerId,
       entity,
     });
+    if (!p) {
+      ElMessage.error(
+        `The dashboard named ${settings.value.linkDashboard} doesn't exist`
+      );
+      return;
+    }
     const path = `/dashboard/${p.layer}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${p.name}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
