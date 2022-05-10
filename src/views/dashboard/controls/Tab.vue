@@ -147,14 +147,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import {
-  ref,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-  defineComponent,
-  toRefs,
-} from "vue";
+import { ref, watch, onMounted, onBeforeUnmount, defineComponent, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
@@ -194,9 +187,7 @@ export default defineComponent({
     const currentItem = ref<number>(0);
     const isScrolling = ref(false);
 
-    const l = dashboardStore.layout.findIndex(
-      (d: LayoutConfig) => d.i === props.data.i
-    );
+    const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
     if (dashboardStore.layout[l].children.length) {
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
@@ -266,7 +257,7 @@ export default defineComponent({
       }
     );
 
-    function clickTabs(e: Event, idx: number, extra:any) {      
+    function clickTabs(e: Event, idx: number, extra: any) {
       e.stopPropagation();
       activeTabIndex.value = idx;
       dashboardStore.activeGridItem(props.data.i);
@@ -278,7 +269,7 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
-      dashboardStore.setCurrentTabType(extra.children[0].type)
+      dashboardStore.setCurrentTabType(extra.children[0].type);
       needQuery.value = true;
     }
     function removeTab(e: Event) {
@@ -315,9 +306,7 @@ export default defineComponent({
     function clickTabGrid(e: Event, item: LayoutConfig) {
       e.stopPropagation();
       activeTabWidget.value = item.i;
-      dashboardStore.activeGridItem(
-        `${props.data.i}-${activeTabIndex.value}-${item.i}`
-      );
+      dashboardStore.activeGridItem(`${props.data.i}-${activeTabIndex.value}-${item.i}`);
       handleClick(e);
     }
     function layoutUpdatedEvent() {
@@ -485,7 +474,7 @@ export default defineComponent({
     color: #409eff;
   }
 }
-.tab-header .tabs .span.active{
+.tab-header .tabs .span.active {
   color: red !important;
 }
 .operations {
