@@ -191,9 +191,6 @@ import { useRoute, useRouter } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useTraceStore } from "@/store/modules/trace";
-onMounted(() => {
-  console.log(dashboardStore.layout, dashboardStore.currentDashboard);
-});
 import {
   EntityType,
   AllTools,
