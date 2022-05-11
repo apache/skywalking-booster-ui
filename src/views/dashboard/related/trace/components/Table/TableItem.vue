@@ -200,9 +200,10 @@ export default defineComponent({
       dom.style.background = "rgba(0, 0, 0, 0.1)";
     }
     function selectSpan(event: any) {
-      const dom = event.path.find((d: any) =>
-        d.className.includes("trace-item")
-      );
+      console.log(event.composedPath());
+      const dom = event
+        .composedPath()
+        .find((d: any) => d.className.includes("trace-item"));
 
       emit("select", props.data);
       if (props.headerType === "profile") {
@@ -212,9 +213,9 @@ export default defineComponent({
       viewSpanDetail(dom);
     }
     function viewSpan(event: any) {
-      const dom = event.path.find((d: any) =>
-        d.className.includes("trace-item")
-      );
+      const dom = event
+        .composedPath()
+        .find((d: any) => d.className.includes("trace-item"));
       emit("select", props.data);
       viewSpanDetail(dom);
     }
