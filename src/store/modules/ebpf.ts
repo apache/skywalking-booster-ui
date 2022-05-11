@@ -103,14 +103,13 @@ export const ebpfStore = defineStore({
       this.getEBPFSchedules({ taskId: this.taskList[0].taskId });
       return res.data;
     },
-    async getEBPFSchedules(params: { taskId: string; duration?: Duration }) {
+    async getEBPFSchedules(params: { taskId: string }) {
       if (!params.taskId) {
         return new Promise((resolve) => resolve({}));
       }
-      const duration = useAppStoreWithOut().durationTime;
       const res: AxiosResponse = await graphql
         .query("getEBPFSchedules")
-        .params({ ...params, duration });
+        .params({ ...params });
 
       if (res.data.errors) {
         this.eBPFSchedules = [];
