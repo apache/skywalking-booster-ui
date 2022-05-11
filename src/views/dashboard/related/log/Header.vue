@@ -349,7 +349,7 @@ function removeFromActiveTerms() {
   );
 }
 function searchLogs() {
-  addToActiveTerms();
+  // addToActiveTerms();
   currentSearchTerm.value = "";
   let endpoint = "",
     instance = "";
@@ -434,6 +434,7 @@ function removeExcludeContent(index: number) {
   excludingContentStr.value = "";
 }
 function setSearchTerm(term: string) {
+  if (!term) return;
   currentSearchTerm.value = term;
 }
 function cancelSearchTerm() {
