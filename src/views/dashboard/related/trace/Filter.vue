@@ -256,29 +256,37 @@ function cancelSearch() {
       break;
     case "endpont":
       state.endpoint.value = "0";
-      break
+      break;
     case "service":
       state.service.value = "";
-      break
+      break;
     case "duration":
       minTraceDuration.value = "";
       maxTraceDuration.value = "";
-      break
+      break;
     case "tags":
-      tagsList.value = []
-      tagsMap.value = []
-      break
+      tagsList.value = [];
+      tagsMap.value = [];
+      break;
     case "traceId":
-      traceId.value = ""
-      break
+      traceId.value = "";
+      break;
   }
   activeFilter.value = "";
   traceStore.activeFilter = "";
-  init()
+  init();
 }
-
+function handleActiveFilterState() {
+  switch (activeFilter.value) {
+    case "traceId":
+      console.log(traceId.value);
+      if (!traceId.value.length) return;
+      traceStore.setActiveFilter(activeFilter.value);
+      break
+  }
+}
 function searchTraces() {
-  traceStore.setActiveFilter(activeFilter.value);
+  handleActiveFilterState()
   activeFilter.value = "";
   let endpoint = "",
     instance = "";
