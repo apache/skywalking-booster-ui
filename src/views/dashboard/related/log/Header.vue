@@ -26,58 +26,76 @@ limitations under the License. -->
             type="success"
             :class="[activeTerms.includes(item.name) ? 'active-toggle' : '']"
             class="toggle-btn mx-3"
+            v-show="item.isVisible"
             @click="setSearchTerm(item.name)"
           >
             <Icon iconSize="sm" :iconName="item.iconName" />
           </el-button>
-        </el-tooltip> 
+        </el-tooltip>
       </div>
     </div>
     <div class="flex-h items-center row">
-      <div
-        class="mr-5 flex-h items-center"
-        v-if="dashboardStore.entity === EntityType[1].value && currentSearchTerm === 'service' "
-      >
-        <span class="grey mr-5">{{ t("service") }}:</span>
-        <Selector
-          size="small"
-          :value="state.service.value"
-          :options="logStore.services"
-          placeholder="Select a service"
-          @change="changeField('service', $event)"
-        />
-      </div>      
-      <div
-        class="mr-5 flex-h"
-        v-if="dashboardStore.entity !== EntityType[3].value && currentSearchTerm === 'instance'"
-      >
-        <span class="grey mr-5">
-          {{ isBrowser ? t("version") : t("instance") }}:
-        </span>
-        <Selector
-          size="small"
-          :value="state.instance.value"
-          :options="logStore.instances"
-          placeholder="Select a instance"
-          @change="changeField('instance', $event)"
-        />
-      </div>
-      <div
-        class="mr-5 flex-h items-center"
-        v-if="dashboardStore.entity !== EntityType[2].value  && currentSearchTerm === 'endpoint'"
-      >
-        <span class="grey mr-5"
-          >{{ isBrowser ? t("page") : t("endpoint") }}:</span
+      <div class="flex-h items-center" v-if="currentSearchTerm === 'service'">
+        <div
+          class="mr-5 flex-h items-center"
+          v-if="dashboardStore.entity === EntityType[1].value"
         >
-        <Selector
-          size="small"
-          :value="state.endpoint.value"
-          :options="logStore.endpoints"
-          placeholder="Select a endpoint"
-          @change="changeField('endpoint', $event)"
-          :isRemote="true"
-          @query="searchEndpoints"
-        />
+          <span class="grey mr-5">{{ t("service") }}:</span>
+          <Selector
+            size="small"
+            :value="state.service.value"
+            :options="logStore.services"
+            placeholder="Select a service"
+            @change="changeField('service', $event)"
+          />
+        </div>
+        <b v-else>{{ t("service") }} data not available</b>
+      </div>
+
+      <div class="flex-h items-center" v-if="currentSearchTerm === 'instance'">
+        <div
+          class="mr-5 flex-h"
+          v-if="
+            dashboardStore.entity !== EntityType[3].value &&
+            currentSearchTerm === 'instance'
+          "
+        >
+          <span class="grey mr-5">
+            {{ isBrowser ? t("version") : t("instance") }}:
+          </span>
+          <Selector
+            size="small"
+            :value="state.instance.value"
+            :options="logStore.instances"
+            placeholder="Select a instance"
+            @change="changeField('instance', $event)"
+          />
+        </div>
+        <b v-else>{{ t("instance") }} data not available</b>
+      </div>
+
+      <div class="flex-h items-center" v-if="currentSearchTerm === 'endpoints'">
+        <div
+          class="mr-5 flex-h items-center"
+          v-if="
+            dashboardStore.entity !== EntityType[2].value &&
+            currentSearchTerm === 'endpoint'
+          "
+        >
+          <span class="grey mr-5"
+            >{{ isBrowser ? t("page") : t("endpoint") }}:</span
+          >
+          <Selector
+            size="small"
+            :value="state.endpoint.value"
+            :options="logStore.endpoints"
+            placeholder="Select a endpoint"
+            @change="changeField('endpoint', $event)"
+            :isRemote="true"
+            @query="searchEndpoints"
+          />
+        </div>
+        <b v-else>{{ t("endpoint") }} data not available</b>
       </div>
     </div>
     <!-- <div class="row tips">
@@ -216,42 +234,50 @@ interface filtersObject {
   name: string;
   iconName: string;
   description: string;
+  isVisible?: boolean;
 }
 const arrayOfFilters = ref<filtersObject[]>([
   {
     name: "traceId",
     iconName: "timeline",
     description: "Trace ID",
+    isVisible: true,
   },
   {
     name: "tags",
     iconName: "epic",
     description: "Tags",
+    isVisible: true,
   },
   {
     name: "keywords",
     iconName: "library_books",
     description: "Keywords",
+    isVisible: logStore.supportQueryLogsByKeywords,
   },
   {
     name: "exclude",
     iconName: "issue-child",
     description: "Exclude keywords",
+    isVisible: logStore.supportQueryLogsByKeywords,
   },
   {
     name: "instance",
     iconName: "epic",
     description: "Instance",
+    isVisible: dashboardStore.entity !== EntityType[3].value,
   },
   {
     name: "service",
     iconName: "settings",
     description: "Service",
+    isVisible: dashboardStore.entity === EntityType[1].value,
   },
   {
     name: "endpoints",
     iconName: "timeline",
     description: "Endpoints",
+    isVisible: dashboardStore.entity !== EntityType[2].value,
   },
 ]);
 init();
@@ -314,15 +340,17 @@ async function getInstances(id?: string) {
   }
   state.instance = logStore.instances[0];
 }
-function addToActiveTerms(){
-  activeTerms.value.push(currentSearchTerm.value);  
+function addToActiveTerms() {
+  activeTerms.value.push(currentSearchTerm.value);
 }
-function removeFromActiveTerms(){
-  activeTerms.value = activeTerms.value.filter(term => term !== currentSearchTerm.value );  
+function removeFromActiveTerms() {
+  activeTerms.value = activeTerms.value.filter(
+    (term) => term !== currentSearchTerm.value
+  );
 }
-function searchLogs() {  
-  addToActiveTerms()
-  currentSearchTerm.value = ""
+function searchLogs() {
+  addToActiveTerms();
+  currentSearchTerm.value = "";
   let endpoint = "",
     instance = "";
   if (dashboardStore.entity === EntityType[2].value) {
@@ -409,7 +437,7 @@ function setSearchTerm(term: string) {
   currentSearchTerm.value = term;
 }
 function cancelSearchTerm() {
-  removeFromActiveTerms()
+  removeFromActiveTerms();
   currentSearchTerm.value = "";
 }
 watch(
