@@ -47,7 +47,7 @@ export const logStore = defineStore({
       queryDuration: useAppStoreWithOut().durationTime,
       paging: { pageNum: 1, pageSize: 15, needTotal: true },
     },
-    supportQueryLogsByKeywords: true,
+    supportQueryLogsByKeywords: false,
     durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
     logs: [],
