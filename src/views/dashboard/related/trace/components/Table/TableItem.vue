@@ -200,7 +200,6 @@ export default defineComponent({
       dom.style.background = "rgba(0, 0, 0, 0.1)";
     }
     function selectSpan(event: any) {
-      console.log(event.composedPath());
       const dom = event
         .composedPath()
         .find((d: any) => d.className.includes("trace-item"));
