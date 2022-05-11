@@ -94,11 +94,13 @@ limitations under the License. -->
         <span class="grey mr-5">-</span>
         <el-input size="small" class="inputs" v-model="maxTraceDuration" />
       </div>
-      <ConditionTags
-        v-if="activeFilter === 'tags'"
-        :type="'TRACE'"
-        @update="updateTags"
-      />
+      <keep-alive>
+        <ConditionTags
+          v-if="activeFilter === 'tags'"
+          :type="'TRACE'"
+          @update="updateTags"
+        />
+      </keep-alive>
       <el-button
         v-if="activeFilter"
         class="search-btn filter-btn"
@@ -257,6 +259,17 @@ function cancelSearch() {
       break
     case "service":
       state.service.value = "";
+      break
+    case "duration":
+      minTraceDuration.value = "";
+      maxTraceDuration.value = "";
+      break
+    case "tags":
+      tagsList.value = []
+      tagsMap.value = []
+      break
+    case "traceId":
+      traceId.value = ""
       break
   }
   activeFilter.value = "";
