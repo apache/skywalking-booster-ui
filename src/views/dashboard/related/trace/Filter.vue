@@ -281,20 +281,29 @@ function handleActiveFilterState() {
     case "traceId":
       if (!traceId.value.length) return;
       traceStore.setActiveFilter(activeFilter.value);
-      break
+      break;
     case "tags":
       if (!tagsList.value.length) return;
       traceStore.setActiveFilter(activeFilter.value);
-      break
+      break;
     case "duration":
       if (!minTraceDuration.value.length || !maxTraceDuration.value.length)
         return;
       traceStore.setActiveFilter(activeFilter.value);
-      break
+      break;
+    case "service":
+      traceStore.setActiveFilter(activeFilter.value);            
+      break;
+    case "instance":
+      traceStore.setActiveFilter(activeFilter.value);            
+      break;
+    case "status":
+      traceStore.setActiveFilter(activeFilter.value);            
+      break;
   }
 }
 function searchTraces() {
-  handleActiveFilterState()
+  handleActiveFilterState();
   activeFilter.value = "";
   let endpoint = "",
     instance = "";
