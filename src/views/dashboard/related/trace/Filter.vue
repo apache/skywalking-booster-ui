@@ -279,8 +279,16 @@ function cancelSearch() {
 function handleActiveFilterState() {
   switch (activeFilter.value) {
     case "traceId":
-      console.log(traceId.value);
       if (!traceId.value.length) return;
+      traceStore.setActiveFilter(activeFilter.value);
+      break
+    case "tags":
+      if (!tagsList.value.length) return;
+      traceStore.setActiveFilter(activeFilter.value);
+      break
+    case "duration":
+      if (!minTraceDuration.value.length || !maxTraceDuration.value.length)
+        return;
       traceStore.setActiveFilter(activeFilter.value);
       break
   }
