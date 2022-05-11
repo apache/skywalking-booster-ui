@@ -182,10 +182,6 @@ const queriedFilter = computed(() => traceStore.activeFilter);
 function setFilter(filter: string) {
   activeFilter.value = filter;
 }
-function cancelSearch() {
-  activeFilter.value = "";
-  traceStore.activeFilter = "";
-}
 
 const traceId = ref<string>("");
 const minTraceDuration = ref<string>("");
@@ -248,6 +244,26 @@ async function getInstances(id?: string) {
   }
   state.instance = traceStore.instances[0];
 }
+function cancelSearch() {
+  switch (activeFilter.value) {
+    case "status":
+      state.status.value = "ALL";
+      break;
+    case "instance":
+      state.instance.value = "0";
+      break;
+    case "endpont":
+      state.endpoint.value = "0";
+      break
+    case "service":
+      state.service.value = "";
+      break
+  }
+  activeFilter.value = "";
+  traceStore.activeFilter = "";
+  init()
+}
+
 function searchTraces() {
   traceStore.setActiveFilter(activeFilter.value);
   activeFilter.value = "";
