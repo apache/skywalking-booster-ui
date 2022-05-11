@@ -81,7 +81,7 @@ export const TraceTagKeys = {
 };
 
 export const TraceTagValues = {
-  variable: "tagKey: String!, $duration: Duration!",
+  variable: "$tagKey: String!, $duration: Duration!",
   query: `
   tagValues: queryTraceTagAutocompleteValues(tagKey: $tagKey, duration: $duration)`,
 };

@@ -40,7 +40,25 @@ limitations under the License. -->
           class="trace-new-tag"
           @change="addLabels"
           :placeholder="t('addTags')"
+          @click="showClick"
         />
+        <el-dropdown
+          ref="dropdown1"
+          trigger="contextmenu"
+          style="margin: 20px 0 0 -130px"
+        >
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="(item, index) in tagArr"
+                :key="index"
+                @click="selectTag(item)"
+              >
+                <span class="tag-item">{{ item }}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </span>
       <span class="tags-tip">
         <a
@@ -63,7 +81,6 @@ limitations under the License. -->
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
-import { Option } from "@/types/app";
 import { ElMessage } from "element-plus";
 
 /*global defineEmits, defineProps */
@@ -76,13 +93,13 @@ const { t } = useI18n();
 const theme = ref<string>("dark");
 const tags = ref<string>("");
 const tagsList = ref<string[]>([]);
-const tagKeys = ref<Option[]>([]);
-const tagValues = ref<Option[]>([]);
+const tagArr = ref<string[]>([]);
 const tipsMap = {
   LOG: "logTagsTip",
   TRACE: "traceTagsTip",
   ALARM: "alarmTagsTip",
 };
+const dropdown1 = ref();
 
 fetchTagKeys();
 function removeTags(index: number) {
@@ -114,27 +131,34 @@ async function fetchTagKeys() {
     ElMessage.error(resp.errors);
     return;
   }
-  tagKeys.value = resp.data.tagKeys.map((d: string) => {
-    return {
-      label: d,
-      value: d,
-    };
-  });
+  tagArr.value = resp.data.tagKeys;
 }
 
 async function fetchTagValues() {
-  const resp = await traceStore.getTagValues(tagKeys.value);
+  const param = tags.value.split("=")[0];
+  const resp = await traceStore.getTagValues(param);
 
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
-  tagValues.value = resp.data.tagValues.map((d: string) => {
-    return {
-      label: d,
-      value: d,
-    };
-  });
+  tagArr.value = resp.data.tagValues;
+}
+
+function selectTag(item: string) {
+  if (tags.value.includes("=")) {
+    tags.value = tags.value + item;
+    fetchTagValues();
+  } else {
+    tags.value = item + "=";
+  }
+}
+
+function showClick() {
+  dropdown1.value.handleOpen();
+  if (tags.value.includes("=")) {
+    fetchTagValues();
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -169,6 +193,11 @@ async function fetchTagValues() {
   display: inline-block;
   margin-left: 3px;
   cursor: pointer;
+}
+
+.tag-item {
+  display: inline-block;
+  width: 210px;
 }
 
 .tags-tip {
