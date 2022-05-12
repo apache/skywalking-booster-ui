@@ -349,7 +349,7 @@ function removeFromActiveTerms() {
   );
 }
 function searchLogs() {
-  // addToActiveTerms();
+  addToActiveTerms();
   currentSearchTerm.value = "";
   let endpoint = "",
     instance = "";
@@ -434,12 +434,38 @@ function removeExcludeContent(index: number) {
   excludingContentStr.value = "";
 }
 function setSearchTerm(term: string) {
-  if (!term) return;
+  // if (!term) return;
   currentSearchTerm.value = term;
+  console.log(currentSearchTerm.value);
 }
 function cancelSearchTerm() {
+  switch (currentSearchTerm.value) {
+    case "traceId":
+      traceId.value = "";
+      break;
+    case "tags":
+      tagsList.value = [];
+      tagsMap.value = [];
+      break;
+    case "keywords":
+      keywordsOfContent.value = [];
+      break;
+    case "exclude":
+      excludingKeywordsOfContent.value = [];
+      break;
+    case "instance":
+      state.instance.value = "0";
+      break;
+    case "endpoints":
+      state.endpoints.value = "0";
+      break;
+    case "service":
+      state.service.value = "";
+      break;
+  }
   removeFromActiveTerms();
   currentSearchTerm.value = "";
+  init()
 }
 watch(
   () => selectorStore.currentService,
