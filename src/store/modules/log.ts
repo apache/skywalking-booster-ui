@@ -151,6 +151,20 @@ export const logStore = defineStore({
       this.logsTotal = res.data.data.queryBrowserErrorLogs.total;
       return res.data;
     },
+    async getLogTagKeys() {
+      const res: AxiosResponse = await graphql
+        .query("queryLogTagKeys")
+        .params({ duration: useAppStoreWithOut().durationTime });
+
+      return res.data;
+    },
+    async getLogTagValues(tagKey: string) {
+      const res: AxiosResponse = await graphql
+        .query("queryLogTagValues")
+        .params({ tagKey, duration: useAppStoreWithOut().durationTime });
+
+      return res.data;
+    },
   },
 });
 

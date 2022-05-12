@@ -79,14 +79,16 @@ limitations under the License. -->
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
+import { useLogStore } from "@/store/modules/log";
 import { ElMessage } from "element-plus";
 
 /*global defineEmits, defineProps */
 const emit = defineEmits(["update"]);
-defineProps({
+const props = defineProps({
   type: { type: String, default: "TRACE" },
 });
 const traceStore = useTraceStore();
+const logStore = useLogStore();
 const { t } = useI18n();
 const theme = ref<string>("dark");
 const tags = ref<string>("");
@@ -100,7 +102,6 @@ const tipsMap = {
 };
 const dropdownTag = ref();
 
-fetchTagKeys();
 function removeTags(index: number) {
   tagsList.value.splice(index, 1);
   updateTags();
@@ -124,7 +125,12 @@ function updateTags() {
   emit("update", { tagsMap, tagsList: tagsList.value });
 }
 async function fetchTagKeys() {
-  const resp = await traceStore.getTagKeys();
+  let resp: any = {};
+  if (props.type === "TRACE") {
+    resp = await traceStore.getTagKeys();
+  } else {
+    resp = await logStore.getLogTagKeys();
+  }
 
   if (resp.errors) {
     ElMessage.error(resp.errors);
@@ -136,7 +142,12 @@ async function fetchTagKeys() {
 
 async function fetchTagValues() {
   const param = tags.value.split("=")[0];
-  const resp = await traceStore.getTagValues(param);
+  let resp: any = {};
+  if (props.type === "TRACE") {
+    resp = await traceStore.getTagValues(param);
+  } else {
+    resp = await logStore.getLogTagValues(param);
+  }
 
   if (resp.errors) {
     ElMessage.error(resp.errors);
@@ -159,6 +170,11 @@ function selectTag(item: string) {
 
 function showClick() {
   dropdownTag.value.handleOpen();
+  if (tags.value.includes("=")) {
+    fetchTagValues();
+    return;
+  }
+  fetchTagKeys();
 }
 </script>
 <style lang="scss" scoped>
