@@ -37,6 +37,7 @@ interface DashboardState {
   activedGridItem: string;
   durationTime: Duration;
   selectorStore: any;
+  showTopology: boolean;
   fullView: boolean;
   currentTabItems: LayoutConfig[];
   showTraceTools: boolean;
@@ -57,6 +58,7 @@ export const dashboardStore = defineStore({
     activedGridItem: "",
     durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
+    showTopology: false,
     showLogTools: false,
     showTraceTools: false,
     fullView: false,
@@ -267,6 +269,9 @@ export const dashboardStore = defineStore({
     },
     setLogTools(show: boolean) {
       this.showLogTools = show;
+    },
+    setTopology(show: boolean) {
+      this.showTopology = show;
     },
     setConfigs(param: { [key: string]: unknown }) {
       const actived = this.activedGridItem.split("-");
