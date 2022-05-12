@@ -108,12 +108,13 @@ limitations under the License. -->
           <el-input v-model="traceId" class="inputs-max" size="small" />
         </div>
       </div>
-
-      <ConditionTags
-        v-if="currentSearchTerm === 'tags'"
-        :type="'LOG'"
-        @update="updateTags"
-      />
+      <keep-alive>
+        <ConditionTags
+          v-if="currentSearchTerm === 'tags'"
+          :type="'LOG'"
+          @update="updateTags"
+        />
+      </keep-alive>
     </div>
 
     <div class="flex-h items-center" v-show="!isBrowser">
@@ -348,8 +349,37 @@ function removeFromActiveTerms() {
     (term) => term !== currentSearchTerm.value
   );
 }
+function handleActiveSearchTerms() {
+  switch (currentSearchTerm.value) {
+    case "traceId":
+      if (!traceId.value.length) return;
+      addToActiveTerms();
+      break;
+    case "tags":
+      if (!tagsList.value.length) return;
+      addToActiveTerms();
+      break;
+    case "keywords":
+      if (!keywordsOfContent.value.length) return;
+      addToActiveTerms();
+      break;
+    case "exclude":
+      if (!excludingKeywordsOfContent.value.length) return;
+      addToActiveTerms();
+      break;
+    case "instance":
+      addToActiveTerms();
+      break;
+    case "service":
+      addToActiveTerms();
+      break;
+    case "endpoint":
+      addToActiveTerms();
+      break;
+  }
+}
 function searchLogs() {
-  addToActiveTerms();
+  handleActiveSearchTerms();
   currentSearchTerm.value = "";
   let endpoint = "",
     instance = "";
@@ -434,9 +464,7 @@ function removeExcludeContent(index: number) {
   excludingContentStr.value = "";
 }
 function setSearchTerm(term: string) {
-  // if (!term) return;
   currentSearchTerm.value = term;
-  console.log(currentSearchTerm.value);
 }
 function cancelSearchTerm() {
   switch (currentSearchTerm.value) {
@@ -465,7 +493,7 @@ function cancelSearchTerm() {
   }
   removeFromActiveTerms();
   currentSearchTerm.value = "";
-  init()
+  init();
 }
 watch(
   () => selectorStore.currentService,

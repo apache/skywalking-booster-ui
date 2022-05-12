@@ -292,13 +292,13 @@ function handleActiveFilterState() {
       traceStore.setActiveFilter(activeFilter.value);
       break;
     case "service":
-      traceStore.setActiveFilter(activeFilter.value);            
+      traceStore.setActiveFilter(activeFilter.value);
       break;
     case "instance":
-      traceStore.setActiveFilter(activeFilter.value);            
+      traceStore.setActiveFilter(activeFilter.value);
       break;
     case "status":
-      traceStore.setActiveFilter(activeFilter.value);            
+      traceStore.setActiveFilter(activeFilter.value);
       break;
   }
 }
