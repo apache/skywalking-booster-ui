@@ -103,7 +103,7 @@ limitations under the License. -->
       <keep-alive>
         <ConditionTags
           v-if="activeFilter === 'tags'"
-          ref="tagComponent"
+          ref="traceTagsComponent"
           :type="'TRACE'"
           @update="updateTags"
         />
@@ -209,7 +209,7 @@ const state = reactive<any>({
   service: { value: "", label: "" },
 });
 
-const tagComponent = ref<InstanceType<typeof ConditionTags> | null>(null);
+const traceTagsComponent = ref<InstanceType<typeof ConditionTags> | null>(null);
 
 // const dateTime = computed(() => [
 //   appStore.durationRow.start,
@@ -282,7 +282,7 @@ function cancelSearch() {
       tagsList.value = [];
       tagsMap.value = [];
       updateTags({ tagsMap: [], tagsList: [] });
-      tagComponent.value?.emptyTags();
+      traceTagsComponent.value?.emptyTags();
       break;
     case "traceId":
       traceId.value = "";

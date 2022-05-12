@@ -110,6 +110,7 @@ limitations under the License. -->
       </div>
       <keep-alive>
         <ConditionTags
+          ref="logTagsComponent"
           v-if="currentSearchTerm === 'tags'"
           :type="'LOG'"
           @update="updateTags"
@@ -231,6 +232,7 @@ const state = reactive<any>({
   endpoint: { value: "0", label: "All" },
   service: { value: "", label: "" },
 });
+const logTagsComponent = ref<InstanceType<typeof ConditionTags> | null>(null);
 interface filtersObject {
   name: string;
   iconName: string;
@@ -373,7 +375,7 @@ function handleActiveSearchTerms() {
     case "service":
       addToActiveTerms();
       break;
-    case "endpoint":
+    case "endpoints":
       addToActiveTerms();
       break;
   }
@@ -474,6 +476,7 @@ function cancelSearchTerm() {
     case "tags":
       tagsList.value = [];
       tagsMap.value = [];
+      logTagsComponent.value?.emptyTags();
       break;
     case "keywords":
       keywordsOfContent.value = [];
@@ -485,7 +488,8 @@ function cancelSearchTerm() {
       state.instance.value = "0";
       break;
     case "endpoints":
-      state.endpoints.value = "0";
+      state.endpoint.value = "0";
+      getEndpoints();
       break;
     case "service":
       state.service.value = "";
