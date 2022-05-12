@@ -16,10 +16,7 @@ limitations under the License. -->
   <div class="flex-h" :class="{ light: theme === 'light' }">
     <div class="flex-h items-center mr-5">
       <span class="sm grey" v-show="theme === 'dark'">{{ t("tags") }}: </span>
-      <span
-        v-if="tagsList.length"
-        class="trace-tags"
-      >
+      <span v-if="tagsList.length" class="trace-tags">
         <!-- :style="type === 'LOG' ? `min-width: 122px;` : ''" -->
         <span class="selected" v-for="(item, index) in tagsList" :key="index">
           <span>{{ item }}</span>
@@ -62,11 +59,12 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, defineExpose } from "vue";
 import { useI18n } from "vue-i18n";
 
 /*global defineEmits, defineProps */
 const emit = defineEmits(["update"]);
+
 defineProps({
   type: { type: String, default: "TRACE" },
 });
@@ -75,6 +73,13 @@ const theme = ref<string>("dark");
 const tags = ref<string>("");
 const tagsList = ref<string[]>([]);
 
+defineExpose({
+  tagsList,
+  emptyTags
+})
+function emptyTags (){
+  tagsList.value = []
+}
 function removeTags(index: number) {
   tagsList.value.splice(index, 1);
   updateTags();
@@ -99,7 +104,7 @@ function updateTags() {
 }
 </script>
 <style lang="scss" scoped>
-.items-center{
+.items-center {
   align-items: center;
 }
 .trace-tags {

@@ -61,7 +61,13 @@ limitations under the License. -->
           @change="changeField('instance', $event)"
         />
       </div>
-      <div class="filter" v-if="dashboardStore.entity !== EntityType[2].value && activeFilter === 'endpoints'">
+      <div
+        class="filter"
+        v-if="
+          dashboardStore.entity !== EntityType[2].value &&
+          activeFilter === 'endpoints'
+        "
+      >
         <span class="grey mr-5">{{ t("endpoint") }}:</span>
         <Selector
           size="small"
@@ -93,10 +99,11 @@ limitations under the License. -->
         <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
         <span class="grey mr-5">-</span>
         <el-input size="small" class="inputs" v-model="maxTraceDuration" />
-      </div>
+      </div>        
       <keep-alive>
         <ConditionTags
           v-if="activeFilter === 'tags'"
+          ref="tagComponent"
           :type="'TRACE'"
           @update="updateTags"
         />
@@ -202,6 +209,8 @@ const state = reactive<any>({
   service: { value: "", label: "" },
 });
 
+const tagComponent = ref<InstanceType<typeof ConditionTags> | null>(null)
+
 // const dateTime = computed(() => [
 //   appStore.durationRow.start,
 //   appStore.durationRow.end,
@@ -272,6 +281,8 @@ function cancelSearch() {
     case "tags":
       tagsList.value = [];
       tagsMap.value = [];
+      updateTags({ tagsMap: [], tagsList: [] });
+      tagComponent.value?.emptyTags()
       break;
     case "traceId":
       traceId.value = "";
@@ -353,6 +364,7 @@ function changeField(type: string, opt: any) {
   }
 }
 function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
+  console.log(data, tagComponent.value)
   tagsList.value = data.tagsList;
   tagsMap.value = data.tagsMap;
 }
