@@ -38,23 +38,21 @@ limitations under the License. -->
           size="small"
           v-model="tags"
           class="trace-new-tag"
-          @change="addLabels"
           :placeholder="t('addTags')"
           @click="showClick"
+          :autofocus="true"
         />
         <el-dropdown
-          ref="dropdown1"
+          ref="dropdownTag"
           trigger="contextmenu"
           style="margin: 20px 0 0 -130px"
         >
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item
-                v-for="(item, index) in tagArr"
-                :key="index"
-                @click="selectTag(item)"
-              >
-                <span class="tag-item">{{ item }}</span>
+              <el-dropdown-item v-for="(item, index) in tagArr" :key="index">
+                <span @click="selectTag(item)" class="tag-item">
+                  {{ item }}
+                </span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -94,12 +92,13 @@ const theme = ref<string>("dark");
 const tags = ref<string>("");
 const tagsList = ref<string[]>([]);
 const tagArr = ref<string[]>([]);
+const tagKeys = ref<string[]>([]);
 const tipsMap = {
   LOG: "logTagsTip",
   TRACE: "traceTagsTip",
   ALARM: "alarmTagsTip",
 };
-const dropdown1 = ref();
+const dropdownTag = ref();
 
 fetchTagKeys();
 function removeTags(index: number) {
@@ -132,6 +131,7 @@ async function fetchTagKeys() {
     return;
   }
   tagArr.value = resp.data.tagKeys;
+  tagKeys.value = resp.data.tagKeys;
 }
 
 async function fetchTagValues() {
@@ -147,18 +147,18 @@ async function fetchTagValues() {
 
 function selectTag(item: string) {
   if (tags.value.includes("=")) {
-    tags.value = tags.value + item;
-    fetchTagValues();
-  } else {
-    tags.value = item + "=";
+    tags.value += item;
+    addLabels();
+    tagArr.value = tagKeys.value;
+    return;
   }
+  tags.value = item + "=";
+  fetchTagValues();
+  dropdownTag.value.handleOpen();
 }
 
 function showClick() {
-  dropdown1.value.handleOpen();
-  if (tags.value.includes("=")) {
-    fetchTagValues();
-  }
+  dropdownTag.value.handleOpen();
 }
 </script>
 <style lang="scss" scoped>
