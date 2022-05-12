@@ -38,7 +38,6 @@ limitations under the License. -->
         size="small"
         v-model="tags"
         class="trace-new-tag"
-        :placeholder="t('addTags')"
         @click="showClick"
       />
       <el-dropdown
@@ -48,8 +47,12 @@ limitations under the License. -->
       >
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item v-for="(item, index) in tagArr" :key="index">
-              <span @click="selectTag(item)" class="tag-item">
+            <el-dropdown-item
+              v-for="(item, index) in tagArr"
+              :key="index"
+              @click="selectTag(item)"
+            >
+              <span class="tag-item">
                 {{ item }}
               </span>
             </el-dropdown-item>
@@ -69,7 +72,7 @@ limitations under the License. -->
           <Icon class="icon-help mr-5" iconName="help" size="middle" />
         </span>
       </el-tooltip>
-      <b v-if="type !== 'LOG'">{{ t("noticeTag") }}</b>
+      <b v-if="type === 'AL'">{{ t("noticeTag") }}</b>
     </span>
   </div>
 </template>
@@ -159,10 +162,10 @@ function selectTag(item: string) {
   if (tags.value.includes("=")) {
     tags.value += item;
     addLabels();
-    tagArr.value = tagKeys.value;
     return;
   }
   tags.value = item + "=";
+  tagArr.value = tagKeys.value;
   fetchTagValues();
   dropdownTag.value.handleOpen();
 }
@@ -178,10 +181,6 @@ function showClick() {
   height: 24px;
   display: inline-block;
   vertical-align: top;
-}
-
-.link-tips {
-  margin-right: 120px;
 }
 
 .selected {
@@ -210,13 +209,16 @@ function showClick() {
 
 .tag-item {
   display: inline-block;
-  width: 210px;
+  min-width: 210px;
 }
 
 .tags-tip {
   color: #a7aebb;
+}
+
+.link-tips {
   display: inline-block;
-  margin-right: 130px;
+  margin-left: 130px;
 }
 
 .light {
