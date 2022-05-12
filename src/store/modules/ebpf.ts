@@ -153,7 +153,7 @@ export const ebpfStore = defineStore({
         this.analyzeTrees = [];
         return res.data;
       }
-      this.analyzeTrees = analysisEBPFResult.trees[0].elements;
+      this.analyzeTrees = analysisEBPFResult.trees;
       return res.data;
     },
   },
