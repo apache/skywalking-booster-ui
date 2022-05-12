@@ -41,7 +41,6 @@ export const Instances = {
     label: name
     language
     instanceUUID
-    layer
     attributes {
       name
       value
@@ -83,7 +82,6 @@ export const getInstance = {
     label: name
     language
     instanceUUID
-    layer
     attributes {
       name
       value
