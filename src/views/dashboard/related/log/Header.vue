@@ -34,7 +34,7 @@ limitations under the License. -->
         </el-tooltip>
       </div>
     </div>
-    <div class="flex-h items-center row">
+    <div class="flex-h items-center">
       <div class="flex-h items-center" v-if="currentSearchTerm === 'service'">
         <div
           class="mr-5 flex-h items-center"
@@ -54,7 +54,7 @@ limitations under the License. -->
 
       <div class="flex-h items-center" v-if="currentSearchTerm === 'instance'">
         <div
-          class="mr-5 flex-h"
+          class="mr-5 items-center flex-h"
           v-if="
             dashboardStore.entity !== EntityType[3].value &&
             currentSearchTerm === 'instance'

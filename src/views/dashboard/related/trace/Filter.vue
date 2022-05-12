@@ -99,7 +99,7 @@ limitations under the License. -->
         <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
         <span class="grey mr-5">-</span>
         <el-input size="small" class="inputs" v-model="maxTraceDuration" />
-      </div>        
+      </div>
       <keep-alive>
         <ConditionTags
           v-if="activeFilter === 'tags'"
@@ -209,7 +209,7 @@ const state = reactive<any>({
   service: { value: "", label: "" },
 });
 
-const tagComponent = ref<InstanceType<typeof ConditionTags> | null>(null)
+const tagComponent = ref<InstanceType<typeof ConditionTags> | null>(null);
 
 // const dateTime = computed(() => [
 //   appStore.durationRow.start,
@@ -282,7 +282,7 @@ function cancelSearch() {
       tagsList.value = [];
       tagsMap.value = [];
       updateTags({ tagsMap: [], tagsList: [] });
-      tagComponent.value?.emptyTags()
+      tagComponent.value?.emptyTags();
       break;
     case "traceId":
       traceId.value = "";
@@ -364,7 +364,6 @@ function changeField(type: string, opt: any) {
   }
 }
 function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
-  console.log(data, tagComponent.value)
   tagsList.value = data.tagsList;
   tagsMap.value = data.tagsMap;
 }
