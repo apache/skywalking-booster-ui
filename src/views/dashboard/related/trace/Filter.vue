@@ -61,7 +61,7 @@ limitations under the License. -->
           @change="changeField('instance', $event)"
         />
       </div>
-      <div class="filter" v-if="dashboardStore.entity !== EntityType[2].value">
+      <div class="filter" v-if="dashboardStore.entity !== EntityType[2].value && activeFilter === 'endpoints'">
         <span class="grey mr-5">{{ t("endpoint") }}:</span>
         <Selector
           size="small"
@@ -178,6 +178,11 @@ const arrayOfFilters = ref<filtersObject[]>([
     iconName: "epic",
     description: "Tags",
   },
+  {
+    name: "endpoints",
+    iconName: "device_hub",
+    description: "Endpoints",
+  },
 ]);
 const activeFilter = ref<string>("");
 const queriedFilter = computed(() => traceStore.activeFilter);
@@ -254,7 +259,7 @@ function cancelSearch() {
     case "instance":
       state.instance.value = "0";
       break;
-    case "endpont":
+    case "endpoints":
       state.endpoint.value = "0";
       break;
     case "service":
@@ -298,6 +303,9 @@ function handleActiveFilterState() {
       traceStore.setActiveFilter(activeFilter.value);
       break;
     case "status":
+      traceStore.setActiveFilter(activeFilter.value);
+      break;
+    case "endpoints":
       traceStore.setActiveFilter(activeFilter.value);
       break;
   }

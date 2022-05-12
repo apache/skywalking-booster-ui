@@ -79,7 +79,7 @@ limitations under the License. -->
           class="mr-5 flex-h items-center"
           v-if="
             dashboardStore.entity !== EntityType[2].value &&
-            currentSearchTerm === 'endpoint'
+            currentSearchTerm === 'endpoints'
           "
         >
           <span class="grey mr-5"
