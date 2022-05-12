@@ -43,16 +43,13 @@ limitations under the License. -->
       <el-dropdown
         ref="dropdownTag"
         trigger="contextmenu"
+        :hide-on-click="false"
         style="margin: 20px 0 0 -130px"
       >
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item
-              v-for="(item, index) in tagArr"
-              :key="index"
-              @click="selectTag(item)"
-            >
-              <span class="tag-item">
+            <el-dropdown-item v-for="(item, index) in tagArr" :key="index">
+              <span @click="selectTag(item)" class="tag-item">
                 {{ item }}
               </span>
             </el-dropdown-item>
@@ -162,12 +159,12 @@ function selectTag(item: string) {
   if (tags.value.includes("=")) {
     tags.value += item;
     addLabels();
+    tagArr.value = tagKeys.value;
+    dropdownTag.value.handleClose();
     return;
   }
   tags.value = item + "=";
-  tagArr.value = tagKeys.value;
   fetchTagValues();
-  dropdownTag.value.handleOpen();
 }
 
 function showClick() {
