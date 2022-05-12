@@ -122,7 +122,7 @@ limitations under the License. -->
       <div
         class="mr-5 flex-h items-center"
         v-show="
-          logStore.supportQueryLogsByKeywords &&
+          supportQueryLogsByKeywords &&
           currentSearchTerm === 'keywords'
         "
       >
@@ -148,7 +148,7 @@ limitations under the License. -->
       <div
         class="mr-5 flex-h items-center"
         v-show="
-          logStore.supportQueryLogsByKeywords && currentSearchTerm === 'exclude'
+          supportExcludeQueryLogsByKeywords && currentSearchTerm === 'exclude'
         "
       >
         <span class="grey mr-5"> {{ t("excludingKeywordsOfContent") }}: </span>
@@ -201,7 +201,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { useLogStore } from "@/store/modules/log";
@@ -220,6 +220,13 @@ const logStore = useLogStore();
 const traceId = ref<string>("");
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
+const supportQueryLogsByKeywords = computed<boolean>(() => {
+  return logStore.supportQueryLogsByKeywords
+})
+const supportExcludeQueryLogsByKeywords = computed<boolean>(() => {
+  return logStore.supportQueryLogsByKeywords
+})
+
 const currentSearchTerm = ref<string>("");
 const activeTerms = ref<string[]>([]);
 const tagsList = ref<string[]>([]);
@@ -237,7 +244,7 @@ interface filtersObject {
   name: string;
   iconName: string;
   description: string;
-  isVisible?: boolean;
+  isVisible?: boolean | unknown; // one of the situations is dependent on an api call
 }
 const arrayOfFilters = ref<filtersObject[]>([
   {
@@ -256,13 +263,13 @@ const arrayOfFilters = ref<filtersObject[]>([
     name: "keywords",
     iconName: "library_books",
     description: "Keywords",
-    isVisible: logStore.supportQueryLogsByKeywords,
+    isVisible: supportQueryLogsByKeywords,
   },
   {
     name: "exclude",
     iconName: "issue-child",
     description: "Exclude keywords",
-    isVisible: logStore.supportQueryLogsByKeywords,
+    isVisible: supportExcludeQueryLogsByKeywords,
   },
   {
     name: "instance",
