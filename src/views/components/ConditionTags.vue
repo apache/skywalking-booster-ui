@@ -78,11 +78,12 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { useLogStore } from "@/store/modules/log";
 import { ElMessage } from "element-plus";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 /*global Nullable, defineEmits, defineProps */
 const emit = defineEmits(["update"]);
@@ -91,6 +92,7 @@ const props = defineProps({
 });
 const traceStore = useTraceStore();
 const logStore = useLogStore();
+const appStore = useAppStoreWithOut();
 const { t } = useI18n();
 const tags = ref<string>("");
 const tagsList = ref<string[]>([]);
@@ -176,6 +178,12 @@ function showClick() {
     dropdownTag.value.handleOpen();
   }
 }
+watch(
+  () => appStore.durationTime,
+  () => {
+    fetchTagKeys();
+  }
+);
 </script>
 <style lang="scss" scoped>
 .trace-tags {
