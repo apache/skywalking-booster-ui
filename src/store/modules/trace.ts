@@ -53,7 +53,7 @@ export const traceStore = defineStore({
     endpoints: [{ value: "0", label: "All" }],
     displayMode: "List",
     currentView: "traceList",
-    activeFilter: "titi",
+    activeFilter: "",
     traceList: [],
     traceSpans: [],
     traceTotal: 0,
