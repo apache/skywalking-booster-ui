@@ -13,65 +13,97 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h" :class="{ light: theme === 'light' }">
-    <div class="mr-5">
-      <span class="sm grey" v-show="theme === 'dark'">{{ t("tags") }}: </span>
-      <span
-        class="trace-tags"
-        :style="type === 'LOG' ? `min-width: 122px;` : ''"
-      >
-        <span class="selected" v-for="(item, index) in tagsList" :key="index">
-          <span>{{ item }}</span>
-          <span class="remove-icon" @click="removeTags(index)">×</span>
-        </span>
+  <div>
+    <span class="grey">{{ t("tags") }}: </span>
+    <span
+      v-if="tagsList.length"
+      class="trace-tags"
+      :style="type === 'LOG' ? `min-width: 122px;` : ''"
+    >
+      <span class="selected" v-for="(item, index) in tagsList" :key="index">
+        <span>{{ item }}</span>
+        <span class="remove-icon" @click="removeTags(index)">×</span>
       </span>
+    </span>
+    <el-input
+      v-if="type === 'ALARM'"
+      size="small"
+      v-model="tags"
+      class="trace-new-tag"
+      @change="addLabels"
+      :placeholder="t('addTags')"
+    />
+    <span v-else>
       <el-input
         size="small"
         v-model="tags"
         class="trace-new-tag"
-        @change="addLabels"
-        :placeholder="t('addTags')"
+        @click="showClick"
       />
-      <span class="tags-tip">
-        <a
-          target="blank"
-          href="https://github.com/apache/skywalking/blob/master/docs/en/setup/backend/configuration-vocabulary.md"
-        >
-          {{ t("tagsLink") }}
-        </a>
-        <el-tooltip
-          :content="
-            t(
-              type === 'LOG'
-                ? 'logTagsTip'
-                : type === 'TRACE'
-                ? 'traceTagsTip'
-                : 'alarmTagsTip'
-            )
-          "
-        >
-          <span>
-            <Icon class="icon-help mr-5" iconName="help" size="middle" />
-          </span>
-        </el-tooltip>
-        <b v-if="type !== 'LOG'">{{ t("noticeTag") }}</b>
-      </span>
-    </div>
+      <el-dropdown
+        ref="dropdownTag"
+        trigger="contextmenu"
+        :hide-on-click="false"
+        style="margin: 20px 0 0 -130px"
+        v-if="tagArr.length"
+      >
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item v-for="(item, index) in tagArr" :key="index">
+              <span @click="selectTag(item)" class="tag-item">
+                {{ item }}
+              </span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </span>
+    <span
+      class="tags-tip"
+      :class="type !== 'ALARM' && tagArr.length ? 'link-tips' : ''"
+    >
+      <a
+        target="blank"
+        href="https://github.com/apache/skywalking/blob/master/docs/en/setup/backend/configuration-vocabulary.md"
+      >
+        {{ t("tagsLink") }}
+      </a>
+      <el-tooltip :content="t(tipsMap[type])">
+        <span>
+          <Icon class="icon-help mr-5" iconName="help" size="middle" />
+        </span>
+      </el-tooltip>
+      <b v-if="type === 'AL'">{{ t("noticeTag") }}</b>
+    </span>
   </div>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useTraceStore } from "@/store/modules/trace";
+import { useLogStore } from "@/store/modules/log";
+import { ElMessage } from "element-plus";
 
-/*global defineEmits, defineProps */
+/*global Nullable, defineEmits, defineProps */
 const emit = defineEmits(["update"]);
-defineProps({
+const props = defineProps({
   type: { type: String, default: "TRACE" },
 });
+const traceStore = useTraceStore();
+const logStore = useLogStore();
 const { t } = useI18n();
-const theme = ref<string>("dark");
 const tags = ref<string>("");
 const tagsList = ref<string[]>([]);
+const tagArr = ref<string[]>([]);
+const tagKeys = ref<string[]>([]);
+const tipsMap = {
+  LOG: "logTagsTip",
+  TRACE: "traceTagsTip",
+  ALARM: "alarmTagsTip",
+};
+const dropdownTag = ref<Nullable<any>>(null);
+
+fetchTagKeys();
 
 function removeTags(index: number) {
   tagsList.value.splice(index, 1);
@@ -94,6 +126,55 @@ function updateTags() {
     };
   });
   emit("update", { tagsMap, tagsList: tagsList.value });
+}
+async function fetchTagKeys() {
+  let resp: any = {};
+  if (props.type === "TRACE") {
+    resp = await traceStore.getTagKeys();
+  } else {
+    resp = await logStore.getLogTagKeys();
+  }
+
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  tagArr.value = resp.data.tagKeys;
+  tagKeys.value = resp.data.tagKeys;
+}
+
+async function fetchTagValues() {
+  const param = tags.value.split("=")[0];
+  let resp: any = {};
+  if (props.type === "TRACE") {
+    resp = await traceStore.getTagValues(param);
+  } else {
+    resp = await logStore.getLogTagValues(param);
+  }
+
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  tagArr.value = resp.data.tagValues;
+}
+
+function selectTag(item: string) {
+  if (tags.value.includes("=")) {
+    tags.value += item;
+    addLabels();
+    tagArr.value = tagKeys.value;
+    dropdownTag.value.handleClose();
+    return;
+  }
+  tags.value = item + "=";
+  fetchTagValues();
+}
+
+function showClick() {
+  if (dropdownTag.value) {
+    dropdownTag.value.handleOpen();
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -121,7 +202,6 @@ function updateTags() {
   padding: 2px 5px;
   border-radius: 3px;
   width: 250px;
-  margin-right: 3px;
 }
 
 .remove-icon {
@@ -130,8 +210,18 @@ function updateTags() {
   cursor: pointer;
 }
 
+.tag-item {
+  display: inline-block;
+  min-width: 210px;
+}
+
 .tags-tip {
   color: #a7aebb;
+}
+
+.link-tips {
+  display: inline-block;
+  margin-left: 130px;
 }
 
 .light {

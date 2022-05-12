@@ -50,9 +50,14 @@ limitations under the License. -->
         @query="searchEndpoints"
       />
     </div>
-  </div>
-  <div class="row tips">
-    <b>{{ t("conditionNotice") }}</b>
+    <el-button
+      class="search-btn"
+      size="small"
+      type="primary"
+      @click="searchLogs"
+    >
+      {{ t("search") }}
+    </el-button>
   </div>
   <div class="flex-h row">
     <div class="mr-5 traceId" v-show="!isBrowser">
@@ -60,6 +65,9 @@ limitations under the License. -->
       <el-input v-model="traceId" class="inputs-max" size="small" />
     </div>
     <ConditionTags :type="'LOG'" @update="updateTags" />
+  </div>
+  <div class="row tips">
+    <b>{{ t("conditionNotice") }}</b>
   </div>
   <div class="flex-h" v-show="!isBrowser">
     <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
@@ -109,14 +117,6 @@ limitations under the License. -->
         </span>
       </el-tooltip>
     </div>
-    <el-button
-      class="search-btn"
-      size="small"
-      type="primary"
-      @click="searchLogs"
-    >
-      {{ t("search") }}
-    </el-button>
   </div>
 </template>
 <script lang="ts" setup>
@@ -326,6 +326,7 @@ watch(
 
 .row {
   margin-bottom: 5px;
+  position: relative;
 }
 
 .inputs-max {
@@ -337,8 +338,11 @@ watch(
 }
 
 .search-btn {
-  margin-left: 20px;
+  position: absolute;
+  top: 0;
+  right: 10px;
   cursor: pointer;
+  width: 120px;
 }
 
 .tips {
