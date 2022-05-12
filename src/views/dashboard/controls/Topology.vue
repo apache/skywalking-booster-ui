@@ -61,7 +61,6 @@ function editConfig() {
   dashboardStore.setConfigPanel(true);
   dashboardStore.selectWidget(props.data);
 }
-
 </script>
 <style lang="scss" scoped>
 .topology {
