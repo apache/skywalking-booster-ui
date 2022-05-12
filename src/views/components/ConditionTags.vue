@@ -45,6 +45,7 @@ limitations under the License. -->
         trigger="contextmenu"
         :hide-on-click="false"
         style="margin: 20px 0 0 -130px"
+        v-if="tagArr.length"
       >
         <template #dropdown>
           <el-dropdown-menu>
@@ -57,7 +58,10 @@ limitations under the License. -->
         </template>
       </el-dropdown>
     </span>
-    <span class="tags-tip" :class="type === 'ALARM' ? '' : 'link-tips'">
+    <span
+      class="tags-tip"
+      :class="type !== 'ALARM' && tagArr.length ? 'link-tips' : ''"
+    >
       <a
         target="blank"
         href="https://github.com/apache/skywalking/blob/master/docs/en/setup/backend/configuration-vocabulary.md"
@@ -80,7 +84,7 @@ import { useTraceStore } from "@/store/modules/trace";
 import { useLogStore } from "@/store/modules/log";
 import { ElMessage } from "element-plus";
 
-/*global defineEmits, defineProps */
+/*global Nullable, defineEmits, defineProps */
 const emit = defineEmits(["update"]);
 const props = defineProps({
   type: { type: String, default: "TRACE" },
@@ -97,7 +101,7 @@ const tipsMap = {
   TRACE: "traceTagsTip",
   ALARM: "alarmTagsTip",
 };
-const dropdownTag = ref();
+const dropdownTag = ref<Nullable<any>>(null);
 
 fetchTagKeys();
 
@@ -168,7 +172,9 @@ function selectTag(item: string) {
 }
 
 function showClick() {
-  dropdownTag.value.handleOpen();
+  if (dropdownTag.value) {
+    dropdownTag.value.handleOpen();
+  }
 }
 </script>
 <style lang="scss" scoped>
