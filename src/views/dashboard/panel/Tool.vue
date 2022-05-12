@@ -177,9 +177,9 @@ limitations under the License. -->
     </div>
     <Header v-if="showLogHeader" />
     <TraceDetailsTools
-      v-if="showFilter && currentTraceView === 'traceDetails'"
+      v-if="showTraceHeader && currentTraceView === 'traceDetails'"
     />
-    <Filter v-if="showFilter && currentTraceView === 'traceList'" />
+    <Filter v-if="showTraceHeader && currentTraceView === 'traceList'" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -213,7 +213,7 @@ const appStore = useAppStoreWithOut();
 const traceStore = useTraceStore();
 const params = useRoute().params;
 const selectedSelector = ref<string>("");
-const showFilter = computed(() => dashboardStore.showTraceTools);
+const showTraceHeader = computed(() => dashboardStore.showTraceTools);
 const showLogHeader = computed(() => dashboardStore.showLogTools);
 const currentTraceView = computed(() => traceStore.currentView);
 const { query } = useRoute();
