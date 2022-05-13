@@ -18,7 +18,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
 import { flamegraph } from "d3-flame-graph";
