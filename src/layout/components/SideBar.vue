@@ -117,7 +117,7 @@ const name = ref<string>(String(useRouter().currentRoute.value.name));
 const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
   ? ref("light")
   : ref("black");
-const routes = ref<RouteRecordRaw[]>(useRouter().options.routes);
+const routes = ref<RouteRecordRaw[] | any>(useRouter().options.routes);
 if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
   appStore.setIsMobile(true);
 } else {
