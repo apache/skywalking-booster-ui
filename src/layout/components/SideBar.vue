@@ -113,11 +113,11 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 
 const appStore = useAppStoreWithOut();
 const { t } = useI18n();
-const name = ref<any>(String(useRouter().currentRoute.value.name));
+const name = ref<string>(String(useRouter().currentRoute.value.name));
 const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
   ? ref("light")
   : ref("black");
-const routes = ref<any>(useRouter().options.routes);
+const routes = ref<RouteRecordRaw[]>(useRouter().options.routes);
 if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
   appStore.setIsMobile(true);
 } else {
