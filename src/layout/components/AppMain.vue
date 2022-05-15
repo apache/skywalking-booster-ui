@@ -21,19 +21,6 @@ limitations under the License. -->
     </router-view>
   </section>
 </template>
-<script lang="ts" setup>
-import { ElMessage } from "element-plus";
-import { useAppStoreWithOut } from "@/store/modules/app";
-
-const appStore = useAppStoreWithOut();
-if (!appStore.utc) {
-  const res = appStore.queryOAPTimeInfo();
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
-}
-</script>
 <style lang="scss" scoped>
 .app-main {
   height: calc(100% - 40px);
