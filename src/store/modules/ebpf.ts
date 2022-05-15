@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Duration, Option } from "@/types/app";
+import { Option } from "@/types/app";
 import {
   EBPFTaskCreationRequest,
   EBPFProfilingSchedule,
@@ -26,10 +26,8 @@ import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
-import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface EbpfStore {
-  durationTime: Duration;
   taskList: EBPFTaskList[];
   eBPFSchedules: EBPFProfilingSchedule[];
   currentSchedule: EBPFProfilingSchedule | Record<string, never>;
@@ -42,7 +40,6 @@ interface EbpfStore {
 export const ebpfStore = defineStore({
   id: "eBPF",
   state: (): EbpfStore => ({
-    durationTime: useAppStoreWithOut().durationTime,
     taskList: [],
     eBPFSchedules: [],
     currentSchedule: {},

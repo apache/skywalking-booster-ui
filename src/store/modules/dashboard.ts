@@ -20,10 +20,8 @@ import { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
 import query from "@/graphql/fetch";
 import { DashboardItem } from "@/types/dashboard";
-import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl, TextConfig } from "../data";
-import { Duration } from "@/types/app";
 import { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
@@ -35,7 +33,6 @@ interface DashboardState {
   entity: string;
   layerId: string;
   activedGridItem: string;
-  durationTime: Duration;
   selectorStore: any;
   showTopology: boolean;
   currentTabItems: LayoutConfig[];
@@ -53,7 +50,6 @@ export const dashboardStore = defineStore({
     entity: "",
     layerId: "",
     activedGridItem: "",
-    durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
     showTopology: false,
     currentTabItems: [],
