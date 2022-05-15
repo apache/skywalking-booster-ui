@@ -25,7 +25,9 @@ limitations under the License. -->
         >
           <el-button
             type="success"
-            :class="[queriedFilter === filter.name ? 'active-filter' : '']"
+            :class="[
+              listOfActiveFilters.includes(filter.name) ? 'active-filter' : '',
+            ]"
             class="filter-btn mx-3"
             @click="setFilter(filter.name)"
           >
@@ -153,7 +155,7 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
-
+const listOfActiveFilters = ref<string[]>([]);
 const arrayOfFilters = ref<filtersObject[]>([
   {
     name: "service",
@@ -260,6 +262,14 @@ async function getInstances(id?: string) {
   }
   state.instance = traceStore.instances[0];
 }
+function addToActiveFilterList() {
+  listOfActiveFilters.value.push(activeFilter.value);
+}
+function removeFromActiveFilters() {
+  listOfActiveFilters.value = listOfActiveFilters.value.filter(
+    (filter) => filter !== activeFilter.value
+  );
+}
 function cancelSearch() {
   switch (activeFilter.value) {
     case "status":
@@ -288,6 +298,7 @@ function cancelSearch() {
       traceId.value = "";
       break;
   }
+  removeFromActiveFilters();
   activeFilter.value = "";
   traceStore.activeFilter = "";
   init();
@@ -297,27 +308,41 @@ function handleActiveFilterState() {
     case "traceId":
       if (!traceId.value.length) return;
       traceStore.setActiveFilter(activeFilter.value);
+      addToActiveFilterList();
+
       break;
     case "tags":
       if (!tagsList.value.length) return;
       traceStore.setActiveFilter(activeFilter.value);
+      addToActiveFilterList();
+
       break;
     case "duration":
       if (!minTraceDuration.value.length || !maxTraceDuration.value.length)
         return;
       traceStore.setActiveFilter(activeFilter.value);
+      addToActiveFilterList();
+
       break;
     case "service":
       traceStore.setActiveFilter(activeFilter.value);
+      addToActiveFilterList();
+
       break;
     case "instance":
       traceStore.setActiveFilter(activeFilter.value);
+      addToActiveFilterList();
+
       break;
     case "status":
       traceStore.setActiveFilter(activeFilter.value);
+      addToActiveFilterList();
+
       break;
     case "endpoints":
       traceStore.setActiveFilter(activeFilter.value);
+      addToActiveFilterList();
+
       break;
   }
 }
