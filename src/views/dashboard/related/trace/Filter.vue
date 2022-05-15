@@ -194,7 +194,6 @@ const arrayOfFilters = ref<filtersObject[]>([
   },
 ]);
 const activeFilter = ref<string>("");
-const queriedFilter = computed(() => traceStore.activeFilter);
 function setFilter(filter: string) {
   activeFilter.value = filter;
 }
