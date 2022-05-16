@@ -25,9 +25,7 @@ limitations under the License. -->
         >
           <el-button
             type="success"
-            :class="[
-              listOfActiveFilters.includes(filter.name) ? 'active-filter' : '',
-            ]"
+            :class="[listOfActiveFilters.includes(filter.name) ? 'active-filter' : '']"
             class="filter-btn mx-3"
             @click="setFilter(filter.name)"
           >
@@ -50,8 +48,7 @@ limitations under the License. -->
       <div
         class="filter"
         v-if="
-          activeFilter === 'instance' &&
-          dashboardStore.entity !== EntityType[3].value
+          activeFilter === 'instance' && dashboardStore.entity !== EntityType[3].value
         "
       >
         <span class="grey mr-5">{{ t("instance") }}:</span>
@@ -66,8 +63,7 @@ limitations under the License. -->
       <div
         class="filter"
         v-if="
-          dashboardStore.entity !== EntityType[2].value &&
-          activeFilter === 'endpoints'
+          dashboardStore.entity !== EntityType[2].value && activeFilter === 'endpoints'
         "
       >
         <span class="grey mr-5">{{ t("endpoint") }}:</span>
@@ -300,7 +296,7 @@ function cancelSearch() {
   removeFromActiveFilters();
   activeFilter.value = "";
   traceStore.activeFilter = "";
-  init();
+  searchTraces();
 }
 function handleActiveFilterState() {
   switch (activeFilter.value) {
@@ -317,8 +313,7 @@ function handleActiveFilterState() {
 
       break;
     case "duration":
-      if (!minTraceDuration.value.length || !maxTraceDuration.value.length)
-        return;
+      if (!minTraceDuration.value.length || !maxTraceDuration.value.length) return;
       traceStore.setActiveFilter(activeFilter.value);
       addToActiveFilterList();
 
