@@ -49,10 +49,10 @@ export default defineComponent({
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
     const traceId = ref<string>("");
-    const queries = useRoute().query;    
+    const queries = useRoute().query;
     const isFullView = computed(() => {
       return queries?.fullview === "true" && queries?.portal === "true";
-    })  
+    });
     const displayMode = computed(() => {
       return traceStore.displayMode;
     });
@@ -125,18 +125,19 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .trace-detail {
-  height: 600px;
-  // height: 100%;
+  // min-height: 300px;
+  height: 100%;
   width: 100%;
   overflow: hidden;
 }
 
 .trace-chart {
-  height: calc(100% - 100px);
+  height: 100%;
+  // height: calc(100% - 100px);
   overflow: auto;
   padding-bottom: 20px;
 }
-.trace-chart.full-view{
+.trace-chart.full-view {
   height: calc(100% - 1px) !important;
 }
 .trace-detail-wrapper {

@@ -137,6 +137,7 @@ async function queryTraces() {
   border-bottom: 1px solid #c1c5ca41;
   border-right: 1px solid #c1c5ca41;
   height: 35px;
+  align-items: center;
 }
 
 .selectors {
