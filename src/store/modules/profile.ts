@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Duration } from "@/types/app";
 import { Endpoint } from "@/types/selector";
 import {
   TaskListItem,
@@ -33,7 +32,6 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 interface ProfileState {
   endpoints: Endpoint[];
   taskEndpoints: Endpoint[];
-  durationTime: Duration;
   condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
   segmentList: Trace[];
@@ -50,7 +48,6 @@ export const profileStore = defineStore({
   state: (): ProfileState => ({
     endpoints: [{ value: "", label: "All" }],
     taskEndpoints: [{ value: "", label: "All" }],
-    durationTime: useAppStoreWithOut().durationTime,
     condition: { serviceId: "", endpointName: "" },
     taskList: [],
     segmentList: [],
@@ -80,7 +77,7 @@ export const profileStore = defineStore({
     async getEndpoints(serviceId: string, keyword?: string) {
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
-        duration: this.durationTime,
+        duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
       });
       if (res.data.errors) {
@@ -92,7 +89,7 @@ export const profileStore = defineStore({
     async getTaskEndpoints(serviceId: string, keyword?: string) {
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
-        duration: this.durationTime,
+        duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
       });
       if (res.data.errors) {

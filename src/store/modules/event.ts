@@ -42,7 +42,6 @@ export const eventStore = defineStore({
     instances: [{ value: "", label: "All" }],
     endpoints: [{ value: "", label: "All" }],
     condition: {
-      time: useAppStoreWithOut().durationTime,
       paging: { pageNum: 1, pageSize: 15, needTotal: true },
     },
   }),
@@ -94,9 +93,12 @@ export const eventStore = defineStore({
     },
     async getEvents() {
       this.loading = true;
-      const res: AxiosResponse = await graphql
-        .query("queryEvents")
-        .params({ condition: this.condition });
+      const res: AxiosResponse = await graphql.query("queryEvents").params({
+        condition: {
+          ...this.condition,
+          time: useAppStoreWithOut().durationTime,
+        },
+      });
       this.loading = false;
       if (res.data.errors) {
         return res.data;
