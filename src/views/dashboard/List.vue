@@ -231,12 +231,26 @@ function exportTemplates() {
     multipleTableRef.value!.clearSelection();
   }, 2000);
 }
-function optimizeTemplate(children: (LayoutConfig & { moved?: boolean })[]) {
+function optimizeTemplate(
+  children: (LayoutConfig & { moved?: boolean; standard?: unknown })[]
+) {
   for (const child of children || []) {
     delete child.moved;
     delete child.activedTabIndex;
+    delete child.standard;
     if (isEmptyObject(child.graph)) {
       delete child.graph;
+    }
+    if (child.widget) {
+      if (child.widget.title === "") {
+        delete child.widget.title;
+      }
+      if (child.widget.tips === "") {
+        delete child.widget.tips;
+      }
+    }
+    if (isEmptyObject(child.widget)) {
+      delete child.widget;
     }
     if (!(child.metrics && child.metrics.length && child.metrics[0])) {
       delete child.metrics;
@@ -269,6 +283,13 @@ function optimizeTemplate(children: (LayoutConfig & { moved?: boolean })[]) {
       for (const item of child.children || []) {
         optimizeTemplate(item.children);
       }
+    }
+    if (
+      ["Trace", "Topology", "Tab", "Profile", "Ebpf", "Log"].includes(
+        child.type
+      )
+    ) {
+      delete child.widget;
     }
   }
 }
