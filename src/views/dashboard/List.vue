@@ -146,9 +146,10 @@ import type { ElTable } from "element-plus";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import router from "@/router";
-import { DashboardItem } from "@/types/dashboard";
+import { DashboardItem, LayoutConfig } from "@/types/dashboard";
 import { saveFile, readFile } from "@/utils/file";
 import { EntityType } from "./data";
+import { isEmptyObject } from "@/utils/is";
 
 /*global Nullable*/
 const { t } = useI18n();
@@ -221,11 +222,76 @@ function exportTemplates() {
     const layout = JSON.parse(sessionStorage.getItem(key) || "{}");
     return layout;
   });
+  for (const item of templates) {
+    optimizeTemplate(item.configuration.children);
+  }
   const name = `dashboards.json`;
   saveFile(templates, name);
   setTimeout(() => {
     multipleTableRef.value!.clearSelection();
   }, 2000);
+}
+function optimizeTemplate(
+  children: (LayoutConfig & { moved?: boolean; standard?: unknown })[]
+) {
+  for (const child of children || []) {
+    delete child.moved;
+    delete child.activedTabIndex;
+    delete child.standard;
+    if (isEmptyObject(child.graph)) {
+      delete child.graph;
+    }
+    if (child.widget) {
+      if (child.widget.title === "") {
+        delete child.widget.title;
+      }
+      if (child.widget.tips === "") {
+        delete child.widget.tips;
+      }
+    }
+    if (isEmptyObject(child.widget)) {
+      delete child.widget;
+    }
+    if (!(child.metrics && child.metrics.length && child.metrics[0])) {
+      delete child.metrics;
+    }
+    if (
+      !(child.metricTypes && child.metricTypes.length && child.metricTypes[0])
+    ) {
+      delete child.metricTypes;
+    }
+    if (child.metricConfig && child.metricConfig.length) {
+      child.metricConfig.forEach((c, index) => {
+        if (!c.calculation) {
+          delete c.calculation;
+        }
+        if (!c.unit) {
+          delete c.unit;
+        }
+        if (!c.label) {
+          delete c.label;
+        }
+        if (isEmptyObject(c)) {
+          (child.metricConfig || []).splice(index, 1);
+        }
+      });
+    }
+    if (!(child.metricConfig && child.metricConfig.length)) {
+      delete child.metricConfig;
+    }
+    if (child.type === "Tab") {
+      for (const item of child.children || []) {
+        optimizeTemplate(item.children);
+      }
+    }
+    if (
+      ["Trace", "Topology", "Tab", "Profile", "Ebpf", "Log"].includes(
+        child.type
+      )
+    ) {
+      delete child.widget;
+    }
+  }
 }
 function handleEdit(row: DashboardItem) {
   dashboardStore.setMode(true);
