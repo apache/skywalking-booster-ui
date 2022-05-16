@@ -268,16 +268,16 @@ function removeFromActiveFilters() {
 function cancelSearch() {
   switch (activeFilter.value) {
     case "status":
-      state.status.value = "ALL";
+      state.status = { label: "All", value: "ALL" };
       break;
     case "instance":
-      state.instance.value = "0";
+      state.instance = { value: "0", label: "All" };
       break;
     case "endpoints":
-      state.endpoint.value = "0";
+      state.endpoint = { value: "0", label: "All" };
       break;
     case "service":
-      state.service.value = "";
+      state.service = { value: "", label: "" };
       break;
     case "duration":
       minTraceDuration.value = "";
