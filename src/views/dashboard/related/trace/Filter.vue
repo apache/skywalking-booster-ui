@@ -380,7 +380,6 @@ async function queryTraces() {
   }
 }
 function changeField(type: string, opt: any) {
-  activeFilter;
   state[type] = opt[0];
   if (type === "service") {
     getEndpoints(state.service.id);
