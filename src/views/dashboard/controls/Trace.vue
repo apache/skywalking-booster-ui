@@ -68,11 +68,11 @@ function showTraceList() {
 }
 
 onMounted(() => {
-  dashboardStore.setTraceTools(true)
+  dashboardStore.setTraceTools(true);
 });
 onBeforeUnmount(() => {
-  dashboardStore.setTraceTools(false)
-})
+  dashboardStore.setTraceTools(false);
+});
 </script>
 <style lang="scss" scoped>
 .trace-wrapper {
