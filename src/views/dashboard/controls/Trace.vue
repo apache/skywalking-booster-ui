@@ -31,10 +31,7 @@ limitations under the License. -->
     </el-popover>
     <div class="trace flex-h">
       <TraceList @show:trace="showTraceDetails" v-if="traceListActive" />
-      <TraceDetail
-        @show:list="traceListActive = true"
-        v-if="!traceListActive"
-      />
+      <TraceDetail @show:list="showTraceList" v-if="!traceListActive" />
     </div>
   </div>
 </template>
@@ -64,7 +61,10 @@ function removeWidget() {
   dashboardStore.removeControls(props.data);
 }
 function showTraceDetails() {
-  traceListActive.value = false;
+  traceStore.currentView === "traceDetails";
+}
+function showTraceList() {
+  traceStore.currentView === "traceList";
 }
 
 onMounted(() => {
