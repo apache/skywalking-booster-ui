@@ -193,6 +193,7 @@ export const InstanceTools = [
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
+  { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
 ];
 export const EndpointTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },

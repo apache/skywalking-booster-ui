@@ -22,5 +22,16 @@ import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
+import DemandLog from "./DemandLog.vue";
 
-export default { Tab, Widget, Trace, Topology, Profile, Log, Text, Ebpf };
+export default {
+  Tab,
+  Widget,
+  Trace,
+  Topology,
+  Profile,
+  Log,
+  Text,
+  Ebpf,
+  DemandLog,
+};
