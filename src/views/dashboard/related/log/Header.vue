@@ -121,10 +121,7 @@ limitations under the License. -->
     <div class="flex-h items-center" v-show="!isBrowser">
       <div
         class="mr-5 flex-h items-center"
-        v-show="
-          supportQueryLogsByKeywords &&
-          currentSearchTerm === 'keywords'
-        "
+        v-show="supportQueryLogsByKeywords && currentSearchTerm === 'keywords'"
       >
         <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
         <span class="log-tags">
@@ -492,19 +489,19 @@ function cancelSearchTerm() {
       excludingKeywordsOfContent.value = [];
       break;
     case "instance":
-      state.instance.value = "0";
+      state.instance = { value: "0", label: "All" };
       break;
     case "endpoints":
-      state.endpoint.value = "0";
+      state.endpoint = { value: "0", label: "All" };
       getEndpoints();
       break;
     case "service":
-      state.service.value = "";
+      state.service = { value: "", label: "" };
       break;
   }
   removeFromActiveTerms();
   currentSearchTerm.value = "";
-  init();
+  searchLogs()
 }
 watch(
   () => selectorStore.currentService,
