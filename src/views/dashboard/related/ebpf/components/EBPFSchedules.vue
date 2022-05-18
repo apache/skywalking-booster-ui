@@ -190,6 +190,8 @@ function visTimeline() {
     height: h,
     width: "100%",
     locale: "en",
+    selectable: false,
+    zoomable: false,
   };
   visGraph.value = new Timeline(timeline.value, items, options);
 }

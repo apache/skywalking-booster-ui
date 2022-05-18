@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="flex-h content">
     <TaskList />
     <div class="vis-graph ml-5">
-      <div class="item">
+      <div class="schedules">
         <EBPFSchedules />
       </div>
       <div class="item">
@@ -44,7 +44,11 @@ import EBPFStack from "./components/EBPFStack.vue";
 .item {
   width: 100%;
   overflow: auto;
-  height: calc(50% - 10px);
+  height: calc(100% - 210px);
   padding-bottom: 10px;
+}
+
+.schedules {
+  height: 200px;
 }
 </style>
