@@ -217,6 +217,18 @@ async function searchEndpoints(keyword: string) {
   }
 }
 watch(
+  () => minTraceDuration.value,
+  () => {
+    appStore.setMinTraceDuration(minTraceDuration.value)
+  }
+)
+watch(
+  () => maxTraceDuration.value,
+  () => {
+    appStore.setMaxTraceDuration(maxTraceDuration.value)
+  }
+)
+watch(
   () => [selectorStore.currentPod],
   () => {
     if (dashboardStore.entity === EntityType[0].value) {
