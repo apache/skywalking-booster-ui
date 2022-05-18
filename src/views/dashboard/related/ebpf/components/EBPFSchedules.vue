@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="filters">
+  <div class="filters flex-h">
     <Selector
       :value="selectedLabels"
       :options="labels"
@@ -23,6 +23,11 @@ limitations under the License. -->
       class="inputs mr-10"
       :multiple="true"
     />
+    <el-button type="primary" size="small">
+      <span>{{ duration[0] }}</span>
+      <span> ~ </span>
+      <span>{{ duration[1] }}</span>
+    </el-button>
     <el-popover placement="bottom" :width="680" trigger="click">
       <template #reference>
         <el-button type="primary" size="small">
@@ -91,7 +96,6 @@ import { ElMessage, ElTable } from "element-plus";
 const { t } = useI18n();
 const ebpfStore = useEbpfStore();
 const pageSize = 5;
-/*global Nullable */
 const multipleTableRef = ref<InstanceType<typeof ElTable>>();
 const selectedProcesses = ref<string[]>([]);
 const labels = ref<Option[]>([{ label: "All", value: "0" }]);
@@ -99,8 +103,9 @@ const processes = ref<Process[]>([]);
 const currentProcesses = ref<Process[]>([]);
 const selectedLabels = ref<string[]>(["0"]);
 const searchText = ref<string>("");
+const duration = ref<string[]>([]);
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  new Date(dayjs(date).format(pattern));
+  dayjs(date).format(pattern);
 
 function changeLabels(opt: any[]) {
   const arr = opt.map((d) => d.value);
@@ -158,20 +163,17 @@ function visTimeline() {
   labels.value = [{ label: "All", value: "0" }];
   selectedLabels.value = ["0"];
   processes.value = [];
-  const schedules = ebpfStore.eBPFSchedules.map(
-    (d: EBPFProfilingSchedule, index: number) => {
-      for (const l of d.process.labels) {
-        labels.value.push({ label: l, value: l });
-      }
-      processes.value.push(d.process);
-      return {
-        id: index + 1,
-        content: d.process.name,
-        start: dateFormat(d.startTime),
-        end: dateFormat(d.endTime),
-      };
+  const ranges = ebpfStore.eBPFSchedules.map((d: EBPFProfilingSchedule) => {
+    for (const l of d.process.labels) {
+      labels.value.push({ label: l, value: l });
     }
-  );
+    processes.value.push(d.process);
+    return [d.startTime / 10000, d.endTime / 10000];
+  });
+  const arr = ranges.flat(1);
+  const min = Math.min(...arr);
+  const max = Math.max(...arr);
+  duration.value = [dateFormat(min * 10000), dateFormat(max * 10000)];
   searchProcesses(0);
 }
 
