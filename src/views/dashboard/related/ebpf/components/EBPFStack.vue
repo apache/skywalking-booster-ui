@@ -78,6 +78,7 @@ function drawGraph() {
     .sort(true)
     .title("")
     .selfValue(false)
+    .inverted(true)
     .setColorMapper((d, originalColor) =>
       d.highlight ? "#6aff8f" : originalColor
     );
@@ -86,8 +87,9 @@ function drawGraph() {
     .direction("w")
     .html(
       (d: { data: StackElement }) =>
-        `<div class="mb-5">Symbol: ${d.data.name}</div><div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
-    );
+        `<div class="mb-5 name">Symbol: ${d.data.name}</div><div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
+    )
+    .style("max-width", "500px");
   flameChart.value.tooltip(tip);
   d3.select("#graph-stack").datum(stackTree.value).call(flameChart.value);
 }
@@ -175,5 +177,9 @@ watch(
   text-align: center;
   color: red;
   margin-top: 20px;
+}
+
+.name {
+  word-wrap: break-word;
 }
 </style>

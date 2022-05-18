@@ -34,7 +34,7 @@ limitations under the License. -->
         placeholder="Please input name"
         class="input-with-search"
         size="small"
-        @change="searchProcesses"
+        @change="searchProcesses(0)"
       >
         <template #append>
           <el-button size="small">
@@ -180,7 +180,7 @@ function visTimeline() {
       };
     }
   );
-  searchProcesses();
+  searchProcesses(0);
   if (!timeline.value) {
     return;
   }
@@ -190,6 +190,8 @@ function visTimeline() {
     height: h,
     width: "100%",
     locale: "en",
+    selectable: false,
+    zoomable: false,
   };
   visGraph.value = new Timeline(timeline.value, items, options);
 }
@@ -198,16 +200,36 @@ function changePage(pageIndex: number) {
   searchProcesses(pageIndex);
 }
 
-function searchProcesses(pageIndex?: any) {
+function searchProcesses(pageIndex: number) {
   const arr = processes.value.filter(
-    (d: { name: string; instanceName: string }) =>
+    (d: {
+      name: string;
+      instanceName: string;
+      attributes: { name: string; value: string }[];
+    }) =>
       d.name.includes(searchText.value) ||
-      d.instanceName.includes(searchText.value)
+      d.instanceName.includes(searchText.value) ||
+      searchAttribute(d.attributes, searchText.value)
   );
-  currentProcesses.value = arr.splice(
-    (pageIndex - 1 || 0) * pageSize,
-    pageSize * (pageIndex || 1)
+  currentProcesses.value = arr.filter(
+    (d, index: number) =>
+      (pageIndex - 1 || 0) * pageSize <= index &&
+      pageSize * (pageIndex || 1) > index
   );
+}
+
+function searchAttribute(
+  attributes: { name: string; value: string }[],
+  text: string
+) {
+  const item = attributes.find(
+    (d: { name: string; value: string }) => d.name === "command_line"
+  );
+
+  if (!item) {
+    return false;
+  }
+  return item.value.includes(text);
 }
 
 watch(
