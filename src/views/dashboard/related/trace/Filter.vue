@@ -94,7 +94,6 @@ limitations under the License. -->
 
       <div v-if="activeFilter === 'duration'" class="filter">
         <span class="sm b grey mr-5">{{ t("duration") }}:</span>
-        <b>{{ minTraceDuration }}</b>
         <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
         <span class="grey mr-5">-</span>
         <el-input size="small" class="inputs" v-model="maxTraceDuration" />
