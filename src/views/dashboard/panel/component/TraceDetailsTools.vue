@@ -81,12 +81,27 @@
         @change="changeTraceId"
         class="trace-detail-ids"
       />
-      <Icon
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="Copy Id"
+        placement="bottom-start"
+      >
+        <el-button
+          size="small"
+          class="mr-10 filter-btn"
+          type="primary"
+          @click="handleClick(traceStore.currentTrace.traceIds)"
+        >
+          <Icon iconSize="sm" iconName="review-list" />
+        </el-button>
+      </el-tooltip>
+      <!-- <Icon
         size="sm"
         class="icon grey link-hover cp ml-5"
         iconName="review-list"
         @click="handleClick"
-      />
+      /> -->
     </div>
     <div class="flex-h item">
       <div>
@@ -191,11 +206,13 @@ export default defineComponent({
       traceStore.setCurrentView("traceList");
     }
     function handleClick(ids: string[] | any) {
+      
       let copyValue = null;
       if (ids.length === 1) {
-        copyValue = ids[0];
+        console.log(ids)
+        copyValue = ids[0].value;
       } else {
-        copyValue = ids.join(",");
+        copyValue = ids.map((trace: any) => trace.value).join(",");
       }
       copy(copyValue);
     }
@@ -280,7 +297,7 @@ export default defineComponent({
 
   .ghost {
     cursor: pointer;
-    background: rgba(4, 147, 114, 1);    
+    background: rgba(4, 147, 114, 1);
   }
 }
 
