@@ -38,6 +38,7 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import Configuration from "../views/dashboard/configuration";
 import controls from "../views/dashboard/controls/index";
 import { useRoute } from "vue-router";
+import connect from "../hooks/useIDE";
 
 let isScrolling = false;
 function scrollStop(callback: { (): void; (): void }, refresh = 66) {
@@ -160,6 +161,10 @@ export default defineComponent({
     onMounted(() => {
       observeItems();
       initScroller();
+
+      if (query["portal"] === "true") {
+        connect();
+      }
     });
     onBeforeUnmount(() => {
       scrollWrapRef?.value?.removeEventListener("wheel", wheelGraphScroll);
