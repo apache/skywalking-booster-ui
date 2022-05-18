@@ -711,7 +711,8 @@ watch(
 <style lang="scss" scoped>
 .dashboard-tool {
   text-align: right;
-  padding: 3px 5px 5px 5px;
+  height: 35px;
+  padding: 0 5px 0 5px;
   background: rgb(240, 242, 245);
   border-bottom: 1px solid #dfe4e8;
   justify-content: space-between;

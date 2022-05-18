@@ -192,10 +192,9 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     right: 0;
-    // top: 50%;
-    //transform: translateY(60%);
+    top: 37vh;
     height: auto;
-    width: 20px;
+    width: 17px;
 
     .full-scroll-to {
       opacity: 0.5;
@@ -210,7 +209,7 @@ export default defineComponent({
     .full-scroll-to.active {
       opacity: 1;
       padding: 6px;
-      background: #9876AA;
+      background: #1a1a1a;
     }
   }
 }

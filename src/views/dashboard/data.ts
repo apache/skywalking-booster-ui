@@ -254,15 +254,13 @@ export const QueryOrders = [
 ];
 export const TextColors: { [key: string]: string } = {
   green: "#629755",
-  blue: "#6897BB",
+  blue: "#409EFF",
   red: "#e1483b",
   grey: "#909399",
   white: "#fff",
   black: "#000",
-  orange: "#CC7832",
+  orange: "#E6A23C",
   purple: "#9876AA",
-  yellow: "#FFC66D",
-  brown: "#8A653B",
 };
 
 export const CalculationOpts = [

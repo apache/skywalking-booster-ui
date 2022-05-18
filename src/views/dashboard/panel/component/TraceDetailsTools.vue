@@ -277,6 +277,7 @@ export default defineComponent({
 }
 
 .trace-detail-wrapper {
+  height: 35px;
   font-size: 12px;
   width: 100%;
   justify-content: space-between;
