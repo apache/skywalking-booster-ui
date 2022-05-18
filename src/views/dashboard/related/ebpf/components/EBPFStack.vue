@@ -31,6 +31,8 @@ const ebpfStore = useEbpfStore();
 const stackTree = ref<Nullable<StackElement>>(null);
 const graph = ref<Nullable<HTMLDivElement>>(null);
 const flameChart = ref<any>(null);
+const min = ref<number>(1);
+const max = ref<number>(1);
 
 function drawGraph() {
   if (flameChart.value) {
@@ -39,8 +41,33 @@ function drawGraph() {
   if (!ebpfStore.analyzeTrees.length) {
     return (stackTree.value = null);
   }
-  stackTree.value = processTree(ebpfStore.analyzeTrees);
-
+  const root: StackElement = {
+    parentId: "0",
+    originId: "1",
+    name: "Virtual Root",
+    children: [],
+    value: 0,
+    id: "1",
+    symbol: "Virtual Root",
+    dumpCount: 0,
+    stackType: "",
+  };
+  countRange();
+  for (const tree of ebpfStore.analyzeTrees) {
+    const ele = processTree(tree.elements);
+    root.children && root.children.push(ele);
+  }
+  const param = (root.children || []).reduce(
+    (prev: number[], curr: StackElement) => {
+      prev[0] += curr.value;
+      prev[1] += curr.dumpCount;
+      return prev;
+    },
+    [0, 0]
+  );
+  root.value = param[0];
+  root.dumpCount = param[1];
+  stackTree.value = root;
   const w = (graph.value && graph.value.getBoundingClientRect().width) || 10;
   flameChart.value = flamegraph()
     .width(w - 15)
@@ -51,6 +78,7 @@ function drawGraph() {
     .sort(true)
     .title("")
     .selfValue(false)
+    .inverted(true)
     .setColorMapper((d, originalColor) =>
       d.highlight ? "#6aff8f" : originalColor
     );
@@ -59,33 +87,38 @@ function drawGraph() {
     .direction("w")
     .html(
       (d: { data: StackElement }) =>
-        `<div class="mb-5">Symbol: ${d.data.name}</div><div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
-    );
+        `<div class="mb-5 name">Symbol: ${d.data.name}</div><div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
+    )
+    .style("max-width", "500px");
   flameChart.value.tooltip(tip);
   d3.select("#graph-stack").datum(stackTree.value).call(flameChart.value);
 }
 
+function countRange() {
+  const list = [];
+  for (const tree of ebpfStore.analyzeTrees) {
+    for (const ele of tree.elements) {
+      list.push(ele.dumpCount);
+    }
+  }
+  max.value = Math.max(...list);
+  min.value = Math.min(...list);
+}
+
 function processTree(arr: StackElement[]) {
-  const copyArr = JSON.parse(JSON.stringify(arr));
+  const copyArr = (window as any).structuredClone(arr);
   const obj: any = {};
   let res = null;
-  let min = 1;
-  let max = 1;
   for (const item of copyArr) {
-    item.originId = item.id;
+    item.parentId = String(Number(item.parentId) + 1);
+    item.originId = String(Number(item.id) + 1);
     item.name = item.symbol;
     delete item.id;
     obj[item.originId] = item;
-    if (item.dumpCount > max) {
-      max = item.dumpCount;
-    }
-    if (item.dumpCount < min) {
-      min = item.dumpCount;
-    }
   }
-  const scale = d3.scaleLinear().domain([min, max]).range([1, 200]);
+  const scale = d3.scaleLinear().domain([min.value, max.value]).range([1, 200]);
   for (const item of copyArr) {
-    if (item.parentId === "0") {
+    if (item.parentId === "1") {
       const val = Number(scale(item.dumpCount).toFixed(4));
       res = item;
       res.value = val;
@@ -144,5 +177,9 @@ watch(
   text-align: center;
   color: red;
   margin-top: 20px;
+}
+
+.name {
+  word-wrap: break-word;
 }
 </style>

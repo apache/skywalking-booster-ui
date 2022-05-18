@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Duration, Option } from "@/types/app";
+import { Option } from "@/types/app";
 import {
   EBPFTaskCreationRequest,
   EBPFProfilingSchedule,
@@ -26,10 +26,8 @@ import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
-import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface EbpfStore {
-  durationTime: Duration;
   taskList: EBPFTaskList[];
   eBPFSchedules: EBPFProfilingSchedule[];
   currentSchedule: EBPFProfilingSchedule | Record<string, never>;
@@ -42,7 +40,6 @@ interface EbpfStore {
 export const ebpfStore = defineStore({
   id: "eBPF",
   state: (): EbpfStore => ({
-    durationTime: useAppStoreWithOut().durationTime,
     taskList: [],
     eBPFSchedules: [],
     currentSchedule: {},
@@ -103,14 +100,13 @@ export const ebpfStore = defineStore({
       this.getEBPFSchedules({ taskId: this.taskList[0].taskId });
       return res.data;
     },
-    async getEBPFSchedules(params: { taskId: string; duration?: Duration }) {
+    async getEBPFSchedules(params: { taskId: string }) {
       if (!params.taskId) {
         return new Promise((resolve) => resolve({}));
       }
-      const duration = useAppStoreWithOut().durationTime;
       const res: AxiosResponse = await graphql
         .query("getEBPFSchedules")
-        .params({ ...params, duration });
+        .params({ ...params });
 
       if (res.data.errors) {
         this.eBPFSchedules = [];
@@ -154,7 +150,7 @@ export const ebpfStore = defineStore({
         this.analyzeTrees = [];
         return res.data;
       }
-      this.analyzeTrees = analysisEBPFResult.trees[0].elements;
+      this.analyzeTrees = analysisEBPFResult.trees;
       return res.data;
     },
   },

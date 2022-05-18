@@ -63,3 +63,15 @@ export const QueryLogsByKeywords = {
   query: `
   support: supportQueryLogsByKeywords`,
 };
+
+export const LogTagKeys = {
+  variable: "$duration: Duration!",
+  query: `
+  tagKeys: queryLogTagAutocompleteKeys(duration: $duration)`,
+};
+
+export const LogTagValues = {
+  variable: "$tagKey: String!, $duration: Duration!",
+  query: `
+  tagValues: queryLogTagAutocompleteValues(tagKey: $tagKey, duration: $duration)`,
+};

@@ -247,7 +247,7 @@ limitations under the License. -->
               (state.showMinutes = state.showSeconds = false)
           "
           :class="{ on: state.showHours }"
-          >{{ state.hour || dd }}</a
+          >{{ dd(state.hour) }}</a
         >
         <span>:</span>
         <a
@@ -257,7 +257,7 @@ limitations under the License. -->
               (state.showHours = state.showSeconds = false)
           "
           :class="{ on: state.showMinutes }"
-          >{{ state.minute || dd }}</a
+          >{{ dd(state.minute) }}</a
         >
         <span v-show="state.m !== 'D'">
           <span>:</span>
@@ -268,7 +268,7 @@ limitations under the License. -->
                 (state.showHours = state.showMinutes = false)
             "
             :class="{ on: state.showSeconds }"
-            >{{ state.second || dd }}</a
+            >{{ dd(state.second) }}</a
           >
         </span>
       </div>
@@ -464,7 +464,6 @@ const status = (
     const minutes = time.getMinutes();
     const seconds = time.getSeconds();
     const milliseconds = time.getMilliseconds();
-    const dd = (t: number) => `0${t}`.slice(-2);
     const map: { [key: string]: string | number } = {
       YYYY: year,
       MM: dd(month + 1),

@@ -134,7 +134,7 @@ const msg = {
   taskId: "Task ID",
   triggerType: "Trigger Type",
   targetType: "Target Type",
-  ebpfTip: "Don't have process could profiling",
+  ebpfTip: "Don't have a process for profiling",
   processSelect: "Click to select processes",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
@@ -326,7 +326,7 @@ const msg = {
   addExcludingKeywordsOfContent: "Please input a keyword of excluding content",
   noticeTag: "Please press Enter after inputting a tag(key=value).",
   conditionNotice:
-    "Notice: Please press Enter after inputting a tag, key of content, exclude key of content(key=value).",
+    "Notice: Please press Enter after inputting a key of content, exclude key of content(key=value).",
   language: "Language",
 };
 export default msg;

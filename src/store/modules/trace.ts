@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Duration } from "@/types/app";
 import { Instance, Endpoint, Service } from "@/types/selector";
 import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
@@ -35,10 +34,6 @@ interface TraceState {
   conditions: any;
   traceSpanLogs: any[];
   traceSpanLogsTotal: number;
-  // traceListErrors: string;
-  // traceSpanErrors: string;
-  // traceSpanLogErrors: string;
-  durationTime: Duration;
   selectorStore: any;
 }
 
@@ -60,12 +55,11 @@ export const traceStore = defineStore({
     },
     traceSpanLogs: [],
     traceSpanLogsTotal: 0,
-    durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),
   }),
   actions: {
     setTraceCondition(data: any) {
-      this.condition = { ...this.condition, ...data };
+      this.conditions = { ...this.conditions, ...data };
     },
     setCurrentTrace(trace: Trace) {
       this.currentTrace = trace;
@@ -89,7 +83,7 @@ export const traceStore = defineStore({
         : id;
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId: serviceId,
-        duration: this.durationTime,
+        duration: useAppStoreWithOut().durationTime,
       });
 
       if (res.data.errors) {
@@ -104,7 +98,7 @@ export const traceStore = defineStore({
         : id;
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
-        duration: this.durationTime,
+        duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
       });
       if (res.data.errors) {
@@ -116,7 +110,7 @@ export const traceStore = defineStore({
     async getTraces() {
       const res: AxiosResponse = await graphql
         .query("queryTraces")
-        .params({ condition: this.condition });
+        .params({ condition: this.conditions });
       if (res.data.errors) {
         return res.data;
       }
@@ -159,6 +153,20 @@ export const traceStore = defineStore({
       }
       this.traceSpanLogs = res.data.data.queryLogs.logs || [];
       this.traceSpanLogsTotal = res.data.data.queryLogs.total;
+      return res.data;
+    },
+    async getTagKeys() {
+      const res: AxiosResponse = await graphql
+        .query("queryTraceTagKeys")
+        .params({ duration: useAppStoreWithOut().durationTime });
+
+      return res.data;
+    },
+    async getTagValues(tagKey: string) {
+      const res: AxiosResponse = await graphql
+        .query("queryTraceTagValues")
+        .params({ tagKey, duration: useAppStoreWithOut().durationTime });
+
       return res.data;
     },
   },

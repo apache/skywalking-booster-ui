@@ -50,10 +50,9 @@ export type Process = {
   serviceName: string;
   instanceId: string;
   instanceName: string;
-  layer: string;
   agentId: string;
   detectType: string;
-  attributes: { name: string; value: string };
+  attributes: { name: string; value: string }[];
   labels: string[];
 };
 export type StackElement = {
