@@ -29,18 +29,17 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
-    <div class="header">
-      <Header />
-    </div>
+    <!-- <div class="header">
+    </div> -->
     <div class="log">
       <List />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import type { onBeforeUnmount, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import Header from "../related/log/Header.vue";
 import List from "../related/log/List.vue";
 
 /*global defineProps */
@@ -57,6 +56,12 @@ const dashboardStore = useDashboardStore();
 function removeWidget() {
   dashboardStore.removeControls(props.data);
 }
+onMounted(() => {
+  dashboardStore.setLogTools(true);
+});
+onBeforeUnmount(() => {
+  dashboardStore.setLogTools(false);
+});
 </script>
 <style lang="scss" scoped>
 .log-wrapper {

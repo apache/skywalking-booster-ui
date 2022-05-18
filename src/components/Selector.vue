@@ -37,7 +37,7 @@ limitations under the License. -->
   </el-select>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import type { PropType } from "vue";
 
 interface Option {
@@ -94,5 +94,8 @@ watch(
 <style lang="scss" scoped>
 .el-input__inner {
   border-radius: unset !important;
+}
+.el-input.el-input--small.el-input--suffix {
+  height: 18px !important;
 }
 </style>

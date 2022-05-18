@@ -14,12 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h" :class="{ light: theme === 'light' }">
-    <div class="mr-5">
+    <div class="flex-h items-center mr-5">
       <span class="sm grey" v-show="theme === 'dark'">{{ t("tags") }}: </span>
-      <span
-        class="trace-tags"
-        :style="type === 'LOG' ? `min-width: 122px;` : ''"
-      >
+      <span v-if="tagsList.length" class="trace-tags">
+        <!-- :style="type === 'LOG' ? `min-width: 122px;` : ''" -->
         <span class="selected" v-for="(item, index) in tagsList" :key="index">
           <span>{{ item }}</span>
           <span class="remove-icon" @click="removeTags(index)">×</span>
@@ -34,6 +32,7 @@ limitations under the License. -->
       />
       <span class="tags-tip">
         <a
+          v-if="false"
           target="blank"
           href="https://github.com/apache/skywalking/blob/master/docs/en/setup/backend/configuration-vocabulary.md"
         >
@@ -54,17 +53,18 @@ limitations under the License. -->
             <Icon class="icon-help mr-5" iconName="help" size="middle" />
           </span>
         </el-tooltip>
-        <b v-if="type !== 'LOG'">{{ t("noticeTag") }}</b>
+        <!-- <b v-if="type !== 'LOG'">{{ t("noticeTag") }}</b> -->
       </span>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, defineExpose } from "vue";
 import { useI18n } from "vue-i18n";
 
 /*global defineEmits, defineProps */
 const emit = defineEmits(["update"]);
+
 defineProps({
   type: { type: String, default: "TRACE" },
 });
@@ -73,6 +73,13 @@ const theme = ref<string>("dark");
 const tags = ref<string>("");
 const tagsList = ref<string[]>([]);
 
+defineExpose({
+  tagsList,
+  emptyTags
+})
+function emptyTags (){
+  tagsList.value = []
+}
 function removeTags(index: number) {
   tagsList.value.splice(index, 1);
   updateTags();
@@ -97,6 +104,9 @@ function updateTags() {
 }
 </script>
 <style lang="scss" scoped>
+.items-center {
+  align-items: center;
+}
 .trace-tags {
   padding: 1px 5px 0 0;
   border-radius: 3px;

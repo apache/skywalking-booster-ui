@@ -110,6 +110,7 @@ function changeSort(opt: Option[] | any) {
 }
 
 async function selectTrace(i: Trace) {
+  traceStore.setCurrentView("traceDetails");
   traceStore.setCurrentTrace(i);
   selectedKey.value = i.key;
   if (i.traceIds.length) {
@@ -136,6 +137,7 @@ async function queryTraces() {
   border-bottom: 1px solid #c1c5ca41;
   border-right: 1px solid #c1c5ca41;
   height: 35px;
+  align-items: center;
 }
 
 .selectors {
@@ -163,11 +165,11 @@ async function queryTraces() {
 }
 
 .trace-t {
-  width: 420px;
+  width: 100%;
 }
 
 .list {
-  width: 400px;
+  width: 100%;
 }
 
 .trace-tr {
