@@ -1,14 +1,7 @@
 <template>
-  <div
-    class="trace-detail-wrapper flex-h"
-    v-if="traceStore.currentTrace.endpointNames"
-  >
+  <div class="trace-detail-wrapper flex-h" v-if="traceStore.currentTrace.endpointNames">
     <div class="mb-0 mt-0">
-      <Icon
-        icon="clear"
-        v-if="traceStore.currentTrace.isError"
-        class="red mr-5 sm"
-      />
+      <Icon icon="clear" v-if="traceStore.currentTrace.isError" class="red mr-5 sm" />
       <div class="trace-log-btn">
         <el-tooltip
           class="box-item"
@@ -206,10 +199,8 @@ export default defineComponent({
       traceStore.setCurrentView("traceList");
     }
     function handleClick(ids: string[] | any) {
-      
       let copyValue = null;
       if (ids.length === 1) {
-        console.log(ids)
         copyValue = ids[0].value;
       } else {
         copyValue = ids.map((trace: any) => trace.value).join(",");
