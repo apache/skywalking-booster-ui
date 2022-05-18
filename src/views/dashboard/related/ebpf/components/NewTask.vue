@@ -111,10 +111,6 @@ function changeType(opt: any[]) {
 }
 
 async function createTask() {
-  if (!labels.value.length) {
-    ElMessage.warning("no labels");
-    return;
-  }
   const date = monitorTime.value === "0" ? new Date() : time.value;
   const params = {
     serviceId: selectorStore.currentService.id,
