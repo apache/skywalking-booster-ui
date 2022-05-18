@@ -77,7 +77,6 @@ limitations under the License. -->
       {{ t("analyze") }}
     </el-button>
   </div>
-  <div ref="timeline" class="schedules"></div>
 </template>
 <script lang="ts" setup>
 import { ref, watch } from "vue";
@@ -87,8 +86,6 @@ import { Option } from "@/types/app";
 import { TableHeader } from "./data";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { EBPFProfilingSchedule, Process } from "@/types/ebpf";
-import { DataSet, Timeline } from "vis-timeline/standalone";
-import "vis-timeline/styles/vis-timeline-graph2d.css";
 import { ElMessage, ElTable } from "element-plus";
 
 const { t } = useI18n();
@@ -97,8 +94,6 @@ const pageSize = 5;
 /*global Nullable */
 const multipleTableRef = ref<InstanceType<typeof ElTable>>();
 const selectedProcesses = ref<string[]>([]);
-const timeline = ref<Nullable<HTMLDivElement>>(null);
-const visGraph = ref<Nullable<any>>(null);
 const labels = ref<Option[]>([{ label: "All", value: "0" }]);
 const processes = ref<Process[]>([]);
 const currentProcesses = ref<Process[]>([]);
@@ -160,9 +155,6 @@ async function analyzeEBPF() {
 }
 
 function visTimeline() {
-  if (visGraph.value) {
-    visGraph.value.destroy();
-  }
   labels.value = [{ label: "All", value: "0" }];
   selectedLabels.value = ["0"];
   processes.value = [];
@@ -181,19 +173,6 @@ function visTimeline() {
     }
   );
   searchProcesses(0);
-  if (!timeline.value) {
-    return;
-  }
-  const h = timeline.value.getBoundingClientRect().height;
-  const items: any = new DataSet(schedules);
-  const options = {
-    height: h,
-    width: "100%",
-    locale: "en",
-    selectable: false,
-    zoomable: false,
-  };
-  visGraph.value = new Timeline(timeline.value, items, options);
 }
 
 function changePage(pageIndex: number) {
