@@ -37,7 +37,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import Header from "../related/log/Header.vue";
+import Header from "../related/demand/Header.vue";
 
 /*global defineProps */
 const props = defineProps({

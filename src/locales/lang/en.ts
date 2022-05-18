@@ -136,6 +136,8 @@ const msg = {
   targetType: "Target Type",
   ebpfTip: "Don't have a process for profiling",
   processSelect: "Click to select processes",
+  container: "Container",
+  limit: "Limit",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",
