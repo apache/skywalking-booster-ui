@@ -1,7 +1,14 @@
 <template>
-  <div class="trace-detail-wrapper flex-h" v-if="traceStore.currentTrace.endpointNames">
+  <div
+    class="trace-detail-wrapper flex-h"
+    v-if="traceStore.currentTrace.endpointNames"
+  >
     <div class="mb-0 mt-0">
-      <Icon icon="clear" v-if="traceStore.currentTrace.isError" class="red mr-5 sm" />
+      <Icon
+        icon="clear"
+        v-if="traceStore.currentTrace.isError"
+        class="red mr-5 sm"
+      />
       <div class="trace-log-btn">
         <el-tooltip
           class="box-item"
@@ -77,24 +84,18 @@
       <el-tooltip
         class="box-item"
         effect="dark"
-        content="Copy Id"
+        content="Copy Ids"
         placement="bottom-start"
       >
         <el-button
           size="small"
-          class="mr-10 filter-btn"
+          class="mr-10 copy-btn"
           type="primary"
           @click="handleClick(traceStore.currentTrace.traceIds)"
         >
           <Icon iconSize="sm" iconName="review-list" />
         </el-button>
       </el-tooltip>
-      <!-- <Icon
-        size="sm"
-        class="icon grey link-hover cp ml-5"
-        iconName="review-list"
-        @click="handleClick"
-      /> -->
     </div>
     <div class="flex-h item">
       <div>
@@ -328,6 +329,11 @@ export default defineComponent({
 }
 .filter-btn {
   height: 18px;
+  margin: 0 5px;
+}
+.copy-btn {
+  height: 18px;
+  width: 10px;
   margin: 0 5px;
 }
 </style>
