@@ -218,7 +218,7 @@ export default class TraceMap {
           ? (d.data.isError ? "◉ " : "") + d.data.label.slice(0, 19) + "..."
           : (d.data.isError ? "◉ " : "") + d.data.label
       )
-      .style("fill", (d: any) => (!d.data.isError ? "#3d444f" : "#E54C17"));
+      .style("fill", (d: any) => (!d.data.isError ? "var(--spp-light-grey)" : "#E54C17"));
     nodeEnter
       .append("text")
       .attr("class", "node-text")
@@ -318,7 +318,7 @@ export default class TraceMap {
         const o = { x: source.x0, y: source.y0 };
         return diagonal(o, o);
       })
-      .attr("stroke", "rgba(0, 0, 0, 0.1)")
+      .attr("stroke", "var(--spp-white)")
       .style("stroke-width", 1.5)
       .style("fill", "none");
 

@@ -173,7 +173,7 @@ export default class ListGraph {
       .attr("class", "node-text")
       .attr("x", 35)
       .attr("y", -6)
-      .attr("fill", "#333")
+      .attr("fill", "var(--spp-light-grey)")
       .text((d: any) => {
         if (d.data.label === "TRACE_ROOT") {
           return "";
@@ -187,7 +187,7 @@ export default class ListGraph {
       .attr("class", "node-text")
       .attr("x", 35)
       .attr("y", 12)
-      .attr("fill", "#ccc")
+      .attr("fill", "var(--spp-white)")
       .style("font-size", "11px")
       .text(
         (d: any) =>
@@ -271,8 +271,8 @@ export default class ListGraph {
       .enter()
       .insert("path", "g")
       .attr("class", "trace-link")
-      .attr("fill", "rgba(0,0,0,0)")
-      .attr("stroke", "rgba(0, 0, 0, 0.1)")
+      .attr("fill", "rgba(128,128,128,0)")
+      .attr("stroke", "rgba(128,128,128,0.1)")
       .attr("stroke-width", 2)
       .attr("transform", `translate(5, 0)`)
       .attr("d", () => {
