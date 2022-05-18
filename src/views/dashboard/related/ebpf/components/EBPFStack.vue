@@ -78,6 +78,7 @@ function drawGraph() {
     .sort(true)
     .title("")
     .selfValue(false)
+    .inverted(true)
     .setColorMapper((d, originalColor) =>
       d.highlight ? "#6aff8f" : originalColor
     );
