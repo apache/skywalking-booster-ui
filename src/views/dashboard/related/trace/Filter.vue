@@ -94,6 +94,7 @@ limitations under the License. -->
 
       <div v-if="activeFilter === 'duration'" class="filter">
         <span class="sm b grey mr-5">{{ t("duration") }}:</span>
+        <b>{{ minTraceDuration }}</b>
         <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
         <span class="grey mr-5">-</span>
         <el-input size="small" class="inputs" v-model="maxTraceDuration" />
@@ -360,8 +361,8 @@ function searchTraces() {
     serviceInstanceId: instance || state.instance.id || undefined,
     traceState: state.status.value || "ALL",
     queryDuration: appStore.durationTime,
-    minTraceDuration: appStore.minTraceDuration || undefined,
-    maxTraceDuration: appStore.maxTraceDuration || undefined,
+    minTraceDuration: minTraceDuration.value || undefined,
+    maxTraceDuration: maxTraceDuration.value || undefined,
     queryOrder: "BY_DURATION",
     tags: tagsMap.value.length ? tagsMap.value : undefined,
     paging: { pageNum: 1, pageSize: 15, needTotal: true },
