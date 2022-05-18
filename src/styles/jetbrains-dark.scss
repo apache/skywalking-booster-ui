@@ -208,6 +208,10 @@
   color: var(--spp-light-grey) !important;
 }
 
+.btn-quickprev, .btn-quicknext {
+  color: var(--spp-light-grey) !important;
+}
+
 .el-pager li {
   background-color: var(--spp-green);
   color: var(--spp-white) !important;
@@ -216,6 +220,22 @@
 .btn-prev[type="button"] {
   background-color: var(--border-color);
   color: var(--spp-light-grey) !important;
+}
+
+.el-pager li.active {
+  color: var(--spp-light-grey);
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.btn-prev {
+  background-color: var(--spp-grey) !important;
+  color: black !important;
+}
+
+.el-pagination button:disabled {
+  background-color: var(--spp-dark-green) !important;
+  color: var(--spp-white) !important;
 }
 
 .el-pager + button.btn-next[type="button"] {
@@ -438,6 +458,11 @@ a {
 }
 
 .log-header div {
+  background-color: var(--table-header-color) !important;
+  color: var(--spp-white);
+}
+
+.trace-header div {
   background-color: var(--table-header-color) !important;
   color: var(--spp-white);
 }
