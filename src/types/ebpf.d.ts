@@ -52,7 +52,7 @@ export type Process = {
   instanceName: string;
   agentId: string;
   detectType: string;
-  attributes: { name: string; value: string };
+  attributes: { name: string; value: string }[];
   labels: string[];
 };
 export type StackElement = {
