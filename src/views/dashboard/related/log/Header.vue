@@ -37,9 +37,9 @@ limitations under the License. -->
       />
     </div>
     <div class="mr-5" v-if="dashboardStore.entity !== EntityType[2].value">
-      <span class="grey mr-5"
-        >{{ isBrowser ? t("page") : t("endpoint") }}:</span
-      >
+      <span class="grey mr-5">
+        {{ isBrowser ? t("page") : t("endpoint") }}:
+      </span>
       <Selector
         size="small"
         :value="state.endpoint.value"

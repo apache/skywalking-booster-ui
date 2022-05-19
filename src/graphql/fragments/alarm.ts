@@ -45,6 +45,5 @@ export const Alarm = {
           endTime
         }
       }
-      total
     }`,
 };
