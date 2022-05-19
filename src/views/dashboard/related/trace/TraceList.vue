@@ -17,9 +17,9 @@ limitations under the License. -->
         v-model:currentPage="traceStore.conditions.paging.pageNum"
         v-model:page-size="pageSize"
         :small="true"
-        layout="prev, pager, next, jumper"
-        :total="traceStore.traceTotal"
-        v-model:pager-count="pageCount"
+        layout="prev, pager, next"
+        :pager-count="5"
+        :total="total"
         @current-change="updatePage"
       />
       <div class="selectors">
@@ -71,7 +71,7 @@ limitations under the License. -->
 
 <script lang="ts" setup>
 import dayjs from "dayjs";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { ElMessage } from "element-plus";
@@ -83,8 +83,12 @@ const { t } = useI18n();
 const traceStore = useTraceStore();
 const loading = ref<boolean>(false);
 const selectedKey = ref<string>("");
-const pageSize = ref<number>(15);
-const pageCount = ref<number>(5);
+const pageSize = ref<number>(20);
+const total = computed(() =>
+  traceStore.traceList.length === pageSize.value
+    ? pageSize.value * traceStore.conditions.paging.pageNum + 1
+    : pageSize.value * traceStore.conditions.paging.pageNum
+);
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 
@@ -96,7 +100,7 @@ function searchTrace() {
 
 function updatePage(p: number) {
   traceStore.setTraceCondition({
-    paging: { pageNum: p, pageSize: pageSize.value, needTotal: true },
+    paging: { pageNum: p, pageSize: pageSize.value },
   });
   searchTrace();
 }
@@ -104,7 +108,7 @@ function updatePage(p: number) {
 function changeSort(opt: Option[] | any) {
   traceStore.setTraceCondition({
     queryOrder: opt[0].value,
-    paging: { pageNum: 1, pageSize: pageSize.value, needTotal: true },
+    paging: { pageNum: 1, pageSize: pageSize.value },
   });
   searchTrace();
 }
@@ -167,7 +171,7 @@ async function queryTraces() {
 }
 
 .list {
-  width: 400px;
+  width: 300px;
 }
 
 .trace-tr {

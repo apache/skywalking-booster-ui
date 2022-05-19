@@ -229,7 +229,7 @@ function searchLogs() {
     keywordsOfContent: keywordsOfContent.value,
     excludingKeywordsOfContent: excludingKeywordsOfContent.value,
     tags: tagsMap.value.length ? tagsMap.value : undefined,
-    paging: { pageNum: 1, pageSize: 15, needTotal: true },
+    paging: { pageNum: 1, pageSize: 15 },
     relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
   });
   queryLogs();
