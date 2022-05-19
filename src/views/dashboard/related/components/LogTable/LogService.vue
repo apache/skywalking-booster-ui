@@ -15,7 +15,7 @@ limitations under the License. -->
 
 <template>
   <div @click="showSelectSpan" class="log-item">
-    <div v-for="(item, index) in columns" :key="index" :class="item.label">
+    <div v-for="(item, index) in visibleColumns" :key="index" :class="item.label">
       <span v-if="item.label === 'timestamp'">
         {{ dateFormat(data.timestamp) }}
       </span>
@@ -43,6 +43,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["select"]);
 const columns = ServiceLogConstants;
+const visibleColumns = computed(() => columns.filter(column => column.isVisible))
 const tags = computed(() => {
   if (!props.data.tags) {
     return "";
