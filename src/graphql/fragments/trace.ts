@@ -27,7 +27,6 @@ export const Traces = {
       isError
       traceIds
     }
-    total
   }`,
 };
 

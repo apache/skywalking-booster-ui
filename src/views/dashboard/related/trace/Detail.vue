@@ -44,7 +44,9 @@ limitations under the License. -->
               v-model:currentPage="pageNum"
               v-model:page-size="pageSize"
               :small="true"
-              :total="traceStore.traceSpanLogsTotal"
+              layout="prev, pager, next"
+              :pager-count="5"
+              :total="total"
               @current-change="turnLogsPage"
             />
             <LogTable
@@ -146,7 +148,7 @@ limitations under the License. -->
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
@@ -171,6 +173,11 @@ export default defineComponent({
     const displayMode = ref<string>("List");
     const pageNum = ref<number>(1);
     const pageSize = 10;
+    const total = computed(() =>
+      traceStore.traceList.length === pageSize
+        ? pageSize * pageNum.value + 1
+        : pageSize * pageNum.value
+    );
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
     const showTraceLogs = ref<boolean>(false);
@@ -202,7 +209,7 @@ export default defineComponent({
           relatedTrace: {
             traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
           },
-          paging: { pageNum: pageNum.value, pageSize, needTotal: true },
+          paging: { pageNum: pageNum.value, pageSize },
         },
       });
       if (res.errors) {
@@ -227,6 +234,7 @@ export default defineComponent({
       pageSize,
       pageNum,
       loading,
+      total,
     };
   },
 });

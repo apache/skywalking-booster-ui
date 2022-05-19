@@ -31,7 +31,6 @@ interface LogState {
   selectorStore: any;
   supportQueryLogsByKeywords: boolean;
   logs: any[];
-  logsTotal: number;
   loadLogs: boolean;
 }
 
@@ -43,12 +42,11 @@ export const logStore = defineStore({
     endpoints: [{ value: "0", label: "All" }],
     conditions: {
       queryDuration: useAppStoreWithOut().durationTime,
-      paging: { pageNum: 1, pageSize: 15, needTotal: true },
+      paging: { pageNum: 1, pageSize: 15 },
     },
     supportQueryLogsByKeywords: true,
     selectorStore: useSelectorStore(),
     logs: [],
-    logsTotal: 0,
     loadLogs: false,
   }),
   actions: {
@@ -131,7 +129,6 @@ export const logStore = defineStore({
       }
 
       this.logs = res.data.data.queryLogs.logs;
-      this.logsTotal = res.data.data.queryLogs.total;
       return res.data;
     },
     async getBrowserLogs() {
@@ -145,7 +142,6 @@ export const logStore = defineStore({
         return res.data;
       }
       this.logs = res.data.data.queryBrowserErrorLogs.logs;
-      this.logsTotal = res.data.data.queryBrowserErrorLogs.total;
       return res.data;
     },
     async getLogTagKeys() {

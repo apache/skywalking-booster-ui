@@ -94,6 +94,8 @@ function setCurrentLog(log: any) {
   font-size: 12px;
   height: 100%;
   border-bottom: 1px solid #eee;
+  width: 100%;
+  overflow: auto;
 }
 
 .log-header {

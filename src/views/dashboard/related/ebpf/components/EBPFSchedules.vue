@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="filters">
+  <div class="filters flex-h">
     <Selector
       :value="selectedLabels"
       :options="labels"
@@ -23,6 +23,11 @@ limitations under the License. -->
       class="inputs mr-10"
       :multiple="true"
     />
+    <el-button type="primary" size="small">
+      <span>{{ duration[0] }}</span>
+      <span> ~ </span>
+      <span>{{ duration[1] }}</span>
+    </el-button>
     <el-popover placement="bottom" :width="680" trigger="click">
       <template #reference>
         <el-button type="primary" size="small">
@@ -34,7 +39,7 @@ limitations under the License. -->
         placeholder="Please input name"
         class="input-with-search"
         size="small"
-        @change="searchProcesses"
+        @change="searchProcesses(0)"
       >
         <template #append>
           <el-button size="small">
@@ -77,7 +82,6 @@ limitations under the License. -->
       {{ t("analyze") }}
     </el-button>
   </div>
-  <div ref="timeline" class="schedules"></div>
 </template>
 <script lang="ts" setup>
 import { ref, watch } from "vue";
@@ -87,25 +91,21 @@ import { Option } from "@/types/app";
 import { TableHeader } from "./data";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { EBPFProfilingSchedule, Process } from "@/types/ebpf";
-import { DataSet, Timeline } from "vis-timeline/standalone";
-import "vis-timeline/styles/vis-timeline-graph2d.css";
 import { ElMessage, ElTable } from "element-plus";
 
 const { t } = useI18n();
 const ebpfStore = useEbpfStore();
 const pageSize = 5;
-/*global Nullable */
 const multipleTableRef = ref<InstanceType<typeof ElTable>>();
 const selectedProcesses = ref<string[]>([]);
-const timeline = ref<Nullable<HTMLDivElement>>(null);
-const visGraph = ref<Nullable<any>>(null);
 const labels = ref<Option[]>([{ label: "All", value: "0" }]);
 const processes = ref<Process[]>([]);
 const currentProcesses = ref<Process[]>([]);
 const selectedLabels = ref<string[]>(["0"]);
 const searchText = ref<string>("");
+const duration = ref<string[]>([]);
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  new Date(dayjs(date).format(pattern));
+  dayjs(date).format(pattern);
 
 function changeLabels(opt: any[]) {
   const arr = opt.map((d) => d.value);
@@ -160,54 +160,57 @@ async function analyzeEBPF() {
 }
 
 function visTimeline() {
-  if (visGraph.value) {
-    visGraph.value.destroy();
-  }
   labels.value = [{ label: "All", value: "0" }];
   selectedLabels.value = ["0"];
   processes.value = [];
-  const schedules = ebpfStore.eBPFSchedules.map(
-    (d: EBPFProfilingSchedule, index: number) => {
-      for (const l of d.process.labels) {
-        labels.value.push({ label: l, value: l });
-      }
-      processes.value.push(d.process);
-      return {
-        id: index + 1,
-        content: d.process.name,
-        start: dateFormat(d.startTime),
-        end: dateFormat(d.endTime),
-      };
+  const ranges = ebpfStore.eBPFSchedules.map((d: EBPFProfilingSchedule) => {
+    for (const l of d.process.labels) {
+      labels.value.push({ label: l, value: l });
     }
-  );
-  searchProcesses();
-  if (!timeline.value) {
-    return;
-  }
-  const h = timeline.value.getBoundingClientRect().height;
-  const items: any = new DataSet(schedules);
-  const options = {
-    height: h,
-    width: "100%",
-    locale: "en",
-  };
-  visGraph.value = new Timeline(timeline.value, items, options);
+    processes.value.push(d.process);
+    return [d.startTime / 10000, d.endTime / 10000];
+  });
+  const arr = ranges.flat(1);
+  const min = Math.min(...arr);
+  const max = Math.max(...arr);
+  duration.value = [dateFormat(min * 10000), dateFormat(max * 10000)];
+  searchProcesses(0);
 }
 
 function changePage(pageIndex: number) {
   searchProcesses(pageIndex);
 }
 
-function searchProcesses(pageIndex?: any) {
+function searchProcesses(pageIndex: number) {
   const arr = processes.value.filter(
-    (d: { name: string; instanceName: string }) =>
+    (d: {
+      name: string;
+      instanceName: string;
+      attributes: { name: string; value: string }[];
+    }) =>
       d.name.includes(searchText.value) ||
-      d.instanceName.includes(searchText.value)
+      d.instanceName.includes(searchText.value) ||
+      searchAttribute(d.attributes, searchText.value)
   );
-  currentProcesses.value = arr.splice(
-    (pageIndex - 1 || 0) * pageSize,
-    pageSize * (pageIndex || 1)
+  currentProcesses.value = arr.filter(
+    (d, index: number) =>
+      (pageIndex - 1 || 0) * pageSize <= index &&
+      pageSize * (pageIndex || 1) > index
   );
+}
+
+function searchAttribute(
+  attributes: { name: string; value: string }[],
+  text: string
+) {
+  const item = attributes.find(
+    (d: { name: string; value: string }) => d.name === "command_line"
+  );
+
+  if (!item) {
+    return false;
+  }
+  return item.value.includes(text);
 }
 
 watch(
