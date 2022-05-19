@@ -75,8 +75,8 @@ limitations under the License. -->
       <el-pagination
         v-model:currentPage="pageNum"
         v-model:page-size="pageSize"
-        layout="prev, jumper, total, next"
-        :total="eventStore.total"
+        layout="prev, pager, next"
+        :total="total"
         @current-change="updatePage"
         :pager-count="5"
         small
@@ -92,7 +92,7 @@ limitations under the License. -->
   </nav>
 </template>
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { EventTypes } from "./data";
 import { useEventStore } from "@/store/modules/event";
@@ -119,6 +119,11 @@ const state = reactive<{
   instance: "",
   endpoint: "",
 });
+const total = computed(() =>
+  eventStore.events.length === pageSize
+    ? pageSize * pageNum.value + 1
+    : pageSize * pageNum.value
+);
 
 getSelectors();
 
@@ -180,7 +185,6 @@ async function queryEvents() {
     paging: {
       pageNum: pageNum.value,
       pageSize: pageSize,
-      needTotal: true,
     },
     source: {
       service: state.service || "",

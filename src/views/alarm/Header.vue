@@ -39,8 +39,8 @@ limitations under the License. -->
         <el-pagination
           v-model:currentPage="pageNum"
           v-model:page-size="pageSize"
-          layout="prev, jumper, total, next"
-          :total="alarmStore.total"
+          layout="prev, pager, next"
+          :total="total"
           @current-change="changePage"
           :pager-count="5"
           small
@@ -55,7 +55,7 @@ limitations under the License. -->
   </nav>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import ConditionTags from "@/views/components/ConditionTags.vue";
 import { AlarmOptions } from "./data";
@@ -70,6 +70,11 @@ const pageSize = 20;
 const entity = ref<string>("");
 const keyword = ref<string>("");
 const pageNum = ref<number>(1);
+const total = computed(() =>
+  alarmStore.alarms.length === pageSize
+    ? pageSize * pageNum.value + 1
+    : pageSize * pageNum.value
+);
 
 refreshAlarms({ pageNum: 1 });
 
@@ -79,7 +84,6 @@ async function refreshAlarms(param: { pageNum: number; tagsMap?: any }) {
     paging: {
       pageNum: param.pageNum,
       pageSize,
-      needTotal: true,
     },
     tags: param.tagsMap,
   };
