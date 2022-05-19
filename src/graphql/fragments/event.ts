@@ -35,6 +35,5 @@ export const FetchEvents = {
       startTime
       endTime
     }
-    total
   }`,
 };
