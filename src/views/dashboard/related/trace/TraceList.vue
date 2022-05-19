@@ -171,7 +171,7 @@ async function queryTraces() {
 }
 
 .list {
-  width: 400px;
+  width: 300px;
 }
 
 .trace-tr {
