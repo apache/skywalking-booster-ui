@@ -54,7 +54,6 @@ export const QueryServiceLogs = {
             value
           }
         }
-        total
     }`,
 };
 

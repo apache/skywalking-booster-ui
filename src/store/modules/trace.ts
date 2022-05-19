@@ -32,7 +32,6 @@ interface TraceState {
   currentTrace: Trace | any;
   conditions: any;
   traceSpanLogs: any[];
-  traceSpanLogsTotal: number;
   selectorStore: any;
 }
 
@@ -52,7 +51,6 @@ export const traceStore = defineStore({
       paging: { pageNum: 1, pageSize: 20 },
     },
     traceSpanLogs: [],
-    traceSpanLogsTotal: 0,
     selectorStore: useSelectorStore(),
   }),
   actions: {
@@ -144,11 +142,9 @@ export const traceStore = defineStore({
         .params(params);
       if (res.data.errors) {
         this.traceSpanLogs = [];
-        this.traceSpanLogsTotal = 0;
         return res.data;
       }
       this.traceSpanLogs = res.data.data.queryLogs.logs || [];
-      this.traceSpanLogsTotal = res.data.data.queryLogs.total;
       return res.data;
     },
     async getTagKeys() {
