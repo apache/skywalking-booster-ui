@@ -103,7 +103,6 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
-import { number } from "@intlify/core-base";
 
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
