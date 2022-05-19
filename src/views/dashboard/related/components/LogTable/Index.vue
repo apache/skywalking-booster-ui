@@ -17,7 +17,8 @@ limitations under the License. -->
   <div class="log">
     <div class="log-header">
       <template v-for="(item, index) in columns">
-        <div
+        <template v-if="item.isVisible">
+          <div
           class="method"
           :style="`width: ${item.method}px`"
           v-if="item.drag"
@@ -31,6 +32,7 @@ limitations under the License. -->
         <div v-else :class="item.label" :key="`col${index}`">
           {{ t(item.value) }}
         </div>
+        </template>
       </template>
     </div>
     <div v-if="type === 'browser'">
