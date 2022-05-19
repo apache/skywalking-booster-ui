@@ -19,34 +19,42 @@ export const ServiceLogConstants = [
   {
     label: "serviceName",
     value: "service",
+    isVisible: true
   },
   {
     label: "serviceInstanceName",
     value: "instance",
+    isVisible: true
   },
   {
     label: "endpointName",
     value: "endpoint",
+    isVisible: false
   },
   {
     label: "timestamp",
     value: "time",
+    isVisible: true
   },
   {
     label: "contentType",
     value: "contentType",
+    isVisible: true
   },
   {
     label: "tags",
     value: "tags",
+    isVisible: false
   },
   {
     label: "content",
     value: "content",
+    isVisible: true
   },
   {
     label: "traceId",
     value: "traceID",
+    isVisible: false
   },
 ];
 export const ServiceLogDetail = [
