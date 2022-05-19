@@ -202,7 +202,7 @@ export default defineComponent({
           relatedTrace: {
             traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
           },
-          paging: { pageNum: pageNum.value, pageSize, needTotal: true },
+          paging: { pageNum: pageNum.value, pageSize },
         },
       });
       if (res.errors) {

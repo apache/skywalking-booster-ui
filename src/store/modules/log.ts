@@ -43,7 +43,7 @@ export const logStore = defineStore({
     endpoints: [{ value: "0", label: "All" }],
     conditions: {
       queryDuration: useAppStoreWithOut().durationTime,
-      paging: { pageNum: 1, pageSize: 15, needTotal: true },
+      paging: { pageNum: 1, pageSize: 15 },
     },
     supportQueryLogsByKeywords: true,
     selectorStore: useSelectorStore(),

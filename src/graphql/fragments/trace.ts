@@ -26,8 +26,8 @@ export const Traces = {
       start
       isError
       traceIds
+      segmentId
     }
-    total
   }`,
 };
 

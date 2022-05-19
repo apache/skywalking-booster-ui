@@ -135,7 +135,7 @@ async function getTaceLogs() {
         segmentId: props.currentSpan.segmentId,
         spanId: props.currentSpan.spanId,
       },
-      paging: { pageNum: pageNum.value, pageSize, needTotal: true },
+      paging: { pageNum: pageNum.value, pageSize },
     },
   });
   if (res.errors) {

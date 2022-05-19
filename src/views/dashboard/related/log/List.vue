@@ -51,7 +51,7 @@ const type = ref<string>(
 const pageSize = ref<number>(15);
 function updatePage(p: number) {
   logStore.setLogCondition({
-    paging: { pageNum: p, pageSize: pageSize.value, needTotal: true },
+    paging: { pageNum: p, pageSize: pageSize.value },
   });
   queryLogs();
 }

@@ -178,7 +178,7 @@ function searchTraces() {
     maxTraceDuration: appStore.maxTraceDuration || undefined,
     queryOrder: "BY_DURATION",
     tags: tagsMap.value.length ? tagsMap.value : undefined,
-    paging: { pageNum: 1, pageSize: 15, needTotal: true },
+    paging: { pageNum: 1, pageSize: 20 },
   });
   queryTraces();
 }
