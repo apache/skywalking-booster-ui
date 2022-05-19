@@ -19,18 +19,19 @@ limitations under the License. -->
       <Selector
         size="small"
         :value="state.service.value"
-        :options="logStore.services"
+        :options="demandLogStore.services"
         placeholder="Select a service"
         @change="changeField('service', $event)"
       />
     </div>
     <div class="mr-5">
       <span class="grey mr-5">{{ t("limit") }}:</span>
-      <Selector
+      <el-input-number
+        v-model="limit"
+        :min="1"
+        :max="100"
         size="small"
-        :value="state.service.value"
-        :options="logStore.services"
-        placeholder="Select a service"
+        controls-position="right"
         @change="changeField('service', $event)"
       />
     </div>
@@ -43,18 +44,8 @@ limitations under the License. -->
       {{ t("search") }}
     </el-button>
   </div>
-  <div class="flex-h row">
-    <div class="mr-5 traceId" v-show="!isBrowser">
-      <span class="grey mr-5">{{ t("traceID") }}:</span>
-      <el-input v-model="traceId" class="inputs-max" size="small" />
-    </div>
-    <ConditionTags :type="'LOG'" @update="updateTags" />
-  </div>
-  <div class="row tips">
-    <b>{{ t("conditionNotice") }}</b>
-  </div>
-  <div class="flex-h" v-show="!isBrowser">
-    <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
+  <div class="flex-h">
+    <div class="mr-5">
       <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
       <span class="log-tags">
         <span
@@ -74,7 +65,7 @@ limitations under the License. -->
         @change="addLabels('keywordsOfContent')"
       />
     </div>
-    <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
+    <div class="mr-5">
       <span class="grey mr-5"> {{ t("excludingKeywordsOfContent") }}: </span>
       <span class="log-tags">
         <span
@@ -96,7 +87,7 @@ limitations under the License. -->
         @change="addLabels('excludingKeywordsOfContent')"
       />
       <el-tooltip :content="t('keywordsOfContentLogTips')">
-        <span class="log-tips" v-show="!logStore.supportQueryLogsByKeywords">
+        <span class="log-tips">
           <Icon icon="help" class="mr-5" />
         </span>
       </el-tooltip>
@@ -106,12 +97,10 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Option } from "@/types/app";
-import { useLogStore } from "@/store/modules/log";
+import { useDemandLogStore } from "@/store/modules/demand-log";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
-import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 
@@ -119,132 +108,77 @@ const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
-const logStore = useLogStore();
-const traceId = ref<string>("");
+const demandLogStore = useDemandLogStore();
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
-const tagsList = ref<string[]>([]);
-const tagsMap = ref<Option[]>([]);
 const contentStr = ref<string>("");
 const excludingContentStr = ref<string>("");
-const isBrowser = ref<boolean>(dashboardStore.layerId === "BROWSER");
+const limit = ref<number>(1);
 const state = reactive<any>({
-  instance: { value: "0", label: "All" },
-  endpoint: { value: "0", label: "All" },
   service: { value: "", label: "" },
 });
 
 init();
 async function init() {
-  const resp = await logStore.getLogsByKeywords();
-
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return;
-  }
-  await fetchSelectors();
+  fetchSelectors();
   await searchLogs();
   state.instance = { value: "0", label: "All" };
-  state.endpoint = { value: "0", label: "All" };
 }
-
 function fetchSelectors() {
   if (dashboardStore.entity === EntityType[1].value) {
     getServices();
-    return;
   }
-  if (dashboardStore.entity === EntityType[2].value) {
+  if (dashboardStore.entity !== EntityType[3].value) {
     getInstances();
-    return;
-  }
-  if (dashboardStore.entity === EntityType[3].value) {
-    getEndpoints();
-    return;
-  }
-  if (dashboardStore.entity === EntityType[0].value) {
-    getInstances();
-    getEndpoints();
   }
 }
-
 async function getServices() {
-  const resp = await logStore.getServices(dashboardStore.layerId);
+  const resp = await demandLogStore.getServices(dashboardStore.layerId);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.service = logStore.services[0];
+  state.service = demandLogStore.services[0];
   getInstances(state.service.id);
-  getEndpoints(state.service.id);
-}
-
-async function getEndpoints(id?: string) {
-  const resp = await logStore.getEndpoints(id);
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return;
-  }
-  state.endpoint = logStore.endpoints[0];
 }
 async function getInstances(id?: string) {
-  const resp = await logStore.getInstances(id);
+  const resp = await demandLogStore.getInstances(id);
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.instance = logStore.instances[0];
+  state.instance = demandLogStore.instances[0];
 }
 function searchLogs() {
-  let endpoint = "",
-    instance = "";
-  if (dashboardStore.entity === EntityType[2].value) {
-    endpoint = selectorStore.currentPod.id;
-  }
+  let instance = "";
   if (dashboardStore.entity === EntityType[3].value) {
     instance = selectorStore.currentPod.id;
   }
-  logStore.setLogCondition({
+  demandLogStore.setLogCondition({
     serviceId: selectorStore.currentService
       ? selectorStore.currentService.id
       : state.service.id,
-    endpointId: endpoint || state.endpoint.id || undefined,
     serviceInstanceId: instance || state.instance.id || undefined,
     queryDuration: appStore.durationTime,
     keywordsOfContent: keywordsOfContent.value,
     excludingKeywordsOfContent: excludingKeywordsOfContent.value,
-    tags: tagsMap.value.length ? tagsMap.value : undefined,
-    paging: { pageNum: 1, pageSize: 15, needTotal: true },
-    relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
+    paging: { pageNum: 1, pageSize: 15 },
   });
   queryLogs();
 }
 async function queryLogs() {
-  const res = await logStore.getLogs();
+  const res = await demandLogStore.getLogs();
   if (res && res.errors) {
     ElMessage.error(res.errors);
   }
 }
 function changeField(type: string, opt: any) {
   state[type] = opt[0];
-  if (type === "service") {
-    getEndpoints(state.service.id);
-    getInstances(state.service.id);
-  }
-}
-async function searchEndpoints(keyword: string) {
-  const resp = await logStore.getEndpoints(state.service.id, keyword);
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-  }
-}
-function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
-  tagsList.value = data.tagsList;
-  tagsMap.value = data.tagsMap;
 }
 function removeContent(index: number) {
   const keywordsOfContentList = keywordsOfContent.value || [];
   keywordsOfContentList.splice(index, 1);
-  logStore.setLogCondition({
+  demandLogStore.setLogCondition({
     keywordsOfContent: keywordsOfContentList,
   });
   contentStr.value = "";
@@ -258,13 +192,13 @@ function addLabels(type: string) {
   }
   if (type === "keywordsOfContent") {
     keywordsOfContent.value.push(contentStr.value);
-    logStore.setLogCondition({
+    demandLogStore.setLogCondition({
       [type]: keywordsOfContent.value,
     });
     contentStr.value = "";
   } else if (type === "excludingKeywordsOfContent") {
     excludingKeywordsOfContent.value.push(excludingContentStr.value);
-    logStore.setLogCondition({
+    demandLogStore.setLogCondition({
       [type]: excludingKeywordsOfContent.value,
     });
     excludingContentStr.value = "";
@@ -272,7 +206,7 @@ function addLabels(type: string) {
 }
 function removeExcludeContent(index: number) {
   excludingKeywordsOfContent.value.splice(index, 1);
-  logStore.setLogCondition({
+  demandLogStore.setLogCondition({
     excludingKeywordsOfContent: excludingKeywordsOfContent.value,
   });
   excludingContentStr.value = "";
@@ -288,16 +222,7 @@ watch(
 watch(
   () => [selectorStore.currentPod],
   () => {
-    if (dashboardStore.entity === EntityType[0].value) {
-      return;
-    }
-    init();
-  }
-);
-watch(
-  () => appStore.durationTime,
-  () => {
-    if (dashboardStore.entity === EntityType[1].value) {
+    if (dashboardStore.entity === EntityType[3].value) {
       init();
     }
   }
