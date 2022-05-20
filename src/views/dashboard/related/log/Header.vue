@@ -14,24 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
-  <div style="display: inline-block; margin-left: 20px">
-    <p style="margin-left: 10px">use collapse-tags-tooltip</p>
-    <el-select
-      v-model="selectedColumns"
-      multiple
-      collapse-tags
-      collapse-tags-tooltip
-      placeholder="Select"
-      style="width: 240px"
-    >
-      <el-option
-        v-for="item in logStore.serviceLogColumn"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
-  </div>
+    <div class="flex-h items-center mr-5">
+      <p style="margin-left: 10px">Select visible columns</p>
+      <el-select
+        v-model="selectedColumns"
+        multiple
+        collapse-tags
+        collapse-tags-tooltip
+        placeholder="Select"
+        style="width: 240px"
+      >
+        <el-option
+          v-for="item in logStore.serviceLogColumn"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+      <el-button class="toggle-btn mx-3" @click="setVisbleColumn">
+        <Icon iconSize="sm" iconName="timeline" />
+      </el-button>
+    </div>
     <div v-if="!currentSearchTerm.length" class="flex-h items-center">
       <div v-for="(item, index) in arrayOfFilters" :key="index">
         <el-tooltip
@@ -232,16 +235,16 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const logStore = useLogStore();
-const selectedColumns = ref<any[]>([])
+const selectedColumns = ref<any[]>([]);
 const traceId = ref<string>("");
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
 const supportQueryLogsByKeywords = computed<boolean>(() => {
-  return logStore.supportQueryLogsByKeywords
-})
+  return logStore.supportQueryLogsByKeywords;
+});
 const supportExcludeQueryLogsByKeywords = computed<boolean>(() => {
-  return logStore.supportQueryLogsByKeywords
-})
+  return logStore.supportQueryLogsByKeywords;
+});
 
 const currentSearchTerm = ref<string>("");
 const activeTerms = ref<string[]>([]);
@@ -307,6 +310,12 @@ const arrayOfFilters = ref<filtersObject[]>([
   },
 ]);
 init();
+function setVisbleColumn() {
+  const cols = logStore.serviceLogColumn.filter((column) => {
+    return selectedColumns.value.includes(column.value);
+  });
+  console.log(cols, [...logStore.serviceLogColumn]);
+}
 async function init() {
   const resp = await logStore.getLogsByKeywords();
 
@@ -520,7 +529,7 @@ function cancelSearchTerm() {
   }
   removeFromActiveTerms();
   currentSearchTerm.value = "";
-  searchLogs()
+  searchLogs();
 }
 watch(
   () => selectorStore.currentService,
@@ -558,7 +567,9 @@ watch(
 .inputs {
   width: 120px;
 }
-
+.items-center {
+  align-items: center;
+}
 .row {
   margin-bottom: 5px;
 }
