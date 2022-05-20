@@ -44,7 +44,7 @@ export const ServiceLogConstants = [
   {
     label: "endpointName",
     value: "endpoint",
-    isVisible: false
+    isVisible: true
   },
   {
     label: "timestamp",
@@ -59,7 +59,7 @@ export const ServiceLogConstants = [
   {
     label: "tags",
     value: "tags",
-    isVisible: false
+    isVisible: true
   },
   {
     label: "content",
@@ -69,7 +69,7 @@ export const ServiceLogConstants = [
   {
     label: "traceId",
     value: "traceID",
-    isVisible: false
+    isVisible: true
   },
 ];
 export const ServiceLogDetail = [
@@ -107,37 +107,45 @@ export const BrowserLogConstants = [
   {
     label: "service",
     value: "service",
+    isVisible: true,
   },
   {
     label: "serviceVersion",
     value: "serviceVersion",
+    isVisible: true,
   },
   {
     label: "errorUrl",
     value: "errorPage",
+    isVisible: true,
   },
   {
     label: "time",
     value: "time",
+    isVisible: true,
   },
   {
     label: "message",
     value: "message",
+    isVisible: true,
     // drag: true,
     method: 350,
   },
   {
     label: "stack",
     value: "stack",
+    isVisible: true,
     // drag: true,
     method: 350,
   },
   {
     label: "category",
     value: "category",
+    isVisible: true,
   },
   {
     label: "grade",
     value: "grade",
+    isVisible: true,
   },
 ];
