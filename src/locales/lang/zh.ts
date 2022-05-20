@@ -134,6 +134,7 @@ const msg = {
   targetType: "目标类型",
   processSelect: "点击选择进程",
   ebpfTip: "没有进程可以分析",
+  page: "页面",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

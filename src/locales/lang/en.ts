@@ -136,6 +136,7 @@ const msg = {
   targetType: "Target Type",
   ebpfTip: "Don't have a process for profiling",
   processSelect: "Click to select processes",
+  page: "Page",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",
