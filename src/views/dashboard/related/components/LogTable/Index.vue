@@ -19,19 +19,24 @@ limitations under the License. -->
       <template v-for="(item, index) in columns">
         <template v-if="item.isVisible">
           <div
-          class="method"
-          :style="`width: ${item.method}px`"
-          v-if="item.drag"
-          :key="index"
-        >
-          <span class="r cp" ref="dragger" :data-index="index">
-            <Icon iconName="settings_ethernet" size="sm" />
-          </span>
-          {{ t(item.value) }}
-        </div>
-        <div v-else :class="item.label" :key="`col${index}`">
-          {{ t(item.value) }}
-        </div>
+            class="method"
+            :style="`width: ${item.method}px`"
+            v-if="item.drag"
+            :key="index"
+          >
+            <span class="r cp" ref="dragger" :data-index="index">
+              <Icon iconName="settings_ethernet" size="sm" />
+            </span>
+            {{ t(item.value) }}
+          </div>
+          <div
+            v-else
+            :class="item.label"
+            :key="`col${index}`"
+            @click="logColumn(item, index)"
+          >
+            {{ t(item.value) }}
+          </div>
         </template>
       </template>
     </div>
@@ -65,7 +70,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { ServiceLogConstants, BrowserLogConstants } from "./data";
 import LogBrowser from "./LogBrowser.vue";
@@ -83,12 +88,61 @@ const currentLog = ref<any>({});
 const showDetail = ref<boolean>(false);
 const dragger = ref<Nullable<HTMLSpanElement>>(null);
 // const method = ref<number>(380);
-const columns: any[] =
-  props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
+// props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
+const columns = ref<any[]> ([
+  {
+    label: "serviceName",
+    value: "service",
+    isVisible: true,
+  },
+  {
+    label: "serviceInstanceName",
+    value: "instance",
+    isVisible: true,
+  },
+  {
+    label: "endpointName",
+    value: "endpoint",
+    isVisible: false,
+  },
+  {
+    label: "timestamp",
+    value: "time",
+    isVisible: true,
+  },
+  {
+    label: "contentType",
+    value: "contentType",
+    isVisible: true,
+  },
+  {
+    label: "tags",
+    value: "tags",
+    isVisible: false,
+  },
+  {
+    label: "content",
+    value: "content",
+    isVisible: true,
+  },
+  {
+    label: "traceId",
+    value: "traceID",
+    isVisible: false,
+  },
+]);
+
+const visibleColumns = computed(() =>
+  columns.value.filter((column) => column.isVisible)
+);
 
 function setCurrentLog(log: any) {
   showDetail.value = true;
   currentLog.value = log;
+}
+function logColumn(item: any, index: number) {
+  console.log(index, item, visibleColumns.value[index]);
+  columns.value[index].isVisible = false;
 }
 </script>
 <style lang="scss" scoped>
