@@ -138,6 +138,7 @@ const msg = {
   processSelect: "Click to select processes",
   container: "Container",
   limit: "Limit",
+  page: "Page",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

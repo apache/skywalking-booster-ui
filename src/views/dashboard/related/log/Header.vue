@@ -226,8 +226,14 @@ function searchLogs() {
     endpointId: endpoint || state.endpoint.id || undefined,
     serviceInstanceId: instance || state.instance.id || undefined,
     queryDuration: appStore.durationTime,
-    keywordsOfContent: keywordsOfContent.value,
-    excludingKeywordsOfContent: excludingKeywordsOfContent.value,
+    keywordsOfContent:
+      dashboardStore.layerId === "BROWSER"
+        ? undefined
+        : keywordsOfContent.value,
+    excludingKeywordsOfContent:
+      dashboardStore.layerId === "BROWSER"
+        ? undefined
+        : excludingKeywordsOfContent.value,
     tags: tagsMap.value.length ? tagsMap.value : undefined,
     paging: { pageNum: 1, pageSize: 15 },
     relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
