@@ -17,7 +17,8 @@
 import { defineStore } from "pinia";
 import { Duration } from "@/types/app";
 import { Instance, Endpoint, Service } from "@/types/selector";
-import { ServiceLogColumn, BrowserLogColumn } from '@/types/log-column'
+import { ServiceLogColumn, BrowserLogColumn } from "@/types/log-column";
+import { ServiceLogConstants, BrowserLogConstants } from "../data";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
@@ -50,8 +51,8 @@ export const logStore = defineStore({
       queryDuration: useAppStoreWithOut().durationTime,
       paging: { pageNum: 1, pageSize: 15, needTotal: true },
     },
-    serviceLogColumn: [],
-    browserLogColumn: [],
+    serviceLogColumn: [...ServiceLogConstants],
+    browserLogColumn: [...BrowserLogConstants],
     supportQueryLogsByKeywords: true,
     durationTime: useAppStoreWithOut().durationTime,
     selectorStore: useSelectorStore(),

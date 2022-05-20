@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 export interface BrowserLogColumn {
-  lable: string;
+  label: string;
   value: string;
-  isVisible?: boolean;
 }
 export interface ServiceLogColumn {
-  lable: string;
+  label: string;
   value: string;
   isVisible?: boolean;
+  methode?: any;
 }

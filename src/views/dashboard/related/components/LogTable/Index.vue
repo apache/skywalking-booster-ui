@@ -72,10 +72,11 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { ServiceLogConstants, BrowserLogConstants } from "./data";
+// import { ServiceLogConstants, BrowserLogConstants } from "./data";
 import LogBrowser from "./LogBrowser.vue";
 import LogService from "./LogService.vue";
 import LogDetail from "./LogDetail.vue";
+import { logStore } from '@/store/modules/log'
 
 /*global defineProps, Nullable */
 const props = defineProps({
@@ -83,54 +84,14 @@ const props = defineProps({
   tableData: { type: Array, default: () => [] },
   noLink: { type: Boolean, default: true },
 });
+const useLogStore = logStore()
 const { t } = useI18n();
 const currentLog = ref<any>({});
 const showDetail = ref<boolean>(false);
 const dragger = ref<Nullable<HTMLSpanElement>>(null);
 // const method = ref<number>(380);
 // props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
-const columns = ref<any[]> ([
-  {
-    label: "serviceName",
-    value: "service",
-    isVisible: true,
-  },
-  {
-    label: "serviceInstanceName",
-    value: "instance",
-    isVisible: true,
-  },
-  {
-    label: "endpointName",
-    value: "endpoint",
-    isVisible: false,
-  },
-  {
-    label: "timestamp",
-    value: "time",
-    isVisible: true,
-  },
-  {
-    label: "contentType",
-    value: "contentType",
-    isVisible: true,
-  },
-  {
-    label: "tags",
-    value: "tags",
-    isVisible: false,
-  },
-  {
-    label: "content",
-    value: "content",
-    isVisible: true,
-  },
-  {
-    label: "traceId",
-    value: "traceID",
-    isVisible: false,
-  },
-]);
+const columns = ref<any[]> (useLogStore.serviceLogColumn);
 
 const visibleColumns = computed(() =>
   columns.value.filter((column) => column.isVisible)
