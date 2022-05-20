@@ -46,11 +46,13 @@ import EBPFStack from "./components/EBPFStack.vue";
 .item {
   width: 100%;
   overflow: auto;
-  height: calc(100% - 70px);
+  height: calc(100% - 100px);
   padding-bottom: 10px;
 }
 
 .schedules {
-  height: 60px;
+  height: 90px;
+  border-bottom: 1px solid #ccc;
+  padding-right: 10px;
 }
 </style>

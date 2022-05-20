@@ -28,7 +28,15 @@ export const NewTaskField = {
   maxSamplingCount: { key: 5, label: "5" },
 };
 
-export const TargetTypes = [{ label: "ON_CPU", value: "ON_CPU" }];
+export const TargetTypes = [
+  { label: "ON_CPU", value: "ON_CPU" },
+  { label: "OFF_CPU", value: "OFF_CPU" },
+];
+
+export const AggregateTypes = [
+  { label: "Duration", value: "DURATION" },
+  { label: "Count", value: "COUNT" },
+];
 
 export const InitTaskField = {
   monitorTimeEn: [

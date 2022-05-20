@@ -13,74 +13,86 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="filters flex-h">
-    <Selector
-      :value="selectedLabels"
-      :options="labels"
-      size="small"
-      placeholder="Please select labels"
-      @change="changeLabels"
-      class="inputs mr-10"
-      :multiple="true"
-    />
-    <el-button type="primary" size="small">
-      <span>{{ duration[0] }}</span>
-      <span> ~ </span>
-      <span>{{ duration[1] }}</span>
-    </el-button>
-    <el-popover placement="bottom" :width="680" trigger="click">
-      <template #reference>
-        <el-button type="primary" size="small">
-          {{ t("processSelect") }}
-        </el-button>
-      </template>
-      <el-input
-        v-model="searchText"
-        placeholder="Please input name"
-        class="input-with-search"
+  <div class="filters">
+    <div class="mb-10">
+      <Selector
+        :value="selectedLabels"
+        :options="labels"
         size="small"
-        @change="searchProcesses(0)"
-      >
-        <template #append>
-          <el-button size="small">
-            <Icon size="sm" iconName="search" />
+        placeholder="Please select labels"
+        @change="changeLabels"
+        class="inputs mr-10"
+        :multiple="true"
+      />
+    </div>
+    <div class="flex-h">
+      <Selector
+        :value="aggregateType"
+        :options="AggregateTypes"
+        size="small"
+        placeholder="Please select a type"
+        @change="changeAggregateType"
+        class="selector mr-10"
+      />
+      <el-button type="primary" size="small">
+        <span>{{ duration[0] }}</span>
+        <span> ~ </span>
+        <span>{{ duration[1] }}</span>
+      </el-button>
+      <el-popover placement="bottom" :width="680" trigger="click">
+        <template #reference>
+          <el-button type="primary" size="small">
+            {{ t("processSelect") }}
           </el-button>
         </template>
-      </el-input>
-      <el-table
-        :data="currentProcesses"
-        ref="multipleTableRef"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55" />
-        <el-table-column
-          v-for="(h, index) of TableHeader"
-          :property="h.property"
-          :label="h.label"
-          :key="index"
-          width="150"
-        />
-        <el-table-column width="300" label="Attributes">
-          <template #default="scope">
-            {{ scope.row.attributes.map((d: {name: string, value: string}) => `${d.name}=${d.value}`).join("; ") }}
+        <el-input
+          v-model="searchText"
+          placeholder="Please input name"
+          class="input-with-search"
+          size="small"
+          @change="searchProcesses(0)"
+        >
+          <template #append>
+            <el-button size="small">
+              <Icon size="sm" iconName="search" />
+            </el-button>
           </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        class="pagination"
-        background
-        small
-        layout="prev, pager, next"
-        :page-size="pageSize"
-        :total="processes.length"
-        @current-change="changePage"
-        @prev-click="changePage"
-        @next-click="changePage"
-      />
-    </el-popover>
-    <el-button type="primary" size="small" @click="analyzeEBPF">
-      {{ t("analyze") }}
-    </el-button>
+        </el-input>
+        <el-table
+          :data="currentProcesses"
+          ref="multipleTableRef"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55" />
+          <el-table-column
+            v-for="(h, index) of TableHeader"
+            :property="h.property"
+            :label="h.label"
+            :key="index"
+            width="150"
+          />
+          <el-table-column width="300" label="Attributes">
+            <template #default="scope">
+              {{ scope.row.attributes.map((d: {name: string, value: string}) => `${d.name}=${d.value}`).join("; ") }}
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          class="pagination"
+          background
+          small
+          layout="prev, pager, next"
+          :page-size="pageSize"
+          :total="processes.length"
+          @current-change="changePage"
+          @prev-click="changePage"
+          @next-click="changePage"
+        />
+      </el-popover>
+      <el-button type="primary" size="small" @click="analyzeEBPF">
+        {{ t("analyze") }}
+      </el-button>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -88,7 +100,7 @@ import { ref, watch } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
-import { TableHeader } from "./data";
+import { TableHeader, AggregateTypes } from "./data";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { EBPFProfilingSchedule, Process } from "@/types/ebpf";
 import { ElMessage, ElTable } from "element-plus";
@@ -103,6 +115,7 @@ const processes = ref<Process[]>([]);
 const currentProcesses = ref<Process[]>([]);
 const selectedLabels = ref<string[]>(["0"]);
 const searchText = ref<string>("");
+const aggregateType = ref<string>(AggregateTypes[0].value);
 const duration = ref<string[]>([]);
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
@@ -110,6 +123,11 @@ const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
 function changeLabels(opt: any[]) {
   const arr = opt.map((d) => d.value);
   selectedLabels.value = arr;
+}
+
+function changeAggregateType(opt: any[]) {
+  aggregateType.value = opt[0].value;
+  ebpfStore.setAnalyzeTrees([]);
 }
 
 const handleSelectionChange = (arr: Process[]) => {
@@ -152,6 +170,7 @@ async function analyzeEBPF() {
   const res = await ebpfStore.getEBPFAnalyze({
     scheduleIdList,
     timeRanges,
+    aggregateType: aggregateType.value,
   });
   if (res.data.errors) {
     ElMessage.error(res.data.errors);
@@ -235,7 +254,7 @@ watch(
 }
 
 .inputs {
-  width: 300px;
+  width: 350px;
 }
 
 .input-with-search {
@@ -245,5 +264,9 @@ watch(
 
 .pagination {
   margin-top: 10px;
+}
+
+.selector {
+  width: 120px;
 }
 </style>

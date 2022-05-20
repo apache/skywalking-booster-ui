@@ -55,6 +55,9 @@ export const ebpfStore = defineStore({
     setCurrentSchedule(s: Trace) {
       this.currentSchedule = s;
     },
+    setAnalyzeTrees(tree: AnalyzationTrees[]) {
+      this.analyzeTrees = tree;
+    },
     async getCreateTaskData(serviceId: string) {
       const res: AxiosResponse = await graphql
         .query("getCreateTaskData")
@@ -125,6 +128,7 @@ export const ebpfStore = defineStore({
     async getEBPFAnalyze(params: {
       scheduleIdList: string[];
       timeRanges: Array<{ start: number; end: number }>;
+      aggregateType: string;
     }) {
       if (!params.scheduleIdList.length) {
         return new Promise((resolve) => resolve({}));
