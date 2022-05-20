@@ -39,7 +39,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { computed, ref } from "vue";
 import dayjs from "dayjs";
-import { ServiceLogConstants } from "./data";
+// import { ServiceLogConstants } from "./data";
 import { logStore } from "@/store/modules/log";
 /*global defineProps, defineEmits */
 const props = defineProps({

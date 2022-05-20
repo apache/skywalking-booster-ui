@@ -14,6 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
+  <div style="display: inline-block; margin-left: 20px">
+    <p style="margin-left: 10px">use collapse-tags-tooltip</p>
+    <el-select
+      v-model="selectedColumns"
+      multiple
+      collapse-tags
+      collapse-tags-tooltip
+      placeholder="Select"
+      style="width: 240px"
+    >
+      <el-option
+        v-for="item in logStore.serviceLogColumn"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      />
+    </el-select>
+  </div>
     <div v-if="!currentSearchTerm.length" class="flex-h items-center">
       <div v-for="(item, index) in arrayOfFilters" :key="index">
         <el-tooltip
@@ -214,6 +232,7 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const logStore = useLogStore();
+const selectedColumns = ref<any[]>([])
 const traceId = ref<string>("");
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);

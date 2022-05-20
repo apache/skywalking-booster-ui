@@ -92,6 +92,7 @@ const dragger = ref<Nullable<HTMLSpanElement>>(null);
 // const method = ref<number>(380);
 // props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
 const columns = ref<any[]> (useLogStore.serviceLogColumn);
+// const portalVisibleDefaultCols:string[] = ['Service', 'Instance','Content']
 
 const visibleColumns = computed(() =>
   columns.value.filter((column) => column.isVisible)
