@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface logColumn {
+export interface BrowserLogColumn {
+  lable: string;
+  value: string;
+  isVisible?: boolean;
+}
+export interface ServiceLogColumn {
   lable: string;
   value: string;
   isVisible?: boolean;
