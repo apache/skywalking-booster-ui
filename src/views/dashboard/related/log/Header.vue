@@ -14,16 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
-    <div v-if="showColumList" class="flex-h items-center mr-5">
+    <div v-if="currentSearchTerm==='column'" class="flex-h items-center mr-5">
       <p style="margin-right: 10px">Select visible columns</p>
       <el-select
         v-model="selectedColumns"
+        clearable
         multiple
         collapse-tags
         collapse-tags-tooltip
         placeholder="Select"
         style="width: 240px"
+        size="small"
       >
+      <!-- <el-option @click="() =>{}" value="">Reset</el-option> -->
         <el-option
           v-for="item in logStore.serviceLogColumn"
           :key="item.value"
@@ -262,7 +265,8 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, computed } from "vue";
+import { ref, reactive, watch, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { useLogStore } from "@/store/modules/log";
@@ -277,6 +281,7 @@ const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
+const { portal } = useRoute().query;
 const logStore = useLogStore();
 const selectedColumns = ref<any[]>([]);
 const showColumList = ref<boolean>(false);
@@ -353,6 +358,17 @@ const arrayOfFilters = ref<filtersObject[]>([
     isVisible: dashboardStore.entity !== EntityType[2].value,
   },
 ]);
+onMounted(() => {
+  if (portal) {
+    logStore.hideColumns([
+      "endpoint",
+      "time",
+      "contentType",
+      "tags",
+      "traceID"])
+  }
+  
+})
 init();
 function toggleColumSelector() {
   showColumList.value = !showColumList.value;
