@@ -29,12 +29,7 @@ limitations under the License. -->
             </span>
             {{ t(item.value) }}
           </div>
-          <div
-            v-else
-            :class="item.label"
-            :key="`col${index}`"
-            @click="logColumn(item, index)"
-          >
+          <div v-else :class="item.label" :key="`col${index}`">
             {{ t(item.value) }}
           </div>
         </template>
@@ -76,7 +71,7 @@ import { useI18n } from "vue-i18n";
 import LogBrowser from "./LogBrowser.vue";
 import LogService from "./LogService.vue";
 import LogDetail from "./LogDetail.vue";
-import { logStore } from '@/store/modules/log'
+import { logStore } from "@/store/modules/log";
 
 /*global defineProps, Nullable */
 const props = defineProps({
@@ -84,7 +79,7 @@ const props = defineProps({
   tableData: { type: Array, default: () => [] },
   noLink: { type: Boolean, default: true },
 });
-const useLogStore = logStore()
+const useLogStore = logStore();
 const { t } = useI18n();
 const currentLog = ref<any>({});
 const showDetail = ref<boolean>(false);
@@ -98,17 +93,9 @@ const columns = ref<any[]>(
 );
 // const portalVisibleDefaultCols:string[] = ['Service', 'Instance','Content']
 
-const visibleColumns = computed(() =>
-  columns.value.filter((column) => column.isVisible)
-);
-
 function setCurrentLog(log: any) {
   showDetail.value = true;
   currentLog.value = log;
-}
-function logColumn(item: any, index: number) {
-  console.log(index, item, visibleColumns.value[index]);
-  columns.value[index].isVisible = false;
 }
 </script>
 <style lang="scss" scoped>
