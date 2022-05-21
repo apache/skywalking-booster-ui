@@ -34,7 +34,7 @@ limitations under the License. -->
               }"
             >
               <div class="ell">
-                <span>{{ i.processLabels.join(" ") }}</span>
+                <span>{{ i.processLabels.join(" ") || "No Labels" }}</span>
                 <a class="profile-btn r" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
                 </a>
