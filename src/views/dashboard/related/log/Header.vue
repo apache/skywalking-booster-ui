@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
-    <div v-if="currentSearchTerm==='column'" class="flex-h items-center mr-5">
+    <div v-if="currentSearchTerm === 'column'" class="flex-h items-center mr-5">
       <p style="margin-right: 10px">Select visible columns</p>
       <el-select
         v-model="selectedColumns"
@@ -26,41 +26,42 @@ limitations under the License. -->
         style="width: 240px"
         size="small"
       >
-      <!-- <el-option @click="() =>{}" value="">Reset</el-option> -->
         <el-option
           v-for="item in logStore.serviceLogColumn"
           :key="item.value"
           :label="item.label"
           :value="item.value"
         >
-          <span class="mr-5">{{ item.value }}</span>
-          <Icon v-if="item.isVisible" iconSize="sm" iconName="cancel" />
-          <Icon v-else iconSize="sm" iconName="add" />
+          <div class="flex-h items-center">
+            <span class="mr-5">{{ item.value }}</span>
+            <div
+              style="justify-content: space-between"
+              class="flex-h items-center"
+            >
+              <el-tooltip
+                class="box-item"
+                effect="dark"
+                :content="item.isVisible ? 'Hide column' : 'Show Column'"
+                placement="right-start"
+              >
+                <el-button
+                  v-if="item.isVisible"
+                  class="toggle-btn mx-3"
+                  @click="hideColumns(item)"
+                >
+                  <Icon iconSize="sm" iconName="cancel" />
+                </el-button>
+                <el-button v-else class="toggle-btn mx-3" @click="showColumns(item)">
+                  <Icon iconSize="sm" iconName="add" />
+                </el-button>
+              </el-tooltip>
+            </div>
+          </div>
         </el-option>
       </el-select>
-      <div class="flex-h items-center" v-if="selectedColumns.length">
-        <el-tooltip
-          class="box-item"
-          effect="dark"
-          content="Add selected columns"
-          placement="bottom-start"
-        >
-          <el-button class="toggle-btn mx-3" @click="showColumns">
-            <Icon iconSize="sm" iconName="save" />
-          </el-button>
-        </el-tooltip>
-
-        <el-tooltip
-          class="box-item"
-          effect="dark"
-          content="Remove selected columns"
-          placement="bottom-start"
-        >
-          <el-button class="toggle-btn mx-3" @click="hideColumns">
-            <Icon iconSize="sm" iconName="cancel" />
-          </el-button>
-        </el-tooltip>
-      </div>
+      <el-button class="toggle-btn mx-3danger" @click="setSearchTerm('')">
+        <Icon iconSize="sm" iconName="cancel" />
+      </el-button>
     </div>
     <div v-if="!currentSearchTerm.length" class="flex-h items-center">
       <div v-for="(item, index) in arrayOfFilters" :key="index">
@@ -365,26 +366,28 @@ onMounted(() => {
       "time",
       "contentType",
       "tags",
-      "traceID"])
+      "traceID",
+    ]);
   }
-  
-})
+});
 init();
 function toggleColumSelector() {
   showColumList.value = !showColumList.value;
   setSearchTerm("column");
 }
-function hideColumns() {
+function hideColumns(column: any) {
+  selectedColumns.value.push(column.value);
   logStore.hideColumns(selectedColumns.value);
   selectedColumns.value = [];
-  toggleColumSelector();
-  setSearchTerm("");
+  // toggleColumSelector();
+  // setSearchTerm("");
 }
-function showColumns() {
+function showColumns(column: any) {
+  selectedColumns.value.push(column.value);
   logStore.showColumns(selectedColumns.value);
   selectedColumns.value = [];
-  toggleColumSelector();
-  setSearchTerm("");
+  // toggleColumSelector();
+  // setSearchTerm("");
 }
 async function init() {
   const resp = await logStore.getLogsByKeywords();
@@ -711,5 +714,8 @@ watch(
 }
 .items-center {
   align-items: center;
+}
+.space-between {
+  justify-content: space-between !important;
 }
 </style>
