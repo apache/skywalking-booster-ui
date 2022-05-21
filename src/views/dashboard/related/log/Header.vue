@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
-    <div class="flex-h items-center mr-5">
+    <div v-if="showColumList" class="flex-h items-center mr-5">
       <p style="margin-right: 10px">Select visible columns</p>
       <el-select
         v-model="selectedColumns"
@@ -57,7 +57,6 @@ limitations under the License. -->
             <Icon iconSize="sm" iconName="cancel" />
           </el-button>
         </el-tooltip>
-
       </div>
     </div>
     <div v-if="!currentSearchTerm.length" class="flex-h items-center">
@@ -79,7 +78,23 @@ limitations under the License. -->
           </el-button>
         </el-tooltip>
       </div>
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="Toggle columns"
+        placement="bottom-start"
+      >
+        <el-button
+          type="success"
+          :class="[false ? 'active-toggle' : '']"
+          class="toggle-btn mx-3"
+          @click="showColumSelector"
+        >
+          <Icon iconSize="sm" iconName="epic" />
+        </el-button>
+      </el-tooltip>
     </div>
+
     <div class="flex-h items-center">
       <div class="flex-h items-center" v-if="currentSearchTerm === 'service'">
         <div
@@ -261,6 +276,7 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const logStore = useLogStore();
 const selectedColumns = ref<any[]>([]);
+const showColumList = ref<boolean>(false);
 const traceId = ref<string>("");
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
@@ -335,14 +351,17 @@ const arrayOfFilters = ref<filtersObject[]>([
   },
 ]);
 init();
-
+function showColumSelector(){
+  showColumList.value = !showColumList.value
+  setSearchTerm('column')
+}
 function hideColumns() {
-  logStore.hideColumns(selectedColumns.value)
-  selectedColumns.value = []
+  logStore.hideColumns(selectedColumns.value);
+  selectedColumns.value = [];
 }
 function showColumns() {
-  logStore.showColumns(selectedColumns.value)
-  selectedColumns.value = []
+  logStore.showColumns(selectedColumns.value);
+  selectedColumns.value = [];
 }
 async function init() {
   const resp = await logStore.getLogsByKeywords();
