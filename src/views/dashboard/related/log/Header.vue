@@ -88,7 +88,7 @@ limitations under the License. -->
           type="success"
           :class="[false ? 'active-toggle' : '']"
           class="toggle-btn mx-3"
-          @click="showColumSelector"
+          @click="toggleColumSelector"
         >
           <Icon iconSize="sm" iconName="epic" />
         </el-button>
@@ -237,7 +237,10 @@ limitations under the License. -->
       </div>
 
       <!-- Search&cancel buttons -->
-      <div v-if="currentSearchTerm.length" class="flex-h items-center">
+      <div
+        v-if="currentSearchTerm.length && currentSearchTerm !== 'column'"
+        class="flex-h items-center"
+      >
         <el-button
           class="search-btn toggle-btn"
           size="small"
@@ -351,17 +354,21 @@ const arrayOfFilters = ref<filtersObject[]>([
   },
 ]);
 init();
-function showColumSelector(){
-  showColumList.value = !showColumList.value
-  setSearchTerm('column')
+function toggleColumSelector() {
+  showColumList.value = !showColumList.value;
+  setSearchTerm("column");
 }
 function hideColumns() {
   logStore.hideColumns(selectedColumns.value);
   selectedColumns.value = [];
+  toggleColumSelector();
+  setSearchTerm("");
 }
 function showColumns() {
   logStore.showColumns(selectedColumns.value);
   selectedColumns.value = [];
+  toggleColumSelector();
+  setSearchTerm("");
 }
 async function init() {
   const resp = await logStore.getLogsByKeywords();
