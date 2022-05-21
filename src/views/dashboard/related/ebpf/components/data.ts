@@ -34,8 +34,8 @@ export const TargetTypes = [
 ];
 
 export const AggregateTypes = [
-  { label: "Duration", value: "DURATION" },
   { label: "Count", value: "COUNT" },
+  { label: "Duration", value: "DURATION" },
 ];
 
 export const InitTaskField = {

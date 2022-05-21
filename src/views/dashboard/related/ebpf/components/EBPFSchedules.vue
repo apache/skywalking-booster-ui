@@ -27,6 +27,7 @@ limitations under the License. -->
     </div>
     <div class="flex-h">
       <Selector
+        v-if="ebpfStore.selectedTask.targetType === 'OFF_CPU'"
         :value="aggregateType"
         :options="AggregateTypes"
         size="small"
@@ -34,11 +35,11 @@ limitations under the License. -->
         @change="changeAggregateType"
         class="selector mr-10"
       />
-      <el-button type="primary" size="small">
+      <div class="mr-5 duration" v-if="duration.length">
         <span>{{ duration[0] }}</span>
         <span> ~ </span>
         <span>{{ duration[1] }}</span>
-      </el-button>
+      </div>
       <el-popover placement="bottom" :width="680" trigger="click">
         <template #reference>
           <el-button type="primary" size="small">
@@ -189,10 +190,14 @@ function visTimeline() {
     processes.value.push(d.process);
     return [d.startTime / 10000, d.endTime / 10000];
   });
-  const arr = ranges.flat(1);
-  const min = Math.min(...arr);
-  const max = Math.max(...arr);
-  duration.value = [dateFormat(min * 10000), dateFormat(max * 10000)];
+  if (ranges.length) {
+    const arr = ranges.flat(1);
+    const min = Math.min(...arr);
+    const max = Math.max(...arr);
+    duration.value = [dateFormat(min * 10000), dateFormat(max * 10000)];
+  } else {
+    duration.value = [];
+  }
   searchProcesses(0);
 }
 
@@ -268,5 +273,9 @@ watch(
 
 .selector {
   width: 120px;
+}
+
+.duration {
+  line-height: 24px;
 }
 </style>

@@ -35,6 +35,7 @@ interface EbpfStore {
   labels: Option[];
   couldProfiling: boolean;
   tip: string;
+  selectedTask: Recordable<EBPFTaskList>;
 }
 
 export const ebpfStore = defineStore({
@@ -47,10 +48,11 @@ export const ebpfStore = defineStore({
     labels: [{ value: "", label: "" }],
     couldProfiling: false,
     tip: "",
+    selectedTask: {},
   }),
   actions: {
-    setCurrentSpan(span: Span) {
-      this.currentSpan = span;
+    setSelectedTask(task: EBPFTaskList) {
+      this.selectedTask = task;
     },
     setCurrentSchedule(s: Trace) {
       this.currentSchedule = s;
