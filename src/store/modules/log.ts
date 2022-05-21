@@ -61,6 +61,14 @@ export const logStore = defineStore({
     loadLogs: false,
   }),
   actions: {
+    showColumns(columnsLabel: string[]) {
+      // TODO: add a parameter column type too
+      this.serviceLogColumn.forEach((col: any) => {
+        if (columnsLabel.includes(col.value)) {
+          col.isVisible = true
+        }
+      })
+    },
     hideColumns(columnsLabel: string[]) {
       // TODO: add a parameter column type too
       this.serviceLogColumn.forEach((col: any) => {

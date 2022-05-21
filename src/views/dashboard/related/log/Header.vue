@@ -42,7 +42,7 @@ limitations under the License. -->
           content="Add selected columns"
           placement="bottom-start"
         >
-          <el-button class="toggle-btn mx-3" @click="setVisbleColumn">
+          <el-button class="toggle-btn mx-3" @click="showColumns">
             <Icon iconSize="sm" iconName="save" />
           </el-button>
         </el-tooltip>
@@ -53,7 +53,7 @@ limitations under the License. -->
           content="Remove selected columns"
           placement="bottom-start"
         >
-          <el-button class="toggle-btn mx-3" @click="hideColumn">
+          <el-button class="toggle-btn mx-3" @click="hideColumns">
             <Icon iconSize="sm" iconName="cancel" />
           </el-button>
         </el-tooltip>
@@ -341,8 +341,12 @@ function setVisbleColumn() {
   });
   console.log(cols, [...logStore.serviceLogColumn]);
 }
-function hideColumn() {
+function hideColumns() {
   logStore.hideColumns(selectedColumns.value)
+  selectedColumns.value = []
+}
+function showColumns() {
+  logStore.showColumns(selectedColumns.value)
   selectedColumns.value = []
 }
 async function init() {
