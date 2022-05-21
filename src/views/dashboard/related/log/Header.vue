@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
     <div class="flex-h items-center mr-5">
-      <p style="margin-left: 10px">Select visible columns</p>
+      <p style="margin-right: 10px">Select visible columns</p>
       <el-select
         v-model="selectedColumns"
         multiple
@@ -29,11 +29,36 @@ limitations under the License. -->
           :key="item.value"
           :label="item.label"
           :value="item.value"
-        />
+        >
+          <span class="mr-5">{{ item.value }}</span>
+          <Icon v-if="item.isVisible" iconSize="sm" iconName="cancel" />
+          <Icon v-else iconSize="sm" iconName="add" />
+        </el-option>
       </el-select>
-      <el-button class="toggle-btn mx-3" @click="setVisbleColumn">
-        <Icon iconSize="sm" iconName="timeline" />
-      </el-button>
+      <div class="flex-h items-center" v-if="selectedColumns.length">
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          content="Add selected columns"
+          placement="bottom-start"
+        >
+          <el-button class="toggle-btn mx-3" @click="setVisbleColumn">
+            <Icon iconSize="sm" iconName="save" />
+          </el-button>
+        </el-tooltip>
+
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          content="Remove selected columns"
+          placement="bottom-start"
+        >
+          <el-button class="toggle-btn mx-3" @click="hideColumn">
+            <Icon iconSize="sm" iconName="cancel" />
+          </el-button>
+        </el-tooltip>
+
+      </div>
     </div>
     <div v-if="!currentSearchTerm.length" class="flex-h items-center">
       <div v-for="(item, index) in arrayOfFilters" :key="index">
@@ -315,6 +340,10 @@ function setVisbleColumn() {
     return selectedColumns.value.includes(column.value);
   });
   console.log(cols, [...logStore.serviceLogColumn]);
+}
+function hideColumn() {
+  logStore.hideColumns(selectedColumns.value)
+  selectedColumns.value = []
 }
 async function init() {
   const resp = await logStore.getLogsByKeywords();

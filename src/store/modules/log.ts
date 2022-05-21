@@ -1,4 +1,3 @@
-import { serviceLogColumn } from '@/types/log-column';
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -63,10 +62,9 @@ export const logStore = defineStore({
   }),
   actions: {
     hideColumns(columnsLabel: string[]) {
-      console.log(columnsLabel, this.serviceLogColumn)
       // TODO: add a parameter column type too
-      this.serviceLogColumn.map((col: any) => {
-        if (columnsLabel.includes(col.label)) {
+      this.serviceLogColumn.forEach((col: any) => {
+        if (columnsLabel.includes(col.value)) {
           col.isVisible = false
         }
       })
