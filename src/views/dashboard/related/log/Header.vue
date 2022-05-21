@@ -335,12 +335,7 @@ const arrayOfFilters = ref<filtersObject[]>([
   },
 ]);
 init();
-function setVisbleColumn() {
-  const cols = logStore.serviceLogColumn.filter((column) => {
-    return selectedColumns.value.includes(column.value);
-  });
-  console.log(cols, [...logStore.serviceLogColumn]);
-}
+
 function hideColumns() {
   logStore.hideColumns(selectedColumns.value)
   selectedColumns.value = []
