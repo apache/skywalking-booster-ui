@@ -22,7 +22,6 @@ import {
   EBPFTaskList,
   AnalyzationTrees,
 } from "@/types/ebpf";
-import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
@@ -54,7 +53,7 @@ export const ebpfStore = defineStore({
     setSelectedTask(task: EBPFTaskList) {
       this.selectedTask = task;
     },
-    setCurrentSchedule(s: Trace) {
+    setCurrentSchedule(s: EBPFProfilingSchedule) {
       this.currentSchedule = s;
     },
     setAnalyzeTrees(tree: AnalyzationTrees[]) {
@@ -123,8 +122,8 @@ export const ebpfStore = defineStore({
       this.eBPFSchedules = eBPFSchedules;
       if (!eBPFSchedules.length) {
         this.eBPFSchedules = [];
+        this.analyzeTrees = [];
       }
-      this.analyzeTrees = [];
       return res.data;
     },
     async getEBPFAnalyze(params: {

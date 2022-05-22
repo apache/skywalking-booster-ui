@@ -179,7 +179,7 @@ async function analyzeEBPF() {
   }
 }
 
-function visTimeline() {
+function getSchedules() {
   labels.value = [{ label: "All", value: "0" }];
   selectedLabels.value = ["0"];
   processes.value = [];
@@ -199,6 +199,7 @@ function visTimeline() {
     duration.value = [];
   }
   searchProcesses(0);
+  analyzeEBPF();
 }
 
 function changePage(pageIndex: number) {
@@ -240,7 +241,7 @@ function searchAttribute(
 watch(
   () => ebpfStore.eBPFSchedules,
   () => {
-    visTimeline();
+    getSchedules();
   }
 );
 </script>
