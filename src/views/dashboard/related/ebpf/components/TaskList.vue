@@ -34,7 +34,15 @@ limitations under the License. -->
               }"
             >
               <div class="ell">
-                <span>{{ i.processLabels.join(" ") }}</span>
+                <span>
+                  {{
+                    i.targetType +
+                    ": " +
+                    (i.processLabels.length
+                      ? i.processLabels.join(" ")
+                      : `All Processes`)
+                  }}
+                </span>
                 <a class="profile-btn r" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
                 </a>
@@ -74,7 +82,9 @@ limitations under the License. -->
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("labels") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.processLabels }}</span>
+          <span class="g-sm-8 wba">
+            {{ selectedTask.processLabels.join(";") }}
+          </span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
@@ -117,6 +127,7 @@ const viewDetail = ref<boolean>(false);
 
 async function changeTask(item: EBPFTaskList) {
   selectedTask.value = item;
+  ebpfStore.setSelectedTask(item);
   const res = await ebpfStore.getEBPFSchedules({
     taskId: item.taskId,
   });
@@ -128,6 +139,7 @@ watch(
   () => ebpfStore.taskList,
   () => {
     selectedTask.value = ebpfStore.taskList[0] || {};
+    ebpfStore.setSelectedTask(selectedTask.value);
   }
 );
 </script>

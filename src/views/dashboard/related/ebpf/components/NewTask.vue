@@ -86,6 +86,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { ElMessage } from "element-plus";
 import { InitTaskField, TargetTypes } from "./data";
+
 /* global defineEmits */
 const emits = defineEmits(["close"]);
 const eBPFStore = useEbpfStore();
@@ -97,6 +98,7 @@ const type = ref<string>(TargetTypes[0].value);
 const monitorTime = ref<string>(InitTaskField.monitorTimeEn[0].value);
 const monitorDuration = ref<number>(10);
 const time = ref<Date>(appStore.durationRow.start);
+const disabled = ref<boolean>(false);
 
 function changeMonitorTime(opt: string) {
   monitorTime.value = opt;
@@ -111,19 +113,24 @@ function changeType(opt: any[]) {
 }
 
 async function createTask() {
+  if (disabled.value) {
+    return;
+  }
+  disabled.value = true;
   const date = monitorTime.value === "0" ? new Date() : time.value;
   const params = {
     serviceId: selectorStore.currentService.id,
     processLabels: labels.value,
     startTime: date.getTime(),
     duration: monitorDuration.value * 60,
-    targetType: "ON_CPU",
+    targetType: type.value,
   };
   const res = await eBPFStore.createTask(params);
   if (res.errors) {
     ElMessage.error(res.errors);
     return;
   }
+  disabled.value = false;
   if (!res.data.createTaskData.status) {
     ElMessage.error(res.data.createTaskData.errorReason);
     return;

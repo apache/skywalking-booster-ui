@@ -75,9 +75,9 @@ export const queryEBPFSchedules = {
 
 export const analysisEBPFResult = {
   variable:
-    "$scheduleIdList: [ID!]!, $timeRanges: [EBPFProfilingAnalyzeTimeRange!]!",
+    "$scheduleIdList: [ID!]!, $timeRanges: [EBPFProfilingAnalyzeTimeRange!]!, $aggregateType: EBPFProfilingAnalyzeAggregateType",
   query: `
-  analysisEBPFResult: analysisEBPFProfilingResult(scheduleIdList: $scheduleIdList, timeRanges: $timeRanges) {
+  analysisEBPFResult: analysisEBPFProfilingResult(scheduleIdList: $scheduleIdList, timeRanges: $timeRanges, aggregateType: $aggregateType) {
     tip
     trees {
       elements {

@@ -22,7 +22,6 @@ import {
   EBPFTaskList,
   AnalyzationTrees,
 } from "@/types/ebpf";
-import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
@@ -35,6 +34,7 @@ interface EbpfStore {
   labels: Option[];
   couldProfiling: boolean;
   tip: string;
+  selectedTask: Recordable<EBPFTaskList>;
 }
 
 export const ebpfStore = defineStore({
@@ -47,13 +47,17 @@ export const ebpfStore = defineStore({
     labels: [{ value: "", label: "" }],
     couldProfiling: false,
     tip: "",
+    selectedTask: {},
   }),
   actions: {
-    setCurrentSpan(span: Span) {
-      this.currentSpan = span;
+    setSelectedTask(task: EBPFTaskList) {
+      this.selectedTask = task;
     },
-    setCurrentSchedule(s: Trace) {
+    setCurrentSchedule(s: EBPFProfilingSchedule) {
       this.currentSchedule = s;
+    },
+    setAnalyzeTrees(tree: AnalyzationTrees[]) {
+      this.analyzeTrees = tree;
     },
     async getCreateTaskData(serviceId: string) {
       const res: AxiosResponse = await graphql
@@ -93,7 +97,7 @@ export const ebpfStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.taskList = res.data.data.queryEBPFTasks.reverse() || [];
+      this.taskList = res.data.data.queryEBPFTasks || [];
       if (!this.taskList.length) {
         return res.data;
       }
@@ -118,13 +122,14 @@ export const ebpfStore = defineStore({
       this.eBPFSchedules = eBPFSchedules;
       if (!eBPFSchedules.length) {
         this.eBPFSchedules = [];
+        this.analyzeTrees = [];
       }
-      this.analyzeTrees = [];
       return res.data;
     },
     async getEBPFAnalyze(params: {
       scheduleIdList: string[];
       timeRanges: Array<{ start: number; end: number }>;
+      aggregateType: string;
     }) {
       if (!params.scheduleIdList.length) {
         return new Promise((resolve) => resolve({}));
