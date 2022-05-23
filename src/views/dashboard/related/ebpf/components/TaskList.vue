@@ -36,9 +36,11 @@ limitations under the License. -->
               <div class="ell">
                 <span>
                   {{
-                    i.processLabels.length
-                      ? i.targetType + ": " + i.processLabels.join(" ")
-                      : `All Processes`
+                    i.targetType +
+                    ": " +
+                    (i.processLabels.length
+                      ? i.processLabels.join(" ")
+                      : `All Processes`)
                   }}
                 </span>
                 <a class="profile-btn r" @click="viewDetail = true">

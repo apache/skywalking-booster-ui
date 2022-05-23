@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="filters">
-    <div class="mb-10">
+    <div class="mb-10 flex-h">
       <Selector
         :value="selectedLabels"
         :options="labels"
@@ -24,6 +24,11 @@ limitations under the License. -->
         class="inputs mr-10"
         :multiple="true"
       />
+      <div class="mr-5 duration" v-if="duration.length">
+        <span>{{ duration[0] }}</span>
+        <span> ~ </span>
+        <span>{{ duration[1] }}</span>
+      </div>
     </div>
     <div class="flex-h">
       <Selector
@@ -35,11 +40,6 @@ limitations under the License. -->
         @change="changeAggregateType"
         class="selector mr-10"
       />
-      <div class="mr-5 duration" v-if="duration.length">
-        <span>{{ duration[0] }}</span>
-        <span> ~ </span>
-        <span>{{ duration[1] }}</span>
-      </div>
       <el-popover placement="bottom" :width="680" trigger="click">
         <template #reference>
           <el-button type="primary" size="small">
@@ -277,6 +277,6 @@ watch(
 }
 
 .duration {
-  line-height: 24px;
+  line-height: 30px;
 }
 </style>
