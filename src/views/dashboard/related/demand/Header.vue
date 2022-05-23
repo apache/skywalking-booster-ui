@@ -47,25 +47,24 @@ limitations under the License. -->
     </div>
     <div class="mr-5">
       <span class="grey mr-5">{{ t("duration") }}:</span>
-      <el-input-number
-        v-model="limit"
-        :min="1"
-        :max="100"
-        size="small"
-        controls-position="right"
-        @change="changeField('limit', $event)"
-      />
+      <!-- <TimePicker
+        :value="duration"
+        position="bottom"
+        format="YYYY-MM-DD HH:mm:ss"
+        @input="changeDuration"
+      /> -->
     </div>
     <div class="mr-5">
       <span class="grey mr-5">{{ t("interval") }}:</span>
       <el-input-number
-        v-model="limit"
+        v-model="intervalTime"
         :min="1"
-        :max="100"
+        :max="120"
         size="small"
         controls-position="right"
-        @change="changeField('limit', $event)"
+        @change="changeField('interval', $event)"
       />
+      Seconds
     </div>
     <el-button
       class="search-btn"
@@ -146,6 +145,7 @@ const excludingKeywordsOfContent = ref<string[]>([]);
 const contentStr = ref<string>("");
 const excludingContentStr = ref<string>("");
 const limit = ref<number>(1);
+const intervalTime = ref<number>(1);
 const state = reactive<any>({
   instance: { value: "", label: "" },
   container: { value: "", label: "" },

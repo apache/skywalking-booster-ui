@@ -67,6 +67,7 @@ function drawGraph() {
   );
   root.value = param[0];
   root.dumpCount = param[1];
+  console.log(root);
   stackTree.value = root;
   const w = (graph.value && graph.value.getBoundingClientRect().width) || 10;
   flameChart.value = flamegraph()
@@ -116,7 +117,7 @@ function processTree(arr: StackElement[]) {
     delete item.id;
     obj[item.originId] = item;
   }
-  const scale = d3.scaleLinear().domain([min.value, max.value]).range([1, 200]);
+  const scale = d3.scaleLinear().domain([min.value, max.value]).range([1, 100]);
   for (const item of copyArr) {
     if (item.parentId === "1") {
       const val = Number(scale(item.dumpCount).toFixed(4));
@@ -127,7 +128,7 @@ function processTree(arr: StackElement[]) {
       if (item.originId === obj[key].parentId) {
         const val = Number(scale(obj[key].dumpCount).toFixed(4));
 
-        obj[key].value = val;
+        obj[key].value = val < 10 ? 10 : val;
         if (item.children) {
           item.children.push(obj[key]);
         } else {
