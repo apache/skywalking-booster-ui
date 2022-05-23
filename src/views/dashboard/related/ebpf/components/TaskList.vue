@@ -80,7 +80,9 @@ limitations under the License. -->
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("labels") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.processLabels }}</span>
+          <span class="g-sm-8 wba">
+            {{ selectedTask.processLabels.join(";") }}
+          </span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
