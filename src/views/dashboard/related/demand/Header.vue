@@ -14,14 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h row">
+    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[3].value">
+      <span class="grey mr-5"> {{ t("instance") }}: </span>
+      <Selector
+        size="small"
+        :value="state.instance.value"
+        :options="demandLogStore.instances"
+        placeholder="Select a instance"
+        @change="changeField('instance', $event)"
+      />
+    </div>
     <div class="mr-5">
       <span class="grey mr-5">{{ t("container") }}:</span>
       <Selector
         size="small"
-        :value="state.service.value"
-        :options="demandLogStore.services"
-        placeholder="Select a service"
-        @change="changeField('service', $event)"
+        :value="state.container.value"
+        :options="demandLogStore.containers"
+        placeholder="Select a container"
+        @change="changeField('container', $event)"
       />
     </div>
     <div class="mr-5">
@@ -32,7 +42,29 @@ limitations under the License. -->
         :max="100"
         size="small"
         controls-position="right"
-        @change="changeField('service', $event)"
+        @change="changeField('limit', $event)"
+      />
+    </div>
+    <div class="mr-5">
+      <span class="grey mr-5">{{ t("duration") }}:</span>
+      <el-input-number
+        v-model="limit"
+        :min="1"
+        :max="100"
+        size="small"
+        controls-position="right"
+        @change="changeField('limit', $event)"
+      />
+    </div>
+    <div class="mr-5">
+      <span class="grey mr-5">{{ t("interval") }}:</span>
+      <el-input-number
+        v-model="limit"
+        :min="1"
+        :max="100"
+        size="small"
+        controls-position="right"
+        @change="changeField('limit', $event)"
       />
     </div>
     <el-button
@@ -115,7 +147,8 @@ const contentStr = ref<string>("");
 const excludingContentStr = ref<string>("");
 const limit = ref<number>(1);
 const state = reactive<any>({
-  service: { value: "", label: "" },
+  instance: { value: "", label: "" },
+  container: { value: "", label: "" },
 });
 
 init();

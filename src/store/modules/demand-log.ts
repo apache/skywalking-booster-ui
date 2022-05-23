@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Instance, Service } from "@/types/selector";
+import { Instance } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
@@ -23,7 +23,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 
 interface DemandLogState {
-  services: Service[];
+  containers: Instance[];
   instances: Instance[];
   conditions: any;
   selectorStore: any;
@@ -34,7 +34,7 @@ interface DemandLogState {
 export const demandLogStore = defineStore({
   id: "demandLog",
   state: (): DemandLogState => ({
-    services: [{ value: "0", label: "All" }],
+    containers: [{ value: "0", label: "All" }],
     instances: [{ value: "0", label: "All" }],
     conditions: {
       queryDuration: useAppStoreWithOut().durationTime,
