@@ -726,4 +726,5 @@ watch(
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
   background: transparent;
 }
+
 </style>

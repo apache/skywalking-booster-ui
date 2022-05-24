@@ -14,7 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div @click="showSelectSpan" class="log-item">
+  <div
+    @click="showSelectSpan"
+    :class="{ 'd-flex': visibleColumns.length < 6 }"
+    class="log-item"
+  >
     <div
       v-for="(item, index) in visibleColumns"
       :key="index"
