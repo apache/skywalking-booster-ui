@@ -72,7 +72,7 @@ function drawGraph() {
   const w = width < 800 ? 802 : width;
   flameChart.value = flamegraph()
     .width(w - 2)
-    .cellHeight(10)
+    .cellHeight(18)
     .transitionDuration(750)
     .minFrameSize(1)
     .transitionEase(d3.easeCubic as any)
