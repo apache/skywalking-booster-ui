@@ -18,11 +18,8 @@ limitations under the License. -->
       <p style="margin-right: 10px">Select visible columns</p>
       <el-select
         v-model="selectedColumns"
-        clearable
         multiple
         collapse-tags
-        automatic-dropdown
-        collapse-tags-tooltip
         placeholder="Select"
         style="width: 240px"
         size="small"
@@ -726,5 +723,16 @@ watch(
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
   background: transparent;
 }
-
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected{
+  width: 100%;
+  padding: 0 32px 0 20px;
+}
+.el-select-dropdown__item.selected {
+  display: block;
+  width: 100%;
+  padding: 0 32px 0 20px;
+}
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after{
+  display:none !important;
+}
 </style>
