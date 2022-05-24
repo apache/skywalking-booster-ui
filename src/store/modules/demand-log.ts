@@ -35,21 +35,21 @@ interface DemandLogState {
 export const demandLogStore = defineStore({
   id: "demandLog",
   state: (): DemandLogState => ({
-    containers: [{ value: "0", label: "" }],
-    instances: [{ value: "0", label: "" }],
+    containers: [{ label: "Detail", value: "Detail" }],
+    instances: [{ value: "", label: "" }],
     conditions: {
       container: "",
       serviceId: "",
       serviceInstanceId: "",
       queryDuration: useAppStoreWithOut().durationTime,
-      paging: { pageNum: 1, pageSize: 15 },
+      paging: { pageNum: 1, pageSize: -1 },
     },
     selectorStore: useSelectorStore(),
     logs: [],
     loadLogs: false,
   }),
   actions: {
-    setLogCondition(data: any) {
+    setLogCondition(data: Conditions) {
       this.conditions = { ...this.conditions, ...data };
     },
     async getInstances(id: string) {
@@ -86,9 +86,10 @@ export const demandLogStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.containers = res.data.data.containers.containers.map((d: string) => {
-        return { label: d, value: d };
-      }) || [{ label: "Detail", value: "Detail" }];
+      this.containers =
+        res.data.data.containers.containers.map((d: string) => {
+          return { label: d, value: d };
+        }) || [];
       return res.data;
     },
     async getDemandLogs() {

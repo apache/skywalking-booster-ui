@@ -166,7 +166,11 @@ async function init() {
 async function fetchSelectors() {
   if (dashboardStore.entity !== EntityType[3].value) {
     await getInstances();
-    await demandLogStore.getContainers(state.instance.id);
+    const resp = await demandLogStore.getContainers(state.instance.id);
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+      return;
+    }
   }
   state.container = demandLogStore.containers[0];
 }
@@ -184,14 +188,13 @@ function searchLogs() {
     instance = selectorStore.currentPod.id;
   }
   demandLogStore.setLogCondition({
-    serviceId: selectorStore.currentService
-      ? selectorStore.currentService.id
-      : state.service.id,
-    serviceInstanceId: instance || state.instance.id || undefined,
+    serviceId:
+      (selectorStore.currentService && selectorStore.currentService.id) || "",
+    serviceInstanceId: instance || state.instance.id || "",
     queryDuration: appStore.durationTime,
     keywordsOfContent: keywordsOfContent.value,
     excludingKeywordsOfContent: excludingKeywordsOfContent.value,
-    paging: { pageNum: 1, pageSize: 15 },
+    paging: { pageNum: 1, pageSize: -1 },
   });
   queryLogs();
 }

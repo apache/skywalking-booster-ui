@@ -13,5 +13,37 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div>logs</div>
+  <div class="log-content" ref="logContent"></div>
 </template>
+<script lang="ts" setup>
+import { onMounted, ref, onUnmounted } from "vue";
+
+/*global Nullable */
+const monacoInstance = ref();
+const logContent = ref<Nullable<HTMLDivElement>>(null);
+const logs = ref<string>("");
+
+onMounted(() => {
+  import("monaco-editor/esm/vs/editor/editor.api").then((monaco) => {
+    monacoInstanceGen(monaco);
+  });
+});
+function monacoInstanceGen(monaco: any) {
+  monaco.languages.register({ id: "custom" });
+  monacoInstance.value = monaco.editor.create(logContent.value, {
+    value: logs.value,
+    language: "javascript",
+  });
+}
+onUnmounted(() => {
+  monacoInstance.value = null;
+});
+</script>
+<style lang="scss" scoped>
+.log-content {
+  min-height: 300px;
+  width: 100%;
+  min-width: 600px;
+  height: calc(100% - 140px);
+}
+</style>

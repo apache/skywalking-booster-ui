@@ -64,6 +64,11 @@ module.exports = {
             test: /[\\/]node_modules[\\/]echarts|zrender[\\/]/,
             priority: 30,
           },
+          monacoEditor: {
+            name: "monaco-editor",
+            test: /[\\/]node_modules[\\/]monaco-editor[\\/]/,
+            priority: 40,
+          },
           elementPlus: {
             name: "element-plus",
             test: /[\\/]node_modules[\\/]element-plus|@element-plus[\\/]/,

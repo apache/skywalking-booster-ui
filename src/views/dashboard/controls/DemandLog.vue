@@ -32,7 +32,7 @@ limitations under the License. -->
     <div class="header">
       <Header />
     </div>
-    <div class="content">
+    <div class="log">
       <Content />
     </div>
   </div>
@@ -93,7 +93,7 @@ function removeWidget() {
   }
 }
 
-.content {
+.log {
   width: 100%;
 }
 </style>
