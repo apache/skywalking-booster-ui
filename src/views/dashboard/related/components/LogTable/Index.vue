@@ -15,7 +15,7 @@ limitations under the License. -->
 
 <template>
   <div class="log">
-    <div class="log-header">
+    <div :class="{ 'd-flex': visibleColumns.length < 6 }" class="log-header">
       <template v-for="(item, index) in columns">
         <template v-if="item.isVisible">
           <div
@@ -85,14 +85,16 @@ const currentLog = ref<any>({});
 const showDetail = ref<boolean>(false);
 const dragger = ref<Nullable<HTMLSpanElement>>(null);
 // const method = ref<number>(380);
-// props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
+
 const columns = ref<any[]>(
   props.type === "browser"
     ? useLogStore.browserLogColumn
     : useLogStore.serviceLogColumn
 );
-// const portalVisibleDefaultCols:string[] = ['Service', 'Instance','Content']
 
+const visibleColumns = computed(() =>
+  columns.value.filter((column) => column.isVisible)
+);
 function setCurrentLog(log: any) {
   showDetail.value = true;
   currentLog.value = log;
@@ -142,5 +144,12 @@ function setCurrentLog(log: any) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.d-flex{
+  display: flex;
+  div{
+    flex-grow: 1;
+  }
 }
 </style>

@@ -131,4 +131,11 @@ function showSelectSpan() {
   height: 100%;
   padding: 3px 8px;
 }
+
+.d-flex{
+  display: flex;
+  div{
+    flex-grow: 1;
+  }
+}
 </style>
