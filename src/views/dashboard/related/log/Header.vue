@@ -37,9 +37,9 @@ limitations under the License. -->
       />
     </div>
     <div class="mr-5" v-if="dashboardStore.entity !== EntityType[2].value">
-      <span class="grey mr-5"
-        >{{ isBrowser ? t("page") : t("endpoint") }}:</span
-      >
+      <span class="grey mr-5">
+        {{ isBrowser ? t("page") : t("endpoint") }}:
+      </span>
       <Selector
         size="small"
         :value="state.endpoint.value"
@@ -226,10 +226,16 @@ function searchLogs() {
     endpointId: endpoint || state.endpoint.id || undefined,
     serviceInstanceId: instance || state.instance.id || undefined,
     queryDuration: appStore.durationTime,
-    keywordsOfContent: keywordsOfContent.value,
-    excludingKeywordsOfContent: excludingKeywordsOfContent.value,
+    keywordsOfContent:
+      dashboardStore.layerId === "BROWSER"
+        ? undefined
+        : keywordsOfContent.value,
+    excludingKeywordsOfContent:
+      dashboardStore.layerId === "BROWSER"
+        ? undefined
+        : excludingKeywordsOfContent.value,
     tags: tagsMap.value.length ? tagsMap.value : undefined,
-    paging: { pageNum: 1, pageSize: 15, needTotal: true },
+    paging: { pageNum: 1, pageSize: 15 },
     relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
   });
   queryLogs();

@@ -72,9 +72,19 @@ limitations under the License. -->
     </div>
     <div class="mr-10">
       <span class="sm b grey mr-5">{{ t("duration") }}:</span>
-      <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" />
+      <el-input
+        size="small"
+        class="inputs mr-5"
+        v-model="minTraceDuration"
+        type="number"
+      />
       <span class="grey mr-5">-</span>
-      <el-input size="small" class="inputs" v-model="maxTraceDuration" />
+      <el-input
+        size="small"
+        class="inputs"
+        v-model="maxTraceDuration"
+        type="number"
+      />
     </div>
   </div>
   <div class="flex-h">
@@ -100,8 +110,8 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
 const traceId = ref<string>("");
-const minTraceDuration = ref<string>("");
-const maxTraceDuration = ref<string>("");
+const minTraceDuration = ref<number>();
+const maxTraceDuration = ref<number>();
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
 const state = reactive<any>({
@@ -174,11 +184,11 @@ function searchTraces() {
     serviceInstanceId: instance || state.instance.id || undefined,
     traceState: state.status.value || "ALL",
     queryDuration: appStore.durationTime,
-    minTraceDuration: appStore.minTraceDuration || undefined,
-    maxTraceDuration: appStore.maxTraceDuration || undefined,
+    minTraceDuration: Number(minTraceDuration.value),
+    maxTraceDuration: Number(maxTraceDuration.value),
     queryOrder: "BY_DURATION",
     tags: tagsMap.value.length ? tagsMap.value : undefined,
-    paging: { pageNum: 1, pageSize: 15, needTotal: true },
+    paging: { pageNum: 1, pageSize: 20 },
   });
   queryTraces();
 }

@@ -30,7 +30,6 @@ export const QueryBrowserErrorLogs = {
            stack
            grade
         }
-        total
     }`,
 };
 
@@ -54,7 +53,6 @@ export const QueryServiceLogs = {
             value
           }
         }
-        total
     }`,
 };
 

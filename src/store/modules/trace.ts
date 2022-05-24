@@ -28,12 +28,10 @@ interface TraceState {
   instances: Instance[];
   endpoints: Endpoint[];
   traceList: Trace[];
-  traceTotal: number;
   traceSpans: Span[];
   currentTrace: Trace | any;
   conditions: any;
   traceSpanLogs: any[];
-  traceSpanLogsTotal: number;
   selectorStore: any;
 }
 
@@ -45,16 +43,14 @@ export const traceStore = defineStore({
     endpoints: [{ value: "0", label: "All" }],
     traceList: [],
     traceSpans: [],
-    traceTotal: 0,
     currentTrace: {},
     conditions: {
       queryDuration: useAppStoreWithOut().durationTime,
       traceState: "ALL",
       queryOrder: "BY_START_TIME",
-      paging: { pageNum: 1, pageSize: 15, needTotal: true },
+      paging: { pageNum: 1, pageSize: 20 },
     },
     traceSpanLogs: [],
-    traceSpanLogsTotal: 0,
     selectorStore: useSelectorStore(),
   }),
   actions: {
@@ -115,7 +111,6 @@ export const traceStore = defineStore({
         return res.data;
       }
       if (!res.data.data.data.traces.length) {
-        this.traceTotal = 0;
         this.traceList = [];
         this.setCurrentTrace({});
         this.setTraceSpans([]);
@@ -128,7 +123,6 @@ export const traceStore = defineStore({
         });
         return d;
       });
-      this.traceTotal = res.data.data.data.total;
       this.setCurrentTrace(res.data.data.data.traces[0] || {});
       return res.data;
     },
@@ -148,11 +142,9 @@ export const traceStore = defineStore({
         .params(params);
       if (res.data.errors) {
         this.traceSpanLogs = [];
-        this.traceSpanLogsTotal = 0;
         return res.data;
       }
       this.traceSpanLogs = res.data.data.queryLogs.logs || [];
-      this.traceSpanLogsTotal = res.data.data.queryLogs.total;
       return res.data;
     },
     async getTagKeys() {
