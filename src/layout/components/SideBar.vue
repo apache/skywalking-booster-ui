@@ -41,7 +41,7 @@ limitations under the License. -->
               <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
                 <Icon size="lg" :iconName="menu.meta.icon" />
               </el-icon>
-              <span :class="isCollapse ? 'collapse' : ''">
+              <span class="title" :class="isCollapse ? 'collapse' : ''">
                 {{ t(menu.meta.title) }}
               </span>
             </router-link>
@@ -57,7 +57,7 @@ limitations under the License. -->
                 :to="m.path"
                 :exact="m.meta.exact || false"
               >
-                <span>{{ t(m.meta.title) }}</span>
+                <span class="title">{{ t(m.meta.title) }}</span>
               </router-link>
             </el-menu-item>
           </el-menu-item-group>
@@ -82,7 +82,7 @@ limitations under the License. -->
               :to="menu.children[0].path"
               :exact="menu.meta.exact"
             >
-              <span>{{ t(menu.meta.title) }}</span>
+              <span class="title">{{ t(menu.meta.title) }}</span>
             </router-link>
           </template>
         </el-menu-item>
@@ -207,5 +207,12 @@ span.collapse {
 .empty {
   width: 100%;
   height: 60px;
+}
+
+.title {
+  display: inline-block;
+  max-width: 110px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 </style>

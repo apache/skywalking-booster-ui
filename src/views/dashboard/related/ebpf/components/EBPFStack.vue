@@ -68,12 +68,13 @@ function drawGraph() {
   root.value = param[0];
   root.dumpCount = param[1];
   stackTree.value = root;
-  const w = (graph.value && graph.value.getBoundingClientRect().width) || 10;
+  const width = (graph.value && graph.value.getBoundingClientRect().width) || 0;
+  const w = width < 800 ? 802 : width;
   flameChart.value = flamegraph()
     .width(w - 15)
     .cellHeight(18)
     .transitionDuration(750)
-    .minFrameSize(5)
+    .minFrameSize(1)
     .transitionEase(d3.easeCubic as any)
     .sort(true)
     .title("")
