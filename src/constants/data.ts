@@ -23,6 +23,7 @@ export enum TimeType {
 export const Languages = [
   { label: "English", value: "en" },
   { label: "Chinese", value: "zh" },
+  { label: "Spanish", value: "es" },
 ];
 
 export const RoutesMap: { [key: string]: string } = {
