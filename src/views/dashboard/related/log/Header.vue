@@ -21,6 +21,7 @@ limitations under the License. -->
         clearable
         multiple
         collapse-tags
+        automatic-dropdown
         collapse-tags-tooltip
         placeholder="Select"
         style="width: 240px"
@@ -32,12 +33,12 @@ limitations under the License. -->
           :label="item.label"
           :value="item.value"
         >
-          <div class="flex-h items-center">
+          <div
+            style="justify-content: space-between"
+            class="flex-h items-center"
+          >
             <span class="mr-5">{{ item.value }}</span>
-            <div
-              style="justify-content: space-between"
-              class="flex-h items-center"
-            >
+            <div class="flex-h items-center">
               <el-tooltip
                 class="box-item"
                 effect="dark"
@@ -51,7 +52,11 @@ limitations under the License. -->
                 >
                   <Icon iconSize="sm" iconName="cancel" />
                 </el-button>
-                <el-button v-else class="toggle-btn mx-3" @click="showColumns(item)">
+                <el-button
+                  v-else
+                  class="toggle-btn mx-3"
+                  @click="showColumns(item)"
+                >
                   <Icon iconSize="sm" iconName="add" />
                 </el-button>
               </el-tooltip>
@@ -717,5 +722,8 @@ watch(
 }
 .space-between {
   justify-content: space-between !important;
+}
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+  background: transparent;
 }
 </style>
