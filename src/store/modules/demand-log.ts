@@ -21,22 +21,26 @@ import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
+import { Conditions, DemandLog } from "@/types/demand-log";
 
 interface DemandLogState {
   containers: Instance[];
   instances: Instance[];
-  conditions: any;
+  conditions: Conditions;
   selectorStore: any;
-  logs: any[];
+  logs: DemandLog[];
   loadLogs: boolean;
 }
 
 export const demandLogStore = defineStore({
   id: "demandLog",
   state: (): DemandLogState => ({
-    containers: [{ value: "0", label: "All" }],
-    instances: [{ value: "0", label: "All" }],
+    containers: [{ value: "0", label: "" }],
+    instances: [{ value: "0", label: "" }],
     conditions: {
+      container: "",
+      serviceId: "",
+      serviceInstanceId: "",
       queryDuration: useAppStoreWithOut().durationTime,
       paging: { pageNum: 1, pageSize: 15 },
     },
@@ -47,16 +51,6 @@ export const demandLogStore = defineStore({
   actions: {
     setLogCondition(data: any) {
       this.conditions = { ...this.conditions, ...data };
-    },
-    async getServices(layer: string) {
-      const res: AxiosResponse = await graphql.query("queryServices").params({
-        layer,
-      });
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.services = res.data.data.services;
-      return res.data;
     },
     async getInstances(id: string) {
       const serviceId = this.selectorStore.currentService
@@ -70,16 +64,37 @@ export const demandLogStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.instances = [
-        { value: "0", label: "All" },
-        ...res.data.data.pods,
-      ] || [{ value: " 0", label: "All" }];
+      this.instances = res.data.data.pods || [];
       return res.data;
     },
-    async getLogs() {
+    async getContainers(instanceId?: string) {
+      const serviceId =
+        this.selectorStore.currentService &&
+        this.selectorStore.currentService.id;
+      const serviceInstanceId =
+        instanceId ||
+        (this.selectorStore.currentInstance &&
+          this.selectorStore.currentInstance.id);
+      const condition = {
+        serviceId,
+        serviceInstanceId,
+      };
+      const res: AxiosResponse = await graphql.query("fetchContainers").params({
+        condition,
+      });
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.containers = res.data.data.containers.containers.map((d: string) => {
+        return { label: d, value: d };
+      }) || [{ label: "Detail", value: "Detail" }];
+      return res.data;
+    },
+    async getDemandLogs() {
       this.loadLogs = true;
       const res: AxiosResponse = await graphql
-        .query("queryServiceLogs")
+        .query("fetchStreamingLogs")
         .params({ condition: this.conditions });
       this.loadLogs = false;
       if (res.data.errors) {

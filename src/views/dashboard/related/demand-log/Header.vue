@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h row">
-    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[3].value">
+    <div class="mr-5 mb-5" v-if="dashboardStore.entity !== EntityType[3].value">
       <span class="grey mr-5"> {{ t("instance") }}: </span>
       <Selector
         size="small"
@@ -22,9 +22,10 @@ limitations under the License. -->
         :options="demandLogStore.instances"
         placeholder="Select a instance"
         @change="changeField('instance', $event)"
+        class="selectors"
       />
     </div>
-    <div class="mr-5">
+    <div class="mr-5 mb-5">
       <span class="grey mr-5">{{ t("container") }}:</span>
       <Selector
         size="small"
@@ -32,6 +33,7 @@ limitations under the License. -->
         :options="demandLogStore.containers"
         placeholder="Select a container"
         @change="changeField('container', $event)"
+        class="selectors"
       />
     </div>
     <div class="mr-5">
@@ -47,12 +49,13 @@ limitations under the License. -->
     </div>
     <div class="mr-5">
       <span class="grey mr-5">{{ t("duration") }}:</span>
-      <!-- <TimePicker
-        :value="duration"
-        position="bottom"
-        format="YYYY-MM-DD HH:mm:ss"
-        @input="changeDuration"
-      /> -->
+      <Selector
+        size="small"
+        :value="state.duration.value"
+        :options="TimeRanges"
+        placeholder="Select a time range"
+        @change="changeField('duration', $event)"
+      />
     </div>
     <div class="mr-5">
       <span class="grey mr-5">{{ t("interval") }}:</span>
@@ -66,16 +69,8 @@ limitations under the License. -->
       />
       Seconds
     </div>
-    <el-button
-      class="search-btn"
-      size="small"
-      type="primary"
-      @click="searchLogs"
-    >
-      {{ t("search") }}
-    </el-button>
   </div>
-  <div class="flex-h">
+  <div class="flex-h row">
     <div class="mr-5">
       <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
       <span class="log-tags">
@@ -124,6 +119,16 @@ limitations under the License. -->
       </el-tooltip>
     </div>
   </div>
+  <div class="flex-h row btn-row">
+    <el-button
+      class="search-btn mt-10"
+      size="small"
+      type="primary"
+      @click="searchLogs"
+    >
+      {{ t("search") }}
+    </el-button>
+  </div>
 </template>
 <script lang="ts" setup>
 import { ref, reactive, watch } from "vue";
@@ -134,6 +139,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
+import { TimeRanges } from "./data";
 
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
@@ -148,34 +154,24 @@ const limit = ref<number>(1);
 const intervalTime = ref<number>(1);
 const state = reactive<any>({
   instance: { value: "", label: "" },
-  container: { value: "", label: "" },
+  container: { value: "", label: "None" },
+  duration: { label: "Last 30 min", value: 1800 },
 });
 
 init();
 async function init() {
   fetchSelectors();
   await searchLogs();
-  state.instance = { value: "0", label: "All" };
 }
-function fetchSelectors() {
-  if (dashboardStore.entity === EntityType[1].value) {
-    getServices();
-  }
+async function fetchSelectors() {
   if (dashboardStore.entity !== EntityType[3].value) {
-    getInstances();
+    await getInstances();
+    await demandLogStore.getContainers(state.instance.id);
   }
+  state.container = demandLogStore.containers[0];
 }
-async function getServices() {
-  const resp = await demandLogStore.getServices(dashboardStore.layerId);
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return;
-  }
-  state.service = demandLogStore.services[0];
-  getInstances(state.service.id);
-}
-async function getInstances(id?: string) {
-  const resp = await demandLogStore.getInstances(id);
+async function getInstances() {
+  const resp = await demandLogStore.getInstances();
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
@@ -200,12 +196,16 @@ function searchLogs() {
   queryLogs();
 }
 async function queryLogs() {
-  const res = await demandLogStore.getLogs();
+  const res = await demandLogStore.getDemandLogs();
   if (res && res.errors) {
     ElMessage.error(res.errors);
   }
 }
 function changeField(type: string, opt: any) {
+  if (["limit", "interval"].includes(type)) {
+    state[type] = opt;
+    return;
+  }
   state[type] = opt[0];
 }
 function removeContent(index: number) {
@@ -269,6 +269,7 @@ watch(
 .row {
   margin-bottom: 5px;
   position: relative;
+  flex-wrap: wrap;
 }
 
 .inputs-max {
@@ -280,11 +281,8 @@ watch(
 }
 
 .search-btn {
-  position: absolute;
-  top: 0;
-  right: 10px;
   cursor: pointer;
-  width: 120px;
+  width: 220px;
 }
 
 .tips {
@@ -323,5 +321,13 @@ watch(
   display: inline-block;
   margin-left: 3px;
   cursor: pointer;
+}
+
+.selectors {
+  width: 250px;
+}
+
+.btn-row {
+  justify-content: flex-end;
 }
 </style>

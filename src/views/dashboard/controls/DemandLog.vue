@@ -32,12 +32,16 @@ limitations under the License. -->
     <div class="header">
       <Header />
     </div>
+    <div class="content">
+      <Content />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import Header from "../related/demand/Header.vue";
+import Header from "../related/demand-log/Header.vue";
+import Content from "../related/demand-log/Content.vue";
 
 /*global defineProps */
 const props = defineProps({
@@ -89,7 +93,7 @@ function removeWidget() {
   }
 }
 
-.log {
+.content {
   width: 100%;
 }
 </style>

@@ -139,6 +139,7 @@ const msg = {
   container: "Container",
   limit: "Limit",
   page: "Page",
+  interval: "Refresh Interval",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

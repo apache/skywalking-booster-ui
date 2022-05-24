@@ -139,6 +139,7 @@ const msg = {
   ebpfTip: "Le falta el proceso para perfilar",
   processSelect: "Click para seleccionar proceso",
   page: "Página",
+  interval: "Intervalo de actualización",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",
   secondTip: "Seleccione Segundo",

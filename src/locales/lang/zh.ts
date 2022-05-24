@@ -137,6 +137,7 @@ const msg = {
   container: "容器",
   limit: "范围",
   page: "页面",
+  interval: "刷新间隔时间",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",

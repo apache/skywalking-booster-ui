@@ -14,21 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface Option {
-  value: string;
-  label: string;
-}
-export interface Duration {
-  start: Date;
-  end: Date;
-  step: string;
-}
-export interface DurationTime {
-  start: string;
-  end: string;
-  step: string;
-}
-export type Paging = {
-  pageNum: number;
-  pageSize: number;
-};
+
+export const TimeRanges = [
+  { label: "Last 5 seconds", value: 5 },
+  { label: "Last 10 seconds", value: 10 },
+  { label: "Last 15 seconds", value: 15 },
+  { label: "Last 30 seconds", value: 30 },
+  { label: "Last 45 seconds", value: 45 },
+  { label: "Last 1 min", value: 60 },
+  { label: "Last 5 min", value: 300 },
+  { label: "Last 15 min", value: 900 },
+  { label: "Last 30 min", value: 1800 },
+];

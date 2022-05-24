@@ -14,21 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface Option {
-  value: string;
-  label: string;
+import { DurationTime, Paging } from "./app";
+
+export interface Conditions {
+  container: string;
+  serviceId: string;
+  serviceInstanceId: string;
+  queryDuration: DurationTime;
+  paging: Paging;
+  keywordsOfContent?: string[];
+  excludingKeywordsOfContent?: string;
 }
-export interface Duration {
-  start: Date;
-  end: Date;
-  step: string;
+
+export interface DemandLog {
+  content: string;
+  timestamp: number;
+  contentType: string;
 }
-export interface DurationTime {
-  start: string;
-  end: string;
-  step: string;
-}
-export type Paging = {
-  pageNum: number;
-  pageSize: number;
-};

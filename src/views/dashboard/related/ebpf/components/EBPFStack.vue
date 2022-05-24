@@ -67,7 +67,6 @@ function drawGraph() {
   );
   root.value = param[0];
   root.dumpCount = param[1];
-  console.log(root);
   stackTree.value = root;
   const w = (graph.value && graph.value.getBoundingClientRect().width) || 10;
   flameChart.value = flamegraph()
