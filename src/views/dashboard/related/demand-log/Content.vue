@@ -13,11 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="log-content" ref="logContent"></div>
+  <div
+    class="log-content"
+    ref="logContent"
+    style="width: 100%; height: calc(100% - 140px)"
+  ></div>
 </template>
 <script lang="ts" setup>
 import { onMounted, ref, onUnmounted } from "vue";
 import { useDemandLogStore } from "@/store/modules/demand-log";
+import { Log } from "@/types/demand-log";
 
 /*global Nullable */
 const demandLogStore = useDemandLogStore();
@@ -30,9 +35,10 @@ onMounted(() => {
   });
 });
 function monacoInstanceGen(monaco: any) {
+  const value = demandLogStore.logs.map((d: Log) => d.content).join("\n");
   monaco.languages.register({ id: "custom" });
   monacoInstance.value = monaco.editor.create(logContent.value, {
-    value: demandLogStore.logs,
+    value: "console.log(123)", // value
     language: "javascript",
   });
 }
@@ -42,9 +48,7 @@ onUnmounted(() => {
 </script>
 <style lang="scss" scoped>
 .log-content {
-  min-height: 300px;
-  width: 100%;
   min-width: 600px;
-  height: calc(100% - 140px);
+  min-height: 400px;
 }
 </style>

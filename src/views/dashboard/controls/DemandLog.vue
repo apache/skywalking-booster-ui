@@ -32,9 +32,7 @@ limitations under the License. -->
     <div class="header">
       <Header />
     </div>
-    <div class="log">
-      <Content />
-    </div>
+    <Content />
   </div>
 </template>
 <script lang="ts" setup>
@@ -91,9 +89,5 @@ function removeWidget() {
     color: #409eff;
     background-color: #eee;
   }
-}
-
-.log {
-  width: 100%;
 }
 </style>

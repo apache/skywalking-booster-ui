@@ -27,7 +27,7 @@ export interface Conditions {
   excludingKeywordsOfContent?: string;
 }
 
-export interface DemandLog {
+export interface Log {
   content: string;
   timestamp: number;
   contentType: string;

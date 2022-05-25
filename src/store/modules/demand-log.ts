@@ -22,14 +22,14 @@ import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
-import { Conditions, DemandLog } from "@/types/demand-log";
+import { Conditions, Log } from "@/types/demand-log";
 
 interface DemandLogState {
   containers: Instance[];
   instances: Instance[];
   conditions: Conditions;
   selectorStore: any;
-  logs: DemandLog[];
+  logs: Log[];
   loadLogs: boolean;
   namespaces: Option[];
 }
