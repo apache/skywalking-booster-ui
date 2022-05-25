@@ -64,11 +64,7 @@ limitations under the License. -->
       <div class="mb-5 blue sm">
         <Selector
           size="small"
-          :value="
-            traceStore.currentTrace.traceIds &&
-            traceStore.currentTrace.traceIds[0] &&
-            traceStore.currentTrace.traceIds[0].value
-          "
+          :value="traceId"
           :options="traceStore.currentTrace.traceIds"
           @change="changeTraceId"
           class="trace-detail-ids"
@@ -169,7 +165,11 @@ export default defineComponent({
     const { t } = useI18n();
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
-    const traceId = ref<string>("");
+    const traceId = ref<string>(
+      traceStore.currentTrace.traceIds &&
+        traceStore.currentTrace.traceIds[0] &&
+        traceStore.currentTrace.traceIds[0].value
+    );
     const displayMode = ref<string>("List");
     const pageNum = ref<number>(1);
     const pageSize = 10;
@@ -182,14 +182,8 @@ export default defineComponent({
       dayjs(date).format(pattern);
     const showTraceLogs = ref<boolean>(false);
 
-    function handleClick(ids: string[] | any) {
-      let copyValue = null;
-      if (ids.length === 1) {
-        copyValue = ids[0];
-      } else {
-        copyValue = ids.join(",");
-      }
-      copy(copyValue);
+    function handleClick() {
+      copy(traceId.value);
     }
 
     async function changeTraceId(opt: Option[] | any) {
@@ -235,6 +229,7 @@ export default defineComponent({
       pageNum,
       loading,
       total,
+      traceId,
     };
   },
 });
