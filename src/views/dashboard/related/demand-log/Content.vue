@@ -17,11 +17,12 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { onMounted, ref, onUnmounted } from "vue";
+import { useDemandLogStore } from "@/store/modules/demand-log";
 
 /*global Nullable */
+const demandLogStore = useDemandLogStore();
 const monacoInstance = ref();
 const logContent = ref<Nullable<HTMLDivElement>>(null);
-const logs = ref<string>("");
 
 onMounted(() => {
   import("monaco-editor/esm/vs/editor/editor.api").then((monaco) => {
@@ -31,7 +32,7 @@ onMounted(() => {
 function monacoInstanceGen(monaco: any) {
   monaco.languages.register({ id: "custom" });
   monacoInstance.value = monaco.editor.create(logContent.value, {
-    value: logs.value,
+    value: demandLogStore.logs,
     language: "javascript",
   });
 }
