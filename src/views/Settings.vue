@@ -194,10 +194,11 @@ const setUTCMin = () => {
   }
 
   .label {
-    width: 160px;
+    width: 180px;
     display: inline-block;
     font-weight: 500;
     color: #000;
+    line-height: 25px;
   }
 }
 </style>
