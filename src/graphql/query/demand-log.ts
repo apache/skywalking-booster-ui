@@ -15,8 +15,14 @@
  * limitations under the License.
  */
 
-import { queryContainers, queryStreamingLogs } from "../fragments/demand-log";
+import {
+  queryContainers,
+  queryStreamingLogs,
+  queryNamespaces,
+} from "../fragments/demand-log";
 
 export const fetchContainers = `query queryContainers(${queryContainers.variable}) {${queryContainers.query}}`;
 
-export const fetchStreamingLogs = `query queryStreamingLogs(${queryStreamingLogs.variable}) {${queryStreamingLogs.query}}`;
+export const fetchDemandPodLogs = `query queryStreamingLogs(${queryStreamingLogs.variable}) {${queryStreamingLogs.query}}`;
+
+export const fetchNamespaces = `query queryContainers {${queryNamespaces.query}}`;

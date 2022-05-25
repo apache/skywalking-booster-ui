@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
+import { Option } from "@/types/app";
 import { Instance } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
@@ -30,6 +31,7 @@ interface DemandLogState {
   selectorStore: any;
   logs: DemandLog[];
   loadLogs: boolean;
+  namespaces: Option[];
 }
 
 export const demandLogStore = defineStore({
@@ -38,6 +40,7 @@ export const demandLogStore = defineStore({
     containers: [{ label: "Detail", value: "Detail" }],
     instances: [{ value: "", label: "" }],
     conditions: {
+      namespace: "",
       container: "",
       serviceId: "",
       serviceInstanceId: "",
@@ -47,6 +50,7 @@ export const demandLogStore = defineStore({
     selectorStore: useSelectorStore(),
     logs: [],
     loadLogs: false,
+    namespaces: [],
   }),
   actions: {
     setLogCondition(data: Conditions) {
@@ -67,21 +71,35 @@ export const demandLogStore = defineStore({
       this.instances = res.data.data.pods || [];
       return res.data;
     },
-    async getContainers(instanceId?: string) {
-      const serviceId =
-        this.selectorStore.currentService &&
-        this.selectorStore.currentService.id;
-      const serviceInstanceId =
-        instanceId ||
-        (this.selectorStore.currentInstance &&
-          this.selectorStore.currentInstance.id);
+    async getNamespaces() {
+      const res: AxiosResponse = await graphql
+        .query("fetchNamespaces")
+        .params({});
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.namespaces = (res.data.data.namespaces || []).map((d: string) => {
+        return {
+          label: d,
+          value: d,
+        };
+      });
+      return res.data;
+    },
+    async getContainers(namespace: string, serviceInstanceId: string) {
+      if (!this.selectorStore.currentService) {
+        return new Promise((resolve) => resolve({ errors: "No service" }));
+      }
+      const serviceId = this.selectorStore.currentService.id;
       const condition = {
         serviceId,
         serviceInstanceId,
+        namespace,
       };
-      const res: AxiosResponse = await graphql.query("fetchContainers").params({
-        condition,
-      });
+      const res: AxiosResponse = await graphql
+        .query("fetchContainers")
+        .params({ condition });
 
       if (res.data.errors) {
         return res.data;
@@ -95,7 +113,7 @@ export const demandLogStore = defineStore({
     async getDemandLogs() {
       this.loadLogs = true;
       const res: AxiosResponse = await graphql
-        .query("fetchStreamingLogs")
+        .query("fetchDemandPodLogs")
         .params({ condition: this.conditions });
       this.loadLogs = false;
       if (res.data.errors) {

@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export const queryNamespaces = {
+  query: `namespaces: listNamespaces`,
+};
 
 export const queryContainers = {
   variable: "$condition: ContainerQueryCondition",
   query: `
-  containers: queryContainers(condition: $condition) {
-    containers
-  }`,
+  containers: queryContainers(condition: $condition)`,
 };
 
 export const queryStreamingLogs = {
-  variable: "$condition: StreamingLogQueryCondition!",
+  variable: "$condition: OndemandLogQueryCondition!",
   query: `
-  logs: queryStreamingLogs(condition: $condition) {
+  logs: ondemandPodLogs(condition: $condition) {
     logs {
       timestamp
       contentType

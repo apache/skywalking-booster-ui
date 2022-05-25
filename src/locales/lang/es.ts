@@ -140,6 +140,7 @@ const msg = {
   processSelect: "Click para seleccionar proceso",
   page: "Página",
   interval: "Intervalo de actualización",
+  namespace: "Espacio de nombres",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",
   secondTip: "Seleccione Segundo",

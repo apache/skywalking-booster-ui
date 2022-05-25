@@ -140,6 +140,7 @@ const msg = {
   limit: "Limit",
   page: "Page",
   interval: "Refresh Interval",
+  namespace: "Namespace",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
   secondTip: "Select Second",

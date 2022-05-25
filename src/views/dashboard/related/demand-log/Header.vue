@@ -26,6 +26,17 @@ limitations under the License. -->
       />
     </div>
     <div class="mr-5 mb-5">
+      <span class="grey mr-5">{{ t("namespace") }}:</span>
+      <Selector
+        size="small"
+        :value="state.namespace.value"
+        :options="demandLogStore.namespaces"
+        placeholder="Select a namespace"
+        @change="changeField('namespace', $event)"
+        class="selectors"
+      />
+    </div>
+    <div class="mr-5 mb-5">
       <span class="grey mr-5">{{ t("container") }}:</span>
       <Selector
         size="small"
@@ -131,7 +142,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDemandLogStore } from "@/store/modules/demand-log";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -140,6 +151,8 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 import { TimeRanges } from "./data";
+import getLocalTime from "@/utils/localtime";
+import dateFormatStep from "@/utils/dateFormat";
 
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
@@ -155,7 +168,23 @@ const intervalTime = ref<number>(1);
 const state = reactive<any>({
   instance: { value: "", label: "" },
   container: { value: "", label: "None" },
+  namespace: { value: "", label: "None" },
   duration: { label: "Last 30 min", value: 1800 },
+});
+const rangeTime = computed(() => {
+  const times = {
+    start: getLocalTime(
+      appStore.utc,
+      new Date(new Date().getTime() - state.duration.value * 1000)
+    ),
+    end: getLocalTime(appStore.utc, new Date()),
+    step: "SECOND",
+  };
+  return {
+    start: dateFormatStep(times.start, times.step, false),
+    end: dateFormatStep(times.end, times.step, false),
+    step: times.step,
+  };
 });
 
 init();
@@ -164,13 +193,30 @@ async function init() {
   await searchLogs();
 }
 async function fetchSelectors() {
-  if (dashboardStore.entity !== EntityType[3].value) {
+  if (dashboardStore.entity === EntityType[3].value) {
+    state.instance = this.selectorStore.currentInstance || {};
+  } else {
     await getInstances();
-    const resp = await demandLogStore.getContainers(state.instance.id);
-    if (resp.errors) {
-      ElMessage.error(resp.errors);
-      return;
-    }
+  }
+  await getNamespaces();
+  getContainers();
+}
+async function getNamespaces() {
+  const resp = await demandLogStore.getNamespaces();
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  state.namespace = demandLogStore.namespaces[0];
+}
+async function getContainers() {
+  const resp = await demandLogStore.getContainers(
+    state.namespace,
+    state.instance.id || ""
+  );
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
   }
   state.container = demandLogStore.containers[0];
 }
@@ -191,10 +237,11 @@ function searchLogs() {
     serviceId:
       (selectorStore.currentService && selectorStore.currentService.id) || "",
     serviceInstanceId: instance || state.instance.id || "",
-    queryDuration: appStore.durationTime,
+    namespace: state.namespace.value,
+    container: state.container.value,
+    queryDuration: rangeTime.value,
     keywordsOfContent: keywordsOfContent.value,
     excludingKeywordsOfContent: excludingKeywordsOfContent.value,
-    paging: { pageNum: 1, pageSize: -1 },
   });
   queryLogs();
 }

@@ -17,6 +17,7 @@
 import { DurationTime, Paging } from "./app";
 
 export interface Conditions {
+  namespace: string;
   container: string;
   serviceId: string;
   serviceInstanceId: string;
