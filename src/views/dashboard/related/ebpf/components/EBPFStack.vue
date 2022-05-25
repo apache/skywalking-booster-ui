@@ -117,7 +117,7 @@ function processTree(arr: StackElement[]) {
     delete item.id;
     obj[item.originId] = item;
   }
-  const scale = d3.scaleLinear().domain([min.value, max.value]).range([1, 100]);
+  const scale = d3.scaleLinear().domain([min.value, max.value]).range([1, 200]);
   for (const item of copyArr) {
     if (item.parentId === "1") {
       const val = Number(scale(item.dumpCount).toFixed(4));
@@ -128,7 +128,7 @@ function processTree(arr: StackElement[]) {
       if (item.originId === obj[key].parentId) {
         const val = Number(scale(obj[key].dumpCount).toFixed(4));
 
-        obj[key].value = val < 10 ? 10 : val;
+        obj[key].value = val;
         if (item.children) {
           item.children.push(obj[key]);
         } else {
