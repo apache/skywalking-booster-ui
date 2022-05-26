@@ -64,7 +64,11 @@ limitations under the License. -->
       <div class="mb-5 blue sm">
         <Selector
           size="small"
-          :value="traceId"
+          :value="
+            traceStore.currentTrace.traceIds &&
+            traceStore.currentTrace.traceIds[0] &&
+            traceStore.currentTrace.traceIds[0].value
+          "
           :options="traceStore.currentTrace.traceIds"
           @change="changeTraceId"
           class="trace-detail-ids"
@@ -149,7 +153,6 @@ import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
 import copy from "@/utils/copy";
-import List from "./components/List.vue";
 import graphs from "./components/index";
 import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
 import { ElMessage } from "element-plus";
@@ -158,18 +161,13 @@ export default defineComponent({
   name: "TraceDetail",
   components: {
     ...graphs,
-    List,
     LogTable,
   },
   setup() {
     const { t } = useI18n();
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
-    const traceId = ref<string>(
-      traceStore.currentTrace.traceIds &&
-        traceStore.currentTrace.traceIds[0] &&
-        traceStore.currentTrace.traceIds[0].value
-    );
+    const traceId = ref<string>("");
     const displayMode = ref<string>("List");
     const pageNum = ref<number>(1);
     const pageSize = 10;
@@ -183,7 +181,7 @@ export default defineComponent({
     const showTraceLogs = ref<boolean>(false);
 
     function handleClick() {
-      copy(traceId.value);
+      copy(traceId.value || traceStore.currentTrace.traceIds[0].value);
     }
 
     async function changeTraceId(opt: Option[] | any) {
