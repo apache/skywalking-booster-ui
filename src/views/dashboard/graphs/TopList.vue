@@ -17,13 +17,13 @@ limitations under the License. -->
   <div class="top-list" v-if="available">
     <div class="chart-slow-i" v-for="(i, index) in data[key]" :key="index">
       <div class="ell tools flex-h">
-        <div>
+        <div class="desc">
           <span class="calls mr-10">{{ i.value }}</span>
           <span class="cp mr-20">
             {{ i.name }}
           </span>
         </div>
-        <div>
+        <div class="copy">
           <Icon
             iconName="review-list"
             size="middle"
@@ -101,6 +101,16 @@ function handleClick(i: string) {
 
 .chart-slow {
   height: 100%;
+}
+
+.desc {
+  flex-grow: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.copy {
+  width: 30px;
 }
 
 .calls {
