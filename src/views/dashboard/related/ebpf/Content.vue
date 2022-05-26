@@ -38,7 +38,7 @@ import EBPFStack from "./components/EBPFStack.vue";
 
 .vis-graph {
   height: 100%;
-  width: calc(100% - 300px);
+  flex-grow: 2;
   min-width: 700px;
   overflow: auto;
 }
