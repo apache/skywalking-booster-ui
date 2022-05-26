@@ -24,6 +24,7 @@ import d3tip from "d3-tip";
 import { flamegraph } from "d3-flame-graph";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { StackElement } from "@/types/ebpf";
+import { AggregateTypes } from "./data";
 import "d3-flame-graph/dist/d3-flamegraph.css";
 
 /*global Nullable*/
@@ -86,10 +87,13 @@ function drawGraph() {
   const tip = (d3tip as any)()
     .attr("class", "d3-tip")
     .direction("w")
-    .html(
-      (d: { data: StackElement }) =>
-        `<div class="mb-5 name">Symbol: ${d.data.name}</div><div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
-    )
+    .html((d: { data: StackElement }) => {
+      const valStr =
+        ebpfStore.aggregateType === AggregateTypes[0].value
+          ? `<div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
+          : `<div class="mb-5">Duration: ${d.data.dumpCount} ns</div>`;
+      return `<div class="mb-5 name">Symbol: ${d.data.name}</div>${valStr}`;
+    })
     .style("max-width", "500px");
   flameChart.value.tooltip(tip);
   d3.select("#graph-stack").datum(stackTree.value).call(flameChart.value);

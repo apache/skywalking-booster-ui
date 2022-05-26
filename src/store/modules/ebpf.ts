@@ -35,6 +35,7 @@ interface EbpfStore {
   couldProfiling: boolean;
   tip: string;
   selectedTask: Recordable<EBPFTaskList>;
+  aggregateType: string;
 }
 
 export const ebpfStore = defineStore({
@@ -48,6 +49,7 @@ export const ebpfStore = defineStore({
     couldProfiling: false,
     tip: "",
     selectedTask: {},
+    aggregateType: "COUNT",
   }),
   actions: {
     setSelectedTask(task: EBPFTaskList) {
@@ -131,6 +133,7 @@ export const ebpfStore = defineStore({
       timeRanges: Array<{ start: number; end: number }>;
       aggregateType: string;
     }) {
+      this.aggregateType = params.aggregateType;
       if (!params.scheduleIdList.length) {
         return new Promise((resolve) => resolve({}));
       }

@@ -46,8 +46,15 @@ export interface Span {
   children?: Span[];
   tags?: Array<Map<string, string>>;
   logs?: log[];
+  parentSegmentId?: string;
+  refs?: Ref[];
 }
-
+export type Ref = {
+  type: string;
+  parentSegmentId: string;
+  parentSpanId: number;
+  traceId: string;
+};
 export interface log {
   time: number;
   data: Map<string, string>;
