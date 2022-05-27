@@ -137,6 +137,7 @@ limitations under the License. -->
       type="primary"
       @click="searchLogs"
     >
+      <Icon size="sm" iconName="retry" class="reload" />
       {{ t("search") }}
     </el-button>
   </div>

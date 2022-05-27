@@ -88,11 +88,12 @@ function drawGraph() {
     .attr("class", "d3-tip")
     .direction("w")
     .html((d: { data: StackElement }) => {
+      const name = d.data.name.replace("<", "&lt;").replace(">", "&gt;");
       const valStr =
         ebpfStore.aggregateType === AggregateTypes[0].value
           ? `<div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
           : `<div class="mb-5">Duration: ${d.data.dumpCount} ns</div>`;
-      return `<div class="mb-5 name">Symbol: ${d.data.name}</div>${valStr}`;
+      return `<div class="mb-5 name">Symbol: ${name}</div>${valStr}`;
     })
     .style("max-width", "500px");
   flameChart.value.tooltip(tip);
