@@ -252,13 +252,6 @@ watch(
   min-width: 560px;
 }
 
-.schedules {
-  width: calc(100% - 5px);
-  margin: 0 5px 5px 0;
-  height: calc(100% - 60px);
-  min-height: 150px;
-}
-
 .inputs {
   width: 400px;
 }

@@ -153,7 +153,6 @@ import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
 import copy from "@/utils/copy";
-import List from "./components/List.vue";
 import graphs from "./components/index";
 import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
 import { ElMessage } from "element-plus";
@@ -162,7 +161,6 @@ export default defineComponent({
   name: "TraceDetail",
   components: {
     ...graphs,
-    List,
     LogTable,
   },
   setup() {
@@ -182,14 +180,8 @@ export default defineComponent({
       dayjs(date).format(pattern);
     const showTraceLogs = ref<boolean>(false);
 
-    function handleClick(ids: string[] | any) {
-      let copyValue = null;
-      if (ids.length === 1) {
-        copyValue = ids[0];
-      } else {
-        copyValue = ids.join(",");
-      }
-      copy(copyValue);
+    function handleClick() {
+      copy(traceId.value || traceStore.currentTrace.traceIds[0].value);
     }
 
     async function changeTraceId(opt: Option[] | any) {
@@ -235,6 +227,7 @@ export default defineComponent({
       pageNum,
       loading,
       total,
+      traceId,
     };
   },
 });
