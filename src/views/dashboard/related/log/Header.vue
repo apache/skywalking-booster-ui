@@ -17,12 +17,13 @@ limitations under the License. -->
     <div v-if="currentSearchTerm === 'column'" class="flex-h items-center mr-5">
       <p style="margin-right: 10px">Select visible columns</p>
       <el-select
+        id="columnSelector"
         v-model="selectedColumns"
         multiple
-        collapse-tags
         placeholder="Select"
         style="width: 240px"
         size="small"
+        @change="hideTags"
       >
         <el-option
           v-for="item in logStore.serviceLogColumn"
@@ -381,15 +382,16 @@ function hideColumns(column: any) {
   selectedColumns.value.push(column.value);
   logStore.hideColumns(selectedColumns.value);
   selectedColumns.value = [];
-  // toggleColumSelector();
-  // setSearchTerm("");
+}
+function hideTags() {
+  let tagsWrap = document.querySelector(".el-select__tags");
+  if (!tagsWrap) return;
+  tagsWrap.style.display = "none";
 }
 function showColumns(column: any) {
   selectedColumns.value.push(column.value);
   logStore.showColumns(selectedColumns.value);
   selectedColumns.value = [];
-  // toggleColumSelector();
-  // setSearchTerm("");
 }
 async function init() {
   const resp = await logStore.getLogsByKeywords();
@@ -723,7 +725,7 @@ watch(
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
   background: transparent;
 }
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected{
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
   width: 100%;
   padding: 0 32px 0 20px;
 }
@@ -731,8 +733,5 @@ watch(
   display: block;
   width: 100%;
   padding: 0 32px 0 20px;
-}
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after{
-  display:none !important;
 }
 </style>
