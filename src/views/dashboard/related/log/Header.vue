@@ -734,4 +734,7 @@ watch(
   width: 100%;
   padding: 0 32px 0 20px;
 }
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after{
+  display: none;
+}
 </style>
