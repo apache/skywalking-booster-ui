@@ -30,6 +30,7 @@ import "d3-flame-graph/dist/d3-flamegraph.css";
 /*global Nullable*/
 const ebpfStore = useEbpfStore();
 const stackTree = ref<Nullable<StackElement>>(null);
+const selectStack = ref<Nullable<StackElement>>(null);
 const graph = ref<Nullable<HTMLDivElement>>(null);
 const flameChart = ref<any>(null);
 const min = ref<number>(1);
@@ -83,6 +84,9 @@ function drawGraph() {
     .title("")
     .selfValue(false)
     .inverted(true)
+    .onClick((d: { data: StackElement }) => {
+      selectStack.value = d.data;
+    })
     .setColorMapper((d, originalColor) =>
       d.highlight ? "#6aff8f" : originalColor
     );
@@ -97,18 +101,18 @@ function drawGraph() {
           : `<div class="mb-5">Duration: ${d.data.dumpCount} ns</div>`;
       const rateOfParent =
         (d.parent &&
-          `<div class="mb-5">Rate Of Parent: ${
-            ((d.data.dumpCount / d.parent.data.dumpCount) * 100).toFixed(3) +
-            "%"
+          `<div class="mb-5">Percentage Of Selected: ${
+            (
+              (d.data.dumpCount /
+                ((selectStack.value && selectStack.value.dumpCount) ||
+                  root.dumpCount)) *
+              100
+            ).toFixed(3) + "%"
           }</div>`) ||
         "";
-      const rateOfRoot =
-        (d.parent &&
-          `<div class="mb-5">Rate Of Root: ${
-            ((d.data.dumpCount / root.dumpCount) * 100).toFixed(3) + "%"
-          }</div>`) ||
-        "";
-
+      const rateOfRoot = `<div class="mb-5">Percentage Of Root: ${
+        ((d.data.dumpCount / root.dumpCount) * 100).toFixed(3) + "%"
+      }</div>`;
       return `<div class="mb-5 name">Symbol: ${name}</div>${valStr}${rateOfParent}${rateOfRoot}`;
     })
     .style("max-width", "500px");
