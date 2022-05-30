@@ -65,6 +65,8 @@ export type StackElement = {
   stackType: string;
   value: number;
   children?: StackElement[];
+  rateOfRoot?: string;
+  rateOfParent: string;
 };
 export type AnalyzationTrees = {
   id: string;
