@@ -173,7 +173,7 @@ async function analyzeEBPF() {
     timeRanges,
     aggregateType: aggregateType.value,
   });
-  if (res.data.errors) {
+  if (res.data && res.data.errors) {
     ElMessage.error(res.data.errors);
     return;
   }

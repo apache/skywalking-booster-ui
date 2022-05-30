@@ -52,6 +52,8 @@ function drawGraph() {
     symbol: "Virtual Root",
     dumpCount: 0,
     stackType: "",
+    rateOfRoot: "",
+    rateOfParent: "",
   };
   countRange();
   for (const tree of ebpfStore.analyzeTrees) {
@@ -87,12 +89,27 @@ function drawGraph() {
   const tip = (d3tip as any)()
     .attr("class", "d3-tip")
     .direction("w")
-    .html((d: { data: StackElement }) => {
+    .html((d: { data: StackElement } & { parent: { data: StackElement } }) => {
+      const name = d.data.name.replace("<", "&lt;").replace(">", "&gt;");
       const valStr =
         ebpfStore.aggregateType === AggregateTypes[0].value
           ? `<div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
           : `<div class="mb-5">Duration: ${d.data.dumpCount} ns</div>`;
-      return `<div class="mb-5 name">Symbol: ${d.data.name}</div>${valStr}`;
+      const rateOfParent =
+        (d.parent &&
+          `<div class="mb-5">Rate Of Parent: ${
+            ((d.data.dumpCount / d.parent.data.dumpCount) * 100).toFixed(3) +
+            "%"
+          }</div>`) ||
+        "";
+      const rateOfRoot =
+        (d.parent &&
+          `<div class="mb-5">Rate Of Root: ${
+            ((d.data.dumpCount / root.dumpCount) * 100).toFixed(3) + "%"
+          }</div>`) ||
+        "";
+
+      return `<div class="mb-5 name">Symbol: ${name}</div>${valStr}${rateOfParent}${rateOfRoot}`;
     })
     .style("max-width", "500px");
   flameChart.value.tooltip(tip);
@@ -122,6 +139,7 @@ function processTree(arr: StackElement[]) {
     obj[item.originId] = item;
   }
   const scale = d3.scaleLinear().domain([min.value, max.value]).range([1, 200]);
+
   for (const item of copyArr) {
     if (item.parentId === "1") {
       const val = Number(scale(item.dumpCount).toFixed(4));
