@@ -29,10 +29,9 @@ const demandLogStore = useDemandLogStore();
 const monacoInstance = ref();
 const logContent = ref<Nullable<HTMLDivElement>>(null);
 
-onMounted(() => {
-  import("monaco-editor/esm/vs/editor/editor.api").then((monaco) => {
-    monacoInstanceGen(monaco);
-  });
+onMounted(async () => {
+  const monaco = await import("monaco-editor/esm/vs/editor/editor.api");
+  monacoInstanceGen(monaco);
 });
 function monacoInstanceGen(monaco: any) {
   const value = demandLogStore.logs.map((d: Log) => d.content).join("\n");
