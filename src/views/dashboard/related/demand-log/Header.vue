@@ -67,7 +67,7 @@ limitations under the License. -->
         controls-position="right"
         @change="changeField('interval', $event)"
       />
-      Seconds
+      {{ t("seconds") }}
     </div>
   </div>
   <div class="flex-h row">
@@ -124,10 +124,10 @@ limitations under the License. -->
       class="search-btn mt-10"
       size="small"
       type="primary"
-      @click="searchLogs"
+      @click="runInterval"
     >
-      <Icon size="sm" iconName="retry" class="reload" />
-      {{ t("search") }}
+      <Icon size="sm" iconName="retry" :loading="!!intervalFn" class="reload" />
+      {{ intervalFn ? t("pause") : t("start") }}
     </el-button>
   </div>
 </template>
@@ -160,6 +160,8 @@ const state = reactive<any>({
   container: { value: "", label: "None" },
   duration: { label: "Last 30 min", value: 1800 },
 });
+/*global Nullable */
+const intervalFn = ref<Nullable<any>>(null);
 const rangeTime = computed(() => {
   const times = {
     start: getLocalTime(
@@ -205,6 +207,16 @@ async function getInstances() {
   }
   state.instance = demandLogStore.instances[0];
 }
+function runInterval() {
+  if (intervalFn.value) {
+    clearInterval(intervalFn.value);
+    return;
+  }
+  intervalFn.value = setInterval(searchLogs, intervalTime.value * 1000);
+  setTimeout(() => {
+    clearInterval(intervalFn.value);
+  }, state.duration * 1000);
+}
 function searchLogs() {
   let instance = "";
   if (dashboardStore.entity === EntityType[3].value) {
@@ -226,6 +238,7 @@ async function queryLogs() {
   }
 }
 function changeField(type: string, opt: any) {
+  clearInterval(intervalFn.value);
   if (["limit", "interval"].includes(type)) {
     state[type] = opt;
     return;
@@ -239,6 +252,7 @@ function removeContent(index: number) {
     keywordsOfContent: keywordsOfContentList,
   });
   contentStr.value = "";
+  clearInterval(intervalFn.value);
 }
 function addLabels(type: string) {
   if (type === "keywordsOfContent" && !contentStr.value) {
@@ -260,6 +274,7 @@ function addLabels(type: string) {
     });
     excludingContentStr.value = "";
   }
+  clearInterval(intervalFn.value);
 }
 function removeExcludeContent(index: number) {
   excludingKeywordsOfContent.value.splice(index, 1);
@@ -267,6 +282,7 @@ function removeExcludeContent(index: number) {
     excludingKeywordsOfContent: excludingKeywordsOfContent.value,
   });
   excludingContentStr.value = "";
+  clearInterval(intervalFn.value);
 }
 watch(
   () => selectorStore.currentService,
@@ -353,5 +369,9 @@ watch(
 
 .btn-row {
   justify-content: flex-end;
+}
+
+.reload {
+  margin-right: 3px;
 }
 </style>
