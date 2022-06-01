@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Option } from "@/types/app";
 import { Instance } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
@@ -31,7 +30,6 @@ interface DemandLogState {
   selectorStore: any;
   logs: Log[];
   loadLogs: boolean;
-  namespaces: Option[];
 }
 
 export const demandLogStore = defineStore({
@@ -40,17 +38,13 @@ export const demandLogStore = defineStore({
     containers: [{ label: "Detail", value: "Detail" }],
     instances: [{ value: "", label: "" }],
     conditions: {
-      namespace: "",
       container: "",
-      serviceId: "",
       serviceInstanceId: "",
       queryDuration: useAppStoreWithOut().durationTime,
-      paging: { pageNum: 1, pageSize: -1 },
     },
     selectorStore: useSelectorStore(),
     logs: [],
     loadLogs: false,
-    namespaces: [],
   }),
   actions: {
     setLogCondition(data: Conditions) {
@@ -71,23 +65,7 @@ export const demandLogStore = defineStore({
       this.instances = res.data.data.pods || [];
       return res.data;
     },
-    async getNamespaces() {
-      const res: AxiosResponse = await graphql
-        .query("fetchNamespaces")
-        .params({});
-
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.namespaces = (res.data.data.namespaces || []).map((d: string) => {
-        return {
-          label: d,
-          value: d,
-        };
-      });
-      return res.data;
-    },
-    async getContainers(namespace: string, serviceInstanceId: string) {
+    async getContainers(serviceInstanceId: string) {
       if (!this.selectorStore.currentService) {
         return new Promise((resolve) => resolve({ errors: "No service" }));
       }
@@ -95,7 +73,6 @@ export const demandLogStore = defineStore({
       const condition = {
         serviceId,
         serviceInstanceId,
-        namespace,
       };
       const res: AxiosResponse = await graphql
         .query("fetchContainers")

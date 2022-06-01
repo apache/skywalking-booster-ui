@@ -14,9 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const queryNamespaces = {
-  query: `namespaces: listNamespaces`,
-};
 
 export const queryContainers = {
   variable: "$condition: ContainerQueryCondition",
@@ -33,6 +30,5 @@ export const queryStreamingLogs = {
       contentType
       content
     }
-    total
   }`,
 };

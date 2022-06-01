@@ -14,15 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { DurationTime, Paging } from "./app";
+import { DurationTime } from "./app";
 
 export interface Conditions {
-  namespace: string;
   container: string;
-  serviceId: string;
   serviceInstanceId: string;
   queryDuration: DurationTime;
-  paging: Paging;
   keywordsOfContent?: string[];
   excludingKeywordsOfContent?: string;
 }

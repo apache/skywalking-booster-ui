@@ -26,17 +26,6 @@ limitations under the License. -->
       />
     </div>
     <div class="mr-5 mb-5">
-      <span class="grey mr-5">{{ t("namespace") }}:</span>
-      <Selector
-        size="small"
-        :value="state.namespace.value"
-        :options="demandLogStore.namespaces"
-        placeholder="Select a namespace"
-        @change="changeField('namespace', $event)"
-        class="selectors"
-      />
-    </div>
-    <div class="mr-5 mb-5">
       <span class="grey mr-5">{{ t("container") }}:</span>
       <Selector
         size="small"
@@ -169,7 +158,6 @@ const intervalTime = ref<number>(1);
 const state = reactive<any>({
   instance: { value: "", label: "" },
   container: { value: "", label: "None" },
-  namespace: { value: "", label: "None" },
   duration: { label: "Last 30 min", value: 1800 },
 });
 const rangeTime = computed(() => {
@@ -199,22 +187,10 @@ async function fetchSelectors() {
   } else {
     await getInstances();
   }
-  await getNamespaces();
   getContainers();
 }
-async function getNamespaces() {
-  const resp = await demandLogStore.getNamespaces();
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return;
-  }
-  state.namespace = demandLogStore.namespaces[0];
-}
 async function getContainers() {
-  const resp = await demandLogStore.getContainers(
-    state.namespace,
-    state.instance.id || ""
-  );
+  const resp = await demandLogStore.getContainers(state.instance.id || "");
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
@@ -235,10 +211,7 @@ function searchLogs() {
     instance = selectorStore.currentPod.id;
   }
   demandLogStore.setLogCondition({
-    serviceId:
-      (selectorStore.currentService && selectorStore.currentService.id) || "",
     serviceInstanceId: instance || state.instance.id || "",
-    namespace: state.namespace.value,
     container: state.container.value,
     queryDuration: rangeTime.value,
     keywordsOfContent: keywordsOfContent.value,
