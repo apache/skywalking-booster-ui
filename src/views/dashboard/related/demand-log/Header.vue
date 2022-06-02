@@ -25,7 +25,7 @@ limitations under the License. -->
         class="selectors"
       />
     </div>
-    <div class="mr-5 mb-5">
+    <div class="mr-5 mb-5" v-if="state.container">
       <span class="grey mr-5">{{ t("container") }}:</span>
       <Selector
         size="small"
@@ -41,7 +41,7 @@ limitations under the License. -->
       <el-input-number
         v-model="limit"
         :min="1"
-        :max="100"
+        :max="1000"
         size="small"
         controls-position="right"
         @change="changeField('limit', $event)"
@@ -132,7 +132,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, computed } from "vue";
+import { ref, reactive, watch, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDemandLogStore } from "@/store/modules/demand-log";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -157,7 +157,7 @@ const limit = ref<number>(1);
 const intervalTime = ref<number>(1);
 const state = reactive<any>({
   instance: { value: "", label: "" },
-  container: { value: "", label: "None" },
+  container: { value: "", label: "" },
   duration: { label: "Last 30 min", value: 1800 },
 });
 /*global Nullable */
@@ -178,26 +178,30 @@ const rangeTime = computed(() => {
   };
 });
 
-init();
-async function init() {
+onMounted(() => {
   fetchSelectors();
-  await searchLogs();
-}
+});
+
 async function fetchSelectors() {
-  if (dashboardStore.entity === EntityType[3].value) {
-    state.instance = this.selectorStore.currentInstance || {};
-  } else {
+  if (dashboardStore.entity !== EntityType[3].value) {
     await getInstances();
   }
   getContainers();
+  if (intervalFn.value) {
+    clearInterval(intervalFn.value);
+  }
 }
 async function getContainers() {
-  const resp = await demandLogStore.getContainers(state.instance.id || "");
+  const resp = await demandLogStore.getContainers(
+    state.instance.id || selectorStore.currentPod.id || ""
+  );
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.container = demandLogStore.containers[0];
+  if (demandLogStore.containers.length) {
+    state.container = demandLogStore.containers[0];
+  }
 }
 async function getInstances() {
   const resp = await demandLogStore.getInstances();
@@ -212,22 +216,27 @@ function runInterval() {
     clearInterval(intervalFn.value);
     return;
   }
+  searchLogs();
   intervalFn.value = setInterval(searchLogs, intervalTime.value * 1000);
   setTimeout(() => {
     clearInterval(intervalFn.value);
   }, state.duration * 1000);
 }
 function searchLogs() {
-  let instance = "";
+  let instance = state.instance.id;
   if (dashboardStore.entity === EntityType[3].value) {
     instance = selectorStore.currentPod.id;
   }
   demandLogStore.setLogCondition({
     serviceInstanceId: instance || state.instance.id || "",
     container: state.container.value,
-    queryDuration: rangeTime.value,
-    keywordsOfContent: keywordsOfContent.value,
-    excludingKeywordsOfContent: excludingKeywordsOfContent.value,
+    duration: rangeTime.value,
+    keywordsOfContent: keywordsOfContent.value.length
+      ? keywordsOfContent.value
+      : undefined,
+    excludingKeywordsOfContent: excludingKeywordsOfContent.value.length
+      ? excludingKeywordsOfContent.value
+      : undefined,
   });
   queryLogs();
 }
@@ -244,6 +253,9 @@ function changeField(type: string, opt: any) {
     return;
   }
   state[type] = opt[0];
+  if (type === "instance") {
+    getContainers();
+  }
 }
 function removeContent(index: number) {
   const keywordsOfContentList = keywordsOfContent.value || [];
@@ -288,7 +300,7 @@ watch(
   () => selectorStore.currentService,
   () => {
     if (dashboardStore.entity === EntityType[0].value) {
-      init();
+      fetchSelectors();
     }
   }
 );
@@ -296,7 +308,7 @@ watch(
   () => [selectorStore.currentPod],
   () => {
     if (dashboardStore.entity === EntityType[3].value) {
-      init();
+      fetchSelectors();
     }
   }
 );

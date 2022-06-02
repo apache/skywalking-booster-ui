@@ -19,7 +19,7 @@ import { DurationTime } from "./app";
 export interface Conditions {
   container: string;
   serviceInstanceId: string;
-  queryDuration: DurationTime;
+  duration: DurationTime;
   keywordsOfContent?: string[];
   excludingKeywordsOfContent?: string;
 }

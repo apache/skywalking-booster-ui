@@ -17,6 +17,6 @@
 
 import { queryContainers, queryStreamingLogs } from "../fragments/demand-log";
 
-export const fetchContainers = `query queryContainers(${queryContainers.variable}) {${queryContainers.query}}`;
+export const fetchContainers = `query listContainers(${queryContainers.variable}) {${queryContainers.query}}`;
 
-export const fetchDemandPodLogs = `query queryStreamingLogs(${queryStreamingLogs.variable}) {${queryStreamingLogs.query}}`;
+export const fetchDemandPodLogs = `query ondemandPodLogs(${queryStreamingLogs.variable}) {${queryStreamingLogs.query}}`;

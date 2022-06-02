@@ -35,12 +35,12 @@ interface DemandLogState {
 export const demandLogStore = defineStore({
   id: "demandLog",
   state: (): DemandLogState => ({
-    containers: [{ label: "Detail", value: "Detail" }],
+    containers: [{ label: "istio-proxy", value: "istio-proxy" }],
     instances: [{ value: "", label: "" }],
     conditions: {
       container: "",
       serviceInstanceId: "",
-      queryDuration: useAppStoreWithOut().durationTime,
+      duration: useAppStoreWithOut().durationTime,
     },
     selectorStore: useSelectorStore(),
     logs: [],
@@ -66,12 +66,12 @@ export const demandLogStore = defineStore({
       return res.data;
     },
     async getContainers(serviceInstanceId: string) {
-      if (!this.selectorStore.currentService) {
-        return new Promise((resolve) => resolve({ errors: "No service" }));
+      if (!serviceInstanceId) {
+        return new Promise((resolve) =>
+          resolve({ errors: "No service instance" })
+        );
       }
-      const serviceId = this.selectorStore.currentService.id;
       const condition = {
-        serviceId,
         serviceInstanceId,
       };
       const res: AxiosResponse = await graphql
@@ -81,10 +81,7 @@ export const demandLogStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.containers =
-        res.data.data.containers.containers.map((d: string) => {
-          return { label: d, value: d };
-        }) || [];
+      this.containers = [{ label: "istio-proxy", value: "istio-proxy" }];
       return res.data;
     },
     async getDemandLogs() {
