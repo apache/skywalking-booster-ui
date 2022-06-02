@@ -378,20 +378,16 @@ function toggleColumSelector() {
   showColumList.value = !showColumList.value;
   setSearchTerm("column");
 }
-function hideColumns(column: any) {
-  selectedColumns.value.push(column.value);
-  logStore.hideColumns(selectedColumns.value);
-  selectedColumns.value = [];
+function hideColumns(column: string) {
+  logStore.hideColumns(column.value);
+}
+function showColumns(column: string) {
+  logStore.showColumns(column.value);
 }
 function hideTags() {
   let tagsWrap = document.querySelector(".el-select__tags");
   if (!tagsWrap) return;
   tagsWrap.style.display = "none";
-}
-function showColumns(column: any) {
-  selectedColumns.value.push(column.value);
-  logStore.showColumns(selectedColumns.value);
-  selectedColumns.value = [];
 }
 async function init() {
   const resp = await logStore.getLogsByKeywords();
