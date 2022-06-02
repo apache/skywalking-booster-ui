@@ -28,3 +28,7 @@ export interface DurationTime {
   end: string;
   step: string;
 }
+export type Paging = {
+  pageNum: number;
+  pageSize: number;
+};

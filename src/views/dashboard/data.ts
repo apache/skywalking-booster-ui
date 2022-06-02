@@ -186,6 +186,7 @@ export const ServiceTools = [
   { name: "timeline", content: "Trace Profiling", id: "addProfile" },
   { name: "insert_chart", content: "eBPF Profiling", id: "addEbpf" },
   { name: "assignment", content: "Log", id: "addLog" },
+  { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
 ];
 export const InstanceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
@@ -193,6 +194,7 @@ export const InstanceTools = [
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
+  { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
 ];
 export const EndpointTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
