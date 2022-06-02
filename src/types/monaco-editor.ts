@@ -14,4 +14,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-declare module "monaco-editor/esm/vs/editor/editor.main.js";
+declare module "monaco-editor";
