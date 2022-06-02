@@ -16,13 +16,12 @@ limitations under the License. -->
   <div
     class="log-content"
     ref="logContent"
-    style="width: 100%; height: calc(100% - 140px)"
+    style="width: calc(100% - 60px); height: calc(100% - 170px)"
   ></div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, onUnmounted } from "vue";
+import { onMounted, ref, onUnmounted, watch, toRaw } from "vue";
 import { useDemandLogStore } from "@/store/modules/demand-log";
-import { Log } from "@/types/demand-log";
 
 /*global Nullable */
 const demandLogStore = useDemandLogStore();
@@ -30,24 +29,46 @@ const monacoInstance = ref();
 const logContent = ref<Nullable<HTMLDivElement>>(null);
 
 onMounted(async () => {
-  const monaco = await import("monaco-editor/esm/vs/editor/editor.api");
+  const monaco = await import("monaco-editor");
   monacoInstanceGen(monaco);
+  window.addEventListener("resize", () => {
+    editorLayout();
+  });
 });
 function monacoInstanceGen(monaco: any) {
-  const value = demandLogStore.logs.map((d: Log) => d.content).join("\n");
-  monaco.languages.register({ id: "custom" });
   monacoInstance.value = monaco.editor.create(logContent.value, {
-    value: "console.log(123)", // value
-    language: "javascript",
+    value: "",
+    language: "text",
+    wordWrap: true,
+    minimap: { enabled: false },
+  });
+}
+function editorLayout() {
+  if (!logContent.value) {
+    return;
+  }
+  const { width, height } = logContent.value.getBoundingClientRect();
+  toRaw(monacoInstance.value).layout({
+    height: height,
+    width: width,
   });
 }
 onUnmounted(() => {
+  toRaw(monacoInstance.value).dispose();
   monacoInstance.value = null;
+  window.removeEventListener("resize", editorLayout);
 });
+watch(
+  () => demandLogStore.logs,
+  () => {
+    toRaw(monacoInstance.value).setValue(demandLogStore.logs);
+  }
+);
 </script>
 <style lang="scss" scoped>
 .log-content {
   min-width: 600px;
   min-height: 400px;
+  // overflow: auto;
 }
 </style>

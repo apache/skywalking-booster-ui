@@ -35,7 +35,7 @@ interface DemandLogState {
 export const demandLogStore = defineStore({
   id: "demandLog",
   state: (): DemandLogState => ({
-    containers: [{ label: "istio-proxy", value: "istio-proxy" }],
+    containers: [{ label: "", value: "" }],
     instances: [{ value: "", label: "" }],
     conditions: {
       container: "",
@@ -81,7 +81,12 @@ export const demandLogStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.containers = [{ label: "istio-proxy", value: "istio-proxy" }];
+      if (res.data.data.containers.errorReason) {
+        return res.data;
+      }
+      this.containers = res.data.data.containers.containers.map((d: string) => {
+        return { label: d, value: d };
+      });
       return res.data;
     },
     async getDemandLogs() {
@@ -94,7 +99,7 @@ export const demandLogStore = defineStore({
         return res.data;
       }
 
-      this.logs = res.data.data.queryLogs.logs;
+      this.logs = res.data.data.logs.logs.map((d: Log) => d.content).join("\n");
       return res.data;
     },
   },

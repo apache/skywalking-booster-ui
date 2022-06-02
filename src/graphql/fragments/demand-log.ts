@@ -18,13 +18,17 @@
 export const queryContainers = {
   variable: "$condition: OndemandContainergQueryCondition!",
   query: `
-  containers: listContainers(condition: $condition)`,
+  containers: listContainers(condition: $condition) {
+    errorReason
+    containers
+  }`,
 };
 
 export const queryStreamingLogs = {
   variable: "$condition: OndemandLogQueryCondition",
   query: `
   logs: ondemandPodLogs(condition: $condition) {
+    errorReason
     logs {
       timestamp
       contentType

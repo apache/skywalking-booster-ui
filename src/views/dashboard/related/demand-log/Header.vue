@@ -124,7 +124,7 @@ limitations under the License. -->
       class="search-btn mt-10"
       size="small"
       type="primary"
-      @click="runInterval"
+      @click="searchLogs"
     >
       <Icon size="sm" iconName="retry" :loading="!!intervalFn" class="reload" />
       {{ intervalFn ? t("pause") : t("start") }}
