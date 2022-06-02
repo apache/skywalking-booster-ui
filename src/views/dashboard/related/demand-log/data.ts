@@ -21,8 +21,17 @@ export const TimeRanges = [
   { label: "Last 15 seconds", value: 15 },
   { label: "Last 30 seconds", value: 30 },
   { label: "Last 45 seconds", value: 45 },
-  { label: "Last 1 min", value: 60 },
-  { label: "Last 5 min", value: 300 },
-  { label: "Last 15 min", value: 900 },
-  { label: "Last 30 min", value: 1800 },
+  { label: "Last 1 minute", value: 60 },
+  { label: "Last 5 minute", value: 300 },
+  { label: "Last 15 minute", value: 900 },
+  { label: "Last 30 minute", value: 1800 },
+];
+export const IntervalOpts = [
+  { label: "None", value: 0 },
+  { label: "5 seconds", value: 5 },
+  { label: "10 seconds", value: 10 },
+  { label: "15 seconds", value: 15 },
+  { label: "30 seconds", value: 30 },
+  { label: "45 seconds", value: 45 },
+  { label: "1 minute", value: 60 },
 ];

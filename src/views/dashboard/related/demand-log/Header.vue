@@ -59,15 +59,12 @@ limitations under the License. -->
     </div>
     <div class="mr-5">
       <span class="grey mr-5">{{ t("interval") }}:</span>
-      <el-input-number
-        v-model="intervalTime"
-        :min="5"
-        :max="120"
+      <Selector
         size="small"
-        controls-position="right"
+        :value="state.interval.value"
+        :options="IntervalOpts"
         @change="changeField('interval', $event)"
       />
-      {{ t("seconds") }}
     </div>
   </div>
   <div class="flex-h row">
@@ -126,7 +123,12 @@ limitations under the License. -->
       type="primary"
       @click="runInterval"
     >
-      <Icon size="middle" iconName="retry" :loading="intervalFn" class="mr-5" />
+      <Icon
+        size="middle"
+        iconName="retry"
+        :loading="!!intervalFn"
+        class="mr-5"
+      />
       {{ intervalFn ? t("pause") : t("start") }}
     </el-button>
   </div>
@@ -140,7 +142,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
-import { TimeRanges } from "./data";
+import { TimeRanges, IntervalOpts } from "./data";
 import getLocalTime from "@/utils/localtime";
 import dateFormatStep from "@/utils/dateFormat";
 
@@ -154,11 +156,11 @@ const excludingKeywordsOfContent = ref<string[]>([]);
 const contentStr = ref<string>("");
 const excludingContentStr = ref<string>("");
 // const limit = ref<number>(20);
-const intervalTime = ref<number>(30);
 const state = reactive<any>({
   instance: { value: "", label: "" },
   container: { value: "", label: "" },
   duration: { label: "Last 30 min", value: 1800 },
+  interval: { label: "30 seconds", value: 30 },
 });
 /*global Nullable */
 const intervalFn = ref<Nullable<any>>(null);
@@ -217,7 +219,10 @@ function runInterval() {
     return;
   }
   searchLogs();
-  intervalFn.value = setInterval(searchLogs, intervalTime.value * 1000);
+  if (state.interval.value === 0) {
+    return;
+  }
+  intervalFn.value = setInterval(searchLogs, state.interval.value * 1000);
   setTimeout(() => {
     clearTimer();
   }, state.duration.value * 1000);
@@ -248,10 +253,10 @@ async function queryLogs() {
 }
 function changeField(type: string, opt: any) {
   clearTimer();
-  if (["limit", "interval"].includes(type)) {
-    state[type] = opt;
-    return;
-  }
+  // if (["limit"].includes(type)) {
+  //   state[type] = opt;
+  //   return;
+  // }
   state[type] = opt[0];
   if (type === "instance") {
     getContainers();
@@ -310,8 +315,8 @@ watch(
   () => selectorStore.currentService,
   () => {
     if (dashboardStore.entity === EntityType[0].value) {
-      demandLogStore.setLogs("");
       fetchSelectors();
+      demandLogStore.setLogs("");
     }
   }
 );
@@ -319,8 +324,8 @@ watch(
   () => [selectorStore.currentPod],
   () => {
     if (dashboardStore.entity === EntityType[3].value) {
-      demandLogStore.setLogs("");
       fetchSelectors();
+      demandLogStore.setLogs("");
     }
   }
 );

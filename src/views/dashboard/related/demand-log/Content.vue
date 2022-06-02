@@ -57,9 +57,11 @@ function editorLayout() {
   });
 }
 onUnmounted(() => {
+  if (!toRaw(monacoInstance.value)) {
+    return;
+  }
   toRaw(monacoInstance.value).dispose();
   monacoInstance.value = null;
-  window.removeEventListener("resize", editorLayout);
 });
 watch(
   () => demandLogStore.logs,
