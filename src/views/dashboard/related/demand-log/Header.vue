@@ -55,6 +55,7 @@ limitations under the License. -->
         :options="TimeRanges"
         placeholder="Select a time range"
         @change="changeField('duration', $event)"
+        class="duration-range"
       />
     </div>
     <div class="mr-5">
@@ -159,7 +160,7 @@ const excludingContentStr = ref<string>("");
 const state = reactive<any>({
   instance: { value: "", label: "" },
   container: { value: "", label: "" },
-  duration: { label: "Last 30 min", value: 1800 },
+  duration: { label: "From 30 minutes ago", value: 1800 },
   interval: { label: "30 seconds", value: 30 },
 });
 /*global Nullable */
@@ -394,6 +395,10 @@ watch(
 
 .selectors {
   width: 250px;
+}
+
+.duration-range {
+  width: 210px;
 }
 
 .btn-row {

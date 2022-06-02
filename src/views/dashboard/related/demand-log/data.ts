@@ -16,15 +16,15 @@
  */
 
 export const TimeRanges = [
-  { label: "Last 5 seconds", value: 5 },
-  { label: "Last 10 seconds", value: 10 },
-  { label: "Last 15 seconds", value: 15 },
-  { label: "Last 30 seconds", value: 30 },
-  { label: "Last 45 seconds", value: 45 },
-  { label: "Last 1 minute", value: 60 },
-  { label: "Last 5 minute", value: 300 },
-  { label: "Last 15 minute", value: 900 },
-  { label: "Last 30 minute", value: 1800 },
+  { label: "From 5 seconds ago -- Now", value: 5 },
+  { label: "From 10 seconds ago -- Now", value: 10 },
+  { label: "From 15 seconds ago -- Now", value: 15 },
+  { label: "From 30 seconds ago -- Now", value: 30 },
+  { label: "From 45 seconds ago -- Now", value: 45 },
+  { label: "From 1 minute ago -- Now", value: 60 },
+  { label: "From 5 minutes ago -- Now", value: 300 },
+  { label: "From 15 minutes ago -- Now", value: 900 },
+  { label: "From 30 minutes ago -- Now", value: 1800 },
 ];
 export const IntervalOpts = [
   { label: "None", value: 0 },
