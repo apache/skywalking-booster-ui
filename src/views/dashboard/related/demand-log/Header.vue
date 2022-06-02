@@ -36,7 +36,7 @@ limitations under the License. -->
         class="selectors"
       />
     </div>
-    <div class="mr-5">
+    <!-- <div class="mr-5">
       <span class="grey mr-5">{{ t("limit") }}:</span>
       <el-input-number
         v-model="limit"
@@ -46,7 +46,7 @@ limitations under the License. -->
         controls-position="right"
         @change="changeField('limit', $event)"
       />
-    </div>
+    </div> -->
     <div class="mr-5">
       <span class="grey mr-5">{{ t("duration") }}:</span>
       <Selector
@@ -61,7 +61,7 @@ limitations under the License. -->
       <span class="grey mr-5">{{ t("interval") }}:</span>
       <el-input-number
         v-model="intervalTime"
-        :min="1"
+        :min="5"
         :max="120"
         size="small"
         controls-position="right"
@@ -114,7 +114,7 @@ limitations under the License. -->
       />
       <el-tooltip :content="t('keywordsOfContentLogTips')">
         <span class="log-tips">
-          <Icon icon="help" class="mr-5" />
+          <Icon size="middle" iconName="help" class="ml-5 help" />
         </span>
       </el-tooltip>
     </div>
@@ -124,15 +124,15 @@ limitations under the License. -->
       class="search-btn mt-10"
       size="small"
       type="primary"
-      @click="searchLogs"
+      @click="runInterval"
     >
-      <Icon size="sm" iconName="retry" :loading="!!intervalFn" class="reload" />
+      <Icon size="middle" iconName="retry" :loading="intervalFn" class="mr-5" />
       {{ intervalFn ? t("pause") : t("start") }}
     </el-button>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, computed, onMounted } from "vue";
+import { ref, reactive, watch, computed, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDemandLogStore } from "@/store/modules/demand-log";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -153,8 +153,8 @@ const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
 const contentStr = ref<string>("");
 const excludingContentStr = ref<string>("");
-const limit = ref<number>(1);
-const intervalTime = ref<number>(1);
+// const limit = ref<number>(20);
+const intervalTime = ref<number>(30);
 const state = reactive<any>({
   instance: { value: "", label: "" },
   container: { value: "", label: "" },
@@ -188,7 +188,7 @@ async function fetchSelectors() {
   }
   getContainers();
   if (intervalFn.value) {
-    clearInterval(intervalFn.value);
+    clearTimer();
   }
 }
 async function getContainers() {
@@ -213,14 +213,14 @@ async function getInstances() {
 }
 function runInterval() {
   if (intervalFn.value) {
-    clearInterval(intervalFn.value);
+    clearTimer();
     return;
   }
   searchLogs();
   intervalFn.value = setInterval(searchLogs, intervalTime.value * 1000);
   setTimeout(() => {
-    clearInterval(intervalFn.value);
-  }, state.duration * 1000);
+    clearTimer();
+  }, state.duration.value * 1000);
 }
 function searchLogs() {
   let instance = state.instance.id;
@@ -247,7 +247,7 @@ async function queryLogs() {
   }
 }
 function changeField(type: string, opt: any) {
-  clearInterval(intervalFn.value);
+  clearTimer();
   if (["limit", "interval"].includes(type)) {
     state[type] = opt;
     return;
@@ -264,7 +264,7 @@ function removeContent(index: number) {
     keywordsOfContent: keywordsOfContentList,
   });
   contentStr.value = "";
-  clearInterval(intervalFn.value);
+  clearTimer();
 }
 function addLabels(type: string) {
   if (type === "keywordsOfContent" && !contentStr.value) {
@@ -286,7 +286,7 @@ function addLabels(type: string) {
     });
     excludingContentStr.value = "";
   }
-  clearInterval(intervalFn.value);
+  clearTimer();
 }
 function removeExcludeContent(index: number) {
   excludingKeywordsOfContent.value.splice(index, 1);
@@ -294,12 +294,23 @@ function removeExcludeContent(index: number) {
     excludingKeywordsOfContent: excludingKeywordsOfContent.value,
   });
   excludingContentStr.value = "";
-  clearInterval(intervalFn.value);
+  clearTimer();
 }
+function clearTimer() {
+  if (!intervalFn.value) {
+    return;
+  }
+  clearInterval(intervalFn.value);
+  intervalFn.value = null;
+}
+onUnmounted(() => {
+  clearTimer();
+});
 watch(
   () => selectorStore.currentService,
   () => {
     if (dashboardStore.entity === EntityType[0].value) {
+      demandLogStore.setLogs("");
       fetchSelectors();
     }
   }
@@ -308,6 +319,7 @@ watch(
   () => [selectorStore.currentPod],
   () => {
     if (dashboardStore.entity === EntityType[3].value) {
+      demandLogStore.setLogs("");
       fetchSelectors();
     }
   }
@@ -334,7 +346,7 @@ watch(
 
 .search-btn {
   cursor: pointer;
-  width: 220px;
+  width: 120px;
 }
 
 .tips {
@@ -383,7 +395,8 @@ watch(
   justify-content: flex-end;
 }
 
-.reload {
-  margin-right: 3px;
+.help {
+  color: #999;
+  cursor: pointer;
 }
 </style>

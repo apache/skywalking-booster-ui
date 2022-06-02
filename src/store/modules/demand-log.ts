@@ -1,3 +1,4 @@
+import { ElMessage } from "element-plus";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -30,6 +31,7 @@ interface DemandLogState {
   selectorStore: any;
   logs: Log[];
   loadLogs: boolean;
+  message: string;
 }
 
 export const demandLogStore = defineStore({
@@ -45,10 +47,15 @@ export const demandLogStore = defineStore({
     selectorStore: useSelectorStore(),
     logs: [],
     loadLogs: false,
+    message: "",
   }),
   actions: {
     setLogCondition(data: Conditions) {
       this.conditions = { ...this.conditions, ...data };
+    },
+    setLogs(logs: Log[], message?: string) {
+      this.logs = logs;
+      this.message = message || "";
     },
     async getInstances(id: string) {
       const serviceId = this.selectorStore.currentService
@@ -82,6 +89,7 @@ export const demandLogStore = defineStore({
         return res.data;
       }
       if (res.data.data.containers.errorReason) {
+        this.containers = [{ label: "", value: "" }];
         return res.data;
       }
       this.containers = res.data.data.containers.containers.map((d: string) => {
@@ -98,8 +106,14 @@ export const demandLogStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-
-      this.logs = res.data.data.logs.logs.map((d: Log) => d.content).join("\n");
+      if (res.data.data.logs.errorReason) {
+        this.setLogs("", res.data.data.logs.errorReason);
+        return res.data;
+      }
+      const logs = res.data.data.logs.logs
+        .map((d: Log) => d.content)
+        .join("\n");
+      this.setLogs(logs);
       return res.data;
     },
   },

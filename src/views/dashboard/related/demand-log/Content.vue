@@ -14,10 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div
+    v-loading="demandLogStore.loadLogs"
     class="log-content"
     ref="logContent"
-    style="width: calc(100% - 60px); height: calc(100% - 170px)"
-  ></div>
+    style="width: calc(100% - 10px); height: calc(100% - 140px)"
+  >
+    <span v-if="demandLogStore.message">{{ demandLogStore.message }}</span>
+  </div>
 </template>
 <script lang="ts" setup>
 import { onMounted, ref, onUnmounted, watch, toRaw } from "vue";
@@ -69,6 +72,5 @@ watch(
 .log-content {
   min-width: 600px;
   min-height: 400px;
-  // overflow: auto;
 }
 </style>
