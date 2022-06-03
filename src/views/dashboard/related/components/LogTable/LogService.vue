@@ -69,6 +69,7 @@ function showSelectSpan() {
   emit("select", props.data);
 }
 </script>
+
 <style lang="scss" scoped>
 .log-item {
   white-space: nowrap;

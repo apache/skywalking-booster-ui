@@ -364,13 +364,9 @@ const arrayOfFilters = ref<filtersObject[]>([
 ]);
 onMounted(() => {
   if (portal) {
-    logStore.hideColumns([
-      "endpoint",
-      "time",
-      "contentType",
-      "tags",
-      "traceID",
-    ]);
+    ["endpoint", "time", "contentType", "tags", "traceID"].forEach((col) =>
+      logStore.hideColumns(col)
+    );
   }
 });
 init();
@@ -380,9 +376,11 @@ function toggleColumSelector() {
 }
 function hideColumns(column: string) {
   logStore.hideColumns(column.value);
+  selectedColumns.value = [];
 }
 function showColumns(column: string) {
   logStore.showColumns(column.value);
+  selectedColumns.value = [];
 }
 function hideTags() {
   let tagsWrap = document.querySelector(".el-select__tags");
@@ -572,6 +570,11 @@ function removeExcludeContent(index: number) {
 }
 function setSearchTerm(term: string) {
   currentSearchTerm.value = term;
+  if (term === "column") {
+    setTimeout(() => {
+      hideTags();
+    }, 200);
+  }
 }
 function cancelSearchTerm() {
   switch (currentSearchTerm.value) {
@@ -730,7 +733,7 @@ watch(
   width: 100%;
   padding: 0 32px 0 20px;
 }
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after{
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
   display: none;
 }
 </style>

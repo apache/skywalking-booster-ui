@@ -67,7 +67,6 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-// import { ServiceLogConstants, BrowserLogConstants } from "./data";
 import LogBrowser from "./LogBrowser.vue";
 import LogService from "./LogService.vue";
 import LogDetail from "./LogDetail.vue";
