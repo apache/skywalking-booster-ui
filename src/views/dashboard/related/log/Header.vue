@@ -17,27 +17,29 @@ limitations under the License. -->
     <div v-if="currentSearchTerm === 'column'" class="flex-h items-center mr-5">
       <!-- <p style="margin-right: 10px">Select visible columns</p> -->
       <el-dropdown class="dark" :hide-on-click="false">
-        <span class="el-dropdown-link">
+        <span class="cursor-pointer">
           Select visible columns<el-icon class="el-icon--right"
             ><arrow-down
           /></el-icon>
         </span>
         <template #dropdown>
-          <el-dropdown-menu class="dropdownSelector" >
+          <el-dropdown-menu class="dropdownSelector">
             <el-dropdown-item>
               <div
                 style="width: 100%"
                 class="flex-h items-center justify-between"
               >
-                <span style="margin-right: 10px">Show All</span>
                 <el-checkbox :checked="showAllColumns" size="large" />
+                <span style="margin-right: 10px">Show All</span>
               </div>
             </el-dropdown-item>
             <el-dropdown-item
               v-for="item in logStore.serviceLogColumn"
               :key="item.value"
             >
-            <el-checkbox v-model="item.isVisible" :label="item.value" fill="success"  />
+              <el-checkbox class="custom-checkbox" v-model="item.isVisible">
+                <span>{{ item.value }}</span>
+              </el-checkbox>
               <!-- <div
                 style="width: 100%"
                 class="flex-h items-center justify-between"
@@ -623,7 +625,7 @@ watch(
 );
 </script>
 <style lang="scss" scoped>
-.dropdownSelector{
+.dropdownSelector {
   background: var(--nice-black);
 }
 .el-dropdown-link {
@@ -631,6 +633,14 @@ watch(
   color: var(--el-color-primary);
   display: flex;
   align-items: center;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.custom-checkbox .el-checkbox__input.is-checked + .el-checkbox__label,
+.custom-checkbox .el-checkbox__label {
+  color: var(--spp-white) !important;
 }
 // .log-wrapper {
 //   width: 600px;
