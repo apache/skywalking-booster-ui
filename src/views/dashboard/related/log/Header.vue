@@ -24,16 +24,27 @@ limitations under the License. -->
         </span>
         <template #dropdown>
           <el-dropdown-menu class="dropdownSelector">
+            <el-dropdown-item >
+              <div
+                style="width: 100%"
+                class="flex-h items-center justify-between"
+                @click="showAllColumns = true"
+              >
+                <el-icon><View /></el-icon>
+                <span style="margin-right: 10px">Show All</span>
+              </div>
+            </el-dropdown-item>
             <el-dropdown-item>
               <div
                 style="width: 100%"
                 class="flex-h items-center justify-between"
+                @click="showAllColumns = false"
               >
-                <!-- <el-checkbox v-model="showAllColumns" size="large"> -->
-                  <span style="margin-right: 10px">Show All</span>
-                <!-- </el-checkbox> -->
+                <el-icon><Hide /></el-icon>
+                <span style="margin-right: 10px">Hide All</span>
               </div>
             </el-dropdown-item>
+            <el-dropdown-item divided></el-dropdown-item>
             <el-dropdown-item
               v-for="item in logStore.serviceLogColumn"
               :key="item.value"
@@ -259,7 +270,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ArrowDown } from "@element-plus/icons-vue";
+import { ArrowDown, View, Hide } from "@element-plus/icons-vue";
 import { ref, reactive, watch, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
@@ -366,14 +377,7 @@ function toggleColumSelector() {
   showColumList.value = !showColumList.value;
   setSearchTerm("column");
 }
-function hideColumns(column: string) {
-  logStore.hideColumns(column.value);
-  selectedColumns.value = [];
-}
-function showColumns(column: string) {
-  logStore.showColumns(column.value);
-  selectedColumns.value = [];
-}
+
 function hideTags() {
   let tagsWrap = document.querySelector(".el-select__tags");
   if (!tagsWrap) return;
@@ -624,12 +628,12 @@ watch(
     }
   }
 );
-watch( 
-  () => showAllColumns.value, 
+watch(
+  () => showAllColumns.value,
   (newVal, oldVal) => {
-   console.log("New:", newVal, "Old:", oldVal)
-   logStore.toggleAllColumns(newVal)
-})
+    logStore.toggleAllColumns(newVal);
+  }
+);
 </script>
 <style lang="scss" scoped>
 .dropdownSelector {
