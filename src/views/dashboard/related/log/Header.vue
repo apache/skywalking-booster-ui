@@ -29,8 +29,9 @@ limitations under the License. -->
                 style="width: 100%"
                 class="flex-h items-center justify-between"
               >
-                <el-checkbox :checked="showAllColumns" size="large" />
-                <span style="margin-right: 10px">Show All</span>
+                <!-- <el-checkbox v-model="showAllColumns" size="large"> -->
+                  <span style="margin-right: 10px">Show All</span>
+                <!-- </el-checkbox> -->
               </div>
             </el-dropdown-item>
             <el-dropdown-item
@@ -623,6 +624,12 @@ watch(
     }
   }
 );
+watch( 
+  () => showAllColumns.value, 
+  (newVal, oldVal) => {
+   console.log("New:", newVal, "Old:", oldVal)
+   logStore.toggleAllColumns(newVal)
+})
 </script>
 <style lang="scss" scoped>
 .dropdownSelector {

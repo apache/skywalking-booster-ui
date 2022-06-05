@@ -64,16 +64,21 @@ export const logStore = defineStore({
     showColumns(columnsLabel: string) {
       this.serviceLogColumn.forEach((col: any) => {
         if (columnsLabel === col.value) {
-          col.isVisible = true
+          col.isVisible = true;
         }
-      })
+      });
     },
     hideColumns(columnsLabel: string) {
       this.serviceLogColumn.forEach((col: any) => {
         if (columnsLabel === col.value) {
-          col.isVisible = false
+          col.isVisible = false;
         }
-      })
+      });
+    },
+    toggleAllColumns(status: boolean) {
+      this.serviceLogColumn.forEach((col: any) => {
+        col.isVisible = status;
+      });
     },
     setLogCondition(data: any) {
       this.conditions = { ...this.conditions, ...data };
