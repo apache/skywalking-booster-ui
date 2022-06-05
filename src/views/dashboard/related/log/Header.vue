@@ -37,13 +37,14 @@ limitations under the License. -->
               v-for="item in logStore.serviceLogColumn"
               :key="item.value"
             >
-              <div
+            <el-checkbox v-model="item.isVisible" :label="item.value" fill="success"  />
+              <!-- <div
                 style="width: 100%"
                 class="flex-h items-center justify-between"
               >
                 <span style="margin-right: 10px">{{ t(item.value) }}</span>
                 <el-checkbox v-model="item.isVisible" size="large" />
-              </div>
+              </div> -->
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -622,6 +623,9 @@ watch(
 );
 </script>
 <style lang="scss" scoped>
+.dropdownSelector{
+  background: var(--nice-black);
+}
 .el-dropdown-link {
   cursor: pointer;
   color: var(--el-color-primary);
