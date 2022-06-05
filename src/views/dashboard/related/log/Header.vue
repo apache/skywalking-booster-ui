@@ -24,7 +24,7 @@ limitations under the License. -->
         </span>
         <template #dropdown>
           <el-dropdown-menu class="dropdownSelector">
-            <el-dropdown-item >
+            <el-dropdown-item>
               <div
                 style="width: 100%"
                 class="flex-h items-center justify-between"
@@ -291,7 +291,7 @@ const { portal } = useRoute().query;
 const logStore = useLogStore();
 const selectedColumns = ref<any[]>([]);
 const showColumList = ref<boolean>(false);
-const showAllColumns = ref<boolean>(false);
+const showAllColumns = ref<boolean | null>(null);
 const traceId = ref<string>("");
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
