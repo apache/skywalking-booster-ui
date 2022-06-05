@@ -15,7 +15,7 @@ limitations under the License. -->
 
 <template>
   <div class="log">
-    <div :class="{ 'd-flex': visibleColumns.length < 6 }" class="log-header">
+    <div :class="{ 'd-flex': visibleColumns.length < 6 }" class="log-header">      
       <template v-for="(item, index) in columns">
         <template v-if="item.isVisible">
           <div

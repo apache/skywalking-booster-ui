@@ -15,53 +15,33 @@ limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
     <div v-if="currentSearchTerm === 'column'" class="flex-h items-center mr-5">
-      <p style="margin-right: 10px">Select visible columns</p>
-      <el-select
-        id="columnSelector"
-        v-model="selectedColumns"
-        multiple
-        placeholder="Select"
-        style="width: 240px"
-        size="small"
-        @change="hideTags"
-      >
-        <el-option
-          v-for="item in logStore.serviceLogColumn"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-          <div
-            style="justify-content: space-between"
-            class="flex-h items-center"
-          >
-            <span class="mr-5">{{ item.value }}</span>
-            <div class="flex-h items-center">
-              <el-tooltip
-                class="box-item"
-                effect="dark"
-                :content="item.isVisible ? 'Hide column' : 'Show Column'"
-                placement="right-start"
+      <!-- <p style="margin-right: 10px">Select visible columns</p> -->
+      <el-dropdown :hide-on-click="false">
+        <span class="el-dropdown-link">
+          Select visible columns<el-icon class="el-icon--right"
+            ><arrow-down
+          /></el-icon>
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu class="dark">
+            <div class="">Test it all</div>
+            <el-dropdown-item
+              v-for="item in logStore.serviceLogColumn"
+              :key="item.value"
+            >
+              <div
+                style="width: 100%"
+                class="flex-h items-center justify-between"
               >
-                <el-button
-                  v-if="item.isVisible"
-                  class="toggle-btn mx-3"
-                  @click="hideColumns(item)"
-                >
-                  <Icon iconSize="sm" iconName="cancel" />
-                </el-button>
-                <el-button
-                  v-else
-                  class="toggle-btn mx-3"
-                  @click="showColumns(item)"
-                >
-                  <Icon iconSize="sm" iconName="add" />
-                </el-button>
-              </el-tooltip>
-            </div>
-          </div>
-        </el-option>
-      </el-select>
+                <span style="margin-left: 10px; display: block">{{
+                  t(item.value)
+                }}</span>
+                <el-checkbox :checked="item.isVisible" size="large" />
+              </div>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
       <el-button class="toggle-btn mx-3danger" @click="setSearchTerm('')">
         <Icon iconSize="sm" iconName="cancel" />
       </el-button>
@@ -269,6 +249,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import { ArrowDown } from "@element-plus/icons-vue";
 import { ref, reactive, watch, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
@@ -634,6 +615,12 @@ watch(
 );
 </script>
 <style lang="scss" scoped>
+.el-dropdown-link {
+  cursor: pointer;
+  color: var(--el-color-primary);
+  display: flex;
+  align-items: center;
+}
 // .log-wrapper {
 //   width: 600px;
 //   padding-left: 40px;
@@ -645,6 +632,9 @@ watch(
 }
 .items-center {
   align-items: center;
+}
+.justify-between {
+  justify-content: space-between;
 }
 .row {
   margin-bottom: 5px;
