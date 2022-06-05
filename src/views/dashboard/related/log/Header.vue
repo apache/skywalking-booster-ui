@@ -16,15 +16,23 @@ limitations under the License. -->
   <div class="flex-h log-wrapper">
     <div v-if="currentSearchTerm === 'column'" class="flex-h items-center mr-5">
       <!-- <p style="margin-right: 10px">Select visible columns</p> -->
-      <el-dropdown :hide-on-click="false">
+      <el-dropdown class="dark" :hide-on-click="false">
         <span class="el-dropdown-link">
           Select visible columns<el-icon class="el-icon--right"
             ><arrow-down
           /></el-icon>
         </span>
         <template #dropdown>
-          <el-dropdown-menu class="dark">
-            <div class="">Test it all</div>
+          <el-dropdown-menu class="dropdownSelector" >
+            <el-dropdown-item>
+              <div
+                style="width: 100%"
+                class="flex-h items-center justify-between"
+              >
+                <span style="margin-right: 10px">Show All</span>
+                <el-checkbox :checked="showAllColumns" size="large" />
+              </div>
+            </el-dropdown-item>
             <el-dropdown-item
               v-for="item in logStore.serviceLogColumn"
               :key="item.value"
@@ -33,10 +41,8 @@ limitations under the License. -->
                 style="width: 100%"
                 class="flex-h items-center justify-between"
               >
-                <span style="margin-left: 10px; display: block">{{
-                  t(item.value)
-                }}</span>
-                <el-checkbox :checked="item.isVisible" size="large" />
+                <span style="margin-right: 10px">{{ t(item.value) }}</span>
+                <el-checkbox v-model="item.isVisible" size="large" />
               </div>
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -270,6 +276,7 @@ const { portal } = useRoute().query;
 const logStore = useLogStore();
 const selectedColumns = ref<any[]>([]);
 const showColumList = ref<boolean>(false);
+const showAllColumns = ref<boolean>(false);
 const traceId = ref<string>("");
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
