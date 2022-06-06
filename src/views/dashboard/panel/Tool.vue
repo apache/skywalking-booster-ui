@@ -80,7 +80,7 @@ limitations under the License. -->
     </div>
     <div class="flex-h tools" v-loading="loading" v-if="!appStore.isMobile">
       <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
-        <el-dropdown content="Controls" placement="bottom">
+        <el-dropdown content="Controls" placement="bottom" :persistent="false">
           <i>
             <Icon class="icon-btn" size="sm" iconName="control" />
           </i>

@@ -40,7 +40,12 @@ limitations under the License. -->
         @change="changeAggregateType"
         class="selector mr-10"
       />
-      <el-popover placement="bottom" :width="680" trigger="click">
+      <el-popover
+        placement="bottom"
+        :width="680"
+        trigger="click"
+        :persistent="false"
+      >
         <template #reference>
           <el-button type="primary" size="small">
             {{ t("processSelect") }}
