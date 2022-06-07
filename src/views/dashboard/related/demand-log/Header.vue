@@ -165,21 +165,23 @@ const state = reactive<any>({
 });
 /*global Nullable */
 const intervalFn = ref<Nullable<any>>(null);
-const rangeTime = computed(() => {
-  const times = {
-    start: getLocalTime(
-      appStore.utc,
-      new Date(new Date().getTime() - state.duration.value * 1000)
-    ),
-    end: getLocalTime(appStore.utc, new Date()),
-    step: "SECOND",
-  };
-  return {
-    start: dateFormatStep(times.start, times.step, false),
-    end: dateFormatStep(times.end, times.step, false),
-    step: times.step,
-  };
-});
+function rangeTime() {
+  {
+    const times = {
+      start: getLocalTime(
+        appStore.utc,
+        new Date(new Date().getTime() - state.duration.value * 1000)
+      ),
+      end: getLocalTime(appStore.utc, new Date()),
+      step: "SECOND",
+    };
+    return {
+      start: dateFormatStep(times.start, times.step, false),
+      end: dateFormatStep(times.end, times.step, false),
+      step: times.step,
+    };
+  }
+}
 
 onMounted(() => {
   fetchSelectors();
@@ -236,7 +238,7 @@ function searchLogs() {
   demandLogStore.setLogCondition({
     serviceInstanceId: instance || state.instance.id || "",
     container: state.container.value,
-    duration: rangeTime.value,
+    duration: rangeTime(),
     keywordsOfContent: keywordsOfContent.value.length
       ? keywordsOfContent.value
       : undefined,
