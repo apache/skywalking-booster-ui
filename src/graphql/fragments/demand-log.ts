@@ -30,8 +30,6 @@ export const queryStreamingLogs = {
   logs: ondemandPodLogs(condition: $condition) {
     errorReason
     logs {
-      timestamp
-      contentType
       content
     }
   }`,

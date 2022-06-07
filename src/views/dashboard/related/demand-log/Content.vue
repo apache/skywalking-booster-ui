@@ -31,20 +31,25 @@ const demandLogStore = useDemandLogStore();
 const monacoInstance = ref();
 const logContent = ref<Nullable<HTMLDivElement>>(null);
 
-onMounted(async () => {
+onMounted(() => {
+  init();
+});
+async function init() {
   const monaco = await import("monaco-editor");
   monacoInstanceGen(monaco);
   window.addEventListener("resize", () => {
     editorLayout();
   });
-});
+}
 function monacoInstanceGen(monaco: any) {
   monacoInstance.value = monaco.editor.create(logContent.value, {
     value: "",
     language: "text",
     wordWrap: true,
     minimap: { enabled: false },
+    readonly: true,
   });
+  toRaw(monacoInstance.value).updateOptions({ readOnly: true });
 }
 function editorLayout() {
   if (!logContent.value) {
@@ -66,7 +71,19 @@ onUnmounted(() => {
 watch(
   () => demandLogStore.logs,
   () => {
+    if (!toRaw(monacoInstance.value)) {
+      return;
+    }
     toRaw(monacoInstance.value).setValue(demandLogStore.logs);
+    if (!demandLogStore.logs) {
+      return;
+    }
+    setTimeout(() => {
+      toRaw(monacoInstance.value).revealPosition({
+        column: 1,
+        lineNumber: demandLogStore.total,
+      });
+    }, 1000);
   }
 );
 </script>
