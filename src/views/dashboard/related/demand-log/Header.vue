@@ -110,11 +110,6 @@ limitations under the License. -->
         v-model="excludingContentStr"
         @change="addLabels('excludingKeywordsOfContent')"
       />
-      <el-tooltip :content="t('keywordsOfContentLogTips')">
-        <span class="log-tips">
-          <Icon size="middle" iconName="help" class="ml-5 help" />
-        </span>
-      </el-tooltip>
     </div>
   </div>
   <div class="flex-h row btn-row">
