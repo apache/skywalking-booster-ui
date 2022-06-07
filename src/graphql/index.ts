@@ -48,7 +48,7 @@ class Graphql {
   public params(variablesData: unknown): AxiosPromise<void> {
     return axios
       .post(
-        "/graphql",
+        "/graphql/dashboard",
         {
           query: query[this.queryData],
           variables: variablesData,
