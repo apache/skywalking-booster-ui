@@ -31,6 +31,7 @@ interface DemandLogState {
   logs: Log[];
   loadLogs: boolean;
   message: string;
+  total: number;
 }
 
 export const demandLogStore = defineStore({
@@ -47,6 +48,7 @@ export const demandLogStore = defineStore({
     logs: [],
     loadLogs: false,
     message: "",
+    total: 0,
   }),
   actions: {
     setLogCondition(data: Conditions) {
@@ -109,6 +111,7 @@ export const demandLogStore = defineStore({
         this.setLogs("", res.data.data.logs.errorReason);
         return res.data;
       }
+      this.total = res.data.data.logs.logs.length;
       const logs = res.data.data.logs.logs
         .map((d: Log) => d.content)
         .join("\n");

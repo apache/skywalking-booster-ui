@@ -135,7 +135,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, computed, onMounted, onUnmounted } from "vue";
+import { ref, reactive, watch, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDemandLogStore } from "@/store/modules/demand-log";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -165,23 +165,6 @@ const state = reactive<any>({
 });
 /*global Nullable */
 const intervalFn = ref<Nullable<any>>(null);
-function rangeTime() {
-  {
-    const times = {
-      start: getLocalTime(
-        appStore.utc,
-        new Date(new Date().getTime() - state.duration.value * 1000)
-      ),
-      end: getLocalTime(appStore.utc, new Date()),
-      step: "SECOND",
-    };
-    return {
-      start: dateFormatStep(times.start, times.step, false),
-      end: dateFormatStep(times.end, times.step, false),
-      step: times.step,
-    };
-  }
-}
 
 onMounted(() => {
   fetchSelectors();
@@ -197,8 +180,16 @@ async function fetchSelectors() {
   }
 }
 async function getContainers() {
+  if (
+    !(
+      state.instance.id ||
+      (selectorStore.currentPod && selectorStore.currentPod.id)
+    )
+  ) {
+    return;
+  }
   const resp = await demandLogStore.getContainers(
-    state.instance.id || selectorStore.currentPod.id || ""
+    state.instance.id || selectorStore.currentPod.id
   );
   if (resp.errors) {
     ElMessage.error(resp.errors);
@@ -231,12 +222,14 @@ function runInterval() {
   }, state.duration.value * 1000);
 }
 function searchLogs() {
-  let instance = state.instance.id;
+  let instance = "";
   if (dashboardStore.entity === EntityType[3].value) {
     instance = selectorStore.currentPod.id;
   }
+  const serviceInstanceId =
+    instance || (state.instance && state.instance.id) || "";
   demandLogStore.setLogCondition({
-    serviceInstanceId: instance || state.instance.id || "",
+    serviceInstanceId,
     container: state.container.value,
     duration: rangeTime(),
     keywordsOfContent: keywordsOfContent.value.length
@@ -246,8 +239,30 @@ function searchLogs() {
       ? excludingKeywordsOfContent.value
       : undefined,
   });
+  if (!serviceInstanceId) {
+    return;
+  }
   queryLogs();
 }
+
+function rangeTime() {
+  {
+    const times = {
+      start: getLocalTime(
+        appStore.utc,
+        new Date(new Date().getTime() - state.duration.value * 1000)
+      ),
+      end: getLocalTime(appStore.utc, new Date()),
+      step: "SECOND",
+    };
+    return {
+      start: dateFormatStep(times.start, times.step, false),
+      end: dateFormatStep(times.end, times.step, false),
+      step: times.step,
+    };
+  }
+}
+
 async function queryLogs() {
   const res = await demandLogStore.getDemandLogs();
   if (res && res.errors) {
