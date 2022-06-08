@@ -13,14 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <span v-if="demandLogStore.message">{{ demandLogStore.message }}</span>
   <div
+    v-else
     v-loading="demandLogStore.loadLogs"
     class="log-content"
     ref="logContent"
     style="width: calc(100% - 10px); height: calc(100% - 140px)"
-  >
-    <span v-if="demandLogStore.message">{{ demandLogStore.message }}</span>
-  </div>
+  ></div>
 </template>
 <script lang="ts" setup>
 import { onMounted, ref, onUnmounted, watch, toRaw } from "vue";
@@ -36,7 +36,9 @@ onMounted(() => {
 });
 async function init() {
   const monaco = await import("monaco-editor");
-  monacoInstanceGen(monaco);
+  setTimeout(() => {
+    monacoInstanceGen(monaco);
+  }, 500);
   window.addEventListener("resize", () => {
     editorLayout();
   });
@@ -50,6 +52,7 @@ function monacoInstanceGen(monaco: any) {
     readonly: true,
   });
   toRaw(monacoInstance.value).updateOptions({ readOnly: true });
+  editorLayout();
 }
 function editorLayout() {
   if (!logContent.value) {
@@ -67,6 +70,7 @@ onUnmounted(() => {
   }
   toRaw(monacoInstance.value).dispose();
   monacoInstance.value = null;
+  demandLogStore.setLogs("");
 });
 watch(
   () => demandLogStore.logs,
