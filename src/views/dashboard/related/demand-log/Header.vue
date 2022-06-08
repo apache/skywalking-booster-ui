@@ -195,7 +195,7 @@ async function getContainers() {
   }
   if (resp.data.containers.errorReason) {
     disabled.value = true;
-    ElMessage.error(resp.data.containers.errorReason);
+    ElMessage.warning(resp.data.containers.errorReason);
     return;
   }
   if (demandLogStore.containers.length) {
