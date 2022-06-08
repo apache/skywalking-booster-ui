@@ -67,6 +67,7 @@ onUnmounted(() => {
   }
   toRaw(monacoInstance.value).dispose();
   monacoInstance.value = null;
+  demandLogStore.setLogs("");
 });
 watch(
   () => demandLogStore.logs,
