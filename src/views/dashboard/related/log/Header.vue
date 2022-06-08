@@ -630,7 +630,7 @@ watch(
   align-items: center;
 }
 .el-divider--horizontal{
-  margin: 10px 0 0 0 !important;
+  margin: 0 !important;
 }
 .cursor-pointer {
   cursor: pointer;
