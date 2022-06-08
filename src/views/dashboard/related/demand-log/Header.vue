@@ -118,6 +118,7 @@ limitations under the License. -->
       size="small"
       type="primary"
       @click="runInterval"
+      :disabled="disabled"
     >
       <Icon
         size="middle"
@@ -158,6 +159,7 @@ const state = reactive<any>({
   duration: { label: "From 30 minutes ago", value: 1800 },
   interval: { label: "30 seconds", value: 30 },
 });
+const disabled = ref<boolean>(true);
 /*global Nullable */
 const intervalFn = ref<Nullable<any>>(null);
 
@@ -187,11 +189,18 @@ async function getContainers() {
     state.instance.id || selectorStore.currentPod.id
   );
   if (resp.errors) {
+    disabled.value = true;
     ElMessage.error(resp.errors);
+    return;
+  }
+  if (resp.data.containers.errorReason) {
+    disabled.value = true;
+    ElMessage.error(resp.data.containers.errorReason);
     return;
   }
   if (demandLogStore.containers.length) {
     state.container = demandLogStore.containers[0];
+    disabled.value = false;
   }
 }
 async function getInstances() {
