@@ -15,7 +15,6 @@ limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
     <div v-if="currentSearchTerm === 'column'" class="flex-h items-center mr-5">
-      <!-- <p style="margin-right: 10px">Select visible columns</p> -->
       <el-dropdown class="dark" :hide-on-click="false">
         <span class="cursor-pointer">
           Select visible columns<el-icon class="el-icon--right"
@@ -28,7 +27,7 @@ limitations under the License. -->
               <div
                 style="width: 100%"
                 class="flex-h items-center justify-between"
-                @click="showAllColumns = true"
+                @click="logStore.toggleAllColumns(true)"
               >
                 <el-icon><View /></el-icon>
                 <span style="margin-right: 10px">Show All</span>
@@ -38,13 +37,13 @@ limitations under the License. -->
               <div
                 style="width: 100%"
                 class="flex-h items-center justify-between"
-                @click="showAllColumns = false"
+                @click="logStore.toggleAllColumns(false)"
               >
                 <el-icon><Hide /></el-icon>
                 <span style="margin-right: 10px">Hide All</span>
               </div>
             </el-dropdown-item>
-            <el-dropdown-item divided></el-dropdown-item>
+            <el-divider />
             <el-dropdown-item
               v-for="item in logStore.serviceLogColumn"
               :key="item.value"
@@ -52,13 +51,6 @@ limitations under the License. -->
               <el-checkbox class="custom-checkbox" v-model="item.isVisible">
                 <span>{{ item.value }}</span>
               </el-checkbox>
-              <!-- <div
-                style="width: 100%"
-                class="flex-h items-center justify-between"
-              >
-                <span style="margin-right: 10px">{{ t(item.value) }}</span>
-                <el-checkbox v-model="item.isVisible" size="large" />
-              </div> -->
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -289,9 +281,7 @@ const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const { portal } = useRoute().query;
 const logStore = useLogStore();
-const selectedColumns = ref<any[]>([]);
 const showColumList = ref<boolean>(false);
-const showAllColumns = ref<boolean | null>(null);
 const traceId = ref<string>("");
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
@@ -628,12 +618,6 @@ watch(
     }
   }
 );
-watch(
-  () => showAllColumns.value,
-  (newVal, oldVal) => {
-    logStore.toggleAllColumns(newVal);
-  }
-);
 </script>
 <style lang="scss" scoped>
 .dropdownSelector {
@@ -644,6 +628,9 @@ watch(
   color: var(--el-color-primary);
   display: flex;
   align-items: center;
+}
+.el-divider--horizontal{
+  margin: 10px 0 0 0 !important;
 }
 .cursor-pointer {
   cursor: pointer;
