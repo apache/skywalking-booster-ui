@@ -22,10 +22,10 @@ limitations under the License. -->
           /></el-icon>
         </span>
         <template #dropdown>
-          <el-dropdown-menu class="dropdownSelector">
-            <el-dropdown-item>
+          <el-dropdown-menu id="toggleColumn" class="dropdownSelector">
+            <el-dropdown-item style="padding: 0">
               <div
-                style="width: 100%"
+                style="width: 100%; padding: 5px 16px"
                 class="flex-h items-center justify-between"
                 @click="logStore.toggleAllColumns(true)"
               >
@@ -33,9 +33,9 @@ limitations under the License. -->
                 <span style="margin-right: 10px">Show All</span>
               </div>
             </el-dropdown-item>
-            <el-dropdown-item>
+            <el-dropdown-item style="padding: 0">
               <div
-                style="width: 100%"
+                style="width: 100%; padding: 5px 16px"
                 class="flex-h items-center justify-between"
                 @click="logStore.toggleAllColumns(false)"
               >
@@ -45,6 +45,7 @@ limitations under the License. -->
             </el-dropdown-item>
             <el-divider />
             <el-dropdown-item
+              style="padding: 0"
               v-for="item in logStore.serviceLogColumn"
               :key="item.value"
             >
@@ -620,6 +621,14 @@ watch(
 );
 </script>
 <style lang="scss" scoped>
+#toggleColumn.el-dropdown-menu{
+  padding: 0 !important;
+}
+.el-checkbox.custom-checkbox {
+  display: inline-block;
+  width: 100%;
+  padding: 5px 16px;
+}
 .dropdownSelector {
   background: var(--nice-black);
 }
@@ -629,7 +638,7 @@ watch(
   display: flex;
   align-items: center;
 }
-.el-divider--horizontal{
+.el-divider--horizontal {
   margin: 0 !important;
 }
 .cursor-pointer {
