@@ -149,10 +149,9 @@ const filterMenus = (menus: any[]) => {
 <style lang="scss" scoped>
 .side-bar {
   background: #252a2f;
-  height: 100%;
-  min-height: 700px;
+  height: 100vh;
   position: relative;
-  margin-bottom: 100px;
+  overflow-y: visible;
 }
 
 .el-menu-vertical:not(.el-menu--collapse) {

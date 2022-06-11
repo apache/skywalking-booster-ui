@@ -50,7 +50,7 @@ if (!appStore.utc) {
 </script>
 <style lang="scss" scoped>
 .app-main {
-  height: calc(100% - 40px);
+  height: calc(100% - 39px);
   background: #f7f9fa;
 }
 </style>

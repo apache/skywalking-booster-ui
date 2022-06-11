@@ -17,7 +17,7 @@ limitations under the License. -->
 </template>
 <style>
 #app {
-  color: #2c3e50;
+  color: var(--spp-white);
   height: 100%;
 }
 </style>

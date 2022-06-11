@@ -135,7 +135,6 @@ export default defineComponent({
   height: 100%;
   // height: calc(100% - 100px);
   overflow: auto;
-  padding-bottom: 20px;
 }
 .trace-chart.full-view {
   height: calc(100% - 1px) !important;

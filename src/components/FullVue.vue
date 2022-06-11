@@ -19,6 +19,7 @@ limitations under the License. -->
         @click="scrollToGraph(item.i, index)"
         v-for="(item, index) in items"
         :key="item.i"
+        :id="'scroll' + item.i"
         :class="[currentItem === index ? 'active' : '']"
         class="full-scroll-to"
       ></div>
@@ -31,13 +32,30 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import * as $ from "jquery";
-import { ref, watch, onMounted, defineComponent } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Configuration from "../views/dashboard/configuration";
 import controls from "../views/dashboard/controls/index";
+import { useRoute } from "vue-router";
+import connect from "../hooks/useIDE";
+
+let isScrolling = false;
+function scrollStop(callback: { (): void; (): void }, refresh = 66) {
+  let scrollListener: number;
+  window.addEventListener(
+    "scroll",
+    function (event) {
+      isScrolling = true;
+      window.clearTimeout(scrollListener);
+      scrollListener = window.setTimeout(callback, refresh);
+    },
+    true
+  );
+}
+scrollStop(function () {
+  isScrolling = false;
+});
 
 export default defineComponent({
   name: "FullView",
@@ -51,11 +69,10 @@ export default defineComponent({
   setup() {
     const dashboardStore = useDashboardStore();
     const { t } = useI18n();
-    const p = useRoute().params;
     const arrayOfItems = ref<Element[]>([]);
     const currentItem = ref<number>(0);
     const scrollWrapRef = ref<any>(null);
-    const isScrolling = ref(false);
+    const { path, query } = useRoute();
     watch(
       () => dashboardStore.layout,
       () => {
@@ -65,8 +82,13 @@ export default defineComponent({
       }
     );
     function scrollToGraph(e: any, index: number) {
-      document?.getElementById(`item${e}`)?.scrollIntoView();
-      currentItem.value = index;
+      isScrolling = true;
+      let el = document.getElementById(`item${e}`);
+
+      if (el != null) {
+        el.scrollIntoView();
+        currentItem.value = index;
+      }
     }
     function observeItems() {
       const observer = new IntersectionObserver((entries) => {
@@ -82,19 +104,18 @@ export default defineComponent({
       });
     }
     function scrollTo(index: number) {
-      arrayOfItems.value[index]?.scrollIntoView();
-      if (isScrolling.value) {
-        setTimeout(() => {
-          isScrolling.value = false;
-        }, 800);
+      let scrollIndex = arrayOfItems.value[index];
+      if (scrollIndex) {
+        let el = document.getElementById(`scroll${scrollIndex.id.substr(4)}`);
+        if (el != null) {
+          el.click();
+        }
       }
     }
     function scrollUp() {
       if (currentItem.value > 0) {
         currentItem.value--;
         scrollTo(currentItem.value);
-      } else if (currentItem.value === 0) {
-        isScrolling.value = false;
       }
     }
     function scrollDown() {
@@ -102,26 +123,52 @@ export default defineComponent({
         currentItem.value++;
         scrollTo(currentItem.value);
       } else if (currentItem.value === arrayOfItems?.value?.length - 1) {
-        isScrolling.value = true;
         currentItem.value = 0;
         scrollTo(currentItem.value);
       }
     }
-    function initScroller() {
-      scrollWrapRef?.value?.addEventListener("wheel", (e: WheelEvent) => {
-        if (isScrolling.value === false) {
-          isScrolling.value = true;
-          if (e.deltaY < 0) {
-            scrollUp();
-          } else {
-            scrollDown();
-          }
+    function wheelGraphScroll(e: WheelEvent) {
+      e.preventDefault();
+      if (!isScrolling) {
+        if (e.deltaY < 0) {
+          scrollUp();
+        } else {
+          scrollDown();
         }
-      });
+      }
+    }
+    function keyGraphScroll(e: KeyboardEvent) {
+      if (e.keyCode == 38) {
+        e.preventDefault();
+        scrollUp();
+      } else if (e.keyCode === 40) {
+        e.preventDefault();
+        scrollDown();
+      }
+    }
+    function initScroller() {
+      //todo: smarter logic on when to add listeners
+      if (query["portal"] === "true" && path.endsWith("Activity")) {
+        console.log("Adding portal wheel/key listeners");
+        scrollWrapRef?.value?.addEventListener("wheel", wheelGraphScroll, {
+          passive: false,
+        });
+        document.addEventListener("keydown", keyGraphScroll, {
+          passive: false,
+        });
+      }
     }
     onMounted(() => {
       observeItems();
       initScroller();
+
+      if (query["portal"] === "true") {
+        connect();
+      }
+    });
+    onBeforeUnmount(() => {
+      scrollWrapRef?.value?.removeEventListener("wheel", wheelGraphScroll);
+      document.removeEventListener("keydown", keyGraphScroll);
     });
     return {
       t,
@@ -150,10 +197,9 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     right: 0;
-    // top: 50%;
-    //transform: translateY(60%);
+    top: 37vh;
     height: auto;
-    width: 20px;
+    width: 17px;
 
     .full-scroll-to {
       opacity: 0.5;
@@ -168,7 +214,7 @@ export default defineComponent({
     .full-scroll-to.active {
       opacity: 1;
       padding: 6px;
-      background: #9876AA;
+      background: #1a1a1a;
     }
   }
 }
