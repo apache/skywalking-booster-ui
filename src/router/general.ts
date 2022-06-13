@@ -33,7 +33,16 @@ export const routesGen: Array<RouteRecordRaw> = [
         path: "/general",
         name: "GeneralServices",
         meta: {
-          title: "services",
+          headPath: "/general/service",
+          exact: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "layers" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/general/tab/:activeTabIndex",
+        name: "GeneralServicesActiveTabIndex",
+        meta: {
           headPath: "/general/service",
           exact: true,
         },

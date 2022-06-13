@@ -54,51 +54,69 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "/dashboard/:layerId/:entity/:name",
-        component: () =>
-          import(
-            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
-          ),
+        path: "",
+        redirect: "/dashboard/:layerId/:entity/:name",
         name: "Create",
-        meta: {
-          notShow: true,
-        },
-      },
-      {
-        path: "/dashboard/:layerId/:entity/:name/:activeTabIndex",
         component: () =>
           import(
             /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
           ),
-        name: "CreateaAtiveTabIndex",
         meta: {
           notShow: true,
         },
+        children: [
+          {
+            path: "/dashboard/:layerId/:entity/:name",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "CreateChild",
+          },
+          {
+            path: "/dashboard/:layerId/:entity/:name/tab/:activeTabIndex",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "CreateActiveTabIndex",
+          },
+        ],
       },
       {
-        path: "/dashboard/:layerId/:entity/:serviceId/:name",
+        path: "",
         component: () =>
           import(
             /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
           ),
         name: "View",
+        redirect: "/dashboard/:layerId/:entity/:serviceId/:name",
         meta: {
           notShow: true,
         },
+        children: [
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:name",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewChild",
+          },
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:name/tab/:activeTabIndex",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewActiveTabIndex",
+          },
+        ],
       },
       {
-        path: "/dashboard/:layerId/:entity/:serviceId/:name/:activeTabIndex",
-        component: () =>
-          import(
-            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
-          ),
-        name: "ViewActiveTabIndex",
-        meta: {
-          notShow: true,
-        },
-      },
-      {
-        path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
+        path: "",
+        redirect:
+          "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
         component: () =>
           import(
             /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
@@ -107,20 +125,28 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         meta: {
           notShow: true,
         },
+        children: [
+          {
+            path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewServiceRelation",
+          },
+          {
+            path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name/tab/:activeTabIndex",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewServiceRelationActiveTabIndex",
+          },
+        ],
       },
       {
-        path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name/:activeTabIndex",
-        component: () =>
-          import(
-            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
-          ),
-        name: "ViewServiceRelationActiveTabIndex",
-        meta: {
-          notShow: true,
-        },
-      },
-      {
-        path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
+        path: "",
+        redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
         component: () =>
           import(
             /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
@@ -129,20 +155,29 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         meta: {
           notShow: true,
         },
+        children: [
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewPod",
+          },
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name/tab/:activeTabIndex",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewPodActiveTabIndex",
+          },
+        ],
       },
       {
-        path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name/:activeTabIndex",
-        component: () =>
-          import(
-            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
-          ),
-        name: "ViewPodActiveTabIndex",
-        meta: {
-          notShow: true,
-        },
-      },
-      {
-        path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
+        path: "",
+        redirect:
+          "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
         component: () =>
           import(
             /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
@@ -151,17 +186,24 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         meta: {
           notShow: true,
         },
-      },
-      {
-        path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name/:activeTabIndex",
-        component: () =>
-          import(
-            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
-          ),
-        name: "ViewPodRelationActiveTabIndex",
-        meta: {
-          notShow: true,
-        },
+        children: [
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewPodRelation",
+          },
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name/tab/:activeTabIndex",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewPodRelationActiveTabIndex",
+          },
+        ],
       },
     ],
   },
