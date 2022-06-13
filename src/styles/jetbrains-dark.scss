@@ -66,7 +66,7 @@
 }
 
 .el-popper.is-light {
-  background: var(--nice-black);
+  background: var(--nice-black) !important;
   border: 1px solid var(--border-color) !important;
 }
 
@@ -552,4 +552,13 @@ a {
 
 .tips {
   color: var(--spp-white) !important;
+}
+
+.el-divider--horizontal {
+  border-top-color: var(--spp-white);
+}
+
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: var(--border-color);
+  border-color: var(--border-color);
 }

@@ -15,22 +15,24 @@ limitations under the License. -->
 
 <template>
   <div class="log">
-    <div class="log-header">
+    <div :class="{ 'd-flex': visibleColumns.length < 6 }" class="log-header">      
       <template v-for="(item, index) in columns">
-        <div
-          class="method"
-          :style="`width: ${item.method}px`"
-          v-if="item.drag"
-          :key="index"
-        >
-          <span class="r cp" ref="dragger" :data-index="index">
-            <Icon iconName="settings_ethernet" size="sm" />
-          </span>
-          {{ t(item.value) }}
-        </div>
-        <div v-else :class="item.label" :key="`col${index}`">
-          {{ t(item.value) }}
-        </div>
+        <template v-if="item.isVisible">
+          <div
+            class="method"
+            :style="`width: ${item.method}px`"
+            v-if="item.drag"
+            :key="index"
+          >
+            <span class="r cp" ref="dragger" :data-index="index">
+              <Icon iconName="settings_ethernet" size="sm" />
+            </span>
+            {{ t(item.value) }}
+          </div>
+          <div v-else :class="item.label" :key="`col${index}`">
+            {{ t(item.value) }}
+          </div>
+        </template>
       </template>
     </div>
     <div v-if="type === 'browser'">
@@ -63,12 +65,12 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { ServiceLogConstants, BrowserLogConstants } from "./data";
 import LogBrowser from "./LogBrowser.vue";
 import LogService from "./LogService.vue";
 import LogDetail from "./LogDetail.vue";
+import { logStore } from "@/store/modules/log";
 
 /*global defineProps, Nullable */
 const props = defineProps({
@@ -76,14 +78,22 @@ const props = defineProps({
   tableData: { type: Array, default: () => [] },
   noLink: { type: Boolean, default: true },
 });
+const useLogStore = logStore();
 const { t } = useI18n();
 const currentLog = ref<any>({});
 const showDetail = ref<boolean>(false);
 const dragger = ref<Nullable<HTMLSpanElement>>(null);
 // const method = ref<number>(380);
-const columns: any[] =
-  props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
 
+const columns = ref<any[]>(
+  props.type === "browser"
+    ? useLogStore.browserLogColumn
+    : useLogStore.serviceLogColumn
+);
+
+const visibleColumns = computed(() =>
+  columns.value.filter((column) => column.isVisible)
+);
 function setCurrentLog(log: any) {
   showDetail.value = true;
   currentLog.value = log;
@@ -133,5 +143,12 @@ function setCurrentLog(log: any) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.d-flex{
+  display: flex;
+  div{
+    flex-grow: 1;
+  }
 }
 </style>

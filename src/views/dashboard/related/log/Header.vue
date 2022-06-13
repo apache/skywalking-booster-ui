@@ -14,6 +14,52 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h log-wrapper">
+    <div v-if="currentSearchTerm === 'column'" class="flex-h items-center mr-5">
+      <el-dropdown class="dark" :hide-on-click="false">
+        <span class="cursor-pointer">
+          Select visible columns<el-icon class="el-icon--right"
+            ><arrow-down
+          /></el-icon>
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu id="toggleColumn" class="dropdownSelector">
+            <el-dropdown-item style="padding: 0">
+              <div
+                style="width: 100%; padding: 5px 16px"
+                class="flex-h items-center"
+                @click="logStore.toggleAllColumns(true)"
+              >
+                <el-icon><View /></el-icon>
+                <span style="margin-right: 10px">Show All</span>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item style="padding: 0">
+              <div
+                style="width: 100%; padding: 5px 16px"
+                class="flex-h items-center"
+                @click="logStore.toggleAllColumns(false)"
+              >
+                <el-icon><Hide /></el-icon>
+                <span style="margin-right: 10px">Hide All</span>
+              </div>
+            </el-dropdown-item>
+            <el-divider />
+            <el-dropdown-item
+              style="padding: 0"
+              v-for="item in logStore.serviceLogColumn"
+              :key="item.value"
+            >
+              <el-checkbox class="custom-checkbox" v-model="item.isVisible">
+                <span>{{ item.value }}</span>
+              </el-checkbox>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+      <el-button class="toggle-btn mx-3danger" @click="setSearchTerm('')">
+        <Icon iconSize="sm" iconName="cancel" />
+      </el-button>
+    </div>
     <div v-if="!currentSearchTerm.length" class="flex-h items-center">
       <div v-for="(item, index) in arrayOfFilters" :key="index">
         <el-tooltip
@@ -33,7 +79,23 @@ limitations under the License. -->
           </el-button>
         </el-tooltip>
       </div>
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="Toggle columns"
+        placement="bottom-start"
+      >
+        <el-button
+          type="success"
+          :class="[false ? 'active-toggle' : '']"
+          class="toggle-btn mx-3"
+          @click="toggleColumSelector"
+        >
+          <Icon iconSize="sm" iconName="epic" />
+        </el-button>
+      </el-tooltip>
     </div>
+
     <div class="flex-h items-center">
       <div class="flex-h items-center" v-if="currentSearchTerm === 'service'">
         <div
@@ -176,7 +238,10 @@ limitations under the License. -->
       </div>
 
       <!-- Search&cancel buttons -->
-      <div v-if="currentSearchTerm.length" class="flex-h items-center">
+      <div
+        v-if="currentSearchTerm.length && currentSearchTerm !== 'column'"
+        class="flex-h items-center"
+      >
         <el-button
           class="search-btn toggle-btn"
           size="small"
@@ -198,7 +263,9 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, computed } from "vue";
+import { ArrowDown, View, Hide } from "@element-plus/icons-vue";
+import { ref, reactive, watch, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { useLogStore } from "@/store/modules/log";
@@ -213,16 +280,18 @@ const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
+const { portal } = useRoute().query;
 const logStore = useLogStore();
+const showColumList = ref<boolean>(false);
 const traceId = ref<string>("");
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
 const supportQueryLogsByKeywords = computed<boolean>(() => {
-  return logStore.supportQueryLogsByKeywords
-})
+  return logStore.supportQueryLogsByKeywords;
+});
 const supportExcludeQueryLogsByKeywords = computed<boolean>(() => {
-  return logStore.supportQueryLogsByKeywords
-})
+  return logStore.supportQueryLogsByKeywords;
+});
 
 const currentSearchTerm = ref<string>("");
 const activeTerms = ref<string[]>([]);
@@ -287,7 +356,24 @@ const arrayOfFilters = ref<filtersObject[]>([
     isVisible: dashboardStore.entity !== EntityType[2].value,
   },
 ]);
+onMounted(() => {
+  if (portal) {
+    ["endpoint", "time", "contentType", "tags", "traceID"].forEach((col) =>
+      logStore.hideColumns(col)
+    );
+  }
+});
 init();
+function toggleColumSelector() {
+  showColumList.value = !showColumList.value;
+  setSearchTerm("column");
+}
+
+function hideTags() {
+  let tagsWrap = document.querySelector(".el-select__tags");
+  if (!tagsWrap) return;
+  tagsWrap.style.display = "none";
+}
 async function init() {
   const resp = await logStore.getLogsByKeywords();
 
@@ -471,6 +557,11 @@ function removeExcludeContent(index: number) {
 }
 function setSearchTerm(term: string) {
   currentSearchTerm.value = term;
+  if (term === "column") {
+    setTimeout(() => {
+      hideTags();
+    }, 200);
+  }
 }
 function cancelSearchTerm() {
   switch (currentSearchTerm.value) {
@@ -501,7 +592,7 @@ function cancelSearchTerm() {
   }
   removeFromActiveTerms();
   currentSearchTerm.value = "";
-  searchLogs()
+  searchLogs();
 }
 watch(
   () => selectorStore.currentService,
@@ -530,16 +621,42 @@ watch(
 );
 </script>
 <style lang="scss" scoped>
-// .log-wrapper {
-//   width: 600px;
-//   padding-left: 40px;
-//   overflow-x: scroll;
-//   align-items: center;
-// }
+#toggleColumn.el-dropdown-menu {
+  padding: 0 !important;
+}
+.el-checkbox.custom-checkbox {
+  width: 100%;
+  padding: 5px 16px;
+}
+.dropdownSelector {
+  background: var(--nice-black);
+}
+.el-dropdown-link {
+  cursor: pointer;
+  color: var(--el-color-primary);
+  display: flex;
+  align-items: center;
+}
+.el-divider--horizontal {
+  margin: 0 !important;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.custom-checkbox .el-checkbox__input.is-checked + .el-checkbox__label,
+.custom-checkbox .el-checkbox__label {
+  color: var(--spp-white) !important;
+}
 .inputs {
   width: 120px;
 }
-
+.items-center {
+  align-items: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
 .row {
   margin-bottom: 5px;
 }
@@ -611,5 +728,23 @@ watch(
 }
 .items-center {
   align-items: center;
+}
+.space-between {
+  justify-content: space-between !important;
+}
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+  background: transparent;
+}
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+  width: 100%;
+  padding: 0 32px 0 20px;
+}
+.el-select-dropdown__item.selected {
+  display: block;
+  width: 100%;
+  padding: 0 32px 0 20px;
+}
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
+  display: none;
 }
 </style>

@@ -29,3 +29,123 @@ export const TextConfig = {
   fontSize: 14,
   textAlign: "left",
 };
+
+export const ServiceLogConstants = [
+  {
+    label: "serviceName",
+    value: "service",
+    isVisible: true
+  },
+  {
+    label: "serviceInstanceName",
+    value: "instance",
+    isVisible: true
+  },
+  {
+    label: "endpointName",
+    value: "endpoint",
+    isVisible: true
+  },
+  {
+    label: "timestamp",
+    value: "time",
+    isVisible: true
+  },
+  {
+    label: "contentType",
+    value: "contentType",
+    isVisible: true
+  },
+  {
+    label: "tags",
+    value: "tags",
+    isVisible: true
+  },
+  {
+    label: "content",
+    value: "content",
+    isVisible: true
+  },
+  {
+    label: "traceId",
+    value: "traceID",
+    isVisible: true
+  },
+];
+export const ServiceLogDetail = [
+  {
+    label: "serviceName",
+    value: "service",
+  },
+  {
+    label: "serviceInstanceName",
+    value: "instance",
+  },
+  {
+    label: "timestamp",
+    value: "time",
+  },
+  {
+    label: "contentType",
+    value: "contentType",
+  },
+  {
+    label: "traceId",
+    value: "traceID",
+  },
+  {
+    label: "tags",
+    value: "tags",
+  },
+  {
+    label: "content",
+    value: "content",
+  },
+];
+// The order of columns should be time, service, error, stack, version, url, catalog, and grade.
+export const BrowserLogConstants = [
+  {
+    label: "service",
+    value: "service",
+    isVisible: true,
+  },
+  {
+    label: "serviceVersion",
+    value: "serviceVersion",
+    isVisible: true,
+  },
+  {
+    label: "errorUrl",
+    value: "errorPage",
+    isVisible: true,
+  },
+  {
+    label: "time",
+    value: "time",
+    isVisible: true,
+  },
+  {
+    label: "message",
+    value: "message",
+    isVisible: true,
+    // drag: true,
+    method: 350,
+  },
+  {
+    label: "stack",
+    value: "stack",
+    isVisible: true,
+    // drag: true,
+    method: 350,
+  },
+  {
+    label: "category",
+    value: "category",
+    isVisible: true,
+  },
+  {
+    label: "grade",
+    value: "grade",
+    isVisible: true,
+  },
+];
