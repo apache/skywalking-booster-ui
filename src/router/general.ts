@@ -33,7 +33,6 @@ export const routesGen: Array<RouteRecordRaw> = [
         path: "/general",
         name: "GeneralServices",
         meta: {
-          headPath: "/general/service",
           exact: true,
         },
         component: () =>
@@ -43,7 +42,6 @@ export const routesGen: Array<RouteRecordRaw> = [
         path: "/general/tab/:activeTabIndex",
         name: "GeneralServicesActiveTabIndex",
         meta: {
-          headPath: "/general/service",
           exact: true,
         },
         component: () =>

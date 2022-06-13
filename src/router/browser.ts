@@ -33,8 +33,16 @@ export const routesBrowser: Array<RouteRecordRaw> = [
         name: "Browser",
         meta: {
           title: "browser",
-          headPath: "/browser",
           exact: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/browser/tab/:activeTabIndex",
+        name: "BrowserActiveTabIndex",
+        meta: {
+          notShow: true,
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),

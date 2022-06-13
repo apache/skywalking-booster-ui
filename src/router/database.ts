@@ -34,8 +34,16 @@ export const routesDatabase: Array<RouteRecordRaw> = [
         name: "Database",
         meta: {
           title: "virtualDatabase",
-          headPath: "/database",
           exact: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/database/tab/:activeTabIndex",
+        name: "DatabaseActiveTabIndex",
+        meta: {
+          notShow: true,
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
