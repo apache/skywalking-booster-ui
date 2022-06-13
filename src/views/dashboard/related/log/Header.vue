@@ -621,11 +621,10 @@ watch(
 );
 </script>
 <style lang="scss" scoped>
-#toggleColumn.el-dropdown-menu{
+#toggleColumn.el-dropdown-menu {
   padding: 0 !important;
 }
 .el-checkbox.custom-checkbox {
-  display: inline-block;
   width: 100%;
   padding: 5px 16px;
 }
@@ -661,19 +660,24 @@ watch(
 .row {
   margin-bottom: 5px;
 }
+
 .inputs-max {
   width: 270px;
 }
+
 .traceId {
   margin-top: 2px;
 }
+
 .search-btn {
   margin-left: 20px;
   cursor: pointer;
 }
+
 .tips {
   color: #888;
 }
+
 .log-tag {
   width: 30%;
   border-style: unset;
@@ -682,6 +686,7 @@ watch(
   height: 30px;
   padding: 0 5px;
 }
+
 .log-tags {
   padding: 1px 5px 0 0;
   border-radius: 3px;
@@ -689,6 +694,7 @@ watch(
   display: inline-block;
   vertical-align: top;
 }
+
 .selected {
   display: inline-block;
   padding: 0 3px;
@@ -699,6 +705,7 @@ watch(
   font-size: 12px;
   margin: 0 2px;
 }
+
 .remove-icon {
   display: inline-block;
   margin-left: 3px;

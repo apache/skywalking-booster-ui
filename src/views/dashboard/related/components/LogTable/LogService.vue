@@ -43,7 +43,6 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { computed, ref } from "vue";
 import dayjs from "dayjs";
-// import { ServiceLogConstants } from "./data";
 import { logStore } from "@/store/modules/log";
 /*global defineProps, defineEmits */
 const props = defineProps({
@@ -53,7 +52,6 @@ const props = defineProps({
 const useLogStore = logStore();
 const columns = ref<any[]>(useLogStore.serviceLogColumn);
 const emit = defineEmits(["select"]);
-// const columns = ServiceLogConstants;
 const visibleColumns = computed(() =>
   columns.value.filter((column) => column.isVisible)
 );
