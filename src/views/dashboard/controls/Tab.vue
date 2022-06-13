@@ -55,6 +55,9 @@ limitations under the License. -->
             <el-dropdown-item @click="canEditTabName = true">
               <span class="edit-tab">{{ t("editTab") }}</span>
             </el-dropdown-item>
+            <el-dropdown-item @click="copyLink">
+              <span class="edit-tab">Copy Link</span>
+            </el-dropdown-item>
             <el-dropdown-item @click="removeTab">
               <span>{{ t("delete") }}</span>
             </el-dropdown-item>
@@ -99,6 +102,7 @@ limitations under the License. -->
 <script lang="ts">
 import { ref, watch, defineComponent, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -111,6 +115,7 @@ import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
 import { dragIgnoreFrom } from "../data";
 import DemandLog from "./DemandLog.vue";
+import copy from "@/utils/copy";
 
 const props = {
   data: {
@@ -126,7 +131,8 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
-    const activeTabIndex = ref<number>(0);
+    const params = useRoute().params;
+    const activeTabIndex = ref<number>(Number(params.activeTabIndex) || 0);
     const activeTabWidget = ref<string>("");
     const editTabIndex = ref<number>(NaN); // edit tab item name
     const canEditTabName = ref<boolean>(false);
@@ -202,6 +208,10 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
     }
+    function copyLink() {
+      const path = useRouter().currentRoute.value.path;
+      copy(path);
+    }
     document.body.addEventListener("click", handleClick, false);
     watch(
       () => dashboardStore.activedGridItem,
@@ -227,6 +237,7 @@ export default defineComponent({
       deleteTabItem,
       removeTab,
       clickTabs,
+      copyLink,
       ...toRefs(props),
       activeTabWidget,
       dashboardStore,

@@ -61,8 +61,17 @@ export const routesDashboard: Array<RouteRecordRaw> = [
           ),
         name: "Create",
         meta: {
-          title: "dashboardEdit",
-          exact: false,
+          notShow: true,
+        },
+      },
+      {
+        path: "/dashboard/:layerId/:entity/:name/:activeTabIndex",
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "CreateaAtiveTabIndex",
+        meta: {
           notShow: true,
         },
       },
@@ -74,8 +83,17 @@ export const routesDashboard: Array<RouteRecordRaw> = [
           ),
         name: "View",
         meta: {
-          title: "dashboardEdit",
-          exact: false,
+          notShow: true,
+        },
+      },
+      {
+        path: "/dashboard/:layerId/:entity/:serviceId/:name/:activeTabIndex",
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "ViewActiveTabIndex",
+        meta: {
           notShow: true,
         },
       },
@@ -87,8 +105,17 @@ export const routesDashboard: Array<RouteRecordRaw> = [
           ),
         name: "ViewServiceRelation",
         meta: {
-          title: "dashboardEdit",
-          exact: false,
+          notShow: true,
+        },
+      },
+      {
+        path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name/:activeTabIndex",
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "ViewServiceRelationActiveTabIndex",
+        meta: {
           notShow: true,
         },
       },
@@ -100,8 +127,17 @@ export const routesDashboard: Array<RouteRecordRaw> = [
           ),
         name: "ViewPod",
         meta: {
-          title: "dashboardEdit",
-          exact: false,
+          notShow: true,
+        },
+      },
+      {
+        path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name/:activeTabIndex",
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "ViewPodActiveTabIndex",
+        meta: {
           notShow: true,
         },
       },
@@ -113,8 +149,17 @@ export const routesDashboard: Array<RouteRecordRaw> = [
           ),
         name: "ViewPodRelation",
         meta: {
-          title: "dashboardEdit",
-          exact: true,
+          notShow: true,
+        },
+      },
+      {
+        path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name/:activeTabIndex",
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "ViewPodRelationActiveTabIndex",
+        meta: {
           notShow: true,
         },
       },
