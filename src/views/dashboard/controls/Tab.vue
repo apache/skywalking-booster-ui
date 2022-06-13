@@ -102,7 +102,7 @@ limitations under the License. -->
 <script lang="ts">
 import { ref, watch, defineComponent, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -131,12 +131,16 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
-    const params = useRoute().params;
-    const activeTabIndex = ref<number>(Number(params.activeTabIndex) || 0);
+    const route = useRoute();
+    const activeTabIndex = ref<number>(
+      Number(route.params.activeTabIndex) || 0
+    );
     const activeTabWidget = ref<string>("");
     const editTabIndex = ref<number>(NaN); // edit tab item name
     const canEditTabName = ref<boolean>(false);
     const needQuery = ref<boolean>(false);
+
+    dashboardStore.setActiveTabIndex(activeTabIndex);
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
     );
@@ -209,7 +213,10 @@ export default defineComponent({
       );
     }
     function copyLink() {
-      const path = useRouter().currentRoute.value.path;
+      let path = location.href;
+      if (route.params.activeTabIndex === undefined) {
+        path = location.href + "/tab/" + activeTabIndex.value;
+      }
       copy(path);
     }
     document.body.addEventListener("click", handleClick, false);
