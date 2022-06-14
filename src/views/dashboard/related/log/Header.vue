@@ -219,25 +219,31 @@ function searchLogs() {
   if (dashboardStore.entity === EntityType[3].value) {
     instance = selectorStore.currentPod.id;
   }
-  logStore.setLogCondition({
-    serviceId: selectorStore.currentService
-      ? selectorStore.currentService.id
-      : state.service.id,
-    endpointId: endpoint || state.endpoint.id || undefined,
-    serviceInstanceId: instance || state.instance.id || undefined,
-    queryDuration: appStore.durationTime,
-    keywordsOfContent:
-      dashboardStore.layerId === "BROWSER"
-        ? undefined
-        : keywordsOfContent.value,
-    excludingKeywordsOfContent:
-      dashboardStore.layerId === "BROWSER"
-        ? undefined
-        : excludingKeywordsOfContent.value,
-    tags: tagsMap.value.length ? tagsMap.value : undefined,
-    paging: { pageNum: 1, pageSize: 15 },
-    relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
-  });
+  if (dashboardStore.layerId === "BROWSER") {
+    logStore.setLogCondition({
+      serviceId: selectorStore.currentService
+        ? selectorStore.currentService.id
+        : state.service.id,
+      pagePathId: endpoint || state.endpoint.id || undefined,
+      serviceVersionId: instance || state.instance.id || undefined,
+      paging: { pageNum: 1, pageSize: 15 },
+      queryDuration: appStore.durationTime,
+    });
+  } else {
+    logStore.setLogCondition({
+      serviceId: selectorStore.currentService
+        ? selectorStore.currentService.id
+        : state.service.id,
+      endpointId: endpoint || state.endpoint.id || undefined,
+      serviceInstanceId: instance || state.instance.id || undefined,
+      queryDuration: appStore.durationTime,
+      keywordsOfContent: keywordsOfContent.value,
+      excludingKeywordsOfContent: excludingKeywordsOfContent.value,
+      tags: tagsMap.value.length ? tagsMap.value : undefined,
+      paging: { pageNum: 1, pageSize: 15 },
+      relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
+    });
+  }
   queryLogs();
 }
 async function queryLogs() {
