@@ -161,7 +161,7 @@ const msg = {
   dashboard: "Panel",
   topology: "Topología",
   trace: "Traza",
-  alarm: "Alarmas",
+  alarm: "Recordatorio en curso",
   auto: "Auto",
   reload: "Recargar",
   version: "Versión",
