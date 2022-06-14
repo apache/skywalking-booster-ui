@@ -78,9 +78,6 @@ import Selector from "@/components/Selector.vue";
 
 const { t, locale } = useI18n();
 const appStore = useAppStoreWithOut();
-const state = reactive<{ timer: ReturnType<typeof setInterval> | null }>({
-  timer: null,
-});
 const lang = ref<string>(locale.value || "en");
 const autoTime = ref<number>(6);
 const auto = ref<boolean>(appStore.autoRefresh || false);
@@ -101,10 +98,10 @@ const handleAuto = () => {
   appStore.setAutoRefresh(auto.value);
   if (auto.value) {
     handleReload();
-    state.timer = setInterval(handleReload, autoTime.value * 1000);
+    appStore.setReloadTimer(setInterval(handleReload, autoTime.value * 1000));
   } else {
-    if (state.timer) {
-      clearInterval(state.timer);
+    if (appStore._reloadTimer) {
+      clearInterval(appStore._reloadTimer);
     }
   }
 };
@@ -112,12 +109,12 @@ const changeAutoTime = () => {
   if (autoTime.value < 1) {
     return;
   }
-  if (state.timer) {
-    clearInterval(state.timer);
+  if (appStore._reloadTimer) {
+    clearInterval(appStore._reloadTimer);
   }
   if (auto.value) {
     handleReload();
-    state.timer = setInterval(handleReload, autoTime.value * 1000);
+    appStore.setReloadTimer(setInterval(handleReload, autoTime.value * 1000));
   }
 };
 const setLang = (): void => {
