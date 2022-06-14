@@ -59,8 +59,8 @@ limitations under the License. -->
       {{ t("search") }}
     </el-button>
   </div>
-  <div class="flex-h row">
-    <div class="mr-5 traceId" v-show="!isBrowser">
+  <div class="flex-h row" v-show="!isBrowser">
+    <div class="mr-5 traceId">
       <span class="grey mr-5">{{ t("traceID") }}:</span>
       <el-input v-model="traceId" class="inputs-max" size="small" />
     </div>
@@ -228,6 +228,7 @@ function searchLogs() {
       serviceVersionId: instance || state.instance.id || undefined,
       paging: { pageNum: 1, pageSize: 15 },
       queryDuration: appStore.durationTime,
+      category: "ALL",
     });
   } else {
     logStore.setLogCondition({
