@@ -66,7 +66,7 @@ limitations under the License. -->
     </div>
     <ConditionTags :type="'LOG'" @update="updateTags" />
   </div>
-  <div class="row tips">
+  <div class="row tips" v-show="!isBrowser">
     <b>{{ t("conditionNotice") }}</b>
   </div>
   <div class="flex-h" v-show="!isBrowser">
