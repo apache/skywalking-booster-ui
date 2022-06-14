@@ -40,7 +40,14 @@ limitations under the License. -->
       <span class="tab-icons" v-if="dashboardStore.editMode">
         <el-tooltip content="Add tab items" placement="bottom">
           <i @click="addTabItem">
-            <Icon size="middle" iconName="add" />
+            <Icon size="middle" iconName="add" class="tab-icon" />
+          </i>
+        </el-tooltip>
+      </span>
+      <span class="tab-icons">
+        <el-tooltip content="Copy Link" placement="bottom">
+          <i @click="copyLink">
+            <Icon size="middle" iconName="review-list" class="tab-icon" />
           </i>
         </el-tooltip>
       </span>
@@ -346,6 +353,10 @@ export default defineComponent({
 .tab-layout {
   height: calc(100% - 55px);
   overflow: auto;
+}
+
+.tab-icon {
+  color: #666;
 }
 
 .vue-grid-item.active {
