@@ -40,7 +40,14 @@ limitations under the License. -->
       <span class="tab-icons" v-if="dashboardStore.editMode">
         <el-tooltip content="Add tab items" placement="bottom">
           <i @click="addTabItem">
-            <Icon size="middle" iconName="add" />
+            <Icon size="middle" iconName="add" class="tab-icon" />
+          </i>
+        </el-tooltip>
+      </span>
+      <span class="tab-icons">
+        <el-tooltip content="Copy Link" placement="bottom">
+          <i @click="copyLink">
+            <Icon size="middle" iconName="review-list" class="tab-icon" />
           </i>
         </el-tooltip>
       </span>
@@ -99,6 +106,7 @@ limitations under the License. -->
 <script lang="ts">
 import { ref, watch, defineComponent, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -111,6 +119,7 @@ import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
 import { dragIgnoreFrom } from "../data";
 import DemandLog from "./DemandLog.vue";
+import copy from "@/utils/copy";
 
 const props = {
   data: {
@@ -126,11 +135,16 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
-    const activeTabIndex = ref<number>(0);
+    const route = useRoute();
+    const activeTabIndex = ref<number>(
+      Number(route.params.activeTabIndex) || 0
+    );
     const activeTabWidget = ref<string>("");
     const editTabIndex = ref<number>(NaN); // edit tab item name
     const canEditTabName = ref<boolean>(false);
     const needQuery = ref<boolean>(false);
+
+    dashboardStore.setActiveTabIndex(activeTabIndex);
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
     );
@@ -154,6 +168,11 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
       needQuery.value = true;
+      if (route.params.activeTabIndex) {
+        let p = location.href.split("/tab/")[0];
+        p = p + "/tab/" + activeTabIndex.value;
+        history.replaceState({}, "", p);
+      }
     }
     function removeTab(e: Event) {
       e.stopPropagation();
@@ -202,6 +221,16 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
     }
+    function copyLink() {
+      let path = "";
+      if (route.params.activeTabIndex === undefined) {
+        path = location.href + "/tab/" + activeTabIndex.value;
+      } else {
+        const p = location.href.split("/tab/")[0];
+        path = p + "/tab/" + activeTabIndex.value;
+      }
+      copy(path);
+    }
     document.body.addEventListener("click", handleClick, false);
     watch(
       () => dashboardStore.activedGridItem,
@@ -227,6 +256,7 @@ export default defineComponent({
       deleteTabItem,
       removeTab,
       clickTabs,
+      copyLink,
       ...toRefs(props),
       activeTabWidget,
       dashboardStore,
@@ -328,6 +358,10 @@ export default defineComponent({
 .tab-layout {
   height: calc(100% - 55px);
   overflow: auto;
+}
+
+.tab-icon {
+  color: #666;
 }
 
 .vue-grid-item.active {

@@ -55,9 +55,9 @@ limitations under the License. -->
               <router-link
                 class="items"
                 :to="m.path"
-                :exact="m.meta.exact || false"
+                :exact="(m.meta && m.meta.exact) || false"
               >
-                <span class="title">{{ t(m.meta.title) }}</span>
+                <span class="title">{{ m.meta && t(m.meta.title) }}</span>
               </router-link>
             </el-menu-item>
           </el-menu-item-group>

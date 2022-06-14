@@ -33,7 +33,18 @@ export const routesK8s: Array<RouteRecordRaw> = [
         path: "/kubernetes/cluster",
         name: "KubernetesCluster",
         meta: {
+          notShow: false,
           title: "kubernetesCluster",
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/kubernetes/cluster/tab/:activeTabIndex",
+        name: "KubernetesClusterActiveTabIndex",
+        meta: {
+          notShow: true,
+          title: "kubernetesClusterActiveTabIndex",
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
@@ -42,7 +53,18 @@ export const routesK8s: Array<RouteRecordRaw> = [
         path: "/kubernetes/service",
         name: "KubernetesService",
         meta: {
+          notShow: false,
           title: "kubernetesService",
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/kubernetes/service/tab/:activeTabIndex",
+        name: "KubernetesServiceActiveTabIndex",
+        meta: {
+          notShow: true,
+          title: "kubernetesServiceActiveTabIndex",
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),

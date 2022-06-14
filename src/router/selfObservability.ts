@@ -34,7 +34,15 @@ export const routesSelf: Array<RouteRecordRaw> = [
         name: "SkyWalkingServer",
         meta: {
           title: "skyWalkingServer",
-          headPath: "/mesh/services",
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/self/skyWalkingServer/tab/:activeTabIndex",
+        name: "SkyWalkingServerActiveTabIndex",
+        meta: {
+          notShow: true,
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
@@ -44,7 +52,15 @@ export const routesSelf: Array<RouteRecordRaw> = [
         name: "Satellite",
         meta: {
           title: "satellite",
-          headPath: "/mesh/controlPanel",
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/self/satellite/tab/:activeTabIndex",
+        name: "SatelliteActiveTabIndex",
+        meta: {
+          notShow: true,
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
