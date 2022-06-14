@@ -161,7 +161,7 @@ const msg = {
   dashboard: "Dashboard",
   topology: "Topology",
   trace: "Trace",
-  alarm: "Alarms",
+  alarm: "Alerting",
   auto: "Auto",
   reload: "Reload",
   version: "Version",

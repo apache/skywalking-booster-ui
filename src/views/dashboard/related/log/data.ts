@@ -14,30 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
 
-export const routesAlarm: Array<RouteRecordRaw> = [
-  {
-    path: "",
-    name: "Alarm",
-    meta: {
-      title: "alarm",
-      icon: "spam",
-      hasGroup: false,
-      exact: true,
-    },
-    component: Layout,
-    children: [
-      {
-        path: "/alerting",
-        name: "Alarm",
-        meta: {
-          exact: false,
-        },
-        component: () =>
-          import(/* webpackChunkName: "alerting" */ "@/views/Alarm.vue"),
-      },
-    ],
-  },
+export const ErrorCategory = [
+  { label: "All", value: "ALL" },
+  { label: "AJAX", value: "AJAX" },
+  { label: "Resource", value: "RESOURCE" },
+  { label: "Vue", value: "VUE" },
+  { label: "Promise", value: "PROMISE" },
+  { label: "JS", value: "JS" },
+  { label: "Unknown", value: "UNKNOWN" },
 ];
