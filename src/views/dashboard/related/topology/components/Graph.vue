@@ -538,6 +538,9 @@ function setNodeTools(nodeDashboard: any) {
   }
 }
 async function freshNodes() {
+  if (!svg.value) {
+    return;
+  }
   svg.value.selectAll(".topo-svg-graph").remove();
   await init();
   update();

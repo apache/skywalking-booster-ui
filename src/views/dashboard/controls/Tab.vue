@@ -168,6 +168,11 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
       needQuery.value = true;
+      if (route.params.activeTabIndex) {
+        let p = location.href.split("/tab/")[0];
+        p = p + "/tab/" + activeTabIndex.value;
+        history.replaceState({}, "", p);
+      }
     }
     function removeTab(e: Event) {
       e.stopPropagation();
@@ -217,9 +222,12 @@ export default defineComponent({
       );
     }
     function copyLink() {
-      let path = location.href;
+      let path = "";
       if (route.params.activeTabIndex === undefined) {
         path = location.href + "/tab/" + activeTabIndex.value;
+      } else {
+        const p = location.href.split("/tab/")[0];
+        path = p + "/tab/" + activeTabIndex.value;
       }
       copy(path);
     }
