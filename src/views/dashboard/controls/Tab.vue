@@ -62,9 +62,6 @@ limitations under the License. -->
             <el-dropdown-item @click="canEditTabName = true">
               <span class="edit-tab">{{ t("editTab") }}</span>
             </el-dropdown-item>
-            <el-dropdown-item @click="copyLink">
-              <span class="edit-tab">Copy Link</span>
-            </el-dropdown-item>
             <el-dropdown-item @click="removeTab">
               <span>{{ t("delete") }}</span>
             </el-dropdown-item>
