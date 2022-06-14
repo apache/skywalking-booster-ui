@@ -44,6 +44,7 @@ export const routesInfra: Array<RouteRecordRaw> = [
         name: "LinuxActiveTabIndex",
         meta: {
           title: "linux",
+          notShow: true,
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
