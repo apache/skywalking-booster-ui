@@ -50,6 +50,16 @@ limitations under the License. -->
         @query="searchEndpoints"
       />
     </div>
+    <div class="mr-5" v-if="isBrowser">
+      <span class="grey mr-5"> {{ t("category") }}: </span>
+      <Selector
+        size="small"
+        :value="state.category.value"
+        :options="ErrorCategory"
+        placeholder="Select a category"
+        @change="changeField('category', $event)"
+      />
+    </div>
     <el-button
       class="search-btn"
       size="small"
@@ -130,6 +140,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
+import { ErrorCategory } from "./data";
 
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
@@ -148,6 +159,7 @@ const state = reactive<any>({
   instance: { value: "0", label: "All" },
   endpoint: { value: "0", label: "All" },
   service: { value: "", label: "" },
+  category: { value: "ALL", label: "All" },
 });
 
 init();
@@ -228,7 +240,7 @@ function searchLogs() {
       serviceVersionId: instance || state.instance.id || undefined,
       paging: { pageNum: 1, pageSize: 15 },
       queryDuration: appStore.durationTime,
-      category: "ALL",
+      category: state.category.value,
     });
   } else {
     logStore.setLogCondition({
