@@ -24,7 +24,6 @@ limitations under the License. -->
       ]"
       :style="{
         lineHeight: 1.3,
-        width: `${item.drag ? item.method : ''}px`,
       }"
     >
       <span v-if="item.label === 'time'">{{ dateFormat(data.time) }}</span>
@@ -44,7 +43,7 @@ import { BrowserLogConstants } from "./data";
 
 /*global defineProps, defineEmits, NodeListOf  */
 const props = defineProps({
-  data: { type: Array as any, default: () => [] },
+  data: { type: Object as any, default: () => ({}) },
 });
 const columns = BrowserLogConstants;
 const emit = defineEmits(["select"]);

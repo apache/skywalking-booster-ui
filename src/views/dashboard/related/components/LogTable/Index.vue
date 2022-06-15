@@ -58,7 +58,7 @@ limitations under the License. -->
       @closed="showDetail = false"
       :title="t('logDetail')"
     >
-      <LogDetail :currentLog="currentLog" />
+      <LogDetail :currentLog="currentLog" :columns="columns" />
     </el-dialog>
   </div>
 </template>
