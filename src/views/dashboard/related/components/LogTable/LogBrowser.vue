@@ -14,17 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div @click="showSelectSpan" :class="['log-item', 'clearfix']" ref="logItem">
+  <div
+    @click="showSelectSpan"
+    :class="['log-item', 'clearfix', 'flex-h']"
+    ref="logItem"
+  >
     <div
       v-for="(item, index) in columns"
       :key="index"
       :class="[
-        'method',
-        ['message', 'stack'].includes(item.label) ? 'autoHeight' : '',
+        'log',
+        ['message', 'stack'].includes(item.label) ? 'max-item' : '',
       ]"
-      :style="{
-        lineHeight: 1.3,
-      }"
     >
       <span v-if="item.label === 'time'">{{ dateFormat(data.time) }}</span>
       <span v-else-if="item.label === 'errorUrl'">{{ data.pagePath }}</span>
@@ -83,7 +84,8 @@ function showSelectSpan() {
 }
 
 .log-item > div {
-  width: 140px;
+  width: 10%;
+  min-width: 140px;
   padding: 0 5px;
   display: inline-block;
   border: 1px solid transparent;
@@ -94,6 +96,10 @@ function showSelectSpan() {
   white-space: nowrap;
 }
 
+.max-item.log {
+  width: 20%;
+}
+
 .log-item .text {
   width: 100% !important;
   display: inline-block;
@@ -102,8 +108,7 @@ function showSelectSpan() {
   white-space: nowrap;
 }
 
-.log-item > div.method {
-  padding: 7px 5px;
+.log-item > div.log {
   line-height: 30px;
 }
 </style>
