@@ -57,9 +57,6 @@ export const appStore = defineStore({
     reloadTimer: null,
   }),
   getters: {
-    _reloadTimer(): any {
-      return this.reloadTimer;
-    },
     duration(): Duration {
       return {
         start: getLocalTime(this.utc, this.durationRow.start),

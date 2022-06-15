@@ -69,7 +69,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import timeFormat from "@/utils/timeFormat";
@@ -100,8 +100,8 @@ const handleAuto = () => {
     handleReload();
     appStore.setReloadTimer(setInterval(handleReload, autoTime.value * 1000));
   } else {
-    if (appStore._reloadTimer) {
-      clearInterval(appStore._reloadTimer);
+    if (appStore.reloadTimer) {
+      clearInterval(appStore.reloadTimer);
     }
   }
 };
@@ -109,8 +109,8 @@ const changeAutoTime = () => {
   if (autoTime.value < 1) {
     return;
   }
-  if (appStore._reloadTimer) {
-    clearInterval(appStore._reloadTimer);
+  if (appStore.reloadTimer) {
+    clearInterval(appStore.reloadTimer);
   }
   if (auto.value) {
     handleReload();
