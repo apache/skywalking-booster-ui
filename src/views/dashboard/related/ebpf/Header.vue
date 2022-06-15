@@ -39,6 +39,10 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { EntityType } from "../../data";
 
+/*global defineProps */
+const props = defineProps({
+  needQuery: { type: Boolean, default: true },
+});
 const ebpfStore = useEbpfStore();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
@@ -46,7 +50,9 @@ const dashboardStore = useDashboardStore();
 const { t } = useI18n();
 const newTask = ref<boolean>(false);
 
-searchTasks();
+if (props.needQuery) {
+  searchTasks();
+}
 
 async function searchTasks() {
   const serviceId =

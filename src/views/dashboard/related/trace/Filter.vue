@@ -104,6 +104,10 @@ import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 
+/*global defineProps */
+const props = defineProps({
+  needQuery: { type: Boolean, default: true },
+});
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
@@ -121,7 +125,10 @@ const state = reactive<any>({
   service: { value: "", label: "" },
 });
 
-init();
+if (props.needQuery) {
+  init();
+}
+
 async function init() {
   if (dashboardStore.entity === EntityType[1].value) {
     await getServices();
