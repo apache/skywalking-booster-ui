@@ -142,6 +142,10 @@ import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 import { ErrorCategory } from "./data";
 
+/*global defineProps */
+const props = defineProps({
+  needQuery: { type: Boolean, default: true },
+});
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
@@ -161,8 +165,9 @@ const state = reactive<any>({
   service: { value: "", label: "" },
   category: { value: "ALL", label: "All" },
 });
-
-init();
+if (props.needQuery) {
+  init();
+}
 async function init() {
   const resp = await logStore.getLogsByKeywords();
 
