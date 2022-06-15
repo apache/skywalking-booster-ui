@@ -17,7 +17,9 @@ limitations under the License. -->
   <div class="log">
     <div
       class="log-header"
-      :class="[type === 'browser' ? 'browser-header' : 'service-header']"
+      :class="
+        type === 'browser' ? ['browser-header', 'flex-h'] : 'service-header'
+      "
     >
       <template v-for="(item, index) in columns" :key="`col${index}`">
         <div
@@ -118,7 +120,7 @@ function setCurrentLog(log: any) {
 
 .log-header div {
   display: inline-block;
-  padding: 0 4px;
+  padding: 0 5px;
   border: 1px solid transparent;
   border-right: 1px dotted silver;
   line-height: 30px;
@@ -128,13 +130,15 @@ function setCurrentLog(log: any) {
   white-space: nowrap;
 }
 
-.browser-header div {
-  min-width: 140px;
-  width: 10%;
-}
+.browser-header {
+  div {
+    min-width: 140px;
+    width: 10%;
+  }
 
-div.max-item {
-  width: 20%;
+  .max-item {
+    width: 20%;
+  }
 }
 
 .service-header div {
