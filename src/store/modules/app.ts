@@ -34,6 +34,7 @@ interface AppState {
   pageTitle: string;
   version: string;
   isMobile: boolean;
+  reloadTimer: Nullable<any>;
 }
 
 export const appStore = defineStore({
@@ -53,6 +54,7 @@ export const appStore = defineStore({
     pageTitle: "",
     version: "",
     isMobile: false,
+    reloadTimer: null,
   }),
   getters: {
     duration(): Duration {
@@ -172,6 +174,9 @@ export const appStore = defineStore({
       }
       this.version = res.data.data.version;
       return res.data;
+    },
+    setReloadTimer(timer: any): void {
+      this.reloadTimer = timer;
     },
   },
 });
