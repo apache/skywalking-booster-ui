@@ -53,6 +53,12 @@ export const logStore = defineStore({
     setLogCondition(data: any) {
       this.conditions = { ...this.conditions, ...data };
     },
+    resetCondition() {
+      this.conditions = {
+        queryDuration: useAppStoreWithOut().durationTime,
+        paging: { pageNum: 1, pageSize: 15 },
+      };
+    },
     async getServices(layer: string) {
       const res: AxiosResponse = await graphql.query("queryServices").params({
         layer,

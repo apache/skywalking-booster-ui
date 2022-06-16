@@ -29,7 +29,7 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
-    <Header />
+    <Header :needQuery="needQuery" />
     <Content />
   </div>
 </template>
@@ -47,6 +47,7 @@ const props = defineProps({
     default: () => ({ graph: {} }),
   },
   activeIndex: { type: String, default: "" },
+  needQuery: { type: Boolean, default: true },
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
