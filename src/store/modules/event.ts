@@ -29,7 +29,7 @@ interface eventState {
   services: Service[];
   instances: Instance[];
   endpoints: Endpoint[];
-  condition: QueryEventCondition | any;
+  condition: Nullable<QueryEventCondition>;
 }
 
 export const eventStore = defineStore({
@@ -40,12 +40,10 @@ export const eventStore = defineStore({
     services: [{ value: "", label: "All" }],
     instances: [{ value: "", label: "All" }],
     endpoints: [{ value: "", label: "All" }],
-    condition: {
-      paging: { pageNum: 1, pageSize: 15 },
-    },
+    condition: null,
   }),
   actions: {
-    setEventCondition(data: any) {
+    setEventCondition(data: QueryEventCondition) {
       this.condition = data;
     },
     async getServices(layer: string) {

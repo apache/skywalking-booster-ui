@@ -32,15 +32,16 @@ limitations under the License. -->
     <div class="header">
       <Header :needQuery="needQuery" />
     </div>
-    <!-- <div class="event">
-      <List />
-    </div> -->
+    <div class="event">
+      <Content />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Header from "../related/event/Header.vue";
+import Content from "../related/event/Content.vue";
 
 /*global defineProps */
 const props = defineProps({
@@ -95,5 +96,6 @@ function removeWidget() {
 
 .event {
   width: 100%;
+  height: calc(100% - 80px);
 }
 </style>
