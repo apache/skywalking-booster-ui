@@ -111,11 +111,7 @@ export const dashboardStore = defineStore({
         };
       }
       if (
-        type === "Trace" ||
-        type === "Profile" ||
-        type === "Log" ||
-        type === "Ebpf" ||
-        type === "DemandLog"
+        ["Trace", "Profile", "Log", "DemandLog", "Ebpf", "Event"].includes(type)
       ) {
         newItem.h = 36;
       }
@@ -172,11 +168,7 @@ export const dashboardStore = defineStore({
         };
       }
       if (
-        type === "Trace" ||
-        type === "Profile" ||
-        type === "Log" ||
-        type === "DemandLog" ||
-        type === "Ebpf"
+        ["Trace", "Profile", "Log", "DemandLog", "Ebpf", "Event"].includes(type)
       ) {
         newItem.h = 32;
       }

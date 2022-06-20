@@ -178,15 +178,16 @@ export const AllTools = [
   { name: "assignment", content: "Add Log", id: "addLog" },
 ];
 export const ServiceTools = [
-  { name: "playlist_add", content: "Widget", id: "addWidget" },
-  { name: "all_inbox", content: "Tab", id: "addTab" },
-  { name: "library_books", content: "Text", id: "addText" },
-  { name: "device_hub", content: "Topology", id: "addTopology" },
-  { name: "merge", content: "Trace", id: "addTrace" },
-  { name: "timeline", content: "Trace Profiling", id: "addProfile" },
-  { name: "insert_chart", content: "eBPF Profiling", id: "addEbpf" },
-  { name: "assignment", content: "Log", id: "addLog" },
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
+  { name: "device_hub", content: "Add Topology", id: "addTopology" },
+  { name: "merge", content: "Add Trace", id: "addTrace" },
+  { name: "timeline", content: "Add Trace Profiling", id: "addProfile" },
+  { name: "insert_chart", content: "Add eBPF Profiling", id: "addEbpf" },
+  { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
+  { name: "event", content: "Add Event", id: "addEvent" },
 ];
 export const InstanceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
@@ -195,6 +196,7 @@ export const InstanceTools = [
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
+  { name: "event", content: "Add Event", id: "addEvent" },
 ];
 export const EndpointTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
@@ -203,6 +205,7 @@ export const EndpointTools = [
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
+  { name: "event", content: "Add Event", id: "addEvent" },
 ];
 export const ServiceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },

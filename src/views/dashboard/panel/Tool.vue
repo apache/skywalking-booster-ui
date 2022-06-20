@@ -458,6 +458,9 @@ function setTabControls(id: string) {
     case "addDemandLog":
       dashboardStore.addTabControls("DemandLog");
       break;
+    case "addEvent":
+      dashboardStore.addTabControls("Event");
+      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -492,6 +495,9 @@ function setControls(id: string) {
       break;
     case "addDemandLog":
       dashboardStore.addControl("DemandLog");
+      break;
+    case "addEvent":
+      dashboardStore.addControl("Event");
       break;
     default:
       dashboardStore.addControl("Widget");
