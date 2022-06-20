@@ -21,6 +21,7 @@ import { AxiosResponse } from "axios";
 import { Event, QueryEventCondition } from "@/types/events";
 import { Instance, Endpoint, Service } from "@/types/selector";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { useSelectorStore } from "@/store/modules/selectors";
 
 interface eventState {
   loading: boolean;
@@ -45,7 +46,7 @@ export const eventStore = defineStore({
   }),
   actions: {
     setEventCondition(data: any) {
-      this.condition = { ...this.condition, ...data };
+      this.condition = data;
     },
     async getServices(layer: string) {
       if (!layer) {
@@ -61,7 +62,10 @@ export const eventStore = defineStore({
       this.services = res.data.data.services;
       return res.data;
     },
-    async getInstances(serviceId: string) {
+    async getInstances() {
+      const serviceId = useSelectorStore().currentService
+        ? useSelectorStore().currentService.id
+        : "";
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -75,7 +79,13 @@ export const eventStore = defineStore({
       ];
       return res.data;
     },
-    async getEndpoints(serviceId: string) {
+    async getEndpoints() {
+      const serviceId = useSelectorStore().currentService
+        ? useSelectorStore().currentService.id
+        : "";
+      if (!serviceId) {
+        return;
+      }
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,

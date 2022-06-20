@@ -80,7 +80,6 @@ limitations under the License. -->
         @current-change="updatePage"
         :pager-count="5"
         small
-        :style="`--el-pagination-bg-color: #f0f2f5; --el-pagination-button-disabled-bg-color: #f0f2f5;`"
       />
       <!-- <div>
         <el-button class="search" type="primary" @click="queryEvents">

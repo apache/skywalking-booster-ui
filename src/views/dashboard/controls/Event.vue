@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="log-wrapper flex-v">
+  <div class="event-wrapper flex-v">
     <el-popover
       placement="bottom"
       trigger="click"
@@ -29,11 +29,19 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
+    <div class="header">
+      <Header :needQuery="needQuery" />
+    </div>
+    <!-- <div class="event">
+      <List />
+    </div> -->
   </div>
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import Header from "../related/event/Header.vue";
+
 /*global defineProps */
 const props = defineProps({
   data: {
@@ -50,3 +58,42 @@ function removeWidget() {
   dashboardStore.removeControls(props.data);
 }
 </script>
+<style lang="scss" scoped>
+.event-wrapper {
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  position: relative;
+  overflow: auto;
+}
+
+.delete {
+  position: absolute;
+  top: 5px;
+  right: 3px;
+}
+
+.header {
+  padding: 10px;
+  font-size: 12px;
+  border-bottom: 1px solid #dcdfe6;
+  min-width: 1024px;
+}
+
+.tools {
+  padding: 5px 0;
+  color: #999;
+  cursor: pointer;
+  position: relative;
+  text-align: center;
+
+  &:hover {
+    color: #409eff;
+    background-color: #eee;
+  }
+}
+
+.event {
+  width: 100%;
+}
+</style>
