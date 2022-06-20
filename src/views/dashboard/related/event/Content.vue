@@ -39,6 +39,7 @@ function visTimeline() {
       content: d.name,
       start: dateFormat(d.startTime),
       end: dateFormat(d.endTime),
+      data: d,
     };
   });
   const items: any = new DataSet(events);
@@ -46,6 +47,40 @@ function visTimeline() {
     height: h,
     width: "100%",
     locale: "en",
+    tooltip: {
+      template: function (originalItemData) {
+        const data = originalItemData.data || {};
+        return ` <div class="mb-5"><span class="grey">Event ID: </span>${
+          data.uuid || ""
+        }</div>
+         <div class="mb-5"><span class="grey">Event Name: </span>${
+           data.name || ""
+         }</div>
+        <div class="mb-5"><span class="grey">Event Type: </span>${
+          data.type || ""
+        }</div>
+         <div class="mb-5"><span class="grey">Start Time: </span>${
+           data.startTime || ""
+         }</div>
+          <div class="mb-5"><span class="grey">End Time: </span>${
+            data.endTime || ""
+          }</div>
+        <div class="mb-5"><span class="grey">Event Message: </span>${
+          data.message || ""
+        }</div>
+         <div class="mb-5"><span class="grey">Event Source: </span>
+         <div>Service:
+            ${data.source.service || ""}</div>
+          <div>
+            Endpoint:
+            ${data.source.endpoint || ""}
+          </div>
+          <div>
+            Service Instance:
+             ${data.source.instance || ""}
+          </div></div>`;
+      },
+    },
   };
   visGraph.value = new Timeline(timeline.value, items, options);
 }
