@@ -117,6 +117,7 @@ import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
+import Event from "./Event.vue";
 import { dragIgnoreFrom } from "../data";
 import DemandLog from "./DemandLog.vue";
 import copy from "@/utils/copy";
@@ -130,7 +131,17 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile, Log, Text, Ebpf, DemandLog },
+  components: {
+    Topology,
+    Widget,
+    Trace,
+    Profile,
+    Log,
+    Text,
+    Ebpf,
+    DemandLog,
+    Event,
+  },
   props,
   setup(props) {
     const { t } = useI18n();
