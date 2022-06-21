@@ -18,7 +18,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import dayjs from "dayjs";
-import { useEventStore } from "@/store/modules/event";
+import { useEventStore } from "../../../../store/modules/event";
 import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
 const eventStore = useEventStore();
@@ -27,6 +27,8 @@ const timeline = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   new Date(dayjs(date).format(pattern));
+const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
+  dayjs(date).format(pattern);
 
 function visTimeline() {
   if (!timeline.value) {
@@ -48,27 +50,20 @@ function visTimeline() {
     width: "100%",
     locale: "en",
     tooltip: {
-      template: function (originalItemData) {
+      template(originalItemData) {
         const data = originalItemData.data || {};
-        return ` <div class="mb-5"><span class="grey">Event ID: </span>${
-          data.uuid || ""
-        }</div>
-         <div class="mb-5"><span class="grey">Event Name: </span>${
-           data.name || ""
+        return `<div><span>Event ID: </span>${data.uuid || ""}</div>
+         <div><span>Event Name: </span>${data.name || ""}</div>
+        <div class="mb-5"><span>Event Type: </span>${data.type || ""}</div>
+         <div class="mb-5"><span>Start Time: </span>${
+           data.startTime ? visDate(data.startTime) : ""
          }</div>
-        <div class="mb-5"><span class="grey">Event Type: </span>${
-          data.type || ""
-        }</div>
-         <div class="mb-5"><span class="grey">Start Time: </span>${
-           data.startTime || ""
-         }</div>
-          <div class="mb-5"><span class="grey">End Time: </span>${
-            data.endTime || ""
+          <div class="mb-5"><span>End Time: </span>${
+            data.endTime ? visDate(data.endTime) : ""
           }</div>
-        <div class="mb-5"><span class="grey">Event Message: </span>${
-          data.message || ""
+        <div style="minHeight: 30px;word-wrap:break-word; max-width:400px">Event Message: ${
+          data.message
         }</div>
-         <div class="mb-5"><span class="grey">Event Source: </span>
          <div>Service:
             ${data.source.service || ""}</div>
           <div>
@@ -97,5 +92,11 @@ watch(
   margin: 0 5px 5px 0;
   height: 100%;
   min-height: 150px;
+}
+
+.message {
+  max-width: 400px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 </style>

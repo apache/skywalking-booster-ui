@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 export const dragIgnoreFrom =
-  "svg.d3-trace-tree, .dragger, .micro-topo-chart, .schedules";
+  "svg.d3-trace-tree, .dragger, .micro-topo-chart, .schedules, .vis-item";
 
 export const PodsChartTypes = ["EndpointList", "InstanceList"];
 

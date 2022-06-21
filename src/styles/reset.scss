@@ -154,3 +154,17 @@ pre {
 .switch {
   margin: 0 5px;
 }
+
+div.vis-tooltip {
+  max-width: 600px;
+  overflow: hidden;
+  background-color: #fff !important;
+
+  div {
+    word-wrap: break-word !important;
+  }
+}
+
+.vis-item {
+  cursor: pointer;
+}
