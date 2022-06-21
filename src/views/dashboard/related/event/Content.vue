@@ -53,8 +53,8 @@ function visTimeline() {
     width: "100%",
     locale: "en",
     tooltip: {
-      template(originalItemData) {
-        const data = originalItemData.data || {};
+      template(item) {
+        const data = item.data || {};
         return `<div><span>Event ID: </span>${data.uuid || ""}</div>
          <div><span>Event Name: </span>${data.name || ""}</div>
         <div class="mb-5"><span>Event Type: </span>${data.type || ""}</div>
@@ -64,18 +64,11 @@ function visTimeline() {
           <div class="mb-5"><span>End Time: </span>${
             data.endTime ? visDate(data.endTime) : ""
           }</div>
-        <div style="minHeight: 30px;word-wrap:break-word; max-width:400px">Event Message: ${
-          data.message
-        }</div>
-         <div>Service:
-            ${data.source.service || ""}</div>
-          <div>
-            Endpoint:
-            ${data.source.endpoint || ""}
+        <div class="message">Event Message: ${data.message || ""}</div>
+         <div>Service: ${data.source.service || ""}</div>
+          <div>Endpoint: ${data.source.endpoint || ""}
           </div>
-          <div>
-            Service Instance:
-             ${data.source.instance || ""}
+          <div>Service Instance: ${data.source.instance || ""}
           </div></div>`;
       },
     },

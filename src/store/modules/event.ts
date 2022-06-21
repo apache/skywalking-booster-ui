@@ -26,7 +26,6 @@ import { useSelectorStore } from "@/store/modules/selectors";
 interface eventState {
   loading: boolean;
   events: Event[];
-  services: Service[];
   instances: Instance[];
   endpoints: Endpoint[];
   condition: Nullable<QueryEventCondition>;
@@ -37,7 +36,6 @@ export const eventStore = defineStore({
   state: (): eventState => ({
     loading: false,
     events: [],
-    services: [{ value: "", label: "All" }],
     instances: [{ value: "", label: "All" }],
     endpoints: [{ value: "", label: "All" }],
     condition: null,
@@ -45,20 +43,6 @@ export const eventStore = defineStore({
   actions: {
     setEventCondition(data: QueryEventCondition) {
       this.condition = data;
-    },
-    async getServices(layer: string) {
-      if (!layer) {
-        this.services = [{ value: "", label: "All" }];
-        return new Promise((resolve) => resolve([]));
-      }
-      const res: AxiosResponse = await graphql.query("queryServices").params({
-        layer,
-      });
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.services = res.data.data.services;
-      return res.data;
     },
     async getInstances() {
       const serviceId = useSelectorStore().currentService
