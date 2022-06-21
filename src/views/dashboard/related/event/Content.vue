@@ -18,6 +18,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, watch, onMounted } from "vue";
 import dayjs from "dayjs";
+import { useThrottleFn } from "@vueuse/core";
 import { useEventStore } from "@/store/modules/event";
 import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
@@ -26,13 +27,20 @@ const eventStore = useEventStore();
 /*global Nullable */
 const timeline = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
+const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   new Date(dayjs(date).format(pattern));
 const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
+
 onMounted(() => {
-  resize();
+  oldVal.value = (timeline.value && timeline.value.getBoundingClientRect()) || {
+    width: 0,
+    height: 0,
+  };
+  useThrottleFn(resize, 500)();
 });
+
 function visTimeline() {
   if (!timeline.value) {
     return;
@@ -74,14 +82,24 @@ function visTimeline() {
   visGraph.value = new Timeline(timeline.value, items, options);
 }
 function resize() {
-  const observer = new ResizeObserver(() => {
+  const observer = new ResizeObserver((entries) => {
+    const entry = entries[0];
+    const cr = entry.contentRect;
+    if (
+      Math.abs(cr.width - oldVal.value.width) < 3 &&
+      Math.abs(cr.height - oldVal.value.height) < 3
+    ) {
+      return;
+    }
     visTimeline();
+    oldVal.value = { width: cr.width, height: cr.height };
   });
-
-  observer.observe(timeline.value);
+  if (timeline.value) {
+    observer.observe(timeline.value);
+  }
 }
 watch(
-  () => [eventStore.events],
+  () => eventStore.events,
   () => {
     visTimeline();
   }
