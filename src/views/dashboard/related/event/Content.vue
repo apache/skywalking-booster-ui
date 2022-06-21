@@ -55,21 +55,15 @@ function visTimeline() {
     tooltip: {
       template(item) {
         const data = item.data || {};
-        return `<div><span>Event ID: </span>${data.uuid || ""}</div>
-         <div><span>Event Name: </span>${data.name || ""}</div>
-        <div class="mb-5"><span>Event Type: </span>${data.type || ""}</div>
-         <div class="mb-5"><span>Start Time: </span>${
-           data.startTime ? visDate(data.startTime) : ""
-         }</div>
-          <div class="mb-5"><span>End Time: </span>${
-            data.endTime ? visDate(data.endTime) : ""
-          }</div>
-        <div class="message">Event Message: ${data.message || ""}</div>
-         <div>Service: ${data.source.service || ""}</div>
-          <div>Endpoint: ${data.source.endpoint || ""}
-          </div>
-          <div>Service Instance: ${data.source.instance || ""}
-          </div></div>`;
+        return `<div>ID: ${data.uuid || ""}</div>
+        <div>Name: ${data.name || ""}</div>
+        <div>Event Type: ${data.type || ""}</div>
+        <div>Start Time: ${data.startTime ? visDate(data.startTime) : ""}</div>
+        <div>End Time: ${data.endTime ? visDate(data.endTime) : ""}</div>
+        <div>Message: ${data.message || ""}</div>
+        <div>Service: ${data.source.service || ""}</div>
+        <div>Endpoint: ${data.source.endpoint || ""}</div>
+        <div>Service Instance: ${data.source.instance || ""}</div>`;
       },
     },
   };

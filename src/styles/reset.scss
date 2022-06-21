@@ -159,10 +159,7 @@ div.vis-tooltip {
   max-width: 600px;
   overflow: hidden;
   background-color: #fff !important;
-
-  .message {
-    word-wrap: break-word !important;
-  }
+  white-space: normal !important;
 }
 
 .vis-item {

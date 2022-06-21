@@ -182,6 +182,15 @@ function updatePage(p: number) {
 }
 
 watch(
+  () => [selectorStore.currentService],
+  () => {
+    if (dashboardStore.entity === EntityType[0].value) {
+      init();
+    }
+  }
+);
+
+watch(
   () => [selectorStore.currentPod],
   () => {
     if (dashboardStore.entity === EntityType[0].value) {

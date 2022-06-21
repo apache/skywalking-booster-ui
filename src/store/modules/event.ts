@@ -19,7 +19,7 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { Event, QueryEventCondition } from "@/types/events";
-import { Instance, Endpoint, Service } from "@/types/selector";
+import { Instance, Endpoint } from "@/types/selector";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 
