@@ -37,17 +37,17 @@ limitations under the License. -->
           v-if="dashboardStore.editMode && canEditTabName"
         />
       </span>
-      <span class="tab-icons" v-if="dashboardStore.editMode">
-        <el-tooltip content="Add tab items" placement="bottom">
-          <i @click="addTabItem">
-            <Icon size="middle" iconName="add" class="tab-icon" />
-          </i>
-        </el-tooltip>
-      </span>
       <span class="tab-icons">
         <el-tooltip content="Copy Link" placement="bottom">
           <i @click="copyLink">
             <Icon size="middle" iconName="review-list" class="tab-icon" />
+          </i>
+        </el-tooltip>
+      </span>
+      <span class="tab-icons" v-if="dashboardStore.editMode">
+        <el-tooltip content="Add tab items" placement="bottom">
+          <i @click="addTabItem">
+            <Icon size="middle" iconName="add_fill" class="tab-icon" />
           </i>
         </el-tooltip>
       </span>

@@ -16,11 +16,12 @@ limitations under the License. -->
   <div ref="timeline" class="events"></div>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import dayjs from "dayjs";
 import { useEventStore } from "@/store/modules/event";
 import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
+
 const eventStore = useEventStore();
 /*global Nullable */
 const timeline = ref<Nullable<HTMLDivElement>>(null);
@@ -29,7 +30,9 @@ const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   new Date(dayjs(date).format(pattern));
 const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
-
+onMounted(() => {
+  resize();
+});
 function visTimeline() {
   if (!timeline.value) {
     return;
@@ -52,6 +55,7 @@ function visTimeline() {
     height: h,
     width: "100%",
     locale: "en",
+    autoResize: false,
     tooltip: {
       template(item) {
         const data = item.data || {};
@@ -69,8 +73,15 @@ function visTimeline() {
   };
   visGraph.value = new Timeline(timeline.value, items, options);
 }
+function resize() {
+  const observer = new ResizeObserver(() => {
+    visTimeline();
+  });
+
+  observer.observe(timeline.value);
+}
 watch(
-  () => eventStore.events,
+  () => [eventStore.events],
   () => {
     visTimeline();
   }
