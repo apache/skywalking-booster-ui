@@ -140,8 +140,8 @@ async function getInstances(id?: string) {
   state.instance = eventStore.instances[0];
 }
 async function queryEvents() {
-  let endpoint = "",
-    instance = "";
+  let endpoint = state.endpoint.value,
+    instance = state.instance.value;
   if (dashboardStore.entity === EntityType[2].value) {
     endpoint = selectorStore.currentPod.id;
   }

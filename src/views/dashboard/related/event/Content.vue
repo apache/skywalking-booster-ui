@@ -18,7 +18,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import dayjs from "dayjs";
-import { useEventStore } from "../../../../store/modules/event";
+import { useEventStore } from "@/store/modules/event";
 import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
 const eventStore = useEventStore();
@@ -33,6 +33,9 @@ const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
 function visTimeline() {
   if (!timeline.value) {
     return;
+  }
+  if (visGraph.value) {
+    visGraph.value.destroy();
   }
   const h = timeline.value.getBoundingClientRect().height;
   const events = eventStore.events.map((d, index) => {
