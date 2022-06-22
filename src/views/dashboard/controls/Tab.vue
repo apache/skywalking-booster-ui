@@ -37,17 +37,17 @@ limitations under the License. -->
           v-if="dashboardStore.editMode && canEditTabName"
         />
       </span>
-      <span class="tab-icons" v-if="dashboardStore.editMode">
-        <el-tooltip content="Add tab items" placement="bottom">
-          <i @click="addTabItem">
-            <Icon size="middle" iconName="add" class="tab-icon" />
-          </i>
-        </el-tooltip>
-      </span>
       <span class="tab-icons">
         <el-tooltip content="Copy Link" placement="bottom">
           <i @click="copyLink">
             <Icon size="middle" iconName="review-list" class="tab-icon" />
+          </i>
+        </el-tooltip>
+      </span>
+      <span class="tab-icons" v-if="dashboardStore.editMode">
+        <el-tooltip content="Add tab items" placement="bottom">
+          <i @click="addTabItem">
+            <Icon size="middle" iconName="add_fill" class="tab-icon" />
           </i>
         </el-tooltip>
       </span>
@@ -117,6 +117,7 @@ import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
+import Event from "./Event.vue";
 import { dragIgnoreFrom } from "../data";
 import DemandLog from "./DemandLog.vue";
 import copy from "@/utils/copy";
@@ -130,7 +131,17 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile, Log, Text, Ebpf, DemandLog },
+  components: {
+    Topology,
+    Widget,
+    Trace,
+    Profile,
+    Log,
+    Text,
+    Ebpf,
+    DemandLog,
+    Event,
+  },
   props,
   setup(props) {
     const { t } = useI18n();
@@ -199,6 +210,7 @@ export default defineComponent({
       editTabIndex.value = index;
     }
     function handleClick(el: any) {
+      needQuery.value = true;
       if (["tab-name", "edit-tab"].includes(el.target.className)) {
         return;
       }

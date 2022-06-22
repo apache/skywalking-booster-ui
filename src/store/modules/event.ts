@@ -19,16 +19,16 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { Event, QueryEventCondition } from "@/types/events";
-import { Instance, Endpoint, Service } from "@/types/selector";
+import { Instance, Endpoint } from "@/types/selector";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { useSelectorStore } from "@/store/modules/selectors";
 
 interface eventState {
   loading: boolean;
   events: Event[];
-  services: Service[];
   instances: Instance[];
   endpoints: Endpoint[];
-  condition: QueryEventCondition | any;
+  condition: Nullable<QueryEventCondition>;
 }
 
 export const eventStore = defineStore({
@@ -36,32 +36,18 @@ export const eventStore = defineStore({
   state: (): eventState => ({
     loading: false,
     events: [],
-    services: [{ value: "", label: "All" }],
     instances: [{ value: "", label: "All" }],
     endpoints: [{ value: "", label: "All" }],
-    condition: {
-      paging: { pageNum: 1, pageSize: 15 },
-    },
+    condition: null,
   }),
   actions: {
-    setEventCondition(data: any) {
-      this.condition = { ...this.condition, ...data };
+    setEventCondition(data: QueryEventCondition) {
+      this.condition = data;
     },
-    async getServices(layer: string) {
-      if (!layer) {
-        this.services = [{ value: "", label: "All" }];
-        return new Promise((resolve) => resolve([]));
-      }
-      const res: AxiosResponse = await graphql.query("queryServices").params({
-        layer,
-      });
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.services = res.data.data.services;
-      return res.data;
-    },
-    async getInstances(serviceId: string) {
+    async getInstances() {
+      const serviceId = useSelectorStore().currentService
+        ? useSelectorStore().currentService.id
+        : "";
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -75,7 +61,13 @@ export const eventStore = defineStore({
       ];
       return res.data;
     },
-    async getEndpoints(serviceId: string) {
+    async getEndpoints() {
+      const serviceId = useSelectorStore().currentService
+        ? useSelectorStore().currentService.id
+        : "";
+      if (!serviceId) {
+        return;
+      }
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,

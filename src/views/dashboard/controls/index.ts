@@ -23,6 +23,7 @@ import Log from "./Log.vue";
 import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
 import DemandLog from "./DemandLog.vue";
+import Event from "./Event.vue";
 
 export default {
   Tab,
@@ -34,4 +35,5 @@ export default {
   Text,
   Ebpf,
   DemandLog,
+  Event,
 };
