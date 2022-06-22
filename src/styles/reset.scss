@@ -165,4 +165,20 @@ div.vis-tooltip {
 
 .vis-item {
   cursor: pointer;
+  height: 17px;
+  border: none !important;
+}
+
+.vis-item.Error {
+  background-color: rgb(238 102 102 / 80%);
+  color: #fff !important;
+}
+
+.vis-item.Normal {
+  background-color: #91cc75;
+  color: #333 !important;
+}
+
+.vis-item .vis-item-content {
+  padding: 0 5px !important;
 }

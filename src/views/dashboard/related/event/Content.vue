@@ -56,14 +56,15 @@ function visTimeline() {
       start: dateFormat(d.startTime),
       end: dateFormat(d.endTime),
       data: d,
+      className: d.type,
     };
   });
   const items: any = new DataSet(events);
   const options: any = {
     height: h,
     width: "100%",
-    minHeight: "150px",
     locale: "en",
+    groupHeightMode: "fitItems",
     autoResize: false,
     tooltip: {
       overflowMethod: "cap",
