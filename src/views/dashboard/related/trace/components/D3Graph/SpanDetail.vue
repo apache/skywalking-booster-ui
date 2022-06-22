@@ -166,7 +166,7 @@ function showCurrentSpanDetail(text: string) {
 }
 
 .item span {
-  height: 21px;
+  min-height: 21px;
 }
 
 .link-hover {
