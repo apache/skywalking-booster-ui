@@ -166,19 +166,26 @@ div.vis-tooltip {
 .vis-item {
   cursor: pointer;
   height: 17px;
-  border: none !important;
 }
 
 .vis-item.Error {
-  background-color: rgb(238 102 102 / 80%);
+  background-color: #e66;
+  opacity: 0.8;
+  border-color: #e66;
   color: #fff !important;
 }
 
 .vis-item.Normal {
-  background-color: #91cc75;
-  color: #333 !important;
+  background-color: #fac858;
+  border-color: #fac858;
+  color: #666 !important;
 }
 
 .vis-item .vis-item-content {
   padding: 0 5px !important;
+}
+
+.vis-item.vis-selected.Error,
+.vis-item.vis-selected.Normal {
+  color: #1a1a1a !important;
 }
