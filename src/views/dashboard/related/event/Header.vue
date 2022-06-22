@@ -213,18 +213,11 @@ watch(
   width: 120px;
 }
 
-.row {
-  position: relative;
-}
-
 .inputs-max {
   width: 270px;
 }
 
 .search-btn {
-  position: absolute;
-  top: 0;
-  right: 10px;
   cursor: pointer;
   width: 120px;
 }

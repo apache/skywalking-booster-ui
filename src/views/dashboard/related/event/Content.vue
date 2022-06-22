@@ -59,23 +59,30 @@ function visTimeline() {
     };
   });
   const items: any = new DataSet(events);
-  const options = {
+  const options: any = {
     height: h,
     width: "100%",
+    minHeight: "150px",
     locale: "en",
     autoResize: false,
     tooltip: {
+      overflowMethod: "cap",
       template(item) {
         const data = item.data || {};
-        return `<div>ID: ${data.uuid || ""}</div>
+        let tmp = `<div>ID: ${data.uuid || ""}</div>
         <div>Name: ${data.name || ""}</div>
         <div>Event Type: ${data.type || ""}</div>
         <div>Start Time: ${data.startTime ? visDate(data.startTime) : ""}</div>
         <div>End Time: ${data.endTime ? visDate(data.endTime) : ""}</div>
         <div>Message: ${data.message || ""}</div>
-        <div>Service: ${data.source.service || ""}</div>
-        <div>Endpoint: ${data.source.endpoint || ""}</div>
-        <div>Service Instance: ${data.source.instance || ""}</div>`;
+        <div>Service: ${data.source.service || ""}</div>`;
+        if (data.source.endpoint) {
+          tmp += `<div>Endpoint: ${data.source.endpoint}</div>`;
+        }
+        if (data.source.instance) {
+          tmp += `<div>Service Instance: ${data.source.instance}</div>`;
+        }
+        return tmp;
       },
     },
   };

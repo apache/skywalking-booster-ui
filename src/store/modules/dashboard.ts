@@ -110,9 +110,6 @@ export const dashboardStore = defineStore({
               : 3,
         };
       }
-      if (type === "Event") {
-        newItem.h = 24;
-      }
       if (["Trace", "Profile", "Log", "DemandLog", "Ebpf"].includes(type)) {
         newItem.h = 36;
       }
@@ -167,9 +164,6 @@ export const dashboardStore = defineStore({
         newItem.graph = {
           showDepth: true,
         };
-      }
-      if (type === "Event") {
-        newItem.h = 24;
       }
       if (["Trace", "Profile", "Log", "DemandLog", "Ebpf"].includes(type)) {
         newItem.h = 32;

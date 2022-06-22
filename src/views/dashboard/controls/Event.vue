@@ -72,6 +72,7 @@ function removeWidget() {
   position: absolute;
   top: 5px;
   right: 3px;
+  z-index: 9999;
 }
 
 .header {
