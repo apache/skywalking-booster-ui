@@ -142,8 +142,12 @@ export function useSourceProcessor(
     ElMessage.error(resp.errors);
     return {};
   }
+  if (!resp.data) {
+    ElMessage.error("The query is wrong");
+    return {};
+  }
   const source: { [key: string]: unknown } = {};
-  const keys = Object.keys((resp && resp.data) || {});
+  const keys = Object.keys(resp.data);
 
   config.metricTypes.forEach((type: string, index) => {
     const m = config.metrics[index];
