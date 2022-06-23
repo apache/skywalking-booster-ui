@@ -143,7 +143,7 @@ export function useSourceProcessor(
     return {};
   }
   const source: { [key: string]: unknown } = {};
-  const keys = Object.keys(resp.data);
+  const keys = Object.keys((resp && resp.data) || {});
 
   config.metricTypes.forEach((type: string, index) => {
     const m = config.metrics[index];
