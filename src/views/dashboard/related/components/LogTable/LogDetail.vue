@@ -20,7 +20,10 @@ limitations under the License. -->
       :key="index"
     >
       <span class="g-sm-4 grey">{{ t(item.value) }}:</span>
-      <span v-if="item.label === 'timestamp'" class="g-sm-8 mb-10">
+      <span
+        v-if="['timestamp', 'time'].includes(item.label)"
+        class="g-sm-8 mb-10"
+      >
         {{ dateFormat(currentLog[item.label]) }}
       </span>
       <textarea
@@ -41,14 +44,14 @@ import { computed } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import dayjs from "dayjs";
-import { ServiceLogDetail } from "./data";
+import { Option } from "@/types/app";
 
 /*global defineProps */
 const props = defineProps({
   currentLog: { type: Object as PropType<any>, default: () => ({}) },
+  columns: { type: Array as PropType<Option[]>, default: () => [] },
 });
 const { t } = useI18n();
-const columns = ServiceLogDetail;
 const logTags = computed(() => {
   if (!props.currentLog.tags) {
     return [];

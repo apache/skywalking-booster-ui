@@ -24,7 +24,7 @@ import Header from "./alarm/Header.vue";
 import Content from "./alarm/Content.vue";
 
 const appStore = useAppStoreWithOut();
-appStore.setPageTitle("Alarm");
+appStore.setPageTitle("Alerting");
 </script>
 <style lang="scss" scoped>
 .alarm {

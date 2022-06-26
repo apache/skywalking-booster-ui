@@ -14,26 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Topology from "./Topology.vue";
-import Tab from "./Tab.vue";
-import Widget from "./Widget.vue";
-import Trace from "./Trace.vue";
-import Profile from "./Profile.vue";
-import Log from "./Log.vue";
-import Text from "./Text.vue";
-import Ebpf from "./Ebpf.vue";
-import DemandLog from "./DemandLog.vue";
-import Event from "./Event.vue";
 
-export default {
-  Tab,
-  Widget,
-  Trace,
-  Topology,
-  Profile,
-  Log,
-  Text,
-  Ebpf,
-  DemandLog,
-  Event,
-};
+export const ErrorCategory = [
+  { label: "All", value: "ALL" },
+  { label: "AJAX", value: "AJAX" },
+  { label: "Resource", value: "RESOURCE" },
+  { label: "Vue", value: "VUE" },
+  { label: "Promise", value: "PROMISE" },
+  { label: "JS", value: "JS" },
+  { label: "Unknown", value: "UNKNOWN" },
+];

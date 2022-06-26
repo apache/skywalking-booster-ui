@@ -52,7 +52,7 @@ limitations under the License. -->
           class="grey link-hover cp ml-5"
           @click="copy(i.value)"
         >
-          <Icon iconName="review-list" />
+          <Icon size="middle" iconName="review-list" />
         </span>
       </span>
     </div>
@@ -166,7 +166,7 @@ function showCurrentSpanDetail(text: string) {
 }
 
 .item span {
-  height: 21px;
+  min-height: 21px;
 }
 
 .link-hover {

@@ -20,7 +20,6 @@ import { routesMesh } from "./serviceMesh";
 import { routesDatabase } from "./database";
 import { routesInfra } from "./infrastructure";
 import { routesDashboard } from "./dashboard";
-import { routesEvent } from "./event";
 import { routesSetting } from "./setting";
 import { routesAlarm } from "./alarm";
 import { routesSelf } from "./selfObservability";
@@ -39,7 +38,6 @@ const routes: Array<RouteRecordRaw> = [
   ...routesSelf,
   ...routesDashboard,
   ...routesAlarm,
-  ...routesEvent,
   ...routesSetting,
 ];
 

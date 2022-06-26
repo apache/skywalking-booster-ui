@@ -33,8 +33,17 @@ export const routesMesh: Array<RouteRecordRaw> = [
         path: "/mesh/services",
         name: "MeshServices",
         meta: {
+          notShow: false,
           title: "services",
-          headPath: "/mesh/services",
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/mesh/services/tab/:activeTabIndex",
+        name: "MeshServicesActiveTabIndex",
+        meta: {
+          notShow: true,
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
@@ -43,8 +52,17 @@ export const routesMesh: Array<RouteRecordRaw> = [
         path: "/mesh/controlPanel",
         name: "ControlPanel",
         meta: {
+          notShow: false,
           title: "controlPanel",
-          headPath: "/mesh/controlPanel",
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/mesh/controlPanel/tab/:activeTabIndex",
+        name: "ControlPanelActiveTabIndex",
+        meta: {
+          notShow: true,
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
@@ -53,10 +71,21 @@ export const routesMesh: Array<RouteRecordRaw> = [
         path: "/mesh/dataPanel",
         name: "DataPanel",
         meta: {
+          notShow: false,
           title: "dataPanel",
-          headPath: "/mesh/dataPanel",
         },
-        component: () => import("@/views/Layer.vue"),
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/mesh/dataPanel/tab/:activeTabIndex",
+        name: "DataPanelActiveTabIndex",
+        meta: {
+          notShow: true,
+          title: "dataPanelActiveTabIndex",
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
     ],
   },

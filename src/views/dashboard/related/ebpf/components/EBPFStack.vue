@@ -24,11 +24,13 @@ import d3tip from "d3-tip";
 import { flamegraph } from "d3-flame-graph";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { StackElement } from "@/types/ebpf";
+import { AggregateTypes } from "./data";
 import "d3-flame-graph/dist/d3-flamegraph.css";
 
 /*global Nullable*/
 const ebpfStore = useEbpfStore();
 const stackTree = ref<Nullable<StackElement>>(null);
+const selectStack = ref<Nullable<StackElement>>(null);
 const graph = ref<Nullable<HTMLDivElement>>(null);
 const flameChart = ref<any>(null);
 const min = ref<number>(1);
@@ -51,6 +53,8 @@ function drawGraph() {
     symbol: "Virtual Root",
     dumpCount: 0,
     stackType: "",
+    rateOfRoot: "",
+    rateOfParent: "",
   };
   countRange();
   for (const tree of ebpfStore.analyzeTrees) {
@@ -80,16 +84,37 @@ function drawGraph() {
     .title("")
     .selfValue(false)
     .inverted(true)
+    .onClick((d: { data: StackElement }) => {
+      selectStack.value = d.data;
+    })
     .setColorMapper((d, originalColor) =>
       d.highlight ? "#6aff8f" : originalColor
     );
   const tip = (d3tip as any)()
     .attr("class", "d3-tip")
     .direction("w")
-    .html(
-      (d: { data: StackElement }) =>
-        `<div class="mb-5 name">Symbol: ${d.data.name}</div><div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
-    )
+    .html((d: { data: StackElement } & { parent: { data: StackElement } }) => {
+      const name = d.data.name.replace("<", "&lt;").replace(">", "&gt;");
+      const valStr =
+        ebpfStore.aggregateType === AggregateTypes[0].value
+          ? `<div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
+          : `<div class="mb-5">Duration: ${d.data.dumpCount} ns</div>`;
+      const rateOfParent =
+        (d.parent &&
+          `<div class="mb-5">Percentage Of Selected: ${
+            (
+              (d.data.dumpCount /
+                ((selectStack.value && selectStack.value.dumpCount) ||
+                  root.dumpCount)) *
+              100
+            ).toFixed(3) + "%"
+          }</div>`) ||
+        "";
+      const rateOfRoot = `<div class="mb-5">Percentage Of Root: ${
+        ((d.data.dumpCount / root.dumpCount) * 100).toFixed(3) + "%"
+      }</div>`;
+      return `<div class="mb-5 name">Symbol: ${name}</div>${valStr}${rateOfParent}${rateOfRoot}`;
+    })
     .style("max-width", "500px");
   flameChart.value.tooltip(tip);
   d3.select("#graph-stack").datum(stackTree.value).call(flameChart.value);
@@ -118,6 +143,7 @@ function processTree(arr: StackElement[]) {
     obj[item.originId] = item;
   }
   const scale = d3.scaleLinear().domain([min.value, max.value]).range([1, 200]);
+
   for (const item of copyArr) {
     if (item.parentId === "1") {
       const val = Number(scale(item.dumpCount).toFixed(4));

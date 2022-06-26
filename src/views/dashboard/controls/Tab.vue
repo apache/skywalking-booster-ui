@@ -37,10 +37,17 @@ limitations under the License. -->
           v-if="dashboardStore.editMode && canEditTabName"
         />
       </span>
+      <span class="tab-icons">
+        <el-tooltip content="Copy Link" placement="bottom">
+          <i @click="copyLink">
+            <Icon size="middle" iconName="review-list" class="tab-icon" />
+          </i>
+        </el-tooltip>
+      </span>
       <span class="tab-icons" v-if="dashboardStore.editMode">
         <el-tooltip content="Add tab items" placement="bottom">
           <i @click="addTabItem">
-            <Icon size="middle" iconName="add" />
+            <Icon size="middle" iconName="add_fill" class="tab-icon" />
           </i>
         </el-tooltip>
       </span>
@@ -99,6 +106,7 @@ limitations under the License. -->
 <script lang="ts">
 import { ref, watch, defineComponent, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -109,7 +117,10 @@ import Profile from "./Profile.vue";
 import Log from "./Log.vue";
 import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
+import Event from "./Event.vue";
 import { dragIgnoreFrom } from "../data";
+import DemandLog from "./DemandLog.vue";
+import copy from "@/utils/copy";
 
 const props = {
   data: {
@@ -120,16 +131,31 @@ const props = {
 };
 export default defineComponent({
   name: "Tab",
-  components: { Topology, Widget, Trace, Profile, Log, Text, Ebpf },
+  components: {
+    Topology,
+    Widget,
+    Trace,
+    Profile,
+    Log,
+    Text,
+    Ebpf,
+    DemandLog,
+    Event,
+  },
   props,
   setup(props) {
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
-    const activeTabIndex = ref<number>(0);
+    const route = useRoute();
+    const activeTabIndex = ref<number>(
+      Number(route.params.activeTabIndex) || 0
+    );
     const activeTabWidget = ref<string>("");
     const editTabIndex = ref<number>(NaN); // edit tab item name
     const canEditTabName = ref<boolean>(false);
     const needQuery = ref<boolean>(false);
+
+    dashboardStore.setActiveTabIndex(activeTabIndex);
     const l = dashboardStore.layout.findIndex(
       (d: LayoutConfig) => d.i === props.data.i
     );
@@ -153,6 +179,11 @@ export default defineComponent({
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
       needQuery.value = true;
+      if (route.params.activeTabIndex) {
+        let p = location.href.split("/tab/")[0];
+        p = p + "/tab/" + activeTabIndex.value;
+        history.replaceState({}, "", p);
+      }
     }
     function removeTab(e: Event) {
       e.stopPropagation();
@@ -179,6 +210,7 @@ export default defineComponent({
       editTabIndex.value = index;
     }
     function handleClick(el: any) {
+      needQuery.value = true;
       if (["tab-name", "edit-tab"].includes(el.target.className)) {
         return;
       }
@@ -200,6 +232,16 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
+    }
+    function copyLink() {
+      let path = "";
+      if (route.params.activeTabIndex === undefined) {
+        path = location.href + "/tab/" + activeTabIndex.value;
+      } else {
+        const p = location.href.split("/tab/")[0];
+        path = p + "/tab/" + activeTabIndex.value;
+      }
+      copy(path);
     }
     document.body.addEventListener("click", handleClick, false);
     watch(
@@ -226,6 +268,7 @@ export default defineComponent({
       deleteTabItem,
       removeTab,
       clickTabs,
+      copyLink,
       ...toRefs(props),
       activeTabWidget,
       dashboardStore,
@@ -250,21 +293,23 @@ export default defineComponent({
 
   span {
     display: inline-block;
-    padding: 0 10px;
-    margin: 0 10px;
     height: 40px;
     line-height: 40px;
     cursor: pointer;
+    text-align: center;
   }
 
   .tab-name {
-    max-width: 130px;
+    max-width: 110px;
     height: 20px;
     line-height: 20px;
     outline: none;
     color: #333;
     font-style: normal;
     margin-right: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
   }
 
   .tab-icons {
@@ -325,6 +370,10 @@ export default defineComponent({
 .tab-layout {
   height: calc(100% - 55px);
   overflow: auto;
+}
+
+.tab-icon {
+  color: #666;
 }
 
 .vue-grid-item.active {

@@ -80,7 +80,7 @@ limitations under the License. -->
     </div>
     <div class="flex-h tools" v-loading="loading" v-if="!appStore.isMobile">
       <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
-        <el-dropdown content="Controls" placement="bottom">
+        <el-dropdown content="Controls" placement="bottom" :persistent="false">
           <i>
             <Icon class="icon-btn" size="sm" iconName="control" />
           </i>
@@ -455,6 +455,12 @@ function setTabControls(id: string) {
     case "addText":
       dashboardStore.addTabControls("Text");
       break;
+    case "addDemandLog":
+      dashboardStore.addTabControls("DemandLog");
+      break;
+    case "addEvent":
+      dashboardStore.addTabControls("Event");
+      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -486,6 +492,12 @@ function setControls(id: string) {
       break;
     case "addText":
       dashboardStore.addControl("Text");
+      break;
+    case "addDemandLog":
+      dashboardStore.addControl("DemandLog");
+      break;
+    case "addEvent":
+      dashboardStore.addControl("Event");
       break;
     default:
       dashboardStore.addControl("Widget");

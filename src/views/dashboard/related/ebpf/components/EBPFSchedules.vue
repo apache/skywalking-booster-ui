@@ -40,7 +40,12 @@ limitations under the License. -->
         @change="changeAggregateType"
         class="selector mr-10"
       />
-      <el-popover placement="bottom" :width="680" trigger="click">
+      <el-popover
+        placement="bottom"
+        :width="680"
+        trigger="click"
+        :persistent="false"
+      >
         <template #reference>
           <el-button type="primary" size="small">
             {{ t("processSelect") }}
@@ -173,7 +178,7 @@ async function analyzeEBPF() {
     timeRanges,
     aggregateType: aggregateType.value,
   });
-  if (res.data.errors) {
+  if (res.data && res.data.errors) {
     ElMessage.error(res.data.errors);
     return;
   }
@@ -252,15 +257,8 @@ watch(
   min-width: 560px;
 }
 
-.schedules {
-  width: calc(100% - 5px);
-  margin: 0 5px 5px 0;
-  height: calc(100% - 60px);
-  min-height: 150px;
-}
-
 .inputs {
-  width: 350px;
+  width: 400px;
 }
 
 .input-with-search {

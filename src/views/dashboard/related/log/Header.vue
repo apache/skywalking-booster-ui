@@ -50,6 +50,16 @@ limitations under the License. -->
         @query="searchEndpoints"
       />
     </div>
+    <div class="mr-5" v-if="isBrowser">
+      <span class="grey mr-5"> {{ t("category") }}: </span>
+      <Selector
+        size="small"
+        :value="state.category.value"
+        :options="ErrorCategory"
+        placeholder="Select a category"
+        @change="changeField('category', $event)"
+      />
+    </div>
     <el-button
       class="search-btn"
       size="small"
@@ -59,14 +69,14 @@ limitations under the License. -->
       {{ t("search") }}
     </el-button>
   </div>
-  <div class="flex-h row">
-    <div class="mr-5 traceId" v-show="!isBrowser">
+  <div class="flex-h row" v-show="!isBrowser">
+    <div class="mr-5 traceId">
       <span class="grey mr-5">{{ t("traceID") }}:</span>
       <el-input v-model="traceId" class="inputs-max" size="small" />
     </div>
     <ConditionTags :type="'LOG'" @update="updateTags" />
   </div>
-  <div class="row tips">
+  <div class="row tips" v-show="!isBrowser">
     <b>{{ t("conditionNotice") }}</b>
   </div>
   <div class="flex-h" v-show="!isBrowser">
@@ -120,7 +130,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { useLogStore } from "@/store/modules/log";
@@ -130,7 +140,12 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
+import { ErrorCategory } from "./data";
 
+/*global defineProps */
+const props = defineProps({
+  needQuery: { type: Boolean, default: true },
+});
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
@@ -148,9 +163,11 @@ const state = reactive<any>({
   instance: { value: "0", label: "All" },
   endpoint: { value: "0", label: "All" },
   service: { value: "", label: "" },
+  category: { value: "ALL", label: "All" },
 });
-
-init();
+if (props.needQuery) {
+  init();
+}
 async function init() {
   const resp = await logStore.getLogsByKeywords();
 
@@ -219,25 +236,32 @@ function searchLogs() {
   if (dashboardStore.entity === EntityType[3].value) {
     instance = selectorStore.currentPod.id;
   }
-  logStore.setLogCondition({
-    serviceId: selectorStore.currentService
-      ? selectorStore.currentService.id
-      : state.service.id,
-    endpointId: endpoint || state.endpoint.id || undefined,
-    serviceInstanceId: instance || state.instance.id || undefined,
-    queryDuration: appStore.durationTime,
-    keywordsOfContent:
-      dashboardStore.layerId === "BROWSER"
-        ? undefined
-        : keywordsOfContent.value,
-    excludingKeywordsOfContent:
-      dashboardStore.layerId === "BROWSER"
-        ? undefined
-        : excludingKeywordsOfContent.value,
-    tags: tagsMap.value.length ? tagsMap.value : undefined,
-    paging: { pageNum: 1, pageSize: 15 },
-    relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
-  });
+  if (dashboardStore.layerId === "BROWSER") {
+    logStore.setLogCondition({
+      serviceId: selectorStore.currentService
+        ? selectorStore.currentService.id
+        : state.service.id,
+      pagePathId: endpoint || state.endpoint.id || undefined,
+      serviceVersionId: instance || state.instance.id || undefined,
+      paging: { pageNum: 1, pageSize: 15 },
+      queryDuration: appStore.durationTime,
+      category: state.category.value,
+    });
+  } else {
+    logStore.setLogCondition({
+      serviceId: selectorStore.currentService
+        ? selectorStore.currentService.id
+        : state.service.id,
+      endpointId: endpoint || state.endpoint.id || undefined,
+      serviceInstanceId: instance || state.instance.id || undefined,
+      queryDuration: appStore.durationTime,
+      keywordsOfContent: keywordsOfContent.value,
+      excludingKeywordsOfContent: excludingKeywordsOfContent.value,
+      tags: tagsMap.value.length ? tagsMap.value : undefined,
+      paging: { pageNum: 1, pageSize: 15 },
+      relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
+    });
+  }
   queryLogs();
 }
 async function queryLogs() {
@@ -299,6 +323,9 @@ function removeExcludeContent(index: number) {
   });
   excludingContentStr.value = "";
 }
+onUnmounted(() => {
+  logStore.resetCondition();
+});
 watch(
   () => selectorStore.currentService,
   () => {

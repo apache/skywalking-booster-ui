@@ -79,7 +79,11 @@ export function useECharts(
     if (!el || !unref(el)) {
       return;
     }
+    const { width, height } = el.getBoundingClientRect();
 
+    if (!width || !height) {
+      return;
+    }
     chartInstance = echarts.init(el, t);
     const { removeEvent } = useEventListener({
       el: window,

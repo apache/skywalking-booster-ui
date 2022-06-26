@@ -30,7 +30,7 @@ limitations under the License. -->
       </div>
     </el-popover>
     <div class="header">
-      <Filter />
+      <Filter :needQuery="needQuery" />
     </div>
     <div class="trace flex-h">
       <TraceList />
@@ -53,6 +53,7 @@ const props = defineProps({
     default: () => ({ graph: {} }),
   },
   activeIndex: { type: String, default: "" },
+  needQuery: { type: Boolean, default: true },
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();

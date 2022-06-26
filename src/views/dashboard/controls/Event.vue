@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="log-wrapper flex-v">
+  <div class="event-wrapper flex-v">
     <el-popover
       placement="bottom"
       trigger="click"
@@ -32,16 +32,16 @@ limitations under the License. -->
     <div class="header">
       <Header :needQuery="needQuery" />
     </div>
-    <div class="log">
-      <List />
+    <div class="event">
+      <Content />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import Header from "../related/log/Header.vue";
-import List from "../related/log/List.vue";
+import Header from "../related/event/Header.vue";
+import Content from "../related/event/Content.vue";
 
 /*global defineProps */
 const props = defineProps({
@@ -60,7 +60,7 @@ function removeWidget() {
 }
 </script>
 <style lang="scss" scoped>
-.log-wrapper {
+.event-wrapper {
   width: 100%;
   height: 100%;
   font-size: 12px;
@@ -72,6 +72,7 @@ function removeWidget() {
   position: absolute;
   top: 5px;
   right: 3px;
+  z-index: 9999;
 }
 
 .header {
@@ -94,7 +95,8 @@ function removeWidget() {
   }
 }
 
-.log {
+.event {
   width: 100%;
+  height: calc(100% - 80px);
 }
 </style>

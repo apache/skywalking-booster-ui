@@ -30,18 +30,16 @@ limitations under the License. -->
       </div>
     </el-popover>
     <div class="header">
-      <Header :needQuery="needQuery" />
+      <Header />
     </div>
-    <div class="log">
-      <List />
-    </div>
+    <Content />
   </div>
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import Header from "../related/log/Header.vue";
-import List from "../related/log/List.vue";
+import Header from "../related/demand-log/Header.vue";
+import Content from "../related/demand-log/Content.vue";
 
 /*global defineProps */
 const props = defineProps({
@@ -50,7 +48,6 @@ const props = defineProps({
     default: () => ({}),
   },
   activeIndex: { type: String, default: "" },
-  needQuery: { type: Boolean, default: true },
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -92,9 +89,5 @@ function removeWidget() {
     color: #409eff;
     background-color: #eee;
   }
-}
-
-.log {
-  width: 100%;
 }
 </style>
