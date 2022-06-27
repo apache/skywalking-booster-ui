@@ -58,8 +58,8 @@ limitations under the License. -->
         <el-collapse-item :title="t('widgetOptions')" name="3">
           <WidgetOptions />
         </el-collapse-item>
-        <el-collapse-item :title="t('seniorOptions')" name="4">
-          <SeniorOptions />
+        <el-collapse-item :title="t('associateOptions')" name="4">
+          <AssociateOptions />
         </el-collapse-item>
       </el-collapse>
     </div>

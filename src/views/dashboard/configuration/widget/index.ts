@@ -18,11 +18,11 @@
 import StyleOptions from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
 import MetricOptions from "./metric/Index.vue";
-import SeniorOptions from "./SeniorOptions.vue";
+import AssociateOptions from "./AssociateOptions.vue";
 
 export default {
   ...StyleOptions,
   WidgetOptions,
   MetricOptions,
-  SeniorOptions,
+  AssociateOptions,
 };

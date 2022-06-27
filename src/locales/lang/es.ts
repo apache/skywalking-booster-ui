@@ -142,7 +142,7 @@ const msg = {
   interval: "Intervalo de actualización",
   pause: "Pausa",
   begin: "Inicio",
-  seniorOptions: "Opciones avanzadas",
+  associateOptions: "Opciones de asociación",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

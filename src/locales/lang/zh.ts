@@ -140,7 +140,7 @@ const msg = {
   interval: "刷新间隔时间",
   pause: "暂停",
   begin: "开始",
-  seniorOptions: "高级选项",
+  associateOptions: "关联选项",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",

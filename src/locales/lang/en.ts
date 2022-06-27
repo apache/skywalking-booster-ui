@@ -142,7 +142,7 @@ const msg = {
   interval: "Refresh Interval",
   pause: "Pause",
   begin: "Start",
-  seniorOptions: "Senior Options",
+  associateOptions: "Association Options",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
