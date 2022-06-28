@@ -232,12 +232,17 @@ function exportTemplates() {
   }, 2000);
 }
 function optimizeTemplate(
-  children: (LayoutConfig & { moved?: boolean; standard?: unknown })[]
+  children: (LayoutConfig & {
+    moved?: boolean;
+    standard?: unknown;
+    id?: string;
+  })[]
 ) {
   for (const child of children || []) {
     delete child.moved;
     delete child.activedTabIndex;
     delete child.standard;
+    delete child.id;
     if (isEmptyObject(child.graph)) {
       delete child.graph;
     }

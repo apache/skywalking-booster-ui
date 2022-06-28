@@ -141,6 +141,7 @@ const msg = {
   pause: "暂停",
   begin: "开始",
   associateOptions: "关联选项",
+  widget: "部件",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",

@@ -143,6 +143,7 @@ const msg = {
   pause: "Pause",
   begin: "Start",
   associateOptions: "Association Options",
+  widget: "Widget",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

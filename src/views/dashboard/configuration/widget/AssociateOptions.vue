@@ -14,26 +14,52 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="item">
-    <span class="label">{{ t("title") }}</span>
-    <el-input
-      class="input"
-      v-model="title"
+    <span class="label">{{ t("widget") }}</span>
+    <Selector
+      :value="widgetId"
+      :options="widgets"
       size="small"
-      placeholder="Please input title"
-      @change="updateWidgetConfig({ title: encodeURIComponent(title) })"
+      placeholder="Select a metric"
+      @change="updateWidgetConfig({ associateWidget: $event[0].value })"
+      class="selectors"
     />
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const widget = dashboardStore.selectedGrid.widget || {};
-const title = ref<string>(widget.title || "");
-
+const associate = dashboardStore.selectedGrid.associate || {};
+const widgetId = ref<string>(associate.widgetId || "");
+const widgets = computed(() => {
+  const all = [];
+  for (const item of dashboardStore.layout) {
+    if (item.type === "Tab") {
+      if (item.children && item.children.length) {
+        for (const child of item.children) {
+          if (child.children && child.children.length) {
+            const items = child.children.map(
+              (d: { i: string; index: string } | any) => {
+                d.value = d.id;
+                d.label = (d.widget && d.widget.title) || d.type || "";
+                return d;
+              }
+            );
+            all.push(...items);
+          }
+        }
+      }
+    } else {
+      item.value = item.id;
+      item.label = (item.widget && item.widget.title) || item.type || "";
+      all.push(item);
+    }
+  }
+  return all;
+});
 function updateWidgetConfig(param: { [key: string]: string }) {
   const key = Object.keys(param)[0];
   if (!key) {
