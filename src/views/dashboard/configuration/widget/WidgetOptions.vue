@@ -14,6 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="item">
+    <span class="label">{{ t("name") }}</span>
+    <el-input
+      class="input"
+      v-model="name"
+      size="small"
+      placeholder="Please input name"
+      @change="updateWidgetName({ name: encodeURIComponent(name) })"
+    />
+  </div>
+  <div class="item">
     <span class="label">{{ t("title") }}</span>
     <el-input
       class="input"
@@ -37,13 +47,17 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import getDashboard from "@/hooks/useDashboardsSession";
+import { LayoutConfig } from "@/types/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const widget = dashboardStore.selectedGrid.widget || {};
 const title = ref<string>(widget.title || "");
 const tips = ref<string>(widget.tips || "");
+const name = ref<string>(widget.name || "");
 
 function updateWidgetConfig(param: { [key: string]: string }) {
   const key = Object.keys(param)[0];
@@ -56,6 +70,19 @@ function updateWidgetConfig(param: { [key: string]: string }) {
     [key]: decodeURIComponent(param[key]),
   };
   dashboardStore.selectWidget({ ...selectedGrid, widget });
+}
+function updateWidgetName(param: { [key: string]: string }) {
+  const key = Object.keys(param)[0];
+  const n = decodeURIComponent(param[key]);
+  const widgets = getDashboard(dashboardStore.currentDashboard).widgets;
+  const item = widgets.find(
+    (d: LayoutConfig) => d.widget && d.widget.name === n
+  );
+  if (item) {
+    ElMessage.warning("Duplicate name");
+    return;
+  }
+  updateWidgetConfig(param);
 }
 </script>
 <style lang="scss" scoped>

@@ -173,18 +173,18 @@ function goDashboard() {
     dashboardStore.entity === EntityType[2].value
       ? EntityType[2].value
       : EntityType[3].value;
-  const d = getDashboard({
+  const { dashboard } = getDashboard({
     name: settings.value.nodeDashboard,
     layer: dashboardStore.layerId,
     entity,
   });
-  if (!d) {
+  if (!dashboard) {
     ElMessage.error(
       `The dashboard named ${settings.value.nodeDashboard} doesn't exist`
     );
     return;
   }
-  const path = `/dashboard/${d.layer}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${d.name}`;
+  const path = `/dashboard/${dashboard.layer}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${dashboard.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
   topologyStore.setNode(null);
@@ -217,18 +217,18 @@ function selectNodeLink(d: any) {
       dashboardStore.entity === EntityType[2].value
         ? EntityType[6].value
         : EntityType[5].value;
-    const p = getDashboard({
+    const { dashboard } = getDashboard({
       name: settings.value.linkDashboard,
       layer: dashboardStore.layerId,
       entity,
     });
-    if (!p) {
+    if (!dashboard) {
       ElMessage.error(
         `The dashboard named ${settings.value.linkDashboard} doesn't exist`
       );
       return;
     }
-    const path = `/dashboard/${p.layer}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${p.name}`;
+    const path = `/dashboard/${dashboard.layer}/${entity}/${sourceObj.serviceId}/${sourceObj.id}/${targetObj.serviceId}/${targetObj.id}/${dashboard.name}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
     return;

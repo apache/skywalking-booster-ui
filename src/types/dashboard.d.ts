@@ -36,6 +36,7 @@ export interface LayoutConfig {
   children?: { name: string; children: LayoutConfig[] }[];
   activedTabIndex?: number;
   metricConfig?: MetricConfigOpt[];
+  id?: string;
 }
 
 export type MetricConfigOpt = {
@@ -48,6 +49,7 @@ export type MetricConfigOpt = {
 };
 
 export interface WidgetConfig {
+  name?: string;
   title?: string;
   tips?: string;
 }

@@ -272,19 +272,19 @@ function handleLinkClick(event: any, d: Call) {
     dashboardStore.entity === EntityType[1].value
       ? EntityType[0].value
       : dashboardStore.entity;
-  const p = getDashboard({
+  const { dashboard } = getDashboard({
     name: settings.value.linkDashboard,
     layer: dashboardStore.layerId,
     entity: `${e}Relation`,
   });
-  if (!p) {
+  if (!dashboard) {
     ElMessage.error(
       `The dashboard named ${settings.value.linkDashboard} doesn't exist`
     );
     return;
   }
-  dashboardStore.setEntity(p.entity);
-  const path = `/dashboard/related/${p.layer}/${e}Relation/${d.source.id}/${d.target.id}/${p.name}`;
+  dashboardStore.setEntity(dashboard.entity);
+  const path = `/dashboard/related/${dashboard.layer}/${e}Relation/${d.source.id}/${d.target.id}/${dashboard.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
   dashboardStore.setEntity(origin);

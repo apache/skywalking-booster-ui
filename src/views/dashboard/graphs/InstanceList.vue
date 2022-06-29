@@ -180,19 +180,19 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
 }
 
 function clickInstance(scope: any) {
-  const d = getDashboard({
+  const { dashboard } = getDashboard({
     name: props.config.dashboardName,
     layer: dashboardStore.layerId,
     entity: EntityType[3].value,
   });
-  if (!d) {
+  if (!dashboard) {
     ElMessage.error("No this dashboard");
     return;
   }
   router.push(
-    `/dashboard/${d.layer}/${d.entity}/${selectorStore.currentService.id}/${
-      scope.row.id
-    }/${d.name.split(" ").join("-")}`
+    `/dashboard/${dashboard.layer}/${dashboard.entity}/${
+      selectorStore.currentService.id
+    }/${scope.row.id}/${dashboard.name.split(" ").join("-")}`
   );
 }
 

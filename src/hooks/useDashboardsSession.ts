@@ -27,6 +27,19 @@ export default function getDashboard(param: {
       d.entity === param.entity &&
       d.layer === param.layer
   );
-
-  return dashboard;
+  const widgets = [];
+  for (const item of dashboard) {
+    if (item.type === "Tab") {
+      if (item.children && item.children.length) {
+        for (const child of item.children) {
+          if (child.children && child.children.length) {
+            widgets.push(...child.children);
+          }
+        }
+      }
+    } else {
+      widgets.push(item);
+    }
+  }
+  return { dashboard, widgets };
 }

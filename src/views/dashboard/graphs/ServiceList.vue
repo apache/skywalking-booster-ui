@@ -179,16 +179,16 @@ function setServices(arr: (Service & { merge: boolean })[]) {
 }
 
 function clickService(scope: any) {
-  const d = getDashboard({
+  const { dashboard } = getDashboard({
     name: props.config.dashboardName,
     layer: dashboardStore.layerId,
     entity: EntityType[0].value,
   });
-  if (!d) {
+  if (!dashboard) {
     ElMessage.error("No this dashboard");
     return;
   }
-  const path = `/dashboard/${d.layer}/${d.entity}/${scope.row.id}/${d.name}`;
+  const path = `/dashboard/${dashboard.layer}/${dashboard.entity}/${scope.row.id}/${dashboard.name}`;
 
   router.push(path);
 }

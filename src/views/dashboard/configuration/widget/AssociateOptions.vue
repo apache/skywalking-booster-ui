@@ -29,6 +29,8 @@ limitations under the License. -->
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import getDashboard from "@/hooks/useDashboardsSession";
+import { LayoutConfig } from "@/types/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -41,45 +43,24 @@ const widgets = computed(() => {
   const isRank = ["TopList"].includes(
     dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
   );
-  const all = [];
-  for (const item of dashboardStore.layout) {
-    if (item.type === "Tab") {
-      if (item.children && item.children.length) {
-        for (const child of item.children) {
-          if (child.children && child.children.length) {
-            const items = child.children.filter(
-              (d: { i: string; index: string } | any) => {
-                if (isLinear) {
-                  d.value = d.id;
-                  d.label = (d.widget && d.widget.title) || d.type || "";
-                  return d;
-                }
-                if (isRank && d.type !== "Widget") {
-                  d.value = d.id;
-                  d.label = (d.widget && d.widget.title) || d.type || "";
-                  return d;
-                }
-              }
-            );
-            all.push(...items);
-          }
+  const w = getDashboard(dashboardStore.currentDashboard).widgets;
+  const items = w.filter(
+    (d: { value: string; label: string } & LayoutConfig) => {
+      if (dashboardStore.selectedGrid.id !== d.id) {
+        if (isLinear) {
+          d.value = d.id || "";
+          d.label = (d.widget && d.widget.title) || d.type || "";
+          return d;
+        }
+        if (isRank && d.type !== "Widget") {
+          d.value = d.id || "";
+          d.label = (d.widget && d.widget.title) || d.type || "";
+          return d;
         }
       }
-    } else {
-      if (isLinear) {
-        item.value = item.id;
-        item.label = (item.widget && item.widget.title) || item.type || "";
-        all.push(item);
-        return;
-      }
-      if (isRank && item.type !== "Widget") {
-        item.value = item.id;
-        item.label = (item.widget && item.widget.title) || item.type || "";
-        all.push(item);
-      }
     }
-  }
-  return all;
+  );
+  return items;
 });
 function updateWidgetConfig(param: { [key: string]: string }) {
   const key = Object.keys(param)[0];

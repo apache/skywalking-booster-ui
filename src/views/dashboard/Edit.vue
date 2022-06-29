@@ -41,6 +41,7 @@ import Tool from "./panel/Tool.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import Configuration from "./configuration";
+import { LayoutConfig } from "@/types/dashboard";
 
 export default defineComponent({
   name: "Dashboard",
@@ -79,7 +80,7 @@ export default defineComponent({
         });
       }
     }
-    function setWidgetsID(widgets: any[]) {
+    function setWidgetsID(widgets: LayoutConfig[]) {
       for (const item of widgets) {
         item.id = item.i;
         if (item.type === "Tab") {
