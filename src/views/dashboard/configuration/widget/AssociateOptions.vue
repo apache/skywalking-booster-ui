@@ -19,7 +19,7 @@ limitations under the License. -->
       :value="widgetId"
       :options="widgets"
       size="small"
-      placeholder="Select a metric"
+      placeholder="Select a widget"
       @change="updateWidgetConfig({ associateWidget: $event[0].value })"
       class="selectors"
     />
@@ -35,17 +35,30 @@ const dashboardStore = useDashboardStore();
 const associate = dashboardStore.selectedGrid.associate || {};
 const widgetId = ref<string>(associate.widgetId || "");
 const widgets = computed(() => {
+  const isLinear = ["Bar", "Line"].includes(
+    dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
+  );
+  const isRank = ["TopList"].includes(
+    dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
+  );
   const all = [];
   for (const item of dashboardStore.layout) {
     if (item.type === "Tab") {
       if (item.children && item.children.length) {
         for (const child of item.children) {
           if (child.children && child.children.length) {
-            const items = child.children.map(
+            const items = child.children.filter(
               (d: { i: string; index: string } | any) => {
-                d.value = d.id;
-                d.label = (d.widget && d.widget.title) || d.type || "";
-                return d;
+                if (isLinear) {
+                  d.value = d.id;
+                  d.label = (d.widget && d.widget.title) || d.type || "";
+                  return d;
+                }
+                if (isRank && d.type !== "Widget") {
+                  d.value = d.id;
+                  d.label = (d.widget && d.widget.title) || d.type || "";
+                  return d;
+                }
               }
             );
             all.push(...items);
@@ -53,9 +66,17 @@ const widgets = computed(() => {
         }
       }
     } else {
-      item.value = item.id;
-      item.label = (item.widget && item.widget.title) || item.type || "";
-      all.push(item);
+      if (isLinear) {
+        item.value = item.id;
+        item.label = (item.widget && item.widget.title) || item.type || "";
+        all.push(item);
+        return;
+      }
+      if (isRank && item.type !== "Widget") {
+        item.value = item.id;
+        item.label = (item.widget && item.widget.title) || item.type || "";
+        all.push(item);
+      }
     }
   }
   return all;
@@ -87,5 +108,9 @@ function updateWidgetConfig(param: { [key: string]: string }) {
 
 .item {
   margin-bottom: 10px;
+}
+
+.selectors {
+  width: 500px;
 }
 </style>
