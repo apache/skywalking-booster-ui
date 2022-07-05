@@ -74,7 +74,14 @@ function updateWidgetConfig(param: { [key: string]: string }) {
 function updateWidgetName(param: { [key: string]: string }) {
   const key = Object.keys(param)[0];
   const n = decodeURIComponent(param[key]);
-  const widgets = getDashboard(dashboardStore.currentDashboard).widgets;
+  const pattern = /^[A-Za-z0-9-_\u4e00-\u9fa5]{4,30}$/;
+  if (!pattern.test(n)) {
+    ElMessage.warning(
+      "The name only supports Chinese and English, horizontal lines and underscores"
+    );
+    return;
+  }
+  const { widgets } = getDashboard(dashboardStore.currentDashboard);
   const item = widgets.find(
     (d: LayoutConfig) => d.widget && d.widget.name === n
   );

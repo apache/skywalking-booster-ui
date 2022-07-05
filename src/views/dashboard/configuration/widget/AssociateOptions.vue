@@ -43,18 +43,18 @@ const widgets = computed(() => {
   const isRank = ["TopList"].includes(
     dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
   );
-  const w = getDashboard(dashboardStore.currentDashboard).widgets;
-  const items = w.filter(
+  const { widgets } = getDashboard(dashboardStore.currentDashboard);
+  const items = widgets.filter(
     (d: { value: string; label: string } & LayoutConfig) => {
       if (dashboardStore.selectedGrid.id !== d.id) {
-        if (isLinear) {
+        if (isLinear && d.widget) {
           d.value = d.id || "";
-          d.label = (d.widget && d.widget.title) || d.type || "";
+          d.label = d.widget.name || d.id || "";
           return d;
         }
-        if (isRank && d.type !== "Widget") {
+        if (isRank && d.type !== "Widget" && d.widget) {
           d.value = d.id || "";
-          d.label = (d.widget && d.widget.title) || d.type || "";
+          d.label = d.widget.name || d.id || "";
           return d;
         }
       }
