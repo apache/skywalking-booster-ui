@@ -16,12 +16,13 @@ limitations under the License. -->
   <div class="item">
     <span class="label">{{ t("widget") }}</span>
     <Selector
-      :value="widgetId"
+      :multiple="true"
+      :value="widgetIds"
       :options="widgets"
       size="small"
       placeholder="Select a widget"
-      @change="updateWidgetConfig({ associateWidget: $event[0].value })"
       class="selectors"
+      @change="updateWidgetConfig"
     />
   </div>
 </template>
@@ -31,13 +32,14 @@ import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { LayoutConfig } from "@/types/dashboard";
+import { Option } from "@/types/app";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const associate = dashboardStore.selectedGrid.associate || {};
-const widgetId = ref<string>(associate.widgetId || "");
+const widgetIds = ref<string[]>(associate.widgetIds || []);
 const widgets = computed(() => {
-  const isLinear = ["Bar", "Line"].includes(
+  const isLinear = ["Bar", "Line", "Area"].includes(
     dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
   );
   const isRank = ["TopList"].includes(
@@ -47,14 +49,14 @@ const widgets = computed(() => {
   const items = widgets.filter(
     (d: { value: string; label: string } & LayoutConfig) => {
       if (dashboardStore.selectedGrid.id !== d.id) {
-        if (isLinear && d.widget) {
-          d.value = d.id || "";
-          d.label = d.widget.name || d.id || "";
+        if (isLinear && d.widget && d.id) {
+          d.value = d.id;
+          d.label = d.widget.name || d.id;
           return d;
         }
-        if (isRank && d.type !== "Widget" && d.widget) {
-          d.value = d.id || "";
-          d.label = d.widget.name || d.id || "";
+        if (isRank && d.type !== "Widget" && d.widget && d.id) {
+          d.value = d.id;
+          d.label = d.widget.name || d.id;
           return d;
         }
       }
@@ -62,17 +64,13 @@ const widgets = computed(() => {
   );
   return items;
 });
-function updateWidgetConfig(param: { [key: string]: string }) {
-  const key = Object.keys(param)[0];
-  if (!key) {
-    return;
-  }
-  const { selectedGrid } = dashboardStore;
+function updateWidgetConfig(options: Option[]) {
+  const opt = options.map((d: Option) => d.value);
   const widget = {
-    ...dashboardStore.selectedGrid.widget,
-    [key]: decodeURIComponent(param[key]),
+    ...dashboardStore.selectedGrid,
+    associate: { widgetIds: opt },
   };
-  dashboardStore.selectWidget({ ...selectedGrid, widget });
+  dashboardStore.selectWidget({ ...widget });
 }
 </script>
 <style lang="scss" scoped>

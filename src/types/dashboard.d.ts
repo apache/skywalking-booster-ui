@@ -37,6 +37,7 @@ export interface LayoutConfig {
   activedTabIndex?: number;
   metricConfig?: MetricConfigOpt[];
   id?: string;
+  associate?: { widgetIds: string }[];
 }
 
 export type MetricConfigOpt = {
@@ -139,3 +140,15 @@ export interface TopologyConfig {
   depth?: number;
   showDepth?: boolean;
 }
+export type EventParams = {
+  componentType: string;
+  seriesType: string;
+  seriesIndex: number;
+  seriesName: string;
+  name: string;
+  dataIndex: number;
+  data: Record<string, unknown>;
+  dataType: string;
+  value: number | number[];
+  color: string;
+};

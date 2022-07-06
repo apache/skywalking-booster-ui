@@ -61,7 +61,7 @@ onMounted(async () => {
     if (!instance) {
       return;
     }
-    instance.on("click", (params: any) => {
+    instance.on("click", (params: unknown) => {
       emits("select", params);
     });
   }, 1000);

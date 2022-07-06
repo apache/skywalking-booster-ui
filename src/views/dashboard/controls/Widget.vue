@@ -62,8 +62,10 @@ limitations under the License. -->
           metricTypes: data.metricTypes || [''],
           i: data.i,
           metricConfig: data.metricConfig,
+          associate: data.associate || [],
         }"
         :needQuery="needQuery"
+        @click="clickHandle"
       />
     </div>
     <div v-else class="no-data">{{ t("noGraph") }}</div>
@@ -84,6 +86,7 @@ import {
   useGetMetricEntity,
 } from "@/hooks/useProcessor";
 import { EntityType, ListChartTypes } from "../data";
+import { EventParams } from "@/types/dashboard";
 
 const props = {
   data: {
@@ -93,6 +96,7 @@ const props = {
   activeIndex: { type: String, default: "" },
   needQuery: { type: Boolean, default: false },
 };
+
 export default defineComponent({
   name: "Widget",
   components: { ...graphs },
@@ -155,6 +159,12 @@ export default defineComponent({
       } else {
         dashboardStore.activeGridItem(props.data.i);
       }
+    }
+    function clickHandle(params: EventParams | any) {
+      console.log(params);
+      console.log(props.data.associate);
+      // for (const id of props.config.associate.widgetIds) {
+      // }
     }
     watch(
       () => [props.data.metricTypes, props.data.metrics],
@@ -221,6 +231,7 @@ export default defineComponent({
       t,
       graph,
       widget,
+      clickHandle,
     };
   },
 });
