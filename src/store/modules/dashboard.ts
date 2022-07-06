@@ -275,6 +275,27 @@ export const dashboardStore = defineStore({
       };
       this.selectedGrid = this.layout[index];
     },
+    setWidget(param: LayoutConfig) {
+      for (let item of this.layout) {
+        if (item.type === "Tab") {
+          if (item.children && item.children.length) {
+            for (const child of item.children) {
+              if (child.children && child.children.length) {
+                for (let c of child.children) {
+                  if (c.id === param.id) {
+                    c = param;
+                  }
+                }
+              }
+            }
+          }
+        } else {
+          if (item.id === param.id) {
+            item = param;
+          }
+        }
+      }
+    },
     async fetchMetricType(item: string) {
       const res: AxiosResponse = await graphql
         .query("queryTypeOfMetrics")

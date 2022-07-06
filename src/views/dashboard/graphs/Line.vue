@@ -32,9 +32,7 @@ const props = defineProps({
   theme: { type: String, default: "light" },
   itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
   config: {
-    type: Object as PropType<
-      LineConfig & { associate: { widgetIds: string[] } }
-    >,
+    type: Object as PropType<LineConfig>,
     default: () => ({
       step: false,
       smooth: false,

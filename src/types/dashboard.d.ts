@@ -37,7 +37,7 @@ export interface LayoutConfig {
   activedTabIndex?: number;
   metricConfig?: MetricConfigOpt[];
   id?: string;
-  associate?: { widgetIds: string }[];
+  associate?: { widgetId: string }[];
 }
 
 export type MetricConfigOpt = {

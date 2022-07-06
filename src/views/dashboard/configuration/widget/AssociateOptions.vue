@@ -17,7 +17,7 @@ limitations under the License. -->
     <span class="label">{{ t("widget") }}</span>
     <Selector
       :multiple="true"
-      :value="widgetIds"
+      :value="widgetId"
       :options="widgets"
       size="small"
       placeholder="Select a widget"
@@ -37,7 +37,7 @@ import { Option } from "@/types/app";
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const associate = dashboardStore.selectedGrid.associate || {};
-const widgetIds = ref<string[]>(associate.widgetIds || []);
+const widgetId = ref<string[]>(associate.widgetId || []);
 const widgets = computed(() => {
   const isLinear = ["Bar", "Line", "Area"].includes(
     dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
@@ -65,10 +65,12 @@ const widgets = computed(() => {
   return items;
 });
 function updateWidgetConfig(options: Option[]) {
-  const opt = options.map((d: Option) => d.value);
+  const opt = options.map((d: Option) => {
+    return { widgetId: d.value };
+  });
   const widget = {
     ...dashboardStore.selectedGrid,
-    associate: { widgetIds: opt },
+    associate: opt,
   };
   dashboardStore.selectWidget({ ...widget });
 }

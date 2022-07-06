@@ -87,6 +87,7 @@ import {
 } from "@/hooks/useProcessor";
 import { EntityType, ListChartTypes } from "../data";
 import { EventParams } from "@/types/dashboard";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 const props = {
   data: {
@@ -161,10 +162,22 @@ export default defineComponent({
       }
     }
     function clickHandle(params: EventParams | any) {
-      console.log(params);
-      console.log(props.data.associate);
-      // for (const id of props.config.associate.widgetIds) {
-      // }
+      const { widgets } = getDashboard(dashboardStore.currentDashboard);
+      const associate = (props.data.associate && props.data.associate) || [];
+
+      for (const item of associate) {
+        const widget = widgets.find(
+          (d: { id: string }) => d.id === item.widgetId
+        );
+        if (widget) {
+          widget.filters = widget.filters || {};
+          widget.filters = {
+            ...widget.filters,
+            [props.data.id || ""]: { value: params.value[0] },
+          };
+          dashboardStore.setWidget(widget);
+        }
+      }
     }
     watch(
       () => [props.data.metricTypes, props.data.metrics],
