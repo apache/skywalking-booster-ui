@@ -172,7 +172,6 @@ export default defineComponent({
         );
         if (widget) {
           widget.filters = {
-            value: params.value[0],
             dataIndex: params.dataIndex,
             sourceId: props.data.id || "",
           };

@@ -74,6 +74,9 @@ onMounted(async () => {
     document.addEventListener(
       "click",
       () => {
+        if (instance.isDisposed()) {
+          return;
+        }
         instance.dispatchAction({
           type: "hideTip",
         });

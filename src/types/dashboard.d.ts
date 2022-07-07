@@ -38,7 +38,7 @@ export interface LayoutConfig {
   metricConfig?: MetricConfigOpt[];
   id?: string;
   associate?: { widgetId: string }[];
-  filters?: { value: number | string; dataIndex: number; sourceId: string };
+  filters?: { dataIndex: number; sourceId: string };
 }
 
 export type MetricConfigOpt = {
