@@ -29,7 +29,15 @@ defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   config: {
-    type: Object as PropType<AreaConfig>,
+    type: Object as PropType<
+      AreaConfig & {
+        filters: {
+          value: number | string;
+          dataIndex: number;
+          sourceId: string;
+        };
+      } & { id: string }
+    >,
     default: () => ({}),
   },
 });
