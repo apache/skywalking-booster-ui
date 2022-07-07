@@ -44,9 +44,9 @@ const widgets = computed(() => {
   const isLinear = ["Bar", "Line", "Area"].includes(
     dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
   );
-  const isRank = ["TopList"].includes(
-    dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
-  );
+  // const isRank = ["TopList"].includes(
+  //   dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
+  // );
   const { widgets } = getDashboard(dashboardStore.currentDashboard);
   const items = widgets.filter(
     (d: { value: string; label: string } & LayoutConfig) => {
@@ -56,11 +56,11 @@ const widgets = computed(() => {
           d.label = d.widget.name || d.id;
           return d;
         }
-        if (isRank && d.type !== "Widget" && d.widget && d.id) {
-          d.value = d.id;
-          d.label = d.widget.name || d.id;
-          return d;
-        }
+        // if (isRank && d.type !== "Widget" && d.widget && d.id) {
+        //   d.value = d.id;
+        //   d.label = d.widget.name || d.id;
+        //   return d;
+        // }
       }
     }
   );

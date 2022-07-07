@@ -142,6 +142,7 @@ const msg = {
   begin: "开始",
   associateOptions: "关联选项",
   widget: "部件",
+  nameTip: "该名称仅支持中文和英文、横线和下划线",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",

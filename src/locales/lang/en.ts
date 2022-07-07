@@ -144,6 +144,8 @@ const msg = {
   begin: "Start",
   associateOptions: "Association Options",
   widget: "Widget",
+  nameTip:
+    "The name only supports Chinese and English, horizontal lines and underscores",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
