@@ -36,8 +36,10 @@ import { Option } from "@/types/app";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const associate = dashboardStore.selectedGrid.associate || {};
-const widgetId = ref<string[]>(associate.widgetId || []);
+const associate = dashboardStore.selectedGrid.associate || [];
+const widgetId = ref<string[]>(
+  associate.map((d: { widgetId: string }) => d.widgetId)
+);
 const widgets = computed(() => {
   const isLinear = ["Bar", "Line", "Area"].includes(
     dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
