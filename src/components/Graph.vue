@@ -44,6 +44,13 @@ const props = defineProps({
     type: Object as PropType<{ [key: string]: any }>,
     default: () => ({}),
   },
+  filters: {
+    type: Object as PropType<{
+      value: number | string;
+      dataIndex: number;
+      sourceId: string;
+    }>,
+  },
 });
 const available = computed(
   () =>
@@ -55,6 +62,7 @@ const available = computed(
 onMounted(async () => {
   await setOptions(props.option);
   chartRef.value && addResizeListener(unref(chartRef), resize);
+  console.log(props.filters);
   setTimeout(() => {
     const instance = getInstance();
 
@@ -77,6 +85,27 @@ watch(
       return;
     }
     setOptions(newVal);
+  }
+);
+watch(
+  () => props.filters,
+  () => {
+    console.log(props.filters);
+    const instance = getInstance();
+    if (!instance) {
+      return;
+    }
+    if (props.filters) {
+      instance.dispatchAction({
+        type: "showTip",
+        dataIndex: props.filters.dataIndex,
+        seriesIndex: 0,
+      });
+    } else {
+      instance.dispatchAction({
+        type: "hideTip",
+      });
+    }
   }
 );
 

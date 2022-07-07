@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Graph :option="option" @select="clickEvent" />
+  <Graph :option="option" @select="clickEvent" :filters="config.filters" />
 </template>
 <script lang="ts" setup>
 import { computed } from "vue";
@@ -32,7 +32,15 @@ const props = defineProps({
   theme: { type: String, default: "light" },
   itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
   config: {
-    type: Object as PropType<LineConfig>,
+    type: Object as PropType<
+      LineConfig & {
+        filters: {
+          value: number | string;
+          dataIndex: number;
+          sourceId: string;
+        };
+      } & { id: string }
+    >,
     default: () => ({
       step: false,
       smooth: false,

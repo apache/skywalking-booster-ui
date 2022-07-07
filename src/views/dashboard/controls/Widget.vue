@@ -61,8 +61,9 @@ limitations under the License. -->
           metrics: data.metrics || [''],
           metricTypes: data.metricTypes || [''],
           i: data.i,
+          id: data.id,
           metricConfig: data.metricConfig,
-          associate: data.associate || [],
+          filters: data.filters || {},
         }"
         :needQuery="needQuery"
         @click="clickHandle"
@@ -162,6 +163,7 @@ export default defineComponent({
       }
     }
     function clickHandle(params: EventParams | any) {
+      console.log(params);
       const { widgets } = getDashboard(dashboardStore.currentDashboard);
       const associate = (props.data.associate && props.data.associate) || [];
 
@@ -170,11 +172,12 @@ export default defineComponent({
           (d: { id: string }) => d.id === item.widgetId
         );
         if (widget) {
-          widget.filters = widget.filters || {};
           widget.filters = {
-            ...widget.filters,
-            [props.data.id || ""]: { value: params.value[0] },
+            value: params.value[0],
+            dataIndex: params.dataIndex,
+            sourceId: props.data.id || "",
           };
+
           dashboardStore.setWidget(widget);
         }
       }
