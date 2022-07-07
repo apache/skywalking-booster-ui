@@ -62,7 +62,6 @@ const available = computed(
 onMounted(async () => {
   await setOptions(props.option);
   chartRef.value && addResizeListener(unref(chartRef), resize);
-  console.log(props.filters);
   setTimeout(() => {
     const instance = getInstance();
 
@@ -72,6 +71,15 @@ onMounted(async () => {
     instance.on("click", (params: unknown) => {
       emits("select", params);
     });
+    document.addEventListener(
+      "click",
+      () => {
+        instance.dispatchAction({
+          type: "hideTip",
+        });
+      },
+      true
+    );
   }, 1000);
 });
 
@@ -90,7 +98,6 @@ watch(
 watch(
   () => props.filters,
   () => {
-    console.log(props.filters);
     const instance = getInstance();
     if (!instance) {
       return;
@@ -100,10 +107,6 @@ watch(
         type: "showTip",
         dataIndex: props.filters.dataIndex,
         seriesIndex: 0,
-      });
-    } else {
-      instance.dispatchAction({
-        type: "hideTip",
       });
     }
   }
