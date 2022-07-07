@@ -163,7 +163,6 @@ export default defineComponent({
       }
     }
     function clickHandle(params: EventParams | any) {
-      console.log(params);
       const { widgets } = getDashboard(dashboardStore.currentDashboard);
       const associate = (props.data.associate && props.data.associate) || [];
 

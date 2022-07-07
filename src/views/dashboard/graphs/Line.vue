@@ -90,7 +90,7 @@ function getOption() {
       name: i,
       type: "line",
       symbol: "circle",
-      symbolSize: 6,
+      symbolSize: 8,
       showSymbol: props.config.showSymbol,
       step: props.config.step,
       smooth: props.config.smooth,
