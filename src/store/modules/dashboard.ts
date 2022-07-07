@@ -80,6 +80,7 @@ export const dashboardStore = defineStore({
       const newItem: LayoutConfig = {
         ...NewControl,
         i: index,
+        id: index,
         type,
         metricTypes: [""],
         metrics: [""],
@@ -152,9 +153,11 @@ export const dashboardStore = defineStore({
       if (!children.length) {
         index = "0";
       }
+      const id = `${activedGridItem}-${tabIndex}-${index}`;
       const newItem: LayoutConfig = {
         ...NewControl,
         i: index,
+        id,
         type,
         metricTypes: [""],
         metrics: [""],

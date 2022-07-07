@@ -235,7 +235,6 @@ function optimizeTemplate(
   children: (LayoutConfig & {
     moved?: boolean;
     standard?: unknown;
-    id?: string;
   })[]
 ) {
   for (const child of children || []) {
@@ -407,6 +406,7 @@ async function updateName(d: DashboardItem, value: string) {
     name: value,
   };
   delete c.id;
+  delete c.filters;
   const setting = {
     id: d.id,
     configuration: JSON.stringify(c),
