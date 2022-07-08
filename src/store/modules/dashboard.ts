@@ -80,6 +80,7 @@ export const dashboardStore = defineStore({
       const newItem: LayoutConfig = {
         ...NewControl,
         i: index,
+        id: index,
         type,
         metricTypes: [""],
         metrics: [""],
@@ -152,9 +153,11 @@ export const dashboardStore = defineStore({
       if (!children.length) {
         index = "0";
       }
+      const id = `${activedGridItem}-${tabIndex}-${index}`;
       const newItem: LayoutConfig = {
         ...NewControl,
         i: index,
+        id,
         type,
         metricTypes: [""],
         metrics: [""],
@@ -274,6 +277,28 @@ export const dashboardStore = defineStore({
         ...param,
       };
       this.selectedGrid = this.layout[index];
+    },
+    setWidget(param: LayoutConfig) {
+      for (let i = 0; i < this.layout.length; i++) {
+        if (this.layout[i].type === "Tab") {
+          if (this.layout[i].children && this.layout[i].children.length) {
+            for (const child of this.layout[i].children) {
+              if (child.children && child.children.length) {
+                for (let c = 0; c < child.children.length; c++) {
+                  if (child.children[c].id === param.id) {
+                    child.children.splice(c, 1, param);
+                    return;
+                  }
+                }
+              }
+            }
+          }
+        } else {
+          if (this.layout[i].id === param.id) {
+            this.layout.splice(i, 1, param);
+          }
+        }
+      }
     },
     async fetchMetricType(item: string) {
       const res: AxiosResponse = await graphql

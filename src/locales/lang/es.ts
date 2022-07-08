@@ -142,6 +142,11 @@ const msg = {
   interval: "Intervalo de actualización",
   pause: "Pausa",
   begin: "Inicio",
+  associateOptions: "Opciones de asociación",
+  widget: "Dispositivo pequeño",
+  duplicateName: "Nombre duplicado",
+  nameTip:
+    "Este nombre sólo admite chino e inglés, líneas cruzadas y subrayado",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

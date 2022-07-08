@@ -44,6 +44,13 @@ const props = defineProps({
     type: Object as PropType<{ [key: string]: any }>,
     default: () => ({}),
   },
+  filters: {
+    type: Object as PropType<{
+      value: number | string;
+      dataIndex: number;
+      sourceId: string;
+    }>,
+  },
 });
 const available = computed(
   () =>
@@ -61,9 +68,25 @@ onMounted(async () => {
     if (!instance) {
       return;
     }
-    instance.on("click", (params: any) => {
+    instance.on("click", (params: unknown) => {
       emits("select", params);
     });
+    document.addEventListener(
+      "click",
+      () => {
+        if (instance.isDisposed()) {
+          return;
+        }
+        instance.dispatchAction({
+          type: "hideTip",
+        });
+        instance.dispatchAction({
+          type: "updateAxisPointer",
+          currTrigger: "leave",
+        });
+      },
+      true
+    );
   }, 1000);
 });
 
@@ -77,6 +100,22 @@ watch(
       return;
     }
     setOptions(newVal);
+  }
+);
+watch(
+  () => props.filters,
+  () => {
+    const instance = getInstance();
+    if (!instance) {
+      return;
+    }
+    if (props.filters) {
+      instance.dispatchAction({
+        type: "showTip",
+        dataIndex: props.filters.dataIndex,
+        seriesIndex: 0,
+      });
+    }
   }
 );
 

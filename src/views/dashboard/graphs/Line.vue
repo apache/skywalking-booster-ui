@@ -13,15 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Graph :option="option" />
+  <Graph :option="option" @select="clickEvent" :filters="config.filters" />
 </template>
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { PropType } from "vue";
 import { Event } from "@/types/events";
-import { LineConfig } from "@/types/dashboard";
+import { LineConfig, EventParams } from "@/types/dashboard";
 
-/*global defineProps */
+/*global defineProps, defineEmits */
+const emits = defineEmits(["click"]);
 const props = defineProps({
   data: {
     type: Object as PropType<{ [key: string]: number[] }>,
@@ -31,7 +32,15 @@ const props = defineProps({
   theme: { type: String, default: "light" },
   itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
   config: {
-    type: Object as PropType<LineConfig>,
+    type: Object as PropType<
+      LineConfig & {
+        filters: {
+          value: number | string;
+          dataIndex: number;
+          sourceId: string;
+        };
+      } & { id: string }
+    >,
     default: () => ({
       step: false,
       smooth: false,
@@ -81,7 +90,7 @@ function getOption() {
       name: i,
       type: "line",
       symbol: "circle",
-      symbolSize: 6,
+      symbolSize: 8,
       showSymbol: props.config.showSymbol,
       step: props.config.step,
       smooth: props.config.smooth,
@@ -145,10 +154,9 @@ function getOption() {
   }
   const tooltip = {
     trigger: "axis",
-    backgroundColor: "rgb(50,50,50)",
     textStyle: {
       fontSize: 12,
-      color: "#ccc",
+      color: "#333",
     },
     enterable: true,
     confine: true,
@@ -214,5 +222,9 @@ function getOption() {
     },
     series: temp,
   };
+}
+
+function clickEvent(params: EventParams) {
+  emits("click", params);
 }
 </script>

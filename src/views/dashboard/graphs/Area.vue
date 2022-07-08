@@ -14,14 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <Line :data="data" :intervalTime="intervalTime" :config="config" />
+  <Line
+    :data="data"
+    :intervalTime="intervalTime"
+    :config="config"
+    @click="clickEvent"
+  />
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import Line from "./Line.vue";
-import { AreaConfig } from "@/types/dashboard";
+import { AreaConfig, EventParams } from "@/types/dashboard";
 
-/*global defineProps */
+/*global defineProps, defineEmits */
+const emits = defineEmits(["click"]);
 defineProps({
   data: {
     type: Object as PropType<{ [key: string]: number[] }>,
@@ -29,8 +35,19 @@ defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   config: {
-    type: Object as PropType<AreaConfig>,
+    type: Object as PropType<
+      AreaConfig & {
+        filters: {
+          value: number | string;
+          dataIndex: number;
+          sourceId: string;
+        };
+      } & { id: string }
+    >,
     default: () => ({}),
   },
 });
+function clickEvent(params: EventParams) {
+  emits("click", params);
+}
 </script>

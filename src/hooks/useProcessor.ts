@@ -142,6 +142,10 @@ export function useSourceProcessor(
     ElMessage.error(resp.errors);
     return {};
   }
+  if (!resp.data) {
+    ElMessage.error("The query is wrong");
+    return {};
+  }
   const source: { [key: string]: unknown } = {};
   const keys = Object.keys(resp.data);
 

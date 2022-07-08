@@ -15,26 +15,14 @@
  * limitations under the License.
  */
 
-import Area from "./Area.vue";
-import Line from "./Line.vue";
-import Bar from "./Bar.vue";
-import HeatMap from "./HeatMap.vue";
-import TopList from "./TopList.vue";
-import Table from "./Table.vue";
-import Card from "./Card.vue";
-import InstanceList from "./InstanceList.vue";
-import EndpointList from "./EndpointList.vue";
-import ServiceList from "./ServiceList.vue";
+import StyleOptions from "./graph-styles";
+import WidgetOptions from "./WidgetOptions.vue";
+import MetricOptions from "./metric/Index.vue";
+import AssociateOptions from "./AssociateOptions.vue";
 
 export default {
-  Line,
-  Bar,
-  HeatMap,
-  TopList,
-  Area,
-  Table,
-  Card,
-  EndpointList,
-  InstanceList,
-  ServiceList,
+  ...StyleOptions,
+  WidgetOptions,
+  MetricOptions,
+  AssociateOptions,
 };

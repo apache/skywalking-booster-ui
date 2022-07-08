@@ -36,6 +36,9 @@ export interface LayoutConfig {
   children?: { name: string; children: LayoutConfig[] }[];
   activedTabIndex?: number;
   metricConfig?: MetricConfigOpt[];
+  id?: string;
+  associate?: { widgetId: string }[];
+  filters?: { dataIndex: number; sourceId: string };
 }
 
 export type MetricConfigOpt = {
@@ -48,6 +51,7 @@ export type MetricConfigOpt = {
 };
 
 export interface WidgetConfig {
+  name?: string;
   title?: string;
   tips?: string;
 }
@@ -137,3 +141,15 @@ export interface TopologyConfig {
   depth?: number;
   showDepth?: boolean;
 }
+export type EventParams = {
+  componentType: string;
+  seriesType: string;
+  seriesIndex: number;
+  seriesName: string;
+  name: string;
+  dataIndex: number;
+  data: Record<string, unknown>;
+  dataType: string;
+  value: number | number[];
+  color: string;
+};

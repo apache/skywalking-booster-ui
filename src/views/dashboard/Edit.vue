@@ -41,6 +41,7 @@ import Tool from "./panel/Tool.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import Configuration from "./configuration";
+import { LayoutConfig } from "@/types/dashboard";
 
 export default defineComponent({
   name: "Dashboard",
@@ -66,7 +67,8 @@ export default defineComponent({
         sessionStorage.getItem(layoutKey.value) || "{}"
       );
       const layout: any = c.configuration || {};
-      dashboardStore.setLayout(layout.children || []);
+
+      dashboardStore.setLayout(setWidgetsID(layout.children || []));
       appStore.setPageTitle(layout.name);
       if (p.entity) {
         dashboardStore.setCurrentDashboard({
@@ -77,6 +79,24 @@ export default defineComponent({
           isRoot: layout.isRoot,
         });
       }
+    }
+    function setWidgetsID(widgets: LayoutConfig[]) {
+      for (const item of widgets) {
+        item.id = item.i;
+        if (item.type === "Tab") {
+          if (item.children && item.children.length) {
+            for (const [index, child] of item.children.entries()) {
+              if (child.children && child.children.length) {
+                child.children.map((d: { i: string; index: string } | any) => {
+                  d.id = `${item.i}-${index}-${d.i}`;
+                  return d;
+                });
+              }
+            }
+          }
+        }
+      }
+      return widgets;
     }
     function handleClick(e: any) {
       e.stopPropagation();

@@ -61,9 +61,12 @@ limitations under the License. -->
           metrics: data.metrics || [''],
           metricTypes: data.metricTypes || [''],
           i: data.i,
+          id: data.id,
           metricConfig: data.metricConfig,
+          filters: data.filters || {},
         }"
         :needQuery="needQuery"
+        @click="clickHandle"
       />
     </div>
     <div v-else class="no-data">{{ t("noGraph") }}</div>
@@ -84,6 +87,8 @@ import {
   useGetMetricEntity,
 } from "@/hooks/useProcessor";
 import { EntityType, ListChartTypes } from "../data";
+import { EventParams } from "@/types/dashboard";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 const props = {
   data: {
@@ -93,6 +98,7 @@ const props = {
   activeIndex: { type: String, default: "" },
   needQuery: { type: Boolean, default: false },
 };
+
 export default defineComponent({
   name: "Widget",
   components: { ...graphs },
@@ -154,6 +160,24 @@ export default defineComponent({
         dashboardStore.activeGridItem(props.activeIndex);
       } else {
         dashboardStore.activeGridItem(props.data.i);
+      }
+    }
+    function clickHandle(params: EventParams | any) {
+      const { widgets } = getDashboard(dashboardStore.currentDashboard);
+      const associate = (props.data.associate && props.data.associate) || [];
+
+      for (const item of associate) {
+        const widget = widgets.find(
+          (d: { id: string }) => d.id === item.widgetId
+        );
+        if (widget) {
+          widget.filters = {
+            dataIndex: params.dataIndex,
+            sourceId: props.data.id || "",
+          };
+
+          dashboardStore.setWidget(widget);
+        }
       }
     }
     watch(
@@ -221,6 +245,7 @@ export default defineComponent({
       t,
       graph,
       widget,
+      clickHandle,
     };
   },
 });

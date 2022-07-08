@@ -58,6 +58,13 @@ limitations under the License. -->
         <el-collapse-item :title="t('widgetOptions')" name="3">
           <WidgetOptions />
         </el-collapse-item>
+        <el-collapse-item
+          :title="t('associateOptions')"
+          name="4"
+          v-if="hasAssociate"
+        >
+          <AssociateOptions />
+        </el-collapse-item>
       </el-collapse>
     </div>
     <div class="footer">
@@ -77,17 +84,13 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Option } from "@/types/app";
 import graphs from "../graphs";
-import configs from "./widget/graph-styles";
-import WidgetOptions from "./widget/WidgetOptions.vue";
-import MetricOptions from "./widget/metric/Index.vue";
+import CustomOptions from "./widget/index";
 
 export default defineComponent({
   name: "WidgetEdit",
   components: {
     ...graphs,
-    ...configs,
-    WidgetOptions,
-    MetricOptions,
+    ...CustomOptions,
   },
   setup() {
     const configHeight = document.documentElement.clientHeight - 520;
@@ -111,6 +114,12 @@ export default defineComponent({
     const graph = computed(() => dashboardStore.selectedGrid.graph || {});
     const title = computed(() => encodeURIComponent(widget.value.title || ""));
     const tips = computed(() => encodeURIComponent(widget.value.tips || ""));
+    const hasAssociate = computed(() =>
+      ["Bar", "Line", "Area"].includes(
+        dashboardStore.selectedGrid.graph &&
+          dashboardStore.selectedGrid.graph.type
+      )
+    );
 
     function getSource(source: unknown) {
       states.source = source;
@@ -145,6 +154,7 @@ export default defineComponent({
       graph,
       title,
       tips,
+      hasAssociate,
     };
   },
 });

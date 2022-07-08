@@ -22,7 +22,9 @@ limitations under the License. -->
         size="small"
         placeholder="Please input unit"
         @change="
-          updateConfig(index, { unit: encodeURIComponent(currentMetric.unit) })
+          updateConfig(index, {
+            unit: encodeURIComponent(currentMetric.unit || ''),
+          })
         "
       />
     </div>
@@ -35,7 +37,7 @@ limitations under the License. -->
         placeholder="Please input a name"
         @change="
           updateConfig(index, {
-            label: encodeURIComponent(currentMetric.label),
+            label: encodeURIComponent(currentMetric.label || ''),
           })
         "
       />

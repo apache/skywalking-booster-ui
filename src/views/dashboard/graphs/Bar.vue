@@ -13,15 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Graph :option="option" />
+  <Graph :option="option" @select="clickEvent" :filters="config.filters" />
 </template>
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { PropType } from "vue";
 import { Event } from "@/types/events";
-import { BarConfig } from "@/types/dashboard";
+import { BarConfig, EventParams } from "@/types/dashboard";
 
-/*global defineProps */
+/*global defineProps, defineEmits */
+const emits = defineEmits(["click"]);
 const props = defineProps({
   data: {
     type: Object as PropType<{ [key: string]: number[] }>,
@@ -31,7 +32,15 @@ const props = defineProps({
   theme: { type: String, default: "light" },
   itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
   config: {
-    type: Object as PropType<BarConfig>,
+    type: Object as PropType<
+      BarConfig & {
+        filters: {
+          value: number | string;
+          dataIndex: number;
+          sourceId: string;
+        };
+      } & { id: string }
+    >,
     default: () => ({}),
   },
 });
@@ -139,11 +148,10 @@ function getOption() {
       trigger: "axis",
       zlevel: 1000,
       z: 60,
-      backgroundColor: "rgb(50,50,50)",
       confine: true,
       textStyle: {
         fontSize: 13,
-        color: "#ccc",
+        color: "#333",
       },
       enterable: true,
       extraCssText: "max-height: 300px; overflow: auto; border: none",
@@ -185,5 +193,8 @@ function getOption() {
     },
     series: temp,
   };
+}
+function clickEvent(params: EventParams) {
+  emits("click", params);
 }
 </script>

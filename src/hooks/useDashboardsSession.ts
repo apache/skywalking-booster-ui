@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import { useDashboardStore } from "@/store/modules/dashboard";
 export default function getDashboard(param: {
   name: string;
   layer: string;
   entity: string;
 }) {
+  const dashboardStore = useDashboardStore();
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   const dashboard = list.find(
     (d: { name: string; layer: string; entity: string }) =>
@@ -27,6 +28,20 @@ export default function getDashboard(param: {
       d.entity === param.entity &&
       d.layer === param.layer
   );
-
-  return dashboard;
+  const all = dashboardStore.layout;
+  const widgets = [];
+  for (const item of all) {
+    if (item.type === "Tab") {
+      if (item.children && item.children.length) {
+        for (const child of item.children) {
+          if (child.children && child.children.length) {
+            widgets.push(...child.children);
+          }
+        }
+      }
+    } else {
+      widgets.push(item);
+    }
+  }
+  return { dashboard, widgets };
 }

@@ -142,6 +142,11 @@ const msg = {
   interval: "Refresh Interval",
   pause: "Pause",
   begin: "Start",
+  associateOptions: "Association Options",
+  widget: "Widget",
+  nameTip:
+    "The name only supports Chinese and English, horizontal lines and underscores",
+  duplicateName: "Duplicate name",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

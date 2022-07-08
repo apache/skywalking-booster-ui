@@ -232,12 +232,16 @@ function exportTemplates() {
   }, 2000);
 }
 function optimizeTemplate(
-  children: (LayoutConfig & { moved?: boolean; standard?: unknown })[]
+  children: (LayoutConfig & {
+    moved?: boolean;
+    standard?: unknown;
+  })[]
 ) {
   for (const child of children || []) {
     delete child.moved;
     delete child.activedTabIndex;
     delete child.standard;
+    delete child.id;
     if (isEmptyObject(child.graph)) {
       delete child.graph;
     }
@@ -402,6 +406,7 @@ async function updateName(d: DashboardItem, value: string) {
     name: value,
   };
   delete c.id;
+  delete c.filters;
   const setting = {
     id: d.id,
     configuration: JSON.stringify(c),
