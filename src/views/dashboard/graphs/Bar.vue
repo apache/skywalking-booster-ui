@@ -148,11 +148,10 @@ function getOption() {
       trigger: "axis",
       zlevel: 1000,
       z: 60,
-      backgroundColor: "rgb(50,50,50)",
       confine: true,
       textStyle: {
         fontSize: 13,
-        color: "#ccc",
+        color: "#333",
       },
       enterable: true,
       extraCssText: "max-height: 300px; overflow: auto; border: none",

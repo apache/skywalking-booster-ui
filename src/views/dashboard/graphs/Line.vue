@@ -154,10 +154,9 @@ function getOption() {
   }
   const tooltip = {
     trigger: "axis",
-    backgroundColor: "rgb(50,50,50)",
     textStyle: {
       fontSize: 12,
-      color: "#ccc",
+      color: "#333",
     },
     enterable: true,
     confine: true,
