@@ -80,6 +80,10 @@ onMounted(async () => {
         instance.dispatchAction({
           type: "hideTip",
         });
+        instance.dispatchAction({
+          type: "updateAxisPointer",
+          currTrigger: "leave",
+        });
       },
       true
     );
