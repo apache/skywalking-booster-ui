@@ -17,7 +17,7 @@ limitations under the License. -->
     <span class="label">{{ t("widget") }}</span>
     <Selector
       :multiple="true"
-      :value="widgetId"
+      :value="widgetIds"
       :options="widgets"
       size="small"
       placeholder="Select a widget"
@@ -37,7 +37,7 @@ import { Option } from "@/types/app";
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const associate = dashboardStore.selectedGrid.associate || [];
-const widgetId = ref<string[]>(
+const widgetIds = ref<string[]>(
   associate.map((d: { widgetId: string }) => d.widgetId)
 );
 const widgets = computed(() => {
@@ -71,11 +71,25 @@ function updateWidgetConfig(options: Option[]) {
   const opt = options.map((d: Option) => {
     return { widgetId: d.value };
   });
+  const newVal = options.map((d: Option) => d.value);
+  // add association options in the source widget
   const widget = {
     ...dashboardStore.selectedGrid,
     associate: opt,
   };
   dashboardStore.selectWidget({ ...widget });
+  // remove unuse association widget option
+  for (const id of widgetIds.value) {
+    if (!newVal.includes(id)) {
+      const w = widgets.find((d: { id: string }) => d.id === id);
+      const config = {
+        ...w,
+        associate: [],
+      };
+      dashboardStore.setWidget(config);
+    }
+  }
+  // add association options in target widgets
   for (let i = 0; i < opt.length; i++) {
     const item = JSON.parse(JSON.stringify(opt));
     item[i] = { widgetId: dashboardStore.selectedGrid.id };
@@ -86,6 +100,7 @@ function updateWidgetConfig(options: Option[]) {
     };
     dashboardStore.setWidget(config);
   }
+  widgetIds.value = newVal;
 }
 </script>
 <style lang="scss" scoped>

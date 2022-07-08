@@ -162,14 +162,6 @@ function getOption() {
     enterable: true,
     confine: true,
     extraCssText: "max-height: 300px; overflow: auto; border: none;",
-    axisPointer: {
-      lineStyle: {
-        width: 2,
-      },
-      label: {
-        show: false,
-      },
-    },
   };
   const tips = {
     formatter(params: any) {

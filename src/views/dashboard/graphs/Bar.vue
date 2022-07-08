@@ -156,14 +156,6 @@ function getOption() {
       },
       enterable: true,
       extraCssText: "max-height: 300px; overflow: auto; border: none",
-      axisPointer: {
-        lineStyle: {
-          width: 2,
-        },
-        label: {
-          show: false,
-        },
-      },
     },
     legend: {
       type: "scroll",
