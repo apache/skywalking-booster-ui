@@ -84,7 +84,7 @@ function updateWidgetName(param: { [key: string]: string }) {
     (d: LayoutConfig) => d.widget && d.widget.name === n
   );
   if (item) {
-    ElMessage.error("Duplicate name");
+    ElMessage.error(t("duplicateName"));
     return;
   }
   updateWidgetConfig(param);
