@@ -51,7 +51,7 @@ const widgets = computed(() => {
   const items = widgets.filter(
     (d: { value: string; label: string } & LayoutConfig) => {
       if (dashboardStore.selectedGrid.id !== d.id) {
-        if (isLinear && d.widget && d.id) {
+        if (isLinear && d.type === "Widget" && d.widget && d.id) {
           d.value = d.id;
           d.label = d.widget.name || d.id;
           return d;
@@ -67,6 +67,7 @@ const widgets = computed(() => {
   return items;
 });
 function updateWidgetConfig(options: Option[]) {
+  const { widgets } = getDashboard(dashboardStore.currentDashboard);
   const opt = options.map((d: Option) => {
     return { widgetId: d.value };
   });
@@ -75,6 +76,16 @@ function updateWidgetConfig(options: Option[]) {
     associate: opt,
   };
   dashboardStore.selectWidget({ ...widget });
+  for (let i = 0; i < opt.length; i++) {
+    const item = JSON.parse(JSON.stringify(opt));
+    item[i] = { widgetId: dashboardStore.selectedGrid.id };
+    const w = widgets.find((d: { id: string }) => d.id === opt[i].widgetId);
+    const config = {
+      ...w,
+      associate: item,
+    };
+    dashboardStore.setWidget(config);
+  }
 }
 </script>
 <style lang="scss" scoped>

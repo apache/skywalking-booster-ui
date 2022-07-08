@@ -279,22 +279,23 @@ export const dashboardStore = defineStore({
       this.selectedGrid = this.layout[index];
     },
     setWidget(param: LayoutConfig) {
-      for (let item of this.layout) {
-        if (item.type === "Tab") {
-          if (item.children && item.children.length) {
-            for (const child of item.children) {
+      for (let i = 0; i < this.layout.length; i++) {
+        if (this.layout[i].type === "Tab") {
+          if (this.layout[i].children && this.layout[i].children.length) {
+            for (const child of this.layout[i].children) {
               if (child.children && child.children.length) {
-                for (let c of child.children) {
-                  if (c.id === param.id) {
-                    c = param;
+                for (let c = 0; c < child.children.length; c++) {
+                  if (child.children[c].id === param.id) {
+                    child.children.splice(c, 1, param);
+                    return;
                   }
                 }
               }
             }
           }
         } else {
-          if (item.id === param.id) {
-            item = param;
+          if (this.layout[i].id === param.id) {
+            this.layout.splice(i, 1, param);
           }
         }
       }
