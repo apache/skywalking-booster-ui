@@ -76,7 +76,7 @@ function updateWidgetName(param: { [key: string]: string }) {
   const n = decodeURIComponent(param[key]);
   const pattern = /^[A-Za-z0-9-_\u4e00-\u9fa5]{1,30}$/;
   if (!pattern.test(n)) {
-    ElMessage.warning(t("nameTip"));
+    ElMessage.error(t("nameTip"));
     return;
   }
   const { widgets } = getDashboard(dashboardStore.currentDashboard);
@@ -84,7 +84,7 @@ function updateWidgetName(param: { [key: string]: string }) {
     (d: LayoutConfig) => d.widget && d.widget.name === n
   );
   if (item) {
-    ElMessage.warning("Duplicate name");
+    ElMessage.error("Duplicate name");
     return;
   }
   updateWidgetConfig(param);

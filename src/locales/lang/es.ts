@@ -144,6 +144,7 @@ const msg = {
   begin: "Inicio",
   associateOptions: "Opciones de asociación",
   widget: "Dispositivo pequeño",
+  duplicateName: "Nombre duplicado",
   nameTip:
     "Este nombre sólo admite chino e inglés, líneas cruzadas y subrayado",
   seconds: "Segundos",
