@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-wrapper flex-v">
+  <div class="log-wrapper flex-v">
     <el-popover
       placement="bottom"
       trigger="click"
@@ -29,54 +29,42 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
-    <div class="trace flex-h">
-      <TraceList @show:trace="showTraceDetails" v-if="traceListActive" />
-      <TraceDetail @show:list="showTraceList" v-if="!traceListActive" />
+    <!-- <div class="header">
+    </div> -->
+    <div class="log">
+      <List />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
-import { computed, onMounted, onBeforeUnmount } from "vue";
-import TraceList from "../related/trace/TraceList.vue";
-import TraceDetail from "../related/trace/Detail.vue";
+import { onBeforeUnmount, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { useTraceStore } from "@/store/modules/trace";
+import List from "../related/log/List.vue";
 
 /*global defineProps */
 const props = defineProps({
   data: {
-    type: Object as PropType<any>,
-    default: () => ({ graph: {} }),
+    type: Object,
+    default: () => ({}),
   },
   activeIndex: { type: String, default: "" },
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const traceStore = useTraceStore();
-const traceListActive = computed(() => {
-  return traceStore.currentView === "traceList";
-});
+
 function removeWidget() {
   dashboardStore.removeControls(props.data);
 }
-function showTraceDetails() {
-  traceStore.currentView === "traceDetails";
-}
-function showTraceList() {
-  traceStore.currentView === "traceList";
-}
-
 onMounted(() => {
-  dashboardStore.setTraceTools(true);
+  dashboardStore.setLogTools(true);
 });
 onBeforeUnmount(() => {
-  dashboardStore.setTraceTools(false);
+  dashboardStore.setLogTools(false);
 });
 </script>
 <style lang="scss" scoped>
-.trace-wrapper {
+.log-wrapper {
   width: 100%;
   height: 100%;
   font-size: 12px;
@@ -108,9 +96,8 @@ onBeforeUnmount(() => {
   }
 }
 
-.trace {
+.log {
   width: 100%;
-  height: 100%;
   overflow: auto;
 }
 </style>
