@@ -17,9 +17,35 @@
 
 import { defineStore } from "pinia";
 import { store } from "@/store";
-import { Trace, Span } from "@/types/trace";
-
+// import { Trace, Span } from "@/types/trace";
 
 interface jbTraceStates {
+  activeFilter: string;
+  displayMode: string;
+  currentView: string;
+}
 
+export const jbTraceStore = defineStore({
+  id: "jb-trace",
+  state: (): jbTraceStates => ({
+    displayMode: "List",
+    currentView: "traceList",
+    activeFilter: "",
+  }),
+  actions: {
+    setDisplayMode(data: string) {
+      this.displayMode = data;
+    },
+    setCurrentView(data: string) {
+      this.currentView = data;
+    },
+    setActiveFilter(data: string) {
+      if (!data) this.activeFilter = "";
+      this.activeFilter = data;
+    },
+  },
+});
+
+export function useJbTraceStore(): any {
+  return jbTraceStore(store);
 }

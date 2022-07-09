@@ -23,7 +23,6 @@ import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
-
 interface TraceState {
   services: Service[];
   instances: Instance[];
