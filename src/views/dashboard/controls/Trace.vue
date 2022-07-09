@@ -36,7 +36,8 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType, computed, onMounted, onBeforeUnmount } from "vue";
+import type { PropType } from "vue";
+import {computed, onMounted, onBeforeUnmount } from "vue"
 import TraceList from "../related/trace/TraceList.vue";
 import TraceDetail from "../related/trace/Detail.vue";
 import { useI18n } from "vue-i18n";
