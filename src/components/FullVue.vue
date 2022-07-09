@@ -45,7 +45,7 @@ function scrollStop(callback: { (): void; (): void }, refresh = 66) {
   let scrollListener: number;
   window.addEventListener(
     "scroll",
-    function (event) {
+    function () {
       isScrolling = true;
       window.clearTimeout(scrollListener);
       scrollListener = window.setTimeout(callback, refresh);
@@ -98,7 +98,7 @@ export default defineComponent({
           }
         });
       });
-      document.querySelectorAll(".item").forEach((element, index) => {
+      document.querySelectorAll(".item").forEach((element) => {
         arrayOfItems.value.push(element);
         observer.observe(element);
       });
