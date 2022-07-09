@@ -172,6 +172,7 @@ import dayjs from "dayjs";
 import { ref, computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
+import { useJbTraceStore } from "@/store/modules/jbTrace";
 import { Option } from "@/types/app";
 import copy from "@/utils/copy";
 import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
@@ -182,13 +183,14 @@ export default defineComponent({
   components: {
     LogTable,
   },
-  setup(props, ctx) {
+  setup() {
     const { t } = useI18n();
     const traceStore = useTraceStore();
+    const jbTraceStore = useJbTraceStore();
     const loading = ref<boolean>(false);
     const traceId = ref<string>("");
     const displayMode = computed(() => {
-      return traceStore.displayMode;
+      return jbTraceStore.displayMode;
     });
     const pageNum = ref<number>(1);
     const pageSize = 10;
@@ -197,7 +199,7 @@ export default defineComponent({
     const showTraceLogs = ref<boolean>(false);
 
     function showTraceList() {
-      traceStore.setCurrentView("traceList");
+      jbTraceStore.setCurrentView("traceList");
     }
     function handleClick(ids: string[] | any) {
       let copyValue = null;
@@ -209,7 +211,7 @@ export default defineComponent({
       copy(copyValue);
     }
     function changeDisplayMode(mode: string) {
-      traceStore.displayMode = mode;
+      jbTraceStore.displayMode = mode;
     }
     async function changeTraceId(opt: Option[] | any) {
       traceId.value = opt[0].value;

@@ -184,7 +184,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import Filter from "../related/trace/JbFilter.vue";
-import Header from "../related/log/Header.vue";
+import Header from "../related/log/JbHeader.vue";
 
 import { reactive, ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
