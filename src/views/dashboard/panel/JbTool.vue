@@ -182,15 +182,16 @@ limitations under the License. -->
     <Filter v-if="showTraceHeader && currentTraceView === 'traceList'" />
   </div>
 </template>
+
 <script lang="ts" setup>
 import Filter from "../related/trace/JbFilter.vue";
 import Header from "../related/log/Header.vue";
 
 import { reactive, ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { useTraceStore } from "@/store/modules/trace";
+import { useDashboardStore } from "../../../store/modules/dashboard";
+import { useAppStoreWithOut } from "../../../store/modules/app";
+import { useTraceStore } from "../../../store/modules/trace";
 import {
   EntityType,
   AllTools,
@@ -201,9 +202,9 @@ import {
   InstanceRelationTools,
   ServiceRelationTools,
 } from "../data";
-import { useSelectorStore } from "@/store/modules/selectors";
+import { useSelectorStore } from "../../../store/modules/selectors";
 import { ElMessage } from "element-plus";
-import { Option } from "@/types/app";
+import { Option } from "../../../types/app";
 import { useI18n } from "vue-i18n";
 import TraceDetailsTools from "./component/TraceDetailsTools.vue";
 const { t } = useI18n();
@@ -708,6 +709,7 @@ watch(
   }
 );
 </script>
+
 <style lang="scss" scoped>
 .dashboard-tool {
   text-align: right;

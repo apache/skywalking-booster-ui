@@ -37,7 +37,7 @@ import { ref, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import GridLayout from "./panel/Layout.vue";
-import Tool from "./panel/Tool.vue";
+import Tool from "./panel/JbTool.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import Configuration from "./configuration";
@@ -95,6 +95,7 @@ export default defineComponent({
 .ds-main {
   overflow: auto;
 }
+
 .full-view__scroll {
   height: 60vh;
   width: 100%;

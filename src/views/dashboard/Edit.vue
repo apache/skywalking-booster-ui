@@ -37,7 +37,7 @@ import { ref, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import GridLayout from "./panel/Layout.vue";
-import Tool from "./panel/Tool.vue";
+import Tool from "./panel/JbTool.vue";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import Configuration from "./configuration";
@@ -97,12 +97,11 @@ export default defineComponent({
 <style lang="scss" scoped>
 .ds-main {
   overflow: auto;
-}
-.ds-main::-webkit-scrollbar {
-  display: none;
-}
-.ds-main{
   -ms-overflow-style: none;
   scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>
