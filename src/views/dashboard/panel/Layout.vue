@@ -31,7 +31,7 @@ limitations under the License. -->
       :h="item.h"
       :i="item.i"
       :key="item.i"
-      @click="clickGrid(item)"
+      @click="clickGrid(item, $event)"
       :class="{ active: dashboardStore.activedGridItem === item.i }"
       :drag-ignore-from="dragIgnoreFrom"
     >
@@ -63,10 +63,13 @@ export default defineComponent({
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
-    function clickGrid(item: LayoutConfig) {
+    function clickGrid(item: LayoutConfig, event: Event) {
       dashboardStore.activeGridItem(item.i);
       dashboardStore.selectWidget(item);
-      if (item.type === "Tab") {
+      if (
+        item.type === "Tab" &&
+        (event.target as HTMLDivElement)?.className !== "tab-layout"
+      ) {
         dashboardStore.setActiveTabIndex(0);
       }
     }

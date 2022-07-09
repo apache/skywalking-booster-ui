@@ -15,21 +15,18 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Duration, Option } from "@/types/app";
+import { Option } from "@/types/app";
 import {
   EBPFTaskCreationRequest,
   EBPFProfilingSchedule,
   EBPFTaskList,
   AnalyzationTrees,
 } from "@/types/ebpf";
-import { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
-import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface EbpfStore {
-  durationTime: Duration;
   taskList: EBPFTaskList[];
   eBPFSchedules: EBPFProfilingSchedule[];
   currentSchedule: EBPFProfilingSchedule | Record<string, never>;
@@ -37,12 +34,13 @@ interface EbpfStore {
   labels: Option[];
   couldProfiling: boolean;
   tip: string;
+  selectedTask: Recordable<EBPFTaskList>;
+  aggregateType: string;
 }
 
 export const ebpfStore = defineStore({
   id: "eBPF",
   state: (): EbpfStore => ({
-    durationTime: useAppStoreWithOut().durationTime,
     taskList: [],
     eBPFSchedules: [],
     currentSchedule: {},
@@ -50,13 +48,18 @@ export const ebpfStore = defineStore({
     labels: [{ value: "", label: "" }],
     couldProfiling: false,
     tip: "",
+    selectedTask: {},
+    aggregateType: "COUNT",
   }),
   actions: {
-    setCurrentSpan(span: Span) {
-      this.currentSpan = span;
+    setSelectedTask(task: EBPFTaskList) {
+      this.selectedTask = task;
     },
-    setCurrentSchedule(s: Trace) {
+    setCurrentSchedule(s: EBPFProfilingSchedule) {
       this.currentSchedule = s;
+    },
+    setAnalyzeTrees(tree: AnalyzationTrees[]) {
+      this.analyzeTrees = tree;
     },
     async getCreateTaskData(serviceId: string) {
       const res: AxiosResponse = await graphql
@@ -85,6 +88,9 @@ export const ebpfStore = defineStore({
       return res.data;
     },
     async getTaskList(serviceId: string) {
+      if (!serviceId) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("getEBPFTasks")
         .params({ serviceId });
@@ -93,18 +99,20 @@ export const ebpfStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.taskList = res.data.data.queryEBPFTasks.reverse() || [];
+      this.taskList = res.data.data.queryEBPFTasks || [];
       if (!this.taskList.length) {
         return res.data;
       }
       this.getEBPFSchedules({ taskId: this.taskList[0].taskId });
       return res.data;
     },
-    async getEBPFSchedules(params: { taskId: string; duration?: Duration }) {
-      const duration = useAppStoreWithOut().durationTime;
+    async getEBPFSchedules(params: { taskId: string }) {
+      if (!params.taskId) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("getEBPFSchedules")
-        .params({ ...params, duration });
+        .params({ ...params });
 
       if (res.data.errors) {
         this.eBPFSchedules = [];
@@ -116,14 +124,22 @@ export const ebpfStore = defineStore({
       this.eBPFSchedules = eBPFSchedules;
       if (!eBPFSchedules.length) {
         this.eBPFSchedules = [];
+        this.analyzeTrees = [];
       }
-      this.analyzeTrees = [];
       return res.data;
     },
     async getEBPFAnalyze(params: {
       scheduleIdList: string[];
       timeRanges: Array<{ start: number; end: number }>;
+      aggregateType: string;
     }) {
+      this.aggregateType = params.aggregateType;
+      if (!params.scheduleIdList.length) {
+        return new Promise((resolve) => resolve({}));
+      }
+      if (!params.timeRanges.length) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("getEBPFResult")
         .params(params);
@@ -142,7 +158,7 @@ export const ebpfStore = defineStore({
         this.analyzeTrees = [];
         return res.data;
       }
-      this.analyzeTrees = analysisEBPFResult.trees[0].elements;
+      this.analyzeTrees = analysisEBPFResult.trees;
       return res.data;
     },
   },

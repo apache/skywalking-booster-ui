@@ -29,6 +29,7 @@ body {
 html,
 body {
   height: 100%;
+  overflow-y: hidden;
 }
 
 div,
@@ -152,4 +153,39 @@ pre {
 
 .switch {
   margin: 0 5px;
+}
+
+div.vis-tooltip {
+  max-width: 600px;
+  overflow: hidden;
+  background-color: #fff !important;
+  white-space: normal !important;
+  font-size: 12px !important;
+}
+
+.vis-item {
+  cursor: pointer;
+  height: 17px;
+}
+
+.vis-item.Error {
+  background-color: #e66;
+  opacity: 0.8;
+  border-color: #e66;
+  color: #fff !important;
+}
+
+.vis-item.Normal {
+  background-color: #fac858;
+  border-color: #fac858;
+  color: #666 !important;
+}
+
+.vis-item .vis-item-content {
+  padding: 0 5px !important;
+}
+
+.vis-item.vis-selected.Error,
+.vis-item.vis-selected.Normal {
+  color: #1a1a1a !important;
 }

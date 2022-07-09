@@ -277,6 +277,12 @@ function handleLinkClick(event: any, d: Call) {
     layer: dashboardStore.layerId,
     entity: `${e}Relation`,
   });
+  if (!p) {
+    ElMessage.error(
+      `The dashboard named ${settings.value.linkDashboard} doesn't exist`
+    );
+    return;
+  }
   dashboardStore.setEntity(p.entity);
   const path = `/dashboard/related/${p.layer}/${e}Relation/${d.source.id}/${d.target.id}/${p.name}`;
   const routeUrl = router.resolve({ path });
@@ -532,6 +538,9 @@ function setNodeTools(nodeDashboard: any) {
   }
 }
 async function freshNodes() {
+  if (!svg.value) {
+    return;
+  }
   svg.value.selectAll(".topo-svg-graph").remove();
   await init();
   update();

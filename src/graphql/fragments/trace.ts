@@ -27,7 +27,6 @@ export const Traces = {
       isError
       traceIds
     }
-    total
   }`,
 };
 
@@ -73,4 +72,15 @@ export const TraceSpans = {
     }
   }
   `,
+};
+export const TraceTagKeys = {
+  variable: "$duration: Duration!",
+  query: `
+  tagKeys: queryTraceTagAutocompleteKeys(duration: $duration)`,
+};
+
+export const TraceTagValues = {
+  variable: "$tagKey: String!, $duration: Duration!",
+  query: `
+  tagValues: queryTraceTagAutocompleteValues(tagKey: $tagKey, duration: $duration)`,
 };

@@ -134,6 +134,13 @@ const msg = {
   targetType: "目标类型",
   processSelect: "点击选择进程",
   ebpfTip: "没有进程可以分析",
+  container: "容器",
+  limit: "范围",
+  page: "页面",
+  interval: "刷新间隔时间",
+  pause: "暂停",
+  begin: "开始",
+  seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
   secondTip: "选择秒数",
@@ -327,7 +334,7 @@ const msg = {
   addExcludingKeywordsOfContent: "请输入一个内容不包含的关键词",
   noticeTag: "请输入一个标签(key=value)之后回车",
   conditionNotice:
-    "请输入一个标签、内容关键词或者内容不包含的关键词(key=value)之后回车",
+    "请输入一个内容关键词或者内容不包含的关键词(key=value)之后回车",
   language: "语言",
 };
 export default msg;

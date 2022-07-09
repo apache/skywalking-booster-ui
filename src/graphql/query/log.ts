@@ -19,9 +19,13 @@ import {
   QueryBrowserErrorLogs,
   QueryServiceLogs,
   QueryLogsByKeywords,
+  LogTagValues,
+  LogTagKeys,
 } from "../fragments/log";
 
 export const queryBrowserErrorLogs = `query queryBrowserErrorLogs(${QueryBrowserErrorLogs.variable}) {
   ${QueryBrowserErrorLogs.query}}`;
 export const queryServiceLogs = `query queryLogs(${QueryServiceLogs.variable}) {${QueryServiceLogs.query}}`;
 export const queryLogsByKeywords = `query queryLogsByKeywords {${QueryLogsByKeywords.query}}`;
+export const queryLogTagValues = `query queryTagValues(${LogTagValues.variable}) {${LogTagValues.query}}`;
+export const queryLogTagKeys = `query queryTagKeys(${LogTagKeys.variable}) {${LogTagKeys.query}}`;

@@ -32,7 +32,6 @@ import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
 import copy from "@/utils/copy";
-import List from "./components/List.vue";
 import graphs from "./components/index";
 import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
 import { ElMessage } from "element-plus";
@@ -41,7 +40,6 @@ export default defineComponent({
   name: "TraceDetail",
   components: {
     ...graphs,
-    List,
     LogTable,
   },
   setup(props, ctx) {
@@ -58,6 +56,11 @@ export default defineComponent({
     });
     const pageNum = ref<number>(1);
     const pageSize = 10;
+    const total = computed(() =>
+      traceStore.traceList.length === pageSize
+        ? pageSize * pageNum.value + 1
+        : pageSize * pageNum.value
+    );
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
     const showTraceLogs = ref<boolean>(false);
@@ -92,7 +95,7 @@ export default defineComponent({
           relatedTrace: {
             traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
           },
-          paging: { pageNum: pageNum.value, pageSize, needTotal: true },
+          paging: { pageNum: pageNum.value, pageSize },
         },
       });
       if (res.errors) {
@@ -119,6 +122,8 @@ export default defineComponent({
       pageSize,
       pageNum,
       loading,
+      total,
+      traceId,
     };
   },
 });
@@ -136,9 +141,11 @@ export default defineComponent({
   // height: calc(100% - 100px);
   overflow: auto;
 }
+
 .trace-chart.full-view {
   height: calc(100% - 1px) !important;
 }
+
 .trace-detail-wrapper {
   font-size: 12px;
   padding: 5px 10px;

@@ -32,10 +32,14 @@ export const routesFunctions: Array<RouteRecordRaw> = [
         path: "/functions",
         name: "Functions",
         meta: {
-          title: "functions",
-          headPath: "/functions",
           exact: true,
         },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/functions/tab/:activeTabIndex",
+        name: "FunctionsActiveTabIndex",
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },

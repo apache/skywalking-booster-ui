@@ -26,7 +26,6 @@ export type Service = {
 export type Instance = {
   value: string;
   label: string;
-  layer?: string;
   language?: string;
   instanceUUID?: string;
   attributes?: { name: string; value: string }[];

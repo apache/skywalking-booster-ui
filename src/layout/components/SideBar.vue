@@ -41,7 +41,7 @@ limitations under the License. -->
               <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
                 <Icon size="lg" :iconName="menu.meta.icon" />
               </el-icon>
-              <span :class="isCollapse ? 'collapse' : ''">
+              <span class="title" :class="isCollapse ? 'collapse' : ''">
                 {{ t(menu.meta.title) }}
               </span>
             </router-link>
@@ -55,9 +55,9 @@ limitations under the License. -->
               <router-link
                 class="items"
                 :to="m.path"
-                :exact="m.meta.exact || false"
+                :exact="(m.meta && m.meta.exact) || false"
               >
-                <span>{{ t(m.meta.title) }}</span>
+                <span class="title">{{ m.meta && t(m.meta.title) }}</span>
               </router-link>
             </el-menu-item>
           </el-menu-item-group>
@@ -82,7 +82,7 @@ limitations under the License. -->
               :to="menu.children[0].path"
               :exact="menu.meta.exact"
             >
-              <span>{{ t(menu.meta.title) }}</span>
+              <span class="title">{{ t(menu.meta.title) }}</span>
             </router-link>
           </template>
         </el-menu-item>
@@ -109,8 +109,9 @@ import { computed, ref } from "vue";
 import { useRouter, RouteRecordRaw, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import Icon from "@/components/Icon.vue";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
-const { path, query } = useRoute();
+const { query } = useRoute();
 
 // eslint-disable-next-line no-undef
 let portalStyle = reactive({});
@@ -126,13 +127,19 @@ if (query["portal"] === "true") {
 const isPortalView = computed(() => {
   return query["portal"] === "true";
 });
+const appStore = useAppStoreWithOut();
 const { t } = useI18n();
-const name = ref<any>(String(useRouter().currentRoute.value.name));
+const name = ref<string>(String(useRouter().currentRoute.value.name));
 const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
   ? ref("light")
   : ref("black");
-const routes = ref<any>(useRouter().options.routes);
-const isCollapse = ref(query["portal"] === "true");
+const routes = ref<RouteRecordRaw[] | any>(useRouter().options.routes);
+if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  appStore.setIsMobile(true);
+} else {
+  appStore.setIsMobile(false);
+}
+const isCollapse = ref(appStore.isMobile ? true : false);
 const controlMenu = () => {
   isCollapse.value = !isCollapse.value;
 };
@@ -215,5 +222,12 @@ span.collapse {
 .empty {
   width: 100%;
   height: 60px;
+}
+
+.title {
+  display: inline-block;
+  max-width: 110px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 </style>

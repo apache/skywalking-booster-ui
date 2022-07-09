@@ -105,8 +105,12 @@ limitations under the License. -->
           <span>{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
-      <div class="application" v-show="headerType === 'profile'">
-        <span @click="viewSpanDetail">{{ t("view") }}</span>
+      <div
+        class="application"
+        v-show="headerType === 'profile'"
+        @click="viewSpan($event)"
+      >
+        <span>{{ t("view") }}</span>
       </div>
     </div>
     <div
@@ -185,7 +189,7 @@ export default defineComponent({
     function toggle() {
       displayChildren.value = !displayChildren.value;
     }
-    function showSelectSpan(dom: any) {
+    function showSelectSpan(dom: HTMLSpanElement) {
       if (!dom) {
         return;
       }
@@ -196,9 +200,9 @@ export default defineComponent({
       dom.style.background = "rgba(0, 0, 0, 0.1)";
     }
     function selectSpan(event: any) {
-      const dom = event.path.find((d: any) =>
-        d.className.includes("trace-item")
-      );
+      const dom = event
+        .composedPath()
+        .find((d: any) => d.className.includes("trace-item"));
 
       emit("select", props.data);
       if (props.headerType === "profile") {
@@ -207,11 +211,18 @@ export default defineComponent({
       }
       viewSpanDetail(dom);
     }
+    function viewSpan(event: any) {
+      const dom = event
+        .composedPath()
+        .find((d: any) => d.className.includes("trace-item"));
+      emit("select", props.data);
+      viewSpanDetail(dom);
+    }
 
-    function selectedItem(data: any) {
+    function selectedItem(data: HTMLSpanElement) {
       emit("select", data);
     }
-    function viewSpanDetail(dom: any) {
+    function viewSpanDetail(dom: HTMLSpanElement) {
       showSelectSpan(dom);
       showDetail.value = true;
     }
@@ -226,6 +237,7 @@ export default defineComponent({
       showDetail,
       selectSpan,
       selectedItem,
+      viewSpan,
       t,
     };
   },

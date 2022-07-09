@@ -31,7 +31,7 @@ import _ from "lodash";
 import * as d3 from "d3";
 import ListGraph from "../../utils/d3-trace-list";
 import TreeGraph from "../../utils/d3-trace-tree";
-import { Span } from "@/types/trace";
+import { Span, Ref } from "@/types/trace";
 import SpanDetail from "./SpanDetail.vue";
 
 /* global defineProps, Nullable, defineExpose*/
@@ -45,6 +45,7 @@ const showDetail = ref<boolean>(false);
 const fixSpansSize = ref<number>(0);
 const segmentId = ref<any>([]);
 const currentSpan = ref<Array<Span>>([]);
+const refSpans = ref<Array<Ref>>([]);
 const tree = ref<any>(null);
 const traceGraph = ref<Nullable<HTMLDivElement>>(null);
 defineExpose({
@@ -103,14 +104,17 @@ function changeTree() {
   segmentId.value = [];
   const segmentGroup: any = {};
   const segmentIdGroup: any = [];
-  const fixSpans: any[] = [];
-  const segmentHeaders: any = [];
+  const fixSpans: Span[] = [];
+  const segmentHeaders: Span[] = [];
   for (const span of props.data) {
+    if (span.refs.length) {
+      refSpans.value.push(...span.refs);
+    }
     if (span.parentSpanId === -1) {
       segmentHeaders.push(span);
     } else {
-      const index = props.data.findIndex(
-        (i: any) =>
+      const item = props.data.find(
+        (i: Span) =>
           i.segmentId === span.segmentId && i.spanId === span.spanId - 1
       );
       const fixSpanKeyContent = {
@@ -119,7 +123,7 @@ function changeTree() {
         spanId: span.spanId - 1,
         parentSpanId: span.spanId - 2,
       };
-      if (index === -1 && !_.find(fixSpans, fixSpanKeyContent)) {
+      if (!item && !_.find(fixSpans, fixSpanKeyContent)) {
         fixSpans.push({
           ...fixSpanKeyContent,
           refs: [],
@@ -133,6 +137,8 @@ function changeTree() {
           layer: "Broken",
           tags: [],
           logs: [],
+          startTime: 0,
+          endTime: 0,
         });
       }
     }
@@ -167,6 +173,8 @@ function changeTree() {
               layer: "Broken",
               tags: [],
               logs: [],
+              startTime: 0,
+              endTime: 0,
             });
           }
           // if root broken node is not exist, create a root broken node.
@@ -191,6 +199,8 @@ function changeTree() {
                 layer: "Broken",
                 tags: [],
                 logs: [],
+                startTime: 0,
+                endTime: 0,
               });
             }
           }
@@ -268,13 +278,27 @@ function changeTree() {
 }
 function collapse(d: Span) {
   if (d.children) {
+    const item = refSpans.value.find(
+      (s: Ref) =>
+        s.parentSpanId === d.spanId && s.parentSegmentId === d.segmentId
+    );
     let dur = d.endTime - d.startTime;
     d.children.forEach((i: Span) => {
       dur -= i.endTime - i.startTime;
     });
     d.dur = dur < 0 ? 0 : dur;
+    if (item) {
+      d.children = d.children.sort(compare("startTime"));
+    }
     d.children.forEach((i: Span) => collapse(i));
   }
+}
+function compare(p: string) {
+  return (m: any, n: any) => {
+    const a = m[p];
+    const b = n[p];
+    return a - b;
+  };
 }
 onBeforeUnmount(() => {
   d3.selectAll(".d3-tip").remove();

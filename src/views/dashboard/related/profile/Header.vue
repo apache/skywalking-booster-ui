@@ -59,6 +59,10 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { EntityType } from "../../data";
 
+/*global defineProps */
+const props = defineProps({
+  needQuery: { type: Boolean, default: true },
+});
 const profileStore = useProfileStore();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
@@ -67,8 +71,10 @@ const { t } = useI18n();
 const endpointName = ref<string>("");
 const newTask = ref<boolean>(false);
 
-searchTasks();
-searchEndpoints("");
+if (props.needQuery) {
+  searchTasks();
+  searchEndpoints("");
+}
 
 async function searchEndpoints(keyword: string) {
   if (!selectorStore.currentService) {
@@ -109,6 +115,7 @@ watch(
   () => selectorStore.currentService,
   () => {
     searchTasks();
+    console.log("service");
   }
 );
 watch(

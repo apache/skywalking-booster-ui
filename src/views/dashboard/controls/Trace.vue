@@ -29,6 +29,9 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
+    <div class="header">
+      <Filter :needQuery="needQuery" />
+    </div>
     <div class="trace flex-h">
       <TraceList @show:trace="showTraceDetails" v-if="traceListActive" />
       <TraceDetail @show:list="showTraceList" v-if="!traceListActive" />
@@ -51,6 +54,7 @@ const props = defineProps({
     default: () => ({ graph: {} }),
   },
   activeIndex: { type: String, default: "" },
+  needQuery: { type: Boolean, default: true },
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -81,6 +85,7 @@ onBeforeUnmount(() => {
   height: 100%;
   font-size: 12px;
   position: relative;
+  overflow: auto;
 }
 
 .delete {
@@ -93,6 +98,7 @@ onBeforeUnmount(() => {
   padding: 10px;
   font-size: 12px;
   border-bottom: 1px solid #dcdfe6;
+  min-width: 1200px;
 }
 
 .tools {
@@ -112,5 +118,6 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   overflow: auto;
+  min-width: 1200px;
 }
 </style>

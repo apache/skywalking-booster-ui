@@ -131,48 +131,95 @@ limitations under the License. -->
           />
         </div>
       </div>
-      <div
-        class="flex-h tools"
-        v-loading="loading"
-        v-if="$route.query['portal'] !== 'true'"
-      >
-        <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
-          <el-dropdown content="Controls" placement="bottom">
-            <i>
-              <Icon class="icon-btn" size="sm" iconName="control" />
-            </i>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item
-                  @click="clickIcons(t)"
-                  v-for="(t, index) in toolIcons"
-                  :key="index"
-                  :title="t.content"
-                >
-                  <Icon class="mr-5" size="middle" :iconName="t.name" />
-                  <span>{{ t.content }}</span>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-          <el-tooltip content="Apply" placement="bottom" effect="light">
-            <i @click="applyDashboard">
-              <Icon class="icon-btn" size="sm" iconName="save" />
-            </i>
-          </el-tooltip>
-        </div>
-        <div class="switch">
-          <el-switch
-            v-model="dashboardStore.editMode"
-            active-text="Edit"
-            inactive-text="View"
-            size="small"
-            inline-prompt
-            active-color="#409eff"
-            inactive-color="#999"
-            @change="changeMode"
-          />
-        </div>
+      <div class="selectors-item" v-if="key === 3 || key === 4">
+        <span class="label">
+          {{
+            ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
+              ? "$Endpoint"
+              : "$ServiceInstance"
+          }}
+        </span>
+        <Selector
+          v-model="states.currentPod"
+          :options="selectorStore.pods"
+          size="small"
+          placeholder="Select a data"
+          @change="changePods"
+          @query="searchPods"
+          class="selectorPod"
+          :isRemote="
+            ['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)
+          "
+        />
+      </div>
+      <div class="selectors-item" v-if="key === 2 || key === 4">
+        <span class="label">$DestinationService</span>
+        <Selector
+          v-model="states.currentDestService"
+          :options="selectorStore.destServices"
+          size="small"
+          placeholder="Select a service"
+          @change="changeDestService"
+          class="selectors"
+        />
+      </div>
+      <div class="selectors-item" v-if="key === 4">
+        <span class="label">
+          {{
+            dashboardStore.entity === "EndpointRelation"
+              ? "$DestinationEndpoint"
+              : "$DestinationServiceInstance"
+          }}
+        </span>
+        <Selector
+          v-model="states.currentDestPod"
+          :options="selectorStore.destPods"
+          size="small"
+          placeholder="Select a data"
+          @change="changeDestPods"
+          class="selectorPod"
+          @query="searchDestPods"
+          :isRemote="dashboardStore.entity === 'EndpointRelation'"
+        />
+      </div>
+    </div>
+    <div class="flex-h tools" v-loading="loading" v-if="!appStore.isMobile">
+      <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
+        <el-dropdown content="Controls" placement="bottom" :persistent="false">
+          <i>
+            <Icon class="icon-btn" size="sm" iconName="control" />
+          </i>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                @click="clickIcons(t)"
+                v-for="(t, index) in toolIcons"
+                :key="index"
+                :title="t.content"
+              >
+                <Icon class="mr-5" size="middle" :iconName="t.name" />
+                <span>{{ t.content }}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-tooltip content="Apply" placement="bottom" effect="light">
+          <i @click="applyDashboard">
+            <Icon class="icon-btn" size="sm" iconName="save" />
+          </i>
+        </el-tooltip>
+      </div>
+      <div class="switch">
+        <el-switch
+          v-model="dashboardStore.editMode"
+          active-text="Edit"
+          inactive-text="View"
+          size="small"
+          inline-prompt
+          active-color="#409eff"
+          inactive-color="#999"
+          @change="changeMode"
+        />
       </div>
     </div>
     <Header v-if="showLogHeader" />
@@ -423,7 +470,12 @@ async function getServices() {
   states.currentService = selectorStore.currentService.value;
   const e = dashboardStore.entity.split("Relation")[0];
   if (
-    [EntityType[2].value, EntityType[3].value].includes(dashboardStore.entity)
+    [
+      EntityType[2].value,
+      EntityType[3].value,
+      EntityType[5].value,
+      EntityType[6].value,
+    ].includes(dashboardStore.entity)
   ) {
     fetchPods(e, selectorStore.currentService.id, true);
   }
@@ -443,7 +495,10 @@ async function changeService(service: any) {
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
-    fetchPods(dashboardStore.entity, selectorStore.currentService.id, true);
+    const e = dashboardStore.entity.split("Relation")[0];
+    selectorStore.setCurrentPod(null);
+    states.currentPod = "";
+    fetchPods(e, selectorStore.currentService.id, true);
   } else {
     selectorStore.setCurrentService(null);
   }
@@ -453,6 +508,9 @@ function changeDestService(service: any) {
   if (service[0]) {
     states.currentDestService = service[0].value;
     selectorStore.setCurrentDestService(service[0]);
+    selectorStore.setCurrentDestPod(null);
+    states.currentDestPod = "";
+    fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
   } else {
     selectorStore.setCurrentDestService(null);
   }
@@ -527,6 +585,12 @@ function setTabControls(id: string) {
     case "addText":
       dashboardStore.addTabControls("Text");
       break;
+    case "addDemandLog":
+      dashboardStore.addTabControls("DemandLog");
+      break;
+    case "addEvent":
+      dashboardStore.addTabControls("Event");
+      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -558,6 +622,12 @@ function setControls(id: string) {
       break;
     case "addText":
       dashboardStore.addControl("Text");
+      break;
+    case "addDemandLog":
+      dashboardStore.addControl("DemandLog");
+      break;
+    case "addEvent":
+      dashboardStore.addControl("Event");
       break;
     default:
       dashboardStore.addControl("Widget");
@@ -615,11 +685,11 @@ async function fetchPods(
       if (setPod) {
         let p;
         if (states.currentDestPod) {
-          p = selectorStore.pods.find(
+          p = selectorStore.destPods.find(
             (d: { label: string }) => d.label === states.currentDestPod
           );
         } else {
-          p = selectorStore.pods.find(
+          p = selectorStore.destPods.find(
             (d: { label: string }, index: number) => index === 0
           );
         }
@@ -635,11 +705,11 @@ async function fetchPods(
       if (setPod) {
         let p;
         if (states.currentDestPod) {
-          p = selectorStore.pods.find(
+          p = selectorStore.destPods.find(
             (d: { label: string }) => d.label === states.currentDestPod
           );
         } else {
-          p = selectorStore.pods.find(
+          p = selectorStore.destPods.find(
             (d: { label: string }, index: number) => index === 0
           );
         }

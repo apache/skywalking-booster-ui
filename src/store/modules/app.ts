@@ -33,6 +33,8 @@ interface AppState {
   autoRefresh: boolean;
   pageTitle: string;
   version: string;
+  isMobile: boolean;
+  reloadTimer: Nullable<any>;
 }
 
 export const appStore = defineStore({
@@ -51,6 +53,8 @@ export const appStore = defineStore({
     autoRefresh: false,
     pageTitle: "",
     version: "",
+    isMobile: false,
+    reloadTimer: null,
   }),
   getters: {
     duration(): Duration {
@@ -122,6 +126,9 @@ export const appStore = defineStore({
       this.utcHour = utcHour;
       this.utc = `${utcHour}:${utcMin}`;
     },
+    setIsMobile(mode: boolean) {
+      this.isMobile = mode;
+    },
     setEventStack(funcs: (() => void)[]): void {
       this.eventStack = funcs;
     },
@@ -168,6 +175,9 @@ export const appStore = defineStore({
       }
       this.version = res.data.data.version;
       return res.data;
+    },
+    setReloadTimer(timer: any): void {
+      this.reloadTimer = timer;
     },
   },
 });

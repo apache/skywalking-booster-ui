@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Duration } from "@/types/app";
 import { Endpoint } from "@/types/selector";
 import {
   TaskListItem,
@@ -33,7 +32,6 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 interface ProfileState {
   endpoints: Endpoint[];
   taskEndpoints: Endpoint[];
-  durationTime: Duration;
   condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
   segmentList: Trace[];
@@ -50,7 +48,6 @@ export const profileStore = defineStore({
   state: (): ProfileState => ({
     endpoints: [{ value: "", label: "All" }],
     taskEndpoints: [{ value: "", label: "All" }],
-    durationTime: useAppStoreWithOut().durationTime,
     condition: { serviceId: "", endpointName: "" },
     taskList: [],
     segmentList: [],
@@ -80,7 +77,7 @@ export const profileStore = defineStore({
     async getEndpoints(serviceId: string, keyword?: string) {
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
-        duration: this.durationTime,
+        duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
       });
       if (res.data.errors) {
@@ -92,7 +89,7 @@ export const profileStore = defineStore({
     async getTaskEndpoints(serviceId: string, keyword?: string) {
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
-        duration: this.durationTime,
+        duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
       });
       if (res.data.errors) {
@@ -122,6 +119,9 @@ export const profileStore = defineStore({
       return res.data;
     },
     async getSegmentList(params: { taskID: string }) {
+      if (!params.taskID) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("getProfileTaskSegmentList")
         .params(params);
@@ -148,6 +148,9 @@ export const profileStore = defineStore({
       return res.data;
     },
     async getSegmentSpans(params: { segmentId: string }) {
+      if (!params.segmentId) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("queryProfileSegment")
         .params(params);
@@ -161,7 +164,13 @@ export const profileStore = defineStore({
         this.analyzeTrees = [];
         return res.data;
       }
-      this.segmentSpans = segment.spans;
+      this.segmentSpans = segment.spans.map((d: SegmentSpan) => {
+        return {
+          ...d,
+          segmentId: this.currentSegment.segmentId,
+          traceId: this.currentSegment.traceIds[0],
+        };
+      });
       if (!(segment.spans && segment.spans.length)) {
         this.analyzeTrees = [];
         return res.data;
@@ -174,6 +183,12 @@ export const profileStore = defineStore({
       segmentId: string;
       timeRanges: Array<{ start: number; end: number }>;
     }) {
+      if (!params.segmentId) {
+        return new Promise((resolve) => resolve({}));
+      }
+      if (!params.timeRanges.length) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res: AxiosResponse = await graphql
         .query("getProfileAnalyze")
         .params(params);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const AutoImport = require("unplugin-auto-import/webpack");
 const Components = require("unplugin-vue-components/webpack");
 const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
@@ -66,6 +67,11 @@ module.exports = {
             test: /[\\/]node_modules[\\/]echarts|zrender[\\/]/,
             priority: 30,
           },
+          monacoEditor: {
+            name: "monaco-editor",
+            test: /[\\/]node_modules[\\/]monaco-editor[\\/]/,
+            priority: 40,
+          },
           elementPlus: {
             name: "element-plus",
             test: /[\\/]node_modules[\\/]element-plus|@element-plus[\\/]/,
@@ -100,7 +106,8 @@ module.exports = {
       Components({
         resolvers: [ElementPlusResolver({ importStyle: "css" })],
         dts: "./src/types/components.d.ts",
-      })
+      }),
+      new MonacoWebpackPlugin()
     );
   },
 };

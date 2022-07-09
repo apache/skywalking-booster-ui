@@ -23,19 +23,31 @@ export enum TimeType {
 export const Languages = [
   { label: "English", value: "en" },
   { label: "Chinese", value: "zh" },
+  { label: "Spanish", value: "es" },
 ];
 
 export const RoutesMap: { [key: string]: string } = {
   GeneralServices: "GENERAL",
+  GeneralServicesActiveTabIndex: "GENERAL",
   Database: "VIRTUAL_DATABASE",
+  DatabaseActiveTabIndex: "VIRTUAL_DATABASE",
   MeshServices: "MESH",
+  MeshServicesActiveTabIndex: "MESH",
   ControlPanel: "MESH_CP",
+  ControlPanelActiveTabIndex: "MESH_CP",
   DataPanel: "MESH_DP",
+  DataPanelActiveTabIndex: "MESH_DP",
   Linux: "OS_LINUX",
   SkyWalkingServer: "SO11Y_OAP",
+  SkyWalkingServerActiveTabIndex: "SO11Y_OAP",
+  SatelliteActiveTabIndex: "SO11Y_SATELLITE",
   Satellite: "SO11Y_SATELLITE",
   Functions: "FAAS",
+  FunctionsActiveTabIndex: "FAAS",
   Browser: "BROWSER",
+  BrowserActiveTabIndex: "BROWSER",
   KubernetesCluster: "K8S",
+  KubernetesClusterActiveTabIndex: "K8S",
   KubernetesService: "K8S_SERVICE",
+  KubernetesServiceActiveTabIndex: "K8S_SERVICE",
 };

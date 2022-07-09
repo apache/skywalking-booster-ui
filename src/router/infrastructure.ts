@@ -39,6 +39,16 @@ export const routesInfra: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
+      {
+        path: "/linux/tab/:activeTabIndex",
+        name: "LinuxActiveTabIndex",
+        meta: {
+          title: "linux",
+          notShow: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
       // {
       //   path: "/infrastructure/vm",
       //   name: "VirtualMachine",

@@ -30,7 +30,6 @@ export const QueryBrowserErrorLogs = {
            stack
            grade
         }
-        total
     }`,
 };
 
@@ -54,7 +53,6 @@ export const QueryServiceLogs = {
             value
           }
         }
-        total
     }`,
 };
 
@@ -62,4 +60,16 @@ export const QueryLogsByKeywords = {
   variable: "",
   query: `
   support: supportQueryLogsByKeywords`,
+};
+
+export const LogTagKeys = {
+  variable: "$duration: Duration!",
+  query: `
+  tagKeys: queryLogTagAutocompleteKeys(duration: $duration)`,
+};
+
+export const LogTagValues = {
+  variable: "$tagKey: String!, $duration: Duration!",
+  query: `
+  tagValues: queryLogTagAutocompleteValues(tagKey: $tagKey, duration: $duration)`,
 };

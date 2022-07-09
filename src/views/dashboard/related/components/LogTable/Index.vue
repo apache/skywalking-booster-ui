@@ -15,24 +15,21 @@ limitations under the License. -->
 
 <template>
   <div class="log">
-    <div :class="{ 'd-flex': visibleColumns.length < 6 }" class="log-header">      
-      <template v-for="(item, index) in columns">
-        <template v-if="item.isVisible">
-          <div
-            class="method"
-            :style="`width: ${item.method}px`"
-            v-if="item.drag"
-            :key="index"
-          >
-            <span class="r cp" ref="dragger" :data-index="index">
-              <Icon iconName="settings_ethernet" size="sm" />
-            </span>
-            {{ t(item.value) }}
-          </div>
-          <div v-else :class="item.label" :key="`col${index}`">
-            {{ t(item.value) }}
-          </div>
-        </template>
+    <div
+      class="log-header"
+      :class="
+        type === 'browser' ? ['browser-header', 'flex-h'] : 'service-header'
+      "
+    >
+      <template v-for="(item, index) in columns" :key="`col${index}`">
+        <div
+          :class="[
+            item.label,
+            ['message', 'stack'].includes(item.label) ? 'max-item' : '',
+          ]"
+        >
+          {{ t(item.value) }}
+        </div>
       </template>
     </div>
     <div v-if="type === 'browser'">
@@ -60,40 +57,41 @@ limitations under the License. -->
       @closed="showDetail = false"
       :title="t('logDetail')"
     >
-      <LogDetail :currentLog="currentLog" />
+      <LogDetail :currentLog="currentLog" :columns="columns" />
     </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import LogBrowser from "./LogBrowser.vue";
 import LogService from "./LogService.vue";
 import LogDetail from "./LogDetail.vue";
-import { logStore } from "@/store/modules/log";
+// import { logStore } from "@/store/modules/log";
+import { BrowserLogConstants, ServiceLogConstants } from "./data";
 
-/*global defineProps, Nullable */
+/*global defineProps */
 const props = defineProps({
   type: { type: String, default: "service" },
   tableData: { type: Array, default: () => [] },
   noLink: { type: Boolean, default: true },
 });
-const useLogStore = logStore();
+// const useLogStore = logStore();
 const { t } = useI18n();
 const currentLog = ref<any>({});
 const showDetail = ref<boolean>(false);
-const dragger = ref<Nullable<HTMLSpanElement>>(null);
-// const method = ref<number>(380);
+const columns: any[] =
+  props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
 
-const columns = ref<any[]>(
-  props.type === "browser"
-    ? useLogStore.browserLogColumn
-    : useLogStore.serviceLogColumn
-);
+// const columns = ref<any[]>(
+//   props.type === "browser"
+//     ? useLogStore.browserLogColumn
+//     : useLogStore.serviceLogColumn
+// );
 
-const visibleColumns = computed(() =>
-  columns.value.filter((column) => column.isVisible)
-);
+// const visibleColumns = computed(() =>
+//   columns.value.filter((column) => column.isVisible)
+// );
 function setCurrentLog(log: any) {
   showDetail.value = true;
   currentLog.value = log;
@@ -103,17 +101,18 @@ function setCurrentLog(log: any) {
 .log {
   font-size: 12px;
   height: 100%;
+  border-bottom: 1px solid #eee;
+  width: 100%;
   overflow: auto;
 }
 
 .log-header {
-  /*display: flex;*/
   white-space: nowrap;
   user-select: none;
   border-left: 0;
   border-right: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  /*background-color: #f3f4f9;*/
+
   .traceId {
     width: 390px;
   }
@@ -131,11 +130,8 @@ function setCurrentLog(log: any) {
 }
 
 .log-header div {
-  /*min-width: 140px;*/
-  width: 140px;
-  /*flex-grow: 1;*/
   display: inline-block;
-  padding: 0 4px;
+  padding: 0 5px;
   border: 1px solid transparent;
   border-right: 1px dotted silver;
   line-height: 30px;
@@ -145,10 +141,18 @@ function setCurrentLog(log: any) {
   white-space: nowrap;
 }
 
-.d-flex{
-  display: flex;
-  div{
-    flex-grow: 1;
+.browser-header {
+  div {
+    min-width: 140px;
+    width: 10%;
   }
+
+  .max-item {
+    width: 20%;
+  }
+}
+
+.service-header div {
+  width: 140px;
 }
 </style>

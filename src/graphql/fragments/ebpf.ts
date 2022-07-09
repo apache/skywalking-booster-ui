@@ -48,9 +48,9 @@ export const queryEBPFTasks = {
   }`,
 };
 export const queryEBPFSchedules = {
-  variable: "$taskId: ID!, $duration: Duration!",
+  variable: "$taskId: ID!",
   query: `
-  eBPFSchedules: queryEBPFProfilingSchedules(taskId: $taskId, duration: $duration) {
+  eBPFSchedules: queryEBPFProfilingSchedules(taskId: $taskId) {
     scheduleId
     taskId
     process {
@@ -60,7 +60,6 @@ export const queryEBPFSchedules = {
       serviceName
       instanceId
       instanceName
-      layer
       agentId
       detectType
       attributes {
@@ -76,9 +75,9 @@ export const queryEBPFSchedules = {
 
 export const analysisEBPFResult = {
   variable:
-    "$scheduleIdList: [ID!]!, $timeRanges: [EBPFProfilingAnalyzeTimeRange!]!",
+    "$scheduleIdList: [ID!]!, $timeRanges: [EBPFProfilingAnalyzeTimeRange!]!, $aggregateType: EBPFProfilingAnalyzeAggregateType",
   query: `
-  analysisEBPFResult: analysisEBPFProfilingResult(scheduleIdList: $scheduleIdList, timeRanges: $timeRanges) {
+  analysisEBPFResult: analysisEBPFProfilingResult(scheduleIdList: $scheduleIdList, timeRanges: $timeRanges, aggregateType: $aggregateType) {
     tip
     trees {
       elements {

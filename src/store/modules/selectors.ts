@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Duration } from "@/types/app";
 import { Service, Instance, Endpoint } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
-
 interface SelectorState {
   services: Service[];
   destServices: Service[];
@@ -31,7 +29,6 @@ interface SelectorState {
   currentDestService: Nullable<Service>;
   currentDestPod: Nullable<Instance | Endpoint>;
   destPods: Array<Instance | Endpoint>;
-  durationTime: Duration;
 }
 
 export const selectorStore = defineStore({
@@ -45,7 +42,6 @@ export const selectorStore = defineStore({
     currentPod: null,
     currentDestService: null,
     currentDestPod: null,
-    durationTime: useAppStoreWithOut().durationTime,
   }),
   actions: {
     setCurrentService(service: Nullable<Service>) {
@@ -86,7 +82,7 @@ export const selectorStore = defineStore({
       }
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId,
-        duration: this.durationTime,
+        duration: useAppStoreWithOut().durationTime,
       });
       if (!res.data.errors) {
         if (param && param.isRelation) {
@@ -112,7 +108,7 @@ export const selectorStore = defineStore({
       }
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
-        duration: this.durationTime,
+        duration: useAppStoreWithOut().durationTime,
         keyword: params.keyword || "",
         limit: params.limit,
       });

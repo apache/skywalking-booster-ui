@@ -40,7 +40,7 @@ limitations under the License. -->
       <span class="g-sm-8 wba">{{ currentSpan.peer || "No Peer" }}</span>
     </div>
     <div class="mb-10 clear item">
-      <span class="g-sm-4 grey">{{ t("error") }}:</span>
+      <span class="g-sm-4 grey">{{ t("isError") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.isError }}</span>
     </div>
     <div class="mb-10 clear item" v-for="i in currentSpan.tags" :key="i.key">
@@ -52,7 +52,7 @@ limitations under the License. -->
           class="grey link-hover cp ml-5"
           @click="copy(i.value)"
         >
-          <Icon iconName="review-list" />
+          <Icon size="middle" iconName="review-list" />
         </span>
       </span>
     </div>
@@ -91,7 +91,9 @@ limitations under the License. -->
       v-model:currentPage="pageNum"
       v-model:page-size="pageSize"
       :small="true"
-      :total="traceStore.traceSpanLogsTotal"
+      layout="prev, pager, next"
+      :pager-count="5"
+      :total="total"
       @current-change="turnPage"
     />
     <LogTable
@@ -106,7 +108,7 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import dayjs from "dayjs";
@@ -124,6 +126,11 @@ const traceStore = useTraceStore();
 const pageNum = ref<number>(1);
 const showRelatedLogs = ref<boolean>(false);
 const pageSize = 10;
+const total = computed(() =>
+  traceStore.traceList.length === pageSize
+    ? pageSize * pageNum.value + 1
+    : pageSize * pageNum.value
+);
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 async function getTaceLogs() {
@@ -135,7 +142,7 @@ async function getTaceLogs() {
         segmentId: props.currentSpan.segmentId,
         spanId: props.currentSpan.spanId,
       },
-      paging: { pageNum: pageNum.value, pageSize, needTotal: true },
+      paging: { pageNum: pageNum.value, pageSize },
     },
   });
   if (res.errors) {
@@ -159,7 +166,7 @@ function showCurrentSpanDetail(text: string) {
 }
 
 .item span {
-  height: 21px;
+  min-height: 21px;
 }
 
 .link-hover {
