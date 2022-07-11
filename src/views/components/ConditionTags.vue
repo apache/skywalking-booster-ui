@@ -46,6 +46,7 @@ limitations under the License. -->
         :hide-on-click="false"
         style="margin: 20px 0 0 -130px"
         v-if="tagArr.length"
+        :max-height="400"
       >
         <template #dropdown>
           <el-dropdown-menu>
@@ -68,12 +69,12 @@ limitations under the License. -->
       >
         {{ t("tagsLink") }}
       </a>
-      <el-tooltip :content="t(tipsMap[type])">
+      <el-tooltip :content="t((tipsMap as any)[type])">
         <span>
           <Icon class="icon-help mr-5" iconName="help" size="middle" />
         </span>
       </el-tooltip>
-      <b v-if="type === 'AL'">{{ t("noticeTag") }}</b>
+      <b v-if="type === 'ALARM'">{{ t("noticeTag") }}</b>
     </span>
   </div>
 </template>
