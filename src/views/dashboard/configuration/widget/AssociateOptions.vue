@@ -41,27 +41,29 @@ const widgetIds = ref<string[]>(
   associate.map((d: { widgetId: string }) => d.widgetId)
 );
 const widgets = computed(() => {
-  const isLinear = ["Bar", "Line", "Area"].includes(
-    dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
-  );
   // const isRank = ["TopList"].includes(
   //   dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
   // );
-  const { widgets } = getDashboard(dashboardStore.currentDashboard);
-  const items = widgets.filter(
+  const all = getDashboard(dashboardStore.currentDashboard).widgets;
+  const items = all.filter(
     (d: { value: string; label: string } & LayoutConfig) => {
-      if (dashboardStore.selectedGrid.id !== d.id) {
-        if (isLinear && d.type === "Widget" && d.widget && d.id) {
-          d.value = d.id;
-          d.label = d.widget.name || d.id;
-          return d;
-        }
-        // if (isRank && d.type !== "Widget" && d.widget && d.id) {
-        //   d.value = d.id;
-        //   d.label = d.widget.name || d.id;
-        //   return d;
-        // }
+      const isLinear = ["Bar", "Line", "Area"].includes(
+        (d.graph && d.graph.type) || ""
+      );
+      if (
+        (isLinear || d.type === "Event") &&
+        d.id &&
+        dashboardStore.selectedGrid.id !== d.id
+      ) {
+        d.value = d.id;
+        d.label = (d.widget && d.widget.name) || d.id;
+        return d;
       }
+      // if (isRank && d.type !== "Widget" && d.widget && d.id) {
+      //   d.value = d.id;
+      //   d.label = d.widget.name || d.id;
+      //   return d;
+      // }
     }
   );
   return items;
@@ -78,15 +80,18 @@ function updateWidgetConfig(options: Option[]) {
     associate: opt,
   };
   dashboardStore.selectWidget({ ...widget });
+
   // remove unuse association widget option
   for (const id of widgetIds.value) {
     if (!newVal.includes(id)) {
       const w = widgets.find((d: { id: string }) => d.id === id);
-      const config = {
-        ...w,
-        associate: [],
-      };
-      dashboardStore.setWidget(config);
+      if (w.type !== "Event") {
+        const config = {
+          ...w,
+          associate: [],
+        };
+        dashboardStore.setWidget(config);
+      }
     }
   }
   // add association options in target widgets
@@ -94,11 +99,13 @@ function updateWidgetConfig(options: Option[]) {
     const item = JSON.parse(JSON.stringify(opt));
     item[i] = { widgetId: dashboardStore.selectedGrid.id };
     const w = widgets.find((d: { id: string }) => d.id === opt[i].widgetId);
-    const config = {
-      ...w,
-      associate: item,
-    };
-    dashboardStore.setWidget(config);
+    if (w.type !== "Event") {
+      const config = {
+        ...w,
+        associate: item,
+      };
+      dashboardStore.setWidget(config);
+    }
   }
   widgetIds.value = newVal;
 }
