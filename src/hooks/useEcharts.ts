@@ -18,7 +18,6 @@ import {
   BarSeriesOption,
   LineSeriesOption,
   HeatmapSeriesOption,
-  PieSeriesOption,
   SankeySeriesOption,
 } from "echarts/charts";
 import {
@@ -46,7 +45,6 @@ export type ECOption = echarts.ComposeOption<
   | DatasetComponentOption
   | LegendComponentOption
   | HeatmapSeriesOption
-  | PieSeriesOption
   | SankeySeriesOption
 >;
 
