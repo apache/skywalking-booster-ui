@@ -48,7 +48,7 @@ limitations under the License. -->
       <span class="g-sm-8 wba">
         {{ i.value }}
         <span
-          v-if="i.key === 'db.statement'"
+          v-if="i.key === 'db.statement' && i.value"
           class="grey link-hover cp ml-5"
           @click="copy(i.value)"
         >
