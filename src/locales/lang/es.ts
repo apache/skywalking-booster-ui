@@ -146,7 +146,7 @@ const msg = {
   widget: "Dispositivo pequeño",
   duplicateName: "Nombre duplicado",
   nameTip:
-    "Este nombre sólo admite chino e inglés, líneas horizontales y subrayado, y no más de 300 caracteres",
+    "El nombre sólo admite chino e inglés, líneas horizontales y subrayado, y la longitud del nombre no excederá de 300 caracteres",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",
