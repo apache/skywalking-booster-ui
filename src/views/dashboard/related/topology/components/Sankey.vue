@@ -68,6 +68,8 @@ function getOption() {
         opacity: 0.12,
       },
       tooltip: {
+        trigger: "item",
+        confine: true,
         position: "bottom",
         formatter: (param: { data: any; dataType: string }) => {
           if (param.dataType === "edge") {
