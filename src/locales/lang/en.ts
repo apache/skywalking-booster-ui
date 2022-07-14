@@ -156,8 +156,6 @@ const msg = {
   monthsHead: "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec",
   months: "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec",
   weeks: "Mon_Tue_Wed_Thu_Fri_Sat_Sun",
-  hello: "Hello",
-  helloMessage: "Welcome Back, Apache SkyWalking APM System !",
   username: "Username",
   password: "Password",
   title: "Title",
