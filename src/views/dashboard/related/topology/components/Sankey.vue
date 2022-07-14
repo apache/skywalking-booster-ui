@@ -36,10 +36,6 @@ const option = computed(() => getOption());
 
 function getOption() {
   return {
-    tooltip: {
-      trigger: "item",
-      confine: true,
-    },
     series: {
       type: "sankey",
       left: 40,
