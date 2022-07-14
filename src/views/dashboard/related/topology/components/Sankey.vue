@@ -36,6 +36,10 @@ const option = computed(() => getOption());
 
 function getOption() {
   return {
+    tooltip: {
+      trigger: "item",
+      confine: true,
+    },
     series: {
       type: "sankey",
       left: 40,
@@ -68,8 +72,6 @@ function getOption() {
         opacity: 0.12,
       },
       tooltip: {
-        trigger: "item",
-        confine: true,
         position: "bottom",
         formatter: (param: { data: any; dataType: string }) => {
           if (param.dataType === "edge") {
