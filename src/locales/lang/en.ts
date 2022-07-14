@@ -145,7 +145,7 @@ const msg = {
   associateOptions: "Association Options",
   widget: "Widget",
   nameTip:
-    "The name only supports Chinese and English, horizontal lines and underscores",
+    "The name only supports Chinese and English, horizontal lines and underscores and is limited to 300 characters",
   duplicateName: "Duplicate name",
   seconds: "Seconds",
   hourTip: "Select Hour",

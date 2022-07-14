@@ -51,9 +51,15 @@ const widgets = computed(() => {
   const items = widgets.filter(
     (d: { value: string; label: string } & LayoutConfig) => {
       if (dashboardStore.selectedGrid.id !== d.id) {
-        if (isLinear && d.type === "Widget" && d.widget && d.id) {
+        if (
+          isLinear &&
+          d.type === "Widget" &&
+          d.widget &&
+          d.widget.name &&
+          d.id
+        ) {
           d.value = d.id;
-          d.label = d.widget.name || d.id;
+          d.label = d.widget.name;
           return d;
         }
         // if (isRank && d.type !== "Widget" && d.widget && d.id) {
