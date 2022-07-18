@@ -147,6 +147,7 @@ const msg = {
   duplicateName: "Nombre duplicado",
   nameTip:
     "Este nombre sólo admite chino e inglés, líneas cruzadas y subrayado",
+  enableAssociate: "Activar asociación",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

@@ -147,6 +147,7 @@ const msg = {
   nameTip:
     "The name only supports Chinese and English, horizontal lines and underscores",
   duplicateName: "Duplicate name",
+  enableAssociate: "Enable association",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

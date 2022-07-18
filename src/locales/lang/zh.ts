@@ -143,6 +143,7 @@ const msg = {
   associateOptions: "关联选项",
   widget: "部件",
   nameTip: "该名称仅支持中文和英文、横线和下划线",
+  enableAssociate: "启用关联",
   duplicateName: "重复的名称",
   seconds: "秒",
   hourTip: "选择小时",
