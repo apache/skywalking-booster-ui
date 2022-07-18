@@ -14,7 +14,7 @@ limitations under the License. -->
   <div>
     <span class="label">{{ t("enableAssociate") }}</span>
     <el-switch
-      v-model="associate"
+      v-model="eventAssociate"
       active-text="Yes"
       inactive-text="No"
       @change="updateConfig"
@@ -28,12 +28,12 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const associate = ref(dashboardStore.selectedGrid.associate || false);
+const eventAssociate = ref(dashboardStore.selectedGrid.eventAssociate || false);
 
 function updateConfig() {
   dashboardStore.selectedGrid = {
     ...dashboardStore.selectedGrid,
-    associate,
+    eventAssociate,
   };
   dashboardStore.selectWidget(dashboardStore.selectedGrid);
 }
