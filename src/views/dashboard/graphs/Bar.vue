@@ -33,9 +33,13 @@ const props = defineProps({
     type: Object as PropType<
       BarConfig & {
         filters: {
-          value: number | string;
-          dataIndex: number;
           sourceId: string;
+          duration: {
+            startTime: string;
+            endTime: string;
+          };
+          isRange: boolean;
+          dataIndex?: number;
         };
       } & { id: string }
     >,
