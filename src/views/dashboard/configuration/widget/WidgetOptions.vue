@@ -74,7 +74,7 @@ function updateWidgetConfig(param: { [key: string]: string }) {
 function updateWidgetName(param: { [key: string]: string }) {
   const key = Object.keys(param)[0];
   const n = decodeURIComponent(param[key]);
-  const pattern = /^[A-Za-z0-9-_\u4e00-\u9fa5]{1,30}$/;
+  const pattern = /^[A-Za-z0-9-_\u4e00-\u9fa5]{1,300}$/;
   if (!pattern.test(n)) {
     ElMessage.error(t("nameTip"));
     return;
