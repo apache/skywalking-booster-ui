@@ -41,29 +41,17 @@ const widgetIds = ref<string[]>(
   associate.map((d: { widgetId: string }) => d.widgetId)
 );
 const widgets = computed(() => {
-  // const isRank = ["TopList"].includes(
-  //   dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
-  // );
   const all = getDashboard(dashboardStore.currentDashboard).widgets;
   const items = all.filter(
     (d: { value: string; label: string } & LayoutConfig) => {
       const isLinear = ["Bar", "Line", "Area"].includes(
         (d.graph && d.graph.type) || ""
       );
-      if (
-        (isLinear || d.type === "Event") &&
-        d.id &&
-        dashboardStore.selectedGrid.id !== d.id
-      ) {
+      if (isLinear && d.id && dashboardStore.selectedGrid.id !== d.id) {
         d.value = d.id;
         d.label = (d.widget && d.widget.name) || d.id;
         return d;
       }
-      // if (isRank && d.type !== "Widget" && d.widget && d.id) {
-      //   d.value = d.id;
-      //   d.label = d.widget.name || d.id;
-      //   return d;
-      // }
     }
   );
   return items;
@@ -85,13 +73,11 @@ function updateWidgetConfig(options: Option[]) {
   for (const id of widgetIds.value) {
     if (!newVal.includes(id)) {
       const w = widgets.find((d: { id: string }) => d.id === id);
-      if (w.type !== "Event") {
-        const config = {
-          ...w,
-          associate: [],
-        };
-        dashboardStore.setWidget(config);
-      }
+      const config = {
+        ...w,
+        associate: [],
+      };
+      dashboardStore.setWidget(config);
     }
   }
   // add association options in target widgets
@@ -99,13 +85,11 @@ function updateWidgetConfig(options: Option[]) {
     const item = JSON.parse(JSON.stringify(opt));
     item[i] = { widgetId: dashboardStore.selectedGrid.id };
     const w = widgets.find((d: { id: string }) => d.id === opt[i].widgetId);
-    if (w.type !== "Event") {
-      const config = {
-        ...w,
-        associate: item,
-      };
-      dashboardStore.setWidget(config);
-    }
+    const config = {
+      ...w,
+      associate: item,
+    };
+    dashboardStore.setWidget(config);
   }
   widgetIds.value = newVal;
 }
