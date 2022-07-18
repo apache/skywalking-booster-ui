@@ -112,16 +112,11 @@ function visTimeline() {
       }
     );
     const index = properties.items[0];
-    const i = items[index];
+    const i = events[index - 1 || 0];
+
     for (const widget of widgets) {
-      const startTime: string = dateFormatTime(
-        new Date(i.startTime),
-        appStore.duration.step
-      );
-      const endTime: string = dateFormatTime(
-        new Date(i.endTime),
-        appStore.duration.step
-      );
+      const startTime = dateFormatTime(i.start, appStore.duration.step);
+      const endTime = dateFormatTime(i.end, appStore.duration.step);
       widget.filters = {
         sourceId: dashboardStore.selectedGrid.id || "",
         isRange: true,

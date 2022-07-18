@@ -26,6 +26,7 @@ import {
   DataZoomComponent,
   VisualMapComponent,
   TimelineComponent,
+  MarkAreaComponent,
 } from "echarts/components";
 
 import { SVGRenderer } from "echarts/renderers";
@@ -43,6 +44,7 @@ echarts.use([
   DataZoomComponent,
   VisualMapComponent,
   TimelineComponent,
+  MarkAreaComponent,
 ]);
 
 export default echarts;

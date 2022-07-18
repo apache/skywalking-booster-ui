@@ -20,6 +20,14 @@ limitations under the License. -->
       @change="updateConfig"
     />
   </div>
+  <div class="footer">
+    <el-button size="small" @click="cancelConfig">
+      {{ t("cancel") }}
+    </el-button>
+    <el-button size="small" type="primary" @click="applyConfig">
+      {{ t("apply") }}
+    </el-button>
+  </div>
 </template>
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
@@ -28,6 +36,7 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
+const originConfig = dashboardStore.selectedGrid;
 const eventAssociate = ref(dashboardStore.selectedGrid.eventAssociate || false);
 
 function updateConfig() {
@@ -36,6 +45,16 @@ function updateConfig() {
     eventAssociate,
   };
   dashboardStore.selectWidget(dashboardStore.selectedGrid);
+}
+
+function applyConfig() {
+  dashboardStore.setConfigPanel(false);
+  dashboardStore.setConfigs(dashboardStore.selectedGrid);
+}
+
+function cancelConfig() {
+  dashboardStore.selectWidget(originConfig);
+  dashboardStore.setConfigPanel(false);
 }
 </script>
 <style lang="scss" scoped>
@@ -48,5 +67,16 @@ function updateConfig() {
 
 .item {
   margin: 10px 0;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  border-top: 1px solid #eee;
+  padding: 10px;
+  text-align: right;
+  width: 100%;
+  background-color: #fff;
 }
 </style>

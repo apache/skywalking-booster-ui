@@ -46,8 +46,12 @@ const props = defineProps({
   },
   filters: {
     type: Object as PropType<{
-      value: number | string;
-      dataIndex: number;
+      duration: {
+        startTime: string;
+        endTime: string;
+      };
+      isRange: boolean;
+      dataIndex?: number;
       sourceId: string;
     }>,
   },
@@ -110,9 +114,39 @@ watch(
       return;
     }
     if (props.filters) {
+      if (props.filters.isRange) {
+        const markArea = {
+          silent: true,
+          itemStyle: {
+            opacity: 0.3,
+          },
+          data: [
+            [
+              {
+                xAxis: props.filters.duration.startTime,
+              },
+              {
+                xAxis: props.filters.duration.endTime,
+              },
+            ],
+          ],
+        };
+        const series = props.option.series;
+        for (const [key, temp] of series.entries()) {
+          if (key === 0) {
+            temp.markArea = markArea;
+          }
+        }
+        const options = {
+          ...props.option,
+          series,
+        };
+        setOptions(options);
+        return;
+      }
       instance.dispatchAction({
         type: "showTip",
-        dataIndex: props.filters.dataIndex,
+        dataIndex: props.filters.dataIndex || undefined,
         seriesIndex: 0,
       });
     }
