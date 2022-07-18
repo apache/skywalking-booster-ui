@@ -30,6 +30,7 @@ import {
 import type { PropType } from "vue";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
+import { remove } from "lodash";
 
 /*global Nullable, defineProps, defineEmits*/
 const emits = defineEmits(["select"]);
@@ -77,7 +78,7 @@ onMounted(async () => {
     });
     document.addEventListener(
       "click",
-      () => {
+      (event: Event) => {
         if (instance.isDisposed()) {
           return;
         }
@@ -88,6 +89,25 @@ onMounted(async () => {
           type: "updateAxisPointer",
           currTrigger: "leave",
         });
+        if (
+          ["vis-item-overflow", "vis-item-content"].includes(
+            (event.target as HTMLDivElement).className
+          )
+        ) {
+          return;
+        }
+        const series = props.option.series;
+        console.log(event);
+        for (const temp of series) {
+          if (temp.markArea) {
+            delete temp.markArea;
+          }
+        }
+        const options = {
+          ...props.option,
+          series,
+        };
+        setOptions(options);
       },
       true
     );
