@@ -30,7 +30,6 @@ import {
 import type { PropType } from "vue";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
-import { remove } from "lodash";
 
 /*global Nullable, defineProps, defineEmits*/
 const emits = defineEmits(["select"]);
@@ -97,7 +96,6 @@ onMounted(async () => {
           return;
         }
         const series = props.option.series;
-        console.log(event);
         for (const temp of series) {
           if (temp.markArea) {
             delete temp.markArea;
@@ -166,7 +164,7 @@ watch(
       }
       instance.dispatchAction({
         type: "showTip",
-        dataIndex: props.filters.dataIndex || undefined,
+        dataIndex: props.filters.dataIndex,
         seriesIndex: 0,
       });
     }
