@@ -147,6 +147,7 @@ const msg = {
   duplicateName: "Nombre duplicado",
   nameTip:
     "El nombre sólo admite chino e inglés, líneas horizontales y subrayado, y la longitud del nombre no excederá de 300 caracteres",
+  enableAssociate: "Activar asociación",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

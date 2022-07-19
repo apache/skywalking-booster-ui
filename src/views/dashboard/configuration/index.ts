@@ -18,9 +18,11 @@
 import Text from "./Text.vue";
 import Widget from "./Widget.vue";
 import Topology from "./Topology.vue";
+import Event from "./Event.vue";
 
 export default {
   Text,
   Widget,
   Topology,
+  Event,
 };

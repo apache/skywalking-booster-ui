@@ -18,7 +18,6 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { PropType } from "vue";
-import { Event } from "@/types/events";
 import { LineConfig, EventParams } from "@/types/dashboard";
 
 /*global defineProps, defineEmits */
@@ -30,14 +29,17 @@ const props = defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   theme: { type: String, default: "light" },
-  itemEvents: { type: Array as PropType<Event[]>, default: () => [] },
   config: {
     type: Object as PropType<
       LineConfig & {
         filters: {
-          value: number | string;
-          dataIndex: number;
           sourceId: string;
+          duration: {
+            startTime: string;
+            endTime: string;
+          };
+          isRange: boolean;
+          dataIndex?: number;
         };
       } & { id: string }
     >,
@@ -58,30 +60,7 @@ function getOption() {
   const keys = Object.keys(props.data || {}).filter(
     (i: any) => Array.isArray(props.data[i]) && props.data[i].length
   );
-  const startP = keys.length > 1 ? 50 : 15;
-  const diff = 10;
-  const markAreas = (props.itemEvents || []).map(
-    (event: Event, index: number) => {
-      return [
-        {
-          name: `${event.name}:${event.type}`,
-          xAxis: event.startTime,
-          y: startP + diff * index,
-          itemStyle: {
-            borderWidth: 2,
-            borderColor: event.type === "Normal" ? "#5dc859" : "#FF0087",
-            color: event.type === "Normal" ? "#5dc859" : "#FF0087",
-          },
-        },
-        {
-          name: event.message,
-          xAxis: event.endTime,
-          y: startP + diff * (index + 1),
-        },
-      ];
-    }
-  );
-  const temp = keys.map((i: any, index: number) => {
+  const temp = keys.map((i: any) => {
     const serie: any = {
       data: props.data[i].map((item: any, itemIndex: number) => [
         props.intervalTime[itemIndex],
@@ -98,23 +77,6 @@ function getOption() {
         width: 1.5,
         type: "solid",
       },
-      markArea:
-        index === 0
-          ? {
-              silent: false,
-              data: markAreas,
-              label: {
-                show: false,
-                width: 60,
-              },
-              emphasis: {
-                label: {
-                  position: "bottom",
-                  show: true,
-                },
-              },
-            }
-          : undefined,
     };
     if (props.config.type === "Area") {
       serie.areaStyle = {

@@ -41,32 +41,16 @@ const widgetIds = ref<string[]>(
   associate.map((d: { widgetId: string }) => d.widgetId)
 );
 const widgets = computed(() => {
-  const isLinear = ["Bar", "Line", "Area"].includes(
-    dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
-  );
-  // const isRank = ["TopList"].includes(
-  //   dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type
-  // );
-  const { widgets } = getDashboard(dashboardStore.currentDashboard);
-  const items = widgets.filter(
+  const all = getDashboard(dashboardStore.currentDashboard).widgets;
+  const items = all.filter(
     (d: { value: string; label: string } & LayoutConfig) => {
-      if (dashboardStore.selectedGrid.id !== d.id) {
-        if (
-          isLinear &&
-          d.type === "Widget" &&
-          d.widget &&
-          d.widget.name &&
-          d.id
-        ) {
-          d.value = d.id;
-          d.label = d.widget.name;
-          return d;
-        }
-        // if (isRank && d.type !== "Widget" && d.widget && d.id) {
-        //   d.value = d.id;
-        //   d.label = d.widget.name || d.id;
-        //   return d;
-        // }
+      const isLinear = ["Bar", "Line", "Area"].includes(
+        (d.graph && d.graph.type) || ""
+      );
+      if (isLinear && d.id && dashboardStore.selectedGrid.id !== d.id) {
+        d.value = d.id;
+        d.label = (d.widget && d.widget.name) || d.id;
+        return d;
       }
     }
   );
@@ -84,6 +68,7 @@ function updateWidgetConfig(options: Option[]) {
     associate: opt,
   };
   dashboardStore.selectWidget({ ...widget });
+
   // remove unuse association widget option
   for (const id of widgetIds.value) {
     if (!newVal.includes(id)) {

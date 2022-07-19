@@ -38,7 +38,16 @@ export interface LayoutConfig {
   metricConfig?: MetricConfigOpt[];
   id?: string;
   associate?: { widgetId: string }[];
-  filters?: { dataIndex: number; sourceId: string };
+  eventAssociate?: boolean;
+  filters?: {
+    dataIndex: number;
+    sourceId: string;
+    isRange?: boolean;
+    duration?: {
+      startTime: string;
+      endTime: string;
+    };
+  };
 }
 
 export type MetricConfigOpt = {

@@ -46,8 +46,12 @@ const props = defineProps({
   },
   filters: {
     type: Object as PropType<{
-      value: number | string;
-      dataIndex: number;
+      duration: {
+        startTime: string;
+        endTime: string;
+      };
+      isRange: boolean;
+      dataIndex?: number;
       sourceId: string;
     }>,
   },
@@ -73,7 +77,7 @@ onMounted(async () => {
     });
     document.addEventListener(
       "click",
-      () => {
+      (event: Event) => {
         if (instance.isDisposed()) {
           return;
         }
@@ -84,6 +88,27 @@ onMounted(async () => {
           type: "updateAxisPointer",
           currTrigger: "leave",
         });
+        if (
+          ["vis-item-overflow", "vis-item-content"].includes(
+            (event.target as HTMLDivElement).className
+          )
+        ) {
+          return;
+        }
+        const series = (window as any).structuredClone(props.option.series);
+        for (const temp of series) {
+          if (temp.markArea) {
+            delete temp.markArea;
+          }
+        }
+        const options = {
+          ...props.option,
+          series,
+        };
+        if (JSON.stringify(options) === JSON.stringify(props.option)) {
+          return;
+        }
+        setOptions(options);
       },
       true
     );
@@ -110,6 +135,39 @@ watch(
       return;
     }
     if (props.filters) {
+      if (props.filters.isRange) {
+        const markArea = {
+          silent: true,
+          itemStyle: {
+            opacity: 0.3,
+          },
+          data: [
+            [
+              {
+                xAxis: props.filters.duration.startTime,
+              },
+              {
+                xAxis: props.filters.duration.endTime,
+              },
+            ],
+          ],
+        };
+        const series = (window as any).structuredClone(props.option.series);
+        for (const [key, temp] of series.entries()) {
+          if (key === 0) {
+            temp.markArea = markArea;
+          }
+        }
+        const options = {
+          ...props.option,
+          series,
+        };
+        if (JSON.stringify(options) === JSON.stringify(props.option)) {
+          return;
+        }
+        setOptions(options);
+        return;
+      }
       instance.dispatchAction({
         type: "showTip",
         dataIndex: props.filters.dataIndex,

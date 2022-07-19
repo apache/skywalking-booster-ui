@@ -19,15 +19,23 @@ limitations under the License. -->
 import { ref, watch, onMounted } from "vue";
 import dayjs from "dayjs";
 import { useThrottleFn } from "@vueuse/core";
+import { Event } from "@/types/events";
+import { LayoutConfig } from "@/types/dashboard";
 import { useEventStore } from "@/store/modules/event";
 import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import getDashboard from "@/hooks/useDashboardsSession";
+import { dateFormatTime } from "@/utils/dateFormat";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 const eventStore = useEventStore();
 /*global Nullable */
 const timeline = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
+const dashboardStore = useDashboardStore();
+const appStore = useAppStoreWithOut();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   new Date(dayjs(date).format(pattern));
 const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
@@ -49,12 +57,12 @@ function visTimeline() {
     visGraph.value.destroy();
   }
   const h = timeline.value.getBoundingClientRect().height;
-  const events = eventStore.events.map((d, index) => {
+  const events = eventStore.events.map((d: Event, index: number) => {
     return {
       id: index + 1,
       content: d.name,
-      start: dateFormat(d.startTime),
-      end: dateFormat(d.endTime),
+      start: dateFormat(Number(d.startTime)),
+      end: dateFormat(Number(d.endTime)),
       data: d,
       className: d.type,
     };
@@ -68,7 +76,7 @@ function visTimeline() {
     autoResize: false,
     tooltip: {
       overflowMethod: "cap",
-      template(item) {
+      template(item: Event | any) {
         const data = item.data || {};
         let tmp = `<div>ID: ${data.uuid || ""}</div>
         <div>Name: ${data.name || ""}</div>
@@ -88,6 +96,38 @@ function visTimeline() {
     },
   };
   visGraph.value = new Timeline(timeline.value, items, options);
+  visGraph.value.on("select", (properties: { items: number[] }) => {
+    if (!dashboardStore.selectedGrid.eventAssociate) {
+      return;
+    }
+    const all = getDashboard(dashboardStore.currentDashboard).widgets;
+    const widgets = all.filter(
+      (d: { value: string; label: string } & LayoutConfig) => {
+        const isLinear = ["Bar", "Line", "Area"].includes(
+          (d.graph && d.graph.type) || ""
+        );
+        if (isLinear) {
+          return d;
+        }
+      }
+    );
+    const index = properties.items[0];
+    const i = events[index - 1 || 0];
+
+    for (const widget of widgets) {
+      const startTime = dateFormatTime(i.start, appStore.duration.step);
+      const endTime = dateFormatTime(i.end, appStore.duration.step);
+      widget.filters = {
+        sourceId: dashboardStore.selectedGrid.id || "",
+        isRange: true,
+        duration: {
+          startTime,
+          endTime,
+        },
+      };
+      dashboardStore.setWidget(widget);
+    }
+  });
 }
 function resize() {
   const observer = new ResizeObserver((entries) => {
