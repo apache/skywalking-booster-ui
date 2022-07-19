@@ -115,8 +115,14 @@ function visTimeline() {
     const i = events[index - 1 || 0];
 
     for (const widget of widgets) {
+      let end = i.end;
+      if (!isNaN(index)) {
+        if (!i.end || i.end.getTime() - i.start.getTime() < 60000) {
+          end = i.start.getTime() + 60000;
+        }
+      }
       const startTime = dateFormatTime(i.start, appStore.duration.step);
-      const endTime = dateFormatTime(i.end, appStore.duration.step);
+      const endTime = dateFormatTime(new Date(end), appStore.duration.step);
       widget.filters = {
         sourceId: dashboardStore.selectedGrid.id || "",
         isRange: true,
