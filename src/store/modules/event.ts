@@ -104,6 +104,9 @@ export const eventStore = defineStore({
               scope = "Endpoint";
             }
             item.scope = scope;
+            if (!item.endTime || item.endTime === item.startTime) {
+              item.endTime = Number(item.startTime) + 60000;
+            }
             return item;
           }
         );
