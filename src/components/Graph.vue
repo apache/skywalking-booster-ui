@@ -95,7 +95,7 @@ onMounted(async () => {
         ) {
           return;
         }
-        const series = props.option.series;
+        const series = (window as any).structuredClone(props.option.series);
         for (const temp of series) {
           if (temp.markArea) {
             delete temp.markArea;
@@ -105,6 +105,9 @@ onMounted(async () => {
           ...props.option,
           series,
         };
+        if (JSON.stringify(options) === JSON.stringify(props.option)) {
+          return;
+        }
         setOptions(options);
       },
       true
@@ -149,7 +152,7 @@ watch(
             ],
           ],
         };
-        const series = props.option.series;
+        const series = (window as any).structuredClone(props.option.series);
         for (const [key, temp] of series.entries()) {
           if (key === 0) {
             temp.markArea = markArea;
@@ -159,6 +162,9 @@ watch(
           ...props.option,
           series,
         };
+        if (JSON.stringify(options) === JSON.stringify(props.option)) {
+          return;
+        }
         setOptions(options);
         return;
       }
