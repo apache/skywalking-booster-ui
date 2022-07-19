@@ -117,7 +117,7 @@ function visTimeline() {
     for (const widget of widgets) {
       let end = i.end;
       if (!isNaN(index)) {
-        let diff = 0;
+        let diff = 60000;
         switch (appStore.duration.step) {
           case "MINUTE":
             diff = 60000;
@@ -126,16 +126,7 @@ function visTimeline() {
             diff = 3600000;
             break;
           case "DAY":
-            diff = 86400000;
-            break;
-          case "MONTH":
-            diff =
-              (appStore.duration.end.getTime() -
-                appStore.duration.start.getTime()) /
-              (appStore.duration.end.getFullYear() * 12 +
-                appStore.duration.end.getMonth() -
-                appStore.duration.start.getFullYear() * 12 -
-                appStore.duration.start.getMonth());
+            diff = 3600000 * 24;
             break;
         }
         if (!i.end || i.end.getTime() - i.start.getTime() < diff) {
