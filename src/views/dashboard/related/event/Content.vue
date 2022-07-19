@@ -26,7 +26,7 @@ import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import getDashboard from "@/hooks/useDashboardsSession";
-import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
+import { dateFormatTime } from "@/utils/dateFormat";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
 const eventStore = useEventStore();
