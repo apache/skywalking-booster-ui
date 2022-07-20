@@ -20,7 +20,7 @@ limitations under the License. -->
         placeholder="Please input name"
         class="input-with-search ml-10"
         size="small"
-        @change="searchDashboards"
+        @change="searchDashboards(1)"
       >
         <template #append>
           <el-button size="small">
@@ -129,7 +129,8 @@ limitations under the License. -->
           small
           layout="prev, pager, next"
           :page-size="pageSize"
-          :total="dashboardStore.dashboards.length"
+          :total="total"
+          v-model="currentPage"
           @current-change="changePage"
           @prev-click="changePage"
           @next-click="changePage"
@@ -159,6 +160,8 @@ const pageSize = 18;
 const dashboards = ref<DashboardItem[]>([]);
 const searchText = ref<string>("");
 const loading = ref<boolean>(false);
+const currentPage = ref<number>(1);
+const total = ref<number>(0);
 const multipleTableRef = ref<InstanceType<typeof ElTable>>();
 const multipleSelection = ref<DashboardItem[]>([]);
 const dashboardFile = ref<Nullable<HTMLDivElement>>(null);
@@ -170,7 +173,7 @@ const handleSelectionChange = (val: DashboardItem[]) => {
 setList();
 async function setList() {
   await dashboardStore.setDashboards();
-  searchDashboards();
+  searchDashboards(1);
 }
 async function importTemplates(event: any) {
   const arr: any = await readFile(event);
@@ -374,7 +377,7 @@ async function setRoot(row: DashboardItem) {
     items.push(d);
   }
   dashboardStore.resetDashboards(items);
-  searchDashboards();
+  searchDashboards(1);
   loading.value = false;
 }
 function handleRename(row: DashboardItem) {
@@ -458,10 +461,13 @@ function searchDashboards(pageIndex?: any) {
   const arr = list.filter((d: { name: string }) =>
     d.name.includes(searchText.value)
   );
-  dashboards.value = arr.splice(
-    (pageIndex - 1 || 0) * pageSize,
-    pageSize * (pageIndex || 1)
+
+  total.value = arr.length;
+  dashboards.value = arr.filter(
+    (d: { name: string }, index: number) =>
+      index < pageIndex * pageSize && index >= (pageIndex - 1) * pageSize
   );
+  currentPage.value = 1;
 }
 
 async function reloadTemplates() {
@@ -470,6 +476,7 @@ async function reloadTemplates() {
   loading.value = false;
 }
 function changePage(pageIndex: number) {
+  currentPage.value = pageIndex;
   searchDashboards(pageIndex);
 }
 </script>
