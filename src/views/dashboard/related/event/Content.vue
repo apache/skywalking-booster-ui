@@ -30,7 +30,13 @@ import { dateFormatTime } from "@/utils/dateFormat";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
 const eventStore = useEventStore();
-/*global Nullable */
+/*global defineProps, Nullable */
+const props = defineProps({
+  data: {
+    type: Object,
+    default: () => ({}),
+  },
+});
 const timeline = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
@@ -97,9 +103,10 @@ function visTimeline() {
   };
   visGraph.value = new Timeline(timeline.value, items, options);
   visGraph.value.on("select", (properties: { items: number[] }) => {
-    if (!dashboardStore.selectedGrid.eventAssociate) {
+    if (!props.data.eventAssociate) {
       return;
     }
+    dashboardStore.selectWidget(props.data);
     const all = getDashboard(dashboardStore.currentDashboard).widgets;
     const widgets = all.filter(
       (d: { value: string; label: string } & LayoutConfig) => {

@@ -36,7 +36,7 @@ limitations under the License. -->
       <Header :needQuery="needQuery" />
     </div>
     <div class="event">
-      <Content />
+      <Content :data="data" />
     </div>
   </div>
 </template>
