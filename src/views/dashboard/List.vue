@@ -467,7 +467,7 @@ function searchDashboards(pageIndex?: any) {
     (d: { name: string }, index: number) =>
       index < pageIndex * pageSize && index >= (pageIndex - 1) * pageSize
   );
-  currentPage.value = 1;
+  currentPage.value = pageIndex;
 }
 
 async function reloadTemplates() {
