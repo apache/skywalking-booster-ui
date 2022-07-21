@@ -125,6 +125,9 @@ function fetchSelectors() {
 
 async function getEndpoints(id?: string) {
   const resp = await eventStore.getEndpoints(id);
+  if (!resp) {
+    return;
+  }
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return;
@@ -147,6 +150,9 @@ async function queryEvents() {
   }
   if (dashboardStore.entity === EntityType[3].value) {
     instance = selectorStore.currentPod.id;
+  }
+  if (!selectorStore.currentService) {
+    return;
   }
   eventStore.setEventCondition({
     // layer: dashboardStore.layerId,

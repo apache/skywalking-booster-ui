@@ -30,14 +30,18 @@ import { dateFormatTime } from "@/utils/dateFormat";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
 const eventStore = useEventStore();
-/*global Nullable */
+/*global defineProps, Nullable */
+const props = defineProps({
+  data: {
+    type: Object,
+    default: () => ({}),
+  },
+});
 const timeline = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 const dashboardStore = useDashboardStore();
 const appStore = useAppStoreWithOut();
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  new Date(dayjs(date).format(pattern));
 const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 
@@ -61,8 +65,8 @@ function visTimeline() {
     return {
       id: index + 1,
       content: d.name,
-      start: dateFormat(Number(d.startTime)),
-      end: dateFormat(Number(d.endTime)),
+      start: new Date(Number(d.startTime)),
+      end: new Date(Number(d.endTime)),
       data: d,
       className: d.type,
     };
@@ -97,9 +101,10 @@ function visTimeline() {
   };
   visGraph.value = new Timeline(timeline.value, items, options);
   visGraph.value.on("select", (properties: { items: number[] }) => {
-    if (!dashboardStore.selectedGrid.eventAssociate) {
+    if (!props.data.eventAssociate) {
       return;
     }
+    dashboardStore.selectWidget(props.data);
     const all = getDashboard(dashboardStore.currentDashboard).widgets;
     const widgets = all.filter(
       (d: { value: string; label: string } & LayoutConfig) => {
@@ -117,8 +122,20 @@ function visTimeline() {
     for (const widget of widgets) {
       let end = i.end;
       if (!isNaN(index)) {
-        if (!i.end || i.end.getTime() - i.start.getTime() < 60000) {
-          end = i.start.getTime() + 60000;
+        let diff = 60000;
+        switch (appStore.duration.step) {
+          case "MINUTE":
+            diff = 60000;
+            break;
+          case "HOUR":
+            diff = 3600000;
+            break;
+          case "DAY":
+            diff = 3600000 * 24;
+            break;
+        }
+        if (!i.end || i.end.getTime() - i.start.getTime() < diff) {
+          end = i.start.getTime() + diff;
         }
       }
       const startTime = dateFormatTime(i.start, appStore.duration.step);
