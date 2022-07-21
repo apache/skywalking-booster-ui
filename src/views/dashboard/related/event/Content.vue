@@ -42,8 +42,6 @@ const visGraph = ref<Nullable<any>>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 const dashboardStore = useDashboardStore();
 const appStore = useAppStoreWithOut();
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  new Date(dayjs(date).format(pattern));
 const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 
@@ -67,8 +65,8 @@ function visTimeline() {
     return {
       id: index + 1,
       content: d.name,
-      start: dateFormat(Number(d.startTime)),
-      end: dateFormat(Number(d.endTime)),
+      start: new Date(Number(d.startTime)),
+      end: new Date(Number(d.endTime)),
       data: d,
       className: d.type,
     };
