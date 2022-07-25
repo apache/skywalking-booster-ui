@@ -169,7 +169,8 @@ async function fetchTagValues() {
 function selectTag(item: string) {
   dropdownTag.value.handleClose();
   if (tags.value.includes("=")) {
-    tags.value += item;
+    const key = tags.value.split("=")[0];
+    tags.value = key + "=" + item;
     addLabels();
     tagArr.value = tagKeys.value;
     searchTags();
