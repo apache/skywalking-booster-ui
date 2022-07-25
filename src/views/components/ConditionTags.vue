@@ -39,18 +39,19 @@ limitations under the License. -->
         v-model="tags"
         class="trace-new-tag"
         @click="showClick"
+        @input="searchTags"
       />
       <el-dropdown
         ref="dropdownTag"
         trigger="contextmenu"
         :hide-on-click="false"
         style="margin: 20px 0 0 -130px"
-        v-if="tagArr.length"
+        v-if="tagList.length"
         :max-height="400"
       >
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item v-for="(item, index) in tagArr" :key="index">
+            <el-dropdown-item v-for="(item, index) in tagList" :key="index">
               <span @click="selectTag(item)" class="tag-item">
                 {{ item }}
               </span>
@@ -98,6 +99,7 @@ const { t } = useI18n();
 const tags = ref<string>("");
 const tagsList = ref<string[]>([]);
 const tagArr = ref<string[]>([]);
+const tagList = ref<string[]>([]);
 const tagKeys = ref<string[]>([]);
 const tipsMap = {
   LOG: "logTagsTip",
@@ -144,6 +146,7 @@ async function fetchTagKeys() {
   }
   tagArr.value = resp.data.tagKeys;
   tagKeys.value = resp.data.tagKeys;
+  searchTags();
 }
 
 async function fetchTagValues() {
@@ -160,18 +163,34 @@ async function fetchTagValues() {
     return;
   }
   tagArr.value = resp.data.tagValues;
+  searchTags();
 }
 
 function selectTag(item: string) {
+  dropdownTag.value.handleClose();
   if (tags.value.includes("=")) {
     tags.value += item;
     addLabels();
     tagArr.value = tagKeys.value;
-    dropdownTag.value.handleClose();
+    searchTags();
     return;
   }
   tags.value = item + "=";
   fetchTagValues();
+}
+
+function searchTags() {
+  if (!tags.value) {
+    tagList.value = tagArr.value;
+    return;
+  }
+  let search = "";
+  if (tags.value.includes("=")) {
+    search = tags.value.split("=")[1];
+  } else {
+    search = tags.value;
+  }
+  tagList.value = tagArr.value.filter((d: string) => d.includes(search));
 }
 
 function showClick() {
@@ -211,6 +230,7 @@ watch(
   padding: 2px 5px;
   border-radius: 3px;
   width: 250px;
+  z-index: 999;
 }
 
 .remove-icon {
