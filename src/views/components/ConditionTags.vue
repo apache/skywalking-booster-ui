@@ -33,32 +33,34 @@ limitations under the License. -->
       @change="addLabels"
       :placeholder="t('addTags')"
     />
-    <span v-else>
-      <el-input
-        size="small"
-        v-model="tags"
-        class="trace-new-tag"
-        @click="showClick"
-      />
-      <el-dropdown
-        ref="dropdownTag"
-        trigger="contextmenu"
-        :hide-on-click="false"
-        style="margin: 20px 0 0 -130px"
-        v-if="tagArr.length"
-        :max-height="400"
-      >
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item v-for="(item, index) in tagArr" :key="index">
-              <span @click="selectTag(item)" class="tag-item">
-                {{ item }}
-              </span>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </span>
+    <el-popover
+      v-else
+      trigger="click"
+      style="margin: 10px 0 0 -130px"
+      :visible="visible"
+      width="300px"
+    >
+      <template #reference>
+        <el-input
+          size="small"
+          v-model="tags"
+          class="trace-new-tag"
+          @input="searchTags"
+          @blur="visible = false"
+          @focus="visible = true"
+        />
+      </template>
+      <div class="content">
+        <span
+          v-for="(item, index) in tagList"
+          :key="index"
+          @click="selectTag(item)"
+          class="tag-item"
+        >
+          {{ item }}
+        </span>
+      </div>
+    </el-popover>
     <span
       class="tags-tip"
       :class="type !== 'ALARM' && tagArr.length ? 'link-tips' : ''"
@@ -86,7 +88,7 @@ import { useLogStore } from "@/store/modules/log";
 import { ElMessage } from "element-plus";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
-/*global Nullable, defineEmits, defineProps */
+/*global defineEmits, defineProps */
 const emit = defineEmits(["update"]);
 const props = defineProps({
   type: { type: String, default: "TRACE" },
@@ -98,13 +100,14 @@ const { t } = useI18n();
 const tags = ref<string>("");
 const tagsList = ref<string[]>([]);
 const tagArr = ref<string[]>([]);
+const tagList = ref<string[]>([]);
 const tagKeys = ref<string[]>([]);
+const visible = ref<boolean>(false);
 const tipsMap = {
   LOG: "logTagsTip",
   TRACE: "traceTagsTip",
   ALARM: "alarmTagsTip",
 };
-const dropdownTag = ref<Nullable<any>>(null);
 
 fetchTagKeys();
 
@@ -144,6 +147,7 @@ async function fetchTagKeys() {
   }
   tagArr.value = resp.data.tagKeys;
   tagKeys.value = resp.data.tagKeys;
+  searchTags();
 }
 
 async function fetchTagValues() {
@@ -160,25 +164,36 @@ async function fetchTagValues() {
     return;
   }
   tagArr.value = resp.data.tagValues;
+  searchTags();
 }
 
 function selectTag(item: string) {
   if (tags.value.includes("=")) {
-    tags.value += item;
+    const key = tags.value.split("=")[0];
+    tags.value = key + "=" + item;
     addLabels();
     tagArr.value = tagKeys.value;
-    dropdownTag.value.handleClose();
+    searchTags();
     return;
   }
   tags.value = item + "=";
   fetchTagValues();
 }
 
-function showClick() {
-  if (dropdownTag.value) {
-    dropdownTag.value.handleOpen();
+function searchTags() {
+  if (!tags.value) {
+    tagList.value = tagArr.value;
+    return;
   }
+  let search = "";
+  if (tags.value.includes("=")) {
+    search = tags.value.split("=")[1];
+  } else {
+    search = tags.value;
+  }
+  tagList.value = tagArr.value.filter((d: string) => d.includes(search));
 }
+
 watch(
   () => appStore.durationTime,
   () => {
@@ -211,6 +226,7 @@ watch(
   padding: 2px 5px;
   border-radius: 3px;
   width: 250px;
+  z-index: 999;
 }
 
 .remove-icon {
@@ -222,6 +238,12 @@ watch(
 .tag-item {
   display: inline-block;
   min-width: 210px;
+  cursor: pointer;
+  margin-top: 10px;
+
+  &:hover {
+    color: #409eff;
+  }
 }
 
 .tags-tip {
@@ -230,7 +252,6 @@ watch(
 
 .link-tips {
   display: inline-block;
-  margin-left: 130px;
 }
 
 .light {
@@ -247,5 +268,11 @@ watch(
 
 .icon-help {
   cursor: pointer;
+}
+
+.content {
+  width: 300px;
+  max-height: 400px;
+  overflow: auto;
 }
 </style>
