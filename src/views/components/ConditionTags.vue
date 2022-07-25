@@ -252,7 +252,6 @@ watch(
 
 .link-tips {
   display: inline-block;
-  margin-left: 130px;
 }
 
 .light {
