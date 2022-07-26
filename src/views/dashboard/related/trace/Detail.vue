@@ -140,8 +140,8 @@ export default defineComponent({
     LogTable,
   },
   setup() {
-    /*global Nullable */
-    const options: LayoutConfig | undefined = inject("options");
+    /*global Nullable, Recordable */
+    const options: Recordable<LayoutConfig> = inject("options") || {};
     const { t } = useI18n();
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
@@ -189,7 +189,7 @@ export default defineComponent({
       };
       dashboardStore.setWidget(item);
       const logTabIndex = widget.id.split("-");
-      const traceTabindex = options?.id?.split("-") || [];
+      const traceTabindex = (options.id as any).split("-") || [];
       let container: Nullable<Element>;
 
       if (logTabIndex[1] === undefined) {

@@ -130,7 +130,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, onUnmounted } from "vue";
+import { ref, reactive, watch, onUnmounted, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { useLogStore } from "@/store/modules/log";
@@ -141,8 +141,10 @@ import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 import { ErrorCategory } from "./data";
+import { LayoutConfig } from "@/types/dashboard";
 
-/*global defineProps */
+/*global  defineProps */
+const options: LayoutConfig | undefined = inject("options");
 const props = defineProps({
   needQuery: { type: Boolean, default: true },
 });
@@ -151,7 +153,9 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const logStore = useLogStore();
-const traceId = ref<string>("");
+const traceId = ref<string>(
+  (options && options.filters && options.filters.traceId) || ""
+);
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
 const tagsList = ref<string[]>([]);
@@ -325,6 +329,12 @@ function removeExcludeContent(index: number) {
 }
 onUnmounted(() => {
   logStore.resetCondition();
+  const item = {
+    ...options,
+    filters: undefined,
+  };
+  dashboardStore.setWidget(item);
+  traceId.value = "";
 });
 watch(
   () => selectorStore.currentService,
