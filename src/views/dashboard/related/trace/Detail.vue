@@ -33,33 +33,6 @@ limitations under the License. -->
             {{ t("viewLogs") }}
           </el-button>
         </div>
-        <el-dialog
-          v-model="showTraceLogs"
-          :destroy-on-close="true"
-          fullscreen
-          @closed="showTraceLogs = false"
-        >
-          <div>
-            <el-pagination
-              v-model:currentPage="pageNum"
-              v-model:page-size="pageSize"
-              :small="true"
-              layout="prev, pager, next"
-              :pager-count="5"
-              :total="total"
-              @current-change="turnLogsPage"
-            />
-            <LogTable
-              :tableData="traceStore.traceSpanLogs || []"
-              :type="`service`"
-              :noLink="true"
-            >
-              <div class="log-tips" v-if="!traceStore.traceSpanLogs.length">
-                {{ t("noData") }}
-              </div>
-            </LogTable>
-          </div>
-        </el-dialog>
       </h5>
       <div class="mb-5 blue sm">
         <Selector
@@ -148,7 +121,7 @@ limitations under the License. -->
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
-import { ref, defineComponent, computed } from "vue";
+import { ref, defineComponent, computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
@@ -156,6 +129,9 @@ import copy from "@/utils/copy";
 import graphs from "./components/index";
 import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
 import { ElMessage } from "element-plus";
+import getDashboard from "@/hooks/useDashboardsSession";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { LayoutConfig } from "@/types/dashboard";
 
 export default defineComponent({
   name: "TraceDetail",
@@ -164,6 +140,7 @@ export default defineComponent({
     LogTable,
   },
   setup() {
+    const options: LayoutConfig | undefined = inject("options");
     const { t } = useI18n();
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
@@ -171,6 +148,7 @@ export default defineComponent({
     const displayMode = ref<string>("List");
     const pageNum = ref<number>(1);
     const pageSize = 10;
+    const dashboardStore = useDashboardStore();
     const total = computed(() =>
       traceStore.traceList.length === pageSize
         ? pageSize * pageNum.value + 1
@@ -195,18 +173,16 @@ export default defineComponent({
     }
 
     async function searchTraceLogs() {
-      showTraceLogs.value = true;
-      const res = await traceStore.getSpanLogs({
-        condition: {
-          relatedTrace: {
-            traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
-          },
-          paging: { pageNum: pageNum.value, pageSize },
+      const { widgets } = getDashboard(dashboardStore.currentDashboard);
+      const widget = widgets.filter((d: { type: string }) => d.type === "Log");
+      const item = {
+        ...widget,
+        filters: {
+          sourceId: options?.id || "",
+          traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
         },
-      });
-      if (res.errors) {
-        ElMessage.error(res.errors);
-      }
+      };
+      dashboardStore.setWidget(item);
     }
 
     function turnLogsPage(page: number) {

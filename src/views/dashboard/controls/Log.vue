@@ -38,6 +38,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import { provide } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Header from "../related/log/Header.vue";
@@ -52,6 +53,7 @@ const props = defineProps({
   activeIndex: { type: String, default: "" },
   needQuery: { type: Boolean, default: true },
 });
+provide("options", props.data);
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 
