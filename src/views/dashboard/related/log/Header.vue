@@ -252,6 +252,11 @@ function searchLogs() {
       category: state.category.value,
     });
   } else {
+    let segmentId, spanId;
+    if (options && options.filters) {
+      segmentId = options.filters.segmentId;
+      spanId = options.filters.spanId;
+    }
     logStore.setLogCondition({
       serviceId: selectorStore.currentService
         ? selectorStore.currentService.id
@@ -263,7 +268,9 @@ function searchLogs() {
       excludingKeywordsOfContent: excludingKeywordsOfContent.value,
       tags: tagsMap.value.length ? tagsMap.value : undefined,
       paging: { pageNum: 1, pageSize: 15 },
-      relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
+      relatedTrace: traceId.value
+        ? { traceId: traceId.value, segmentId, spanId }
+        : undefined,
     });
   }
   queryLogs();

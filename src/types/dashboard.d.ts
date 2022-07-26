@@ -48,6 +48,8 @@ export interface LayoutConfig {
       endTime: string;
     };
     traceId?: string;
+    spanId?: string;
+    segmentId?: string;
   };
 }
 

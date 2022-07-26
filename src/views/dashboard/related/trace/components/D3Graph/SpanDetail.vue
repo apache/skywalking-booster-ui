@@ -83,7 +83,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, inject } from "vue";
+import { inject } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import dayjs from "dayjs";
