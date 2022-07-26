@@ -123,6 +123,8 @@ limitations under the License. -->
 import dayjs from "dayjs";
 import { ref, defineComponent, computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+import router from "@/router";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
 import copy from "@/utils/copy";
@@ -132,6 +134,7 @@ import { ElMessage } from "element-plus";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
+import { local } from "d3-selection";
 
 export default defineComponent({
   name: "TraceDetail",
@@ -140,8 +143,10 @@ export default defineComponent({
     LogTable,
   },
   setup() {
+    /*global Nullable */
     const options: LayoutConfig | undefined = inject("options");
     const { t } = useI18n();
+    const route = useRoute();
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
     const traceId = ref<string>("");
@@ -156,7 +161,6 @@ export default defineComponent({
     );
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
-    const showTraceLogs = ref<boolean>(false);
 
     function handleClick() {
       copy(traceId.value || traceStore.currentTrace.traceIds[0].value);
@@ -174,7 +178,8 @@ export default defineComponent({
 
     async function searchTraceLogs() {
       const { widgets } = getDashboard(dashboardStore.currentDashboard);
-      const widget = widgets.filter((d: { type: string }) => d.type === "Log");
+      const widget =
+        widgets.filter((d: { type: string }) => d.type === "Log")[0] || {};
       const item = {
         ...widget,
         filters: {
@@ -183,6 +188,28 @@ export default defineComponent({
         },
       };
       dashboardStore.setWidget(item);
+      const logTabIndex = widget.id.split("-");
+      const traceTabindex = options?.id?.split("-") || [];
+      if (logTabIndex[1] === traceTabindex[1] || logTabIndex[1] === undefined) {
+        let container: Nullable<Element>;
+        if (logTabIndex[1] === undefined) {
+          container = document.querySelector(".ds-main");
+        } else {
+          container = document.querySelector(".tab-layout");
+        }
+        if (container && options) {
+          container.scrollTop = options.y * 10;
+        }
+      } else {
+        let path = "";
+        if (route.params.activeTabIndex === undefined) {
+          path = location.href + "/tab/" + logTabIndex[1];
+        } else {
+          const p = location.href.split("/tab/")[0];
+          path = p + "/tab/" + logTabIndex[1];
+        }
+        location.href = path;
+      }
     }
 
     function turnLogsPage(page: number) {
@@ -197,7 +224,6 @@ export default defineComponent({
       handleClick,
       t,
       searchTraceLogs,
-      showTraceLogs,
       turnLogsPage,
       pageSize,
       pageNum,

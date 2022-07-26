@@ -15,11 +15,7 @@ limitations under the License. -->
 <template>
   <div>
     <span class="grey">{{ t("tags") }}: </span>
-    <span
-      v-if="tagsList.length"
-      class="trace-tags"
-      :style="type === 'LOG' ? `min-width: 122px;` : ''"
-    >
+    <span v-if="tagsList.length" class="trace-tags">
       <span class="selected" v-for="(item, index) in tagsList" :key="index">
         <span>{{ item }}</span>
         <span class="remove-icon" @click="removeTags(index)">×</span>
@@ -33,13 +29,7 @@ limitations under the License. -->
       @change="addLabels"
       :placeholder="t('addTags')"
     />
-    <el-popover
-      v-else
-      trigger="click"
-      style="margin: 10px 0 0 -130px"
-      :visible="visible"
-      width="300px"
-    >
+    <el-popover v-else trigger="click" :visible="visible" width="300px">
       <template #reference>
         <el-input
           size="small"
@@ -226,7 +216,6 @@ watch(
   padding: 2px 5px;
   border-radius: 3px;
   width: 250px;
-  z-index: 999;
 }
 
 .remove-icon {
