@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { LayoutConfig } from "@/types/dashboard";
+
 export default function getDashboard(param: {
   name: string;
   layer: string;
@@ -29,7 +31,7 @@ export default function getDashboard(param: {
       d.layer === param.layer
   );
   const all = dashboardStore.layout;
-  const widgets = [];
+  const widgets: LayoutConfig[] = [];
   for (const item of all) {
     if (item.type === "Tab") {
       if (item.children && item.children.length) {
@@ -43,5 +45,31 @@ export default function getDashboard(param: {
       widgets.push(item);
     }
   }
-  return { dashboard, widgets };
+  function associationWidget(sourceId: string, filters: unknown, type: string) {
+    const widget = widgets.filter((d: { type: string }) => d.type === type)[0];
+    if (!widget) {
+      return;
+    }
+    const item = {
+      ...widget,
+      filters,
+    };
+    dashboardStore.setWidget(item);
+    const targetTabIndex = (widget.id || "").split("-");
+    const sourceTabindex = (sourceId || "").split("-") || [];
+    let container: Nullable<Element>;
+
+    if (targetTabIndex[1] === undefined) {
+      container = document.querySelector(".ds-main");
+    } else {
+      container = document.querySelector(".tab-layout");
+    }
+    if (targetTabIndex[1] && targetTabIndex[1] !== sourceTabindex[1]) {
+      dashboardStore.setActiveTabIndex(Number(targetTabIndex[1]));
+    }
+    if (container && widget) {
+      container.scrollTop = widget.y * 10;
+    }
+  }
+  return { dashboard, widgets, associationWidget };
 }

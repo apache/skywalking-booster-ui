@@ -81,77 +81,38 @@ limitations under the License. -->
       {{ t("relatedTraceLogs") }}
     </el-button>
   </div>
-  <el-dialog
-    v-model="showRelatedLogs"
-    :destroy-on-close="true"
-    fullscreen
-    @closed="showRelatedLogs = false"
-  >
-    <el-pagination
-      v-model:currentPage="pageNum"
-      v-model:page-size="pageSize"
-      :small="true"
-      layout="prev, pager, next"
-      :pager-count="5"
-      :total="total"
-      @current-change="turnPage"
-    />
-    <LogTable
-      :tableData="traceStore.traceSpanLogs || []"
-      :type="`service`"
-      :noLink="true"
-    >
-      <div class="log-tips" v-if="!traceStore.traceSpanLogs.length">
-        {{ t("noData") }}
-      </div>
-    </LogTable>
-  </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import { ref, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import dayjs from "dayjs";
-import { useTraceStore } from "@/store/modules/trace";
 import copy from "@/utils/copy";
-import { ElMessage } from "element-plus";
-import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
+import getDashboard from "@/hooks/useDashboardsSession";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { LayoutConfig } from "@/types/dashboard";
 
-/* global defineProps */
+/*global defineProps, Recordable */
+const options: Recordable<LayoutConfig> = inject("options") || {};
 const props = defineProps({
   currentSpan: { type: Object as PropType<any>, default: () => ({}) },
 });
+const dashboardStore = useDashboardStore();
 const { t } = useI18n();
-const traceStore = useTraceStore();
-const pageNum = ref<number>(1);
-const showRelatedLogs = ref<boolean>(false);
-const pageSize = 10;
-const total = computed(() =>
-  traceStore.traceList.length === pageSize
-    ? pageSize * pageNum.value + 1
-    : pageSize * pageNum.value
-);
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 async function getTaceLogs() {
-  showRelatedLogs.value = true;
-  const res = await traceStore.getSpanLogs({
-    condition: {
-      relatedTrace: {
-        traceId: props.currentSpan.traceId,
-        segmentId: props.currentSpan.segmentId,
-        spanId: props.currentSpan.spanId,
-      },
-      paging: { pageNum: pageNum.value, pageSize },
+  const { associationWidget } = getDashboard(dashboardStore.currentDashboard);
+  associationWidget(
+    (options.id as any) || "",
+    {
+      sourceId: options?.id || "",
+      traceId: props.currentSpan.traceId,
+      segmentId: props.currentSpan.segmentId,
+      spanId: props.currentSpan.spanId,
     },
-  });
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
-}
-function turnPage(p: number) {
-  pageNum.value = p;
-  getTaceLogs();
+    "Log"
+  );
 }
 function showCurrentSpanDetail(text: string) {
   copy(text);

@@ -121,7 +121,7 @@ limitations under the License. -->
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
-import { ref, defineComponent, computed, inject } from "vue";
+import { ref, defineComponent, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
@@ -140,21 +140,14 @@ export default defineComponent({
     LogTable,
   },
   setup() {
-    /*global Nullable, Recordable */
+    /*global Recordable */
     const options: Recordable<LayoutConfig> = inject("options") || {};
     const { t } = useI18n();
     const traceStore = useTraceStore();
     const loading = ref<boolean>(false);
     const traceId = ref<string>("");
     const displayMode = ref<string>("List");
-    const pageNum = ref<number>(1);
-    const pageSize = 10;
     const dashboardStore = useDashboardStore();
-    const total = computed(() =>
-      traceStore.traceList.length === pageSize
-        ? pageSize * pageNum.value + 1
-        : pageSize * pageNum.value
-    );
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
 
@@ -173,41 +166,17 @@ export default defineComponent({
     }
 
     async function searchTraceLogs() {
-      const { widgets } = getDashboard(dashboardStore.currentDashboard);
-      const widget = widgets.filter(
-        (d: { type: string }) => d.type === "Log"
-      )[0];
-      if (!widget) {
-        return;
-      }
-      const item = {
-        ...widget,
-        filters: {
+      const { associationWidget } = getDashboard(
+        dashboardStore.currentDashboard
+      );
+      associationWidget(
+        (options.id as any) || "",
+        {
           sourceId: options?.id || "",
           traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
         },
-      };
-      dashboardStore.setWidget(item);
-      const logTabIndex = widget.id.split("-");
-      const traceTabindex = (options.id as any).split("-") || [];
-      let container: Nullable<Element>;
-
-      if (logTabIndex[1] === undefined) {
-        container = document.querySelector(".ds-main");
-      } else {
-        container = document.querySelector(".tab-layout");
-      }
-      if (logTabIndex[1] && logTabIndex[1] !== traceTabindex[1]) {
-        dashboardStore.setActiveTabIndex(Number(logTabIndex[1]));
-      }
-      if (container && widget) {
-        container.scrollTop = widget.y * 10;
-      }
-    }
-
-    function turnLogsPage(page: number) {
-      pageNum.value = page;
-      searchTraceLogs();
+        "Log"
+      );
     }
     return {
       traceStore,
@@ -217,11 +186,7 @@ export default defineComponent({
       handleClick,
       t,
       searchTraceLogs,
-      turnLogsPage,
-      pageSize,
-      pageNum,
       loading,
-      total,
       traceId,
     };
   },
