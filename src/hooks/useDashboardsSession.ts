@@ -14,24 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
-export default function getDashboard(param: {
+import { LayoutConfig } from "@/types/dashboard";
+
+export default function getDashboard(param?: {
   name: string;
   layer: string;
   entity: string;
 }) {
   const dashboardStore = useDashboardStore();
+  const opt = param || dashboardStore.currentDashboard;
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   const dashboard = list.find(
     (d: { name: string; layer: string; entity: string }) =>
-      d.name === param.name &&
-      d.entity === param.entity &&
-      d.layer === param.layer
+      d.name === opt.name && d.entity === opt.entity && d.layer === opt.layer
   );
   const all = dashboardStore.layout;
-  const widgets = [];
+  const widgets: LayoutConfig[] = [];
   for (const item of all) {
     if (item.type === "Tab") {
+      widgets.push(item);
       if (item.children && item.children.length) {
         for (const child of item.children) {
           if (child.children && child.children.length) {
@@ -43,5 +46,36 @@ export default function getDashboard(param: {
       widgets.push(item);
     }
   }
-  return { dashboard, widgets };
+  function associationWidget(sourceId: string, filters: unknown, type: string) {
+    const widget = widgets.find((d: { type: string }) => d.type === type);
+    if (!widget) {
+      return ElMessage.info(`There has no a ${type} widget in the dashboard`);
+    }
+    const item = {
+      ...widget,
+      filters,
+    };
+    dashboardStore.setWidget(item);
+    const targetTabIndex = (widget.id || "").split("-");
+    const sourceTabindex = (sourceId || "").split("-") || [];
+    let container: Nullable<Element>;
+
+    if (targetTabIndex[1] === undefined) {
+      container = document.querySelector(".ds-main");
+    } else {
+      const w = widgets.find((d: any) => d.id === targetTabIndex[0]);
+      container = document.querySelector(".tab-layout");
+      const layout: Nullable<Element> = document.querySelector(".ds-main");
+      if (w && layout) {
+        layout.scrollTop = w.y * 10 + w.h * 5;
+      }
+    }
+    if (targetTabIndex[1] && targetTabIndex[1] !== sourceTabindex[1]) {
+      dashboardStore.setActiveTabIndex(Number(targetTabIndex[1]));
+    }
+    if (container && widget) {
+      container.scrollTop = widget.y * 10 + widget.h * 5;
+    }
+  }
+  return { dashboard, widgets, associationWidget };
 }

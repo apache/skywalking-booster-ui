@@ -46,8 +46,8 @@ export default class ListGraph {
       .select(this.el)
       .append("svg")
       .attr("class", "trace-list-dowanload")
-      .attr("width", this.width)
-      .attr("height", this.height)
+      .attr("width", this.width > 0 ? this.width : 10)
+      .attr("height", this.height > 0 ? this.height : 10)
       .attr("transform", `translate(-5, 0)`);
     this.tip = (d3tip as any)()
       .attr("class", "d3-tip")

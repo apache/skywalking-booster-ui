@@ -18,7 +18,7 @@ limitations under the License. -->
       v-loading="logStore.loadLogs"
       :tableData="logStore.logs || []"
       :type="type"
-      :noLink="true"
+      :noLink="false"
     >
       <div class="log-tips" v-if="!logStore.logs.length">{{ t("noData") }}</div>
     </LogTable>
@@ -39,7 +39,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
+import LogTable from "./LogTable/Index.vue";
 import { useLogStore } from "@/store/modules/log";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { ElMessage } from "element-plus";

@@ -131,6 +131,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref, reactive, watch, onUnmounted } from "vue";
+import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { useLogStore } from "@/store/modules/log";
@@ -141,17 +142,24 @@ import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 import { ErrorCategory } from "./data";
+import { LayoutConfig } from "@/types/dashboard";
 
-/*global defineProps */
+/*global  defineProps, Recordable */
 const props = defineProps({
   needQuery: { type: Boolean, default: true },
+  data: {
+    type: Object as PropType<LayoutConfig>,
+    default: () => ({ graph: {} }),
+  },
 });
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const logStore = useLogStore();
-const traceId = ref<string>("");
+const traceId = ref<string>(
+  (props.data.filters && props.data.filters.traceId) || ""
+);
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
 const tagsList = ref<string[]>([]);
@@ -159,7 +167,7 @@ const tagsMap = ref<Option[]>([]);
 const contentStr = ref<string>("");
 const excludingContentStr = ref<string>("");
 const isBrowser = ref<boolean>(dashboardStore.layerId === "BROWSER");
-const state = reactive<any>({
+const state = reactive<Recordable>({
   instance: { value: "0", label: "All" },
   endpoint: { value: "0", label: "All" },
   service: { value: "", label: "" },
@@ -248,6 +256,11 @@ function searchLogs() {
       category: state.category.value,
     });
   } else {
+    let segmentId, spanId;
+    if (props.data.filters) {
+      segmentId = props.data.filters.segmentId;
+      spanId = props.data.filters.spanId;
+    }
     logStore.setLogCondition({
       serviceId: selectorStore.currentService
         ? selectorStore.currentService.id
@@ -259,7 +272,9 @@ function searchLogs() {
       excludingKeywordsOfContent: excludingKeywordsOfContent.value,
       tags: tagsMap.value.length ? tagsMap.value : undefined,
       paging: { pageNum: 1, pageSize: 15 },
-      relatedTrace: traceId.value ? { traceId: traceId.value } : undefined,
+      relatedTrace: traceId.value
+        ? { traceId: traceId.value, segmentId, spanId }
+        : undefined,
     });
   }
   queryLogs();
@@ -325,6 +340,12 @@ function removeExcludeContent(index: number) {
 }
 onUnmounted(() => {
   logStore.resetCondition();
+  const item = {
+    ...props.data,
+    filters: undefined,
+  };
+  dashboardStore.setWidget(item);
+  traceId.value = "";
 });
 watch(
   () => selectorStore.currentService,
@@ -347,6 +368,19 @@ watch(
   () => appStore.durationTime,
   () => {
     if (dashboardStore.entity === EntityType[1].value) {
+      init();
+    }
+  }
+);
+watch(
+  () => props.data.filters,
+  (newJson, oldJson) => {
+    console.log(props.data.filters);
+    if (props.data.filters) {
+      if (JSON.stringify(newJson) === JSON.stringify(oldJson)) {
+        return;
+      }
+      traceId.value = props.data.filters.traceId || "";
       init();
     }
   }

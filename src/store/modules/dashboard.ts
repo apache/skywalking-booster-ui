@@ -39,6 +39,7 @@ interface DashboardState {
   dashboards: DashboardItem[];
   currentDashboard: Nullable<DashboardItem>;
   editMode: boolean;
+  currentTabIndex: number;
 }
 
 export const dashboardStore = defineStore({
@@ -56,6 +57,7 @@ export const dashboardStore = defineStore({
     dashboards: [],
     currentDashboard: null,
     editMode: false,
+    currentTabIndex: 0,
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -189,6 +191,7 @@ export const dashboardStore = defineStore({
       this.activedGridItem = index;
     },
     setActiveTabIndex(index: number, target?: number) {
+      this.currentTabIndex = index;
       const m = target || this.activedGridItem;
       const idx = this.layout.findIndex((d: LayoutConfig) => d.i === m);
       if (idx < 0) {

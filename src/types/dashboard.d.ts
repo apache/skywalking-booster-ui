@@ -47,6 +47,9 @@ export interface LayoutConfig {
       startTime: string;
       endTime: string;
     };
+    traceId?: string;
+    spanId?: string;
+    segmentId?: string;
   };
 }
 

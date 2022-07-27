@@ -57,8 +57,8 @@ export default class TraceMap {
       .select(this.el)
       .append("svg")
       .attr("class", "d3-trace-tree")
-      .attr("width", this.width)
-      .attr("height", this.height);
+      .attr("width", this.width > 0 ? this.width : 10)
+      .attr("height", this.height > 0 ? this.height : 10);
     this.tip = (d3tip as any)()
       .attr("class", "d3-tip")
       .offset([-8, 0])

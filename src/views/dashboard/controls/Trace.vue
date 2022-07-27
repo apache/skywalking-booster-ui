@@ -30,7 +30,7 @@ limitations under the License. -->
       </div>
     </el-popover>
     <div class="header">
-      <Filter :needQuery="needQuery" />
+      <Filter :needQuery="needQuery" :data="data" />
     </div>
     <div class="trace flex-h">
       <TraceList />
@@ -39,6 +39,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import { provide } from "vue";
 import type { PropType } from "vue";
 import Filter from "../related/trace/Filter.vue";
 import TraceList from "../related/trace/TraceList.vue";
@@ -55,6 +56,7 @@ const props = defineProps({
   activeIndex: { type: String, default: "" },
   needQuery: { type: Boolean, default: true },
 });
+provide("options", props.data);
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 function removeWidget() {

@@ -168,7 +168,7 @@ export default defineComponent({
 
       for (const item of associate) {
         const widget = widgets.find(
-          (d: { id: string }) => d.id === item.widgetId
+          (d: LayoutConfig) => d.id === item.widgetId
         );
         if (widget) {
           widget.filters = {

@@ -41,12 +41,12 @@ export const ServiceLogConstants = [
     value: "tags",
   },
   {
-    label: "content",
-    value: "content",
-  },
-  {
     label: "traceId",
     value: "traceID",
+  },
+  {
+    label: "content",
+    value: "content",
   },
 ];
 export const ServiceLogDetail = [

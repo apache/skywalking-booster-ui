@@ -259,6 +259,26 @@ export default defineComponent({
         }
       }
     );
+    watch(
+      () => dashboardStore.currentTabIndex,
+      () => {
+        activeTabIndex.value = dashboardStore.currentTabIndex;
+        dashboardStore.activeGridItem(props.data.i);
+        dashboardStore.selectWidget(props.data);
+        const l = dashboardStore.layout.findIndex(
+          (d: LayoutConfig) => d.i === props.data.i
+        );
+        dashboardStore.setCurrentTabItems(
+          dashboardStore.layout[l].children[activeTabIndex.value].children
+        );
+        needQuery.value = true;
+        if (route.params.activeTabIndex) {
+          let p = location.href.split("/tab/")[0];
+          p = p + "/tab/" + activeTabIndex.value;
+          history.replaceState({}, "", p);
+        }
+      }
+    );
     return {
       handleClick,
       layoutUpdatedEvent,
