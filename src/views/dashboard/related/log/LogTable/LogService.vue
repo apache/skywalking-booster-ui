@@ -15,21 +15,25 @@ limitations under the License. -->
 
 <template>
   <div class="log-item">
-    <div v-for="(item, index) in columns" :key="index" :class="item.label">
-      <span v-if="item.label === 'timestamp'" @click="showSelectSpan">
+    <div
+      v-for="(item, index) in columns"
+      :key="index"
+      :class="item.label"
+      @click="selectLog(item.label, data[item.label])"
+    >
+      <span v-if="item.label === 'timestamp'">
         {{ dateFormat(data.timestamp) }}
       </span>
-      <span v-else-if="item.label === 'tags'" @click="showSelectSpan">
+      <span v-else-if="item.label === 'tags'">
         {{ tags }}
       </span>
       <span
         v-else-if="item.label === 'traceId' && !noLink"
         :class="noLink ? '' : 'blue'"
-        @click="linkTrace(data[item.label])"
       >
         {{ data[item.label] }}
       </span>
-      <span v-else @click="showSelectSpan">{{ data[item.label] }}</span>
+      <span v-else>{{ data[item.label] }}</span>
     </div>
   </div>
 </template>
@@ -62,7 +66,16 @@ const tags = computed(() => {
 });
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
-function showSelectSpan() {
+
+function selectLog(label: string, value: string) {
+  if (label === "traceId") {
+    if (!value) {
+      emit("select", props.data);
+      return;
+    }
+    linkTrace(value);
+    return;
+  }
   emit("select", props.data);
 }
 function linkTrace(id: string) {
