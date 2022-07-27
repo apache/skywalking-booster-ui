@@ -17,18 +17,17 @@
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
 
-export default function getDashboard(param: {
+export default function getDashboard(param?: {
   name: string;
   layer: string;
   entity: string;
 }) {
   const dashboardStore = useDashboardStore();
+  const opt = param || dashboardStore.currentDashboard;
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   const dashboard = list.find(
     (d: { name: string; layer: string; entity: string }) =>
-      d.name === param.name &&
-      d.entity === param.entity &&
-      d.layer === param.layer
+      d.name === opt.name && d.entity === opt.entity && d.layer === opt.layer
   );
   const all = dashboardStore.layout;
   const widgets: LayoutConfig[] = [];

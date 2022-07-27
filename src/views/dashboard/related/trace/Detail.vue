@@ -130,7 +130,6 @@ import graphs from "./components/index";
 import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
 import { ElMessage } from "element-plus";
 import getDashboard from "@/hooks/useDashboardsSession";
-import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
 
 export default defineComponent({
@@ -147,7 +146,6 @@ export default defineComponent({
     const loading = ref<boolean>(false);
     const traceId = ref<string>("");
     const displayMode = ref<string>("List");
-    const dashboardStore = useDashboardStore();
     const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
       dayjs(date).format(pattern);
 
@@ -166,9 +164,7 @@ export default defineComponent({
     }
 
     async function searchTraceLogs() {
-      const { associationWidget } = getDashboard(
-        dashboardStore.currentDashboard
-      );
+      const { associationWidget } = getDashboard();
       associationWidget(
         (options.id as any) || "",
         {

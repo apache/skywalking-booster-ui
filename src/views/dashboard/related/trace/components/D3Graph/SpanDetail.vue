@@ -89,7 +89,6 @@ import type { PropType } from "vue";
 import dayjs from "dayjs";
 import copy from "@/utils/copy";
 import getDashboard from "@/hooks/useDashboardsSession";
-import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
 
 /*global defineProps, Recordable */
@@ -97,12 +96,11 @@ const options: Recordable<LayoutConfig> = inject("options") || {};
 const props = defineProps({
   currentSpan: { type: Object as PropType<any>, default: () => ({}) },
 });
-const dashboardStore = useDashboardStore();
 const { t } = useI18n();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 async function getTaceLogs() {
-  const { associationWidget } = getDashboard(dashboardStore.currentDashboard);
+  const { associationWidget } = getDashboard();
   associationWidget(
     (options.id as any) || "",
     {
