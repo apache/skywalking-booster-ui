@@ -30,7 +30,7 @@ limitations under the License. -->
       </div>
     </el-popover>
     <div class="header">
-      <Header :needQuery="needQuery" />
+      <Header :needQuery="needQuery" :data="data" />
     </div>
     <div class="log">
       <List />
@@ -43,12 +43,14 @@ import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import Header from "../related/log/Header.vue";
 import List from "../related/log/List.vue";
+import { LayoutConfig } from "@/types/dashboard";
+import type { PropType } from "vue";
 
 /*global defineProps */
 const props = defineProps({
   data: {
-    type: Object,
-    default: () => ({}),
+    type: Object as PropType<LayoutConfig>,
+    default: () => ({ graph: {} }),
   },
   activeIndex: { type: String, default: "" },
   needQuery: { type: Boolean, default: true },

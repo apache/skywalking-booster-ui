@@ -92,7 +92,8 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, inject } from "vue";
+import { ref, reactive, watch } from "vue";
+import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { Status } from "../../data";
@@ -106,18 +107,21 @@ import { EntityType } from "../../data";
 import { LayoutConfig } from "@/types/dashboard";
 
 /*global defineProps, Recordable */
-const options: LayoutConfig | undefined = inject("options");
 const props = defineProps({
   needQuery: { type: Boolean, default: true },
+  data: {
+    type: Object as PropType<LayoutConfig>,
+    default: () => ({ graph: {} }),
+  },
 });
+const traceId = ref<string>(
+  (props.data.filters && props.data.filters.traceId) || ""
+);
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
-const traceId = ref<string>(
-  (options && options.filters && options.filters.traceId) || ""
-);
 const minTraceDuration = ref<number>();
 const maxTraceDuration = ref<number>();
 const tagsList = ref<string[]>([]);
@@ -248,6 +252,18 @@ watch(
   () => appStore.durationTime,
   () => {
     if (dashboardStore.entity === EntityType[1].value) {
+      init();
+    }
+  }
+);
+watch(
+  () => props.data.filters,
+  (newJson, oldJson) => {
+    if (props.data.filters) {
+      if (JSON.stringify(newJson) === JSON.stringify(oldJson)) {
+        return;
+      }
+      traceId.value = props.data.filters.traceId || "";
       init();
     }
   }

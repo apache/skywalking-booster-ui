@@ -30,7 +30,7 @@ limitations under the License. -->
       </div>
     </el-popover>
     <div class="header">
-      <Filter :needQuery="needQuery" />
+      <Filter :needQuery="needQuery" :data="data" />
     </div>
     <div class="trace flex-h">
       <TraceList />
