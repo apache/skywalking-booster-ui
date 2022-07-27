@@ -127,7 +127,6 @@ import { useTraceStore } from "@/store/modules/trace";
 import { Option } from "@/types/app";
 import copy from "@/utils/copy";
 import graphs from "./components/index";
-import LogTable from "@/views/dashboard/related/components/LogTable/Index.vue";
 import { ElMessage } from "element-plus";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { LayoutConfig } from "@/types/dashboard";
@@ -136,7 +135,6 @@ export default defineComponent({
   name: "TraceDetail",
   components: {
     ...graphs,
-    LogTable,
   },
   setup() {
     /*global Recordable */
