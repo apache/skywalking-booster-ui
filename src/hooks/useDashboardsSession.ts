@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
 
@@ -47,7 +48,7 @@ export default function getDashboard(param?: {
   function associationWidget(sourceId: string, filters: unknown, type: string) {
     const widget = widgets.filter((d: { type: string }) => d.type === type)[0];
     if (!widget) {
-      return;
+      return ElMessage.info(`There has no a ${type} widget in the dashboard`);
     }
     const item = {
       ...widget,
@@ -67,7 +68,7 @@ export default function getDashboard(param?: {
       dashboardStore.setActiveTabIndex(Number(targetTabIndex[1]));
     }
     if (container && widget) {
-      container.scrollTop = widget.y * 10;
+      container.scrollTop = widget.y * 10 + 10;
     }
   }
   return { dashboard, widgets, associationWidget };
