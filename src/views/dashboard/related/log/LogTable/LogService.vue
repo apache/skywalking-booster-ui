@@ -70,6 +70,7 @@ const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
 function selectLog(label: string, value: string) {
   if (label === "traceId") {
     if (!value) {
+      emit("select", props.data);
       return;
     }
     linkTrace(value);
