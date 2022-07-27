@@ -92,7 +92,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { Status } from "../../data";
@@ -103,8 +103,10 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
+import { LayoutConfig } from "@/types/dashboard";
 
-/*global defineProps */
+/*global defineProps, Recordable */
+const options: LayoutConfig | undefined = inject("options");
 const props = defineProps({
   needQuery: { type: Boolean, default: true },
 });
@@ -113,12 +115,14 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
-const traceId = ref<string>("");
+const traceId = ref<string>(
+  (options && options.filters && options.filters.traceId) || ""
+);
 const minTraceDuration = ref<number>();
 const maxTraceDuration = ref<number>();
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
-const state = reactive<any>({
+const state = reactive<Recordable>({
   status: { label: "All", value: "ALL" },
   instance: { value: "0", label: "All" },
   endpoint: { value: "0", label: "All" },

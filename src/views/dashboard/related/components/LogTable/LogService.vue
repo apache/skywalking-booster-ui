@@ -14,45 +14,67 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div @click="showSelectSpan" class="log-item">
+  <div class="log-item">
     <div v-for="(item, index) in columns" :key="index" :class="item.label">
-      <span v-if="item.label === 'timestamp'">
+      <span v-if="item.label === 'timestamp'" @click="showSelectSpan">
         {{ dateFormat(data.timestamp) }}
       </span>
-      <span v-else-if="item.label === 'tags'">
+      <span v-else-if="item.label === 'tags'" @click="showSelectSpan">
         {{ tags }}
       </span>
-      <!-- <router-link
+      <span
         v-else-if="item.label === 'traceId' && !noLink"
-        :to="{ name: 'trace', query: { traceid: data[item.label] } }"
+        :class="noLink ? '' : 'blue'"
+        @click="linkTrace(data[item.label])"
       >
-        <span :class="noLink ? '' : 'blue'">{{ data[item.label] }}</span>
-      </router-link> -->
-      <span v-else>{{ data[item.label] }}</span>
+        {{ data[item.label] }}
+      </span>
+      <span v-else @click="showSelectSpan">{{ data[item.label] }}</span>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import dayjs from "dayjs";
 import { ServiceLogConstants } from "./data";
-/*global defineProps, defineEmits */
+import getDashboard from "@/hooks/useDashboardsSession";
+import { useDashboardStore } from "@/store/modules/dashboard";
+import { LayoutConfig } from "@/types/dashboard";
+
+/*global defineProps, defineEmits, Recordable */
 const props = defineProps({
   data: { type: Object as any, default: () => ({}) },
   noLink: { type: Boolean, default: true },
 });
+const dashboardStore = useDashboardStore();
+const options: Recordable<LayoutConfig> = inject("options") || {};
 const emit = defineEmits(["select"]);
 const columns = ServiceLogConstants;
 const tags = computed(() => {
   if (!props.data.tags) {
     return "";
   }
-  return String(props.data.tags.map((d: any) => `${d.key}=${d.value}`));
+  return String(
+    props.data.tags.map(
+      (d: { key: string; value: string }) => `${d.key}=${d.value}`
+    )
+  );
 });
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 function showSelectSpan() {
   emit("select", props.data);
+}
+function linkTrace(id: string) {
+  const { associationWidget } = getDashboard(dashboardStore.currentDashboard);
+  associationWidget(
+    (options.id as any) || "",
+    {
+      sourceId: options.id || "",
+      traceId: id,
+    },
+    "Trace"
+  );
 }
 </script>
 <style lang="scss" scoped>

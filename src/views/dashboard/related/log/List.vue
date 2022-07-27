@@ -18,7 +18,7 @@ limitations under the License. -->
       v-loading="logStore.loadLogs"
       :tableData="logStore.logs || []"
       :type="type"
-      :noLink="true"
+      :noLink="false"
     >
       <div class="log-tips" v-if="!logStore.logs.length">{{ t("noData") }}</div>
     </LogTable>
