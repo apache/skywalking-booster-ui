@@ -92,7 +92,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, onUnmounted } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
@@ -230,6 +230,15 @@ async function searchEndpoints(keyword: string) {
     ElMessage.error(resp.errors);
   }
 }
+onUnmounted(() => {
+  traceStore.resetCondition();
+  const item = {
+    ...props.data,
+    filters: undefined,
+  };
+  dashboardStore.setWidget(item);
+  traceId.value = "";
+});
 watch(
   () => [selectorStore.currentPod],
   () => {

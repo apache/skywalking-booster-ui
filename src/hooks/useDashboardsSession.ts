@@ -34,6 +34,7 @@ export default function getDashboard(param?: {
   const widgets: LayoutConfig[] = [];
   for (const item of all) {
     if (item.type === "Tab") {
+      widgets.push(item);
       if (item.children && item.children.length) {
         for (const child of item.children) {
           if (child.children && child.children.length) {
@@ -46,7 +47,7 @@ export default function getDashboard(param?: {
     }
   }
   function associationWidget(sourceId: string, filters: unknown, type: string) {
-    const widget = widgets.filter((d: { type: string }) => d.type === type)[0];
+    const widget = widgets.find((d: { type: string }) => d.type === type);
     if (!widget) {
       return ElMessage.info(`There has no a ${type} widget in the dashboard`);
     }
@@ -62,13 +63,18 @@ export default function getDashboard(param?: {
     if (targetTabIndex[1] === undefined) {
       container = document.querySelector(".ds-main");
     } else {
+      const w = widgets.find((d: any) => d.id === targetTabIndex[0]);
       container = document.querySelector(".tab-layout");
+      const layout: Nullable<Element> = document.querySelector(".ds-main");
+      if (w && layout) {
+        layout.scrollTop = w.y * 10 + w.h * 5;
+      }
     }
     if (targetTabIndex[1] && targetTabIndex[1] !== sourceTabindex[1]) {
       dashboardStore.setActiveTabIndex(Number(targetTabIndex[1]));
     }
     if (container && widget) {
-      container.scrollTop = widget.y * 10 + 10;
+      container.scrollTop = widget.y * 10 + widget.h * 5;
     }
   }
   return { dashboard, widgets, associationWidget };

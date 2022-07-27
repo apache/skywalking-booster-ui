@@ -63,6 +63,14 @@ export const traceStore = defineStore({
     setTraceSpans(spans: Span) {
       this.traceSpans = spans;
     },
+    resetCondition() {
+      this.conditions = {
+        queryDuration: useAppStoreWithOut().durationTime,
+        paging: { pageNum: 1, pageSize: 20 },
+        traceState: "ALL",
+        queryOrder: "BY_START_TIME",
+      };
+    },
     async getServices(layer: string) {
       const res: AxiosResponse = await graphql.query("queryServices").params({
         layer,
