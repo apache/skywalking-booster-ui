@@ -125,22 +125,37 @@ function associateTraceLog(
   const widgets = dashboard.filter((d: { type: string }) =>
     ["Trace", "Log"].includes(d.type)
   );
+  const index = items[0];
+  const i = events[index - 1 || 0];
   for (const widget of widgets) {
-    const index = items[0];
-    const i = events[index - 1 || 0];
-    const { start, end } = setEndTime(i.start, i.end, index);
-    const item = {
-      ...widget,
-      filters: {
-        sourceId: props.data.id || "",
-        duration: {
-          startTime: dateFormatStep(start, appStore.duration.step, true),
-          endTime: dateFormatStep(end, appStore.duration.step, true),
-          step: appStore.duration.step,
+    if (isNaN(index)) {
+      const item = {
+        ...widget,
+        filters: {
+          sourceId: props.data.id || "",
+          duration: {
+            startTime: null,
+            endTime: null,
+            step: appStore.duration.step,
+          },
         },
-      },
-    };
-    dashboardStore.setWidget(item);
+      };
+      dashboardStore.setWidget(item);
+    } else {
+      const { start, end } = setEndTime(i.start, i.end);
+      const item = {
+        ...widget,
+        filters: {
+          sourceId: props.data.id || "",
+          duration: {
+            startTime: dateFormatStep(start, appStore.duration.step, true),
+            endTime: dateFormatStep(end, appStore.duration.step, true),
+            step: appStore.duration.step,
+          },
+        },
+      };
+      dashboardStore.setWidget(item);
+    }
   }
 }
 function associateMetrics(
@@ -167,41 +182,54 @@ function associateMetrics(
   const i = events[index - 1 || 0];
 
   for (const widget of widgets) {
-    const { start, end } = setEndTime(i.start, i.end, index);
-    const startTime = dateFormatTime(start, appStore.duration.step);
-    const endTime = dateFormatTime(end, appStore.duration.step);
-    const item = {
-      ...widget,
-      filters: {
-        sourceId: dashboardStore.selectedGrid.id || "",
-        isRange: true,
-        duration: {
-          startTime,
-          endTime,
+    if (isNaN(index)) {
+      const item = {
+        ...widget,
+        filters: {
+          sourceId: dashboardStore.selectedGrid.id || "",
+          isRange: true,
+          duration: {
+            startTime: null,
+            endTime: null,
+          },
         },
-      },
-    };
-    dashboardStore.setWidget(item);
+      };
+      dashboardStore.setWidget(item);
+    } else {
+      const { start, end } = setEndTime(i.start, i.end);
+      const startTime = dateFormatTime(start, appStore.duration.step);
+      const endTime = dateFormatTime(end, appStore.duration.step);
+      const item = {
+        ...widget,
+        filters: {
+          sourceId: dashboardStore.selectedGrid.id || "",
+          isRange: true,
+          duration: {
+            startTime,
+            endTime,
+          },
+        },
+      };
+      dashboardStore.setWidget(item);
+    }
   }
 }
-function setEndTime(start: Date, end: Date, index: number) {
+function setEndTime(start: Date, end: Date) {
   let time: Date | number = end;
-  if (!isNaN(index)) {
-    let diff = 60000;
-    switch (appStore.duration.step) {
-      case "MINUTE":
-        diff = 60000;
-        break;
-      case "HOUR":
-        diff = 3600000;
-        break;
-      case "DAY":
-        diff = 3600000 * 24;
-        break;
-    }
-    if (!end || end.getTime() - start.getTime() < diff) {
-      time = start.getTime() + diff;
-    }
+  let diff = 60000;
+  switch (appStore.duration.step) {
+    case "MINUTE":
+      diff = 60000;
+      break;
+    case "HOUR":
+      diff = 3600000;
+      break;
+    case "DAY":
+      diff = 3600000 * 24;
+      break;
+  }
+  if (!end || end.getTime() - start.getTime() < diff) {
+    time = start.getTime() + diff;
   }
   return { start, end: new Date(time) };
 }

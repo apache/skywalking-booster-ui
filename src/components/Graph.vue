@@ -115,6 +115,10 @@ watch(
     }
     if (props.filters) {
       if (props.filters.isRange) {
+        if (!props.filters.duration.startTime) {
+          setOptions(props.option);
+          return;
+        }
         const list = props.option.series[0].data.map(
           (d: (number | string)[]) => d[0]
         );
