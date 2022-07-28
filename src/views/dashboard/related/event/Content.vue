@@ -26,8 +26,8 @@ import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import getDashboard from "@/hooks/useDashboardsSession";
-import { dateFormatTime } from "@/utils/dateFormat";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 
 const eventStore = useEventStore();
 /*global defineProps, Nullable */
@@ -105,8 +105,43 @@ function visTimeline() {
       return;
     }
     dashboardStore.selectWidget(props.data);
-    associateMetrics(properties.items, events);
+    const dashboard = getDashboard(dashboardStore.currentDashboard).widgets;
+    associateMetrics(properties.items, events, dashboard);
+    associateTraceLog(properties.items, events, dashboard);
   });
+}
+function associateTraceLog(
+  items: number[],
+  events: {
+    id: number;
+    content: string;
+    start: Date;
+    end: Date;
+    data: unknown;
+    className: string;
+  }[],
+  dashboard: LayoutConfig[]
+) {
+  const widgets = dashboard.filter((d: { type: string }) =>
+    ["Trace", "Log"].includes(d.type)
+  );
+  for (const widget of widgets) {
+    const index = items[0];
+    const i = events[index - 1 || 0];
+    const { start, end } = setEndTime(i.start, i.end, index);
+    const item = {
+      ...widget,
+      filters: {
+        sourceId: props.data.id || "",
+        duration: {
+          startTime: dateFormatStep(start, appStore.duration.step, true),
+          endTime: dateFormatStep(end, appStore.duration.step, true),
+          step: appStore.duration.step,
+        },
+      },
+    };
+    dashboardStore.setWidget(item);
+  }
 }
 function associateMetrics(
   items: number[],
@@ -117,10 +152,10 @@ function associateMetrics(
     end: Date;
     data: unknown;
     className: string;
-  }[]
+  }[],
+  dashboard: LayoutConfig[]
 ) {
-  const all = getDashboard(dashboardStore.currentDashboard).widgets;
-  const widgets = all.filter((d: any) => {
+  const widgets = dashboard.filter((d: LayoutConfig) => {
     const isLinear = ["Bar", "Line", "Area"].includes(
       (d.graph && d.graph.type) || ""
     );
@@ -132,26 +167,9 @@ function associateMetrics(
   const i = events[index - 1 || 0];
 
   for (const widget of widgets) {
-    let end: Date | number = i.end;
-    if (!isNaN(index)) {
-      let diff = 60000;
-      switch (appStore.duration.step) {
-        case "MINUTE":
-          diff = 60000;
-          break;
-        case "HOUR":
-          diff = 3600000;
-          break;
-        case "DAY":
-          diff = 3600000 * 24;
-          break;
-      }
-      if (!i.end || i.end.getTime() - i.start.getTime() < diff) {
-        end = i.start.getTime() + diff;
-      }
-    }
-    const startTime = dateFormatTime(i.start, appStore.duration.step);
-    const endTime = dateFormatTime(new Date(end), appStore.duration.step);
+    const { start, end } = setEndTime(i.start, i.end, index);
+    const startTime = dateFormatTime(start, appStore.duration.step);
+    const endTime = dateFormatTime(end, appStore.duration.step);
     const item = {
       ...widget,
       filters: {
@@ -166,6 +184,28 @@ function associateMetrics(
     dashboardStore.setWidget(item);
   }
 }
+function setEndTime(start: Date, end: Date, index: number) {
+  let time: Date | number = end;
+  if (!isNaN(index)) {
+    let diff = 60000;
+    switch (appStore.duration.step) {
+      case "MINUTE":
+        diff = 60000;
+        break;
+      case "HOUR":
+        diff = 3600000;
+        break;
+      case "DAY":
+        diff = 3600000 * 24;
+        break;
+    }
+    if (!end || end.getTime() - start.getTime() < diff) {
+      time = start.getTime() + diff;
+    }
+  }
+  return { start, end: new Date(time) };
+}
+
 function resize() {
   const observer = new ResizeObserver((entries) => {
     const entry = entries[0];
