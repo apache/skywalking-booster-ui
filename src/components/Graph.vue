@@ -99,56 +99,67 @@ function updateOptions() {
   if (!instance) {
     return;
   }
-  if (props.filters) {
-    if (props.filters.isRange) {
-      if (!props.filters.duration.startTime) {
-        setOptions(props.option);
-        return;
-      }
-      const list = props.option.series[0].data.map(
-        (d: (number | string)[]) => d[0]
-      );
-      if (!list.includes(props.filters.duration.endTime)) {
-        return;
-      }
-      const markArea = {
-        silent: true,
-        itemStyle: {
-          opacity: 0.3,
-        },
-        data: [
-          [
-            {
-              xAxis: props.filters.duration.startTime,
-            },
-            {
-              xAxis: props.filters.duration.endTime,
-            },
-          ],
-        ],
-      };
-      const series = (window as any).structuredClone(props.option.series);
-      for (const [key, temp] of series.entries()) {
-        if (key === 0) {
-          temp.markArea = markArea;
-        }
-      }
-      const options = {
-        ...props.option,
-        series,
-      };
-      if (JSON.stringify(options) === JSON.stringify(props.option)) {
-        return;
-      }
-      setOptions(options);
+  if (!props.filters) {
+    return;
+  }
+  if (props.filters.isRange) {
+    const options = eventAssociate();
+    if (JSON.stringify(options) === JSON.stringify(props.option)) {
       return;
     }
+    setOptions(options);
+  } else {
     instance.dispatchAction({
       type: "showTip",
       dataIndex: props.filters.dataIndex,
       seriesIndex: 0,
     });
   }
+}
+
+function eventAssociate() {
+  if (!props.filters) {
+    return;
+  }
+  if (!props.filters.duration.startTime) {
+    return props.option;
+  }
+  if (!props.option.series[0]) {
+    return;
+  }
+  const list = props.option.series[0].data.map(
+    (d: (number | string)[]) => d[0]
+  );
+  if (!list.includes(props.filters.duration.endTime)) {
+    return;
+  }
+  const markArea = {
+    silent: true,
+    itemStyle: {
+      opacity: 0.3,
+    },
+    data: [
+      [
+        {
+          xAxis: props.filters.duration.startTime,
+        },
+        {
+          xAxis: props.filters.duration.endTime,
+        },
+      ],
+    ],
+  };
+  const series = (window as any).structuredClone(props.option.series);
+  for (const [key, temp] of series.entries()) {
+    if (key === 0) {
+      temp.markArea = markArea;
+    }
+  }
+  const options = {
+    ...props.option,
+    series,
+  };
+  return options;
 }
 
 watch(
@@ -160,7 +171,11 @@ watch(
     if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
       return;
     }
-    setOptions(newVal);
+    let options;
+    if (props.filters && props.filters.isRange) {
+      options = eventAssociate();
+    }
+    setOptions(options || props.option);
   }
 );
 watch(
