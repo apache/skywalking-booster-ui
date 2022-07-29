@@ -344,13 +344,6 @@ function removeExcludeContent(index: number) {
 }
 onUnmounted(() => {
   logStore.resetState();
-  const item = {
-    ...props.data,
-    filters: undefined,
-  };
-  dashboardStore.setWidget(item);
-  traceId.value = "";
-  duration.value = appStore.durationTime;
 });
 watch(
   () => selectorStore.currentService,

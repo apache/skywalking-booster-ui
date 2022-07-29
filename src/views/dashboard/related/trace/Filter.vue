@@ -236,13 +236,6 @@ async function searchEndpoints(keyword: string) {
 }
 onUnmounted(() => {
   traceStore.resetState();
-  const item = {
-    ...props.data,
-    filters: undefined,
-  };
-  dashboardStore.setWidget(item);
-  traceId.value = "";
-  duration.value = appStore.durationTime;
 });
 watch(
   () => [selectorStore.currentPod],
