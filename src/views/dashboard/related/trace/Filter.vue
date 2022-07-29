@@ -105,7 +105,7 @@ import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 import { LayoutConfig } from "@/types/dashboard";
-// import { Duration, DurationTime } from "@/types/app";
+import { DurationTime } from "@/types/app";
 
 /*global defineProps, Recordable */
 const props = defineProps({
@@ -123,7 +123,7 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
-const duration = ref<any>(
+const duration = ref<DurationTime>(
   (props.data.filters && props.data.filters.duration) || appStore.durationTime
 );
 const minTraceDuration = ref<number>();

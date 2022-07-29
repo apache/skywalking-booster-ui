@@ -143,6 +143,7 @@ import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 import { ErrorCategory } from "./data";
 import { LayoutConfig } from "@/types/dashboard";
+import { DurationTime } from "@/types/app";
 
 /*global  defineProps, Recordable */
 const props = defineProps({
@@ -160,7 +161,7 @@ const logStore = useLogStore();
 const traceId = ref<string>(
   (props.data.filters && props.data.filters.traceId) || ""
 );
-const duration = ref<any>(
+const duration = ref<DurationTime>(
   (props.data.filters && props.data.filters.duration) || appStore.durationTime
 );
 const keywordsOfContent = ref<string[]>([]);
