@@ -139,7 +139,19 @@ function associateTraceLog(
       };
       dashboardStore.setWidget(item);
     } else {
-      const { start, end } = setEndTime(i.start, i.end);
+      let step = appStore.duration.step;
+      let start = i.start;
+      let end = i.end;
+      if (
+        appStore.duration.step === "MINUTE" &&
+        i.end.getTime() - i.start.getTime() < 60000
+      ) {
+        step = "SECOND";
+      } else {
+        const times = setEndTime(i.start, i.end);
+        start = times.start;
+        end = times.end;
+      }
       const item = {
         ...widget,
         filters: {
@@ -147,15 +159,11 @@ function associateTraceLog(
           duration: {
             start: dateFormatStep(
               getLocalTime(appStore.utc, start),
-              appStore.duration.step,
+              step,
               true
             ),
-            end: dateFormatStep(
-              getLocalTime(appStore.utc, end),
-              appStore.duration.step,
-              true
-            ),
-            step: appStore.duration.step,
+            end: dateFormatStep(getLocalTime(appStore.utc, end), step, true),
+            step,
           },
         },
       };

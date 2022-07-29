@@ -271,7 +271,7 @@ function searchLogs() {
         : state.service.id,
       endpointId: endpoint || state.endpoint.id || undefined,
       serviceInstanceId: instance || state.instance.id || undefined,
-      queryDuration: appStore.durationTime,
+      queryDuration: duration.value,
       keywordsOfContent: keywordsOfContent.value,
       excludingKeywordsOfContent: excludingKeywordsOfContent.value,
       tags: tagsMap.value.length ? tagsMap.value : undefined,
@@ -344,13 +344,6 @@ function removeExcludeContent(index: number) {
 }
 onUnmounted(() => {
   logStore.resetState();
-  const item = {
-    ...props.data,
-    filters: undefined,
-  };
-  dashboardStore.setWidget(item);
-  traceId.value = "";
-  duration.value = appStore.durationTime;
 });
 watch(
   () => selectorStore.currentService,
