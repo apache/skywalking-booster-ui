@@ -28,6 +28,8 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
+import getLocalTime from "@/utils/localtime";
+import { enumDeclaration } from "@babel/types";
 
 const eventStore = useEventStore();
 /*global defineProps, Nullable */
@@ -134,8 +136,8 @@ function associateTraceLog(
         filters: {
           sourceId: props.data.id || "",
           duration: {
-            startTime: null,
-            endTime: null,
+            start: null,
+            end: null,
             step: appStore.duration.step,
           },
         },
@@ -148,8 +150,16 @@ function associateTraceLog(
         filters: {
           sourceId: props.data.id || "",
           duration: {
-            startTime: dateFormatStep(start, appStore.duration.step, true),
-            endTime: dateFormatStep(end, appStore.duration.step, true),
+            start: dateFormatStep(
+              getLocalTime(appStore.utc, start),
+              appStore.duration.step,
+              true
+            ),
+            end: dateFormatStep(
+              getLocalTime(appStore.utc, end),
+              appStore.duration.step,
+              true
+            ),
             step: appStore.duration.step,
           },
         },

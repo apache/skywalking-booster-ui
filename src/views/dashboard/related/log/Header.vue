@@ -160,6 +160,9 @@ const logStore = useLogStore();
 const traceId = ref<string>(
   (props.data.filters && props.data.filters.traceId) || ""
 );
+const duration = ref<any>(
+  (props.data.filters && props.data.filters.duration) || appStore.durationTime
+);
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
 const tagsList = ref<string[]>([]);
@@ -252,7 +255,7 @@ function searchLogs() {
       pagePathId: endpoint || state.endpoint.id || undefined,
       serviceVersionId: instance || state.instance.id || undefined,
       paging: { pageNum: 1, pageSize: 15 },
-      queryDuration: appStore.durationTime,
+      queryDuration: duration,
       category: state.category.value,
     });
   } else {
@@ -346,6 +349,7 @@ onUnmounted(() => {
   };
   dashboardStore.setWidget(item);
   traceId.value = "";
+  duration.value = appStore.durationTime;
 });
 watch(
   () => selectorStore.currentService,
@@ -381,6 +385,7 @@ watch(
         return;
       }
       traceId.value = props.data.filters.traceId || "";
+      duration.value = props.data.filters.duration || appStore.durationTime;
       init();
     }
   }
