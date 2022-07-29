@@ -134,11 +134,7 @@ function associateTraceLog(
         ...widget,
         filters: {
           sourceId: props.data.id || "",
-          duration: {
-            start: null,
-            end: null,
-            step: appStore.duration.step,
-          },
+          duration: null,
         },
       };
       dashboardStore.setWidget(item);

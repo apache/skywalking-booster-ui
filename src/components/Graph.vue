@@ -104,10 +104,7 @@ function updateOptions() {
   }
   if (props.filters.isRange) {
     const options = eventAssociate();
-    if (JSON.stringify(options) === JSON.stringify(props.option)) {
-      return;
-    }
-    setOptions(options);
+    setOptions(options || props.option);
   } else {
     instance.dispatchAction({
       type: "showTip",
@@ -121,7 +118,7 @@ function eventAssociate() {
   if (!props.filters) {
     return;
   }
-  if (!props.filters.duration.startTime) {
+  if (!props.filters.duration) {
     return props.option;
   }
   if (!props.option.series[0]) {
