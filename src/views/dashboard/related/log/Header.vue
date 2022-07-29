@@ -271,7 +271,7 @@ function searchLogs() {
         : state.service.id,
       endpointId: endpoint || state.endpoint.id || undefined,
       serviceInstanceId: instance || state.instance.id || undefined,
-      queryDuration: appStore.durationTime,
+      queryDuration: duration.value,
       keywordsOfContent: keywordsOfContent.value,
       excludingKeywordsOfContent: excludingKeywordsOfContent.value,
       tags: tagsMap.value.length ? tagsMap.value : undefined,
