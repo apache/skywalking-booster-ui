@@ -343,7 +343,7 @@ function removeExcludeContent(index: number) {
   excludingContentStr.value = "";
 }
 onUnmounted(() => {
-  logStore.resetCondition();
+  logStore.resetState();
   const item = {
     ...props.data,
     filters: undefined,
@@ -380,7 +380,6 @@ watch(
 watch(
   () => props.data.filters,
   (newJson, oldJson) => {
-    console.log(props.data.filters);
     if (props.data.filters) {
       if (JSON.stringify(newJson) === JSON.stringify(oldJson)) {
         return;

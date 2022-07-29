@@ -235,7 +235,7 @@ async function searchEndpoints(keyword: string) {
   }
 }
 onUnmounted(() => {
-  traceStore.resetCondition();
+  traceStore.resetState();
   const item = {
     ...props.data,
     filters: undefined,
