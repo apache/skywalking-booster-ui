@@ -53,7 +53,8 @@ export const logStore = defineStore({
     setLogCondition(data: any) {
       this.conditions = { ...this.conditions, ...data };
     },
-    resetCondition() {
+    resetState() {
+      this.logs = [];
       this.conditions = {
         queryDuration: useAppStoreWithOut().durationTime,
         paging: { pageNum: 1, pageSize: 15 },

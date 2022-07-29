@@ -26,8 +26,9 @@ import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import getDashboard from "@/hooks/useDashboardsSession";
-import { dateFormatTime } from "@/utils/dateFormat";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
+import getLocalTime from "@/utils/localtime";
 
 const eventStore = useEventStore();
 /*global defineProps, Nullable */
@@ -105,53 +106,139 @@ function visTimeline() {
       return;
     }
     dashboardStore.selectWidget(props.data);
-    const all = getDashboard(dashboardStore.currentDashboard).widgets;
-    const widgets = all.filter(
-      (d: { value: string; label: string } & LayoutConfig) => {
-        const isLinear = ["Bar", "Line", "Area"].includes(
-          (d.graph && d.graph.type) || ""
-        );
-        if (isLinear) {
-          return d;
-        }
-      }
-    );
-    const index = properties.items[0];
-    const i = events[index - 1 || 0];
-
-    for (const widget of widgets) {
-      let end = i.end;
-      if (!isNaN(index)) {
-        let diff = 60000;
-        switch (appStore.duration.step) {
-          case "MINUTE":
-            diff = 60000;
-            break;
-          case "HOUR":
-            diff = 3600000;
-            break;
-          case "DAY":
-            diff = 3600000 * 24;
-            break;
-        }
-        if (!i.end || i.end.getTime() - i.start.getTime() < diff) {
-          end = i.start.getTime() + diff;
-        }
-      }
-      const startTime = dateFormatTime(i.start, appStore.duration.step);
-      const endTime = dateFormatTime(new Date(end), appStore.duration.step);
-      widget.filters = {
-        sourceId: dashboardStore.selectedGrid.id || "",
-        isRange: true,
-        duration: {
-          startTime,
-          endTime,
-        },
-      };
-      dashboardStore.setWidget(widget);
-    }
+    const dashboard = getDashboard(dashboardStore.currentDashboard).widgets;
+    associateMetrics(properties.items, events, dashboard);
+    associateTraceLog(properties.items, events, dashboard);
   });
 }
+function associateTraceLog(
+  items: number[],
+  events: {
+    id: number;
+    content: string;
+    start: Date;
+    end: Date;
+    data: unknown;
+    className: string;
+  }[],
+  dashboard: LayoutConfig[]
+) {
+  const widgets = dashboard.filter((d: { type: string }) =>
+    ["Trace", "Log"].includes(d.type)
+  );
+  const index = items[0];
+  const i = events[index - 1 || 0];
+  for (const widget of widgets) {
+    if (isNaN(index)) {
+      const item = {
+        ...widget,
+        filters: {
+          sourceId: props.data.id || "",
+          duration: null,
+        },
+      };
+      dashboardStore.setWidget(item);
+    } else {
+      const { start, end } = setEndTime(i.start, i.end);
+      const item = {
+        ...widget,
+        filters: {
+          sourceId: props.data.id || "",
+          duration: {
+            start: dateFormatStep(
+              getLocalTime(appStore.utc, start),
+              appStore.duration.step,
+              true
+            ),
+            end: dateFormatStep(
+              getLocalTime(appStore.utc, end),
+              appStore.duration.step,
+              true
+            ),
+            step: appStore.duration.step,
+          },
+        },
+      };
+      dashboardStore.setWidget(item);
+    }
+  }
+}
+function associateMetrics(
+  items: number[],
+  events: {
+    id: number;
+    content: string;
+    start: Date;
+    end: Date;
+    data: unknown;
+    className: string;
+  }[],
+  dashboard: LayoutConfig[]
+) {
+  const widgets = dashboard.filter((d: LayoutConfig) => {
+    const isLinear = ["Bar", "Line", "Area"].includes(
+      (d.graph && d.graph.type) || ""
+    );
+    if (isLinear) {
+      return d;
+    }
+  });
+  const index = items[0];
+  const i = events[index - 1 || 0];
+
+  for (const widget of widgets) {
+    if (isNaN(index)) {
+      const item = {
+        ...widget,
+        filters: {
+          sourceId: dashboardStore.selectedGrid.id || "",
+          isRange: true,
+          duration: {
+            startTime: null,
+            endTime: null,
+          },
+        },
+      };
+      dashboardStore.setWidget(item);
+    } else {
+      const { start, end } = setEndTime(i.start, i.end);
+      const startTime = dateFormatTime(start, appStore.duration.step);
+      const endTime = dateFormatTime(end, appStore.duration.step);
+      const item = {
+        ...widget,
+        filters: {
+          sourceId: dashboardStore.selectedGrid.id || "",
+          isRange: true,
+          duration: {
+            startTime,
+            endTime,
+          },
+        },
+      };
+      dashboardStore.setWidget(item);
+    }
+  }
+}
+function setEndTime(start: Date, end: Date) {
+  let time: Date | number = end;
+  let diff = 60000;
+  switch (appStore.duration.step) {
+    case "MINUTE":
+      diff = 60000;
+      break;
+    case "HOUR":
+      diff = 3600000;
+      break;
+    case "DAY":
+      diff = 3600000 * 24;
+      break;
+  }
+  if (!end || end.getTime() - start.getTime() < diff) {
+    time = start.getTime() + diff;
+  }
+  return { start, end: new Date(time) };
+}
+
 function resize() {
   const observer = new ResizeObserver((entries) => {
     const entry = entries[0];

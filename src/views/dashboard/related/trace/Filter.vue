@@ -105,6 +105,7 @@ import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 import { LayoutConfig } from "@/types/dashboard";
+import { DurationTime } from "@/types/app";
 
 /*global defineProps, Recordable */
 const props = defineProps({
@@ -122,6 +123,9 @@ const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
+const duration = ref<DurationTime>(
+  (props.data.filters && props.data.filters.duration) || appStore.durationTime
+);
 const minTraceDuration = ref<number>();
 const maxTraceDuration = ref<number>();
 const tagsList = ref<string[]>([]);
@@ -198,7 +202,7 @@ function searchTraces() {
     endpointId: endpoint || state.endpoint.id || undefined,
     serviceInstanceId: instance || state.instance.id || undefined,
     traceState: state.status.value || "ALL",
-    queryDuration: appStore.durationTime,
+    queryDuration: duration.value,
     minTraceDuration: Number(minTraceDuration.value),
     maxTraceDuration: Number(maxTraceDuration.value),
     queryOrder: "BY_DURATION",
@@ -231,13 +235,14 @@ async function searchEndpoints(keyword: string) {
   }
 }
 onUnmounted(() => {
-  traceStore.resetCondition();
+  traceStore.resetState();
   const item = {
     ...props.data,
     filters: undefined,
   };
   dashboardStore.setWidget(item);
   traceId.value = "";
+  duration.value = appStore.durationTime;
 });
 watch(
   () => [selectorStore.currentPod],
@@ -273,6 +278,7 @@ watch(
         return;
       }
       traceId.value = props.data.filters.traceId || "";
+      duration.value = props.data.filters.duration || appStore.durationTime;
       init();
     }
   }

@@ -143,6 +143,7 @@ import { ElMessage } from "element-plus";
 import { EntityType } from "../../data";
 import { ErrorCategory } from "./data";
 import { LayoutConfig } from "@/types/dashboard";
+import { DurationTime } from "@/types/app";
 
 /*global  defineProps, Recordable */
 const props = defineProps({
@@ -159,6 +160,9 @@ const dashboardStore = useDashboardStore();
 const logStore = useLogStore();
 const traceId = ref<string>(
   (props.data.filters && props.data.filters.traceId) || ""
+);
+const duration = ref<DurationTime>(
+  (props.data.filters && props.data.filters.duration) || appStore.durationTime
 );
 const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
@@ -252,7 +256,7 @@ function searchLogs() {
       pagePathId: endpoint || state.endpoint.id || undefined,
       serviceVersionId: instance || state.instance.id || undefined,
       paging: { pageNum: 1, pageSize: 15 },
-      queryDuration: appStore.durationTime,
+      queryDuration: duration,
       category: state.category.value,
     });
   } else {
@@ -339,13 +343,14 @@ function removeExcludeContent(index: number) {
   excludingContentStr.value = "";
 }
 onUnmounted(() => {
-  logStore.resetCondition();
+  logStore.resetState();
   const item = {
     ...props.data,
     filters: undefined,
   };
   dashboardStore.setWidget(item);
   traceId.value = "";
+  duration.value = appStore.durationTime;
 });
 watch(
   () => selectorStore.currentService,
@@ -375,12 +380,12 @@ watch(
 watch(
   () => props.data.filters,
   (newJson, oldJson) => {
-    console.log(props.data.filters);
     if (props.data.filters) {
       if (JSON.stringify(newJson) === JSON.stringify(oldJson)) {
         return;
       }
       traceId.value = props.data.filters.traceId || "";
+      duration.value = props.data.filters.duration || appStore.durationTime;
       init();
     }
   }

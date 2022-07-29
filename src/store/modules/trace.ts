@@ -63,7 +63,10 @@ export const traceStore = defineStore({
     setTraceSpans(spans: Span) {
       this.traceSpans = spans;
     },
-    resetCondition() {
+    resetState() {
+      this.traceSpans = [];
+      this.traceList = [];
+      this.currentTrace = {};
       this.conditions = {
         queryDuration: useAppStoreWithOut().durationTime,
         paging: { pageNum: 1, pageSize: 20 },
