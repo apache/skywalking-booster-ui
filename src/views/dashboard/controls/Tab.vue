@@ -118,6 +118,7 @@ import Log from "./Log.vue";
 import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
 import Event from "./Event.vue";
+import NetworkProfiling from "./NetworkProfiling.vue";
 import { dragIgnoreFrom } from "../data";
 import DemandLog from "./DemandLog.vue";
 import copy from "@/utils/copy";
@@ -141,6 +142,7 @@ export default defineComponent({
     Ebpf,
     DemandLog,
     Event,
+    NetworkProfiling,
   },
   props,
   setup(props) {

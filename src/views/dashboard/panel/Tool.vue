@@ -144,9 +144,8 @@ const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
-const toolIcons = ref<{ name: string; content: string; id: string }[]>(
-  EndpointRelationTools
-);
+const toolIcons =
+  ref<{ name: string; content: string; id: string }[]>(AllTools);
 const loading = ref<boolean>(false);
 const states = reactive<{
   destService: string;
@@ -461,6 +460,9 @@ function setTabControls(id: string) {
     case "addEvent":
       dashboardStore.addTabControls("Event");
       break;
+    case "addNetworkProfiling":
+      dashboardStore.addTabControls("NetworkProfiling");
+      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -498,6 +500,9 @@ function setControls(id: string) {
       break;
     case "addEvent":
       dashboardStore.addControl("Event");
+      break;
+    case "addNetworkProfiling":
+      dashboardStore.addControl("NetworkProfiling");
       break;
     default:
       dashboardStore.addControl("Widget");
@@ -618,7 +623,7 @@ function getTools() {
       toolIcons.value = EndpointRelationTools;
       break;
     default:
-      toolIcons.value = EndpointRelationTools;
+      toolIcons.value = AllTools;
   }
 }
 function searchPods(query: string) {

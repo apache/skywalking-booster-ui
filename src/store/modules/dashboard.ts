@@ -113,7 +113,16 @@ export const dashboardStore = defineStore({
               : 3,
         };
       }
-      if (["Trace", "Profile", "Log", "DemandLog", "Ebpf"].includes(type)) {
+      if (
+        [
+          "Trace",
+          "Profile",
+          "Log",
+          "DemandLog",
+          "Ebpf",
+          "NetworkProfiling",
+        ].includes(type)
+      ) {
         newItem.h = 36;
       }
       if (type === "Text") {
@@ -170,7 +179,16 @@ export const dashboardStore = defineStore({
           showDepth: true,
         };
       }
-      if (["Trace", "Profile", "Log", "DemandLog", "Ebpf"].includes(type)) {
+      if (
+        [
+          "Trace",
+          "Profile",
+          "Log",
+          "DemandLog",
+          "Ebpf",
+          "NetworkProfiling",
+        ].includes(type)
+      ) {
         newItem.h = 32;
       }
       if (type === "Text") {
