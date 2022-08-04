@@ -35,6 +35,6 @@ export const getEBPFSchedules = `query queryEBPFSchedules(${queryEBPFSchedules.v
 
 export const getEBPFResult = `query analysisEBPFResult(${analysisEBPFResult.variable}) {${analysisEBPFResult.query}}`;
 
-export const saveNetworkProfiling = `mutation createNetworkProfiling(${createNetworkProfiling.variable}) {${createNetworkProfiling.query}}`;
+export const newNetworkProfiling = `mutation createNetworkProfiling(${createNetworkProfiling.variable}) {${createNetworkProfiling.query}}`;
 
 export const aliveNetworkProfiling = `mutation keepNetworkProfiling(${keepNetworkProfiling.variable}) {${keepNetworkProfiling.query}}`;

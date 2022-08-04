@@ -15,11 +15,13 @@ limitations under the License. -->
 <template>
   <div class="profile-task-list flex-v">
     <div class="profile-task-wrapper flex-v">
-      <div class="profile-t-tool flex-h">
-        {{ t("taskList") }}
-        <el-button type="primary" size="small" @click="createTask">
-          {{ t("newTask") }}
-        </el-button>
+      <div class="profile-t-tool">
+        <span>{{ t("taskList") }}</span>
+        <el-tooltip content="New Task" placement="right">
+          <span class="new-task cp">
+            <Icon iconName="library_add" @click="createTask" size="middle" />
+          </span>
+        </el-tooltip>
       </div>
       <div class="profile-t-wrapper">
         <div class="no-data" v-show="!ebpfStore.networkTasks.length">
@@ -152,10 +154,13 @@ async function createTask() {
   if (!selectorStore.currentService) {
     return;
   }
-  if (!selectorStore.currentInstance) {
+  if (!selectorStore.currentPod) {
     return;
   }
-  ebpfStore.getCreateTaskData(selectorStore.currentService.id);
+  ebpfStore.createNetworkTask({
+    serviceId: selectorStore.currentService.id,
+    serviceInstanceId: selectorStore.currentpod.id,
+  });
 }
 async function fetchTasks() {
   const serviceId =
@@ -221,10 +226,9 @@ async function fetchTasks() {
 
 .profile-t-tool {
   padding: 5px 10px;
-  font-weight: bold;
-  border-right: 1px solid rgba(0, 0, 0, 0.07);
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   background: #f3f4f9;
+  width: 100%;
 }
 
 .profile-btn {
@@ -232,6 +236,10 @@ async function fetchTasks() {
   padding: 1px 3px;
   border-radius: 2px;
   font-size: 12px;
+  float: right;
+}
+
+.new-task {
   float: right;
 }
 </style>

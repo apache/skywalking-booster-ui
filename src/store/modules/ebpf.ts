@@ -100,6 +100,23 @@ export const ebpfStore = defineStore({
       });
       return res.data;
     },
+    async createNetworkTask(param: {
+      serviceId: string;
+      serviceInstanceId: string;
+    }) {
+      const res: AxiosResponse = await graphql
+        .query("newNetworkProfiling")
+        .params({ request: { serviceInstanceId: param.serviceInstanceId } });
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.getTaskList({
+        ...param,
+        targets: ["NETWORK"],
+      });
+      return res.data;
+    },
     async getTaskList(params: {
       serviceId: string;
       serviceInstanceId: string;
