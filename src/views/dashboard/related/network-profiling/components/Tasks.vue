@@ -73,60 +73,7 @@ limitations under the License. -->
       </div>
     </div>
   </div>
-  <el-dialog
-    v-model="viewDetail"
-    :destroy-on-close="true"
-    fullscreen
-    @closed="viewDetail = false"
-  >
-    <div class="profile-detail flex-v">
-      <div>
-        <h5 class="mb-10">{{ t("task") }}.</h5>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("taskId") }}:</span>
-          <span class="g-sm-8 wba">
-            {{ ebpfStore.selectedNetworkTask.taskId }}
-          </span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("service") }}:</span>
-          <span class="g-sm-8 wba">{{
-            ebpfStore.selectedNetworkTask.serviceName
-          }}</span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("labels") }}:</span>
-          <span class="g-sm-8 wba">
-            {{ ebpfStore.selectedNetworkTask.processLabels.join(";") }}
-          </span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
-          <span class="g-sm-8 wba">
-            {{ dateFormat(ebpfStore.selectedNetworkTask.taskStartTime) }}
-          </span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span>
-          <span class="g-sm-8 wba">
-            {{ ebpfStore.selectedNetworkTask.fixedTriggerDuration / 60 }} min
-          </span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("triggerType") }}:</span>
-          <span class="g-sm-8 wba">{{
-            ebpfStore.selectedNetworkTask.triggerType
-          }}</span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("targetType") }}:</span>
-          <span class="g-sm-8 wba">{{
-            ebpfStore.selectedNetworkTask.targetType
-          }}</span>
-        </div>
-      </div>
-    </div>
-  </el-dialog>
+  <TaskDetails :details="ebpfStore.selectedNetworkTask" :show="viewDetail" />
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
@@ -136,6 +83,7 @@ import { useEbpfStore } from "@/store/modules/ebpf";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
+import TaskDetails from "./TaskDetails.vue";
 
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
