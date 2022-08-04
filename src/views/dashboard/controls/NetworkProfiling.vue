@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="profile-wrapper flex-v">
+    <div class="title">Network Profiling</div>
     <el-popover
       placement="bottom"
       trigger="click"
@@ -21,8 +22,8 @@ limitations under the License. -->
       v-if="dashboardStore.editMode"
     >
       <template #reference>
-        <span class="delete cp">
-          <Icon iconName="ellipsis_v" size="middle" class="operation" />
+        <span class="operation cp">
+          <Icon iconName="ellipsis_v" size="middle" />
         </span>
       </template>
       <div class="tools" @click="removeWidget">
@@ -49,7 +50,7 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-console.log("enter");
+
 function removeWidget() {
   dashboardStore.removeControls(props.data);
 }
@@ -62,9 +63,9 @@ function removeWidget() {
   position: relative;
 }
 
-.delete {
+.operation {
   position: absolute;
-  top: 5px;
+  top: 8px;
   right: 3px;
 }
 
@@ -87,8 +88,10 @@ function removeWidget() {
   }
 }
 
-.trace {
-  width: 100%;
-  overflow: auto;
+.title {
+  font-weight: bold;
+  line-height: 40px;
+  padding: 0 10px;
+  border-bottom: 1px solid #dcdfe6;
 }
 </style>

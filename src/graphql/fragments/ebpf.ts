@@ -33,12 +33,15 @@ export const createEBPFTask = {
   }`,
 };
 export const queryEBPFTasks = {
-  variable: "$serviceId: ID!",
+  variable:
+    "$serviceId: ID, $serviceInstanceId: ID, $targets: [EBPFProfilingTargetType!]",
   query: `
-  queryEBPFTasks: queryEBPFProfilingTasks(serviceId: $serviceId) {
+  queryEBPFTasks: queryEBPFProfilingTasks(serviceId: $serviceId, serviceInstanceId: $serviceInstanceId, targets: $targets) {
     taskId
     serviceName
     serviceId
+    serviceInstanceId
+    serviceInstanceName
     processLabels
     taskStartTime
     triggerType
@@ -88,5 +91,24 @@ export const analysisEBPFResult = {
         dumpCount
       }
     }
+  }`,
+};
+
+export const createNetworkProfiling = {
+  variable: "$request: EBPFProfilingNetworkTaskRequest!",
+  query: `
+  createEBPFNetworkProfiling(request: $request) {
+    status
+    errorReason
+    id
+  }`,
+};
+
+export const keepNetworkProfiling = {
+  variable: "$taskId: ID!",
+  query: `
+  keepEBPFNetworkProfiling(taskId: $taskId) {
+    status
+    errorReason
   }`,
 };

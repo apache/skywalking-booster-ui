@@ -1,3 +1,4 @@
+import { TaskListItem } from "./../../types/profile.d";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -28,13 +29,16 @@ import { AxiosResponse } from "axios";
 
 interface EbpfStore {
   taskList: EBPFTaskList[];
+  networkTasks: EBPFTaskList[];
   eBPFSchedules: EBPFProfilingSchedule[];
   currentSchedule: EBPFProfilingSchedule | Record<string, never>;
   analyzeTrees: AnalyzationTrees[];
   labels: Option[];
   couldProfiling: boolean;
   tip: string;
+  networkTip: string;
   selectedTask: Recordable<EBPFTaskList>;
+  selectedNetworkTask: Recordable<EBPFTaskList>;
   aggregateType: string;
 }
 
@@ -42,18 +46,24 @@ export const ebpfStore = defineStore({
   id: "eBPF",
   state: (): EbpfStore => ({
     taskList: [],
+    networkTasks: [],
     eBPFSchedules: [],
     currentSchedule: {},
     analyzeTrees: [],
     labels: [{ value: "", label: "" }],
     couldProfiling: false,
     tip: "",
+    networkTip: "",
     selectedTask: {},
+    selectedNetworkTask: {},
     aggregateType: "COUNT",
   }),
   actions: {
     setSelectedTask(task: EBPFTaskList) {
-      this.selectedTask = task;
+      this.selectedTask = task || {};
+    },
+    setSelectedNetworkTask(task: EBPFTaskList) {
+      this.selectedNetworkTask = task || {};
     },
     setCurrentSchedule(s: EBPFProfilingSchedule) {
       this.currentSchedule = s;
@@ -84,24 +94,44 @@ export const ebpfStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.getTaskList(param.serviceId);
+      this.getTaskList({
+        serviceId: param.serviceId,
+        targets: ["ON_CPU", "OFF_CPU"],
+      });
       return res.data;
     },
-    async getTaskList(serviceId: string) {
-      if (!serviceId) {
+    async getTaskList(params: {
+      serviceId: string;
+      serviceInstanceId: string;
+      targets: string[];
+    }) {
+      if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
       const res: AxiosResponse = await graphql
         .query("getEBPFTasks")
-        .params({ serviceId });
+        .params(params);
 
-      this.tip = "";
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.taskList = res.data.data.queryEBPFTasks || [];
-      if (!this.taskList.length) {
-        return res.data;
+      if (params.serviceInstanceId) {
+        this.networkTip = "";
+        if (res.data.errors) {
+          return res.data;
+        }
+        this.networkTasks = res.data.data.queryEBPFTasks || [];
+        if (!this.networkTasks.length) {
+          return res.data;
+        }
+        this.selectedNetworkTask = this.networkTasks[0] || {};
+        this.setSelectedNetworkTask(this.selectedNetworkTask);
+      } else {
+        this.tip = "";
+        if (res.data.errors) {
+          return res.data;
+        }
+        this.taskList = res.data.data.queryEBPFTasks || [];
+        if (!this.taskList.length) {
+          return res.data;
+        }
       }
       this.getEBPFSchedules({ taskId: this.taskList[0].taskId });
       return res.data;
