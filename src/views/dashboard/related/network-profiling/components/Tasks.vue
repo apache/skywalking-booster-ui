@@ -17,11 +17,16 @@ limitations under the License. -->
     <div class="profile-task-wrapper flex-v">
       <div class="profile-t-tool">
         <span>{{ t("taskList") }}</span>
-        <el-tooltip content="New Task" placement="right">
-          <span class="new-task cp">
-            <Icon iconName="library_add" @click="createTask" size="middle" />
-          </span>
-        </el-tooltip>
+        <el-popconfirm
+          title="Are you sure to create a task?"
+          @confirm="createTask"
+        >
+          <template #reference>
+            <span class="new-task cp">
+              <Icon iconName="library_add" size="middle" />
+            </span>
+          </template>
+        </el-popconfirm>
       </div>
       <div class="profile-t-wrapper">
         <div class="no-data" v-show="!ebpfStore.networkTasks.length">
@@ -151,15 +156,19 @@ async function changeTask(item: EBPFTaskList) {
   }
 }
 async function createTask() {
-  if (!selectorStore.currentService) {
+  const serviceId =
+    (selectorStore.currentService && selectorStore.currentService.id) || "";
+  const serviceInstanceId =
+    (selectorStore.currentPod && selectorStore.currentPod.id) || "";
+  if (!serviceId) {
     return;
   }
-  if (!selectorStore.currentPod) {
+  if (!serviceInstanceId) {
     return;
   }
   ebpfStore.createNetworkTask({
-    serviceId: selectorStore.currentService.id,
-    serviceInstanceId: selectorStore.currentpod.id,
+    serviceId,
+    serviceInstanceId,
   });
 }
 async function fetchTasks() {
