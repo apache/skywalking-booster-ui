@@ -30,7 +30,7 @@ limitations under the License. -->
             <td
               class="profile-td"
               :class="{
-                selected: selectedTask.taskId === i.taskId,
+                selected: ebpfStore.selectedTask.taskId === i.taskId,
               }"
             >
               <div class="ell">
@@ -73,45 +73,51 @@ limitations under the License. -->
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("taskId") }}:</span>
           <span class="g-sm-8 wba">
-            {{ selectedTask.taskId }}
+            {{ ebpfStore.selectedTask.taskId }}
           </span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("service") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.serviceName }}</span>
+          <span class="g-sm-8 wba">{{
+            ebpfStore.selectedTask.serviceName
+          }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("labels") }}:</span>
           <span class="g-sm-8 wba">
-            {{ selectedTask.processLabels.join(";") }}
+            {{ ebpfStore.selectedTask.processLabels.join(";") }}
           </span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
           <span class="g-sm-8 wba">
-            {{ dateFormat(selectedTask.taskStartTime) }}
+            {{ dateFormat(ebpfStore.selectedTask.taskStartTime) }}
           </span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span>
           <span class="g-sm-8 wba">
-            {{ selectedTask.fixedTriggerDuration / 60 }} min
+            {{ ebpfStore.selectedTask.fixedTriggerDuration / 60 }} min
           </span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("triggerType") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.triggerType }}</span>
+          <span class="g-sm-8 wba">{{
+            ebpfStore.selectedTask.triggerType
+          }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("targetType") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.targetType }}</span>
+          <span class="g-sm-8 wba">{{
+            ebpfStore.selectedTask.targetType
+          }}</span>
         </div>
       </div>
     </div>
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
@@ -122,11 +128,9 @@ const { t } = useI18n();
 const ebpfStore = useEbpfStore();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
-const selectedTask = ref<EBPFTaskList | Record<string, never>>({});
 const viewDetail = ref<boolean>(false);
 
 async function changeTask(item: EBPFTaskList) {
-  selectedTask.value = item;
   ebpfStore.setSelectedTask(item);
   const res = await ebpfStore.getEBPFSchedules({
     taskId: item.taskId,
@@ -135,13 +139,6 @@ async function changeTask(item: EBPFTaskList) {
     ElMessage.error(res.errors);
   }
 }
-watch(
-  () => ebpfStore.taskList,
-  () => {
-    selectedTask.value = ebpfStore.taskList[0] || {};
-    ebpfStore.setSelectedTask(selectedTask.value);
-  }
-);
 </script>
 <style lang="scss" scoped>
 .profile-task-list {

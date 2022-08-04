@@ -135,17 +135,19 @@ export const ebpfStore = defineStore({
           return res.data;
         }
         this.networkTasks = res.data.data.queryEBPFTasks || [];
+        this.selectedNetworkTask = this.networkTasks[0] || {};
+        this.setSelectedNetworkTask(this.selectedNetworkTask);
         if (!this.networkTasks.length) {
           return res.data;
         }
-        this.selectedNetworkTask = this.networkTasks[0] || {};
-        this.setSelectedNetworkTask(this.selectedNetworkTask);
       } else {
         this.tip = "";
         if (res.data.errors) {
           return res.data;
         }
         this.taskList = res.data.data.queryEBPFTasks || [];
+        this.selectedTask = this.taskList[0] || {};
+        this.setSelectedTask(this.selectedTask);
         if (!this.taskList.length) {
           return res.data;
         }
