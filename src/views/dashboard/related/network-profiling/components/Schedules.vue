@@ -13,23 +13,96 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="filters">
-    <el-button type="primary" size="small">
-      {{ t("start") }}
-    </el-button>
-  </div>
+  <div ref="timeline" class="time-ranges"></div>
+  <el-button type="primary" size="small">
+    {{ t("start") }}
+  </el-button>
 </template>
 <script lang="ts" setup>
+import { ref, onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
+import { DataSet, Timeline } from "vis-timeline/standalone";
+import "vis-timeline/styles/vis-timeline-graph2d.css";
+import { useThrottleFn } from "@vueuse/core";
 
+/*global Nullable */
 const { t } = useI18n();
 const ebpfStore = useEbpfStore();
+const timeline = ref<Nullable<HTMLDivElement>>(null);
+const visGraph = ref<Nullable<any>>(null);
+const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
+
+onMounted(() => {
+  oldVal.value = (timeline.value && timeline.value.getBoundingClientRect()) || {
+    width: 0,
+    height: 0,
+  };
+  useThrottleFn(resize, 500)();
+});
+
+function visTimeline() {
+  if (!timeline.value) {
+    return;
+  }
+  if (visGraph.value) {
+    visGraph.value.destroy();
+  }
+  const h = timeline.value.getBoundingClientRect().height;
+  const task = [
+    {
+      id: 1,
+      content: ebpfStore.selectedNetworkTask.name,
+      start: new Date(Number(ebpfStore.selectedNetworkTask.taskStartTime)),
+      end: new Date(
+        Number(
+          ebpfStore.selectedNetworkTask.taskStartTime +
+            ebpfStore.selectedNetworkTask.fixedTriggerDuration
+        )
+      ),
+      data: ebpfStore.selectedNetworkTask,
+      className: ebpfStore.selectedNetworkTask.type,
+    },
+  ];
+  const items = new DataSet(task);
+  const options: any = {
+    height: h,
+    width: "100%",
+    locale: "en",
+    groupHeightMode: "fitItems",
+    autoResize: false,
+  };
+  visGraph.value = new Timeline(timeline.value, items, options);
+}
+function resize() {
+  const observer = new ResizeObserver((entries) => {
+    const entry = entries[0];
+    const cr = entry.contentRect;
+    if (
+      Math.abs(cr.width - oldVal.value.width) < 3 &&
+      Math.abs(cr.height - oldVal.value.height) < 3
+    ) {
+      return;
+    }
+    visTimeline();
+    oldVal.value = { width: cr.width, height: cr.height };
+  });
+  if (timeline.value) {
+    observer.observe(timeline.value);
+  }
+}
+watch(
+  () => ebpfStore.selectedNetworkTask,
+  () => {
+    visTimeline();
+  }
+);
 </script>
 <style lang="scss" scoped>
-.filters {
-  margin: 5px 0;
-  width: 100%;
-  min-width: 560px;
+.time-ranges {
+  width: calc(100% - 5px);
+  margin: 0 5px 5px 0;
+  height: 100%;
+  min-height: 150px;
 }
 </style>
