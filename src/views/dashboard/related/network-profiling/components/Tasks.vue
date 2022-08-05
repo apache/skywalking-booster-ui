@@ -47,13 +47,7 @@ limitations under the License. -->
             >
               <div class="ell">
                 <span>
-                  {{
-                    i.targetType +
-                    ": " +
-                    (i.processLabels.length
-                      ? i.processLabels.join(" ")
-                      : `All Processes`)
-                  }}
+                  {{ i.targetType }}
                 </span>
                 <a class="profile-btn r" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
@@ -73,7 +67,14 @@ limitations under the License. -->
       </div>
     </div>
   </div>
-  <TaskDetails :details="ebpfStore.selectedNetworkTask" :show="viewDetail" />
+  <el-dialog
+    v-model="viewDetail"
+    :destroy-on-close="true"
+    fullscreen
+    @closed="viewDetail = false"
+  >
+    <TaskDetails :details="ebpfStore.selectedNetworkTask" />
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
@@ -83,7 +84,7 @@ import { useEbpfStore } from "@/store/modules/ebpf";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
-import TaskDetails from "./TaskDetails.vue";
+import TaskDetails from "../../components/TaskDetails.vue";
 
 const { t } = useI18n();
 const selectorStore = useSelectorStore();

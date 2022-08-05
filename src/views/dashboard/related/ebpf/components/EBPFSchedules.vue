@@ -79,7 +79,7 @@ limitations under the License. -->
           />
           <el-table-column width="300" label="Attributes">
             <template #default="scope">
-              {{ scope.row.attributes.map((d: {name: string, value: string}) => `${d.name}=${d.value}`).join("; ") }}
+              {{ attributes(scope.row.attributes) }}
             </template>
           </el-table-column>
         </el-table>
@@ -125,6 +125,11 @@ const aggregateType = ref<string>(AggregateTypes[0].value);
 const duration = ref<string[]>([]);
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
+const attributes = (attr: { name: string; value: string }[]) => {
+  return attr
+    .map((d: { name: string; value: string }) => `${d.name}=${d.value}`)
+    .join("; ");
+};
 
 function changeLabels(opt: any[]) {
   const arr = opt.map((d) => d.value);

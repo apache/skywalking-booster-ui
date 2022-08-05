@@ -106,7 +106,7 @@ export const ebpfStore = defineStore({
     }) {
       const res: AxiosResponse = await graphql
         .query("newNetworkProfiling")
-        .params({ request: { serviceInstanceId: param.serviceInstanceId } });
+        .params({ request: { instanceId: param.serviceInstanceId } });
 
       if (res.data.errors) {
         return res.data;
@@ -137,9 +137,6 @@ export const ebpfStore = defineStore({
         this.networkTasks = res.data.data.queryEBPFTasks || [];
         this.selectedNetworkTask = this.networkTasks[0] || {};
         this.setSelectedNetworkTask(this.selectedNetworkTask);
-        if (!this.networkTasks.length) {
-          return res.data;
-        }
       } else {
         this.tip = "";
         if (res.data.errors) {
@@ -151,8 +148,8 @@ export const ebpfStore = defineStore({
         if (!this.taskList.length) {
           return res.data;
         }
+        this.getEBPFSchedules({ taskId: this.taskList[0].taskId });
       }
-      this.getEBPFSchedules({ taskId: this.taskList[0].taskId });
       return res.data;
     },
     async getEBPFSchedules(params: { taskId: string }) {

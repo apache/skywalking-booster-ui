@@ -67,53 +67,7 @@ limitations under the License. -->
     fullscreen
     @closed="viewDetail = false"
   >
-    <div class="profile-detail flex-v">
-      <div>
-        <h5 class="mb-10">{{ t("task") }}.</h5>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("taskId") }}:</span>
-          <span class="g-sm-8 wba">
-            {{ ebpfStore.selectedTask.taskId }}
-          </span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("service") }}:</span>
-          <span class="g-sm-8 wba">{{
-            ebpfStore.selectedTask.serviceName
-          }}</span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("labels") }}:</span>
-          <span class="g-sm-8 wba">
-            {{ ebpfStore.selectedTask.processLabels.join(";") }}
-          </span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
-          <span class="g-sm-8 wba">
-            {{ dateFormat(ebpfStore.selectedTask.taskStartTime) }}
-          </span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span>
-          <span class="g-sm-8 wba">
-            {{ ebpfStore.selectedTask.fixedTriggerDuration / 60 }} min
-          </span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("triggerType") }}:</span>
-          <span class="g-sm-8 wba">{{
-            ebpfStore.selectedTask.triggerType
-          }}</span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("targetType") }}:</span>
-          <span class="g-sm-8 wba">{{
-            ebpfStore.selectedTask.targetType
-          }}</span>
-        </div>
-      </div>
-    </div>
+    <TaskDetails :details="ebpfStore.selectedTask" />
   </el-dialog>
 </template>
 <script lang="ts" setup>
@@ -123,6 +77,7 @@ import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
+import TaskDetails from "../../components/TaskDetails.vue";
 
 const { t } = useI18n();
 const ebpfStore = useEbpfStore();
