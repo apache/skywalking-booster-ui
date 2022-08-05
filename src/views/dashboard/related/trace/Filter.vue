@@ -205,7 +205,7 @@ function searchTraces() {
     queryDuration: duration.value,
     minTraceDuration: Number(minTraceDuration.value),
     maxTraceDuration: Number(maxTraceDuration.value),
-    queryOrder: "BY_DURATION",
+    queryOrder: traceStore.conditions.queryOrder || "BY_DURATION",
     tags: tagsMap.value.length ? tagsMap.value : undefined,
     paging: { pageNum: 1, pageSize: 20 },
   });
