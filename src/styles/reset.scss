@@ -139,8 +139,10 @@ pre {
   padding-left: 56px !important;
 }
 
-.el-icon.menu-icons {
-  margin-top: -3px !important;
+.el-sub-menu__title {
+  .el-icon.menu-icons {
+    margin-top: -5px !important;
+  }
 }
 
 .el-switch__label--left {
