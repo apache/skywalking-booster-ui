@@ -51,7 +51,7 @@ export const routesGen: Array<RouteRecordRaw> = [
       },
       {
         path: "/database",
-        name: "Database",
+        name: "VirtualDatabase",
         meta: {
           title: "virtualDatabase",
           exact: true,
@@ -61,7 +61,7 @@ export const routesGen: Array<RouteRecordRaw> = [
       },
       {
         path: "/database/tab/:activeTabIndex",
-        name: "DatabaseActiveTabIndex",
+        name: "VirtualDatabaseActiveTabIndex",
         meta: {
           notShow: true,
         },
