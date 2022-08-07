@@ -32,6 +32,7 @@ const msg = {
   dashboards: "Dashboards",
   profiles: "Profiles",
   database: "Database",
+  mySQL: "MySQL",
   serviceName: "Service Name",
   technologies: "Technologies",
   generalServicePanel: "General Service Panel",

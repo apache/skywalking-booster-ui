@@ -32,6 +32,7 @@ const msg = {
   dashboards: "仪表盘",
   profiles: "性能剖析",
   database: "数据库",
+  mySQL: "MySQL",
   serviceName: "服务名称",
   technologies: "技术",
   health: "健康",
