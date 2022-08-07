@@ -122,6 +122,7 @@ const msg = {
   linux: "Linux",
   editWarning: "You are entering edit mode",
   viewWarning: "You are entering view mode",
+  virtualDatabase: "Virtual Database",
   reloadDashboards: "Reload dashboards",
   kubernetesService: "Service",
   kubernetesCluster: "Cluster",

@@ -17,13 +17,14 @@
 import { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
 
-export const routesMySQL: Array<RouteRecordRaw> = [
+export const routesDatabase: Array<RouteRecordRaw> = [
   {
     path: "",
     name: "MySQL",
     meta: {
-      title: "mySQL",
+      title: "database",
       icon: "storage",
+      hasGroup: true,
     },
     redirect: "/mySQL",
     component: Layout,

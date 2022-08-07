@@ -53,7 +53,7 @@ export const routesGen: Array<RouteRecordRaw> = [
         path: "/database",
         name: "Database",
         meta: {
-          title: "database",
+          title: "virtualDatabase",
           exact: true,
         },
         component: () =>
