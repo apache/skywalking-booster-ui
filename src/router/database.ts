@@ -20,7 +20,7 @@ import Layout from "@/layout/Index.vue";
 export const routesDatabase: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "MySQL",
+    name: "Database",
     meta: {
       title: "database",
       icon: "storage",
