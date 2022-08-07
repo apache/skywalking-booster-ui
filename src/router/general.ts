@@ -34,6 +34,7 @@ export const routesGen: Array<RouteRecordRaw> = [
         name: "GeneralServices",
         meta: {
           exact: true,
+          title: "services",
         },
         component: () =>
           import(/* webpackChunkName: "layers" */ "@/views/Layer.vue"),

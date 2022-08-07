@@ -24,7 +24,6 @@ export const routesMySQL: Array<RouteRecordRaw> = [
     meta: {
       title: "mySQL",
       icon: "storage",
-      hasGroup: true,
     },
     redirect: "/mySQL",
     component: Layout,
