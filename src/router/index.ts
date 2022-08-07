@@ -17,7 +17,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { routesGen } from "./general";
 import { routesMesh } from "./serviceMesh";
-import { routesDatabase } from "./database";
+import { routesMySQL } from "./mySQL";
 import { routesInfra } from "./infrastructure";
 import { routesDashboard } from "./dashboard";
 import { routesSetting } from "./setting";
@@ -34,7 +34,7 @@ const routes: Array<RouteRecordRaw> = [
   ...routesK8s,
   ...routesInfra,
   ...routesBrowser,
-  ...routesDatabase,
+  ...routesMySQL,
   ...routesSelf,
   ...routesDashboard,
   ...routesAlarm,

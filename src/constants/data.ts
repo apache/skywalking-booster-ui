@@ -50,4 +50,6 @@ export const RoutesMap: { [key: string]: string } = {
   KubernetesClusterActiveTabIndex: "K8S",
   KubernetesService: "K8S_SERVICE",
   KubernetesServiceActiveTabIndex: "K8S_SERVICE",
+  MySQL: "MYSQL",
+  MySQLActiveTabIndex: "MySQL",
 };

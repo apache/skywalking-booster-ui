@@ -17,31 +17,31 @@
 import { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
 
-export const routesDatabase: Array<RouteRecordRaw> = [
+export const routesMySQL: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "Database",
+    name: "MySQL",
     meta: {
-      title: "database",
+      title: "mySQL",
       icon: "storage",
       hasGroup: true,
     },
-    redirect: "/database",
+    redirect: "/mySQL",
     component: Layout,
     children: [
       {
-        path: "/database",
-        name: "Database",
+        path: "/mySQL",
+        name: "MySQL",
         meta: {
-          title: "virtualDatabase",
+          title: "mySQL",
           exact: true,
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
-        path: "/database/tab/:activeTabIndex",
-        name: "DatabaseActiveTabIndex",
+        path: "/mySQL/tab/:activeTabIndex",
+        name: "MySQLActiveTabIndex",
         meta: {
           notShow: true,
         },

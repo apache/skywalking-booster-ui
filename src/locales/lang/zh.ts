@@ -119,7 +119,6 @@ const msg = {
   browser: "浏览器",
   editWarning: "你正在进入编辑模式",
   viewWarning: "你正在进入预览模式",
-  virtualDatabase: "虚拟数据库",
   reloadDashboards: "重新加载仪表盘",
   kubernetesService: "服务",
   kubernetesCluster: "集群",
