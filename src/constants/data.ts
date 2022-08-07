@@ -29,8 +29,8 @@ export const Languages = [
 export const RoutesMap: { [key: string]: string } = {
   GeneralServices: "GENERAL",
   GeneralServicesActiveTabIndex: "GENERAL",
-  Database: "VIRTUAL_DATABASE",
-  DatabaseActiveTabIndex: "VIRTUAL_DATABASE",
+  VirtualDatabase: "VIRTUAL_DATABASE",
+  VirtualDatabaseActiveTabIndex: "VIRTUAL_DATABASE",
   MeshServices: "MESH",
   MeshServicesActiveTabIndex: "MESH",
   ControlPanel: "MESH_CP",
