@@ -75,3 +75,13 @@ export type AnalyzationTrees = {
   dumpCount: number;
   stackType: string;
 };
+export type ProcessNode = {
+  id: string;
+  name: string;
+  serviceId: string;
+  serviceName: string;
+  serviceInstanceId: string;
+  serviceInstanceName: string;
+  name: string;
+  isReal: boolean;
+};

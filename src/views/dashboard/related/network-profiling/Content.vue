@@ -19,13 +19,16 @@ limitations under the License. -->
       <div class="schedules">
         <Schedules />
       </div>
-      <div class="item">EBPF Stack</div>
+      <div class="item">
+        <Topology></Topology>
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import Tasks from "./components/Tasks.vue";
 import Schedules from "./components/Schedules.vue";
+import Topology from "./components/Topology.vue";
 </script>
 <style lang="scss" scoped>
 .content {

@@ -1,4 +1,3 @@
-import { TaskListItem } from "./../../types/profile.d";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -22,11 +21,12 @@ import {
   EBPFProfilingSchedule,
   EBPFTaskList,
   AnalyzationTrees,
+  ProcessNode,
 } from "@/types/ebpf";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
-
+import { Call } from "@/types/topology";
 interface EbpfStore {
   taskList: EBPFTaskList[];
   networkTasks: EBPFTaskList[];
@@ -40,6 +40,8 @@ interface EbpfStore {
   selectedTask: Recordable<EBPFTaskList>;
   selectedNetworkTask: Recordable<EBPFTaskList>;
   aggregateType: string;
+  nodes: ProcessNode[];
+  calls: Call[];
 }
 
 export const ebpfStore = defineStore({
@@ -57,6 +59,8 @@ export const ebpfStore = defineStore({
     selectedTask: {},
     selectedNetworkTask: {},
     aggregateType: "COUNT",
+    nodes: [],
+    calls: [],
   }),
   actions: {
     setSelectedTask(task: EBPFTaskList) {
@@ -205,6 +209,21 @@ export const ebpfStore = defineStore({
         return res.data;
       }
       this.analyzeTrees = analysisEBPFResult.trees;
+      return res.data;
+    },
+    async getProcessTopology(params: {
+      duration: any;
+      serviceInstanceId: string;
+    }) {
+      const res: AxiosResponse = await graphql
+        .query("getProcessTopology")
+        .params(params);
+      if (res.data.errors) {
+        this.nodes = [];
+        this.calls = [];
+        return res.data;
+      }
+      const topo = res.data.data;
       return res.data;
     },
   },

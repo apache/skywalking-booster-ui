@@ -16,13 +16,28 @@ limitations under the License. -->
   <div ref="topology" class="topology"></div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
+import { useSelectorStore } from "@/store/modules/selectors";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
-/*global Nullable */
-const { t } = useI18n();
+const selectorStore = useSelectorStore();
 const ebpfStore = useEbpfStore();
+const appStore = useAppStoreWithOut();
+
+onMounted(() => {
+  getTopology();
+});
+
+function getTopology() {
+  const serviceInstanceId =
+    (selectorStore.currentPod && selectorStore.currentPod.id) || "";
+  ebpfStore.getProcessTopology({
+    serviceInstanceId,
+    duration: appStore.durationTime,
+  });
+}
 </script>
 <style lang="scss" scoped>
 .topology {

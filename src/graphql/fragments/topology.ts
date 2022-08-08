@@ -83,7 +83,6 @@ export const ProcessTopology = {
     nodes {
       id
       name
-      type
       isReal
       serviceName
       serviceId
