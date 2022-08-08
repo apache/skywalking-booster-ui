@@ -398,6 +398,9 @@ export function aggregation(
     case Calculations.MsTos:
       data = (val / 1000).toFixed(2);
       break;
+    case Calculations.SecondToDay:
+      data = (val / 86400).toFixed(2);
+      break;
     default:
       data;
       break;
