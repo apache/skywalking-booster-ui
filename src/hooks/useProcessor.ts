@@ -383,19 +383,16 @@ export function aggregation(
     case Calculations.Apdex:
       data = val / 10000;
       break;
-    case Calculations.ApdexAvg:
-      data = val / 10000;
-      break;
     case Calculations.ConvertSeconds:
-      data = dayjs(val).format("YYYY-MM-DD HH:mm:ss");
+      data = dayjs(val * 1000).format("YYYY-MM-DD HH:mm:ss");
       break;
     case Calculations.ConvertMilliseconds:
-      data = dayjs.unix(val).format("YYYY-MM-DD HH:mm:ss");
+      data = dayjs(val).format("YYYY-MM-DD HH:mm:ss");
       break;
     case Calculations.Precision:
       data = data.toFixed(2);
       break;
-    case Calculations.MsTos:
+    case Calculations.MsToS:
       data = (val / 1000).toFixed(2);
       break;
     case Calculations.SecondToDay:
