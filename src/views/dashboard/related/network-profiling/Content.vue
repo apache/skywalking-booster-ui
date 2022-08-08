@@ -16,13 +16,16 @@ limitations under the License. -->
   <div class="flex-h content">
     <Tasks />
     <div class="vis-graph ml-5">
-      <div class="schedules">EBPFS chedules</div>
+      <div class="schedules">
+        <Schedules />
+      </div>
       <div class="item">EBPF Stack</div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import Tasks from "./components/Tasks.vue";
+import Schedules from "./components/Schedules.vue";
 </script>
 <style lang="scss" scoped>
 .content {
@@ -45,7 +48,7 @@ import Tasks from "./components/Tasks.vue";
 }
 
 .schedules {
-  height: 90px;
+  min-height: 90px;
   border-bottom: 1px solid #ccc;
   padding-right: 10px;
 }

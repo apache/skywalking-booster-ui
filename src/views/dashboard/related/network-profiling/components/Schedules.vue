@@ -13,10 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div ref="timeline" class="time-ranges"></div>
   <el-button type="primary" size="small">
     {{ t("start") }}
   </el-button>
+  <div ref="timeRange" class="time-ranges"></div>
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";
@@ -29,12 +29,13 @@ import { useThrottleFn } from "@vueuse/core";
 /*global Nullable */
 const { t } = useI18n();
 const ebpfStore = useEbpfStore();
-const timeline = ref<Nullable<HTMLDivElement>>(null);
+const timeRange = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 
 onMounted(() => {
-  oldVal.value = (timeline.value && timeline.value.getBoundingClientRect()) || {
+  oldVal.value = (timeRange.value &&
+    timeRange.value.getBoundingClientRect()) || {
     width: 0,
     height: 0,
   };
@@ -42,13 +43,16 @@ onMounted(() => {
 });
 
 function visTimeline() {
-  if (!timeline.value) {
+  if (!timeRange.value) {
     return;
   }
   if (visGraph.value) {
     visGraph.value.destroy();
   }
-  const h = timeline.value.getBoundingClientRect().height;
+  if (!ebpfStore.selectedNetworkTask.taskId) {
+    return;
+  }
+  const h = timeRange.value.getBoundingClientRect().height;
   const task = [
     {
       id: 1,
@@ -72,7 +76,7 @@ function visTimeline() {
     groupHeightMode: "fitItems",
     autoResize: false,
   };
-  visGraph.value = new Timeline(timeline.value, items, options);
+  visGraph.value = new Timeline(timeRange.value, items, options);
 }
 function resize() {
   const observer = new ResizeObserver((entries) => {
@@ -87,8 +91,8 @@ function resize() {
     visTimeline();
     oldVal.value = { width: cr.width, height: cr.height };
   });
-  if (timeline.value) {
-    observer.observe(timeline.value);
+  if (timeRange.value) {
+    observer.observe(timeRange.value);
   }
 }
 watch(
