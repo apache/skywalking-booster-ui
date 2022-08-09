@@ -23,11 +23,18 @@ import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import d3tip from "d3-tip";
-import { simulationInit, simulationSkip } from "./utils/simulation";
-import { linkElement, anchorElement, arrowMarker } from "./utils/linkElement";
-import nodeElement from "./utils/nodeElement";
+import {
+  simulationInit,
+  simulationSkip,
+} from "../../components/D3Graph/simulation";
+import {
+  linkElement,
+  anchorElement,
+  arrowMarker,
+} from "../../components/D3Graph/linkElement";
+import nodeElement from "../../components/D3Graph/nodeElement";
 import { Call } from "@/types/topology";
-import zoom from "./utils/zoom";
+import zoom from "../../components/D3Graph/zoom";
 import { ProcessNode } from "@/types/ebpf";
 
 /*global Nullable, defineProps */
