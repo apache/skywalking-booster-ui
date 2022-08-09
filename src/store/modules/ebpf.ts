@@ -42,6 +42,8 @@ interface EbpfStore {
   aggregateType: string;
   nodes: ProcessNode[];
   calls: Call[];
+  node: Nullable<ProcessNode>;
+  call: Nullable<Call>;
 }
 
 export const ebpfStore = defineStore({
@@ -61,6 +63,8 @@ export const ebpfStore = defineStore({
     aggregateType: "COUNT",
     nodes: [],
     calls: [],
+    node: null,
+    call: null,
   }),
   actions: {
     setSelectedTask(task: EBPFTaskList) {
@@ -74,6 +78,35 @@ export const ebpfStore = defineStore({
     },
     setAnalyzeTrees(tree: AnalyzationTrees[]) {
       this.analyzeTrees = tree;
+    },
+    setNode(node: Node) {
+      this.node = node;
+    },
+    setLink(link: Call) {
+      this.call = link;
+    },
+    setTopology(data: { nodes: ProcessNode[]; calls: Call[] }) {
+      const obj = {} as any;
+      const calls = (data.calls || []).reduce((prev: Call[], next: Call) => {
+        if (!obj[next.id]) {
+          obj[next.id] = true;
+          next.value = next.value || 1;
+          for (const node of data.nodes) {
+            if (next.source === node.id) {
+              next.sourceObj = node;
+            }
+            if (next.target === node.id) {
+              next.targetObj = node;
+            }
+          }
+          next.value = next.value || 1;
+          prev.push(next);
+        }
+        return prev;
+      }, []);
+
+      this.calls = calls;
+      this.nodes = data.nodes;
     },
     async getCreateTaskData(serviceId: string) {
       const res: AxiosResponse = await graphql
@@ -223,7 +256,9 @@ export const ebpfStore = defineStore({
         this.calls = [];
         return res.data;
       }
-      const topo = res.data.data;
+      const { topology } = res.data.data;
+
+      this.setTopology(topology);
       return res.data;
     },
   },

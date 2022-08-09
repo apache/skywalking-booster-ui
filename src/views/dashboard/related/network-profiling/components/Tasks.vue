@@ -85,10 +85,14 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
 import TaskDetails from "../../components/TaskDetails.vue";
+import dateFormatStep from "@/utils/dateFormat";
+import getLocalTime from "@/utils/localtime";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const ebpfStore = useEbpfStore();
+const appStore = useAppStoreWithOut();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 const viewDetail = ref<boolean>(false);
@@ -97,12 +101,37 @@ fetchTasks();
 
 async function changeTask(item: EBPFTaskList) {
   ebpfStore.setSelectedNetworkTask(item);
-  const res = await ebpfStore.getEBPFSchedules({
-    taskId: item.taskId,
+  getTopology();
+}
+async function getTopology() {
+  const serviceInstanceId =
+    (selectorStore.currentPod && selectorStore.currentPod.id) || "";
+  const resp = await ebpfStore.getProcessTopology({
+    serviceInstanceId,
+    duration: {
+      start: dateFormatStep(
+        getLocalTime(
+          appStore.utc,
+          new Date(ebpfStore.selectedNetworkTask.taskStartTime)
+        ),
+        appStore.duration.step,
+        true
+      ),
+      end: dateFormatStep(
+        getLocalTime(
+          appStore.utc,
+          new Date(
+            ebpfStore.selectedNetworkTask.taskStartTime +
+              ebpfStore.selectedNetworkTask.fixedTriggerDuration * 1000
+          )
+        ),
+        appStore.duration.step,
+        true
+      ),
+      step: appStore.duration.step,
+    },
   });
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
+  return resp;
 }
 async function createTask() {
   const serviceId =
@@ -132,8 +161,9 @@ async function fetchTasks() {
   });
 
   if (res.errors) {
-    ElMessage.error(res.errors);
+    return ElMessage.error(res.errors);
   }
+  getTopology();
 }
 </script>
 <style lang="scss" scoped>

@@ -13,17 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div ref="chart" class="topology"></div>
+  <div ref="chart" class="micro-topo-chart"></div>
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import * as d3 from "d3";
 import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
-import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { useAppStoreWithOut } from "@/store/modules/app";
 import d3tip from "d3-tip";
 import { simulationInit, simulationSkip } from "./utils/simulation";
 import { linkElement, anchorElement, arrowMarker } from "./utils/linkElement";
@@ -40,10 +38,8 @@ const props = defineProps({
   },
 });
 const { t } = useI18n();
-const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const ebpfStore = useEbpfStore();
-const appStore = useAppStoreWithOut();
 const height = ref<number>(100);
 const width = ref<number>(100);
 const simulation = ref<any>(null);
@@ -61,20 +57,25 @@ onMounted(() => {
 });
 
 async function init() {
-  await getTopology();
-
-  const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
-    height: 40,
-    width: 0,
-  };
-  height.value = dom.height - 40;
-  width.value = dom.width;
   svg.value = d3.select(chart.value).append("svg").attr("class", "process-svg");
+  window.addEventListener("resize", resize);
+  if (!ebpfStore.nodes.length) {
+    return;
+  }
   drawGraph();
   update();
 }
 
 function drawGraph() {
+  const dom = document
+    .querySelector(".micro-topo-chart")
+    ?.getBoundingClientRect() || {
+    height: 40,
+    width: 0,
+  };
+  height.value = dom.height - 40;
+  width.value = dom.width;
+  svg.value.attr("height", height.value).attr("width", width.value);
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
   graph.value = svg.value
     .append("g")
@@ -111,10 +112,6 @@ function update() {
     d3,
     node.value.enter(),
     {
-      // dragstart: dragstart,
-      // dragged: dragged,
-      // dragended: dragended,
-      handleNodeClick: handleNodeClick,
       tipHtml: (data: ProcessNode) => {
         return ` <div class="mb-5"><span class="grey">name: </span>${data.name}</div>`;
       },
@@ -206,31 +203,42 @@ function ticked() {
   );
 }
 
-function getTopology() {
-  const serviceInstanceId =
-    (selectorStore.currentPod && selectorStore.currentPod.id) || "";
-  ebpfStore.getProcessTopology({
-    serviceInstanceId,
-    duration: appStore.durationTime,
-  });
+function resize() {
+  const dom = chart.value?.getBoundingClientRect() || {
+    height: 40,
+    width: 0,
+  };
+  height.value = dom.height - 40;
+  width.value = dom.width;
+  svg.value.attr("height", height.value).attr("width", width.value);
 }
 
-function handleNodeClick(d: Node & { x: number; y: number }) {
-  ebpfStore.setNode(d);
-  ebpfStore.setLink(null);
+async function freshNodes() {
+  svg.value.selectAll(".svg-graph").remove();
+  if (!ebpfStore.nodes.length) {
+    return;
+  }
+  drawGraph();
+  update();
 }
+watch(
+  () => ebpfStore.nodes,
+  () => {
+    freshNodes();
+  }
+);
 </script>
 <style lang="scss" scoped>
-.topology {
-  width: calc(100% - 5px);
+.micro-topo-chart {
+  width: calc(100% - 10px);
   margin: 0 5px 5px 0;
   height: 100%;
   min-height: 150px;
 }
 
-.topo-svg {
+.process-svg {
   width: 100%;
-  height: calc(100% - 5px);
+  height: calc(100% - 10px);
   cursor: move;
 }
 </style>

@@ -106,7 +106,6 @@ watch(
 .time-ranges {
   width: calc(100% - 5px);
   margin: 0 5px 5px 0;
-  height: 100%;
-  min-height: 150px;
+  height: 150px;
 }
 </style>

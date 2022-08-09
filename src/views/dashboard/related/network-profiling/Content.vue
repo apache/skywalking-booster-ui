@@ -45,13 +45,12 @@ import ProcessTopology from "./components/ProcessTopology.vue";
 
 .item {
   width: 100%;
-  overflow: auto;
-  height: calc(100% - 100px);
-  padding-bottom: 10px;
+  height: calc(100% - 210px);
+  background-color: #333840;
 }
 
 .schedules {
-  min-height: 90px;
+  height: 200px;
   border-bottom: 1px solid #ccc;
   padding-right: 10px;
 }
