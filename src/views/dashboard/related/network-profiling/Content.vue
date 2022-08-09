@@ -20,7 +20,7 @@ limitations under the License. -->
         <Schedules />
       </div>
       <div class="item">
-        <Topology></Topology>
+        <process-topology />
       </div>
     </div>
   </div>
@@ -28,7 +28,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import Tasks from "./components/Tasks.vue";
 import Schedules from "./components/Schedules.vue";
-import Topology from "./components/Topology.vue";
+import ProcessTopology from "./components/ProcessTopology.vue";
 </script>
 <style lang="scss" scoped>
 .content {
