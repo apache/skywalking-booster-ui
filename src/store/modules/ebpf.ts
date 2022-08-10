@@ -27,6 +27,7 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { Call } from "@/types/topology";
+import { LayoutConfig } from "@/types/dashboard";
 interface EbpfStore {
   taskList: EBPFTaskList[];
   networkTasks: EBPFTaskList[];
@@ -44,6 +45,9 @@ interface EbpfStore {
   calls: Call[];
   node: Nullable<ProcessNode>;
   call: Nullable<Call>;
+  metricsLayout: LayoutConfig[];
+  selectedMetric: Nullable<LayoutConfig>;
+  activeMetricIndex: string;
 }
 
 export const ebpfStore = defineStore({
@@ -65,6 +69,9 @@ export const ebpfStore = defineStore({
     calls: [],
     node: null,
     call: null,
+    metricsLayout: [],
+    selectedMetric: null,
+    activeMetricIndex: "",
   }),
   actions: {
     setSelectedTask(task: EBPFTaskList) {
@@ -84,6 +91,15 @@ export const ebpfStore = defineStore({
     },
     setLink(link: Call) {
       this.call = link;
+    },
+    setMetricsLayout(layout: LayoutConfig[]) {
+      this.metricsLayout = layout;
+    },
+    setSelectedMetric(item: LayoutConfig) {
+      this.selectedMetric = item;
+    },
+    setActiveItem(index: string) {
+      this.activeMetricIndex = index;
     },
     setTopology(data: { nodes: ProcessNode[]; calls: Call[] }) {
       const obj = {} as any;

@@ -110,17 +110,8 @@ import { useRoute } from "vue-router";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import Topology from "./Topology.vue";
-import Widget from "./Widget.vue";
-import Trace from "./Trace.vue";
-import Profile from "./Profile.vue";
-import Log from "./Log.vue";
-import Text from "./Text.vue";
-import Ebpf from "./Ebpf.vue";
-import Event from "./Event.vue";
-import NetworkProfiling from "./NetworkProfiling.vue";
+import controls from "./tab";
 import { dragIgnoreFrom } from "../data";
-import DemandLog from "./DemandLog.vue";
 import copy from "@/utils/copy";
 
 const props = {
@@ -133,16 +124,7 @@ const props = {
 export default defineComponent({
   name: "Tab",
   components: {
-    Topology,
-    Widget,
-    Trace,
-    Profile,
-    Log,
-    Text,
-    Ebpf,
-    DemandLog,
-    Event,
-    NetworkProfiling,
+    ...controls,
   },
   props,
   setup(props) {
