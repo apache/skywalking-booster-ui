@@ -33,7 +33,6 @@ interface EbpfState {
   labels: Option[];
   couldProfiling: boolean;
   tip: string;
-  networkTip: string;
   selectedTask: Recordable<EBPFTaskList>;
   aggregateType: string;
 }
@@ -48,16 +47,12 @@ export const ebpfStore = defineStore({
     labels: [{ value: "", label: "" }],
     couldProfiling: false,
     tip: "",
-    networkTip: "",
     selectedTask: {},
     aggregateType: "COUNT",
   }),
   actions: {
     setSelectedTask(task: EBPFTaskList) {
       this.selectedTask = task || {};
-    },
-    setSelectedNetworkTask(task: EBPFTaskList) {
-      this.selectedNetworkTask = task || {};
     },
     setCurrentSchedule(s: EBPFProfilingSchedule) {
       this.currentSchedule = s;
