@@ -34,8 +34,9 @@ import {
 } from "../../components/D3Graph/linkElement";
 import nodeElement from "../../components/D3Graph/nodeElement";
 import { Call } from "@/types/topology";
-import zoom from "../../components/D3Graph/zoom";
+// import zoom from "../../components/D3Graph/zoom";
 import { ProcessNode } from "@/types/ebpf";
+import { useThrottleFn } from "@vueuse/core";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -58,14 +59,18 @@ const node = ref<any>(null);
 const link = ref<any>(null);
 const anchor = ref<any>(null);
 const arrow = ref<any>(null);
+const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 
 onMounted(() => {
   init();
+  oldVal.value = (chart.value && chart.value.getBoundingClientRect()) || {
+    width: 0,
+    height: 0,
+  };
 });
 
 async function init() {
   svg.value = d3.select(chart.value).append("svg").attr("class", "process-svg");
-  window.addEventListener("resize", resize);
   if (!ebpfStore.nodes.length) {
     return;
   }
@@ -74,9 +79,7 @@ async function init() {
 }
 
 function drawGraph() {
-  const dom = document
-    .querySelector(".micro-topo-chart")
-    ?.getBoundingClientRect() || {
+  const dom = chart.value?.getBoundingClientRect() || {
     height: 40,
     width: 0,
   };
@@ -87,7 +90,7 @@ function drawGraph() {
   graph.value = svg.value
     .append("g")
     .attr("class", "svg-graph")
-    .attr("transform", `translate(-100, -100)`);
+    .attr("transform", `translate(-250, -220)`);
   graph.value.call(tip.value);
   simulation.value = simulationInit(
     d3,
@@ -99,7 +102,7 @@ function drawGraph() {
   link.value = graph.value.append("g").selectAll(".topo-line");
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
   arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
-  svg.value.call(zoom(d3, graph.value));
+  // svg.value.call(zoom(d3, graph.value));
   svg.value.on("click", (event: any) => {
     event.stopPropagation();
     event.preventDefault();
@@ -107,6 +110,7 @@ function drawGraph() {
     ebpfStore.setLink(null);
     dashboardStore.selectWidget(props.config);
   });
+  useThrottleFn(resize, 500)();
 }
 function update() {
   // node element
@@ -211,13 +215,21 @@ function ticked() {
 }
 
 function resize() {
-  const dom = chart.value?.getBoundingClientRect() || {
-    height: 40,
-    width: 0,
-  };
-  height.value = dom.height - 40;
-  width.value = dom.width;
-  svg.value.attr("height", height.value).attr("width", width.value);
+  const observer = new ResizeObserver((entries) => {
+    const entry = entries[0];
+    const cr = entry.contentRect;
+    if (
+      Math.abs(cr.width - oldVal.value.width) < 5 &&
+      Math.abs(cr.height - oldVal.value.height) < 5
+    ) {
+      return;
+    }
+    freshNodes();
+    oldVal.value = { width: cr.width, height: cr.height };
+  });
+  if (chart.value) {
+    observer.observe(chart.value);
+  }
 }
 
 async function freshNodes() {

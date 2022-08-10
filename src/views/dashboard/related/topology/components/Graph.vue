@@ -94,7 +94,7 @@ import {
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
-import zoom from "../utils/zoom";
+import zoom from "../../components/D3Graph/zoom";
 import {
   simulationInit,
   simulationSkip,
