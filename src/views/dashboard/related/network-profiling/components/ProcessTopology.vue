@@ -20,7 +20,7 @@ import type { PropType } from "vue";
 import { ref, onMounted, watch } from "vue";
 import * as d3 from "d3";
 import { useI18n } from "vue-i18n";
-import { useEbpfStore } from "@/store/modules/ebpf";
+import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import d3tip from "d3-tip";
 import {
@@ -47,7 +47,7 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const ebpfStore = useEbpfStore();
+const networkProfilingStore = useNetworkProfilingStore();
 const height = ref<number>(100);
 const width = ref<number>(100);
 const simulation = ref<any>(null);
@@ -71,7 +71,7 @@ onMounted(() => {
 
 async function init() {
   svg.value = d3.select(chart.value).append("svg").attr("class", "process-svg");
-  if (!ebpfStore.nodes.length) {
+  if (!networkProfilingStore.nodes.length) {
     return;
   }
   drawGraph();
@@ -94,8 +94,8 @@ function drawGraph() {
   graph.value.call(tip.value);
   simulation.value = simulationInit(
     d3,
-    ebpfStore.nodes,
-    ebpfStore.calls,
+    networkProfilingStore.nodes,
+    networkProfilingStore.calls,
     ticked
   );
   node.value = graph.value.append("g").selectAll(".topo-node");
@@ -106,8 +106,8 @@ function drawGraph() {
   svg.value.on("click", (event: any) => {
     event.stopPropagation();
     event.preventDefault();
-    ebpfStore.setNode(null);
-    ebpfStore.setLink(null);
+    networkProfilingStore.setNode(null);
+    networkProfilingStore.setLink(null);
     dashboardStore.selectWidget(props.config);
   });
   useThrottleFn(resize, 500)();
@@ -117,7 +117,10 @@ function update() {
   if (!node.value || !link.value) {
     return;
   }
-  node.value = node.value.data(ebpfStore.nodes, (d: ProcessNode) => d.id);
+  node.value = node.value.data(
+    networkProfilingStore.nodes,
+    (d: ProcessNode) => d.id
+  );
   node.value.exit().remove();
   node.value = nodeElement(
     d3,
@@ -130,11 +133,14 @@ function update() {
     tip.value
   ).merge(node.value);
   // line element
-  link.value = link.value.data(ebpfStore.calls, (d: Call) => d.id);
+  link.value = link.value.data(networkProfilingStore.calls, (d: Call) => d.id);
   link.value.exit().remove();
   link.value = linkElement(link.value.enter()).merge(link.value);
   // anchorElement
-  anchor.value = anchor.value.data(ebpfStore.calls, (d: Call) => d.id);
+  anchor.value = anchor.value.data(
+    networkProfilingStore.calls,
+    (d: Call) => d.id
+  );
   anchor.value.exit().remove();
   anchor.value = anchorElement(
     anchor.value.enter(),
@@ -150,25 +156,28 @@ function update() {
     tip.value
   ).merge(anchor.value);
   // arrow marker
-  arrow.value = arrow.value.data(ebpfStore.calls, (d: Call) => d.id);
+  arrow.value = arrow.value.data(
+    networkProfilingStore.calls,
+    (d: Call) => d.id
+  );
   arrow.value.exit().remove();
   arrow.value = arrowMarker(arrow.value.enter()).merge(arrow.value);
   // force element
-  simulation.value.nodes(ebpfStore.nodes);
+  simulation.value.nodes(networkProfilingStore.nodes);
   simulation.value
     .force("link")
-    .links(ebpfStore.calls)
+    .links(networkProfilingStore.calls)
     .id((d: Call) => d.id);
   simulationSkip(d3, simulation.value, ticked);
   const loopMap: any = {};
-  for (let i = 0; i < ebpfStore.calls.length; i++) {
-    const link: any = ebpfStore.calls[i];
+  for (let i = 0; i < networkProfilingStore.calls.length; i++) {
+    const link: any = networkProfilingStore.calls[i];
     link.loopFactor = 1;
-    for (let j = 0; j < ebpfStore.calls.length; j++) {
+    for (let j = 0; j < networkProfilingStore.calls.length; j++) {
       if (i === j || loopMap[i]) {
         continue;
       }
-      const otherLink = ebpfStore.calls[j];
+      const otherLink = networkProfilingStore.calls[j];
       if (
         link.source.id === otherLink.target.id &&
         link.target.id === otherLink.source.id
@@ -189,8 +198,8 @@ function handleLinkClick(event: any, d: Call) {
     return;
   }
   event.stopPropagation();
-  ebpfStore.setNode(null);
-  ebpfStore.setLink(d);
+  networkProfilingStore.setNode(null);
+  networkProfilingStore.setLink(d);
 }
 
 function ticked() {
@@ -234,14 +243,14 @@ function resize() {
 
 async function freshNodes() {
   svg.value.selectAll(".svg-graph").remove();
-  if (!ebpfStore.nodes.length) {
+  if (!networkProfilingStore.nodes.length) {
     return;
   }
   drawGraph();
   update();
 }
 watch(
-  () => ebpfStore.nodes,
+  () => networkProfilingStore.nodes,
   () => {
     freshNodes();
   }

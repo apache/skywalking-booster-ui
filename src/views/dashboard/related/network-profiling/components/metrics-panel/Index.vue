@@ -30,9 +30,12 @@ limitations under the License. -->
       :i="item.i"
       :key="item.i"
       @click="clickGrid(item)"
-      :class="{ active: ebpfStore.activeMetricIndex === item.i }"
+      :class="{ active: networkProfilingStore.activeMetricIndex === item.i }"
     >
-      <metric-widget :data="item" :activeIndex="ebpfStore.activeMetricIndex" />
+      <metric-widget
+        :data="item"
+        :activeIndex="networkProfilingStore.activeMetricIndex"
+      />
     </grid-item>
   </grid-layout>
   <div class="no-data-tips" v-else>{{ t("noWidget") }}</div>
@@ -43,7 +46,7 @@ import { onBeforeUnmount, defineProps, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { LayoutConfig } from "@/types/dashboard";
 import MetricWidget from "./MetricWidget.vue";
-import { useEbpfStore } from "@/store/modules/ebpf";
+import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 
 const props = defineProps({
   widgets: {
@@ -52,14 +55,14 @@ const props = defineProps({
   },
 });
 const { t } = useI18n();
-const ebpfStore = useEbpfStore();
+const networkProfilingStore = useNetworkProfilingStore();
 const layout = ref<LayoutConfig[]>(props.widgets);
 
 function clickGrid(item: LayoutConfig) {
-  ebpfStore.setActiveItem(item.i);
-  ebpfStore.setSelectedMetric(item);
+  networkProfilingStore.setActiveItem(item.i);
+  networkProfilingStore.setSelectedMetric(item);
 }
 onBeforeUnmount(() => {
-  ebpfStore.setMetricsLayout([]);
+  networkProfilingStore.setMetricsLayout([]);
 });
 </script>

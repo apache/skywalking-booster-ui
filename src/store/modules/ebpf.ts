@@ -21,16 +21,12 @@ import {
   EBPFProfilingSchedule,
   EBPFTaskList,
   AnalyzationTrees,
-  ProcessNode,
 } from "@/types/ebpf";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
-import { Call } from "@/types/topology";
-import { LayoutConfig } from "@/types/dashboard";
-interface EbpfStore {
+interface EbpfState {
   taskList: EBPFTaskList[];
-  networkTasks: EBPFTaskList[];
   eBPFSchedules: EBPFProfilingSchedule[];
   currentSchedule: EBPFProfilingSchedule | Record<string, never>;
   analyzeTrees: AnalyzationTrees[];
@@ -39,22 +35,13 @@ interface EbpfStore {
   tip: string;
   networkTip: string;
   selectedTask: Recordable<EBPFTaskList>;
-  selectedNetworkTask: Recordable<EBPFTaskList>;
   aggregateType: string;
-  nodes: ProcessNode[];
-  calls: Call[];
-  node: Nullable<ProcessNode>;
-  call: Nullable<Call>;
-  metricsLayout: LayoutConfig[];
-  selectedMetric: Nullable<LayoutConfig>;
-  activeMetricIndex: string;
 }
 
 export const ebpfStore = defineStore({
   id: "eBPF",
-  state: (): EbpfStore => ({
+  state: (): EbpfState => ({
     taskList: [],
-    networkTasks: [],
     eBPFSchedules: [],
     currentSchedule: {},
     analyzeTrees: [],
@@ -63,15 +50,7 @@ export const ebpfStore = defineStore({
     tip: "",
     networkTip: "",
     selectedTask: {},
-    selectedNetworkTask: {},
     aggregateType: "COUNT",
-    nodes: [],
-    calls: [],
-    node: null,
-    call: null,
-    metricsLayout: [],
-    selectedMetric: null,
-    activeMetricIndex: "",
   }),
   actions: {
     setSelectedTask(task: EBPFTaskList) {
@@ -85,44 +64,6 @@ export const ebpfStore = defineStore({
     },
     setAnalyzeTrees(tree: AnalyzationTrees[]) {
       this.analyzeTrees = tree;
-    },
-    setNode(node: Node) {
-      this.node = node;
-    },
-    setLink(link: Call) {
-      this.call = link;
-    },
-    setMetricsLayout(layout: LayoutConfig[]) {
-      this.metricsLayout = layout;
-    },
-    setSelectedMetric(item: LayoutConfig) {
-      this.selectedMetric = item;
-    },
-    setActiveItem(index: string) {
-      this.activeMetricIndex = index;
-    },
-    setTopology(data: { nodes: ProcessNode[]; calls: Call[] }) {
-      const obj = {} as any;
-      const calls = (data.calls || []).reduce((prev: Call[], next: Call) => {
-        if (!obj[next.id]) {
-          obj[next.id] = true;
-          next.value = next.value || 1;
-          for (const node of data.nodes) {
-            if (next.source === node.id) {
-              next.sourceObj = node;
-            }
-            if (next.target === node.id) {
-              next.targetObj = node;
-            }
-          }
-          next.value = next.value || 1;
-          prev.push(next);
-        }
-        return prev;
-      }, []);
-
-      this.calls = calls;
-      this.nodes = data.nodes;
     },
     async getCreateTaskData(serviceId: string) {
       const res: AxiosResponse = await graphql
@@ -153,23 +94,6 @@ export const ebpfStore = defineStore({
       });
       return res.data;
     },
-    async createNetworkTask(param: {
-      serviceId: string;
-      serviceInstanceId: string;
-    }) {
-      const res: AxiosResponse = await graphql
-        .query("newNetworkProfiling")
-        .params({ request: { instanceId: param.serviceInstanceId } });
-
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.getTaskList({
-        ...param,
-        targets: ["NETWORK"],
-      });
-      return res.data;
-    },
     async getTaskList(params: {
       serviceId: string;
       serviceInstanceId: string;
@@ -182,27 +106,17 @@ export const ebpfStore = defineStore({
         .query("getEBPFTasks")
         .params(params);
 
-      if (params.serviceInstanceId) {
-        this.networkTip = "";
-        if (res.data.errors) {
-          return res.data;
-        }
-        this.networkTasks = res.data.data.queryEBPFTasks || [];
-        this.selectedNetworkTask = this.networkTasks[0] || {};
-        this.setSelectedNetworkTask(this.selectedNetworkTask);
-      } else {
-        this.tip = "";
-        if (res.data.errors) {
-          return res.data;
-        }
-        this.taskList = res.data.data.queryEBPFTasks || [];
-        this.selectedTask = this.taskList[0] || {};
-        this.setSelectedTask(this.selectedTask);
-        if (!this.taskList.length) {
-          return res.data;
-        }
-        this.getEBPFSchedules({ taskId: this.taskList[0].taskId });
+      this.tip = "";
+      if (res.data.errors) {
+        return res.data;
       }
+      this.taskList = res.data.data.queryEBPFTasks || [];
+      this.selectedTask = this.taskList[0] || {};
+      this.setSelectedTask(this.selectedTask);
+      if (!this.taskList.length) {
+        return res.data;
+      }
+      this.getEBPFSchedules({ taskId: this.taskList[0].taskId });
       return res.data;
     },
     async getEBPFSchedules(params: { taskId: string }) {
@@ -258,23 +172,6 @@ export const ebpfStore = defineStore({
         return res.data;
       }
       this.analyzeTrees = analysisEBPFResult.trees;
-      return res.data;
-    },
-    async getProcessTopology(params: {
-      duration: any;
-      serviceInstanceId: string;
-    }) {
-      const res: AxiosResponse = await graphql
-        .query("getProcessTopology")
-        .params(params);
-      if (res.data.errors) {
-        this.nodes = [];
-        this.calls = [];
-        return res.data;
-      }
-      const { topology } = res.data.data;
-
-      this.setTopology(topology);
       return res.data;
     },
   },

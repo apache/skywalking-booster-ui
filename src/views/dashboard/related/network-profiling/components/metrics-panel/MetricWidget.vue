@@ -72,7 +72,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { toRefs, reactive, defineComponent, ref, watch, computed } from "vue";
+import { toRefs, reactive, defineComponent, ref, computed } from "vue";
 import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";

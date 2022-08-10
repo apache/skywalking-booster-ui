@@ -21,14 +21,14 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useEbpfStore } from "@/store/modules/ebpf";
+import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
 import { useThrottleFn } from "@vueuse/core";
 
 /*global Nullable */
 const { t } = useI18n();
-const ebpfStore = useEbpfStore();
+const networkProfilingStore = useNetworkProfilingStore();
 const timeRange = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
@@ -49,23 +49,25 @@ function visTimeline() {
   if (visGraph.value) {
     visGraph.value.destroy();
   }
-  if (!ebpfStore.selectedNetworkTask.taskId) {
+  if (!networkProfilingStore.selectedNetworkTask.taskId) {
     return;
   }
   const h = timeRange.value.getBoundingClientRect().height;
   const task = [
     {
       id: 1,
-      content: ebpfStore.selectedNetworkTask.name,
-      start: new Date(Number(ebpfStore.selectedNetworkTask.taskStartTime)),
+      content: networkProfilingStore.selectedNetworkTask.name,
+      start: new Date(
+        Number(networkProfilingStore.selectedNetworkTask.taskStartTime)
+      ),
       end: new Date(
         Number(
-          ebpfStore.selectedNetworkTask.taskStartTime +
-            ebpfStore.selectedNetworkTask.fixedTriggerDuration
+          networkProfilingStore.selectedNetworkTask.taskStartTime +
+            networkProfilingStore.selectedNetworkTask.fixedTriggerDuration
         )
       ),
-      data: ebpfStore.selectedNetworkTask,
-      className: ebpfStore.selectedNetworkTask.type,
+      data: networkProfilingStore.selectedNetworkTask,
+      className: networkProfilingStore.selectedNetworkTask.type,
     },
   ];
   const items = new DataSet(task);
@@ -96,7 +98,7 @@ function resize() {
   }
 }
 watch(
-  () => ebpfStore.selectedNetworkTask,
+  () => networkProfilingStore.selectedNetworkTask,
   () => {
     visTimeline();
   }

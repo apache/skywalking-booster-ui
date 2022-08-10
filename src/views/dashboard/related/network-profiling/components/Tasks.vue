@@ -29,20 +29,24 @@ limitations under the License. -->
         </el-popconfirm>
       </div>
       <div class="profile-t-wrapper">
-        <div class="no-data" v-show="!ebpfStore.networkTasks.length">
+        <div
+          class="no-data"
+          v-show="!networkProfilingStore.networkTasks.length"
+        >
           {{ t("noData") }}
         </div>
         <table class="profile-t">
           <tr
             class="profile-tr cp"
-            v-for="(i, index) in ebpfStore.networkTasks"
+            v-for="(i, index) in networkProfilingStore.networkTasks"
             @click="changeTask(i)"
             :key="index"
           >
             <td
               class="profile-td"
               :class="{
-                selected: ebpfStore.selectedNetworkTask.taskId === i.taskId,
+                selected:
+                  networkProfilingStore.selectedNetworkTask.taskId === i.taskId,
               }"
             >
               <div class="ell">
@@ -73,14 +77,14 @@ limitations under the License. -->
     fullscreen
     @closed="viewDetail = false"
   >
-    <TaskDetails :details="ebpfStore.selectedNetworkTask" />
+    <TaskDetails :details="networkProfilingStore.selectedNetworkTask" />
   </el-dialog>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
-import { useEbpfStore } from "@/store/modules/ebpf";
+import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
@@ -91,7 +95,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
-const ebpfStore = useEbpfStore();
+const networkProfilingStore = useNetworkProfilingStore();
 const appStore = useAppStoreWithOut();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
@@ -100,19 +104,19 @@ const viewDetail = ref<boolean>(false);
 fetchTasks();
 
 async function changeTask(item: EBPFTaskList) {
-  ebpfStore.setSelectedNetworkTask(item);
+  networkProfilingStore.setSelectedNetworkTask(item);
   getTopology();
 }
 async function getTopology() {
   const serviceInstanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
-  const resp = await ebpfStore.getProcessTopology({
+  const resp = await networkProfilingStore.getProcessTopology({
     serviceInstanceId,
     duration: {
       start: dateFormatStep(
         getLocalTime(
           appStore.utc,
-          new Date(ebpfStore.selectedNetworkTask.taskStartTime)
+          new Date(networkProfilingStore.selectedNetworkTask.taskStartTime)
         ),
         appStore.duration.step,
         true
@@ -121,8 +125,9 @@ async function getTopology() {
         getLocalTime(
           appStore.utc,
           new Date(
-            ebpfStore.selectedNetworkTask.taskStartTime +
-              ebpfStore.selectedNetworkTask.fixedTriggerDuration * 1000
+            networkProfilingStore.selectedNetworkTask.taskStartTime +
+              networkProfilingStore.selectedNetworkTask.fixedTriggerDuration *
+                1000
           )
         ),
         appStore.duration.step,
@@ -144,7 +149,7 @@ async function createTask() {
   if (!serviceInstanceId) {
     return;
   }
-  ebpfStore.createNetworkTask({
+  networkProfilingStore.createNetworkTask({
     serviceId,
     serviceInstanceId,
   });
@@ -154,7 +159,7 @@ async function fetchTasks() {
     (selectorStore.currentService && selectorStore.currentService.id) || "";
   const serviceInstanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
-  const res = await ebpfStore.getTaskList({
+  const res = await networkProfilingStore.getTaskList({
     serviceId,
     serviceInstanceId,
     targets: ["NETWORK"],
