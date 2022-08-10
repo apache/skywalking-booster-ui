@@ -77,6 +77,7 @@ import type { PropType } from "vue";
 import { LayoutConfig } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import graphs from "../../../../graphs/topology";
 import { useI18n } from "vue-i18n";
 import {
@@ -95,7 +96,7 @@ const props = {
 };
 
 export default defineComponent({
-  name: "Widget",
+  name: "Metric",
   components: { ...graphs },
   props,
   setup(props) {
@@ -107,6 +108,7 @@ export default defineComponent({
     const { data } = toRefs(props);
     const appStore = useAppStoreWithOut();
     const dashboardStore = useDashboardStore();
+    const networkProfilingStore = useNetworkProfilingStore();
     const graph = computed(() => props.data.graph || {});
     const widget = computed(() => props.data.widget || {});
 
@@ -137,15 +139,15 @@ export default defineComponent({
     }
 
     function removeWidget() {
-      dashboardStore.removeControls(props.data);
+      networkProfilingStore.removeControls(props.data);
     }
     function editConfig() {
-      dashboardStore.setConfigPanel(true);
-      dashboardStore.selectWidget(props.data);
+      networkProfilingStore.setConfigPanel(true);
+      networkProfilingStore.setSelectedMetric(props.data);
       if (props.activeIndex) {
-        dashboardStore.activeGridItem(props.activeIndex);
+        networkProfilingStore.setActiveItem(props.activeIndex);
       } else {
-        dashboardStore.activeGridItem(props.data.i);
+        networkProfilingStore.setActiveItem(props.data.i);
       }
     }
 

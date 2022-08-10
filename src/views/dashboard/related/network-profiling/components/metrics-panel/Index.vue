@@ -56,7 +56,7 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const networkProfilingStore = useNetworkProfilingStore();
-const layout = ref<LayoutConfig[]>(props.widgets);
+const layout = ref<LayoutConfig[]>(props.widgets || []);
 
 function clickGrid(item: LayoutConfig) {
   networkProfilingStore.setActiveItem(item.i);
