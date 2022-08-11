@@ -198,11 +198,6 @@ export const InstanceTools = [
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
   { name: "event", content: "Add Event", id: "addEvent" },
-  {
-    name: "timeline",
-    content: "Add Network Profiling",
-    id: "addNetworkProfiling",
-  },
 ];
 export const EndpointTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },

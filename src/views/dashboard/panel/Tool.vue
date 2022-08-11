@@ -548,9 +548,6 @@ function setTabControls(id: string) {
     case "addEvent":
       dashboardStore.addTabControls("Event");
       break;
-    case "addNetworkProfiling":
-      dashboardStore.addTabControls("NetworkProfiling");
-      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -588,9 +585,6 @@ function setControls(id: string) {
       break;
     case "addEvent":
       dashboardStore.addControl("Event");
-      break;
-    case "addNetworkProfiling":
-      dashboardStore.addControl("NetworkProfiling");
       break;
     default:
       dashboardStore.addControl("Widget");
