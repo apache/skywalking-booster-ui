@@ -213,6 +213,11 @@ export const EndpointTools = [
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "event", content: "Add Event", id: "addEvent" },
 ];
+export const ProcessTools = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
+];
 export const ServiceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },

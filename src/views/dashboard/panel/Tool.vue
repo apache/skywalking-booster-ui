@@ -50,11 +50,11 @@ limitations under the License. -->
       <div class="selectors-item" v-if="key === 5">
         <span class="label"> $Process </span>
         <Selector
-          v-model="states.currentDestPod"
-          :options="selectorStore.destPods"
+          v-model="states.currentProcess"
+          :options="selectorStore.processes"
           size="small"
           placeholder="Select a data"
-          @change="changeDestPods"
+          @change="changeProcess"
           class="selectors"
         />
       </div>
@@ -91,11 +91,11 @@ limitations under the License. -->
       <div class="selectors-item" v-if="key === 5">
         <span class="label"> $DestinationProcess </span>
         <Selector
-          v-model="states.currentDestPod"
-          :options="selectorStore.destPods"
+          v-model="states.currentDestProcess"
+          :options="selectorStore.destProcesses"
           size="small"
           placeholder="Select a data"
-          @change="changeDestPods"
+          @change="changeDestProcess"
           class="selectors"
         />
       </div>
@@ -155,6 +155,7 @@ import {
   EndpointRelationTools,
   InstanceRelationTools,
   ServiceRelationTools,
+  ProcessTools,
 } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
@@ -175,16 +176,20 @@ const states = reactive<{
   key: number;
   currentService: string;
   currentPod: string;
+  currentProcess: string;
   currentDestService: string;
   currentDestPod: string;
+  currentDestProcess: string;
 }>({
   destService: "",
   destPod: "",
   key: 0,
   currentService: "",
   currentPod: "",
+  currentProcess: "",
   currentDestService: "",
   currentDestPod: "",
+  currentDestProcess: "",
 });
 const key = computed(() => {
   const type = EntityType.find(
@@ -346,14 +351,18 @@ async function getServices() {
     );
   }
   selectorStore.setCurrentService(s || null);
-  let d;
+  let d,
+    val = 1;
+  if (key.value === 5) {
+    val = 0;
+  }
   if (states.currentService) {
     d = (selectorStore.services || []).find(
       (d: { label: string }) => d.label === states.currentDestService
     );
   } else {
     d = (selectorStore.services || []).find(
-      (d: unknown, index: number) => index === 1
+      (d: unknown, index: number) => index === val
     );
   }
   selectorStore.setCurrentDestService(d || null);
@@ -377,7 +386,9 @@ async function getServices() {
   }
   states.currentDestService = selectorStore.currentDestService.value;
   if (
-    [EntityType[5].value, EntityType[6].value].includes(dashboardStore.entity)
+    [EntityType[5].value, EntityType[6].value, EntityType[7].value].includes(
+      dashboardStore.entity
+    )
   ) {
     fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
   }
@@ -409,19 +420,19 @@ function changeDestService(service: any) {
 }
 
 function changePods(pod: any) {
-  if (pod[0]) {
-    selectorStore.setCurrentPod(pod[0]);
-  } else {
-    selectorStore.setCurrentPod("");
-  }
+  selectorStore.setCurrentPod(pod[0] || null);
 }
 
 function changeDestPods(pod: any) {
-  if (pod[0]) {
-    selectorStore.setCurrentDestPod(pod[0]);
-  } else {
-    selectorStore.setCurrentDestPod(null);
-  }
+  selectorStore.setCurrentDestPod(pod[0] || null);
+}
+
+function changeDestProcess(pod: any) {
+  selectorStore.setCurrentDestProcess(pod[0] || null);
+}
+
+function changeProcess(pod: any) {
+  selectorStore.setCurrentProcess(pod[0] || null);
 }
 
 function changeMode() {
@@ -614,6 +625,65 @@ async function fetchPods(
         states.currentDestPod = selectorStore.currentDestPod.label;
       }
       break;
+    case EntityType[7].value:
+      resp = await selectorStore.getServiceInstances({ serviceId });
+      if (setPod) {
+        let p, m;
+        if (states.currentPod) {
+          p = selectorStore.pods.find(
+            (d: { label: string }) => d.label === states.currentPod
+          );
+        } else {
+          p = selectorStore.pods.find(
+            (d: { label: string }, index: number) => index === 0
+          );
+        }
+        selectorStore.setCurrentPod(p || null);
+        states.currentPod = selectorStore.currentPod.label;
+        selectorStore.setDestPods(selectorStore.pods || []);
+        if (states.currentDestPod) {
+          m = selectorStore.destPods.find(
+            (d: { label: string }) => d.label === states.currentDestPod
+          );
+        } else {
+          m = selectorStore.destPods.find(
+            (d: { label: string }, index: number) => index === 1
+          );
+        }
+        selectorStore.setCurrentDestPod(m || null);
+        states.currentDestPod = selectorStore.currentDestPod.label;
+      }
+      resp = await selectorStore.getProcesses({
+        instanceId: selectorStore.currentPod.id,
+        isRelation: true,
+      });
+      if (setPod) {
+        let p, m;
+        if (states.currentProcess) {
+          p = selectorStore.processes.find(
+            (d: { label: string }) => d.label === states.currentProcess
+          );
+        } else {
+          p = selectorStore.processes.find(
+            (d: { label: string }, index: number) => index === 0
+          );
+        }
+        selectorStore.setCurrentProcess(p || null);
+        states.currentProcess = selectorStore.currentProcess.label;
+        selectorStore.setDestProcesses(selectorStore.processes || []);
+        if (states.currentDestProcess) {
+          m = selectorStore.destProcesses.find(
+            (d: { label: string }) => d.label === states.currentDestProcess
+          );
+        } else {
+          m = selectorStore.destProcesses.find(
+            (d: { label: string }, index: number) => index === 1
+          );
+        }
+        selectorStore.setCurrentDestProcess(m || null);
+        states.currentDestProcess = selectorStore.currentDestProcess.label;
+      }
+      break;
     default:
       resp = {};
   }
@@ -643,6 +713,9 @@ function getTools() {
       break;
     case EntityType[6].value:
       toolIcons.value = EndpointRelationTools;
+      break;
+    case EntityType[7].value:
+      toolIcons.value = ProcessTools;
       break;
     default:
       toolIcons.value = AllTools;
