@@ -26,7 +26,7 @@ limitations under the License. -->
           class="selectors"
         />
       </div>
-      <div class="selectors-item" v-if="key === 3 || key === 4">
+      <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5">
         <span class="label">
           {{
             ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
@@ -47,7 +47,18 @@ limitations under the License. -->
           "
         />
       </div>
-      <div class="selectors-item" v-if="key === 2 || key === 4">
+      <div class="selectors-item" v-if="key === 5">
+        <span class="label"> $Process </span>
+        <Selector
+          v-model="states.currentDestPod"
+          :options="selectorStore.destPods"
+          size="small"
+          placeholder="Select a data"
+          @change="changeDestPods"
+          class="selectors"
+        />
+      </div>
+      <div class="selectors-item" v-if="key === 2 || key === 4 || key === 5">
         <span class="label">$DestinationService</span>
         <Selector
           v-model="states.currentDestService"
@@ -58,7 +69,7 @@ limitations under the License. -->
           class="selectors"
         />
       </div>
-      <div class="selectors-item" v-if="key === 4">
+      <div class="selectors-item" v-if="key === 4 || key === 5">
         <span class="label">
           {{
             dashboardStore.entity === "EndpointRelation"
@@ -75,6 +86,17 @@ limitations under the License. -->
           class="selectorPod"
           @query="searchDestPods"
           :isRemote="dashboardStore.entity === 'EndpointRelation'"
+        />
+      </div>
+      <div class="selectors-item" v-if="key === 5">
+        <span class="label"> $DestinationProcess </span>
+        <Selector
+          v-model="states.currentDestPod"
+          :options="selectorStore.destPods"
+          size="small"
+          placeholder="Select a data"
+          @change="changeDestPods"
+          class="selectors"
         />
       </div>
     </div>

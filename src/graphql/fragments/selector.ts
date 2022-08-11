@@ -58,6 +58,23 @@ export const Endpoints = {
     }
 `,
 };
+export const Processes = {
+  variable: "$instanceId: ID!, $duration: Duration!",
+  query: `
+  processes: listProcesses(instanceId: $instanceId, duration: $duration) {
+    id
+    value: name
+    label: name
+    serviceId
+    serviceName
+    instanceId
+    instanceName
+    agentId
+    detectType
+    attributes
+    labels
+`,
+};
 
 export const getService = {
   variable: "$serviceId: String!",
@@ -99,6 +116,25 @@ export const getEndpoint = {
     label: name
     serviceId
     serviceName
+  }
+  `,
+};
+
+export const getProcess = {
+  variable: "$processId: ID!",
+  query: `
+  process: getProcess(processId: $processId) {
+    id
+    value: name
+    label: name
+    serviceId
+    serviceName
+    instanceId
+    instanceName
+    agentId
+    detectType
+    attributes
+    labels
   }
   `,
 };
