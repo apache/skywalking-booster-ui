@@ -80,10 +80,10 @@ async function init() {
 
 function drawGraph() {
   const dom = chart.value?.getBoundingClientRect() || {
-    height: 40,
+    height: 20,
     width: 0,
   };
-  height.value = dom.height - 40;
+  height.value = dom.height - 20;
   width.value = dom.width;
   svg.value.attr("height", height.value).attr("width", width.value);
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);

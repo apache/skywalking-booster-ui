@@ -19,7 +19,7 @@ limitations under the License. -->
       <div class="schedules">
         <Schedules />
       </div>
-      <div class="item">
+      <div class="item" v-show="networkProfilingStore.nodes.length">
         <process-topology />
       </div>
     </div>
@@ -29,6 +29,9 @@ limitations under the License. -->
 import Tasks from "./components/Tasks.vue";
 import Schedules from "./components/Schedules.vue";
 import ProcessTopology from "./components/ProcessTopology.vue";
+import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
+
+const networkProfilingStore = useNetworkProfilingStore();
 </script>
 <style lang="scss" scoped>
 .content {
