@@ -225,6 +225,7 @@ async function setSelector() {
       EntityType[3].value,
       EntityType[5].value,
       EntityType[6].value,
+      EntityType[7].value,
     ].includes(String(params.entity))
   ) {
     setSourceSelector();
@@ -278,6 +279,7 @@ async function setSourceSelector() {
   if (!(selectorStore.pods.length && selectorStore.pods[0])) {
     selectorStore.setCurrentPod(null);
     states.currentPod = "";
+    states.currentProcess = "";
     return;
   }
   const pod = params.podId || selectorStore.pods[0].id;
@@ -289,9 +291,25 @@ async function setSourceSelector() {
   } else {
     currentPod = selectorStore.pods.find((d: { id: string }) => d.id === pod);
   }
-  if (currentPod) {
-    selectorStore.setCurrentPod(currentPod);
-    states.currentPod = currentPod.label;
+  if (!currentPod) {
+    return;
+  }
+  selectorStore.setCurrentPod(currentPod);
+  states.currentPod = currentPod.label;
+  const process = params.processId || selectorStore.processes[0].id;
+  let currentProcess;
+  if (states.currentProcess) {
+    currentProcess = selectorStore.processes.find(
+      (d: { label: string }) => d.label === states.currentProcess
+    );
+  } else {
+    currentProcess = selectorStore.processes.find(
+      (d: { id: string }) => d.id === process
+    );
+  }
+  if (currentProcess) {
+    selectorStore.setCurrentProcess(currentProcess);
+    states.currentProcess = currentProcess.label;
   }
 }
 
@@ -319,9 +337,25 @@ async function setDestSelector() {
       (d: { id: string }) => d.id === destPod
     );
   }
-  if (currentDestPod) {
-    selectorStore.setCurrentDestPod(currentDestPod);
-    states.currentDestPod = currentDestPod.label;
+  if (!currentDestPod) {
+    return;
+  }
+  selectorStore.setCurrentDestPod(currentDestPod);
+  states.currentDestPod = currentDestPod.label;
+  const destProcess = params.destProcessId || selectorStore.destProcesses[0].id;
+  let currentDestProcess;
+  if (states.currentDestProcess) {
+    currentDestProcess = selectorStore.destProcesses.find(
+      (d: { label: string }) => d.label === states.currentProcess
+    );
+  } else {
+    currentDestProcess = selectorStore.destProcesses.find(
+      (d: { id: string }) => d.id === destProcess
+    );
+  }
+  if (currentDestProcess) {
+    selectorStore.setCurrentProcess(currentDestProcess);
+    states.currentProcess = currentDestProcess.label;
   }
 }
 
@@ -365,6 +399,7 @@ async function getServices() {
       (d: unknown, index: number) => index === val
     );
   }
+
   selectorStore.setCurrentDestService(d || null);
   if (!selectorStore.currentService) {
     return;
@@ -377,9 +412,10 @@ async function getServices() {
       EntityType[3].value,
       EntityType[5].value,
       EntityType[6].value,
+      EntityType[7].value,
     ].includes(dashboardStore.entity)
   ) {
-    fetchPods(e, selectorStore.currentService.id, true);
+    await fetchPods(e, selectorStore.currentService.id, true);
   }
   if (!selectorStore.currentDestService) {
     return;
@@ -390,48 +426,67 @@ async function getServices() {
       dashboardStore.entity
     )
   ) {
-    fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
+    await fetchPods(
+      dashboardStore.entity,
+      selectorStore.currentDestService.id,
+      true
+    );
   }
 }
 
-async function changeService(service: any) {
+async function changeService(service: Option[]) {
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
-    const e = dashboardStore.entity.split("Relation")[0];
     selectorStore.setCurrentPod(null);
     states.currentPod = "";
-    fetchPods(e, selectorStore.currentService.id, true);
+    states.currentProcess = "";
+    if (dashboardStore.entity === EntityType[7].value) {
+      fetchPods("Process", selectorStore.currentService.id, true);
+    } else {
+      fetchPods(dashboardStore.entity, selectorStore.currentService.id, true);
+    }
   } else {
     selectorStore.setCurrentService(null);
   }
 }
 
-function changeDestService(service: any) {
+function changeDestService(service: Option[]) {
   if (service[0]) {
     states.currentDestService = service[0].value;
     selectorStore.setCurrentDestService(service[0]);
     selectorStore.setCurrentDestPod(null);
     states.currentDestPod = "";
+    states.currentDestProcess = "";
     fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
   } else {
     selectorStore.setCurrentDestService(null);
   }
 }
 
-function changePods(pod: any) {
+async function changePods(pod: Option[]) {
   selectorStore.setCurrentPod(pod[0] || null);
+  if (dashboardStore.entity === EntityType[7].value) {
+    selectorStore.setCurrentProcess(null);
+    states.currentProcess = "";
+    fetchProcess(true);
+  }
 }
 
-function changeDestPods(pod: any) {
+function changeDestPods(pod: Option[]) {
   selectorStore.setCurrentDestPod(pod[0] || null);
+  if (dashboardStore.entity === EntityType[7].value) {
+    selectorStore.setCurrentDestProcess(null);
+    states.currentDestProcess = "";
+    fetchDestProcess(true);
+  }
 }
 
-function changeDestProcess(pod: any) {
+function changeDestProcess(pod: Option[]) {
   selectorStore.setCurrentDestProcess(pod[0] || null);
 }
 
-function changeProcess(pod: any) {
+function changeProcess(pod: Option[]) {
   selectorStore.setCurrentProcess(pod[0] || null);
 }
 
@@ -626,63 +681,12 @@ async function fetchPods(
       }
       break;
     case EntityType[7].value:
-      resp = await selectorStore.getServiceInstances({ serviceId });
-      if (setPod) {
-        let p, m;
-        if (states.currentPod) {
-          p = selectorStore.pods.find(
-            (d: { label: string }) => d.label === states.currentPod
-          );
-        } else {
-          p = selectorStore.pods.find(
-            (d: { label: string }, index: number) => index === 0
-          );
-        }
-        selectorStore.setCurrentPod(p || null);
-        states.currentPod = selectorStore.currentPod.label;
-        selectorStore.setDestPods(selectorStore.pods || []);
-        if (states.currentDestPod) {
-          m = selectorStore.destPods.find(
-            (d: { label: string }) => d.label === states.currentDestPod
-          );
-        } else {
-          m = selectorStore.destPods.find(
-            (d: { label: string }, index: number) => index === 1
-          );
-        }
-        selectorStore.setCurrentDestPod(m || null);
-        states.currentDestPod = selectorStore.currentDestPod.label;
-      }
-      resp = await selectorStore.getProcesses({
-        instanceId: selectorStore.currentPod.id,
-        isRelation: true,
-      });
-      if (setPod) {
-        let p, m;
-        if (states.currentProcess) {
-          p = selectorStore.processes.find(
-            (d: { label: string }) => d.label === states.currentProcess
-          );
-        } else {
-          p = selectorStore.processes.find(
-            (d: { label: string }, index: number) => index === 0
-          );
-        }
-        selectorStore.setCurrentProcess(p || null);
-        states.currentProcess = selectorStore.currentProcess.label;
-        selectorStore.setDestProcesses(selectorStore.processes || []);
-        if (states.currentDestProcess) {
-          m = selectorStore.destProcesses.find(
-            (d: { label: string }) => d.label === states.currentDestProcess
-          );
-        } else {
-          m = selectorStore.destProcesses.find(
-            (d: { label: string }, index: number) => index === 1
-          );
-        }
-        selectorStore.setCurrentDestProcess(m || null);
-        states.currentDestProcess = selectorStore.currentDestProcess.label;
-      }
+      await fetchPods(EntityType[5].value, serviceId, setPod, param);
+      resp = await fetchDestProcess(setPod);
+      break;
+    case "Process":
+      await fetchPods(EntityType[3].value, serviceId, setPod, param);
+      resp = await fetchProcess(setPod);
       break;
     default:
       resp = {};
@@ -690,6 +694,48 @@ async function fetchPods(
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
+}
+
+async function fetchProcess(setPod: boolean) {
+  const resp = await selectorStore.getProcesses({
+    instanceId: selectorStore.currentPod.id,
+  });
+  if (setPod) {
+    let m;
+    if (states.currentProcess) {
+      m = selectorStore.processes.find(
+        (d: { label: string }) => d.label === states.currentProcess
+      );
+    } else {
+      m = selectorStore.processes.find(
+        (d: { label: string }, index: number) => index === 0
+      );
+    }
+    selectorStore.setCurrentProcess(m || null);
+    states.currentProcess = m && m.label;
+  }
+  return resp;
+}
+async function fetchDestProcess(setPod: boolean) {
+  const resp = await selectorStore.getProcesses({
+    instanceId: selectorStore.currentDestPod.id,
+    isRelation: true,
+  });
+  if (setPod) {
+    let m;
+    if (states.currentDestProcess) {
+      m = selectorStore.destProcesses.find(
+        (d: { label: string }) => d.label === states.currentDestProcess
+      );
+    } else {
+      m = selectorStore.destProcesses.find(
+        (d: { label: string }, index: number) => index === 1
+      );
+    }
+    selectorStore.setCurrentDestProcess(m || null);
+    states.currentDestProcess = m && m.label;
+  }
+  return resp;
 }
 function getTools() {
   switch (params.entity) {

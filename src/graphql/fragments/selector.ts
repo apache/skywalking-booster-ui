@@ -48,16 +48,7 @@ export const Instances = {
   }
   `,
 };
-export const Endpoints = {
-  variable: "$serviceId: ID!, $keyword: String!",
-  query: `
-  pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 20) {
-    id
-    value: name
-     label: name
-    }
-`,
-};
+
 export const Processes = {
   variable: "$instanceId: ID!, $duration: Duration!",
   query: `
@@ -71,8 +62,23 @@ export const Processes = {
     instanceName
     agentId
     detectType
-    attributes
+    attributes {
+      name
+      value
+    }
     labels
+  }
+`,
+};
+
+export const Endpoints = {
+  variable: "$serviceId: ID!, $keyword: String!",
+  query: `
+  pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 20) {
+    id
+    value: name
+     label: name
+    }
 `,
 };
 
@@ -133,8 +139,10 @@ export const getProcess = {
     instanceName
     agentId
     detectType
-    attributes
-    labels
+    attributes {
+      name
+      value
+    }
   }
   `,
 };

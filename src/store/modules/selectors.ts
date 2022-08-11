@@ -1,4 +1,3 @@
-import { getProcess } from "./../../graphql/fragments/selector";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -122,7 +121,7 @@ export const selectorStore = defineStore({
       if (!instanceId) {
         return null;
       }
-      const res: AxiosResponse = await graphql.query("queryInstances").params({
+      const res: AxiosResponse = await graphql.query("queryProcesses").params({
         instanceId,
         duration: useAppStoreWithOut().durationTime,
       });
