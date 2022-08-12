@@ -29,3 +29,10 @@ export const TextConfig = {
   fontSize: 14,
   textAlign: "left",
 };
+
+export const TimeRangeConfig = {
+  fontColor: "black",
+  backgroundColor: "white",
+  fontSize: 14,
+  textAlign: "center",
+};

@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="topology">
+  <div class="time-range">
     <div class="header">
       <el-popover
         placement="bottom"
@@ -41,16 +41,20 @@ limitations under the License. -->
         justifyContent: graph.textAlign,
       }"
     >
-      <a
-        :href="graph.url"
-        target="_blank"
+      <Icon
+        iconName="time_range"
+        size="lg"
+        :style="{ color: TextColors[graph.fontColor] }"
+      />
+      <span
+        class="ml-10"
         :style="{
           color: TextColors[graph.fontColor],
           fontSize: graph.fontSize + 'px',
         }"
       >
         {{ content }}
-      </a>
+      </span>
     </div>
   </div>
 </template>
@@ -75,7 +79,9 @@ const graph = computed(() => props.data.graph || {});
 const dashboardStore = useDashboardStore();
 const appStore = useAppStoreWithOut();
 const content = computed(() => {
-  const text = appStore.duration.map((date: Date) => tf(date)).join(` ~ `);
+  const text = [appStore.duration.start, appStore.duration.end]
+    .map((date: Date) => tf(date, "YYYY-MM-DD HH:mm"))
+    .join(` ~ `);
   return text;
 });
 
@@ -86,7 +92,7 @@ function editConfig() {
   dashboardStore.setConfigPanel(true);
   dashboardStore.selectWidget(props.data);
 }
-function tf(time: Date, format?: any): string {
+function tf(time: Date, format: any): string {
   const local = {
     dow: 1, // Monday is the first day of the week
     hourTip: t("hourTip"), // tip of select hour
@@ -136,7 +142,7 @@ function tf(time: Date, format?: any): string {
 }
 </script>
 <style lang="scss" scoped>
-.topology {
+.time-range {
   font-size: 12px;
   height: 100%;
   position: relative;
@@ -160,6 +166,7 @@ function tf(time: Date, format?: any): string {
   display: flex;
   align-items: center;
   overflow: auto;
+  font-weight: bold;
 }
 
 .tools {

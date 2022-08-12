@@ -212,6 +212,7 @@ export const ProcessTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tab", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
+  { name: "time_range", content: "Add Time Range Text", id: "addTimeRange" },
 ];
 export const ServiceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },

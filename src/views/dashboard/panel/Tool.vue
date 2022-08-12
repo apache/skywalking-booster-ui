@@ -560,6 +560,9 @@ function setTabControls(id: string) {
     case "addEvent":
       dashboardStore.addTabControls("Event");
       break;
+    case "addTimeRange":
+      dashboardStore.addTabControls("TimeRange");
+      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -597,6 +600,9 @@ function setControls(id: string) {
       break;
     case "addEvent":
       dashboardStore.addControl("Event");
+      break;
+    case "addTimeRange":
+      dashboardStore.addControl("TimeRange");
       break;
     default:
       dashboardStore.addControl("Widget");
