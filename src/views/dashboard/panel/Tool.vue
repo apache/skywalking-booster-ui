@@ -14,94 +14,98 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
-    <div class="flex-h">
-      <div class="selectors-item" v-if="key !== 10">
-        <span class="label">$Service</span>
-        <Selector
-          v-model="states.currentService"
-          :options="selectorStore.services"
-          size="small"
-          placeholder="Select a service"
-          @change="changeService"
-          class="selectors"
-        />
+    <div :class="isRelation ? 'flex-v' : 'flex-h'">
+      <div class="flex-h">
+        <div class="selectors-item" v-if="key !== 10">
+          <span class="label">$Service</span>
+          <Selector
+            v-model="states.currentService"
+            :options="selectorStore.services"
+            size="small"
+            placeholder="Select a service"
+            @change="changeService"
+            class="selectors"
+          />
+        </div>
+        <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5">
+          <span class="label">
+            {{
+              ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
+                ? "$Endpoint"
+                : "$ServiceInstance"
+            }}
+          </span>
+          <Selector
+            v-model="states.currentPod"
+            :options="selectorStore.pods"
+            size="small"
+            placeholder="Select a data"
+            @change="changePods"
+            @query="searchPods"
+            class="selectorPod"
+            :isRemote="
+              ['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)
+            "
+          />
+        </div>
+        <div class="selectors-item" v-if="key === 5">
+          <span class="label"> $Process </span>
+          <Selector
+            v-model="states.currentProcess"
+            :options="selectorStore.processes"
+            size="small"
+            placeholder="Select a data"
+            @change="changeProcess"
+            class="selectors"
+          />
+        </div>
       </div>
-      <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5">
-        <span class="label">
-          {{
-            ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
-              ? "$Endpoint"
-              : "$ServiceInstance"
-          }}
-        </span>
-        <Selector
-          v-model="states.currentPod"
-          :options="selectorStore.pods"
-          size="small"
-          placeholder="Select a data"
-          @change="changePods"
-          @query="searchPods"
-          class="selectorPod"
-          :isRemote="
-            ['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)
-          "
-        />
-      </div>
-      <div class="selectors-item" v-if="key === 5">
-        <span class="label"> $Process </span>
-        <Selector
-          v-model="states.currentProcess"
-          :options="selectorStore.processes"
-          size="small"
-          placeholder="Select a data"
-          @change="changeProcess"
-          class="selectors"
-        />
-      </div>
-      <div class="selectors-item" v-if="key === 2 || key === 4 || key === 5">
-        <span class="label">$DestinationService</span>
-        <Selector
-          v-model="states.currentDestService"
-          :options="selectorStore.destServices"
-          size="small"
-          placeholder="Select a service"
-          @change="changeDestService"
-          class="selectors"
-        />
-      </div>
-      <div class="selectors-item" v-if="key === 4 || key === 5">
-        <span class="label">
-          {{
-            dashboardStore.entity === "EndpointRelation"
-              ? "$DestinationEndpoint"
-              : "$DestinationServiceInstance"
-          }}
-        </span>
-        <Selector
-          v-model="states.currentDestPod"
-          :options="selectorStore.destPods"
-          size="small"
-          placeholder="Select a data"
-          @change="changeDestPods"
-          class="selectorPod"
-          @query="searchDestPods"
-          :isRemote="dashboardStore.entity === 'EndpointRelation'"
-        />
-      </div>
-      <div class="selectors-item" v-if="key === 5">
-        <span class="label"> $DestinationProcess </span>
-        <Selector
-          v-model="states.currentDestProcess"
-          :options="selectorStore.destProcesses"
-          size="small"
-          placeholder="Select a data"
-          @change="changeDestProcess"
-          class="selectors"
-        />
+      <div class="flex-h" :class="isRelation ? 'relation' : ''">
+        <div class="selectors-item" v-if="key === 2 || key === 4 || key === 5">
+          <span class="label">$DestinationService</span>
+          <Selector
+            v-model="states.currentDestService"
+            :options="selectorStore.destServices"
+            size="small"
+            placeholder="Select a service"
+            @change="changeDestService"
+            class="selectors"
+          />
+        </div>
+        <div class="selectors-item" v-if="key === 4 || key === 5">
+          <span class="label">
+            {{
+              dashboardStore.entity === "EndpointRelation"
+                ? "$DestinationEndpoint"
+                : "$DestinationServiceInstance"
+            }}
+          </span>
+          <Selector
+            v-model="states.currentDestPod"
+            :options="selectorStore.destPods"
+            size="small"
+            placeholder="Select a data"
+            @change="changeDestPods"
+            class="selectorPod"
+            @query="searchDestPods"
+            :isRemote="dashboardStore.entity === 'EndpointRelation'"
+          />
+        </div>
+        <div class="selectors-item" v-if="key === 5">
+          <span class="label"> $DestinationProcess </span>
+          <Selector
+            v-model="states.currentDestProcess"
+            :options="selectorStore.destProcesses"
+            size="small"
+            placeholder="Select a data"
+            @change="changeDestProcess"
+            class="selectors"
+          />
+        </div>
       </div>
     </div>
     <div class="flex-h tools" v-loading="loading" v-if="!appStore.isMobile">
-      <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
+      <div class="tool-icons" v-if="dashboardStore.editMode">
         <el-dropdown content="Controls" placement="bottom" :persistent="false">
           <i>
             <Icon class="icon-btn" size="sm" iconName="control" />
@@ -196,6 +200,14 @@ const key = computed(() => {
     (d: Option) => d.value === dashboardStore.entity
   );
   return (type && type.key) || 0;
+});
+
+const isRelation = computed(() => {
+  return [
+    EntityType[7].value,
+    EntityType[6].value,
+    EntityType[5].value,
+  ].includes(dashboardStore.entity);
 });
 
 setCurrentDashboard();
@@ -840,5 +852,9 @@ watch(
 
 .selectorPod {
   width: 300px;
+}
+
+.relation {
+  margin-top: 5px;
 }
 </style>
