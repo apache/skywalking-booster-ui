@@ -24,6 +24,7 @@ import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
 import DemandLog from "./DemandLog.vue";
 import Event from "./Event.vue";
+import TimeRange from "./TimeRange.vue";
 
 export default {
   Tab,
@@ -36,4 +37,5 @@ export default {
   Ebpf,
   DemandLog,
   Event,
+  TimeRange,
 };
