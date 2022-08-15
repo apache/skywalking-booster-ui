@@ -182,7 +182,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
           import(
             /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
           ),
-        name: "ViewPodRelation",
+        name: "PodRelation",
         meta: {
           notShow: true,
         },
@@ -202,6 +202,37 @@ export const routesDashboard: Array<RouteRecordRaw> = [
                 /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
               ),
             name: "ViewPodRelationActiveTabIndex",
+          },
+        ],
+      },
+      {
+        path: "",
+        redirect:
+          "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name",
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+          ),
+        name: "ProcessRelation",
+        meta: {
+          notShow: true,
+        },
+        children: [
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewProcessRelation",
+          },
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name/tab/:activeTabIndex",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewProcessRelationActiveTabIndex",
           },
         ],
       },

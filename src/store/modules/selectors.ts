@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Service, Instance, Endpoint } from "@/types/selector";
+import { Service, Instance, Endpoint, Process } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
@@ -24,11 +24,15 @@ interface SelectorState {
   services: Service[];
   destServices: Service[];
   pods: Array<Instance | Endpoint>;
+  processes: Process[];
+  destProcesses: Process[];
   currentService: Nullable<Service>;
   currentPod: Nullable<Instance | Endpoint>;
+  currentProcess: Nullable<Process>;
   currentDestService: Nullable<Service>;
   currentDestPod: Nullable<Instance | Endpoint>;
   destPods: Array<Instance | Endpoint>;
+  currentDestProcess: Nullable<Process>;
 }
 
 export const selectorStore = defineStore({
@@ -38,10 +42,14 @@ export const selectorStore = defineStore({
     destServices: [],
     pods: [],
     destPods: [],
+    processes: [],
+    destProcesses: [],
     currentService: null,
     currentPod: null,
+    currentProcess: null,
     currentDestService: null,
     currentDestPod: null,
+    currentDestProcess: null,
   }),
   actions: {
     setCurrentService(service: Nullable<Service>) {
@@ -55,6 +63,18 @@ export const selectorStore = defineStore({
     },
     setCurrentDestPod(pod: Nullable<Instance | Endpoint>) {
       this.currentDestPod = pod;
+    },
+    setCurrentProcess(process: Nullable<Process>) {
+      this.currentProcess = process;
+    },
+    setCurrentDestProcess(process: Nullable<Process>) {
+      this.currentDestProcess = process;
+    },
+    setDestPods(pods: Array<Instance | Endpoint>) {
+      this.destPods = pods;
+    },
+    setDestProcesses(processes: Array<Process>) {
+      this.destProcesses = processes;
     },
     async fetchLayers(): Promise<AxiosResponse> {
       const res: AxiosResponse = await graphql.query("queryLayers").params({});
@@ -90,6 +110,27 @@ export const selectorStore = defineStore({
           return res.data;
         }
         this.pods = res.data.data.pods || [];
+      }
+      return res.data;
+    },
+    async getProcesses(param?: {
+      instanceId: string;
+      isRelation: boolean;
+    }): Promise<Nullable<AxiosResponse>> {
+      const instanceId = param ? param.instanceId : this.currentPod?.id;
+      if (!instanceId) {
+        return null;
+      }
+      const res: AxiosResponse = await graphql.query("queryProcesses").params({
+        instanceId,
+        duration: useAppStoreWithOut().durationTime,
+      });
+      if (!res.data.errors) {
+        if (param && param.isRelation) {
+          this.destProcesses = res.data.data.processes || [];
+          return res.data;
+        }
+        this.processes = res.data.data.processes || [];
       }
       return res.data;
     },
@@ -174,6 +215,25 @@ export const selectorStore = defineStore({
         }
         this.currentPod = res.data.data.endpoint || null;
         this.pods = [res.data.data.endpoint];
+      }
+
+      return res.data;
+    },
+    async getProcess(instanceId: string, isRelation?: boolean) {
+      if (!instanceId) {
+        return;
+      }
+      const res: AxiosResponse = await graphql.query("queryProcess").params({
+        instanceId,
+      });
+      if (!res.data.errors) {
+        if (isRelation) {
+          this.currentDestProcess = res.data.data.process || null;
+          this.destProcesses = [res.data.data.process];
+          return;
+        }
+        this.currentProcess = res.data.data.process || null;
+        this.processes = [res.data.data.process];
       }
 
       return res.data;

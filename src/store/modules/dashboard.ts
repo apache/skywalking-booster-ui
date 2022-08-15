@@ -21,7 +21,7 @@ import graphql from "@/graphql";
 import query from "@/graphql/fetch";
 import { DashboardItem } from "@/types/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
-import { NewControl, TextConfig } from "../data";
+import { NewControl, TextConfig, TimeRangeConfig } from "../data";
 import { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
@@ -113,12 +113,26 @@ export const dashboardStore = defineStore({
               : 3,
         };
       }
-      if (["Trace", "Profile", "Log", "DemandLog", "Ebpf"].includes(type)) {
+      if (
+        [
+          "Trace",
+          "Profile",
+          "Log",
+          "DemandLog",
+          "Ebpf",
+          "NetworkProfiling",
+        ].includes(type)
+      ) {
         newItem.h = 36;
       }
       if (type === "Text") {
         newItem.h = 6;
         newItem.graph = TextConfig;
+      }
+      if (type === "TimeRange") {
+        newItem.w = 8;
+        newItem.h = 6;
+        newItem.graph = TimeRangeConfig;
       }
       this.activedGridItem = newItem.i;
       this.selectedGrid = newItem;
@@ -170,10 +184,24 @@ export const dashboardStore = defineStore({
           showDepth: true,
         };
       }
-      if (["Trace", "Profile", "Log", "DemandLog", "Ebpf"].includes(type)) {
+      if (
+        [
+          "Trace",
+          "Profile",
+          "Log",
+          "DemandLog",
+          "Ebpf",
+          "NetworkProfiling",
+        ].includes(type)
+      ) {
         newItem.h = 32;
       }
       if (type === "Text") {
+        newItem.h = 6;
+        newItem.graph = TextConfig;
+      }
+      if (type === "TimeRange") {
+        newItem.w = 8;
         newItem.h = 6;
         newItem.graph = TextConfig;
       }

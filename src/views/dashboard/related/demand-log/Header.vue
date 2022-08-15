@@ -152,7 +152,6 @@ const keywordsOfContent = ref<string[]>([]);
 const excludingKeywordsOfContent = ref<string[]>([]);
 const contentStr = ref<string>("");
 const excludingContentStr = ref<string>("");
-// const limit = ref<number>(20);
 const state = reactive<any>({
   instance: { value: "", label: "" },
   container: { value: "", label: "" },

@@ -145,6 +145,7 @@ const msg = {
   begin: "Inicio",
   associateOptions: "Opciones de asociación",
   widget: "Dispositivo pequeño",
+  text: "Texto",
   duplicateName: "Nombre duplicado",
   nameTip:
     "El nombre sólo admite chino e inglés, líneas horizontales y subrayado, y la longitud del nombre no excederá de 300 caracteres",

@@ -18,7 +18,7 @@ import icons from "@/assets/img/icons";
 import { Node } from "@/types/topology";
 
 icons["KAFKA-CONSUMER"] = icons.KAFKA;
-export default (d3: any, graph: any, funcs: any, tip: any, legend: any) => {
+export default (d3: any, graph: any, funcs: any, tip: any, legend?: any) => {
   const nodeEnter = graph
     .append("g")
     .call(

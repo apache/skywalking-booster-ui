@@ -75,3 +75,26 @@ export const InstanceTopology = {
   }
 `,
 };
+export const ProcessTopology = {
+  variable: "$serviceInstanceId: ID!, $duration: Duration!",
+  query: `
+  topology: getProcessTopology(serviceInstanceId: $serviceInstanceId,
+    duration: $duration) {
+    nodes {
+      id
+      name
+      isReal
+      serviceName
+      serviceId
+      serviceInstanceId
+      serviceInstanceName
+    }
+    calls {
+      id
+      source
+      detectPoints
+      target
+    }
+  }
+`,
+};

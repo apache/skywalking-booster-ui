@@ -32,7 +32,7 @@ export enum Calculations {
   Precision = "precision",
   ConvertSeconds = "convertSeconds",
   ConvertMilliseconds = "convertMilliseconds",
-  MsTos = "msTos",
+  MsToS = "msTos",
   Average = "average",
   PercentageAvg = "percentageAvg",
   ApdexAvg = "apdexAvg",

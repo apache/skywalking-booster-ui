@@ -25,8 +25,7 @@ import {
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
-
-interface EbpfStore {
+interface EbpfState {
   taskList: EBPFTaskList[];
   eBPFSchedules: EBPFProfilingSchedule[];
   currentSchedule: EBPFProfilingSchedule | Record<string, never>;
@@ -40,7 +39,7 @@ interface EbpfStore {
 
 export const ebpfStore = defineStore({
   id: "eBPF",
-  state: (): EbpfStore => ({
+  state: (): EbpfState => ({
     taskList: [],
     eBPFSchedules: [],
     currentSchedule: {},
@@ -53,7 +52,7 @@ export const ebpfStore = defineStore({
   }),
   actions: {
     setSelectedTask(task: EBPFTaskList) {
-      this.selectedTask = task;
+      this.selectedTask = task || {};
     },
     setCurrentSchedule(s: EBPFProfilingSchedule) {
       this.currentSchedule = s;
@@ -84,22 +83,31 @@ export const ebpfStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.getTaskList(param.serviceId);
+      this.getTaskList({
+        serviceId: param.serviceId,
+        targets: ["ON_CPU", "OFF_CPU"],
+      });
       return res.data;
     },
-    async getTaskList(serviceId: string) {
-      if (!serviceId) {
+    async getTaskList(params: {
+      serviceId: string;
+      serviceInstanceId: string;
+      targets: string[];
+    }) {
+      if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
       const res: AxiosResponse = await graphql
         .query("getEBPFTasks")
-        .params({ serviceId });
+        .params(params);
 
       this.tip = "";
       if (res.data.errors) {
         return res.data;
       }
       this.taskList = res.data.data.queryEBPFTasks || [];
+      this.selectedTask = this.taskList[0] || {};
+      this.setSelectedTask(this.selectedTask);
       if (!this.taskList.length) {
         return res.data;
       }

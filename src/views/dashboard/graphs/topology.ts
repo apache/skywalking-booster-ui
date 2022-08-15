@@ -15,16 +15,18 @@
  * limitations under the License.
  */
 
-import Text from "./Text.vue";
-import Widget from "./Widget.vue";
-import Topology from "./Topology.vue";
-import Event from "./Event.vue";
-import TimeRange from "./TimeRange.vue";
+import Area from "./Area.vue";
+import Line from "./Line.vue";
+import Bar from "./Bar.vue";
+import TopList from "./TopList.vue";
+import Table from "./Table.vue";
+import Card from "./Card.vue";
 
 export default {
-  Text,
-  Widget,
-  Topology,
-  Event,
-  TimeRange,
+  Line,
+  Bar,
+  TopList,
+  Area,
+  Table,
+  Card,
 };

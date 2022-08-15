@@ -145,7 +145,7 @@ import { ErrorCategory } from "./data";
 import { LayoutConfig } from "@/types/dashboard";
 import { DurationTime } from "@/types/app";
 
-/*global  defineProps, Recordable */
+/*global defineProps, Recordable */
 const props = defineProps({
   needQuery: { type: Boolean, default: true },
   data: {

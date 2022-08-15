@@ -146,10 +146,10 @@ async function queryEvents() {
   let endpoint = state.endpoint.value,
     instance = state.instance.value;
   if (dashboardStore.entity === EntityType[2].value) {
-    endpoint = selectorStore.currentPod.id;
+    endpoint = selectorStore.currentPod && selectorStore.currentPod.id;
   }
   if (dashboardStore.entity === EntityType[3].value) {
-    instance = selectorStore.currentPod.id;
+    instance = selectorStore.currentPod && selectorStore.currentPod.id;
   }
   if (!selectorStore.currentService) {
     return;

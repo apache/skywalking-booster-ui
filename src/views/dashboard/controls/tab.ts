@@ -14,17 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import Text from "./Text.vue";
-import Widget from "./Widget.vue";
 import Topology from "./Topology.vue";
+import Widget from "./Widget.vue";
+import Trace from "./Trace.vue";
+import Profile from "./Profile.vue";
+import Log from "./Log.vue";
+import Text from "./Text.vue";
+import Ebpf from "./Ebpf.vue";
+import DemandLog from "./DemandLog.vue";
 import Event from "./Event.vue";
 import TimeRange from "./TimeRange.vue";
 
 export default {
-  Text,
   Widget,
+  Trace,
   Topology,
+  Profile,
+  Log,
+  Text,
+  Ebpf,
+  DemandLog,
   Event,
   TimeRange,
 };

@@ -57,7 +57,10 @@ if (props.needQuery) {
 async function searchTasks() {
   const serviceId =
     (selectorStore.currentService && selectorStore.currentService.id) || "";
-  const res = await ebpfStore.getTaskList(serviceId);
+  const res = await ebpfStore.getTaskList({
+    serviceId,
+    targets: ["ON_CPU", "OFF_CPU"],
+  });
 
   if (res.errors) {
     ElMessage.error(res.errors);

@@ -14,72 +14,98 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
-    <div class="flex-h">
-      <div class="selectors-item" v-if="key !== 10">
-        <span class="label">$Service</span>
-        <Selector
-          v-model="states.currentService"
-          :options="selectorStore.services"
-          size="small"
-          placeholder="Select a service"
-          @change="changeService"
-          class="selectors"
-        />
+    <div :class="isRelation ? 'flex-v' : 'flex-h'">
+      <div class="flex-h">
+        <div class="selectors-item" v-if="key !== 10">
+          <span class="label">$Service</span>
+          <Selector
+            v-model="states.currentService"
+            :options="selectorStore.services"
+            size="small"
+            placeholder="Select a service"
+            @change="changeService"
+            class="selectors"
+          />
+        </div>
+        <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5">
+          <span class="label">
+            {{
+              ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
+                ? "$Endpoint"
+                : "$ServiceInstance"
+            }}
+          </span>
+          <Selector
+            v-model="states.currentPod"
+            :options="selectorStore.pods"
+            size="small"
+            placeholder="Select a data"
+            @change="changePods"
+            @query="searchPods"
+            class="selectorPod"
+            :isRemote="
+              ['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)
+            "
+          />
+        </div>
+        <div class="selectors-item" v-if="key === 5">
+          <span class="label"> $Process </span>
+          <Selector
+            v-model="states.currentProcess"
+            :options="selectorStore.processes"
+            size="small"
+            placeholder="Select a data"
+            @change="changeProcess"
+            class="selectors"
+          />
+        </div>
       </div>
-      <div class="selectors-item" v-if="key === 3 || key === 4">
-        <span class="label">
-          {{
-            ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
-              ? "$Endpoint"
-              : "$ServiceInstance"
-          }}
-        </span>
-        <Selector
-          v-model="states.currentPod"
-          :options="selectorStore.pods"
-          size="small"
-          placeholder="Select a data"
-          @change="changePods"
-          @query="searchPods"
-          class="selectorPod"
-          :isRemote="
-            ['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)
-          "
-        />
-      </div>
-      <div class="selectors-item" v-if="key === 2 || key === 4">
-        <span class="label">$DestinationService</span>
-        <Selector
-          v-model="states.currentDestService"
-          :options="selectorStore.destServices"
-          size="small"
-          placeholder="Select a service"
-          @change="changeDestService"
-          class="selectors"
-        />
-      </div>
-      <div class="selectors-item" v-if="key === 4">
-        <span class="label">
-          {{
-            dashboardStore.entity === "EndpointRelation"
-              ? "$DestinationEndpoint"
-              : "$DestinationServiceInstance"
-          }}
-        </span>
-        <Selector
-          v-model="states.currentDestPod"
-          :options="selectorStore.destPods"
-          size="small"
-          placeholder="Select a data"
-          @change="changeDestPods"
-          class="selectorPod"
-          @query="searchDestPods"
-          :isRemote="dashboardStore.entity === 'EndpointRelation'"
-        />
+      <div class="flex-h" :class="isRelation ? 'relation' : ''">
+        <div class="selectors-item" v-if="key === 2 || key === 4 || key === 5">
+          <span class="label">$DestinationService</span>
+          <Selector
+            v-model="states.currentDestService"
+            :options="selectorStore.destServices"
+            size="small"
+            placeholder="Select a service"
+            @change="changeDestService"
+            class="selectors"
+          />
+        </div>
+        <div class="selectors-item" v-if="key === 4 || key === 5">
+          <span class="label">
+            {{
+              dashboardStore.entity === "EndpointRelation"
+                ? "$DestinationEndpoint"
+                : "$DestinationServiceInstance"
+            }}
+          </span>
+          <Selector
+            v-model="states.currentDestPod"
+            :options="selectorStore.destPods"
+            size="small"
+            placeholder="Select a data"
+            @change="changeDestPods"
+            class="selectorPod"
+            @query="searchDestPods"
+            :isRemote="dashboardStore.entity === 'EndpointRelation'"
+          />
+        </div>
+        <div class="selectors-item" v-if="key === 5">
+          <span class="label"> $DestinationProcess </span>
+          <Selector
+            v-model="states.currentDestProcess"
+            :options="selectorStore.destProcesses"
+            size="small"
+            placeholder="Select a data"
+            @change="changeDestProcess"
+            class="selectors"
+          />
+        </div>
       </div>
     </div>
     <div class="flex-h tools" v-loading="loading" v-if="!appStore.isMobile">
-      <div class="tool-icons flex-h" v-if="dashboardStore.editMode">
+      <div class="tool-icons" v-if="dashboardStore.editMode">
         <el-dropdown content="Controls" placement="bottom" :persistent="false">
           <i>
             <Icon class="icon-btn" size="sm" iconName="control" />
@@ -133,6 +159,7 @@ import {
   EndpointRelationTools,
   InstanceRelationTools,
   ServiceRelationTools,
+  ProcessTools,
 } from "../data";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
@@ -144,9 +171,8 @@ const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
 const params = useRoute().params;
-const toolIcons = ref<{ name: string; content: string; id: string }[]>(
-  EndpointRelationTools
-);
+const toolIcons =
+  ref<{ name: string; content: string; id: string }[]>(AllTools);
 const loading = ref<boolean>(false);
 const states = reactive<{
   destService: string;
@@ -154,22 +180,34 @@ const states = reactive<{
   key: number;
   currentService: string;
   currentPod: string;
+  currentProcess: string;
   currentDestService: string;
   currentDestPod: string;
+  currentDestProcess: string;
 }>({
   destService: "",
   destPod: "",
   key: 0,
   currentService: "",
   currentPod: "",
+  currentProcess: "",
   currentDestService: "",
   currentDestPod: "",
+  currentDestProcess: "",
 });
 const key = computed(() => {
   const type = EntityType.find(
     (d: Option) => d.value === dashboardStore.entity
   );
   return (type && type.key) || 0;
+});
+
+const isRelation = computed(() => {
+  return [
+    EntityType[7].value,
+    EntityType[6].value,
+    EntityType[5].value,
+  ].includes(dashboardStore.entity);
 });
 
 setCurrentDashboard();
@@ -199,6 +237,7 @@ async function setSelector() {
       EntityType[3].value,
       EntityType[5].value,
       EntityType[6].value,
+      EntityType[7].value,
     ].includes(String(params.entity))
   ) {
     setSourceSelector();
@@ -252,6 +291,7 @@ async function setSourceSelector() {
   if (!(selectorStore.pods.length && selectorStore.pods[0])) {
     selectorStore.setCurrentPod(null);
     states.currentPod = "";
+    states.currentProcess = "";
     return;
   }
   const pod = params.podId || selectorStore.pods[0].id;
@@ -263,9 +303,25 @@ async function setSourceSelector() {
   } else {
     currentPod = selectorStore.pods.find((d: { id: string }) => d.id === pod);
   }
-  if (currentPod) {
-    selectorStore.setCurrentPod(currentPod);
-    states.currentPod = currentPod.label;
+  if (!currentPod) {
+    return;
+  }
+  selectorStore.setCurrentPod(currentPod);
+  states.currentPod = currentPod.label;
+  const process = params.processId || selectorStore.processes[0].id;
+  let currentProcess;
+  if (states.currentProcess) {
+    currentProcess = selectorStore.processes.find(
+      (d: { label: string }) => d.label === states.currentProcess
+    );
+  } else {
+    currentProcess = selectorStore.processes.find(
+      (d: { id: string }) => d.id === process
+    );
+  }
+  if (currentProcess) {
+    selectorStore.setCurrentProcess(currentProcess);
+    states.currentProcess = currentProcess.label;
   }
 }
 
@@ -293,9 +349,25 @@ async function setDestSelector() {
       (d: { id: string }) => d.id === destPod
     );
   }
-  if (currentDestPod) {
-    selectorStore.setCurrentDestPod(currentDestPod);
-    states.currentDestPod = currentDestPod.label;
+  if (!currentDestPod) {
+    return;
+  }
+  selectorStore.setCurrentDestPod(currentDestPod);
+  states.currentDestPod = currentDestPod.label;
+  const destProcess = params.destProcessId || selectorStore.destProcesses[0].id;
+  let currentDestProcess;
+  if (states.currentDestProcess) {
+    currentDestProcess = selectorStore.destProcesses.find(
+      (d: { label: string }) => d.label === states.currentProcess
+    );
+  } else {
+    currentDestProcess = selectorStore.destProcesses.find(
+      (d: { id: string }) => d.id === destProcess
+    );
+  }
+  if (currentDestProcess) {
+    selectorStore.setCurrentProcess(currentDestProcess);
+    states.currentProcess = currentDestProcess.label;
   }
 }
 
@@ -325,16 +397,21 @@ async function getServices() {
     );
   }
   selectorStore.setCurrentService(s || null);
-  let d;
+  let d,
+    val = 1;
+  if (key.value === 5) {
+    val = 0;
+  }
   if (states.currentService) {
     d = (selectorStore.services || []).find(
       (d: { label: string }) => d.label === states.currentDestService
     );
   } else {
     d = (selectorStore.services || []).find(
-      (d: unknown, index: number) => index === 1
+      (d: unknown, index: number) => index === val
     );
   }
+
   selectorStore.setCurrentDestService(d || null);
   if (!selectorStore.currentService) {
     return;
@@ -347,60 +424,82 @@ async function getServices() {
       EntityType[3].value,
       EntityType[5].value,
       EntityType[6].value,
+      EntityType[7].value,
     ].includes(dashboardStore.entity)
   ) {
-    fetchPods(e, selectorStore.currentService.id, true);
+    await fetchPods(e, selectorStore.currentService.id, true);
   }
   if (!selectorStore.currentDestService) {
     return;
   }
   states.currentDestService = selectorStore.currentDestService.value;
   if (
-    [EntityType[5].value, EntityType[6].value].includes(dashboardStore.entity)
+    [EntityType[5].value, EntityType[6].value, EntityType[7].value].includes(
+      dashboardStore.entity
+    )
   ) {
-    fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
+    await fetchPods(
+      dashboardStore.entity,
+      selectorStore.currentDestService.id,
+      true
+    );
   }
 }
 
-async function changeService(service: any) {
+async function changeService(service: Option[]) {
   if (service[0]) {
     states.currentService = service[0].value;
     selectorStore.setCurrentService(service[0]);
-    const e = dashboardStore.entity.split("Relation")[0];
     selectorStore.setCurrentPod(null);
     states.currentPod = "";
-    fetchPods(e, selectorStore.currentService.id, true);
+    states.currentProcess = "";
+    if (dashboardStore.entity === EntityType[7].value) {
+      fetchPods("Process", selectorStore.currentService.id, true);
+    } else {
+      fetchPods(dashboardStore.entity, selectorStore.currentService.id, true);
+    }
   } else {
     selectorStore.setCurrentService(null);
   }
 }
 
-function changeDestService(service: any) {
+function changeDestService(service: Option[]) {
   if (service[0]) {
     states.currentDestService = service[0].value;
     selectorStore.setCurrentDestService(service[0]);
     selectorStore.setCurrentDestPod(null);
     states.currentDestPod = "";
+    states.currentDestProcess = "";
     fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
   } else {
     selectorStore.setCurrentDestService(null);
   }
 }
 
-function changePods(pod: any) {
-  if (pod[0]) {
-    selectorStore.setCurrentPod(pod[0]);
-  } else {
-    selectorStore.setCurrentPod("");
+async function changePods(pod: Option[]) {
+  selectorStore.setCurrentPod(pod[0] || null);
+  if (dashboardStore.entity === EntityType[7].value) {
+    selectorStore.setCurrentProcess(null);
+    states.currentProcess = "";
+    fetchProcess(true);
   }
 }
 
-function changeDestPods(pod: any) {
-  if (pod[0]) {
-    selectorStore.setCurrentDestPod(pod[0]);
-  } else {
-    selectorStore.setCurrentDestPod(null);
+function changeDestPods(pod: Option[]) {
+  selectorStore.setCurrentDestPod(pod[0] || null);
+  if (dashboardStore.entity === EntityType[7].value) {
+    selectorStore.setCurrentDestProcess(null);
+    states.currentDestProcess = "";
+    fetchDestProcess(true);
   }
+}
+
+function changeDestProcess(pod: Option[]) {
+  selectorStore.setCurrentDestProcess(pod[0] || null);
+}
+
+function changeProcess(pod: Option[]) {
+  selectorStore.setCurrentProcess(pod[0] || null);
 }
 
 function changeMode() {
@@ -461,6 +560,9 @@ function setTabControls(id: string) {
     case "addEvent":
       dashboardStore.addTabControls("Event");
       break;
+    case "addTimeRange":
+      dashboardStore.addTabControls("TimeRange");
+      break;
     default:
       ElMessage.info("Don't support this control");
       break;
@@ -498,6 +600,9 @@ function setControls(id: string) {
       break;
     case "addEvent":
       dashboardStore.addControl("Event");
+      break;
+    case "addTimeRange":
+      dashboardStore.addControl("TimeRange");
       break;
     default:
       dashboardStore.addControl("Widget");
@@ -587,12 +692,62 @@ async function fetchPods(
         states.currentDestPod = selectorStore.currentDestPod.label;
       }
       break;
+    case EntityType[7].value:
+      await fetchPods(EntityType[5].value, serviceId, setPod, param);
+      resp = await fetchDestProcess(setPod);
+      break;
+    case "Process":
+      await fetchPods(EntityType[3].value, serviceId, setPod, param);
+      resp = await fetchProcess(setPod);
+      break;
     default:
       resp = {};
   }
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
+}
+
+async function fetchProcess(setPod: boolean) {
+  const resp = await selectorStore.getProcesses({
+    instanceId: selectorStore.currentPod.id,
+  });
+  if (setPod) {
+    let m;
+    if (states.currentProcess) {
+      m = selectorStore.processes.find(
+        (d: { label: string }) => d.label === states.currentProcess
+      );
+    } else {
+      m = selectorStore.processes.find(
+        (d: { label: string }, index: number) => index === 0
+      );
+    }
+    selectorStore.setCurrentProcess(m || null);
+    states.currentProcess = m && m.label;
+  }
+  return resp;
+}
+async function fetchDestProcess(setPod: boolean) {
+  const resp = await selectorStore.getProcesses({
+    instanceId: selectorStore.currentDestPod.id,
+    isRelation: true,
+  });
+  if (setPod) {
+    let m;
+    if (states.currentDestProcess) {
+      m = selectorStore.destProcesses.find(
+        (d: { label: string }) => d.label === states.currentDestProcess
+      );
+    } else {
+      m = selectorStore.destProcesses.find(
+        (d: { label: string }, index: number) => index === 1
+      );
+    }
+    selectorStore.setCurrentDestProcess(m || null);
+    states.currentDestProcess = m && m.label;
+  }
+  return resp;
 }
 function getTools() {
   switch (params.entity) {
@@ -617,8 +772,11 @@ function getTools() {
     case EntityType[6].value:
       toolIcons.value = EndpointRelationTools;
       break;
+    case EntityType[7].value:
+      toolIcons.value = ProcessTools;
+      break;
     default:
-      toolIcons.value = EndpointRelationTools;
+      toolIcons.value = AllTools;
   }
 }
 function searchPods(query: string) {
@@ -700,5 +858,9 @@ watch(
 
 .selectorPod {
   width: 300px;
+}
+
+.relation {
+  margin-top: 5px;
 }
 </style>

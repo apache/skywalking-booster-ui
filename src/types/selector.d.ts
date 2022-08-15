@@ -46,3 +46,16 @@ export type Service = {
   layers: string[];
   shortName: string;
 };
+
+export type Process = {
+  id: string;
+  name: string;
+  serviceId: string;
+  serviceName: string;
+  instanceId: string;
+  instanceName: string;
+  agentId: string;
+  detectType: string;
+  attributes: { name: string; value: string }[];
+  labels: string[];
+};
