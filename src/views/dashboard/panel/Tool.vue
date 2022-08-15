@@ -296,6 +296,11 @@ async function setSourceSelector() {
   }
   selectorStore.setCurrentPod(currentPod);
   states.currentPod = currentPod.label;
+  if (!(selectorStore.processes.length && selectorStore.processes[0])) {
+    selectorStore.setCurrentProcess(null);
+    states.currentProcess = "";
+    return;
+  }
   const process = params.processId || selectorStore.processes[0].id;
   let currentProcess;
   if (states.currentProcess) {

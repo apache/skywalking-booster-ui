@@ -143,6 +143,7 @@ async function createTask() {
     (selectorStore.currentService && selectorStore.currentService.id) || "";
   const serviceInstanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
+  console.log(selectorStore.currentPod);
   if (!serviceId) {
     return;
   }

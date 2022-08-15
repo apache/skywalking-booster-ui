@@ -65,16 +65,16 @@ export const selectorStore = defineStore({
       this.currentDestPod = pod;
     },
     setCurrentProcess(process: Nullable<Process>) {
-      this.currentPod = process;
+      this.currentProcess = process;
     },
     setCurrentDestProcess(process: Nullable<Process>) {
-      this.currentDestPod = process;
+      this.currentDestProcess = process;
     },
     setDestPods(pods: Array<Instance | Endpoint>) {
       this.destPods = pods;
     },
     setDestProcesses(processes: Array<Process>) {
-      this.destPods = processes;
+      this.destProcesses = processes;
     },
     async fetchLayers(): Promise<AxiosResponse> {
       const res: AxiosResponse = await graphql.query("queryLayers").params({});
