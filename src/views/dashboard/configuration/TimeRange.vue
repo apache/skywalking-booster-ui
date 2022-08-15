@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="item">
-    <span class="label">{{ t("content") }}</span>
+    <span class="label">{{ t("text") }}</span>
     <el-input
       class="input"
       v-model="text"
