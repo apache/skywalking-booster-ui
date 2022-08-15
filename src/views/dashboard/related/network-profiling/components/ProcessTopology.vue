@@ -14,12 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div ref="chart" class="micro-topo-chart"></div>
+  <div
+    class="switch-icon ml-5"
+    title="Settings"
+    @click="setConfig"
+    v-if="dashboardStore.editMode"
+  >
+    <Icon size="middle" iconName="settings" />
+  </div>
+  <div class="setting" v-if="showSettings && dashboardStore.editMode">
+    <Settings @update="updateSettings" @updateNodes="freshNodes" />
+  </div>
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import { ref, onMounted, watch } from "vue";
 import * as d3 from "d3";
 import { useI18n } from "vue-i18n";
+import { ElMessage } from "element-plus";
+import router from "@/router";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import d3tip from "d3-tip";
@@ -37,6 +50,9 @@ import { Call } from "@/types/topology";
 // import zoom from "../../components/D3Graph/zoom";
 import { ProcessNode } from "@/types/ebpf";
 import { useThrottleFn } from "@vueuse/core";
+import Settings from "./Settings.vue";
+import { EntityType } from "@/views/dashboard/data";
+import getDashboard from "@/hooks/useDashboardsSession";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -60,6 +76,8 @@ const link = ref<any>(null);
 const anchor = ref<any>(null);
 const arrow = ref<any>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
+const showSettings = ref<boolean>(false);
+const config = ref<any>({});
 
 onMounted(() => {
   init();
@@ -200,6 +218,23 @@ function handleLinkClick(event: any, d: Call) {
   event.stopPropagation();
   networkProfilingStore.setNode(null);
   networkProfilingStore.setLink(d);
+  if (!config.value.linkDashboard) {
+    return;
+  }
+  const { dashboard } = getDashboard({
+    name: config.value.linkDashboard,
+    layer: dashboardStore.layerId,
+    entity: EntityType[7].value,
+  });
+  if (!dashboard) {
+    ElMessage.error(
+      `The dashboard named ${config.value.linkDashboard} doesn't exist`
+    );
+    return;
+  }
+  const path = `/dashboard/related/${dashboard.layer}/${EntityType[7].value}Relation/${d.source.id}/${d.target.id}/${dashboard.name}`;
+  const routeUrl = router.resolve({ path });
+  window.open(routeUrl.href, "_blank");
 }
 
 function ticked() {
@@ -221,6 +256,15 @@ function ticked() {
     "transform",
     (d: Node | any) => `translate(${d.x - 22},${d.y - 22})`
   );
+}
+
+function updateSettings(config: any) {
+  config.value = config;
+}
+
+function setConfig() {
+  showSettings.value = !showSettings.value;
+  dashboardStore.selectWidget(props.config);
 }
 
 function resize() {
@@ -268,5 +312,32 @@ watch(
   width: 100%;
   height: calc(100% - 10px);
   cursor: move;
+}
+
+.switch-icon {
+  cursor: pointer;
+  transition: all 0.5ms linear;
+  background-color: #252a2f99;
+  color: #ddd;
+  display: inline-block;
+  padding: 5px 8px 8px;
+  border-radius: 3px;
+  position: absolute;
+  top: 20px;
+  right: 10px;
+}
+
+.setting {
+  position: absolute;
+  top: 65px;
+  right: 10px;
+  width: 300px;
+  height: 160px;
+  background-color: #2b3037;
+  overflow: auto;
+  padding: 15px;
+  border-radius: 3px;
+  color: #ccc;
+  transition: all 0.5ms linear;
 }
 </style>
