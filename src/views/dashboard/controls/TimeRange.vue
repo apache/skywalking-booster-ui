@@ -39,22 +39,25 @@ limitations under the License. -->
       :style="{
         backgroundColor: TextColors[graph.backgroundColor],
         justifyContent: graph.textAlign,
+        color: TextColors[graph.fontColor],
       }"
     >
-      <Icon
-        iconName="time_range"
-        size="lg"
-        :style="{ color: TextColors[graph.fontColor] }"
-      />
+      <Icon iconName="time_range" size="lg" />
       <span
-        class="ml-10"
+        class="ml-5"
         :style="{
-          color: TextColors[graph.fontColor],
           fontSize: graph.fontSize + 'px',
         }"
       >
         {{ content }}
       </span>
+      <span
+        class="ml-5"
+        :style="{
+          fontSize: graph.fontSize + 'px',
+        }"
+        >{{ graph.text }}</span
+      >
     </div>
   </div>
 </template>

@@ -35,4 +35,5 @@ export const TimeRangeConfig = {
   backgroundColor: "white",
   fontSize: 14,
   textAlign: "center",
+  text: "text",
 };

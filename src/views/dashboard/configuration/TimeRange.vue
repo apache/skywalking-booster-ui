@@ -12,6 +12,15 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="item">
+    <span class="label">{{ t("content") }}</span>
+    <el-input
+      class="input"
+      v-model="text"
+      size="small"
+      @change="changeConfig({ text })"
+    />
+  </div>
+  <div class="item">
     <span class="label">{{ t("textAlign") }}</span>
     <Selector
       :value="textAlign"
@@ -79,6 +88,7 @@ const backgroundColor = ref(graph.backgroundColor || "green");
 const fontColor = ref(graph.fontColor || "white");
 const fontSize = ref<number>(graph.fontSize || 12);
 const textAlign = ref(graph.textAlign || "left");
+const text = ref<string>(graph.text || "");
 const Colors = [
   {
     label: "Green",
