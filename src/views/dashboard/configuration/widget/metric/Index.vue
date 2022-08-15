@@ -179,12 +179,16 @@ const setVisTypes = computed(() => {
 
 async function setMetricType(chart?: any) {
   const g = chart || dashboardStore.selectedGrid.graph || {};
-  const json = await dashboardStore.fetchMetricList();
-  if (json.errors) {
-    ElMessage.error(json.errors);
-    return;
+  let arr: any[] = states.metricList;
+  if (!chart) {
+    const json = await dashboardStore.fetchMetricList();
+    if (json.errors) {
+      ElMessage.error(json.errors);
+      return;
+    }
+    arr = json.data.metrics;
   }
-  states.metricList = (json.data.metrics || []).filter(
+  states.metricList = (arr || []).filter(
     (d: { catalog: string; type: string }) => {
       if (states.isList) {
         if (d.type === MetricsType.REGULAR_VALUE) {
