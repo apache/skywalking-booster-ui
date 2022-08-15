@@ -232,7 +232,7 @@ function handleLinkClick(event: any, d: Call) {
     );
     return;
   }
-  const path = `/dashboard/related/${dashboard.layer}/${EntityType[7].value}Relation/${d.source.id}/${d.target.id}/${dashboard.name}`;
+  const path = `/dashboard/related/${dashboard.layer}/${EntityType[7].value}/${d.source.id}/${d.target.id}/${dashboard.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
 }
