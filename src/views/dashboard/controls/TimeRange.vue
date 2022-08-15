@@ -42,7 +42,14 @@ limitations under the License. -->
         color: TextColors[graph.fontColor],
       }"
     >
-      <Icon iconName="time_range" size="lg" />
+      <span
+        class="mr-5"
+        :style="{
+          fontSize: graph.fontSize + 'px',
+        }"
+        >{{ graph.text }}
+      </span>
+      <Icon iconName="time_range" size="middle" />
       <span
         class="ml-5"
         :style="{
@@ -51,13 +58,6 @@ limitations under the License. -->
       >
         {{ content }}
       </span>
-      <span
-        class="ml-5"
-        :style="{
-          fontSize: graph.fontSize + 'px',
-        }"
-        >{{ graph.text }}</span
-      >
     </div>
   </div>
 </template>
