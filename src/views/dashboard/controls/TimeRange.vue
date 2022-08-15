@@ -82,7 +82,7 @@ const graph = computed(() => props.data.graph || {});
 const dashboardStore = useDashboardStore();
 const appStore = useAppStoreWithOut();
 const content = computed(() => {
-  const text = [appStore.duration.start, appStore.duration.end]
+  const text = [appStore.durationRow.start, appStore.durationRow.end]
     .map((date: Date) => tf(date, "YYYY-MM-DD HH:mm"))
     .join(` ~ `);
   return text;
