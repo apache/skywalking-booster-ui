@@ -16,12 +16,12 @@
  */
 export const simulationInit = (
   d3: any,
-  dataNodes: any,
-  dataLinks: any,
+  nodes: any,
+  links: any,
   ticked: any
 ) => {
   const simulation = d3
-    .forceSimulation(dataNodes)
+    .forceSimulation(nodes)
     .force(
       "collide",
       d3.forceCollide().radius(() => 60)
@@ -31,7 +31,7 @@ export const simulationInit = (
     .force("charge", d3.forceManyBody().strength(-520))
     .force(
       "link",
-      d3.forceLink(dataLinks).id((d: { id: string }) => d.id)
+      d3.forceLink(links).id((d: { id: string }) => d.id)
     )
     .force(
       "center",

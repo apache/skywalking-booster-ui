@@ -24,6 +24,7 @@ import Ebpf from "./Ebpf.vue";
 import DemandLog from "./DemandLog.vue";
 import Event from "./Event.vue";
 import NetworkProfiling from "./NetworkProfiling.vue";
+import TimeRange from "./TimeRange.vue";
 
 export default {
   Widget,
@@ -36,4 +37,5 @@ export default {
   DemandLog,
   Event,
   NetworkProfiling,
+  TimeRange,
 };

@@ -213,13 +213,24 @@ export default defineComponent({
     watch(
       () => [selectorStore.currentPod, selectorStore.currentDestPod],
       () => {
-        if (dashboardStore.entity === EntityType[0].value) {
+        if (
+          dashboardStore.entity === EntityType[0].value ||
+          dashboardStore.entity === EntityType[7].value
+        ) {
           return;
         }
         if (isList.value) {
           return;
         }
         queryMetrics();
+      }
+    );
+    watch(
+      () => [selectorStore.currentProcess, selectorStore.currentDestProcess],
+      () => {
+        if (dashboardStore.entity === EntityType[7].value) {
+          queryMetrics();
+        }
       }
     );
     watch(
