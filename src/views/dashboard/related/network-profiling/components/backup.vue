@@ -37,11 +37,15 @@ import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import d3tip from "d3-tip";
 import {
+  simulationInit,
+  simulationSkip,
+} from "../../components/D3Graph/simulation";
+import {
   linkElement,
   anchorElement,
   arrowMarker,
 } from "../../components/D3Graph/linkElement";
-import nodeElement from "../../components/D3Graph/nodeProcess";
+import nodeElement from "../../components/D3Graph/nodeElement";
 import { Call } from "@/types/topology";
 // import zoom from "../../components/D3Graph/zoom";
 import { ProcessNode } from "@/types/ebpf";
@@ -49,7 +53,6 @@ import { useThrottleFn } from "@vueuse/core";
 import Settings from "./Settings.vue";
 import { EntityType } from "@/views/dashboard/data";
 import getDashboard from "@/hooks/useDashboardsSession";
-import { Layout } from "./Graph/layout";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -63,6 +66,7 @@ const dashboardStore = useDashboardStore();
 const networkProfilingStore = useNetworkProfilingStore();
 const height = ref<number>(100);
 const width = ref<number>(100);
+const simulation = ref<any>(null);
 const svg = ref<Nullable<any>>(null);
 const chart = ref<Nullable<HTMLDivElement>>(null);
 const tip = ref<Nullable<HTMLDivElement>>(null);
@@ -104,8 +108,14 @@ function drawGraph() {
   graph.value = svg.value
     .append("g")
     .attr("class", "svg-graph")
-    .attr("transform", `translate(200, 200)`);
+    .attr("transform", `translate(-250, -220)`);
   graph.value.call(tip.value);
+  simulation.value = simulationInit(
+    d3,
+    networkProfilingStore.nodes,
+    networkProfilingStore.calls,
+    ticked
+  );
   node.value = graph.value.append("g").selectAll(".topo-node");
   link.value = graph.value.append("g").selectAll(".topo-line");
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
@@ -121,72 +131,15 @@ function drawGraph() {
   useThrottleFn(resize, 500)();
 }
 
-function hexGrid(n = 1, radius = 1, origin = [0, 0]) {
-  let x, y, yn, p;
-  const gLayout = new Layout(radius, origin);
-  const pos = [];
-  // x = -1; n = 1.5
-  for (x = -n; x <= n; x++) {
-    y = Math.max(-n, -x - n); // 0
-    yn = Math.min(n, -x + n); // 1
-    // y = 0 yn = 1
-    for (y; y <= yn; y++) {
-      p = gLayout.axialToPixel(x, y);
-      pos.push(...p);
-    }
-  }
-  return pos;
-}
-
-function createPolygon(radius: number, sides = 6, offset = 0) {
-  const poly: number[][] = [];
-  let i, rad;
-  for (i = 0; i < sides; i++) {
-    rad = Math.PI * 2 * (i / sides);
-    poly.push([
-      Math.cos(rad + offset) * radius,
-      Math.sin(rad + offset) * radius,
-    ]);
-  }
-  return poly;
-}
-
 function update() {
+  // node element
   if (!node.value || !link.value) {
     return;
   }
-  const obj: any = (chart.value && chart.value.getBoundingClientRect()) || {};
-  const p = {
-    hexagonParam: [27, 0.04, 5, 0.04, 0],
-    count: 1,
-    radius: obj.width / 5, // layout hexagons radius
-  };
-  const polygon = createPolygon(p.radius, 6, 0);
-  const origin = [0, 0];
-  const vertices: any = []; // a hexagon vertices
-  for (let v = 0; v < polygon.length; v++) {
-    vertices.push([origin[0] + polygon[v][0], origin[1] + polygon[v][1]]);
-  }
-  const linePath = d3.line();
-  linePath.curve(d3.curveLinearClosed);
-  graph.value
-    .append("path")
-    .attr("d", linePath(vertices))
-    .attr("stroke", "#ccc")
-    .attr("stroke-width", 2)
-    .style("fill", "none");
-  const centers = hexGrid(p.count, 50, origin); // cube centers
-  const pos = hexGrid(p.count, 50, [p.radius * 2 + 20.0]); // cube centers
-  // console.log(centers);
-  const nodeArr = networkProfilingStore.nodes;
-  for (let v = 0; v < 7; v++) {
-    const x = origin[0] + centers[v * 2];
-    const y = origin[1] + centers[v * 2 + 1];
-    nodeArr[v].x = x;
-    nodeArr[v].y = y;
-  }
-  node.value = node.value.data(nodeArr, (d: ProcessNode) => d.id);
-
+  node.value = node.value.data(
+    networkProfilingStore.nodes,
+    (d: ProcessNode) => d.id
+  );
   node.value.exit().remove();
   node.value = nodeElement(
     d3,
@@ -198,6 +151,61 @@ function update() {
     },
     tip.value
   ).merge(node.value);
+  // line element
+  link.value = link.value.data(networkProfilingStore.calls, (d: Call) => d.id);
+  link.value.exit().remove();
+  link.value = linkElement(link.value.enter()).merge(link.value);
+  // anchorElement
+  anchor.value = anchor.value.data(
+    networkProfilingStore.calls,
+    (d: Call) => d.id
+  );
+  anchor.value.exit().remove();
+  anchor.value = anchorElement(
+    anchor.value.enter(),
+    {
+      handleLinkClick: handleLinkClick,
+      tipHtml: (data: Call) => {
+        const html = `<div><span class="grey">${t(
+          "detectPoint"
+        )}:</span>${data.detectPoints.join(" | ")}</div>`;
+        return html;
+      },
+    },
+    tip.value
+  ).merge(anchor.value);
+  // arrow marker
+  arrow.value = arrow.value.data(
+    networkProfilingStore.calls,
+    (d: Call) => d.id
+  );
+  arrow.value.exit().remove();
+  arrow.value = arrowMarker(arrow.value.enter()).merge(arrow.value);
+  // force element
+  simulation.value.nodes(networkProfilingStore.nodes);
+  simulation.value
+    .force("link")
+    .links(networkProfilingStore.calls)
+    .id((d: Call) => d.id);
+  const loopMap: any = {};
+  for (let i = 0; i < networkProfilingStore.calls.length; i++) {
+    const link: any = networkProfilingStore.calls[i];
+    link.loopFactor = 1;
+    for (let j = 0; j < networkProfilingStore.calls.length; j++) {
+      if (i === j || loopMap[i]) {
+        continue;
+      }
+      const otherLink = networkProfilingStore.calls[j];
+      if (
+        link.source.id === otherLink.target.id &&
+        link.target.id === otherLink.source.id
+      ) {
+        link.loopFactor = -1;
+        loopMap[j] = 1;
+        break;
+      }
+    }
+  }
 }
 
 function handleLinkClick(event: any, d: Call) {
@@ -298,8 +306,6 @@ watch(
   margin: 0 5px 5px 0;
   height: 100%;
   min-height: 150px;
-  min-width: 300px;
-  overflow: auto;
 }
 
 .process-svg {

@@ -49,7 +49,7 @@ const networkProfilingStore = useNetworkProfilingStore();
 .item {
   width: 100%;
   height: calc(100% - 210px);
-  background-color: #333840;
+  // background-color: #333840;
   position: relative;
 }
 
