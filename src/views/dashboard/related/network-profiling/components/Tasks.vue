@@ -173,7 +173,7 @@ async function fetchTasks() {
 </script>
 <style lang="scss" scoped>
 .profile-task-list {
-  width: 300px;
+  width: 280px;
   height: calc(100% - 10px);
   overflow: auto;
   border-right: 1px solid rgba(0, 0, 0, 0.1);

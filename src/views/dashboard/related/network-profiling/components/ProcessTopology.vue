@@ -35,6 +35,7 @@ import { ElMessage } from "element-plus";
 import router from "@/router";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useSelectorStore } from "@/store/modules/selectors";
 import d3tip from "d3-tip";
 import {
   linkElement,
@@ -60,6 +61,7 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
+const selectorStore = useSelectorStore();
 const networkProfilingStore = useNetworkProfilingStore();
 const height = ref<number>(100);
 const width = ref<number>(100);
@@ -104,7 +106,7 @@ function drawGraph() {
   graph.value = svg.value
     .append("g")
     .attr("class", "svg-graph")
-    .attr("transform", `translate(200, 200)`);
+    .attr("transform", `translate(300, 300)`);
   graph.value.call(tip.value);
   node.value = graph.value.append("g").selectAll(".topo-node");
   link.value = graph.value.append("g").selectAll(".topo-line");
@@ -132,7 +134,7 @@ function hexGrid(n = 1, radius = 1, origin = [0, 0]) {
     // y = 0 yn = 1
     for (y; y <= yn; y++) {
       p = gLayout.axialToPixel(x, y);
-      pos.push(...p);
+      pos.push(p);
     }
   }
   return pos;
@@ -159,7 +161,7 @@ function update() {
   const p = {
     hexagonParam: [27, 0.04, 5, 0.04, 0],
     count: 1,
-    radius: obj.width / 5, // layout hexagons radius
+    radius: 300, // layout hexagons radius
   };
   const polygon = createPolygon(p.radius, 6, 0);
   const origin = [0, 0];
@@ -175,13 +177,36 @@ function update() {
     .attr("stroke", "#ccc")
     .attr("stroke-width", 2)
     .style("fill", "none");
-  const centers = hexGrid(p.count, 50, origin); // cube centers
-  const pos = hexGrid(p.count, 50, [p.radius * 2 + 20.0]); // cube centers
-  // console.log(centers);
-  const nodeArr = networkProfilingStore.nodes;
-  for (let v = 0; v < 7; v++) {
-    const x = origin[0] + centers[v * 2];
-    const y = origin[1] + centers[v * 2 + 1];
+  const centers = hexGrid(p.count, 100, origin); // cube centers
+  const cubeCenters = [];
+  for (let i = 0; i < centers.length; i++) {
+    // const polygon = createPolygon(90, 6, 0);
+    // const vertices: any = []; // a hexagon vertices
+    // for (let v = 0; v < polygon.length; v++) {
+    //   vertices.push([
+    //     centers[i][0] + polygon[v][0],
+    //     centers[i][1] + polygon[v][1],
+    //   ]);
+    // }
+    // const linePath = d3.line();
+    // linePath.curve(d3.curveLinearClosed);
+    // graph.value
+    //   .append("path")
+    //   .attr("d", linePath(vertices))
+    //   .attr("stroke", "#ccc")
+    //   .attr("stroke-width", 1)
+    //   .style("fill", "none");
+    const c = hexGrid(p.count, 25, centers[i]);
+    cubeCenters.push(...c);
+  }
+  shuffleArray(cubeCenters);
+  const pos = hexGrid(p.count, 30, [p.radius * 2 + 20]); // cube centers
+  const nodeArr = networkProfilingStore.nodes.filter(
+    (d: ProcessNode) => d.serviceInstanceId === selectorStore.currentPod.id
+  );
+  for (let v = 0; v < nodeArr.length; v++) {
+    const x = cubeCenters[v][0];
+    const y = cubeCenters[v][1];
     nodeArr[v].x = x;
     nodeArr[v].y = y;
   }
@@ -198,6 +223,13 @@ function update() {
     },
     tip.value
   ).merge(node.value);
+}
+
+function shuffleArray(array: number[][]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
 
 function handleLinkClick(event: any, d: Call) {

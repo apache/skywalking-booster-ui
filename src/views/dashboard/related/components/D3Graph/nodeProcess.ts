@@ -35,8 +35,8 @@ export default (d3: any, graph: any, funcs: any, tip: any) => {
     });
   nodeEnter
     .append("image")
-    .attr("width", 40)
-    .attr("height", 40)
+    .attr("width", 35)
+    .attr("height", 35)
     .attr("x", (d: any) => d.x)
     .attr("y", (d: any) => d.y)
     .attr("style", "cursor: move;")
@@ -46,9 +46,9 @@ export default (d3: any, graph: any, funcs: any, tip: any) => {
     .attr("fill", "#000")
     .attr("text-anchor", "middle")
     .attr("x", (d: any) => d.x + 15)
-    .attr("y", (d: any) => d.y + 50)
+    .attr("y", (d: any) => d.y + 42)
     .text((d: { name: string }) =>
-      d.name.length > 20 ? `${d.name.substring(0, 20)}...` : d.name
+      d.name.length > 10 ? `${d.name.substring(0, 10)}...` : d.name
     );
   return nodeEnter;
 };
