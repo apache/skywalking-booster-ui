@@ -13,16 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div ref="chart" class="micro-topo-chart"></div>
+  <div ref="chart" class="process-topo"></div>
   <div
-    class="switch-icon ml-5"
+    class="switch-icon-edit ml-5"
     title="Settings"
     @click="setConfig"
     v-if="dashboardStore.editMode"
   >
     <Icon size="middle" iconName="settings" />
   </div>
-  <div class="setting" v-if="showSettings && dashboardStore.editMode">
+  <div class="process-setting" v-if="showSettings && dashboardStore.editMode">
     <Settings @update="updateSettings" @updateNodes="freshNodes" />
   </div>
 </template>
@@ -37,12 +37,8 @@ import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import d3tip from "d3-tip";
-import {
-  linkElement,
-  anchorElement,
-  arrowMarker,
-} from "../../components/D3Graph/linkElement";
-import nodeElement from "../../components/D3Graph/nodeProcess";
+import { linkElement, anchorElement, arrowMarker } from "./Graph/linkProcess";
+import nodeElement from "./Graph/nodeProcess";
 import { Call } from "@/types/topology";
 // import zoom from "../../components/D3Graph/zoom";
 import { ProcessNode } from "@/types/ebpf";
@@ -109,7 +105,7 @@ function drawGraph() {
     .attr("transform", `translate(300, 300)`);
   graph.value.call(tip.value);
   node.value = graph.value.append("g").selectAll(".topo-node");
-  link.value = graph.value.append("g").selectAll(".topo-line");
+  link.value = graph.value.append("g").selectAll(".topo-call");
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
   arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
   // svg.value.call(zoom(d3, graph.value));
@@ -157,7 +153,7 @@ function update() {
   if (!node.value || !link.value) {
     return;
   }
-  const obj: any = (chart.value && chart.value.getBoundingClientRect()) || {};
+  // const obj: any = (chart.value && chart.value.getBoundingClientRect()) || {};
   const p = {
     hexagonParam: [27, 0.04, 5, 0.04, 0],
     count: 1,
@@ -180,7 +176,7 @@ function update() {
   const centers = hexGrid(p.count, 100, origin); // cube centers
   const cubeCenters = [];
   for (let i = 0; i < centers.length; i++) {
-    // const polygon = createPolygon(90, 6, 0);
+    // const polygon = createPolygon(100, 6, 0);
     // const vertices: any = []; // a hexagon vertices
     // for (let v = 0; v < polygon.length; v++) {
     //   vertices.push([
@@ -196,9 +192,27 @@ function update() {
     //   .attr("stroke", "#ccc")
     //   .attr("stroke-width", 1)
     //   .style("fill", "none");
-    const c = hexGrid(p.count, 25, centers[i]);
+    const c = hexGrid(p.count, 30, centers[i]);
     cubeCenters.push(...c);
   }
+  // for (let i = 0; i < cubeCenters.length; i++) {
+  //   const polygon = createPolygon(30, 6, 0);
+  //   const vertices: any = []; // a hexagon vertices
+  //   for (let v = 0; v < polygon.length; v++) {
+  //     vertices.push([
+  //       cubeCenters[i][0] + polygon[v][0],
+  //       cubeCenters[i][1] + polygon[v][1],
+  //     ]);
+  //   }
+  //   const linePath = d3.line();
+  //   linePath.curve(d3.curveLinearClosed);
+  //   graph.value
+  //     .append("path")
+  //     .attr("d", linePath(vertices))
+  //     .attr("stroke", "#ccc")
+  //     .attr("stroke-width", 1)
+  //     .style("fill", "none");
+  // }
   shuffleArray(cubeCenters);
   const pos = hexGrid(p.count, 30, [p.radius * 2 + 20]); // cube centers
   const nodeArr = networkProfilingStore.nodes.filter(
@@ -211,7 +225,6 @@ function update() {
     nodeArr[v].y = y;
   }
   node.value = node.value.data(nodeArr, (d: ProcessNode) => d.id);
-
   node.value.exit().remove();
   node.value = nodeElement(
     d3,
@@ -223,6 +236,50 @@ function update() {
     },
     tip.value
   ).merge(node.value);
+  // line element
+  const obj = {} as any;
+  const calls = networkProfilingStore.calls.reduce((prev: any[], next: any) => {
+    if (
+      !(
+        obj[next.sourceId + next.targetId] && obj[next.targetId + next.sourceId]
+      )
+    ) {
+      obj[next.sourceId + next.targetId] = true;
+      obj[next.targetId + next.sourceId] = true;
+      prev.push(next);
+    }
+    return prev;
+  }, []);
+
+  link.value = link.value.data(calls, (d: Call) => d.id);
+  link.value.exit().remove();
+  link.value = linkElement(link.value.enter()).merge(link.value);
+  // anchorElement
+  // anchor.value = anchor.value.data(
+  //   networkProfilingStore.calls,
+  //   (d: Call) => d.id
+  // );
+  // anchor.value.exit().remove();
+  // anchor.value = anchorElement(
+  //   anchor.value.enter(),
+  //   {
+  //     handleLinkClick: handleLinkClick,
+  //     tipHtml: (data: Call) => {
+  //       const html = `<div><span class="grey">${t(
+  //         "detectPoint"
+  //       )}:</span>${data.detectPoints.join(" | ")}</div>`;
+  //       return html;
+  //     },
+  //   },
+  //   tip.value
+  // ).merge(anchor.value);
+  // arrow marker
+  arrow.value = arrow.value.data(
+    networkProfilingStore.calls,
+    (d: Call) => d.id
+  );
+  arrow.value.exit().remove();
+  arrow.value = arrowMarker(arrow.value.enter()).merge(arrow.value);
 }
 
 function shuffleArray(array: number[][]) {
@@ -259,27 +316,6 @@ function handleLinkClick(event: any, d: Call) {
   const path = `/dashboard/related/${dashboard.layer}/${EntityType[7].value}/${d.source.id}/${d.target.id}/${dashboard.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
-}
-
-function ticked() {
-  link.value.attr(
-    "d",
-    (d: Call | any) =>
-      `M${d.source.x} ${d.source.y} Q ${(d.source.x + d.target.x) / 2} ${
-        (d.target.y + d.source.y) / 2 - d.loopFactor * 90
-      } ${d.target.x} ${d.target.y}`
-  );
-  anchor.value.attr(
-    "transform",
-    (d: Call | any) =>
-      `translate(${(d.source.x + d.target.x) / 2}, ${
-        (d.target.y + d.source.y) / 2 - d.loopFactor * 45
-      })`
-  );
-  node.value.attr(
-    "transform",
-    (d: Node | any) => `translate(${d.x - 22},${d.y - 22})`
-  );
 }
 
 function updateSettings(config: any) {
@@ -324,8 +360,8 @@ watch(
   }
 );
 </script>
-<style lang="scss" scoped>
-.micro-topo-chart {
+<style lang="scss">
+.process-topo {
   width: calc(100% - 10px);
   margin: 0 5px 5px 0;
   height: 100%;
@@ -340,7 +376,7 @@ watch(
   cursor: move;
 }
 
-.switch-icon {
+.switch-icon-edit {
   cursor: pointer;
   transition: all 0.5ms linear;
   background-color: #252a2f99;
@@ -353,7 +389,7 @@ watch(
   right: 10px;
 }
 
-.setting {
+.process-setting {
   position: absolute;
   top: 65px;
   right: 10px;
@@ -365,5 +401,23 @@ watch(
   border-radius: 3px;
   color: #ccc;
   transition: all 0.5ms linear;
+}
+
+.topo-call {
+  stroke-linecap: round;
+  stroke-width: 2px;
+  stroke-dasharray: 13 7;
+  fill: none;
+  animation: topo-dash 0.5s linear infinite;
+}
+
+@keyframes topo-dash {
+  from {
+    stroke-dashoffset: 20;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 </style>

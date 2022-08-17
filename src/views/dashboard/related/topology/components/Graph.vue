@@ -94,17 +94,10 @@ import {
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
-import zoom from "../../components/D3Graph/zoom";
-import {
-  simulationInit,
-  simulationSkip,
-} from "../../components/D3Graph/simulation";
-import nodeElement from "../../components/D3Graph/nodeElement";
-import {
-  linkElement,
-  anchorElement,
-  arrowMarker,
-} from "../../components/D3Graph/linkElement";
+import zoom from "./utils/zoom";
+import { simulationInit, simulationSkip } from "./utils/simulation";
+import nodeElement from "./utils/nodeElement";
+import { linkElement, anchorElement, arrowMarker } from "./utils/linkElement";
 import { Node, Call } from "@/types/topology";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useTopologyStore } from "@/store/modules/topology";

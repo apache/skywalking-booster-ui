@@ -70,7 +70,7 @@ export const networkProfilingStore = defineStore({
     },
     setTopology(data: { nodes: ProcessNode[]; calls: Call[] }) {
       const obj = {} as any;
-      const calls = (data.calls || []).reduce((prev: Call[], next: Call) => {
+      let calls = (data.calls || []).reduce((prev: Call[], next: Call) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
           next.value = next.value || 1;
@@ -87,7 +87,16 @@ export const networkProfilingStore = defineStore({
         }
         return prev;
       }, []);
-
+      calls = calls.map((d: any) => {
+        d.sourceId = d.source;
+        d.targetId = d.target;
+        d.source = d.sourceObj;
+        d.target = d.targetObj;
+        delete d.sourceObj;
+        delete d.targetObj;
+        return d;
+      });
+      console.log(calls);
       this.calls = calls;
       this.nodes = data.nodes;
     },
