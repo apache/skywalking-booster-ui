@@ -20,12 +20,12 @@ export const linkElement = (graph: any) => {
     .append("path")
     .attr("class", "topo-call")
     .attr("marker-end", "url(#arrow)")
-    .attr("stroke", "#afc4dd")
+    .attr("stroke", "#bbb")
     .attr("d", (d: any) => {
       const controlPos = computeControlPoint(
         [d.source.x, d.source.y - 5],
         [d.target.x, d.target.y - 5],
-        1
+        0.5
       );
       return (
         "M" +
@@ -50,7 +50,21 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .append("circle")
     .attr("class", "topo-line-anchor")
     .attr("r", 5)
-    .attr("fill", "#217EF25f")
+    .attr("fill", "#ccc")
+    .attr("transform", (d: any) => {
+      const controlPos = computeControlPoint(
+        [d.source.x, d.source.y - 5],
+        [d.target.x, d.target.y - 5],
+        0.5
+      );
+      const p = quadraticBezier(
+        0.5,
+        { x: d.source.x, y: d.source.y - 5 },
+        { x: controlPos[0], y: controlPos[1] },
+        { x: d.target.x, y: d.target.y - 5 }
+      );
+      return `translate(${p[0]}, ${p[1]})`;
+    })
     .on("mouseover", function (event: unknown, d: unknown) {
       tip.html(funcs.tipHtml).show(d, this);
     })
@@ -69,17 +83,18 @@ export const arrowMarker = (graph: any) => {
     .attr("id", "arrow")
     .attr("class", "topo-line-arrow")
     .attr("markerUnits", "strokeWidth")
-    .attr("markerWidth", "6")
-    .attr("markerHeight", "6")
+    .attr("markerWidth", "8")
+    .attr("markerHeight", "8")
     .attr("viewBox", "0 0 12 12")
     .attr("refX", "10")
     .attr("refY", "6")
     .attr("orient", "auto");
   const arrowPath = "M2,2 L10,6 L2,10 L6,6 L2,2";
 
-  arrow.append("path").attr("d", arrowPath).attr("fill", "#afc4dd");
+  arrow.append("path").attr("d", arrowPath).attr("fill", "#bbb");
   return arrow;
 };
+// Control Point coordinates of quadratic Bezier curve
 function computeControlPoint(ps: number[], pe: number[], arc = 0.5) {
   const deltaX = pe[0] - ps[0];
   const deltaY = pe[1] - ps[1];
@@ -90,4 +105,15 @@ function computeControlPoint(ps: number[], pe: number[], arc = 0.5) {
     (ps[0] + pe[0]) / 2 + len * Math.cos(newTheta),
     (ps[1] + pe[1]) / 2 + len * Math.sin(newTheta),
   ];
+}
+// Point coordinates of quadratic Bezier curve
+function quadraticBezier(
+  t: number,
+  ps: { x: number; y: number },
+  pc: { x: number; y: number },
+  pe: { x: number; y: number }
+) {
+  const x = (1 - t) * (1 - t) * ps.x + 2 * t * (1 - t) * pc.x + t * t * pe.x;
+  const y = (1 - t) * (1 - t) * ps.y + 2 * t * (1 - t) * pc.y + t * t * pe.y;
+  return [x, y];
 }

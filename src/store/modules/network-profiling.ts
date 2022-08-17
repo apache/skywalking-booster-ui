@@ -96,7 +96,6 @@ export const networkProfilingStore = defineStore({
         delete d.targetObj;
         return d;
       });
-      console.log(calls);
       this.calls = calls;
       this.nodes = data.nodes;
     },

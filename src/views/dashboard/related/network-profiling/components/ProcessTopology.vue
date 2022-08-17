@@ -87,7 +87,7 @@ async function init() {
     return;
   }
   drawGraph();
-  update();
+  drawTopology();
 }
 
 function drawGraph() {
@@ -149,7 +149,7 @@ function createPolygon(radius: number, sides = 6, offset = 0) {
   return poly;
 }
 
-function update() {
+function drawTopology() {
   if (!node.value || !link.value) {
     return;
   }
@@ -254,30 +254,23 @@ function update() {
   link.value = link.value.data(calls, (d: Call) => d.id);
   link.value.exit().remove();
   link.value = linkElement(link.value.enter()).merge(link.value);
-  // anchorElement
-  // anchor.value = anchor.value.data(
-  //   networkProfilingStore.calls,
-  //   (d: Call) => d.id
-  // );
-  // anchor.value.exit().remove();
-  // anchor.value = anchorElement(
-  //   anchor.value.enter(),
-  //   {
-  //     handleLinkClick: handleLinkClick,
-  //     tipHtml: (data: Call) => {
-  //       const html = `<div><span class="grey">${t(
-  //         "detectPoint"
-  //       )}:</span>${data.detectPoints.join(" | ")}</div>`;
-  //       return html;
-  //     },
-  //   },
-  //   tip.value
-  // ).merge(anchor.value);
+  anchor.value = anchor.value.data(calls, (d: Call) => d.id);
+  anchor.value.exit().remove();
+  anchor.value = anchorElement(
+    anchor.value.enter(),
+    {
+      handleLinkClick: handleLinkClick,
+      tipHtml: (data: Call) => {
+        const html = `<div><span class="grey">${t(
+          "detectPoint"
+        )}:</span>${data.detectPoints.join(" | ")}</div>`;
+        return html;
+      },
+    },
+    tip.value
+  ).merge(anchor.value);
   // arrow marker
-  arrow.value = arrow.value.data(
-    networkProfilingStore.calls,
-    (d: Call) => d.id
-  );
+  arrow.value = arrow.value.data(calls, (d: Call) => d.id);
   arrow.value.exit().remove();
   arrow.value = arrowMarker(arrow.value.enter()).merge(arrow.value);
 }
@@ -351,7 +344,7 @@ async function freshNodes() {
     return;
   }
   drawGraph();
-  update();
+  drawTopology();
 }
 watch(
   () => networkProfilingStore.nodes,
