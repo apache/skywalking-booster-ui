@@ -154,7 +154,10 @@ export function useSourceProcessor(
     const c = (config.metricConfig && config.metricConfig[index]) || {};
 
     if (type === MetricQueryTypes.ReadMetricsValues) {
-      source[m] = calculateExp(resp.data[keys[index]].values.values, c);
+      source[m] =
+        (resp.data[keys[index]] &&
+          calculateExp(resp.data[keys[index]].values.values, c)) ||
+        [];
     }
     if (type === MetricQueryTypes.ReadLabeledMetricsValues) {
       const resVal = Object.values(resp.data)[0] || [];

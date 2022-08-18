@@ -238,6 +238,8 @@ function optimizeTemplate(
   children: (LayoutConfig & {
     moved?: boolean;
     standard?: unknown;
+    label?: string;
+    value?: string;
   })[]
 ) {
   for (const child of children || []) {
@@ -245,6 +247,8 @@ function optimizeTemplate(
     delete child.activedTabIndex;
     delete child.standard;
     delete child.id;
+    delete child.label;
+    delete child.value;
     if (isEmptyObject(child.graph)) {
       delete child.graph;
     }

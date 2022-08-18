@@ -308,7 +308,9 @@ async function setSourceSelector() {
   }
   selectorStore.setCurrentPod(currentPod);
   states.currentPod = currentPod.label;
-  const process = params.processId || selectorStore.processes[0].id;
+  const process =
+    params.processId ||
+    (selectorStore.processes.length && selectorStore.processes[0].id);
   let currentProcess;
   if (states.currentProcess) {
     currentProcess = selectorStore.processes.find(
