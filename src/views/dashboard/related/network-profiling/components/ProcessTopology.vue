@@ -372,10 +372,10 @@ watch(
 .switch-icon-edit {
   cursor: pointer;
   transition: all 0.5ms linear;
-  background-color: #252a2f99;
-  color: #ddd;
+  border: 1px solid #ccc;
+  color: #666;
   display: inline-block;
-  padding: 5px 8px 8px;
+  padding: 5px;
   border-radius: 3px;
   position: absolute;
   top: 20px;
@@ -388,11 +388,11 @@ watch(
   right: 10px;
   width: 300px;
   height: 160px;
-  background-color: #2b3037;
+  background-color: #666;
   overflow: auto;
   padding: 15px;
   border-radius: 3px;
-  color: #ccc;
+  color: #fff;
   transition: all 0.5ms linear;
 }
 

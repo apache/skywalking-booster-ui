@@ -107,6 +107,13 @@ function computeControlPoint(ps: number[], pe: number[], arc = 0.5) {
   ];
 }
 // Point coordinates of quadratic Bezier curve
+/**
+ * @param t [0, 1]
+ * @param ps start position
+ * @param pc control position
+ * @param pe end position
+ * @returns a position in the line
+ */
 function quadraticBezier(
   t: number,
   ps: { x: number; y: number },
