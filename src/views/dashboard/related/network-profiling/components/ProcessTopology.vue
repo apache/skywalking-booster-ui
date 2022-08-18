@@ -95,14 +95,14 @@ function drawGraph() {
     height: 20,
     width: 0,
   };
-  height.value = dom.height - 20;
+  height.value = (dom.height || 40) - 20;
   width.value = dom.width;
   svg.value.attr("height", height.value).attr("width", width.value);
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
   graph.value = svg.value
     .append("g")
     .attr("class", "svg-graph")
-    .attr("transform", `translate(300, 300)`);
+    .attr("transform", `translate(${dom.width / 3}, ${dom.width / 3})`);
   graph.value.call(tip.value);
   node.value = graph.value.append("g").selectAll(".topo-node");
   link.value = graph.value.append("g").selectAll(".topo-call");
@@ -153,11 +153,16 @@ function drawTopology() {
   if (!node.value || !link.value) {
     return;
   }
-  // const obj: any = (chart.value && chart.value.getBoundingClientRect()) || {};
+  const dom: any = (chart.value && chart.value.getBoundingClientRect()) || {
+    width: 0,
+    height: 0,
+  };
+  if (isNaN(dom.width) || dom.width < 1) {
+    return;
+  }
   const p = {
-    hexagonParam: [27, 0.04, 5, 0.04, 0],
     count: 1,
-    radius: 300, // layout hexagons radius
+    radius: parseInt(dom.width / 3), // layout hexagons radius 300
   };
   const polygon = createPolygon(p.radius, 6, 0);
   const origin = [0, 0];
@@ -173,27 +178,35 @@ function drawTopology() {
     .attr("stroke", "#ccc")
     .attr("stroke-width", 2)
     .style("fill", "none");
-  const centers = hexGrid(p.count, 100, origin); // cube centers
+  const nodeArr = networkProfilingStore.nodes.filter(
+    (d: ProcessNode) => d.serviceInstanceId === selectorStore.currentPod.id
+  );
+  const count = nodeArr.length;
+  // layout
+  const centers = hexGrid(p.count, parseInt(dom.width / 9), origin); // cube centers radius 100
   const cubeCenters = [];
-  for (let i = 0; i < centers.length; i++) {
-    // const polygon = createPolygon(100, 6, 0);
-    // const vertices: any = []; // a hexagon vertices
-    // for (let v = 0; v < polygon.length; v++) {
-    //   vertices.push([
-    //     centers[i][0] + polygon[v][0],
-    //     centers[i][1] + polygon[v][1],
-    //   ]);
-    // }
-    // const linePath = d3.line();
-    // linePath.curve(d3.curveLinearClosed);
-    // graph.value
-    //   .append("path")
-    //   .attr("d", linePath(vertices))
-    //   .attr("stroke", "#ccc")
-    //   .attr("stroke-width", 1)
-    //   .style("fill", "none");
-    const c = hexGrid(p.count, 30, centers[i]);
-    cubeCenters.push(...c);
+  if (count > 7) {
+    for (let i = 0; i < centers.length; i++) {
+      // const polygon = createPolygon(100, 6, 0);
+      // const vertices: any = []; // a hexagon vertices
+      // for (let v = 0; v < polygon.length; v++) {
+      //   vertices.push([
+      //     centers[i][0] + polygon[v][0],
+      //     centers[i][1] + polygon[v][1],
+      //   ]);
+      // }
+      // const linePath = d3.line();
+      // linePath.curve(d3.curveLinearClosed);
+      // graph.value
+      //   .append("path")
+      //   .attr("d", linePath(vertices))
+      //   .attr("stroke", "#ccc")
+      //   .attr("stroke-width", 1)
+      //   .style("fill", "none");
+      const c = hexGrid(p.count, parseInt(dom.width / 27) - 5, centers[i]);
+      cubeCenters.push(...c);
+    }
+    shuffleArray(cubeCenters);
   }
   // for (let i = 0; i < cubeCenters.length; i++) {
   //   const polygon = createPolygon(30, 6, 0);
@@ -213,14 +226,11 @@ function drawTopology() {
   //     .attr("stroke-width", 1)
   //     .style("fill", "none");
   // }
-  shuffleArray(cubeCenters);
-  const pos = hexGrid(p.count, 30, [p.radius * 2 + 20]); // cube centers
-  const nodeArr = networkProfilingStore.nodes.filter(
-    (d: ProcessNode) => d.serviceInstanceId === selectorStore.currentPod.id
-  );
-  for (let v = 0; v < nodeArr.length; v++) {
-    const x = cubeCenters[v][0];
-    const y = cubeCenters[v][1];
+  // const pos = hexGrid(p.count, 30, [p.radius * 2 + 20]); // cube centers
+  let cubes = count > 7 ? cubeCenters : centers;
+  for (let v = 0; v < count; v++) {
+    const x = cubes[v][0];
+    const y = cubes[v][1];
     nodeArr[v].x = x;
     nodeArr[v].y = y;
   }
@@ -292,6 +302,7 @@ function handleLinkClick(event: any, d: Call) {
   event.stopPropagation();
   networkProfilingStore.setNode(null);
   networkProfilingStore.setLink(d);
+  console.log(config.value);
   if (!config.value.linkDashboard) {
     return;
   }
@@ -394,6 +405,10 @@ watch(
   border-radius: 3px;
   color: #fff;
   transition: all 0.5ms linear;
+}
+
+.topo-line-anchor {
+  cursor: pointer;
 }
 
 .topo-call {
