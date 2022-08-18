@@ -216,7 +216,6 @@ export default defineComponent({
       dashboardStore.setCurrentTabItems(
         dashboardStore.layout[l].children[activeTabIndex.value].children
       );
-      console.log(dashboardStore.currentTabItems);
     }
     function copyLink() {
       let path = "";
