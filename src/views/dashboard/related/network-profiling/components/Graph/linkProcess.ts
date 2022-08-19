@@ -20,7 +20,7 @@ export const linkElement = (graph: any) => {
     .append("path")
     .attr("class", "topo-call")
     .attr("marker-end", "url(#arrow)")
-    .attr("stroke", "#bbb")
+    .attr("stroke", "#97B0F8")
     .attr("d", (d: any) => {
       const controlPos = computeControlPoint(
         [d.source.x, d.source.y - 5],
@@ -50,7 +50,7 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .append("circle")
     .attr("class", "topo-line-anchor")
     .attr("r", 5)
-    .attr("fill", "#ccc")
+    .attr("fill", "#97B0F8")
     .attr("transform", (d: any) => {
       const controlPos = computeControlPoint(
         [d.source.x, d.source.y - 5],
@@ -91,7 +91,7 @@ export const arrowMarker = (graph: any) => {
     .attr("orient", "auto");
   const arrowPath = "M2,2 L10,6 L2,10 L6,6 L2,2";
 
-  arrow.append("path").attr("d", arrowPath).attr("fill", "#bbb");
+  arrow.append("path").attr("d", arrowPath).attr("fill", "#97B0F8");
   return arrow;
 };
 // Control Point coordinates of quadratic Bezier curve
