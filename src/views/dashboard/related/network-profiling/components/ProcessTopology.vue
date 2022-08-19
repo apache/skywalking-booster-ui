@@ -72,6 +72,8 @@ const arrow = ref<any>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 const showSettings = ref<boolean>(false);
 const config = ref<any>({});
+const diff = ref<number[]>([220, 200]);
+const radius = 210;
 
 onMounted(() => {
   init();
@@ -99,16 +101,24 @@ function drawGraph() {
   width.value = dom.width;
   svg.value.attr("height", height.value).attr("width", width.value);
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
+  const outNodes = networkProfilingStore.nodes.filter(
+    (d: ProcessNode) => d.serviceInstanceId !== selectorStore.currentPod.id
+  );
+  if (!outNodes.length) {
+    diff.value[0] = (dom.width - radius * 2) / 2 + radius;
+  } else {
+    diff.value[0] = (dom.width - radius * 4) / 2 + radius;
+  }
   graph.value = svg.value
     .append("g")
     .attr("class", "svg-graph")
-    .attr("transform", `translate(220, 200)`);
+    .attr("transform", `translate(${diff.value[0]}, ${diff.value[1]})`);
   graph.value.call(tip.value);
   node.value = graph.value.append("g").selectAll(".topo-node");
   link.value = graph.value.append("g").selectAll(".topo-call");
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
   arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
-  svg.value.call(zoom(d3, graph.value, [220, 200]));
+  svg.value.call(zoom(d3, graph.value, diff.value));
   svg.value.on("click", (event: any) => {
     event.stopPropagation();
     event.preventDefault();
@@ -167,7 +177,7 @@ function createLayout() {
   }
   const p = {
     count: 1,
-    radius: 210, // layout hexagons radius 300
+    radius, // layout hexagons radius 300
   };
   const polygon = createPolygon(p.radius, 6, 0);
   const origin = [0, 0];
