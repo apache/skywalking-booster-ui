@@ -287,7 +287,7 @@ async function setSourceSelector() {
   await selectorStore.getService(String(params.serviceId));
   states.currentService = selectorStore.currentService.value;
   const e = String(params.entity).split("Relation")[0];
-  await fetchPods(e, selectorStore.currentService.id, false);
+  await fetchPods(e, selectorStore.currentService.id, true);
   if (!(selectorStore.pods.length && selectorStore.pods[0])) {
     selectorStore.setCurrentPod(null);
     states.currentPod = "";
@@ -336,7 +336,7 @@ async function setDestSelector() {
   await fetchPods(
     String(params.entity),
     selectorStore.currentDestService.id,
-    false
+    true
   );
   if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
     selectorStore.setCurrentDestPod(null);

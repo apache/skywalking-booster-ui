@@ -23,7 +23,7 @@ limitations under the License. -->
     <Icon size="middle" iconName="settings" />
   </div>
   <div class="process-setting" v-if="showSettings && dashboardStore.editMode">
-    <Settings @update="updateSettings" @updateNodes="freshNodes" />
+    <Settings @update="updateSettings" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -342,16 +342,9 @@ function shuffleArray(array: number[][]) {
 }
 
 function handleLinkClick(event: any, d: Call) {
-  if (
-    d.source.layer !== dashboardStore.layerId ||
-    d.target.layer !== dashboardStore.layerId
-  ) {
-    return;
-  }
   event.stopPropagation();
   networkProfilingStore.setNode(null);
   networkProfilingStore.setLink(d);
-  console.log(config.value);
   if (!config.value.linkDashboard) {
     return;
   }
@@ -366,13 +359,13 @@ function handleLinkClick(event: any, d: Call) {
     );
     return;
   }
-  const path = `/dashboard/related/${dashboard.layer}/${EntityType[7].value}/${d.source.id}/${d.target.id}/${dashboard.name}`;
+  const path = `/dashboard/${dashboard.layer}/${EntityType[7].value}/${d.source.serviceId}/${d.source.serviceInstanceId}/${d.source.id}/${d.target.serviceId}/${d.target.serviceInstanceId}/${d.target.id}/${dashboard.name}`;
   const routeUrl = router.resolve({ path });
   window.open(routeUrl.href, "_blank");
 }
 
-function updateSettings(config: any) {
-  config.value = config;
+function updateSettings(param: any) {
+  config.value = param;
 }
 
 function setConfig() {
@@ -438,13 +431,13 @@ watch(
   padding: 5px;
   border-radius: 3px;
   position: absolute;
-  top: 20px;
+  top: 10px;
   right: 10px;
 }
 
 .process-setting {
   position: absolute;
-  top: 65px;
+  top: 45px;
   right: 10px;
   width: 300px;
   height: 160px;

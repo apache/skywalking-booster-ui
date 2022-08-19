@@ -65,13 +65,13 @@ function getDashboards() {
 
 function changeLinkDashboard(opt: { value: string }[]) {
   linkDashboard.value = opt[0].value;
-  const param = {
+  const p = {
     ...dashboardStore.selectedGrid,
-    linkDashboard: linkDashboard.value,
+    linkDashboard: opt[0].value,
   };
-  dashboardStore.selectWidget(param);
-  dashboardStore.setConfigs(param);
-  emits("update", param);
+  dashboardStore.selectWidget(p);
+  dashboardStore.setConfigs(p);
+  emits("update", p);
 }
 </script>
 <style lang="scss" scoped>
