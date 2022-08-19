@@ -48,14 +48,14 @@ const networkProfilingStore = useNetworkProfilingStore();
 
 .item {
   width: 100%;
-  height: calc(100% - 210px);
+  height: calc(100% - 50px);
   // background-color: #333840;
   position: relative;
 }
 
 .schedules {
-  height: 200px;
+  height: 40px;
   border-bottom: 1px solid #ccc;
-  padding-right: 10px;
+  padding: 8px;
 }
 </style>
