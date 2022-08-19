@@ -40,7 +40,7 @@ import d3tip from "d3-tip";
 import { linkElement, anchorElement, arrowMarker } from "./Graph/linkProcess";
 import nodeElement from "./Graph/nodeProcess";
 import { Call } from "@/types/topology";
-// import zoom from "../../components/D3Graph/zoom";
+import zoom from "../../components/utils/zoom";
 import { ProcessNode } from "@/types/ebpf";
 import { useThrottleFn } from "@vueuse/core";
 import Settings from "./Settings.vue";
@@ -108,7 +108,7 @@ function drawGraph() {
   link.value = graph.value.append("g").selectAll(".topo-call");
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
   arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
-  // svg.value.call(zoom(d3, graph.value));
+  svg.value.call(zoom(d3, graph.value, [220, 200]));
   svg.value.on("click", (event: any) => {
     event.stopPropagation();
     event.preventDefault();
@@ -123,11 +123,9 @@ function hexGrid(n = 1, radius = 1, origin = [0, 0]) {
   let x, y, yn, p;
   const gLayout = new Layout(radius, origin);
   const pos = [];
-  // x = -1; n = 1.5
   for (x = -n; x <= n; x++) {
     y = Math.max(-n, -x - n); // 0
     yn = Math.min(n, -x + n); // 1
-    // y = 0 yn = 1
     for (y; y <= yn; y++) {
       p = gLayout.axialToPixel(x, y);
       pos.push(p);
@@ -149,6 +147,13 @@ function createPolygon(radius: number, sides = 6, offset = 0) {
   return poly;
 }
 
+function getArcPoint(angle: number, radius: number) {
+  const origin = [0, 0];
+  const x1 = radius + origin[0] * Math.cos((angle * Math.PI) / 180);
+  const y1 = origin[1] + radius * Math.sin((angle * Math.PI) / 180);
+
+  return [x1, y1];
+}
 function createLayout() {
   if (!node.value || !link.value) {
     return;
@@ -239,22 +244,35 @@ function createLayout() {
   //     .attr("stroke-width", 1)
   //     .style("fill", "none");
   // }
-  const pos = hexGrid(p.count, 68, origin); // cube centers
   let cubes = count > 7 ? cubeCenters : centers;
-  drawTopology(cubes);
-}
-
-function drawTopology(cubes: number[][]) {
-  const nodeArr = networkProfilingStore.nodes.filter(
-    (d: ProcessNode) => d.serviceInstanceId === selectorStore.currentPod.id
-  );
-  const count = nodeArr.length;
   for (let v = 0; v < count; v++) {
     const x = cubes[v][0];
     const y = cubes[v][1];
     nodeArr[v].x = x;
     nodeArr[v].y = y;
   }
+  const outNodes = networkProfilingStore.nodes.filter(
+    (d: ProcessNode) => d.serviceInstanceId !== selectorStore.currentPod.id
+  );
+  let angle = 10;
+  let r = 230;
+  for (let v = 0; v < outNodes.length; v++) {
+    const pos = getArcPoint(angle, r); // angle is [-120, 120]
+    outNodes[v].x = pos[0];
+    outNodes[v].y = pos[1];
+    angle = angle + 10;
+    if (angle * (v + 1) > 120) {
+      angle = -10;
+    }
+    if (angle * (v + 1) < -120) {
+      r = r + 20;
+      angle = 10;
+    }
+  }
+  drawTopology([...nodeArr, ...outNodes]);
+}
+
+function drawTopology(nodeArr: any[]) {
   node.value = node.value.data(nodeArr, (d: ProcessNode) => d.id);
   node.value.exit().remove();
   node.value = nodeElement(

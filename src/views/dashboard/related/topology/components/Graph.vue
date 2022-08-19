@@ -94,7 +94,7 @@ import {
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
 import d3tip from "d3-tip";
-import zoom from "./utils/zoom";
+import zoom from "../../components/utils/zoom";
 import { simulationInit, simulationSkip } from "./utils/simulation";
 import nodeElement from "./utils/nodeElement";
 import { linkElement, anchorElement, arrowMarker } from "./utils/linkElement";
@@ -193,7 +193,7 @@ async function init() {
   link.value = graph.value.append("g").selectAll(".topo-line");
   anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
   arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
-  svg.value.call(zoom(d3, graph.value));
+  svg.value.call(zoom(d3, graph.value, [-100, -100]));
   svg.value.on("click", (event: any) => {
     event.stopPropagation();
     event.preventDefault();
