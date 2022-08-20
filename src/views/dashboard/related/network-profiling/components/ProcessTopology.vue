@@ -27,13 +27,18 @@ limitations under the License. -->
     </template>
     <Settings @update="updateSettings" />
   </el-popover>
-  <el-popover placement="bottom" :width="600" trigger="click">
+  <el-popover
+    placement="bottom"
+    :width="600"
+    trigger="click"
+    @after-enter="showTimeLine"
+  >
     <template #reference>
       <div class="range switch-icon-edit">
         <Icon size="middle" iconName="time_range" />
       </div>
     </template>
-    <Schedules />
+    <div ref="timeRange" class="time-ranges"></div>
   </el-popover>
 </template>
 <script lang="ts" setup>
@@ -57,7 +62,8 @@ import Settings from "./Settings.vue";
 import { EntityType } from "@/views/dashboard/data";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { Layout } from "./Graph/layout";
-import Schedules from "./Schedules.vue";
+import { DataSet, Timeline } from "vis-timeline/standalone";
+import "vis-timeline/styles/vis-timeline-graph2d.css";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -84,6 +90,8 @@ const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 const config = ref<any>({});
 const diff = ref<number[]>([220, 200]);
 const radius = 210;
+const timeRange = ref<Nullable<HTMLDivElement>>(null);
+const visGraph = ref<Nullable<any>>(null);
 
 onMounted(() => {
   init();
@@ -408,6 +416,61 @@ async function freshNodes() {
   drawGraph();
   createLayout();
 }
+function showTimeLine() {
+  visTimeline();
+}
+function visTimeline() {
+  if (!timeRange.value) {
+    return;
+  }
+  if (visGraph.value) {
+    visGraph.value.destroy();
+  }
+  if (!networkProfilingStore.selectedNetworkTask.taskId) {
+    return;
+  }
+  const h = timeRange.value.getBoundingClientRect().height;
+  const { taskStartTime, fixedTriggerDuration, taskId, targetType } =
+    networkProfilingStore.selectedNetworkTask;
+  const startTime =
+    fixedTriggerDuration > 1800
+      ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
+      : taskStartTime;
+  const task = [
+    {
+      id: 1,
+      content: "",
+      start: new Date(Number(startTime)),
+      end: new Date(Number(taskStartTime + fixedTriggerDuration * 1000)),
+      data: networkProfilingStore.selectedNetworkTask,
+      className: targetType,
+    },
+  ];
+  const items = new DataSet(task);
+  const itemsAlwaysDraggable =
+    fixedTriggerDuration < 1800
+      ? {
+          item: true,
+          range: true,
+        }
+      : undefined;
+  const editable =
+    fixedTriggerDuration < 1800
+      ? {
+          updateTime: true,
+        }
+      : false;
+  const options = {
+    height: h,
+    width: "100%",
+    locale: "en",
+    editable,
+    itemsAlwaysDraggable,
+    zoomMin: 1000 * 60,
+    zoomMax: 1000 * 60 * 60 * 24,
+  };
+  visGraph.value = new Timeline(timeRange.value, items, options);
+}
 watch(
   () => networkProfilingStore.nodes,
   () => {
@@ -467,5 +530,11 @@ watch(
   to {
     stroke-dashoffset: 0;
   }
+}
+
+.time-ranges {
+  width: calc(100% - 5px);
+  padding: 10px;
+  height: 150px;
 }
 </style>
