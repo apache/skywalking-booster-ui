@@ -13,17 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <!-- <el-button class="mr-10" type="primary" size="small">
-    {{ t("start") }}
-  </el-button> -->
-  <el-popover placement="bottom" :width="600" trigger="click">
-    <template #reference>
-      <span>
-        <el-button size="small"> Set time range </el-button>
-      </span>
-    </template>
-    <div ref="timeRange" class="time-ranges"></div>
-  </el-popover>
+  <div ref="timeRange" class="time-ranges"></div>
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";

@@ -83,5 +83,6 @@ function changeLinkDashboard(opt: { value: string }[]) {
 .inputs {
   margin-top: 8px;
   width: 270px;
+  margin-bottom: 30px;
 }
 </style>

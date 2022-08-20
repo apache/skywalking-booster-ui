@@ -14,17 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div ref="chart" class="process-topo"></div>
-  <div
-    class="switch-icon-edit ml-5"
-    title="Settings"
-    @click="setConfig"
-    v-if="dashboardStore.editMode"
-  >
-    <Icon size="middle" iconName="settings" />
-  </div>
-  <div class="process-setting" v-if="showSettings && dashboardStore.editMode">
+  <el-popover placement="bottom" :width="295" trigger="click">
+    <template #reference>
+      <div
+        class="switch-icon-edit ml-5"
+        title="Settings"
+        @click="setConfig"
+        v-if="dashboardStore.editMode"
+      >
+        <Icon size="middle" iconName="setting_empty" />
+      </div>
+    </template>
     <Settings @update="updateSettings" />
-  </div>
+  </el-popover>
+  <el-popover placement="bottom" :width="600" trigger="click">
+    <template #reference>
+      <div class="range switch-icon-edit">
+        <Icon size="middle" iconName="time_range" />
+      </div>
+    </template>
+    <Schedules />
+  </el-popover>
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
@@ -47,6 +57,7 @@ import Settings from "./Settings.vue";
 import { EntityType } from "@/views/dashboard/data";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { Layout } from "./Graph/layout";
+import Schedules from "./Schedules.vue";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -70,7 +81,6 @@ const link = ref<any>(null);
 const anchor = ref<any>(null);
 const arrow = ref<any>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
-const showSettings = ref<boolean>(false);
 const config = ref<any>({});
 const diff = ref<number[]>([220, 200]);
 const radius = 210;
@@ -369,7 +379,6 @@ function updateSettings(param: any) {
 }
 
 function setConfig() {
-  showSettings.value = !showSettings.value;
   dashboardStore.selectWidget(props.config);
 }
 
@@ -408,8 +417,7 @@ watch(
 </script>
 <style lang="scss">
 .process-topo {
-  width: calc(100% - 10px);
-  margin: 0 5px 5px 0;
+  width: 100%;
   height: 100%;
   min-height: 150px;
   min-width: 300px;
@@ -435,18 +443,8 @@ watch(
   right: 10px;
 }
 
-.process-setting {
-  position: absolute;
-  top: 45px;
-  right: 10px;
-  width: 300px;
-  height: 160px;
-  background-color: #666;
-  overflow: auto;
-  padding: 15px;
-  border-radius: 3px;
-  color: #fff;
-  transition: all 0.5ms linear;
+.range {
+  right: 50px;
 }
 
 .topo-line-anchor {

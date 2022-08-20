@@ -15,19 +15,13 @@ limitations under the License. -->
 <template>
   <div class="flex-h content">
     <Tasks />
-    <div class="vis-graph ml-5">
-      <div class="schedules">
-        <Schedules />
-      </div>
-      <div class="item" v-show="networkProfilingStore.nodes.length">
-        <process-topology />
-      </div>
+    <div class="vis-graph ml-5" v-show="networkProfilingStore.nodes.length">
+      <process-topology />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import Tasks from "./components/Tasks.vue";
-import Schedules from "./components/Schedules.vue";
 import ProcessTopology from "./components/ProcessTopology.vue";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 
@@ -44,18 +38,7 @@ const networkProfilingStore = useNetworkProfilingStore();
   flex-grow: 2;
   min-width: 700px;
   overflow: auto;
-}
-
-.item {
-  width: 100%;
-  height: calc(100% - 50px);
-  // background-color: #333840;
   position: relative;
-}
-
-.schedules {
-  height: 40px;
-  border-bottom: 1px solid #ccc;
-  padding: 8px;
+  width: calc(100% - 300px);
 }
 </style>
