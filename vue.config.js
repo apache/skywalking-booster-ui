@@ -46,7 +46,9 @@ module.exports = {
       .loader("svg-sprite-loader")
       .options({ symbolId: "[name]" });
     config.resolve.alias.set("vue-i18n", "vue-i18n/dist/vue-i18n.cjs.js");
-    config.plugins.delete("preload");
+    if (process.env.NODE_ENV === "development") {
+      config.plugins.delete("preload");
+    }
   },
   configureWebpack: (config) => {
     config.performance = {
