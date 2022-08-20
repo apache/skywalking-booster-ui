@@ -27,6 +27,18 @@ limitations under the License. -->
             </span>
           </template>
         </el-popconfirm>
+        <el-popconfirm
+          :title="`Are you sure to ${
+            enableTasks ? 'disable' : 'enable'
+          } interval?`"
+          @confirm="enableInterval"
+        >
+          <template #reference>
+            <span class="new-task cp">
+              <Icon iconName="retry" :loading="enableTasks" size="middle" />
+            </span>
+          </template>
+        </el-popconfirm>
       </div>
       <div class="profile-t-wrapper">
         <div
@@ -100,6 +112,7 @@ const appStore = useAppStoreWithOut();
 const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 const viewDetail = ref<boolean>(false);
+const enableTasks = ref<boolean>(false);
 
 fetchTasks();
 
@@ -154,6 +167,17 @@ async function createTask() {
     serviceInstanceId,
   });
 }
+function enableInterval() {
+  let interval;
+  enableTasks.value = !enableTasks.value;
+  if (enableTasks.value) {
+    interval = setInterval(() => {
+      fetchTasks();
+    }, 18000);
+    return;
+  }
+  interval && clearInterval(interval);
+}
 async function fetchTasks() {
   const serviceId =
     (selectorStore.currentService && selectorStore.currentService.id) || "";
@@ -167,6 +191,9 @@ async function fetchTasks() {
 
   if (res.errors) {
     return ElMessage.error(res.errors);
+  }
+  if (enableTasks.value && !networkProfilingStore.aliveNetwork) {
+    return;
   }
   getTopology();
 }

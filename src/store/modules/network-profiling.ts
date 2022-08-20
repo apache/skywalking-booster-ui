@@ -21,6 +21,7 @@ import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { Call } from "@/types/topology";
 import { LayoutConfig } from "@/types/dashboard";
+import { ElMessage } from "element-plus";
 
 interface NetworkProfilingState {
   networkTasks: EBPFTaskList[];
@@ -33,6 +34,7 @@ interface NetworkProfilingState {
   metricsLayout: LayoutConfig[];
   selectedMetric: Nullable<LayoutConfig>;
   activeMetricIndex: string;
+  aliveNetwork: boolean;
 }
 
 export const networkProfilingStore = defineStore({
@@ -48,6 +50,7 @@ export const networkProfilingStore = defineStore({
     metricsLayout: [],
     selectedMetric: null,
     activeMetricIndex: "",
+    aliveNetwork: false,
   }),
   actions: {
     setSelectedNetworkTask(task: EBPFTaskList) {
@@ -135,6 +138,22 @@ export const networkProfilingStore = defineStore({
       this.networkTasks = res.data.data.queryEBPFTasks || [];
       this.selectedNetworkTask = this.networkTasks[0] || {};
       this.setSelectedNetworkTask(this.selectedNetworkTask);
+      return res.data;
+    },
+    async keepNetworkProfiling(taskId: string) {
+      if (!taskId) {
+        return new Promise((resolve) => resolve({}));
+      }
+      const res: AxiosResponse = await graphql
+        .query("aliveNetworkProfiling")
+        .params({ taskId });
+
+      this.aliveMessage = "";
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.aliveNetwork = res.data.data.keepEBPFNetworkProfiling.status;
+      ElMessage.warning(res.data.data.keepEBPFNetworkProfiling.errorReason);
       return res.data;
     },
     async getProcessTopology(params: {
