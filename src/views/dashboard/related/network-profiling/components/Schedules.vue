@@ -17,14 +17,11 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";
-import { useI18n } from "vue-i18n";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
-import { useThrottleFn } from "@vueuse/core";
 
 /*global Nullable */
-const { t } = useI18n();
 const networkProfilingStore = useNetworkProfilingStore();
 const timeRange = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
@@ -36,7 +33,7 @@ onMounted(() => {
     width: 0,
     height: 0,
   };
-  useThrottleFn(resize, 500)();
+  visTimeline();
 });
 
 function visTimeline() {
@@ -50,19 +47,18 @@ function visTimeline() {
     return;
   }
   const h = timeRange.value.getBoundingClientRect().height;
+  const { taskStartTime, fixedTriggerDuration, name } =
+    networkProfilingStore.selectedNetworkTask;
+  const startTime =
+    fixedTriggerDuration > 1800
+      ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
+      : taskStartTime;
   const task = [
     {
       id: 1,
-      content: networkProfilingStore.selectedNetworkTask.name,
-      start: new Date(
-        Number(networkProfilingStore.selectedNetworkTask.taskStartTime)
-      ),
-      end: new Date(
-        Number(
-          networkProfilingStore.selectedNetworkTask.taskStartTime +
-            networkProfilingStore.selectedNetworkTask.fixedTriggerDuration
-        )
-      ),
+      content: name,
+      start: new Date(Number(startTime)),
+      end: new Date(Number(taskStartTime + fixedTriggerDuration)),
       data: networkProfilingStore.selectedNetworkTask,
       className: networkProfilingStore.selectedNetworkTask.type,
     },
@@ -77,23 +73,6 @@ function visTimeline() {
   };
   visGraph.value = new Timeline(timeRange.value, items, options);
 }
-function resize() {
-  const observer = new ResizeObserver((entries) => {
-    const entry = entries[0];
-    const cr = entry.contentRect;
-    if (
-      Math.abs(cr.width - oldVal.value.width) < 3 &&
-      Math.abs(cr.height - oldVal.value.height) < 3
-    ) {
-      return;
-    }
-    visTimeline();
-    oldVal.value = { width: cr.width, height: cr.height };
-  });
-  if (timeRange.value) {
-    observer.observe(timeRange.value);
-  }
-}
 watch(
   () => networkProfilingStore.selectedNetworkTask,
   () => {
@@ -104,7 +83,7 @@ watch(
 <style lang="scss" scoped>
 .time-ranges {
   width: calc(100% - 5px);
-  margin: 0 5px 5px 0;
+  padding: 10px;
   height: 150px;
 }
 </style>

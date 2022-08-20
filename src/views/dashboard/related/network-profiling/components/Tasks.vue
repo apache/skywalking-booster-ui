@@ -121,27 +121,27 @@ async function changeTask(item: EBPFTaskList) {
   getTopology();
 }
 async function getTopology() {
+  const { taskStartTime, fixedTriggerDuration } =
+    networkProfilingStore.selectedNetworkTask;
   const serviceInstanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
+  const startTime =
+    fixedTriggerDuration > 1800
+      ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
+      : taskStartTime;
+
   const resp = await networkProfilingStore.getProcessTopology({
     serviceInstanceId,
     duration: {
       start: dateFormatStep(
-        getLocalTime(
-          appStore.utc,
-          new Date(networkProfilingStore.selectedNetworkTask.taskStartTime)
-        ),
+        getLocalTime(appStore.utc, new Date(startTime)),
         appStore.duration.step,
         true
       ),
       end: dateFormatStep(
         getLocalTime(
           appStore.utc,
-          new Date(
-            networkProfilingStore.selectedNetworkTask.taskStartTime +
-              networkProfilingStore.selectedNetworkTask.fixedTriggerDuration *
-                1000
-          )
+          new Date(taskStartTime + fixedTriggerDuration * 1000)
         ),
         appStore.duration.step,
         true
