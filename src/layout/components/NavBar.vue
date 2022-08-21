@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="nav-bar flex-h" :class="{ dark: theme === 'dark' }">
+  <div class="nav-bar flex-h">
     <div class="title">{{ appStore.pageTitle || t(pageName) }}</div>
     <div class="app-config">
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
@@ -61,22 +61,17 @@ const appStore = useAppStoreWithOut();
 const route = useRoute();
 const pageName = ref<string>("");
 const timeRange = ref<number>(0);
-const theme = ref<string>("light");
 
 getVersion();
 const setConfig = (value: string) => {
   pageName.value = value || "";
-  // theme.value = route.path.includes("/infrastructure/") ? "dark" : "light";
 };
-const time = computed(() => [
-  appStore.durationRow.start,
-  appStore.durationRow.end,
-]);
+const time = computed(() => [appStore.duration.start, appStore.duration.end]);
 const handleReload = () => {
   const gap =
     appStore.duration.end.getTime() - appStore.duration.start.getTime();
-  const time: Date[] = [new Date(new Date().getTime() - gap), new Date()];
-  appStore.setDuration(timeFormat(time));
+  const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
+  appStore.setDuration(timeFormat(dates));
 };
 function changeTimeRange(val: Date[] | any) {
   timeRange.value =
