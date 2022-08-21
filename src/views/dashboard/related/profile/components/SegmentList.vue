@@ -43,7 +43,7 @@ limitations under the License. -->
             </div>
             <div class="grey ell sm">
               <span class="tag mr-10 sm"> {{ i.duration }} ms </span>
-              {{ dateFormat(parseInt(i.start)) }}
+              {{ dateFormat(parseInt(i.start), appStore.utc) }}
             </div>
           </td>
         </tr>
@@ -53,16 +53,16 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useProfileStore } from "@/store/modules/profile";
 import { Trace } from "@/types/trace";
 import { ElMessage } from "element-plus";
+import { dateFormat } from "@/utils/dateFormat";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 const { t } = useI18n();
 const profileStore = useProfileStore();
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
+const appStore = useAppStoreWithOut();
 const selectedKey = ref<string>("");
 
 async function selectTrace(item: Trace) {

@@ -40,9 +40,16 @@ limitations under the License. -->
                 </a>
               </div>
               <div class="grey ell sm">
-                <span class="mr-10 sm">{{ dateFormat(i.startTime) }}</span>
+                <span class="mr-10 sm">{{
+                  dateFormat(i.startTime, appStore.utc)
+                }}</span>
                 <span class="mr-10 sm">
-                  {{ dateFormat(i.startTime + i.duration * 60 * 1000) }}
+                  {{
+                    dateFormat(
+                      i.startTime + i.duration * 60 * 1000,
+                      appStore.utc
+                    )
+                  }}
                 </span>
               </div>
             </td>
@@ -71,7 +78,7 @@ limitations under the License. -->
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
           <span class="g-sm-8 wba">
-            {{ dateFormat(selectedTask.startTime) }}
+            {{ dateFormat(selectedTask.startTime, appStore.utc) }}
           </span>
         </div>
         <div class="mb-10 clear item">
@@ -113,7 +120,7 @@ limitations under the License. -->
             <span class="mr-10 grey">{{ t("operationType") }}:</span>
             <span class="mr-20">{{ d.operationType }}</span>
             <span class="mr-10 grey">{{ t("time") }}:</span>
-            <span>{{ dateFormat(d.operationTime) }}</span>
+            <span>{{ dateFormat(d.operationTime, appStore.utc) }}</span>
           </div>
         </div>
       </div>
@@ -122,18 +129,18 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useProfileStore } from "@/store/modules/profile";
 import { TaskLog, TaskListItem } from "@/types/profile";
 import { ElMessage } from "element-plus";
+import { dateFormat } from "@/utils/dateFormat";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 const { t } = useI18n();
 const profileStore = useProfileStore();
 const selectorStore = useSelectorStore();
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
+const appStore = useAppStoreWithOut();
 const viewDetail = ref<boolean>(false);
 const service = ref<string>("");
 const selectedTask = ref<TaskListItem | Record<string, never>>({});

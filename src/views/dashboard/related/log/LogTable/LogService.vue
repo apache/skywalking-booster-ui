@@ -22,7 +22,7 @@ limitations under the License. -->
       @click="selectLog(item.label, data[item.label])"
     >
       <span v-if="item.label === 'timestamp'">
-        {{ dateFormat(data.timestamp) }}
+        {{ dateFormat(data.timestamp, appStore.utc) }}
       </span>
       <span v-else-if="item.label === 'tags'">
         {{ tags }}
@@ -39,11 +39,12 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { computed, inject } from "vue";
-import dayjs from "dayjs";
 import { ServiceLogConstants } from "./data";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
+import { dateFormat } from "@/utils/dateFormat";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 /*global defineProps, defineEmits, Recordable */
 const props = defineProps({
@@ -51,6 +52,7 @@ const props = defineProps({
   noLink: { type: Boolean, default: true },
 });
 const dashboardStore = useDashboardStore();
+const appStore = useAppStoreWithOut();
 const options: Recordable<LayoutConfig> = inject("options") || {};
 const emit = defineEmits(["select"]);
 const columns = ServiceLogConstants;
@@ -64,8 +66,6 @@ const tags = computed(() => {
     )
   );
 });
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 
 function selectLog(label: string, value: string) {
   if (label === "traceId") {

@@ -57,7 +57,9 @@ limitations under the License. -->
         <div>
           <div class="tag mr-5">{{ t("start") }}</div>
           <span class="mr-15 sm">
-            {{ dateFormat(parseInt(traceStore.currentTrace.start)) }}
+            {{
+              dateFormat(parseInt(traceStore.currentTrace.start), appStore.utc)
+            }}
           </span>
           <div class="tag mr-5">{{ t("duration") }}</div>
           <span class="mr-15 sm"
@@ -120,7 +122,6 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import dayjs from "dayjs";
 import { ref, defineComponent, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
@@ -130,6 +131,8 @@ import graphs from "./components/index";
 import { ElMessage } from "element-plus";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { LayoutConfig } from "@/types/dashboard";
+import { dateFormat } from "@/utils/dateFormat";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 export default defineComponent({
   name: "TraceDetail",
@@ -137,6 +140,7 @@ export default defineComponent({
     ...graphs,
   },
   setup() {
+    const appStore = useAppStoreWithOut();
     /*global Recordable */
     const options: Recordable<LayoutConfig> = inject("options") || {};
     const { t } = useI18n();
@@ -144,8 +148,6 @@ export default defineComponent({
     const loading = ref<boolean>(false);
     const traceId = ref<string>("");
     const displayMode = ref<string>("List");
-    const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-      dayjs(date).format(pattern);
 
     function handleClick() {
       copy(traceId.value || traceStore.currentTrace.traceIds[0].value);
@@ -180,6 +182,7 @@ export default defineComponent({
       handleClick,
       t,
       searchTraceLogs,
+      appStore,
       loading,
       traceId,
     };

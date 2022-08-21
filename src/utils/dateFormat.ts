@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import dayjs from "dayjs";
+import getLocalTime from "@/utils/localtime";
 export default function dateFormatStep(
   date: Date,
   step: string,
@@ -99,3 +101,9 @@ export const dateFormatTime = (date: Date, step: string): string => {
   }
   return "";
 };
+
+export const dateFormat = (
+  date: number,
+  utc: string,
+  pattern = "YYYY-MM-DD HH:mm:ss"
+) => dayjs(getLocalTime(utc, new Date(date))).format(pattern);

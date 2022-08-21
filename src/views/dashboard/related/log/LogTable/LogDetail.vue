@@ -24,7 +24,7 @@ limitations under the License. -->
         v-if="['timestamp', 'time'].includes(item.label)"
         class="g-sm-8 mb-10"
       >
-        {{ dateFormat(currentLog[item.label]) }}
+        {{ dateFormat(currentLog[item.label], appStore.utc) }}
       </span>
       <textarea
         class="content mb-10"
@@ -43,8 +43,9 @@ limitations under the License. -->
 import { computed } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import dayjs from "dayjs";
 import { Option } from "@/types/app";
+import { dateFormat } from "@/utils/dateFormat";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 /*global defineProps */
 const props = defineProps({
@@ -52,6 +53,7 @@ const props = defineProps({
   columns: { type: Array as PropType<Option[]>, default: () => [] },
 });
 const { t } = useI18n();
+const appStore = useAppStoreWithOut();
 const logTags = computed(() => {
   if (!props.currentLog.tags) {
     return [];
@@ -60,8 +62,6 @@ const logTags = computed(() => {
     return `${d.key} = ${d.value}`;
   });
 });
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 </script>
 <style lang="scss" scoped>
 .content {

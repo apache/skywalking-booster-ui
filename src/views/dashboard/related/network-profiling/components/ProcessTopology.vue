@@ -461,14 +461,14 @@ function visTimeline() {
     task.value = properties.data;
   });
   const itemsAlwaysDraggable =
-    fixedTriggerDuration < 1800
+    fixedTriggerDuration > 1800
       ? {
           item: true,
           range: true,
         }
       : undefined;
   const editable =
-    fixedTriggerDuration < 1800
+    fixedTriggerDuration > 1800
       ? {
           updateTime: true,
         }

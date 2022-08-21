@@ -59,7 +59,7 @@ limitations under the License. -->
             </div>
             <div class="grey ell sm">
               <span class="tag mr-10 sm">{{ i.duration }} ms</span
-              >{{ dateFormat(parseInt(i.start, 10)) }}
+              >{{ dateFormat(parseInt(i.start, 10), appStore.utc) }}
             </div>
           </td>
         </tr>
@@ -70,7 +70,6 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import dayjs from "dayjs";
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTraceStore } from "@/store/modules/trace";
@@ -78,6 +77,8 @@ import { ElMessage } from "element-plus";
 import { QueryOrders } from "../../data";
 import { Option } from "@/types/app";
 import { Trace } from "@/types/trace";
+import { dateFormat } from "@/utils/dateFormat";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 const { t } = useI18n();
 const traceStore = useTraceStore();
@@ -89,8 +90,7 @@ const total = computed(() =>
     ? pageSize.value * traceStore.conditions.paging.pageNum + 1
     : pageSize.value * traceStore.conditions.paging.pageNum
 );
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
+const appStore = useAppStoreWithOut();
 
 function searchTrace() {
   loading.value = true;

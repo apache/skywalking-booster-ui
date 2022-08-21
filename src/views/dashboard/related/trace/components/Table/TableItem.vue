@@ -77,7 +77,7 @@ limitations under the License. -->
         </el-tooltip>
       </div>
       <div class="start-time">
-        {{ dateFormat(data.startTime) }}
+        {{ dateFormat(data.startTime, appStore.utc) }}
       </div>
       <div class="exec-ms">
         {{
@@ -138,11 +138,12 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { ref, computed, defineComponent } from "vue";
 import type { PropType } from "vue";
 import SpanDetail from "../D3Graph/SpanDetail.vue";
+import { dateFormat } from "@/utils/dateFormat";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 const props = {
   data: { type: Object as PropType<any>, default: () => ({}) },
@@ -156,11 +157,10 @@ export default defineComponent({
   emits: ["select"],
   components: { SpanDetail },
   setup(props, { emit }) {
+    const appStore = useAppStoreWithOut();
     const displayChildren = ref<boolean>(true);
     const showDetail = ref<boolean>(false);
     const { t } = useI18n();
-    const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-      dayjs(date).format(pattern);
     const selfTime = computed(() => (props.data.dur ? props.data.dur : 0));
     const execTime = computed(() =>
       props.data.endTime - props.data.startTime
@@ -239,6 +239,7 @@ export default defineComponent({
       selectedItem,
       viewSpan,
       t,
+      appStore,
     };
   },
 });

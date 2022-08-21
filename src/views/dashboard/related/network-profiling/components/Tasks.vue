@@ -70,10 +70,15 @@ limitations under the License. -->
                 </a>
               </div>
               <div class="grey ell sm">
-                <span class="mr-10 sm">{{ dateFormat(i.taskStartTime) }}</span>
+                <span class="mr-10 sm">
+                  {{ dateFormat(i.taskStartTime, appStore.utc) }}
+                </span>
                 <span class="mr-10 sm">
                   {{
-                    dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000)
+                    dateFormat(
+                      i.taskStartTime + i.fixedTriggerDuration * 1000,
+                      appStore.utc
+                    )
                   }}
                 </span>
               </div>
@@ -94,14 +99,13 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
 import TaskDetails from "../../components/TaskDetails.vue";
-import dateFormatStep from "@/utils/dateFormat";
+import dateFormatStep, { dateFormat } from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
@@ -109,8 +113,6 @@ const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const networkProfilingStore = useNetworkProfilingStore();
 const appStore = useAppStoreWithOut();
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 const viewDetail = ref<boolean>(false);
 const enableTasks = ref<boolean>(false);
 
