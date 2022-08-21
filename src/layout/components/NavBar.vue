@@ -55,6 +55,7 @@ import { useI18n } from "vue-i18n";
 import timeFormat from "@/utils/timeFormat";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { ElMessage } from "element-plus";
+import getLocalTime from "@/utils/localtime";
 
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
@@ -70,7 +71,10 @@ const time = computed(() => [appStore.duration.start, appStore.duration.end]);
 const handleReload = () => {
   const gap =
     appStore.duration.end.getTime() - appStore.duration.start.getTime();
-  const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
+  const dates: Date[] = [
+    getLocalTime(appStore.utc, new Date(new Date().getTime() - gap)),
+    getLocalTime(appStore.utc, new Date()),
+  ];
   appStore.setDuration(timeFormat(dates));
 };
 function changeTimeRange(val: Date[] | any) {
