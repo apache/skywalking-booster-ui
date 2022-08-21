@@ -39,6 +39,9 @@ limitations under the License. -->
       </div>
     </template>
     <div ref="timeRange" class="time-ranges"></div>
+    <el-button class="query" size="small" type="primary" @click="updateTopology"
+      >query</el-button
+    >
   </el-popover>
 </template>
 <script lang="ts" setup>
@@ -64,6 +67,9 @@ import getDashboard from "@/hooks/useDashboardsSession";
 import { Layout } from "./Graph/layout";
 import { DataSet, Timeline } from "vis-timeline/standalone";
 import "vis-timeline/styles/vis-timeline-graph2d.css";
+import dateFormatStep from "@/utils/dateFormat";
+import getLocalTime from "@/utils/localtime";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -75,6 +81,7 @@ const props = defineProps({
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
+const appStore = useAppStoreWithOut();
 const networkProfilingStore = useNetworkProfilingStore();
 const height = ref<number>(100);
 const width = ref<number>(100);
@@ -92,6 +99,7 @@ const diff = ref<number[]>([220, 200]);
 const radius = 210;
 const timeRange = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
+const task = ref<any[]>([]);
 
 onMounted(() => {
   init();
@@ -429,24 +437,29 @@ function visTimeline() {
   if (!networkProfilingStore.selectedNetworkTask.taskId) {
     return;
   }
-  const h = timeRange.value.getBoundingClientRect().height;
-  const { taskStartTime, fixedTriggerDuration, taskId, targetType } =
+  const { taskStartTime, fixedTriggerDuration, targetType } =
     networkProfilingStore.selectedNetworkTask;
   const startTime =
     fixedTriggerDuration > 1800
       ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
       : taskStartTime;
-  const task = [
+  task.value = [
     {
       id: 1,
       content: "",
-      start: new Date(Number(startTime)),
-      end: new Date(Number(taskStartTime + fixedTriggerDuration * 1000)),
+      start: getLocalTime(appStore.utc, new Date(startTime)),
+      end: getLocalTime(
+        appStore.utc,
+        new Date(taskStartTime + fixedTriggerDuration * 1000)
+      ),
       data: networkProfilingStore.selectedNetworkTask,
       className: targetType,
     },
   ];
-  const items = new DataSet(task);
+  const items: any = new DataSet(task.value);
+  items.on("update", (event: string, properties: any) => {
+    task.value = properties.data;
+  });
   const itemsAlwaysDraggable =
     fixedTriggerDuration < 1800
       ? {
@@ -461,15 +474,34 @@ function visTimeline() {
         }
       : false;
   const options = {
-    height: h,
+    height: 150,
     width: "100%",
     locale: "en",
     editable,
-    itemsAlwaysDraggable,
     zoomMin: 1000 * 60,
     zoomMax: 1000 * 60 * 60 * 24,
   };
-  visGraph.value = new Timeline(timeRange.value, items, options);
+  const opt = itemsAlwaysDraggable
+    ? { ...options, itemsAlwaysDraggable }
+    : options;
+  visGraph.value = new Timeline(timeRange.value, items, opt);
+}
+async function updateTopology() {
+  const serviceInstanceId =
+    (selectorStore.currentPod && selectorStore.currentPod.id) || "";
+
+  const resp = await networkProfilingStore.getProcessTopology({
+    serviceInstanceId,
+    duration: {
+      start: dateFormatStep(task.value[0].start, appStore.duration.step, true),
+      end: dateFormatStep(task.value[0].end, appStore.duration.step, true),
+      step: appStore.duration.step,
+    },
+  });
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+  }
+  return resp;
 }
 watch(
   () => networkProfilingStore.nodes,
@@ -533,8 +565,11 @@ watch(
 }
 
 .time-ranges {
-  width: calc(100% - 5px);
+  width: 100%;
   padding: 10px;
-  height: 150px;
+}
+
+.query {
+  margin-left: 510px;
 }
 </style>

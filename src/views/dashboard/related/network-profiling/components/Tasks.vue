@@ -149,6 +149,9 @@ async function getTopology() {
       step: appStore.duration.step,
     },
   });
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+  }
   return resp;
 }
 async function createTask() {
