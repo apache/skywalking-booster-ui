@@ -46,6 +46,7 @@ import "vis-timeline/styles/vis-timeline-graph2d.css";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 import { useAppStoreWithOut } from "@/store/modules/app";
+
 /*global Nullable */
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
@@ -54,6 +55,8 @@ const networkProfilingStore = useNetworkProfilingStore();
 const timeRange = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
 const task = ref<any[]>([]);
+const isUpdate = ref<boolean>(false);
+
 function showTimeLine() {
   visTimeline();
 }
@@ -61,14 +64,20 @@ function visTimeline() {
   if (!timeRange.value) {
     return;
   }
-  if (visGraph.value) {
-    visGraph.value.destroy();
-  }
   if (!networkProfilingStore.selectedNetworkTask.taskId) {
     return;
   }
-  const { taskStartTime, fixedTriggerDuration, targetType } =
+  const { taskStartTime, fixedTriggerDuration, targetType, taskId } =
     networkProfilingStore.selectedNetworkTask;
+  if (task.value[0] && task.value[0].data.taskId === taskId) {
+    if (isUpdate.value) {
+      return;
+    }
+  }
+  if (visGraph.value) {
+    visGraph.value.destroy();
+  }
+  isUpdate.value = false;
   const startTime =
     fixedTriggerDuration > 1800
       ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
@@ -91,14 +100,14 @@ function visTimeline() {
     task.value = properties.data;
   });
   const itemsAlwaysDraggable =
-    fixedTriggerDuration > 500
+    fixedTriggerDuration > 1800
       ? {
           item: true,
           range: true,
         }
       : undefined;
   const editable =
-    fixedTriggerDuration > 500
+    fixedTriggerDuration > 1800
       ? {
           updateTime: true,
         }
@@ -117,6 +126,7 @@ function visTimeline() {
   visGraph.value = new Timeline(timeRange.value, items, opt);
 }
 async function updateTopology() {
+  isUpdate.value = true;
   const serviceInstanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
 
