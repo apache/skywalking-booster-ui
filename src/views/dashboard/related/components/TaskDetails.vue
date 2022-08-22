@@ -58,7 +58,6 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
 import type { PropType } from "vue";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
