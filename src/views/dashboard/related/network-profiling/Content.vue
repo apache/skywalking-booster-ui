@@ -15,10 +15,16 @@ limitations under the License. -->
 <template>
   <div class="flex-h content">
     <Tasks />
-    <div class="vis-graph ml-5" v-if="networkProfilingStore.nodes.length">
+    <div
+      class="vis-graph ml-5"
+      v-if="networkProfilingStore.nodes.length"
+      v-loading="networkProfilingStore.loadNodes"
+    >
       <process-topology />
     </div>
-    <div class="text" v-else>{{ t("noData") }}</div>
+    <div class="text" v-else v-loading="networkProfilingStore.loadNodes">
+      {{ t("noData") }}
+    </div>
   </div>
 </template>
 <script lang="ts" setup>

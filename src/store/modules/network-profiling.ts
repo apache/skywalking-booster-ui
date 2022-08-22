@@ -35,6 +35,7 @@ interface NetworkProfilingState {
   selectedMetric: Nullable<LayoutConfig>;
   activeMetricIndex: string;
   aliveNetwork: boolean;
+  loadNodes: boolean;
 }
 
 export const networkProfilingStore = defineStore({
@@ -51,6 +52,7 @@ export const networkProfilingStore = defineStore({
     selectedMetric: null,
     activeMetricIndex: "",
     aliveNetwork: false,
+    loadNodes: false,
   }),
   actions: {
     setSelectedNetworkTask(task: EBPFTaskList) {
@@ -160,9 +162,11 @@ export const networkProfilingStore = defineStore({
       duration: any;
       serviceInstanceId: string;
     }) {
+      this.loadNodes = true;
       const res: AxiosResponse = await graphql
         .query("getProcessTopology")
         .params(params);
+      this.loadNodes = false;
       if (res.data.errors) {
         this.nodes = [];
         this.calls = [];
