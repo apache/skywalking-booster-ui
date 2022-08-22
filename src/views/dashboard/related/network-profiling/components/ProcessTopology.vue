@@ -27,7 +27,7 @@ limitations under the License. -->
     </template>
     <Settings @update="updateSettings" />
   </el-popover>
-  <TimeLine />
+  <TimeLine @get="getDates" />
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
@@ -51,6 +51,8 @@ import { EntityType } from "@/views/dashboard/data";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { Layout } from "./Graph/layout";
 import TimeLine from "./TimeLine.vue";
+import { useAppStoreWithOut } from "@/store/modules/app";
+import getLocalTime from "@/utils/localtime";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -60,6 +62,7 @@ const props = defineProps({
   },
 });
 const { t } = useI18n();
+const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
 const networkProfilingStore = useNetworkProfilingStore();
@@ -77,6 +80,7 @@ const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 const config = ref<any>({});
 const diff = ref<number[]>([220, 200]);
 const radius = 210;
+const dates = ref<Nullable<{ start: number; end: number }>>(null);
 
 onMounted(() => {
   init();
@@ -362,17 +366,42 @@ function handleLinkClick(event: any, d: Call) {
     );
     return;
   }
-  const path = `/dashboard/${dashboard.layer}/${EntityType[7].value}/${d.source.serviceId}/${d.source.serviceInstanceId}/${d.source.id}/${d.target.serviceId}/${d.target.serviceInstanceId}/${d.target.id}/${dashboard.name}`;
+  let times: any = {};
+  if (dates.value) {
+    times = dates.value;
+  } else {
+    const { taskStartTime, fixedTriggerDuration } =
+      networkProfilingStore.selectedNetworkTask;
+    const startTime =
+      fixedTriggerDuration > 1800
+        ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
+        : taskStartTime;
+    times = {
+      start: startTime,
+      end: taskStartTime + fixedTriggerDuration * 1000,
+    };
+  }
+  const param = JSON.stringify({
+    ...times,
+    step: appStore.duration.step,
+    utc: appStore.utc,
+  });
+  const path = `/dashboard/${dashboard.layer}/${EntityType[7].value}/${d.source.serviceId}/${d.source.serviceInstanceId}/${d.source.id}/${d.target.serviceId}/${d.target.serviceInstanceId}/${d.target.id}/${dashboard.name}/duration/${param}`;
   const routeUrl = router.resolve({ path });
+
   window.open(routeUrl.href, "_blank");
 }
 
-function updateSettings(param: any) {
+function updateSettings(param: unknown) {
   config.value = param;
 }
 
 function setConfig() {
   dashboardStore.selectWidget(props.config);
+}
+
+function getDates(times: any) {
+  this.dates.value = times;
 }
 
 function resize() {

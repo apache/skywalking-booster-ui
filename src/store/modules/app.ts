@@ -119,11 +119,17 @@ export const appStore = defineStore({
       }
       this.runEventStack();
     },
+    updateDurationRow(data: Duration) {
+      this.durationRow = data;
+    },
     setUTC(utcHour: number, utcMin: number): void {
       this.runEventStack();
       this.utcMin = utcMin;
       this.utcHour = utcHour;
       this.utc = `${utcHour}:${utcMin}`;
+    },
+    updateUTC(data: string) {
+      this.utc = data;
     },
     setIsMobile(mode: boolean) {
       this.isMobile = mode;
@@ -155,10 +161,9 @@ export const appStore = defineStore({
         .params({});
       if (res.data.errors) {
         this.utc = -(new Date().getTimezoneOffset() / 60) + ":0";
-        return res.data;
+      } else {
+        this.utc = res.data.data.getTimeInfo.timezone / 100 + ":0";
       }
-      this.utc = res.data.data.getTimeInfo.timezone / 100 + ":0";
-
       const utcArr = this.utc.split(":");
       this.utcHour = isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]);
       this.utcMin = isNaN(Number(utcArr[1])) ? 0 : Number(utcArr[1]);

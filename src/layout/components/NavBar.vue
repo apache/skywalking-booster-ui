@@ -49,7 +49,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import timeFormat from "@/utils/timeFormat";
@@ -62,12 +62,14 @@ const appStore = useAppStoreWithOut();
 const route = useRoute();
 const pageName = ref<string>("");
 const timeRange = ref<number>(0);
+const time = ref<Date[]>([appStore.duration.start, appStore.duration.end]);
 
+resetDuration();
 getVersion();
 const setConfig = (value: string) => {
   pageName.value = value || "";
 };
-const time = computed(() => [appStore.duration.start, appStore.duration.end]);
+
 const handleReload = () => {
   const gap =
     appStore.duration.end.getTime() - appStore.duration.start.getTime();
@@ -96,6 +98,20 @@ async function getVersion() {
   const res = await appStore.fetchVersion();
   if (res.errors) {
     ElMessage.error(res.errors);
+  }
+}
+function resetDuration() {
+  const { duration }: any = route.params;
+  if (duration) {
+    const d = JSON.parse(duration);
+
+    appStore.updateDurationRow({
+      start: getLocalTime(d.utc, d.start),
+      end: getLocalTime(d.utc, d.end),
+      step: d.step,
+    });
+    appStore.updateUTC(d.utc);
+    time.value = [getLocalTime(d.utc, d.start), getLocalTime(d.utc, d.end)];
   }
 }
 </script>

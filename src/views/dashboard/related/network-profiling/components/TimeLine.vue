@@ -47,7 +47,8 @@ import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
-/*global Nullable */
+/*global Nullable, defineEmits */
+const emits = defineEmits(["get"]);
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const appStore = useAppStoreWithOut();
@@ -127,6 +128,10 @@ function visTimeline() {
 }
 async function updateTopology() {
   isUpdate.value = true;
+  emits("get", {
+    start: task.value[0].start.getTime(),
+    end: task.value[0].end.getTime(),
+  });
   const serviceInstanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
 
