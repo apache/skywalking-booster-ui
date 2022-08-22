@@ -87,7 +87,7 @@ limitations under the License. -->
         :w="item.w"
         :h="item.h"
         :i="item.i"
-        :key="item.i"
+        :key="item.id"
         @click="clickTabGrid($event, item)"
         :class="{ active: activeTabWidget === item.i }"
         :drag-ignore-from="dragIgnoreFrom"

@@ -28,7 +28,7 @@ limitations under the License. -->
       :w="item.w"
       :h="item.h"
       :i="item.i"
-      :key="item.i"
+      :key="item.id"
       @click="clickGrid(item, $event)"
       :class="{ active: dashboardStore.activedGridItem === item.i }"
       :drag-ignore-from="dragIgnoreFrom"
