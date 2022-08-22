@@ -95,7 +95,7 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -209,6 +209,12 @@ async function fetchTasks() {
   }
   await getTopology();
 }
+watch(
+  () => selectorStore.currentPod,
+  () => {
+    fetchTasks();
+  }
+);
 </script>
 <style lang="scss" scoped>
 .profile-task-list {
