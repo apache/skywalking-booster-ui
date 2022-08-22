@@ -111,7 +111,7 @@ function drawGraph() {
     (d: ProcessNode) => d.serviceInstanceId !== selectorStore.currentPod.id
   );
   if (outNodes.length) {
-    diff.value[0] = (dom.width - radius * 3) / 2 + radius;
+    diff.value[0] = (dom.width - radius * 4) / 2 + radius;
   } else {
     diff.value[0] = (dom.width - radius * 2) / 2 + radius;
   }
@@ -208,7 +208,7 @@ function createLayout() {
     .attr("y", p.radius)
     .text(() => selectorStore.currentPod.label);
   const nodeArr = networkProfilingStore.nodes.filter(
-    (d: ProcessNode) => d.serviceInstanceId === selectorStore.currentPod.id
+    (d: ProcessNode) => d.isReal || d.name === "UNKNOWN_LOCAL"
   );
   const count = nodeArr.length;
   // layout
@@ -268,7 +268,7 @@ function createLayout() {
     nodeArr[v].y = y;
   }
   const outNodes = networkProfilingStore.nodes.filter(
-    (d: ProcessNode) => d.serviceInstanceId !== selectorStore.currentPod.id
+    (d: ProcessNode) => !(d.isReal || d.name === "UNKNOWN_LOCAL")
   );
   let angle = 10;
   let r = 230;
@@ -279,9 +279,10 @@ function createLayout() {
     angle = angle + 20;
     if (angle * (v + 1) > 120) {
       angle = -10;
+      r = r + 60;
     }
     if (angle * (v + 1) < -120) {
-      r = r + 20;
+      r = r + 60;
       angle = 10;
     }
   }

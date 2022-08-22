@@ -62,14 +62,6 @@ limitations under the License. -->
               }"
             >
               <div class="ell">
-                <span>
-                  {{ i.targetType }}
-                </span>
-                <a class="profile-btn r" @click="viewDetail = true">
-                  <Icon iconName="view" size="middle" />
-                </a>
-              </div>
-              <div class="grey ell sm">
                 <span class="mr-10 sm">
                   {{ dateFormat(i.taskStartTime) }}
                 </span>
@@ -78,6 +70,9 @@ limitations under the License. -->
                     dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000)
                   }}
                 </span>
+                <a class="profile-btn r" @click="viewDetail = true">
+                  <Icon iconName="view" size="middle" />
+                </a>
               </div>
             </td>
           </tr>
@@ -218,7 +213,7 @@ watch(
 </script>
 <style lang="scss" scoped>
 .profile-task-list {
-  width: 300px;
+  width: 320px;
   height: calc(100% - 10px);
   overflow: auto;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
@@ -229,7 +224,7 @@ watch(
 }
 
 .profile-td {
-  padding: 5px 10px;
+  padding: 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 
   &.selected {

@@ -48,11 +48,11 @@ const { t } = useI18n();
   min-width: 700px;
   overflow: auto;
   position: relative;
-  width: calc(100% - 300px);
+  width: calc(100% - 320px);
 }
 
 .text {
-  width: calc(100% - 300px);
+  width: calc(100% - 320px);
   text-align: center;
   margin-top: 30px;
 }
