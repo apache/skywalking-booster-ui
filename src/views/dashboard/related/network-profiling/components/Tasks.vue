@@ -71,14 +71,11 @@ limitations under the License. -->
               </div>
               <div class="grey ell sm">
                 <span class="mr-10 sm">
-                  {{ dateFormat(i.taskStartTime, appStore.utc) }}
+                  {{ dateFormat(i.taskStartTime) }}
                 </span>
                 <span class="mr-10 sm">
                   {{
-                    dateFormat(
-                      i.taskStartTime + i.fixedTriggerDuration * 1000,
-                      appStore.utc
-                    )
+                    dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000)
                   }}
                 </span>
               </div>

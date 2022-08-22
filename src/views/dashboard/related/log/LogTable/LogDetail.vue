@@ -24,7 +24,7 @@ limitations under the License. -->
         v-if="['timestamp', 'time'].includes(item.label)"
         class="g-sm-8 mb-10"
       >
-        {{ dateFormat(currentLog[item.label], appStore.utc) }}
+        {{ dateFormat(currentLog[item.label]) }}
       </span>
       <textarea
         class="content mb-10"
@@ -45,7 +45,6 @@ import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { dateFormat } from "@/utils/dateFormat";
-import { useAppStoreWithOut } from "@/store/modules/app";
 
 /*global defineProps */
 const props = defineProps({
@@ -53,7 +52,6 @@ const props = defineProps({
   columns: { type: Array as PropType<Option[]>, default: () => [] },
 });
 const { t } = useI18n();
-const appStore = useAppStoreWithOut();
 const logTags = computed(() => {
   if (!props.currentLog.tags) {
     return [];

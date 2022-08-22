@@ -87,11 +87,8 @@ function visTimeline() {
     {
       id: 1,
       content: "",
-      start: getLocalTime(appStore.utc, new Date(startTime)),
-      end: getLocalTime(
-        appStore.utc,
-        new Date(taskStartTime + fixedTriggerDuration * 1000)
-      ),
+      start: new Date(startTime),
+      end: new Date(taskStartTime + fixedTriggerDuration * 1000),
       data: networkProfilingStore.selectedNetworkTask,
       className: targetType,
     },
@@ -101,14 +98,14 @@ function visTimeline() {
     task.value = properties.data;
   });
   const itemsAlwaysDraggable =
-    fixedTriggerDuration > 1800
+    fixedTriggerDuration > 500
       ? {
           item: true,
           range: true,
         }
       : undefined;
   const editable =
-    fixedTriggerDuration > 1800
+    fixedTriggerDuration > 500
       ? {
           updateTime: true,
         }
@@ -138,8 +135,16 @@ async function updateTopology() {
   const resp = await networkProfilingStore.getProcessTopology({
     serviceInstanceId,
     duration: {
-      start: dateFormatStep(task.value[0].start, appStore.duration.step, true),
-      end: dateFormatStep(task.value[0].end, appStore.duration.step, true),
+      start: dateFormatStep(
+        getLocalTime(appStore.utc, new Date(task.value[0].start)),
+        appStore.duration.step,
+        true
+      ),
+      end: dateFormatStep(
+        getLocalTime(appStore.utc, new Date(task.value[0].end)),
+        appStore.duration.step,
+        true
+      ),
       step: appStore.duration.step,
     },
   });

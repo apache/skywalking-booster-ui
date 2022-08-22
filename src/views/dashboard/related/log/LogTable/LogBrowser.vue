@@ -27,9 +27,7 @@ limitations under the License. -->
         ['message', 'stack'].includes(item.label) ? 'max-item' : '',
       ]"
     >
-      <span v-if="item.label === 'time'">{{
-        dateFormat(data.time, appStore.utc)
-      }}</span>
+      <span v-if="item.label === 'time'">{{ dateFormat(data.time) }}</span>
       <span v-else-if="item.label === 'errorUrl'">{{ data.pagePath }}</span>
       <el-tooltip v-else :content="data[item.label] || '-'">
         <span>
@@ -43,13 +41,11 @@ limitations under the License. -->
 import { ref } from "vue";
 import { BrowserLogConstants } from "./data";
 import { dateFormat } from "@/utils/dateFormat";
-import { useAppStoreWithOut } from "@/store/modules/app";
 
 /*global defineProps, defineEmits, NodeListOf  */
 const props = defineProps({
   data: { type: Object as any, default: () => ({}) },
 });
-const appStore = useAppStoreWithOut();
 const columns = BrowserLogConstants;
 const emit = defineEmits(["select"]);
 const logItem = ref<any>(null);

@@ -103,13 +103,13 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { Option } from "@/types/app";
 import { TableHeader, AggregateTypes } from "./data";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { EBPFProfilingSchedule, Process } from "@/types/ebpf";
 import { ElMessage, ElTable } from "element-plus";
+import { dateFormat } from "@/utils/dateFormat";
 
 const { t } = useI18n();
 const ebpfStore = useEbpfStore();
@@ -123,8 +123,6 @@ const selectedLabels = ref<string[]>(["0"]);
 const searchText = ref<string>("");
 const aggregateType = ref<string>(AggregateTypes[0].value);
 const duration = ref<string[]>([]);
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 const attributes = (attr: { name: string; value: string }[]) => {
   return attr
     .map((d: { name: string; value: string }) => `${d.name}=${d.value}`)

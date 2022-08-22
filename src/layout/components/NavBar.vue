@@ -62,7 +62,10 @@ const appStore = useAppStoreWithOut();
 const route = useRoute();
 const pageName = ref<string>("");
 const timeRange = ref<number>(0);
-const time = ref<Date[]>([appStore.duration.start, appStore.duration.end]);
+const time = ref<Date[]>([
+  appStore.durationRow.start,
+  appStore.durationRow.end,
+]);
 
 resetDuration();
 getVersion();
@@ -106,12 +109,12 @@ function resetDuration() {
     const d = JSON.parse(duration);
 
     appStore.updateDurationRow({
-      start: getLocalTime(d.utc, d.start),
-      end: getLocalTime(d.utc, d.end),
+      start: new Date(d.start),
+      end: new Date(d.end),
       step: d.step,
     });
     appStore.updateUTC(d.utc);
-    time.value = [getLocalTime(d.utc, d.start), getLocalTime(d.utc, d.end)];
+    time.value = [new Date(d.start), new Date(d.end)];
   }
 }
 </script>

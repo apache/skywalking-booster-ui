@@ -145,16 +145,14 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { Alarm, Event } from "@/types/alarm";
 import { useAlarmStore } from "@/store/modules/alarm";
 import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys } from "./data";
+import { dateFormat } from "@/utils/dateFormat";
 
 const { t } = useI18n();
 const alarmStore = useAlarmStore();
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 const isShowDetails = ref<boolean>(false);
 const showEventDetails = ref<boolean>(false);
 const currentDetail = ref<Alarm | any>({});

@@ -57,9 +57,7 @@ limitations under the License. -->
         <div>
           <div class="tag mr-5">{{ t("start") }}</div>
           <span class="mr-15 sm">
-            {{
-              dateFormat(parseInt(traceStore.currentTrace.start), appStore.utc)
-            }}
+            {{ dateFormat(parseInt(traceStore.currentTrace.start)) }}
           </span>
           <div class="tag mr-5">{{ t("duration") }}</div>
           <span class="mr-15 sm"

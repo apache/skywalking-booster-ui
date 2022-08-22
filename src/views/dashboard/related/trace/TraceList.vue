@@ -59,7 +59,7 @@ limitations under the License. -->
             </div>
             <div class="grey ell sm">
               <span class="tag mr-10 sm">{{ i.duration }} ms</span
-              >{{ dateFormat(parseInt(i.start, 10), appStore.utc) }}
+              >{{ dateFormat(parseInt(i.start, 10)) }}
             </div>
           </td>
         </tr>
@@ -78,7 +78,6 @@ import { QueryOrders } from "../../data";
 import { Option } from "@/types/app";
 import { Trace } from "@/types/trace";
 import { dateFormat } from "@/utils/dateFormat";
-import { useAppStoreWithOut } from "@/store/modules/app";
 
 const { t } = useI18n();
 const traceStore = useTraceStore();
@@ -90,7 +89,6 @@ const total = computed(() =>
     ? pageSize.value * traceStore.conditions.paging.pageNum + 1
     : pageSize.value * traceStore.conditions.paging.pageNum
 );
-const appStore = useAppStoreWithOut();
 
 function searchTrace() {
   loading.value = true;

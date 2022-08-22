@@ -40,16 +40,11 @@ limitations under the License. -->
                 </a>
               </div>
               <div class="grey ell sm">
-                <span class="mr-10 sm">{{
-                  dateFormat(i.startTime, appStore.utc)
-                }}</span>
                 <span class="mr-10 sm">
-                  {{
-                    dateFormat(
-                      i.startTime + i.duration * 60 * 1000,
-                      appStore.utc
-                    )
-                  }}
+                  {{ dateFormat(i.startTime) }}
+                </span>
+                <span class="mr-10 sm">
+                  {{ dateFormat(i.startTime + i.duration * 60 * 1000) }}
                 </span>
               </div>
             </td>
@@ -78,7 +73,7 @@ limitations under the License. -->
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
           <span class="g-sm-8 wba">
-            {{ dateFormat(selectedTask.startTime, appStore.utc) }}
+            {{ dateFormat(selectedTask.startTime) }}
           </span>
         </div>
         <div class="mb-10 clear item">
@@ -120,7 +115,7 @@ limitations under the License. -->
             <span class="mr-10 grey">{{ t("operationType") }}:</span>
             <span class="mr-20">{{ d.operationType }}</span>
             <span class="mr-10 grey">{{ t("time") }}:</span>
-            <span>{{ dateFormat(d.operationTime, appStore.utc) }}</span>
+            <span>{{ dateFormat(d.operationTime) }}</span>
           </div>
         </div>
       </div>
@@ -135,12 +130,10 @@ import { useProfileStore } from "@/store/modules/profile";
 import { TaskLog, TaskListItem } from "@/types/profile";
 import { ElMessage } from "element-plus";
 import { dateFormat } from "@/utils/dateFormat";
-import { useAppStoreWithOut } from "@/store/modules/app";
 
 const { t } = useI18n();
 const profileStore = useProfileStore();
 const selectorStore = useSelectorStore();
-const appStore = useAppStoreWithOut();
 const viewDetail = ref<boolean>(false);
 const service = ref<string>("");
 const selectedTask = ref<TaskListItem | Record<string, never>>({});

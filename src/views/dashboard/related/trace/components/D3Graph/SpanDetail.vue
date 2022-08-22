@@ -62,7 +62,7 @@ limitations under the License. -->
     <div v-for="(i, index) in currentSpan.logs" :key="index">
       <div class="mb-10 sm">
         <span class="mr-10">{{ t("time") }}:</span
-        ><span class="grey">{{ dateFormat(i.time, appStore.utc) }}</span>
+        ><span class="grey">{{ dateFormat(i.time) }}</span>
       </div>
       <div class="mb-15 clear" v-for="(_i, _index) in i.data" :key="_index">
         <div class="mb-10">
@@ -90,7 +90,6 @@ import copy from "@/utils/copy";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { LayoutConfig } from "@/types/dashboard";
 import { dateFormat } from "@/utils/dateFormat";
-import { useAppStoreWithOut } from "@/store/modules/app";
 
 /*global defineProps, Recordable */
 const options: Recordable<LayoutConfig> = inject("options") || {};
@@ -98,7 +97,6 @@ const props = defineProps({
   currentSpan: { type: Object as PropType<any>, default: () => ({}) },
 });
 const { t } = useI18n();
-const appStore = useAppStoreWithOut();
 async function getTaceLogs() {
   const { associationWidget } = getDashboard();
   associationWidget(

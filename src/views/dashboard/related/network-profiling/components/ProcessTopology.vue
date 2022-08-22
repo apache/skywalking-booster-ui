@@ -52,7 +52,6 @@ import getDashboard from "@/hooks/useDashboardsSession";
 import { Layout } from "./Graph/layout";
 import TimeLine from "./TimeLine.vue";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import getLocalTime from "@/utils/localtime";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -401,7 +400,7 @@ function setConfig() {
 }
 
 function getDates(times: any) {
-  this.dates.value = times;
+  dates.value = times;
 }
 
 function resize() {

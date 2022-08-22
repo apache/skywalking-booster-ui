@@ -77,7 +77,7 @@ limitations under the License. -->
         </el-tooltip>
       </div>
       <div class="start-time">
-        {{ dateFormat(data.startTime, appStore.utc) }}
+        {{ dateFormat(data.startTime) }}
       </div>
       <div class="exec-ms">
         {{

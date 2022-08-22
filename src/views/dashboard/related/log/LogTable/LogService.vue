@@ -22,7 +22,7 @@ limitations under the License. -->
       @click="selectLog(item.label, data[item.label])"
     >
       <span v-if="item.label === 'timestamp'">
-        {{ dateFormat(data.timestamp, appStore.utc) }}
+        {{ dateFormat(data.timestamp) }}
       </span>
       <span v-else-if="item.label === 'tags'">
         {{ tags }}
@@ -44,7 +44,6 @@ import getDashboard from "@/hooks/useDashboardsSession";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
 import { dateFormat } from "@/utils/dateFormat";
-import { useAppStoreWithOut } from "@/store/modules/app";
 
 /*global defineProps, defineEmits, Recordable */
 const props = defineProps({
@@ -52,7 +51,6 @@ const props = defineProps({
   noLink: { type: Boolean, default: true },
 });
 const dashboardStore = useDashboardStore();
-const appStore = useAppStoreWithOut();
 const options: Recordable<LayoutConfig> = inject("options") || {};
 const emit = defineEmits(["select"]);
 const columns = ServiceLogConstants;
