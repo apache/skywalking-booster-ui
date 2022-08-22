@@ -27,27 +27,7 @@ limitations under the License. -->
     </template>
     <Settings @update="updateSettings" />
   </el-popover>
-  <el-popover
-    placement="bottom"
-    :width="600"
-    trigger="click"
-    @after-enter="showTimeLine"
-  >
-    <template #reference>
-      <div class="range switch-icon-edit">
-        <Icon size="middle" iconName="time_range" />
-      </div>
-    </template>
-    <div ref="timeRange" class="time-ranges"></div>
-    <el-button
-      class="query"
-      size="small"
-      type="primary"
-      @click="updateTopology"
-    >
-      {{ t("query") }}
-    </el-button>
-  </el-popover>
+  <TimeLine />
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
@@ -70,11 +50,7 @@ import Settings from "./Settings.vue";
 import { EntityType } from "@/views/dashboard/data";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { Layout } from "./Graph/layout";
-import { DataSet, Timeline } from "vis-timeline/standalone";
-import "vis-timeline/styles/vis-timeline-graph2d.css";
-import dateFormatStep from "@/utils/dateFormat";
-import getLocalTime from "@/utils/localtime";
-import { useAppStoreWithOut } from "@/store/modules/app";
+import TimeLine from "./TimeLine.vue";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -86,7 +62,6 @@ const props = defineProps({
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const selectorStore = useSelectorStore();
-const appStore = useAppStoreWithOut();
 const networkProfilingStore = useNetworkProfilingStore();
 const height = ref<number>(100);
 const width = ref<number>(100);
@@ -102,9 +77,6 @@ const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 const config = ref<any>({});
 const diff = ref<number[]>([220, 200]);
 const radius = 210;
-const timeRange = ref<Nullable<HTMLDivElement>>(null);
-const visGraph = ref<Nullable<any>>(null);
-const task = ref<any[]>([]);
 
 onMounted(() => {
   init();
@@ -429,85 +401,7 @@ async function freshNodes() {
   drawGraph();
   createLayout();
 }
-function showTimeLine() {
-  visTimeline();
-}
-function visTimeline() {
-  if (!timeRange.value) {
-    return;
-  }
-  if (visGraph.value) {
-    visGraph.value.destroy();
-  }
-  if (!networkProfilingStore.selectedNetworkTask.taskId) {
-    return;
-  }
-  const { taskStartTime, fixedTriggerDuration, targetType } =
-    networkProfilingStore.selectedNetworkTask;
-  const startTime =
-    fixedTriggerDuration > 1800
-      ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
-      : taskStartTime;
-  task.value = [
-    {
-      id: 1,
-      content: "",
-      start: getLocalTime(appStore.utc, new Date(startTime)),
-      end: getLocalTime(
-        appStore.utc,
-        new Date(taskStartTime + fixedTriggerDuration * 1000)
-      ),
-      data: networkProfilingStore.selectedNetworkTask,
-      className: targetType,
-    },
-  ];
-  const items: any = new DataSet(task.value);
-  items.on("update", (event: string, properties: any) => {
-    task.value = properties.data;
-  });
-  const itemsAlwaysDraggable =
-    fixedTriggerDuration > 1800
-      ? {
-          item: true,
-          range: true,
-        }
-      : undefined;
-  const editable =
-    fixedTriggerDuration > 1800
-      ? {
-          updateTime: true,
-        }
-      : false;
-  const options = {
-    height: 150,
-    width: "100%",
-    locale: "en",
-    editable,
-    zoomMin: 1000 * 60,
-    zoomMax: 1000 * 60 * 60 * 24,
-  };
-  const opt = itemsAlwaysDraggable
-    ? { ...options, itemsAlwaysDraggable }
-    : options;
-  visGraph.value = new Timeline(timeRange.value, items, opt);
-}
-async function updateTopology() {
-  const serviceInstanceId =
-    (selectorStore.currentPod && selectorStore.currentPod.id) || "";
 
-  const resp = await networkProfilingStore.getProcessTopology({
-    serviceInstanceId,
-    duration: {
-      start: dateFormatStep(task.value[0].start, appStore.duration.step, true),
-      end: dateFormatStep(task.value[0].end, appStore.duration.step, true),
-      step: appStore.duration.step,
-    },
-  });
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-  }
-  return resp;
-}
 watch(
   () => networkProfilingStore.nodes,
   () => {
