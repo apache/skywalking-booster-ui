@@ -133,7 +133,6 @@ async function getTopology() {
     fixedTriggerDuration > 1800
       ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
       : taskStartTime;
-
   const resp = await networkProfilingStore.getProcessTopology({
     serviceInstanceId,
     duration: {
@@ -169,10 +168,14 @@ async function createTask() {
   if (!serviceInstanceId) {
     return;
   }
-  networkProfilingStore.createNetworkTask({
+  const res = await networkProfilingStore.createNetworkTask({
     serviceId,
     serviceInstanceId,
   });
+  if (res.errors) {
+    ElMessage.error(res.errors);
+  }
+  await getTopology();
 }
 function enableInterval() {
   enableTasks.value = !enableTasks.value;
@@ -202,7 +205,7 @@ async function fetchTasks() {
     enableTasks.value = false;
     return intervalFn.value && clearInterval(intervalFn.value);
   }
-  getTopology();
+  await getTopology();
 }
 </script>
 <style lang="scss" scoped>

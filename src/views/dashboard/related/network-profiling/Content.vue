@@ -15,17 +15,20 @@ limitations under the License. -->
 <template>
   <div class="flex-h content">
     <Tasks />
-    <div class="vis-graph ml-5" v-show="networkProfilingStore.nodes.length">
+    <div class="vis-graph ml-5" v-if="networkProfilingStore.nodes.length">
       <process-topology />
     </div>
+    <div class="text" v-else>{{ t("noData") }}</div>
   </div>
 </template>
 <script lang="ts" setup>
+import { useI18n } from "vue-i18n";
 import Tasks from "./components/Tasks.vue";
 import ProcessTopology from "./components/ProcessTopology.vue";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 
 const networkProfilingStore = useNetworkProfilingStore();
+const { t } = useI18n();
 </script>
 <style lang="scss" scoped>
 .content {
@@ -40,5 +43,11 @@ const networkProfilingStore = useNetworkProfilingStore();
   overflow: auto;
   position: relative;
   width: calc(100% - 300px);
+}
+
+.text {
+  width: calc(100% - 300px);
+  text-align: center;
+  margin-top: 30px;
 }
 </style>
