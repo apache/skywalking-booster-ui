@@ -107,10 +107,10 @@ function drawGraph() {
   const outNodes = networkProfilingStore.nodes.filter(
     (d: ProcessNode) => d.serviceInstanceId !== selectorStore.currentPod.id
   );
-  if (!outNodes.length) {
-    diff.value[0] = (dom.width - radius * 2) / 2 + radius;
+  if (outNodes.length) {
+    diff.value[0] = (dom.width - radius * 3) / 2 + radius;
   } else {
-    diff.value[0] = (dom.width - radius * 4) / 2 + radius;
+    diff.value[0] = (dom.width - radius * 2) / 2 + radius;
   }
   graph.value = svg.value
     .append("g")
@@ -273,7 +273,7 @@ function createLayout() {
     const pos = getArcPoint(angle, r); // angle is [-120, 120]
     outNodes[v].x = pos[0];
     outNodes[v].y = pos[1];
-    angle = angle + 10;
+    angle = angle + 20;
     if (angle * (v + 1) > 120) {
       angle = -10;
     }

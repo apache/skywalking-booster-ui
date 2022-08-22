@@ -72,6 +72,48 @@ export const networkProfilingStore = defineStore({
       this.activeMetricIndex = index;
     },
     setTopology(data: { nodes: ProcessNode[]; calls: Call[] }) {
+      data.nodes = [
+        ...data.nodes,
+        {
+          id: "8fb699b42bddbc2800f48c620db3b14388214f057822aa16a2eef7e95f111111",
+          isReal: true,
+          name: "python111",
+          serviceId: "YWdlbnRsZXNzOjpyZWNvbW1lbmRhdGl111==.1",
+          serviceInstanceId:
+            "YWdlbnRsZXNzOjpyZWNvbW1lbmRhdGlvbg==.1_cmVjb21tZW5kYXRpb24tZGVwbG95bWVudC01NzQ3Yzk3NmQ5LWx1111",
+          serviceInstanceName: "recommendation-deployment-5747c976d9-l123",
+          serviceName: "agentless::recommendation123",
+        },
+        {
+          id: "8fb699b42bddbc2800f48c620db3b14388214f057822aa16a2eef7e95f222222",
+          isReal: true,
+          name: "python222",
+          serviceId: "YWdlbnRsZXNzOjpyZWNvbW1lbmRhdGl111==.1",
+          serviceInstanceId:
+            "YWdlbnRsZXNzOjpyZWNvbW1lbmRhdGlvbg==.1_cmVjb21tZW5kYXRpb24tZGVwbG95bWVudC01NzQ3Yzk3NmQ5LWx11114",
+          serviceInstanceName: "recommendation-deployment-5747c976d9-l1234",
+          serviceName: "agentless::recommendation1234",
+        },
+      ];
+      data.calls = [
+        ...data.calls,
+        {
+          detectPoints: ["SERVER"],
+          id: "689f0e6178a740ef33a83349b79866dae5ab1fcbb2077da06e44ee511a7769e7-8fb699b42bddbc2800f48c620db3b14388214f057822aa16a2eef7e95f222222",
+          source:
+            "689f0e6178a740ef33a83349b79866dae5ab1fcbb2077da06e44ee511a7769e7",
+          target:
+            "8fb699b42bddbc2800f48c620db3b14388214f057822aa16a2eef7e95f222222",
+        },
+        {
+          detectPoints: ["SERVER"],
+          id: "689f0e6178a740ef33a83349b79866dae5ab1fcbb2077da06e44ee511a7769e7-8fb699b42bddbc2800f48c620db3b14388214f057822aa16a2eef7e95f111111",
+          source:
+            "689f0e6178a740ef33a83349b79866dae5ab1fcbb2077da06e44ee511a7769e7",
+          target:
+            "8fb699b42bddbc2800f48c620db3b14388214f057822aa16a2eef7e95f111111",
+        },
+      ];
       const obj = {} as any;
       let calls = (data.calls || []).reduce((prev: Call[], next: Call) => {
         if (!obj[next.id]) {
