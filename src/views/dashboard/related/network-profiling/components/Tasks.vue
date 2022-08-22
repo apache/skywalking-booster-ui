@@ -179,7 +179,7 @@ function enableInterval() {
   if (enableTasks.value) {
     intervalFn.value = setInterval(() => {
       fetchTasks();
-    }, 18000);
+    }, 180000);
     return;
   }
   intervalFn.value && clearInterval(intervalFn.value);

@@ -39,9 +39,14 @@ limitations under the License. -->
       </div>
     </template>
     <div ref="timeRange" class="time-ranges"></div>
-    <el-button class="query" size="small" type="primary" @click="updateTopology"
-      >query</el-button
+    <el-button
+      class="query"
+      size="small"
+      type="primary"
+      @click="updateTopology"
     >
+      {{ t("query") }}
+    </el-button>
   </el-popover>
 </template>
 <script lang="ts" setup>
