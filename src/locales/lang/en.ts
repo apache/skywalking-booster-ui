@@ -150,6 +150,7 @@ const msg = {
   duplicateName: "Duplicate name",
   enableAssociate: "Enable association",
   text: "Text",
+  postgreSQL: "PostgreSQL",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

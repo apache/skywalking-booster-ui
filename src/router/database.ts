@@ -48,6 +48,25 @@ export const routesDatabase: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
+      {
+        path: "/postgreSQL",
+        name: "PostgreSQL",
+        meta: {
+          title: "postgreSQL",
+          exact: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/postgreSQL/tab/:activeTabIndex",
+        name: "PostgreSQLActiveTabIndex",
+        meta: {
+          notShow: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
     ],
   },
 ];
