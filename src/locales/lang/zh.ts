@@ -147,6 +147,7 @@ const msg = {
   nameTip: "该名称仅支持中文和英文、横线和下划线, 并且限制长度为300个字符",
   duplicateName: "重复的名称",
   text: "文本",
+  postgreSQL: "PostgreSQL",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
