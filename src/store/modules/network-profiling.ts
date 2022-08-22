@@ -155,7 +155,9 @@ export const networkProfilingStore = defineStore({
         return res.data;
       }
       this.aliveNetwork = res.data.data.keepEBPFNetworkProfiling.status;
-      ElMessage.warning(res.data.data.keepEBPFNetworkProfiling.errorReason);
+      if (!this.aliveNetwork) {
+        ElMessage.warning(res.data.data.keepEBPFNetworkProfiling.errorReason);
+      }
       return res.data;
     },
     async getProcessTopology(params: {

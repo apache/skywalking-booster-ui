@@ -174,12 +174,17 @@ async function createTask() {
   }
   await getTopology();
 }
-function enableInterval() {
+async function enableInterval() {
   enableTasks.value = !enableTasks.value;
   if (enableTasks.value) {
-    intervalFn.value = setInterval(() => {
-      fetchTasks();
-    }, 180000);
+    await networkProfilingStore.keepNetworkProfiling(
+      networkProfilingStore.selectedNetworkTask.taskId
+    );
+    if (networkProfilingStore.aliveNetwork) {
+      intervalFn.value = setInterval(() => {
+        fetchTasks();
+      }, 180000);
+    }
     return;
   }
   intervalFn.value && clearInterval(intervalFn.value);
