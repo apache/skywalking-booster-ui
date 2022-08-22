@@ -115,6 +115,8 @@ const networkProfilingStore = useNetworkProfilingStore();
 const appStore = useAppStoreWithOut();
 const viewDetail = ref<boolean>(false);
 const enableTasks = ref<boolean>(false);
+/*global Nullable */
+const intervalFn = ref<Nullable<any>>(null);
 
 fetchTasks();
 
@@ -173,15 +175,14 @@ async function createTask() {
   });
 }
 function enableInterval() {
-  let interval;
   enableTasks.value = !enableTasks.value;
   if (enableTasks.value) {
-    interval = setInterval(() => {
+    intervalFn.value = setInterval(() => {
       fetchTasks();
     }, 18000);
     return;
   }
-  interval && clearInterval(interval);
+  intervalFn.value && clearInterval(intervalFn.value);
 }
 async function fetchTasks() {
   const serviceId =
@@ -198,7 +199,8 @@ async function fetchTasks() {
     return ElMessage.error(res.errors);
   }
   if (enableTasks.value && !networkProfilingStore.aliveNetwork) {
-    return;
+    enableTasks.value = false;
+    return intervalFn.value && clearInterval(intervalFn.value);
   }
   getTopology();
 }
