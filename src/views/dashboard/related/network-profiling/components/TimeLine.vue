@@ -79,16 +79,20 @@ function visTimeline() {
     visGraph.value.destroy();
   }
   isUpdate.value = false;
-  const startTime =
-    fixedTriggerDuration > 1800
-      ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
-      : taskStartTime;
+  let startTime = taskStartTime;
+  if (fixedTriggerDuration > 1800) {
+    startTime = taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000;
+  }
+  let endTime = taskStartTime + fixedTriggerDuration * 1000;
+  if (taskStartTime + fixedTriggerDuration * 1000 > new Date().getTime()) {
+    endTime = new Date().getTime();
+  }
   task.value = [
     {
       id: 1,
       content: "",
       start: new Date(startTime),
-      end: new Date(taskStartTime + fixedTriggerDuration * 1000),
+      end: new Date(endTime),
       data: networkProfilingStore.selectedNetworkTask,
       className: targetType,
     },
