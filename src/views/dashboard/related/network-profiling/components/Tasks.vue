@@ -192,7 +192,7 @@ async function enableInterval() {
     return ElMessage.error(res.errors);
   }
   if (networkProfilingStore.aliveNetwork) {
-    intervalFn.value = setInterval(getTopology, 60000);
+    intervalFn.value = setInterval(getTopology, 30000);
   }
 }
 async function fetchTasks() {
