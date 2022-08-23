@@ -40,7 +40,9 @@ limitations under the License. -->
                 </a>
               </div>
               <div class="grey ell sm">
-                <span class="mr-10 sm">{{ dateFormat(i.startTime) }}</span>
+                <span class="mr-10 sm">
+                  {{ dateFormat(i.startTime) }}
+                </span>
                 <span class="mr-10 sm">
                   {{ dateFormat(i.startTime + i.duration * 60 * 1000) }}
                 </span>
@@ -122,18 +124,16 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useProfileStore } from "@/store/modules/profile";
 import { TaskLog, TaskListItem } from "@/types/profile";
 import { ElMessage } from "element-plus";
+import { dateFormat } from "@/utils/dateFormat";
 
 const { t } = useI18n();
 const profileStore = useProfileStore();
 const selectorStore = useSelectorStore();
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 const viewDetail = ref<boolean>(false);
 const service = ref<string>("");
 const selectedTask = ref<TaskListItem | Record<string, never>>({});

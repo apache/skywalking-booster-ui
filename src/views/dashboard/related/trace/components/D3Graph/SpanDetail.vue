@@ -86,10 +86,10 @@ limitations under the License. -->
 import { inject } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
-import dayjs from "dayjs";
 import copy from "@/utils/copy";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { LayoutConfig } from "@/types/dashboard";
+import { dateFormat } from "@/utils/dateFormat";
 
 /*global defineProps, Recordable */
 const options: Recordable<LayoutConfig> = inject("options") || {};
@@ -97,8 +97,6 @@ const props = defineProps({
   currentSpan: { type: Object as PropType<any>, default: () => ({}) },
 });
 const { t } = useI18n();
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 async function getTaceLogs() {
   const { associationWidget } = getDashboard();
   associationWidget(

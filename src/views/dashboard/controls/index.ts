@@ -24,6 +24,7 @@ import Text from "./Text.vue";
 import Ebpf from "./Ebpf.vue";
 import DemandLog from "./DemandLog.vue";
 import Event from "./Event.vue";
+import NetworkProfiling from "./NetworkProfiling.vue";
 import TimeRange from "./TimeRange.vue";
 
 export default {
@@ -37,5 +38,6 @@ export default {
   Ebpf,
   DemandLog,
   Event,
+  NetworkProfiling,
   TimeRange,
 };

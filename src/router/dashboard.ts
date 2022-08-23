@@ -234,6 +234,14 @@ export const routesDashboard: Array<RouteRecordRaw> = [
               ),
             name: "ViewProcessRelationActiveTabIndex",
           },
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name/duration/:duration",
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboards" */ "@/views/dashboard/Edit.vue"
+              ),
+            name: "ViewProcessRelationDuration",
+          },
         ],
       },
     ],

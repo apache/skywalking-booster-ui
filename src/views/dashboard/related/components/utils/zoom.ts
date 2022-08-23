@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 
-export default (d3: any, graph: any) =>
+export default (d3: any, graph: any, diff: number[]) =>
   d3
     .zoom()
     .scaleExtent([0.3, 10])
-    .on("zoom", (d: any) => {
-      graph
-        .attr("transform", d3.zoomTransform(graph.node()))
-        .attr(
-          `translate(${d.transform.x},${d.transform.y})scale(${d.transform.k})`
-        );
+    .on("zoom", (event: any) => {
+      graph.attr(
+        "transform",
+        `translate(${event.transform.x + diff[0]},${
+          event.transform.y + diff[1]
+        })scale(${event.transform.k})`
+      );
     });

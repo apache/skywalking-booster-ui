@@ -75,6 +75,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import timeFormat from "@/utils/timeFormat";
 import { Languages } from "@/constants/data";
 import Selector from "@/components/Selector.vue";
+import getLocalTime from "@/utils/localtime";
 
 const { t, locale } = useI18n();
 const appStore = useAppStoreWithOut();
@@ -88,8 +89,11 @@ appStore.setPageTitle("Setting");
 const handleReload = () => {
   const gap =
     appStore.duration.end.getTime() - appStore.duration.start.getTime();
-  const time: Date[] = [new Date(new Date().getTime() - gap), new Date()];
-  appStore.setDuration(timeFormat(time));
+  const dates: Date[] = [
+    getLocalTime(appStore.utc, new Date(new Date().getTime() - gap)),
+    getLocalTime(appStore.utc, new Date()),
+  ];
+  appStore.setDuration(timeFormat(dates));
 };
 const handleAuto = () => {
   if (autoTime.value < 1) {

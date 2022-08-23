@@ -39,11 +39,11 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { computed, inject } from "vue";
-import dayjs from "dayjs";
 import { ServiceLogConstants } from "./data";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { LayoutConfig } from "@/types/dashboard";
+import { dateFormat } from "@/utils/dateFormat";
 
 /*global defineProps, defineEmits, Recordable */
 const props = defineProps({
@@ -64,8 +64,6 @@ const tags = computed(() => {
     )
   );
 });
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 
 function selectLog(label: string, value: string) {
   if (label === "traceId") {

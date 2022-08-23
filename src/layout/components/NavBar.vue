@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="nav-bar flex-h" :class="{ dark: theme === 'dark' }">
+  <div class="nav-bar flex-h">
     <div class="title">{{ appStore.pageTitle || t(pageName) }}</div>
     <div class="app-config">
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
@@ -49,34 +49,38 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import timeFormat from "@/utils/timeFormat";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { ElMessage } from "element-plus";
+import getLocalTime from "@/utils/localtime";
 
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const route = useRoute();
 const pageName = ref<string>("");
 const timeRange = ref<number>(0);
-const theme = ref<string>("light");
-
-getVersion();
-const setConfig = (value: string) => {
-  pageName.value = value || "";
-  // theme.value = route.path.includes("/infrastructure/") ? "dark" : "light";
-};
-const time = computed(() => [
+const time = ref<Date[]>([
   appStore.durationRow.start,
   appStore.durationRow.end,
 ]);
+
+resetDuration();
+getVersion();
+const setConfig = (value: string) => {
+  pageName.value = value || "";
+};
+
 const handleReload = () => {
   const gap =
     appStore.duration.end.getTime() - appStore.duration.start.getTime();
-  const time: Date[] = [new Date(new Date().getTime() - gap), new Date()];
-  appStore.setDuration(timeFormat(time));
+  const dates: Date[] = [
+    getLocalTime(appStore.utc, new Date(new Date().getTime() - gap)),
+    getLocalTime(appStore.utc, new Date()),
+  ];
+  appStore.setDuration(timeFormat(dates));
 };
 function changeTimeRange(val: Date[] | any) {
   timeRange.value =
@@ -97,6 +101,20 @@ async function getVersion() {
   const res = await appStore.fetchVersion();
   if (res.errors) {
     ElMessage.error(res.errors);
+  }
+}
+function resetDuration() {
+  const { duration }: any = route.params;
+  if (duration) {
+    const d = JSON.parse(duration);
+
+    appStore.updateDurationRow({
+      start: new Date(d.start),
+      end: new Date(d.end),
+      step: d.step,
+    });
+    appStore.updateUTC(d.utc);
+    time.value = [new Date(d.start), new Date(d.end)];
   }
 }
 </script>

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 export const dragIgnoreFrom =
-  "svg.d3-trace-tree, .dragger, .micro-topo-chart, .schedules, .vis-item, .vis-timeline";
+  "svg.d3-trace-tree, .dragger, .micro-topo-chart, .schedules, .vis-item, .vis-timeline, .process-svg";
 
 export const PodsChartTypes = ["EndpointList", "InstanceList"];
 
@@ -198,6 +198,11 @@ export const InstanceTools = [
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
   { name: "event", content: "Add Event", id: "addEvent" },
+  {
+    name: "timeline",
+    content: "Add Network Profiling",
+    id: "addNetworkProfiling",
+  },
 ];
 export const EndpointTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
