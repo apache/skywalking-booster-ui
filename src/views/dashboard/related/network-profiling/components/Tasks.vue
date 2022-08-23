@@ -17,7 +17,6 @@ limitations under the License. -->
     <div class="profile-task-wrapper flex-v">
       <div class="profile-t-tool">
         <span>{{ t("taskList") }}</span>
-
         <span v-if="inProcess" class="new-task cp" @click="createTask">
           <Icon
             :style="{ color: '#ccc' }"
@@ -110,10 +109,11 @@ fetchTasks();
 
 async function changeTask(item: EBPFTaskList) {
   networkProfilingStore.setSelectedNetworkTask(item);
+  intervalFn.value && clearInterval(intervalFn.value);
   getTopology();
 }
 async function getTopology() {
-  const { taskStartTime, fixedTriggerDuration } =
+  const { taskStartTime, fixedTriggerDuration, taskId } =
     networkProfilingStore.selectedNetworkTask;
   const serviceInstanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
@@ -144,10 +144,14 @@ async function getTopology() {
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
-  inProcess.value =
-    taskStartTime + fixedTriggerDuration * 1000 > new Date().getTime()
-      ? true
-      : false;
+  const task = networkProfilingStore.networkTasks[0] || {};
+  if (task.taskId === taskId) {
+    inProcess.value =
+      task.taskStartTime + task.fixedTriggerDuration * 1000 >
+      new Date().getTime()
+        ? true
+        : false;
+  }
   if (!inProcess.value) {
     intervalFn.value && clearInterval(intervalFn.value);
   }
@@ -173,8 +177,9 @@ async function createTask() {
   });
   if (res.errors) {
     ElMessage.error(res.errors);
+    return;
   }
-  await getTopology();
+  await fetchTasks();
 }
 async function enableInterval() {
   const res = await networkProfilingStore.keepNetworkProfiling(
@@ -184,9 +189,7 @@ async function enableInterval() {
     return ElMessage.error(res.errors);
   }
   if (networkProfilingStore.aliveNetwork) {
-    intervalFn.value = setInterval(() => {
-      getTopology();
-    }, 60000);
+    intervalFn.value = setInterval(getTopology, 6000);
   }
 }
 async function fetchTasks() {

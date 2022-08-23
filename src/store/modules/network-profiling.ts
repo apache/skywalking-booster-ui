@@ -115,10 +115,6 @@ export const networkProfilingStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      await this.getTaskList({
-        ...param,
-        targets: ["NETWORK"],
-      });
       return res.data;
     },
     async getTaskList(params: {

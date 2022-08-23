@@ -83,8 +83,12 @@ function visTimeline() {
   if (fixedTriggerDuration > 1800) {
     startTime = taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000;
   }
+  const d = networkProfilingStore.networkTasks[0] || {};
   let endTime = taskStartTime + fixedTriggerDuration * 1000;
-  if (taskStartTime + fixedTriggerDuration * 1000 > new Date().getTime()) {
+  if (
+    taskStartTime + fixedTriggerDuration * 1000 > new Date().getTime() &&
+    taskId === d.taskId
+  ) {
     endTime = new Date().getTime();
   }
   task.value = [
