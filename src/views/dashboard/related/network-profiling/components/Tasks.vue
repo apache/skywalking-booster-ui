@@ -66,10 +66,10 @@ limitations under the License. -->
                     dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000)
                   }}
                 </span>
-                <span class="ml-10" @click="viewDetail = true">
+                <span class="new-task" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
                 </span>
-                <span class="ml-5" v-if="index === 0 && inProcess">
+                <span class="ml-15" v-if="index === 0 && inProcess">
                   <Icon iconName="retry" :loading="true" size="middle" />
                 </span>
               </div>
@@ -236,7 +236,7 @@ watch(
 }
 
 .profile-td {
-  padding: 10px 0 10px 10px;
+  padding: 10px 5px 10px 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 
   &.selected {
@@ -270,7 +270,7 @@ watch(
 }
 
 .profile-t-tool {
-  padding: 5px 10px;
+  padding: 10px 5px 10px 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   background: #f3f4f9;
   width: 100%;
