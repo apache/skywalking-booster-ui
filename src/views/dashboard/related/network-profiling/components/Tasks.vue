@@ -278,6 +278,5 @@ watch(
 
 .new-task {
   float: right;
-  margin-right: 3px;
 }
 </style>
