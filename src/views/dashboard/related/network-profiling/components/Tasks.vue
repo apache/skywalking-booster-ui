@@ -69,7 +69,7 @@ limitations under the License. -->
                 <span class="new-task" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
                 </span>
-                <span class="ml-15" v-if="index === 0 && inProcess">
+                <span class="reload" v-if="index === 0 && inProcess">
                   <Icon iconName="retry" :loading="true" size="middle" />
                 </span>
               </div>
@@ -107,7 +107,7 @@ const appStore = useAppStoreWithOut();
 const viewDetail = ref<boolean>(false);
 /*global Nullable */
 const intervalFn = ref<Nullable<any>>(null);
-const inProcess = ref<boolean>(true);
+const inProcess = ref<boolean>(false);
 fetchTasks();
 
 async function changeTask(item: EBPFTaskList) {
@@ -210,6 +210,9 @@ async function fetchTasks() {
   if (res.errors) {
     return ElMessage.error(res.errors);
   }
+  if (!networkProfilingStore.networkTasks.length) {
+    return;
+  }
   await getTopology();
   if (inProcess.value) {
     enableInterval();
@@ -278,5 +281,9 @@ watch(
 
 .new-task {
   float: right;
+}
+
+.reload {
+  margin-left: 30px;
 }
 </style>
