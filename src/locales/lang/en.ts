@@ -151,6 +151,7 @@ const msg = {
   enableAssociate: "Enable association",
   text: "Text",
   query: "Query",
+  postgreSQL: "PostgreSQL",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

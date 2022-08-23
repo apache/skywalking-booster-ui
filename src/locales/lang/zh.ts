@@ -148,6 +148,7 @@ const msg = {
   duplicateName: "重复的名称",
   text: "文本",
   query: "查询",
+  postgreSQL: "PostgreSQL",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
