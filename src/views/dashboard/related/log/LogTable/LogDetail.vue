@@ -43,8 +43,8 @@ limitations under the License. -->
 import { computed } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import dayjs from "dayjs";
 import { Option } from "@/types/app";
+import { dateFormat } from "@/utils/dateFormat";
 
 /*global defineProps */
 const props = defineProps({
@@ -60,8 +60,6 @@ const logTags = computed(() => {
     return `${d.key} = ${d.value}`;
   });
 });
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 </script>
 <style lang="scss" scoped>
 .content {

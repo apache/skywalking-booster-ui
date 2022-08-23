@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import dayjs from "dayjs";
 export default function dateFormatStep(
   date: Date,
   step: string,
@@ -99,3 +100,6 @@ export const dateFormatTime = (date: Date, step: string): string => {
   }
   return "";
 };
+
+export const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
+  dayjs(new Date(date)).format(pattern);

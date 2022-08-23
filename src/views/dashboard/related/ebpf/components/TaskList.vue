@@ -72,17 +72,15 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import { EBPFTaskList } from "@/types/ebpf";
 import { ElMessage } from "element-plus";
 import TaskDetails from "../../components/TaskDetails.vue";
+import { dateFormat } from "@/utils/dateFormat";
 
 const { t } = useI18n();
 const ebpfStore = useEbpfStore();
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 const viewDetail = ref<boolean>(false);
 
 async function changeTask(item: EBPFTaskList) {

@@ -39,8 +39,8 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import dayjs from "dayjs";
 import { BrowserLogConstants } from "./data";
+import { dateFormat } from "@/utils/dateFormat";
 
 /*global defineProps, defineEmits, NodeListOf  */
 const props = defineProps({
@@ -49,9 +49,6 @@ const props = defineProps({
 const columns = BrowserLogConstants;
 const emit = defineEmits(["select"]);
 const logItem = ref<any>(null);
-
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
 
 function showSelectSpan() {
   const items: NodeListOf<any> = document.querySelectorAll(".log-item");

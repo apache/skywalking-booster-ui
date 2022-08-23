@@ -287,7 +287,7 @@ async function setSourceSelector() {
   await selectorStore.getService(String(params.serviceId));
   states.currentService = selectorStore.currentService.value;
   const e = String(params.entity).split("Relation")[0];
-  await fetchPods(e, selectorStore.currentService.id, false);
+  await fetchPods(e, selectorStore.currentService.id, true);
   if (!(selectorStore.pods.length && selectorStore.pods[0])) {
     selectorStore.setCurrentPod(null);
     states.currentPod = "";
@@ -295,32 +295,25 @@ async function setSourceSelector() {
     return;
   }
   const pod = params.podId || selectorStore.pods[0].id;
-  let currentPod;
-  if (states.currentPod) {
-    currentPod = selectorStore.pods.find(
-      (d: { label: string }) => d.label === states.currentPod
-    );
-  } else {
-    currentPod = selectorStore.pods.find((d: { id: string }) => d.id === pod);
-  }
+  const currentPod = selectorStore.pods.find(
+    (d: { id: string }) => d.id === pod
+  );
   if (!currentPod) {
+    selectorStore.setCurrentProcess(null);
+    states.currentProcess = "";
     return;
   }
   selectorStore.setCurrentPod(currentPod);
   states.currentPod = currentPod.label;
-  const process =
-    params.processId ||
-    (selectorStore.processes.length && selectorStore.processes[0].id);
-  let currentProcess;
-  if (states.currentProcess) {
-    currentProcess = selectorStore.processes.find(
-      (d: { label: string }) => d.label === states.currentProcess
-    );
-  } else {
-    currentProcess = selectorStore.processes.find(
-      (d: { id: string }) => d.id === process
-    );
+  if (!(selectorStore.processes.length && selectorStore.processes[0])) {
+    selectorStore.setCurrentProcess(null);
+    states.currentProcess = "";
+    return;
   }
+  const process = params.processId || selectorStore.processes[0].id;
+  const currentProcess = selectorStore.processes.find(
+    (d: { id: string }) => d.id === process
+  );
   if (currentProcess) {
     selectorStore.setCurrentProcess(currentProcess);
     states.currentProcess = currentProcess.label;
@@ -333,7 +326,7 @@ async function setDestSelector() {
   await fetchPods(
     String(params.entity),
     selectorStore.currentDestService.id,
-    false
+    true
   );
   if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
     selectorStore.setCurrentDestPod(null);
@@ -341,36 +334,27 @@ async function setDestSelector() {
     return;
   }
   const destPod = params.destPodId || selectorStore.destPods[0].id;
-  let currentDestPod = { label: "" };
-  if (states.currentDestPod) {
-    currentDestPod = selectorStore.pods.find(
-      (d: { label: string }) => d.label === states.currentDestPod
-    );
-  } else {
-    currentDestPod = selectorStore.destPods.find(
-      (d: { id: string }) => d.id === destPod
-    );
-  }
+  const currentDestPod = selectorStore.destPods.find(
+    (d: { id: string }) => d.id === destPod
+  );
   if (!currentDestPod) {
+    states.currentDestProcess = "";
+    selectorStore.setCurrentProcess(null);
     return;
   }
   selectorStore.setCurrentDestPod(currentDestPod);
   states.currentDestPod = currentDestPod.label;
   const destProcess = params.destProcessId || selectorStore.destProcesses[0].id;
-  let currentDestProcess;
-  if (states.currentDestProcess) {
-    currentDestProcess = selectorStore.destProcesses.find(
-      (d: { label: string }) => d.label === states.currentProcess
-    );
-  } else {
-    currentDestProcess = selectorStore.destProcesses.find(
-      (d: { id: string }) => d.id === destProcess
-    );
+  const currentDestProcess = selectorStore.destProcesses.find(
+    (d: { id: string }) => d.id === destProcess
+  );
+  if (!currentDestProcess) {
+    states.currentDestProcess = "";
+    selectorStore.setCurrentProcess(null);
+    return;
   }
-  if (currentDestProcess) {
-    selectorStore.setCurrentProcess(currentDestProcess);
-    states.currentProcess = currentDestProcess.label;
-  }
+  selectorStore.setCurrentProcess(currentDestProcess);
+  states.currentDestProcess = currentDestProcess.label;
 }
 
 async function getServices() {
@@ -562,6 +546,9 @@ function setTabControls(id: string) {
     case "addEvent":
       dashboardStore.addTabControls("Event");
       break;
+    case "addNetworkProfiling":
+      dashboardStore.addTabControls("NetworkProfiling");
+      break;
     case "addTimeRange":
       dashboardStore.addTabControls("TimeRange");
       break;
@@ -602,6 +589,9 @@ function setControls(id: string) {
       break;
     case "addEvent":
       dashboardStore.addControl("Event");
+      break;
+    case "addNetworkProfiling":
+      dashboardStore.addControl("NetworkProfiling");
       break;
     case "addTimeRange":
       dashboardStore.addControl("TimeRange");
