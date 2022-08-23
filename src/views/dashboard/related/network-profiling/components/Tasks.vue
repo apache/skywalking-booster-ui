@@ -105,7 +105,7 @@ const appStore = useAppStoreWithOut();
 const viewDetail = ref<boolean>(false);
 /*global Nullable */
 const intervalFn = ref<Nullable<any>>(null);
-const inProcess = ref<boolean>(false);
+const inProcess = ref<boolean>(true);
 fetchTasks();
 
 async function changeTask(item: EBPFTaskList) {
@@ -186,7 +186,7 @@ async function enableInterval() {
   if (networkProfilingStore.aliveNetwork) {
     intervalFn.value = setInterval(() => {
       getTopology();
-    }, 180000);
+    }, 60000);
   }
 }
 async function fetchTasks() {
