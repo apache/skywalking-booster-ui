@@ -66,9 +66,12 @@ limitations under the License. -->
                     dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000)
                   }}
                 </span>
-                <a class="profile-btn r" @click="viewDetail = true">
+                <span class="ml-10" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
-                </a>
+                </span>
+                <span class="ml-5" v-if="index === 0 && inProcess">
+                  <Icon iconName="retry" :loading="true" size="middle" />
+                </span>
               </div>
             </td>
           </tr>
@@ -222,7 +225,7 @@ watch(
 </script>
 <style lang="scss" scoped>
 .profile-task-list {
-  width: 320px;
+  width: 330px;
   height: calc(100% - 10px);
   overflow: auto;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
@@ -233,7 +236,7 @@ watch(
 }
 
 .profile-td {
-  padding: 10px;
+  padding: 10px 0 10px 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 
   &.selected {
@@ -271,14 +274,6 @@ watch(
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   background: #f3f4f9;
   width: 100%;
-}
-
-.profile-btn {
-  color: #3d444f;
-  padding: 1px 3px;
-  border-radius: 2px;
-  font-size: 12px;
-  float: right;
 }
 
 .new-task {
