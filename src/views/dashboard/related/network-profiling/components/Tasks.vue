@@ -17,25 +17,22 @@ limitations under the License. -->
     <div class="profile-task-wrapper flex-v">
       <div class="profile-t-tool">
         <span>{{ t("taskList") }}</span>
+
+        <span v-if="inProcess" class="new-task cp" @click="createTask">
+          <Icon
+            :style="{ color: '#ccc' }"
+            iconName="library_add"
+            size="middle"
+          />
+        </span>
         <el-popconfirm
           title="Are you sure to create a task?"
           @confirm="createTask"
+          v-else
         >
           <template #reference>
             <span class="new-task cp">
               <Icon iconName="library_add" size="middle" />
-            </span>
-          </template>
-        </el-popconfirm>
-        <el-popconfirm
-          :title="`Are you sure to ${
-            enableTasks ? 'disable' : 'enable'
-          } interval?`"
-          @confirm="enableInterval"
-        >
-          <template #reference>
-            <span class="new-task cp">
-              <Icon iconName="retry" :loading="enableTasks" size="middle" />
             </span>
           </template>
         </el-popconfirm>
@@ -106,10 +103,9 @@ const selectorStore = useSelectorStore();
 const networkProfilingStore = useNetworkProfilingStore();
 const appStore = useAppStoreWithOut();
 const viewDetail = ref<boolean>(false);
-const enableTasks = ref<boolean>(false);
 /*global Nullable */
 const intervalFn = ref<Nullable<any>>(null);
-
+const inProcess = ref<boolean>(false);
 fetchTasks();
 
 async function changeTask(item: EBPFTaskList) {
@@ -125,6 +121,10 @@ async function getTopology() {
     fixedTriggerDuration > 1800
       ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
       : taskStartTime;
+  let endTime = taskStartTime + fixedTriggerDuration * 1000;
+  if (taskStartTime + fixedTriggerDuration * 1000 > new Date().getTime()) {
+    endTime = new Date().getTime();
+  }
   const resp = await networkProfilingStore.getProcessTopology({
     serviceInstanceId,
     duration: {
@@ -134,10 +134,7 @@ async function getTopology() {
         true
       ),
       end: dateFormatStep(
-        getLocalTime(
-          appStore.utc,
-          new Date(taskStartTime + fixedTriggerDuration * 1000)
-        ),
+        getLocalTime(appStore.utc, new Date(endTime)),
         appStore.duration.step,
         true
       ),
@@ -147,9 +144,19 @@ async function getTopology() {
   if (resp.errors) {
     ElMessage.error(resp.errors);
   }
+  inProcess.value =
+    taskStartTime + fixedTriggerDuration * 1000 > new Date().getTime()
+      ? true
+      : false;
+  if (!inProcess.value) {
+    intervalFn.value && clearInterval(intervalFn.value);
+  }
   return resp;
 }
 async function createTask() {
+  if (inProcess.value) {
+    return;
+  }
   const serviceId =
     (selectorStore.currentService && selectorStore.currentService.id) || "";
   const serviceInstanceId =
@@ -170,21 +177,20 @@ async function createTask() {
   await getTopology();
 }
 async function enableInterval() {
-  enableTasks.value = !enableTasks.value;
-  if (enableTasks.value) {
-    await networkProfilingStore.keepNetworkProfiling(
-      networkProfilingStore.selectedNetworkTask.taskId
-    );
-    if (networkProfilingStore.aliveNetwork) {
-      intervalFn.value = setInterval(() => {
-        fetchTasks();
-      }, 180000);
-    }
-    return;
+  const res = await networkProfilingStore.keepNetworkProfiling(
+    networkProfilingStore.selectedNetworkTask.taskId
+  );
+  if (res.errors) {
+    return ElMessage.error(res.errors);
   }
-  intervalFn.value && clearInterval(intervalFn.value);
+  if (networkProfilingStore.aliveNetwork) {
+    intervalFn.value = setInterval(() => {
+      getTopology();
+    }, 180000);
+  }
 }
 async function fetchTasks() {
+  intervalFn.value && clearInterval(intervalFn.value);
   const serviceId =
     (selectorStore.currentService && selectorStore.currentService.id) || "";
   const serviceInstanceId =
@@ -198,12 +204,12 @@ async function fetchTasks() {
   if (res.errors) {
     return ElMessage.error(res.errors);
   }
-  if (enableTasks.value && !networkProfilingStore.aliveNetwork) {
-    enableTasks.value = false;
-    return intervalFn.value && clearInterval(intervalFn.value);
-  }
   await getTopology();
+  if (inProcess.value) {
+    enableInterval();
+  }
 }
+
 watch(
   () => selectorStore.currentPod,
   () => {
