@@ -297,15 +297,11 @@ function drawTopology(nodeArr: any[]) {
   // line element
   const obj = {} as any;
   const calls = networkProfilingStore.calls.reduce((prev: any[], next: any) => {
-    if (
-      !(
-        obj[next.sourceId + next.targetId] && obj[next.targetId + next.sourceId]
-      )
-    ) {
-      obj[next.sourceId + next.targetId] = true;
-      obj[next.targetId + next.sourceId] = true;
-      prev.push(next);
+    if (obj[next.targetId + next.sourceId]) {
+      next.lowerArc = true;
     }
+    obj[next.sourceId + next.targetId] = true;
+    prev.push(next);
     return prev;
   }, []);
 
