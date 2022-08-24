@@ -271,12 +271,12 @@ function createLayout() {
   let r = 250;
   let pointArr = getCirclePoint(r, interval);
   for (let v = 0; v < outNodes.length; v++) {
-    outNodes[v].x = pointArr[v][0];
-    outNodes[v].y = pointArr[v][1];
-    if (!pointArr[v + 1]) {
+    if (!pointArr[v]) {
       r = r + 80;
       pointArr = [...pointArr, ...getCirclePoint(r, interval)];
     }
+    outNodes[v].x = pointArr[v][0];
+    outNodes[v].y = pointArr[v][1];
   }
   drawTopology([...nodeArr, ...outNodes]);
 }
