@@ -107,14 +107,7 @@ function drawGraph() {
   width.value = dom.width;
   svg.value.attr("height", height.value).attr("width", width.value);
   tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
-  const outNodes = networkProfilingStore.nodes.filter(
-    (d: ProcessNode) => d.serviceInstanceId !== selectorStore.currentPod.id
-  );
-  if (outNodes.length) {
-    diff.value[0] = (dom.width - radius * 4) / 2 + radius;
-  } else {
-    diff.value[0] = (dom.width - radius * 2) / 2 + radius;
-  }
+  diff.value[0] = (dom.width - radius * 2) / 2 + radius;
   graph.value = svg.value
     .append("g")
     .attr("class", "svg-graph")
@@ -162,13 +155,17 @@ function createPolygon(radius: number, sides = 6, offset = 0) {
   }
   return poly;
 }
-
-function getArcPoint(angle: number, radius: number) {
+function getCirclePoint(radius: number, p = 1) {
+  const data = [];
   const origin = [0, 0];
-  const x1 = radius + origin[0] * Math.cos((angle * Math.PI) / 180);
-  const y1 = origin[1] + radius * Math.sin((angle * Math.PI) / 180);
-
-  return [x1, y1];
+  for (let index = 0; index < 360; index = index + p) {
+    if (index < 230 || index > 310) {
+      let x = radius * Math.cos((Math.PI * 2 * index) / 360);
+      let y = radius * Math.sin((Math.PI * 2 * index) / 360);
+      data.push([x + origin[0], y + origin[1]]);
+    }
+  }
+  return data;
 }
 function createLayout() {
   if (!node.value || !link.value) {
@@ -205,7 +202,7 @@ function createLayout() {
     .attr("fill", "#000")
     .attr("text-anchor", "middle")
     .attr("x", 0)
-    .attr("y", p.radius)
+    .attr("y", p.radius - 15)
     .text(() => selectorStore.currentPod.label);
   const nodeArr = networkProfilingStore.nodes.filter(
     (d: ProcessNode) => d.isReal || d.name === "UNKNOWN_LOCAL"
@@ -270,21 +267,16 @@ function createLayout() {
   const outNodes = networkProfilingStore.nodes.filter(
     (d: ProcessNode) => !(d.isReal || d.name === "UNKNOWN_LOCAL")
   );
-  let angle = 10;
-  let r = 230;
+  const interval = 30;
+  let r = 250;
+  let pointArr = getCirclePoint(r, interval);
   for (let v = 0; v < outNodes.length; v++) {
-    const pos = getArcPoint(angle, r); // angle is [-120, 120]
-    outNodes[v].x = pos[0];
-    outNodes[v].y = pos[1];
-    angle = angle + 20;
-    if (angle * (v + 1) > 120) {
-      angle = -10;
-      r = r + 60;
+    if (!pointArr[v]) {
+      r = r + 80;
+      pointArr = [...pointArr, ...getCirclePoint(r, interval)];
     }
-    if (angle * (v + 1) < -120) {
-      r = r + 60;
-      angle = 10;
-    }
+    outNodes[v].x = pointArr[v][0];
+    outNodes[v].y = pointArr[v][1];
   }
   drawTopology([...nodeArr, ...outNodes]);
 }
@@ -305,15 +297,11 @@ function drawTopology(nodeArr: any[]) {
   // line element
   const obj = {} as any;
   const calls = networkProfilingStore.calls.reduce((prev: any[], next: any) => {
-    if (
-      !(
-        obj[next.sourceId + next.targetId] && obj[next.targetId + next.sourceId]
-      )
-    ) {
-      obj[next.sourceId + next.targetId] = true;
-      obj[next.targetId + next.sourceId] = true;
-      prev.push(next);
+    if (obj[next.targetId + next.sourceId]) {
+      next.lowerArc = true;
     }
+    obj[next.sourceId + next.targetId] = true;
+    prev.push(next);
     return prev;
   }, []);
 

@@ -66,10 +66,10 @@ limitations under the License. -->
                     dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000)
                   }}
                 </span>
-                <span class="ml-10" @click="viewDetail = true">
+                <span class="new-task" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
                 </span>
-                <span class="ml-5" v-if="index === 0 && inProcess">
+                <span class="reload" v-if="index === 0 && inProcess">
                   <Icon iconName="retry" :loading="true" size="middle" />
                 </span>
               </div>
@@ -107,7 +107,9 @@ const appStore = useAppStoreWithOut();
 const viewDetail = ref<boolean>(false);
 /*global Nullable */
 const intervalFn = ref<Nullable<any>>(null);
-const inProcess = ref<boolean>(true);
+const intervalKeepAlive = ref<Nullable<any>>(null);
+const inProcess = ref<boolean>(false);
+
 fetchTasks();
 
 async function changeTask(item: EBPFTaskList) {
@@ -157,6 +159,7 @@ async function getTopology() {
   }
   if (!inProcess.value) {
     intervalFn.value && clearInterval(intervalFn.value);
+    intervalKeepAlive.value && clearInterval(intervalKeepAlive.value);
   }
   return resp;
 }
@@ -184,19 +187,31 @@ async function createTask() {
   }
   await fetchTasks();
 }
-async function enableInterval() {
+function enableInterval() {
+  intervalFn.value = setInterval(getTopology, 30000);
+}
+
+function networkInterval() {
+  intervalKeepAlive.value = setInterval(keepAliveNetwork, 60000);
+}
+
+async function keepAliveNetwork() {
   const res = await networkProfilingStore.keepNetworkProfiling(
     networkProfilingStore.selectedNetworkTask.taskId
   );
   if (res.errors) {
+    intervalKeepAlive.value && clearInterval(intervalKeepAlive.value);
     return ElMessage.error(res.errors);
   }
-  if (networkProfilingStore.aliveNetwork) {
-    intervalFn.value = setInterval(getTopology, 60000);
+  if (!networkProfilingStore.aliveNetwork) {
+    intervalFn.value && clearInterval(intervalFn.value);
+    intervalKeepAlive.value && clearInterval(intervalKeepAlive.value);
   }
 }
+
 async function fetchTasks() {
   intervalFn.value && clearInterval(intervalFn.value);
+  intervalKeepAlive.value && clearInterval(intervalKeepAlive.value);
   const serviceId =
     (selectorStore.currentService && selectorStore.currentService.id) || "";
   const serviceInstanceId =
@@ -210,9 +225,14 @@ async function fetchTasks() {
   if (res.errors) {
     return ElMessage.error(res.errors);
   }
+  if (!networkProfilingStore.networkTasks.length) {
+    return;
+  }
   await getTopology();
   if (inProcess.value) {
     enableInterval();
+    networkInterval();
+    keepAliveNetwork();
   }
 }
 
@@ -236,7 +256,7 @@ watch(
 }
 
 .profile-td {
-  padding: 10px 0 10px 10px;
+  padding: 10px 5px 10px 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 
   &.selected {
@@ -270,7 +290,7 @@ watch(
 }
 
 .profile-t-tool {
-  padding: 5px 10px;
+  padding: 10px 5px 10px 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   background: #f3f4f9;
   width: 100%;
@@ -278,5 +298,9 @@ watch(
 
 .new-task {
   float: right;
+}
+
+.reload {
+  margin-left: 30px;
 }
 </style>

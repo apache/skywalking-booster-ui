@@ -82,6 +82,7 @@ import type { PropType } from "vue";
 import { ServiceListConfig } from "@/types/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import { Service } from "@/types/selector";
 import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
 import { EntityType } from "../data";
@@ -111,6 +112,7 @@ const props = defineProps({
 });
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
+const appStore = useAppStoreWithOut();
 const chartLoading = ref<boolean>(false);
 const pageSize = 10;
 const services = ref<Service[]>([]);
@@ -271,6 +273,14 @@ watch(
       return;
     }
     queryServiceMetrics(services.value);
+  }
+);
+watch(
+  () => appStore.durationTime,
+  () => {
+    if (dashboardStore.entity === EntityType[1].value) {
+      queryServices();
+    }
   }
 );
 </script>

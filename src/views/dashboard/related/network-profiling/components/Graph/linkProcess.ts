@@ -27,6 +27,9 @@ export const linkElement = (graph: any) => {
         [d.target.x, d.target.y - 5],
         0.5
       );
+      if (d.lowerArc) {
+        controlPos[1] = -controlPos[1];
+      }
       return (
         "M" +
         d.source.x +
@@ -57,6 +60,9 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
         [d.target.x, d.target.y - 5],
         0.5
       );
+      if (d.lowerArc) {
+        controlPos[1] = -controlPos[1];
+      }
       const p = quadraticBezier(
         0.5,
         { x: d.source.x, y: d.source.y - 5 },

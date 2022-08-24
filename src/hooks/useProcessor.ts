@@ -46,6 +46,7 @@ export function useQueryProcessor(config: any) {
     "ServiceRelation",
     "ServiceInstanceRelation",
     "EndpointRelation",
+    "ProcessRelation",
   ].includes(dashboardStore.entity);
   if (isRelation && !selectorStore.currentDestService) {
     return;
@@ -93,11 +94,18 @@ export function useQueryProcessor(config: any) {
             dashboardStore.entity === "All"
               ? undefined
               : selectorStore.currentService.normal,
-          serviceInstanceName: dashboardStore.entity.includes("ServiceInstance")
+          serviceInstanceName: [
+            "ServiceInstance",
+            "ServiceInstanceRelation",
+            "ProcessRelation",
+          ].includes(dashboardStore.entity)
             ? selectorStore.currentPod && selectorStore.currentPod.value
             : undefined,
           endpointName: dashboardStore.entity.includes("Endpoint")
             ? selectorStore.currentPod && selectorStore.currentPod.value
+            : undefined,
+          processName: dashboardStore.entity.includes("Process")
+            ? selectorStore.currentProcess && selectorStore.currentProcess.value
             : undefined,
           destNormal: isRelation
             ? selectorStore.currentDestService.normal
@@ -105,16 +113,21 @@ export function useQueryProcessor(config: any) {
           destServiceName: isRelation
             ? selectorStore.currentDestService.value
             : undefined,
-          destServiceInstanceName:
-            dashboardStore.entity === "ServiceInstanceRelation"
-              ? selectorStore.currentDestPod &&
-                selectorStore.currentDestPod.value
-              : undefined,
+          destServiceInstanceName: [
+            "ServiceInstanceRelation",
+            "ProcessRelation",
+          ].includes(dashboardStore.entity)
+            ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
+            : undefined,
           destEndpointName:
             dashboardStore.entity === "EndpointRelation"
               ? selectorStore.currentDestPod &&
                 selectorStore.currentDestPod.value
               : undefined,
+          destProcessName: dashboardStore.entity.includes("ProcessRelation")
+            ? selectorStore.currentDestProcess &&
+              selectorStore.currentDestProcess.value
+            : undefined,
         },
       };
     }
