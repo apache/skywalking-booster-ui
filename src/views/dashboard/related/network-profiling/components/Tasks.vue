@@ -107,7 +107,9 @@ const appStore = useAppStoreWithOut();
 const viewDetail = ref<boolean>(false);
 /*global Nullable */
 const intervalFn = ref<Nullable<any>>(null);
+const intervalKeepAlive = ref<Nullable<any>>(null);
 const inProcess = ref<boolean>(false);
+
 fetchTasks();
 
 async function changeTask(item: EBPFTaskList) {
@@ -157,6 +159,7 @@ async function getTopology() {
   }
   if (!inProcess.value) {
     intervalFn.value && clearInterval(intervalFn.value);
+    intervalKeepAlive.value && clearInterval(intervalKeepAlive.value);
   }
   return resp;
 }
@@ -184,19 +187,31 @@ async function createTask() {
   }
   await fetchTasks();
 }
-async function enableInterval() {
+function enableInterval() {
+  intervalFn.value = setInterval(getTopology, 30000);
+}
+
+function networkInterval() {
+  intervalKeepAlive.value = setInterval(keepAliveNetwork, 60000);
+}
+
+async function keepAliveNetwork() {
   const res = await networkProfilingStore.keepNetworkProfiling(
     networkProfilingStore.selectedNetworkTask.taskId
   );
   if (res.errors) {
+    intervalKeepAlive.value && clearInterval(intervalKeepAlive.value);
     return ElMessage.error(res.errors);
   }
-  if (networkProfilingStore.aliveNetwork) {
-    intervalFn.value = setInterval(getTopology, 30000);
+  if (!networkProfilingStore.aliveNetwork) {
+    intervalFn.value && clearInterval(intervalFn.value);
+    intervalKeepAlive.value && clearInterval(intervalKeepAlive.value);
   }
 }
+
 async function fetchTasks() {
   intervalFn.value && clearInterval(intervalFn.value);
+  intervalKeepAlive.value && clearInterval(intervalKeepAlive.value);
   const serviceId =
     (selectorStore.currentService && selectorStore.currentService.id) || "";
   const serviceInstanceId =
@@ -216,6 +231,8 @@ async function fetchTasks() {
   await getTopology();
   if (inProcess.value) {
     enableInterval();
+    networkInterval();
+    keepAliveNetwork();
   }
 }
 
