@@ -94,6 +94,8 @@ export const ProcessTopology = {
       source
       detectPoints
       target
+      sourceComponents
+      targetComponents
     }
   }
 `,

@@ -45,7 +45,7 @@ export default (d3: any, graph: any, funcs: any, tip: any) => {
     .append("text")
     .attr("fill", "#000")
     .attr("text-anchor", "middle")
-    .attr("x", (d: any) => d.x + 5)
+    .attr("x", (d: any) => d.x)
     .attr("y", (d: any) => d.y + 28)
     .text((d: { name: string }) =>
       d.name.length > 10 ? `${d.name.substring(0, 10)}...` : d.name
