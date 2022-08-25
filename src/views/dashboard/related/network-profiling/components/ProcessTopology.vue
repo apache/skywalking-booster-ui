@@ -458,10 +458,6 @@ watch(
   right: 50px;
 }
 
-.topo-line-anchor {
-  cursor: pointer;
-}
-
 .topo-call {
   stroke-linecap: round;
   stroke-width: 2px;

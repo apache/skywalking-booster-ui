@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import icons from "@/assets/img/icons";
 export const linkElement = (graph: any) => {
   const linkEnter = graph
     .append("path")
@@ -23,8 +23,8 @@ export const linkElement = (graph: any) => {
     .attr("stroke", "#97B0F8")
     .attr("d", (d: any) => {
       const controlPos = computeControlPoint(
-        [d.source.x, d.source.y - 5],
-        [d.target.x, d.target.y - 5],
+        [d.source.x, d.source.y],
+        [d.target.x, d.target.y],
         0.5
       );
       if (d.lowerArc) {
@@ -34,7 +34,7 @@ export const linkElement = (graph: any) => {
         "M" +
         d.source.x +
         " " +
-        (d.source.y - 5) +
+        d.source.y +
         " " +
         "Q" +
         controlPos[0] +
@@ -43,34 +43,15 @@ export const linkElement = (graph: any) => {
         " " +
         d.target.x +
         " " +
-        (d.target.y - 5)
+        d.target.y
       );
     });
   return linkEnter;
 };
 export const anchorElement = (graph: any, funcs: any, tip: any) => {
   const linkEnter = graph
-    .append("circle")
-    .attr("class", "topo-line-anchor")
-    .attr("r", 5)
-    .attr("fill", "#97B0F8")
-    .attr("transform", (d: any) => {
-      const controlPos = computeControlPoint(
-        [d.source.x, d.source.y - 5],
-        [d.target.x, d.target.y - 5],
-        0.5
-      );
-      if (d.lowerArc) {
-        controlPos[1] = -controlPos[1];
-      }
-      const p = quadraticBezier(
-        0.5,
-        { x: d.source.x, y: d.source.y - 5 },
-        { x: controlPos[0], y: controlPos[1] },
-        { x: d.target.x, y: d.target.y - 5 }
-      );
-      return `translate(${p[0]}, ${p[1]})`;
-    })
+    .append("g")
+    .attr("style", "cursor: move;")
     .on("mouseover", function (event: unknown, d: unknown) {
       tip.html(funcs.tipHtml).show(d, this);
     })
@@ -79,6 +60,60 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     })
     .on("click", (event: unknown, d: unknown) => {
       funcs.handleLinkClick(event, d);
+    });
+  linkEnter
+    .append("text")
+    .attr("fill", "#444")
+    .attr("text-anchor", "middle")
+    .attr("x", (d: any) => {
+      const p = getMidpoint(d);
+      return p[0] + 2;
+    })
+    .attr("y", (d: any) => {
+      const p = getMidpoint(d);
+      return p[1] + 5;
+    })
+    .text((d: any) => {
+      const types = [...d.sourceComponents, ...d.targetComponents];
+      if (types.includes("tcp")) {
+        return "tcp";
+      }
+      if (types.includes("https")) {
+        return "https";
+      }
+      if (types.includes("http")) {
+        return "http";
+      }
+      if (types.includes("tls")) {
+        return "tls";
+      }
+    });
+  linkEnter
+    .append("image")
+    .attr("width", 15)
+    .attr("height", 15)
+    .attr("x", (d: any) => {
+      const p = getMidpoint(d);
+      return p[0] - 6;
+    })
+    .attr("y", (d: any) => {
+      const p = getMidpoint(d);
+      return p[1] - 16;
+    })
+    .attr("xlink:href", (d: any) => {
+      const types = [...d.sourceComponents, ...d.targetComponents];
+      if (types.includes("tcp")) {
+        return icons.HTTPDARK;
+      }
+      if (types.includes("https")) {
+        return icons.HTTPS;
+      }
+      if (types.includes("http")) {
+        return icons.HTTPDARK;
+      }
+      if (types.includes("tls")) {
+        return icons.HTTPS;
+      }
     });
   return linkEnter;
 };
@@ -129,4 +164,21 @@ function quadraticBezier(
   const x = (1 - t) * (1 - t) * ps.x + 2 * t * (1 - t) * pc.x + t * t * pe.x;
   const y = (1 - t) * (1 - t) * ps.y + 2 * t * (1 - t) * pc.y + t * t * pe.y;
   return [x, y];
+}
+function getMidpoint(d: any) {
+  const controlPos = computeControlPoint(
+    [d.source.x, d.source.y],
+    [d.target.x, d.target.y],
+    0.5
+  );
+  if (d.lowerArc) {
+    controlPos[1] = -controlPos[1];
+  }
+  const p = quadraticBezier(
+    0.5,
+    { x: d.source.x, y: d.source.y },
+    { x: controlPos[0], y: controlPos[1] },
+    { x: d.target.x, y: d.target.y }
+  );
+  return p;
 }
