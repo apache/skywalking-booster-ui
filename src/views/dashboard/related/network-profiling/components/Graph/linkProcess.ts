@@ -69,25 +69,25 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .attr("text-anchor", "middle")
     .attr("x", (d: Call) => {
       const p = getMidpoint(d);
-      return p[0] + 2;
+      return p[0] + 10;
     })
     .attr("y", (d: Call) => {
       const p = getMidpoint(d);
-      return p[1] + 5;
+      return p[1] + 3;
     })
     .text((d: Call) => {
       const types = [...d.sourceComponents, ...d.targetComponents];
       if (types.includes("tcp")) {
-        return "tcp";
+        return "TCP";
       }
       if (types.includes("https")) {
-        return "https";
+        return "HTTPS";
       }
       if (types.includes("http")) {
-        return "http";
+        return "HTTP";
       }
       if (types.includes("tls")) {
-        return "tls";
+        return "TLS";
       }
     });
   linkEnter
@@ -96,11 +96,11 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .attr("height", 15)
     .attr("x", (d: Call) => {
       const p = getMidpoint(d);
-      return p[0] - 6;
+      return p[0] - 16;
     })
     .attr("y", (d: Call) => {
       const p = getMidpoint(d);
-      return p[1] - 16;
+      return p[1] - 9;
     })
     .attr("xlink:href", (d: Call) => {
       const types = [...d.sourceComponents, ...d.targetComponents];
