@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 import icons from "@/assets/img/icons";
+import { Call } from "@/types/topology";
+
 export const linkElement = (graph: any) => {
   const linkEnter = graph
     .append("path")
     .attr("class", "topo-call")
     .attr("marker-end", "url(#arrow)")
     .attr("stroke", "#97B0F8")
-    .attr("d", (d: any) => {
+    .attr("d", (d: Call) => {
       const controlPos = computeControlPoint(
         [d.source.x, d.source.y],
         [d.target.x, d.target.y],
@@ -65,15 +67,15 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .append("text")
     .attr("fill", "#444")
     .attr("text-anchor", "middle")
-    .attr("x", (d: any) => {
+    .attr("x", (d: Call) => {
       const p = getMidpoint(d);
       return p[0] + 2;
     })
-    .attr("y", (d: any) => {
+    .attr("y", (d: Call) => {
       const p = getMidpoint(d);
       return p[1] + 5;
     })
-    .text((d: any) => {
+    .text((d: Call) => {
       const types = [...d.sourceComponents, ...d.targetComponents];
       if (types.includes("tcp")) {
         return "tcp";
@@ -92,15 +94,15 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .append("image")
     .attr("width", 15)
     .attr("height", 15)
-    .attr("x", (d: any) => {
+    .attr("x", (d: Call) => {
       const p = getMidpoint(d);
       return p[0] - 6;
     })
-    .attr("y", (d: any) => {
+    .attr("y", (d: Call) => {
       const p = getMidpoint(d);
       return p[1] - 16;
     })
-    .attr("xlink:href", (d: any) => {
+    .attr("xlink:href", (d: Call) => {
       const types = [...d.sourceComponents, ...d.targetComponents];
       if (types.includes("tcp")) {
         return icons.HTTPDARK;
@@ -165,7 +167,7 @@ function quadraticBezier(
   const y = (1 - t) * (1 - t) * ps.y + 2 * t * (1 - t) * pc.y + t * t * pe.y;
   return [x, y];
 }
-function getMidpoint(d: any) {
+function getMidpoint(d: Call) {
   const controlPos = computeControlPoint(
     [d.source.x, d.source.y],
     [d.target.x, d.target.y],

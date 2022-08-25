@@ -23,6 +23,9 @@ export interface Call {
   sourceObj?: any;
   targetObj?: any;
   value?: number;
+  lowerArc?: boolean;
+  sourceComponents: string[];
+  targetComponents: string[];
 }
 export interface Node {
   id: string;
