@@ -95,8 +95,8 @@ async function init() {
   if (!networkProfilingStore.nodes.length) {
     return;
   }
-  drawGraph();
-  createLayout();
+  freshNodes();
+  useThrottleFn(resize, 500)();
 }
 
 function drawGraph() {
@@ -114,10 +114,22 @@ function drawGraph() {
     .attr("class", "svg-graph")
     .attr("transform", `translate(${diff.value[0]}, ${diff.value[1]})`);
   graph.value.call(tip.value);
-  node.value = graph.value.append("g").selectAll(".topo-node");
-  link.value = graph.value.append("g").selectAll(".topo-call");
-  anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
-  arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
+  node.value = graph.value
+    .append("g")
+    .attr("class", "nodes")
+    .selectAll(".topo-node");
+  link.value = graph.value
+    .append("g")
+    .attr("class", "calls")
+    .selectAll(".topo-call");
+  anchor.value = graph.value
+    .append("g")
+    .attr("class", "anchors")
+    .selectAll(".topo-line-anchor");
+  arrow.value = graph.value
+    .append("g")
+    .attr("class", "arrows")
+    .selectAll(".topo-line-arrow");
   svg.value.call(zoom(d3, graph.value, diff.value));
   svg.value.on("click", (event: any) => {
     event.stopPropagation();
@@ -126,7 +138,6 @@ function drawGraph() {
     networkProfilingStore.setLink(null);
     dashboardStore.selectWidget(props.config);
   });
-  useThrottleFn(resize, 500)();
 }
 
 function hexGrid(n = 1, radius = 1, origin = [0, 0]) {
@@ -191,7 +202,7 @@ function createLayout() {
   }
   const linePath = d3.line();
   linePath.curve(d3.curveLinearClosed);
-  const hexPolygon = graph.value.append("g");
+  const hexPolygon = graph.value.append("g").attr("class", "hex-polygon");
   hexPolygon
     .append("path")
     .attr("d", linePath(vertices))
@@ -298,14 +309,20 @@ function drawTopology(nodeArr: any[]) {
   ).merge(node.value);
   // line element
   const obj = {} as any;
-  const calls = networkProfilingStore.calls.reduce((prev: any[], next: any) => {
-    if (obj[next.targetId + next.sourceId]) {
-      next.lowerArc = true;
-    }
-    obj[next.sourceId + next.targetId] = true;
-    prev.push(next);
-    return prev;
-  }, []);
+  const calls = networkProfilingStore.calls.reduce(
+    (
+      prev: (Call & { targetId: string; sourceId: string })[],
+      next: Call & { targetId: string; sourceId: string }
+    ) => {
+      if (obj[next.targetId + next.sourceId]) {
+        next.lowerArc = true;
+      }
+      obj[next.sourceId + next.targetId] = true;
+      prev.push(next);
+      return prev;
+    },
+    []
+  );
 
   link.value = link.value.data(calls, (d: Call) => d.id);
   link.value.exit().remove();
@@ -337,7 +354,6 @@ function shuffleArray(array: number[][]) {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
-
 function handleLinkClick(event: any, d: Call) {
   event.stopPropagation();
   networkProfilingStore.setNode(null);

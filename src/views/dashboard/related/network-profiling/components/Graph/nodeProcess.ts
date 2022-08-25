@@ -20,6 +20,7 @@ import { Node } from "@/types/topology";
 export default (d3: any, graph: any, funcs: any, tip: any) => {
   const nodeEnter = graph
     .append("g")
+    .attr("class", "topo-node")
     .call(
       d3
         .drag()
