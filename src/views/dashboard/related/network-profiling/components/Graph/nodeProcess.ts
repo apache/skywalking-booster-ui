@@ -37,16 +37,16 @@ export default (d3: any, graph: any, funcs: any, tip: any) => {
     .append("image")
     .attr("width", 35)
     .attr("height", 35)
-    .attr("x", (d: any) => d.x - 15)
-    .attr("y", (d: any) => d.y - 15)
+    .attr("x", (d: { x: number }) => d.x - 15)
+    .attr("y", (d: { y: number }) => d.y - 15)
     .attr("style", "cursor: move;")
     .attr("xlink:href", icons.CUBE);
   nodeEnter
     .append("text")
     .attr("fill", "#000")
     .attr("text-anchor", "middle")
-    .attr("x", (d: any) => d.x)
-    .attr("y", (d: any) => d.y + 28)
+    .attr("x", (d: { x: number }) => d.x)
+    .attr("y", (d: { y: number }) => d.y + 28)
     .text((d: { name: string }) =>
       d.name.length > 10 ? `${d.name.substring(0, 10)}...` : d.name
     );

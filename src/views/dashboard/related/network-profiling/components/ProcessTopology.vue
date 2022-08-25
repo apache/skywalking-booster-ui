@@ -80,6 +80,7 @@ const config = ref<any>({});
 const diff = ref<number[]>([220, 200]);
 const radius = 210;
 const dates = ref<Nullable<{ start: number; end: number }>>(null);
+const nodeList = ref<any>([]);
 
 onMounted(() => {
   init();
@@ -278,7 +279,8 @@ function createLayout() {
     outNodes[v].x = pointArr[v][0];
     outNodes[v].y = pointArr[v][1];
   }
-  drawTopology([...nodeArr, ...outNodes]);
+  nodeList.value = [...nodeArr, ...outNodes];
+  drawTopology(nodeList.value);
 }
 
 function drawTopology(nodeArr: any[]) {

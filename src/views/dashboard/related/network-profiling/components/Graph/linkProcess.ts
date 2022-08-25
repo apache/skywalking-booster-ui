@@ -25,8 +25,8 @@ export const linkElement = (graph: any) => {
     .attr("stroke", "#97B0F8")
     .attr("d", (d: Call) => {
       const controlPos = computeControlPoint(
-        [d.source.x, d.source.y],
-        [d.target.x, d.target.y],
+        [d.source.x, d.source.y - 5],
+        [d.target.x, d.target.y - 5],
         0.5
       );
       if (d.lowerArc) {
@@ -36,7 +36,7 @@ export const linkElement = (graph: any) => {
         "M" +
         d.source.x +
         " " +
-        d.source.y +
+        (d.source.y - 5) +
         " " +
         "Q" +
         controlPos[0] +
@@ -45,7 +45,7 @@ export const linkElement = (graph: any) => {
         " " +
         d.target.x +
         " " +
-        d.target.y
+        (d.target.y - 5)
       );
     });
   return linkEnter;
@@ -73,7 +73,7 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     })
     .attr("y", (d: Call) => {
       const p = getMidpoint(d);
-      return p[1] + 3;
+      return p[1] - 2;
     })
     .text((d: Call) => {
       const types = [...d.sourceComponents, ...d.targetComponents];
@@ -100,7 +100,7 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     })
     .attr("y", (d: Call) => {
       const p = getMidpoint(d);
-      return p[1] - 9;
+      return p[1] - 14;
     })
     .attr("xlink:href", (d: Call) => {
       const types = [...d.sourceComponents, ...d.targetComponents];
