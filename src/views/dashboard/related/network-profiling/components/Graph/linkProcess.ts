@@ -104,16 +104,10 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     })
     .attr("xlink:href", (d: Call) => {
       const types = [...d.sourceComponents, ...d.targetComponents];
-      if (types.includes("tcp")) {
+      if (types.includes("tcp") || types.includes("http")) {
         return icons.HTTPDARK;
       }
-      if (types.includes("https")) {
-        return icons.HTTPS;
-      }
-      if (types.includes("http")) {
-        return icons.HTTPDARK;
-      }
-      if (types.includes("tls")) {
+      if (types.includes("https") || types.includes("tls")) {
         return icons.HTTPS;
       }
     });
