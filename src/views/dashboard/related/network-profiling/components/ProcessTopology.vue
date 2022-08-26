@@ -315,9 +315,21 @@ function drawTopology(nodeArr: any[]) {
     {
       handleLinkClick: handleLinkClick,
       tipHtml: (data: Call) => {
+        const types = [...data.sourceComponents, ...data.targetComponents];
+        let l = "TCP";
+        if (types.includes("https")) {
+          l = "HTTPS";
+        }
+        if (types.includes("http")) {
+          l = "HTTP";
+        }
+        if (types.includes("tls")) {
+          l = "TLS";
+        }
         const html = `<div><span class="grey">${t(
           "detectPoint"
-        )}:</span>${data.detectPoints.join(" | ")}</div>`;
+        )}: </span>${data.detectPoints.join(" | ")}</div>
+        <div><span class="grey">Type: </span>${l}</div>`;
         return html;
       },
     },

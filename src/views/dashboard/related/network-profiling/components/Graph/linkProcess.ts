@@ -25,18 +25,18 @@ export const linkElement = (graph: any) => {
     .attr("stroke", "#97B0F8")
     .attr("d", (d: Call) => {
       const controlPos = computeControlPoint(
-        [d.source.x, d.source.y],
-        [d.target.x, d.target.y],
+        [d.source.x, d.source.y - 5],
+        [d.target.x, d.target.y - 5],
         0.5
       );
       if (d.lowerArc) {
-        controlPos[1] = -controlPos[1];
+        controlPos[1] = -controlPos[1] - 10;
       }
       return (
         "M" +
         d.source.x +
         " " +
-        d.source.y +
+        (d.source.y - 5) +
         " " +
         "Q" +
         controlPos[0] +
@@ -45,7 +45,7 @@ export const linkElement = (graph: any) => {
         " " +
         d.target.x +
         " " +
-        d.target.y
+        (d.target.y - 5)
       );
     });
   return linkEnter;
@@ -64,43 +64,16 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
       funcs.handleLinkClick(event, d);
     });
   linkEnter
-    .append("text")
-    .attr("fill", "#444")
-    .attr("text-anchor", "middle")
-    .attr("x", (d: Call) => {
-      const p = getMidpoint(d);
-      return p[0] + 10;
-    })
-    .attr("y", (d: Call) => {
-      const p = getMidpoint(d);
-      return p[1] + 3;
-    })
-    .text((d: Call) => {
-      const types = [...d.sourceComponents, ...d.targetComponents];
-      if (types.includes("tcp")) {
-        return "TCP";
-      }
-      if (types.includes("https")) {
-        return "HTTPS";
-      }
-      if (types.includes("http")) {
-        return "HTTP";
-      }
-      if (types.includes("tls")) {
-        return "TLS";
-      }
-    });
-  linkEnter
     .append("image")
     .attr("width", 15)
     .attr("height", 15)
     .attr("x", (d: Call) => {
       const p = getMidpoint(d);
-      return p[0] - 16;
+      return p[0] - 8;
     })
     .attr("y", (d: Call) => {
       const p = getMidpoint(d);
-      return p[1] - 9;
+      return p[1] - 13;
     })
     .attr("xlink:href", (d: Call) => {
       const types = [...d.sourceComponents, ...d.targetComponents];
