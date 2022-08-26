@@ -30,7 +30,7 @@ export const linkElement = (graph: any) => {
         0.5
       );
       if (d.lowerArc) {
-        controlPos[1] = -controlPos[1];
+        controlPos[1] = -controlPos[1] - 10;
       }
       return (
         "M" +
@@ -54,7 +54,6 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
   const linkEnter = graph
     .append("g")
     .attr("class", "topo-line-anchor")
-    .attr("style", "cursor: move;")
     .on("mouseover", function (event: unknown, d: unknown) {
       tip.html(funcs.tipHtml).show(d, this);
     })
@@ -64,44 +63,18 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
     .on("click", (event: unknown, d: unknown) => {
       funcs.handleLinkClick(event, d);
     });
-  linkEnter
-    .append("text")
-    .attr("fill", "#444")
-    .attr("text-anchor", "middle")
-    .attr("x", (d: Call) => {
-      const p = getMidpoint(d);
-      return p[0] + 10;
-    })
-    .attr("y", (d: Call) => {
-      const p = getMidpoint(d);
-      return p[1] - 2;
-    })
-    .text((d: Call) => {
-      const types = [...d.sourceComponents, ...d.targetComponents];
-      if (types.includes("tcp")) {
-        return "TCP";
-      }
-      if (types.includes("https")) {
-        return "HTTPS";
-      }
-      if (types.includes("http")) {
-        return "HTTP";
-      }
-      if (types.includes("tls")) {
-        return "TLS";
-      }
-    });
+
   linkEnter
     .append("image")
     .attr("width", 15)
     .attr("height", 15)
     .attr("x", (d: Call) => {
       const p = getMidpoint(d);
-      return p[0] - 16;
+      return p[0] - 8;
     })
     .attr("y", (d: Call) => {
       const p = getMidpoint(d);
-      return p[1] - 14;
+      return p[1] - 13;
     })
     .attr("xlink:href", (d: Call) => {
       const types = [...d.sourceComponents, ...d.targetComponents];
