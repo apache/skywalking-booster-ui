@@ -453,6 +453,10 @@ watch(
   cursor: move;
 }
 
+.topo-line-anchor {
+  cursor: pointer;
+}
+
 .switch-icon-edit {
   cursor: pointer;
   transition: all 0.5ms linear;

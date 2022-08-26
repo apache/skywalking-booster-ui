@@ -53,7 +53,7 @@ export const linkElement = (graph: any) => {
 export const anchorElement = (graph: any, funcs: any, tip: any) => {
   const linkEnter = graph
     .append("g")
-    .attr("style", "cursor: move;")
+    .attr("class", "topo-line-anchor")
     .on("mouseover", function (event: unknown, d: unknown) {
       tip.html(funcs.tipHtml).show(d, this);
     })
