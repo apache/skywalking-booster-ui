@@ -297,4 +297,5 @@ export const CalculationOpts = [
   { label: "Precision is 2", value: "precision" },
   { label: "Milliseconds to seconds", value: "msTos" },
   { label: "Seconds to days", value: "secondToDay" },
+  { label: "Nanoseconds to milliseconds", value: "nanosecondToMillisecond" },
 ];
