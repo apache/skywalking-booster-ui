@@ -20,7 +20,7 @@ limitations under the License. -->
       v-if="networkProfilingStore.nodes.length"
       v-loading="networkProfilingStore.loadNodes"
     >
-      <process-topology />
+      <process-topology :config="config" />
     </div>
     <div class="text" v-else v-loading="networkProfilingStore.loadNodes">
       {{ t("noData") }}
@@ -28,11 +28,19 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import Tasks from "./components/Tasks.vue";
 import ProcessTopology from "./components/ProcessTopology.vue";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 
+/*global defineProps */
+defineProps({
+  config: {
+    type: Object as PropType<any>,
+    default: () => ({ graph: {} }),
+  },
+});
 const networkProfilingStore = useNetworkProfilingStore();
 const { t } = useI18n();
 </script>

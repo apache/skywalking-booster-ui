@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="label">{{ t("linkDashboard") }}</div>
   <Selector
-    :value="linkDashboard"
+    :value="dashboardStore.selectedGrid.linkDashboard || ''"
     :options="linkDashboards"
     size="small"
     placeholder="Please input a dashboard name for calls"
@@ -37,8 +37,6 @@ const dashboardStore = useDashboardStore();
 const linkDashboards = ref<
   (DashboardItem & { label: string; value: string })[]
 >([]);
-const { selectedGrid } = dashboardStore;
-const linkDashboard = ref<string>(selectedGrid.linkDashboard || "");
 
 onMounted(() => {
   getDashboards();
@@ -64,7 +62,6 @@ function getDashboards() {
 }
 
 function changeLinkDashboard(opt: { value: string }[]) {
-  linkDashboard.value = opt[0].value;
   const p = {
     ...dashboardStore.selectedGrid,
     linkDashboard: opt[0].value,
