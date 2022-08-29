@@ -40,15 +40,16 @@ const widgetIds = ref<string[]>(
   associate.map((d: { widgetId: string }) => d.widgetId)
 );
 const widgets: any = computed(() => {
-  const all = getDashboard(dashboardStore.currentDashboard).widgets;
-  const items = all.filter((d: any) => {
+  const widgetList = getDashboard(dashboardStore.currentDashboard).widgets;
+  const items = [];
+  for (const d of widgetList) {
     const isLinear = ["Bar", "Line", "Area"].includes(
       (d.graph && d.graph.type) || ""
     );
     if (isLinear && d.id && dashboardStore.selectedGrid.id !== d.id) {
-      return { value: d.id, label: (d.widget && d.widget.name) || d.id };
+      items.push({ value: d.id, label: (d.widget && d.widget.name) || d.id });
     }
-  });
+  }
   return items;
 });
 function updateWidgetConfig(options: Option[]) {
