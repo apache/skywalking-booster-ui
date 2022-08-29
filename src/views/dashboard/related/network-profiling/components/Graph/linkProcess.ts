@@ -23,31 +23,7 @@ export const linkElement = (graph: any) => {
     .attr("class", "topo-call")
     .attr("marker-end", "url(#arrow)")
     .attr("stroke", "#97B0F8")
-    .attr("d", (d: Call) => {
-      const controlPos = computeControlPoint(
-        [d.source.x, d.source.y - 5],
-        [d.target.x, d.target.y - 5],
-        0.5
-      );
-      if (d.lowerArc) {
-        controlPos[1] = -controlPos[1] - 10;
-      }
-      return (
-        "M" +
-        d.source.x +
-        " " +
-        (d.source.y - 5) +
-        " " +
-        "Q" +
-        controlPos[0] +
-        " " +
-        controlPos[1] +
-        " " +
-        d.target.x +
-        " " +
-        (d.target.y - 5)
-      );
-    });
+    .attr("d", (d: Call) => linkPath(d));
   return linkEnter;
 };
 export const anchorElement = (graph: any, funcs: any, tip: any) => {
@@ -77,13 +53,7 @@ export const anchorElement = (graph: any, funcs: any, tip: any) => {
       return p[1] - 13;
     })
     .attr("xlink:href", (d: Call) => {
-      const types = [...d.sourceComponents, ...d.targetComponents];
-      if (types.includes("tcp") || types.includes("http")) {
-        return icons.HTTPDARK;
-      }
-      if (types.includes("https") || types.includes("tls")) {
-        return icons.HTTPS;
-      }
+      return getAnchor(d);
     });
   return linkEnter;
 };
@@ -135,13 +105,14 @@ function quadraticBezier(
   const y = (1 - t) * (1 - t) * ps.y + 2 * t * (1 - t) * pc.y + t * t * pe.y;
   return [x, y];
 }
-function getMidpoint(d: Call) {
+export function getMidpoint(d: Call) {
   const controlPos = computeControlPoint(
     [d.source.x, d.source.y],
     [d.target.x, d.target.y],
     0.5
   );
   if (d.lowerArc) {
+    console.log(true);
     controlPos[1] = -controlPos[1];
   }
   const p = quadraticBezier(
@@ -151,4 +122,38 @@ function getMidpoint(d: Call) {
     { x: d.target.x, y: d.target.y }
   );
   return p;
+}
+export function linkPath(d: Call) {
+  const controlPos = computeControlPoint(
+    [d.source.x, d.source.y - 5],
+    [d.target.x, d.target.y - 5],
+    0.5
+  );
+  if (d.lowerArc) {
+    controlPos[1] = -controlPos[1] - 10;
+  }
+  return (
+    "M" +
+    d.source.x +
+    " " +
+    (d.source.y - 5) +
+    " " +
+    "Q" +
+    controlPos[0] +
+    " " +
+    controlPos[1] +
+    " " +
+    d.target.x +
+    " " +
+    (d.target.y - 5)
+  );
+}
+export function getAnchor(d: Call) {
+  const types = [...d.sourceComponents, ...d.targetComponents];
+  if (types.includes("tcp") || types.includes("http")) {
+    return icons.HTTPDARK;
+  }
+  if (types.includes("https") || types.includes("tls")) {
+    return icons.HTTPS;
+  }
 }

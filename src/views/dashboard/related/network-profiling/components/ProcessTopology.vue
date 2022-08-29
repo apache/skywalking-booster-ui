@@ -13,7 +13,89 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div ref="chart" class="process-topo"></div>
+  <div ref="chart" class="process-topo">
+    <svg
+      class="process-svg"
+      :width="width"
+      :height="height"
+      @click="clickTopology"
+    >
+      <g class="svg-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
+        <g class="hex-polygon">
+          <path
+            :d="getHexPolygonVertices()"
+            stroke="#D5DDF6"
+            stroke-width="2"
+            fill="none"
+          />
+          <text :x="0" :y="radius - 15" fill="#000" text-anchor="middle">
+            {{ selectorStore.currentPod.label }}
+          </text>
+        </g>
+        <g class="nodes">
+          <g v-for="(node, index) in nodeList" :key="index">
+            <image
+              :href="icons.CUBE"
+              style="cursor: 'move'"
+              width="35"
+              height="35"
+              :x="node.x - 15"
+              :y="node.y - 15"
+            />
+            <text :x="node.x" :y="node.y + 28" fill="#000" text-anchor="middle">
+              {{
+                node.name.length > 10
+                  ? `${node.name.substring(0, 10)}...`
+                  : node.name
+              }}
+            </text>
+          </g>
+        </g>
+        <g class="calls">
+          <path
+            v-for="(call, index) in networkProfilingStore.calls"
+            :key="index"
+            class="topo-call"
+            markerEnd="url(#arrow)"
+            stroke="#97B0F8"
+            :d="linkPath(call)"
+          />
+        </g>
+        <g class="anchors">
+          <image
+            v-for="(call, index) in networkProfilingStore.calls"
+            :key="index"
+            class="topo-line-anchor"
+            :href="getAnchor(call)"
+            width="15"
+            height="15"
+            :x="getMidpoint(call)[0] - 8"
+            :y="getMidpoint(call)[1] - 13"
+          />
+        </g>
+        <g class="arrows">
+          <defs
+            v-for="(call, index) in networkProfilingStore.calls"
+            :key="index"
+          >
+            <marker
+              id="arrow"
+              class="topo-line-arrow"
+              markerUnits="strokeWidth"
+              markerWidth="8"
+              markerHeight="8"
+              viewBox="0 0 12 12"
+              refX="10"
+              refY="6"
+              orient="auto"
+            >
+              <path d="M2,2 L10,6 L2,10 L6,6 L2,2" fill="#97B0F8" />
+            </marker>
+          </defs>
+        </g>
+      </g>
+    </svg>
+  </div>
   <el-popover placement="bottom" :width="295" trigger="click">
     <template #reference>
       <div
@@ -40,8 +122,7 @@ import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import d3tip from "d3-tip";
-import { linkElement, anchorElement, arrowMarker } from "./Graph/linkProcess";
-import nodeElement from "./Graph/nodeProcess";
+import { linkPath, getAnchor, getMidpoint } from "./Graph/linkProcess";
 import { Call } from "@/types/topology";
 import zoom from "../../components/utils/zoom";
 import { ProcessNode } from "@/types/ebpf";
@@ -52,6 +133,7 @@ import getDashboard from "@/hooks/useDashboardsSession";
 import { Layout } from "./Graph/layout";
 import TimeLine from "./TimeLine.vue";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import icons from "@/assets/img/icons";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -67,7 +149,6 @@ const selectorStore = useSelectorStore();
 const networkProfilingStore = useNetworkProfilingStore();
 const height = ref<number>(100);
 const width = ref<number>(100);
-const svg = ref<Nullable<any>>(null);
 const chart = ref<Nullable<HTMLDivElement>>(null);
 const tip = ref<Nullable<HTMLDivElement>>(null);
 const graph = ref<any>(null);
@@ -91,7 +172,7 @@ onMounted(() => {
 });
 
 async function init() {
-  svg.value = d3.select(chart.value).append("svg").attr("class", "process-svg");
+  // svg.value = d3.select(chart.value).append("svg").attr("class", "process-svg");
   if (!networkProfilingStore.nodes.length) {
     return;
   }
@@ -106,38 +187,14 @@ function drawGraph() {
   };
   height.value = (dom.height || 40) - 20;
   width.value = dom.width;
-  svg.value.attr("height", height.value).attr("width", width.value);
-  tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
-  diff.value[0] = (dom.width - radius * 2) / 2 + radius;
-  graph.value = svg.value
-    .append("g")
-    .attr("class", "svg-graph")
-    .attr("transform", `translate(${diff.value[0]}, ${diff.value[1]})`);
-  graph.value.call(tip.value);
-  node.value = graph.value
-    .append("g")
-    .attr("class", "nodes")
-    .selectAll(".topo-node");
-  link.value = graph.value
-    .append("g")
-    .attr("class", "calls")
-    .selectAll(".topo-call");
-  anchor.value = graph.value
-    .append("g")
-    .attr("class", "anchors")
-    .selectAll(".topo-line-anchor");
-  arrow.value = graph.value
-    .append("g")
-    .attr("class", "arrows")
-    .selectAll(".topo-line-arrow");
-  svg.value.call(zoom(d3, graph.value, diff.value));
-  svg.value.on("click", (event: any) => {
-    event.stopPropagation();
-    event.preventDefault();
-    networkProfilingStore.setNode(null);
-    networkProfilingStore.setLink(null);
-    dashboardStore.selectWidget(props.config);
-  });
+}
+
+function clickTopology(event: any) {
+  event.stopPropagation();
+  event.preventDefault();
+  networkProfilingStore.setNode(null);
+  networkProfilingStore.setLink(null);
+  dashboardStore.selectWidget(props.config);
 }
 
 function hexGrid(n = 1, radius = 1, origin = [0, 0]) {
@@ -179,17 +236,8 @@ function getCirclePoint(radius: number, p = 1) {
   }
   return data;
 }
-function createLayout() {
-  if (!node.value || !link.value) {
-    return;
-  }
-  const dom: any = (chart.value && chart.value.getBoundingClientRect()) || {
-    width: 0,
-    height: 0,
-  };
-  if (isNaN(dom.width) || dom.width < 1) {
-    return;
-  }
+
+function getHexPolygonVertices() {
   const p = {
     count: 1,
     radius, // layout hexagons radius 300
@@ -202,20 +250,21 @@ function createLayout() {
   }
   const linePath = d3.line();
   linePath.curve(d3.curveLinearClosed);
-  const hexPolygon = graph.value.append("g").attr("class", "hex-polygon");
-  hexPolygon
-    .append("path")
-    .attr("d", linePath(vertices))
-    .attr("stroke", "#D5DDF6")
-    .attr("stroke-width", 2)
-    .style("fill", "none");
-  hexPolygon
-    .append("text")
-    .attr("fill", "#000")
-    .attr("text-anchor", "middle")
-    .attr("x", 0)
-    .attr("y", p.radius - 15)
-    .text(() => selectorStore.currentPod.label);
+  return linePath(vertices) || "";
+}
+function createLayout() {
+  const dom: any = (chart.value && chart.value.getBoundingClientRect()) || {
+    width: 0,
+    height: 0,
+  };
+  if (isNaN(dom.width) || dom.width < 1) {
+    return;
+  }
+  const p = {
+    count: 1,
+    radius, // layout hexagons radius 300
+  };
+  const origin = [0, 0];
   const nodeArr = networkProfilingStore.nodes.filter(
     (d: ProcessNode) => d.isReal || d.name === "UNKNOWN_LOCAL"
   );
@@ -291,73 +340,6 @@ function createLayout() {
     outNodes[v].y = pointArr[v][1];
   }
   nodeList.value = [...nodeArr, ...outNodes];
-  drawTopology(nodeList.value);
-}
-
-function drawTopology(nodeArr: any[]) {
-  node.value = node.value.data(nodeArr, (d: ProcessNode) => d.id);
-  node.value.exit().remove();
-  node.value = nodeElement(
-    d3,
-    node.value.enter(),
-    {
-      tipHtml: (data: ProcessNode) => {
-        return ` <div class="mb-5"><span class="grey">name: </span>${data.name}</div>`;
-      },
-    },
-    tip.value
-  ).merge(node.value);
-  // line element
-  const obj = {} as any;
-  const calls = networkProfilingStore.calls.reduce(
-    (
-      prev: (Call & { targetId: string; sourceId: string })[],
-      next: Call & { targetId: string; sourceId: string }
-    ) => {
-      if (obj[next.targetId + next.sourceId]) {
-        next.lowerArc = true;
-      }
-      obj[next.sourceId + next.targetId] = true;
-      prev.push(next);
-      return prev;
-    },
-    []
-  );
-
-  link.value = link.value.data(calls, (d: Call) => d.id);
-  link.value.exit().remove();
-  link.value = linkElement(link.value.enter()).merge(link.value);
-  anchor.value = anchor.value.data(calls, (d: Call) => d.id);
-  anchor.value.exit().remove();
-  anchor.value = anchorElement(
-    anchor.value.enter(),
-    {
-      handleLinkClick: handleLinkClick,
-      tipHtml: (data: Call) => {
-        const types = [...data.sourceComponents, ...data.targetComponents];
-        let l = "TCP";
-        if (types.includes("https")) {
-          l = "HTTPS";
-        }
-        if (types.includes("http")) {
-          l = "HTTP";
-        }
-        if (types.includes("tls")) {
-          l = "TLS";
-        }
-        const html = `<div><span class="grey">${t(
-          "detectPoint"
-        )}: </span>${data.detectPoints.join(" | ")}</div>
-        <div><span class="grey">Type: </span>${l}</div>`;
-        return html;
-      },
-    },
-    tip.value
-  ).merge(anchor.value);
-  // arrow marker
-  arrow.value = arrow.value.data(calls, (d: Call) => d.id);
-  arrow.value.exit().remove();
-  arrow.value = arrowMarker(arrow.value.enter()).merge(arrow.value);
 }
 
 function shuffleArray(array: number[][]) {
@@ -441,7 +423,7 @@ function resize() {
 }
 
 async function freshNodes() {
-  svg.value.selectAll(".svg-graph").remove();
+  d3.select("svg-graph").remove();
   if (!networkProfilingStore.nodes.length) {
     return;
   }
