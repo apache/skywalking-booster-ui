@@ -30,7 +30,7 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
-    <Content />
+    <Content :config="props.data" />
   </div>
 </template>
 <script lang="ts" setup>
