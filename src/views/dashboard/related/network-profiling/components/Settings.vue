@@ -62,9 +62,10 @@ function getDashboards() {
 }
 
 function changeLinkDashboard(opt: { value: string }[]) {
+  const linkDashboard = opt.length ? opt[0].value : "";
   const p = {
     ...dashboardStore.selectedGrid,
-    linkDashboard: opt[0].value,
+    linkDashboard,
   };
   dashboardStore.selectWidget(p);
   dashboardStore.setConfigs(p);
