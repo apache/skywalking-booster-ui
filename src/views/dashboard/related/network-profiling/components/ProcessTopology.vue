@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div ref="chart" class="process-topo"></div>
-  <el-popover placement="bottom" :width="295" trigger="click">
+  <el-popover
+    placement="bottom"
+    :width="295"
+    trigger="click"
+    v-if="dashboardStore.editMode"
+  >
     <template #reference>
-      <div
-        class="switch-icon-edit ml-5"
-        title="Settings"
-        @click="setConfig"
-        v-if="dashboardStore.editMode"
-      >
+      <div class="switch-icon-edit ml-5" title="Settings" @click="setConfig">
         <Icon size="middle" iconName="setting_empty" />
       </div>
     </template>
@@ -76,7 +76,7 @@ const link = ref<any>(null);
 const anchor = ref<any>(null);
 const arrow = ref<any>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
-const config = ref<any>({});
+const config = ref<any>(props.config || {});
 const diff = ref<number[]>([220, 200]);
 const radius = 210;
 const dates = ref<Nullable<{ start: number; end: number }>>(null);

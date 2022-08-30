@@ -30,7 +30,10 @@ export const linkElement = (graph: any) => {
         0.5
       );
       if (d.lowerArc) {
-        controlPos[1] = -controlPos[1] - 10;
+        controlPos[1] =
+          Math.abs(controlPos[1]) < 50
+            ? -controlPos[1] + 90
+            : -controlPos[1] - 10;
       }
       return (
         "M" +
@@ -141,7 +144,8 @@ function getMidpoint(d: Call) {
     0.5
   );
   if (d.lowerArc) {
-    controlPos[1] = -controlPos[1];
+    controlPos[1] =
+      Math.abs(controlPos[1]) < 50 ? -controlPos[1] + 100 : -controlPos[1] - 10;
   }
   const p = quadraticBezier(
     0.5,

@@ -15,15 +15,14 @@ limitations under the License. -->
 <template>
   <div class="flex-h content">
     <Tasks />
-    <div
-      class="vis-graph ml-5"
-      v-if="networkProfilingStore.nodes.length"
-      v-loading="networkProfilingStore.loadNodes"
-    >
-      <process-topology :config="config" />
-    </div>
-    <div class="text" v-else v-loading="networkProfilingStore.loadNodes">
-      {{ t("noData") }}
+    <div class="vis-graph ml-5" v-loading="networkProfilingStore.loadNodes">
+      <process-topology
+        v-if="networkProfilingStore.nodes.length"
+        :config="config"
+      />
+      <div class="text" v-else>
+        {{ t("noData") }}
+      </div>
     </div>
   </div>
 </template>
@@ -60,7 +59,7 @@ const { t } = useI18n();
 }
 
 .text {
-  width: calc(100% - 330px);
+  width: 100%;
   text-align: center;
   margin-top: 30px;
 }
