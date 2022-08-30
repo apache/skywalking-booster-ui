@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div ref="chart" class="process-topo"></div>
-  <el-popover placement="bottom" :width="295" trigger="click">
+  <el-popover
+    placement="bottom"
+    :width="295"
+    trigger="click"
+    v-if="dashboardStore.editMode"
+  >
     <template #reference>
-      <div
-        class="switch-icon-edit ml-5"
-        title="Settings"
-        @click="setConfig"
-        v-if="dashboardStore.editMode"
-      >
+      <div class="switch-icon-edit ml-5" title="Settings" @click="setConfig">
         <Icon size="middle" iconName="setting_empty" />
       </div>
     </template>
