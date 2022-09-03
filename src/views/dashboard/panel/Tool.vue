@@ -288,36 +288,6 @@ async function setSourceSelector() {
   states.currentService = selectorStore.currentService.value;
   const e = String(params.entity).split("Relation")[0];
   await fetchPods(e, selectorStore.currentService.id, true);
-  if (!(selectorStore.pods.length && selectorStore.pods[0])) {
-    selectorStore.setCurrentPod(null);
-    states.currentPod = "";
-    states.currentProcess = "";
-    return;
-  }
-  const pod = params.podId || selectorStore.pods[0].id;
-  const currentPod = selectorStore.pods.find(
-    (d: { id: string }) => d.id === pod
-  );
-  if (!currentPod) {
-    selectorStore.setCurrentProcess(null);
-    states.currentProcess = "";
-    return;
-  }
-  selectorStore.setCurrentPod(currentPod);
-  states.currentPod = currentPod.label;
-  if (!(selectorStore.processes.length && selectorStore.processes[0])) {
-    selectorStore.setCurrentProcess(null);
-    states.currentProcess = "";
-    return;
-  }
-  const process = params.processId || selectorStore.processes[0].id;
-  const currentProcess = selectorStore.processes.find(
-    (d: { id: string }) => d.id === process
-  );
-  if (currentProcess) {
-    selectorStore.setCurrentProcess(currentProcess);
-    states.currentProcess = currentProcess.label;
-  }
 }
 
 async function setDestSelector() {
@@ -328,33 +298,6 @@ async function setDestSelector() {
     selectorStore.currentDestService.id,
     true
   );
-  if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
-    selectorStore.setCurrentDestPod(null);
-    states.currentDestPod = "";
-    return;
-  }
-  const destPod = params.destPodId || selectorStore.destPods[0].id;
-  const currentDestPod = selectorStore.destPods.find(
-    (d: { id: string }) => d.id === destPod
-  );
-  if (!currentDestPod) {
-    states.currentDestProcess = "";
-    selectorStore.setCurrentProcess(null);
-    return;
-  }
-  selectorStore.setCurrentDestPod(currentDestPod);
-  states.currentDestPod = currentDestPod.label;
-  const destProcess = params.destProcessId || selectorStore.destProcesses[0].id;
-  const currentDestProcess = selectorStore.destProcesses.find(
-    (d: { id: string }) => d.id === destProcess
-  );
-  if (!currentDestProcess) {
-    states.currentDestProcess = "";
-    selectorStore.setCurrentProcess(null);
-    return;
-  }
-  selectorStore.setCurrentProcess(currentDestProcess);
-  states.currentDestProcess = currentDestProcess.label;
 }
 
 async function getServices() {
@@ -482,10 +425,12 @@ function changeDestPods(pod: Option[]) {
 
 function changeDestProcess(pod: Option[]) {
   selectorStore.setCurrentDestProcess(pod[0] || null);
+  states.currentDestProcess = pod[0].label || "";
 }
 
 function changeProcess(pod: Option[]) {
   selectorStore.setCurrentProcess(pod[0] || null);
+  states.currentProcess = pod[0].label || "";
 }
 
 function changeMode() {
@@ -612,35 +557,13 @@ async function fetchPods(
     case EntityType[2].value:
       resp = await selectorStore.getEndpoints({ serviceId, ...param });
       if (setPod) {
-        let p;
-        if (states.currentPod) {
-          p = selectorStore.pods.find(
-            (d: { label: unknown }) => d.label === states.currentPod
-          );
-        } else {
-          p = selectorStore.pods.find(
-            (d: unknown, index: number) => index === 0
-          );
-        }
-        selectorStore.setCurrentPod(p || null);
-        states.currentPod = selectorStore.currentPod.label;
+        updateCurrentPod();
       }
       break;
     case EntityType[3].value:
       resp = await selectorStore.getServiceInstances({ serviceId });
       if (setPod) {
-        let p;
-        if (states.currentPod) {
-          p = selectorStore.pods.find(
-            (d: { label: string }) => d.label === states.currentPod
-          );
-        } else {
-          p = selectorStore.pods.find(
-            (d: { label: string }, index: number) => index === 0
-          );
-        }
-        selectorStore.setCurrentPod(p || null);
-        states.currentPod = selectorStore.currentPod.label;
+        updateCurrentPod();
       }
       break;
     case EntityType[6].value:
@@ -650,18 +573,7 @@ async function fetchPods(
         ...param,
       });
       if (setPod) {
-        let p;
-        if (states.currentDestPod) {
-          p = selectorStore.destPods.find(
-            (d: { label: string }) => d.label === states.currentDestPod
-          );
-        } else {
-          p = selectorStore.destPods.find(
-            (d: { label: string }, index: number) => index === 0
-          );
-        }
-        selectorStore.setCurrentDestPod(p || null);
-        states.currentDestPod = selectorStore.currentDestPod.label;
+        updateCurrentDestPod();
       }
       break;
     case EntityType[5].value:
@@ -670,18 +582,7 @@ async function fetchPods(
         isRelation: true,
       });
       if (setPod) {
-        let p;
-        if (states.currentDestPod) {
-          p = selectorStore.destPods.find(
-            (d: { label: string }) => d.label === states.currentDestPod
-          );
-        } else {
-          p = selectorStore.destPods.find(
-            (d: { label: string }, index: number) => index === 0
-          );
-        }
-        selectorStore.setCurrentDestPod(p || null);
-        states.currentDestPod = selectorStore.currentDestPod.label;
+        updateCurrentDestPod();
       }
       break;
     case EntityType[7].value:
@@ -705,18 +606,14 @@ async function fetchProcess(setPod: boolean) {
     instanceId: selectorStore.currentPod.id,
   });
   if (setPod) {
-    let m;
-    if (states.currentProcess) {
-      m = selectorStore.processes.find(
-        (d: { label: string }) => d.label === states.currentProcess
-      );
-    } else {
-      m = selectorStore.processes.find(
-        (d: { label: string }, index: number) => index === 0
-      );
+    const process = params.processId || selectorStore.processes[0].id;
+    const currentProcess = selectorStore.processes.find(
+      (d: { id: string }) => d.id === process
+    );
+    if (currentProcess) {
+      selectorStore.setCurrentProcess(currentProcess);
+      states.currentProcess = currentProcess.label;
     }
-    selectorStore.setCurrentProcess(m || null);
-    states.currentProcess = m && m.label;
   }
   return resp;
 }
@@ -726,20 +623,57 @@ async function fetchDestProcess(setPod: boolean) {
     isRelation: true,
   });
   if (setPod) {
-    let m;
-    if (states.currentDestProcess) {
-      m = selectorStore.destProcesses.find(
-        (d: { label: string }) => d.label === states.currentDestProcess
-      );
-    } else {
-      m = selectorStore.destProcesses.find(
-        (d: { label: string }, index: number) => index === 1
-      );
+    const destProcess =
+      params.destProcessId || selectorStore.destProcesses[0].id;
+    const currentDestProcess = selectorStore.destProcesses.find(
+      (d: { id: string }) => d.id === destProcess
+    );
+    if (!currentDestProcess) {
+      states.currentDestProcess = "";
+      selectorStore.setCurrentDestProcess(null);
+      return;
     }
-    selectorStore.setCurrentDestProcess(m || null);
-    states.currentDestProcess = m && m.label;
+    selectorStore.setCurrentDestProcess(currentDestProcess);
+    states.currentDestProcess = currentDestProcess.label;
   }
   return resp;
+}
+
+function updateCurrentDestPod() {
+  if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
+    selectorStore.setCurrentDestPod(null);
+    states.currentDestPod = "";
+    return;
+  }
+  const destPod = params.destPodId || selectorStore.destPods[0].id;
+  const currentDestPod = selectorStore.destPods.find(
+    (d: { id: string }) => d.id === destPod
+  );
+  if (!currentDestPod) {
+    states.currentDestPod = "";
+    selectorStore.setCurrentDestPod(null);
+    return;
+  }
+  selectorStore.setCurrentDestPod(currentDestPod);
+  states.currentDestPod = currentDestPod.label;
+}
+function updateCurrentPod() {
+  if (!(selectorStore.pods.length && selectorStore.pods[0])) {
+    selectorStore.setCurrentPod(null);
+    states.currentPod = "";
+    return;
+  }
+  const pod = params.podId || selectorStore.pods[0].id;
+  const currentPod = selectorStore.pods.find(
+    (d: { id: string }) => d.id === pod
+  );
+  if (!currentPod) {
+    selectorStore.setCurrentPod(null);
+    states.currentPod = "";
+    return;
+  }
+  selectorStore.setCurrentPod(currentPod);
+  states.currentPod = currentPod.label;
 }
 function getTools() {
   switch (params.entity) {

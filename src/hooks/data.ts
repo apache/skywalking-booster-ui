@@ -37,6 +37,7 @@ export enum Calculations {
   PercentageAvg = "percentageAvg",
   ApdexAvg = "apdexAvg",
   SecondToDay = "secondToDay",
+  NanosecondToMillisecond = "nanosecondToMillisecond",
 }
 export enum sizeEnum {
   XS = "XS",
