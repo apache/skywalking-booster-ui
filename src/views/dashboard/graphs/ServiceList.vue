@@ -18,12 +18,11 @@ limitations under the License. -->
       <el-input
         v-model="searchText"
         placeholder="Please input service name"
-        size="small"
         @change="searchList"
         class="inputs mt-5"
       >
         <template #append>
-          <el-button size="small" @click="searchList">
+          <el-button class="btn" @click="searchList">
             <Icon size="sm" iconName="search" />
           </el-button>
         </template>
@@ -289,5 +288,9 @@ watch(
 
 .inputs {
   width: 300px;
+}
+
+.btn {
+  margin-top: -12px;
 }
 </style>

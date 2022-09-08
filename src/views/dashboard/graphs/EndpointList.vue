@@ -17,14 +17,13 @@ limitations under the License. -->
     <div class="search">
       <el-input
         v-model="searchText"
-        placeholder="Please input endpoint name"
-        size="small"
+        placeholder="Search for more endpoints"
         @change="searchList"
         class="inputs"
       >
         <template #append>
-          <el-button size="small" @click="searchList">
-            <Icon size="sm" iconName="search" />
+          <el-button @click="searchList" class="btn">
+            <Icon size="middle" iconName="search" />
           </el-button>
         </template>
       </el-input>
@@ -197,5 +196,9 @@ watch(
 
 .inputs {
   width: 300px;
+}
+
+.btn {
+  margin-top: -12px;
 }
 </style>
