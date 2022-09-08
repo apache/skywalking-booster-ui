@@ -152,7 +152,7 @@ const msg = {
   text: "Text",
   query: "Query",
   postgreSQL: "PostgreSQL",
-  endpointTips: "The table shows up to 20 pieces of data.",
+  endpointTips: "The table shows up to 20 pieces of endpoints.",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

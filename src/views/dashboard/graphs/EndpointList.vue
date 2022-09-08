@@ -195,6 +195,5 @@ watch(
 
 .tips {
   color: red;
-  float: right;
 }
 </style>
