@@ -23,6 +23,7 @@
 .list {
   margin-top: 10px;
   margin-bottom: 10px;
+  height: calc(100% - 90px);
 }
 
 .pagination {
@@ -40,9 +41,21 @@
 }
 
 .search {
-  text-align: right;
+  margin-top: 5px;
 }
 
 .input-with-search {
   width: 400px;
+}
+
+.btn {
+  margin-top: -12px;
+}
+
+.chart {
+  height: 60px;
+}
+
+.inputs {
+  width: 300px;
 }
