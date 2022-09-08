@@ -194,6 +194,6 @@ watch(
 @import "./style.scss";
 
 .tips {
-  color: red;
+  color: rgba(255, 0, 0, 0.5);
 }
 </style>
