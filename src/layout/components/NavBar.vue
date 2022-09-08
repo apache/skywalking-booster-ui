@@ -18,7 +18,7 @@ limitations under the License. -->
     <div class="app-config">
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
       <TimePicker
-        :value="time"
+        :value="[appStore.durationRow.start, appStore.durationRow.end]"
         position="bottom"
         format="YYYY-MM-DD HH:mm"
         @input="changeTimeRange"
@@ -55,17 +55,12 @@ import { useI18n } from "vue-i18n";
 import timeFormat from "@/utils/timeFormat";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { ElMessage } from "element-plus";
-import getLocalTime from "@/utils/localtime";
 
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const route = useRoute();
 const pageName = ref<string>("");
 const timeRange = ref<number>(0);
-const time = ref<Date[]>([
-  appStore.durationRow.start,
-  appStore.durationRow.end,
-]);
 
 resetDuration();
 getVersion();
@@ -73,15 +68,13 @@ const setConfig = (value: string) => {
   pageName.value = value || "";
 };
 
-const handleReload = () => {
+function handleReload() {
   const gap =
     appStore.duration.end.getTime() - appStore.duration.start.getTime();
-  const dates: Date[] = [
-    getLocalTime(appStore.utc, new Date(new Date().getTime() - gap)),
-    getLocalTime(appStore.utc, new Date()),
-  ];
+  const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
   appStore.setDuration(timeFormat(dates));
-};
+}
+
 function changeTimeRange(val: Date[] | any) {
   timeRange.value =
     val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
@@ -114,7 +107,6 @@ function resetDuration() {
       step: d.step,
     });
     appStore.updateUTC(d.utc);
-    time.value = [new Date(d.start), new Date(d.end)];
   }
 }
 </script>
