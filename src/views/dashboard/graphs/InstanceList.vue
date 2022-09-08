@@ -242,20 +242,8 @@ watch(
 <style lang="scss" scoped>
 @import "./style.scss";
 
-.chart {
-  height: 60px;
-}
-
-.inputs {
-  width: 300px;
-}
-
 .attributes {
   max-height: 400px;
   overflow: auto;
-}
-
-.btn {
-  margin-top: -12px;
 }
 </style>

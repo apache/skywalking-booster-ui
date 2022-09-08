@@ -152,6 +152,7 @@ const msg = {
   enableAssociate: "Activar asociación",
   query: "Consulta",
   postgreSQL: "PostgreSQL",
+  endpointTips: "Aquí, la tabla muestra hasta 20 Datos.",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

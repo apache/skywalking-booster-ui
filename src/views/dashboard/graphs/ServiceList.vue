@@ -285,12 +285,4 @@ watch(
 </script>
 <style lang="scss" scoped>
 @import "./style.scss";
-
-.inputs {
-  width: 300px;
-}
-
-.btn {
-  margin-top: -12px;
-}
 </style>
