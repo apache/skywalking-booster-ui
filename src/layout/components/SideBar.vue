@@ -143,7 +143,8 @@ const filterMenus = (menus: any[]) => {
   height: 100%;
   position: relative;
   margin-bottom: 100px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .el-menu-vertical:not(.el-menu--collapse) {
