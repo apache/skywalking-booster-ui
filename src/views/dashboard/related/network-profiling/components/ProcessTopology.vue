@@ -33,7 +33,13 @@ limitations under the License. -->
           </text>
         </g>
         <g class="nodes">
-          <g v-for="(node, index) in nodeList" :key="index">
+          <g
+            v-for="(node, index) in nodeList"
+            :key="index"
+            class="topo-node"
+            @mouseover="showNodeTip(node)"
+            @mouseout="hideNodeTip"
+          >
             <image
               :href="icons.CUBE"
               style="cursor: 'move'"
@@ -56,7 +62,7 @@ limitations under the License. -->
             v-for="(call, index) in networkProfilingStore.calls"
             :key="index"
             class="topo-call"
-            markerEnd="url(#arrow)"
+            marker-end="url(#arrow)"
             stroke="#97B0F8"
             :d="linkPath(call)"
           />
@@ -71,16 +77,13 @@ limitations under the License. -->
             height="15"
             :x="getMidpoint(call)[0] - 8"
             :y="getMidpoint(call)[1] - 13"
+            @click="handleLinkClick($event, call)"
           />
         </g>
         <g class="arrows">
-          <defs
-            v-for="(call, index) in networkProfilingStore.calls"
-            :key="index"
-          >
+          <defs v-for="(_, index) in networkProfilingStore.calls" :key="index">
             <marker
               id="arrow"
-              class="topo-line-arrow"
               markerUnits="strokeWidth"
               markerWidth="8"
               markerHeight="8"
@@ -95,6 +98,7 @@ limitations under the License. -->
         </g>
       </g>
     </svg>
+    <div id="tooltip">test tooltip</div>
   </div>
   <el-popover placement="bottom" :width="295" trigger="click">
     <template #reference>
@@ -145,12 +149,10 @@ const networkProfilingStore = useNetworkProfilingStore();
 const height = ref<number>(100);
 const width = ref<number>(100);
 const chart = ref<Nullable<HTMLDivElement>>(null);
-const tip = ref<Nullable<HTMLDivElement>>(null);
-const graph = ref<any>(null);
-const node = ref<any>(null);
-const link = ref<any>(null);
-const anchor = ref<any>(null);
-const arrow = ref<any>(null);
+const tooltip = ref<Nullable<any>>(null);
+const svg = ref<Nullable<any>>(null);
+const graph = ref<Nullable<any>>(null);
+const tip = ref<Nullable<any>>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 const config = ref<any>(props.config || {});
 const diff = ref<number[]>([220, 200]);
@@ -167,10 +169,12 @@ onMounted(() => {
 });
 
 async function init() {
-  // svg.value = d3.select(chart.value).append("svg").attr("class", "process-svg");
   if (!networkProfilingStore.nodes.length) {
     return;
   }
+  svg.value = d3.select(".process-svg");
+  graph.value = d3.select(".svg-graph");
+  tooltip.value = d3.select("#tooltip");
   freshNodes();
   useThrottleFn(resize, 500)();
 }
@@ -182,6 +186,10 @@ function drawGraph() {
   };
   height.value = (dom.height || 40) - 20;
   width.value = dom.width;
+  diff.value[0] = (dom.width - radius * 2) / 2 + radius;
+  tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
+  graph.value.call(tip.value);
+  svg.value.call(zoom(d3, graph.value, diff.value));
 }
 
 function clickTopology(event: any) {
@@ -418,12 +426,24 @@ function resize() {
 }
 
 async function freshNodes() {
-  d3.select("svg-graph").remove();
+  // d3.select(".svg-graph").remove();
   if (!networkProfilingStore.nodes.length) {
     return;
   }
   drawGraph();
   createLayout();
+}
+
+function showNodeTip(d: any) {
+  const tipHtml = ` <div class="mb-5"><span class="grey">name: </span>${d.name}</div>`;
+  tooltip.value
+    .style("top", d.y + diff.value[1] - 30 + "px")
+    .style("left", d.x + diff.value[0] - 20 + "px");
+  tooltip.value.style("visibility", "visible");
+}
+
+function hideNodeTip() {
+  tooltip.value.style("visibility", "hidden");
 }
 
 watch(
@@ -494,5 +514,10 @@ watch(
 
 .query {
   margin-left: 510px;
+}
+
+#tooltip {
+  position: absolute;
+  visibility: hidden;
 }
 </style>

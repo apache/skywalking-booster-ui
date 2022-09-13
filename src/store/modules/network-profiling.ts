@@ -109,7 +109,6 @@ export const networkProfilingStore = defineStore({
       }, []);
       this.calls = calls;
       this.nodes = data.nodes;
-      console.log(calls);
     },
     async createNetworkTask(param: {
       serviceId: string;
