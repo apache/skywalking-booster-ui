@@ -194,6 +194,7 @@ export default defineComponent({
       editTabIndex.value = index;
     }
     function handleClick(el: any) {
+      el.stopPropagation();
       needQuery.value = true;
       if (["tab-name", "edit-tab"].includes(el.target.className)) {
         return;
