@@ -46,7 +46,7 @@ limitations under the License. -->
         ref="multipleTableRef"
         :default-sort="{ prop: 'name', order: 'ascending' }"
         @selection-change="handleSelectionChange"
-        height="637px"
+        height="calc(100% - 60px)"
         size="small"
       >
         <el-table-column type="selection" width="55" />
@@ -156,7 +156,7 @@ import { isEmptyObject } from "@/utils/is";
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const dashboardStore = useDashboardStore();
-const pageSize = 18;
+const pageSize = 20;
 const dashboards = ref<DashboardItem[]>([]);
 const searchText = ref<string>("");
 const loading = ref<boolean>(false);
@@ -500,12 +500,13 @@ function changePage(pageIndex: number) {
 }
 
 .table {
-  padding: 20px;
+  padding: 20px 10px;
   background-color: #fff;
   box-shadow: 0px 1px 4px 0px #00000029;
   border-radius: 5px;
   width: 100%;
-  overflow: hidden;
+  height: 100%;
+  overflow: auto;
 }
 
 .toggle-selection {
