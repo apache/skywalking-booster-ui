@@ -37,7 +37,7 @@ limitations under the License. -->
             v-for="(node, index) in nodeList"
             :key="index"
             class="topo-node"
-            @mouseover="showNodeTip(node)"
+            @mouseover="showNodeTip(node, $event)"
             @mouseout="hideNodeTip"
           >
             <image
@@ -78,6 +78,8 @@ limitations under the License. -->
             :x="getMidpoint(call)[0] - 8"
             :y="getMidpoint(call)[1] - 13"
             @click="handleLinkClick($event, call)"
+            @mouseover="showLinkTip(call, $event)"
+            @mouseout="hideLinkTip"
           />
         </g>
         <g class="arrows">
@@ -120,7 +122,6 @@ import router from "@/router";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
-import d3tip from "d3-tip";
 import { linkPath, getAnchor, getMidpoint } from "./Graph/linkProcess";
 import { Call } from "@/types/topology";
 import zoom from "../../components/utils/zoom";
@@ -152,7 +153,6 @@ const chart = ref<Nullable<HTMLDivElement>>(null);
 const tooltip = ref<Nullable<any>>(null);
 const svg = ref<Nullable<any>>(null);
 const graph = ref<Nullable<any>>(null);
-const tip = ref<Nullable<any>>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 const config = ref<any>(props.config || {});
 const diff = ref<number[]>([220, 200]);
@@ -187,8 +187,6 @@ function drawGraph() {
   height.value = (dom.height || 40) - 20;
   width.value = dom.width;
   diff.value[0] = (dom.width - radius * 2) / 2 + radius;
-  tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
-  graph.value.call(tip.value);
   svg.value.call(zoom(d3, graph.value, diff.value));
 }
 
@@ -434,15 +432,45 @@ async function freshNodes() {
   createLayout();
 }
 
-function showNodeTip(d: any) {
+function showNodeTip(d: ProcessNode, event: MouseEvent) {
   const tipHtml = ` <div class="mb-5"><span class="grey">name: </span>${d.name}</div>`;
+
   tooltip.value
-    .style("top", d.y + diff.value[1] - 30 + "px")
-    .style("left", d.x + diff.value[0] - 20 + "px");
-  tooltip.value.style("visibility", "visible");
+    .style("top", event.offsetY + "px")
+    .style("left", event.offsetX + "px")
+    .style("visibility", "visible")
+    .html(tipHtml);
 }
 
 function hideNodeTip() {
+  tooltip.value.style("visibility", "hidden");
+}
+
+function showLinkTip(link: Call, event: MouseEvent) {
+  const types = [...link.sourceComponents, ...link.targetComponents];
+  let l = "TCP";
+  if (types.includes("https")) {
+    l = "HTTPS";
+  }
+  if (types.includes("http")) {
+    l = "HTTP";
+  }
+  if (types.includes("tls")) {
+    l = "TLS";
+  }
+  const tipHtml = `<div><span class="grey">${t(
+    "detectPoint"
+  )}: </span>${link.detectPoints.join(" | ")}</div>
+        <div><span class="grey">Type: </span>${l}</div>`;
+
+  tooltip.value
+    .style("top", event.offsetY + "px")
+    .style("left", event.offsetX + "px")
+    .style("visibility", "visible")
+    .html(tipHtml);
+}
+
+function hideLinkTip() {
   tooltip.value.style("visibility", "hidden");
 }
 
@@ -519,5 +547,9 @@ watch(
 #tooltip {
   position: absolute;
   visibility: hidden;
+  padding: 5px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background-color: #fff;
 }
 </style>
