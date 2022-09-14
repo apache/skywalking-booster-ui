@@ -39,16 +39,24 @@ limitations under the License. -->
             class="topo-node"
             @mouseover="showNodeTip(node, $event)"
             @mouseout="hideNodeTip"
+            @mousemove="moveNode(node, $event)"
+            @mousedown="startMoveNode($event)"
+            @mouseup="stopMoveNode($event)"
           >
             <image
               :href="icons.CUBE"
               style="cursor: 'move'"
               width="35"
               height="35"
-              :x="node.x - 15"
-              :y="node.y - 15"
+              :x="(node.x || 0) - 15"
+              :y="(node.y || 0) - 15"
             />
-            <text :x="node.x" :y="node.y + 28" fill="#000" text-anchor="middle">
+            <text
+              :x="node.x"
+              :y="(node.y || 0) + 28"
+              fill="#000"
+              text-anchor="middle"
+            >
               {{
                 node.name.length > 10
                   ? `${node.name.substring(0, 10)}...`
@@ -100,7 +108,7 @@ limitations under the License. -->
         </g>
       </g>
     </svg>
-    <div id="tooltip">test tooltip</div>
+    <div id="tooltip"></div>
   </div>
   <el-popover placement="bottom" :width="295" trigger="click">
     <template #reference>
@@ -158,7 +166,8 @@ const config = ref<any>(props.config || {});
 const diff = ref<number[]>([220, 200]);
 const radius = 210;
 const dates = ref<Nullable<{ start: number; end: number }>>(null);
-const nodeList = ref<any>([]);
+const nodeList = ref<ProcessNode[]>([]);
+const isMoving = ref<boolean>(false);
 
 onMounted(() => {
   init();
@@ -424,12 +433,32 @@ function resize() {
 }
 
 async function freshNodes() {
-  // d3.select(".svg-graph").remove();
   if (!networkProfilingStore.nodes.length) {
     return;
   }
   drawGraph();
   createLayout();
+}
+function startMoveNode(event: MouseEvent) {
+  event.stopPropagation();
+  isMoving.value = true;
+}
+function stopMoveNode(event: MouseEvent) {
+  event.stopPropagation();
+  isMoving.value = false;
+}
+function moveNode(d: ProcessNode, event: MouseEvent) {
+  event.stopPropagation();
+  if (!isMoving.value) {
+    return;
+  }
+  nodeList.value = nodeList.value.map((node: ProcessNode) => {
+    if (node.id === d.id) {
+      node.x = event.offsetX - diff.value[0];
+      node.y = event.offsetY - diff.value[1];
+    }
+    return node;
+  });
 }
 
 function showNodeTip(d: ProcessNode, event: MouseEvent) {
@@ -549,7 +578,7 @@ watch(
   visibility: hidden;
   padding: 5px;
   border: 1px solid #000;
-  border-radius: 5px;
+  border-radius: 3px;
   background-color: #fff;
 }
 </style>

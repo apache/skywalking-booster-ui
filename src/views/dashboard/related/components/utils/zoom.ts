@@ -19,11 +19,11 @@ export default (d3: any, graph: any, diff: number[]) =>
   d3
     .zoom()
     .scaleExtent([0.3, 10])
-    .on("zoom", (event: any) => {
+    .on("zoom", (d: any) => {
       graph.attr(
         "transform",
-        `translate(${event.transform.x + diff[0]},${
-          event.transform.y + diff[1]
-        })scale(${event.transform.k})`
+        `translate(${d.transform.x + diff[0]},${
+          d.transform.y + diff[1]
+        })scale(${d.transform.k})`
       );
     });
