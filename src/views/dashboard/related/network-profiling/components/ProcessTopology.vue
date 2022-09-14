@@ -36,11 +36,10 @@ limitations under the License. -->
           <g
             v-for="(node, index) in nodeList"
             :key="index"
-            class="topo-node"
+            class="node"
             @mouseover="showNodeTip(node, $event)"
             @mouseout="hideNodeTip"
-            @mousemove="moveNode(node, $event)"
-            @mousedown="startMoveNode($event)"
+            @mousedown="startMoveNode($event, node)"
             @mouseup="stopMoveNode($event)"
           >
             <image
@@ -167,7 +166,7 @@ const diff = ref<number[]>([220, 200]);
 const radius = 210;
 const dates = ref<Nullable<{ start: number; end: number }>>(null);
 const nodeList = ref<ProcessNode[]>([]);
-const isMoving = ref<boolean>(false);
+const currentNode = ref<Nullable<ProcessNode>>(null);
 
 onMounted(() => {
   init();
@@ -199,7 +198,7 @@ function drawGraph() {
   svg.value.call(zoom(d3, graph.value, diff.value));
 }
 
-function clickTopology(event: any) {
+function clickTopology(event: MouseEvent) {
   event.stopPropagation();
   event.preventDefault();
   networkProfilingStore.setNode(null);
@@ -350,6 +349,10 @@ function createLayout() {
     outNodes[v].y = pointArr[v][1];
   }
   nodeList.value = [...nodeArr, ...outNodes];
+  const drag: any = d3.drag().on("drag", (d: ProcessNode) => {
+    moveNode(d);
+  });
+  d3.selectAll(".node").call(drag);
 }
 
 function shuffleArray(array: number[][]) {
@@ -439,23 +442,19 @@ async function freshNodes() {
   drawGraph();
   createLayout();
 }
-function startMoveNode(event: MouseEvent) {
+function startMoveNode(event: MouseEvent, d: ProcessNode) {
   event.stopPropagation();
-  isMoving.value = true;
+  currentNode.value = d;
 }
 function stopMoveNode(event: MouseEvent) {
   event.stopPropagation();
-  isMoving.value = false;
+  currentNode.value = null;
 }
-function moveNode(d: ProcessNode, event: MouseEvent) {
-  event.stopPropagation();
-  if (!isMoving.value) {
-    return;
-  }
+function moveNode(d: ProcessNode) {
   nodeList.value = nodeList.value.map((node: ProcessNode) => {
-    if (node.id === d.id) {
-      node.x = event.offsetX - diff.value[0];
-      node.y = event.offsetY - diff.value[1];
+    if (currentNode.value && node.id === currentNode.value.id) {
+      node.x = d.x;
+      node.y = d.y;
     }
     return node;
   });
