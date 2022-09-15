@@ -53,7 +53,7 @@ const { t } = useI18n();
   height: 100%;
   flex-grow: 2;
   min-width: 700px;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
   width: calc(100% - 330px);
 }

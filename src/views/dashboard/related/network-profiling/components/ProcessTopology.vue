@@ -13,13 +13,103 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div ref="chart" class="process-topo"></div>
-  <el-popover
-    placement="bottom"
-    :width="295"
-    trigger="click"
-    v-if="dashboardStore.editMode"
-  >
+  <div ref="chart" class="process-topo">
+    <svg
+      class="process-svg"
+      :width="width"
+      :height="height"
+      @click="clickTopology"
+    >
+      <g class="svg-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
+        <g class="hex-polygon">
+          <path
+            :d="getHexPolygonVertices()"
+            stroke="#D5DDF6"
+            stroke-width="2"
+            fill="none"
+          />
+          <text :x="0" :y="radius - 15" fill="#000" text-anchor="middle">
+            {{ selectorStore.currentPod.label }}
+          </text>
+        </g>
+        <g class="nodes">
+          <g
+            v-for="(node, index) in nodeList"
+            :key="index"
+            class="node"
+            @mouseover="showNodeTip(node, $event)"
+            @mouseout="hideNodeTip"
+            @mousedown="startMoveNode($event, node)"
+            @mouseup="stopMoveNode($event)"
+          >
+            <image
+              :href="icons.CUBE"
+              style="cursor: 'move'"
+              width="35"
+              height="35"
+              :x="(node.x || 0) - 15"
+              :y="(node.y || 0) - 15"
+            />
+            <text
+              :x="node.x"
+              :y="(node.y || 0) + 28"
+              fill="#000"
+              text-anchor="middle"
+            >
+              {{
+                node.name.length > 10
+                  ? `${node.name.substring(0, 10)}...`
+                  : node.name
+              }}
+            </text>
+          </g>
+        </g>
+        <g class="calls">
+          <path
+            v-for="(call, index) in networkProfilingStore.calls"
+            :key="index"
+            class="topo-call"
+            marker-end="url(#arrow)"
+            stroke="#97B0F8"
+            :d="linkPath(call)"
+          />
+        </g>
+        <g class="anchors">
+          <image
+            v-for="(call, index) in networkProfilingStore.calls"
+            :key="index"
+            class="topo-line-anchor"
+            :href="getAnchor(call)"
+            width="15"
+            height="15"
+            :x="getMidpoint(call)[0] - 8"
+            :y="getMidpoint(call)[1] - 13"
+            @click="handleLinkClick($event, call)"
+            @mouseover="showLinkTip(call, $event)"
+            @mouseout="hideLinkTip"
+          />
+        </g>
+        <g class="arrows">
+          <defs v-for="(_, index) in networkProfilingStore.calls" :key="index">
+            <marker
+              id="arrow"
+              markerUnits="strokeWidth"
+              markerWidth="8"
+              markerHeight="8"
+              viewBox="0 0 12 12"
+              refX="10"
+              refY="6"
+              orient="auto"
+            >
+              <path d="M2,2 L10,6 L2,10 L6,6 L2,2" fill="#97B0F8" />
+            </marker>
+          </defs>
+        </g>
+      </g>
+    </svg>
+    <div id="tooltip"></div>
+  </div>
+  <el-popover placement="bottom" :width="295" trigger="click">
     <template #reference>
       <div class="switch-icon-edit ml-5" title="Settings" @click="setConfig">
         <Icon size="middle" iconName="setting_empty" />
@@ -39,9 +129,7 @@ import router from "@/router";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
-import d3tip from "d3-tip";
-import { linkElement, anchorElement, arrowMarker } from "./Graph/linkProcess";
-import nodeElement from "./Graph/nodeProcess";
+import { linkPath, getAnchor, getMidpoint } from "./Graph/linkProcess";
 import { Call } from "@/types/topology";
 import zoom from "../../components/utils/zoom";
 import { ProcessNode } from "@/types/ebpf";
@@ -52,6 +140,7 @@ import getDashboard from "@/hooks/useDashboardsSession";
 import { Layout } from "./Graph/layout";
 import TimeLine from "./TimeLine.vue";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import icons from "@/assets/img/icons";
 
 /*global Nullable, defineProps */
 const props = defineProps({
@@ -67,19 +156,18 @@ const selectorStore = useSelectorStore();
 const networkProfilingStore = useNetworkProfilingStore();
 const height = ref<number>(100);
 const width = ref<number>(100);
-const svg = ref<Nullable<any>>(null);
 const chart = ref<Nullable<HTMLDivElement>>(null);
-const tip = ref<Nullable<HTMLDivElement>>(null);
-const graph = ref<any>(null);
-const node = ref<any>(null);
-const link = ref<any>(null);
-const anchor = ref<any>(null);
-const arrow = ref<any>(null);
+const tooltip = ref<Nullable<any>>(null);
+const svg = ref<Nullable<any>>(null);
+const graph = ref<Nullable<any>>(null);
 const oldVal = ref<{ width: number; height: number }>({ width: 0, height: 0 });
 const config = ref<any>(props.config || {});
 const diff = ref<number[]>([220, 200]);
 const radius = 210;
 const dates = ref<Nullable<{ start: number; end: number }>>(null);
+const nodeList = ref<ProcessNode[]>([]);
+const currentNode = ref<Nullable<ProcessNode>>(null);
+const origin = [0, 0];
 
 onMounted(() => {
   init();
@@ -90,12 +178,14 @@ onMounted(() => {
 });
 
 async function init() {
-  svg.value = d3.select(chart.value).append("svg").attr("class", "process-svg");
   if (!networkProfilingStore.nodes.length) {
     return;
   }
-  drawGraph();
-  createLayout();
+  svg.value = d3.select(".process-svg");
+  graph.value = d3.select(".svg-graph");
+  tooltip.value = d3.select("#tooltip");
+  freshNodes();
+  useThrottleFn(resize, 500)();
 }
 
 function drawGraph() {
@@ -105,27 +195,16 @@ function drawGraph() {
   };
   height.value = (dom.height || 40) - 20;
   width.value = dom.width;
-  svg.value.attr("height", height.value).attr("width", width.value);
-  tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
   diff.value[0] = (dom.width - radius * 2) / 2 + radius;
-  graph.value = svg.value
-    .append("g")
-    .attr("class", "svg-graph")
-    .attr("transform", `translate(${diff.value[0]}, ${diff.value[1]})`);
-  graph.value.call(tip.value);
-  node.value = graph.value.append("g").selectAll(".topo-node");
-  link.value = graph.value.append("g").selectAll(".topo-call");
-  anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
-  arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
   svg.value.call(zoom(d3, graph.value, diff.value));
-  svg.value.on("click", (event: any) => {
-    event.stopPropagation();
-    event.preventDefault();
-    networkProfilingStore.setNode(null);
-    networkProfilingStore.setLink(null);
-    dashboardStore.selectWidget(props.config);
-  });
-  useThrottleFn(resize, 500)();
+}
+
+function clickTopology(event: MouseEvent) {
+  event.stopPropagation();
+  event.preventDefault();
+  networkProfilingStore.setNode(null);
+  networkProfilingStore.setLink(null);
+  dashboardStore.selectWidget(props.config);
 }
 
 function hexGrid(n = 1, radius = 1, origin = [0, 0]) {
@@ -157,7 +236,6 @@ function createPolygon(radius: number, sides = 6, offset = 0) {
 }
 function getCirclePoint(radius: number, p = 1) {
   const data = [];
-  const origin = [0, 0];
   for (let index = 0; index < 360; index = index + p) {
     if (index < 230 || index > 310) {
       let x = radius * Math.cos((Math.PI * 2 * index) / 360);
@@ -167,10 +245,22 @@ function getCirclePoint(radius: number, p = 1) {
   }
   return data;
 }
-function createLayout() {
-  if (!node.value || !link.value) {
-    return;
+
+function getHexPolygonVertices() {
+  const p = {
+    count: 1,
+    radius, // layout hexagons radius 300
+  };
+  const polygon = createPolygon(p.radius, 6, 0);
+  const vertices: any = []; // a hexagon vertices
+  for (let v = 0; v < polygon.length; v++) {
+    vertices.push([origin[0] + polygon[v][0], origin[1] + polygon[v][1]]);
   }
+  const linePath = d3.line();
+  linePath.curve(d3.curveLinearClosed);
+  return linePath(vertices) || "";
+}
+function createLayout() {
   const dom: any = (chart.value && chart.value.getBoundingClientRect()) || {
     width: 0,
     height: 0,
@@ -182,28 +272,6 @@ function createLayout() {
     count: 1,
     radius, // layout hexagons radius 300
   };
-  const polygon = createPolygon(p.radius, 6, 0);
-  const origin = [0, 0];
-  const vertices: any = []; // a hexagon vertices
-  for (let v = 0; v < polygon.length; v++) {
-    vertices.push([origin[0] + polygon[v][0], origin[1] + polygon[v][1]]);
-  }
-  const linePath = d3.line();
-  linePath.curve(d3.curveLinearClosed);
-  const hexPolygon = graph.value.append("g");
-  hexPolygon
-    .append("path")
-    .attr("d", linePath(vertices))
-    .attr("stroke", "#D5DDF6")
-    .attr("stroke-width", 2)
-    .style("fill", "none");
-  hexPolygon
-    .append("text")
-    .attr("fill", "#000")
-    .attr("text-anchor", "middle")
-    .attr("x", 0)
-    .attr("y", p.radius - 15)
-    .text(() => selectorStore.currentPod.label);
   const nodeArr = networkProfilingStore.nodes.filter(
     (d: ProcessNode) => d.isReal || d.name === "UNKNOWN_LOCAL"
   );
@@ -278,67 +346,11 @@ function createLayout() {
     outNodes[v].x = pointArr[v][0];
     outNodes[v].y = pointArr[v][1];
   }
-  drawTopology([...nodeArr, ...outNodes]);
-}
-
-function drawTopology(nodeArr: any[]) {
-  node.value = node.value.data(nodeArr, (d: ProcessNode) => d.id);
-  node.value.exit().remove();
-  node.value = nodeElement(
-    d3,
-    node.value.enter(),
-    {
-      tipHtml: (data: ProcessNode) => {
-        return ` <div class="mb-5"><span class="grey">name: </span>${data.name}</div>`;
-      },
-    },
-    tip.value
-  ).merge(node.value);
-  // line element
-  const obj = {} as any;
-  const calls = networkProfilingStore.calls.reduce((prev: any[], next: any) => {
-    if (obj[next.targetId + next.sourceId]) {
-      next.lowerArc = true;
-    }
-    obj[next.sourceId + next.targetId] = true;
-    prev.push(next);
-    return prev;
-  }, []);
-
-  link.value = link.value.data(calls, (d: Call) => d.id);
-  link.value.exit().remove();
-  link.value = linkElement(link.value.enter()).merge(link.value);
-  anchor.value = anchor.value.data(calls, (d: Call) => d.id);
-  anchor.value.exit().remove();
-  anchor.value = anchorElement(
-    anchor.value.enter(),
-    {
-      handleLinkClick: handleLinkClick,
-      tipHtml: (data: Call) => {
-        const types = [...data.sourceComponents, ...data.targetComponents];
-        let l = "TCP";
-        if (types.includes("https")) {
-          l = "HTTPS";
-        }
-        if (types.includes("http")) {
-          l = "HTTP";
-        }
-        if (types.includes("tls")) {
-          l = "TLS";
-        }
-        const html = `<div><span class="grey">${t(
-          "detectPoint"
-        )}: </span>${data.detectPoints.join(" | ")}</div>
-        <div><span class="grey">Type: </span>${l}</div>`;
-        return html;
-      },
-    },
-    tip.value
-  ).merge(anchor.value);
-  // arrow marker
-  arrow.value = arrow.value.data(calls, (d: Call) => d.id);
-  arrow.value.exit().remove();
-  arrow.value = arrowMarker(arrow.value.enter()).merge(arrow.value);
+  nodeList.value = [...nodeArr, ...outNodes];
+  const drag: any = d3.drag().on("drag", (d: ProcessNode) => {
+    moveNode(d);
+  });
+  d3.selectAll(".node").call(drag);
 }
 
 function shuffleArray(array: number[][]) {
@@ -347,7 +359,6 @@ function shuffleArray(array: number[][]) {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
-
 function handleLinkClick(event: any, d: Call) {
   event.stopPropagation();
   networkProfilingStore.setNode(null);
@@ -423,12 +434,99 @@ function resize() {
 }
 
 async function freshNodes() {
-  svg.value.selectAll(".svg-graph").remove();
   if (!networkProfilingStore.nodes.length) {
     return;
   }
   drawGraph();
   createLayout();
+}
+function startMoveNode(event: MouseEvent, d: ProcessNode) {
+  event.stopPropagation();
+  currentNode.value = d;
+}
+function stopMoveNode(event: MouseEvent) {
+  event.stopPropagation();
+  currentNode.value = null;
+}
+function moveNode(d: ProcessNode) {
+  if (!currentNode.value) {
+    return;
+  }
+  const inNode =
+    currentNode.value.isReal || currentNode.value.name === "UNKNOWN_LOCAL";
+  const diff = inNode ? -20 : 20;
+  const inside = posInHex(d.x || 0, d.y || 0, diff);
+  if (inNode) {
+    if (!inside) {
+      return;
+    }
+  } else {
+    if (inside) {
+      return;
+    }
+  }
+  nodeList.value = nodeList.value.map((node: ProcessNode) => {
+    if (currentNode.value && node.id === currentNode.value.id) {
+      node.x = d.x;
+      node.y = d.y;
+    }
+    return node;
+  });
+}
+function posInHex(posX: number, posY: number, diff: number) {
+  const halfSideLen = (radius + diff) / 2;
+  const mathSqrt3 = Math.sqrt(3);
+  const dx = Math.abs(origin[0] - posX);
+  const dy = Math.abs(origin[1] - posY);
+
+  if (dx < halfSideLen) {
+    return dy <= halfSideLen * mathSqrt3;
+  } else {
+    const maxY = -mathSqrt3 * (dx - halfSideLen) + halfSideLen * mathSqrt3;
+    return dy < maxY;
+  }
+}
+
+function showNodeTip(d: ProcessNode, event: MouseEvent) {
+  const tipHtml = ` <div class="mb-5"><span class="grey">name: </span>${d.name}</div>`;
+
+  tooltip.value
+    .style("top", event.offsetY + "px")
+    .style("left", event.offsetX + "px")
+    .style("visibility", "visible")
+    .html(tipHtml);
+}
+
+function hideNodeTip() {
+  tooltip.value.style("visibility", "hidden");
+}
+
+function showLinkTip(link: Call, event: MouseEvent) {
+  const types = [...link.sourceComponents, ...link.targetComponents];
+  let l = "TCP";
+  if (types.includes("https")) {
+    l = "HTTPS";
+  }
+  if (types.includes("http")) {
+    l = "HTTP";
+  }
+  if (types.includes("tls")) {
+    l = "TLS";
+  }
+  const tipHtml = `<div><span class="grey">${t(
+    "detectPoint"
+  )}: </span>${link.detectPoints.join(" | ")}</div>
+        <div><span class="grey">Type: </span>${l}</div>`;
+
+  tooltip.value
+    .style("top", event.offsetY + "px")
+    .style("left", event.offsetX + "px")
+    .style("visibility", "visible")
+    .html(tipHtml);
+}
+
+function hideLinkTip() {
+  tooltip.value.style("visibility", "hidden");
 }
 
 watch(
@@ -499,5 +597,14 @@ watch(
 
 .query {
   margin-left: 510px;
+}
+
+#tooltip {
+  position: absolute;
+  visibility: hidden;
+  padding: 5px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  background-color: #fff;
 }
 </style>
