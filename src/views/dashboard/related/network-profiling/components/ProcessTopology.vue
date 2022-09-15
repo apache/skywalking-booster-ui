@@ -167,6 +167,7 @@ const radius = 210;
 const dates = ref<Nullable<{ start: number; end: number }>>(null);
 const nodeList = ref<ProcessNode[]>([]);
 const currentNode = ref<Nullable<ProcessNode>>(null);
+const origin = [0, 0];
 
 onMounted(() => {
   init();
@@ -189,10 +190,10 @@ async function init() {
 
 function drawGraph() {
   const dom = chart.value?.getBoundingClientRect() || {
-    height: 20,
+    height: 30,
     width: 0,
   };
-  height.value = (dom.height || 40) - 20;
+  height.value = (dom.height || 40) - 30;
   width.value = dom.width;
   diff.value[0] = (dom.width - radius * 2) / 2 + radius;
   svg.value.call(zoom(d3, graph.value, diff.value));
@@ -235,7 +236,6 @@ function createPolygon(radius: number, sides = 6, offset = 0) {
 }
 function getCirclePoint(radius: number, p = 1) {
   const data = [];
-  const origin = [0, 0];
   for (let index = 0; index < 360; index = index + p) {
     if (index < 230 || index > 310) {
       let x = radius * Math.cos((Math.PI * 2 * index) / 360);
@@ -252,7 +252,6 @@ function getHexPolygonVertices() {
     radius, // layout hexagons radius 300
   };
   const polygon = createPolygon(p.radius, 6, 0);
-  const origin = [0, 0];
   const vertices: any = []; // a hexagon vertices
   for (let v = 0; v < polygon.length; v++) {
     vertices.push([origin[0] + polygon[v][0], origin[1] + polygon[v][1]]);
@@ -273,7 +272,6 @@ function createLayout() {
     count: 1,
     radius, // layout hexagons radius 300
   };
-  const origin = [0, 0];
   const nodeArr = networkProfilingStore.nodes.filter(
     (d: ProcessNode) => d.isReal || d.name === "UNKNOWN_LOCAL"
   );
@@ -451,6 +449,22 @@ function stopMoveNode(event: MouseEvent) {
   currentNode.value = null;
 }
 function moveNode(d: ProcessNode) {
+  if (!currentNode.value) {
+    return;
+  }
+  const inNode =
+    currentNode.value.isReal || currentNode.value.name === "UNKNOWN_LOCAL";
+  const diff = inNode ? -20 : 20;
+  const inside = posInHex(d.x || 0, d.y || 0, diff);
+  if (inNode) {
+    if (!inside) {
+      return;
+    }
+  } else {
+    if (inside) {
+      return;
+    }
+  }
   nodeList.value = nodeList.value.map((node: ProcessNode) => {
     if (currentNode.value && node.id === currentNode.value.id) {
       node.x = d.x;
@@ -458,6 +472,19 @@ function moveNode(d: ProcessNode) {
     }
     return node;
   });
+}
+function posInHex(posX: number, posY: number, diff: number) {
+  const halfSideLen = (radius + diff) / 2;
+  const mathSqrt3 = Math.sqrt(3);
+  const dx = Math.abs(origin[0] - posX);
+  const dy = Math.abs(origin[1] - posY);
+
+  if (dx < halfSideLen) {
+    return dy <= halfSideLen * mathSqrt3;
+  } else {
+    const maxY = -mathSqrt3 * (dx - halfSideLen) + halfSideLen * mathSqrt3;
+    return dy < maxY;
+  }
 }
 
 function showNodeTip(d: ProcessNode, event: MouseEvent) {
