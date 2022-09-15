@@ -190,10 +190,10 @@ async function init() {
 
 function drawGraph() {
   const dom = chart.value?.getBoundingClientRect() || {
-    height: 30,
+    height: 20,
     width: 0,
   };
-  height.value = (dom.height || 40) - 30;
+  height.value = (dom.height || 40) - 20;
   width.value = dom.width;
   diff.value[0] = (dom.width - radius * 2) / 2 + radius;
   svg.value.call(zoom(d3, graph.value, diff.value));
