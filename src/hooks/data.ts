@@ -28,6 +28,7 @@ export enum Calculations {
   ByteToKB = "byteToKB",
   ByteToMB = "byteToMB",
   ByteToGB = "byteToGB",
+  NanoToMill = "nanoToMill",
   Apdex = "apdex",
   Precision = "precision",
   ConvertSeconds = "convertSeconds",

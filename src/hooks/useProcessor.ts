@@ -411,6 +411,9 @@ export function aggregation(
     case Calculations.MsToS:
       data = (val / 1000).toFixed(2);
       break;
+    case Calculations.NanoToMill:
+      data = (val / 1000000).toFixed(4);
+      break;
     case Calculations.SecondToDay:
       data = (val / 86400).toFixed(2);
       break;
