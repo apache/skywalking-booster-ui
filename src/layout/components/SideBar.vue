@@ -141,13 +141,13 @@ const filterMenus = (menus: any[]) => {
 .side-bar {
   background: #252a2f;
   height: 100%;
-  min-height: 700px;
-  position: relative;
   margin-bottom: 100px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .el-menu-vertical:not(.el-menu--collapse) {
-  width: 200px;
+  width: 220px;
   font-size: 16px;
 }
 
@@ -173,7 +173,7 @@ span.collapse {
 .menu-control {
   position: absolute;
   top: 7px;
-  left: 200px;
+  left: 220px;
   cursor: pointer;
   transition: all 0.2s linear;
   z-index: 99;

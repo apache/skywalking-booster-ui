@@ -17,96 +17,6 @@
 import icons from "@/assets/img/icons";
 import { Call } from "@/types/topology";
 
-export const linkElement = (graph: any) => {
-  const linkEnter = graph
-    .append("path")
-    .attr("class", "topo-call")
-    .attr("marker-end", "url(#arrow)")
-    .attr("stroke", "#97B0F8")
-    .attr("d", (d: Call) => {
-      const controlPos = computeControlPoint(
-        [d.source.x, d.source.y - 5],
-        [d.target.x, d.target.y - 5],
-        0.5
-      );
-      if (d.lowerArc) {
-        controlPos[1] =
-          Math.abs(controlPos[1]) < 50
-            ? -controlPos[1] + 90
-            : -controlPos[1] - 10;
-      }
-      return (
-        "M" +
-        d.source.x +
-        " " +
-        (d.source.y - 5) +
-        " " +
-        "Q" +
-        controlPos[0] +
-        " " +
-        controlPos[1] +
-        " " +
-        d.target.x +
-        " " +
-        (d.target.y - 5)
-      );
-    });
-  return linkEnter;
-};
-export const anchorElement = (graph: any, funcs: any, tip: any) => {
-  const linkEnter = graph
-    .append("g")
-    .attr("class", "topo-line-anchor")
-    .on("mouseover", function (event: unknown, d: unknown) {
-      tip.html(funcs.tipHtml).show(d, this);
-    })
-    .on("mouseout", function () {
-      tip.hide(this);
-    })
-    .on("click", (event: unknown, d: unknown) => {
-      funcs.handleLinkClick(event, d);
-    });
-  linkEnter
-    .append("image")
-    .attr("width", 15)
-    .attr("height", 15)
-    .attr("x", (d: Call) => {
-      const p = getMidpoint(d);
-      return p[0] - 8;
-    })
-    .attr("y", (d: Call) => {
-      const p = getMidpoint(d);
-      return p[1] - 13;
-    })
-    .attr("xlink:href", (d: Call) => {
-      const types = [...d.sourceComponents, ...d.targetComponents];
-      if (types.includes("tcp") || types.includes("http")) {
-        return icons.HTTPDARK;
-      }
-      if (types.includes("https") || types.includes("tls")) {
-        return icons.HTTPS;
-      }
-    });
-  return linkEnter;
-};
-export const arrowMarker = (graph: any) => {
-  const defs = graph.append("defs");
-  const arrow = defs
-    .append("marker")
-    .attr("id", "arrow")
-    .attr("class", "topo-line-arrow")
-    .attr("markerUnits", "strokeWidth")
-    .attr("markerWidth", "8")
-    .attr("markerHeight", "8")
-    .attr("viewBox", "0 0 12 12")
-    .attr("refX", "10")
-    .attr("refY", "6")
-    .attr("orient", "auto");
-  const arrowPath = "M2,2 L10,6 L2,10 L6,6 L2,2";
-
-  arrow.append("path").attr("d", arrowPath).attr("fill", "#97B0F8");
-  return arrow;
-};
 // Control Point coordinates of quadratic Bezier curve
 function computeControlPoint(ps: number[], pe: number[], arc = 0.5) {
   const deltaX = pe[0] - ps[0];
@@ -137,15 +47,20 @@ function quadraticBezier(
   const y = (1 - t) * (1 - t) * ps.y + 2 * t * (1 - t) * pc.y + t * t * pe.y;
   return [x, y];
 }
-function getMidpoint(d: Call) {
+export function getMidpoint(d: Call) {
+  if (isNaN(d.source.x) || isNaN(d.source.y)) {
+    return [0, 0];
+  }
+  if (isNaN(d.target.x) || isNaN(d.target.y)) {
+    return [0, 0];
+  }
   const controlPos = computeControlPoint(
     [d.source.x, d.source.y],
     [d.target.x, d.target.y],
     0.5
   );
   if (d.lowerArc) {
-    controlPos[1] =
-      Math.abs(controlPos[1]) < 50 ? -controlPos[1] + 100 : -controlPos[1] - 10;
+    controlPos[1] = -controlPos[1];
   }
   const p = quadraticBezier(
     0.5,
@@ -154,4 +69,44 @@ function getMidpoint(d: Call) {
     { x: d.target.x, y: d.target.y }
   );
   return p;
+}
+export function linkPath(d: Call) {
+  if (isNaN(d.source.x) || isNaN(d.source.y)) {
+    return;
+  }
+  if (isNaN(d.target.x) || isNaN(d.target.y)) {
+    return;
+  }
+  const controlPos = computeControlPoint(
+    [d.source.x, d.source.y - 5],
+    [d.target.x, d.target.y - 5],
+    0.5
+  );
+  if (d.lowerArc) {
+    controlPos[1] = -controlPos[1] - 10;
+  }
+  return (
+    "M" +
+    d.source.x +
+    " " +
+    (d.source.y - 5) +
+    " " +
+    "Q" +
+    controlPos[0] +
+    " " +
+    controlPos[1] +
+    " " +
+    d.target.x +
+    " " +
+    (d.target.y - 5)
+  );
+}
+export function getAnchor(d: Call) {
+  const types = [...d.sourceComponents, ...d.targetComponents];
+  if (types.includes("tcp") || types.includes("http")) {
+    return icons.HTTPDARK;
+  }
+  if (types.includes("https") || types.includes("tls")) {
+    return icons.HTTPS;
+  }
 }

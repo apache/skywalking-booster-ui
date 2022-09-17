@@ -92,15 +92,21 @@ export const networkProfilingStore = defineStore({
         }
         return prev;
       }, []);
-      calls = calls.map((d: any) => {
-        d.sourceId = d.source;
-        d.targetId = d.target;
-        d.source = d.sourceObj;
-        d.target = d.targetObj;
-        delete d.sourceObj;
-        delete d.targetObj;
-        return d;
-      });
+      const param = {} as any;
+      calls = data.calls.reduce((prev: (Call | any)[], next: Call | any) => {
+        if (param[next.targetId + next.sourceId]) {
+          next.lowerArc = true;
+        }
+        param[next.sourceId + next.targetId] = true;
+        next.sourceId = next.source;
+        next.targetId = next.target;
+        next.source = next.sourceObj;
+        next.target = next.targetObj;
+        delete next.sourceObj;
+        delete next.targetObj;
+        prev.push(next);
+        return prev;
+      }, []);
       this.calls = calls;
       this.nodes = data.nodes;
     },

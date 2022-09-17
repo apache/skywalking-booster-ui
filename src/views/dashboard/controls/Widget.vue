@@ -228,6 +228,11 @@ export default defineComponent({
     watch(
       () => [selectorStore.currentProcess, selectorStore.currentDestProcess],
       () => {
+        if (
+          !(selectorStore.currentDestProcess && selectorStore.currentProcess)
+        ) {
+          return;
+        }
         if (dashboardStore.entity === EntityType[7].value) {
           queryMetrics();
         }

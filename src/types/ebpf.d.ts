@@ -74,4 +74,6 @@ export type ProcessNode = {
   serviceInstanceName: string;
   name: string;
   isReal: boolean;
+  x?: number;
+  y?: number;
 };

@@ -17,17 +17,17 @@ limitations under the License. -->
     <div class="search">
       <el-input
         v-model="searchText"
-        placeholder="Please input endpoint name"
-        size="small"
+        placeholder="Search for more endpoints"
         @change="searchList"
         class="inputs"
       >
         <template #append>
-          <el-button size="small" @click="searchList">
-            <Icon size="sm" iconName="search" />
+          <el-button @click="searchList" class="btn">
+            <Icon size="middle" iconName="search" />
           </el-button>
         </template>
       </el-input>
+      <span class="ml-5 tips">{{ t("endpointTips") }}</span>
     </div>
     <div class="list">
       <el-table v-loading="chartLoading" :data="endpoints" style="width: 100%">
@@ -56,6 +56,7 @@ limitations under the License. -->
 import { ref, watch, computed } from "vue";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
+import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import { EndpointListConfig } from "@/types/dashboard";
 import { Endpoint } from "@/types/selector";
@@ -92,6 +93,7 @@ const props = defineProps({
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
 
+const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
@@ -191,11 +193,7 @@ watch(
 <style lang="scss" scoped>
 @import "./style.scss";
 
-.chart {
-  height: 60px;
-}
-
-.inputs {
-  width: 300px;
+.tips {
+  color: rgba(255, 0, 0, 0.5);
 }
 </style>
