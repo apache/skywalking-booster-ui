@@ -58,10 +58,29 @@ export const routesGen: Array<RouteRecordRaw> = [
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
-      },
+      },      
       {
         path: "/database/tab/:activeTabIndex",
         name: "VirtualDatabaseActiveTabIndex",
+        meta: {
+          notShow: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/cache",
+        name: "VirtualCache",
+        meta: {
+          title: "virtualCache",
+          exact: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/cache/tab/:activeTabIndex",
+        name: "VirtualCacheActiveTabIndex",
         meta: {
           notShow: true,
         },

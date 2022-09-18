@@ -125,6 +125,7 @@ const msg = {
   editWarning: "Estás entrando en modo edición",
   viewWarning: "Estás entrando en modo visualización",
   virtualDatabase: "Base de Datos Virtual",
+  virtualCache: "Caché virtual",
   reloadDashboards: "Recargar Panel",
   kubernetesService: "Servicio",
   kubernetesCluster: "Cluster",

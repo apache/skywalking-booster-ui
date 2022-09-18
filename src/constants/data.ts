@@ -31,6 +31,8 @@ export const RoutesMap: { [key: string]: string } = {
   GeneralServicesActiveTabIndex: "GENERAL",
   VirtualDatabase: "VIRTUAL_DATABASE",
   VirtualDatabaseActiveTabIndex: "VIRTUAL_DATABASE",
+  VirtualCache: "VIRTUAL_CACHE",
+  VirtualCacheActiveTabIndex: "VIRTUAL_CACHE",
   MeshServices: "MESH",
   MeshServicesActiveTabIndex: "MESH",
   ControlPanel: "MESH_CP",
