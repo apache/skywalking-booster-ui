@@ -58,7 +58,7 @@ export const routesGen: Array<RouteRecordRaw> = [
         },
         component: () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
-      },      
+      },
       {
         path: "/database/tab/:activeTabIndex",
         name: "VirtualDatabaseActiveTabIndex",

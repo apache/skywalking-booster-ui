@@ -83,7 +83,7 @@ export const profileStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods];
+      this.endpoints = res.data.data.pods || [];
       return res.data;
     },
     async getTaskEndpoints(serviceId: string, keyword?: string) {
