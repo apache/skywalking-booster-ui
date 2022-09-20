@@ -15,27 +15,13 @@
  * limitations under the License.
  */
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import { routesGen } from "./general";
-import { routesMesh } from "./serviceMesh";
-import { routesDatabase } from "./database";
-import { routesInfra } from "./infrastructure";
 import { routesDashboard } from "./dashboard";
 import { routesSetting } from "./setting";
 import { routesAlarm } from "./alarm";
-import { routesSelf } from "./selfObservability";
-import { routesFunctions } from "./functions";
-import { routesBrowser } from "./browser";
-import { routesK8s } from "./k8s";
+import routesLayers from "./layer";
 
 const routes: Array<RouteRecordRaw> = [
-  ...routesGen,
-  ...routesMesh,
-  ...routesFunctions,
-  ...routesK8s,
-  ...routesInfra,
-  ...routesBrowser,
-  ...routesDatabase,
-  ...routesSelf,
+  ...routesLayers,
   ...routesDashboard,
   ...routesAlarm,
   ...routesSetting,

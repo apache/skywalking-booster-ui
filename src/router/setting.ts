@@ -25,7 +25,6 @@ export const routesSetting: Array<RouteRecordRaw> = [
       title: "settings",
       icon: "settings",
       hasGroup: false,
-      exact: false,
     },
     component: Layout,
     children: [
@@ -36,7 +35,6 @@ export const routesSetting: Array<RouteRecordRaw> = [
           title: "settings",
           icon: "settings",
           hasGroup: false,
-          exact: false,
         },
         component: () =>
           import(/* webpackChunkName: "settings" */ "@/views/Settings.vue"),

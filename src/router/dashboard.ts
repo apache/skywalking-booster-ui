@@ -26,7 +26,6 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       title: "dashboards",
       icon: "dashboard_customize",
       hasGroup: true,
-      exact: true,
     },
     children: [
       {
@@ -38,7 +37,6 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         name: "List",
         meta: {
           title: "dashboardList",
-          exact: false,
         },
       },
       {
@@ -50,7 +48,6 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         name: "New",
         meta: {
           title: "dashboardNew",
-          exact: false,
         },
       },
       {

@@ -27,7 +27,6 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import Dashboard from "./dashboard/Edit.vue";
 import { useI18n } from "vue-i18n";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { RoutesMap } from "@/constants/data";
 
 const route = useRoute();
 const { t } = useI18n();
@@ -38,7 +37,7 @@ const layer = ref<string>("GENERAL");
 getDashboard();
 
 async function getDashboard() {
-  layer.value = RoutesMap[String(route.name)];
+  layer.value = String(route.meta.layer);
   dashboardStore.setLayer(layer.value);
   dashboardStore.setMode(false);
   await dashboardStore.setDashboards();

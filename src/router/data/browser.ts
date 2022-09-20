@@ -15,14 +15,32 @@
  * limitations under the License.
  */
 
-export enum TimeType {
-  MINUTE_TIME = "MINUTE",
-  HOUR_TIME = "HOUR",
-  DAY_TIME = "DAY",
-}
-
-export const Languages = [
-  { label: "English", value: "en" },
-  { label: "Chinese", value: "zh" },
-  { label: "Spanish", value: "es" },
+export default [
+  {
+    path: "",
+    name: "Browser",
+    meta: {
+      title: "browser",
+      icon: "language",
+    },
+    redirect: "/browser",
+    children: [
+      {
+        path: "/browser",
+        name: "Browser",
+        meta: {
+          title: "browser",
+          layer: "BROWSER",
+        },
+      },
+      {
+        path: "/browser/tab/:activeTabIndex",
+        name: "BrowserActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "BROWSER",
+        },
+      },
+    ],
+  },
 ];

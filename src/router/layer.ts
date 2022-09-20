@@ -14,15 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import LayerJson from "./data";
+import Layout from "@/layout/Index.vue";
 
-export enum TimeType {
-  MINUTE_TIME = "MINUTE",
-  HOUR_TIME = "HOUR",
-  DAY_TIME = "DAY",
+function layerDashboards() {
+  const routes = LayerJson.map((item: any) => {
+    item.component = Layout;
+    if (item.meta.hasGroup) {
+      item.children = item.children.map((d: any) => {
+        d.component = () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue");
+        return d;
+      });
+    }
+    return item;
+  });
+  return routes;
 }
 
-export const Languages = [
-  { label: "English", value: "en" },
-  { label: "Chinese", value: "zh" },
-  { label: "Spanish", value: "es" },
-];
+export default layerDashboards();

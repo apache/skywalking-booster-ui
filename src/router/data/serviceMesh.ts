@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
 
-export const routesMesh: Array<RouteRecordRaw> = [
+export default [
   {
     path: "",
     name: "ServiceMesh",
@@ -27,7 +25,6 @@ export const routesMesh: Array<RouteRecordRaw> = [
       icon: "epic",
       hasGroup: true,
     },
-    component: Layout,
     children: [
       {
         path: "/mesh/services",
@@ -35,18 +32,16 @@ export const routesMesh: Array<RouteRecordRaw> = [
         meta: {
           notShow: false,
           title: "services",
+          layer: "MESH",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/mesh/services/tab/:activeTabIndex",
         name: "MeshServicesActiveTabIndex",
         meta: {
           notShow: true,
+          layer: "MESH",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/mesh/controlPanel",
@@ -54,18 +49,16 @@ export const routesMesh: Array<RouteRecordRaw> = [
         meta: {
           notShow: false,
           title: "controlPanel",
+          layer: "MESH_CP",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/mesh/controlPanel/tab/:activeTabIndex",
         name: "ControlPanelActiveTabIndex",
         meta: {
           notShow: true,
+          layer: "MESH_CP",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/mesh/dataPanel",
@@ -73,9 +66,8 @@ export const routesMesh: Array<RouteRecordRaw> = [
         meta: {
           notShow: false,
           title: "dataPanel",
+          layer: "MESH_DP",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/mesh/dataPanel/tab/:activeTabIndex",
@@ -83,9 +75,8 @@ export const routesMesh: Array<RouteRecordRaw> = [
         meta: {
           notShow: true,
           title: "dataPanelActiveTabIndex",
+          layer: "MESH_DP",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
     ],
   },

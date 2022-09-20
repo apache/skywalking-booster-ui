@@ -15,14 +15,25 @@
  * limitations under the License.
  */
 
-export enum TimeType {
-  MINUTE_TIME = "MINUTE",
-  HOUR_TIME = "HOUR",
-  DAY_TIME = "DAY",
-}
-
-export const Languages = [
-  { label: "English", value: "en" },
-  { label: "Chinese", value: "zh" },
-  { label: "Spanish", value: "es" },
+export default [
+  {
+    path: "",
+    name: "Functions",
+    meta: {
+      title: "functions",
+      icon: "cloud_queue",
+      layer: "FAAS",
+    },
+    redirect: "/functions",
+    children: [
+      {
+        path: "/functions",
+        name: "Functions",
+      },
+      {
+        path: "/functions/tab/:activeTabIndex",
+        name: "FunctionsActiveTabIndex",
+      },
+    ],
+  },
 ];

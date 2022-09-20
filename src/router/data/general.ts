@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
 
-export const routesGen: Array<RouteRecordRaw> = [
+export default [
   {
     path: "",
     name: "General",
@@ -25,67 +23,55 @@ export const routesGen: Array<RouteRecordRaw> = [
       title: "general",
       icon: "chart",
       hasGroup: true,
-      exact: true,
     },
-    component: Layout,
     children: [
       {
         path: "/general",
         name: "GeneralServices",
         meta: {
-          exact: true,
           title: "services",
+          layer: "GENERAL",
         },
-        component: () =>
-          import(/* webpackChunkName: "layers" */ "@/views/Layer.vue"),
       },
       {
         path: "/general/tab/:activeTabIndex",
         name: "GeneralServicesActiveTabIndex",
         meta: {
-          exact: true,
           notShow: true,
+          layer: "GENERAL",
         },
-        component: () =>
-          import(/* webpackChunkName: "layers" */ "@/views/Layer.vue"),
       },
       {
         path: "/database",
         name: "VirtualDatabase",
         meta: {
           title: "virtualDatabase",
-          exact: true,
+          layer: "VIRTUAL_DATABASE",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/database/tab/:activeTabIndex",
         name: "VirtualDatabaseActiveTabIndex",
         meta: {
           notShow: true,
+          layer: "VIRTUAL_DATABASE",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/cache",
         name: "VirtualCache",
         meta: {
           title: "virtualCache",
-          exact: true,
+          layer: "VIRTUAL_CACHE",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/cache/tab/:activeTabIndex",
         name: "VirtualCacheActiveTabIndex",
         meta: {
           notShow: true,
+          layer: "VIRTUAL_CACHE",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
     ],
   },

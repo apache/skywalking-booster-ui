@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
 
-export const routesK8s: Array<RouteRecordRaw> = [
+export default [
   {
     path: "",
     name: "Kubernetes",
@@ -27,7 +25,6 @@ export const routesK8s: Array<RouteRecordRaw> = [
       hasGroup: true,
     },
     redirect: "/kubernetes/cluster",
-    component: Layout,
     children: [
       {
         path: "/kubernetes/cluster",
@@ -35,9 +32,8 @@ export const routesK8s: Array<RouteRecordRaw> = [
         meta: {
           notShow: false,
           title: "kubernetesCluster",
+          layer: "K8S",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/kubernetes/cluster/tab/:activeTabIndex",
@@ -45,9 +41,8 @@ export const routesK8s: Array<RouteRecordRaw> = [
         meta: {
           notShow: true,
           title: "kubernetesClusterActiveTabIndex",
+          layer: "K8S",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/kubernetes/service",
@@ -55,9 +50,8 @@ export const routesK8s: Array<RouteRecordRaw> = [
         meta: {
           notShow: false,
           title: "kubernetesService",
+          layer: "K8S_SERVICE",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/kubernetes/service/tab/:activeTabIndex",
@@ -65,9 +59,8 @@ export const routesK8s: Array<RouteRecordRaw> = [
         meta: {
           notShow: true,
           title: "kubernetesServiceActiveTabIndex",
+          layer: "K8S_SERVICE",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
     ],
   },

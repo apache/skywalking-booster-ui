@@ -14,38 +14,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
 
-export const routesBrowser: Array<RouteRecordRaw> = [
+export default [
   {
     path: "",
-    name: "Browser",
+    name: "Database",
     meta: {
-      title: "browser",
-      icon: "language",
+      title: "database",
+      icon: "storage",
+      hasGroup: true,
     },
-    redirect: "/browser",
-    component: Layout,
+    redirect: "/mySQL",
     children: [
       {
-        path: "/browser",
-        name: "Browser",
+        path: "/mySQL",
+        name: "MySQL",
         meta: {
-          title: "browser",
-          exact: true,
+          title: "mySQL",
+          layer: "MYSQL",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
-        path: "/browser/tab/:activeTabIndex",
-        name: "BrowserActiveTabIndex",
+        path: "/mySQL/tab/:activeTabIndex",
+        name: "MySQLActiveTabIndex",
         meta: {
           notShow: true,
+          layer: "MYSQL",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
+      },
+      {
+        path: "/postgreSQL",
+        name: "PostgreSQL",
+        meta: {
+          title: "postgreSQL",
+          layer: "POSTGRESQL",
+        },
+      },
+      {
+        path: "/postgreSQL/tab/:activeTabIndex",
+        name: "PostgreSQLActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "POSTGRESQL",
+        },
       },
     ],
   },
