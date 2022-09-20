@@ -20,7 +20,7 @@ import Layout from "@/layout/Index.vue";
 function layerDashboards() {
   const routes = LayerJson.map((item: any) => {
     item.component = Layout;
-    if (item.meta.hasGroup) {
+    if (item.children) {
       item.children = item.children.map((d: any) => {
         d.component = () =>
           import(/* webpackChunkName: "layer" */ "@/views/Layer.vue");
