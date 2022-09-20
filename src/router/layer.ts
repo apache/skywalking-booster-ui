@@ -14,26 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
+import LayerJson from "./data";
 import Layout from "@/layout/Index.vue";
 
-export const routesAlarm: Array<RouteRecordRaw> = [
-  {
-    path: "",
-    name: "Alarm",
-    meta: {
-      title: "alarm",
-      icon: "spam",
-      hasGroup: false,
-    },
-    component: Layout,
-    children: [
-      {
-        path: "/alerting",
-        name: "Alarm",
-        component: () =>
-          import(/* webpackChunkName: "alerting" */ "@/views/Alarm.vue"),
-      },
-    ],
-  },
-];
+function layerDashboards() {
+  const routes = LayerJson.map((item: any) => {
+    item.component = Layout;
+    if (item.children) {
+      item.children = item.children.map((d: any) => {
+        d.component = () =>
+          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue");
+        return d;
+      });
+    }
+    return item;
+  });
+  return routes;
+}
+
+export default layerDashboards();

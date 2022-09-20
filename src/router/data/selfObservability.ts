@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
 
-export const routesSelf: Array<RouteRecordRaw> = [
+export default [
   {
     path: "",
     name: "SelfObservability",
@@ -27,43 +25,38 @@ export const routesSelf: Array<RouteRecordRaw> = [
       icon: "logo",
       hasGroup: true,
     },
-    component: Layout,
     children: [
       {
         path: "/self/skyWalkingServer",
         name: "SkyWalkingServer",
         meta: {
           title: "skyWalkingServer",
+          layer: "SO11Y_OAP",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/self/skyWalkingServer/tab/:activeTabIndex",
         name: "SkyWalkingServerActiveTabIndex",
         meta: {
           notShow: true,
+          layer: "SO11Y_OAP",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/self/satellite",
         name: "Satellite",
         meta: {
           title: "satellite",
+          layer: "SO11Y_SATELLITE",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/self/satellite/tab/:activeTabIndex",
         name: "SatelliteActiveTabIndex",
         meta: {
           notShow: true,
+          layer: "SO11Y_SATELLITE",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
     ],
   },

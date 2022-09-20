@@ -14,30 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
 
-export const routesInfra: Array<RouteRecordRaw> = [
+export default [
   {
     path: "",
     name: "Infrastructure",
     meta: {
       title: "infrastructure",
       icon: "scatter_plot",
-      exact: true,
       hasGroup: true,
     },
     redirect: "/linux",
-    component: Layout,
     children: [
       {
         path: "/linux",
         name: "Linux",
         meta: {
           title: "linux",
+          layer: "OS_LINUX",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       {
         path: "/linux/tab/:activeTabIndex",
@@ -45,9 +40,8 @@ export const routesInfra: Array<RouteRecordRaw> = [
         meta: {
           title: "linux",
           notShow: true,
+          layer: "OS_LINUX",
         },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
       },
       // {
       //   path: "/infrastructure/vm",

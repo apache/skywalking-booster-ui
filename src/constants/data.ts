@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 export enum TimeType {
   MINUTE_TIME = "MINUTE",
   HOUR_TIME = "HOUR",
@@ -25,35 +26,3 @@ export const Languages = [
   { label: "Chinese", value: "zh" },
   { label: "Spanish", value: "es" },
 ];
-
-export const RoutesMap: { [key: string]: string } = {
-  GeneralServices: "GENERAL",
-  GeneralServicesActiveTabIndex: "GENERAL",
-  VirtualDatabase: "VIRTUAL_DATABASE",
-  VirtualDatabaseActiveTabIndex: "VIRTUAL_DATABASE",
-  VirtualCache: "VIRTUAL_CACHE",
-  VirtualCacheActiveTabIndex: "VIRTUAL_CACHE",
-  MeshServices: "MESH",
-  MeshServicesActiveTabIndex: "MESH",
-  ControlPanel: "MESH_CP",
-  ControlPanelActiveTabIndex: "MESH_CP",
-  DataPanel: "MESH_DP",
-  DataPanelActiveTabIndex: "MESH_DP",
-  Linux: "OS_LINUX",
-  SkyWalkingServer: "SO11Y_OAP",
-  SkyWalkingServerActiveTabIndex: "SO11Y_OAP",
-  SatelliteActiveTabIndex: "SO11Y_SATELLITE",
-  Satellite: "SO11Y_SATELLITE",
-  Functions: "FAAS",
-  FunctionsActiveTabIndex: "FAAS",
-  Browser: "BROWSER",
-  BrowserActiveTabIndex: "BROWSER",
-  KubernetesCluster: "K8S",
-  KubernetesClusterActiveTabIndex: "K8S",
-  KubernetesService: "K8S_SERVICE",
-  KubernetesServiceActiveTabIndex: "K8S_SERVICE",
-  MySQL: "MYSQL",
-  MySQLActiveTabIndex: "MYSQL",
-  PostgreSQL: "POSTGRESQL",
-  PostgreSQLActiveTabIndex: "POSTGRESQL",
-};

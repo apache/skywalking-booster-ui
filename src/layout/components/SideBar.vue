@@ -33,11 +33,7 @@ limitations under the License. -->
       <template v-for="(menu, index) in routes" :key="index">
         <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
           <template #title>
-            <router-link
-              class="items"
-              :to="menu.path"
-              :exact="menu.meta.exact || false"
-            >
+            <router-link class="items" :to="menu.path">
               <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
                 <Icon size="lg" :iconName="menu.meta.icon" />
               </el-icon>
@@ -52,11 +48,7 @@ limitations under the License. -->
               :index="m.name"
               :key="idx"
             >
-              <router-link
-                class="items"
-                :to="m.path"
-                :exact="(m.meta && m.meta.exact) || false"
-              >
+              <router-link class="items" :to="m.path">
                 <span class="title">{{ m.meta && t(m.meta.title) }}</span>
               </router-link>
             </el-menu-item>
@@ -68,20 +60,12 @@ limitations under the License. -->
           v-else
         >
           <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
-            <router-link
-              class="items"
-              :to="menu.children[0].path"
-              :exact="menu.meta.exact"
-            >
+            <router-link class="items" :to="menu.children[0].path">
               <Icon size="lg" :iconName="menu.meta.icon" />
             </router-link>
           </el-icon>
           <template #title>
-            <router-link
-              class="items"
-              :to="menu.children[0].path"
-              :exact="menu.meta.exact"
-            >
+            <router-link class="items" :to="menu.children[0].path">
               <span class="title">{{ t(menu.meta.title) }}</span>
             </router-link>
           </template>

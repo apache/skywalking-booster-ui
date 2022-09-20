@@ -14,35 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
+import general from "./general";
+import serviceMesh from "./serviceMesh";
+import database from "./database";
+import infrastructure from "./infrastructure";
+import selfObservability from "./selfObservability";
+import functions from "./functions";
+import browser from "./browser";
+import k8s from "./k8s";
 
-export const routesFunctions: Array<RouteRecordRaw> = [
-  {
-    path: "",
-    name: "Functions",
-    meta: {
-      title: "functions",
-      icon: "cloud_queue",
-    },
-    redirect: "/functions",
-    component: Layout,
-    children: [
-      {
-        path: "/functions",
-        name: "Functions",
-        meta: {
-          exact: true,
-        },
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
-      },
-      {
-        path: "/functions/tab/:activeTabIndex",
-        name: "FunctionsActiveTabIndex",
-        component: () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue"),
-      },
-    ],
-  },
+export default [
+  ...general,
+  ...serviceMesh,
+  ...functions,
+  ...k8s,
+  ...infrastructure,
+  ...browser,
+  ...database,
+  ...selfObservability,
 ];

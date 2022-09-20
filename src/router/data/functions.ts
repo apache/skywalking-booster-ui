@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
-import Layout from "@/layout/Index.vue";
 
-export const routesAlarm: Array<RouteRecordRaw> = [
+export default [
   {
     path: "",
-    name: "Alarm",
+    name: "Functions",
     meta: {
-      title: "alarm",
-      icon: "spam",
-      hasGroup: false,
+      title: "functions",
+      icon: "cloud_queue",
+      layer: "FAAS",
     },
-    component: Layout,
+    redirect: "/functions",
     children: [
       {
-        path: "/alerting",
-        name: "Alarm",
-        component: () =>
-          import(/* webpackChunkName: "alerting" */ "@/views/Alarm.vue"),
+        path: "/functions",
+        name: "Functions",
+      },
+      {
+        path: "/functions/tab/:activeTabIndex",
+        name: "FunctionsActiveTabIndex",
       },
     ],
   },
