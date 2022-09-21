@@ -43,22 +43,6 @@ export default [
           layer: "OS_LINUX",
         },
       },
-      // {
-      //   path: "/infrastructure/vm",
-      //   name: "VirtualMachine",
-      //   meta: {
-      //     title: "virtualMachine",
-      //   },
-      //   component: () => import("@/views/infrastructure/Infrastructure.vue"),
-      // },
-      // {
-      //   path: "/infrastructure/k8s",
-      //   name: "Kubernetes",
-      //   meta: {
-      //     title: "kubernetes",
-      //   },
-      //   component: () => import("@/views/infrastructure/Infrastructure.vue"),
-      // },
     ],
   },
 ];
