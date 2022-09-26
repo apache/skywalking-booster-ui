@@ -47,12 +47,12 @@ limitations under the License. -->
     <el-drawer
       v-model="showTrace"
       :title="t('trace')"
-      size="70%"
+      size="100%"
       :destroy-on-close="true"
       :before-close="() => (showTrace = false)"
       :append-to-body="true"
     >
-      <span>Hi, trace!</span>
+      <Trace :data="traceOptions" />
     </el-drawer>
   </div>
   <div class="center no-data" v-else>No Data</div>
@@ -63,6 +63,7 @@ import { useI18n } from "vue-i18n";
 import { computed, ref } from "vue";
 import copy from "@/utils/copy";
 import { TextColors } from "@/views/dashboard/data";
+import Trace from "../controls/Trace.vue";
 /*global defineProps */
 const props = defineProps({
   data: {
@@ -79,6 +80,10 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const showTrace = ref<boolean>(false);
+const traceOptions = ref<{ id: string; type: string; filter?: unknown }>({
+  id: "related" + Math.round(Math.random() * 100),
+  type: "Trace",
+});
 const key = computed(() => Object.keys(props.data)[0] || "");
 const available = computed(
   () =>
@@ -98,7 +103,10 @@ function handleClick(event: PointerEvent, i: string) {
   copy(i);
 }
 function viewTrace(item: { name: string }) {
-  console.log(item);
+  traceOptions.value = {
+    ...traceOptions.value,
+    filter: item,
+  };
   showTrace.value = true;
 }
 </script>
