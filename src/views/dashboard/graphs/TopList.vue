@@ -15,7 +15,12 @@ limitations under the License. -->
 
 <template>
   <div class="top-list" v-if="available">
-    <div class="chart-slow-i" v-for="(i, index) in data[key]" :key="index">
+    <div
+      class="chart-slow-i"
+      v-for="(i, index) in data[key]"
+      :key="index"
+      @click="viewTrace(i)"
+    >
       <div class="ell tools flex-h">
         <div class="desc">
           <span class="calls mr-10">{{ i.value }}</span>
@@ -28,7 +33,7 @@ limitations under the License. -->
             iconName="review-list"
             size="middle"
             class="cp"
-            @click="handleClick(i.name)"
+            @click="handleClick($event, i.name)"
           />
         </div>
       </div>
@@ -39,12 +44,23 @@ limitations under the License. -->
         :show-text="false"
       />
     </div>
+    <el-drawer
+      v-model="showTrace"
+      :title="t('trace')"
+      size="70%"
+      :destroy-on-close="true"
+      :before-close="() => (showTrace = false)"
+      :append-to-body="true"
+    >
+      <span>Hi, trace!</span>
+    </el-drawer>
   </div>
   <div class="center no-data" v-else>No Data</div>
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { computed, ref } from "vue";
 import copy from "@/utils/copy";
 import { TextColors } from "@/views/dashboard/data";
 /*global defineProps */
@@ -61,6 +77,8 @@ const props = defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
+const { t } = useI18n();
+const showTrace = ref<boolean>(false);
 const key = computed(() => Object.keys(props.data)[0] || "");
 const available = computed(
   () =>
@@ -75,8 +93,13 @@ const maxValue = computed(() => {
   const temp: number[] = props.data[key.value].map((i: any) => i.value);
   return Math.max.apply(null, temp);
 });
-function handleClick(i: string) {
+function handleClick(event: PointerEvent, i: string) {
+  event.stopPropagation();
   copy(i);
+}
+function viewTrace(item: { name: string }) {
+  console.log(item);
+  showTrace.value = true;
 }
 </script>
 <style lang="scss" scoped>
