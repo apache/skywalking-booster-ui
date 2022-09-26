@@ -345,5 +345,6 @@ const msg = {
   conditionNotice:
     "Notice: Please press Enter after inputting a key of content, exclude key of content(key=value).",
   language: "Language",
+  gateway: "Gateway",
 };
 export default msg;
