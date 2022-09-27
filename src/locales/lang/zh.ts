@@ -345,5 +345,6 @@ const msg = {
   conditionNotice:
     "请输入一个内容关键词或者内容不包含的关键词(key=value)之后回车",
   language: "语言",
+  gateway: "网关",
 };
 export default msg;
