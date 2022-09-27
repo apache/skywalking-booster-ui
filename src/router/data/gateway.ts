@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
- export default [
+export default [
   {
     path: "",
     name: "Gateway",
     meta: {
       title: "gateway",
-      icon: "storage",
+      icon: "gateway",
       hasGroup: true,
     },
     redirect: "/apisix",
