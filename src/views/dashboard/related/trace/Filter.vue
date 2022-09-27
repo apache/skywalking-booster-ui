@@ -164,7 +164,7 @@ async function getServices() {
     ElMessage.error(resp.errors);
     return;
   }
-  state.service = traceStore.services[0];
+  state.service = getCurrentNode(traceStore.services) || traceStore.services[0];
   getEndpoints(state.service.id);
   getInstances(state.service.id);
 }
@@ -175,7 +175,8 @@ async function getEndpoints(id?: string, keyword?: string) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.endpoint = traceStore.endpoints[0];
+  state.endpoint =
+    getCurrentNode(traceStore.endpoints) || traceStore.endpoints[0];
 }
 async function getInstances(id?: string) {
   const resp = await traceStore.getInstances(id);
@@ -183,9 +184,36 @@ async function getInstances(id?: string) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.instance = traceStore.instances[0];
+  state.instance =
+    getCurrentNode(traceStore.instances) || traceStore.instances[0];
 }
-function searchTraces() {
+function getCurrentNode(arr: { id: string }[]) {
+  let item;
+  if (props.data.filters && props.data.filters.id) {
+    item = arr.find((d: { id: string }) => d.id === props.data.filters?.id);
+  }
+  return item;
+}
+function setCondition() {
+  let param: any = {
+    traceState: state.status.value || "ALL",
+    tags: tagsMap.value.length ? tagsMap.value : undefined,
+    queryOrder: traceStore.conditions.queryOrder || "BY_DURATION",
+    queryDuration: duration.value,
+    minTraceDuration: Number(minTraceDuration.value),
+    maxTraceDuration: Number(maxTraceDuration.value),
+    traceId: traceId.value || undefined,
+    paging: { pageNum: 1, pageSize: 20 },
+  };
+  if (props.data.filters && props.data.filters.id) {
+    param = {
+      ...param,
+      serviceId: selectorStore.currentService.id,
+      endpointId: state.endpoint.id || undefined,
+      serviceInstanceId: state.instance.id || undefined,
+    };
+    return param;
+  }
   let endpoint = "",
     instance = "";
   if (dashboardStore.entity === EntityType[2].value) {
@@ -194,21 +222,18 @@ function searchTraces() {
   if (dashboardStore.entity === EntityType[3].value) {
     instance = selectorStore.currentPod.id;
   }
-  traceStore.setTraceCondition({
+  param = {
+    ...param,
     serviceId: selectorStore.currentService
       ? selectorStore.currentService.id
       : state.service.id,
-    traceId: traceId.value || undefined,
     endpointId: endpoint || state.endpoint.id || undefined,
     serviceInstanceId: instance || state.instance.id || undefined,
-    traceState: state.status.value || "ALL",
-    queryDuration: duration.value,
-    minTraceDuration: Number(minTraceDuration.value),
-    maxTraceDuration: Number(maxTraceDuration.value),
-    queryOrder: traceStore.conditions.queryOrder || "BY_DURATION",
-    tags: tagsMap.value.length ? tagsMap.value : undefined,
-    paging: { pageNum: 1, pageSize: 20 },
-  });
+  };
+  return param;
+}
+function searchTraces() {
+  traceStore.setTraceCondition(setCondition());
   queryTraces();
 }
 async function queryTraces() {

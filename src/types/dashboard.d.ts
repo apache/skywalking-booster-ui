@@ -50,6 +50,7 @@ export interface LayoutConfig {
     traceId?: string;
     spanId?: string;
     segmentId?: string;
+    id?: string;
   };
 }
 

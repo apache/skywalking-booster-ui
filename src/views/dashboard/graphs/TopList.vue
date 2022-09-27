@@ -68,7 +68,7 @@ import Trace from "../controls/Trace.vue";
 const props = defineProps({
   data: {
     type: Object as PropType<{
-      [key: string]: { name: string; value: number; traceIds: string[] }[];
+      [key: string]: { name: string; value: number; id: string }[];
     }>,
     default: () => ({}),
   },
@@ -80,7 +80,7 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const showTrace = ref<boolean>(false);
-const traceOptions = ref<{ type: string; filter?: unknown }>({
+const traceOptions = ref<{ type: string; filters?: unknown }>({
   type: "Trace",
 });
 const key = computed(() => Object.keys(props.data)[0] || "");
@@ -101,10 +101,10 @@ function handleClick(event: PointerEvent, i: string) {
   event.stopPropagation();
   copy(i);
 }
-function viewTrace(item: { name: string }) {
+function viewTrace(item: { name: string; id: string }) {
   traceOptions.value = {
     ...traceOptions.value,
-    filter: item,
+    filters: item,
   };
   showTrace.value = true;
 }
