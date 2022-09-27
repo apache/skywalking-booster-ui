@@ -23,7 +23,7 @@ limitations under the License. -->
             {{ i.name }}
           </span>
         </div>
-        <el-popover placement="bottom" trigger="click" :width="30">
+        <el-popover placement="bottom" trigger="click">
           <template #reference>
             <div class="operation-icon cp ml-10">
               <Icon iconName="ellipsis_v" size="middle" />
