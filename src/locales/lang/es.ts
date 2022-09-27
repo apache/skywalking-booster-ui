@@ -154,6 +154,8 @@ const msg = {
   query: "Consulta",
   postgreSQL: "PostgreSQL",
   endpointTips: "Aquí, la tabla muestra hasta 20 punto final.",
+  viewTrace: "Ver trazas relacionadas",
+  copyName: "Nombre de la copia",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

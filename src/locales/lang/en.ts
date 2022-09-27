@@ -154,6 +154,8 @@ const msg = {
   query: "Query",
   postgreSQL: "PostgreSQL",
   endpointTips: "The table shows up to 20 pieces of endpoints.",
+  viewTrace: "View related traces",
+  copyName: "Copy name",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

@@ -151,6 +151,8 @@ const msg = {
   query: "查询",
   postgreSQL: "PostgreSQL",
   endpointTips: "这里最多展示20条endpoints。",
+  viewTrace: "查看相关traces",
+  copyName: "复制名称",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",

@@ -15,12 +15,7 @@ limitations under the License. -->
 
 <template>
   <div class="top-list" v-if="available">
-    <div
-      class="chart-slow-i"
-      v-for="(i, index) in data[key]"
-      :key="index"
-      @click="viewTrace(i)"
-    >
+    <div class="chart-slow-i" v-for="(i, index) in data[key]" :key="index">
       <div class="ell tools flex-h">
         <div class="desc">
           <span class="calls mr-10">{{ i.value }}</span>
@@ -28,14 +23,19 @@ limitations under the License. -->
             {{ i.name }}
           </span>
         </div>
-        <div class="copy">
-          <Icon
-            iconName="review-list"
-            size="middle"
-            class="cp"
-            @click="handleClick($event, i.name)"
-          />
-        </div>
+        <el-popover placement="bottom" trigger="click" :width="30">
+          <template #reference>
+            <div class="operation-icon cp ml-10">
+              <Icon iconName="ellipsis_v" size="middle" />
+            </div>
+          </template>
+          <div class="operation" @click="handleClick(i.name)">
+            <span>{{ t("copyName") }}</span>
+          </div>
+          <div class="operation" @click="viewTrace(i)">
+            <span>{{ t("viewTrace") }}</span>
+          </div>
+        </el-popover>
       </div>
       <el-progress
         :stroke-width="6"
@@ -97,8 +97,7 @@ const maxValue = computed(() => {
   const temp: number[] = props.data[key.value].map((i: any) => i.value);
   return Math.max.apply(null, temp);
 });
-function handleClick(event: PointerEvent, i: string) {
-  event.stopPropagation();
+function handleClick(i: string) {
   copy(i);
 }
 function viewTrace(item: { name: string; id: string }) {
@@ -139,10 +138,6 @@ function viewTrace(item: { name: string; id: string }) {
   text-overflow: ellipsis;
 }
 
-.copy {
-  width: 30px;
-}
-
 .calls {
   font-size: 12px;
   padding: 0 5px;
@@ -170,5 +165,23 @@ function viewTrace(item: { name: string; id: string }) {
   -webkit-box-orient: horizontal;
   -webkit-box-pack: center;
   -webkit-box-align: center;
+}
+
+.operation-icon {
+  color: #333;
+}
+
+.operation {
+  padding: 5px 0;
+  color: #333;
+  cursor: pointer;
+  position: relative;
+  text-align: center;
+  font-size: 12px;
+
+  &:hover {
+    color: #409eff;
+    background-color: #eee;
+  }
 }
 </style>
