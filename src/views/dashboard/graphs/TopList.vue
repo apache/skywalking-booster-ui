@@ -80,8 +80,7 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const showTrace = ref<boolean>(false);
-const traceOptions = ref<{ id: string; type: string; filter?: unknown }>({
-  id: "related" + Math.round(Math.random() * 100),
+const traceOptions = ref<{ type: string; filter?: unknown }>({
   type: "Trace",
 });
 const key = computed(() => Object.keys(props.data)[0] || "");
