@@ -15,6 +15,14 @@ limitations under the License. -->
 <template>
   <div class="chart" ref="chartRef" :style="`height:${height};width:${width};`">
     <div v-if="!available" class="no-data">No Data</div>
+    <div class="menus" v-show="visMenus" ref="menus">
+      <div class="tools">
+        {{ t("viewTrace") }}
+      </div>
+      <div class="tools">
+        {{ t("viewTrace") }}
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -28,12 +36,16 @@ import {
   computed,
 } from "vue";
 import type { PropType } from "vue";
+import { useI18n } from "vue-i18n";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
 
 /*global Nullable, defineProps, defineEmits*/
 const emits = defineEmits(["select"]);
+const { t } = useI18n();
 const chartRef = ref<Nullable<HTMLDivElement>>(null);
+const menus = ref<Nullable<HTMLDivElement>>(null);
+const visMenus = ref<boolean>(false);
 const { setOptions, resize, getInstance } = useECharts(
   chartRef as Ref<HTMLDivElement>
 );
@@ -72,7 +84,13 @@ onMounted(async () => {
     if (!instance) {
       return;
     }
-    instance.on("click", (params: unknown) => {
+    instance.on("click", (params: any) => {
+      if (!menus.value) {
+        return;
+      }
+      visMenus.value = true;
+      menus.value.style.left = params.event.offsetX + "px";
+      menus.value.style.top = params.event.offsetY + "px";
       emits("select", params);
     });
     document.addEventListener(
@@ -200,5 +218,21 @@ onBeforeUnmount(() => {
 
 .chart {
   overflow: hidden;
+}
+
+.menus {
+  position: absolute;
+}
+
+.tools {
+  padding: 5px 0;
+  color: #999;
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    color: #409eff;
+    background-color: #eee;
+  }
 }
 </style>
