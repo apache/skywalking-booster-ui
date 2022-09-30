@@ -193,22 +193,22 @@ async function init() {
   state.endpoint = { value: "0", label: "All" };
 }
 
-function fetchSelectors() {
+async function fetchSelectors() {
   if (dashboardStore.entity === EntityType[1].value) {
-    getServices();
+    await getServices();
     return;
   }
   if (dashboardStore.entity === EntityType[2].value) {
-    getInstances();
+    await getInstances();
     return;
   }
   if (dashboardStore.entity === EntityType[3].value) {
-    getEndpoints();
+    await getEndpoints();
     return;
   }
   if (dashboardStore.entity === EntityType[0].value) {
-    getInstances();
-    getEndpoints();
+    await getInstances();
+    await getEndpoints();
   }
 }
 
