@@ -222,6 +222,15 @@ onBeforeUnmount(() => {
 
 .menus {
   position: absolute;
+  display: block;
+  white-space: nowrap;
+  z-index: 9999999;
+  box-shadow: #ccc 1px 2px 10px;
+  transition: all cubic-bezier(0.075, 0.82, 0.165, 1) linear;
+  background-color: rgb(255, 255, 255);
+  border-radius: 4px;
+  color: rgb(51, 51, 51);
+  padding: 5px;
 }
 
 .tools {
