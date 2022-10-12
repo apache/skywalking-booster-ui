@@ -71,7 +71,7 @@ export const appStore = defineStore({
         step: this.duration.step,
       };
     },
-    intervalTime(): string[] {
+    intervalUnix(): number[] {
       let interval = 946080000000;
       switch (this.duration.step) {
         case "MINUTE":
@@ -97,12 +97,17 @@ export const appStore = defineStore({
         this.utcMin * 60000;
       const startUnix: number = this.duration.start.getTime();
       const endUnix: number = this.duration.end.getTime();
-      const timeIntervals: string[] = [];
+      const timeIntervals: number[] = [];
       for (let i = 0; i <= endUnix - startUnix; i += interval) {
-        const temp: string = dateFormatTime(
-          new Date(startUnix + i - utcSpace),
-          this.duration.step
-        );
+        timeIntervals.push(startUnix + i - utcSpace);
+      }
+      return timeIntervals;
+    },
+    intervalTime(): string[] {
+      const arr = this.intervalUnix;
+      const timeIntervals: string[] = [];
+      for (const item of arr) {
+        const temp: string = dateFormatTime(new Date(item), this.duration.step);
         timeIntervals.push(temp);
       }
       return timeIntervals;

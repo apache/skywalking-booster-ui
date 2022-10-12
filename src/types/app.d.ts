@@ -45,4 +45,5 @@ export type EventParams = {
   value: number | Array;
   color: string;
   event: any;
+  dataIndex: number;
 };

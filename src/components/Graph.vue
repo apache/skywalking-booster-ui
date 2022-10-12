@@ -49,12 +49,16 @@ import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { EventParams } from "@/types/app";
 import { useECharts } from "@/hooks/useEcharts";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
 import Trace from "@/views/dashboard/controls/Trace.vue";
+import dateFormatStep from "@/utils/dateFormat";
+import getLocalTime from "@/utils/localtime";
 
 /*global Nullable, defineProps, defineEmits*/
 const emits = defineEmits(["select"]);
 const { t } = useI18n();
+const appStore = useAppStoreWithOut();
 const chartRef = ref<Nullable<HTMLDivElement>>(null);
 const menus = ref<Nullable<HTMLDivElement>>(null);
 const visMenus = ref<boolean>(false);
@@ -156,8 +160,27 @@ function updateOptions() {
 }
 
 function viewTrace() {
-  console.log(currentParams.value);
-  const item = {};
+  if (!currentParams.value) {
+    return;
+  }
+  const start = appStore.intervalUnix[currentParams.value.dataIndex];
+  const end = start;
+  const { step } = appStore.durationRow;
+  const item = {
+    duration: {
+      start: dateFormatStep(
+        getLocalTime(appStore.utc, new Date(start)),
+        step,
+        true
+      ),
+      end: dateFormatStep(
+        getLocalTime(appStore.utc, new Date(end)),
+        step,
+        true
+      ),
+      step,
+    },
+  };
   traceOptions.value = {
     ...traceOptions.value,
     filters: item,
