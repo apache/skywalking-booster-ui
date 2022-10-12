@@ -54,6 +54,7 @@ import { addResizeListener, removeResizeListener } from "@/utils/event";
 import Trace from "@/views/dashboard/controls/Trace.vue";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
+import associateProcessor from "@/hooks/useAssociateProcessor";
 
 /*global Nullable, defineProps, defineEmits*/
 const emits = defineEmits(["select"]);
@@ -65,6 +66,7 @@ const visMenus = ref<boolean>(false);
 const { setOptions, resize, getInstance } = useECharts(
   chartRef as Ref<HTMLDivElement>
 );
+const { eventAssociate } = associateProcessor();
 const currentParams = ref<Nullable<EventParams>>(null);
 const showTrace = ref<boolean>(false);
 const traceOptions = ref<{ type: string; filters?: unknown }>({
@@ -99,6 +101,10 @@ const available = computed(
 onMounted(async () => {
   await setOptions(props.option);
   chartRef.value && addResizeListener(unref(chartRef), resize);
+  instanceEvent();
+});
+
+function instanceEvent() {
   setTimeout(() => {
     const instance = getInstance();
 
@@ -132,7 +138,7 @@ onMounted(async () => {
       true
     );
   }, 1000);
-});
+}
 
 function associateMetrics() {
   emits("select", currentParams.value);
@@ -148,7 +154,7 @@ function updateOptions() {
     return;
   }
   if (props.filters.isRange) {
-    const options = eventAssociate();
+    const options = eventAssociate(props);
     setOptions(options || props.option);
   } else {
     instance.dispatchAction({
@@ -188,51 +194,6 @@ function viewTrace() {
   showTrace.value = true;
 }
 
-function eventAssociate() {
-  if (!props.filters) {
-    return;
-  }
-  if (!props.filters.duration) {
-    return props.option;
-  }
-  if (!props.option.series[0]) {
-    return;
-  }
-  const list = props.option.series[0].data.map(
-    (d: (number | string)[]) => d[0]
-  );
-  if (!list.includes(props.filters.duration.endTime)) {
-    return;
-  }
-  const markArea = {
-    silent: true,
-    itemStyle: {
-      opacity: 0.3,
-    },
-    data: [
-      [
-        {
-          xAxis: props.filters.duration.startTime,
-        },
-        {
-          xAxis: props.filters.duration.endTime,
-        },
-      ],
-    ],
-  };
-  const series = (window as any).structuredClone(props.option.series);
-  for (const [key, temp] of series.entries()) {
-    if (key === 0) {
-      temp.markArea = markArea;
-    }
-  }
-  const options = {
-    ...props.option,
-    series,
-  };
-  return options;
-}
-
 watch(
   () => props.option,
   (newVal, oldVal) => {
@@ -244,7 +205,7 @@ watch(
     }
     let options;
     if (props.filters && props.filters.isRange) {
-      options = eventAssociate();
+      options = eventAssociate(props);
     }
     setOptions(options || props.option);
   }
