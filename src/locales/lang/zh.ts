@@ -143,6 +143,7 @@ const msg = {
   pause: "暂停",
   begin: "开始",
   associateOptions: "关联选项",
+  associateMetrics: "关联指标",
   widget: "部件",
   enableAssociate: "启用关联",
   nameTip: "该名称仅支持中文和英文、横线和下划线, 并且限制长度为300个字符",

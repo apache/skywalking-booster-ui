@@ -145,6 +145,7 @@ const msg = {
   pause: "Pause",
   begin: "Start",
   associateOptions: "Association Options",
+  associateMetrics: "Association Metrics",
   widget: "Widget",
   nameTip:
     "The name only supports Chinese and English, horizontal lines and underscores. The length of the name is limited to 300 characters",

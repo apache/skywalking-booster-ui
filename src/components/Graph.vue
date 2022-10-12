@@ -16,8 +16,8 @@ limitations under the License. -->
   <div class="chart" ref="chartRef" :style="`height:${height};width:${width};`">
     <div v-if="!available" class="no-data">No Data</div>
     <div class="menus" v-show="visMenus" ref="menus">
-      <div class="tools">
-        {{ t("viewTrace") }}
+      <div class="tools" @click="associateMetrics">
+        {{ t("associateMetrics") }}
       </div>
       <div class="tools">
         {{ t("viewTrace") }}
@@ -37,6 +37,7 @@ import {
 } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
+import { EventParams } from "@/types/app";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
 
@@ -49,6 +50,7 @@ const visMenus = ref<boolean>(false);
 const { setOptions, resize, getInstance } = useECharts(
   chartRef as Ref<HTMLDivElement>
 );
+const currentParams = ref<Nullable<EventParams>>(null);
 const props = defineProps({
   height: { type: String, default: "100%" },
   width: { type: String, default: "100%" },
@@ -84,14 +86,14 @@ onMounted(async () => {
     if (!instance) {
       return;
     }
-    instance.on("click", (params: any) => {
+    instance.on("click", (params: EventParams) => {
+      currentParams.value = params;
       if (!menus.value) {
         return;
       }
       visMenus.value = true;
       menus.value.style.left = params.event.offsetX + "px";
       menus.value.style.top = params.event.offsetY + "px";
-      emits("select", params);
     });
     document.addEventListener(
       "click",
@@ -99,6 +101,7 @@ onMounted(async () => {
         if (instance.isDisposed()) {
           return;
         }
+        visMenus.value = false;
         instance.dispatchAction({
           type: "hideTip",
         });
@@ -111,6 +114,11 @@ onMounted(async () => {
     );
   }, 1000);
 });
+
+function associateMetrics() {
+  emits("select", currentParams.value);
+  visMenus.value = true;
+}
 
 function updateOptions() {
   const instance = getInstance();
@@ -225,7 +233,7 @@ onBeforeUnmount(() => {
   display: block;
   white-space: nowrap;
   z-index: 9999999;
-  box-shadow: #ccc 1px 2px 10px;
+  box-shadow: #ddd 1px 2px 10px;
   transition: all cubic-bezier(0.075, 0.82, 0.165, 1) linear;
   background-color: rgb(255, 255, 255);
   border-radius: 4px;
@@ -234,7 +242,7 @@ onBeforeUnmount(() => {
 }
 
 .tools {
-  padding: 5px 0;
+  padding: 5px;
   color: #999;
   cursor: pointer;
   text-align: center;

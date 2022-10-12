@@ -145,6 +145,7 @@ const msg = {
   pause: "Pausa",
   begin: "Inicio",
   associateOptions: "Opciones de asociación",
+  associateMetrics: "Índice de correlación",
   widget: "Dispositivo pequeño",
   text: "Texto",
   duplicateName: "Nombre duplicado",
