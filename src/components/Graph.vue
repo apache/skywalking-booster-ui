@@ -66,7 +66,6 @@ const visMenus = ref<boolean>(false);
 const { setOptions, resize, getInstance } = useECharts(
   chartRef as Ref<HTMLDivElement>
 );
-const { eventAssociate } = associateProcessor();
 const currentParams = ref<Nullable<EventParams>>(null);
 const showTrace = ref<boolean>(false);
 const traceOptions = ref<{ type: string; filters?: unknown }>({
@@ -154,6 +153,7 @@ function updateOptions() {
     return;
   }
   if (props.filters.isRange) {
+    const { eventAssociate } = associateProcessor();
     const options = eventAssociate(props);
     setOptions(options || props.option);
   } else {
@@ -166,27 +166,8 @@ function updateOptions() {
 }
 
 function viewTrace() {
-  if (!currentParams.value) {
-    return;
-  }
-  const start = appStore.intervalUnix[currentParams.value.dataIndex];
-  const end = start;
-  const { step } = appStore.durationRow;
-  const item = {
-    duration: {
-      start: dateFormatStep(
-        getLocalTime(appStore.utc, new Date(start)),
-        step,
-        true
-      ),
-      end: dateFormatStep(
-        getLocalTime(appStore.utc, new Date(end)),
-        step,
-        true
-      ),
-      step,
-    },
-  };
+  const item = associateProcessor().traceFilters(currentParams.value);
+
   traceOptions.value = {
     ...traceOptions.value,
     filters: item,
@@ -205,6 +186,7 @@ watch(
     }
     let options;
     if (props.filters && props.filters.isRange) {
+      const { eventAssociate } = associateProcessor();
       options = eventAssociate(props);
     }
     setOptions(options || props.option);

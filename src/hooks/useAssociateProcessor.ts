@@ -14,6 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { useAppStoreWithOut } from "@/store/modules/app";
+import dateFormatStep from "@/utils/dateFormat";
+import getLocalTime from "@/utils/localtime";
+
 export default function associateProcessor() {
   function eventAssociate(props: any) {
     if (!props.filters) {
@@ -59,5 +63,31 @@ export default function associateProcessor() {
     };
     return options;
   }
-  return { eventAssociate };
+  function traceFilters(currentParams: any) {
+    const appStore = useAppStoreWithOut();
+
+    if (!currentParams.value) {
+      return;
+    }
+    const start = appStore.intervalUnix[currentParams.value.dataIndex];
+    const end = start;
+    const { step } = appStore.durationRow;
+    const item = {
+      duration: {
+        start: dateFormatStep(
+          getLocalTime(appStore.utc, new Date(start)),
+          step,
+          true
+        ),
+        end: dateFormatStep(
+          getLocalTime(appStore.utc, new Date(end)),
+          step,
+          true
+        ),
+        step,
+      },
+    };
+    return item;
+  }
+  return { eventAssociate, traceFilters };
 }
