@@ -19,10 +19,20 @@ limitations under the License. -->
       <div class="tools" @click="associateMetrics">
         {{ t("associateMetrics") }}
       </div>
-      <div class="tools">
+      <div class="tools" @click="viewTrace">
         {{ t("viewTrace") }}
       </div>
     </div>
+    <el-drawer
+      v-model="showTrace"
+      :title="t('trace')"
+      size="100%"
+      :destroy-on-close="true"
+      :before-close="() => (showTrace = false)"
+      :append-to-body="true"
+    >
+      <Trace :data="traceOptions" />
+    </el-drawer>
   </div>
 </template>
 <script lang="ts" setup>
@@ -40,6 +50,7 @@ import { useI18n } from "vue-i18n";
 import { EventParams } from "@/types/app";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
+import Trace from "@/views/dashboard/controls/Trace.vue";
 
 /*global Nullable, defineProps, defineEmits*/
 const emits = defineEmits(["select"]);
@@ -51,6 +62,10 @@ const { setOptions, resize, getInstance } = useECharts(
   chartRef as Ref<HTMLDivElement>
 );
 const currentParams = ref<Nullable<EventParams>>(null);
+const showTrace = ref<boolean>(false);
+const traceOptions = ref<{ type: string; filters?: unknown }>({
+  type: "Trace",
+});
 const props = defineProps({
   height: { type: String, default: "100%" },
   width: { type: String, default: "100%" },
@@ -138,6 +153,16 @@ function updateOptions() {
       seriesIndex: 0,
     });
   }
+}
+
+function viewTrace() {
+  console.log(currentParams.value);
+  const item = {};
+  traceOptions.value = {
+    ...traceOptions.value,
+    filters: item,
+  };
+  showTrace.value = true;
 }
 
 function eventAssociate() {
