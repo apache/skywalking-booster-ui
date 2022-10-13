@@ -17,6 +17,7 @@
 import { useAppStoreWithOut } from "@/store/modules/app";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
+import { QueryOrders } from "@/views/dashboard/data";
 
 export default function associateProcessor() {
   function eventAssociate(props: any) {
@@ -89,9 +90,19 @@ export default function associateProcessor() {
         step,
       };
     }
-
+    let queryOrder = QueryOrders[1].value;
+    let status = undefined;
+    if (currentParams.seriesName.includes("_sla")) {
+      queryOrder = QueryOrders[0].value;
+      status = "ERROR";
+    }
+    if (currentParams.seriesName.includes("_apdex")) {
+      status = "ERROR";
+    }
     const item = {
       duration,
+      queryOrder,
+      status,
     };
     return item;
   }

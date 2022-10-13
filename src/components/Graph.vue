@@ -167,7 +167,7 @@ function updateOptions() {
 
 function viewTrace() {
   const item = associateProcessor().traceFilters(currentParams.value);
-
+  console.log(item);
   traceOptions.value = {
     ...traceOptions.value,
     filters: item,

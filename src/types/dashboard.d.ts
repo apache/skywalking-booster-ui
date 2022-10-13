@@ -39,20 +39,23 @@ export interface LayoutConfig {
   id?: string;
   associate?: { widgetId: string }[];
   eventAssociate?: boolean;
-  filters?: {
-    dataIndex: number;
-    sourceId: string;
-    isRange?: boolean;
-    duration?: {
-      startTime: string;
-      endTime: string;
-    };
-    traceId?: string;
-    spanId?: string;
-    segmentId?: string;
-    id?: string;
-  };
+  filters?: Filters;
 }
+export type Filters = {
+  dataIndex: number;
+  sourceId: string;
+  isRange?: boolean;
+  duration?: {
+    startTime: string;
+    endTime: string;
+  };
+  traceId?: string;
+  spanId?: string;
+  segmentId?: string;
+  id?: string;
+  queryOrder?: string;
+  status?: string;
+};
 
 export type MetricConfigOpt = {
   unit?: string;

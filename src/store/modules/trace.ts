@@ -22,6 +22,7 @@ import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
+import { QueryOrders } from "@/views/dashboard/data";
 
 interface TraceState {
   services: Service[];
@@ -47,7 +48,7 @@ export const traceStore = defineStore({
     conditions: {
       queryDuration: useAppStoreWithOut().durationTime,
       traceState: "ALL",
-      queryOrder: "BY_START_TIME",
+      queryOrder: QueryOrders[0].value,
       paging: { pageNum: 1, pageSize: 20 },
     },
     traceSpanLogs: [],
@@ -56,6 +57,7 @@ export const traceStore = defineStore({
   actions: {
     setTraceCondition(data: any) {
       this.conditions = { ...this.conditions, ...data };
+      console.log(this.conditions.queryOrder);
     },
     setCurrentTrace(trace: Trace) {
       this.currentTrace = trace;
@@ -71,7 +73,7 @@ export const traceStore = defineStore({
         queryDuration: useAppStoreWithOut().durationTime,
         paging: { pageNum: 1, pageSize: 20 },
         traceState: "ALL",
-        queryOrder: "BY_START_TIME",
+        queryOrder: QueryOrders[0].value,
       };
     },
     async getServices(layer: string) {
