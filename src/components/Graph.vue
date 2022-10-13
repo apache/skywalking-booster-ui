@@ -49,17 +49,13 @@ import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { EventParams } from "@/types/app";
 import { useECharts } from "@/hooks/useEcharts";
-import { useAppStoreWithOut } from "@/store/modules/app";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
 import Trace from "@/views/dashboard/controls/Trace.vue";
-import dateFormatStep from "@/utils/dateFormat";
-import getLocalTime from "@/utils/localtime";
 import associateProcessor from "@/hooks/useAssociateProcessor";
 
 /*global Nullable, defineProps, defineEmits*/
 const emits = defineEmits(["select"]);
 const { t } = useI18n();
-const appStore = useAppStoreWithOut();
 const chartRef = ref<Nullable<HTMLDivElement>>(null);
 const menus = ref<Nullable<HTMLDivElement>>(null);
 const visMenus = ref<boolean>(false);
@@ -153,8 +149,8 @@ function updateOptions() {
     return;
   }
   if (props.filters.isRange) {
-    const { eventAssociate } = associateProcessor();
-    const options = eventAssociate(props);
+    const { eventAssociate } = associateProcessor(props);
+    const options = eventAssociate();
     setOptions(options || props.option);
   } else {
     instance.dispatchAction({
@@ -166,8 +162,7 @@ function updateOptions() {
 }
 
 function viewTrace() {
-  const item = associateProcessor().traceFilters(currentParams.value);
-  console.log(item);
+  const item = associateProcessor(props).traceFilters(currentParams.value);
   traceOptions.value = {
     ...traceOptions.value,
     filters: item,
@@ -186,8 +181,8 @@ watch(
     }
     let options;
     if (props.filters && props.filters.isRange) {
-      const { eventAssociate } = associateProcessor();
-      options = eventAssociate(props);
+      const { eventAssociate } = associateProcessor(props);
+      options = eventAssociate();
     }
     setOptions(options || props.option);
   }

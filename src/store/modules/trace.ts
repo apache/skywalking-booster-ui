@@ -57,7 +57,6 @@ export const traceStore = defineStore({
   actions: {
     setTraceCondition(data: any) {
       this.conditions = { ...this.conditions, ...data };
-      console.log(this.conditions.queryOrder);
     },
     setCurrentTrace(trace: Trace) {
       this.currentTrace = trace;

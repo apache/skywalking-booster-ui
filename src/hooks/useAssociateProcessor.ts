@@ -1,3 +1,4 @@
+import { Option } from "@/types/app";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -18,9 +19,10 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 import { QueryOrders } from "@/views/dashboard/data";
+import { EventParams } from "@/types/app";
 
-export default function associateProcessor() {
-  function eventAssociate(props: any) {
+export default function associateProcessor(props: any) {
+  function eventAssociate() {
     if (!props.filters) {
       return;
     }
@@ -64,7 +66,7 @@ export default function associateProcessor() {
     };
     return options;
   }
-  function traceFilters(currentParams: any) {
+  function traceFilters(currentParams: Nullable<EventParams>) {
     const appStore = useAppStoreWithOut();
 
     if (!currentParams) {
@@ -92,6 +94,7 @@ export default function associateProcessor() {
     }
     let queryOrder = QueryOrders[1].value;
     let status = undefined;
+    let latency = undefined;
     if (currentParams.seriesName.includes("_sla")) {
       queryOrder = QueryOrders[0].value;
       status = "ERROR";
@@ -99,10 +102,18 @@ export default function associateProcessor() {
     if (currentParams.seriesName.includes("_apdex")) {
       status = "ERROR";
     }
+    if (props.option.series) {
+      latency = props.option.series.map(
+        (d: { name: string; data: number[][] }) => {
+          return { [d.name]: d.data[currentParams.dataIndex] };
+        }
+      );
+    }
     const item = {
       duration,
       queryOrder,
       status,
+      latency,
     };
     return item;
   }
