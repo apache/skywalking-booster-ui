@@ -66,14 +66,16 @@ export default function associateProcessor() {
   function traceFilters(currentParams: any) {
     const appStore = useAppStoreWithOut();
 
-    if (!currentParams.value) {
+    if (!currentParams) {
       return;
     }
-    const start = appStore.intervalUnix[currentParams.value.dataIndex];
-    const end = start;
+    const start = appStore.intervalUnix[currentParams.dataIndex];
     const { step } = appStore.durationRow;
-    const item = {
-      duration: {
+    let duration = undefined;
+
+    if (start) {
+      const end = start;
+      duration = {
         start: dateFormatStep(
           getLocalTime(appStore.utc, new Date(start)),
           step,
@@ -85,7 +87,11 @@ export default function associateProcessor() {
           true
         ),
         step,
-      },
+      };
+    }
+
+    const item = {
+      duration,
     };
     return item;
   }
