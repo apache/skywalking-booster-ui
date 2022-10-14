@@ -362,14 +362,6 @@ watch(
   border-radius: 4px;
 }
 
-.trace-list .trace-node rect {
-  cursor: pointer;
-
-  &:hover {
-    fill: rgba(0, 0, 0, 0.05);
-  }
-}
-
 .dialog-c-text {
   white-space: pre;
   overflow: auto;

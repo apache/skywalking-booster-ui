@@ -151,6 +151,7 @@ const msg = {
   query: "查询",
   postgreSQL: "PostgreSQL",
   endpointTips: "这里最多展示20条endpoints。",
+  apisix: "APISIX",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",

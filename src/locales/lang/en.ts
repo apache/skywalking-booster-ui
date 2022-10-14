@@ -154,6 +154,7 @@ const msg = {
   query: "Query",
   postgreSQL: "PostgreSQL",
   endpointTips: "The table shows up to 20 pieces of endpoints.",
+  apisix: "APISIX",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
