@@ -30,7 +30,7 @@ export default [
         path: "/apisix",
         name: "APISIX",
         meta: {
-          title: "APISIX",
+          title: "apisix",
           layer: "APISIX",
         },
       },

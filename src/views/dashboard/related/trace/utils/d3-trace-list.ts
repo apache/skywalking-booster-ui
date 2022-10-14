@@ -141,6 +141,7 @@ export default class ListGraph {
       .append("g")
       .attr("transform", `translate(${source.y0},${source.x0})`)
       .attr("class", "trace-node")
+      .attr("style", "cursor: pointer")
       .style("opacity", 0)
       .on("mouseover", function (event: any, d: Trace) {
         t.tip.show(d, this);
