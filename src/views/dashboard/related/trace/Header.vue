@@ -82,24 +82,7 @@ function setCondition() {
       endpointId: state.endpoint.id || undefined,
       serviceInstanceId: state.instance.id || undefined,
     };
-    return param;
   }
-  let endpoint = "",
-    instance = "";
-  if (dashboardStore.entity === EntityType[2].value) {
-    endpoint = selectorStore.currentPod.id;
-  }
-  if (dashboardStore.entity === EntityType[3].value) {
-    instance = selectorStore.currentPod.id;
-  }
-  param = {
-    ...param,
-    serviceId: selectorStore.currentService
-      ? selectorStore.currentService.id
-      : state.service.id,
-    endpointId: endpoint || state.endpoint.id || undefined,
-    serviceInstanceId: instance || state.instance.id || undefined,
-  };
   return param;
 }
 function searchTraces() {
