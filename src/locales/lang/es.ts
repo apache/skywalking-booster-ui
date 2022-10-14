@@ -155,8 +155,7 @@ const msg = {
   query: "Consulta",
   postgreSQL: "PostgreSQL",
   endpointTips: "Aquí, la tabla muestra hasta 20 punto final.",
-  viewTrace: "Ver trazas relacionadas",
-  copyName: "Nombre de la copia",
+  apisix: "APISIX",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",
@@ -351,5 +350,6 @@ const msg = {
   conditionNotice:
     "Aviso: Por favor presione Intro después de introducir una clave de contenido, excluir clave de contenido(clave=valor).",
   language: "Lenguaje",
+  gateway: "Puerta",
 };
 export default msg;

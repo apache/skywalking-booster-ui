@@ -152,8 +152,7 @@ const msg = {
   query: "查询",
   postgreSQL: "PostgreSQL",
   endpointTips: "这里最多展示20条endpoints。",
-  viewTrace: "查看相关traces",
-  copyName: "复制名称",
+  apisix: "APISIX",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
@@ -348,5 +347,6 @@ const msg = {
   conditionNotice:
     "请输入一个内容关键词或者内容不包含的关键词(key=value)之后回车",
   language: "语言",
+  gateway: "网关",
 };
 export default msg;

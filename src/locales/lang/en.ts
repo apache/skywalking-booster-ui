@@ -155,8 +155,7 @@ const msg = {
   query: "Query",
   postgreSQL: "PostgreSQL",
   endpointTips: "The table shows up to 20 pieces of endpoints.",
-  viewTrace: "View related traces",
-  copyName: "Copy name",
+  apisix: "APISIX",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
@@ -348,5 +347,6 @@ const msg = {
   conditionNotice:
     "Notice: Please press Enter after inputting a key of content, exclude key of content(key=value).",
   language: "Language",
+  gateway: "Gateway",
 };
 export default msg;
