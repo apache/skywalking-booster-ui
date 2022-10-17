@@ -67,8 +67,18 @@ const state = reactive<Recordable>({
   endpoint: "",
   service: "",
 });
-
-init();
+if (filters.id) {
+  init();
+} else {
+  state.service = selectorStore.currentService.id;
+  if (dashboardStore.entity === EntityType[2].value) {
+    state.instance = selectorStore.currentPod.id;
+  }
+  if (dashboardStore.entity === EntityType[3].value) {
+    state.endpoint = selectorStore.currentPod.id;
+  }
+  queryTraces();
+}
 async function init() {
   if (dashboardStore.entity === EntityType[1].value) {
     await getService();
