@@ -25,7 +25,6 @@ limitations under the License. -->
     </div>
     <el-drawer
       v-model="showTrace"
-      :title="t('trace')"
       size="100%"
       :destroy-on-close="true"
       :before-close="() => (showTrace = false)"
