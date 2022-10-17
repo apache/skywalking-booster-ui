@@ -56,8 +56,8 @@ export function useQueryProcessor(config: any) {
     const c = (config.metricConfig && config.metricConfig[index]) || {};
     if (
       [
-        MetricQueryTypes.SortMetrics,
         MetricQueryTypes.ReadSampledRecords,
+        MetricQueryTypes.SortMetrics,
       ].includes(metricType)
     ) {
       variables.push(`$condition${index}: TopNCondition!`);
