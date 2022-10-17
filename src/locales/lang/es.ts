@@ -110,6 +110,7 @@ const msg = {
   showXAxis: "Mostrar Eje X",
   showYAxis: "Mostrar Eje Y",
   nameError: "El nombre del panel no puede ser duplicado",
+  nameEmptyError: "El nombre del panel no puede estar vacío",
   showGroup: "Mostrar Grupo",
   noRoot: "Por favor ponga la raíz del panel",
   noWidget: "Por favor añada widgets.",
