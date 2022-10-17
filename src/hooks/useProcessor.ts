@@ -56,8 +56,8 @@ export function useQueryProcessor(config: any) {
     const c = (config.metricConfig && config.metricConfig[index]) || {};
     if (
       [
-        MetricQueryTypes.ReadSampledRecords,
         MetricQueryTypes.SortMetrics,
+        MetricQueryTypes.ReadSampledRecords,
       ].includes(metricType)
     ) {
       variables.push(`$condition${index}: TopNCondition!`);
@@ -70,6 +70,22 @@ export function useQueryProcessor(config: any) {
           ? selectorStore.currentService.normal
           : true,
         scope: config.catalog,
+        topN: c.topN || 10,
+        order: c.sortOrder || "DES",
+      };
+    } else if ([MetricQueryTypes.ReadRecords].includes(metricType)) {
+      variables.push(`$condition${index}: RecordCondition!`);
+      conditions[`condition${index}`] = {
+        name,
+        parentEntity: {
+          scope: config.catalog,
+          normal: selectorStore.currentService
+            ? selectorStore.currentService.normal
+            : true,
+          serviceName: ["All"].includes(dashboardStore.entity)
+            ? null
+            : selectorStore.currentService.value,
+        },
         topN: c.topN || 10,
         order: c.sortOrder || "DES",
       };
@@ -435,6 +451,7 @@ export async function useGetMetricEntity(metric: string, metricType: any) {
     [
       MetricQueryTypes.ReadSampledRecords,
       MetricQueryTypes.SortMetrics,
+      MetricQueryTypes.ReadRecords,
     ].includes(metricType)
   ) {
     const res = await dashboardStore.fetchMetricList(metric);
