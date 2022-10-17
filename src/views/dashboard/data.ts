@@ -45,6 +45,7 @@ export const MetricChartType: any = {
   readLabeledMetricsValues: [{ label: "Line", value: "Line" }],
   readHeatMap: [{ label: "Heat Map", value: "HeatMap" }],
   readSampledRecords: [{ label: "Top List", value: "TopList" }],
+  readRecords: [{ label: "Top List", value: "TopList" }],
 };
 export const DefaultGraphConfig: { [key: string]: any } = {
   Bar: {
@@ -134,6 +135,7 @@ export const MetricTypes: {
     { label: "read heatmap values in the duration", value: "readHeatMap" },
   ],
   SAMPLED_RECORD: [
+    { label: "get sorted topN values", value: "readRecords" },
     { label: "get sorted topN values", value: "readSampledRecords" },
   ],
 };
