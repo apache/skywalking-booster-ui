@@ -81,7 +81,7 @@ const onCreate = () => {
       states.entity === d.entity &&
       states.selectedLayer === d.layer
   );
-  if (states.name.trim() === "") {
+  if (!states.name) {
     ElMessage.error(t("nameEmptyError"));
     return;
   }
