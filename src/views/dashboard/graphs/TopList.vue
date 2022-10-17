@@ -46,7 +46,6 @@ limitations under the License. -->
     </div>
     <el-drawer
       v-model="showTrace"
-      :title="t('trace')"
       size="100%"
       :destroy-on-close="true"
       :before-close="() => (showTrace = false)"
@@ -63,7 +62,7 @@ import { useI18n } from "vue-i18n";
 import { computed, ref } from "vue";
 import copy from "@/utils/copy";
 import { TextColors } from "@/views/dashboard/data";
-import Trace from "../controls/Trace.vue";
+import Trace from "@/views/dashboard/related/trace/Index.vue";
 /*global defineProps */
 const props = defineProps({
   data: {

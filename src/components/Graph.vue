@@ -50,7 +50,7 @@ import { useI18n } from "vue-i18n";
 import { EventParams } from "@/types/app";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
-import Trace from "@/views/dashboard/controls/Trace.vue";
+import Trace from "@/views/dashboard/related/trace/Index.vue";
 import associateProcessor from "@/hooks/useAssociateProcessor";
 
 /*global Nullable, defineProps, defineEmits*/

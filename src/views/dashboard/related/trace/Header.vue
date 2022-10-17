@@ -16,10 +16,21 @@ limitations under the License. -->
   <div class="flex-h">
     <ConditionTags :type="'TRACE'" @update="updateTags" />
   </div>
+  <div class="mr-10">
+    <el-button
+      size="small"
+      type="primary"
+      @click="queryTraces"
+      class="search-btn"
+    >
+      {{ t("search") }}
+    </el-button>
+  </div>
 </template>
 <script lang="ts" setup>
 import { ref, reactive, onUnmounted } from "vue";
 import type { PropType } from "vue";
+import { useI18n } from "vue-i18n";
 import { Option, DurationTime } from "@/types/app";
 import { useTraceStore } from "@/store/modules/trace";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -38,6 +49,7 @@ const props = defineProps({
     default: () => ({ graph: {} }),
   },
 });
+const { t } = useI18n();
 const filters = reactive<Recordable>(props.data.filters || {});
 const traceId = ref<string>(filters.traceId || "");
 const appStore = useAppStoreWithOut();
@@ -64,7 +76,9 @@ async function init() {
   if (dashboardStore.entity === EntityType[0].value) {
     state.service = selectorStore.currentService.id;
     await getInstance();
-    await getEndpoint();
+    if (!state.instance) {
+      await getEndpoint();
+    }
   }
   await queryTraces();
 }
@@ -74,7 +88,7 @@ async function getService() {
     ElMessage.error(resp.errors);
     return;
   }
-  state.service = resp.data.service;
+  state.service = (resp.data.service && resp.data.service) || "";
 }
 async function getEndpoint() {
   const resp = await traceStore.getEndpoint(filters.id);
@@ -82,7 +96,7 @@ async function getEndpoint() {
     ElMessage.error(resp.errors);
     return;
   }
-  state.endpoint = resp.data.endpoint.id;
+  state.endpoint = (resp.data.endpoint && resp.data.endpoint.id) || "";
 }
 async function getInstance() {
   const resp = await traceStore.getInstance(filters.id);
@@ -90,7 +104,7 @@ async function getInstance() {
     ElMessage.error(resp.errors);
     return;
   }
-  state.instance = resp.data.instance.id;
+  state.instance = (resp.data.instance && resp.data.instance.id) || "";
 }
 function setCondition() {
   if (filters.queryOrder) {
