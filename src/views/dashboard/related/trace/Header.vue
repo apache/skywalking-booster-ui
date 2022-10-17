@@ -20,7 +20,6 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { ref, reactive, onUnmounted } from "vue";
 import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
 import { Option, DurationTime } from "@/types/app";
 import { useTraceStore } from "@/store/modules/trace";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -41,7 +40,6 @@ const props = defineProps({
 });
 const filters = reactive<Recordable>(props.data.filters || {});
 const traceId = ref<string>(filters.traceId || "");
-const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
@@ -57,8 +55,43 @@ const state = reactive<Recordable>({
   endpoint: "",
   service: "",
 });
-searchTraces();
 
+init();
+async function init() {
+  if (dashboardStore.entity === EntityType[1].value) {
+    await getService();
+  }
+  if (dashboardStore.entity === EntityType[0].value) {
+    state.service = selectorStore.currentService.id;
+    await getInstance();
+    await getEndpoint();
+  }
+  await queryTraces();
+}
+async function getService() {
+  const resp = await traceStore.getService(filters.id);
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  state.service = resp.data.service;
+}
+async function getEndpoint() {
+  const resp = await traceStore.getEndpoint(filters.id);
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  state.endpoint = resp.data.endpoint.id;
+}
+async function getInstance() {
+  const resp = await traceStore.getInstance(filters.id);
+  if (resp.errors) {
+    ElMessage.error(resp.errors);
+    return;
+  }
+  state.instance = resp.data.instance.id;
+}
 function setCondition() {
   if (filters.queryOrder) {
     traceStore.setTraceCondition({
@@ -78,18 +111,15 @@ function setCondition() {
   if (props.data.filters && props.data.filters.id) {
     param = {
       ...param,
-      serviceId: selectorStore.currentService.id,
-      endpointId: state.endpoint.id || undefined,
-      serviceInstanceId: state.instance.id || undefined,
+      serviceId: state.service || undefined,
+      endpointId: state.endpoint || undefined,
+      serviceInstanceId: state.instance || undefined,
     };
   }
   return param;
 }
-function searchTraces() {
-  traceStore.setTraceCondition(setCondition());
-  queryTraces();
-}
 async function queryTraces() {
+  traceStore.setTraceCondition(setCondition());
   const res = await traceStore.getTraces();
   if (res && res.errors) {
     ElMessage.error(res.errors);
@@ -104,17 +134,9 @@ onUnmounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-.inputs {
-  width: 120px;
-}
-
 .row {
   margin-bottom: 5px;
   position: relative;
-}
-
-.traceId {
-  width: 270px;
 }
 
 .search-btn {

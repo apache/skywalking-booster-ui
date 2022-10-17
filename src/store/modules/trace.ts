@@ -85,6 +85,36 @@ export const traceStore = defineStore({
       this.services = res.data.data.services;
       return res.data;
     },
+    async getService(serviceId: string) {
+      if (!serviceId) {
+        return;
+      }
+      const res: AxiosResponse = await graphql.query("queryService").params({
+        serviceId,
+      });
+
+      return res.data;
+    },
+    async getInstance(instanceId: string) {
+      if (!instanceId) {
+        return;
+      }
+      const res: AxiosResponse = await graphql.query("queryInstance").params({
+        instanceId,
+      });
+
+      return res.data;
+    },
+    async getEndpoint(endpointId: string) {
+      if (!endpointId) {
+        return;
+      }
+      const res: AxiosResponse = await graphql.query("queryEndpoint").params({
+        endpointId,
+      });
+
+      return res.data;
+    },
     async getInstances(id: string) {
       const serviceId = this.selectorStore.currentService
         ? this.selectorStore.currentService.id
