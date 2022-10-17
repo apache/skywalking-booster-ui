@@ -53,9 +53,9 @@ const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
 const state = reactive<Recordable>({
   status: filters.status === "ERROR" ? Status[2].value : Status[0].value,
-  instance: { value: "0", label: "All" },
-  endpoint: { value: "0", label: "All" },
-  service: { value: "", label: "" },
+  instance: "",
+  endpoint: "",
+  service: "",
 });
 searchTraces();
 

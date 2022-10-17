@@ -30,7 +30,7 @@ limitations under the License. -->
             </div>
           </template>
           <div class="operation" @click="handleClick(i.name)">
-            <span>{{ t("copyName") }}</span>
+            <span>{{ t("copy") }}</span>
           </div>
           <div class="operation" @click="viewTrace(i)">
             <span>{{ t("viewTrace") }}</span>
