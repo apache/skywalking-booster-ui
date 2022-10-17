@@ -81,6 +81,10 @@ const onCreate = () => {
       states.entity === d.entity &&
       states.selectedLayer === d.layer
   );
+  if (states.name.trim() === "") {
+    ElMessage.error(t("nameEmptyError"));
+    return;
+  }
   if (index > -1) {
     ElMessage.error(t("nameError"));
     return;
