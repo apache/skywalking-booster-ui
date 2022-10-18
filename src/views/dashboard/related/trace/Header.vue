@@ -86,19 +86,20 @@ const items = Object.keys(filters).map((d: string) => {
 });
 const conditions = ref(items[0].key);
 
-if (filters.id) {
-  init();
-} else {
-  state.service = selectorStore.currentService.id;
-  if (dashboardStore.entity === EntityType[2].value) {
-    state.instance = selectorStore.currentPod.id;
-  }
-  if (dashboardStore.entity === EntityType[3].value) {
-    state.endpoint = selectorStore.currentPod.id;
-  }
-  queryTraces();
-}
+init();
+
 async function init() {
+  if (!filters.id) {
+    state.service = selectorStore.currentService.id;
+    if (dashboardStore.entity === EntityType[2].value) {
+      state.instance = selectorStore.currentPod.id;
+    }
+    if (dashboardStore.entity === EntityType[3].value) {
+      state.endpoint = selectorStore.currentPod.id;
+    }
+    await queryTraces();
+    return;
+  }
   if (dashboardStore.entity === EntityType[1].value) {
     await getService();
   }
@@ -147,16 +148,12 @@ function setCondition() {
     maxTraceDuration: undefined,
     tags: tagsMap.value.length ? tagsMap.value : undefined,
     paging: { pageNum: 1, pageSize: 20 },
+    serviceId: state.service || undefined,
+    endpointId: state.endpoint || undefined,
+    serviceInstanceId: state.instance || undefined,
   };
-  // topList
-  if (filters.id) {
-    params = {
-      ...params,
-      serviceId: state.service || undefined,
-      endpointId: state.endpoint || undefined,
-      serviceInstanceId: state.instance || undefined,
-    };
-  } else {
+  // echarts
+  if (!filters.id) {
     for (const k of items) {
       if (k.key === conditions.value) {
         params[k.value] = filters[k.key];
