@@ -162,6 +162,7 @@ const msg = {
   minuteTip: "Seleccione Minuto",
   secondTip: "Seleccione Segundo",
   viewTrace: "Ver trazas relacionadas",
+  relatedTraceOptions: "Opciones de seguimiento relacionadas",
   second: "s",
   yearSuffix: "Año",
   monthsHead: "Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Set_Oct_Nov_Dic",

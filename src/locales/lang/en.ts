@@ -158,6 +158,7 @@ const msg = {
   endpointTips: "The table shows up to 20 pieces of endpoints.",
   apisix: "APISIX",
   viewTrace: "View related trace",
+  relatedTraceOptions: "Related Trace Options",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

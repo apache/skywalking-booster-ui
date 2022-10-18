@@ -19,10 +19,12 @@ import StyleOptions from "./graph-styles";
 import WidgetOptions from "./WidgetOptions.vue";
 import MetricOptions from "./metric/Index.vue";
 import AssociateOptions from "./AssociateOptions.vue";
+import RelatedTraceOptions from "./RelatedTraceOptions.vue";
 
 export default {
   ...StyleOptions,
   WidgetOptions,
   MetricOptions,
   AssociateOptions,
+  RelatedTraceOptions,
 };

@@ -65,6 +65,9 @@ limitations under the License. -->
         >
           <AssociateOptions />
         </el-collapse-item>
+        <el-collapse-item :title="t('relatedTraceOptions')" name="5">
+          <RelatedTraceOptions />
+        </el-collapse-item>
       </el-collapse>
     </div>
     <div class="footer">
