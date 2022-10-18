@@ -190,4 +190,8 @@ onUnmounted(() => {
   top: 0;
   right: 10px;
 }
+
+.conditions {
+  margin-bottom: 10px;
+}
 </style>

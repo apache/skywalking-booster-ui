@@ -60,9 +60,4 @@ provide("options", props.data);
   overflow: auto;
   min-width: 1200px;
 }
-
-.conditions {
-  padding: 0 10px;
-  margin-bottom: 10px;
-}
 </style>
