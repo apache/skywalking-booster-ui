@@ -21,6 +21,7 @@ export enum MetricQueryTypes {
   ReadLabeledMetricsValues = "readLabeledMetricsValues",
   READHEATMAP = "readHeatMap",
   ReadSampledRecords = "readSampledRecords",
+  ReadRecords = "readRecords",
 }
 
 export enum Calculations {
@@ -97,6 +98,12 @@ export const RespFields: any = {
     }
   }`,
   readSampledRecords: `{
+    name
+    value
+    refId
+  }`,
+  readRecords: `{
+    id
     name
     value
     refId

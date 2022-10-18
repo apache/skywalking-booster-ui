@@ -73,6 +73,22 @@ export function useQueryProcessor(config: any) {
         topN: c.topN || 10,
         order: c.sortOrder || "DES",
       };
+    } else if ([MetricQueryTypes.ReadRecords].includes(metricType)) {
+      variables.push(`$condition${index}: RecordCondition!`);
+      conditions[`condition${index}`] = {
+        name,
+        parentEntity: {
+          scope: config.catalog,
+          normal: selectorStore.currentService
+            ? selectorStore.currentService.normal
+            : true,
+          serviceName: ["All"].includes(dashboardStore.entity)
+            ? null
+            : selectorStore.currentService.value,
+        },
+        topN: c.topN || 10,
+        order: c.sortOrder || "DES",
+      };
     } else {
       if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
         const labels = (c.labelsIndex || "")
@@ -435,6 +451,7 @@ export async function useGetMetricEntity(metric: string, metricType: any) {
     [
       MetricQueryTypes.ReadSampledRecords,
       MetricQueryTypes.SortMetrics,
+      MetricQueryTypes.ReadRecords,
     ].includes(metricType)
   ) {
     const res = await dashboardStore.fetchMetricList(metric);

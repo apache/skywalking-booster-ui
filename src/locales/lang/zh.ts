@@ -106,6 +106,7 @@ const msg = {
   showXAxis: "显示X轴",
   showYAxis: "显示Y轴",
   nameError: "仪表板名称不能重复",
+  nameEmptyError: "仪表板名称不能为空",
   noRoot: "请设置根仪表板，为",
   showGroup: "显示分组",
   noWidget: "请添加组件",
