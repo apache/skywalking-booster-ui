@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-wrapper flex-v">
-    <div class="tabs"></div>
     <div class="header">
       <Header :data="data" />
     </div>
@@ -60,5 +59,10 @@ provide("options", props.data);
   width: 100%;
   overflow: auto;
   min-width: 1200px;
+}
+
+.conditions {
+  padding: 0 10px;
+  margin-bottom: 10px;
 }
 </style>

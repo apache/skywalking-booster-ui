@@ -13,6 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <div class="conditions" v-if="!filters.id">
+    <el-radio-group v-model="conditions" @change="changeCondition">
+      <el-radio-button
+        v-for="(item, index) in items"
+        :label="item.key"
+        :key="item.key + index"
+        border
+      >
+        {{ item.key }}
+      </el-radio-button>
+    </el-radio-group>
+  </div>
   <div class="flex-h">
     <ConditionTags :type="'TRACE'" @update="updateTags" />
   </div>
@@ -31,7 +43,7 @@ limitations under the License. -->
 import { ref, reactive, onUnmounted } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import { Option, DurationTime } from "@/types/app";
+import { Option } from "@/types/app";
 import { useTraceStore } from "@/store/modules/trace";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -41,6 +53,13 @@ import { ElMessage } from "element-plus";
 import { EntityType, QueryOrders, Status } from "../../data";
 import { LayoutConfig } from "@/types/dashboard";
 
+const filtersKeys: { [key: string]: string } = {
+  status: "traceState",
+  queryOrder: "queryOrder",
+  duration: "queryDuration",
+  minTraceDuration: "minTraceDuration",
+  maxTraceDuration: "maxTraceDuration",
+};
 /*global defineProps, Recordable */
 const props = defineProps({
   needQuery: { type: Boolean, default: true },
@@ -51,22 +70,22 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const filters = reactive<Recordable>(props.data.filters || {});
-const traceId = ref<string>(filters.traceId || "");
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
-const duration = ref<DurationTime>(filters.duration || appStore.durationTime);
-const minTraceDuration = ref<number>();
-const maxTraceDuration = ref<number>();
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
 const state = reactive<Recordable>({
-  status: filters.status === "ERROR" ? Status[2].value : Status[0].value,
   instance: "",
   endpoint: "",
   service: "",
 });
+const items = Object.keys(filters).map((d: string) => {
+  return { key: d, value: filtersKeys[d] };
+});
+const conditions = ref(items[0].key);
+
 if (filters.id) {
   init();
 } else {
@@ -91,6 +110,9 @@ async function init() {
     }
   }
   await queryTraces();
+}
+async function changeCondition() {
+  queryTraces();
 }
 async function getService() {
   const resp = await traceStore.getService(filters.id);
@@ -117,30 +139,31 @@ async function getInstance() {
   state.instance = (resp.data.instance && resp.data.instance.id) || "";
 }
 function setCondition() {
-  if (filters.queryOrder) {
-    traceStore.setTraceCondition({
-      queryOrder: filters.queryOrder,
-    });
-  }
-  let param: any = {
-    traceState: state.status || Status[0].value,
+  let params: any = {
+    traceState: Status[0].value,
+    queryOrder: QueryOrders[0].value,
+    queryDuration: appStore.durationTime,
+    minTraceDuration: undefined,
+    maxTraceDuration: undefined,
     tags: tagsMap.value.length ? tagsMap.value : undefined,
-    queryOrder: traceStore.conditions.queryOrder || QueryOrders[1].value,
-    queryDuration: duration.value,
-    minTraceDuration: Number(minTraceDuration.value),
-    maxTraceDuration: Number(maxTraceDuration.value),
-    traceId: traceId.value || undefined,
     paging: { pageNum: 1, pageSize: 20 },
   };
-  if (props.data.filters && props.data.filters.id) {
-    param = {
-      ...param,
+  // topList
+  if (filters.id) {
+    params = {
+      ...params,
       serviceId: state.service || undefined,
       endpointId: state.endpoint || undefined,
       serviceInstanceId: state.instance || undefined,
     };
+  } else {
+    for (const k of items) {
+      if (k.key === conditions.value) {
+        params[k.value] = filters[k.key];
+      }
+    }
   }
-  return param;
+  return params;
 }
 async function queryTraces() {
   traceStore.setTraceCondition(setCondition());
