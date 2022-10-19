@@ -159,6 +159,7 @@ const msg = {
   apisix: "APISIX",
   viewTrace: "View related trace",
   relatedTraceOptions: "Related Trace Options",
+  setLatencyDuration: "Set Latency Range",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
