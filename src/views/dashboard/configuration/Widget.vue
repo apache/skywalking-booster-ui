@@ -36,6 +36,7 @@ limitations under the License. -->
             metrics: dashboardStore.selectedGrid.metrics,
             metricTypes: dashboardStore.selectedGrid.metricTypes,
             metricConfig: dashboardStore.selectedGrid.metricConfig,
+            relatedTrace: dashboardStore.selectedGrid.relatedTrace,
           }"
           :needQuery="true"
         />

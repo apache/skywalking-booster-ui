@@ -13,12 +13,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Graph :option="option" @select="clickEvent" :filters="config.filters" />
+  <Graph
+    :option="option"
+    @select="clickEvent"
+    :filters="config.filters"
+    :relatedTrace="config.relatedTrace"
+  />
 </template>
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { PropType } from "vue";
-import { LineConfig, EventParams } from "@/types/dashboard";
+import {
+  LineConfig,
+  EventParams,
+  RelatedTrace,
+  Filters,
+} from "@/types/dashboard";
 
 /*global defineProps, defineEmits */
 const emits = defineEmits(["click"]);
@@ -32,15 +42,8 @@ const props = defineProps({
   config: {
     type: Object as PropType<
       LineConfig & {
-        filters: {
-          sourceId: string;
-          duration: {
-            startTime: string;
-            endTime: string;
-          };
-          isRange: boolean;
-          dataIndex?: number;
-        };
+        filters: Filters;
+        relatedTrace: RelatedTrace;
       } & { id: string }
     >,
     default: () => ({

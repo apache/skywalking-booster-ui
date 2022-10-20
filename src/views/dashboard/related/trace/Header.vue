@@ -53,7 +53,7 @@ import { ElMessage } from "element-plus";
 import { EntityType, QueryOrders, Status } from "../../data";
 import { LayoutConfig } from "@/types/dashboard";
 
-const filtersKeys: { [key: string]: string } = {
+const FiltersKeys: { [key: string]: string } = {
   status: "traceState",
   queryOrder: "queryOrder",
   duration: "queryDuration",
@@ -89,8 +89,8 @@ init();
 async function init() {
   if (!filters.id) {
     for (const d of Object.keys(filters)) {
-      if (filters[d]) {
-        items.value.push({ key: d, value: filtersKeys[d] });
+      if (filters[d] && d !== "duration") {
+        items.value.push({ key: d, value: FiltersKeys[d] });
       }
     }
     conditions.value = (items.value[0] && items.value[0].key) || "";

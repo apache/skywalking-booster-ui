@@ -47,6 +47,7 @@ import {
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import { EventParams } from "@/types/app";
+import { Filters, RelatedTrace } from "@/types/dashboard";
 import { useECharts } from "@/hooks/useEcharts";
 import { addResizeListener, removeResizeListener } from "@/utils/event";
 import Trace from "@/views/dashboard/related/trace/Index.vue";
@@ -74,15 +75,10 @@ const props = defineProps({
     default: () => ({}),
   },
   filters: {
-    type: Object as PropType<{
-      duration: {
-        startTime: string;
-        endTime: string;
-      };
-      isRange: boolean;
-      dataIndex?: number;
-      sourceId: string;
-    }>,
+    type: Object as PropType<Filters>,
+  },
+  relatedTrace: {
+    type: Object as PropType<RelatedTrace>,
   },
 });
 const available = computed(

@@ -1,3 +1,4 @@
+import { DurationTime } from "@/types/app";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -40,7 +41,15 @@ export interface LayoutConfig {
   associate?: { widgetId: string }[];
   eventAssociate?: boolean;
   filters?: Filters;
+  relatedTrace?: RelatedTrace;
 }
+export type RelatedTrace = {
+  duration: DurationTime;
+  status: string;
+  queryOrder: string;
+  latency: any;
+};
+
 export type Filters = {
   dataIndex: number;
   sourceId: string;
