@@ -73,6 +73,22 @@ export default [
           layer: "VIRTUAL_CACHE",
         },
       },
+      {
+        path: "/mq",
+        name: "VirtualMQ",
+        meta: {
+          title: "virtualMQ",
+          layer: "VIRTUAL_MQ",
+        },
+      },
+      {
+        path: "/mq/tab/:activeTabIndex",
+        name: "VirtualMQActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "VIRTUAL_MQ",
+        },
+      },      
     ],
   },
 ];

@@ -348,5 +348,6 @@ const msg = {
     "请输入一个内容关键词或者内容不包含的关键词(key=value)之后回车",
   language: "语言",
   gateway: "网关",
+  virtualMQ: "虚拟消息队列",
 };
 export default msg;

@@ -351,5 +351,6 @@ const msg = {
     "Aviso: Por favor presione Intro después de introducir una clave de contenido, excluir clave de contenido(clave=valor).",
   language: "Lenguaje",
   gateway: "Puerta",
+  virtualMQ: "MQ virtual",
 };
 export default msg;
