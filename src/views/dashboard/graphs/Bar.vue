@@ -18,7 +18,12 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { PropType } from "vue";
-import { BarConfig, EventParams } from "@/types/dashboard";
+import {
+  BarConfig,
+  EventParams,
+  RelatedTrace,
+  Filters,
+} from "@/types/dashboard";
 
 /*global defineProps, defineEmits */
 const emits = defineEmits(["click"]);
@@ -32,15 +37,8 @@ const props = defineProps({
   config: {
     type: Object as PropType<
       BarConfig & {
-        filters: {
-          sourceId: string;
-          duration: {
-            startTime: string;
-            endTime: string;
-          };
-          isRange: boolean;
-          dataIndex?: number;
-        };
+        filters: Filters;
+        relatedTrace: RelatedTrace;
       } & { id: string }
     >,
     default: () => ({}),
