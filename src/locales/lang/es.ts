@@ -157,6 +157,7 @@ const msg = {
   postgreSQL: "PostgreSQL",
   endpointTips: "Aquí, la tabla muestra hasta 20 punto final.",
   apisix: "APISIX",
+  queryOrder: "Orden de consulta",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

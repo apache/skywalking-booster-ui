@@ -81,15 +81,19 @@ const state = reactive<Recordable>({
   endpoint: "",
   service: "",
 });
-const items = Object.keys(filters).map((d: string) => {
-  return { key: d, value: filtersKeys[d] };
-});
-const conditions = ref(items[0].key);
+const conditions = ref<string>("");
+const items = ref<{ key: string; value: string }[]>([]);
 
 init();
 
 async function init() {
   if (!filters.id) {
+    for (const d of Object.keys(filters)) {
+      if (filters[d]) {
+        items.value.push({ key: d, value: filtersKeys[d] });
+      }
+    }
+    conditions.value = (items.value[0] && items.value[0].key) || "";
     state.service = selectorStore.currentService.id;
     if (dashboardStore.entity === EntityType[2].value) {
       state.instance = selectorStore.currentPod.id;
@@ -154,8 +158,8 @@ function setCondition() {
   };
   // echarts
   if (!filters.id) {
-    for (const k of items) {
-      if (k.key === conditions.value) {
+    for (const k of items.value) {
+      if (k.key === conditions.value && filters[k.key]) {
         params[k.value] = filters[k.key];
       }
     }

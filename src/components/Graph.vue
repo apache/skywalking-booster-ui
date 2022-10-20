@@ -167,6 +167,7 @@ function viewTrace() {
     filters: item,
   };
   showTrace.value = true;
+  visMenus.value = true;
 }
 
 watch(

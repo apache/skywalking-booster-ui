@@ -160,6 +160,7 @@ const msg = {
   viewTrace: "View related trace",
   relatedTraceOptions: "Related Trace Options",
   setLatencyDuration: "Set Latency Range",
+  queryOrder: "Query Order",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

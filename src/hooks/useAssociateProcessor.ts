@@ -18,8 +18,8 @@ import { Option } from "@/types/app";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
-import { QueryOrders } from "@/views/dashboard/data";
 import { EventParams } from "@/types/app";
+import { QueryOrders, Status } from "@/views/dashboard/data";
 
 export default function associateProcessor(props: any) {
   function eventAssociate() {
@@ -92,18 +92,13 @@ export default function associateProcessor(props: any) {
         step,
       };
     }
-    let queryOrder = QueryOrders[1].value;
-    let status = undefined;
-    let latency = undefined;
-    if (currentParams.seriesName.includes("_sla")) {
-      queryOrder = QueryOrders[0].value;
-      status = "ERROR";
-    }
-    if (currentParams.seriesName.includes("_apdex")) {
-      status = "ERROR";
-    }
-    if (props.option.series) {
-      latency = props.option.series.map(
+    const relatedTrace = props.relatedTrace || {};
+    const status = relatedTrace.status;
+    const queryOrder = relatedTrace.queryOrder;
+    const { latency } = relatedTrace;
+    let latencyList = undefined;
+    if (latency && props.option.series) {
+      latencyList = props.option.series.map(
         (d: { name: string; data: number[][] }) => {
           return { [d.name]: d.data[currentParams.dataIndex] };
         }
@@ -113,7 +108,7 @@ export default function associateProcessor(props: any) {
       duration,
       queryOrder,
       status,
-      latency,
+      latency: latencyList,
     };
     return item;
   }

@@ -65,7 +65,11 @@ limitations under the License. -->
         >
           <AssociateOptions />
         </el-collapse-item>
-        <el-collapse-item :title="t('relatedTraceOptions')" name="5">
+        <el-collapse-item
+          :title="t('relatedTraceOptions')"
+          name="5"
+          v-if="hasAssociate"
+        >
           <RelatedTraceOptions />
         </el-collapse-item>
       </el-collapse>
