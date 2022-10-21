@@ -95,12 +95,27 @@ export default function associateProcessor(props: any) {
     const relatedTrace = props.relatedTrace || {};
     const status = relatedTrace.status;
     const queryOrder = relatedTrace.queryOrder;
-    const { latency } = relatedTrace;
+    const latency = relatedTrace.latency;
     let latencyList = undefined;
-    if (latency && props.option.series) {
-      latencyList = props.option.series.map(
-        (d: { name: string; data: number[][] }) => {
-          return { [d.name]: d.data[currentParams.dataIndex] };
+    const series = props.option.series;
+    // console.log(series);
+    if (latency && series) {
+      latencyList = series.map(
+        (d: { name: string; data: number[][] }, index: number) => {
+          const data = [
+            d.data[currentParams.dataIndex][1],
+            series[index + 1]
+              ? series[index + 1].data[currentParams.dataIndex][1]
+              : Infinity,
+          ];
+          return {
+            label:
+              d.name +
+              "--" +
+              (series[index + 1] ? series[index + 1].name : "Infinity"),
+            value: String(index),
+            data,
+          };
         }
       );
     }

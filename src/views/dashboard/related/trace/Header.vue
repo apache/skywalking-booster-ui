@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="conditions" v-if="!filters.id">
+  <div class="conditions flex-h" v-if="!filters.id">
     <el-radio-group v-model="conditions" @change="changeCondition">
       <el-radio-button
         v-for="(item, index) in items"
@@ -24,6 +24,14 @@ limitations under the License. -->
         {{ item.key }}
       </el-radio-button>
     </el-radio-group>
+    <Selector
+      v-if="conditions === 'latency'"
+      :value="filters.latency[0].value"
+      :options="filters.latency"
+      placeholder="Select a option"
+      @change="changeLatency"
+      class="ml-10"
+    />
   </div>
   <div class="flex-h">
     <ConditionTags :type="'TRACE'" @update="updateTags" />
@@ -83,10 +91,14 @@ const state = reactive<Recordable>({
 });
 const conditions = ref<string>("");
 const items = ref<{ key: string; value: string }[]>([]);
+const currentLatency = ref<number[]>(
+  filters.latency ? filters.latency[0].data : []
+);
 
 init();
 
 async function init() {
+  // console.log(filters);
   if (!filters.id) {
     for (const d of Object.keys(filters)) {
       if (filters[d] && d !== "duration") {
@@ -116,9 +128,18 @@ async function init() {
   }
   await queryTraces();
 }
-async function changeCondition() {
+function changeCondition() {
+  if (conditions.value === "latency") {
+    currentLatency.value = filters.latency ? filters.latency[0].data : [];
+  }
   queryTraces();
 }
+
+function changeLatency(options: any[]) {
+  currentLatency.value = options[0].data;
+  queryTraces();
+}
+
 async function getService() {
   const resp = await traceStore.getService(filters.id);
   if (resp.errors) {
@@ -148,8 +169,12 @@ function setCondition() {
     traceState: Status[0].value,
     queryOrder: QueryOrders[0].value,
     queryDuration: appStore.durationTime,
-    minTraceDuration: undefined,
-    maxTraceDuration: undefined,
+    minTraceDuration: isNaN(currentLatency.value[0])
+      ? undefined
+      : currentLatency.value[0],
+    maxTraceDuration: isNaN(currentLatency.value[1])
+      ? undefined
+      : currentLatency.value[0],
     tags: tagsMap.value.length ? tagsMap.value : undefined,
     paging: { pageNum: 1, pageSize: 20 },
     serviceId: state.service || undefined,
@@ -159,7 +184,7 @@ function setCondition() {
   // echarts
   if (!filters.id) {
     for (const k of items.value) {
-      if (k.key === conditions.value && filters[k.key]) {
+      if (k.key === conditions.value && FiltersKeys[k.key]) {
         params[k.value] = filters[k.key];
       }
     }
@@ -189,7 +214,7 @@ onUnmounted(() => {
 
 .search-btn {
   cursor: pointer;
-  width: 120px;
+  width: 80px;
   position: absolute;
   top: 0;
   right: 10px;
