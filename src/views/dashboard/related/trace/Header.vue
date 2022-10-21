@@ -35,16 +35,11 @@ limitations under the License. -->
   </div>
   <div class="flex-h">
     <ConditionTags :type="'TRACE'" @update="updateTags" />
-  </div>
-  <div class="mr-10">
-    <el-button
-      size="small"
-      type="primary"
-      @click="queryTraces"
-      class="search-btn"
-    >
-      {{ t("search") }}
-    </el-button>
+    <div class="search-btn">
+      <el-button size="small" type="primary" @click="queryTraces">
+        {{ t("search") }}
+      </el-button>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -212,15 +207,11 @@ onUnmounted(() => {
   position: relative;
 }
 
-.search-btn {
-  cursor: pointer;
-  width: 80px;
-  position: absolute;
-  top: 0;
-  right: 10px;
-}
-
 .conditions {
   margin-bottom: 10px;
+}
+
+.search-btn {
+  margin-top: 2px;
 }
 </style>
