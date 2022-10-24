@@ -356,5 +356,6 @@ const msg = {
     "Notice: Please press Enter after inputting a key of content, exclude key of content(key=value).",
   language: "Language",
   gateway: "Gateway",
+  virtualMQ: "Virtual MQ"
 };
 export default msg;
