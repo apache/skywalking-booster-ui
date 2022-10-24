@@ -47,7 +47,8 @@ export type RelatedTrace = {
   duration: DurationTime;
   status: string;
   queryOrder: string;
-  latency: any;
+  latency: boolean;
+  enableRelate: boolean;
 };
 
 export type Filters = {

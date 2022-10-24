@@ -163,6 +163,7 @@ const msg = {
   queryOrder: "Query Order",
   latency: "Latency",
   metricValues: "Metric Values",
+  enableRelatedTrace: "Enable Related Trace",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

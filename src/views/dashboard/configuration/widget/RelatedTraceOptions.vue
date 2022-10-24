@@ -14,33 +14,44 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="item">
-    <span class="label">{{ t("status") }}</span>
-    <Selector
-      size="small"
-      :value="status"
-      :options="Status"
-      placeholder="Select a status"
-      @change="updateConfig({ status: $event[0].value })"
-    />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("queryOrder") }}</span>
-    <Selector
-      size="small"
-      :value="queryOrder"
-      :options="QueryOrders"
-      placeholder="Select a option"
-      @change="updateConfig({ queryOrder: $event[0].value })"
-    />
-  </div>
-  <div class="item">
-    <span class="label">{{ t("setLatencyDuration") }}</span>
+    <span class="label">{{ t("enableRelatedTrace") }}</span>
     <el-switch
-      v-model="latency"
+      v-model="enableRelate"
       active-text="Yes"
       inactive-text="No"
-      @change="updateConfig({ latency })"
+      @change="updateConfig({ enableRelate })"
     />
+  </div>
+  <div v-show="enableRelate">
+    <div class="item">
+      <span class="label">{{ t("status") }}</span>
+      <Selector
+        size="small"
+        :value="status"
+        :options="Status"
+        placeholder="Select a status"
+        @change="updateConfig({ status: $event[0].value })"
+      />
+    </div>
+    <div class="item">
+      <span class="label">{{ t("queryOrder") }}</span>
+      <Selector
+        size="small"
+        :value="queryOrder"
+        :options="QueryOrders"
+        placeholder="Select a option"
+        @change="updateConfig({ queryOrder: $event[0].value })"
+      />
+    </div>
+    <div class="item">
+      <span class="label">{{ t("setLatencyDuration") }}</span>
+      <el-switch
+        v-model="latency"
+        active-text="Yes"
+        inactive-text="No"
+        @change="updateConfig({ latency })"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -55,6 +66,7 @@ const traceOpt = dashboardStore.selectedGrid.relatedTrace || {};
 const status = ref<string>(traceOpt.status || Status[0].value);
 const queryOrder = ref<string>(traceOpt.queryOrder || QueryOrders[0].value);
 const latency = ref<boolean>(traceOpt.setLatencyDuration || false);
+const enableRelate = ref<boolean>(traceOpt.enableRelate || false);
 
 function updateConfig(param: { [key: string]: unknown }) {
   const relatedTrace = {

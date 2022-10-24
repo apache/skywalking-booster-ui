@@ -160,6 +160,7 @@ const msg = {
   queryOrder: "查询顺序",
   latency: "延迟",
   metricValues: "指标值",
+  enableRelatedTrace: "启用相关Trace",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",

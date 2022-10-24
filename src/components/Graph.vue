@@ -19,7 +19,11 @@ limitations under the License. -->
       <div class="tools" @click="associateMetrics">
         {{ t("associateMetrics") }}
       </div>
-      <div class="tools" @click="viewTrace">
+      <div
+        class="tools"
+        @click="viewTrace"
+        v-if="props.relatedTrace && props.relatedTrace.enableRelate"
+      >
         {{ t("viewTrace") }}
       </div>
     </div>
