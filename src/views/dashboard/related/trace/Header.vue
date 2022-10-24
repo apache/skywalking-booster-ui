@@ -200,7 +200,7 @@ function setCondition() {
         params[k.value] = filters[k.label];
       }
     }
-    if (isNaN(params.minTraceDuration)) {
+    if (!isNaN(params.minTraceDuration)) {
       params.queryOrder = QueryOrders[1].value;
     }
   }
