@@ -236,7 +236,8 @@ onUnmounted(() => {
 }
 
 .metric-value {
-  padding: 10px 5px;
+  padding: 0 5px;
+  line-height: 32px;
 }
 
 .title {
