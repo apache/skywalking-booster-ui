@@ -159,6 +159,7 @@ const msg = {
   apisix: "APISIX",
   queryOrder: "Orden de consulta",
   latency: "Retraso",
+  metricValues: "Valor métrico",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

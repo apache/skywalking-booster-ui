@@ -25,13 +25,26 @@ limitations under the License. -->
       </el-radio-button>
     </el-radio-group>
     <Selector
-      v-if="conditions === 'latency'"
+      v-if="conditions === 'latency' && filters.latency.length > 1"
       :value="filters.latency[0].value"
       :options="filters.latency"
       placeholder="Select a option"
       @change="changeLatency"
       class="ml-10"
     />
+    <el-popover trigger="hover" width="250" placement="bottom" effect="light">
+      <template #reference>
+        <div class="cp metric-value">
+          <Icon iconName="info_outline" size="middle" />
+        </div>
+      </template>
+      <div>
+        <div class="bt-10">{{ t("metricValues") }}</div>
+        <div v-for="metric in filters.metricValue" :key="metric.value">
+          {{ metric.label }}: {{ metric.data }}
+        </div>
+      </div>
+    </el-popover>
   </div>
   <div class="flex-h">
     <ConditionTags :type="'TRACE'" @update="updateTags" />
@@ -94,10 +107,10 @@ const currentLatency = ref<number[]>(
 init();
 
 async function init() {
-  // console.log(filters);
+  console.log(filters);
   if (!filters.id) {
     for (const d of Object.keys(filters)) {
-      if (filters[d] && d !== "duration") {
+      if (filters[d] && !["metricValue", "duration"].includes(d)) {
         items.value.push({ label: d, value: FiltersKeys[d] });
       }
     }
@@ -218,5 +231,9 @@ onUnmounted(() => {
 
 .search-btn {
   margin-top: 2px;
+}
+
+.metric-value {
+  padding: 10px 5px;
 }
 </style>

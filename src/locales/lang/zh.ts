@@ -159,6 +159,7 @@ const msg = {
   setLatencyDuration: "设置延时范围",
   queryOrder: "查询顺序",
   latency: "延迟",
+  metricValues: "指标值",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",

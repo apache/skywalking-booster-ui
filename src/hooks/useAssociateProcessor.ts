@@ -1,4 +1,3 @@
-import { Option } from "@/types/app";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -96,11 +95,14 @@ export default function associateProcessor(props: any) {
     const status = relatedTrace.status;
     const queryOrder = relatedTrace.queryOrder;
     const latency = relatedTrace.latency;
-    let latencyList = undefined;
-    const series = props.option.series;
-    // console.log(series);
-    if (latency && series) {
-      latencyList = series.map(
+    const series = props.option.series || [];
+    const item: any = {
+      duration,
+      queryOrder,
+      status,
+    };
+    if (latency) {
+      const latencyList = series.map(
         (d: { name: string; data: number[][] }, index: number) => {
           const data = [
             d.data[currentParams.dataIndex][1],
@@ -118,13 +120,18 @@ export default function associateProcessor(props: any) {
           };
         }
       );
+      item.latency = latencyList;
     }
-    const item = {
-      duration,
-      queryOrder,
-      status,
-      latency: latencyList,
-    };
+    const value = series.map(
+      (d: { name: string; data: number[][] }, index: number) => {
+        return {
+          label: d.name,
+          value: String(index),
+          data: d.data[currentParams.dataIndex][1],
+        };
+      }
+    );
+    item.metricValue = value;
     return item;
   }
   return { eventAssociate, traceFilters };

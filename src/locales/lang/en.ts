@@ -162,6 +162,7 @@ const msg = {
   setLatencyDuration: "Set Latency Range",
   queryOrder: "Query Order",
   latency: "Latency",
+  metricValues: "Metric Values",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
