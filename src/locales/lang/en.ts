@@ -157,7 +157,7 @@ const msg = {
   postgreSQL: "PostgreSQL",
   endpointTips: "The table shows up to 20 pieces of endpoints.",
   apisix: "APISIX",
-  viewTrace: "View related trace",
+  viewTrace: "View Related Traces",
   relatedTraceOptions: "Related Trace Options",
   setLatencyDuration: "Set Latency Range",
   queryOrder: "Query Order",
@@ -356,6 +356,6 @@ const msg = {
     "Notice: Please press Enter after inputting a key of content, exclude key of content(key=value).",
   language: "Language",
   gateway: "Gateway",
-  virtualMQ: "Virtual MQ"
+  virtualMQ: "Virtual MQ",
 };
 export default msg;

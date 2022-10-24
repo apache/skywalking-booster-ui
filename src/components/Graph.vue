@@ -122,9 +122,6 @@ function instanceEvent() {
         }
         visMenus.value = false;
         instance.dispatchAction({
-          type: "hideTip",
-        });
-        instance.dispatchAction({
           type: "updateAxisPointer",
           currTrigger: "leave",
         });
@@ -137,6 +134,7 @@ function instanceEvent() {
 function associateMetrics() {
   emits("select", currentParams.value);
   visMenus.value = true;
+  updateOptions();
 }
 
 function updateOptions() {
@@ -153,7 +151,7 @@ function updateOptions() {
     setOptions(options || props.option);
   } else {
     instance.dispatchAction({
-      type: "showTip",
+      type: "updateAxisPointer",
       dataIndex: props.filters.dataIndex,
       seriesIndex: 0,
     });

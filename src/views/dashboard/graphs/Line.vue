@@ -118,13 +118,17 @@ function getOption() {
       break;
   }
   const tooltip = {
-    trigger: "axis",
-    textStyle: {
-      fontSize: 12,
-      color: "#333",
+    trigger: "none",
+    axisPointer: {
+      type: "cross",
     },
-    enterable: true,
-    confine: true,
+    // trigger: "axis",
+    // textStyle: {
+    //   fontSize: 12,
+    //   color: "#333",
+    // },
+    // enterable: true,
+    // confine: true,
     extraCssText: "max-height: 300px; overflow: auto; border: none;",
   };
   const tips = {
@@ -152,6 +156,11 @@ function getOption() {
       itemWidth: 12,
       textStyle: {
         color: props.theme === "dark" ? "#fff" : "#333",
+      },
+    },
+    axisPointer: {
+      label: {
+        backgroundColor: "#777",
       },
     },
     grid: {
