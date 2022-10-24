@@ -145,7 +145,6 @@ function changeCondition() {
 
 function changeLatency(options: any[]) {
   currentLatency.value = options[0].data;
-  console.log(options);
   queryTraces();
 }
 
