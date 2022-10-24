@@ -105,16 +105,12 @@ function getOption() {
   return {
     color,
     tooltip: {
-      trigger: "axis",
-      zlevel: 1000,
-      z: 60,
-      confine: true,
-      textStyle: {
-        fontSize: 13,
+      trigger: "none",
+      axisPointer: {
+        type: "cross",
         color: "#333",
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
       },
-      enterable: true,
-      extraCssText: "max-height: 300px; overflow: auto; border: none",
     },
     legend: {
       type: "scroll",
@@ -133,6 +129,12 @@ function getOption() {
       right: 10,
       bottom: 5,
       containLabel: true,
+    },
+    axisPointer: {
+      label: {
+        color: "#333",
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
+      },
     },
     xAxis: {
       type: "category",

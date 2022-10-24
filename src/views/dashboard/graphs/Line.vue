@@ -121,6 +121,8 @@ function getOption() {
     trigger: "none",
     axisPointer: {
       type: "cross",
+      color: "#333",
+      backgroundColor: "rgba(255, 255, 255, 0.8)",
     },
     // trigger: "axis",
     // textStyle: {
@@ -160,7 +162,8 @@ function getOption() {
     },
     axisPointer: {
       label: {
-        backgroundColor: "#777",
+        color: "#333",
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
       },
     },
     grid: {
