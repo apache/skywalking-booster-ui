@@ -107,12 +107,17 @@ function instanceEvent() {
     }
     instance.on("click", (params: EventParams) => {
       currentParams.value = params;
-      if (!menus.value) {
+      if (!menus.value || !chartRef.value) {
         return;
       }
       visMenus.value = true;
-      menus.value.style.left = params.event.offsetX + "px";
-      menus.value.style.top = params.event.offsetY + "px";
+      const w = chartRef.value.getBoundingClientRect().width || 0;
+      if (w - params.event.offsetX > 125) {
+        menus.value.style.left = params.event.offsetX + "px";
+      } else {
+        menus.value.style.left = params.event.offsetX - 125 + "px";
+      }
+      menus.value.style.top = params.event.offsetY + 5 + "px";
     });
     document.addEventListener(
       "click",
