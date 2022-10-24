@@ -17,11 +17,11 @@ limitations under the License. -->
     <el-radio-group v-model="conditions" @change="changeCondition">
       <el-radio-button
         v-for="(item, index) in items"
-        :label="item.key"
-        :key="item.key + index"
+        :label="item.label"
+        :key="item.label + index"
         border
       >
-        {{ item.key }}
+        {{ t(item.label) }}
       </el-radio-button>
     </el-radio-group>
     <Selector
@@ -46,7 +46,7 @@ limitations under the License. -->
 import { ref, reactive, onUnmounted } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import { Option } from "@/types/app";
+import { Option, DurationTime } from "@/types/app";
 import { useTraceStore } from "@/store/modules/trace";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -79,13 +79,14 @@ const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
+const duration = ref<DurationTime>(filters.duration || appStore.durationTime);
 const state = reactive<Recordable>({
   instance: "",
   endpoint: "",
   service: "",
 });
 const conditions = ref<string>("");
-const items = ref<{ key: string; value: string }[]>([]);
+const items = ref<{ label: string; value: string }[]>([]);
 const currentLatency = ref<number[]>(
   filters.latency ? filters.latency[0].data : []
 );
@@ -97,10 +98,10 @@ async function init() {
   if (!filters.id) {
     for (const d of Object.keys(filters)) {
       if (filters[d] && d !== "duration") {
-        items.value.push({ key: d, value: FiltersKeys[d] });
+        items.value.push({ label: d, value: FiltersKeys[d] });
       }
     }
-    conditions.value = (items.value[0] && items.value[0].key) || "";
+    conditions.value = (items.value[0] && items.value[0].label) || "";
     state.service = selectorStore.currentService.id;
     if (dashboardStore.entity === EntityType[2].value) {
       state.instance = selectorStore.currentPod.id;
@@ -132,6 +133,7 @@ function changeCondition() {
 
 function changeLatency(options: any[]) {
   currentLatency.value = options[0].data;
+  console.log(options);
   queryTraces();
 }
 
@@ -163,13 +165,16 @@ function setCondition() {
   let params: any = {
     traceState: Status[0].value,
     queryOrder: QueryOrders[0].value,
-    queryDuration: appStore.durationTime,
+    queryDuration: duration.value,
     minTraceDuration: isNaN(currentLatency.value[0])
       ? undefined
+      : currentLatency.value[0] === currentLatency.value[1]
+      ? currentLatency.value[0] - 10
       : currentLatency.value[0],
-    maxTraceDuration: isNaN(currentLatency.value[1])
-      ? undefined
-      : currentLatency.value[0],
+    maxTraceDuration:
+      isNaN(currentLatency.value[1]) || currentLatency.value[1] === Infinity
+        ? undefined
+        : currentLatency.value[1],
     tags: tagsMap.value.length ? tagsMap.value : undefined,
     paging: { pageNum: 1, pageSize: 20 },
     serviceId: state.service || undefined,
@@ -179,8 +184,8 @@ function setCondition() {
   // echarts
   if (!filters.id) {
     for (const k of items.value) {
-      if (k.key === conditions.value && FiltersKeys[k.key]) {
-        params[k.value] = filters[k.key];
+      if (k.label === conditions.value && FiltersKeys[k.label]) {
+        params[k.value] = filters[k.label];
       }
     }
   }

@@ -158,6 +158,7 @@ const msg = {
   endpointTips: "Aquí, la tabla muestra hasta 20 punto final.",
   apisix: "APISIX",
   queryOrder: "Orden de consulta",
+  latency: "Retraso",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

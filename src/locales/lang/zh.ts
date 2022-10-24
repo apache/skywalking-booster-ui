@@ -158,6 +158,7 @@ const msg = {
   relatedTraceOptions: "相关的Trace选项",
   setLatencyDuration: "设置延时范围",
   queryOrder: "查询顺序",
+  latency: "延迟",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",

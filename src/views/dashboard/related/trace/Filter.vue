@@ -302,14 +302,6 @@ watch(
     }
     traceId.value = props.data.filters.traceId || "";
     duration.value = props.data.filters.duration || appStore.durationTime;
-    // if (props.data.filters.queryOrder) {
-    //   traceStore.setTraceCondition({
-    //     queryOrder: props.data.filters.queryOrder,
-    //   });
-    // }
-    // if (props.data.filters.status) {
-    //   state.status = filters.status === "ERROR" ? Status[2] : Status[0];
-    // }
     init();
   }
 );

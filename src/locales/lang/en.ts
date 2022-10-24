@@ -161,6 +161,7 @@ const msg = {
   relatedTraceOptions: "Related Trace Options",
   setLatencyDuration: "Set Latency Range",
   queryOrder: "Query Order",
+  latency: "Latency",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
