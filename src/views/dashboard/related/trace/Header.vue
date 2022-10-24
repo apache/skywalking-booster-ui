@@ -39,7 +39,7 @@ limitations under the License. -->
         </div>
       </template>
       <div>
-        <div class="bt-10">{{ t("metricValues") }}</div>
+        <div class="title">{{ t("metricValues") }}</div>
         <div v-for="metric in filters.metricValue" :key="metric.value">
           {{ metric.label }}: {{ metric.data }}
         </div>
@@ -107,7 +107,6 @@ const currentLatency = ref<number[]>(
 init();
 
 async function init() {
-  console.log(filters);
   if (!filters.id) {
     for (const d of Object.keys(filters)) {
       if (filters[d] && !["metricValue", "duration"].includes(d)) {
@@ -201,6 +200,9 @@ function setCondition() {
         params[k.value] = filters[k.label];
       }
     }
+    if (isNaN(params.minTraceDuration)) {
+      params.queryOrder = QueryOrders[1].value;
+    }
   }
   return params;
 }
@@ -235,5 +237,10 @@ onUnmounted(() => {
 
 .metric-value {
   padding: 10px 5px;
+}
+
+.title {
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 </style>

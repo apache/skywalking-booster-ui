@@ -18,7 +18,6 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 import { EventParams } from "@/types/app";
-import { QueryOrders, Status } from "@/views/dashboard/data";
 
 export default function associateProcessor(props: any) {
   function eventAssociate() {
