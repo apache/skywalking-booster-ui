@@ -234,7 +234,6 @@ onBeforeUnmount(() => {
   padding: 5px;
   color: #999;
   cursor: pointer;
-  text-align: center;
 
   &:hover {
     color: #409eff;
