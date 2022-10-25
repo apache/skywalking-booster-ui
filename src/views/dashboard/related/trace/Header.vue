@@ -34,6 +34,25 @@ limitations under the License. -->
     />
     <el-popover trigger="hover" width="250" placement="bottom" effect="light">
       <template #reference>
+        <div class="cp conditions-popup">
+          <Icon iconName="conditions" size="middle" />
+        </div>
+      </template>
+      <div>
+        <div class="title">{{ t("queryConditions") }}</div>
+        <div
+          v-for="key in Object.keys(FiltersKeys)"
+          :key="key"
+          v-show="traceStore.conditions[FiltersKeys[key]]"
+        >
+          <span v-if="key !== 'duration'">
+            {{ t(key) }}: {{ traceStore.conditions[FiltersKeys[key]] }}
+          </span>
+        </div>
+      </div>
+    </el-popover>
+    <el-popover trigger="hover" width="250" placement="bottom" effect="light">
+      <template #reference>
         <div class="cp metric-value">
           <Icon iconName="info_outline" size="middle" />
         </div>
@@ -236,6 +255,11 @@ onUnmounted(() => {
 
 .metric-value {
   padding: 0 5px;
+  line-height: 32px;
+}
+
+.conditions-popup {
+  padding-left: 10px;
   line-height: 32px;
 }
 

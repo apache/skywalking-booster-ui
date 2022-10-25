@@ -127,6 +127,7 @@ export default function associateProcessor(props: any) {
           label: d.name,
           value: String(index),
           data: d.data[currentParams.dataIndex][1],
+          date: d.data[currentParams.dataIndex][0],
         };
       }
     );
