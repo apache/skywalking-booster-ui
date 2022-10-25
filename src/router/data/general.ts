@@ -88,7 +88,7 @@ export default [
           notShow: true,
           layer: "VIRTUAL_MQ",
         },
-      },      
+      },
     ],
   },
 ];
