@@ -31,6 +31,7 @@ limitations under the License. -->
         :options="Status"
         placeholder="Select a status"
         @change="updateConfig({ status: $event[0].value })"
+        class="selector"
       />
     </div>
     <div class="item">
@@ -40,6 +41,7 @@ limitations under the License. -->
         :value="queryOrder"
         :options="QueryOrders"
         placeholder="Select a option"
+        class="selector"
         @change="updateConfig({ queryOrder: $event[0].value })"
       />
     </div>
@@ -86,5 +88,9 @@ function updateConfig(param: { [key: string]: unknown }) {
 
 .item {
   margin-bottom: 10px;
+}
+
+.selector {
+  width: 500px;
 }
 </style>

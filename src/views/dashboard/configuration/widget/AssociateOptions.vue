@@ -23,6 +23,7 @@ limitations under the License. -->
       placeholder="Select a widget"
       class="selectors"
       @change="updateWidgetConfig"
+      :filterable="false"
     />
   </div>
 </template>
