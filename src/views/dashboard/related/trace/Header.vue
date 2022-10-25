@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="conditions flex-h" v-if="!filters.id">
+  <div class="conditions flex-h">
     <el-radio-group v-model="conditions" @change="changeCondition">
       <el-radio-button
         v-for="(item, index) in items"
@@ -126,13 +126,13 @@ const currentLatency = ref<number[]>(
 init();
 
 async function init() {
-  if (!filters.id) {
-    for (const d of Object.keys(filters)) {
-      if (filters[d] && !["metricValue", "duration"].includes(d)) {
-        items.value.push({ label: d, value: FiltersKeys[d] });
-      }
+  for (const d of Object.keys(filters)) {
+    if (filters[d] && ["status", "queryOrder", "latency"].includes(d)) {
+      items.value.push({ label: d, value: FiltersKeys[d] });
     }
-    conditions.value = (items.value[0] && items.value[0].label) || "";
+  }
+  conditions.value = (items.value[0] && items.value[0].label) || "";
+  if (!filters.id) {
     state.service = selectorStore.currentService.id;
     if (dashboardStore.entity === EntityType[2].value) {
       state.instance = selectorStore.currentPod.id;
@@ -211,16 +211,13 @@ function setCondition() {
     endpointId: state.endpoint || undefined,
     serviceInstanceId: state.instance || undefined,
   };
-  // echarts
-  if (!filters.id) {
-    for (const k of items.value) {
-      if (k.label === conditions.value && FiltersKeys[k.label]) {
-        params[k.value] = filters[k.label];
-      }
+  for (const k of items.value) {
+    if (k.label === conditions.value && FiltersKeys[k.label]) {
+      params[k.value] = filters[k.label];
     }
-    if (!isNaN(params.minTraceDuration)) {
-      params.queryOrder = QueryOrders[1].value;
-    }
+  }
+  if (!isNaN(params.minTraceDuration)) {
+    params.queryOrder = QueryOrders[1].value;
   }
   return params;
 }

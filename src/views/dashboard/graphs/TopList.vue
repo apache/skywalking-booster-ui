@@ -63,6 +63,7 @@ import { computed, ref } from "vue";
 import copy from "@/utils/copy";
 import { TextColors } from "@/views/dashboard/data";
 import Trace from "@/views/dashboard/related/trace/Index.vue";
+import { QueryOrders, Status } from "../data";
 /*global defineProps */
 const props = defineProps({
   data: {
@@ -72,7 +73,7 @@ const props = defineProps({
     default: () => ({}),
   },
   config: {
-    type: Object as PropType<{ color: string }>,
+    type: Object as PropType<{ color: string; metrics: string[] }>,
     default: () => ({ color: "purple" }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
@@ -99,10 +100,18 @@ const maxValue = computed(() => {
 function handleClick(i: string) {
   copy(i);
 }
-function viewTrace(item: { name: string; id: string }) {
+function viewTrace(item: { name: string; id: string; value: unknown }) {
+  const filters = {
+    ...item,
+    queryOrder: QueryOrders[1].value,
+    status: Status[2].value,
+    metricValue: [
+      { label: props.config.metrics[0], data: item.value, value: item.name },
+    ],
+  };
   traceOptions.value = {
     ...traceOptions.value,
-    filters: item,
+    filters,
   };
   showTrace.value = true;
 }
