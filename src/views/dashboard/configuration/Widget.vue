@@ -101,7 +101,7 @@ export default defineComponent({
     ...CustomOptions,
   },
   setup() {
-    const configHeight = document.documentElement.clientHeight - 520;
+    const configHeight = document.documentElement.clientHeight - 540;
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     const appStoreWithOut = useAppStoreWithOut();
