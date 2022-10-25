@@ -22,6 +22,7 @@ import graphql from "@/graphql";
 import { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
+import { QueryOrders } from "@/views/dashboard/data";
 
 interface TraceState {
   services: Service[];
@@ -47,7 +48,7 @@ export const traceStore = defineStore({
     conditions: {
       queryDuration: useAppStoreWithOut().durationTime,
       traceState: "ALL",
-      queryOrder: "BY_START_TIME",
+      queryOrder: QueryOrders[0].value,
       paging: { pageNum: 1, pageSize: 20 },
     },
     traceSpanLogs: [],
@@ -71,7 +72,7 @@ export const traceStore = defineStore({
         queryDuration: useAppStoreWithOut().durationTime,
         paging: { pageNum: 1, pageSize: 20 },
         traceState: "ALL",
-        queryOrder: "BY_START_TIME",
+        queryOrder: QueryOrders[0].value,
       };
     },
     async getServices(layer: string) {
@@ -82,6 +83,36 @@ export const traceStore = defineStore({
         return res.data;
       }
       this.services = res.data.data.services;
+      return res.data;
+    },
+    async getService(serviceId: string) {
+      if (!serviceId) {
+        return;
+      }
+      const res: AxiosResponse = await graphql.query("queryService").params({
+        serviceId,
+      });
+
+      return res.data;
+    },
+    async getInstance(instanceId: string) {
+      if (!instanceId) {
+        return;
+      }
+      const res: AxiosResponse = await graphql.query("queryInstance").params({
+        instanceId,
+      });
+
+      return res.data;
+    },
+    async getEndpoint(endpointId: string) {
+      if (!endpointId) {
+        return;
+      }
+      const res: AxiosResponse = await graphql.query("queryEndpoint").params({
+        endpointId,
+      });
+
       return res.data;
     },
     async getInstances(id: string) {

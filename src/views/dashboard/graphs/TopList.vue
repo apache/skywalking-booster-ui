@@ -23,14 +23,19 @@ limitations under the License. -->
             {{ i.name }}
           </span>
         </div>
-        <div class="copy">
-          <Icon
-            iconName="review-list"
-            size="middle"
-            class="cp"
-            @click="handleClick(i.name)"
-          />
-        </div>
+        <el-popover placement="bottom" trigger="click">
+          <template #reference>
+            <div class="operation-icon cp ml-10">
+              <Icon iconName="ellipsis_v" size="middle" />
+            </div>
+          </template>
+          <div class="operation" @click="handleClick(i.name)">
+            <span>{{ t("copy") }}</span>
+          </div>
+          <div class="operation" @click="viewTrace(i)">
+            <span>{{ t("viewTrace") }}</span>
+          </div>
+        </el-popover>
       </div>
       <el-progress
         :stroke-width="6"
@@ -39,27 +44,44 @@ limitations under the License. -->
         :show-text="false"
       />
     </div>
+    <el-drawer
+      v-model="showTrace"
+      size="100%"
+      :destroy-on-close="true"
+      :before-close="() => (showTrace = false)"
+      :append-to-body="true"
+    >
+      <Trace :data="traceOptions" />
+    </el-drawer>
   </div>
   <div class="center no-data" v-else>No Data</div>
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { computed, ref } from "vue";
 import copy from "@/utils/copy";
 import { TextColors } from "@/views/dashboard/data";
+import Trace from "@/views/dashboard/related/trace/Index.vue";
+import { QueryOrders, Status } from "../data";
 /*global defineProps */
 const props = defineProps({
   data: {
     type: Object as PropType<{
-      [key: string]: { name: string; value: number; traceIds: string[] }[];
+      [key: string]: { name: string; value: number; id: string }[];
     }>,
     default: () => ({}),
   },
   config: {
-    type: Object as PropType<{ color: string }>,
+    type: Object as PropType<{ color: string; metrics: string[] }>,
     default: () => ({ color: "purple" }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+});
+const { t } = useI18n();
+const showTrace = ref<boolean>(false);
+const traceOptions = ref<{ type: string; filters?: unknown }>({
+  type: "Trace",
 });
 const key = computed(() => Object.keys(props.data)[0] || "");
 const available = computed(
@@ -77,6 +99,21 @@ const maxValue = computed(() => {
 });
 function handleClick(i: string) {
   copy(i);
+}
+function viewTrace(item: { name: string; id: string; value: unknown }) {
+  const filters = {
+    ...item,
+    queryOrder: QueryOrders[1].value,
+    status: Status[2].value,
+    metricValue: [
+      { label: props.config.metrics[0], data: item.value, value: item.name },
+    ],
+  };
+  traceOptions.value = {
+    ...traceOptions.value,
+    filters,
+  };
+  showTrace.value = true;
 }
 </script>
 <style lang="scss" scoped>
@@ -109,10 +146,6 @@ function handleClick(i: string) {
   text-overflow: ellipsis;
 }
 
-.copy {
-  width: 30px;
-}
-
 .calls {
   font-size: 12px;
   padding: 0 5px;
@@ -140,5 +173,23 @@ function handleClick(i: string) {
   -webkit-box-orient: horizontal;
   -webkit-box-pack: center;
   -webkit-box-align: center;
+}
+
+.operation-icon {
+  color: #333;
+}
+
+.operation {
+  padding: 5px 0;
+  color: #333;
+  cursor: pointer;
+  position: relative;
+  text-align: center;
+  font-size: 12px;
+
+  &:hover {
+    color: #409eff;
+    background-color: #eee;
+  }
 }
 </style>

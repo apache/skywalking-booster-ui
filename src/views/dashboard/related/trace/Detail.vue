@@ -34,7 +34,7 @@ limitations under the License. -->
           </el-button>
         </div>
       </h5>
-      <div class="mb-5 blue sm">
+      <div class="mb-5 blue">
         <Selector
           size="small"
           :value="
@@ -46,12 +46,7 @@ limitations under the License. -->
           @change="changeTraceId"
           class="trace-detail-ids"
         />
-        <Icon
-          size="sm"
-          class="icon grey link-hover cp ml-5"
-          iconName="review-list"
-          @click="handleClick"
-        />
+        <Icon class="cp ml-5" iconName="copy" @click="handleClick" />
       </div>
       <div class="flex-h item">
         <div>

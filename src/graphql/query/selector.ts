@@ -32,6 +32,6 @@ export const queryInstances = `query queryInstances(${Instances.variable}) {${In
 export const queryLayers = `query listLayer {${Layers.query}}`;
 export const queryService = `query queryService(${getService.variable}) {${getService.query}}`;
 export const queryInstance = `query queryInstance(${getInstance.variable}) {${getInstance.query}}`;
-export const queryEndpoint = `query queryInstance(${getEndpoint.variable}) {${getEndpoint.query}}`;
+export const queryEndpoint = `query queryEndpoint(${getEndpoint.variable}) {${getEndpoint.query}}`;
 export const queryProcesses = `query queryProcesses(${Processes.variable}) {${Processes.query}}`;
 export const queryProcess = `query queryProcess(${getProcess.variable}) {${getProcess.query}}`;

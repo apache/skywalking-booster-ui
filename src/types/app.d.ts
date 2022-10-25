@@ -32,3 +32,18 @@ export type Paging = {
   pageNum: number;
   pageSize: number;
 };
+
+export type EventParams = {
+  componentType: string;
+  seriesType: string;
+  seriesIndex: number;
+  seriesName: string;
+  name: string;
+  dataIndex: number;
+  data: unknown;
+  dataType: string;
+  value: number | Array;
+  color: string;
+  event: any;
+  dataIndex: number;
+};

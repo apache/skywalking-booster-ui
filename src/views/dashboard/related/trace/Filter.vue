@@ -95,17 +95,15 @@ limitations under the License. -->
 import { ref, reactive, watch, onUnmounted } from "vue";
 import type { PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import { Option } from "@/types/app";
-import { Status } from "../../data";
+import { Option, DurationTime } from "@/types/app";
 import { useTraceStore } from "@/store/modules/trace";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import ConditionTags from "@/views/components/ConditionTags.vue";
 import { ElMessage } from "element-plus";
-import { EntityType } from "../../data";
+import { EntityType, QueryOrders, Status } from "../../data";
 import { LayoutConfig } from "@/types/dashboard";
-import { DurationTime } from "@/types/app";
 
 /*global defineProps, Recordable */
 const props = defineProps({
@@ -115,28 +113,29 @@ const props = defineProps({
     default: () => ({ graph: {} }),
   },
 });
-const traceId = ref<string>(
-  (props.data.filters && props.data.filters.traceId) || ""
-);
+const filters = reactive<Recordable>(props.data.filters || {});
+const traceId = ref<string>(filters.traceId || "");
 const { t } = useI18n();
 const appStore = useAppStoreWithOut();
 const selectorStore = useSelectorStore();
 const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
-const duration = ref<DurationTime>(
-  (props.data.filters && props.data.filters.duration) || appStore.durationTime
-);
+const duration = ref<DurationTime>(filters.duration || appStore.durationTime);
 const minTraceDuration = ref<number>();
 const maxTraceDuration = ref<number>();
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
 const state = reactive<Recordable>({
-  status: { label: "All", value: "ALL" },
+  status: filters.status === "ERROR" ? Status[2] : Status[0],
   instance: { value: "0", label: "All" },
   endpoint: { value: "0", label: "All" },
   service: { value: "", label: "" },
 });
-
+if (filters.queryOrder) {
+  traceStore.setTraceCondition({
+    queryOrder: filters.queryOrder,
+  });
+}
 if (props.needQuery) {
   init();
 }
@@ -164,7 +163,7 @@ async function getServices() {
     ElMessage.error(resp.errors);
     return;
   }
-  state.service = traceStore.services[0];
+  state.service = getCurrentNode(traceStore.services) || traceStore.services[0];
   getEndpoints(state.service.id);
   getInstances(state.service.id);
 }
@@ -175,7 +174,8 @@ async function getEndpoints(id?: string, keyword?: string) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.endpoint = traceStore.endpoints[0];
+  state.endpoint =
+    getCurrentNode(traceStore.endpoints) || traceStore.endpoints[0];
 }
 async function getInstances(id?: string) {
   const resp = await traceStore.getInstances(id);
@@ -183,9 +183,39 @@ async function getInstances(id?: string) {
     ElMessage.error(resp.errors);
     return;
   }
-  state.instance = traceStore.instances[0];
+  state.instance =
+    getCurrentNode(traceStore.instances) || traceStore.instances[0];
 }
-function searchTraces() {
+function getCurrentNode(arr: { id: string }[]) {
+  let item;
+  if (!props.data.filters) {
+    return item;
+  }
+  if (props.data.filters.id) {
+    item = arr.find((d: { id: string }) => d.id === props.data.filters?.id);
+  }
+  return item;
+}
+function setCondition() {
+  let param: any = {
+    traceState: state.status.value || "ALL",
+    tags: tagsMap.value.length ? tagsMap.value : undefined,
+    queryOrder: traceStore.conditions.queryOrder || QueryOrders[1].value,
+    queryDuration: duration.value,
+    minTraceDuration: Number(minTraceDuration.value),
+    maxTraceDuration: Number(maxTraceDuration.value),
+    traceId: traceId.value || undefined,
+    paging: { pageNum: 1, pageSize: 20 },
+  };
+  if (props.data.filters && props.data.filters.id) {
+    param = {
+      ...param,
+      serviceId: selectorStore.currentService.id,
+      endpointId: state.endpoint.id || undefined,
+      serviceInstanceId: state.instance.id || undefined,
+    };
+    return param;
+  }
   let endpoint = "",
     instance = "";
   if (dashboardStore.entity === EntityType[2].value) {
@@ -194,21 +224,18 @@ function searchTraces() {
   if (dashboardStore.entity === EntityType[3].value) {
     instance = selectorStore.currentPod.id;
   }
-  traceStore.setTraceCondition({
+  param = {
+    ...param,
     serviceId: selectorStore.currentService
       ? selectorStore.currentService.id
       : state.service.id,
-    traceId: traceId.value || undefined,
     endpointId: endpoint || state.endpoint.id || undefined,
     serviceInstanceId: instance || state.instance.id || undefined,
-    traceState: state.status.value || "ALL",
-    queryDuration: duration.value,
-    minTraceDuration: Number(minTraceDuration.value),
-    maxTraceDuration: Number(maxTraceDuration.value),
-    queryOrder: traceStore.conditions.queryOrder || "BY_DURATION",
-    tags: tagsMap.value.length ? tagsMap.value : undefined,
-    paging: { pageNum: 1, pageSize: 20 },
-  });
+  };
+  return param;
+}
+function searchTraces() {
+  traceStore.setTraceCondition(setCondition());
   queryTraces();
 }
 async function queryTraces() {
@@ -263,17 +290,19 @@ watch(
     }
   }
 );
+// Event widget associate with trace widget
 watch(
   () => props.data.filters,
   (newJson, oldJson) => {
-    if (props.data.filters) {
-      if (JSON.stringify(newJson) === JSON.stringify(oldJson)) {
-        return;
-      }
-      traceId.value = props.data.filters.traceId || "";
-      duration.value = props.data.filters.duration || appStore.durationTime;
-      init();
+    if (!props.data.filters) {
+      return;
     }
+    if (JSON.stringify(newJson) === JSON.stringify(oldJson)) {
+      return;
+    }
+    traceId.value = props.data.filters.traceId || "";
+    duration.value = props.data.filters.duration || appStore.durationTime;
+    init();
   }
 );
 </script>

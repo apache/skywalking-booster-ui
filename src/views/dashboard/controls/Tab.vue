@@ -40,7 +40,7 @@ limitations under the License. -->
       <span class="tab-icons">
         <el-tooltip content="Copy Link" placement="bottom">
           <i @click="copyLink">
-            <Icon size="middle" iconName="review-list" class="tab-icon" />
+            <Icon size="middle" iconName="copy" class="tab-icon" />
           </i>
         </el-tooltip>
       </span>

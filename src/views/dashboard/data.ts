@@ -174,7 +174,7 @@ export const SortOrder = [
 ];
 export const AllTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
-  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
@@ -182,7 +182,7 @@ export const AllTools = [
 ];
 export const ServiceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
-  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
@@ -194,7 +194,7 @@ export const ServiceTools = [
 ];
 export const InstanceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
-  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
@@ -208,7 +208,7 @@ export const InstanceTools = [
 ];
 export const EndpointTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
-  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
@@ -217,25 +217,25 @@ export const EndpointTools = [
 ];
 export const ProcessTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
-  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "time_range", content: "Add Time Range Text", id: "addTimeRange" },
 ];
 export const ServiceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
-  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
 ];
 
 export const EndpointRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
-  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
 ];
 export const InstanceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
-  { name: "all_inbox", content: "Add Tab", id: "addTab" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
 ];

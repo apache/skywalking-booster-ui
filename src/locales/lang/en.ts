@@ -146,6 +146,7 @@ const msg = {
   pause: "Pause",
   begin: "Start",
   associateOptions: "Association Options",
+  associateMetrics: "Association Metrics",
   widget: "Widget",
   nameTip:
     "The name only supports Chinese and English, horizontal lines and underscores. The length of the name is limited to 300 characters",
@@ -156,6 +157,16 @@ const msg = {
   postgreSQL: "PostgreSQL",
   endpointTips: "The table shows up to 20 pieces of endpoints.",
   apisix: "APISIX",
+  viewTrace: "View Related Traces",
+  relatedTraceOptions: "Related Trace Options",
+  setLatencyDuration: "Set Latency Range",
+  queryOrder: "Query Order",
+  latency: "Latency",
+  metricValues: "Metric Values",
+  queryConditions: "Query Conditions",
+  enableRelatedTrace: "Enable Related Trace",
+  maxTraceDuration: "Maximum Duration",
+  minTraceDuration: "Minimum Duration",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
@@ -348,6 +359,6 @@ const msg = {
     "Notice: Please press Enter after inputting a key of content, exclude key of content(key=value).",
   language: "Language",
   gateway: "Gateway",
-  virtualMQ: "Virtual MQ"
+  virtualMQ: "Virtual MQ",
 };
 export default msg;

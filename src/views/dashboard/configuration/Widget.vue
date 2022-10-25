@@ -36,6 +36,7 @@ limitations under the License. -->
             metrics: dashboardStore.selectedGrid.metrics,
             metricTypes: dashboardStore.selectedGrid.metricTypes,
             metricConfig: dashboardStore.selectedGrid.metricConfig,
+            relatedTrace: dashboardStore.selectedGrid.relatedTrace,
           }"
           :needQuery="true"
         />
@@ -64,6 +65,13 @@ limitations under the License. -->
           v-if="hasAssociate"
         >
           <AssociateOptions />
+        </el-collapse-item>
+        <el-collapse-item
+          :title="t('relatedTraceOptions')"
+          name="5"
+          v-if="hasAssociate"
+        >
+          <RelatedTraceOptions />
         </el-collapse-item>
       </el-collapse>
     </div>

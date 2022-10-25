@@ -58,8 +58,8 @@ limitations under the License. -->
               <span class="b">{{ i.endpointNames[0] }}</span>
             </div>
             <div class="grey ell sm">
-              <span class="tag mr-10 sm">{{ i.duration }} ms</span
-              >{{ dateFormat(parseInt(i.start, 10)) }}
+              <span class="tag mr-10 sm"> {{ i.duration }} ms </span>
+              {{ dateFormat(parseInt(i.start, 10)) }}
             </div>
           </td>
         </tr>

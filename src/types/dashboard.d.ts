@@ -1,3 +1,4 @@
+import { DurationTime } from "@/types/app";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -39,19 +40,32 @@ export interface LayoutConfig {
   id?: string;
   associate?: { widgetId: string }[];
   eventAssociate?: boolean;
-  filters?: {
-    dataIndex: number;
-    sourceId: string;
-    isRange?: boolean;
-    duration?: {
-      startTime: string;
-      endTime: string;
-    };
-    traceId?: string;
-    spanId?: string;
-    segmentId?: string;
-  };
+  filters?: Filters;
+  relatedTrace?: RelatedTrace;
 }
+export type RelatedTrace = {
+  duration: DurationTime;
+  status: string;
+  queryOrder: string;
+  latency: boolean;
+  enableRelate: boolean;
+};
+
+export type Filters = {
+  dataIndex: number;
+  sourceId: string;
+  isRange?: boolean;
+  duration?: {
+    startTime: string;
+    endTime: string;
+  };
+  traceId?: string;
+  spanId?: string;
+  segmentId?: string;
+  id?: string;
+  queryOrder?: string;
+  status?: string;
+};
 
 export type MetricConfigOpt = {
   unit?: string;
