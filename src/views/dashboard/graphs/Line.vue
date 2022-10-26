@@ -42,9 +42,9 @@ const props = defineProps({
   config: {
     type: Object as PropType<
       LineConfig & {
-        filters: Filters;
-        relatedTrace: RelatedTrace;
-      } & { id: string }
+        filters?: Filters;
+        relatedTrace?: RelatedTrace;
+      } & { id?: string }
     >,
     default: () => ({
       step: false,
