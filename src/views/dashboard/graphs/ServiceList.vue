@@ -216,7 +216,7 @@ async function queryServiceMetrics(currentServices: Service[]) {
     const metricConfig = props.config.metricConfig || [];
     services.value = usePodsSource(currentServices, json, {
       ...props.config,
-      metricConfig: metricConfig || [],
+      metricConfig,
     });
     return;
   }

@@ -154,7 +154,7 @@ export function useQueryProcessor(config: any) {
     }
   });
   const queryStr = `query queryData(${variables}) {${fragment}}`;
-  console.log(queryStr);
+
   return {
     queryStr,
     conditions,
@@ -255,7 +255,11 @@ export function useSourceProcessor(
 
 export function useQueryPodsMetrics(
   pods: Array<Instance | Endpoint | Service | any>,
-  config: { metrics: string[]; metricTypes: string[] },
+  config: {
+    metrics: string[];
+    metricTypes: string[];
+    metricConfig: MetricConfigOpt[];
+  },
   scope: string
 ) {
   const metricTypes = (config.metricTypes || []).filter((m: string) => m);
@@ -287,12 +291,20 @@ export function useQueryPodsMetrics(
       };
       const f = metrics.map((name: string, idx: number) => {
         const metricType = metricTypes[idx] || "";
+        variables.push(`$condition${index}${idx}: MetricsCondition!`);
         conditions[`condition${index}${idx}`] = {
           name,
           entity: param,
         };
-        variables.push(`$condition${index}${idx}: MetricsCondition!`);
-        return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, duration: $duration)${RespFields[metricType]}`;
+        let labelStr = "";
+        if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
+          variables.push(`$labels${index}${idx}: [String!]!`);
+          labelStr = `labels: $labels${index}${idx}, `;
+          conditions[`labels${index}${idx}`] = (
+            config.metricConfig[idx].label || ""
+          ).split(",");
+        }
+        return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[metricType]}`;
       });
       return f;
     }
@@ -315,6 +327,7 @@ export function usePodsSource(
     ElMessage.error(resp.errors);
     return {};
   }
+  console.log(config);
   const data = pods.map((d: Instance | any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
@@ -331,11 +344,30 @@ export function usePodsSource(
             Calculations.PercentageAvg,
           ].includes(c.calculation)
         ) {
-          d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
+          if (Array.isArray(d[resp.data[key]])) {
+            for (const item of d[resp.data[key]]) {
+              d[item.label]["avg"] = calculateExp(
+                resp.data[key][item.label].values.values,
+                c
+              );
+            }
+          } else {
+            d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
+          }
         }
-        d[name]["values"] = resp.data[key].values.values.map(
-          (val: { value: number }) => aggregation(val.value, c)
-        );
+        if (Array.isArray(d[resp.data[key]])) {
+          for (const item of d[resp.data[key]]) {
+            d[item.label]["values"] = resp.data[key][
+              item.label
+            ].values.values.map((val: { value: number }) =>
+              aggregation(val.value, c)
+            );
+          }
+        } else {
+          d[name]["values"] = resp.data[key].values.values.map(
+            (val: { value: number }) => aggregation(val.value, c)
+          );
+        }
       }
     });
 
