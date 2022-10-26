@@ -17,11 +17,6 @@ limitations under the License. -->
       v-if="traceStore.currentTrace.endpointNames"
     >
       <h5 class="mb-5 mt-0">
-        <Icon
-          icon="clear"
-          v-if="traceStore.currentTrace.isError"
-          class="red mr-5 sm"
-        />
         <span class="vm">{{ traceStore.currentTrace.endpointNames[0] }}</span>
         <div class="trace-log-btn">
           <el-button
