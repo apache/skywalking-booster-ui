@@ -194,6 +194,7 @@ function clickService(scope: any) {
   router.push(path);
 }
 async function queryServiceMetrics(currentServices: Service[]) {
+  // console.log(services.value);
   if (!currentServices.length) {
     return;
   }
@@ -219,7 +220,7 @@ async function queryServiceMetrics(currentServices: Service[]) {
     });
     return;
   }
-
+  console.log(services.value);
   services.value = currentServices;
 }
 function objectSpanMethod(param: any): any {

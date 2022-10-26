@@ -191,7 +191,10 @@ async function setMetricType(chart?: any) {
   states.metricList = (arr || []).filter(
     (d: { catalog: string; type: string }) => {
       if (states.isList) {
-        if (d.type === MetricsType.REGULAR_VALUE) {
+        if (
+          d.type === MetricsType.REGULAR_VALUE ||
+          d.type === MetricsType.LABELED_VALUE
+        ) {
           return d;
         }
       } else if (g.type === "Table") {

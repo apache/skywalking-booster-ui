@@ -154,6 +154,7 @@ export function useQueryProcessor(config: any) {
     }
   });
   const queryStr = `query queryData(${variables}) {${fragment}}`;
+  console.log(queryStr);
   return {
     queryStr,
     conditions,
@@ -257,10 +258,12 @@ export function useQueryPodsMetrics(
   config: { metrics: string[]; metricTypes: string[] },
   scope: string
 ) {
-  if (!(config.metrics && config.metrics[0])) {
+  const metricTypes = (config.metricTypes || []).filter((m: string) => m);
+  if (!metricTypes.length) {
     return;
   }
-  if (!(config.metricTypes && config.metricTypes[0])) {
+  const metrics = (config.metrics || []).filter((m: string) => m);
+  if (!metrics.length) {
     return;
   }
   const appStore = useAppStoreWithOut();
@@ -282,8 +285,8 @@ export function useQueryPodsMetrics(
         endpointName: scope === "Endpoint" ? d.label : undefined,
         normal: scope === "Service" ? d.normal : currentService.normal,
       };
-      const f = config.metrics.map((name: string, idx: number) => {
-        const metricType = config.metricTypes[idx] || "";
+      const f = metrics.map((name: string, idx: number) => {
+        const metricType = metricTypes[idx] || "";
         conditions[`condition${index}${idx}`] = {
           name,
           entity: param,
