@@ -18,7 +18,6 @@ limitations under the License. -->
     v-model="selected"
     :placeholder="placeholder"
     @change="changeSelected"
-    filterable
     :multiple="multiple"
     :disabled="disabled"
     :style="{ borderRadius }"
@@ -26,6 +25,7 @@ limitations under the License. -->
     :remote="isRemote"
     :reserve-keyword="isRemote"
     :remote-method="remoteMethod"
+    :filterable="filterable"
   >
     <el-option
       v-for="item in options"
@@ -66,6 +66,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   clearable: { type: Boolean, default: false },
   isRemote: { type: Boolean, default: false },
+  filterable: { type: Boolean, default: true },
 });
 
 const selected = ref<string[] | string>(props.value);
