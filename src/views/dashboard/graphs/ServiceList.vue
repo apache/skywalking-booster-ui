@@ -56,7 +56,7 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
-          :config="config"
+          :config="{ ...config, metrics: colMetrics, metricConfig }"
           v-if="colMetrics.length"
         />
       </el-table>
@@ -228,10 +228,8 @@ async function queryServiceMetrics(currentServices: Service[]) {
     services.value = data;
     colMetrics.value = names;
 
-    // metricConfig.value = metricConfigArr;
-    console.log(names);
-    console.log(data);
-    console.log(metricConfigArr);
+    metricConfig.value = metricConfigArr;
+    // console.log(metricConfigArr);
     return;
   }
   services.value = currentServices;

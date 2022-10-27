@@ -298,7 +298,6 @@ export function useQueryPodsMetrics(
         };
         let labelStr = "";
         if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
-          console.log(config);
           variables.push(`$labels${index}${idx}: [String!]!`);
           labelStr = `labels: $labels${index}${idx}, `;
           conditions[`labels${index}${idx}`] = (
@@ -331,7 +330,7 @@ export function usePodsSource(
     return {};
   }
   const names: string[] = [];
-  const metricConfigArr: MetricConfigOpt[] = config.metricConfig || [];
+  const metricConfigArr: MetricConfigOpt[] = [];
   const data = pods.map((d: Instance | any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
@@ -340,6 +339,7 @@ export function usePodsSource(
         d[name] = aggregation(resp.data[key], c);
         if (idx === 0) {
           names.push(name);
+          metricConfigArr.push(c);
         }
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
@@ -358,6 +358,7 @@ export function usePodsSource(
         );
         if (idx === 0) {
           names.push(name);
+          metricConfigArr.push(c);
         }
       }
       if (
@@ -401,6 +402,7 @@ export function usePodsSource(
             d[labels[indexNum]]["values"] = values;
             if (idx === 0) {
               names.push(labels[indexNum]);
+              metricConfigArr.push(c);
             }
           } else {
             if (!d[item.label]) {
@@ -409,9 +411,9 @@ export function usePodsSource(
             d[item.label]["values"] = values;
             if (idx === 0) {
               names.push(item.label);
+              metricConfigArr.push(c);
             }
           }
-          metricConfigArr.splice(index, 0, c);
         }
       }
     });
