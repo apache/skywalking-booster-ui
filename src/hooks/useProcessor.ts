@@ -331,6 +331,7 @@ export function usePodsSource(
     return {};
   }
   const names: string[] = [];
+  const metricConfigArr: MetricConfigOpt[] = config.metricConfig || [];
   const data = pods.map((d: Instance | any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
@@ -369,7 +370,6 @@ export function usePodsSource(
         const labelsIdx = (c.labelsIndex || "")
           .split(",")
           .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-        console.log(resVal);
         for (const item of resVal) {
           const values = item.values.values.map((d: { value: number }) =>
             aggregation(Number(d.value), c)
@@ -411,12 +411,13 @@ export function usePodsSource(
               names.push(item.label);
             }
           }
+          metricConfigArr.splice(index, 0, c);
         }
       }
     });
     return d;
   });
-  return { data, names };
+  return { data, names, metricConfigArr };
 }
 export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   const appStore = useAppStoreWithOut();

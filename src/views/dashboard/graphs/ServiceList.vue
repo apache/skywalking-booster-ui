@@ -217,12 +217,21 @@ async function queryServiceMetrics(currentServices: Service[]) {
     if (!metricConfig.value.length) {
       return;
     }
-    const { data, names } = usePodsSource(currentServices, json, {
-      ...props.config,
-      metricConfig: metricConfig.value,
-    });
+    const { data, names, metricConfigArr } = usePodsSource(
+      currentServices,
+      json,
+      {
+        ...props.config,
+        metricConfig: metricConfig.value,
+      }
+    );
     services.value = data;
     colMetrics.value = names;
+
+    // metricConfig.value = metricConfigArr;
+    console.log(names);
+    console.log(data);
+    console.log(metricConfigArr);
     return;
   }
   services.value = currentServices;
