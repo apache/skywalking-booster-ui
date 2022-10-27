@@ -298,10 +298,12 @@ export function useQueryPodsMetrics(
         };
         let labelStr = "";
         if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
+          console.log(config);
           variables.push(`$labels${index}${idx}: [String!]!`);
           labelStr = `labels: $labels${index}${idx}, `;
           conditions[`labels${index}${idx}`] = (
-            config.metricConfig[idx].label || ""
+            (config.metricConfig[idx] && config.metricConfig[idx].label) ||
+            ""
           ).split(",");
         }
         return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[metricType]}`;
@@ -314,6 +316,7 @@ export function useQueryPodsMetrics(
 
   return { queryStr, conditions };
 }
+
 export function usePodsSource(
   pods: Array<Instance | Endpoint>,
   resp: { errors: string; data: { [key: string]: any } },
@@ -327,13 +330,16 @@ export function usePodsSource(
     ElMessage.error(resp.errors);
     return {};
   }
-  console.log(config);
+  const names: string[] = [];
   const data = pods.map((d: Instance | any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
       const key = name + idx + index;
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValue) {
         d[name] = aggregation(resp.data[key], c);
+        if (idx === 0) {
+          names.push(name);
+        }
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
         d[name] = {};
@@ -344,36 +350,73 @@ export function usePodsSource(
             Calculations.PercentageAvg,
           ].includes(c.calculation)
         ) {
-          if (Array.isArray(d[resp.data[key]])) {
-            for (const item of d[resp.data[key]]) {
-              d[item.label]["avg"] = calculateExp(
-                resp.data[key][item.label].values.values,
-                c
-              );
+          d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
+        }
+        d[name]["values"] = resp.data[key].values.values.map(
+          (val: { value: number }) => aggregation(val.value, c)
+        );
+        if (idx === 0) {
+          names.push(name);
+        }
+      }
+      if (
+        config.metricTypes[index] === MetricQueryTypes.ReadLabeledMetricsValues
+      ) {
+        const resVal = resp.data[key] || [];
+        const labels = (c.label || "")
+          .split(",")
+          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+        const labelsIdx = (c.labelsIndex || "")
+          .split(",")
+          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+        console.log(resVal);
+        for (const item of resVal) {
+          const values = item.values.values.map((d: { value: number }) =>
+            aggregation(Number(d.value), c)
+          );
+          const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
+          if (
+            [
+              Calculations.Average,
+              Calculations.ApdexAvg,
+              Calculations.PercentageAvg,
+            ].includes(c.calculation)
+          ) {
+            if (labels[indexNum] && indexNum > -1) {
+              if (!d[labels[indexNum]]) {
+                d[labels[indexNum]] = {};
+              }
+              d[labels[indexNum]]["avg"] = calculateExp(item.values.values, c);
+            } else {
+              if (!d[item.label]) {
+                d[item.label] = {};
+              }
+              d[item.label]["avg"] = calculateExp(item.values.values, c);
+            }
+          }
+          if (labels[indexNum] && indexNum > -1) {
+            if (!d[labels[indexNum]]) {
+              d[labels[indexNum]] = {};
+            }
+            d[labels[indexNum]]["values"] = values;
+            if (idx === 0) {
+              names.push(labels[indexNum]);
             }
           } else {
-            d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
+            if (!d[item.label]) {
+              d[item.label] = {};
+            }
+            d[item.label]["values"] = values;
+            if (idx === 0) {
+              names.push(item.label);
+            }
           }
-        }
-        if (Array.isArray(d[resp.data[key]])) {
-          for (const item of d[resp.data[key]]) {
-            d[item.label]["values"] = resp.data[key][
-              item.label
-            ].values.values.map((val: { value: number }) =>
-              aggregation(val.value, c)
-            );
-          }
-        } else {
-          d[name]["values"] = resp.data[key].values.values.map(
-            (val: { value: number }) => aggregation(val.value, c)
-          );
         }
       }
     });
-
     return d;
   });
-  return data;
+  return { data, names };
 }
 export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   const appStore = useAppStoreWithOut();

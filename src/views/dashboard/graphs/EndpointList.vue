@@ -143,7 +143,7 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
     endpoints.value = usePodsSource(currentPods, json, {
       ...props.config,
       metricConfig: metricConfig,
-    });
+    }).data;
     return;
   }
   endpoints.value = currentPods;

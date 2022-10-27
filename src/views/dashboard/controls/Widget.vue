@@ -62,7 +62,7 @@ limitations under the License. -->
           metricTypes: data.metricTypes || [''],
           i: data.i,
           id: data.id,
-          metricConfig: data.metricConfig,
+          metricConfig: data.metricConfig || [],
           filters: data.filters || {},
           relatedTrace: data.relatedTrace || {},
         }"

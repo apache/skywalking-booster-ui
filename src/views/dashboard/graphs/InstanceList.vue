@@ -172,7 +172,7 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
     instances.value = usePodsSource(currentInstances, json, {
       ...props.config,
       metricConfig,
-    });
+    }).data;
     return;
   }
   instances.value = currentInstances;
