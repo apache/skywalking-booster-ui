@@ -331,6 +331,7 @@ export function usePodsSource(
   }
   const names: string[] = [];
   const metricConfigArr: MetricConfigOpt[] = [];
+  const metricTypesArr: string[] = [];
   const data = pods.map((d: Instance | any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
@@ -340,6 +341,7 @@ export function usePodsSource(
         if (idx === 0) {
           names.push(name);
           metricConfigArr.push(c);
+          metricTypesArr.push(config.metricTypes[index]);
         }
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
@@ -359,6 +361,7 @@ export function usePodsSource(
         if (idx === 0) {
           names.push(name);
           metricConfigArr.push(c);
+          metricTypesArr.push(config.metricTypes[index]);
         }
       }
       if (
@@ -403,6 +406,7 @@ export function usePodsSource(
             if (idx === 0) {
               names.push(labels[indexNum]);
               metricConfigArr.push(c);
+              metricTypesArr.push(config.metricTypes[index]);
             }
           } else {
             if (!d[item.label]) {
@@ -412,6 +416,7 @@ export function usePodsSource(
             if (idx === 0) {
               names.push(item.label);
               metricConfigArr.push(c);
+              metricTypesArr.push(config.metricTypes[index]);
             }
           }
         }
@@ -419,7 +424,7 @@ export function usePodsSource(
     });
     return d;
   });
-  return { data, names, metricConfigArr };
+  return { data, names, metricConfigArr, metricTypesArr };
 }
 export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   const appStore = useAppStoreWithOut();

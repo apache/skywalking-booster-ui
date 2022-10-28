@@ -95,13 +95,12 @@ import Card from "../Card.vue";
 const props = defineProps({
   colMetrics: { type: Object },
   config: {
-    type: Object as PropType<
-      {
-        i: string;
-        metrics: string[];
-        metricTypes: string[];
-      } & { metricConfig: MetricConfigOpt[] }
-    >,
+    type: Object as PropType<{
+      i: string;
+      metrics: string[];
+      metricTypes: string[];
+      metricConfig: MetricConfigOpt[];
+    }>,
     default: () => ({}),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },

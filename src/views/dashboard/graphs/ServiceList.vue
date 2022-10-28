@@ -56,7 +56,12 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
-          :config="{ ...config, metrics: colMetrics, metricConfig }"
+          :config="{
+            ...config,
+            metrics: colMetrics,
+            metricConfig,
+            metricTypes,
+          }"
           v-if="colMetrics.length"
         />
       </el-table>
@@ -122,6 +127,8 @@ const searchText = ref<string>("");
 const groups = ref<any>({});
 const sortServices = ref<(Service & { merge: boolean })[]>([]);
 const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
+const metricTypes = ref<string[]>(props.config.metricTypes || []);
+
 queryServices();
 
 async function queryServices() {
@@ -199,9 +206,9 @@ async function queryServiceMetrics(currentServices: Service[]) {
     return;
   }
   const metrics = props.config.metrics || [];
-  const metricTypes = props.config.metricTypes || [];
+  const types = props.config.metricTypes || [];
 
-  if (metrics.length && metrics[0] && metricTypes.length && metricTypes[0]) {
+  if (metrics.length && metrics[0] && types.length && types[0]) {
     const params = await useQueryPodsMetrics(
       currentServices,
       props.config,
@@ -217,7 +224,7 @@ async function queryServiceMetrics(currentServices: Service[]) {
     if (!metricConfig.value.length) {
       return;
     }
-    const { data, names, metricConfigArr } = usePodsSource(
+    const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(
       currentServices,
       json,
       {
@@ -227,9 +234,9 @@ async function queryServiceMetrics(currentServices: Service[]) {
     );
     services.value = data;
     colMetrics.value = names;
-
+    metricTypes.value = metricTypesArr;
     metricConfig.value = metricConfigArr;
-    // console.log(metricConfigArr);
+
     return;
   }
   services.value = currentServices;
@@ -283,6 +290,7 @@ watch(
     if (JSON.stringify(data) === JSON.stringify(old)) {
       return;
     }
+    metricConfig.value = data;
     queryServiceMetrics(services.value);
   }
 );
