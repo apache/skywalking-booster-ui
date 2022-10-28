@@ -368,17 +368,12 @@ export function usePodsSource(
         config.metricTypes[index] === MetricQueryTypes.ReadLabeledMetricsValues
       ) {
         const resVal = resp.data[key] || [];
-        const labels = (c.label || "")
-          .split(",")
-          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-        const labelsIdx = (c.labelsIndex || "")
-          .split(",")
-          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-        for (const item of resVal) {
+
+        for (let i = 0; i < resVal.length; i++) {
+          const item = resVal[i];
           const values = item.values.values.map((d: { value: number }) =>
             aggregation(Number(d.value), c)
           );
-          const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
           if (
             [
               Calculations.Average,
@@ -386,38 +381,19 @@ export function usePodsSource(
               Calculations.PercentageAvg,
             ].includes(c.calculation)
           ) {
-            if (labels[indexNum] && indexNum > -1) {
-              if (!d[labels[indexNum]]) {
-                d[labels[indexNum]] = {};
-              }
-              d[labels[indexNum]]["avg"] = calculateExp(item.values.values, c);
-            } else {
-              if (!d[item.label]) {
-                d[item.label] = {};
-              }
-              d[item.label]["avg"] = calculateExp(item.values.values, c);
-            }
-          }
-          if (labels[indexNum] && indexNum > -1) {
-            if (!d[labels[indexNum]]) {
-              d[labels[indexNum]] = {};
-            }
-            d[labels[indexNum]]["values"] = values;
-            if (idx === 0) {
-              names.push(labels[indexNum]);
-              metricConfigArr.push(c);
-              metricTypesArr.push(config.metricTypes[index]);
-            }
-          } else {
             if (!d[item.label]) {
               d[item.label] = {};
             }
-            d[item.label]["values"] = values;
-            if (idx === 0) {
-              names.push(item.label);
-              metricConfigArr.push(c);
-              metricTypesArr.push(config.metricTypes[index]);
-            }
+            d[item.label]["avg"] = calculateExp(item.values.values, c);
+          }
+          if (!d[item.label]) {
+            d[item.label] = {};
+          }
+          d[item.label]["values"] = values;
+          if (idx === 0) {
+            names.push(item.label);
+            metricConfigArr.push({ ...c, index: i });
+            metricTypesArr.push(config.metricTypes[index]);
           }
         }
       }

@@ -74,6 +74,7 @@ export type MetricConfigOpt = {
   labelsIndex: string;
   sortOrder: string;
   topN?: number;
+  index?: number;
 };
 
 export interface WidgetConfig {

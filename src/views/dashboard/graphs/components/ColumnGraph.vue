@@ -90,6 +90,7 @@ import { MetricConfigOpt } from "@/types/dashboard";
 import { useListConfig } from "@/hooks/useListConfig";
 import Line from "../Line.vue";
 import Card from "../Card.vue";
+import { MetricQueryTypes } from "@/hooks/data";
 
 /*global defineProps */
 const props = defineProps({
@@ -124,6 +125,16 @@ function getLabel(metric: string, index: string) {
     props.config.metricConfig[i] &&
     props.config.metricConfig[i].label;
   if (label) {
+    if (
+      props.config.metricTypes[i] === MetricQueryTypes.ReadLabeledMetricsValues
+    ) {
+      const name = (label || "")
+        .split(",")
+        .map((item: string) => item.replace(/^\s*|\s*$/g, ""))[
+        props.config.metricConfig[i].index || 0
+      ];
+      return encodeURIComponent(name || "");
+    }
     return encodeURIComponent(label);
   }
   return encodeURIComponent(metric);
