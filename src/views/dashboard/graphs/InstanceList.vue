@@ -42,10 +42,15 @@ limitations under the License. -->
           </template>
         </el-table-column>
         <ColumnGraph
-          v-if="colMetrics.length"
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
-          :config="config"
+          :config="{
+            ...config,
+            metrics: colMetrics,
+            metricConfig,
+            metricTypes,
+          }"
+          v-if="colMetrics.length"
         />
         <el-table-column label="Attributes">
           <template #default="scope">
@@ -82,7 +87,7 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
@@ -126,9 +131,9 @@ const chartLoading = ref<boolean>(false);
 const instances = ref<Instance[]>([]); // current instances
 const pageSize = 10;
 const searchText = ref<string>("");
-const colMetrics = computed(() =>
-  (props.config.metrics || []).filter((d: string) => d)
-);
+const colMetrics = ref<string[]>([]);
+const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
+const metricTypes = ref<string[]>(props.config.metricTypes || []);
 if (props.needQuery) {
   queryInstance();
 }
@@ -154,9 +159,9 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
     return;
   }
   const metrics = props.config.metrics || [];
-  const metricTypes = props.config.metricTypes || [];
+  const types = props.config.metricTypes || [];
 
-  if (metrics.length && metrics[0] && metricTypes.length && metricTypes[0]) {
+  if (metrics.length && metrics[0] && types.length && types[0]) {
     const params = await useQueryPodsMetrics(
       currentInstances,
       props.config,
@@ -168,11 +173,18 @@ async function queryInstanceMetrics(currentInstances: Instance[]) {
       ElMessage.error(json.errors);
       return;
     }
-    const metricConfig = props.config.metricConfig || [];
-    instances.value = usePodsSource(currentInstances, json, {
-      ...props.config,
-      metricConfig,
-    }).data;
+    const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(
+      currentInstances,
+      json,
+      {
+        ...props.config,
+        metricConfig: metricConfig.value,
+      }
+    );
+    instances.value = data;
+    colMetrics.value = names;
+    metricTypes.value = metricTypesArr;
+    metricConfig.value = metricConfigArr;
     return;
   }
   instances.value = currentInstances;
