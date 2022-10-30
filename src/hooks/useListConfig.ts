@@ -26,16 +26,18 @@ export function useListConfig(config: any, index: string) {
     config.metricConfig &&
     config.metricConfig[i] &&
     config.metricConfig[i].calculation;
-  const line =
-    config.metricTypes[i] === MetricQueryTypes.ReadMetricsValues &&
-    !types.includes(calculation);
+  const isLinear =
+    [
+      MetricQueryTypes.ReadMetricsValues,
+      MetricQueryTypes.ReadLabeledMetricsValues,
+    ].includes(config.metricTypes[i]) && !types.includes(calculation);
   const isAvg =
     [
       MetricQueryTypes.ReadMetricsValues,
       MetricQueryTypes.ReadLabeledMetricsValues,
     ].includes(config.metricTypes[i]) && types.includes(calculation);
   return {
-    isLinear: line,
+    isLinear,
     isAvg,
   };
 }
