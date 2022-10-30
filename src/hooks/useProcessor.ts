@@ -399,7 +399,7 @@ export function usePodsSource(
           }
           d[key]["values"] = values;
           if (idx === 0) {
-            names.push(item.label);
+            names.push(key);
             metricConfigArr.push({ ...c, index: i });
             metricTypesArr.push(config.metricTypes[index]);
           }

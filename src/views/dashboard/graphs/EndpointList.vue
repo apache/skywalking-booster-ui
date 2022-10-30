@@ -177,11 +177,16 @@ async function searchList() {
   await queryEndpoints();
 }
 watch(
-  () => [...(props.config.metricTypes || []), ...(props.config.metrics || [])],
+  () => [
+    ...(props.config.metricTypes || []),
+    ...(props.config.metrics || []),
+    ...(props.config.metricConfig || []),
+  ],
   (data, old) => {
     if (JSON.stringify(data) === JSON.stringify(old)) {
       return;
     }
+    metricConfig.value = props.config.metricConfig;
     queryEndpointMetrics(endpoints.value);
   }
 );
@@ -189,16 +194,6 @@ watch(
   () => selectorStore.currentService,
   () => {
     queryEndpoints();
-  }
-);
-watch(
-  () => [...(props.config.metricConfig || [])],
-  (data, old) => {
-    if (JSON.stringify(data) === JSON.stringify(old)) {
-      return;
-    }
-    metricConfig.value = data;
-    queryEndpointMetrics(endpoints.value);
   }
 );
 </script>

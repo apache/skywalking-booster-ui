@@ -227,11 +227,16 @@ function searchList() {
 }
 
 watch(
-  () => [...(props.config.metricTypes || []), ...(props.config.metrics || [])],
+  () => [
+    ...(props.config.metricTypes || []),
+    ...(props.config.metrics || []),
+    ...(props.config.metricConfig || []),
+  ],
   (data, old) => {
     if (JSON.stringify(data) === JSON.stringify(old)) {
       return;
     }
+    metricConfig.value = props.config.metricConfig;
     queryInstanceMetrics(instances.value);
   }
 );
@@ -239,15 +244,6 @@ watch(
   () => selectorStore.currentService,
   () => {
     queryInstance();
-  }
-);
-watch(
-  () => [...(props.config.metricConfig || [])],
-  (data, old) => {
-    if (JSON.stringify(data) === JSON.stringify(old)) {
-      return;
-    }
-    queryInstanceMetrics(instances.value);
   }
 );
 </script>
