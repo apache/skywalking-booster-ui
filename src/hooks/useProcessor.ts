@@ -381,35 +381,23 @@ export function usePodsSource(
             aggregation(Number(d.value), c)
           );
           const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
+          let key = item.label;
           if (labels[indexNum] && indexNum > -1) {
-            if (!d[labels[indexNum]]) {
-              d[labels[indexNum]] = {};
-            }
-            if (
-              [
-                Calculations.Average,
-                Calculations.ApdexAvg,
-                Calculations.PercentageAvg,
-              ].includes(c.calculation)
-            ) {
-              d[labels[indexNum]]["avg"] = calculateExp(item.values.values, c);
-            }
-            d[labels[indexNum]]["values"] = values;
-          } else {
-            if (!d[item.label]) {
-              d[item.label] = {};
-            }
-            if (
-              [
-                Calculations.Average,
-                Calculations.ApdexAvg,
-                Calculations.PercentageAvg,
-              ].includes(c.calculation)
-            ) {
-              d[item.label]["avg"] = calculateExp(item.values.values, c);
-            }
-            d[item.label]["values"] = values;
+            key = labels[indexNum];
           }
+          if (!d[key]) {
+            d[key] = {};
+          }
+          if (
+            [
+              Calculations.Average,
+              Calculations.ApdexAvg,
+              Calculations.PercentageAvg,
+            ].includes(c.calculation)
+          ) {
+            d[key]["avg"] = calculateExp(item.values.values, c);
+          }
+          d[key]["values"] = values;
           if (idx === 0) {
             names.push(item.label);
             metricConfigArr.push({ ...c, index: i });
