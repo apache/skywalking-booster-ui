@@ -211,7 +211,7 @@ async function queryServiceMetrics(currentServices: Service[]) {
   if (metrics.length && metrics[0] && types.length && types[0]) {
     const params = await useQueryPodsMetrics(
       currentServices,
-      props.config,
+      { ...props.config, metricConfig: metricConfig.value || [] },
       EntityType[0].value
     );
     const json = await dashboardStore.fetchMetricValue(params);
