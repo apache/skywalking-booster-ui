@@ -298,12 +298,13 @@ export function useQueryPodsMetrics(
         };
         let labelStr = "";
         if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
+          const c = config.metricConfig[idx] || {};
           variables.push(`$labels${index}${idx}: [String!]!`);
           labelStr = `labels: $labels${index}${idx}, `;
-          conditions[`labels${index}${idx}`] = (
-            (config.metricConfig[idx] && config.metricConfig[idx].label) ||
-            ""
-          ).split(",");
+          const labels = (c.labelsIndex || "")
+            .split(",")
+            .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+          conditions[`labels${index}${idx}`] = labels;
         }
         return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[metricType]}`;
       });
@@ -368,28 +369,47 @@ export function usePodsSource(
         config.metricTypes[index] === MetricQueryTypes.ReadLabeledMetricsValues
       ) {
         const resVal = resp.data[key] || [];
-
+        const labels = (c.label || "")
+          .split(",")
+          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+        const labelsIdx = (c.labelsIndex || "")
+          .split(",")
+          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
         for (let i = 0; i < resVal.length; i++) {
           const item = resVal[i];
           const values = item.values.values.map((d: { value: number }) =>
             aggregation(Number(d.value), c)
           );
-          if (
-            [
-              Calculations.Average,
-              Calculations.ApdexAvg,
-              Calculations.PercentageAvg,
-            ].includes(c.calculation)
-          ) {
+          const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
+          if (labels[indexNum] && indexNum > -1) {
+            if (!d[labels[indexNum]]) {
+              d[labels[indexNum]] = {};
+            }
+            if (
+              [
+                Calculations.Average,
+                Calculations.ApdexAvg,
+                Calculations.PercentageAvg,
+              ].includes(c.calculation)
+            ) {
+              d[labels[indexNum]]["avg"] = calculateExp(item.values.values, c);
+            }
+            d[labels[indexNum]]["values"] = values;
+          } else {
             if (!d[item.label]) {
               d[item.label] = {};
             }
-            d[item.label]["avg"] = calculateExp(item.values.values, c);
+            if (
+              [
+                Calculations.Average,
+                Calculations.ApdexAvg,
+                Calculations.PercentageAvg,
+              ].includes(c.calculation)
+            ) {
+              d[item.label]["avg"] = calculateExp(item.values.values, c);
+            }
+            d[item.label]["values"] = values;
           }
-          if (!d[item.label]) {
-            d[item.label] = {};
-          }
-          d[item.label]["values"] = values;
           if (idx === 0) {
             names.push(item.label);
             metricConfigArr.push({ ...c, index: i });
