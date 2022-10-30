@@ -167,5 +167,6 @@ function getLabel(metric: string, index: string) {
   display: inline-block;
   flex-grow: 2;
   height: 100%;
+  width: calc(100% - 30px);
 }
 </style>

@@ -276,21 +276,16 @@ function searchList() {
 }
 
 watch(
-  () => [...(props.config.metricTypes || []), ...(props.config.metrics || [])],
+  () => [
+    ...(props.config.metricTypes || []),
+    ...(props.config.metrics || []),
+    ...(props.config.metricConfig || []),
+  ],
   (data, old) => {
     if (JSON.stringify(data) === JSON.stringify(old)) {
       return;
     }
-    queryServiceMetrics(services.value);
-  }
-);
-watch(
-  () => [...(props.config.metricConfig || [])],
-  (data, old) => {
-    if (JSON.stringify(data) === JSON.stringify(old)) {
-      return;
-    }
-    metricConfig.value = data;
+    metricConfig.value = props.config.metricConfig;
     queryServiceMetrics(services.value);
   }
 );
