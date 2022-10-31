@@ -141,6 +141,7 @@ if (props.needQuery) {
 }
 
 async function init() {
+  duration.value = filters.duration || appStore.durationTime;
   if (dashboardStore.entity === EntityType[1].value) {
     await getServices();
   }
