@@ -173,6 +173,7 @@ function selectTag(item: string) {
 function searchTags() {
   if (!tags.value) {
     tagList.value = tagArr.value;
+    fetchTagKeys();
     return;
   }
   let search = "";
