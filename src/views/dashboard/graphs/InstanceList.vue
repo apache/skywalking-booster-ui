@@ -30,7 +30,7 @@ limitations under the License. -->
     </div>
     <div class="list">
       <el-table v-loading="chartLoading" :data="instances" style="width: 100%">
-        <el-table-column label="Service Instances">
+        <el-table-column label="Service Instances" fixed min-width="320">
           <template #default="scope">
             <span
               class="link"
@@ -52,7 +52,7 @@ limitations under the License. -->
           }"
           v-if="colMetrics.length"
         />
-        <el-table-column label="Attributes">
+        <el-table-column label="Attributes" fixed="right" min-width="100">
           <template #default="scope">
             <el-popover placement="left" :width="400" trigger="click">
               <template #reference>

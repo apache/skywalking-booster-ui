@@ -20,6 +20,7 @@ limitations under the License. -->
       getLabel(metric, index)
     )} ${decodeURIComponent(getUnit(index))}`"
     :key="metric + index"
+    min-width="150"
   >
     <template #default="scope">
       <div class="chart">

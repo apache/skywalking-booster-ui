@@ -31,7 +31,7 @@ limitations under the License. -->
     </div>
     <div class="list">
       <el-table v-loading="chartLoading" :data="endpoints" style="width: 100%">
-        <el-table-column label="Endpoints">
+        <el-table-column label="Endpoints" fixed min-width="220">
           <template #default="scope">
             <span
               class="link"

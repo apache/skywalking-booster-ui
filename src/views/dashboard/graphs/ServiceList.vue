@@ -37,12 +37,17 @@ limitations under the License. -->
         :border="true"
         :style="{ fontSize: '14px' }"
       >
-        <el-table-column label="Service Groups" v-if="config.showGroup">
+        <el-table-column
+          fixed
+          label="Service Groups"
+          v-if="config.showGroup"
+          min-width="150"
+        >
           <template #default="scope">
             {{ scope.row.group }}
           </template>
         </el-table-column>
-        <el-table-column label="Service Names">
+        <el-table-column fixed label="Service Names" min-width="220">
           <template #default="scope">
             <span
               class="link"
