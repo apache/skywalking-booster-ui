@@ -191,7 +191,10 @@ async function setMetricType(chart?: any) {
   states.metricList = (arr || []).filter(
     (d: { catalog: string; type: string }) => {
       if (states.isList) {
-        if (d.type === MetricsType.REGULAR_VALUE) {
+        if (
+          d.type === MetricsType.REGULAR_VALUE ||
+          d.type === MetricsType.LABELED_VALUE
+        ) {
           return d;
         }
       } else if (g.type === "Table") {
@@ -239,7 +242,10 @@ async function setMetricType(chart?: any) {
 }
 
 function setDashboards(type?: string) {
-  const chart = type || dashboardStore.selectedGrid.graph || {};
+  const chart =
+    type ||
+    (dashboardStore.selectedGrid.graph &&
+      dashboardStore.selectedGrid.graph.type);
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   const arr = list.reduce(
     (
@@ -248,9 +254,9 @@ function setDashboards(type?: string) {
     ) => {
       if (d.layer === dashboardStore.layerId) {
         if (
-          (d.entity === EntityType[0].value && chart.type === "ServiceList") ||
-          (d.entity === EntityType[2].value && chart.type === "EndpointList") ||
-          (d.entity === EntityType[3].value && chart.type === "InstanceList")
+          (d.entity === EntityType[0].value && chart === "ServiceList") ||
+          (d.entity === EntityType[2].value && chart === "EndpointList") ||
+          (d.entity === EntityType[3].value && chart === "InstanceList")
         ) {
           prev.push({
             ...d,

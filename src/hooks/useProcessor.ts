@@ -154,6 +154,7 @@ export function useQueryProcessor(config: any) {
     }
   });
   const queryStr = `query queryData(${variables}) {${fragment}}`;
+
   return {
     queryStr,
     conditions,
@@ -254,13 +255,19 @@ export function useSourceProcessor(
 
 export function useQueryPodsMetrics(
   pods: Array<Instance | Endpoint | Service | any>,
-  config: { metrics: string[]; metricTypes: string[] },
+  config: {
+    metrics: string[];
+    metricTypes: string[];
+    metricConfig: MetricConfigOpt[];
+  },
   scope: string
 ) {
-  if (!(config.metrics && config.metrics[0])) {
+  const metricTypes = (config.metricTypes || []).filter((m: string) => m);
+  if (!metricTypes.length) {
     return;
   }
-  if (!(config.metricTypes && config.metricTypes[0])) {
+  const metrics = (config.metrics || []).filter((m: string) => m);
+  if (!metrics.length) {
     return;
   }
   const appStore = useAppStoreWithOut();
@@ -282,14 +289,24 @@ export function useQueryPodsMetrics(
         endpointName: scope === "Endpoint" ? d.label : undefined,
         normal: scope === "Service" ? d.normal : currentService.normal,
       };
-      const f = config.metrics.map((name: string, idx: number) => {
-        const metricType = config.metricTypes[idx] || "";
+      const f = metrics.map((name: string, idx: number) => {
+        const metricType = metricTypes[idx] || "";
+        variables.push(`$condition${index}${idx}: MetricsCondition!`);
         conditions[`condition${index}${idx}`] = {
           name,
           entity: param,
         };
-        variables.push(`$condition${index}${idx}: MetricsCondition!`);
-        return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, duration: $duration)${RespFields[metricType]}`;
+        let labelStr = "";
+        if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
+          const c = config.metricConfig[idx] || {};
+          variables.push(`$labels${index}${idx}: [String!]!`);
+          labelStr = `labels: $labels${index}${idx}, `;
+          const labels = (c.labelsIndex || "")
+            .split(",")
+            .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+          conditions[`labels${index}${idx}`] = labels;
+        }
+        return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[metricType]}`;
       });
       return f;
     }
@@ -299,6 +316,7 @@ export function useQueryPodsMetrics(
 
   return { queryStr, conditions };
 }
+
 export function usePodsSource(
   pods: Array<Instance | Endpoint>,
   resp: { errors: string; data: { [key: string]: any } },
@@ -312,12 +330,20 @@ export function usePodsSource(
     ElMessage.error(resp.errors);
     return {};
   }
+  const names: string[] = [];
+  const metricConfigArr: MetricConfigOpt[] = [];
+  const metricTypesArr: string[] = [];
   const data = pods.map((d: Instance | any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
       const key = name + idx + index;
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValue) {
         d[name] = aggregation(resp.data[key], c);
+        if (idx === 0) {
+          names.push(name);
+          metricConfigArr.push(c);
+          metricTypesArr.push(config.metricTypes[index]);
+        }
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
         d[name] = {};
@@ -333,12 +359,56 @@ export function usePodsSource(
         d[name]["values"] = resp.data[key].values.values.map(
           (val: { value: number }) => aggregation(val.value, c)
         );
+        if (idx === 0) {
+          names.push(name);
+          metricConfigArr.push(c);
+          metricTypesArr.push(config.metricTypes[index]);
+        }
+      }
+      if (
+        config.metricTypes[index] === MetricQueryTypes.ReadLabeledMetricsValues
+      ) {
+        const resVal = resp.data[key] || [];
+        const labels = (c.label || "")
+          .split(",")
+          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+        const labelsIdx = (c.labelsIndex || "")
+          .split(",")
+          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+        for (let i = 0; i < resVal.length; i++) {
+          const item = resVal[i];
+          const values = item.values.values.map((d: { value: number }) =>
+            aggregation(Number(d.value), c)
+          );
+          const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
+          let key = item.label;
+          if (labels[indexNum] && indexNum > -1) {
+            key = labels[indexNum];
+          }
+          if (!d[key]) {
+            d[key] = {};
+          }
+          if (
+            [
+              Calculations.Average,
+              Calculations.ApdexAvg,
+              Calculations.PercentageAvg,
+            ].includes(c.calculation)
+          ) {
+            d[key]["avg"] = calculateExp(item.values.values, c);
+          }
+          d[key]["values"] = values;
+          if (idx === 0) {
+            names.push(key);
+            metricConfigArr.push({ ...c, index: i });
+            metricTypesArr.push(config.metricTypes[index]);
+          }
+        }
       }
     });
-
     return d;
   });
-  return data;
+  return { data, names, metricConfigArr, metricTypesArr };
 }
 export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
   const appStore = useAppStoreWithOut();

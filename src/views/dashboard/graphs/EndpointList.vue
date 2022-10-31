@@ -31,7 +31,7 @@ limitations under the License. -->
     </div>
     <div class="list">
       <el-table v-loading="chartLoading" :data="endpoints" style="width: 100%">
-        <el-table-column label="Endpoints">
+        <el-table-column label="Endpoints" fixed min-width="220">
           <template #default="scope">
             <span
               class="link"
@@ -45,7 +45,12 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
-          :config="config"
+          :config="{
+            ...config,
+            metrics: colMetrics,
+            metricConfig,
+            metricTypes,
+          }"
           v-if="colMetrics.length"
         />
       </el-table>
@@ -53,7 +58,7 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
@@ -99,9 +104,9 @@ const dashboardStore = useDashboardStore();
 const chartLoading = ref<boolean>(false);
 const endpoints = ref<Endpoint[]>([]);
 const searchText = ref<string>("");
-const colMetrics = computed(() =>
-  (props.config.metrics || []).filter((d: string) => d)
-);
+const colMetrics = ref<string[]>([]);
+const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
+const metricTypes = ref<string[]>(props.config.metricTypes || []);
 
 if (props.needQuery) {
   queryEndpoints();
@@ -125,8 +130,8 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
     return;
   }
   const metrics = props.config.metrics || [];
-  const metricTypes = props.config.metricTypes || [];
-  if (metrics.length && metrics[0] && metricTypes.length && metricTypes[0]) {
+  const types = props.config.metricTypes || [];
+  if (metrics.length && metrics[0] && types.length && types[0]) {
     const params = await useQueryPodsMetrics(
       currentPods,
       props.config,
@@ -138,12 +143,18 @@ async function queryEndpointMetrics(currentPods: Endpoint[]) {
       ElMessage.error(json.errors);
       return;
     }
-    const metricConfig = props.config.metricConfig || [];
-
-    endpoints.value = usePodsSource(currentPods, json, {
-      ...props.config,
-      metricConfig: metricConfig,
-    });
+    const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(
+      currentPods,
+      json,
+      {
+        ...props.config,
+        metricConfig: metricConfig.value,
+      }
+    );
+    endpoints.value = data;
+    colMetrics.value = names;
+    metricTypes.value = metricTypesArr;
+    metricConfig.value = metricConfigArr;
     return;
   }
   endpoints.value = currentPods;
@@ -166,11 +177,16 @@ async function searchList() {
   await queryEndpoints();
 }
 watch(
-  () => [...(props.config.metricTypes || []), ...(props.config.metrics || [])],
+  () => [
+    ...(props.config.metricTypes || []),
+    ...(props.config.metrics || []),
+    ...(props.config.metricConfig || []),
+  ],
   (data, old) => {
     if (JSON.stringify(data) === JSON.stringify(old)) {
       return;
     }
+    metricConfig.value = props.config.metricConfig;
     queryEndpointMetrics(endpoints.value);
   }
 );
@@ -178,15 +194,6 @@ watch(
   () => selectorStore.currentService,
   () => {
     queryEndpoints();
-  }
-);
-watch(
-  () => [...(props.config.metricConfig || [])],
-  (data, old) => {
-    if (JSON.stringify(data) === JSON.stringify(old)) {
-      return;
-    }
-    queryEndpointMetrics(endpoints.value);
   }
 );
 </script>

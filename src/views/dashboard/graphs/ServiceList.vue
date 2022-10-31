@@ -37,12 +37,17 @@ limitations under the License. -->
         :border="true"
         :style="{ fontSize: '14px' }"
       >
-        <el-table-column label="Service Groups" v-if="config.showGroup">
+        <el-table-column
+          fixed
+          label="Service Groups"
+          v-if="config.showGroup"
+          min-width="150"
+        >
           <template #default="scope">
             {{ scope.row.group }}
           </template>
         </el-table-column>
-        <el-table-column label="Service Names">
+        <el-table-column fixed label="Service Names" min-width="220">
           <template #default="scope">
             <span
               class="link"
@@ -56,7 +61,12 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
-          :config="config"
+          :config="{
+            ...config,
+            metrics: colMetrics,
+            metricConfig,
+            metricTypes,
+          }"
           v-if="colMetrics.length"
         />
       </el-table>
@@ -75,7 +85,7 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { watch, ref, computed } from "vue";
+import { watch, ref } from "vue";
 import { ElMessage } from "element-plus";
 import type { PropType } from "vue";
 import { ServiceListConfig } from "@/types/dashboard";
@@ -102,7 +112,9 @@ const props = defineProps({
         metrics: string[];
         metricTypes: string[];
         isEdit: boolean;
-      } & { metricConfig: MetricConfigOpt[] }
+        names: string[];
+        metricConfig: MetricConfigOpt[];
+      }
     >,
     default: () => ({ dashboardName: "", fontSize: 12 }),
   },
@@ -115,12 +127,13 @@ const appStore = useAppStoreWithOut();
 const chartLoading = ref<boolean>(false);
 const pageSize = 10;
 const services = ref<Service[]>([]);
+const colMetrics = ref<string[]>([]);
 const searchText = ref<string>("");
 const groups = ref<any>({});
 const sortServices = ref<(Service & { merge: boolean })[]>([]);
-const colMetrics = computed(() =>
-  (props.config.metrics || []).filter((d: string) => d)
-);
+const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
+const metricTypes = ref<string[]>(props.config.metricTypes || []);
+
 queryServices();
 
 async function queryServices() {
@@ -198,12 +211,12 @@ async function queryServiceMetrics(currentServices: Service[]) {
     return;
   }
   const metrics = props.config.metrics || [];
-  const metricTypes = props.config.metricTypes || [];
+  const types = props.config.metricTypes || [];
 
-  if (metrics.length && metrics[0] && metricTypes.length && metricTypes[0]) {
+  if (metrics.length && metrics[0] && types.length && types[0]) {
     const params = await useQueryPodsMetrics(
       currentServices,
-      props.config,
+      { ...props.config, metricConfig: metricConfig.value || [] },
       EntityType[0].value
     );
     const json = await dashboardStore.fetchMetricValue(params);
@@ -212,14 +225,22 @@ async function queryServiceMetrics(currentServices: Service[]) {
       ElMessage.error(json.errors);
       return;
     }
-    const metricConfig = props.config.metricConfig || [];
-    services.value = usePodsSource(currentServices, json, {
-      ...props.config,
-      metricConfig: metricConfig || [],
-    });
+
+    const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(
+      currentServices,
+      json,
+      {
+        ...props.config,
+        metricConfig: metricConfig.value || [],
+      }
+    );
+    services.value = data;
+    colMetrics.value = names;
+    metricTypes.value = metricTypesArr;
+    metricConfig.value = metricConfigArr;
+
     return;
   }
-
   services.value = currentServices;
 }
 function objectSpanMethod(param: any): any {
@@ -257,20 +278,16 @@ function searchList() {
 }
 
 watch(
-  () => [...(props.config.metricTypes || []), ...(props.config.metrics || [])],
+  () => [
+    ...(props.config.metricTypes || []),
+    ...(props.config.metrics || []),
+    ...(props.config.metricConfig || []),
+  ],
   (data, old) => {
     if (JSON.stringify(data) === JSON.stringify(old)) {
       return;
     }
-    queryServiceMetrics(services.value);
-  }
-);
-watch(
-  () => [...(props.config.metricConfig || [])],
-  (data, old) => {
-    if (JSON.stringify(data) === JSON.stringify(old)) {
-      return;
-    }
+    metricConfig.value = props.config.metricConfig;
     queryServiceMetrics(services.value);
   }
 );

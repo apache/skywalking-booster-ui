@@ -115,7 +115,9 @@ const currentMetric = ref<MetricConfigOpt>({
   topN: props.currentMetricConfig.topN || 10,
 });
 const metricTypes = dashboardStore.selectedGrid.metricTypes || [];
-const metricType = ref<string>(metricTypes[props.index]);
+const metricType = computed(
+  () => (dashboardStore.selectedGrid.metricTypes || [])[props.index]
+);
 const hasLabel = computed(() => {
   const graph = dashboardStore.selectedGrid.graph || {};
   return (

@@ -20,6 +20,7 @@ limitations under the License. -->
       getLabel(metric, index)
     )} ${decodeURIComponent(getUnit(index))}`"
     :key="metric + index"
+    min-width="150"
   >
     <template #default="scope">
       <div class="chart">
@@ -90,18 +91,18 @@ import { MetricConfigOpt } from "@/types/dashboard";
 import { useListConfig } from "@/hooks/useListConfig";
 import Line from "../Line.vue";
 import Card from "../Card.vue";
+import { MetricQueryTypes } from "@/hooks/data";
 
 /*global defineProps */
 const props = defineProps({
   colMetrics: { type: Object },
   config: {
-    type: Object as PropType<
-      {
-        i: string;
-        metrics: string[];
-        metricTypes: string[];
-      } & { metricConfig: MetricConfigOpt[] }
-    >,
+    type: Object as PropType<{
+      i: string;
+      metrics: string[];
+      metricTypes: string[];
+      metricConfig: MetricConfigOpt[];
+    }>,
     default: () => ({}),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
@@ -125,6 +126,16 @@ function getLabel(metric: string, index: string) {
     props.config.metricConfig[i] &&
     props.config.metricConfig[i].label;
   if (label) {
+    if (
+      props.config.metricTypes[i] === MetricQueryTypes.ReadLabeledMetricsValues
+    ) {
+      const name = (label || "")
+        .split(",")
+        .map((item: string) => item.replace(/^\s*|\s*$/g, ""))[
+        props.config.metricConfig[i].index || 0
+      ];
+      return encodeURIComponent(name || "");
+    }
     return encodeURIComponent(label);
   }
   return encodeURIComponent(metric);
@@ -157,5 +168,6 @@ function getLabel(metric: string, index: string) {
   display: inline-block;
   flex-grow: 2;
   height: 100%;
+  width: calc(100% - 30px);
 }
 </style>
