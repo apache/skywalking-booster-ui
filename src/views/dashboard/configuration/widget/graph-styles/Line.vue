@@ -13,13 +13,36 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div>
+  <div class="legend">
     <span class="label">{{ t("legendOptions") }}</span>
+    <span class="label">{{ t("showLegend") }}</span>
     <el-switch
-      v-model="graph.showLegend"
+      v-model="legend.showLegend"
       active-text="Yes"
       inactive-text="No"
-      @change="updateConfig({ showLegend: graph.showLegend })"
+      @change="updateLegendConfig({ showLegend: legend.showLegend })"
+    />
+    <span class="label">{{ t("asTable") }}</span>
+    <el-switch
+      v-model="legend.asTable"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateLegendConfig({ asTable: legend.asTable })"
+    />
+    <span class="label">{{ t("toTheRight") }}</span>
+    <el-switch
+      v-model="legend.toTheRight"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateLegendConfig({ toTheRight: legend.toTheRight })"
+    />
+    <span class="label">{{ t("width") }}</span>
+    <el-input
+      v-model="legend.width"
+      class="input"
+      size="small"
+      placeholder="Please input the width"
+      @change="updateLegendConfig({ toTheRight: legend.width })"
     />
   </div>
   <div>
@@ -79,6 +102,7 @@ const graph = computed(() => dashboardStore.selectedGrid.graph || {});
 const smooth = ref(graph.value.smooth);
 const showSymbol = ref(graph.value.showSymbol);
 const step = ref(graph.value.step);
+const legend = computed(() => graph.value.legend || {});
 
 function updateConfig(param: { [key: string]: unknown }) {
   const graph = {
@@ -86,6 +110,17 @@ function updateConfig(param: { [key: string]: unknown }) {
     ...param,
   };
   dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
+}
+
+function updateLegendConfig(param: { [key: string]: unknown }) {
+  const g = {
+    ...dashboardStore.selectedGrid.graph,
+    legend: {
+      ...dashboardStore.selectedGrid.graph.legend,
+      ...param,
+    },
+  };
+  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, g });
 }
 </script>
 <style lang="scss" scoped>
