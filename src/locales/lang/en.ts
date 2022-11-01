@@ -167,6 +167,7 @@ const msg = {
   enableRelatedTrace: "Enable Related Trace",
   maxTraceDuration: "Maximum Duration",
   minTraceDuration: "Minimum Duration",
+  legendOptions: "Legend Options",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

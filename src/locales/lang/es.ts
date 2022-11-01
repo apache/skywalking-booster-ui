@@ -171,6 +171,7 @@ const msg = {
   queryConditions: "Condiciones de consulta",
   maxTraceDuration: "Duración máxima",
   minTraceDuration: "Duración mínima",
+  legendOptions: "Opciones de leyenda",
   second: "s",
   yearSuffix: "Año",
   monthsHead: "Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Set_Oct_Nov_Dic",

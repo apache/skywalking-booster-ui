@@ -14,6 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
+    <span class="label">{{ t("legendOptions") }}</span>
+    <el-switch
+      v-model="graph.showLegend"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateConfig({ showLegend: graph.showLegend })"
+    />
+  </div>
+  <div>
     <span class="label">{{ t("showXAxis") }}</span>
     <el-switch
       v-model="graph.showXAxis"
@@ -82,8 +91,8 @@ function updateConfig(param: { [key: string]: unknown }) {
 <style lang="scss" scoped>
 .label {
   font-size: 13px;
-  font-weight: 500;
   display: block;
-  margin-bottom: 5px;
+  margin-top: 5px;
+  margin-bottom: -5px;
 }
 </style>

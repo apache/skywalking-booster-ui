@@ -164,6 +164,7 @@ const msg = {
   queryConditions: "查询条件",
   maxTraceDuration: "最大持续时间",
   minTraceDuration: "最小持续时间",
+  legendOptions: "图例选项",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
