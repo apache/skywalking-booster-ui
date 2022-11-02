@@ -44,7 +44,7 @@ limitations under the License. -->
       class="inputs"
       size="small"
       placeholder="Please input the width"
-      @change="updateLegendConfig({ toTheRight: legend.width })"
+      @change="updateLegendConfig({ width: legend.width })"
     />
   </div>
   <div>
@@ -68,14 +68,14 @@ limitations under the License. -->
       v-model="legend.mean"
       active-text="Yes"
       inactive-text="No"
-      @change="updateLegendConfig({ avg: legend.mean })"
+      @change="updateLegendConfig({ mean: legend.mean })"
     />
     <span class="title ml-20 mr-5">{{ t("total") }}</span>
     <el-switch
       v-model="legend.total"
       active-text="Yes"
       inactive-text="No"
-      @change="updateLegendConfig({ avg: legend.total })"
+      @change="updateLegendConfig({ total: legend.total })"
     />
   </div>
   <div>
@@ -125,9 +125,10 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import { ref, computed, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { LegendOptions } from "@/types/dashboard";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -135,7 +136,17 @@ const graph = computed(() => dashboardStore.selectedGrid.graph || {});
 const smooth = ref(graph.value.smooth);
 const showSymbol = ref(graph.value.showSymbol);
 const step = ref(graph.value.step);
-const legend = computed(() => graph.value.legend || {});
+const legend = reactive<LegendOptions>({
+  showLegend: true,
+  total: false,
+  min: false,
+  max: false,
+  mean: false,
+  asTable: false,
+  toTheRight: false,
+  width: 120,
+  ...graph.value.legend,
+});
 
 function updateConfig(param: { [key: string]: unknown }) {
   const graph = {
