@@ -13,71 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div>
-    <span class="label">{{ t("showLegend") }}</span>
-    <el-switch
-      v-model="legend.showLegend"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateLegendConfig({ showLegend: legend.showLegend })"
-    />
-  </div>
-  <div>
-    <span class="label">{{ t("legendOptions") }}</span>
-    <span class="title mr-5">{{ t("asTable") }}</span>
-    <el-switch
-      v-model="legend.asTable"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateLegendConfig({ asTable: legend.asTable })"
-    />
-    <span class="title ml-20 mr-5">{{ t("toTheRight") }}</span>
-    <el-switch
-      v-model="legend.toTheRight"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateLegendConfig({ toTheRight: legend.toTheRight })"
-    />
-    <span class="title ml-20 mr-5">{{ t("width") }}</span>
-    <el-input
-      v-model="legend.width"
-      class="inputs"
-      size="small"
-      placeholder="Please input the width"
-      @change="updateLegendConfig({ width: legend.width })"
-    />
-  </div>
-  <div>
-    <span class="label">{{ t("legendValues") }}</span>
-    <span class="title mr-5">{{ t("min") }}</span>
-    <el-switch
-      v-model="legend.min"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateLegendConfig({ min: legend.min })"
-    />
-    <span class="title ml-20 mr-5">{{ t("max") }}</span>
-    <el-switch
-      v-model="legend.max"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateLegendConfig({ max: legend.max })"
-    />
-    <span class="title ml-20 mr-5">{{ t("mean") }}</span>
-    <el-switch
-      v-model="legend.mean"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateLegendConfig({ mean: legend.mean })"
-    />
-    <span class="title ml-20 mr-5">{{ t("total") }}</span>
-    <el-switch
-      v-model="legend.total"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateLegendConfig({ total: legend.total })"
-    />
-  </div>
+  <Legend />
   <div>
     <span class="label">{{ t("showXAxis") }}</span>
     <el-switch
@@ -125,10 +61,10 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, reactive } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { LegendOptions } from "@/types/dashboard";
+import Legend from "./components/Legend.vue";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -136,17 +72,6 @@ const graph = computed(() => dashboardStore.selectedGrid.graph || {});
 const smooth = ref(graph.value.smooth);
 const showSymbol = ref(graph.value.showSymbol);
 const step = ref(graph.value.step);
-const legend = reactive<LegendOptions>({
-  showLegend: true,
-  total: false,
-  min: false,
-  max: false,
-  mean: false,
-  asTable: false,
-  toTheRight: false,
-  width: 120,
-  ...graph.value.legend,
-});
 
 function updateConfig(param: { [key: string]: unknown }) {
   const graph = {
@@ -155,17 +80,6 @@ function updateConfig(param: { [key: string]: unknown }) {
   };
   dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
 }
-
-function updateLegendConfig(param: { [key: string]: unknown }) {
-  const g = {
-    ...dashboardStore.selectedGrid.graph,
-    legend: {
-      ...dashboardStore.selectedGrid.graph.legend,
-      ...param,
-    },
-  };
-  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, g });
-}
 </script>
 <style lang="scss" scoped>
 .label {
@@ -173,17 +87,5 @@ function updateLegendConfig(param: { [key: string]: unknown }) {
   display: block;
   margin-top: 5px;
   margin-bottom: -5px;
-}
-
-.title {
-  font-size: 12px;
-  display: inline-flex;
-  height: 32px;
-  line-height: 34px;
-  vertical-align: middle;
-}
-
-.inputs {
-  width: 120px;
 }
 </style>
