@@ -14,59 +14,61 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="legend">
-    <span class="label">{{ t("legendOptions") }}</span>
-    <span class="title">{{ t("showLegend") }}</span>
+    <span class="label">{{ t("showLegend") }}</span>
     <el-switch
       v-model="legend.showLegend"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ showLegend: legend.showLegend })"
     />
-    <span class="title">{{ t("asTable") }}</span>
+    <span class="label">{{ t("legendOptions") }}</span>
+    <div class="title mr-5">
+      {{ t("asTable") }}
+    </div>
     <el-switch
       v-model="legend.asTable"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ asTable: legend.asTable })"
     />
-    <span class="title">{{ t("toTheRight") }}</span>
+    <div class="title ml-20 mr-5">{{ t("toTheRight") }}</div>
     <el-switch
       v-model="legend.toTheRight"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ toTheRight: legend.toTheRight })"
     />
-    <span class="title">{{ t("width") }}</span>
+    <div class="title ml-20 mr-5">{{ t("width") }}</div>
     <el-input
       v-model="legend.width"
-      class="input"
+      class="inputs"
       size="small"
       placeholder="Please input the width"
       @change="updateLegendConfig({ toTheRight: legend.width })"
     />
     <span class="label">{{ t("legendValues") }}</span>
-    <span class="title">{{ t("min") }}</span>
+    <span class="title mr-5">{{ t("min") }}</span>
     <el-switch
       v-model="legend.min"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ min: legend.min })"
     />
-    <span class="title">{{ t("max") }}</span>
+    <span class="title ml-20 mr-5">{{ t("max") }}</span>
     <el-switch
       v-model="legend.max"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ max: legend.max })"
     />
-    <span class="title">{{ t("mean") }}</span>
+    <span class="title ml-20 mr-5">{{ t("mean") }}</span>
     <el-switch
       v-model="legend.mean"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ avg: legend.mean })"
     />
-    <span class="title">{{ t("total") }}</span>
+    <span class="title ml-20 mr-5">{{ t("total") }}</span>
     <el-switch
       v-model="legend.total"
       active-text="Yes"
@@ -162,9 +164,17 @@ function updateLegendConfig(param: { [key: string]: unknown }) {
 
 .title {
   font-size: 12px;
+  display: inline-flex;
+  height: 32px;
+  line-height: 34px;
+  vertical-align: middle;
 }
 
 .legend {
   margin-bottom: 10px;
+}
+
+.inputs {
+  width: 120px;
 }
 </style>
