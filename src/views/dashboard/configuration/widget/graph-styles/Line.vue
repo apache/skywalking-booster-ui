@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="legend">
+  <div>
     <span class="label">{{ t("showLegend") }}</span>
     <el-switch
       v-model="legend.showLegend"
@@ -21,24 +21,24 @@ limitations under the License. -->
       inactive-text="No"
       @change="updateLegendConfig({ showLegend: legend.showLegend })"
     />
+  </div>
+  <div>
     <span class="label">{{ t("legendOptions") }}</span>
-    <div class="title mr-5">
-      {{ t("asTable") }}
-    </div>
+    <span class="title mr-5">{{ t("asTable") }}</span>
     <el-switch
       v-model="legend.asTable"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ asTable: legend.asTable })"
     />
-    <div class="title ml-20 mr-5">{{ t("toTheRight") }}</div>
+    <span class="title ml-20 mr-5">{{ t("toTheRight") }}</span>
     <el-switch
       v-model="legend.toTheRight"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ toTheRight: legend.toTheRight })"
     />
-    <div class="title ml-20 mr-5">{{ t("width") }}</div>
+    <span class="title ml-20 mr-5">{{ t("width") }}</span>
     <el-input
       v-model="legend.width"
       class="inputs"
@@ -46,6 +46,8 @@ limitations under the License. -->
       placeholder="Please input the width"
       @change="updateLegendConfig({ toTheRight: legend.width })"
     />
+  </div>
+  <div>
     <span class="label">{{ t("legendValues") }}</span>
     <span class="title mr-5">{{ t("min") }}</span>
     <el-switch
@@ -168,10 +170,6 @@ function updateLegendConfig(param: { [key: string]: unknown }) {
   height: 32px;
   line-height: 34px;
   vertical-align: middle;
-}
-
-.legend {
-  margin-bottom: 10px;
 }
 
 .inputs {
