@@ -15,34 +15,63 @@ limitations under the License. -->
 <template>
   <div class="legend">
     <span class="label">{{ t("legendOptions") }}</span>
-    <span class="label">{{ t("showLegend") }}</span>
+    <span class="title">{{ t("showLegend") }}</span>
     <el-switch
       v-model="legend.showLegend"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ showLegend: legend.showLegend })"
     />
-    <span class="label">{{ t("asTable") }}</span>
+    <span class="title">{{ t("asTable") }}</span>
     <el-switch
       v-model="legend.asTable"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ asTable: legend.asTable })"
     />
-    <span class="label">{{ t("toTheRight") }}</span>
+    <span class="title">{{ t("toTheRight") }}</span>
     <el-switch
       v-model="legend.toTheRight"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ toTheRight: legend.toTheRight })"
     />
-    <span class="label">{{ t("width") }}</span>
+    <span class="title">{{ t("width") }}</span>
     <el-input
       v-model="legend.width"
       class="input"
       size="small"
       placeholder="Please input the width"
       @change="updateLegendConfig({ toTheRight: legend.width })"
+    />
+    <span class="label">{{ t("legendValues") }}</span>
+    <span class="title">{{ t("min") }}</span>
+    <el-switch
+      v-model="legend.min"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateLegendConfig({ min: legend.min })"
+    />
+    <span class="title">{{ t("max") }}</span>
+    <el-switch
+      v-model="legend.max"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateLegendConfig({ max: legend.max })"
+    />
+    <span class="title">{{ t("mean") }}</span>
+    <el-switch
+      v-model="legend.mean"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateLegendConfig({ avg: legend.mean })"
+    />
+    <span class="title">{{ t("total") }}</span>
+    <el-switch
+      v-model="legend.total"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateLegendConfig({ avg: legend.total })"
     />
   </div>
   <div>
@@ -129,5 +158,13 @@ function updateLegendConfig(param: { [key: string]: unknown }) {
   display: block;
   margin-top: 5px;
   margin-bottom: -5px;
+}
+
+.title {
+  font-size: 12px;
+}
+
+.legend {
+  margin-bottom: 10px;
 }
 </style>
