@@ -33,6 +33,7 @@ import {
   Filters,
 } from "@/types/dashboard";
 import Legend from "./components/Legend.vue";
+import useLegendProcess from "@/hooks/useLegendProcessor";
 
 /*global defineProps, defineEmits */
 const emits = defineEmits(["click"]);
@@ -63,6 +64,7 @@ const props = defineProps({
     }),
   },
 });
+const { showEchartsLegend } = useLegendProcess();
 const option = computed(() => getOption());
 function getOption() {
   const keys = Object.keys(props.data || {}).filter(
@@ -156,7 +158,7 @@ function getOption() {
     tooltip: props.config.smallTips ? tips : tooltip,
     legend: {
       type: "scroll",
-      show: keys.length === 1 ? false : true,
+      show: showEchartsLegend(keys, props.config.legend),
       icon: "circle",
       top: 0,
       left: 0,

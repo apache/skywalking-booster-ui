@@ -44,7 +44,8 @@ defineProps({
       AreaConfig & {
         filters: Filters;
         relatedTrace: RelatedTrace;
-      } & { id: string }
+        id: string;
+      }
     >,
     default: () => ({}),
   },

@@ -14,14 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">{{ t("legendOptions") }}</span>
-    <span class="title mr-5">{{ t("asTable") }}</span>
+    <span class="label mr-5">{{ t("asTable") }}</span>
     <el-switch
       v-model="legend.asTable"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ asTable: legend.asTable })"
     />
+  </div>
+  <div>
+    <span class="label">{{ t("legendOptions") }}</span>
     <span class="title ml-20 mr-5">{{ t("toTheRight") }}</span>
     <el-switch
       v-model="legend.toTheRight"

@@ -27,6 +27,7 @@ import {
   RelatedTrace,
   Filters,
 } from "@/types/dashboard";
+import useLegendProcess from "@/hooks/useLegendProcessor";
 
 /*global defineProps, defineEmits */
 const emits = defineEmits(["click"]);
@@ -48,6 +49,7 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+const { showEchartsLegend } = useLegendProcess();
 const option = computed(() => getOption());
 
 function getOption() {
@@ -118,7 +120,7 @@ function getOption() {
     },
     legend: {
       type: "scroll",
-      show: keys.length === 1 ? false : true,
+      show: showEchartsLegend(keys, props.config.legend),
       icon: "circle",
       top: 0,
       left: 0,

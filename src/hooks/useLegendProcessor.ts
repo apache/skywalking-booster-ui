@@ -14,3 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { LegendOptions } from "@/types/dashboard";
+
+export default function useLegendProcess() {
+  function showEchartsLegend(keys: string[], legend?: LegendOptions) {
+    if (keys.length === 1) {
+      return false;
+    }
+    if (legend && legend.asTable) {
+      return false;
+    }
+    return true;
+  }
+  return { showEchartsLegend };
+}
