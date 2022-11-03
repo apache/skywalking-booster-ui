@@ -93,7 +93,10 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Service } from "@/types/selector";
-import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
+import {
+  useQueryPodsMetrics,
+  usePodsSource,
+} from "@/hooks/useMetricsProcessor";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";

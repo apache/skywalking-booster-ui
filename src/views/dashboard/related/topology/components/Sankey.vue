@@ -21,7 +21,7 @@ import { computed, PropType } from "vue";
 import { useTopologyStore } from "@/store/modules/topology";
 import { Node, Call } from "@/types/topology";
 import { MetricConfigOpt } from "@/types/dashboard";
-import { aggregation } from "@/hooks/useProcessor";
+import { aggregation } from "@/hooks/useMetricsProcessor";
 
 /*global defineEmits, defineProps */
 const props = defineProps({

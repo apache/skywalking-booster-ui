@@ -113,7 +113,7 @@ import {
   useQueryProcessor,
   useSourceProcessor,
   useGetMetricEntity,
-} from "@/hooks/useProcessor";
+} from "@/hooks/useMetricsProcessor";
 import { useI18n } from "vue-i18n";
 import { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
 import Standard from "./Standard.vue";
