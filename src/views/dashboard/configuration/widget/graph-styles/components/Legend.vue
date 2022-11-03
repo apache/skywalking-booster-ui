@@ -14,15 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">{{ t("showLegend") }}</span>
-    <el-switch
-      v-model="legend.showLegend"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateLegendConfig({ showLegend: legend.showLegend })"
-    />
-  </div>
-  <div>
     <span class="label">{{ t("legendOptions") }}</span>
     <span class="title mr-5">{{ t("asTable") }}</span>
     <el-switch

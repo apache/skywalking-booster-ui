@@ -95,7 +95,7 @@ export type GraphConfig =
 export interface BarConfig {
   type?: string;
   showBackground?: boolean;
-  LegendOptions?: LegendOptions;
+  legend?: LegendOptions;
 }
 export interface LineConfig extends AreaConfig {
   type?: string;
@@ -111,7 +111,7 @@ export interface LineConfig extends AreaConfig {
 export interface AreaConfig {
   type?: string;
   opacity?: number;
-  LegendOptions?: LegendOptions;
+  legend?: LegendOptions;
 }
 
 export interface CardConfig {

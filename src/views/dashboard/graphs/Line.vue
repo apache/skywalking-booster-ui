@@ -13,12 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Graph
-    :option="option"
-    @select="clickEvent"
-    :filters="config.filters"
-    :relatedTrace="config.relatedTrace"
-  />
+  <div class="graph">
+    <Graph
+      :option="option"
+      @select="clickEvent"
+      :filters="config.filters"
+      :relatedTrace="config.relatedTrace"
+    />
+    <Legend :config="config.legend" :data="data" />
+  </div>
 </template>
 <script lang="ts" setup>
 import { computed } from "vue";
@@ -29,6 +32,7 @@ import {
   RelatedTrace,
   Filters,
 } from "@/types/dashboard";
+import Legend from "./components/Legend.vue";
 
 /*global defineProps, defineEmits */
 const emits = defineEmits(["click"]);
@@ -206,3 +210,9 @@ function clickEvent(params: EventParams) {
   emits("click", params);
 }
 </script>
+<style lang="scss" scoped>
+.graph {
+  width: 100%;
+  height: 100%;
+}
+</style>

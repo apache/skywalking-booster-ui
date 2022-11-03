@@ -13,6 +13,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div>legend</div>
+  <div></div>
 </template>
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import type { PropType } from "vue";
+import { LegendOptions } from "@/types/dashboard";
+
+/*global defineProps */
+const props = defineProps({
+  data: {
+    type: Object as PropType<{ [key: string]: number[] }>,
+    default: () => ({}),
+  },
+  config: {
+    type: Object as PropType<LegendOptions>,
+    default: () => ({
+      legend: {},
+    }),
+  },
+});
+// console.log(props);
+</script>
