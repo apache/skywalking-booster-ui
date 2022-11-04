@@ -119,8 +119,8 @@ function updateTimeRange() {
     if (!children || !children.length) {
       timeRange.value = [
         {
-          start: this.currentSpan.startTime,
-          end: this.currentSpan.endTime,
+          start: startTime,
+          end: endTime,
         },
       ];
       return;
