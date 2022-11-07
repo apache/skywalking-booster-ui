@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="graph flex-v">
+  <div class="graph flex-v" :class="toTheRight ? 'flex-h' : 'flex-v'">
     <Graph
       :option="option"
       @select="clickEvent"
@@ -64,7 +64,8 @@ const props = defineProps({
     }),
   },
 });
-const { showEchartsLegend } = useLegendProcess();
+const { showEchartsLegend, isRight } = useLegendProcess(props.config.legend);
+const toTheRight = computed(() => isRight());
 const option = computed(() => getOption());
 function getOption() {
   const keys = Object.keys(props.data || {}).filter(
@@ -158,7 +159,7 @@ function getOption() {
     tooltip: props.config.smallTips ? tips : tooltip,
     legend: {
       type: "scroll",
-      show: showEchartsLegend(keys, props.config.legend),
+      show: showEchartsLegend(keys),
       icon: "circle",
       top: 0,
       left: 0,

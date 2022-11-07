@@ -16,8 +16,8 @@
  */
 import { LegendOptions } from "@/types/dashboard";
 
-export default function useLegendProcess() {
-  function showEchartsLegend(keys: string[], legend?: LegendOptions) {
+export default function useLegendProcess(legend?: LegendOptions) {
+  function showEchartsLegend(keys: string[]) {
     if (legend && !legend.show === undefined) {
       return legend.show;
     }
@@ -29,5 +29,11 @@ export default function useLegendProcess() {
     }
     return true;
   }
-  return { showEchartsLegend };
+  function isRight() {
+    if (legend && legend.toTheRight) {
+      return true;
+    }
+    return false;
+  }
+  return { showEchartsLegend, isRight };
 }

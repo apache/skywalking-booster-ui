@@ -49,7 +49,7 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const { showEchartsLegend } = useLegendProcess();
+const { showEchartsLegend } = useLegendProcess(props.config.legend);
 const option = computed(() => getOption());
 
 function getOption() {
@@ -120,7 +120,7 @@ function getOption() {
     },
     legend: {
       type: "scroll",
-      show: showEchartsLegend(keys, props.config.legend),
+      show: showEchartsLegend(keys),
       icon: "circle",
       top: 0,
       left: 0,
