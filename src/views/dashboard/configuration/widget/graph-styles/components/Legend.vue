@@ -14,6 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
+    <span class="label mr-5">{{ t("showLegend") }}</span>
+    <el-switch
+      v-model="legend.show"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateLegendConfig({ show: legend.show })"
+    />
+  </div>
+  <div>
+    <span class="label">{{ t("legendOptions") }}</span>
     <span class="label mr-5">{{ t("asTable") }}</span>
     <el-switch
       v-model="legend.asTable"
@@ -21,9 +31,6 @@ limitations under the License. -->
       inactive-text="No"
       @change="updateLegendConfig({ asTable: legend.asTable })"
     />
-  </div>
-  <div>
-    <span class="label">{{ t("legendOptions") }}</span>
     <span class="title ml-20 mr-5">{{ t("toTheRight") }}</span>
     <el-switch
       v-model="legend.toTheRight"
@@ -82,7 +89,7 @@ const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const graph = computed(() => dashboardStore.selectedGrid.graph || {});
 const legend = reactive<LegendOptions>({
-  showLegend: true,
+  show: true,
   total: false,
   min: false,
   max: false,

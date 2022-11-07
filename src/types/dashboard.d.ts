@@ -183,7 +183,7 @@ export type EventParams = {
   color: string;
 };
 export type LegendOptions = {
-  showLegend: boolean;
+  show: boolean;
   total: boolean;
   min: boolean;
   max: boolean;

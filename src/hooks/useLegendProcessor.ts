@@ -18,6 +18,9 @@ import { LegendOptions } from "@/types/dashboard";
 
 export default function useLegendProcess() {
   function showEchartsLegend(keys: string[], legend?: LegendOptions) {
+    if (legend && !legend.show === undefined) {
+      return legend.show;
+    }
     if (keys.length === 1) {
       return false;
     }
