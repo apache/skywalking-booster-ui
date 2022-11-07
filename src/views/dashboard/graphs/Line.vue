@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="graph flex-v" :class="toTheRight ? 'flex-h' : 'flex-v'">
+  <div class="graph flex-v" :class="isRight ? 'flex-h' : 'flex-v'">
     <Graph
       :option="option"
       @select="clickEvent"
@@ -65,7 +65,6 @@ const props = defineProps({
   },
 });
 const { showEchartsLegend, isRight } = useLegendProcess(props.config.legend);
-const toTheRight = computed(() => isRight());
 const option = computed(() => getOption());
 function getOption() {
   const keys = Object.keys(props.data || {}).filter(

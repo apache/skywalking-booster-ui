@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="graph">
+  <div class="graph" :class="isRight ? 'flex-h' : 'flex-v'">
     <Graph :option="option" @select="clickEvent" :filters="config.filters" />
     <Legend :config="config.legend" :data="data" />
   </div>
@@ -49,7 +49,7 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const { showEchartsLegend } = useLegendProcess(props.config.legend);
+const { showEchartsLegend, isRight } = useLegendProcess(props.config.legend);
 const option = computed(() => getOption());
 
 function getOption() {
