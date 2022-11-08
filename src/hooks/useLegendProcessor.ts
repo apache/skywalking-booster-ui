@@ -47,13 +47,13 @@ export default function useLegendProcess(legend?: LegendOptions) {
         if (legend.min) {
           item.min = Math.min(...data[value]);
           if (key === 0) {
-            headers.push("min");
+            headers.push({ value: "min", label: "Min" });
           }
         }
         if (legend.max) {
           item.max = Math.max(...data[value]);
           if (key === 0) {
-            headers.push("max");
+            headers.push({ value: "max", label: "Max" });
           }
         }
         if (legend.mean) {
@@ -63,7 +63,7 @@ export default function useLegendProcess(legend?: LegendOptions) {
           }, 0);
           item.mean = total / data[value].length;
           if (key === 0) {
-            headers.push("mean");
+            headers.push({ value: "mean", label: "Mean" });
           }
         }
         if (legend.total) {
@@ -72,7 +72,7 @@ export default function useLegendProcess(legend?: LegendOptions) {
             return prev;
           }, 0);
           if (key === 0) {
-            headers.push("total");
+            headers.push({ value: "total", label: "Total" });
           }
         }
       }

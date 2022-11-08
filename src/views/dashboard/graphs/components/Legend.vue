@@ -13,16 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div :style="`width: ${config.width || '100%'}`" v-if="source.length">
-    <el-table :data="source" style="width: 100%">
-      <el-table-column prop="name" label="Name" width="180" />
-      <el-table-column
-        v-for="item in headers"
-        :prop="item"
-        label="Address"
-        :key="item"
-      />
-    </el-table>
+  <div
+    :style="`width: ${config.width || '100%'}, max-height:${
+      isRight ? '100%' : 130
+    }`"
+    v-if="source.length"
+    class="legend"
+  >
+    <div class="col-item">
+      <span></span>
+      <span v-for="h in headers" :key="h.value">{{ h.label }}</span>
+    </div>
+    <div class="col-item" v-for="(item, index) in source" :key="index">
+      <span>{{ item.name }}</span>
+      <span v-for="h in headers" :key="h.value">{{ item[h.value] }}</span>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -41,6 +46,11 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const { aggregations } = useLegendProcess(props.config);
+const { aggregations, isRight } = useLegendProcess(props.config);
 const { source, headers } = aggregations(props.data);
 </script>
+<style lang="scss" scoped>
+.legend {
+  overflow: auto;
+}
+</style>
