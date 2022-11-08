@@ -13,7 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div :style="`width: ${config.width || '100%'}`">legend</div>
+  <div :style="`width: ${config.width || '100%'}`" v-if="source.length">
+    <el-table :data="source" style="width: 100%">
+      <el-table-column prop="name" label="Name" width="180" />
+      <el-table-column
+        v-for="item in headers"
+        :prop="item"
+        label="Address"
+        :key="item"
+      />
+    </el-table>
+  </div>
 </template>
 <script lang="ts" setup>
 import type { PropType } from "vue";
@@ -32,6 +42,5 @@ const props = defineProps({
   },
 });
 const { aggregations } = useLegendProcess(props.config);
-const source = aggregations(props.data);
-console.log(source);
+const { source, headers } = aggregations(props.data);
 </script>

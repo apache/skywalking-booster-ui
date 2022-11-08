@@ -34,35 +34,52 @@ export default function useLegendProcess(legend?: LegendOptions) {
     return true;
   }
   function aggregations(data: { [key: string]: number[] }) {
-    const source: any = {};
+    const source: { [key: string]: unknown }[] = [];
     const keys = Object.keys(data);
+    const headers = [];
 
-    for (const k of keys) {
-      source[k].linear = data[k];
+    for (const [key, value] of keys.entries()) {
+      const item: { [key: string]: unknown } = {
+        name: value,
+        linear: data[value],
+      };
       if (legend) {
         if (legend.min) {
-          source[k].min = Math.min(...data[k]);
+          item.min = Math.min(...data[value]);
+          if (key === 0) {
+            headers.push("min");
+          }
         }
         if (legend.max) {
-          source[k].max = Math.max(...data[k]);
+          item.max = Math.max(...data[value]);
+          if (key === 0) {
+            headers.push("max");
+          }
         }
         if (legend.mean) {
-          const total = data[k].reduce((prev: number, next: number) => {
+          const total = data[value].reduce((prev: number, next: number) => {
             prev += next;
             return prev;
           }, 0);
-          source[k].mean = total / data[k].length;
+          item.mean = total / data[value].length;
+          if (key === 0) {
+            headers.push("mean");
+          }
         }
         if (legend.total) {
-          source[k].total = data[k].reduce((prev: number, next: number) => {
+          item.total = data[value].reduce((prev: number, next: number) => {
             prev += next;
             return prev;
           }, 0);
+          if (key === 0) {
+            headers.push("total");
+          }
         }
       }
+      source.push(item);
     }
 
-    return source;
+    return { source, headers };
   }
   return { showEchartsLegend, isRight, aggregations };
 }
