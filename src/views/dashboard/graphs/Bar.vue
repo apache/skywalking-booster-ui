@@ -49,7 +49,9 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const { showEchartsLegend, isRight } = useLegendProcess(props.config.legend);
+const { showEchartsLegend, isRight, chartColors } = useLegendProcess(
+  props.config.legend
+);
 const option = computed(() => getOption());
 
 function getOption() {
@@ -79,35 +81,7 @@ function getOption() {
       },
     };
   });
-  let color: string[] = [];
-  switch (keys.length) {
-    case 2:
-      color = ["#FF6A84", "#a0b1e6"];
-      break;
-    case 1:
-      color = ["#3f96e3"];
-      break;
-    default:
-      color = [
-        "#30A4EB",
-        "#45BFC0",
-        "#FFCC55",
-        "#FF6A84",
-        "#a0a7e6",
-        "#c23531",
-        "#2f4554",
-        "#61a0a8",
-        "#d48265",
-        "#91c7ae",
-        "#749f83",
-        "#ca8622",
-        "#bda29a",
-        "#6e7074",
-        "#546570",
-        "#c4ccd3",
-      ];
-      break;
-  }
+  const color: string[] = chartColors(keys);
   return {
     color,
     tooltip: {

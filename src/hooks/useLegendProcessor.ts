@@ -35,7 +35,9 @@ export default function useLegendProcess(legend?: LegendOptions) {
   }
   function aggregations(data: { [key: string]: number[] }) {
     const source: { [key: string]: unknown }[] = [];
-    const keys = Object.keys(data);
+    const keys = Object.keys(data || {}).filter(
+      (i: any) => Array.isArray(data[i]) && data[i].length
+    );
     const headers = [];
 
     for (const [key, value] of keys.entries()) {
@@ -81,5 +83,37 @@ export default function useLegendProcess(legend?: LegendOptions) {
 
     return { source, headers };
   }
-  return { showEchartsLegend, isRight, aggregations };
+  function chartColors(keys: string[]) {
+    let color: string[] = [];
+    switch (keys.length) {
+      case 2:
+        color = ["#FF6A84", "#a0b1e6"];
+        break;
+      case 1:
+        color = ["#3f96e3"];
+        break;
+      default:
+        color = [
+          "#30A4EB",
+          "#45BFC0",
+          "#FFCC55",
+          "#FF6A84",
+          "#a0a7e6",
+          "#c23531",
+          "#2f4554",
+          "#61a0a8",
+          "#d48265",
+          "#91c7ae",
+          "#749f83",
+          "#ca8622",
+          "#bda29a",
+          "#6e7074",
+          "#546570",
+          "#c4ccd3",
+        ];
+        break;
+    }
+    return color;
+  }
+  return { showEchartsLegend, isRight, aggregations, chartColors };
 }

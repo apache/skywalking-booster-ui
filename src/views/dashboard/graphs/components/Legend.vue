@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div
-    :style="`width: ${config.width || '100%'}, max-height:${
+    :style="`width: ${config.width || '100%'}; max-height:${
       isRight ? '100%' : 130
     }`"
     v-if="source.length"
@@ -25,7 +25,10 @@ limitations under the License. -->
       <span v-for="h in headers" :key="h.value">{{ h.label }}</span>
     </div>
     <div class="col-item" v-for="(item, index) in source" :key="index">
-      <span>{{ item.name }}</span>
+      <span>
+        <Icon iconName="circle" :style="`color: ${colors[index]};`" />
+        <i style="font-style: normal">{{ item.name }}</i>
+      </span>
       <span v-for="h in headers" :key="h.value">{{ item[h.value] }}</span>
     </div>
   </div>
@@ -46,11 +49,10 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const { aggregations, isRight } = useLegendProcess(props.config);
+const { aggregations, chartColors, isRight } = useLegendProcess(props.config);
 const { source, headers } = aggregations(props.data);
+const keys = Object.keys(props.data || {}).filter(
+  (i: any) => Array.isArray(props.data[i]) && props.data[i].length
+);
+const colors = chartColors(keys);
 </script>
-<style lang="scss" scoped>
-.legend {
-  overflow: auto;
-}
-</style>
