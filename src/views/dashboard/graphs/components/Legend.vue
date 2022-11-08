@@ -18,6 +18,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import { LegendOptions } from "@/types/dashboard";
+import useLegendProcess from "@/hooks/useLegendProcessor";
 
 /*global defineProps */
 const props = defineProps({
@@ -27,10 +28,10 @@ const props = defineProps({
   },
   config: {
     type: Object as PropType<LegendOptions>,
-    default: () => ({
-      legend: {},
-    }),
+    default: () => ({}),
   },
 });
-console.log(props);
+const { aggregations } = useLegendProcess(props.config);
+const source = aggregations(props.data);
+console.log(source);
 </script>

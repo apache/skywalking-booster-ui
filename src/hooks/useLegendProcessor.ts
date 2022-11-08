@@ -33,6 +33,36 @@ export default function useLegendProcess(legend?: LegendOptions) {
     }
     return true;
   }
+  function aggregations(data: { [key: string]: number[] }) {
+    const source: any = {};
+    const keys = Object.keys(data);
 
-  return { showEchartsLegend, isRight };
+    for (const k of keys) {
+      source[k].linear = data[k];
+      if (legend) {
+        if (legend.min) {
+          source[k].min = Math.min(...data[k]);
+        }
+        if (legend.max) {
+          source[k].max = Math.max(...data[k]);
+        }
+        if (legend.mean) {
+          const total = data[k].reduce((prev: number, next: number) => {
+            prev += next;
+            return prev;
+          }, 0);
+          source[k].mean = total / data[k].length;
+        }
+        if (legend.total) {
+          source[k].total = data[k].reduce((prev: number, next: number) => {
+            prev += next;
+            return prev;
+          }, 0);
+        }
+      }
+    }
+
+    return source;
+  }
+  return { showEchartsLegend, isRight, aggregations };
 }
