@@ -15,9 +15,7 @@ limitations under the License. -->
 <template>
   <div
     class="legend"
-    :style="`width: ${
-      config.width || (isRight ? '150px' : '100%')
-    }; maxHeight:${isRight ? '100%' : 130}`"
+    :style="`width: ${width}; maxHeight:${isRight ? '100%' : 130}`"
     v-if="tableData.length && config.asTable"
   >
     <table>
@@ -83,6 +81,13 @@ const headerRow = computed(() => {
   return aggregations(props.data, props.intervalTime).headers;
 });
 const isRight = computed(() => useLegendProcess(props.config).isRight);
+const width = computed(() =>
+  props.config.width
+    ? props.config.width + "px"
+    : isRight.value
+    ? "150px"
+    : "100%"
+);
 const colors = computed(() => {
   const keys = Object.keys(props.data || {}).filter(
     (i: any) => Array.isArray(props.data[i]) && props.data[i].length
