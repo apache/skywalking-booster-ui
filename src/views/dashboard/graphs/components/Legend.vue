@@ -29,10 +29,24 @@ limitations under the License. -->
       </tr>
       <tr class="col-item" v-for="(item, index) in tableData" :key="index">
         <td class="header-cell">
-          <div class="cell">
-            <Icon iconName="circle" :style="`color: ${colors[index]};`" />
-            <i style="font-style: normal">{{ item.name }}</i>
-          </div>
+          <el-popover placement="bottom" :width="100" trigger="click">
+            <template #reference>
+              <div class="cell name">
+                <Icon iconName="circle" :style="`color: ${colors[index]};`" />
+                <i>{{ item.name }}</i>
+              </div>
+            </template>
+            <div>
+              <div
+                class="value"
+                v-for="(value, index) in item.topN"
+                :key="index"
+              >
+                <span>{{ index }}</span>
+                <span>{{ value }}</span>
+              </div>
+            </div>
+          </el-popover>
         </td>
         <td v-for="h in headerRow" :key="h.value">
           <div class="cell">{{ item[h.value] }}</div>
@@ -95,6 +109,10 @@ table {
     text-overflow: ellipsis;
     vertical-align: middle;
     width: 100px;
+
+    &.header-cell {
+      width: 150px;
+    }
   }
 }
 
@@ -106,9 +124,21 @@ table {
   word-break: break-all;
   line-height: 23px;
   padding: 0 5px;
+
+  i {
+    font-style: normal;
+  }
 }
 
-.header-cell {
-  width: 150px;
+.value {
+  span {
+    display: inline-block;
+    padding: 5px;
+    width: 50px;
+  }
+}
+
+.name {
+  cursor: pointer;
 }
 </style>

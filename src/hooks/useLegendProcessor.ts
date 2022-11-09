@@ -47,7 +47,7 @@ export default function useLegendProcess(legend?: LegendOptions) {
     for (const [key, value] of keys.entries()) {
       const item: { [key: string]: unknown } = {
         name: value,
-        linear: data[value],
+        topN: data[value],
       };
       if (legend) {
         if (legend.min) {
