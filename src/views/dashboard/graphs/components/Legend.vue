@@ -16,14 +16,19 @@ limitations under the License. -->
   <div
     :style="`width: ${
       config.width || (isRight ? '150px' : '100%')
-    }; max-height:${isRight ? '100%' : 130}`"
+    }; maxHeight:${isRight ? '100%' : 130}`"
     v-if="tableData.length && config.asTable"
+    class="flex-v legend"
   >
-    <div class="col-item">
+    <div class="col-item flex-h">
       <span class="empty"></span>
       <span v-for="h in headerRow" :key="h.value">{{ h.label }}</span>
     </div>
-    <div class="col-item" v-for="(item, index) in tableData" :key="index">
+    <div
+      class="col-item flex-h"
+      v-for="(item, index) in tableData"
+      :key="index"
+    >
       <span>
         <Icon iconName="circle" :style="`color: ${colors[index]};`" />
         <i style="font-style: normal">{{ item.name }}</i>
@@ -68,14 +73,18 @@ const colors = computed(() => {
 });
 </script>
 <style lang="scss" scoped>
+.legend {
+  overflow: auto;
+}
+
 .col-item {
   font-size: 12px;
-  width: 100%;
-  overflow: auto;
+  height: 30px;
 
   span {
     display: inline-block;
     padding: 5px;
+    min-width: 60px;
   }
 }
 </style>
