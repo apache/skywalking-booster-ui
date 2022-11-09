@@ -29,21 +29,21 @@ limitations under the License. -->
       </tr>
       <tr class="col-item" v-for="(item, index) in tableData" :key="index">
         <td class="header-cell">
-          <el-popover placement="bottom" :width="100" trigger="click">
+          <el-popover placement="bottom" :width="230" trigger="click">
             <template #reference>
               <div class="cell name">
                 <Icon iconName="circle" :style="`color: ${colors[index]};`" />
                 <i>{{ item.name }}</i>
               </div>
             </template>
-            <div>
-              <div
-                class="value"
-                v-for="(value, index) in item.topN"
-                :key="index"
-              >
-                <span>{{ index }}</span>
-                <span>{{ value }}</span>
+            <div class="list">
+              <div class="value">
+                <span>Key</span>
+                <span>Value</span>
+              </div>
+              <div class="value" v-for="(d, index) in item.topN" :key="index">
+                <span>{{ d.key }}</span>
+                <span>{{ d.value }}</span>
               </div>
             </div>
           </el-popover>
@@ -71,15 +71,16 @@ const props = defineProps({
     type: Object as PropType<LegendOptions>,
     default: () => ({}),
   },
+  intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
 
-const tableData = computed(() => {
+const tableData: any = computed(() => {
   const { aggregations } = useLegendProcess(props.config);
-  return aggregations(props.data).source;
+  return aggregations(props.data, props.intervalTime).source;
 });
 const headerRow = computed(() => {
   const { aggregations } = useLegendProcess(props.config);
-  return aggregations(props.data).headers;
+  return aggregations(props.data, props.intervalTime).headers;
 });
 const isRight = computed(() => useLegendProcess(props.config).isRight);
 const colors = computed(() => {
@@ -134,11 +135,16 @@ table {
   span {
     display: inline-block;
     padding: 5px;
-    width: 50px;
+    width: 80px;
   }
 }
 
 .name {
   cursor: pointer;
+}
+
+.list {
+  height: 360px;
+  overflow: auto;
 }
 </style>

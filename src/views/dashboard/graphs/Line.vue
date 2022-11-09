@@ -20,7 +20,7 @@ limitations under the License. -->
       :filters="config.filters"
       :relatedTrace="config.relatedTrace"
     />
-    <Legend :config="config.legend" :data="data" />
+    <Legend :config="config.legend" :data="data" :intervalTime="intervalTime" />
   </div>
 </template>
 <script lang="ts" setup>

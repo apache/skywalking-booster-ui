@@ -37,7 +37,10 @@ export default function useLegendProcess(legend?: LegendOptions) {
     }
     return true;
   }
-  function aggregations(data: { [key: string]: number[] }) {
+  function aggregations(
+    data: { [key: string]: number[] },
+    intervalTime: string[]
+  ) {
     const source: { [key: string]: unknown }[] = [];
     const keys = Object.keys(data || {}).filter(
       (i: any) => Array.isArray(data[i]) && data[i].length
@@ -45,9 +48,23 @@ export default function useLegendProcess(legend?: LegendOptions) {
     const headers = [];
 
     for (const [key, value] of keys.entries()) {
+      const arr = JSON.parse(JSON.stringify(data[value]));
       const item: { [key: string]: unknown } = {
         name: value,
-        topN: data[value],
+        topN: arr
+          .map((d: number, index: number) => {
+            return {
+              key: intervalTime[index],
+              value: d,
+            };
+          })
+          .sort(
+            (
+              a: { key: string; value: number },
+              b: { key: string; value: number }
+            ) => b.value - a.value
+          )
+          .filter((_: unknown, index: number) => index < 10),
       };
       if (legend) {
         if (legend.min) {
