@@ -325,6 +325,7 @@ const msg = {
   eventsParameters: "事件参数",
   eventDetail: "事件详情",
   value: "数值",
+  key: "Key",
   tableHeader: "表头名称",
   tableValues: "表值",
   show: "展示",

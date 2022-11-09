@@ -327,6 +327,7 @@ const msg = {
   eventsParameters: "Parámetro del Evento",
   eventDetail: "Detalle del Evento",
   value: "Valor",
+  key: "Clave",
   show: "Mostrar",
   hide: "Oculatr",
   statistics: "Estadísticas",
