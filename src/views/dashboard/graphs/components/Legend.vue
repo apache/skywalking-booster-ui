@@ -22,13 +22,13 @@ limitations under the License. -->
   >
     <table>
       <tr class="col-item">
-        <td class="empty"></td>
+        <td class="header-cell"></td>
         <td v-for="h in headerRow" :key="h.value">
           <div class="cell">{{ h.label }}</div>
         </td>
       </tr>
       <tr class="col-item" v-for="(item, index) in tableData" :key="index">
-        <td>
+        <td class="header-cell">
           <div class="cell">
             <Icon iconName="circle" :style="`color: ${colors[index]};`" />
             <i style="font-style: normal">{{ item.name }}</i>
@@ -94,7 +94,7 @@ table {
     box-sizing: border-box;
     text-overflow: ellipsis;
     vertical-align: middle;
-    width: 60px;
+    width: 100px;
   }
 }
 
@@ -106,5 +106,9 @@ table {
   word-break: break-all;
   line-height: 23px;
   padding: 0 5px;
+}
+
+.header-cell {
+  width: 150px;
 }
 </style>
