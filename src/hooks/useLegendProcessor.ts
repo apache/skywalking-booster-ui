@@ -64,7 +64,7 @@ export default function useLegendProcess(legend?: LegendOptions) {
         }
         if (legend.mean) {
           const total = data[value].reduce((prev: number, next: number) => {
-            prev += next;
+            prev += Number(next);
             return prev;
           }, 0);
           item.mean = (total / data[value].length).toFixed(2);
@@ -75,7 +75,7 @@ export default function useLegendProcess(legend?: LegendOptions) {
         if (legend.total) {
           item.total = data[value]
             .reduce((prev: number, next: number) => {
-              prev += next;
+              prev += Number(next);
               return prev;
             }, 0)
             .toFixed(2);
