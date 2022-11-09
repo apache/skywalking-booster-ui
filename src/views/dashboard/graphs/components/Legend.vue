@@ -14,27 +14,31 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div
+    class="legend"
     :style="`width: ${
       config.width || (isRight ? '150px' : '100%')
     }; maxHeight:${isRight ? '100%' : 130}`"
     v-if="tableData.length && config.asTable"
-    class="flex-v legend"
   >
-    <div class="col-item flex-h">
-      <span class="empty"></span>
-      <span v-for="h in headerRow" :key="h.value">{{ h.label }}</span>
-    </div>
-    <div
-      class="col-item flex-h"
-      v-for="(item, index) in tableData"
-      :key="index"
-    >
-      <span>
-        <Icon iconName="circle" :style="`color: ${colors[index]};`" />
-        <i style="font-style: normal">{{ item.name }}</i>
-      </span>
-      <span v-for="h in headerRow" :key="h.value">{{ item[h.value] }}</span>
-    </div>
+    <table>
+      <tr class="col-item">
+        <td class="empty"></td>
+        <td v-for="h in headerRow" :key="h.value">
+          <div class="cell">{{ h.label }}</div>
+        </td>
+      </tr>
+      <tr class="col-item" v-for="(item, index) in tableData" :key="index">
+        <td>
+          <div class="cell">
+            <Icon iconName="circle" :style="`color: ${colors[index]};`" />
+            <i style="font-style: normal">{{ item.name }}</i>
+          </div>
+        </td>
+        <td v-for="h in headerRow" :key="h.value">
+          <div class="cell">{{ item[h.value] }}</div>
+        </td>
+      </tr>
+    </table>
   </div>
 </template>
 <script lang="ts" setup>
@@ -73,18 +77,34 @@ const colors = computed(() => {
 });
 </script>
 <style lang="scss" scoped>
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
 .legend {
   overflow: auto;
 }
 
 .col-item {
-  font-size: 12px;
-  height: 30px;
-
-  span {
-    display: inline-block;
-    padding: 5px;
-    min-width: 60px;
+  td {
+    font-size: 12px;
+    font-weight: normal;
+    padding: 3px 0;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    width: 60px;
   }
+}
+
+.cell {
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-all;
+  line-height: 23px;
+  padding: 0 5px;
 }
 </style>
