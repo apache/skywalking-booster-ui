@@ -23,15 +23,17 @@ limitations under the License. -->
     />
   </div>
   <div>
-    <span class="label">{{ t("legendOptions") }}</span>
-    <span class="title mr-5">{{ t("asTable") }}</span>
+    <span class="label">{{ t("asTable") }}</span>
     <el-switch
       v-model="legend.asTable"
       active-text="Yes"
       inactive-text="No"
       @change="updateLegendConfig({ asTable: legend.asTable })"
     />
-    <span class="title ml-20 mr-5">{{ t("toTheRight") }}</span>
+  </div>
+  <div v-show="legend.asTable">
+    <span class="label">{{ t("legendOptions") }}</span>
+    <span class="title mr-5">{{ t("toTheRight") }}</span>
     <el-switch
       v-model="legend.toTheRight"
       active-text="Yes"
@@ -47,7 +49,7 @@ limitations under the License. -->
       @change="updateLegendConfig({ width: legend.width })"
     />
   </div>
-  <div>
+  <div v-show="legend.asTable">
     <span class="label">{{ t("legendValues") }}</span>
     <span class="title mr-5">{{ t("min") }}</span>
     <el-switch
