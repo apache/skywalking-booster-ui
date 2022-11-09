@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import { LegendOptions } from "@/types/dashboard";
+import { isUnDef } from "@/utils/is";
 
 export default function useLegendProcess(legend?: LegendOptions) {
   let isRight = false;
@@ -22,7 +23,10 @@ export default function useLegendProcess(legend?: LegendOptions) {
     isRight = true;
   }
   function showEchartsLegend(keys: string[]) {
-    if (legend && !legend.show === undefined) {
+    if (legend && isUnDef(legend.show)) {
+      if (legend.asTable && legend.show) {
+        return false;
+      }
       return legend.show;
     }
     if (keys.length === 1) {

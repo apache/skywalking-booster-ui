@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="graph flex-v" :class="isRight ? 'flex-h' : 'flex-v'">
+  <div class="graph flex-v" :class="setRight ? 'flex-h' : 'flex-v'">
     <Graph
       :option="option"
       @select="clickEvent"
@@ -24,7 +24,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import type { PropType } from "vue";
 import {
   LineConfig,
@@ -64,11 +64,13 @@ const props = defineProps({
     }),
   },
 });
-const { showEchartsLegend, isRight, chartColors } = useLegendProcess(
-  props.config.legend
-);
+const setRight = ref<boolean>(false);
 const option = computed(() => getOption());
 function getOption() {
+  const { showEchartsLegend, isRight, chartColors } = useLegendProcess(
+    props.config.legend
+  );
+  setRight.value = isRight;
   const keys = Object.keys(props.data || {}).filter(
     (i: any) => Array.isArray(props.data[i]) && props.data[i].length
   );

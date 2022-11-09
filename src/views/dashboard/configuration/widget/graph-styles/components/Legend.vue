@@ -24,7 +24,7 @@ limitations under the License. -->
   </div>
   <div>
     <span class="label">{{ t("legendOptions") }}</span>
-    <span class="label mr-5">{{ t("asTable") }}</span>
+    <span class="title mr-5">{{ t("asTable") }}</span>
     <el-switch
       v-model="legend.asTable"
       active-text="Yes"
@@ -108,7 +108,10 @@ function updateLegendConfig(param: { [key: string]: unknown }) {
       ...param,
     },
   };
-  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, g });
+  dashboardStore.selectWidget({
+    ...dashboardStore.selectedGrid,
+    graph: g,
+  });
 }
 </script>
 <style lang="scss" scoped>
