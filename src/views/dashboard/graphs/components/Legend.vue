@@ -14,26 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div
-    :style="`width: ${config.width || '100%'}; max-height:${
-      isRight ? '100%' : 130
-    }`"
-    v-if="source.length"
-    class="legend"
+    :style="`width: ${
+      config.width || (isRight ? '150px' : '100%')
+    }; max-height:${isRight ? '100%' : 130}`"
+    v-if="tableData.length && config.asTable"
   >
     <div class="col-item">
-      <span></span>
-      <span v-for="h in headers" :key="h.value">{{ h.label }}</span>
+      <span class="empty"></span>
+      <span v-for="h in headerRow" :key="h.value">{{ h.label }}</span>
     </div>
-    <div class="col-item" v-for="(item, index) in source" :key="index">
+    <div class="col-item" v-for="(item, index) in tableData" :key="index">
       <span>
         <Icon iconName="circle" :style="`color: ${colors[index]};`" />
         <i style="font-style: normal">{{ item.name }}</i>
       </span>
-      <span v-for="h in headers" :key="h.value">{{ item[h.value] }}</span>
+      <span v-for="h in headerRow" :key="h.value">{{ item[h.value] }}</span>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import { computed } from "vue";
 import type { PropType } from "vue";
 import { LegendOptions } from "@/types/dashboard";
 import useLegendProcess from "@/hooks/useLegendProcessor";
@@ -49,10 +49,33 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const { aggregations, chartColors, isRight } = useLegendProcess(props.config);
-const { source, headers } = aggregations(props.data);
-const keys = Object.keys(props.data || {}).filter(
-  (i: any) => Array.isArray(props.data[i]) && props.data[i].length
-);
-const colors = chartColors(keys);
+
+const tableData = computed(() => {
+  const { aggregations } = useLegendProcess(props.config);
+  return aggregations(props.data).source;
+});
+const headerRow = computed(() => {
+  const { aggregations } = useLegendProcess(props.config);
+  return aggregations(props.data).headers;
+});
+const isRight = computed(() => useLegendProcess(props.config).isRight);
+const colors = computed(() => {
+  const keys = Object.keys(props.data || {}).filter(
+    (i: any) => Array.isArray(props.data[i]) && props.data[i].length
+  );
+  const { chartColors } = useLegendProcess(props.config);
+  return chartColors(keys);
+});
 </script>
+<style lang="scss" scoped>
+.col-item {
+  font-size: 12px;
+  width: 100%;
+  overflow: auto;
+
+  span {
+    display: inline-block;
+    padding: 5px;
+  }
+}
+</style>

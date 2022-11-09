@@ -96,7 +96,7 @@ const legend = reactive<LegendOptions>({
   mean: false,
   asTable: false,
   toTheRight: false,
-  width: 120,
+  width: 130,
   ...graph.value.legend,
 });
 

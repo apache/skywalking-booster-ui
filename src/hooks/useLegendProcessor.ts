@@ -51,13 +51,13 @@ export default function useLegendProcess(legend?: LegendOptions) {
       };
       if (legend) {
         if (legend.min) {
-          item.min = Math.min(...data[value]);
+          item.min = Math.min(...data[value]).toFixed(2);
           if (key === 0) {
             headers.push({ value: "min", label: "Min" });
           }
         }
         if (legend.max) {
-          item.max = Math.max(...data[value]);
+          item.max = Math.max(...data[value]).toFixed(2);
           if (key === 0) {
             headers.push({ value: "max", label: "Max" });
           }
@@ -67,16 +67,18 @@ export default function useLegendProcess(legend?: LegendOptions) {
             prev += next;
             return prev;
           }, 0);
-          item.mean = total / data[value].length;
+          item.mean = (total / data[value].length).toFixed(2);
           if (key === 0) {
             headers.push({ value: "mean", label: "Mean" });
           }
         }
         if (legend.total) {
-          item.total = data[value].reduce((prev: number, next: number) => {
-            prev += next;
-            return prev;
-          }, 0);
+          item.total = data[value]
+            .reduce((prev: number, next: number) => {
+              prev += next;
+              return prev;
+            }, 0)
+            .toFixed(2);
           if (key === 0) {
             headers.push({ value: "total", label: "Total" });
           }
