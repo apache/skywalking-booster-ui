@@ -36,8 +36,8 @@ limitations under the License. -->
             </template>
             <div class="list">
               <div class="value">
-                <span>Key</span>
-                <span>Value</span>
+                <span>{{ t("key") }}</span>
+                <span>{{ t("value") }}</span>
               </div>
               <div class="value" v-for="(d, index) in item.topN" :key="index">
                 <span>{{ d.key }}</span>
@@ -56,6 +56,7 @@ limitations under the License. -->
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { PropType } from "vue";
+import { useI18n } from "vue-i18n";
 import { LegendOptions } from "@/types/dashboard";
 import useLegendProcess from "@/hooks/useLegendProcessor";
 
@@ -71,7 +72,7 @@ const props = defineProps({
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
 });
-
+const { t } = useI18n();
 const tableData: any = computed(() => {
   const { aggregations } = useLegendProcess(props.config);
   return aggregations(props.data, props.intervalTime).source;

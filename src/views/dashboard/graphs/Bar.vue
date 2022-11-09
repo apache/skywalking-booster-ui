@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="graph" :class="isRight ? 'flex-h' : 'flex-v'">
     <Graph :option="option" @select="clickEvent" :filters="config.filters" />
-    <Legend :config="config.legend" :data="data" />
+    <Legend :config="config.legend" :data="data" :intervalTime="intervalTime" />
   </div>
 </template>
 <script lang="ts" setup>
