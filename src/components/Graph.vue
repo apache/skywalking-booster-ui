@@ -215,6 +215,7 @@ onBeforeUnmount(() => {
 
 .chart {
   overflow: hidden;
+  flex: 1;
 }
 
 .menus {

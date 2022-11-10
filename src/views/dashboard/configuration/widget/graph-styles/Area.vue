@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <Legend />
   <div>
     <span class="label">{{ t("areaOpacity") }}</span>
     <el-slider
@@ -31,6 +32,7 @@ limitations under the License. -->
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import Legend from "./components/Legend.vue";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();

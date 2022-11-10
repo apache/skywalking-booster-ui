@@ -13,15 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Graph
-    :option="option"
-    @select="clickEvent"
-    :filters="config.filters"
-    :relatedTrace="config.relatedTrace"
-  />
+  <div class="graph flex-v" :class="setRight ? 'flex-h' : 'flex-v'">
+    <Graph
+      :option="option"
+      @select="clickEvent"
+      :filters="config.filters"
+      :relatedTrace="config.relatedTrace"
+    />
+    <Legend :config="config.legend" :data="data" :intervalTime="intervalTime" />
+  </div>
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import type { PropType } from "vue";
 import {
   LineConfig,
@@ -29,6 +32,8 @@ import {
   RelatedTrace,
   Filters,
 } from "@/types/dashboard";
+import Legend from "./components/Legend.vue";
+import useLegendProcess from "@/hooks/useLegendProcessor";
 
 /*global defineProps, defineEmits */
 const emits = defineEmits(["click"]);
@@ -44,7 +49,8 @@ const props = defineProps({
       LineConfig & {
         filters?: Filters;
         relatedTrace?: RelatedTrace;
-      } & { id?: string }
+        id?: string;
+      }
     >,
     default: () => ({
       step: false,
@@ -58,8 +64,13 @@ const props = defineProps({
     }),
   },
 });
+const setRight = ref<boolean>(false);
 const option = computed(() => getOption());
 function getOption() {
+  const { showEchartsLegend, isRight, chartColors } = useLegendProcess(
+    props.config.legend
+  );
+  setRight.value = isRight;
   const keys = Object.keys(props.data || {}).filter(
     (i: any) => Array.isArray(props.data[i]) && props.data[i].length
   );
@@ -88,35 +99,7 @@ function getOption() {
     }
     return serie;
   });
-  let color: string[] = [];
-  switch (keys.length) {
-    case 2:
-      color = ["#FF6A84", "#a0b1e6"];
-      break;
-    case 1:
-      color = ["#3f96e3"];
-      break;
-    default:
-      color = [
-        "#30A4EB",
-        "#45BFC0",
-        "#FFCC55",
-        "#FF6A84",
-        "#a0a7e6",
-        "#c23531",
-        "#2f4554",
-        "#61a0a8",
-        "#d48265",
-        "#91c7ae",
-        "#749f83",
-        "#ca8622",
-        "#bda29a",
-        "#6e7074",
-        "#546570",
-        "#c4ccd3",
-      ];
-      break;
-  }
+  const color: string[] = chartColors(keys);
   const tooltip = {
     trigger: "none",
     axisPointer: {
@@ -151,7 +134,7 @@ function getOption() {
     tooltip: props.config.smallTips ? tips : tooltip,
     legend: {
       type: "scroll",
-      show: keys.length === 1 ? false : true,
+      show: showEchartsLegend(keys),
       icon: "circle",
       top: 0,
       left: 0,
@@ -167,7 +150,7 @@ function getOption() {
       },
     },
     grid: {
-      top: keys.length === 1 ? 15 : 55,
+      top: showEchartsLegend(keys) ? 35 : 10,
       left: 0,
       right: 10,
       bottom: 5,
@@ -205,3 +188,9 @@ function clickEvent(params: EventParams) {
   emits("click", params);
 }
 </script>
+<style lang="scss" scoped>
+.graph {
+  width: 100%;
+  height: 100%;
+}
+</style>

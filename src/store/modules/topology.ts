@@ -23,7 +23,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { AxiosResponse } from "axios";
 import query from "@/graphql/fetch";
-import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
+import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
 import { ElMessage } from "element-plus";
 
 interface MetricVal {

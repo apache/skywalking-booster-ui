@@ -66,7 +66,10 @@ import type { PropType } from "vue";
 import { EndpointListConfig } from "@/types/dashboard";
 import { Endpoint } from "@/types/selector";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useProcessor";
+import {
+  useQueryPodsMetrics,
+  usePodsSource,
+} from "@/hooks/useMetricsProcessor";
 import { EntityType } from "../data";
 import router from "@/router";
 import getDashboard from "@/hooks/useDashboardsSession";

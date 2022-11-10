@@ -86,7 +86,7 @@ import {
   useQueryProcessor,
   useSourceProcessor,
   useGetMetricEntity,
-} from "@/hooks/useProcessor";
+} from "@/hooks/useMetricsProcessor";
 import { EntityType, ListChartTypes } from "../data";
 import { EventParams } from "@/types/dashboard";
 import getDashboard from "@/hooks/useDashboardsSession";

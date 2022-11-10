@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <Legend />
   <div>
     <span class="label">{{ t("showXAxis") }}</span>
     <el-switch
@@ -63,6 +64,7 @@ limitations under the License. -->
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import Legend from "./components/Legend.vue";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
@@ -82,8 +84,8 @@ function updateConfig(param: { [key: string]: unknown }) {
 <style lang="scss" scoped>
 .label {
   font-size: 13px;
-  font-weight: 500;
   display: block;
-  margin-bottom: 5px;
+  margin-top: 5px;
+  margin-bottom: -5px;
 }
 </style>

@@ -111,9 +111,9 @@ import { Service } from "@/types/selector";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import getDashboard from "@/hooks/useDashboardsSession";
 import { MetricConfigOpt } from "@/types/dashboard";
-import { aggregation } from "@/hooks/useProcessor";
+import { aggregation } from "@/hooks/useMetricsProcessor";
 import icons from "@/assets/img/icons";
-import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
+import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
 
 /*global Nullable, defineProps */
 const props = defineProps({

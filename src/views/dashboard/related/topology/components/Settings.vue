@@ -248,7 +248,7 @@ import { useTopologyStore } from "@/store/modules/topology";
 import { ElMessage } from "element-plus";
 import { MetricCatalog, ScopeType, MetricConditions } from "../../../data";
 import { Option } from "@/types/app";
-import { useQueryTopologyMetrics } from "@/hooks/useProcessor";
+import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
 import { Node } from "@/types/topology";
 import { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
 import { EntityType, LegendOpt, MetricsType } from "../../../data";

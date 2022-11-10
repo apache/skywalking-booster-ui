@@ -122,7 +122,7 @@ const hasLabel = computed(() => {
   const graph = dashboardStore.selectedGrid.graph || {};
   return (
     ListChartTypes.includes(graph.type) ||
-    metricType.value === "readLabeledMetricsValues"
+    ["readLabeledMetricsValues", "readMetricsValues"].includes(metricType.value)
   );
 });
 const isTopn = computed(() =>
