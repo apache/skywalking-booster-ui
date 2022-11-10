@@ -21,7 +21,27 @@ limitations under the License. -->
     :style="`width: ${width}; maxHeight:${isRight ? '100%' : 130}`"
     class="scroll_bar_style"
   >
-    <table>
+    <table v-if="tableData.length === 1">
+      <thead>
+        <tr>
+          <th v-show="headerRow.length"></th>
+          <th>
+            {{ tableData[0].name }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="h in headerRow" :key="h.value">
+          <th>
+            {{ h.label }}
+          </th>
+          <td>
+            {{ tableData[0][h.value] }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table v-else>
       <thead>
         <tr>
           <th></th>
@@ -125,6 +145,7 @@ table thead th {
   z-index: 1;
   width: 25vw;
   background: #fff;
+  text-align: left;
 }
 
 .name {
@@ -133,7 +154,6 @@ table thead th {
 
 table td {
   padding: 5px;
-  text-align: center;
 }
 
 table thead th:first-child {
@@ -144,7 +164,7 @@ table thead th:first-child {
 
 table tbody th {
   font-weight: bold;
-  font-style: italic;
+  font-style: normal;
   text-align: left;
   background: #fff;
   position: sticky;
