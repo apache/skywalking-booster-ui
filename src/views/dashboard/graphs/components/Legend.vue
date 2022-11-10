@@ -140,7 +140,7 @@ table thead th:first-child {
 }
 
 table tbody th {
-  font-weight: normal;
+  font-weight: bold;
   font-style: italic;
   text-align: left;
   background: #fff;
