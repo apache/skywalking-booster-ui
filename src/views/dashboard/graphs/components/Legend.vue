@@ -115,13 +115,11 @@ table {
   table-layout: fixed;
 }
 
-table td,
 table th {
-  padding: 0.5rem 1rem;
+  padding: 5px;
 }
 
 table thead th {
-  padding: 3px;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -130,7 +128,7 @@ table thead th {
 }
 
 table td {
-  padding: 4px 5px;
+  padding: 5px;
   text-align: center;
 }
 

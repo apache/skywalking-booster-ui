@@ -84,7 +84,7 @@ export default function useLegendProcess(legend?: LegendOptions) {
             prev += Number(next);
             return prev;
           }, 0);
-          item.mean = (total / data[value].length).toFixed(2);
+          item.mean = (total / data[value].length).toFixed(4);
           if (key === 0) {
             headers.push({ value: "mean", label: "Mean" });
           }
