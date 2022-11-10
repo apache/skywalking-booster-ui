@@ -35,7 +35,7 @@ limitations under the License. -->
           <th>
             <el-popover placement="bottom" :width="230" trigger="click">
               <template #reference>
-                <div>
+                <div class="name">
                   <Icon iconName="circle" :style="`color: ${colors[index]};`" />
                   <i>{{ item.name }}</i>
                 </div>
@@ -127,6 +127,10 @@ table thead th {
   background: #fff;
 }
 
+.name {
+  cursor: pointer;
+}
+
 table td {
   padding: 5px;
   text-align: center;
@@ -162,10 +166,6 @@ i {
     padding: 5px;
     width: 80px;
   }
-}
-
-.name {
-  cursor: pointer;
 }
 
 .list {
