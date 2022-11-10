@@ -14,42 +14,48 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div
-    class="legend"
-    :style="`width: ${width}; maxHeight:${isRight ? '100%' : 130}`"
     v-if="tableData.length && config.asTable"
+    role="region"
+    aria-labelledby="caption"
+    tabindex="0"
+    :style="`width: ${width}; maxHeight:${isRight ? '100%' : 130}`"
   >
     <table>
-      <tr class="col-item">
-        <td class="header-cell"></td>
-        <td v-for="h in headerRow" :key="h.value">
-          <div class="cell">{{ h.label }}</div>
-        </td>
-      </tr>
-      <tr class="col-item" v-for="(item, index) in tableData" :key="index">
-        <td class="header-cell">
-          <el-popover placement="bottom" :width="230" trigger="click">
-            <template #reference>
-              <div class="cell name">
-                <Icon iconName="circle" :style="`color: ${colors[index]};`" />
-                <i>{{ item.name }}</i>
+      <thead>
+        <tr>
+          <th></th>
+          <th v-for="h in headerRow" :key="h.value">
+            {{ h.label }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in tableData" :key="index">
+          <th>
+            <el-popover placement="bottom" :width="230" trigger="click">
+              <template #reference>
+                <div>
+                  <Icon iconName="circle" :style="`color: ${colors[index]};`" />
+                  <i>{{ item.name }}</i>
+                </div>
+              </template>
+              <div class="list">
+                <div class="value">
+                  <span>{{ t("key") }}</span>
+                  <span>{{ t("value") }}</span>
+                </div>
+                <div class="value" v-for="(d, index) in item.topN" :key="index">
+                  <span>{{ d.key }}</span>
+                  <span>{{ d.value }}</span>
+                </div>
               </div>
-            </template>
-            <div class="list">
-              <div class="value">
-                <span>{{ t("key") }}</span>
-                <span>{{ t("value") }}</span>
-              </div>
-              <div class="value" v-for="(d, index) in item.topN" :key="index">
-                <span>{{ d.key }}</span>
-                <span>{{ d.value }}</span>
-              </div>
-            </div>
-          </el-popover>
-        </td>
-        <td v-for="h in headerRow" :key="h.value">
-          <div class="cell">{{ item[h.value] }}</div>
-        </td>
-      </tr>
+            </el-popover>
+          </th>
+          <td v-for="h in headerRow" :key="h.value">
+            {{ item[h.value] }}
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </template>
@@ -99,42 +105,56 @@ const colors = computed(() => {
 </script>
 <style lang="scss" scoped>
 table {
+  font-size: 12px;
+  white-space: nowrap;
+  margin: 0;
+  border: none;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: fixed;
-  width: 100%;
 }
 
-.legend {
+table td,
+table th {
+  padding: 0.5rem 1rem;
+}
+
+table thead th {
+  padding: 3px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 25vw;
+  background: #fff;
+}
+
+table td {
+  padding: 4px 5px;
+  text-align: center;
+}
+
+table thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+table tbody th {
+  font-weight: normal;
+  font-style: italic;
+  text-align: left;
+  background: #fff;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
+[role="region"][aria-labelledby][tabindex] {
   overflow: auto;
 }
 
-.col-item {
-  td {
-    font-size: 12px;
-    font-weight: normal;
-    padding: 3px 0;
-    box-sizing: border-box;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    width: 100px;
-
-    &.header-cell {
-      width: 150px;
-    }
-  }
-}
-
-.cell {
-  box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
-  word-break: break-all;
-  line-height: 23px;
-  padding: 0 5px;
-
-  i {
-    font-style: normal;
-  }
+i {
+  font-style: normal;
 }
 
 .value {
