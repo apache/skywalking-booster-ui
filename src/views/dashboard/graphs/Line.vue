@@ -150,7 +150,7 @@ function getOption() {
       },
     },
     grid: {
-      top: keys.length === 1 ? 15 : 55,
+      top: showEchartsLegend(keys) ? 35 : 10,
       left: 0,
       right: 10,
       bottom: 5,
