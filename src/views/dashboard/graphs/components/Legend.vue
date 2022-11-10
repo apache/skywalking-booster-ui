@@ -19,6 +19,7 @@ limitations under the License. -->
     aria-labelledby="caption"
     tabindex="0"
     :style="`width: ${width}; maxHeight:${isRight ? '100%' : 130}`"
+    class="scroll_bar_style"
   >
     <table>
       <thead>
