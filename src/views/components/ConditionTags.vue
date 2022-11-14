@@ -92,6 +92,7 @@ const tagsList = ref<string[]>([]);
 const tagArr = ref<string[]>([]);
 const tagList = ref<string[]>([]);
 const tagKeys = ref<string[]>([]);
+const keyList = ref<string[]>([]);
 const visible = ref<boolean>(false);
 const tipsMap = {
   LOG: "logTagsTip",
@@ -137,6 +138,7 @@ async function fetchTagKeys() {
   }
   tagArr.value = resp.data.tagKeys;
   tagKeys.value = resp.data.tagKeys;
+  keyList.value = resp.data.tagKeys;
   searchTags();
 }
 
@@ -172,8 +174,8 @@ function selectTag(item: string) {
 
 function searchTags() {
   if (!tags.value) {
-    tagList.value = tagArr.value;
-    fetchTagKeys();
+    tagList.value = keyList.value;
+    tagKeys.value = keyList.value;
     return;
   }
   let search = "";
@@ -188,6 +190,7 @@ function searchTags() {
 watch(
   () => appStore.durationTime,
   () => {
+    console.log(appStore.durationTime);
     fetchTagKeys();
   }
 );

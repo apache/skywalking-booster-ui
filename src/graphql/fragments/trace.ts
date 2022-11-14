@@ -69,6 +69,25 @@ export const TraceSpans = {
           value
         }
       }
+      attachedEvents {
+        startTime {
+          seconds
+          nanos
+        }
+        event
+        endTime {
+          seconds
+          nanos
+        }
+        tags {
+          key
+          value
+        }
+        summary {
+          key
+          value
+        }
+      }
     }
   }
   `,
