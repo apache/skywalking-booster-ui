@@ -35,9 +35,10 @@ limitations under the License. -->
           size="small"
           v-model="tags"
           class="trace-new-tag"
-          @input="searchTags"
+          @input="inputTags"
           @blur="visible = false"
           @focus="visible = true"
+          @change="addTags"
         />
       </template>
       <div class="content">
@@ -92,6 +93,7 @@ const tagsList = ref<string[]>([]);
 const tagArr = ref<string[]>([]);
 const tagList = ref<string[]>([]);
 const tagKeys = ref<string[]>([]);
+const keysList = ref<string[]>([]);
 const visible = ref<boolean>(false);
 const tipsMap = {
   LOG: "logTagsTip",
@@ -137,6 +139,7 @@ async function fetchTagKeys() {
   }
   tagArr.value = resp.data.tagKeys;
   tagKeys.value = resp.data.tagKeys;
+  keysList.value = resp.data.tagKeys;
   searchTags();
 }
 
@@ -157,13 +160,37 @@ async function fetchTagValues() {
   searchTags();
 }
 
+function inputTags() {
+  if (!tags.value) {
+    tagArr.value = keysList.value;
+    tagKeys.value = keysList.value;
+    tagList.value = tagArr.value;
+    return;
+  }
+  let search = "";
+  if (tags.value.includes("=")) {
+    search = tags.value.split("=")[1];
+    fetchTagValues();
+  } else {
+    search = tags.value;
+  }
+  tagList.value = tagArr.value.filter((d: string) => d.includes(search));
+}
+
+function addTags() {
+  if (!tags.value.includes("=")) {
+    return;
+  }
+  addLabels();
+  tagArr.value = tagKeys.value;
+  searchTags();
+}
+
 function selectTag(item: string) {
   if (tags.value.includes("=")) {
     const key = tags.value.split("=")[0];
     tags.value = key + "=" + item;
-    addLabels();
-    tagArr.value = tagKeys.value;
-    searchTags();
+    addTags();
     return;
   }
   tags.value = item + "=";
@@ -171,11 +198,6 @@ function selectTag(item: string) {
 }
 
 function searchTags() {
-  if (!tags.value) {
-    tagList.value = tagArr.value;
-    fetchTagKeys();
-    return;
-  }
   let search = "";
   if (tags.value.includes("=")) {
     search = tags.value.split("=")[1];
