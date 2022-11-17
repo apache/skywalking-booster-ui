@@ -90,6 +90,7 @@ import {
   reactive,
   watch,
   computed,
+  nextTick,
 } from "vue";
 import { useI18n } from "vue-i18n";
 import * as d3 from "d3";
@@ -149,6 +150,14 @@ const graphConfig = computed(() => props.config.graph || {});
 const depth = ref<number>(graphConfig.value.depth || 2);
 
 onMounted(async () => {
+  await nextTick();
+  const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
+    height: 40,
+    width: 0,
+  };
+  height.value = dom.height - 40;
+  width.value = dom.width;
+
   loading.value = true;
   const json = await selectorStore.fetchServices(dashboardStore.layerId);
   if (json.errors) {
@@ -157,18 +166,13 @@ onMounted(async () => {
   }
   const resp = await getTopology();
   loading.value = false;
+
   if (resp && resp.errors) {
     ElMessage.error(resp.errors);
   }
   topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
   topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
   topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
-  const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
-    height: 40,
-    width: 0,
-  };
-  height.value = dom.height - 40;
-  width.value = dom.width;
   window.addEventListener("resize", resize);
   svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
   await initLegendMetrics();
@@ -732,5 +736,9 @@ watch(
   to {
     stroke-dashoffset: 0;
   }
+}
+
+.el-loading-spinner {
+  top: 30%;
 }
 </style>
