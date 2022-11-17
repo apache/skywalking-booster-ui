@@ -92,6 +92,7 @@ const tagsList = ref<string[]>([]);
 const tagArr = ref<string[]>([]);
 const tagList = ref<string[]>([]);
 const tagKeys = ref<string[]>([]);
+const keysList = ref<string[]>([]);
 const visible = ref<boolean>(false);
 const tipsMap = {
   LOG: "logTagsTip",
@@ -137,6 +138,7 @@ async function fetchTagKeys() {
   }
   tagArr.value = resp.data.tagKeys;
   tagKeys.value = resp.data.tagKeys;
+  keysList.value = resp.data.tagKeys;
   searchTags();
 }
 
@@ -172,8 +174,9 @@ function selectTag(item: string) {
 
 function searchTags() {
   if (!tags.value) {
+    tagArr.value = keysList.value;
+    tagKeys.value = keysList.value;
     tagList.value = tagArr.value;
-    fetchTagKeys();
     return;
   }
   let search = "";
