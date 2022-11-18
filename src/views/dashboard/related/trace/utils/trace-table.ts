@@ -29,13 +29,13 @@ export default class TraceUtil {
     return Array.from(new Set(data.map((span: Span) => span.serviceCode)));
   }
 
-  public static changeTree(data: Span[], cureentTraceId: string) {
+  public static changeTree(data: Span[], currentTraceId: string) {
     const segmentIdList: Span[] = [];
     const traceTreeRef: any = this.changeTreeCore(data);
     traceTreeRef.segmentIdGroup.forEach((segmentId: string) => {
       if (traceTreeRef.segmentMap.get(segmentId).refs) {
         traceTreeRef.segmentMap.get(segmentId).refs.forEach((ref: Ref) => {
-          if (ref.traceId === cureentTraceId) {
+          if (ref.traceId === currentTraceId) {
             this.traverseTree(
               traceTreeRef.segmentMap.get(ref.parentSegmentId) as Span,
               ref.parentSpanId,
