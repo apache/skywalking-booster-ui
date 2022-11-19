@@ -144,7 +144,7 @@ export default class TraceUtil {
               spanId: parentSpanId,
               parentSpanId: parentSpanId > -1 ? 0 : -1,
             };
-            if (lodash.find(fixSpans, fixSpanKeyContent)) {
+            if (!lodash.find(fixSpans, fixSpanKeyContent)) {
               fixSpans.push({
                 ...fixSpanKeyContent,
                 refs: [],
