@@ -107,4 +107,8 @@ function downloadTrace() {
 .list {
   height: calc(100% - 150px);
 }
+
+.event-tag {
+  color: red;
+}
 </style>

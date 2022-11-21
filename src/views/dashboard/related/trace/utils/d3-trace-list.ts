@@ -175,13 +175,46 @@ export default class ListGraph {
       .attr("x", 35)
       .attr("y", -6)
       .attr("fill", "#333")
-      .text((d: any) => {
+      .html((d: any) => {
         if (d.data.label === "TRACE_ROOT") {
           return "";
         }
-        return d.data.label.length > 40
-          ? `${d.data.label.slice(0, 40)}...`
-          : `${d.data.label}`;
+        const label =
+          d.data.label.length > 35
+            ? `${d.data.label.slice(0, 35)}...`
+            : `${d.data.label}`;
+        return label;
+      });
+    nodeEnter
+      .append("rect")
+      .attr("rx", 2)
+      .attr("ry", 2)
+      .attr("height", 15)
+      .attr("width", 40)
+      .attr("fill", "#e66")
+      .attr("x", 270)
+      .attr("y", -15);
+    nodeEnter
+      .append("text")
+      .attr("x", 272)
+      .attr("y", -4)
+      .attr("fill", "#fff")
+      .text((d: any) => {
+        // const events = d.data.attachedEvents;
+        const events = [
+          {
+            startTime: "",
+            event: "event",
+            endTime: "",
+            tags: [],
+            summary: [],
+          },
+        ];
+        if (events && events.length) {
+          return `events`;
+        } else {
+          return "";
+        }
       });
     nodeEnter
       .append("text")
@@ -196,18 +229,6 @@ export default class ListGraph {
             d.data.component ? "- " + d.data.component : d.data.component || ""
           }`
       );
-    nodeEnter
-      .append("text")
-      .attr("class", "node-text")
-      .attr("x", 50)
-      .attr("y", 0)
-      .attr("fill", "#333")
-      .text((d: any) => {
-        if (d.data.attachedEvents && d.data.attachedEvents.length) {
-          return `Events - ${d.data.attachedEvents.length}`;
-        }
-        return "";
-      });
     nodeEnter
       .append("rect")
       .attr("rx", 2)
