@@ -169,7 +169,7 @@ const msg = {
   secondTip: "Seleccione Segundo",
   viewTrace: "Ver trazas relacionadas",
   relatedTraceOptions: "Opciones de seguimiento relacionadas",
-  setLatencyDuration: "Establecer el rango de retardo",
+  setLatencyDuration: "Índice de correlación retardada",
   enableRelatedTrace: "Activar trazas relacionadas",
   queryConditions: "Condiciones de consulta",
   maxTraceDuration: "Duración máxima",

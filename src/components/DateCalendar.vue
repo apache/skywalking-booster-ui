@@ -632,11 +632,6 @@ onMounted(() => {
   right: 24px;
 }
 
-.calendar-next-month-btn .middle,
-.calendar-prev-month-btn .middle {
-  margin-top: 8px;
-}
-
 .calendar-body {
   position: relative;
   width: 196px;

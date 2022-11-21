@@ -197,6 +197,18 @@ export default class ListGraph {
           }`
       );
     nodeEnter
+      .append("text")
+      .attr("class", "node-text")
+      .attr("x", 50)
+      .attr("y", 0)
+      .attr("fill", "#333")
+      .text((d: any) => {
+        if (d.data.attachedEvents && d.data.attachedEvents.length) {
+          return `Events - ${d.data.attachedEvents.length}`;
+        }
+        return "";
+      });
+    nodeEnter
       .append("rect")
       .attr("rx", 2)
       .attr("ry", 2)

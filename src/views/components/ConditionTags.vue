@@ -210,7 +210,6 @@ function searchTags() {
 watch(
   () => appStore.durationTime,
   () => {
-    console.log(appStore.durationTime);
     fetchTagKeys();
   }
 );
