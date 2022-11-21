@@ -67,7 +67,7 @@ const dashboardStore = useDashboardStore();
 const traceOpt = dashboardStore.selectedGrid.relatedTrace || {};
 const status = ref<string>(traceOpt.status || Status[0].value);
 const queryOrder = ref<string>(traceOpt.queryOrder || QueryOrders[0].value);
-const latency = ref<boolean>(traceOpt.setLatencyDuration || false);
+const latency = ref<boolean>(traceOpt.latency || false);
 const enableRelate = ref<boolean>(traceOpt.enableRelate || false);
 
 function updateConfig(param: { [key: string]: unknown }) {
