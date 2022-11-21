@@ -127,7 +127,10 @@ init();
 
 async function init() {
   for (const d of Object.keys(filters)) {
-    if (filters[d] && ["status", "queryOrder", "latency"].includes(d)) {
+    if (
+      ["status", "queryOrder"].includes(d) ||
+      (filters[d] && d === "latency")
+    ) {
       items.value.push({ label: d, value: FiltersKeys[d] });
     }
   }
@@ -212,7 +215,11 @@ function setCondition() {
     serviceInstanceId: state.instance || undefined,
   };
   for (const k of items.value) {
-    if (k.label === conditions.value && FiltersKeys[k.label]) {
+    if (
+      k.label === conditions.value &&
+      FiltersKeys[k.label] &&
+      filters[k.label]
+    ) {
       params[k.value] = filters[k.label];
     }
   }
