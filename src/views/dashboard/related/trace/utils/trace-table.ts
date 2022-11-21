@@ -255,11 +255,11 @@ export default class TraceUtil {
   private static collapse(span: Span) {
     if (span.children) {
       let dur = span.endTime - span.startTime;
-      span.children.forEach((chlid: Span) => {
-        dur -= chlid.endTime - chlid.startTime;
+      span.children.forEach((child: Span) => {
+        dur -= child.endTime - child.startTime;
       });
       span.dur = dur < 0 ? 0 : dur;
-      span.children.forEach((chlid) => this.collapse(chlid));
+      span.children.forEach((child) => this.collapse(child));
     }
   }
 
