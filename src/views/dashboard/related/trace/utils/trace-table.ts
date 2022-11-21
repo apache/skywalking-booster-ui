@@ -29,13 +29,13 @@ export default class TraceUtil {
     return Array.from(new Set(data.map((span: Span) => span.serviceCode)));
   }
 
-  public static changeTree(data: Span[], cureentTraceId: string) {
+  public static changeTree(data: Span[], currentTraceId: string) {
     const segmentIdList: Span[] = [];
     const traceTreeRef: any = this.changeTreeCore(data);
     traceTreeRef.segmentIdGroup.forEach((segmentId: string) => {
       if (traceTreeRef.segmentMap.get(segmentId).refs) {
         traceTreeRef.segmentMap.get(segmentId).refs.forEach((ref: Ref) => {
-          if (ref.traceId === cureentTraceId) {
+          if (ref.traceId === currentTraceId) {
             this.traverseTree(
               traceTreeRef.segmentMap.get(ref.parentSegmentId) as Span,
               ref.parentSpanId,
@@ -144,7 +144,7 @@ export default class TraceUtil {
               spanId: parentSpanId,
               parentSpanId: parentSpanId > -1 ? 0 : -1,
             };
-            if (lodash.find(fixSpans, fixSpanKeyContent)) {
+            if (!lodash.find(fixSpans, fixSpanKeyContent)) {
               fixSpans.push({
                 ...fixSpanKeyContent,
                 refs: [],
@@ -255,11 +255,11 @@ export default class TraceUtil {
   private static collapse(span: Span) {
     if (span.children) {
       let dur = span.endTime - span.startTime;
-      span.children.forEach((chlid: Span) => {
-        dur -= chlid.endTime - chlid.startTime;
+      span.children.forEach((child: Span) => {
+        dur -= child.endTime - child.startTime;
       });
       span.dur = dur < 0 ? 0 : dur;
-      span.children.forEach((chlid) => this.collapse(chlid));
+      span.children.forEach((child) => this.collapse(child));
     }
   }
 
