@@ -158,7 +158,7 @@ const msg = {
   apisix: "APISIX",
   viewTrace: "查看相关Trace",
   relatedTraceOptions: "相关的Trace选项",
-  setLatencyDuration: "设置延时范围",
+  setLatencyDuration: "延迟相关指标",
   queryOrder: "查询顺序",
   latency: "延迟",
   metricValues: "指标值",

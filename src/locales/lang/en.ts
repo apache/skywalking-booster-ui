@@ -161,7 +161,7 @@ const msg = {
   apisix: "APISIX",
   viewTrace: "View Related Traces",
   relatedTraceOptions: "Related Trace Options",
-  setLatencyDuration: "Set Latency Range",
+  setLatencyDuration: "Latency Related Metrics",
   queryOrder: "Query Order",
   latency: "Latency",
   metricValues: "Metric Values",
