@@ -199,7 +199,7 @@ export default class ListGraph {
       .attr("x", 272)
       .attr("y", -4)
       .attr("fill", "#fff")
-      .text((d: any) => {
+      .text(() => {
         // const events = d.data.attachedEvents;
         const events = [
           {

@@ -78,7 +78,7 @@ limitations under the License. -->
       </div>
     </div>
     <h5 class="mb-10">{{ t("events") }}.</h5>
-    <div class="attach-events"></div>
+    <div class="attach-events" ref="timeline"></div>
     <el-button class="popup-btn" type="primary" @click="getTaceLogs">
       {{ t("relatedTraceLogs") }}
     </el-button>
@@ -110,16 +110,18 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import dayjs from "dayjs";
 import { DataSet, Timeline } from "vis-timeline/standalone";
+import "vis-timeline/styles/vis-timeline-graph2d.css";
 import copy from "@/utils/copy";
 import { ElMessage } from "element-plus";
 import { dateFormat } from "@/utils/dateFormat";
 import { useTraceStore } from "@/store/modules/trace";
 import LogTable from "@/views/dashboard/related/log/LogTable/Index.vue";
+import { SpanAttachedEvent } from "@/types/trace";
 
 /*global defineProps, Nullable */
 const props = defineProps({
@@ -140,7 +142,11 @@ const total = computed(() =>
 const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 
-visTimeline();
+onMounted(() => {
+  setTimeout(() => {
+    visTimeline();
+  }, 500);
+});
 async function getTaceLogs() {
   showRelatedLogs.value = true;
   const res = await traceStore.getSpanLogs({
@@ -165,18 +171,32 @@ function visTimeline() {
     visGraph.value.destroy();
   }
   const h = timeline.value.getBoundingClientRect().height;
-  const events = props.currentSpan.attachedEvents.map(
-    (d: any, index: number) => {
-      return {
-        id: index + 1,
-        content: d.name,
-        start: new Date(Number(d.startTime)),
-        end: new Date(Number(d.endTime)),
-        data: d,
-        className: d.type,
-      };
-    }
-  );
+  // const attachedEvents = props.currentSpan.attachedEvents || [];
+  const attachedEvents: SpanAttachedEvent[] = [
+    {
+      startTime: {
+        seconds: 1669102205296,
+        nanos: 1669102205296,
+      },
+      event: "event",
+      endTime: {
+        seconds: 1669102212791,
+        nanos: 1669102212791,
+      },
+      tags: [{ key: "test", value: "test" }],
+      summary: [{ key: "test", value: 123 }],
+    },
+  ];
+  const events = attachedEvents.map((d: SpanAttachedEvent, index: number) => {
+    return {
+      id: index + 1,
+      content: d.event,
+      start: new Date(Number(d.startTime.seconds)),
+      end: new Date(Number(d.endTime.seconds)),
+      data: d,
+      className: "Normal",
+    };
+  });
   const items: any = new DataSet(events);
   const options: any = {
     height: h,
@@ -186,21 +206,21 @@ function visTimeline() {
     autoResize: false,
     tooltip: {
       overflowMethod: "cap",
-      template(item: Event | any) {
+      template(item: SpanAttachedEvent | any) {
         const data = item.data || {};
-        let tmp = `<div>ID: ${data.uuid || ""}</div>
-        <div>Name: ${data.name || ""}</div>
-        <div>Event Type: ${data.type || ""}</div>
-        <div>Start Time: ${data.startTime ? visDate(data.startTime) : ""}</div>
-        <div>End Time: ${data.endTime ? visDate(data.endTime) : ""}</div>
-        <div>Message: ${data.message || ""}</div>
-        <div>Service: ${data.source.service || ""}</div>`;
-        if (data.source.endpoint) {
-          tmp += `<div>Endpoint: ${data.source.endpoint}</div>`;
-        }
-        if (data.source.instance) {
-          tmp += `<div>Service Instance: ${data.source.instance}</div>`;
-        }
+        let tmp = `<div>Name: ${data.event || ""}</div>
+        <div>Start Time: ${
+          data.startTime.seconds ? visDate(data.startTime.seconds) : ""
+        }</div>
+        <div>End Time: ${
+          data.endTime.seconds ? visDate(data.endTime.seconds) : ""
+        }</div>
+        <div>Summary: ${data.summary
+          .map((d: any) => d.key + "=" + d.value)
+          .join("; ")}</div>
+        <div>Tags: ${data.tags
+          .map((d: any) => d.key + "=" + d.value)
+          .join("; ")}</div>`;
         return tmp;
       },
     },
@@ -216,6 +236,12 @@ function showCurrentSpanDetail(text: string) {
 }
 </script>
 <style lang="scss" scoped>
+.attach-events {
+  width: 100%;
+  margin: 0 5px 5px 0;
+  height: 200px;
+}
+
 .popup-btn {
   color: #fff;
   margin-top: 40px;

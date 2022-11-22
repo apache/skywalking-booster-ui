@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 export interface Trace {
   duration: number;
   isError: boolean;
@@ -84,4 +83,20 @@ export interface StatisticsGroupRef {
 export class TraceTreeRef {
   segmentMap: Map<string, Span>;
   segmentIdGroup: string[];
+}
+
+type Instant = {
+  seconds: number;
+  nanos: number;
+};
+type KeyValue = {
+  key: string;
+  value: string | number;
+};
+export interface SpanAttachedEvent {
+  startTime: Instant;
+  endTime: Instant;
+  event: string;
+  tags: KeyValue[];
+  summary: KeyValue[];
 }
