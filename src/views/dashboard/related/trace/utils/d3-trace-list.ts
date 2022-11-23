@@ -186,19 +186,35 @@ export default class ListGraph {
         return label;
       });
     nodeEnter
-      .append("rect")
-      .attr("rx", 2)
-      .attr("ry", 2)
-      .attr("height", 15)
-      .attr("width", 40)
-      .attr("fill", "#e66")
-      .attr("x", 270)
-      .attr("y", -15);
+      .append("circle")
+      .attr("r", 8)
+      .attr("cx", 270)
+      .attr("cy", -5)
+      .attr("fill", "none")
+      .attr("stroke", "#e66")
+      .style("opacity", (d: any) => {
+        // const events = d.data.attachedEvents;
+        const events = [
+          {
+            startTime: "",
+            event: "event",
+            endTime: "",
+            tags: [],
+            summary: [],
+          },
+        ];
+        if (events && events.length) {
+          return 0.5;
+        } else {
+          return 0;
+        }
+      });
     nodeEnter
       .append("text")
-      .attr("x", 272)
-      .attr("y", -4)
-      .attr("fill", "#fff")
+      .attr("x", 267)
+      .attr("y", -1)
+      .attr("fill", "#e66")
+      .style("font-size", "10px")
       .text(() => {
         // const events = d.data.attachedEvents;
         const events = [
@@ -211,7 +227,7 @@ export default class ListGraph {
           },
         ];
         if (events && events.length) {
-          return `events`;
+          return `E`;
         } else {
           return "";
         }

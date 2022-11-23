@@ -188,7 +188,57 @@ export default class TraceMap {
       .on("click", function (event: any, d: any) {
         that.handleSelectSpan(d);
       });
-
+    nodeEnter
+      .append("circle")
+      .attr("r", 8)
+      .attr("cy", "-12")
+      .attr("cx", function (d: any) {
+        return d.children || d._children ? -15 : 110;
+      })
+      .attr("fill", "none")
+      .attr("stroke", "#e66")
+      .style("opacity", (d: any) => {
+        // const events = d.data.attachedEvents;
+        const events = [
+          {
+            startTime: "",
+            event: "event",
+            endTime: "",
+            tags: [],
+            summary: [],
+          },
+        ];
+        if (events && events.length) {
+          return 0.5;
+        } else {
+          return 0;
+        }
+      });
+    nodeEnter
+      .append("text")
+      .attr("x", function (d: any) {
+        return d.children || d._children ? -18 : 107;
+      })
+      .attr("dy", "-0.8em")
+      .attr("fill", "#e66")
+      .style("font-size", "10px")
+      .text((d: any) => {
+        // const events = d.data.attachedEvents;
+        const events = [
+          {
+            startTime: "",
+            event: "event",
+            endTime: "",
+            tags: [],
+            summary: [],
+          },
+        ];
+        if (events && events.length) {
+          return `E`;
+        } else {
+          return "";
+        }
+      });
     nodeEnter
       .append("circle")
       .attr("class", "node")
@@ -208,14 +258,14 @@ export default class TraceMap {
       .attr("font-size", 11)
       .attr("dy", "-0.5em")
       .attr("x", function (d: any) {
-        return d.children || d._children ? -15 : 15;
+        return d.children || d._children ? -45 : 15;
       })
       .attr("text-anchor", function (d: any) {
         return d.children || d._children ? "end" : "start";
       })
       .text((d: any) =>
         d.data.label.length > 19
-          ? (d.data.isError ? "◉ " : "") + d.data.label.slice(0, 19) + "..."
+          ? (d.data.isError ? "◉ " : "") + d.data.label.slice(0, 10) + "..."
           : (d.data.isError ? "◉ " : "") + d.data.label
       )
       .style("fill", (d: any) => (!d.data.isError ? "#3d444f" : "#E54C17"));
@@ -223,7 +273,7 @@ export default class TraceMap {
       .append("text")
       .attr("class", "node-text")
       .attr("x", function (d: any) {
-        return d.children || d._children ? -15 : 15;
+        return d.children || d._children ? -45 : 15;
       })
       .attr("dy", "1em")
       .attr("fill", "#bbb")
