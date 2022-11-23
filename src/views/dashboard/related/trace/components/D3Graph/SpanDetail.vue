@@ -42,7 +42,9 @@ limitations under the License. -->
       <span class="g-sm-4 grey">{{ t("isError") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.isError }}</span>
     </div>
-    <h5 class="mb-10">{{ t("tags") }}.</h5>
+    <h5 class="mb-10" v-if="currentSpan.tags && currentSpan.tags.length">
+      {{ t("tags") }}.
+    </h5>
     <div class="mb-10 clear item" v-for="i in currentSpan.tags" :key="i.key">
       <span class="g-sm-4 grey">{{ i.key }}:</span>
       <span class="g-sm-8 wba">
@@ -77,8 +79,17 @@ limitations under the License. -->
         <pre class="pl-15 mt-0 mb-0 sm oa">{{ _i.value }}</pre>
       </div>
     </div>
-    <h5 class="mb-10">{{ t("events") }}.</h5>
-    <div class="attach-events" ref="timeline"></div>
+    <h5
+      class="mb-10"
+      v-if="currentSpan.attachedEvent && currentSpan.attachedEvent.length"
+    >
+      {{ t("events") }}.
+    </h5>
+    <div
+      class="attach-events"
+      ref="timeline"
+      v-if="currentSpan.attachedEvent && currentSpan.attachedEvent.length"
+    ></div>
     <el-button class="popup-btn" type="primary" @click="getTaceLogs">
       {{ t("relatedTraceLogs") }}
     </el-button>
@@ -211,22 +222,7 @@ function visTimeline() {
     visGraph.value.destroy();
   }
   const h = timeline.value.getBoundingClientRect().height;
-  // const attachedEvents = props.currentSpan.attachedEvents || [];
-  const attachedEvents: SpanAttachedEvent[] = [
-    {
-      startTime: {
-        seconds: 1669102205296,
-        nanos: 1669102205296,
-      },
-      event: "event",
-      endTime: {
-        seconds: 1669102212791,
-        nanos: 1669102212791,
-      },
-      tags: [{ key: "test", value: "test" }],
-      summary: [{ key: "test", value: 123 }],
-    },
-  ];
+  const attachedEvents = props.currentSpan.attachedEvents || [];
   const events: any[] = attachedEvents.map(
     (d: SpanAttachedEvent, index: number) => {
       return {
@@ -240,11 +236,12 @@ function visTimeline() {
     }
   );
   const items = new DataSet(events);
-  const options = {
+  const options: any = {
     height: h,
     width: "100%",
     locale: "en",
-    autoResize: true,
+    groupHeightMode: "fitItems",
+    autoResize: false,
   };
   visGraph.value = new Timeline(timeline.value, items, options);
   visGraph.value.on("select", (data: { items: number[] }) => {

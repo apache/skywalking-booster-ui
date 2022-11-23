@@ -175,7 +175,23 @@ export const traceStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.setTraceSpans(res.data.data.trace.spans || []);
+      const data = res.data.data.trace.spans;
+      data[4].attachedEvents = [
+        {
+          startTime: {
+            seconds: 1669102205296,
+            nanos: 1669102205296,
+          },
+          event: "event",
+          endTime: {
+            seconds: 1669102212791,
+            nanos: 1669102212791,
+          },
+          tags: [{ key: "test", value: "test" }],
+          summary: [{ key: "test", value: 123 }],
+        },
+      ];
+      this.setTraceSpans(data || []);
       return res.data;
     },
     async getSpanLogs(params: any) {
