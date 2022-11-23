@@ -84,6 +84,44 @@ limitations under the License. -->
     </el-button>
   </div>
   <el-dialog
+    v-model="showEventDetail"
+    :destroy-on-close="true"
+    fullscreen
+    @closed="showEventDetail = false"
+  >
+    <div>
+      <div>Name: {{ currentEvent.event || "" }}</div>
+      <div>
+        Start Time:
+        {{
+          currentEvent.startTime && currentEvent.startTime.seconds
+            ? visDate(currentEvent.startTime.seconds)
+            : ""
+        }}
+      </div>
+      <div>
+        End Time:
+        {{
+          currentEvent.startTime && currentEvent.endTime.seconds
+            ? visDate(currentEvent.endTime.seconds)
+            : ""
+        }}
+      </div>
+      <div>
+        Summary:
+        {{(currentEvent.summary || [])
+          .map((d: any) => d.key + "=" + d.value)
+          .join("; ")}}
+      </div>
+      <div>
+        Tags:
+        {{(currentEvent.tags || [])
+          .map((d: any) => d.key + "=" + d.value)
+          .join("; ")}}
+      </div>
+    </div>
+  </el-dialog>
+  <el-dialog
     v-model="showRelatedLogs"
     :destroy-on-close="true"
     fullscreen
@@ -133,6 +171,8 @@ const timeline = ref<Nullable<HTMLDivElement>>(null);
 const visGraph = ref<Nullable<any>>(null);
 const pageNum = ref<number>(1);
 const showRelatedLogs = ref<boolean>(false);
+const showEventDetail = ref<boolean>(false);
+const currentEvent = ref<SpanAttachedEvent | Record<string, never>>({});
 const pageSize = 10;
 const total = computed(() =>
   traceStore.traceList.length === pageSize
@@ -187,45 +227,36 @@ function visTimeline() {
       summary: [{ key: "test", value: 123 }],
     },
   ];
-  const events = attachedEvents.map((d: SpanAttachedEvent, index: number) => {
-    return {
-      id: index + 1,
-      content: d.event,
-      start: new Date(Number(d.startTime.seconds)),
-      end: new Date(Number(d.endTime.seconds)),
-      data: d,
-      className: "Normal",
-    };
-  });
+  const events: any[] = attachedEvents.map(
+    (d: SpanAttachedEvent, index: number) => {
+      return {
+        id: index + 1,
+        content: d.event,
+        start: new Date(Number(d.startTime.seconds)),
+        end: new Date(Number(d.endTime.seconds)),
+        ...d,
+        className: "Normal",
+      };
+    }
+  );
   const items: any = new DataSet(events);
   const options: any = {
     height: h,
     width: "100%",
     locale: "en",
-    groupHeightMode: "fitItems",
-    autoResize: false,
-    tooltip: {
-      overflowMethod: "cap",
-      template(item: SpanAttachedEvent | any) {
-        const data = item.data || {};
-        let tmp = `<div>Name: ${data.event || ""}</div>
-        <div>Start Time: ${
-          data.startTime.seconds ? visDate(data.startTime.seconds) : ""
-        }</div>
-        <div>End Time: ${
-          data.endTime.seconds ? visDate(data.endTime.seconds) : ""
-        }</div>
-        <div>Summary: ${data.summary
-          .map((d: any) => d.key + "=" + d.value)
-          .join("; ")}</div>
-        <div>Tags: ${data.tags
-          .map((d: any) => d.key + "=" + d.value)
-          .join("; ")}</div>`;
-        return tmp;
-      },
-    },
+    autoResize: true,
   };
   visGraph.value = new Timeline(timeline.value, items, options);
+  visGraph.value.on("select", (data: { items: number[] }) => {
+    const index = items[0];
+    currentEvent.value = events[index - 1 || 0] || {};
+    console.log(currentEvent.value);
+    if (data.items.length) {
+      showEventDetail.value = true;
+      return;
+    }
+    showEventDetail.value = false;
+  });
 }
 function turnPage(p: number) {
   pageNum.value = p;
