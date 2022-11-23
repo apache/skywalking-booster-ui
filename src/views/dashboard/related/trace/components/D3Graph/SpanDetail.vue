@@ -105,18 +105,12 @@ limitations under the License. -->
       <div>
         Start Time:
         {{
-          currentEvent.startTime && currentEvent.startTime.seconds
-            ? visDate(currentEvent.startTime.seconds)
-            : ""
+          currentEvent.startTime ? visDate(Number(currentEvent.startTime)) : ""
         }}
       </div>
       <div>
         End Time:
-        {{
-          currentEvent.startTime && currentEvent.endTime.seconds
-            ? visDate(currentEvent.endTime.seconds)
-            : ""
-        }}
+        {{ currentEvent.endTime ? visDate(Number(currentEvent.endTime)) : "" }}
       </div>
       <div>
         Summary:
@@ -229,9 +223,15 @@ function visTimeline() {
       return {
         id: index + 1,
         content: d.event,
-        start: new Date(Number(d.startTime.seconds)),
-        end: new Date(Number(d.endTime.seconds)),
+        start: new Date(
+          Number(d.startTime.seconds * 1000 + d.startTime.nanos / 1000)
+        ),
+        end: new Date(
+          Number(d.endTime.seconds * 1000 + d.endTime.nanos / 1000)
+        ),
         ...d,
+        startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000,
+        endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000,
         className: "Normal",
       };
     }
