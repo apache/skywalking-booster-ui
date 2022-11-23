@@ -239,8 +239,8 @@ function visTimeline() {
       };
     }
   );
-  const items: any = new DataSet(events);
-  const options: any = {
+  const items = new DataSet(events);
+  const options = {
     height: h,
     width: "100%",
     locale: "en",
@@ -248,9 +248,8 @@ function visTimeline() {
   };
   visGraph.value = new Timeline(timeline.value, items, options);
   visGraph.value.on("select", (data: { items: number[] }) => {
-    const index = items[0];
+    const index = data.items[0];
     currentEvent.value = events[index - 1 || 0] || {};
-    console.log(currentEvent.value);
     if (data.items.length) {
       showEventDetail.value = true;
       return;
