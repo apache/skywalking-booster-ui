@@ -193,16 +193,7 @@ export default class ListGraph {
       .attr("fill", "none")
       .attr("stroke", "#e66")
       .style("opacity", (d: any) => {
-        // const events = d.data.attachedEvents;
-        const events = [
-          {
-            startTime: "",
-            event: "event",
-            endTime: "",
-            tags: [],
-            summary: [],
-          },
-        ];
+        const events = d.data.attachedEvents;
         if (events && events.length) {
           return 0.5;
         } else {
@@ -215,17 +206,8 @@ export default class ListGraph {
       .attr("y", -1)
       .attr("fill", "#e66")
       .style("font-size", "10px")
-      .text(() => {
-        // const events = d.data.attachedEvents;
-        const events = [
-          {
-            startTime: "",
-            event: "event",
-            endTime: "",
-            tags: [],
-            summary: [],
-          },
-        ];
+      .text((d: any) => {
+        const events = d.data.attachedEvents;
         if (events && events.length) {
           return `E`;
         } else {
