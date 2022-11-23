@@ -180,15 +180,22 @@ export default class ListGraph {
           return "";
         }
         const label =
-          d.data.label.length > 35
-            ? `${d.data.label.slice(0, 35)}...`
+          d.data.label.length > 30
+            ? `${d.data.label.slice(0, 30)}...`
             : `${d.data.label}`;
         return label;
       });
     nodeEnter
       .append("circle")
-      .attr("r", 8)
-      .attr("cx", 270)
+      .attr("r", 10)
+      .attr("cx", (d: any) => {
+        const events = d.data.attachedEvents;
+        if (events && events.length > 9) {
+          return 272;
+        } else {
+          return 270;
+        }
+      })
       .attr("cy", -5)
       .attr("fill", "none")
       .attr("stroke", "#e66")
@@ -209,7 +216,7 @@ export default class ListGraph {
       .text((d: any) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
-          return `E`;
+          return `${events.length}`;
         } else {
           return "";
         }

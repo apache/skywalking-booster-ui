@@ -208,7 +208,10 @@ export default class TraceMap {
     nodeEnter
       .append("text")
       .attr("x", function (d: any) {
-        return d.children || d._children ? -18 : 107;
+        const events = d.data.attachedEvents || [];
+        let p = d.children || d._children ? -18 : 107;
+        p = events.length > 9 ? p - 2 : p;
+        return p;
       })
       .attr("dy", "-0.8em")
       .attr("fill", "#e66")
@@ -216,7 +219,7 @@ export default class TraceMap {
       .text((d: any) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
-          return `E`;
+          return `${events.length}`;
         } else {
           return "";
         }
