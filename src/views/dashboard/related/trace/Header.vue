@@ -138,10 +138,10 @@ async function init() {
   if (!filters.id) {
     state.service = selectorStore.currentService.id;
     if (dashboardStore.entity === EntityType[2].value) {
-      state.instance = selectorStore.currentPod.id;
+      state.endpoint = selectorStore.currentPod.id;
     }
     if (dashboardStore.entity === EntityType[3].value) {
-      state.endpoint = selectorStore.currentPod.id;
+      state.instance = selectorStore.currentPod.id;
     }
     await queryTraces();
     return;

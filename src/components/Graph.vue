@@ -112,12 +112,17 @@ function instanceEvent() {
       }
       visMenus.value = true;
       const w = chartRef.value.getBoundingClientRect().width || 0;
+      const h = chartRef.value.getBoundingClientRect().height || 0;
       if (w - params.event.offsetX > 125) {
         menus.value.style.left = params.event.offsetX + "px";
       } else {
         menus.value.style.left = params.event.offsetX - 125 + "px";
       }
-      menus.value.style.top = params.event.offsetY + 5 + "px";
+      if (h - params.event.offsetY < 60) {
+        menus.value.style.top = params.event.offsetY - 60 + "px";
+      } else {
+        menus.value.style.top = params.event.offsetY + 5 + "px";
+      }
     });
     document.addEventListener(
       "click",
