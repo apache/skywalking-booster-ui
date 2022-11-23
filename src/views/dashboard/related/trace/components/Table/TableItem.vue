@@ -112,6 +112,9 @@ limitations under the License. -->
       >
         <span>{{ t("view") }}</span>
       </div>
+      <div class="application" v-show="headerType !== 'profile'">
+        <span>{{ data.attachedEvents && data.attachedEvents.length }}</span>
+      </div>
     </div>
     <div
       v-show="data.children && data.children.length > 0 && displayChildren"
@@ -246,6 +249,15 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 @import "./table.scss";
+
+.event-tag {
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+  border: 1px solid #e66;
+  color: #e66;
+  display: inline-block;
+}
 
 .trace-item.level0 {
   color: #448dfe;

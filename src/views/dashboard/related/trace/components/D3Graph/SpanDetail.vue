@@ -81,14 +81,14 @@ limitations under the License. -->
     </div>
     <h5
       class="mb-10"
-      v-if="currentSpan.attachedEvent && currentSpan.attachedEvent.length"
+      v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"
     >
       {{ t("events") }}.
     </h5>
     <div
       class="attach-events"
       ref="timeline"
-      v-if="currentSpan.attachedEvent && currentSpan.attachedEvent.length"
+      v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"
     ></div>
     <el-button class="popup-btn" type="primary" @click="getTaceLogs">
       {{ t("relatedTraceLogs") }}
@@ -190,6 +190,7 @@ const total = computed(() =>
     ? pageSize * pageNum.value + 1
     : pageSize * pageNum.value
 );
+console.log(props.currentSpan);
 const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 
