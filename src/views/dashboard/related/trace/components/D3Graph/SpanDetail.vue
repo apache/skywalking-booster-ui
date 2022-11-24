@@ -101,18 +101,18 @@ limitations under the License. -->
     @closed="showEventDetail = false"
   >
     <div>
-      <div>Name: {{ currentEvent.event || "" }}</div>
-      <div>
+      <div class="mb-10">Name: {{ currentEvent.event || "" }}</div>
+      <div class="mb-10">
         Start Time:
         {{
           currentEvent.startTime ? visDate(Number(currentEvent.startTime)) : ""
         }}
       </div>
-      <div>
+      <div class="mb-10">
         End Time:
         {{ currentEvent.endTime ? visDate(Number(currentEvent.endTime)) : "" }}
       </div>
-      <div>
+      <div class="mb-10">
         Summary:
         {{(currentEvent.summary || [])
           .map((d: any) => d.key + "=" + d.value)
@@ -120,9 +120,13 @@ limitations under the License. -->
       </div>
       <div>
         Tags:
-        {{(currentEvent.tags || [])
-          .map((d: any) => d.key + "=" + d.value)
-          .join("; ")}}
+        <div
+          class="tag mb-5"
+          v-for="(tag, index) in currentEvent.tags || []"
+          :key="index"
+        >
+          {{ tag.key + "=" + tag.value }};
+        </div>
       </div>
     </div>
   </el-dialog>
