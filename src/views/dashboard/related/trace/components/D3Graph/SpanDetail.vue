@@ -184,7 +184,6 @@ const total = computed(() =>
     ? pageSize * pageNum.value + 1
     : pageSize * pageNum.value
 );
-console.log(props.currentSpan);
 const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
   dayjs(date).format(pattern);
 
@@ -243,7 +242,10 @@ function visTimeline() {
     locale: "en",
     groupHeightMode: "fitItems",
     autoResize: false,
+    zoomMin: 80,
+    zoomMax: 3600000,
   };
+
   visGraph.value = new Timeline(timeline.value, items, options);
   visGraph.value.on("select", (data: { items: number[] }) => {
     const index = data.items[0];
