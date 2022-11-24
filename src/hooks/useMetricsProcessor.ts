@@ -213,8 +213,13 @@ export function useSourceProcessor(
       source[m] = aggregation(Number(Object.values(resp.data)[0]), c);
     }
     if (
-      type === MetricQueryTypes.SortMetrics ||
-      type === MetricQueryTypes.ReadSampledRecords
+      (
+        [
+          MetricQueryTypes.ReadRecords,
+          MetricQueryTypes.ReadSampledRecords,
+          MetricQueryTypes.SortMetrics,
+        ] as string[]
+      ).includes(type)
     ) {
       source[m] = (Object.values(resp.data)[0] || []).map(
         (d: { value: unknown; name: string }) => {
