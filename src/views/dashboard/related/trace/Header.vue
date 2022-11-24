@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="conditions flex-h">
+  <div class="conditions flex-h" v-show="!filters.id">
     <el-radio-group v-model="conditions" @change="changeCondition">
       <el-radio-button
         v-for="(item, index) in items"
@@ -135,7 +135,7 @@ async function init() {
     }
   }
   conditions.value = (items.value[0] && items.value[0].label) || "";
-  if (filters.id) {
+  if (!filters.id) {
     state.service = selectorStore.currentService.id;
     if (dashboardStore.entity === EntityType[2].value) {
       state.endpoint = selectorStore.currentPod.id;
@@ -213,6 +213,7 @@ function setCondition() {
     serviceId: state.service || undefined,
     endpointId: state.endpoint || undefined,
     serviceInstanceId: state.instance || undefined,
+    traceId: filters.refId || undefined,
   };
   for (const k of items.value) {
     if (

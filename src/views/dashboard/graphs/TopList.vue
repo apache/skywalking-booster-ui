@@ -105,6 +105,7 @@ function viewTrace(item: { name: string; id: string; value: unknown }) {
     ...item,
     queryOrder: QueryOrders[1].value,
     status: Status[2].value,
+    id: item.id || item.name,
     metricValue: [
       { label: props.config.metrics[0], data: item.value, value: item.name },
     ],
