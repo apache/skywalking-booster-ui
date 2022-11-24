@@ -134,10 +134,7 @@ export const MetricTypes: {
   HEATMAP: [
     { label: "read heatmap values in the duration", value: "readHeatMap" },
   ],
-  SAMPLED_RECORD: [
-    { label: "read sorted top N values", value: "readRecords" },
-    { label: "get sorted topN values", value: "readSampledRecords" },
-  ],
+  SAMPLED_RECORD: [{ label: "read sorted top N values", value: "readRecords" }],
 };
 
 export enum MetricCatalog {
