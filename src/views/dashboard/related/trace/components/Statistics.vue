@@ -56,7 +56,7 @@ onMounted(() => {
 function calculationDataforStatistics(data: Span[]): StatisticsSpan[] {
   list.value = traceTable.buildTraceDataList(data);
   const result: StatisticsSpan[] = [];
-  const map = traceTable.changeStatisticsTree(data, props.traceId);
+  const map = traceTable.changeStatisticsTree(data);
   map.forEach((nodes, nodeKey) => {
     const nodeKeyData = nodeKey.split(":");
     result.push(

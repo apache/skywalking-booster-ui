@@ -79,6 +79,10 @@ export const TraceConstant = [
     label: "application",
     value: "Service",
   },
+  {
+    label: "application",
+    value: "Attached Events",
+  },
 ];
 
 export const StatisticsConstant = [

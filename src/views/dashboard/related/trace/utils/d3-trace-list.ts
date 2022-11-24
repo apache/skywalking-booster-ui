@@ -175,13 +175,51 @@ export default class ListGraph {
       .attr("x", 35)
       .attr("y", -6)
       .attr("fill", "#333")
-      .text((d: any) => {
+      .html((d: any) => {
         if (d.data.label === "TRACE_ROOT") {
           return "";
         }
-        return d.data.label.length > 40
-          ? `${d.data.label.slice(0, 40)}...`
-          : `${d.data.label}`;
+        const label =
+          d.data.label.length > 30
+            ? `${d.data.label.slice(0, 30)}...`
+            : `${d.data.label}`;
+        return label;
+      });
+    nodeEnter
+      .append("circle")
+      .attr("r", 10)
+      .attr("cx", (d: any) => {
+        const events = d.data.attachedEvents;
+        if (events && events.length > 9) {
+          return 272;
+        } else {
+          return 270;
+        }
+      })
+      .attr("cy", -5)
+      .attr("fill", "none")
+      .attr("stroke", "#e66")
+      .style("opacity", (d: any) => {
+        const events = d.data.attachedEvents;
+        if (events && events.length) {
+          return 0.5;
+        } else {
+          return 0;
+        }
+      });
+    nodeEnter
+      .append("text")
+      .attr("x", 267)
+      .attr("y", -1)
+      .attr("fill", "#e66")
+      .style("font-size", "10px")
+      .text((d: any) => {
+        const events = d.data.attachedEvents;
+        if (events && events.length) {
+          return `${events.length}`;
+        } else {
+          return "";
+        }
       });
     nodeEnter
       .append("text")

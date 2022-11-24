@@ -175,7 +175,8 @@ export const traceStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.setTraceSpans(res.data.data.trace.spans || []);
+      const data = res.data.data.trace.spans;
+      this.setTraceSpans(data || []);
       return res.data;
     },
     async getSpanLogs(params: any) {
