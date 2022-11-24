@@ -241,9 +241,7 @@ function visTimeline() {
     width: "100%",
     locale: "en",
     groupHeightMode: "fitItems",
-    autoResize: false,
     zoomMin: 80,
-    zoomMax: 3600000,
   };
 
   visGraph.value = new Timeline(timeline.value, items, options);
