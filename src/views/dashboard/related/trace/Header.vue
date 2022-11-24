@@ -135,7 +135,7 @@ async function init() {
     }
   }
   conditions.value = (items.value[0] && items.value[0].label) || "";
-  if (filters.id) {
+  if (!filters.id) {
     state.service = selectorStore.currentService.id;
     if (dashboardStore.entity === EntityType[2].value) {
       state.endpoint = selectorStore.currentPod.id;
