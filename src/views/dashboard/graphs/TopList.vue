@@ -91,8 +91,9 @@ const showTrace = ref<boolean>(false);
 const traceOptions = ref<{ type: string; filters?: unknown }>({
   type: "Trace",
 });
-const refIdType = ref<string>(
-  (props.config.relatedTrace && props.config.relatedTrace.refIdType) ||
+const refIdType = computed(
+  () =>
+    (props.config.relatedTrace && props.config.relatedTrace.refIdType) ||
     RefIdTypes[0].value
 );
 const key = computed(() => Object.keys(props.data)[0] || "");
