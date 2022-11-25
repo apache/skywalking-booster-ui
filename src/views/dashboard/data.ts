@@ -298,3 +298,4 @@ export const CalculationOpts = [
   { label: "Seconds to days", value: "secondToDay" },
   { label: "Nanoseconds to milliseconds", value: "nanosecondToMillisecond" },
 ];
+export const RefIdTypes = [{ label: "Trace ID", value: "traceId" }];

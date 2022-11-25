@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div v-if="filters.id" class="conditions flex-h">
-    <div class="label grey">TraceId ( refId ):</div>
+    <div class="label grey">TraceId:</div>
     <el-input size="small" v-model="traceId" class="trace-id" />
   </div>
   <div class="conditions flex-h" v-else>

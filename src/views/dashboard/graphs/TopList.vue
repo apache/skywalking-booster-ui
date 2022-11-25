@@ -32,7 +32,11 @@ limitations under the License. -->
           <div class="operation" @click="handleClick(i.name)">
             <span>{{ t("copy") }}</span>
           </div>
-          <div class="operation" @click="viewTrace(i)">
+          <div
+            class="operation"
+            @click="viewTrace(i)"
+            v-show="refIdType === RefIdTypes[0].value"
+          >
             <span>{{ t("viewTrace") }}</span>
           </div>
         </el-popover>
@@ -63,7 +67,7 @@ import { computed, ref } from "vue";
 import copy from "@/utils/copy";
 import { TextColors } from "@/views/dashboard/data";
 import Trace from "@/views/dashboard/related/trace/Index.vue";
-import { QueryOrders, Status } from "../data";
+import { QueryOrders, Status, RefIdTypes } from "../data";
 /*global defineProps */
 const props = defineProps({
   data: {
@@ -73,7 +77,11 @@ const props = defineProps({
     default: () => ({}),
   },
   config: {
-    type: Object as PropType<{ color: string; metrics: string[] }>,
+    type: Object as PropType<{
+      color: string;
+      metrics: string[];
+      relatedTrace: any;
+    }>,
     default: () => ({ color: "purple" }),
   },
   intervalTime: { type: Array as PropType<string[]>, default: () => [] },
@@ -83,6 +91,10 @@ const showTrace = ref<boolean>(false);
 const traceOptions = ref<{ type: string; filters?: unknown }>({
   type: "Trace",
 });
+const refIdType = ref<string>(
+  (props.config.relatedTrace && props.config.relatedTrace.refIdType) ||
+    RefIdTypes[0].value
+);
 const key = computed(() => Object.keys(props.data)[0] || "");
 const available = computed(
   () =>
