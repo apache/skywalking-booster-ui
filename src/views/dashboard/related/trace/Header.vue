@@ -13,7 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="conditions flex-h" v-show="!filters.id">
+  <div v-if="filters.id" class="conditions flex-h">
+    <div class="label grey">TraceId ( refId ):</div>
+    <el-input size="small" v-model="traceId" class="trace-id" />
+  </div>
+  <div class="conditions flex-h" v-else>
     <el-radio-group v-model="conditions" @change="changeCondition">
       <el-radio-button
         v-for="(item, index) in items"
@@ -111,6 +115,7 @@ const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
+const traceId = ref<string>(filters.refId || "");
 const duration = ref<DurationTime>(filters.duration || appStore.durationTime);
 const state = reactive<Recordable>({
   instance: "",
@@ -213,7 +218,7 @@ function setCondition() {
     serviceId: state.service || undefined,
     endpointId: state.endpoint || undefined,
     serviceInstanceId: state.instance || undefined,
-    traceId: filters.refId || undefined,
+    traceId: traceId.value || undefined,
   };
   for (const k of items.value) {
     if (
@@ -271,5 +276,14 @@ onUnmounted(() => {
 .title {
   margin-bottom: 10px;
   font-weight: bold;
+}
+
+.trace-id {
+  width: 300px;
+  margin-left: 10px;
+}
+
+.label {
+  line-height: 22px;
 }
 </style>
