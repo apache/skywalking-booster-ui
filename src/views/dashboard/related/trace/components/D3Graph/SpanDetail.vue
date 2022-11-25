@@ -101,28 +101,41 @@ limitations under the License. -->
     @closed="showEventDetail = false"
   >
     <div>
-      <div>Name: {{ currentEvent.event || "" }}</div>
-      <div>
-        Start Time:
+      <div class="mb-10">
+        <span class="grey">Name:</span>
+        {{ currentEvent.event || "" }}
+      </div>
+      <div class="mb-10">
+        <span class="grey">Start Time:</span>
         {{
           currentEvent.startTime ? visDate(Number(currentEvent.startTime)) : ""
         }}
       </div>
-      <div>
-        End Time:
+      <div class="mb-10">
+        <span class="grey">End Time:</span>
         {{ currentEvent.endTime ? visDate(Number(currentEvent.endTime)) : "" }}
       </div>
-      <div>
-        Summary:
-        {{(currentEvent.summary || [])
-          .map((d: any) => d.key + "=" + d.value)
-          .join("; ")}}
+      <div class="mb-10">
+        <span class="grey">Summary:</span>
+        <div
+          class="mb-5"
+          v-for="(d, index) in currentEvent.summary || []"
+          :key="index"
+          style="white-space: pre-wrap"
+        >
+          {{ d.key + "=" + d.value }};
+        </div>
       </div>
       <div>
-        Tags:
-        {{(currentEvent.tags || [])
-          .map((d: any) => d.key + "=" + d.value)
-          .join("; ")}}
+        <span class="grey">Tags:</span>
+        <div
+          class="mb-5"
+          v-for="(tag, index) in currentEvent.tags || []"
+          :key="index"
+          style="white-space: pre-wrap"
+        >
+          {{ tag.key + "=" + tag.value }};
+        </div>
       </div>
     </div>
   </el-dialog>
@@ -241,9 +254,7 @@ function visTimeline() {
     width: "100%",
     locale: "en",
     groupHeightMode: "fitItems",
-    autoResize: false,
     zoomMin: 80,
-    zoomMax: 3600000,
   };
 
   visGraph.value = new Timeline(timeline.value, items, options);

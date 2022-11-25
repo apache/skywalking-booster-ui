@@ -124,7 +124,7 @@ export default defineComponent({
     const title = computed(() => encodeURIComponent(widget.value.title || ""));
     const tips = computed(() => encodeURIComponent(widget.value.tips || ""));
     const hasAssociate = computed(() =>
-      ["Bar", "Line", "Area"].includes(
+      ["Bar", "Line", "Area", "TopList"].includes(
         dashboardStore.selectedGrid.graph &&
           dashboardStore.selectedGrid.graph.type
       )

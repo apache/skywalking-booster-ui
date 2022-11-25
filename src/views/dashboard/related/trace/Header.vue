@@ -13,7 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="conditions flex-h">
+  <div v-if="filters.id" class="conditions flex-h">
+    <div class="label grey">TraceId:</div>
+    <el-input size="small" v-model="traceId" class="trace-id" />
+  </div>
+  <div class="conditions flex-h" v-else>
     <el-radio-group v-model="conditions" @change="changeCondition">
       <el-radio-button
         v-for="(item, index) in items"
@@ -40,12 +44,18 @@ limitations under the License. -->
       </template>
       <div>
         <div class="title">{{ t("queryConditions") }}</div>
-        <div
-          v-for="key in Object.keys(FiltersKeys)"
-          :key="key"
-          v-show="traceStore.conditions[FiltersKeys[key]]"
-        >
-          <span v-if="key !== 'duration'">
+        <div v-for="key in Object.keys(FiltersKeys)" :key="key">
+          <span
+            v-if="
+              [
+                FiltersKeys.minTraceDuration,
+                FiltersKeys.maxTraceDuration,
+              ].includes(key) && !isNaN(traceStore.conditions[FiltersKeys[key]])
+            "
+          >
+            {{ t(key) }}: {{ traceStore.conditions[FiltersKeys[key]] }}
+          </span>
+          <span v-else-if="key !== 'duration'">
             {{ t(key) }}: {{ traceStore.conditions[FiltersKeys[key]] }}
           </span>
         </div>
@@ -111,6 +121,7 @@ const dashboardStore = useDashboardStore();
 const traceStore = useTraceStore();
 const tagsList = ref<string[]>([]);
 const tagsMap = ref<Option[]>([]);
+const traceId = ref<string>(filters.refId || "");
 const duration = ref<DurationTime>(filters.duration || appStore.durationTime);
 const state = reactive<Recordable>({
   instance: "",
@@ -122,13 +133,13 @@ const items = ref<{ label: string; value: string }[]>([]);
 const currentLatency = ref<number[]>(
   filters.latency ? filters.latency[0].data : []
 );
-
 init();
 
 async function init() {
   for (const d of Object.keys(filters)) {
     if (
-      ["status", "queryOrder"].includes(d) ||
+      ["queryOrder"].includes(d) ||
+      (d === "status" && filters[d] && filters[d] !== "ALL") ||
       (filters[d] && d === "latency")
     ) {
       items.value.push({ label: d, value: FiltersKeys[d] });
@@ -199,20 +210,14 @@ function setCondition() {
     traceState: Status[0].value,
     queryOrder: QueryOrders[0].value,
     queryDuration: duration.value,
-    minTraceDuration: isNaN(currentLatency.value[0])
-      ? undefined
-      : currentLatency.value[0] === currentLatency.value[1]
-      ? currentLatency.value[0] - 10
-      : currentLatency.value[0],
-    maxTraceDuration:
-      isNaN(currentLatency.value[1]) || currentLatency.value[1] === Infinity
-        ? undefined
-        : currentLatency.value[1],
+    minTraceDuration: currentLatency.value[0],
+    maxTraceDuration: currentLatency.value[1],
     tags: tagsMap.value.length ? tagsMap.value : undefined,
     paging: { pageNum: 1, pageSize: 20 },
     serviceId: state.service || undefined,
     endpointId: state.endpoint || undefined,
     serviceInstanceId: state.instance || undefined,
+    traceId: traceId.value || undefined,
   };
   for (const k of items.value) {
     if (
@@ -270,5 +275,14 @@ onUnmounted(() => {
 .title {
   margin-bottom: 10px;
   font-weight: bold;
+}
+
+.trace-id {
+  width: 300px;
+  margin-left: 10px;
+}
+
+.label {
+  line-height: 22px;
 }
 </style>

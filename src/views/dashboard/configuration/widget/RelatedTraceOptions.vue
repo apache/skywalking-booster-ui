@@ -13,7 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="item">
+  <div v-if="type === 'TopList'" class="item">
+    <span class="label">RefId</span>
+    <Selector
+      size="small"
+      :value="refIdType"
+      :options="RefIdTypes"
+      placeholder="Select a refId"
+      @change="updateConfig({ refIdType: $event[0].value })"
+      class="selector"
+    />
+  </div>
+  <div v-else class="item">
     <span class="label">{{ t("enableRelatedTrace") }}</span>
     <el-switch
       v-model="enableRelate"
@@ -22,7 +33,7 @@ limitations under the License. -->
       @change="updateConfig({ enableRelate })"
     />
   </div>
-  <div v-show="enableRelate">
+  <div v-if="enableRelate">
     <div class="item">
       <span class="label">{{ t("status") }}</span>
       <Selector
@@ -60,15 +71,18 @@ limitations under the License. -->
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { Status, QueryOrders } from "../../data";
+import { Status, QueryOrders, RefIdTypes } from "../../data";
 
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
-const traceOpt = dashboardStore.selectedGrid.relatedTrace || {};
+const { graph, relatedTrace } = dashboardStore.selectedGrid;
+const traceOpt = (relatedTrace && relatedTrace.traceOpt) || {};
 const status = ref<string>(traceOpt.status || Status[0].value);
 const queryOrder = ref<string>(traceOpt.queryOrder || QueryOrders[0].value);
 const latency = ref<boolean>(traceOpt.latency || false);
 const enableRelate = ref<boolean>(traceOpt.enableRelate || false);
+const type = ref<string>((graph && graph.type) || "");
+const refIdType = ref<string>(traceOpt.refIdType || "traceId");
 
 function updateConfig(param: { [key: string]: unknown }) {
   const relatedTrace = {
