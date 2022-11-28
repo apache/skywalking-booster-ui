@@ -21,12 +21,11 @@ limitations under the License. -->
     </div>
     <div>
       <div class="label">{{ t("minDuration") }} (ms)</div>
-      <el-input
+      <el-input-number
         size="small"
         class="profile-input"
         :min="0"
         v-model="states.minDuration"
-        type="number"
       />
     </div>
     <div>
@@ -78,15 +77,11 @@ function changeConfig(params: { [key: string]: number | string }) {
   (states as any)[key] = params[key];
 }
 
-async function createTask() {
-  const when4xx =
-    states.when4xx === InitTaskField.Whenxx[0].value ? true : false;
-  const when5xx =
-    states.when5xx === InitTaskField.Whenxx[0].value ? true : false;
+function createTask() {
   emits("create", {
     uriRegex: states.uriRegex || undefined,
-    when4xx,
-    when5xx,
+    when4xx: states.when4xx === InitTaskField.Whenxx[0].value ? true : false,
+    when5xx: states.when5xx === InitTaskField.Whenxx[0].value ? true : false,
     minDuration: isNaN(states.minDuration) ? undefined : states.minDuration,
   });
 }
