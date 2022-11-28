@@ -176,11 +176,10 @@ async function saveNewTask(
     minDuration: number;
   }[]
 ) {
-  console.log(params);
   newTask.value = false;
   const instanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
-  if (instanceId) {
+  if (!instanceId) {
     return ElMessage.error("No Instance ID");
   }
   const res = await networkProfilingStore.createNetworkTask(instanceId, params);

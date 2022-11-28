@@ -35,7 +35,7 @@ limitations under the License. -->
         class="mb-5"
         :value="states.when4xx"
         :options="InitTaskField.Whenxx"
-        @change="changeConfig({ when4xx: states.when4xx })"
+        @change="changeWhen4xx"
       />
     </div>
     <div>
@@ -44,7 +44,7 @@ limitations under the License. -->
         class="mb-5"
         :value="states.when5xx"
         :options="InitTaskField.Whenxx"
-        @change="changeConfig({ when5xx: states.when5xx })"
+        @change="changeWhen5xx"
       />
     </div>
   </div>
@@ -71,9 +71,12 @@ const props = defineProps({
 const { t } = useI18n();
 const states = reactive<NetworkProfilingRequest>(props.condition);
 
-function changeConfig(params: { [key: string]: number | string }) {
-  const key: string = Object.keys(params)[0];
-  (states as any)[key] = params[key];
+function changeWhen5xx(value: string) {
+  states.when5xx = value;
+  emits("change", states, props.key);
+}
+function changeWhen4xx(value: string) {
+  states.when4xx = value;
   emits("change", states, props.key);
 }
 </script>

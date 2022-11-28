@@ -91,6 +91,10 @@ function createTask() {
       minDuration: isNaN(Number(d.minDuration))
         ? undefined
         : Number(d.minDuration),
+      settings: {
+        requireCompleteRequest: true,
+        requireCompleteResponse: true,
+      },
     };
   });
   emits("create", list);

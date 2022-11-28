@@ -117,20 +117,14 @@ export const networkProfilingStore = defineStore({
         when4xx: string;
         when5xx: string;
         minDuration: number;
-      }
+      }[]
     ) {
       const res: AxiosResponse = await graphql
         .query("newNetworkProfiling")
         .params({
           request: {
             instanceId,
-            samplings: {
-              ...params,
-              settings: {
-                requireCompleteRequest: true,
-                requireCompleteResponse: true,
-              },
-            },
+            samplings: params,
           },
         });
 
