@@ -124,8 +124,7 @@ function removeConditions(e: any, key: number) {
 </script>
 <style lang="scss" scoped>
 .profile-task {
-  margin: 0 auto;
-  width: 400px;
+  width: 100%;
 }
 
 .create-task-btn {
