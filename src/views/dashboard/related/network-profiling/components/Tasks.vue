@@ -82,7 +82,7 @@ limitations under the License. -->
     fullscreen
     @closed="newTask = false"
   >
-    <NewTask />
+    <NewTask @create="saveNewTask" />
   </el-dialog>
 </template>
 <script lang="ts" setup>
@@ -168,21 +168,19 @@ function createTask() {
   }
   newTask.value = true;
 }
-async function saveNewTask() {
-  const serviceId =
-    (selectorStore.currentService && selectorStore.currentService.id) || "";
-  const serviceInstanceId =
+async function saveNewTask(params: {
+  uriRegex: string;
+  when4xx: string;
+  when5xx: string;
+  minDuration: number;
+}) {
+  newTask.value = false;
+  const instanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
-  if (!serviceId) {
-    return;
+  if (!instanceId) {
+    return ElMessage.error("No Instance ID");
   }
-  if (!serviceInstanceId) {
-    return;
-  }
-  const res = await networkProfilingStore.createNetworkTask({
-    serviceId,
-    serviceInstanceId,
-  });
+  const res = await networkProfilingStore.createNetworkTask(instanceId, params);
   if (res.errors) {
     ElMessage.error(res.errors);
     return;

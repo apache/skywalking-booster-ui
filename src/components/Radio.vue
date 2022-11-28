@@ -24,8 +24,8 @@ import { ref } from "vue";
 import type { PropType } from "vue";
 
 interface Option {
-  label: string;
-  value: string;
+  label: string | number;
+  value: string | number;
 }
 
 /*global  defineProps, defineEmits */

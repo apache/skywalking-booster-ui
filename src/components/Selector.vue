@@ -42,7 +42,7 @@ import type { PropType } from "vue";
 
 interface Option {
   label: string | number;
-  value: string | number | boolean;
+  value: string | number;
 }
 
 /*global  defineProps, defineEmits*/

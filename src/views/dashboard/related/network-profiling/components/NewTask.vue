@@ -20,34 +20,31 @@ limitations under the License. -->
       <el-input size="small" class="profile-input" v-model="states.uriRegex" />
     </div>
     <div>
-      <div class="label">{{ t("minThreshold") }} (ms)</div>
-      <el-input-number
+      <div class="label">{{ t("minDuration") }} (ms)</div>
+      <el-input
         size="small"
         class="profile-input"
         :min="0"
         v-model="states.minDuration"
+        type="number"
       />
     </div>
     <div>
-      <div class="label">{{ t("monitorTime") }}</div>
-      <div>
-        <Selector
-          size="small"
-          :value="states.when4xx"
-          :options="InitTaskField.When4xx"
-          placeholder="Select a data"
-          @change="changeConfig({ when4xx: states.when4xx })"
-          class="profile-input"
-        />
-      </div>
+      <div class="label">{{ t("when4xx") }}</div>
+      <Radio
+        class="mb-5"
+        :value="states.when4xx"
+        :options="InitTaskField.Whenxx"
+        @change="changeConfig({ when4xx: $event })"
+      />
     </div>
     <div>
-      <div class="label">{{ t("minThreshold") }} (ms)</div>
-      <el-input-number
-        size="small"
-        class="profile-input"
-        :min="0"
-        v-model="states.minDuration"
+      <div class="label">{{ t("when5xx") }}</div>
+      <Radio
+        class="mb-5"
+        :value="states.when5xx"
+        :options="InitTaskField.Whenxx"
+        @change="changeConfig({ when5xx: $event })"
       />
     </div>
     <div>
@@ -62,21 +59,36 @@ import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { InitTaskField } from "./data";
 /* global defineEmits */
-const emits = defineEmits(["close"]);
+const emits = defineEmits(["create"]);
 const { t } = useI18n();
-const states = reactive<any>({
+const states = reactive<{
+  uriRegex: string;
+  when4xx: string;
+  when5xx: string;
+  minDuration: number;
+}>({
   uriRegex: "",
-  when4xx: true,
+  when4xx: InitTaskField.Whenxx[0].value,
+  when5xx: InitTaskField.Whenxx[1].value,
   minDuration: NaN,
 });
 
-function changeConfig(params: { [key: string]: unknown }) {
-  const key = Object.keys(params)[0];
-  states[key] = params[key];
+function changeConfig(params: { [key: string]: number | string }) {
+  const key: string = Object.keys(params)[0];
+  (states as any)[key] = params[key];
 }
 
 async function createTask() {
-  emits("close");
+  const when4xx =
+    states.when4xx === InitTaskField.Whenxx[0].value ? true : false;
+  const when5xx =
+    states.when5xx === InitTaskField.Whenxx[0].value ? true : false;
+  emits("create", {
+    uriRegex: states.uriRegex || undefined,
+    when4xx,
+    when5xx,
+    minDuration: isNaN(states.minDuration) ? undefined : states.minDuration,
+  });
 }
 </script>
 <style lang="scss" scoped>
