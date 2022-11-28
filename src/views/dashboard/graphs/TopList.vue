@@ -43,7 +43,11 @@ limitations under the License. -->
       </div>
       <el-progress
         :stroke-width="6"
-        :percentage="(i.value / maxValue) * 100"
+        :percentage="
+          isNaN(Number(i.value) / maxValue)
+            ? 0
+            : (Number(i.value) / maxValue) * 100
+        "
         :color="TextColors[config.color || 'purple']"
         :show-text="false"
       />
