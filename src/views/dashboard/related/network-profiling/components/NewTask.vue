@@ -28,6 +28,7 @@ limitations under the License. -->
               class="mr-5 cp"
               iconName="remove_circle_outline"
               size="middle"
+              v-show="conditionsList.length !== 1"
               @click="removeConditions($event, index)"
             />
             <Icon
@@ -113,6 +114,9 @@ function createConditions(e: any) {
 
 function removeConditions(e: any, key: number) {
   e.stopPropagation();
+  if (conditionsList.value.length === 1) {
+    return;
+  }
   conditionsList.value = conditionsList.value.filter(
     (_, index: number) => index !== key
   );
