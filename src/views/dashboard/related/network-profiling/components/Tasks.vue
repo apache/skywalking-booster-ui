@@ -168,16 +168,19 @@ function createTask() {
   }
   newTask.value = true;
 }
-async function saveNewTask(params: {
-  uriRegex: string;
-  when4xx: string;
-  when5xx: string;
-  minDuration: number;
-}) {
+async function saveNewTask(
+  params: {
+    uriRegex: string;
+    when4xx: string;
+    when5xx: string;
+    minDuration: number;
+  }[]
+) {
+  console.log(params);
   newTask.value = false;
   const instanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
-  if (!instanceId) {
+  if (instanceId) {
     return ElMessage.error("No Instance ID");
   }
   const res = await networkProfilingStore.createNetworkTask(instanceId, params);

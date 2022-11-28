@@ -19,8 +19,26 @@ limitations under the License. -->
       <el-collapse-item
         v-for="(item, index) in conditionsList"
         :key="index"
-        :title="`Condition - ${index + 1}`"
+        :name="index"
       >
+        <template #title>
+          <div>
+            <span class="title">{{ `Condition - ${index + 1}` }}</span>
+            <Icon
+              class="mr-5 cp"
+              iconName="remove_circle_outline"
+              size="middle"
+              @click="removeConditions($event, index)"
+            />
+            <Icon
+              class="cp"
+              v-show="index === conditionsList.length - 1"
+              iconName="add_circle_outlinecontrol_point"
+              size="middle"
+              @click="createConditions"
+            />
+          </div>
+        </template>
         <NewCondition
           :name="index"
           :condition="item"
@@ -32,13 +50,6 @@ limitations under the License. -->
     <div>
       <el-button @click="createTask" type="primary" class="create-task-btn">
         {{ t("createTask") }}
-      </el-button>
-      <el-button
-        @click="createConditions"
-        type="primary"
-        class="create-task-btn"
-      >
-        {{ t("createConditions") }}
       </el-button>
     </div>
   </div>
@@ -53,7 +64,7 @@ import { NetworkProfilingRequest } from "@/types/ebpf";
 /* global defineEmits */
 const emits = defineEmits(["create"]);
 const { t } = useI18n();
-const activeNames = ref([1]);
+const activeNames = ref([0]);
 const conditionsList = ref<NetworkProfilingRequest[]>([
   {
     uriRegex: "",
@@ -77,14 +88,30 @@ function createTask() {
       uriRegex: d.uriRegex || undefined,
       when4xx: d.when4xx === InitTaskField.Whenxx[0].value ? true : false,
       when5xx: d.when5xx === InitTaskField.Whenxx[0].value ? true : false,
-      minDuration: isNaN(d.minDuration) ? undefined : d.minDuration,
+      minDuration: isNaN(Number(d.minDuration))
+        ? undefined
+        : Number(d.minDuration),
     };
   });
   emits("create", list);
 }
 
-function createConditions() {
-  console.log(conditionsList);
+function createConditions(e: any) {
+  e.stopPropagation();
+  conditionsList.value.push({
+    uriRegex: "",
+    when4xx: InitTaskField.Whenxx[0].value,
+    when5xx: InitTaskField.Whenxx[1].value,
+    minDuration: NaN,
+  });
+  activeNames.value = [conditionsList.value.length - 1];
+}
+
+function removeConditions(e: any, key: number) {
+  e.stopPropagation();
+  conditionsList.value = conditionsList.value.filter(
+    (_, index: number) => index !== key
+  );
 }
 </script>
 <style lang="scss" scoped>
@@ -96,5 +123,10 @@ function createConditions() {
 .create-task-btn {
   width: 300px;
   margin-top: 50px;
+}
+
+.title {
+  display: inline-block;
+  margin-right: 5px;
 }
 </style>

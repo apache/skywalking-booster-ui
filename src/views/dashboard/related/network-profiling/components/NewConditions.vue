@@ -35,7 +35,7 @@ limitations under the License. -->
         class="mb-5"
         :value="states.when4xx"
         :options="InitTaskField.Whenxx"
-        @change="changeConfig({ when4xx: $event })"
+        @change="changeConfig({ when4xx: states.when4xx })"
       />
     </div>
     <div>
@@ -44,7 +44,7 @@ limitations under the License. -->
         class="mb-5"
         :value="states.when5xx"
         :options="InitTaskField.Whenxx"
-        @change="changeConfig({ when5xx: $event })"
+        @change="changeConfig({ when5xx: states.when5xx })"
       />
     </div>
   </div>
@@ -56,6 +56,8 @@ import type { PropType } from "vue";
 import { InitTaskField } from "./data";
 import { NetworkProfilingRequest } from "@/types/ebpf";
 
+/* global defineEmits */
+const emits = defineEmits(["change"]);
 const props = defineProps({
   condition: {
     type: Object as PropType<NetworkProfilingRequest>,
@@ -72,6 +74,7 @@ const states = reactive<NetworkProfilingRequest>(props.condition);
 function changeConfig(params: { [key: string]: number | string }) {
   const key: string = Object.keys(params)[0];
   (states as any)[key] = params[key];
+  emits("change", states, props.key);
 }
 </script>
 <style lang="scss" scoped>
