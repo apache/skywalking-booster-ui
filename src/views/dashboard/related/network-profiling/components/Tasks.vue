@@ -78,6 +78,7 @@ limitations under the License. -->
   </el-dialog>
   <el-dialog
     v-model="newTask"
+    :title="t('taskTitle')"
     :destroy-on-close="true"
     fullscreen
     @closed="newTask = false"
@@ -176,7 +177,6 @@ async function saveNewTask(
     minDuration: number;
   }[]
 ) {
-  newTask.value = false;
   const instanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
   if (!instanceId) {
@@ -191,6 +191,7 @@ async function saveNewTask(
     ElMessage.error(res.data.createEBPFNetworkProfiling.errorReason);
     return;
   }
+  newTask.value = false;
   await fetchTasks();
 }
 function enableInterval() {

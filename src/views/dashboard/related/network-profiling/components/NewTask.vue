@@ -23,7 +23,7 @@ limitations under the License. -->
       >
         <template #title>
           <div>
-            <span class="title">{{ `Condition - ${index + 1}` }}</span>
+            <span class="title">{{ `Rule - ${index + 1}` }}</span>
             <Icon
               class="mr-5 cp"
               iconName="remove_circle_outline"

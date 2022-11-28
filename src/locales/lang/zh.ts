@@ -174,6 +174,7 @@ const msg = {
   minDuration: "最小请求持续时间",
   when4xx: "当响应代码介于400和499之间时，带有跟踪的HTTP请求和响应示例",
   when5xx: "当响应代码介于500和599之间时，带有跟踪的HTTP请求和响应示例",
+  taskTitle: "HTTP请求和响应收集规则",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
