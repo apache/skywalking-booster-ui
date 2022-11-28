@@ -73,79 +73,74 @@ export function useQueryProcessor(config: any) {
         topN: c.topN || 10,
         order: c.sortOrder || "DES",
       };
-    } else if ([MetricQueryTypes.ReadRecords].includes(metricType)) {
-      variables.push(`$condition${index}: RecordCondition!`);
-      conditions[`condition${index}`] = {
-        name,
-        parentEntity: {
-          scope: config.catalog,
-          normal: selectorStore.currentService
-            ? selectorStore.currentService.normal
-            : true,
-          serviceName: ["All"].includes(dashboardStore.entity)
-            ? null
-            : selectorStore.currentService.value,
-        },
-        topN: c.topN || 10,
-        order: c.sortOrder || "DES",
-      };
     } else {
-      if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
-        const labels = (c.labelsIndex || "")
-          .split(",")
-          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-        variables.push(`$labels${index}: [String!]!`);
-        conditions[`labels${index}`] = labels;
-      }
-      variables.push(`$condition${index}: MetricsCondition!`);
-      conditions[`condition${index}`] = {
-        name,
-        entity: {
-          scope: dashboardStore.entity,
-          serviceName:
-            dashboardStore.entity === "All"
-              ? undefined
-              : selectorStore.currentService.value,
-          normal:
-            dashboardStore.entity === "All"
-              ? undefined
-              : selectorStore.currentService.normal,
-          serviceInstanceName: [
-            "ServiceInstance",
-            "ServiceInstanceRelation",
-            "ProcessRelation",
-          ].includes(dashboardStore.entity)
-            ? selectorStore.currentPod && selectorStore.currentPod.value
-            : undefined,
-          endpointName: dashboardStore.entity.includes("Endpoint")
-            ? selectorStore.currentPod && selectorStore.currentPod.value
-            : undefined,
-          processName: dashboardStore.entity.includes("Process")
-            ? selectorStore.currentProcess && selectorStore.currentProcess.value
-            : undefined,
-          destNormal: isRelation
-            ? selectorStore.currentDestService.normal
-            : undefined,
-          destServiceName: isRelation
-            ? selectorStore.currentDestService.value
-            : undefined,
-          destServiceInstanceName: [
-            "ServiceInstanceRelation",
-            "ProcessRelation",
-          ].includes(dashboardStore.entity)
+      const entity = {
+        scope: config.catalog,
+        serviceName:
+          dashboardStore.entity === "All"
+            ? undefined
+            : selectorStore.currentService.value,
+        normal:
+          dashboardStore.entity === "All"
+            ? undefined
+            : selectorStore.currentService.normal,
+        serviceInstanceName: [
+          "ServiceInstance",
+          "ServiceInstanceRelation",
+          "ProcessRelation",
+        ].includes(dashboardStore.entity)
+          ? selectorStore.currentPod && selectorStore.currentPod.value
+          : undefined,
+        endpointName: dashboardStore.entity.includes("Endpoint")
+          ? selectorStore.currentPod && selectorStore.currentPod.value
+          : undefined,
+        processName: dashboardStore.entity.includes("Process")
+          ? selectorStore.currentProcess && selectorStore.currentProcess.value
+          : undefined,
+        destNormal: isRelation
+          ? selectorStore.currentDestService.normal
+          : undefined,
+        destServiceName: isRelation
+          ? selectorStore.currentDestService.value
+          : undefined,
+        destServiceInstanceName: [
+          "ServiceInstanceRelation",
+          "ProcessRelation",
+        ].includes(dashboardStore.entity)
+          ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
+          : undefined,
+        destEndpointName:
+          dashboardStore.entity === "EndpointRelation"
             ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
             : undefined,
-          destEndpointName:
-            dashboardStore.entity === "EndpointRelation"
-              ? selectorStore.currentDestPod &&
-                selectorStore.currentDestPod.value
-              : undefined,
-          destProcessName: dashboardStore.entity.includes("ProcessRelation")
-            ? selectorStore.currentDestProcess &&
-              selectorStore.currentDestProcess.value
-            : undefined,
-        },
+        destProcessName: dashboardStore.entity.includes("ProcessRelation")
+          ? selectorStore.currentDestProcess &&
+            selectorStore.currentDestProcess.value
+          : undefined,
       };
+      if ([MetricQueryTypes.ReadRecords].includes(metricType)) {
+        variables.push(`$condition${index}: RecordCondition!`);
+        conditions[`condition${index}`] = {
+          name,
+          parentEntity: entity,
+          topN: c.topN || 10,
+          order: c.sortOrder || "DES",
+        };
+      } else {
+        entity.scope = dashboardStore.entity;
+        if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
+          const labels = (c.labelsIndex || "")
+            .split(",")
+            .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+          variables.push(`$labels${index}: [String!]!`);
+          conditions[`labels${index}`] = labels;
+        }
+        variables.push(`$condition${index}: MetricsCondition!`);
+        conditions[`condition${index}`] = {
+          name,
+          entity,
+        };
+      }
     }
     if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
       return `${name}${index}: ${metricType}(condition: $condition${index}, labels: $labels${index}, duration: $duration)${RespFields[metricType]}`;

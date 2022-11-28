@@ -107,7 +107,7 @@ if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
 } else {
   appStore.setIsMobile(false);
 }
-const isCollapse = ref(true);
+const isCollapse = ref(false);
 const controlMenu = () => {
   isCollapse.value = !isCollapse.value;
 };

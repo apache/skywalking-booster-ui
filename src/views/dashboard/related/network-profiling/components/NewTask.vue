@@ -69,8 +69,8 @@ const activeNames = ref([0]);
 const conditionsList = ref<NetworkProfilingRequest[]>([
   {
     uriRegex: "",
-    when4xx: InitTaskField.Whenxx[0].value,
-    when5xx: InitTaskField.Whenxx[1].value,
+    when4xx: InitTaskField.Whenxx[1].value,
+    when5xx: InitTaskField.Whenxx[0].value,
     minDuration: NaN,
   },
 ]);
