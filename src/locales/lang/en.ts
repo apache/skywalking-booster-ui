@@ -174,6 +174,7 @@ const msg = {
   asTable: "As Table",
   toTheRight: "To The Right",
   legendValues: "Legend Values",
+  minDuration: "Minimal Request Duration",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

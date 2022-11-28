@@ -178,6 +178,7 @@ const msg = {
   showLegend: "Mostrar leyenda",
   asTable: "Como tabla",
   toTheRight: "Derecha",
+  minDuration: "Duración mínima de la solicitud",
   second: "s",
   yearSuffix: "Año",
   monthsHead: "Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Set_Oct_Nov_Dic",

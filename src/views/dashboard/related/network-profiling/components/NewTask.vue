@@ -16,7 +16,7 @@ limitations under the License. -->
 <template>
   <div class="profile-task">
     <div>
-      <div class="label">{{ t("uriRegex") }}</div>
+      <div class="label">URI Regex</div>
       <el-input size="small" class="profile-input" v-model="states.uriRegex" />
     </div>
     <div>
@@ -29,7 +29,7 @@ limitations under the License. -->
       />
     </div>
     <div>
-      <div class="label">{{ t("when4xx") }}</div>
+      <div class="label">When4xx</div>
       <Radio
         class="mb-5"
         :value="states.when4xx"
@@ -38,7 +38,7 @@ limitations under the License. -->
       />
     </div>
     <div>
-      <div class="label">{{ t("when5xx") }}</div>
+      <div class="label">When5xx</div>
       <Radio
         class="mb-5"
         :value="states.when5xx"

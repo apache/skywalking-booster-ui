@@ -171,6 +171,7 @@ const msg = {
   asTable: "作为表格",
   toTheRight: "在右边",
   legendValues: "图例值",
+  minDuration: "最小请求持续时间",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
