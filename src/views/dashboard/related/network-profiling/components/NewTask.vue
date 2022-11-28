@@ -21,15 +21,16 @@ limitations under the License. -->
     </div>
     <div>
       <div class="label">{{ t("minDuration") }} (ms)</div>
-      <el-input-number
+      <el-input
         size="small"
         class="profile-input"
         :min="0"
         v-model="states.minDuration"
+        type="number"
       />
     </div>
     <div>
-      <div class="label">When4xx</div>
+      <div class="label">{{ t("when4xx") }}</div>
       <Radio
         class="mb-5"
         :value="states.when4xx"
@@ -38,7 +39,7 @@ limitations under the License. -->
       />
     </div>
     <div>
-      <div class="label">When5xx</div>
+      <div class="label">{{ t("when5xx") }}</div>
       <Radio
         class="mb-5"
         :value="states.when5xx"

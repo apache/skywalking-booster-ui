@@ -175,6 +175,10 @@ const msg = {
   toTheRight: "To The Right",
   legendValues: "Legend Values",
   minDuration: "Minimal Request Duration",
+  when4xx:
+    "Sample HTTP requests and responses with tracing when response code between 400 and 499",
+  when5xx:
+    "Sample HTTP requests and responses with tracing when response code between 500 and 599",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

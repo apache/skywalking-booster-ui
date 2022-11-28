@@ -179,6 +179,10 @@ const msg = {
   asTable: "Como tabla",
   toTheRight: "Derecha",
   minDuration: "Duración mínima de la solicitud",
+  when4xx:
+    "Ejemplo de solicitud y respuesta http con seguimiento cuando el Código de respuesta está entre 400 y 499",
+  when5xx:
+    "Ejemplo de solicitud y respuesta http con seguimiento cuando el Código de respuesta está entre 500 y 599",
   second: "s",
   yearSuffix: "Año",
   monthsHead: "Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Set_Oct_Nov_Dic",
