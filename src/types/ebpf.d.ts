@@ -77,3 +77,9 @@ export type ProcessNode = {
   x?: number;
   y?: number;
 };
+export interface NetworkProfilingRequest {
+  uriRegex: string;
+  when4xx: string;
+  when5xx: string;
+  minDuration: number;
+}

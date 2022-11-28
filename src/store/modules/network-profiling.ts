@@ -110,13 +110,23 @@ export const networkProfilingStore = defineStore({
       this.calls = calls;
       this.nodes = data.nodes;
     },
-    async createNetworkTask(param: {
-      serviceId: string;
-      serviceInstanceId: string;
-    }) {
+    async createNetworkTask(
+      instanceId: string,
+      params: {
+        uriRegex: string;
+        when4xx: string;
+        when5xx: string;
+        minDuration: number;
+      }[]
+    ) {
       const res: AxiosResponse = await graphql
         .query("newNetworkProfiling")
-        .params({ request: { instanceId: param.serviceInstanceId } });
+        .params({
+          request: {
+            instanceId,
+            samplings: params,
+          },
+        });
 
       if (res.data.errors) {
         return res.data;

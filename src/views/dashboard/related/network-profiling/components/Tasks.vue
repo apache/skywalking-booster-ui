@@ -17,24 +17,13 @@ limitations under the License. -->
     <div class="profile-task-wrapper flex-v">
       <div class="profile-t-tool">
         <span>{{ t("taskList") }}</span>
-        <span v-if="inProcess" class="new-task cp" @click="createTask">
+        <span class="new-task cp" @click="createTask">
           <Icon
-            :style="{ color: '#ccc' }"
+            :style="{ color: inProcess ? '#ccc' : '#000' }"
             iconName="library_add"
             size="middle"
           />
         </span>
-        <el-popconfirm
-          title="Are you sure to create a task?"
-          @confirm="createTask"
-          v-else
-        >
-          <template #reference>
-            <span class="new-task cp">
-              <Icon iconName="library_add" size="middle" />
-            </span>
-          </template>
-        </el-popconfirm>
       </div>
       <div class="profile-t-wrapper">
         <div
@@ -87,6 +76,15 @@ limitations under the License. -->
   >
     <TaskDetails :details="networkProfilingStore.selectedNetworkTask" />
   </el-dialog>
+  <el-dialog
+    v-model="newTask"
+    :title="t('taskTitle')"
+    :destroy-on-close="true"
+    fullscreen
+    @closed="newTask = false"
+  >
+    <NewTask @create="saveNewTask" />
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import { ref, watch } from "vue";
@@ -99,13 +97,15 @@ import TaskDetails from "../../components/TaskDetails.vue";
 import dateFormatStep, { dateFormat } from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import NewTask from "./NewTask.vue";
 
+/*global Nullable */
 const { t } = useI18n();
 const selectorStore = useSelectorStore();
 const networkProfilingStore = useNetworkProfilingStore();
 const appStore = useAppStoreWithOut();
 const viewDetail = ref<boolean>(false);
-/*global Nullable */
+const newTask = ref<boolean>(false);
 const intervalFn = ref<Nullable<any>>(null);
 const intervalKeepAlive = ref<Nullable<any>>(null);
 const inProcess = ref<boolean>(false);
@@ -163,28 +163,35 @@ async function getTopology() {
   }
   return resp;
 }
-async function createTask() {
+function createTask() {
   if (inProcess.value) {
     return;
   }
-  const serviceId =
-    (selectorStore.currentService && selectorStore.currentService.id) || "";
-  const serviceInstanceId =
+  newTask.value = true;
+}
+async function saveNewTask(
+  params: {
+    uriRegex: string;
+    when4xx: string;
+    when5xx: string;
+    minDuration: number;
+  }[]
+) {
+  const instanceId =
     (selectorStore.currentPod && selectorStore.currentPod.id) || "";
-  if (!serviceId) {
-    return;
+  if (!instanceId) {
+    return ElMessage.error("No Instance ID");
   }
-  if (!serviceInstanceId) {
-    return;
-  }
-  const res = await networkProfilingStore.createNetworkTask({
-    serviceId,
-    serviceInstanceId,
-  });
+  const res = await networkProfilingStore.createNetworkTask(instanceId, params);
   if (res.errors) {
     ElMessage.error(res.errors);
     return;
   }
+  if (!res.data.createEBPFNetworkProfiling.status) {
+    ElMessage.error(res.data.createEBPFNetworkProfiling.errorReason);
+    return;
+  }
+  newTask.value = false;
   await fetchTasks();
 }
 function enableInterval() {
