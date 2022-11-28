@@ -187,6 +187,10 @@ async function saveNewTask(
     ElMessage.error(res.errors);
     return;
   }
+  if (!res.data.createEBPFNetworkProfiling.status) {
+    ElMessage.error(res.data.createEBPFNetworkProfiling.errorReason);
+    return;
+  }
   await fetchTasks();
 }
 function enableInterval() {
