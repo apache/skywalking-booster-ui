@@ -33,6 +33,7 @@ limitations under the License. -->
       :destroy-on-close="true"
       :before-close="() => (showTrace = false)"
       :append-to-body="true"
+      title="The Related Traces"
     >
       <Trace :data="traceOptions" />
     </el-drawer>
@@ -159,6 +160,7 @@ function updateOptions() {
   if (!props.filters) {
     return;
   }
+  console.log(props.filters);
   if (props.filters.isRange) {
     const { eventAssociate } = associateProcessor(props);
     const options = eventAssociate();

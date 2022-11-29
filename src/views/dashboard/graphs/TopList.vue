@@ -58,6 +58,7 @@ limitations under the License. -->
       :destroy-on-close="true"
       :before-close="() => (showTrace = false)"
       :append-to-body="true"
+      title="The Related Traces"
     >
       <Trace :data="traceOptions" />
     </el-drawer>
