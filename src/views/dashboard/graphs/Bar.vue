@@ -14,7 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="graph" :class="isRight ? 'flex-h' : 'flex-v'">
-    <Graph :option="option" @select="clickEvent" :filters="config.filters" />
+    <Graph
+      :option="option"
+      @select="clickEvent"
+      :filters="config.filters"
+      :associate="config.associate || []"
+    />
     <Legend :config="config.legend" :data="data" :intervalTime="intervalTime" />
   </div>
 </template>
@@ -44,6 +49,7 @@ const props = defineProps({
         filters: Filters;
         relatedTrace: RelatedTrace;
         id: string;
+        associate: { widgetId: string }[];
       }
     >,
     default: () => ({}),

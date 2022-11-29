@@ -19,6 +19,7 @@ limitations under the License. -->
       @select="clickEvent"
       :filters="config.filters"
       :relatedTrace="config.relatedTrace"
+      :associate="config.associate || []"
     />
     <Legend :config="config.legend" :data="data" :intervalTime="intervalTime" />
   </div>
@@ -50,6 +51,7 @@ const props = defineProps({
         filters?: Filters;
         relatedTrace?: RelatedTrace;
         id?: string;
+        associate: { widgetId: string }[];
       }
     >,
     default: () => ({

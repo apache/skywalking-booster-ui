@@ -18,7 +18,7 @@ limitations under the License. -->
     <el-input size="small" v-model="traceId" class="trace-id" />
   </div>
   <div class="conditions flex-h" v-else>
-    <el-radio-group v-model="conditions" @change="changeCondition">
+    <el-radio-group v-model="conditions" @change="changeCondition" size="small">
       <el-radio-button
         v-for="(item, index) in items"
         :label="item.label"

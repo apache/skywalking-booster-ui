@@ -45,6 +45,7 @@ defineProps({
         filters: Filters;
         relatedTrace: RelatedTrace;
         id: string;
+        associate: { widgetId: string }[];
       }
     >,
     default: () => ({}),

@@ -16,13 +16,13 @@ limitations under the License. -->
   <div class="chart" ref="chartRef" :style="`height:${height};width:${width};`">
     <div v-if="!available" class="no-data">No Data</div>
     <div class="menus" v-show="visMenus" ref="menus">
-      <div class="tools" @click="associateMetrics">
+      <div class="tools" @click="associateMetrics" v-if="associate.length">
         {{ t("associateMetrics") }}
       </div>
       <div
         class="tools"
         @click="viewTrace"
-        v-if="props.relatedTrace && props.relatedTrace.enableRelate"
+        v-if="relatedTrace && relatedTrace.enableRelate"
       >
         {{ t("viewTrace") }}
       </div>
@@ -33,6 +33,7 @@ limitations under the License. -->
       :destroy-on-close="true"
       :before-close="() => (showTrace = false)"
       :append-to-body="true"
+      title="The Related Traces"
     >
       <Trace :data="traceOptions" />
     </el-drawer>
@@ -84,6 +85,10 @@ const props = defineProps({
   relatedTrace: {
     type: Object as PropType<RelatedTrace>,
   },
+  associate: {
+    type: Array as PropType<{ widgetId: string }[]>,
+    default: () => [],
+  },
 });
 const available = computed(
   () =>
@@ -113,15 +118,15 @@ function instanceEvent() {
       visMenus.value = true;
       const w = chartRef.value.getBoundingClientRect().width || 0;
       const h = chartRef.value.getBoundingClientRect().height || 0;
-      if (w - params.event.offsetX > 125) {
+      if (w - params.event.offsetX > 120) {
         menus.value.style.left = params.event.offsetX + "px";
       } else {
-        menus.value.style.left = params.event.offsetX - 125 + "px";
+        menus.value.style.left = params.event.offsetX - 120 + "px";
       }
-      if (h - params.event.offsetY < 60) {
-        menus.value.style.top = params.event.offsetY - 60 + "px";
+      if (h - params.event.offsetY < 50) {
+        menus.value.style.top = params.event.offsetY - 40 + "px";
       } else {
-        menus.value.style.top = params.event.offsetY + 5 + "px";
+        menus.value.style.top = params.event.offsetY + 2 + "px";
       }
     });
     document.addEventListener(
@@ -143,11 +148,14 @@ function instanceEvent() {
 
 function associateMetrics() {
   emits("select", currentParams.value);
-  visMenus.value = true;
-  updateOptions();
+  const { dataIndex, seriesIndex } = currentParams.value || {
+    dataIndex: 0,
+    seriesIndex: 0,
+  };
+  updateOptions({ dataIndex, seriesIndex });
 }
 
-function updateOptions() {
+function updateOptions(params?: { dataIndex: number; seriesIndex: number }) {
   const instance = getInstance();
   if (!instance) {
     return;
@@ -162,8 +170,14 @@ function updateOptions() {
   } else {
     instance.dispatchAction({
       type: "updateAxisPointer",
-      dataIndex: props.filters.dataIndex,
-      seriesIndex: 0,
+      dataIndex: params ? params.dataIndex : props.filters.dataIndex,
+      seriesIndex: params ? params.seriesIndex : 0,
+    });
+    const ids = props.option.series.map((_: unknown, index: number) => index);
+    instance.dispatchAction({
+      type: "highlight",
+      dataIndex: params ? params.dataIndex : props.filters.dataIndex,
+      seriesIndex: ids,
     });
   }
 }
