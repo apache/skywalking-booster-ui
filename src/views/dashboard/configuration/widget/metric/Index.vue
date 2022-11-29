@@ -60,7 +60,10 @@ limitations under the License. -->
       />
     </el-popover>
     <span
-      v-show="states.isList || states.metricTypes[0] === 'readMetricsValues'"
+      v-show="
+        states.isList ||
+        states.metricTypes[0] === ProtocolTypes.ReadMetricsValues
+      "
     >
       <Icon
         class="cp mr-5"
@@ -106,6 +109,7 @@ import {
   ChartTypes,
   PodsChartTypes,
   MetricsType,
+  ProtocolTypes,
 } from "../../../data";
 import { ElMessage } from "element-plus";
 import Icon from "@/components/Icon.vue";
@@ -425,13 +429,7 @@ function setMetricTypeList(type: string) {
     return MetricTypes[type];
   }
   if (states.isList || graph.value.type === "Table") {
-    return [
-      { label: "read all values in the duration", value: "readMetricsValues" },
-      {
-        label: "read the single value in the duration",
-        value: "readMetricsValue",
-      },
-    ];
+    return [MetricTypes.REGULAR_VALUE[0], MetricTypes.REGULAR_VALUE[1]];
   }
   return MetricTypes[type];
 }

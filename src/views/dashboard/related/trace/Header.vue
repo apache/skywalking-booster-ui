@@ -138,8 +138,10 @@ init();
 async function init() {
   for (const d of Object.keys(filters)) {
     if (
-      ["queryOrder"].includes(d) ||
-      (d === "status" && filters[d] && filters[d] !== "ALL") ||
+      (d === "queryOrder" &&
+        filters[d] &&
+        filters[d] === QueryOrders[1].value) ||
+      (d === "status" && filters[d] && filters[d] !== Status[0].value) ||
       (filters[d] && d === "latency")
     ) {
       items.value.push({ label: d, value: FiltersKeys[d] });

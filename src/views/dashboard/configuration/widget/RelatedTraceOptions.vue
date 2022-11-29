@@ -46,7 +46,7 @@ limitations under the License. -->
       />
     </div>
     <div class="item">
-      <span class="label">{{ t("queryOrder") }}</span>
+      <span class="label">{{ t("setOrder") }}</span>
       <Selector
         size="small"
         :value="queryOrder"
@@ -71,8 +71,17 @@ limitations under the License. -->
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { Status, QueryOrders, RefIdTypes } from "../../data";
+import { RefIdTypes } from "../../data";
 
+const QueryOrders = [
+  { label: "None", value: "BY_START_TIME" },
+  { label: "Duration", value: "BY_DURATION" },
+];
+const Status = [
+  { label: "None", value: "ALL" },
+  { label: "Success", value: "SUCCESS" },
+  { label: "Error", value: "ERROR" },
+];
 const { t } = useI18n();
 const dashboardStore = useDashboardStore();
 const { graph, relatedTrace } = dashboardStore.selectedGrid;
