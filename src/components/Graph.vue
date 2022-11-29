@@ -148,7 +148,6 @@ function instanceEvent() {
 
 function associateMetrics() {
   emits("select", currentParams.value);
-  visMenus.value = true;
   const dataIndex = currentParams.value?.dataIndex;
   updateOptions(dataIndex);
 }
