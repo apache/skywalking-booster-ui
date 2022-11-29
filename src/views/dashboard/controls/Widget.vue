@@ -65,6 +65,7 @@ limitations under the License. -->
           metricConfig: data.metricConfig || [],
           filters: data.filters || {},
           relatedTrace: data.relatedTrace || {},
+          associate: data.associate || [],
         }"
         :needQuery="needQuery"
         @click="clickHandle"

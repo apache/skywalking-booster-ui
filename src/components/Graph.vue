@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="chart" ref="chartRef" :style="`height:${height};width:${width};`">
     <div v-if="!available" class="no-data">No Data</div>
     <div class="menus" v-show="visMenus" ref="menus">
-      <div class="tools" @click="associateMetrics">
+      <div class="tools" @click="associateMetrics" v-if="associate.length">
         {{ t("associateMetrics") }}
       </div>
       <div
@@ -83,6 +83,10 @@ const props = defineProps({
   },
   relatedTrace: {
     type: Object as PropType<RelatedTrace>,
+  },
+  associate: {
+    type: Array as PropType<{ widgetId: string }[]>,
+    default: () => [],
   },
 });
 const available = computed(

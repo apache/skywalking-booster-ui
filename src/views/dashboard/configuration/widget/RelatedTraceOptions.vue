@@ -89,7 +89,6 @@ const traceOpt = relatedTrace || {};
 const status = ref<string>(traceOpt.status || Status[0].value);
 const queryOrder = ref<string>(traceOpt.queryOrder || QueryOrders[0].value);
 const latency = ref<boolean>(traceOpt.latency || false);
-console.log(dashboardStore.selectedGrid.relatedTrace);
 const enableRelate = ref<boolean>(traceOpt.enableRelate || false);
 const type = ref<string>((graph && graph.type) || "");
 const refIdType = ref<string>(traceOpt.refIdType || "traceId");
