@@ -97,7 +97,7 @@ import { useI18n } from "vue-i18n";
 import { SortOrder, CalculationOpts } from "../../../data";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { MetricConfigOpt } from "@/types/dashboard";
-import { ListChartTypes } from "../../../data";
+import { ListChartTypes, ProtocolTypes } from "../../../data";
 
 /*global defineEmits, defineProps */
 const props = defineProps({
@@ -122,11 +122,18 @@ const hasLabel = computed(() => {
   const graph = dashboardStore.selectedGrid.graph || {};
   return (
     ListChartTypes.includes(graph.type) ||
-    ["readLabeledMetricsValues", "readMetricsValues"].includes(metricType.value)
+    [
+      ProtocolTypes.ReadLabeledMetricsValues,
+      ProtocolTypes.ReadMetricsValues,
+    ].includes(metricType.value)
   );
 });
 const isTopn = computed(() =>
-  ["sortMetrics", "readSampledRecords"].includes(metricTypes[props.index])
+  [
+    ProtocolTypes.SortMetrics,
+    ProtocolTypes.ReadSampledRecords,
+    ProtocolTypes.ReadRecords,
+  ].includes(metricTypes[props.index])
 );
 function updateConfig(index: number, param: { [key: string]: string }) {
   const key = Object.keys(param)[0];

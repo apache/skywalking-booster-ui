@@ -47,6 +47,15 @@ export const MetricChartType: any = {
   readSampledRecords: [{ label: "Top List", value: "TopList" }],
   readRecords: [{ label: "Top List", value: "TopList" }],
 };
+export enum ProtocolTypes {
+  ReadRecords = "readRecords",
+  ReadSampledRecords = "readSampledRecords",
+  SortMetrics = "sortMetrics",
+  ReadLabeledMetricsValues = "readLabeledMetricsValues",
+  ReadHeatMap = "readHeatMap",
+  ReadMetricsValues = "readMetricsValues",
+  ReadMetricsValue = "readMetricsValue",
+}
 export const DefaultGraphConfig: { [key: string]: any } = {
   Bar: {
     type: "Bar",
