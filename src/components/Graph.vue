@@ -148,11 +148,14 @@ function instanceEvent() {
 
 function associateMetrics() {
   emits("select", currentParams.value);
-  const dataIndex = currentParams.value?.dataIndex;
-  updateOptions(dataIndex);
+  const { dataIndex, seriesIndex } = currentParams.value || {
+    dataIndex: 0,
+    seriesIndex: 0,
+  };
+  updateOptions({ dataIndex, seriesIndex });
 }
 
-function updateOptions(dataIndex?: number) {
+function updateOptions(params?: { dataIndex: number; seriesIndex: number }) {
   const instance = getInstance();
   if (!instance) {
     return;
@@ -167,8 +170,14 @@ function updateOptions(dataIndex?: number) {
   } else {
     instance.dispatchAction({
       type: "updateAxisPointer",
-      dataIndex: dataIndex || props.filters.dataIndex,
-      seriesIndex: 0,
+      dataIndex: params ? params.dataIndex : props.filters.dataIndex,
+      seriesIndex: params ? params.seriesIndex : 0,
+    });
+    const ids = props.option.series.map((_: unknown, index: number) => index);
+    instance.dispatchAction({
+      type: "highlight",
+      dataIndex: params ? params.dataIndex : props.filters.dataIndex,
+      seriesIndex: ids,
     });
   }
 }
