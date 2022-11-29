@@ -22,7 +22,7 @@ limitations under the License. -->
       <div
         class="tools"
         @click="viewTrace"
-        v-if="props.relatedTrace && props.relatedTrace.enableRelate"
+        v-if="relatedTrace && relatedTrace.enableRelate"
       >
         {{ t("viewTrace") }}
       </div>
@@ -118,15 +118,15 @@ function instanceEvent() {
       visMenus.value = true;
       const w = chartRef.value.getBoundingClientRect().width || 0;
       const h = chartRef.value.getBoundingClientRect().height || 0;
-      if (w - params.event.offsetX > 125) {
+      if (w - params.event.offsetX > 120) {
         menus.value.style.left = params.event.offsetX + "px";
       } else {
-        menus.value.style.left = params.event.offsetX - 125 + "px";
+        menus.value.style.left = params.event.offsetX - 120 + "px";
       }
-      if (h - params.event.offsetY < 60) {
-        menus.value.style.top = params.event.offsetY - 60 + "px";
+      if (h - params.event.offsetY < 50) {
+        menus.value.style.top = params.event.offsetY - 40 + "px";
       } else {
-        menus.value.style.top = params.event.offsetY + 5 + "px";
+        menus.value.style.top = params.event.offsetY + 2 + "px";
       }
     });
     document.addEventListener(
@@ -149,10 +149,11 @@ function instanceEvent() {
 function associateMetrics() {
   emits("select", currentParams.value);
   visMenus.value = true;
-  updateOptions();
+  const dataIndex = currentParams.value?.dataIndex;
+  updateOptions(dataIndex);
 }
 
-function updateOptions() {
+function updateOptions(dataIndex?: number) {
   const instance = getInstance();
   if (!instance) {
     return;
@@ -160,7 +161,6 @@ function updateOptions() {
   if (!props.filters) {
     return;
   }
-  console.log(props.filters);
   if (props.filters.isRange) {
     const { eventAssociate } = associateProcessor(props);
     const options = eventAssociate();
@@ -168,7 +168,7 @@ function updateOptions() {
   } else {
     instance.dispatchAction({
       type: "updateAxisPointer",
-      dataIndex: props.filters.dataIndex,
+      dataIndex: dataIndex || props.filters.dataIndex,
       seriesIndex: 0,
     });
   }
