@@ -197,7 +197,7 @@ const total = computed(() =>
     ? pageSize * pageNum.value + 1
     : pageSize * pageNum.value
 );
-const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
+const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") =>
   dayjs(date).format(pattern);
 
 onMounted(() => {
