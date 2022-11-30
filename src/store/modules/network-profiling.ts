@@ -152,6 +152,10 @@ export const networkProfilingStore = defineStore({
       this.networkTasks = res.data.data.queryEBPFTasks || [];
       this.selectedNetworkTask = this.networkTasks[0] || {};
       this.setSelectedNetworkTask(this.selectedNetworkTask);
+      if (!this.networkTasks.length) {
+        this.nodes = [];
+        this.calls = [];
+      }
       return res.data;
     },
     async keepNetworkProfiling(taskId: string) {
