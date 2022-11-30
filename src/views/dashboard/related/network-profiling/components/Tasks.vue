@@ -246,6 +246,7 @@ async function fetchTasks() {
 watch(
   () => selectorStore.currentPod,
   () => {
+    inProcess.value = false;
     fetchTasks();
   }
 );
