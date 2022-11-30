@@ -108,12 +108,22 @@ limitations under the License. -->
       <div class="mb-10">
         <span class="grey">Start Time:</span>
         {{
-          currentEvent.startTime ? visDate(Number(currentEvent.startTime)) : ""
+          currentEvent.startTime
+            ? `${visDate(
+                Number(currentEvent.startTime)
+              )}:${currentEvent.startTimeNanos.toLocaleString("en-US")}`
+            : ""
         }}
       </div>
       <div class="mb-10">
         <span class="grey">End Time:</span>
-        {{ currentEvent.endTime ? visDate(Number(currentEvent.endTime)) : "" }}
+        {{
+          currentEvent.endTime
+            ? `${visDate(
+                Number(currentEvent.endTime)
+              )}:${currentEvent.endTimeNanos.toLocaleString("en-US")}`
+            : ""
+        }}
       </div>
       <div class="mb-10">
         <span class="grey">Summary:</span>
@@ -190,7 +200,7 @@ const visGraph = ref<Nullable<any>>(null);
 const pageNum = ref<number>(1);
 const showRelatedLogs = ref<boolean>(false);
 const showEventDetail = ref<boolean>(false);
-const currentEvent = ref<SpanAttachedEvent | Record<string, never>>({});
+const currentEvent = ref<any>({});
 const pageSize = 10;
 const total = computed(() =>
   traceStore.traceList.length === pageSize
@@ -245,6 +255,8 @@ function visTimeline() {
         startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000,
         endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000,
         className: "Normal",
+        startTimeNanos: d.startTime.nanos,
+        endTimeNanos: d.endTime.nanos,
       };
     }
   );
@@ -261,6 +273,7 @@ function visTimeline() {
   visGraph.value.on("select", (data: { items: number[] }) => {
     const index = data.items[0];
     currentEvent.value = events[index - 1 || 0] || {};
+    console.log(currentEvent.value);
     if (data.items.length) {
       showEventDetail.value = true;
       return;
