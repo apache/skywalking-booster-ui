@@ -109,9 +109,9 @@ limitations under the License. -->
         <span class="grey">Start Time:</span>
         {{
           currentEvent.startTime
-            ? `${visDate(Number(currentEvent.startTime))}:${(
-                currentEvent.startTimeNanos / 1000
-              ).toLocaleString("en-US")}`
+            ? `${visDate(Number(currentEvent.startTime))}:${
+                currentEvent.startTimeNanos
+              }`
             : ""
         }}
       </div>
@@ -119,9 +119,9 @@ limitations under the License. -->
         <span class="grey">End Time:</span>
         {{
           currentEvent.endTime
-            ? `${visDate(Number(currentEvent.endTime))}:${(
-                currentEvent.endTimeNanos / 1000
-              ).toLocaleString("en-US")}`
+            ? `${visDate(Number(currentEvent.endTime))}:${
+                currentEvent.endTimeNanos
+              }`
             : ""
         }}
       </div>
@@ -246,20 +246,25 @@ function visTimeline() {
         id: index + 1,
         content: d.event,
         start: new Date(
-          Number(d.startTime.seconds * 1000 + d.startTime.nanos / 1000 / 1000)
+          Number(d.startTime.seconds * 1000 + d.startTime.nanos / 1000000)
         ),
         end: new Date(
-          Number(d.endTime.seconds * 1000 + d.endTime.nanos / 1000 / 1000)
+          Number(d.endTime.seconds * 1000 + d.endTime.nanos / 1000000)
         ),
         ...d,
-        startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000 / 1000,
-        endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000 / 1000,
+        startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000000,
+        endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000000,
         className: "Normal",
-        startTimeNanos: d.startTime.nanos,
-        endTimeNanos: d.endTime.nanos,
+        startTimeNanos: Number(
+          String(d.startTime.nanos / 1000000).split(".")[1]
+        ).toLocaleString("en-US"),
+        endTimeNanos: Number(
+          String(d.endTime.nanos / 1000000).split(".")[1]
+        ).toLocaleString("en-US"),
       };
     }
   );
+
   const items = new DataSet(events);
   const options: any = {
     height: h,
