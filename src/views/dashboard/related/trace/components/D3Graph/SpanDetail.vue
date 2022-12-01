@@ -109,9 +109,9 @@ limitations under the License. -->
         <span class="grey">Start Time:</span>
         {{
           currentEvent.startTime
-            ? `${visDate(
-                Number(currentEvent.startTime)
-              )}:${currentEvent.startTimeNanos.toLocaleString("en-US")}`
+            ? `${visDate(Number(currentEvent.startTime))}:${(
+                currentEvent.startTimeNanos / 1000
+              ).toLocaleString("en-US")}`
             : ""
         }}
       </div>
@@ -119,9 +119,9 @@ limitations under the License. -->
         <span class="grey">End Time:</span>
         {{
           currentEvent.endTime
-            ? `${visDate(
-                Number(currentEvent.endTime)
-              )}:${currentEvent.endTimeNanos.toLocaleString("en-US")}`
+            ? `${visDate(Number(currentEvent.endTime))}:${(
+                currentEvent.endTimeNanos / 1000
+              ).toLocaleString("en-US")}`
             : ""
         }}
       </div>
@@ -246,14 +246,14 @@ function visTimeline() {
         id: index + 1,
         content: d.event,
         start: new Date(
-          Number(d.startTime.seconds * 1000 + d.startTime.nanos / 1000)
+          Number(d.startTime.seconds * 1000 + d.startTime.nanos / 1000 / 1000)
         ),
         end: new Date(
-          Number(d.endTime.seconds * 1000 + d.endTime.nanos / 1000)
+          Number(d.endTime.seconds * 1000 + d.endTime.nanos / 1000 / 1000)
         ),
         ...d,
-        startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000,
-        endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000,
+        startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000 / 1000,
+        endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000 / 1000,
         className: "Normal",
         startTimeNanos: d.startTime.nanos,
         endTimeNanos: d.endTime.nanos,
@@ -273,7 +273,6 @@ function visTimeline() {
   visGraph.value.on("select", (data: { items: number[] }) => {
     const index = data.items[0];
     currentEvent.value = events[index - 1 || 0] || {};
-    console.log(currentEvent.value);
     if (data.items.length) {
       showEventDetail.value = true;
       return;
