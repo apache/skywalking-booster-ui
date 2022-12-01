@@ -242,6 +242,11 @@ function visTimeline() {
   const attachedEvents = props.currentSpan.attachedEvents || [];
   const events: any[] = attachedEvents.map(
     (d: SpanAttachedEvent, index: number) => {
+      console.log(
+        Number(
+          String(d.startTime.nanos / 1000 / 1000).split(".")[1]
+        ).toLocaleString("en-US")
+      );
       return {
         id: index + 1,
         content: d.event,
@@ -255,12 +260,12 @@ function visTimeline() {
         startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000 / 1000,
         endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000 / 1000,
         className: "Normal",
-        startTimeNanos: (d.startTime.nanos / 1000)
-          .toLocaleString("en-US")
-          .split(".")[0],
-        endTimeNanos: (d.endTime.nanos / 1000)
-          .toLocaleString("en-US")
-          .split(".")[0],
+        startTimeNanos: Number(
+          String(d.startTime.nanos / 1000 / 1000).split(".")[1]
+        ).toLocaleString("en-US"),
+        endTimeNanos: Number(
+          String(d.endTime.nanos / 1000 / 1000).split(".")[1]
+        ).toLocaleString("en-US"),
       };
     }
   );
