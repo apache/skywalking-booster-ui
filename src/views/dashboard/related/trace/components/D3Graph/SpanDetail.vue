@@ -242,11 +242,6 @@ function visTimeline() {
   const attachedEvents = props.currentSpan.attachedEvents || [];
   const events: any[] = attachedEvents.map(
     (d: SpanAttachedEvent, index: number) => {
-      console.log(
-        Number(
-          String(d.startTime.nanos / 1000 / 1000).split(".")[1]
-        ).toLocaleString("en-US")
-      );
       return {
         id: index + 1,
         content: d.event,
