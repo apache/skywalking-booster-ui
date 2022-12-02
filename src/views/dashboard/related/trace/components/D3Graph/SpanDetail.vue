@@ -102,11 +102,11 @@ limitations under the License. -->
   >
     <div>
       <div class="mb-10">
-        <span class="grey">Name:</span>
+        <span class="grey title">Name:</span>
         {{ currentEvent.event || "" }}
       </div>
       <div class="mb-10">
-        <span class="grey">Start Time:</span>
+        <span class="grey title">Start Time:</span>
         {{
           currentEvent.startTime
             ? `${visDate(Number(currentEvent.startTime))}:${
@@ -116,7 +116,7 @@ limitations under the License. -->
         }}
       </div>
       <div class="mb-10">
-        <span class="grey">End Time:</span>
+        <span class="grey title">End Time:</span>
         {{
           currentEvent.endTime
             ? `${visDate(Number(currentEvent.endTime))}:${
@@ -126,7 +126,7 @@ limitations under the License. -->
         }}
       </div>
       <div class="mb-10">
-        <span class="grey">Summary:</span>
+        <span class="grey title">Summary:</span>
         <div
           class="mb-5"
           v-for="(d, index) in currentEvent.summary || []"
@@ -137,7 +137,7 @@ limitations under the License. -->
         </div>
       </div>
       <div>
-        <span class="grey">Tags:</span>
+        <span class="grey title">Tags:</span>
         <div
           class="mb-5"
           v-for="(tag, index) in currentEvent.tags || []"
@@ -242,6 +242,10 @@ function visTimeline() {
   const attachedEvents = props.currentSpan.attachedEvents || [];
   const events: any[] = attachedEvents.map(
     (d: SpanAttachedEvent, index: number) => {
+      let startTimeNanos = String(d.startTime.nanos).slice(-6).padStart(6, "0");
+      let endTimeNanos = String(d.endTime.nanos).slice(-6).padStart(6, "0");
+      endTimeNanos = toString(endTimeNanos);
+      startTimeNanos = toString(startTimeNanos);
       return {
         id: index + 1,
         content: d.event,
@@ -255,12 +259,8 @@ function visTimeline() {
         startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000000,
         endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000000,
         className: "Normal",
-        startTimeNanos: Number(
-          String(d.startTime.nanos / 1000000).split(".")[1]
-        ).toLocaleString("en-US"),
-        endTimeNanos: Number(
-          String(d.endTime.nanos / 1000000).split(".")[1]
-        ).toLocaleString("en-US"),
+        startTimeNanos,
+        endTimeNanos,
       };
     }
   );
@@ -278,12 +278,16 @@ function visTimeline() {
   visGraph.value.on("select", (data: { items: number[] }) => {
     const index = data.items[0];
     currentEvent.value = events[index - 1 || 0] || {};
+    console.log(currentEvent.value);
     if (data.items.length) {
       showEventDetail.value = true;
       return;
     }
     showEventDetail.value = false;
   });
+}
+function toString(str: string) {
+  return str.replace(/\d(?=(\d{3})+$)/g, "$&,");
 }
 function turnPage(p: number) {
   pageNum.value = p;
@@ -294,6 +298,11 @@ function showCurrentSpanDetail(text: string) {
 }
 </script>
 <style lang="scss" scoped>
+.title {
+  display: inline-block;
+  width: 70px;
+}
+
 .attach-events {
   width: 100%;
   margin: 0 5px 5px 0;
