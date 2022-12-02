@@ -242,12 +242,8 @@ function visTimeline() {
   const attachedEvents = props.currentSpan.attachedEvents || [];
   const events: any[] = attachedEvents.map(
     (d: SpanAttachedEvent, index: number) => {
-      let startTimeNanos = String(d.startTime.nanos / 1000000)
-        .split(".")[1]
-        .padStart(6, "0");
-      let endTimeNanos = String(d.endTime.nanos / 1000000)
-        .split(".")[1]
-        .padStart(6, "0");
+      let startTimeNanos = String(d.startTime.nanos).slice(-6).padStart(6, "0");
+      let endTimeNanos = String(d.endTime.nanos).slice(-6).padStart(6, "0");
       endTimeNanos = toString(endTimeNanos);
       startTimeNanos = toString(startTimeNanos);
       return {
@@ -282,6 +278,7 @@ function visTimeline() {
   visGraph.value.on("select", (data: { items: number[] }) => {
     const index = data.items[0];
     currentEvent.value = events[index - 1 || 0] || {};
+    console.log(currentEvent.value);
     if (data.items.length) {
       showEventDetail.value = true;
       return;
