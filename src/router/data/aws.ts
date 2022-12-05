@@ -18,9 +18,9 @@
 export default [
   {
     path: "",
-    name: "AWS",
+    name: "AWSCloud",
     meta: {
-      title: "AWS Cloud ",
+      title: "AWSCloud",
       icon: "aws",
       hasGroup: true,
     },
@@ -28,9 +28,9 @@ export default [
     children: [
       {
         path: "/aws-eks",
-        name: "EKS",
+        name: "AWSCloudEKS",
         meta: {
-          title: "EKS",
+          title: "AWSCloudEKS",
           layer: "AWS_EKS",
         },
       },
