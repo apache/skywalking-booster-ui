@@ -20,8 +20,8 @@ export default [
     path: "",
     name: "AWS",
     meta: {
-      title: "AWS",
-      icon: "AWS",
+      title: "AWS Cloud ",
+      icon: "aws",
       hasGroup: true,
     },
     redirect: "/aws-eks",
