@@ -14,26 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import general from "./general";
-import serviceMesh from "./serviceMesh";
-import database from "./database";
-import infrastructure from "./infrastructure";
-import selfObservability from "./selfObservability";
-import functions from "./functions";
-import browser from "./browser";
-import k8s from "./k8s";
-import gateway from "./gateway";
-import aws from "./aws";
 
 export default [
-  ...general,
-  ...serviceMesh,
-  ...functions,
-  ...k8s,
-  ...infrastructure,
-  ...aws,
-  ...browser,
-  ...gateway,
-  ...database,
-  ...selfObservability,
+  {
+    path: "",
+    name: "AWSCloud",
+    meta: {
+      title: "AWSCloud",
+      icon: "aws",
+      hasGroup: true,
+    },
+    redirect: "/aws-eks",
+    children: [
+      {
+        path: "/aws-eks",
+        name: "AWSCloudEKS",
+        meta: {
+          title: "AWSCloudEKS",
+          layer: "AWS_EKS",
+        },
+      },
+      {
+        path: "/aws-eks/tab/:activeTabIndex",
+        name: "EKSActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "AWS_EKS",
+        },
+      },
+    ],
+  },
 ];
