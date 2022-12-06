@@ -378,7 +378,7 @@ const msg = {
   language: "Lenguaje",
   gateway: "Puerta",
   virtualMQ: "MQ virtual",
-  AWSCloud: "Amazon Cloud",
+  AWSCloud: "AWS Cloud",
   AWSCloudEKS: "EKS"
 };
 export default msg;
