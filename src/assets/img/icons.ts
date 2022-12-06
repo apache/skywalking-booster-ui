@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireComponent = require.context("./technologies", false, /\.png$/);
-const requireTool = require.context("./tools", false, /\.png$/);
+const requireComponent: any = import.meta.glob("./technologies/*.svg");
+const requireTool: any = import.meta.glob("./tools/*.png");
 const result: { [key: string]: string } = {};
 const t: { [key: string]: string } = {};
 
@@ -29,7 +29,7 @@ function validateFileName(str: string): string | undefined {
     );
   }
 }
-[...requireComponent.keys()].forEach((filePath: string) => {
+Object.keys(requireComponent).forEach((filePath: string) => {
   const componentConfig = requireComponent(filePath);
 
   const fileName = validateFileName(filePath);
@@ -37,8 +37,8 @@ function validateFileName(str: string): string | undefined {
     result[fileName] = componentConfig;
   }
 });
-[...requireTool.keys()].forEach((filePath: string) => {
-  const componentConfig = requireTool(filePath);
+Object.keys(requireTool).forEach((filePath: string) => {
+  const componentConfig = requireTool[filePath];
 
   const fileName = validateFileName(filePath);
   if (fileName) {

@@ -22,8 +22,7 @@ function layerDashboards() {
     item.component = Layout;
     if (item.children) {
       item.children = item.children.map((d: any) => {
-        d.component = () =>
-          import(/* webpackChunkName: "layer" */ "@/views/Layer.vue");
+        d.component = () => import("@/views/Layer.vue");
         return d;
       });
     }

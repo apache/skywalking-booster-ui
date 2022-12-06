@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireAll = (requireContext: Recordable) =>
-  requireContext.keys().map(requireContext);
-const req = require.context("./", true, /\.svg$/);
+const requireAll = (requireContext: Recordable) => Object.keys(requireContext);
+const req = import.meta.glob("./*.svg");
 requireAll(req);

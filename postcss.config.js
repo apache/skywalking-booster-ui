@@ -15,7 +15,5 @@
  * limitations under the License.
  */
 module.exports = {
-  plugins: {
-    autoprefixer: {},
-  },
+  autoprefixer: {},
 };

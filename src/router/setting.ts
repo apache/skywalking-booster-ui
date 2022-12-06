@@ -36,8 +36,7 @@ export const routesSetting: Array<RouteRecordRaw> = [
           icon: "settings",
           hasGroup: false,
         },
-        component: () =>
-          import(/* webpackChunkName: "settings" */ "@/views/Settings.vue"),
+        component: () => import("@/views/Settings.vue"),
       },
     ],
   },

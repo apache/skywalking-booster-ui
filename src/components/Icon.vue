@@ -28,8 +28,6 @@ limitations under the License. -->
   </svg>
 </template>
 <script lang="ts" setup>
-import "@/assets/icons/index";
-
 /*global defineProps */
 defineProps({
   iconName: { type: String, default: "" },

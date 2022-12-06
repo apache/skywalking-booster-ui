@@ -31,8 +31,7 @@ export const routesAlarm: Array<RouteRecordRaw> = [
       {
         path: "/alerting",
         name: "Alarm",
-        component: () =>
-          import(/* webpackChunkName: "alerting" */ "@/views/Alarm.vue"),
+        component: () => import("@/views/Alarm.vue"),
       },
     ],
   },
