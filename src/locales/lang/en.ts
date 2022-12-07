@@ -376,6 +376,6 @@ const msg = {
   gateway: "Gateway",
   virtualMQ: "Virtual MQ",
   AWSCloud: "AWS Cloud",
-  AWSCloudEKS: "EKS"
+  AWSCloudEKS: "EKS",
 };
 export default msg;

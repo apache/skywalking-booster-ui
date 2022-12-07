@@ -21,7 +21,7 @@ export default [
     name: "Functions",
     meta: {
       title: "functions",
-      icon: "cloud_queue",
+      icon: "functions",
       layer: "FAAS",
     },
     redirect: "/functions",
