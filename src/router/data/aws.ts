@@ -21,7 +21,7 @@ export default [
     name: "AWSCloud",
     meta: {
       title: "AWSCloud",
-      icon: "aws",
+      icon: "cloud_queue",
       hasGroup: true,
     },
     redirect: "/aws-eks",

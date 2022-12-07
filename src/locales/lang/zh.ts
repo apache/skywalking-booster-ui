@@ -374,6 +374,6 @@ const msg = {
   gateway: "网关",
   virtualMQ: "虚拟消息队列",
   AWSCloud: "AWS云服务",
-  AWSCloudEKS: "EKS"
+  AWSCloudEKS: "EKS",
 };
 export default msg;

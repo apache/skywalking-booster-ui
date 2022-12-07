@@ -50,13 +50,13 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { defineProps, reactive } from "vue";
+import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PropType } from "vue";
 import { InitTaskField } from "./data";
 import { NetworkProfilingRequest } from "@/types/ebpf";
 
-/* global defineEmits */
+/* global defineProps, defineEmits */
 const emits = defineEmits(["change"]);
 const props = defineProps({
   condition: {
