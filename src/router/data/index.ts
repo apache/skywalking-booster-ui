@@ -23,6 +23,7 @@ import functions from "./functions";
 import browser from "./browser";
 import k8s from "./k8s";
 import gateway from "./gateway";
+import aws from "./aws";
 
 export default [
   ...general,
@@ -30,6 +31,7 @@ export default [
   ...functions,
   ...k8s,
   ...infrastructure,
+  ...aws,
   ...browser,
   ...gateway,
   ...database,

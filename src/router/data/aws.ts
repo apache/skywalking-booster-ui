@@ -18,21 +18,29 @@
 export default [
   {
     path: "",
-    name: "Functions",
+    name: "AWSCloud",
     meta: {
-      title: "functions",
-      icon: "functions",
-      layer: "FAAS",
+      title: "AWSCloud",
+      icon: "cloud_queue",
+      hasGroup: true,
     },
-    redirect: "/functions",
+    redirect: "/aws-eks",
     children: [
       {
-        path: "/functions",
-        name: "Functions",
+        path: "/aws-eks",
+        name: "AWSCloudEKS",
+        meta: {
+          title: "AWSCloudEKS",
+          layer: "AWS_EKS",
+        },
       },
       {
-        path: "/functions/tab/:activeTabIndex",
-        name: "FunctionsActiveTabIndex",
+        path: "/aws-eks/tab/:activeTabIndex",
+        name: "EKSActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "AWS_EKS",
+        },
       },
     ],
   },
