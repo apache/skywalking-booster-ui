@@ -28,9 +28,9 @@ export default [
     children: [
       {
         path: "/mySQL",
-        name: "MySQL",
+        name: "MySQL/MariaDB",
         meta: {
-          title: "mySQL",
+          title: "mySQL/mariaDB",
           layer: "MYSQL",
         },
       },
