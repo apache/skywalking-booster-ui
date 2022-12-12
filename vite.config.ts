@@ -22,8 +22,7 @@ import { loadEnv } from "vite";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
-// import monacoEditorPlugin from "vite-plugin-monaco-editor";
-
+import monacoEditorPlugin from "vite-plugin-monaco-editor";
 
 const OUTPUT_DIR = 'dist';
 // https://vitejs.dev/config/
@@ -33,7 +32,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
   return {
     plugins: [
       vue(),
-      // monacoEditorPlugin(null),
+      monacoEditorPlugin({}),
       AutoImport({
         imports: ["vue"],
         resolvers: [

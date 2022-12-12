@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /// <reference types="vite/client" />
 declare module "*.vue" {
   import { defineComponent } from "vue";
@@ -28,9 +29,3 @@ declare global {
     axiosCancel: any;
   }
 }
-
-// declare module '*.vue' {
-//   import type { DefineComponent } from 'vue'
-//   const component: DefineComponent<{}, {}, any>
-//   export default component
-// }
