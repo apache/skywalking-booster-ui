@@ -22,15 +22,12 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import monacoEditorPlugin from "vite-plugin-monaco-editor";
-import { fileURLToPath, URL } from "node:url";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import path from "path";
 
 const OUTPUT_DIR = "dist";
 // https://vitejs.dev/config/
 export default ({ command, mode }: ConfigEnv): UserConfig => {
-  const root = process.cwd();
-
   return {
     plugins: [
       vue(),
@@ -50,7 +47,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
       alias: {
         "@": path.resolve(__dirname, "./src"),
-        // "@": fileURLToPath(new URL("./src", loadEnv(mode, process.cwd()).url)),
         "vue-i18n": "vue-i18n/dist/vue-i18n.cjs.js",
       },
       preserveSymlinks: true,

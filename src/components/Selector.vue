@@ -40,16 +40,21 @@ limitations under the License. -->
   import { ref, watch } from "vue";
   import type { PropType } from "vue";
 
-  interface Option {
-    label: string | number;
-    value: string | number;
-  }
+  // interface Option {
+  //   label: string | number;
+  //   value: string | number;
+  // }
 
   /*global  defineProps, defineEmits*/
   const emit = defineEmits(["change", "query"]);
   const props = defineProps({
     options: {
-      type: Array as PropType<(Option & { disabled?: boolean })[]>,
+      type: Array as PropType<
+        ({
+          label: string | number;
+          value: string | number;
+        } & { disabled?: boolean })[]
+      >,
       default: () => [],
     },
     value: {

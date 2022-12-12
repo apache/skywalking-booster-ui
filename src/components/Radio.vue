@@ -23,16 +23,16 @@ limitations under the License. -->
   import { ref } from "vue";
   import type { PropType } from "vue";
 
-  interface Option {
-    label: string | number;
-    value: string | number;
-  }
-
   /*global  defineProps, defineEmits */
   const emit = defineEmits(["change"]);
   const props = defineProps({
     options: {
-      type: Array as PropType<Option[]>,
+      type: Array as PropType<
+        {
+          label: string | number;
+          value: string | number;
+        }[]
+      >,
       default: () => [],
     },
     value: {
