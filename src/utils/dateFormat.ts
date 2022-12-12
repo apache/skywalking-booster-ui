@@ -15,11 +15,7 @@
  * limitations under the License.
  */
 import dayjs from "dayjs";
-export default function dateFormatStep(
-  date: Date,
-  step: string,
-  monthDayDiff?: boolean
-): string {
+export default function dateFormatStep(date: Date, step: string, monthDayDiff?: boolean): string {
   const year = date.getFullYear();
   const monthTemp = date.getMonth() + 1;
   let month = `${monthTemp}`;

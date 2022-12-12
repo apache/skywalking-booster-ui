@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Option } from "@/types/app";
-import {
+import type { Option } from "@/types/app";
+import type {
   EBPFTaskCreationRequest,
   EBPFProfilingSchedule,
   EBPFTaskList,
@@ -24,7 +24,7 @@ import {
 } from "@/types/ebpf";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 interface EbpfState {
   taskList: EBPFTaskList[];
   eBPFSchedules: EBPFProfilingSchedule[];
@@ -61,9 +61,7 @@ export const ebpfStore = defineStore({
       this.analyzeTrees = tree;
     },
     async getCreateTaskData(serviceId: string) {
-      const res: AxiosResponse = await graphql
-        .query("getCreateTaskData")
-        .params({ serviceId });
+      const res: AxiosResponse = await graphql.query("getCreateTaskData").params({ serviceId });
 
       if (res.data.errors) {
         return res.data;
@@ -76,9 +74,7 @@ export const ebpfStore = defineStore({
       return res.data;
     },
     async createTask(param: EBPFTaskCreationRequest) {
-      const res: AxiosResponse = await graphql
-        .query("saveEBPFTask")
-        .params({ request: param });
+      const res: AxiosResponse = await graphql.query("saveEBPFTask").params({ request: param });
 
       if (res.data.errors) {
         return res.data;
@@ -89,17 +85,11 @@ export const ebpfStore = defineStore({
       });
       return res.data;
     },
-    async getTaskList(params: {
-      serviceId: string;
-      serviceInstanceId: string;
-      targets: string[];
-    }) {
+    async getTaskList(params: { serviceId: string; serviceInstanceId: string; targets: string[] }) {
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql
-        .query("getEBPFTasks")
-        .params(params);
+      const res: AxiosResponse = await graphql.query("getEBPFTasks").params(params);
 
       this.tip = "";
       if (res.data.errors) {
@@ -118,9 +108,7 @@ export const ebpfStore = defineStore({
       if (!params.taskId) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql
-        .query("getEBPFSchedules")
-        .params({ ...params });
+      const res: AxiosResponse = await graphql.query("getEBPFSchedules").params({ ...params });
 
       if (res.data.errors) {
         this.eBPFSchedules = [];
@@ -148,9 +136,7 @@ export const ebpfStore = defineStore({
       if (!params.timeRanges.length) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql
-        .query("getEBPFResult")
-        .params(params);
+      const res: AxiosResponse = await graphql.query("getEBPFResult").params(params);
 
       if (res.data.errors) {
         this.analyzeTrees = [];

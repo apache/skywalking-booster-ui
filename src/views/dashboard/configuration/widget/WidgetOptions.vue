@@ -45,64 +45,62 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { ElMessage } from "element-plus";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import getDashboard from "@/hooks/useDashboardsSession";
-import { LayoutConfig } from "@/types/dashboard";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import getDashboard from "@/hooks/useDashboardsSession";
+  import type { LayoutConfig } from "@/types/dashboard";
 
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const widget = dashboardStore.selectedGrid.widget || {};
-const title = ref<string>(widget.title || "");
-const tips = ref<string>(widget.tips || "");
-const name = ref<string>(widget.name || "");
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const widget = dashboardStore.selectedGrid.widget || {};
+  const title = ref<string>(widget.title || "");
+  const tips = ref<string>(widget.tips || "");
+  const name = ref<string>(widget.name || "");
 
-function updateWidgetConfig(param: { [key: string]: string }) {
-  const key = Object.keys(param)[0];
-  if (!key) {
-    return;
+  function updateWidgetConfig(param: { [key: string]: string }) {
+    const key = Object.keys(param)[0];
+    if (!key) {
+      return;
+    }
+    const { selectedGrid } = dashboardStore;
+    const widget = {
+      ...dashboardStore.selectedGrid.widget,
+      [key]: decodeURIComponent(param[key]),
+    };
+    dashboardStore.selectWidget({ ...selectedGrid, widget });
   }
-  const { selectedGrid } = dashboardStore;
-  const widget = {
-    ...dashboardStore.selectedGrid.widget,
-    [key]: decodeURIComponent(param[key]),
-  };
-  dashboardStore.selectWidget({ ...selectedGrid, widget });
-}
-function updateWidgetName(param: { [key: string]: string }) {
-  const key = Object.keys(param)[0];
-  const n = decodeURIComponent(param[key]);
-  const pattern = /^[A-Za-z0-9-_\u4e00-\u9fa5]{1,300}$/;
-  if (!pattern.test(n)) {
-    ElMessage.error(t("nameTip"));
-    return;
+  function updateWidgetName(param: { [key: string]: string }) {
+    const key = Object.keys(param)[0];
+    const n = decodeURIComponent(param[key]);
+    const pattern = /^[A-Za-z0-9-_\u4e00-\u9fa5]{1,300}$/;
+    if (!pattern.test(n)) {
+      ElMessage.error(t("nameTip"));
+      return;
+    }
+    const { widgets } = getDashboard(dashboardStore.currentDashboard);
+    const item = widgets.find((d: LayoutConfig) => d.widget && d.widget.name === n);
+    if (item) {
+      ElMessage.error(t("duplicateName"));
+      return;
+    }
+    updateWidgetConfig(param);
   }
-  const { widgets } = getDashboard(dashboardStore.currentDashboard);
-  const item = widgets.find(
-    (d: LayoutConfig) => d.widget && d.widget.name === n
-  );
-  if (item) {
-    ElMessage.error(t("duplicateName"));
-    return;
-  }
-  updateWidgetConfig(param);
-}
 </script>
 <style lang="scss" scoped>
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
-}
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+  }
 
-.input {
-  width: 500px;
-}
+  .input {
+    width: 500px;
+  }
 
-.item {
-  margin-bottom: 10px;
-}
+  .item {
+    margin-bottom: 10px;
+  }
 </style>

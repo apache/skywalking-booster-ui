@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import { routesDashboard } from "./dashboard";
 import { routesSetting } from "./setting";
 import { routesAlarm } from "./alarm";

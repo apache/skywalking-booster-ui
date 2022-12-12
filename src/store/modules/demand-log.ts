@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Instance } from "@/types/selector";
+import type { Instance } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
-import { Conditions, Log } from "@/types/demand-log";
+import type { Conditions, Log } from "@/types/demand-log";
 
 interface DemandLogState {
   containers: Instance[];
@@ -75,16 +75,12 @@ export const demandLogStore = defineStore({
     },
     async getContainers(serviceInstanceId: string) {
       if (!serviceInstanceId) {
-        return new Promise((resolve) =>
-          resolve({ errors: "No service instance" })
-        );
+        return new Promise((resolve) => resolve({ errors: "No service instance" }));
       }
       const condition = {
         serviceInstanceId,
       };
-      const res: AxiosResponse = await graphql
-        .query("fetchContainers")
-        .params({ condition });
+      const res: AxiosResponse = await graphql.query("fetchContainers").params({ condition });
 
       if (res.data.errors) {
         return res.data;
@@ -112,9 +108,7 @@ export const demandLogStore = defineStore({
         return res.data;
       }
       this.total = res.data.data.logs.logs.length;
-      const logs = res.data.data.logs.logs
-        .map((d: Log) => d.content)
-        .join("\n");
+      const logs = res.data.data.logs.logs.map((d: Log) => d.content).join("\n");
       this.setLogs(logs);
       return res.data;
     },

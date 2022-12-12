@@ -14,44 +14,34 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <Line
-    :data="data"
-    :intervalTime="intervalTime"
-    :config="config"
-    @click="clickEvent"
-  />
+  <Line :data="data" :intervalTime="intervalTime" :config="config" @click="clickEvent" />
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
-import Line from "./Line.vue";
-import {
-  AreaConfig,
-  EventParams,
-  RelatedTrace,
-  Filters,
-} from "@/types/dashboard";
+  import type { PropType } from "vue";
+  import Line from "./Line.vue";
+  import type { AreaConfig, EventParams, RelatedTrace, Filters } from "@/types/dashboard";
 
-/*global defineProps, defineEmits */
-const emits = defineEmits(["click"]);
-defineProps({
-  data: {
-    type: Object as PropType<{ [key: string]: number[] }>,
-    default: () => ({}),
-  },
-  intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-  config: {
-    type: Object as PropType<
-      AreaConfig & {
-        filters: Filters;
-        relatedTrace: RelatedTrace;
-        id: string;
-        associate: { widgetId: string }[];
-      }
-    >,
-    default: () => ({}),
-  },
-});
-function clickEvent(params: EventParams) {
-  emits("click", params);
-}
+  /*global defineProps, defineEmits */
+  const emits = defineEmits(["click"]);
+  defineProps({
+    data: {
+      type: Object as PropType<{ [key: string]: number[] }>,
+      default: () => ({}),
+    },
+    intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+    config: {
+      type: Object as PropType<
+        AreaConfig & {
+          filters: Filters;
+          relatedTrace: RelatedTrace;
+          id: string;
+          associate: { widgetId: string }[];
+        }
+      >,
+      default: () => ({}),
+    },
+  });
+  function clickEvent(params: EventParams) {
+    emits("click", params);
+  }
 </script>

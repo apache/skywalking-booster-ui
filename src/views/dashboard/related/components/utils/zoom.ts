@@ -22,8 +22,6 @@ export default (d3: any, graph: any, diff: number[]) =>
     .on("zoom", (d: any) => {
       graph.attr(
         "transform",
-        `translate(${d.transform.x + diff[0]},${
-          d.transform.y + diff[1]
-        })scale(${d.transform.k})`
+        `translate(${d.transform.x + diff[0]},${d.transform.y + diff[1]})scale(${d.transform.k})`,
       );
     });

@@ -53,8 +53,7 @@ export const EndpointTopology = {
   }`,
 };
 export const InstanceTopology = {
-  variable:
-    "$clientServiceId: ID!, $serverServiceId: ID!, $duration: Duration!",
+  variable: "$clientServiceId: ID!, $serverServiceId: ID!, $duration: Duration!",
   query: `
   topology: getServiceInstanceTopology(clientServiceId: $clientServiceId,
     serverServiceId: $serverServiceId, duration: $duration) {

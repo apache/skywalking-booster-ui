@@ -40,61 +40,61 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import * as d3 from "d3";
-import Graph from "./D3Graph/Index.vue";
-import type { PropType } from "vue";
-import { Span } from "@/types/trace";
-import { useI18n } from "vue-i18n";
-import { ref, onMounted } from "vue";
+  import * as d3 from "d3";
+  import Graph from "./D3Graph/Index.vue";
+  import type { PropType } from "vue";
+  import type { Span } from "@/types/trace";
+  import { useI18n } from "vue-i18n";
+  import { ref, onMounted } from "vue";
 
-/* global defineProps */
-const props = defineProps({
-  data: { type: Array as PropType<Span[]>, default: () => [] },
-  traceId: { type: String, default: "" },
-});
-const { t } = useI18n();
-const list = ref<string[]>([]);
-const charts = ref<any>(null);
+  /* global defineProps */
+  const props = defineProps({
+    data: { type: Array as PropType<Span[]>, default: () => [] },
+    traceId: { type: String, default: "" },
+  });
+  const { t } = useI18n();
+  const list = ref<string[]>([]);
+  const charts = ref<any>(null);
 
-onMounted(() => {
-  list.value = Array.from(new Set(props.data.map((i: Span) => i.serviceCode)));
-});
-function computedScale(i: number) {
-  const sequentialScale = d3
-    .scaleSequential()
-    .domain([0, list.value.length + 1])
-    .interpolator(d3.interpolateCool);
-  return sequentialScale(i);
-}
+  onMounted(() => {
+    list.value = Array.from(new Set(props.data.map((i: Span) => i.serviceCode)));
+  });
+  function computedScale(i: number) {
+    const sequentialScale = d3
+      .scaleSequential()
+      .domain([0, list.value.length + 1])
+      .interpolator(d3.interpolateCool);
+    return sequentialScale(i);
+  }
 </script>
 <style lang="scss" scoped>
-.trace-tree {
-  height: 100%;
-  overflow: auto;
-}
+  .trace-tree {
+    height: 100%;
+    overflow: auto;
+  }
 
-.trace-tree-btn {
-  display: inline-block;
-  border-radius: 4px;
-  padding: 0px 7px;
-  background-color: #40454e;
-  color: #eee;
-  font-size: 11px;
-}
+  .trace-tree-btn {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 0px 7px;
+    background-color: #40454e;
+    color: #eee;
+    font-size: 11px;
+  }
 
-.trace-tree-charts {
-  overflow: auto;
-  padding: 10px;
-  position: relative;
-  height: 100%;
-  width: 100%;
-}
+  .trace-tree-charts {
+    overflow: auto;
+    padding: 10px;
+    position: relative;
+    height: 100%;
+    width: 100%;
+  }
 
-.time-charts-item {
-  display: inline-block;
-  padding: 2px 8px;
-  border: 1px solid;
-  font-size: 11px;
-  border-radius: 4px;
-}
+  .time-charts-item {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid;
+    font-size: 11px;
+    border-radius: 4px;
+  }
 </style>

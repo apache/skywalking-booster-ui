@@ -19,17 +19,17 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { useAppStoreWithOut } from "@/store/modules/app";
-import Header from "./alarm/Header.vue";
-import Content from "./alarm/Content.vue";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import Header from "./alarm/Header.vue";
+  import Content from "./alarm/Content.vue";
 
-const appStore = useAppStoreWithOut();
-appStore.setPageTitle("Alerting");
+  const appStore = useAppStoreWithOut();
+  appStore.setPageTitle("Alerting");
 </script>
 <style lang="scss" scoped>
-.alarm {
-  flex-grow: 1;
-  height: 100%;
-  font-size: 12px;
-}
+  .alarm {
+    flex-grow: 1;
+    height: 100%;
+    font-size: 12px;
+  }
 </style>

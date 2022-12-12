@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { EBPFTaskList, ProcessNode } from "@/types/ebpf";
+import type { EBPFTaskList, ProcessNode } from "@/types/ebpf";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
-import { Call } from "@/types/topology";
-import { LayoutConfig } from "@/types/dashboard";
+import type { AxiosResponse } from "axios";
+import type { Call } from "@/types/topology";
+import type { LayoutConfig } from "@/types/dashboard";
 import { ElMessage } from "element-plus";
 
 interface NetworkProfilingState {
@@ -117,33 +117,25 @@ export const networkProfilingStore = defineStore({
         when4xx: string;
         when5xx: string;
         minDuration: number;
-      }[]
+      }[],
     ) {
-      const res: AxiosResponse = await graphql
-        .query("newNetworkProfiling")
-        .params({
-          request: {
-            instanceId,
-            samplings: params,
-          },
-        });
+      const res: AxiosResponse = await graphql.query("newNetworkProfiling").params({
+        request: {
+          instanceId,
+          samplings: params,
+        },
+      });
 
       if (res.data.errors) {
         return res.data;
       }
       return res.data;
     },
-    async getTaskList(params: {
-      serviceId: string;
-      serviceInstanceId: string;
-      targets: string[];
-    }) {
+    async getTaskList(params: { serviceId: string; serviceInstanceId: string; targets: string[] }) {
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql
-        .query("getEBPFTasks")
-        .params(params);
+      const res: AxiosResponse = await graphql.query("getEBPFTasks").params(params);
 
       this.networkTip = "";
       if (res.data.errors) {
@@ -162,9 +154,7 @@ export const networkProfilingStore = defineStore({
       if (!taskId) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql
-        .query("aliveNetworkProfiling")
-        .params({ taskId });
+      const res: AxiosResponse = await graphql.query("aliveNetworkProfiling").params({ taskId });
 
       this.aliveMessage = "";
       if (res.data.errors) {
@@ -176,14 +166,9 @@ export const networkProfilingStore = defineStore({
       }
       return res.data;
     },
-    async getProcessTopology(params: {
-      duration: any;
-      serviceInstanceId: string;
-    }) {
+    async getProcessTopology(params: { duration: any; serviceInstanceId: string }) {
       this.loadNodes = true;
-      const res: AxiosResponse = await graphql
-        .query("getProcessTopology")
-        .params(params);
+      const res: AxiosResponse = await graphql.query("getProcessTopology").params(params);
       this.loadNodes = false;
       if (res.data.errors) {
         this.nodes = [];

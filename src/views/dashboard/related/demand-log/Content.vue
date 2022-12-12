@@ -23,77 +23,77 @@ limitations under the License. -->
   ></div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, onUnmounted, watch, toRaw } from "vue";
-import { useDemandLogStore } from "@/store/modules/demand-log";
+  import { onMounted, ref, onUnmounted, watch, toRaw } from "vue";
+  import { useDemandLogStore } from "@/store/modules/demand-log";
 
-/*global Nullable */
-const demandLogStore = useDemandLogStore();
-const monacoInstance = ref();
-const logContent = ref<Nullable<HTMLDivElement>>(null);
+  /*global Nullable */
+  const demandLogStore = useDemandLogStore();
+  const monacoInstance = ref();
+  const logContent = ref<Nullable<HTMLDivElement>>(null);
 
-onMounted(() => {
-  init();
-});
-async function init() {
-  const monaco = await import("monaco-editor");
-  setTimeout(() => {
-    monacoInstanceGen(monaco);
-  }, 500);
-  window.addEventListener("resize", () => {
+  onMounted(() => {
+    init();
+  });
+  async function init() {
+    const monaco = await import("monaco-editor");
+    setTimeout(() => {
+      monacoInstanceGen(monaco);
+    }, 500);
+    window.addEventListener("resize", () => {
+      editorLayout();
+    });
+  }
+  function monacoInstanceGen(monaco: any) {
+    monacoInstance.value = monaco.editor.create(logContent.value, {
+      value: "",
+      language: "text",
+      wordWrap: true,
+      minimap: { enabled: false },
+      readonly: true,
+    });
+    toRaw(monacoInstance.value).updateOptions({ readOnly: true });
     editorLayout();
-  });
-}
-function monacoInstanceGen(monaco: any) {
-  monacoInstance.value = monaco.editor.create(logContent.value, {
-    value: "",
-    language: "text",
-    wordWrap: true,
-    minimap: { enabled: false },
-    readonly: true,
-  });
-  toRaw(monacoInstance.value).updateOptions({ readOnly: true });
-  editorLayout();
-}
-function editorLayout() {
-  if (!logContent.value) {
-    return;
   }
-  const { width, height } = logContent.value.getBoundingClientRect();
-  toRaw(monacoInstance.value).layout({
-    height: height,
-    width: width,
-  });
-}
-onUnmounted(() => {
-  if (!toRaw(monacoInstance.value)) {
-    return;
+  function editorLayout() {
+    if (!logContent.value) {
+      return;
+    }
+    const { width, height } = logContent.value.getBoundingClientRect();
+    toRaw(monacoInstance.value).layout({
+      height: height,
+      width: width,
+    });
   }
-  toRaw(monacoInstance.value).dispose();
-  monacoInstance.value = null;
-  demandLogStore.setLogs("");
-});
-watch(
-  () => demandLogStore.logs,
-  () => {
+  onUnmounted(() => {
     if (!toRaw(monacoInstance.value)) {
       return;
     }
-    toRaw(monacoInstance.value).setValue(demandLogStore.logs);
-    if (!demandLogStore.logs) {
-      return;
-    }
-    setTimeout(() => {
-      toRaw(monacoInstance.value).revealPosition({
-        column: 1,
-        lineNumber: demandLogStore.total,
-      });
-    }, 1000);
-  }
-);
+    toRaw(monacoInstance.value).dispose();
+    monacoInstance.value = null;
+    demandLogStore.setLogs("");
+  });
+  watch(
+    () => demandLogStore.logs,
+    () => {
+      if (!toRaw(monacoInstance.value)) {
+        return;
+      }
+      toRaw(monacoInstance.value).setValue(demandLogStore.logs);
+      if (!demandLogStore.logs) {
+        return;
+      }
+      setTimeout(() => {
+        toRaw(monacoInstance.value).revealPosition({
+          column: 1,
+          lineNumber: demandLogStore.total,
+        });
+      }, 1000);
+    },
+  );
 </script>
 <style lang="scss" scoped>
-.log-content {
-  min-width: 600px;
-  min-height: 400px;
-}
+  .log-content {
+    min-width: 600px;
+    min-height: 400px;
+  }
 </style>

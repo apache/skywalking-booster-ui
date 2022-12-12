@@ -17,14 +17,16 @@
 
 import type { UserConfig, ConfigEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
-import path from "path";
 import { loadEnv } from "vite";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import monacoEditorPlugin from "vite-plugin-monaco-editor";
+import { fileURLToPath, URL } from "node:url";
+import vueJsx from "@vitejs/plugin-vue-jsx";
+import path from "path";
 
-const OUTPUT_DIR = 'dist';
+const OUTPUT_DIR = "dist";
 // https://vitejs.dev/config/
 export default ({ command, mode }: ConfigEnv): UserConfig => {
   const root = process.cwd();
@@ -32,12 +34,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
   return {
     plugins: [
       vue(),
+      vueJsx(),
       monacoEditorPlugin({}),
       AutoImport({
         imports: ["vue"],
-        resolvers: [
-          ElementPlusResolver(),
-        ],
+        resolvers: [ElementPlusResolver()],
         dts: "./src/types/auto-imports.d.ts",
       }),
       Components({
@@ -49,6 +50,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
       alias: {
         "@": path.resolve(__dirname, "./src"),
+        // "@": fileURLToPath(new URL("./src", loadEnv(mode, process.cwd()).url)),
         "vue-i18n": "vue-i18n/dist/vue-i18n.cjs.js",
       },
       preserveSymlinks: true,
@@ -57,21 +59,18 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       host: true,
       proxy: {
         "/graphql": {
-          target: `${loadEnv(mode, process.cwd()).VITE_SW_PROXY_TARGET || "http://127.0.0.1:12800"}`,
+          target: `${
+            loadEnv(mode, process.cwd()).VITE_SW_PROXY_TARGET || "http://127.0.0.1:12800"
+          }`,
           changeOrigin: true,
         },
       },
     },
     build: {
       target: "es2015",
+      cssTarget: "chrome80",
       outDir: OUTPUT_DIR,
-      terserOptions: {
-        compress: {
-          keep_infinity: true,
-          drop_console: true,
-        },
-      },
       chunkSizeWarningLimit: 2000,
     },
-  }
-}
+  };
+};

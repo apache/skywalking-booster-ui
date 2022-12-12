@@ -29,35 +29,35 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import Legend from "./components/Legend.vue";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import Legend from "./components/Legend.vue";
 
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const graph = dashboardStore.selectedGrid.graph || {};
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const graph = dashboardStore.selectedGrid.graph || {};
 
-const opacity = ref(graph.opacity);
+  const opacity = ref(graph.opacity);
 
-function updateConfig(param: { [key: string]: unknown }) {
-  const graph = {
-    ...dashboardStore.selectedGrid.graph,
-    ...param,
-  };
-  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
-}
+  function updateConfig(param: { [key: string]: unknown }) {
+    const graph = {
+      ...dashboardStore.selectedGrid.graph,
+      ...param,
+    };
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
+  }
 </script>
 <style lang="scss" scoped>
-.bar-width {
-  width: 500px;
-  margin-top: -13px;
-}
+  .bar-width {
+    width: 500px;
+    margin-top: -13px;
+  }
 
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
-}
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+  }
 </style>

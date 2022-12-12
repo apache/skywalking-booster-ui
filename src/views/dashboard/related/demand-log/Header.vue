@@ -98,9 +98,7 @@ limitations under the License. -->
           :key="`excludingKeywordsOfContent${index}`"
         >
           <span>{{ item }}</span>
-          <span class="remove-icon" @click="removeExcludeContent(index)">
-            ×
-          </span>
+          <span class="remove-icon" @click="removeExcludeContent(index)"> × </span>
         </span>
       </span>
       <el-input
@@ -120,313 +118,300 @@ limitations under the License. -->
       @click="runInterval"
       :disabled="disabled"
     >
-      <Icon
-        size="middle"
-        iconName="retry"
-        :loading="!!intervalFn"
-        class="mr-5"
-      />
+      <Icon size="middle" iconName="retry" :loading="!!intervalFn" class="mr-5" />
       {{ intervalFn ? t("pause") : t("start") }}
     </el-button>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, onMounted, onUnmounted } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDemandLogStore } from "@/store/modules/demand-log";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { useSelectorStore } from "@/store/modules/selectors";
-import { ElMessage } from "element-plus";
-import { EntityType } from "../../data";
-import { TimeRanges, IntervalOpts } from "./data";
-import getLocalTime from "@/utils/localtime";
-import dateFormatStep from "@/utils/dateFormat";
+  import { ref, reactive, watch, onMounted, onUnmounted } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDemandLogStore } from "@/store/modules/demand-log";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useSelectorStore } from "@/store/modules/selectors";
+  import { ElMessage } from "element-plus";
+  import { EntityType } from "../../data";
+  import { TimeRanges, IntervalOpts } from "./data";
+  import getLocalTime from "@/utils/localtime";
+  import dateFormatStep from "@/utils/dateFormat";
 
-const { t } = useI18n();
-const appStore = useAppStoreWithOut();
-const selectorStore = useSelectorStore();
-const dashboardStore = useDashboardStore();
-const demandLogStore = useDemandLogStore();
-const keywordsOfContent = ref<string[]>([]);
-const excludingKeywordsOfContent = ref<string[]>([]);
-const contentStr = ref<string>("");
-const excludingContentStr = ref<string>("");
-const state = reactive<any>({
-  instance: { value: "", label: "" },
-  container: { value: "", label: "" },
-  duration: { label: "From 30 minutes ago", value: 1800 },
-  interval: { label: "30 seconds", value: 30 },
-});
-const disabled = ref<boolean>(true);
-/*global Nullable */
-const intervalFn = ref<Nullable<any>>(null);
-
-onMounted(() => {
-  fetchSelectors();
-});
-
-async function fetchSelectors() {
-  if (dashboardStore.entity !== EntityType[3].value) {
-    await getInstances();
-  }
-  getContainers();
-  if (intervalFn.value) {
-    clearTimer();
-  }
-}
-async function getContainers() {
-  if (
-    !(
-      state.instance.id ||
-      (selectorStore.currentPod && selectorStore.currentPod.id)
-    )
-  ) {
-    return;
-  }
-  const resp = await demandLogStore.getContainers(
-    state.instance.id || selectorStore.currentPod.id
-  );
-  if (resp.errors) {
-    disabled.value = true;
-    ElMessage.error(resp.errors);
-    return;
-  }
-  if (resp.data.containers.errorReason) {
-    disabled.value = true;
-    ElMessage.warning(resp.data.containers.errorReason);
-    return;
-  }
-  if (demandLogStore.containers.length) {
-    state.container = demandLogStore.containers[0];
-    disabled.value = false;
-  }
-}
-async function getInstances() {
-  const resp = await demandLogStore.getInstances();
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return;
-  }
-  state.instance = demandLogStore.instances[0];
-}
-function runInterval() {
-  if (intervalFn.value) {
-    clearTimer();
-    return;
-  }
-  searchLogs();
-  if (state.interval.value === 0) {
-    return;
-  }
-  intervalFn.value = setInterval(searchLogs, state.interval.value * 1000);
-  setTimeout(() => {
-    clearTimer();
-  }, state.duration.value * 1000);
-}
-function searchLogs() {
-  let instance = "";
-  if (dashboardStore.entity === EntityType[3].value) {
-    instance = selectorStore.currentPod.id;
-  }
-  const serviceInstanceId =
-    instance || (state.instance && state.instance.id) || "";
-  demandLogStore.setLogCondition({
-    serviceInstanceId,
-    container: state.container.value,
-    duration: rangeTime(),
-    keywordsOfContent: keywordsOfContent.value.length
-      ? keywordsOfContent.value
-      : undefined,
-    excludingKeywordsOfContent: excludingKeywordsOfContent.value.length
-      ? excludingKeywordsOfContent.value
-      : undefined,
+  const { t } = useI18n();
+  const appStore = useAppStoreWithOut();
+  const selectorStore = useSelectorStore();
+  const dashboardStore = useDashboardStore();
+  const demandLogStore = useDemandLogStore();
+  const keywordsOfContent = ref<string[]>([]);
+  const excludingKeywordsOfContent = ref<string[]>([]);
+  const contentStr = ref<string>("");
+  const excludingContentStr = ref<string>("");
+  const state = reactive<any>({
+    instance: { value: "", label: "" },
+    container: { value: "", label: "" },
+    duration: { label: "From 30 minutes ago", value: 1800 },
+    interval: { label: "30 seconds", value: 30 },
   });
-  if (!serviceInstanceId) {
-    return;
-  }
-  queryLogs();
-}
+  const disabled = ref<boolean>(true);
+  /*global Nullable */
+  const intervalFn = ref<Nullable<any>>(null);
 
-function rangeTime() {
-  {
-    const times = {
-      start: getLocalTime(
-        appStore.utc,
-        new Date(new Date().getTime() - state.duration.value * 1000)
-      ),
-      end: getLocalTime(appStore.utc, new Date()),
-      step: "SECOND",
-    };
-    return {
-      start: dateFormatStep(times.start, times.step, false),
-      end: dateFormatStep(times.end, times.step, false),
-      step: times.step,
-    };
-  }
-}
+  onMounted(() => {
+    fetchSelectors();
+  });
 
-async function queryLogs() {
-  const res = await demandLogStore.getDemandLogs();
-  if (res && res.errors) {
-    ElMessage.error(res.errors);
-  }
-}
-function changeField(type: string, opt: any) {
-  clearTimer();
-  // if (["limit"].includes(type)) {
-  //   state[type] = opt;
-  //   return;
-  // }
-  state[type] = opt[0];
-  if (type === "instance") {
+  async function fetchSelectors() {
+    if (dashboardStore.entity !== EntityType[3].value) {
+      await getInstances();
+    }
     getContainers();
+    if (intervalFn.value) {
+      clearTimer();
+    }
   }
-}
-function removeContent(index: number) {
-  const keywordsOfContentList = keywordsOfContent.value || [];
-  keywordsOfContentList.splice(index, 1);
-  demandLogStore.setLogCondition({
-    keywordsOfContent: keywordsOfContentList,
-  });
-  contentStr.value = "";
-  clearTimer();
-}
-function addLabels(type: string) {
-  if (type === "keywordsOfContent" && !contentStr.value) {
-    return;
+  async function getContainers() {
+    if (!(state.instance.id || (selectorStore.currentPod && selectorStore.currentPod.id))) {
+      return;
+    }
+    const resp = await demandLogStore.getContainers(
+      state.instance.id || selectorStore.currentPod.id,
+    );
+    if (resp.errors) {
+      disabled.value = true;
+      ElMessage.error(resp.errors);
+      return;
+    }
+    if (resp.data.containers.errorReason) {
+      disabled.value = true;
+      ElMessage.warning(resp.data.containers.errorReason);
+      return;
+    }
+    if (demandLogStore.containers.length) {
+      state.container = demandLogStore.containers[0];
+      disabled.value = false;
+    }
   }
-  if (type === "excludingKeywordsOfContent" && !excludingContentStr.value) {
-    return;
+  async function getInstances() {
+    const resp = await demandLogStore.getInstances();
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+      return;
+    }
+    state.instance = demandLogStore.instances[0];
   }
-  if (type === "keywordsOfContent") {
-    keywordsOfContent.value.push(contentStr.value);
+  function runInterval() {
+    if (intervalFn.value) {
+      clearTimer();
+      return;
+    }
+    searchLogs();
+    if (state.interval.value === 0) {
+      return;
+    }
+    intervalFn.value = setInterval(searchLogs, state.interval.value * 1000);
+    setTimeout(() => {
+      clearTimer();
+    }, state.duration.value * 1000);
+  }
+  function searchLogs() {
+    let instance = "";
+    if (dashboardStore.entity === EntityType[3].value) {
+      instance = selectorStore.currentPod.id;
+    }
+    const serviceInstanceId = instance || (state.instance && state.instance.id) || "";
     demandLogStore.setLogCondition({
-      [type]: keywordsOfContent.value,
+      serviceInstanceId,
+      container: state.container.value,
+      duration: rangeTime(),
+      keywordsOfContent: keywordsOfContent.value.length ? keywordsOfContent.value : undefined,
+      excludingKeywordsOfContent: excludingKeywordsOfContent.value.length
+        ? excludingKeywordsOfContent.value
+        : undefined,
+    });
+    if (!serviceInstanceId) {
+      return;
+    }
+    queryLogs();
+  }
+
+  function rangeTime() {
+    {
+      const times = {
+        start: getLocalTime(
+          appStore.utc,
+          new Date(new Date().getTime() - state.duration.value * 1000),
+        ),
+        end: getLocalTime(appStore.utc, new Date()),
+        step: "SECOND",
+      };
+      return {
+        start: dateFormatStep(times.start, times.step, false),
+        end: dateFormatStep(times.end, times.step, false),
+        step: times.step,
+      };
+    }
+  }
+
+  async function queryLogs() {
+    const res = await demandLogStore.getDemandLogs();
+    if (res && res.errors) {
+      ElMessage.error(res.errors);
+    }
+  }
+  function changeField(type: string, opt: any) {
+    clearTimer();
+    // if (["limit"].includes(type)) {
+    //   state[type] = opt;
+    //   return;
+    // }
+    state[type] = opt[0];
+    if (type === "instance") {
+      getContainers();
+    }
+  }
+  function removeContent(index: number) {
+    const keywordsOfContentList = keywordsOfContent.value || [];
+    keywordsOfContentList.splice(index, 1);
+    demandLogStore.setLogCondition({
+      keywordsOfContent: keywordsOfContentList,
     });
     contentStr.value = "";
-  } else if (type === "excludingKeywordsOfContent") {
-    excludingKeywordsOfContent.value.push(excludingContentStr.value);
+    clearTimer();
+  }
+  function addLabels(type: string) {
+    if (type === "keywordsOfContent" && !contentStr.value) {
+      return;
+    }
+    if (type === "excludingKeywordsOfContent" && !excludingContentStr.value) {
+      return;
+    }
+    if (type === "keywordsOfContent") {
+      keywordsOfContent.value.push(contentStr.value);
+      demandLogStore.setLogCondition({
+        [type]: keywordsOfContent.value,
+      });
+      contentStr.value = "";
+    } else if (type === "excludingKeywordsOfContent") {
+      excludingKeywordsOfContent.value.push(excludingContentStr.value);
+      demandLogStore.setLogCondition({
+        [type]: excludingKeywordsOfContent.value,
+      });
+      excludingContentStr.value = "";
+    }
+    clearTimer();
+  }
+  function removeExcludeContent(index: number) {
+    excludingKeywordsOfContent.value.splice(index, 1);
     demandLogStore.setLogCondition({
-      [type]: excludingKeywordsOfContent.value,
+      excludingKeywordsOfContent: excludingKeywordsOfContent.value,
     });
     excludingContentStr.value = "";
+    clearTimer();
   }
-  clearTimer();
-}
-function removeExcludeContent(index: number) {
-  excludingKeywordsOfContent.value.splice(index, 1);
-  demandLogStore.setLogCondition({
-    excludingKeywordsOfContent: excludingKeywordsOfContent.value,
+  function clearTimer() {
+    if (!intervalFn.value) {
+      return;
+    }
+    clearInterval(intervalFn.value);
+    intervalFn.value = null;
+  }
+  onUnmounted(() => {
+    clearTimer();
   });
-  excludingContentStr.value = "";
-  clearTimer();
-}
-function clearTimer() {
-  if (!intervalFn.value) {
-    return;
-  }
-  clearInterval(intervalFn.value);
-  intervalFn.value = null;
-}
-onUnmounted(() => {
-  clearTimer();
-});
-watch(
-  () => selectorStore.currentService,
-  () => {
-    if (dashboardStore.entity === EntityType[0].value) {
-      fetchSelectors();
-      demandLogStore.setLogs("");
-    }
-  }
-);
-watch(
-  () => [selectorStore.currentPod],
-  () => {
-    if (dashboardStore.entity === EntityType[3].value) {
-      fetchSelectors();
-      demandLogStore.setLogs("");
-    }
-  }
-);
+  watch(
+    () => selectorStore.currentService,
+    () => {
+      if (dashboardStore.entity === EntityType[0].value) {
+        fetchSelectors();
+        demandLogStore.setLogs("");
+      }
+    },
+  );
+  watch(
+    () => [selectorStore.currentPod],
+    () => {
+      if (dashboardStore.entity === EntityType[3].value) {
+        fetchSelectors();
+        demandLogStore.setLogs("");
+      }
+    },
+  );
 </script>
 <style lang="scss" scoped>
-.inputs {
-  width: 120px;
-}
+  .inputs {
+    width: 120px;
+  }
 
-.row {
-  margin-bottom: 5px;
-  position: relative;
-  flex-wrap: wrap;
-}
+  .row {
+    margin-bottom: 5px;
+    position: relative;
+    flex-wrap: wrap;
+  }
 
-.inputs-max {
-  width: 270px;
-}
+  .inputs-max {
+    width: 270px;
+  }
 
-.traceId {
-  margin-top: 2px;
-}
+  .traceId {
+    margin-top: 2px;
+  }
 
-.search-btn {
-  cursor: pointer;
-  width: 120px;
-}
+  .search-btn {
+    cursor: pointer;
+    width: 120px;
+  }
 
-.tips {
-  color: #888;
-}
+  .tips {
+    color: #888;
+  }
 
-.log-tag {
-  width: 30%;
-  border-style: unset;
-  outline: 0;
-  border: 1px solid #ccc;
-  height: 30px;
-  padding: 0 5px;
-}
+  .log-tag {
+    width: 30%;
+    border-style: unset;
+    outline: 0;
+    border: 1px solid #ccc;
+    height: 30px;
+    padding: 0 5px;
+  }
 
-.log-tags {
-  padding: 1px 5px 0 0;
-  border-radius: 3px;
-  height: 24px;
-  display: inline-block;
-  vertical-align: top;
-}
+  .log-tags {
+    padding: 1px 5px 0 0;
+    border-radius: 3px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: top;
+  }
 
-.selected {
-  display: inline-block;
-  padding: 0 3px;
-  border-radius: 3px;
-  overflow: hidden;
-  color: #3d444f;
-  border: 1px dashed #aaa;
-  font-size: 12px;
-  margin: 0 2px;
-}
+  .selected {
+    display: inline-block;
+    padding: 0 3px;
+    border-radius: 3px;
+    overflow: hidden;
+    color: #3d444f;
+    border: 1px dashed #aaa;
+    font-size: 12px;
+    margin: 0 2px;
+  }
 
-.remove-icon {
-  display: inline-block;
-  margin-left: 3px;
-  cursor: pointer;
-}
+  .remove-icon {
+    display: inline-block;
+    margin-left: 3px;
+    cursor: pointer;
+  }
 
-.selectors {
-  width: 250px;
-}
+  .selectors {
+    width: 250px;
+  }
 
-.duration-range {
-  width: 210px;
-}
+  .duration-range {
+    width: 210px;
+  }
 
-.btn-row {
-  justify-content: flex-end;
-}
+  .btn-row {
+    justify-content: flex-end;
+  }
 
-.help {
-  color: #999;
-  cursor: pointer;
-}
+  .help {
+    color: #999;
+    cursor: pointer;
+  }
 </style>

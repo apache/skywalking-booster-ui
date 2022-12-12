@@ -50,47 +50,47 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
-import { useI18n } from "vue-i18n";
-import type { PropType } from "vue";
-import { InitTaskField } from "./data";
-import { NetworkProfilingRequest } from "@/types/ebpf";
+  import { reactive } from "vue";
+  import { useI18n } from "vue-i18n";
+  import type { PropType } from "vue";
+  import { InitTaskField } from "./data";
+  import type { NetworkProfilingRequest } from "@/types/ebpf";
 
-/* global defineEmits, defineProps */
-const emits = defineEmits(["change"]);
-const props = defineProps({
-  condition: {
-    type: Object as PropType<NetworkProfilingRequest>,
-    default: () => ({ children: [] }),
-  },
-  key: {
-    type: Number,
-    default: () => 0,
-  },
-});
-const { t } = useI18n();
-const states = reactive<NetworkProfilingRequest>(props.condition);
+  /* global defineEmits, defineProps */
+  const emits = defineEmits(["change"]);
+  const props = defineProps({
+    condition: {
+      type: Object as PropType<NetworkProfilingRequest>,
+      default: () => ({ children: [] }),
+    },
+    key: {
+      type: Number,
+      default: () => 0,
+    },
+  });
+  const { t } = useI18n();
+  const states = reactive<NetworkProfilingRequest>(props.condition);
 
-function changeWhen5xx(value: string) {
-  states.when5xx = value;
-  emits("change", states, props.key);
-}
-function changeWhen4xx(value: string) {
-  states.when4xx = value;
-  emits("change", states, props.key);
-}
+  function changeWhen5xx(value: string) {
+    states.when5xx = value;
+    emits("change", states, props.key);
+  }
+  function changeWhen4xx(value: string) {
+    states.when4xx = value;
+    emits("change", states, props.key);
+  }
 </script>
 <style lang="scss" scoped>
-.date {
-  font-size: 12px;
-}
+  .date {
+    font-size: 12px;
+  }
 
-.label {
-  margin-top: 10px;
-  font-size: 14px;
-}
+  .label {
+    margin-top: 10px;
+    font-size: 14px;
+  }
 
-.profile-input {
-  width: 300px;
-}
+  .profile-input {
+    width: 300px;
+  }
 </style>

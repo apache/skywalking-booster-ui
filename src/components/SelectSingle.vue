@@ -19,9 +19,7 @@ limitations under the License. -->
         {{ selected.label }}
       </span>
       <span class="no-data" v-else>Please select a option</span>
-      <span class="remove-icon" @click="removeSelected" v-if="clearable">
-        ×
-      </span>
+      <span class="remove-icon" @click="removeSelected" v-if="clearable"> × </span>
     </div>
     <div class="opt-wrapper" v-show="visible">
       <div
@@ -37,141 +35,141 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from "vue";
-import type { PropType } from "vue";
-import { Option } from "@/types/app";
+  import { ref, watch } from "vue";
+  import type { PropType } from "vue";
+  import type { Option } from "@/types/app";
 
-/*global  defineProps, defineEmits*/
-const emit = defineEmits(["change"]);
-const props = defineProps({
-  options: {
-    type: Array as PropType<Option[]>,
-    default: () => [],
-  },
-  value: {
-    type: String as PropType<string>,
-    default: () => "",
-  },
-  clearable: { type: Boolean, default: false },
-});
-const visible = ref<boolean>(false);
-const opt = props.options.find((d: Option) => props.value === d.value);
-const selected = ref<Option>(opt || { label: "", value: "" });
+  /*global  defineProps, defineEmits*/
+  const emit = defineEmits(["change"]);
+  const props = defineProps({
+    options: {
+      type: Array as PropType<Option[]>,
+      default: () => [],
+    },
+    value: {
+      type: String as PropType<string>,
+      default: () => "",
+    },
+    clearable: { type: Boolean, default: false },
+  });
+  const visible = ref<boolean>(false);
+  const opt = props.options.find((d: Option) => props.value === d.value);
+  const selected = ref<Option>(opt || { label: "", value: "" });
 
-function handleSelect(i: Option) {
-  selected.value = i;
-  emit("change", i.value);
-}
-function removeSelected() {
-  selected.value = { label: "", value: "" };
-  emit("change", "");
-}
-watch(
-  () => props.value,
-  (data) => {
-    const opt = props.options.find((d: Option) => data === d.value);
-    selected.value = opt || { label: "", value: "" };
+  function handleSelect(i: Option) {
+    selected.value = i;
+    emit("change", i.value);
   }
-);
-document.body.addEventListener("click", handleClick, false);
+  function removeSelected() {
+    selected.value = { label: "", value: "" };
+    emit("change", "");
+  }
+  watch(
+    () => props.value,
+    (data) => {
+      const opt = props.options.find((d: Option) => data === d.value);
+      selected.value = opt || { label: "", value: "" };
+    },
+  );
+  document.body.addEventListener("click", handleClick, false);
 
-function handleClick() {
-  visible.value = false;
-}
-function setPopper(event: any) {
-  event.stopPropagation();
-  visible.value = !visible.value;
-}
+  function handleClick() {
+    visible.value = false;
+  }
+  function setPopper(event: any) {
+    event.stopPropagation();
+    visible.value = !visible.value;
+  }
 </script>
 <style lang="scss" scoped>
-.bar-select {
-  position: relative;
-  justify-content: space-between;
-  border: 1px solid #ddd;
-  background: #fff;
-  border-radius: 3px;
-  color: #000;
-  font-size: 12px;
-  height: 24px;
-
-  .selected {
-    padding: 0 3px;
+  .bar-select {
+    position: relative;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    background: #fff;
     border-radius: 3px;
-    margin: 3px;
-    color: #409eff;
-    background-color: #fafafa;
-    border: 1px solid #e8e8e8;
-    text-align: center;
-  }
-}
+    color: #000;
+    font-size: 12px;
+    height: 24px;
 
-.no-data {
-  color: #c0c4cc;
-}
-
-.bar-i {
-  height: 100%;
-  width: 100%;
-  padding: 2px 10px;
-  overflow: auto;
-  color: #606266;
-  position: relative;
-
-  &:hover {
-    .remove-icon {
-      display: block;
+    .selected {
+      padding: 0 3px;
+      border-radius: 3px;
+      margin: 3px;
+      color: #409eff;
+      background-color: #fafafa;
+      border: 1px solid #e8e8e8;
+      text-align: center;
     }
   }
-}
 
-.remove-icon {
-  position: absolute;
-  right: 5px;
-  top: 0;
-  font-size: 14px;
-  display: none;
-  color: #aaa;
-  cursor: pointer;
-}
+  .no-data {
+    color: #c0c4cc;
+  }
 
-.opt-wrapper {
-  color: #606266;
-  position: absolute;
-  top: 26px;
-  left: 0;
-  background: #fff;
-  box-shadow: 0 1px 6px rgba(99, 99, 99, 0.2);
-  border: 1px solid #ddd;
-  width: 100%;
-  border-radius: 0 0 3px 3px;
-  border-right-width: 1px !important;
-  z-index: 10;
-  overflow: auto;
-  max-height: 200px;
-  padding-bottom: 2px;
-
-  .close {
-    position: absolute;
-    right: 10px;
-    top: 12px;
-    opacity: 0.6;
+  .bar-i {
+    height: 100%;
+    width: 100%;
+    padding: 2px 10px;
+    overflow: auto;
+    color: #606266;
+    position: relative;
 
     &:hover {
-      opacity: 1;
+      .remove-icon {
+        display: block;
+      }
     }
   }
-}
 
-.opt {
-  padding: 7px 15px;
-
-  &.select-disabled {
-    color: #409eff;
-    cursor: not-allowed;
+  .remove-icon {
+    position: absolute;
+    right: 5px;
+    top: 0;
+    font-size: 14px;
+    display: none;
+    color: #aaa;
+    cursor: pointer;
   }
 
-  &:hover {
-    background-color: #f5f5f5;
+  .opt-wrapper {
+    color: #606266;
+    position: absolute;
+    top: 26px;
+    left: 0;
+    background: #fff;
+    box-shadow: 0 1px 6px rgba(99, 99, 99, 0.2);
+    border: 1px solid #ddd;
+    width: 100%;
+    border-radius: 0 0 3px 3px;
+    border-right-width: 1px !important;
+    z-index: 10;
+    overflow: auto;
+    max-height: 200px;
+    padding-bottom: 2px;
+
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 12px;
+      opacity: 0.6;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
   }
-}
+
+  .opt {
+    padding: 7px 15px;
+
+    &.select-disabled {
+      color: #409eff;
+      cursor: not-allowed;
+    }
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
 </style>

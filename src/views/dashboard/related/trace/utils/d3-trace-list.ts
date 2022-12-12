@@ -17,7 +17,7 @@
 
 import * as d3 from "d3";
 import d3tip from "d3-tip";
-import { Trace } from "@/types/trace";
+import type { Trace } from "@/types/trace";
 
 export default class ListGraph {
   private barHeight = 48;
@@ -55,16 +55,10 @@ export default class ListGraph {
       .html((d: any) => {
         return `
           <div class="mb-5">${d.data.label}</div>
-          ${
-            d.data.dur
-              ? '<div class="sm">SelfDuration: ' + d.data.dur + "ms</div>"
-              : ""
-          }
+          ${d.data.dur ? '<div class="sm">SelfDuration: ' + d.data.dur + "ms</div>" : ""}
           ${
             d.data.endTime - d.data.startTime
-              ? '<div class="sm">TotalDuration: ' +
-                (d.data.endTime - d.data.startTime) +
-                "ms</div>"
+              ? '<div class="sm">TotalDuration: ' + (d.data.endTime - d.data.startTime) + "ms</div>"
               : ""
           }
           `;
@@ -93,10 +87,7 @@ export default class ListGraph {
       if (d >= 1000) return d / 1000 + "s";
       return d;
     });
-    this.svg.attr(
-      "height",
-      (this.row.length + fixSpansSize + 1) * this.barHeight
-    );
+    this.svg.attr("height", (this.row.length + fixSpansSize + 1) * this.barHeight);
     this.svg
       .append("g")
       .attr("class", "trace-xaxis")
@@ -180,9 +171,7 @@ export default class ListGraph {
           return "";
         }
         const label =
-          d.data.label.length > 30
-            ? `${d.data.label.slice(0, 30)}...`
-            : `${d.data.label}`;
+          d.data.label.length > 30 ? `${d.data.label.slice(0, 30)}...` : `${d.data.label}`;
         return label;
       });
     nodeEnter
@@ -232,7 +221,7 @@ export default class ListGraph {
         (d: any) =>
           `${d.data.layer || ""} ${
             d.data.component ? "- " + d.data.component : d.data.component || ""
-          }`
+          }`,
       );
     nodeEnter
       .append("rect")
@@ -246,17 +235,10 @@ export default class ListGraph {
       .attr("x", (d: any) =>
         !d.data.endTime || !d.data.startTime
           ? 0
-          : this.width * 0.618 -
-              20 -
-              d.y +
-              this.xScale(d.data.startTime - this.min) || 0
+          : this.width * 0.618 - 20 - d.y + this.xScale(d.data.startTime - this.min) || 0,
       )
       .attr("y", -2)
-      .style(
-        "fill",
-        (d: any) =>
-          `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`
-      );
+      .style("fill", (d: any) => `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`);
     nodeEnter
       .transition()
       .duration(400)
@@ -270,12 +252,12 @@ export default class ListGraph {
       .attr("fill", (d: any) =>
         d._children
           ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`
-          : "rbga(0,0,0,0)"
+          : "rbga(0,0,0,0)",
       )
       .style("stroke", (d: any) =>
         d.data.label === "TRACE_ROOT"
           ? ""
-          : `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`
+          : `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`,
       )
       .on("click", (d: any) => {
         this.click(d, this);
@@ -287,9 +269,7 @@ export default class ListGraph {
       .style("opacity", 1)
       .select("circle")
       .attr("fill", (d: any) =>
-        d._children
-          ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`
-          : ""
+        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "",
       );
 
     // Transition exiting nodes to the parent's new position.
@@ -300,11 +280,9 @@ export default class ListGraph {
       .attr("transform", `translate(${source.y},${source.x})`)
       .style("opacity", 0)
       .remove();
-    const link = this.svg
-      .selectAll(".trace-link")
-      .data(this.root.links(), function (d: any) {
-        return d.target.id;
-      });
+    const link = this.svg.selectAll(".trace-link").data(this.root.links(), function (d: any) {
+      return d.target.id;
+    });
 
     link
       .enter()

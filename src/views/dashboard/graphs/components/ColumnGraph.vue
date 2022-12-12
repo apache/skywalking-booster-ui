@@ -16,9 +16,7 @@ limitations under the License. -->
 <template>
   <el-table-column
     v-for="(metric, index) in colMetrics"
-    :label="`${decodeURIComponent(
-      getLabel(metric, index)
-    )} ${decodeURIComponent(getUnit(index))}`"
+    :label="`${decodeURIComponent(getLabel(metric, index))} ${decodeURIComponent(getUnit(index))}`"
     :key="metric + index"
     min-width="150"
   >
@@ -37,18 +35,11 @@ limitations under the License. -->
             showlabels: false,
           }"
         />
-        <span
-          class="item flex-h"
-          v-else-if="useListConfig(config, index).isAvg"
-        >
+        <span class="item flex-h" v-else-if="useListConfig(config, index).isAvg">
           <el-popover placement="left" :width="400" trigger="click">
             <template #reference>
               <span class="trend">
-                <Icon
-                  iconName="timeline"
-                  size="middle"
-                  style="color: #409eff"
-                />
+                <Icon iconName="timeline" size="middle" style="color: #409eff" />
               </span>
             </template>
             <div class="view-line">
@@ -75,99 +66,91 @@ limitations under the License. -->
             />
           </span>
         </span>
-        <Card
-          v-else
-          :data="{ [metric]: scope.row[metric] }"
-          :config="{ textAlign: 'left' }"
-        />
+        <Card v-else :data="{ [metric]: scope.row[metric] }" :config="{ textAlign: 'left' }" />
       </div>
     </template>
   </el-table-column>
 </template>
 
 <script lang="ts" setup>
-import type { PropType } from "vue";
-import { MetricConfigOpt } from "@/types/dashboard";
-import { useListConfig } from "@/hooks/useListConfig";
-import Line from "../Line.vue";
-import Card from "../Card.vue";
-import { MetricQueryTypes } from "@/hooks/data";
+  import type { PropType } from "vue";
+  import type { MetricConfigOpt } from "@/types/dashboard";
+  import { useListConfig } from "@/hooks/useListConfig";
+  import Line from "../Line.vue";
+  import Card from "../Card.vue";
+  import { MetricQueryTypes } from "@/hooks/data";
 
-/*global defineProps */
-const props = defineProps({
-  colMetrics: { type: Object },
-  config: {
-    type: Object as PropType<{
-      i: string;
-      metrics: string[];
-      metricTypes: string[];
-      metricConfig: MetricConfigOpt[];
-    }>,
-    default: () => ({}),
-  },
-  intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-});
+  /*global defineProps */
+  const props = defineProps({
+    colMetrics: { type: Object },
+    config: {
+      type: Object as PropType<{
+        i: string;
+        metrics: string[];
+        metricTypes: string[];
+        metricConfig: MetricConfigOpt[];
+      }>,
+      default: () => ({}),
+    },
+    intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+  });
 
-function getUnit(index: string) {
-  const i = Number(index);
-  const u =
-    props.config.metricConfig &&
-    props.config.metricConfig[i] &&
-    props.config.metricConfig[i].unit;
-  if (u) {
-    return `(${encodeURIComponent(u)})`;
-  }
-  return encodeURIComponent("");
-}
-function getLabel(metric: string, index: string) {
-  const i = Number(index);
-  const label =
-    props.config.metricConfig &&
-    props.config.metricConfig[i] &&
-    props.config.metricConfig[i].label;
-  if (label) {
-    if (
-      props.config.metricTypes[i] === MetricQueryTypes.ReadLabeledMetricsValues
-    ) {
-      const name = (label || "")
-        .split(",")
-        .map((item: string) => item.replace(/^\s*|\s*$/g, ""))[
-        props.config.metricConfig[i].index || 0
-      ];
-      return encodeURIComponent(name || "");
+  function getUnit(index: string) {
+    const i = Number(index);
+    const u =
+      props.config.metricConfig &&
+      props.config.metricConfig[i] &&
+      props.config.metricConfig[i].unit;
+    if (u) {
+      return `(${encodeURIComponent(u)})`;
     }
-    return encodeURIComponent(label);
+    return encodeURIComponent("");
   }
-  return encodeURIComponent(metric);
-}
+  function getLabel(metric: string, index: string) {
+    const i = Number(index);
+    const label =
+      props.config.metricConfig &&
+      props.config.metricConfig[i] &&
+      props.config.metricConfig[i].label;
+    if (label) {
+      if (props.config.metricTypes[i] === MetricQueryTypes.ReadLabeledMetricsValues) {
+        const name = (label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""))[
+          props.config.metricConfig[i].index || 0
+        ];
+        return encodeURIComponent(name || "");
+      }
+      return encodeURIComponent(label);
+    }
+    return encodeURIComponent(metric);
+  }
 </script>
 <style lang="scss" scoped>
-.chart {
-  height: 40px;
-}
+  .chart {
+    height: 40px;
+  }
 
-.view-line {
-  width: 380px;
-  height: 200px;
-}
+  .view-line {
+    width: 380px;
+    height: 200px;
+  }
 
-.item {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-}
+  .item {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+  }
 
-.trend {
-  width: 30px;
-  display: inline-block;
-  height: 100%;
-  cursor: pointer;
-}
+  .trend {
+    width: 30px;
+    display: inline-block;
+    height: 100%;
+    cursor: pointer;
+  }
 
-.value {
-  display: inline-block;
-  flex-grow: 2;
-  height: 100%;
-  width: calc(100% - 30px);
-}
+  .value {
+    display: inline-block;
+    flex-grow: 2;
+    height: 100%;
+    width: calc(100% - 30px);
+  }
 </style>

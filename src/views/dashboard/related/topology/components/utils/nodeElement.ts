@@ -15,18 +15,14 @@
  * limitations under the License.
  */
 import icons from "@/assets/img/icons";
-import { Node } from "@/types/topology";
+import type { Node } from "@/types/topology";
 
 icons["KAFKA-CONSUMER"] = icons.KAFKA;
 export default (d3: any, graph: any, funcs: any, tip: any, legend?: any) => {
   const nodeEnter = graph
     .append("g")
     .call(
-      d3
-        .drag()
-        .on("start", funcs.dragstart)
-        .on("drag", funcs.dragged)
-        .on("end", funcs.dragended)
+      d3.drag().on("start", funcs.dragstart).on("drag", funcs.dragged).on("end", funcs.dragended),
     )
     .on("mouseover", function (event: any, d: Node) {
       tip.html(funcs.tipHtml).show(d, this);
@@ -78,9 +74,7 @@ export default (d3: any, graph: any, funcs: any, tip: any, legend?: any) => {
     .attr("x", 13)
     .attr("y", -7)
     .attr("xlink:href", (d: { type: string }) =>
-      !d.type || d.type === "N/A"
-        ? icons.UNDEFINED
-        : icons[d.type.toUpperCase().replace("-", "")]
+      !d.type || d.type === "N/A" ? icons.UNDEFINED : icons[d.type.toUpperCase().replace("-", "")],
     );
   nodeEnter
     .append("text")
@@ -88,8 +82,6 @@ export default (d3: any, graph: any, funcs: any, tip: any, legend?: any) => {
     .attr("text-anchor", "middle")
     .attr("x", 22)
     .attr("y", 70)
-    .text((d: { name: string }) =>
-      d.name.length > 20 ? `${d.name.substring(0, 20)}...` : d.name
-    );
+    .text((d: { name: string }) => (d.name.length > 20 ? `${d.name.substring(0, 20)}...` : d.name));
   return nodeEnter;
 };

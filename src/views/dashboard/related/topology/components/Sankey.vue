@@ -17,139 +17,136 @@ limitations under the License. -->
   <Graph :option="option" @select="clickChart" />
 </template>
 <script lang="ts" setup>
-import { computed, PropType } from "vue";
-import { useTopologyStore } from "@/store/modules/topology";
-import { Node, Call } from "@/types/topology";
-import { MetricConfigOpt } from "@/types/dashboard";
-import { aggregation } from "@/hooks/useMetricsProcessor";
+  import type { PropType } from "vue";
+  import { computed } from "vue";
+  import { useTopologyStore } from "@/store/modules/topology";
+  import type { Node, Call } from "@/types/topology";
+  import type { MetricConfigOpt } from "@/types/dashboard";
+  import { aggregation } from "@/hooks/useMetricsProcessor";
 
-/*global defineEmits, defineProps */
-const props = defineProps({
-  settings: {
-    type: Object as PropType<any>,
-    default: () => ({}),
-  },
-});
-const emit = defineEmits(["click"]);
-const topologyStore = useTopologyStore();
-const option = computed(() => getOption());
-
-function getOption() {
-  return {
-    tooltip: {
-      trigger: "item",
-      confine: true,
+  /*global defineEmits, defineProps */
+  const props = defineProps({
+    settings: {
+      type: Object as PropType<any>,
+      default: () => ({}),
     },
-    series: {
-      type: "sankey",
-      left: 40,
-      top: 20,
-      right: 300,
-      bottom: 40,
-      emphasis: { focus: "adjacency" },
-      data: topologyStore.nodes,
-      links: topologyStore.calls,
-      label: {
-        color: "#fff",
-        formatter: (param: any) => param.data.name,
-      },
-      color: [
-        "#3fe1da",
-        "#6be6c1",
-        "#3fcfdc",
-        "#626c91",
-        "#3fbcde",
-        "#a0a7e6",
-        "#3fa9e1",
-        "#96dee8",
-        "#bf99f8",
-      ],
-      itemStyle: {
-        borderWidth: 0,
-      },
-      lineStyle: {
-        color: "source",
-        opacity: 0.12,
-      },
+  });
+  const emit = defineEmits(["click"]);
+  const topologyStore = useTopologyStore();
+  const option = computed(() => getOption());
+
+  function getOption() {
+    return {
       tooltip: {
-        position: "bottom",
-        formatter: (param: { data: any; dataType: string }) => {
-          if (param.dataType === "edge") {
-            return linkTooltip(param.data);
-          }
-          return nodeTooltip(param.data);
+        trigger: "item",
+        confine: true,
+      },
+      series: {
+        type: "sankey",
+        left: 40,
+        top: 20,
+        right: 300,
+        bottom: 40,
+        emphasis: { focus: "adjacency" },
+        data: topologyStore.nodes,
+        links: topologyStore.calls,
+        label: {
+          color: "#fff",
+          formatter: (param: any) => param.data.name,
+        },
+        color: [
+          "#3fe1da",
+          "#6be6c1",
+          "#3fcfdc",
+          "#626c91",
+          "#3fbcde",
+          "#a0a7e6",
+          "#3fa9e1",
+          "#96dee8",
+          "#bf99f8",
+        ],
+        itemStyle: {
+          borderWidth: 0,
+        },
+        lineStyle: {
+          color: "source",
+          opacity: 0.12,
+        },
+        tooltip: {
+          position: "bottom",
+          formatter: (param: { data: any; dataType: string }) => {
+            if (param.dataType === "edge") {
+              return linkTooltip(param.data);
+            }
+            return nodeTooltip(param.data);
+          },
         },
       },
-    },
-  };
-}
-function linkTooltip(data: Call) {
-  const clientMetrics: string[] = Object.keys(topologyStore.linkClientMetrics);
-  const serverMetrics: string[] = Object.keys(topologyStore.linkServerMetrics);
-  const linkServerMetricConfig: MetricConfigOpt[] =
-    props.settings.linkServerMetricConfig || [];
-  const linkClientMetricConfig: MetricConfigOpt[] =
-    props.settings.linkClientMetricConfig || [];
+    };
+  }
+  function linkTooltip(data: Call) {
+    const clientMetrics: string[] = Object.keys(topologyStore.linkClientMetrics);
+    const serverMetrics: string[] = Object.keys(topologyStore.linkServerMetrics);
+    const linkServerMetricConfig: MetricConfigOpt[] = props.settings.linkServerMetricConfig || [];
+    const linkClientMetricConfig: MetricConfigOpt[] = props.settings.linkClientMetricConfig || [];
 
-  const htmlServer = serverMetrics.map((m, index) => {
-    const metric =
-      topologyStore.linkServerMetrics[m].values.find(
-        (val: { id: string; value: unknown }) => val.id === data.id
-      ) || {};
-    if (metric) {
-      const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
+    const htmlServer = serverMetrics.map((m, index) => {
+      const metric =
+        topologyStore.linkServerMetrics[m].values.find(
+          (val: { id: string; value: unknown }) => val.id === data.id,
+        ) || {};
+      if (metric) {
+        const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
+        const v = aggregation(metric.value, opt);
+        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${
+          opt.unit || ""
+        }</div>`;
+      }
+    });
+    const htmlClient = clientMetrics.map((m, index) => {
+      const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
+      const metric =
+        topologyStore.linkClientMetrics[m].values.find(
+          (val: { id: string; value: unknown }) => val.id === data.id,
+        ) || {};
       const v = aggregation(metric.value, opt);
-      return ` <div class="mb-5"><span class="grey">${
-        opt.label || m
-      }: </span>${v} ${opt.unit || ""}</div>`;
-    }
-  });
-  const htmlClient = clientMetrics.map((m, index) => {
-    const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
-    const metric =
-      topologyStore.linkClientMetrics[m].values.find(
-        (val: { id: string; value: unknown }) => val.id === data.id
-      ) || {};
-    const v = aggregation(metric.value, opt);
-    return ` <div class="mb-5"><span class="grey">${
-      opt.label || m
-    }: </span>${v} ${opt.unit || ""}</div>`;
-  });
-  const html = [
-    `<div>${data.sourceObj.serviceName} -> ${data.targetObj.serviceName}</div>`,
-    ...htmlServer,
-    ...htmlClient,
-  ].join(" ");
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${
+        opt.unit || ""
+      }</div>`;
+    });
+    const html = [
+      `<div>${data.sourceObj.serviceName} -> ${data.targetObj.serviceName}</div>`,
+      ...htmlServer,
+      ...htmlClient,
+    ].join(" ");
 
-  return html;
-}
+    return html;
+  }
 
-function nodeTooltip(data: Node) {
-  const nodeMetrics: string[] = Object.keys(topologyStore.nodeMetricValue);
-  const nodeMetricConfig = props.settings.nodeMetricConfig || [];
-  const html = nodeMetrics.map((m, index) => {
-    const metric =
-      topologyStore.nodeMetricValue[m].values.find(
-        (val: { id: string; value: unknown }) => val.id === data.id
-      ) || {};
-    const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-    const v = aggregation(metric.value, opt);
-    return ` <div class="mb-5"><span class="grey">${
-      opt.label || m
-    }: </span>${v} ${opt.unit || ""}</div>`;
-  });
-  return [` <div><span>name: </span>${data.serviceName}</div>`, ...html].join(
-    " "
-  );
-}
+  function nodeTooltip(data: Node) {
+    const nodeMetrics: string[] = Object.keys(topologyStore.nodeMetricValue);
+    const nodeMetricConfig = props.settings.nodeMetricConfig || [];
+    const html = nodeMetrics.map((m, index) => {
+      const metric =
+        topologyStore.nodeMetricValue[m].values.find(
+          (val: { id: string; value: unknown }) => val.id === data.id,
+        ) || {};
+      const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
+      const v = aggregation(metric.value, opt);
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${
+        opt.unit || ""
+      }</div>`;
+    });
+    return [` <div><span>name: </span>${data.serviceName}</div>`, ...html].join(" ");
+  }
 
-function clickChart(param: any) {
-  emit("click", param);
-}
+  function clickChart(param: any) {
+    emit("click", param);
+  }
 </script>
 <style lang="scss" scoped>
-.sankey {
-  width: 100%;
-  height: 100%;
-}
+  .sankey {
+    width: 100%;
+    height: 100%;
+  }
 </style>

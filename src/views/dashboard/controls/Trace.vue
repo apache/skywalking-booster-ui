@@ -14,12 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-wrapper flex-v">
-    <el-popover
-      placement="bottom"
-      trigger="click"
-      :width="100"
-      v-if="dashboardStore.editMode"
-    >
+    <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
       <template #reference>
         <span class="delete cp">
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
@@ -39,68 +34,68 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { provide } from "vue";
-import type { PropType } from "vue";
-import Filter from "../related/trace/Filter.vue";
-import TraceList from "../related/trace/TraceList.vue";
-import TraceDetail from "../related/trace/Detail.vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
+  import { provide } from "vue";
+  import type { PropType } from "vue";
+  import Filter from "../related/trace/Filter.vue";
+  import TraceList from "../related/trace/TraceList.vue";
+  import TraceDetail from "../related/trace/Detail.vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
 
-/*global defineProps */
-const props = defineProps({
-  data: {
-    type: Object as PropType<any>,
-    default: () => ({ graph: {} }),
-  },
-  activeIndex: { type: String, default: "" },
-  needQuery: { type: Boolean, default: true },
-});
-provide("options", props.data);
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-function removeWidget() {
-  dashboardStore.removeControls(props.data);
-}
+  /*global defineProps */
+  const props = defineProps({
+    data: {
+      type: Object as PropType<any>,
+      default: () => ({ graph: {} }),
+    },
+    activeIndex: { type: String, default: "" },
+    needQuery: { type: Boolean, default: true },
+  });
+  provide("options", props.data);
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  function removeWidget() {
+    dashboardStore.removeControls(props.data);
+  }
 </script>
 <style lang="scss" scoped>
-.trace-wrapper {
-  width: 100%;
-  height: 100%;
-  font-size: 12px;
-  position: relative;
-  overflow: auto;
-}
-
-.delete {
-  position: absolute;
-  top: 5px;
-  right: 3px;
-}
-
-.header {
-  padding: 10px;
-  font-size: 12px;
-  border-bottom: 1px solid #dcdfe6;
-  min-width: 1200px;
-}
-
-.tools {
-  padding: 5px 0;
-  color: #999;
-  cursor: pointer;
-  position: relative;
-  text-align: center;
-
-  &:hover {
-    color: #409eff;
-    background-color: #eee;
+  .trace-wrapper {
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    position: relative;
+    overflow: auto;
   }
-}
 
-.trace {
-  width: 100%;
-  overflow: auto;
-  min-width: 1200px;
-}
+  .delete {
+    position: absolute;
+    top: 5px;
+    right: 3px;
+  }
+
+  .header {
+    padding: 10px;
+    font-size: 12px;
+    border-bottom: 1px solid #dcdfe6;
+    min-width: 1200px;
+  }
+
+  .tools {
+    padding: 5px 0;
+    color: #999;
+    cursor: pointer;
+    position: relative;
+    text-align: center;
+
+    &:hover {
+      color: #409eff;
+      background-color: #eee;
+    }
+  }
+
+  .trace {
+    width: 100%;
+    overflow: auto;
+    min-width: 1200px;
+  }
 </style>

@@ -17,109 +17,102 @@ limitations under the License. -->
     <div class="trace-t-loading" v-show="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
-    <TableContainer
-      :tableData="tableData"
-      type="statistics"
-      :HeaderType="HeaderType"
-    >
+    <TableContainer :tableData="tableData" type="statistics" :HeaderType="HeaderType">
       <div class="trace-tips" v-if="!tableData.length">{{ $t("noData") }}</div>
     </TableContainer>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, onMounted } from "vue";
-import type { PropType } from "vue";
-import TableContainer from "./Table/TableContainer.vue";
-import traceTable from "../utils/trace-table";
-import { StatisticsSpan, Span, StatisticsGroupRef } from "@/types/trace";
+  import { ref, watch, onMounted } from "vue";
+  import type { PropType } from "vue";
+  import TableContainer from "./Table/TableContainer.vue";
+  import traceTable from "../utils/trace-table";
+  import type { StatisticsSpan, Span, StatisticsGroupRef } from "@/types/trace";
 
-/* global defineProps, defineEmits */
-const props = defineProps({
-  data: { type: Array as PropType<any>, default: () => [] },
-  traceId: { type: String, default: "" },
-  showBtnDetail: { type: Boolean, default: false },
-  HeaderType: { type: String, default: "" },
-});
-const emit = defineEmits(["load"]);
-const loading = ref<boolean>(true);
-const tableData = ref<any>([]);
-const list = ref<any[]>([]);
-
-onMounted(() => {
-  tableData.value = calculationDataforStatistics(props.data);
-  loading.value = false;
-  emit("load", () => {
-    loading.value = true;
+  /* global defineProps, defineEmits */
+  const props = defineProps({
+    data: { type: Array as PropType<any>, default: () => [] },
+    traceId: { type: String, default: "" },
+    showBtnDetail: { type: Boolean, default: false },
+    HeaderType: { type: String, default: "" },
   });
-});
+  const emit = defineEmits(["load"]);
+  const loading = ref<boolean>(true);
+  const tableData = ref<any>([]);
+  const list = ref<any[]>([]);
 
-function calculationDataforStatistics(data: Span[]): StatisticsSpan[] {
-  list.value = traceTable.buildTraceDataList(data);
-  const result: StatisticsSpan[] = [];
-  const map = traceTable.changeStatisticsTree(data);
-  map.forEach((nodes, nodeKey) => {
-    const nodeKeyData = nodeKey.split(":");
-    result.push(
-      getSpanGroupData(nodes, {
-        endpointName: nodeKeyData[0],
-        type: nodeKeyData[1],
-      })
-    );
-  });
-  return result;
-}
-
-function getSpanGroupData(
-  groupspans: Span[],
-  groupRef: StatisticsGroupRef
-): StatisticsSpan {
-  let maxTime = 0;
-  let minTime = 0;
-  let sumTime = 0;
-  const count = groupspans.length;
-  groupspans.forEach((groupspan: Span) => {
-    const duration = groupspan.dur || 0;
-    if (duration > maxTime) {
-      maxTime = duration;
-    }
-    if (duration < minTime) {
-      minTime = duration;
-    }
-    sumTime = sumTime + duration;
-  });
-  const avgTime = count === 0 ? 0 : sumTime / count;
-  return {
-    groupRef,
-    maxTime,
-    minTime,
-    sumTime,
-    avgTime,
-    count,
-  };
-}
-
-watch(
-  () => props.data,
-  () => {
-    if (!props.data.length) {
-      tableData.value = [];
-      return;
-    }
+  onMounted(() => {
     tableData.value = calculationDataforStatistics(props.data);
     loading.value = false;
+    emit("load", () => {
+      loading.value = true;
+    });
+  });
+
+  function calculationDataforStatistics(data: Span[]): StatisticsSpan[] {
+    list.value = traceTable.buildTraceDataList(data);
+    const result: StatisticsSpan[] = [];
+    const map = traceTable.changeStatisticsTree(data);
+    map.forEach((nodes, nodeKey) => {
+      const nodeKeyData = nodeKey.split(":");
+      result.push(
+        getSpanGroupData(nodes, {
+          endpointName: nodeKeyData[0],
+          type: nodeKeyData[1],
+        }),
+      );
+    });
+    return result;
   }
-);
+
+  function getSpanGroupData(groupspans: Span[], groupRef: StatisticsGroupRef): StatisticsSpan {
+    let maxTime = 0;
+    let minTime = 0;
+    let sumTime = 0;
+    const count = groupspans.length;
+    groupspans.forEach((groupspan: Span) => {
+      const duration = groupspan.dur || 0;
+      if (duration > maxTime) {
+        maxTime = duration;
+      }
+      if (duration < minTime) {
+        minTime = duration;
+      }
+      sumTime = sumTime + duration;
+    });
+    const avgTime = count === 0 ? 0 : sumTime / count;
+    return {
+      groupRef,
+      maxTime,
+      minTime,
+      sumTime,
+      avgTime,
+      count,
+    };
+  }
+
+  watch(
+    () => props.data,
+    () => {
+      if (!props.data.length) {
+        tableData.value = [];
+        return;
+      }
+      tableData.value = calculationDataforStatistics(props.data);
+      loading.value = false;
+    },
+  );
 </script>
 <style lang="scss" scoped>
-.trace-tips {
-  width: 100%;
-  text-align: center;
-  margin-top: 10px;
-}
+  .trace-tips {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+  }
 
-.trace-statistics {
-  padding: 10px;
-  height: calc(100% - 95px);
-  width: 100%;
-}
+  .trace-statistics {
+    padding: 10px;
+    height: calc(100% - 95px);
+    width: 100%;
+  }
 </style>

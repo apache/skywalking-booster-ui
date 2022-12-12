@@ -37,38 +37,38 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
+  import { ref, computed } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
 
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const graph = computed(() => dashboardStore.selectedGrid.graph || {});
-const fontSize = ref(graph.value.fontSize);
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+  const fontSize = ref(graph.value.fontSize);
 
-function updateConfig(param: { [key: string]: unknown }) {
-  const { selectedGrid } = dashboardStore;
-  const graph = {
-    ...selectedGrid.graph,
-    ...param,
-  };
-  dashboardStore.selectWidget({ ...selectedGrid, graph });
-}
+  function updateConfig(param: { [key: string]: unknown }) {
+    const { selectedGrid } = dashboardStore;
+    const graph = {
+      ...selectedGrid.graph,
+      ...param,
+    };
+    dashboardStore.selectWidget({ ...selectedGrid, graph });
+  }
 </script>
 <style lang="scss" scoped>
-.slider {
-  width: 500px;
-  margin-top: -13px;
-}
+  .slider {
+    width: 500px;
+    margin-top: -13px;
+  }
 
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
-}
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+  }
 
-.item {
-  margin-top: 5px;
-}
+  .item {
+    margin-top: 5px;
+  }
 </style>

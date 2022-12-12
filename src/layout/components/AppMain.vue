@@ -22,8 +22,8 @@ limitations under the License. -->
   </section>
 </template>
 <style lang="scss" scoped>
-.app-main {
-  height: calc(100% - 40px);
-  background: #f7f9fa;
-}
+  .app-main {
+    height: calc(100% - 40px);
+    background: #f7f9fa;
+  }
 </style>

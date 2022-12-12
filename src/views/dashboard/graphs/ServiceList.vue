@@ -37,12 +37,7 @@ limitations under the License. -->
         :border="true"
         :style="{ fontSize: '14px' }"
       >
-        <el-table-column
-          fixed
-          label="Service Groups"
-          v-if="config.showGroup"
-          min-width="150"
-        >
+        <el-table-column fixed label="Service Groups" v-if="config.showGroup" min-width="150">
           <template #default="scope">
             {{ scope.row.group }}
           </template>
@@ -85,224 +80,217 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { watch, ref } from "vue";
-import { ElMessage } from "element-plus";
-import type { PropType } from "vue";
-import { ServiceListConfig } from "@/types/dashboard";
-import { useSelectorStore } from "@/store/modules/selectors";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { Service } from "@/types/selector";
-import {
-  useQueryPodsMetrics,
-  usePodsSource,
-} from "@/hooks/useMetricsProcessor";
-import { EntityType } from "../data";
-import router from "@/router";
-import getDashboard from "@/hooks/useDashboardsSession";
-import { MetricConfigOpt } from "@/types/dashboard";
-import ColumnGraph from "./components/ColumnGraph.vue";
+  import { watch, ref } from "vue";
+  import { ElMessage } from "element-plus";
+  import type { PropType } from "vue";
+  import type { ServiceListConfig } from "@/types/dashboard";
+  import { useSelectorStore } from "@/store/modules/selectors";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import type { Service } from "@/types/selector";
+  import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
+  import { EntityType } from "../data";
+  import router from "@/router";
+  import getDashboard from "@/hooks/useDashboardsSession";
+  import type { MetricConfigOpt } from "@/types/dashboard";
+  import ColumnGraph from "./components/ColumnGraph.vue";
 
-/*global defineProps */
-const props = defineProps({
-  data: {
-    type: Object,
-  },
-  config: {
-    type: Object as PropType<
-      ServiceListConfig & {
-        i: string;
-        metrics: string[];
-        metricTypes: string[];
-        isEdit: boolean;
-        names: string[];
-        metricConfig: MetricConfigOpt[];
-      }
-    >,
-    default: () => ({ dashboardName: "", fontSize: 12 }),
-  },
-  intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-  isEdit: { type: Boolean, default: false },
-});
-const selectorStore = useSelectorStore();
-const dashboardStore = useDashboardStore();
-const appStore = useAppStoreWithOut();
-const chartLoading = ref<boolean>(false);
-const pageSize = 10;
-const services = ref<Service[]>([]);
-const colMetrics = ref<string[]>([]);
-const searchText = ref<string>("");
-const groups = ref<any>({});
-const sortServices = ref<(Service & { merge: boolean })[]>([]);
-const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
-const metricTypes = ref<string[]>(props.config.metricTypes || []);
-
-queryServices();
-
-async function queryServices() {
-  chartLoading.value = true;
-  const resp = await selectorStore.fetchServices(dashboardStore.layerId);
-
-  chartLoading.value = false;
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-  }
-  sortServices.value = selectorStore.services.sort((a: any, b: any) => {
-    const groupA = a.group.toUpperCase();
-    const groupB = b.group.toUpperCase();
-    if (groupA < groupB) {
-      return -1;
-    }
-    if (groupA > groupB) {
-      return 1;
-    }
-    return 0;
-  });
-  const s = sortServices.value.filter(
-    (d: Service, index: number) => index < pageSize
-  );
-  setServices(s);
-}
-
-function setServices(arr: (Service & { merge: boolean })[]) {
-  groups.value = {};
-  const map: { [key: string]: any[] } = arr.reduce(
-    (result: { [key: string]: any[] }, item: any) => {
-      item.group = item.group || "";
-      if (result[item.group]) {
-        item.merge = true;
-      } else {
-        item.merge = false;
-        result[item.group] = [];
-      }
-      result[item.group].push(item);
-      return result;
+  /*global defineProps */
+  const props = defineProps({
+    data: {
+      type: Object,
     },
-    {}
-  );
-  const list = Object.values(map).flat(1);
-  const obj = {} as any;
-  for (const s of list) {
-    s.group = s.group || "";
-    if (!obj[s.group]) {
-      obj[s.group] = 1;
-    } else {
-      obj[s.group]++;
-    }
-    groups.value[s.group] = obj[s.group];
-  }
-  services.value = list;
-  queryServiceMetrics(services.value);
-}
-
-function clickService(scope: any) {
-  const { dashboard } = getDashboard({
-    name: props.config.dashboardName,
-    layer: dashboardStore.layerId,
-    entity: EntityType[0].value,
+    config: {
+      type: Object as PropType<
+        ServiceListConfig & {
+          i: string;
+          metrics: string[];
+          metricTypes: string[];
+          isEdit: boolean;
+          names: string[];
+          metricConfig: MetricConfigOpt[];
+        }
+      >,
+      default: () => ({ dashboardName: "", fontSize: 12 }),
+    },
+    intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+    isEdit: { type: Boolean, default: false },
   });
-  if (!dashboard) {
-    ElMessage.error("No this dashboard");
-    return;
-  }
-  const path = `/dashboard/${dashboard.layer}/${dashboard.entity}/${scope.row.id}/${dashboard.name}`;
+  const selectorStore = useSelectorStore();
+  const dashboardStore = useDashboardStore();
+  const appStore = useAppStoreWithOut();
+  const chartLoading = ref<boolean>(false);
+  const pageSize = 10;
+  const services = ref<Service[]>([]);
+  const colMetrics = ref<string[]>([]);
+  const searchText = ref<string>("");
+  const groups = ref<any>({});
+  const sortServices = ref<(Service & { merge: boolean })[]>([]);
+  const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
+  const metricTypes = ref<string[]>(props.config.metricTypes || []);
 
-  router.push(path);
-}
-async function queryServiceMetrics(currentServices: Service[]) {
-  if (!currentServices.length) {
-    return;
-  }
-  const metrics = props.config.metrics || [];
-  const types = props.config.metricTypes || [];
+  queryServices();
 
-  if (metrics.length && metrics[0] && types.length && types[0]) {
-    const params = await useQueryPodsMetrics(
-      currentServices,
-      { ...props.config, metricConfig: metricConfig.value || [] },
-      EntityType[0].value
-    );
-    const json = await dashboardStore.fetchMetricValue(params);
+  async function queryServices() {
+    chartLoading.value = true;
+    const resp = await selectorStore.fetchServices(dashboardStore.layerId);
 
-    if (json.errors) {
-      ElMessage.error(json.errors);
-      return;
+    chartLoading.value = false;
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
     }
-
-    const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(
-      currentServices,
-      json,
-      {
-        ...props.config,
-        metricConfig: metricConfig.value || [],
+    sortServices.value = selectorStore.services.sort((a: any, b: any) => {
+      const groupA = a.group.toUpperCase();
+      const groupB = b.group.toUpperCase();
+      if (groupA < groupB) {
+        return -1;
       }
+      if (groupA > groupB) {
+        return 1;
+      }
+      return 0;
+    });
+    const s = sortServices.value.filter((d: Service, index: number) => index < pageSize);
+    setServices(s);
+  }
+
+  function setServices(arr: (Service & { merge: boolean })[]) {
+    groups.value = {};
+    const map: { [key: string]: any[] } = arr.reduce(
+      (result: { [key: string]: any[] }, item: any) => {
+        item.group = item.group || "";
+        if (result[item.group]) {
+          item.merge = true;
+        } else {
+          item.merge = false;
+          result[item.group] = [];
+        }
+        result[item.group].push(item);
+        return result;
+      },
+      {},
     );
-    services.value = data;
-    colMetrics.value = names;
-    metricTypes.value = metricTypesArr;
-    metricConfig.value = metricConfigArr;
-
-    return;
-  }
-  services.value = currentServices;
-}
-function objectSpanMethod(param: any): any {
-  if (!props.config.showGroup) {
-    return;
-  }
-  if (param.columnIndex !== 0) {
-    return;
-  }
-  if (param.row.merge) {
-    return {
-      rowspan: 0,
-      colspan: 0,
-    };
-  }
-  return { rowspan: groups.value[param.row.group], colspan: 1 };
-}
-function changePage(pageIndex: number) {
-  const arr = sortServices.value.filter((d: Service, index: number) => {
-    if (index >= (pageIndex - 1) * pageSize && index < pageSize * pageIndex) {
-      return d;
+    const list = Object.values(map).flat(1);
+    const obj = {} as any;
+    for (const s of list) {
+      s.group = s.group || "";
+      if (!obj[s.group]) {
+        obj[s.group] = 1;
+      } else {
+        obj[s.group]++;
+      }
+      groups.value[s.group] = obj[s.group];
     }
-  });
-
-  setServices(arr);
-}
-function searchList() {
-  const searchServices = sortServices.value.filter((d: { label: string }) =>
-    d.label.includes(searchText.value)
-  );
-  const services = searchServices.filter(
-    (d: unknown, index: number) => index < pageSize
-  );
-  setServices(services);
-}
-
-watch(
-  () => [
-    ...(props.config.metricTypes || []),
-    ...(props.config.metrics || []),
-    ...(props.config.metricConfig || []),
-  ],
-  (data, old) => {
-    if (JSON.stringify(data) === JSON.stringify(old)) {
-      return;
-    }
-    metricConfig.value = props.config.metricConfig;
+    services.value = list;
     queryServiceMetrics(services.value);
   }
-);
-watch(
-  () => appStore.durationTime,
-  () => {
-    if (dashboardStore.entity === EntityType[1].value) {
-      queryServices();
+
+  function clickService(scope: any) {
+    const { dashboard } = getDashboard({
+      name: props.config.dashboardName,
+      layer: dashboardStore.layerId,
+      entity: EntityType[0].value,
+    });
+    if (!dashboard) {
+      ElMessage.error("No this dashboard");
+      return;
     }
+    const path = `/dashboard/${dashboard.layer}/${dashboard.entity}/${scope.row.id}/${dashboard.name}`;
+
+    router.push(path);
   }
-);
+  async function queryServiceMetrics(currentServices: Service[]) {
+    if (!currentServices.length) {
+      return;
+    }
+    const metrics = props.config.metrics || [];
+    const types = props.config.metricTypes || [];
+
+    if (metrics.length && metrics[0] && types.length && types[0]) {
+      const params = await useQueryPodsMetrics(
+        currentServices,
+        { ...props.config, metricConfig: metricConfig.value || [] },
+        EntityType[0].value,
+      );
+      const json = await dashboardStore.fetchMetricValue(params);
+
+      if (json.errors) {
+        ElMessage.error(json.errors);
+        return;
+      }
+
+      const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(
+        currentServices,
+        json,
+        {
+          ...props.config,
+          metricConfig: metricConfig.value || [],
+        },
+      );
+      services.value = data;
+      colMetrics.value = names;
+      metricTypes.value = metricTypesArr;
+      metricConfig.value = metricConfigArr;
+
+      return;
+    }
+    services.value = currentServices;
+  }
+  function objectSpanMethod(param: any): any {
+    if (!props.config.showGroup) {
+      return;
+    }
+    if (param.columnIndex !== 0) {
+      return;
+    }
+    if (param.row.merge) {
+      return {
+        rowspan: 0,
+        colspan: 0,
+      };
+    }
+    return { rowspan: groups.value[param.row.group], colspan: 1 };
+  }
+  function changePage(pageIndex: number) {
+    const arr = sortServices.value.filter((d: Service, index: number) => {
+      if (index >= (pageIndex - 1) * pageSize && index < pageSize * pageIndex) {
+        return d;
+      }
+    });
+
+    setServices(arr);
+  }
+  function searchList() {
+    const searchServices = sortServices.value.filter((d: { label: string }) =>
+      d.label.includes(searchText.value),
+    );
+    const services = searchServices.filter((d: unknown, index: number) => index < pageSize);
+    setServices(services);
+  }
+
+  watch(
+    () => [
+      ...(props.config.metricTypes || []),
+      ...(props.config.metrics || []),
+      ...(props.config.metricConfig || []),
+    ],
+    (data, old) => {
+      if (JSON.stringify(data) === JSON.stringify(old)) {
+        return;
+      }
+      metricConfig.value = props.config.metricConfig;
+      queryServiceMetrics(services.value);
+    },
+  );
+  watch(
+    () => appStore.durationTime,
+    () => {
+      if (dashboardStore.entity === EntityType[1].value) {
+        queryServices();
+      }
+    },
+  );
 </script>
 <style lang="scss" scoped>
-@import "./style.scss";
+  @import "./style.scss";
 </style>

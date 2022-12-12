@@ -16,10 +16,7 @@ limitations under the License. -->
   <div class="flex-h content">
     <Tasks />
     <div class="vis-graph ml-5" v-loading="networkProfilingStore.loadNodes">
-      <process-topology
-        v-if="networkProfilingStore.nodes.length"
-        :config="config"
-      />
+      <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
       <div class="text" v-else>
         {{ t("noData") }}
       </div>
@@ -27,40 +24,40 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
-import Tasks from "./components/Tasks.vue";
-import ProcessTopology from "./components/ProcessTopology.vue";
-import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
+  import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
+  import Tasks from "./components/Tasks.vue";
+  import ProcessTopology from "./components/ProcessTopology.vue";
+  import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 
-/*global defineProps */
-defineProps({
-  config: {
-    type: Object as PropType<any>,
-    default: () => ({ graph: {} }),
-  },
-});
-const networkProfilingStore = useNetworkProfilingStore();
-const { t } = useI18n();
+  /*global defineProps */
+  defineProps({
+    config: {
+      type: Object as PropType<any>,
+      default: () => ({ graph: {} }),
+    },
+  });
+  const networkProfilingStore = useNetworkProfilingStore();
+  const { t } = useI18n();
 </script>
 <style lang="scss" scoped>
-.content {
-  height: calc(100% - 30px);
-  width: 100%;
-}
+  .content {
+    height: calc(100% - 30px);
+    width: 100%;
+  }
 
-.vis-graph {
-  height: 100%;
-  flex-grow: 2;
-  min-width: 700px;
-  overflow: hidden;
-  position: relative;
-  width: calc(100% - 330px);
-}
+  .vis-graph {
+    height: 100%;
+    flex-grow: 2;
+    min-width: 700px;
+    overflow: hidden;
+    position: relative;
+    width: calc(100% - 330px);
+  }
 
-.text {
-  width: 100%;
-  text-align: center;
-  margin-top: 30px;
-}
+  .text {
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+  }
 </style>

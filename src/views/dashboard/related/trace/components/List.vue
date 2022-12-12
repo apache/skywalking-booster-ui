@@ -32,83 +32,77 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
-import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
-import * as d3 from "d3";
-import { Span } from "@/types/trace";
-import Graph from "./D3Graph/Index.vue";
+  import { computed } from "vue";
+  import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
+  import * as d3 from "d3";
+  import type { Span } from "@/types/trace";
+  import Graph from "./D3Graph/Index.vue";
 
-/* global defineProps*/
-const props = defineProps({
-  data: { type: Array as PropType<Span[]>, default: () => [] },
-  traceId: { type: String, default: "" },
-});
-const { t } = useI18n();
-const list = computed(() =>
-  Array.from(new Set(props.data.map((i: Span) => i.serviceCode)))
-);
+  /* global defineProps*/
+  const props = defineProps({
+    data: { type: Array as PropType<Span[]>, default: () => [] },
+    traceId: { type: String, default: "" },
+  });
+  const { t } = useI18n();
+  const list = computed(() => Array.from(new Set(props.data.map((i: Span) => i.serviceCode))));
 
-function computedScale(i: number) {
-  const sequentialScale = d3
-    .scaleSequential()
-    .domain([0, list.value.length + 1])
-    .interpolator(d3.interpolateCool);
-  return sequentialScale(i);
-}
+  function computedScale(i: number) {
+    const sequentialScale = d3
+      .scaleSequential()
+      .domain([0, list.value.length + 1])
+      .interpolator(d3.interpolateCool);
+    return sequentialScale(i);
+  }
 
-function downloadTrace() {
-  const serializer = new XMLSerializer();
-  const svgNode: any = d3.select(".trace-list-dowanload").node();
-  const source = `<?xml version="1.0" standalone="no"?>\r\n${serializer.serializeToString(
-    svgNode
-  )}`;
-  const canvas = document.createElement("canvas");
-  const context: any = canvas.getContext("2d");
-  canvas.width = (
-    d3.select(".trace-list-dowanload") as any
-  )._groups[0][0].clientWidth;
-  canvas.height = (
-    d3.select(".trace-list-dowanload") as any
-  )._groups[0][0].clientHeight;
-  context.fillStyle = "#fff";
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  const image = new Image();
-  image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(source)}`;
-  image.onload = () => {
-    context.drawImage(image, 0, 0);
-    const tagA = document.createElement("a");
-    tagA.download = "trace-list.png";
-    tagA.href = canvas.toDataURL("image/png");
-    tagA.click();
-  };
-}
+  function downloadTrace() {
+    const serializer = new XMLSerializer();
+    const svgNode: any = d3.select(".trace-list-dowanload").node();
+    const source = `<?xml version="1.0" standalone="no"?>\r\n${serializer.serializeToString(
+      svgNode,
+    )}`;
+    const canvas = document.createElement("canvas");
+    const context: any = canvas.getContext("2d");
+    canvas.width = (d3.select(".trace-list-dowanload") as any)._groups[0][0].clientWidth;
+    canvas.height = (d3.select(".trace-list-dowanload") as any)._groups[0][0].clientHeight;
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    const image = new Image();
+    image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(source)}`;
+    image.onload = () => {
+      context.drawImage(image, 0, 0);
+      const tagA = document.createElement("a");
+      tagA.download = "trace-list.png";
+      tagA.href = canvas.toDataURL("image/png");
+      tagA.click();
+    };
+  }
 </script>
 <style lang="scss" scoped>
-.charts {
-  overflow: auto;
-  padding: 10px;
-  height: 100%;
-  width: 100%;
-}
+  .charts {
+    overflow: auto;
+    padding: 10px;
+    height: 100%;
+    width: 100%;
+  }
 
-.charts-item {
-  display: inline-block;
-  padding: 2px 8px;
-  border: 1px solid;
-  font-size: 11px;
-  border-radius: 4px;
-}
+  .charts-item {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid;
+    font-size: 11px;
+    border-radius: 4px;
+  }
 
-.btn {
-  float: right;
-}
+  .btn {
+    float: right;
+  }
 
-.list {
-  height: calc(100% - 150px);
-}
+  .list {
+    height: calc(100% - 150px);
+  }
 
-.event-tag {
-  color: red;
-}
+  .event-tag {
+    color: red;
+  }
 </style>

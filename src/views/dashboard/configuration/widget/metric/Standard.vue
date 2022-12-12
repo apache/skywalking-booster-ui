@@ -91,99 +91,93 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, computed } from "vue";
-import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
-import { SortOrder, CalculationOpts } from "../../../data";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { MetricConfigOpt } from "@/types/dashboard";
-import { ListChartTypes, ProtocolTypes } from "../../../data";
+  import { ref, watch, computed } from "vue";
+  import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { SortOrder, CalculationOpts } from "../../../data";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import type { MetricConfigOpt } from "@/types/dashboard";
+  import { ListChartTypes, ProtocolTypes } from "../../../data";
 
-/*global defineEmits, defineProps */
-const props = defineProps({
-  currentMetricConfig: {
-    type: Object as PropType<MetricConfigOpt>,
-    default: () => ({ unit: "" }),
-  },
-  index: { type: Number, default: 0 },
-});
-const { t } = useI18n();
-const emit = defineEmits(["update"]);
-const dashboardStore = useDashboardStore();
-const currentMetric = ref<MetricConfigOpt>({
-  ...props.currentMetricConfig,
-  topN: props.currentMetricConfig.topN || 10,
-});
-const metricTypes = dashboardStore.selectedGrid.metricTypes || [];
-const metricType = computed(
-  () => (dashboardStore.selectedGrid.metricTypes || [])[props.index]
-);
-const hasLabel = computed(() => {
-  const graph = dashboardStore.selectedGrid.graph || {};
-  return (
-    ListChartTypes.includes(graph.type) ||
-    [
-      ProtocolTypes.ReadLabeledMetricsValues,
-      ProtocolTypes.ReadMetricsValues,
-    ].includes(metricType.value)
-  );
-});
-const isTopn = computed(() =>
-  [
-    ProtocolTypes.SortMetrics,
-    ProtocolTypes.ReadSampledRecords,
-    ProtocolTypes.ReadRecords,
-  ].includes(metricTypes[props.index])
-);
-function updateConfig(index: number, param: { [key: string]: string }) {
-  const key = Object.keys(param)[0];
-  if (!key) {
-    return;
-  }
-  changeConfigs(index, { [key]: decodeURIComponent(param[key]) });
-}
-function changeConfigs(
-  index: number,
-  param: { [key: string]: string | number }
-) {
-  const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
-
-  metricConfig[index] = { ...metricConfig[index], ...param };
-  dashboardStore.selectWidget({
-    ...dashboardStore.selectedGrid,
-    metricConfig,
+  /*global defineEmits, defineProps */
+  const props = defineProps({
+    currentMetricConfig: {
+      type: Object as PropType<MetricConfigOpt>,
+      default: () => ({ unit: "" }),
+    },
+    index: { type: Number, default: 0 },
   });
-  emit("update");
-}
-watch(
-  () => props.currentMetricConfig,
-  () => {
-    currentMetric.value = {
-      ...props.currentMetricConfig,
-      topN: props.currentMetricConfig.topN || 10,
-    };
+  const { t } = useI18n();
+  const emit = defineEmits(["update"]);
+  const dashboardStore = useDashboardStore();
+  const currentMetric = ref<MetricConfigOpt>({
+    ...props.currentMetricConfig,
+    topN: props.currentMetricConfig.topN || 10,
+  });
+  const metricTypes = dashboardStore.selectedGrid.metricTypes || [];
+  const metricType = computed(() => (dashboardStore.selectedGrid.metricTypes || [])[props.index]);
+  const hasLabel = computed(() => {
+    const graph = dashboardStore.selectedGrid.graph || {};
+    return (
+      ListChartTypes.includes(graph.type) ||
+      [ProtocolTypes.ReadLabeledMetricsValues, ProtocolTypes.ReadMetricsValues].includes(
+        metricType.value,
+      )
+    );
+  });
+  const isTopn = computed(() =>
+    [
+      ProtocolTypes.SortMetrics,
+      ProtocolTypes.ReadSampledRecords,
+      ProtocolTypes.ReadRecords,
+    ].includes(metricTypes[props.index]),
+  );
+  function updateConfig(index: number, param: { [key: string]: string }) {
+    const key = Object.keys(param)[0];
+    if (!key) {
+      return;
+    }
+    changeConfigs(index, { [key]: decodeURIComponent(param[key]) });
   }
-);
+  function changeConfigs(index: number, param: { [key: string]: string | number }) {
+    const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
+
+    metricConfig[index] = { ...metricConfig[index], ...param };
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      metricConfig,
+    });
+    emit("update");
+  }
+  watch(
+    () => props.currentMetricConfig,
+    () => {
+      currentMetric.value = {
+        ...props.currentMetricConfig,
+        topN: props.currentMetricConfig.topN || 10,
+      };
+    },
+  );
 </script>
 <style lang="scss" scoped>
-.config-panel {
-  padding: 10px 5px;
-  position: relative;
-}
+  .config-panel {
+    padding: 10px 5px;
+    position: relative;
+  }
 
-.label {
-  width: 150px;
-  display: inline-block;
-  font-size: 12px;
-}
+  .label {
+    width: 150px;
+    display: inline-block;
+    font-size: 12px;
+  }
 
-.close {
-  position: absolute;
-  top: -8px;
-  right: -15px;
-}
+  .close {
+    position: absolute;
+    top: -8px;
+    right: -15px;
+  }
 
-.selectors {
-  width: 365px;
-}
+  .selectors {
+    width: 365px;
+  }
 </style>

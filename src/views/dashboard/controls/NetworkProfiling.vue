@@ -15,12 +15,7 @@ limitations under the License. -->
 <template>
   <div class="profile-wrapper flex-v">
     <div class="title">Network Profiling</div>
-    <el-popover
-      placement="bottom"
-      trigger="click"
-      :width="100"
-      v-if="dashboardStore.editMode"
-    >
+    <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
       <template #reference>
         <span class="operation cp">
           <Icon iconName="ellipsis_v" size="middle" />
@@ -34,64 +29,64 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import Content from "../related/network-profiling/Content.vue";
+  import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import Content from "../related/network-profiling/Content.vue";
 
-/*global defineProps */
-const props = defineProps({
-  data: {
-    type: Object as PropType<any>,
-    default: () => ({ graph: {} }),
-  },
-  activeIndex: { type: String, default: "" },
-  needQuery: { type: Boolean, default: true },
-});
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
+  /*global defineProps */
+  const props = defineProps({
+    data: {
+      type: Object as PropType<any>,
+      default: () => ({ graph: {} }),
+    },
+    activeIndex: { type: String, default: "" },
+    needQuery: { type: Boolean, default: true },
+  });
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
 
-function removeWidget() {
-  dashboardStore.removeControls(props.data);
-}
+  function removeWidget() {
+    dashboardStore.removeControls(props.data);
+  }
 </script>
 <style lang="scss" scoped>
-.profile-wrapper {
-  width: 100%;
-  height: 100%;
-  font-size: 12px;
-  position: relative;
-}
-
-.operation {
-  position: absolute;
-  top: 8px;
-  right: 3px;
-}
-
-.header {
-  padding: 10px;
-  font-size: 12px;
-  border-bottom: 1px solid #dcdfe6;
-}
-
-.tools {
-  padding: 5px 0;
-  color: #999;
-  cursor: pointer;
-  position: relative;
-  text-align: center;
-
-  &:hover {
-    color: #409eff;
-    background-color: #eee;
+  .profile-wrapper {
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    position: relative;
   }
-}
 
-.title {
-  font-weight: bold;
-  line-height: 40px;
-  padding: 0 10px;
-  border-bottom: 1px solid #dcdfe6;
-}
+  .operation {
+    position: absolute;
+    top: 8px;
+    right: 3px;
+  }
+
+  .header {
+    padding: 10px;
+    font-size: 12px;
+    border-bottom: 1px solid #dcdfe6;
+  }
+
+  .tools {
+    padding: 5px 0;
+    color: #999;
+    cursor: pointer;
+    position: relative;
+    text-align: center;
+
+    &:hover {
+      color: #409eff;
+      background-color: #eee;
+    }
+  }
+
+  .title {
+    font-weight: bold;
+    line-height: 40px;
+    padding: 0 10px;
+    border-bottom: 1px solid #dcdfe6;
+  }
 </style>

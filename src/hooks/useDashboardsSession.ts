@@ -16,19 +16,15 @@
  */
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import { LayoutConfig } from "@/types/dashboard";
+import type { LayoutConfig } from "@/types/dashboard";
 
-export default function getDashboard(param?: {
-  name: string;
-  layer: string;
-  entity: string;
-}) {
+export default function getDashboard(param?: { name: string; layer: string; entity: string }) {
   const dashboardStore = useDashboardStore();
   const opt = param || dashboardStore.currentDashboard;
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   const dashboard = list.find(
     (d: { name: string; layer: string; entity: string }) =>
-      d.name === opt.name && d.entity === opt.entity && d.layer === opt.layer
+      d.name === opt.name && d.entity === opt.entity && d.layer === opt.layer,
   );
   const all = dashboardStore.layout;
   const widgets: LayoutConfig[] = [];

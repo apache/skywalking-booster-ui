@@ -20,31 +20,31 @@ limitations under the License. -->
   </el-radio-group>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import type { PropType } from "vue";
+  import { ref } from "vue";
+  import type { PropType } from "vue";
 
-interface Option {
-  label: string | number;
-  value: string | number;
-}
+  interface Option {
+    label: string | number;
+    value: string | number;
+  }
 
-/*global  defineProps, defineEmits */
-const emit = defineEmits(["change"]);
-const props = defineProps({
-  options: {
-    type: Array as PropType<Option[]>,
-    default: () => [],
-  },
-  value: {
-    type: String as PropType<string>,
-    default: "",
-  },
-  size: { type: null, default: "default" },
-});
+  /*global  defineProps, defineEmits */
+  const emit = defineEmits(["change"]);
+  const props = defineProps({
+    options: {
+      type: Array as PropType<Option[]>,
+      default: () => [],
+    },
+    value: {
+      type: String as PropType<string>,
+      default: "",
+    },
+    size: { type: null, default: "default" },
+  });
 
-const selected = ref<string>(props.value);
+  const selected = ref<string>(props.value);
 
-function checked(opt: unknown) {
-  emit("change", opt);
-}
+  function checked(opt: unknown) {
+    emit("change", opt);
+  }
 </script>

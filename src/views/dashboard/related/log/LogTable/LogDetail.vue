@@ -14,16 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="log-detail">
-    <div
-      class="mb-10 clear rk-flex"
-      v-for="(item, index) in columns"
-      :key="index"
-    >
+    <div class="mb-10 clear rk-flex" v-for="(item, index) in columns" :key="index">
       <span class="g-sm-4 grey">{{ t(item.value) }}:</span>
-      <span
-        v-if="['timestamp', 'time'].includes(item.label)"
-        class="g-sm-8 mb-10"
-      >
+      <span v-if="['timestamp', 'time'].includes(item.label)" class="g-sm-8 mb-10">
         {{ dateFormat(currentLog[item.label]) }}
       </span>
       <textarea
@@ -40,35 +33,35 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
-import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
-import { Option } from "@/types/app";
-import { dateFormat } from "@/utils/dateFormat";
+  import { computed } from "vue";
+  import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
+  import type { Option } from "@/types/app";
+  import { dateFormat } from "@/utils/dateFormat";
 
-/*global defineProps */
-const props = defineProps({
-  currentLog: { type: Object as PropType<any>, default: () => ({}) },
-  columns: { type: Array as PropType<Option[]>, default: () => [] },
-});
-const { t } = useI18n();
-const logTags = computed(() => {
-  if (!props.currentLog.tags) {
-    return [];
-  }
-  return props.currentLog.tags.map((d: { key: string; value: string }) => {
-    return `${d.key} = ${d.value}`;
+  /*global defineProps */
+  const props = defineProps({
+    currentLog: { type: Object as PropType<any>, default: () => ({}) },
+    columns: { type: Array as PropType<Option[]>, default: () => [] },
   });
-});
+  const { t } = useI18n();
+  const logTags = computed(() => {
+    if (!props.currentLog.tags) {
+      return [];
+    }
+    return props.currentLog.tags.map((d: { key: string; value: string }) => {
+      return `${d.key} = ${d.value}`;
+    });
+  });
 </script>
 <style lang="scss" scoped>
-.content {
-  max-width: 700px;
-  min-width: 500px;
-  min-height: 500px;
-  border: none;
-  outline: none;
-  color: #3d444f;
-  overflow: auto;
-}
+  .content {
+    max-width: 700px;
+    min-width: 500px;
+    min-height: 500px;
+    border: none;
+    outline: none;
+    color: #3d444f;
+    overflow: auto;
+  }
 </style>

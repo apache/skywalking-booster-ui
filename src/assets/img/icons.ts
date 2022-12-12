@@ -24,9 +24,7 @@ function capitalizeFirstLetter(str: string) {
 }
 function validateFileName(str: string): string | undefined {
   if (/^\S+\.png$/.test(str)) {
-    return str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) =>
-      capitalizeFirstLetter($1)
-    );
+    return str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) => capitalizeFirstLetter($1));
   }
 }
 Object.keys(requireComponent).forEach((filePath: string) => {

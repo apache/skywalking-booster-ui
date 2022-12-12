@@ -17,8 +17,8 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
-import { Alarm } from "@/types/alarm";
+import type { AxiosResponse } from "axios";
+import type { Alarm } from "@/types/alarm";
 
 interface AlarmState {
   loading: boolean;
@@ -35,9 +35,7 @@ export const alarmStore = defineStore({
   }),
   actions: {
     async getAlarms(params: any) {
-      const res: AxiosResponse = await graphql
-        .query("queryAlarms")
-        .params(params);
+      const res: AxiosResponse = await graphql.query("queryAlarms").params(params);
       if (res.data.errors) {
         return res.data;
       }

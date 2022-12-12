@@ -17,21 +17,19 @@ limitations under the License. -->
   <PodTopology :config="config" v-else />
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
-import Graph from "./components/Graph.vue";
-import PodTopology from "./components/PodTopology.vue";
-import { EntityType } from "../../data";
-import { useDashboardStore } from "@/store/modules/dashboard";
+  import type { PropType } from "vue";
+  import Graph from "./components/Graph.vue";
+  import PodTopology from "./components/PodTopology.vue";
+  import { EntityType } from "../../data";
+  import { useDashboardStore } from "@/store/modules/dashboard";
 
-/*global defineProps */
-defineProps({
-  config: {
-    type: Object as PropType<any>,
-    default: () => ({ graph: {} }),
-  },
-});
-const dashboardStore = useDashboardStore();
-const isService = [EntityType[0].value, EntityType[1].value].includes(
-  dashboardStore.entity
-);
+  /*global defineProps */
+  defineProps({
+    config: {
+      type: Object as PropType<any>,
+      default: () => ({ graph: {} }),
+    },
+  });
+  const dashboardStore = useDashboardStore();
+  const isService = [EntityType[0].value, EntityType[1].value].includes(dashboardStore.entity);
 </script>

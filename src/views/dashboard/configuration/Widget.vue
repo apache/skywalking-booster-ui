@@ -60,18 +60,10 @@ limitations under the License. -->
         <el-collapse-item :title="t('widgetOptions')" name="3">
           <WidgetOptions />
         </el-collapse-item>
-        <el-collapse-item
-          :title="t('associateOptions')"
-          name="4"
-          v-if="hasAssociate"
-        >
+        <el-collapse-item :title="t('associateOptions')" name="4" v-if="hasAssociate">
           <AssociateOptions />
         </el-collapse-item>
-        <el-collapse-item
-          :title="t('relatedTraceOptions')"
-          name="5"
-          v-if="hasAssociate"
-        >
+        <el-collapse-item :title="t('relatedTraceOptions')" name="5" v-if="hasAssociate">
           <RelatedTraceOptions />
         </el-collapse-item>
       </el-collapse>
@@ -87,164 +79,163 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-import { reactive, defineComponent, ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { Option } from "@/types/app";
-import graphs from "../graphs";
-import CustomOptions from "./widget/index";
+  import { reactive, defineComponent, ref, computed } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import type { Option } from "@/types/app";
+  import graphs from "../graphs";
+  import CustomOptions from "./widget/index";
 
-export default defineComponent({
-  name: "WidgetEdit",
-  components: {
-    ...graphs,
-    ...CustomOptions,
-  },
-  setup() {
-    const configHeight = document.documentElement.clientHeight - 540;
-    const { t } = useI18n();
-    const dashboardStore = useDashboardStore();
-    const appStoreWithOut = useAppStoreWithOut();
-    const loading = ref<boolean>(false);
-    const states = reactive<{
-      activeNames: string;
-      source: unknown;
-      index: string;
-      visType: Option[];
-    }>({
-      activeNames: "1",
-      source: {},
-      index: dashboardStore.selectedGrid.i,
-      visType: [],
-    });
-    const originConfig = dashboardStore.selectedGrid;
-    const widget = computed(() => dashboardStore.selectedGrid.widget || {});
-    const graph = computed(() => dashboardStore.selectedGrid.graph || {});
-    const title = computed(() => encodeURIComponent(widget.value.title || ""));
-    const tips = computed(() => encodeURIComponent(widget.value.tips || ""));
-    const hasAssociate = computed(() =>
-      ["Bar", "Line", "Area", "TopList"].includes(
-        dashboardStore.selectedGrid.graph &&
-          dashboardStore.selectedGrid.graph.type
-      )
-    );
+  export default defineComponent({
+    name: "WidgetEdit",
+    components: {
+      ...graphs,
+      ...CustomOptions,
+    },
+    setup() {
+      const configHeight = document.documentElement.clientHeight - 540;
+      const { t } = useI18n();
+      const dashboardStore = useDashboardStore();
+      const appStoreWithOut = useAppStoreWithOut();
+      const loading = ref<boolean>(false);
+      const states = reactive<{
+        activeNames: string;
+        source: unknown;
+        index: string;
+        visType: Option[];
+      }>({
+        activeNames: "1",
+        source: {},
+        index: dashboardStore.selectedGrid.i,
+        visType: [],
+      });
+      const originConfig = dashboardStore.selectedGrid;
+      const widget = computed(() => dashboardStore.selectedGrid.widget || {});
+      const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+      const title = computed(() => encodeURIComponent(widget.value.title || ""));
+      const tips = computed(() => encodeURIComponent(widget.value.tips || ""));
+      const hasAssociate = computed(() =>
+        ["Bar", "Line", "Area", "TopList"].includes(
+          dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type,
+        ),
+      );
 
-    function getSource(source: unknown) {
-      states.source = source;
-    }
+      function getSource(source: unknown) {
+        states.source = source;
+      }
 
-    function setLoading(load: boolean) {
-      loading.value = load;
-    }
+      function setLoading(load: boolean) {
+        loading.value = load;
+      }
 
-    function applyConfig() {
-      dashboardStore.setConfigPanel(false);
-      dashboardStore.setConfigs(dashboardStore.selectedGrid);
-    }
+      function applyConfig() {
+        dashboardStore.setConfigPanel(false);
+        dashboardStore.setConfigs(dashboardStore.selectedGrid);
+      }
 
-    function cancelConfig() {
-      dashboardStore.selectWidget(originConfig);
-      dashboardStore.setConfigPanel(false);
-    }
+      function cancelConfig() {
+        dashboardStore.selectWidget(originConfig);
+        dashboardStore.setConfigPanel(false);
+      }
 
-    return {
-      states,
-      loading,
-      t,
-      appStoreWithOut,
-      configHeight,
-      dashboardStore,
-      applyConfig,
-      cancelConfig,
-      getSource,
-      setLoading,
-      widget,
-      graph,
-      title,
-      tips,
-      hasAssociate,
-    };
-  },
-});
+      return {
+        states,
+        loading,
+        t,
+        appStoreWithOut,
+        configHeight,
+        dashboardStore,
+        applyConfig,
+        cancelConfig,
+        getSource,
+        setLoading,
+        widget,
+        graph,
+        title,
+        tips,
+        hasAssociate,
+      };
+    },
+  });
 </script>
 <style lang="scss" scoped>
-.widget-config {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
+  .widget-config {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
 
-.graph {
-  position: relative;
-  min-width: 1280px;
-  border: 1px solid #eee;
-  background-color: #fff;
-}
+  .graph {
+    position: relative;
+    min-width: 1280px;
+    border: 1px solid #eee;
+    background-color: #fff;
+  }
 
-.header {
-  height: 25px;
-  line-height: 25px;
-  text-align: center;
-  background-color: aliceblue;
-  font-size: 12px;
-  position: relative;
-}
+  .header {
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    background-color: aliceblue;
+    font-size: 12px;
+    position: relative;
+  }
 
-.tips {
-  position: absolute;
-  right: 5px;
-  top: 0;
-}
+  .tips {
+    position: absolute;
+    right: 5px;
+    top: 0;
+  }
 
-.render-chart {
-  padding: 5px;
-  height: 400px;
-  width: 100%;
-}
+  .render-chart {
+    padding: 5px;
+    height: 400px;
+    width: 100%;
+  }
 
-.selectors {
-  width: 500px;
-  margin-right: 10px;
-}
+  .selectors {
+    width: 500px;
+    margin-right: 10px;
+  }
 
-.el-collapse-item__header {
-  font-weight: bold;
-}
+  .el-collapse-item__header {
+    font-weight: bold;
+  }
 
-.config {
-  min-width: 1280px;
-}
+  .config {
+    min-width: 1280px;
+  }
 
-.no-data {
-  font-size: 14px;
-  text-align: center;
-  line-height: 400px;
-}
+  .no-data {
+    font-size: 14px;
+    text-align: center;
+    line-height: 400px;
+  }
 
-.footer {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  border-top: 1px solid #eee;
-  padding: 10px;
-  text-align: right;
-  width: 100%;
-  background-color: #fff;
-}
+  .footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    border-top: 1px solid #eee;
+    padding: 10px;
+    text-align: right;
+    width: 100%;
+    background-color: #fff;
+  }
 
-.collapse {
-  margin-top: 10px;
-  overflow: auto;
-}
+  .collapse {
+    margin-top: 10px;
+    overflow: auto;
+  }
 
-.ds-name {
-  margin-bottom: 10px;
-}
+  .ds-name {
+    margin-bottom: 10px;
+  }
 
-.unit {
-  display: inline-block;
-  margin-left: 5px;
-}
+  .unit {
+    display: inline-block;
+    margin-left: 5px;
+  }
 </style>

@@ -17,9 +17,9 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
-import { Event, QueryEventCondition } from "@/types/events";
-import { Instance, Endpoint } from "@/types/selector";
+import type { AxiosResponse } from "axios";
+import type { Event, QueryEventCondition } from "@/types/events";
+import type { Instance, Endpoint } from "@/types/selector";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 
@@ -94,22 +94,20 @@ export const eventStore = defineStore({
         return res.data;
       }
       if (res.data.data.fetchEvents) {
-        this.events = (res.data.data.fetchEvents.events || []).map(
-          (item: Event) => {
-            let scope = "Service";
-            if (item.source.serviceInstance) {
-              scope = "ServiceInstance";
-            }
-            if (item.source.endpoint) {
-              scope = "Endpoint";
-            }
-            item.scope = scope;
-            if (!item.endTime || item.endTime === item.startTime) {
-              item.endTime = Number(item.startTime) + 60000;
-            }
-            return item;
+        this.events = (res.data.data.fetchEvents.events || []).map((item: Event) => {
+          let scope = "Service";
+          if (item.source.serviceInstance) {
+            scope = "ServiceInstance";
           }
-        );
+          if (item.source.endpoint) {
+            scope = "Endpoint";
+          }
+          item.scope = scope;
+          if (!item.endTime || item.endTime === item.startTime) {
+            item.endTime = Number(item.startTime) + 60000;
+          }
+          return item;
+        });
       }
       return res.data;
     },

@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
+import type {
   BarSeriesOption,
   LineSeriesOption,
   HeatmapSeriesOption,
   SankeySeriesOption,
 } from "echarts/charts";
-import {
+import type {
   TitleComponentOption,
   TooltipComponentOption,
   GridComponentOption,
@@ -50,7 +50,7 @@ export type ECOption = echarts.ComposeOption<
 
 export function useECharts(
   elRef: Ref<HTMLDivElement>,
-  theme: "light" | "dark" | "default" = "default"
+  theme: "light" | "dark" | "default" = "default",
 ): any {
   const getDarkMode = computed(() => {
     return theme === "default" ? "light" : theme;
@@ -131,7 +131,7 @@ export function useECharts(
         initCharts(theme as "default");
         setOptions(cacheOptions.value);
       }
-    }
+    },
   );
 
   tryOnUnmounted(() => {

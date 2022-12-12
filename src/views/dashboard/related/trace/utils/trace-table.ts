@@ -15,13 +15,7 @@
  * limitations under the License.
  */
 
-import {
-  Ref,
-  Span,
-  StatisticsSpan,
-  StatisticsGroupRef,
-  TraceTreeRef,
-} from "@/types/trace";
+import type { Ref, Span, StatisticsSpan, StatisticsGroupRef, TraceTreeRef } from "@/types/trace";
 import lodash from "lodash";
 
 export default class TraceUtil {
@@ -40,7 +34,7 @@ export default class TraceUtil {
               traceTreeRef.segmentMap.get(ref.parentSegmentId) as Span,
               ref.parentSpanId,
               ref.parentSegmentId,
-              traceTreeRef.segmentMap.get(segmentId) as Span
+              traceTreeRef.segmentMap.get(segmentId) as Span,
             );
           }
         });
@@ -95,10 +89,7 @@ export default class TraceUtil {
         segmentHeaders.push(span);
       } else {
         const index = data.findIndex((patchSpan: Span) => {
-          return (
-            patchSpan.segmentId === span.segmentId &&
-            patchSpan.spanId === span.spanId - 1
-          );
+          return patchSpan.segmentId === span.segmentId && patchSpan.spanId === span.spanId - 1;
         });
         const fixSpanKeyContent = {
           traceId: span.traceId,
@@ -131,8 +122,7 @@ export default class TraceUtil {
         span.refs.forEach((ref) => {
           const index = data.findIndex((patchSpan: Span) => {
             return (
-              ref.parentSegmentId === patchSpan.segmentId &&
-              ref.parentSpanId === patchSpan.spanId
+              ref.parentSegmentId === patchSpan.segmentId && ref.parentSpanId === patchSpan.spanId
             );
           });
           if (index === -1) {
@@ -208,22 +198,19 @@ export default class TraceUtil {
 
     segmentIdGroup.forEach((segmentId: string) => {
       const currentSegmentSet = segmentGroup[segmentId].sort(
-        (a: Span, b: Span) => b.parentSpanId - a.parentSpanId
+        (a: Span, b: Span) => b.parentSpanId - a.parentSpanId,
       );
       currentSegmentSet.forEach((curSegment: Span) => {
         const index = currentSegmentSet.findIndex(
-          (curSegment2: Span) => curSegment2.spanId === curSegment.parentSpanId
+          (curSegment2: Span) => curSegment2.spanId === curSegment.parentSpanId,
         );
         if (index !== -1) {
           if (
-            (currentSegmentSet[index].isBroken &&
-              currentSegmentSet[index].parentSpanId === -1) ||
+            (currentSegmentSet[index].isBroken && currentSegmentSet[index].parentSpanId === -1) ||
             !currentSegmentSet[index].isBroken
           ) {
             currentSegmentSet[index].children.push(curSegment);
-            currentSegmentSet[index].children.sort(
-              (a: Span, b: Span) => a.spanId - b.spanId
-            );
+            currentSegmentSet[index].children.sort((a: Span, b: Span) => a.spanId - b.spanId);
           }
         }
         if (curSegment.isBroken) {
@@ -240,10 +227,7 @@ export default class TraceUtil {
           }
         }
       });
-      segmentMap.set(
-        segmentId,
-        currentSegmentSet[currentSegmentSet.length - 1]
-      );
+      segmentMap.set(segmentId, currentSegmentSet[currentSegmentSet.length - 1]);
     });
 
     return {
@@ -263,12 +247,7 @@ export default class TraceUtil {
     }
   }
 
-  private static traverseTree(
-    node: Span,
-    spanId: number,
-    segmentId: string,
-    childNode: Span
-  ) {
+  private static traverseTree(node: Span, spanId: number, segmentId: string, childNode: Span) {
     if (!node || node.isBroken) {
       return;
     }
@@ -285,7 +264,7 @@ export default class TraceUtil {
 
   private static getSpanGroupData(
     groupspans: Span[],
-    groupRef: StatisticsGroupRef
+    groupRef: StatisticsGroupRef,
   ): StatisticsSpan {
     let maxTime = 0;
     let minTime = 0;
@@ -312,10 +291,7 @@ export default class TraceUtil {
     };
   }
 
-  private static calculationChildren(
-    nodes: Span[],
-    result: Map<string, Span[]>
-  ): void {
+  private static calculationChildren(nodes: Span[], result: Map<string, Span[]>): void {
     nodes.forEach((node: Span) => {
       const groupRef = node.endpointName + ":" + node.type;
       if (node.children && node.children.length > 0) {

@@ -16,11 +16,7 @@ limitations under the License. -->
 <template>
   <div class="profile-task">
     <el-collapse v-model="activeNames">
-      <el-collapse-item
-        v-for="(item, index) in conditionsList"
-        :key="index"
-        :name="index"
-      >
+      <el-collapse-item v-for="(item, index) in conditionsList" :key="index" :name="index">
         <template #title>
           <div>
             <span class="title">{{ `Rule - ${index + 1}` }}</span>
@@ -40,12 +36,7 @@ limitations under the License. -->
             />
           </div>
         </template>
-        <NewCondition
-          :name="index"
-          :condition="item"
-          :key="index"
-          @change="changeConfig"
-        />
+        <NewCondition :name="index" :condition="item" :key="index" @change="changeConfig" />
       </el-collapse-item>
     </el-collapse>
     <div>
@@ -56,84 +47,77 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { InitTaskField } from "./data";
-import NewCondition from "./NewConditions.vue";
-import { NetworkProfilingRequest } from "@/types/ebpf";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { InitTaskField } from "./data";
+  import NewCondition from "./NewConditions.vue";
+  import type { NetworkProfilingRequest } from "@/types/ebpf";
 
-/* global defineEmits */
-const emits = defineEmits(["create"]);
-const { t } = useI18n();
-const activeNames = ref([0]);
-const conditionsList = ref<NetworkProfilingRequest[]>([
-  {
-    uriRegex: "",
-    when4xx: InitTaskField.Whenxx[1].value,
-    when5xx: InitTaskField.Whenxx[0].value,
-    minDuration: NaN,
-  },
-]);
+  /* global defineEmits */
+  const emits = defineEmits(["create"]);
+  const { t } = useI18n();
+  const activeNames = ref([0]);
+  const conditionsList = ref<NetworkProfilingRequest[]>([
+    {
+      uriRegex: "",
+      when4xx: InitTaskField.Whenxx[1].value,
+      when5xx: InitTaskField.Whenxx[0].value,
+      minDuration: NaN,
+    },
+  ]);
 
-function changeConfig(
-  params: { [key: string]: number | string },
-  index: number
-) {
-  const key: string = Object.keys(params)[0];
-  (conditionsList.value[index] as any)[key] = params[key];
-}
-
-function createTask() {
-  const list = conditionsList.value.map((d: NetworkProfilingRequest) => {
-    return {
-      uriRegex: d.uriRegex || undefined,
-      when4xx: d.when4xx === InitTaskField.Whenxx[0].value ? true : false,
-      when5xx: d.when5xx === InitTaskField.Whenxx[0].value ? true : false,
-      minDuration: isNaN(Number(d.minDuration))
-        ? undefined
-        : Number(d.minDuration),
-      settings: {
-        requireCompleteRequest: true,
-        requireCompleteResponse: true,
-      },
-    };
-  });
-  emits("create", list);
-}
-
-function createConditions(e: any) {
-  e.stopPropagation();
-  conditionsList.value.push({
-    uriRegex: "",
-    when4xx: InitTaskField.Whenxx[0].value,
-    when5xx: InitTaskField.Whenxx[1].value,
-    minDuration: NaN,
-  });
-  activeNames.value = [conditionsList.value.length - 1];
-}
-
-function removeConditions(e: any, key: number) {
-  e.stopPropagation();
-  if (conditionsList.value.length === 1) {
-    return;
+  function changeConfig(params: { [key: string]: number | string }, index: number) {
+    const key: string = Object.keys(params)[0];
+    (conditionsList.value[index] as any)[key] = params[key];
   }
-  conditionsList.value = conditionsList.value.filter(
-    (_, index: number) => index !== key
-  );
-}
+
+  function createTask() {
+    const list = conditionsList.value.map((d: NetworkProfilingRequest) => {
+      return {
+        uriRegex: d.uriRegex || undefined,
+        when4xx: d.when4xx === InitTaskField.Whenxx[0].value ? true : false,
+        when5xx: d.when5xx === InitTaskField.Whenxx[0].value ? true : false,
+        minDuration: isNaN(Number(d.minDuration)) ? undefined : Number(d.minDuration),
+        settings: {
+          requireCompleteRequest: true,
+          requireCompleteResponse: true,
+        },
+      };
+    });
+    emits("create", list);
+  }
+
+  function createConditions(e: any) {
+    e.stopPropagation();
+    conditionsList.value.push({
+      uriRegex: "",
+      when4xx: InitTaskField.Whenxx[0].value,
+      when5xx: InitTaskField.Whenxx[1].value,
+      minDuration: NaN,
+    });
+    activeNames.value = [conditionsList.value.length - 1];
+  }
+
+  function removeConditions(e: any, key: number) {
+    e.stopPropagation();
+    if (conditionsList.value.length === 1) {
+      return;
+    }
+    conditionsList.value = conditionsList.value.filter((_, index: number) => index !== key);
+  }
 </script>
 <style lang="scss" scoped>
-.profile-task {
-  width: 100%;
-}
+  .profile-task {
+    width: 100%;
+  }
 
-.create-task-btn {
-  width: 300px;
-  margin-top: 50px;
-}
+  .create-task-btn {
+    width: 300px;
+    margin-top: 50px;
+  }
 
-.title {
-  display: inline-block;
-  margin-right: 5px;
-}
+  .title {
+    display: inline-block;
+    margin-right: 5px;
+  }
 </style>

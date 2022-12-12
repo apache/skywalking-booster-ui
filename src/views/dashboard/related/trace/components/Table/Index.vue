@@ -28,84 +28,80 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, onMounted } from "vue";
-import type { PropType } from "vue";
-import TableContainer from "./TableContainer.vue";
-import traceTable from "../../utils/trace-table";
-import { Span } from "@/types/trace";
+  import { ref, watch, onMounted } from "vue";
+  import type { PropType } from "vue";
+  import TableContainer from "./TableContainer.vue";
+  import traceTable from "../../utils/trace-table";
+  import type { Span } from "@/types/trace";
 
-/* global defineProps, defineEmits */
-const props = defineProps({
-  data: { type: Array as PropType<any>, default: () => [] },
-  traceId: { type: String, default: "" },
-  showBtnDetail: { type: Boolean, default: false },
-  headerType: { type: String, default: "" },
-});
-const emit = defineEmits(["select", "view", "load"]);
-const loading = ref<boolean>(true);
-const tableData = ref<any>([]);
-const showDetail = ref<boolean>(false);
-const currentSpan = ref<Span | any>({});
-
-onMounted(() => {
-  tableData.value = formatData(
-    traceTable.changeTree(props.data, props.traceId)
-  );
-  loading.value = false;
-  emit("load", () => {
-    loading.value = true;
+  /* global defineProps, defineEmits */
+  const props = defineProps({
+    data: { type: Array as PropType<any>, default: () => [] },
+    traceId: { type: String, default: "" },
+    showBtnDetail: { type: Boolean, default: false },
+    headerType: { type: String, default: "" },
   });
-});
+  const emit = defineEmits(["select", "view", "load"]);
+  const loading = ref<boolean>(true);
+  const tableData = ref<any>([]);
+  const showDetail = ref<boolean>(false);
+  const currentSpan = ref<Span | any>({});
 
-function formatData(arr: any[], level = 1, totalExec?: number) {
-  for (const item of arr) {
-    item.level = level;
-    totalExec = totalExec || item.endTime - item.startTime;
-    item.totalExec = totalExec;
-    if (item.children && item.children.length > 0) {
-      formatData(item.children, level + 1, totalExec);
-    }
-  }
-  return arr;
-}
-
-function handleSelectSpan(data: Span) {
-  currentSpan.value = data;
-  if (!props.showBtnDetail) {
-    showDetail.value = true;
-  }
-  emit("select", data);
-}
-
-watch(
-  () => props.data,
-  () => {
-    if (!props.data.length) {
-      tableData.value = [];
-      return;
-    }
-    tableData.value = formatData(
-      traceTable.changeTree(props.data, props.traceId)
-    );
+  onMounted(() => {
+    tableData.value = formatData(traceTable.changeTree(props.data, props.traceId));
     loading.value = false;
+    emit("load", () => {
+      loading.value = true;
+    });
+  });
+
+  function formatData(arr: any[], level = 1, totalExec?: number) {
+    for (const item of arr) {
+      item.level = level;
+      totalExec = totalExec || item.endTime - item.startTime;
+      item.totalExec = totalExec;
+      if (item.children && item.children.length > 0) {
+        formatData(item.children, level + 1, totalExec);
+      }
+    }
+    return arr;
   }
-);
+
+  function handleSelectSpan(data: Span) {
+    currentSpan.value = data;
+    if (!props.showBtnDetail) {
+      showDetail.value = true;
+    }
+    emit("select", data);
+  }
+
+  watch(
+    () => props.data,
+    () => {
+      if (!props.data.length) {
+        tableData.value = [];
+        return;
+      }
+      tableData.value = formatData(traceTable.changeTree(props.data, props.traceId));
+      loading.value = false;
+    },
+  );
 </script>
 <style lang="scss" scoped>
-.dialog-c-text {
-  white-space: pre;
-  overflow: auto;
-  font-family: monospace;
-}
+  .dialog-c-text {
+    white-space: pre;
+    overflow: auto;
+    font-family: monospace;
+  }
 
-.trace-tips {
-  width: 100%;
-  text-align: center;
-  margin-top: 10px;
-}
+  .trace-tips {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+  }
 
-.trace-table {
-  height: 100%;
-  width: 100%;
-}
+  .trace-table {
+    height: 100%;
+    width: 100%;
+  }
 </style>

@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Instance, Endpoint, Service } from "@/types/selector";
-import { Trace, Span } from "@/types/trace";
+import type { Instance, Endpoint, Service } from "@/types/selector";
+import type { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { QueryOrders } from "@/views/dashboard/data";
@@ -169,9 +169,7 @@ export const traceStore = defineStore({
       return res.data;
     },
     async getTraceSpans(params: { traceId: string }) {
-      const res: AxiosResponse = await graphql
-        .query("queryTrace")
-        .params(params);
+      const res: AxiosResponse = await graphql.query("queryTrace").params(params);
       if (res.data.errors) {
         return res.data;
       }
@@ -180,9 +178,7 @@ export const traceStore = defineStore({
       return res.data;
     },
     async getSpanLogs(params: any) {
-      const res: AxiosResponse = await graphql
-        .query("queryServiceLogs")
-        .params(params);
+      const res: AxiosResponse = await graphql.query("queryServiceLogs").params(params);
       if (res.data.errors) {
         this.traceSpanLogs = [];
         return res.data;

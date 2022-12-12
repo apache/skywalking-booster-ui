@@ -56,186 +56,179 @@ limitations under the License. -->
       :pager-count="5"
       small
     />
-    <el-button
-      class="search-btn"
-      size="small"
-      type="primary"
-      @click="queryEvents"
-    >
+    <el-button class="search-btn" size="small" type="primary" @click="queryEvents">
       {{ t("search") }}
     </el-button>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, reactive, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { useEventStore } from "@/store/modules/event";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { useSelectorStore } from "@/store/modules/selectors";
-import { ElMessage } from "element-plus";
-import { EntityType } from "../../data";
-import { EventTypes } from "./data";
+  import { ref, computed, reactive, watch } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useEventStore } from "@/store/modules/event";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useSelectorStore } from "@/store/modules/selectors";
+  import { ElMessage } from "element-plus";
+  import { EntityType } from "../../data";
+  import { EventTypes } from "./data";
 
-/*global defineProps */
-const props = defineProps({
-  needQuery: { type: Boolean, default: true },
-});
-const { t } = useI18n();
-const appStore = useAppStoreWithOut();
-const selectorStore = useSelectorStore();
-const dashboardStore = useDashboardStore();
-const eventStore = useEventStore();
-const pageSize = 20;
-const pageNum = ref<number>(1);
-const state = reactive<any>({
-  instance: { value: "", label: "All", id: "" },
-  endpoint: { value: "", label: "All", id: "" },
-  eventType: { value: "", label: "All" },
-});
-const total = computed(() =>
-  eventStore.events.length === pageSize
-    ? pageSize * pageNum.value + 1
-    : pageSize * pageNum.value
-);
-if (props.needQuery) {
-  init();
-}
-async function init() {
-  fetchSelectors();
-  await queryEvents();
-  state.instance = { value: "", label: "All" };
-  state.endpoint = { value: "", label: "All" };
-}
-
-function fetchSelectors() {
-  if (dashboardStore.entity === EntityType[2].value) {
-    getInstances();
-    return;
-  }
-  if (dashboardStore.entity === EntityType[3].value) {
-    getEndpoints();
-    return;
-  }
-  if (dashboardStore.entity === EntityType[0].value) {
-    getInstances();
-    getEndpoints();
-  }
-}
-
-async function getEndpoints(id?: string) {
-  const resp = await eventStore.getEndpoints(id);
-  if (!resp) {
-    return;
-  }
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return;
-  }
-  state.endpoint = eventStore.endpoints[0];
-}
-async function getInstances(id?: string) {
-  const resp = await eventStore.getInstances(id);
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return;
-  }
-  state.instance = eventStore.instances[0];
-}
-async function queryEvents() {
-  let endpoint = state.endpoint.value,
-    instance = state.instance.value;
-  if (dashboardStore.entity === EntityType[2].value) {
-    endpoint = selectorStore.currentPod && selectorStore.currentPod.id;
-  }
-  if (dashboardStore.entity === EntityType[3].value) {
-    instance = selectorStore.currentPod && selectorStore.currentPod.id;
-  }
-  if (!selectorStore.currentService) {
-    return;
-  }
-  eventStore.setEventCondition({
-    // layer: dashboardStore.layerId,
-    paging: {
-      pageNum: pageNum.value,
-      pageSize: pageSize,
-    },
-    source: {
-      service: selectorStore.currentService.value || "",
-      endpoint: endpoint || "",
-      serviceInstance: instance || "",
-    },
-    type: state.eventType.value || undefined,
+  /*global defineProps */
+  const props = defineProps({
+    needQuery: { type: Boolean, default: true },
   });
-  const res = await eventStore.getEvents();
-  if (res && res.errors) {
-    ElMessage.error(res.errors);
-  }
-}
-function changeField(type: string, opt: any[]) {
-  state[type] = opt[0];
-}
-async function searchEndpoints(keyword: string) {
-  const resp = await eventStore.getEndpoints(keyword);
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-  }
-}
-
-function updatePage(p: number) {
-  pageNum.value = p;
-  queryEvents();
-}
-
-watch(
-  () => [selectorStore.currentService],
-  () => {
-    if (dashboardStore.entity === EntityType[0].value) {
-      init();
-    }
-  }
-);
-
-watch(
-  () => [selectorStore.currentPod],
-  () => {
-    if (dashboardStore.entity === EntityType[0].value) {
-      return;
-    }
+  const { t } = useI18n();
+  const appStore = useAppStoreWithOut();
+  const selectorStore = useSelectorStore();
+  const dashboardStore = useDashboardStore();
+  const eventStore = useEventStore();
+  const pageSize = 20;
+  const pageNum = ref<number>(1);
+  const state = reactive<any>({
+    instance: { value: "", label: "All", id: "" },
+    endpoint: { value: "", label: "All", id: "" },
+    eventType: { value: "", label: "All" },
+  });
+  const total = computed(() =>
+    eventStore.events.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
+  );
+  if (props.needQuery) {
     init();
   }
-);
-watch(
-  () => appStore.durationTime,
-  () => {
-    if (dashboardStore.entity === EntityType[1].value) {
-      init();
+  async function init() {
+    fetchSelectors();
+    await queryEvents();
+    state.instance = { value: "", label: "All" };
+    state.endpoint = { value: "", label: "All" };
+  }
+
+  function fetchSelectors() {
+    if (dashboardStore.entity === EntityType[2].value) {
+      getInstances();
+      return;
+    }
+    if (dashboardStore.entity === EntityType[3].value) {
+      getEndpoints();
+      return;
+    }
+    if (dashboardStore.entity === EntityType[0].value) {
+      getInstances();
+      getEndpoints();
     }
   }
-);
+
+  async function getEndpoints(id?: string) {
+    const resp = await eventStore.getEndpoints(id);
+    if (!resp) {
+      return;
+    }
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+      return;
+    }
+    state.endpoint = eventStore.endpoints[0];
+  }
+  async function getInstances(id?: string) {
+    const resp = await eventStore.getInstances(id);
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+      return;
+    }
+    state.instance = eventStore.instances[0];
+  }
+  async function queryEvents() {
+    let endpoint = state.endpoint.value,
+      instance = state.instance.value;
+    if (dashboardStore.entity === EntityType[2].value) {
+      endpoint = selectorStore.currentPod && selectorStore.currentPod.id;
+    }
+    if (dashboardStore.entity === EntityType[3].value) {
+      instance = selectorStore.currentPod && selectorStore.currentPod.id;
+    }
+    if (!selectorStore.currentService) {
+      return;
+    }
+    eventStore.setEventCondition({
+      // layer: dashboardStore.layerId,
+      paging: {
+        pageNum: pageNum.value,
+        pageSize: pageSize,
+      },
+      source: {
+        service: selectorStore.currentService.value || "",
+        endpoint: endpoint || "",
+        serviceInstance: instance || "",
+      },
+      type: state.eventType.value || undefined,
+    });
+    const res = await eventStore.getEvents();
+    if (res && res.errors) {
+      ElMessage.error(res.errors);
+    }
+  }
+  function changeField(type: string, opt: any[]) {
+    state[type] = opt[0];
+  }
+  async function searchEndpoints(keyword: string) {
+    const resp = await eventStore.getEndpoints(keyword);
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+    }
+  }
+
+  function updatePage(p: number) {
+    pageNum.value = p;
+    queryEvents();
+  }
+
+  watch(
+    () => [selectorStore.currentService],
+    () => {
+      if (dashboardStore.entity === EntityType[0].value) {
+        init();
+      }
+    },
+  );
+
+  watch(
+    () => [selectorStore.currentPod],
+    () => {
+      if (dashboardStore.entity === EntityType[0].value) {
+        return;
+      }
+      init();
+    },
+  );
+  watch(
+    () => appStore.durationTime,
+    () => {
+      if (dashboardStore.entity === EntityType[1].value) {
+        init();
+      }
+    },
+  );
 </script>
 <style lang="scss" scoped>
-.inputs {
-  width: 120px;
-}
+  .inputs {
+    width: 120px;
+  }
 
-.inputs-max {
-  width: 270px;
-}
+  .inputs-max {
+    width: 270px;
+  }
 
-.search-btn {
-  cursor: pointer;
-  width: 120px;
-}
+  .search-btn {
+    cursor: pointer;
+    width: 120px;
+  }
 
-.selected {
-  display: inline-block;
-  padding: 0 3px;
-  border-radius: 3px;
-  overflow: hidden;
-  color: #3d444f;
-  border: 1px dashed #aaa;
-  font-size: 12px;
-  margin: 0 2px;
-}
+  .selected {
+    display: inline-block;
+    padding: 0 3px;
+    border-radius: 3px;
+    overflow: hidden;
+    color: #3d444f;
+    border: 1px dashed #aaa;
+    font-size: 12px;
+    margin: 0 2px;
+  }
 </style>

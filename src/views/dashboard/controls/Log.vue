@@ -14,12 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="log-wrapper flex-v">
-    <el-popover
-      placement="bottom"
-      trigger="click"
-      :width="100"
-      v-if="dashboardStore.editMode"
-    >
+    <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
       <template #reference>
         <span class="delete cp">
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
@@ -38,68 +33,68 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { provide } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import Header from "../related/log/Header.vue";
-import List from "../related/log/List.vue";
-import { LayoutConfig } from "@/types/dashboard";
-import type { PropType } from "vue";
+  import { provide } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import Header from "../related/log/Header.vue";
+  import List from "../related/log/List.vue";
+  import type { LayoutConfig } from "@/types/dashboard";
+  import type { PropType } from "vue";
 
-/*global defineProps */
-const props = defineProps({
-  data: {
-    type: Object as PropType<LayoutConfig>,
-    default: () => ({ graph: {} }),
-  },
-  activeIndex: { type: String, default: "" },
-  needQuery: { type: Boolean, default: true },
-});
-provide("options", props.data);
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
+  /*global defineProps */
+  const props = defineProps({
+    data: {
+      type: Object as PropType<LayoutConfig>,
+      default: () => ({ graph: {} }),
+    },
+    activeIndex: { type: String, default: "" },
+    needQuery: { type: Boolean, default: true },
+  });
+  provide("options", props.data);
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
 
-function removeWidget() {
-  dashboardStore.removeControls(props.data);
-}
+  function removeWidget() {
+    dashboardStore.removeControls(props.data);
+  }
 </script>
 <style lang="scss" scoped>
-.log-wrapper {
-  width: 100%;
-  height: 100%;
-  font-size: 12px;
-  position: relative;
-  overflow: auto;
-}
-
-.delete {
-  position: absolute;
-  top: 5px;
-  right: 3px;
-  z-index: 1000;
-}
-
-.header {
-  padding: 10px;
-  font-size: 12px;
-  border-bottom: 1px solid #dcdfe6;
-  min-width: 1024px;
-}
-
-.tools {
-  padding: 5px 0;
-  color: #999;
-  cursor: pointer;
-  position: relative;
-  text-align: center;
-
-  &:hover {
-    color: #409eff;
-    background-color: #eee;
+  .log-wrapper {
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    position: relative;
+    overflow: auto;
   }
-}
 
-.log {
-  width: 100%;
-}
+  .delete {
+    position: absolute;
+    top: 5px;
+    right: 3px;
+    z-index: 1000;
+  }
+
+  .header {
+    padding: 10px;
+    font-size: 12px;
+    border-bottom: 1px solid #dcdfe6;
+    min-width: 1024px;
+  }
+
+  .tools {
+    padding: 5px 0;
+    color: #999;
+    cursor: pointer;
+    position: relative;
+    text-align: center;
+
+    &:hover {
+      color: #409eff;
+      background-color: #eee;
+    }
+  }
+
+  .log {
+    width: 100%;
+  }
 </style>

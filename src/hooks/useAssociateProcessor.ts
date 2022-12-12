@@ -17,7 +17,7 @@
 import { useAppStoreWithOut } from "@/store/modules/app";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
-import { EventParams } from "@/types/app";
+import type { EventParams } from "@/types/app";
 
 export default function associateProcessor(props: any) {
   function eventAssociate() {
@@ -30,9 +30,7 @@ export default function associateProcessor(props: any) {
     if (!props.option.series[0]) {
       return;
     }
-    const list = props.option.series[0].data.map(
-      (d: (number | string)[]) => d[0]
-    );
+    const list = props.option.series[0].data.map((d: (number | string)[]) => d[0]);
     if (!list.includes(props.filters.duration.endTime)) {
       return;
     }
@@ -77,16 +75,8 @@ export default function associateProcessor(props: any) {
     if (start) {
       const end = start;
       duration = {
-        start: dateFormatStep(
-          getLocalTime(appStore.utc, new Date(start)),
-          step,
-          true
-        ),
-        end: dateFormatStep(
-          getLocalTime(appStore.utc, new Date(end)),
-          step,
-          true
-        ),
+        start: dateFormatStep(getLocalTime(appStore.utc, new Date(start)), step, true),
+        end: dateFormatStep(getLocalTime(appStore.utc, new Date(end)), step, true),
         step,
       };
     }
@@ -101,36 +91,27 @@ export default function associateProcessor(props: any) {
       status,
     };
     if (latency) {
-      const latencyList = series.map(
-        (d: { name: string; data: number[][] }, index: number) => {
-          const data = [
-            d.data[currentParams.dataIndex][1],
-            series[index + 1]
-              ? series[index + 1].data[currentParams.dataIndex][1]
-              : Infinity,
-          ];
-          return {
-            label:
-              d.name +
-              "--" +
-              (series[index + 1] ? series[index + 1].name : "Infinity"),
-            value: String(index),
-            data,
-          };
-        }
-      );
+      const latencyList = series.map((d: { name: string; data: number[][] }, index: number) => {
+        const data = [
+          d.data[currentParams.dataIndex][1],
+          series[index + 1] ? series[index + 1].data[currentParams.dataIndex][1] : Infinity,
+        ];
+        return {
+          label: d.name + "--" + (series[index + 1] ? series[index + 1].name : "Infinity"),
+          value: String(index),
+          data,
+        };
+      });
       item.latency = latencyList;
     }
-    const value = series.map(
-      (d: { name: string; data: number[][] }, index: number) => {
-        return {
-          label: d.name,
-          value: String(index),
-          data: d.data[currentParams.dataIndex][1],
-          date: d.data[currentParams.dataIndex][0],
-        };
-      }
-    );
+    const value = series.map((d: { name: string; data: number[][] }, index: number) => {
+      return {
+        label: d.name,
+        value: String(index),
+        data: d.data[currentParams.dataIndex][1],
+        date: d.data[currentParams.dataIndex][0],
+      };
+    });
     item.metricValue = value;
     return item;
   }

@@ -368,8 +368,7 @@ const msg = {
   addKeywordsOfContent: "请输入一个内容关键词",
   addExcludingKeywordsOfContent: "请输入一个内容不包含的关键词",
   noticeTag: "请输入一个标签(key=value)之后回车",
-  conditionNotice:
-    "请输入一个内容关键词或者内容不包含的关键词(key=value)之后回车",
+  conditionNotice: "请输入一个内容关键词或者内容不包含的关键词(key=value)之后回车",
   language: "语言",
   gateway: "网关",
   virtualMQ: "虚拟消息队列",

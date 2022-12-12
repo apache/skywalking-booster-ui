@@ -87,174 +87,163 @@ limitations under the License. -->
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { ElMessage } from "element-plus";
-import type { PropType } from "vue";
-import { useSelectorStore } from "@/store/modules/selectors";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { InstanceListConfig } from "@/types/dashboard";
-import { Instance } from "@/types/selector";
-import {
-  useQueryPodsMetrics,
-  usePodsSource,
-} from "@/hooks/useMetricsProcessor";
-import { EntityType } from "../data";
-import router from "@/router";
-import getDashboard from "@/hooks/useDashboardsSession";
-import { MetricConfigOpt } from "@/types/dashboard";
-import ColumnGraph from "./components/ColumnGraph.vue";
+  import { ref, watch } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
+  import type { PropType } from "vue";
+  import { useSelectorStore } from "@/store/modules/selectors";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import type { InstanceListConfig } from "@/types/dashboard";
+  import type { Instance } from "@/types/selector";
+  import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
+  import { EntityType } from "../data";
+  import router from "@/router";
+  import getDashboard from "@/hooks/useDashboardsSession";
+  import type { MetricConfigOpt } from "@/types/dashboard";
+  import ColumnGraph from "./components/ColumnGraph.vue";
 
-/*global defineProps */
-const props = defineProps({
-  config: {
-    type: Object as PropType<
-      InstanceListConfig & {
-        i: string;
-        metrics: string[];
-        metricTypes: string[];
-        isEdit: boolean;
-      } & { metricConfig: MetricConfigOpt[] }
-    >,
-    default: () => ({
-      dashboardName: "",
-      fontSize: 12,
-      i: "",
-      metrics: [],
-      metricTypes: [],
-    }),
-  },
-  intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-  needQuery: { type: Boolean, default: false },
-});
-const { t } = useI18n();
-const selectorStore = useSelectorStore();
-const dashboardStore = useDashboardStore();
-const chartLoading = ref<boolean>(false);
-const instances = ref<Instance[]>([]); // current instances
-const pageSize = 10;
-const searchText = ref<string>("");
-const colMetrics = ref<string[]>([]);
-const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
-const metricTypes = ref<string[]>(props.config.metricTypes || []);
-if (props.needQuery) {
-  queryInstance();
-}
-
-async function queryInstance() {
-  chartLoading.value = true;
-  const resp = await selectorStore.getServiceInstances();
-
-  chartLoading.value = false;
-  if (resp && resp.errors) {
-    ElMessage.error(resp.errors);
-    instances.value = [];
-    return;
-  }
-  instances.value = selectorStore.pods.filter(
-    (d: unknown, index: number) => index < pageSize
-  );
-  queryInstanceMetrics(instances.value);
-}
-
-async function queryInstanceMetrics(currentInstances: Instance[]) {
-  if (!currentInstances.length) {
-    return;
-  }
-  const metrics = props.config.metrics || [];
-  const types = props.config.metricTypes || [];
-
-  if (metrics.length && metrics[0] && types.length && types[0]) {
-    const params = await useQueryPodsMetrics(
-      currentInstances,
-      props.config,
-      EntityType[3].value
-    );
-    const json = await dashboardStore.fetchMetricValue(params);
-
-    if (json.errors) {
-      ElMessage.error(json.errors);
-      return;
-    }
-    const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(
-      currentInstances,
-      json,
-      {
-        ...props.config,
-        metricConfig: metricConfig.value,
-      }
-    );
-    instances.value = data;
-    colMetrics.value = names;
-    metricTypes.value = metricTypesArr;
-    metricConfig.value = metricConfigArr;
-    return;
-  }
-  instances.value = currentInstances;
-}
-
-function clickInstance(scope: any) {
-  const { dashboard } = getDashboard({
-    name: props.config.dashboardName,
-    layer: dashboardStore.layerId,
-    entity: EntityType[3].value,
+  /*global defineProps */
+  const props = defineProps({
+    config: {
+      type: Object as PropType<
+        InstanceListConfig & {
+          i: string;
+          metrics: string[];
+          metricTypes: string[];
+          isEdit: boolean;
+        } & { metricConfig: MetricConfigOpt[] }
+      >,
+      default: () => ({
+        dashboardName: "",
+        fontSize: 12,
+        i: "",
+        metrics: [],
+        metricTypes: [],
+      }),
+    },
+    intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+    needQuery: { type: Boolean, default: false },
   });
-  if (!dashboard) {
-    ElMessage.error("No this dashboard");
-    return;
-  }
-  router.push(
-    `/dashboard/${dashboard.layer}/${dashboard.entity}/${
-      selectorStore.currentService.id
-    }/${scope.row.id}/${dashboard.name.split(" ").join("-")}`
-  );
-}
-
-function changePage(pageIndex: number) {
-  instances.value = selectorStore.pods.filter((d: unknown, index: number) => {
-    if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
-      return d;
-    }
-  });
-  queryInstanceMetrics(instances.value);
-}
-
-function searchList() {
-  const searchInstances = selectorStore.pods.filter((d: { label: string }) =>
-    d.label.includes(searchText.value)
-  );
-  instances.value = searchInstances.filter(
-    (d: unknown, index: number) => index < pageSize
-  );
-  queryInstanceMetrics(instances.value);
-}
-
-watch(
-  () => [
-    ...(props.config.metricTypes || []),
-    ...(props.config.metrics || []),
-    ...(props.config.metricConfig || []),
-  ],
-  (data, old) => {
-    if (JSON.stringify(data) === JSON.stringify(old)) {
-      return;
-    }
-    metricConfig.value = props.config.metricConfig;
-    queryInstanceMetrics(instances.value);
-  }
-);
-watch(
-  () => selectorStore.currentService,
-  () => {
+  const { t } = useI18n();
+  const selectorStore = useSelectorStore();
+  const dashboardStore = useDashboardStore();
+  const chartLoading = ref<boolean>(false);
+  const instances = ref<Instance[]>([]); // current instances
+  const pageSize = 10;
+  const searchText = ref<string>("");
+  const colMetrics = ref<string[]>([]);
+  const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
+  const metricTypes = ref<string[]>(props.config.metricTypes || []);
+  if (props.needQuery) {
     queryInstance();
   }
-);
+
+  async function queryInstance() {
+    chartLoading.value = true;
+    const resp = await selectorStore.getServiceInstances();
+
+    chartLoading.value = false;
+    if (resp && resp.errors) {
+      ElMessage.error(resp.errors);
+      instances.value = [];
+      return;
+    }
+    instances.value = selectorStore.pods.filter((d: unknown, index: number) => index < pageSize);
+    queryInstanceMetrics(instances.value);
+  }
+
+  async function queryInstanceMetrics(currentInstances: Instance[]) {
+    if (!currentInstances.length) {
+      return;
+    }
+    const metrics = props.config.metrics || [];
+    const types = props.config.metricTypes || [];
+
+    if (metrics.length && metrics[0] && types.length && types[0]) {
+      const params = await useQueryPodsMetrics(currentInstances, props.config, EntityType[3].value);
+      const json = await dashboardStore.fetchMetricValue(params);
+
+      if (json.errors) {
+        ElMessage.error(json.errors);
+        return;
+      }
+      const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(
+        currentInstances,
+        json,
+        {
+          ...props.config,
+          metricConfig: metricConfig.value,
+        },
+      );
+      instances.value = data;
+      colMetrics.value = names;
+      metricTypes.value = metricTypesArr;
+      metricConfig.value = metricConfigArr;
+      return;
+    }
+    instances.value = currentInstances;
+  }
+
+  function clickInstance(scope: any) {
+    const { dashboard } = getDashboard({
+      name: props.config.dashboardName,
+      layer: dashboardStore.layerId,
+      entity: EntityType[3].value,
+    });
+    if (!dashboard) {
+      ElMessage.error("No this dashboard");
+      return;
+    }
+    router.push(
+      `/dashboard/${dashboard.layer}/${dashboard.entity}/${selectorStore.currentService.id}/${
+        scope.row.id
+      }/${dashboard.name.split(" ").join("-")}`,
+    );
+  }
+
+  function changePage(pageIndex: number) {
+    instances.value = selectorStore.pods.filter((d: unknown, index: number) => {
+      if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
+        return d;
+      }
+    });
+    queryInstanceMetrics(instances.value);
+  }
+
+  function searchList() {
+    const searchInstances = selectorStore.pods.filter((d: { label: string }) =>
+      d.label.includes(searchText.value),
+    );
+    instances.value = searchInstances.filter((d: unknown, index: number) => index < pageSize);
+    queryInstanceMetrics(instances.value);
+  }
+
+  watch(
+    () => [
+      ...(props.config.metricTypes || []),
+      ...(props.config.metrics || []),
+      ...(props.config.metricConfig || []),
+    ],
+    (data, old) => {
+      if (JSON.stringify(data) === JSON.stringify(old)) {
+        return;
+      }
+      metricConfig.value = props.config.metricConfig;
+      queryInstanceMetrics(instances.value);
+    },
+  );
+  watch(
+    () => selectorStore.currentService,
+    () => {
+      queryInstance();
+    },
+  );
 </script>
 <style lang="scss" scoped>
-@import "./style.scss";
+  @import "./style.scss";
 
-.attributes {
-  max-height: 400px;
-  overflow: auto;
-}
+  .attributes {
+    max-height: 400px;
+    overflow: auto;
+  }
 </style>

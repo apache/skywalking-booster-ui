@@ -53,12 +53,7 @@ limitations under the License. -->
       </div>
     </div>
   </div>
-  <el-dialog
-    v-model="viewDetail"
-    :destroy-on-close="true"
-    fullscreen
-    @closed="viewDetail = false"
-  >
+  <el-dialog v-model="viewDetail" :destroy-on-close="true" fullscreen @closed="viewDetail = false">
     <div class="profile-detail flex-v">
       <div>
         <h5 class="mb-10">{{ t("task") }}.</h5>
@@ -82,9 +77,7 @@ limitations under the License. -->
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("minThreshold") }}:</span>
-          <span class="g-sm-8 wba">
-            {{ selectedTask.minDurationThreshold }} ms
-          </span>
+          <span class="g-sm-8 wba"> {{ selectedTask.minDurationThreshold }} ms </span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("dumpPeriod") }}:</span>
@@ -96,17 +89,10 @@ limitations under the License. -->
         </div>
       </div>
       <div>
-        <h5
-          class="mb-10 mt-10"
-          v-show="selectedTask.logs && selectedTask.logs.length"
-        >
+        <h5 class="mb-10 mt-10" v-show="selectedTask.logs && selectedTask.logs.length">
           {{ t("logs") }}.
         </h5>
-        <div
-          class="log-item"
-          v-for="(i, index) in Object.keys(instanceLogs)"
-          :key="index"
-        >
+        <div class="log-item" v-for="(i, index) in Object.keys(instanceLogs)" :key="index">
           <div class="mb-10 sm">
             <span class="mr-10 grey">{{ t("instance") }}:</span>
             <span>{{ i }}</span>
@@ -123,127 +109,127 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useSelectorStore } from "@/store/modules/selectors";
-import { useProfileStore } from "@/store/modules/profile";
-import { TaskLog, TaskListItem } from "@/types/profile";
-import { ElMessage } from "element-plus";
-import { dateFormat } from "@/utils/dateFormat";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useSelectorStore } from "@/store/modules/selectors";
+  import { useProfileStore } from "@/store/modules/profile";
+  import type { TaskLog, TaskListItem } from "@/types/profile";
+  import { ElMessage } from "element-plus";
+  import { dateFormat } from "@/utils/dateFormat";
 
-const { t } = useI18n();
-const profileStore = useProfileStore();
-const selectorStore = useSelectorStore();
-const viewDetail = ref<boolean>(false);
-const service = ref<string>("");
-const selectedTask = ref<TaskListItem | Record<string, never>>({});
-const instanceLogs = ref<TaskLog | any>({});
+  const { t } = useI18n();
+  const profileStore = useProfileStore();
+  const selectorStore = useSelectorStore();
+  const viewDetail = ref<boolean>(false);
+  const service = ref<string>("");
+  const selectedTask = ref<TaskListItem | Record<string, never>>({});
+  const instanceLogs = ref<TaskLog | any>({});
 
-async function changeTask(item: TaskListItem) {
-  profileStore.setCurrentSegment({});
-  selectedTask.value = item;
-  const res = await profileStore.getSegmentList({ taskID: item.id });
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
-}
-
-async function viewTask(e: Event, item: TaskListItem) {
-  window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
-  viewDetail.value = true;
-  selectedTask.value = item;
-  service.value = (
-    selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}
-  ).label;
-  const res = await profileStore.getTaskLogs({ taskID: item.id });
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
-    return;
-  }
-  item.logs = profileStore.taskLogs;
-  instanceLogs.value = {};
-  for (const d of item.logs) {
-    if (instanceLogs.value[d.instanceName]) {
-      instanceLogs.value[d.instanceName].push({
-        operationType: d.operationType,
-        operationTime: d.operationTime,
-      });
-    } else {
-      instanceLogs.value[d.instanceName] = [
-        { operationType: d.operationType, operationTime: d.operationTime },
-      ];
+  async function changeTask(item: TaskListItem) {
+    profileStore.setCurrentSegment({});
+    selectedTask.value = item;
+    const res = await profileStore.getSegmentList({ taskID: item.id });
+    if (res.errors) {
+      ElMessage.error(res.errors);
     }
   }
-  selectedTask.value = item;
-}
+
+  async function viewTask(e: Event, item: TaskListItem) {
+    window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
+    viewDetail.value = true;
+    selectedTask.value = item;
+    service.value = (
+      selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}
+    ).label;
+    const res = await profileStore.getTaskLogs({ taskID: item.id });
+
+    if (res.errors) {
+      ElMessage.error(res.errors);
+      return;
+    }
+    item.logs = profileStore.taskLogs;
+    instanceLogs.value = {};
+    for (const d of item.logs) {
+      if (instanceLogs.value[d.instanceName]) {
+        instanceLogs.value[d.instanceName].push({
+          operationType: d.operationType,
+          operationTime: d.operationTime,
+        });
+      } else {
+        instanceLogs.value[d.instanceName] = [
+          { operationType: d.operationType, operationTime: d.operationTime },
+        ];
+      }
+    }
+    selectedTask.value = item;
+  }
 </script>
 <style lang="scss" scoped>
-.profile-task-list {
-  width: 300px;
-  height: calc((100% - 60px) / 2);
-  overflow: auto;
-}
-
-.item span {
-  height: 21px;
-}
-
-.profile-td {
-  padding: 5px 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-
-  &.selected {
-    background-color: #ededed;
+  .profile-task-list {
+    width: 300px;
+    height: calc((100% - 60px) / 2);
+    overflow: auto;
   }
-}
 
-.no-data {
-  text-align: center;
-  margin-top: 10px;
-}
-
-.profile-t-wrapper {
-  overflow: auto;
-  flex-grow: 1;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.profile-t {
-  width: 100%;
-  border-spacing: 0;
-  table-layout: fixed;
-  flex-grow: 1;
-  position: relative;
-}
-
-.profile-tr {
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+  .item span {
+    height: 21px;
   }
-}
 
-.profile-segment {
-  border-top: 1px solid rgba(0, 0, 0, 0.07);
-}
+  .profile-td {
+    padding: 5px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 
-.profile-t-tool {
-  padding: 5px 10px;
-  font-weight: bold;
-  border-right: 1px solid rgba(0, 0, 0, 0.07);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-  background: #f3f4f9;
-}
+    &.selected {
+      background-color: #ededed;
+    }
+  }
 
-.log-item {
-  margin-top: 20px;
-}
+  .no-data {
+    text-align: center;
+    margin-top: 10px;
+  }
 
-.profile-btn {
-  color: #3d444f;
-  padding: 1px 3px;
-  border-radius: 2px;
-  font-size: 12px;
-  float: right;
-}
+  .profile-t-wrapper {
+    overflow: auto;
+    flex-grow: 1;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-t {
+    width: 100%;
+    border-spacing: 0;
+    table-layout: fixed;
+    flex-grow: 1;
+    position: relative;
+  }
+
+  .profile-tr {
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .profile-segment {
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
+  }
+
+  .profile-t-tool {
+    padding: 5px 10px;
+    font-weight: bold;
+    border-right: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    background: #f3f4f9;
+  }
+
+  .log-item {
+    margin-top: 20px;
+  }
+
+  .profile-btn {
+    color: #3d444f;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-size: 12px;
+    float: right;
+  }
 </style>

@@ -26,11 +26,7 @@ limitations under the License. -->
     />
   </div>
   <div>{{ t("metrics") }}</div>
-  <div
-    v-for="(metric, index) in states.metrics"
-    :key="index"
-    class="metric-item"
-  >
+  <div v-for="(metric, index) in states.metrics" :key="index" class="metric-item">
     <Selector
       :value="metric"
       :options="states.metricList"
@@ -53,24 +49,12 @@ limitations under the License. -->
           <Icon class="cp mr-5" iconName="mode_edit" size="middle" />
         </span>
       </template>
-      <Standard
-        @update="queryMetrics"
-        :currentMetricConfig="currentMetricConfig"
-        :index="index"
-      />
+      <Standard @update="queryMetrics" :currentMetricConfig="currentMetricConfig" :index="index" />
     </el-popover>
-    <span
-      v-show="
-        states.isList ||
-        states.metricTypes[0] === ProtocolTypes.ReadMetricsValues
-      "
-    >
+    <span v-show="states.isList || states.metricTypes[0] === ProtocolTypes.ReadMetricsValues">
       <Icon
         class="cp mr-5"
-        v-if="
-          index === states.metrics.length - 1 &&
-          states.metrics.length < defaultLen
-        "
+        v-if="index === states.metrics.length - 1 && states.metrics.length < defaultLen"
         iconName="add_circle_outlinecontrol_point"
         size="middle"
         @click="addMetric"
@@ -98,393 +82,368 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, computed } from "vue";
-import { Option } from "@/types/app";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import {
-  MetricTypes,
-  ListChartTypes,
-  DefaultGraphConfig,
-  EntityType,
-  ChartTypes,
-  PodsChartTypes,
-  MetricsType,
-  ProtocolTypes,
-} from "../../../data";
-import { ElMessage } from "element-plus";
-import Icon from "@/components/Icon.vue";
-import {
-  useQueryProcessor,
-  useSourceProcessor,
-  useGetMetricEntity,
-} from "@/hooks/useMetricsProcessor";
-import { useI18n } from "vue-i18n";
-import { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
-import Standard from "./Standard.vue";
+  import { reactive, ref, computed } from "vue";
+  import type { Option } from "@/types/app";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import {
+    MetricTypes,
+    ListChartTypes,
+    DefaultGraphConfig,
+    EntityType,
+    ChartTypes,
+    PodsChartTypes,
+    MetricsType,
+    ProtocolTypes,
+  } from "../../../data";
+  import { ElMessage } from "element-plus";
+  import Icon from "@/components/Icon.vue";
+  import {
+    useQueryProcessor,
+    useSourceProcessor,
+    useGetMetricEntity,
+  } from "@/hooks/useMetricsProcessor";
+  import { useI18n } from "vue-i18n";
+  import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
+  import Standard from "./Standard.vue";
 
-/*global defineEmits */
-const { t } = useI18n();
-const emit = defineEmits(["update", "loading"]);
-const dashboardStore = useDashboardStore();
-const metrics = computed(() => dashboardStore.selectedGrid.metrics || []);
-const graph = computed(() => dashboardStore.selectedGrid.graph || {});
-const metricTypes = computed(
-  () => dashboardStore.selectedGrid.metricTypes || []
-);
-const states = reactive<{
-  metrics: string[];
-  metricTypes: string[];
-  metricTypeList: Option[][];
-  isList: boolean;
-  metricList: (Option & { type: string })[];
-  dashboardName: string;
-  dashboardList: ((DashboardItem & { label: string; value: string }) | any)[];
-}>({
-  metrics: metrics.value.length ? metrics.value : [""],
-  metricTypes: metricTypes.value.length ? metricTypes.value : [""],
-  metricTypeList: [],
-  isList: false,
-  metricList: [],
-  dashboardName: graph.value.dashboardName,
-  dashboardList: [{ label: "", value: "" }],
-});
-const currentMetricConfig = ref<MetricConfigOpt>({
-  unit: "",
-  label: "",
-  labelsIndex: "",
-  calculation: "",
-  sortOrder: "DES",
-});
+  /*global defineEmits */
+  const { t } = useI18n();
+  const emit = defineEmits(["update", "loading"]);
+  const dashboardStore = useDashboardStore();
+  const metrics = computed(() => dashboardStore.selectedGrid.metrics || []);
+  const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+  const metricTypes = computed(() => dashboardStore.selectedGrid.metricTypes || []);
+  const states = reactive<{
+    metrics: string[];
+    metricTypes: string[];
+    metricTypeList: Option[][];
+    isList: boolean;
+    metricList: (Option & { type: string })[];
+    dashboardName: string;
+    dashboardList: ((DashboardItem & { label: string; value: string }) | any)[];
+  }>({
+    metrics: metrics.value.length ? metrics.value : [""],
+    metricTypes: metricTypes.value.length ? metricTypes.value : [""],
+    metricTypeList: [],
+    isList: false,
+    metricList: [],
+    dashboardName: graph.value.dashboardName,
+    dashboardList: [{ label: "", value: "" }],
+  });
+  const currentMetricConfig = ref<MetricConfigOpt>({
+    unit: "",
+    label: "",
+    labelsIndex: "",
+    calculation: "",
+    sortOrder: "DES",
+  });
 
-states.isList = ListChartTypes.includes(graph.value.type);
-const defaultLen = ref<number>(states.isList ? 5 : 20);
-setDashboards();
-setMetricType();
+  states.isList = ListChartTypes.includes(graph.value.type);
+  const defaultLen = ref<number>(states.isList ? 5 : 20);
+  setDashboards();
+  setMetricType();
 
-const setVisTypes = computed(() => {
-  let graphs = [];
-  if (dashboardStore.entity === EntityType[0].value) {
-    graphs = ChartTypes.filter(
-      (d: Option) =>
-        ![ChartTypes[7].value, ChartTypes[8].value].includes(d.value)
-    );
-  } else if (dashboardStore.entity === EntityType[1].value) {
-    graphs = ChartTypes.filter(
-      (d: Option) => !PodsChartTypes.includes(d.value)
-    );
-  } else {
-    graphs = ChartTypes.filter(
-      (d: Option) => !ListChartTypes.includes(d.value)
-    );
-  }
-
-  return graphs;
-});
-
-async function setMetricType(chart?: any) {
-  const g = chart || dashboardStore.selectedGrid.graph || {};
-  let arr: any[] = states.metricList;
-  if (!chart) {
-    const json = await dashboardStore.fetchMetricList();
-    if (json.errors) {
-      ElMessage.error(json.errors);
-      return;
+  const setVisTypes = computed(() => {
+    let graphs = [];
+    if (dashboardStore.entity === EntityType[0].value) {
+      graphs = ChartTypes.filter(
+        (d: Option) => ![ChartTypes[7].value, ChartTypes[8].value].includes(d.value),
+      );
+    } else if (dashboardStore.entity === EntityType[1].value) {
+      graphs = ChartTypes.filter((d: Option) => !PodsChartTypes.includes(d.value));
+    } else {
+      graphs = ChartTypes.filter((d: Option) => !ListChartTypes.includes(d.value));
     }
-    arr = json.data.metrics;
-  }
-  states.metricList = (arr || []).filter(
-    (d: { catalog: string; type: string }) => {
+
+    return graphs;
+  });
+
+  async function setMetricType(chart?: any) {
+    const g = chart || dashboardStore.selectedGrid.graph || {};
+    let arr: any[] = states.metricList;
+    if (!chart) {
+      const json = await dashboardStore.fetchMetricList();
+      if (json.errors) {
+        ElMessage.error(json.errors);
+        return;
+      }
+      arr = json.data.metrics;
+    }
+    states.metricList = (arr || []).filter((d: { catalog: string; type: string }) => {
       if (states.isList) {
-        if (
-          d.type === MetricsType.REGULAR_VALUE ||
-          d.type === MetricsType.LABELED_VALUE
-        ) {
+        if (d.type === MetricsType.REGULAR_VALUE || d.type === MetricsType.LABELED_VALUE) {
           return d;
         }
       } else if (g.type === "Table") {
-        if (
-          d.type === MetricsType.LABELED_VALUE ||
-          d.type === MetricsType.REGULAR_VALUE
-        ) {
+        if (d.type === MetricsType.LABELED_VALUE || d.type === MetricsType.REGULAR_VALUE) {
           return d;
         }
       } else {
         return d;
       }
+    });
+    const metrics: any = states.metricList.filter((d: { value: string; type: string }) =>
+      states.metrics.includes(d.value),
+    );
+
+    if (metrics.length) {
+      // keep states.metrics index
+      const m = metrics.map((d: { value: string }) => d.value);
+      states.metrics = states.metrics.filter((d) => m.includes(d));
+    } else {
+      states.metrics = [""];
+      states.metricTypes = [""];
     }
-  );
-  const metrics: any = states.metricList.filter(
-    (d: { value: string; type: string }) => states.metrics.includes(d.value)
-  );
-
-  if (metrics.length) {
-    // keep states.metrics index
-    const m = metrics.map((d: { value: string }) => d.value);
-    states.metrics = states.metrics.filter((d) => m.includes(d));
-  } else {
-    states.metrics = [""];
-    states.metricTypes = [""];
-  }
-  dashboardStore.selectWidget({
-    ...dashboardStore.selectedGrid,
-    metrics: states.metrics,
-    metricTypes: states.metricTypes,
-    graph: g,
-  });
-  states.metricTypeList = [];
-  for (const metric of metrics) {
-    if (states.metrics.includes(metric.value)) {
-      const arr = setMetricTypeList(metric.type);
-      states.metricTypeList.push(arr);
-    }
-  }
-  if (states.metrics && states.metrics[0]) {
-    queryMetrics();
-  } else {
-    emit("update", {});
-  }
-}
-
-function setDashboards(type?: string) {
-  const chart =
-    type ||
-    (dashboardStore.selectedGrid.graph &&
-      dashboardStore.selectedGrid.graph.type);
-  const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-  const arr = list.reduce(
-    (
-      prev: (DashboardItem & { label: string; value: string })[],
-      d: DashboardItem
-    ) => {
-      if (d.layer === dashboardStore.layerId) {
-        if (
-          (d.entity === EntityType[0].value && chart === "ServiceList") ||
-          (d.entity === EntityType[2].value && chart === "EndpointList") ||
-          (d.entity === EntityType[3].value && chart === "InstanceList")
-        ) {
-          prev.push({
-            ...d,
-            value: d.name,
-            label: d.name,
-          });
-        }
-      }
-      return prev;
-    },
-    []
-  );
-
-  states.dashboardList = arr.length ? arr : [{ label: "", value: "" }];
-}
-
-function changeChartType(item: Option) {
-  const chart = DefaultGraphConfig[item.value] || {};
-  states.isList = ListChartTypes.includes(chart.type);
-  if (states.isList) {
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
-      metrics: [""],
-      metricTypes: [""],
+      metrics: states.metrics,
+      metricTypes: states.metricTypes,
+      graph: g,
     });
-    states.metrics = [""];
-    states.metricTypes = [""];
-    defaultLen.value = 5;
-  }
-  setMetricType(chart);
-  setDashboards(chart.type);
-  states.dashboardName = "";
-  defaultLen.value = 10;
-}
-
-function changeMetrics(
-  index: number,
-  arr: (Option & { type: string })[] | any
-) {
-  if (!arr.length) {
     states.metricTypeList = [];
-    states.metricTypes = [];
-    dashboardStore.selectWidget({
-      ...dashboardStore.selectedGrid,
-      ...{ metricTypes: states.metricTypes, metrics: states.metrics },
-    });
-    return;
-  }
-  states.metrics[index] = arr[0].value;
-  const typeOfMetrics = arr[0].type;
-
-  states.metricTypeList[index] = setMetricTypeList(typeOfMetrics);
-  states.metricTypes[index] = MetricTypes[typeOfMetrics][0].value;
-  dashboardStore.selectWidget({
-    ...dashboardStore.selectedGrid,
-    ...{ metricTypes: states.metricTypes, metrics: states.metrics },
-  });
-  if (states.isList) {
-    return;
-  }
-  queryMetrics();
-}
-
-function changeMetricType(index: number, opt: Option[] | any) {
-  const metric =
-    states.metricList.filter(
-      (d: Option) => states.metrics[index] === d.value
-    )[0] || {};
-  const l = setMetricTypeList(metric.type);
-  if (states.isList) {
-    states.metricTypes[index] = opt[0].value;
-    states.metricTypeList[index] = l;
-  } else {
-    states.metricTypes = states.metricTypes.map((d: string) => {
-      d = opt[0].value;
-      return d;
-    });
-    states.metricTypeList = states.metricTypeList.map((d: Option[]) => {
-      d = l;
-
-      return d;
-    });
-  }
-  dashboardStore.selectWidget({
-    ...dashboardStore.selectedGrid,
-    ...{ metricTypes: states.metricTypes },
-  });
-  if (states.isList) {
-    return;
-  }
-  queryMetrics();
-}
-async function queryMetrics() {
-  if (states.isList) {
-    return;
-  }
-  const { metricConfig, metricTypes, metrics } = dashboardStore.selectedGrid;
-  if (!(metrics && metrics[0] && metricTypes && metricTypes[0])) {
-    return;
-  }
-  const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
-  const params = useQueryProcessor({ ...states, metricConfig, catalog });
-  if (!params) {
-    emit("update", {});
-    return;
+    for (const metric of metrics) {
+      if (states.metrics.includes(metric.value)) {
+        const arr = setMetricTypeList(metric.type);
+        states.metricTypeList.push(arr);
+      }
+    }
+    if (states.metrics && states.metrics[0]) {
+      queryMetrics();
+    } else {
+      emit("update", {});
+    }
   }
 
-  emit("loading", true);
-  const json = await dashboardStore.fetchMetricValue(params);
-  emit("loading", false);
-  if (json.errors) {
-    ElMessage.error(json.errors);
-    return;
-  }
-  const source = useSourceProcessor(json, { ...states, metricConfig });
-  emit("update", source);
-}
+  function setDashboards(type?: string) {
+    const chart =
+      type || (dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type);
+    const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
+    const arr = list.reduce(
+      (prev: (DashboardItem & { label: string; value: string })[], d: DashboardItem) => {
+        if (d.layer === dashboardStore.layerId) {
+          if (
+            (d.entity === EntityType[0].value && chart === "ServiceList") ||
+            (d.entity === EntityType[2].value && chart === "EndpointList") ||
+            (d.entity === EntityType[3].value && chart === "InstanceList")
+          ) {
+            prev.push({
+              ...d,
+              value: d.name,
+              label: d.name,
+            });
+          }
+        }
+        return prev;
+      },
+      [],
+    );
 
-function changeDashboard(opt: any) {
-  if (!opt[0]) {
+    states.dashboardList = arr.length ? arr : [{ label: "", value: "" }];
+  }
+
+  function changeChartType(item: Option) {
+    const chart = DefaultGraphConfig[item.value] || {};
+    states.isList = ListChartTypes.includes(chart.type);
+    if (states.isList) {
+      dashboardStore.selectWidget({
+        ...dashboardStore.selectedGrid,
+        metrics: [""],
+        metricTypes: [""],
+      });
+      states.metrics = [""];
+      states.metricTypes = [""];
+      defaultLen.value = 5;
+    }
+    setMetricType(chart);
+    setDashboards(chart.type);
     states.dashboardName = "";
-  } else {
-    states.dashboardName = opt[0].value;
+    defaultLen.value = 10;
   }
-  const graph = {
-    ...dashboardStore.selectedGrid.graph,
-    dashboardName: states.dashboardName,
-  };
-  dashboardStore.selectWidget({
-    ...dashboardStore.selectedGrid,
-    graph,
-  });
-}
-function addMetric() {
-  states.metrics.push("");
-  if (!states.isList) {
-    states.metricTypes.push(states.metricTypes[0]);
-    states.metricTypeList.push(states.metricTypeList[0]);
-    return;
-  }
-  states.metricTypes.push("");
-}
-function deleteMetric(index: number) {
-  if (states.metrics.length === 1) {
-    states.metrics = [""];
-    states.metricTypes = [""];
+
+  function changeMetrics(index: number, arr: (Option & { type: string })[] | any) {
+    if (!arr.length) {
+      states.metricTypeList = [];
+      states.metricTypes = [];
+      dashboardStore.selectWidget({
+        ...dashboardStore.selectedGrid,
+        ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+      });
+      return;
+    }
+    states.metrics[index] = arr[0].value;
+    const typeOfMetrics = arr[0].type;
+
+    states.metricTypeList[index] = setMetricTypeList(typeOfMetrics);
+    states.metricTypes[index] = MetricTypes[typeOfMetrics][0].value;
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       ...{ metricTypes: states.metricTypes, metrics: states.metrics },
-      metricConfig: [],
     });
-    return;
+    if (states.isList) {
+      return;
+    }
+    queryMetrics();
   }
-  states.metrics.splice(index, 1);
-  states.metricTypes.splice(index, 1);
-  const config = dashboardStore.selectedGrid.metricConfig || [];
-  const metricConfig = config[index] ? config.splice(index, 1) : config;
-  dashboardStore.selectWidget({
-    ...dashboardStore.selectedGrid,
-    ...{ metricTypes: states.metricTypes, metrics: states.metrics },
-    metricConfig,
-  });
-}
-function setMetricTypeList(type: string) {
-  if (type !== MetricsType.REGULAR_VALUE) {
+
+  function changeMetricType(index: number, opt: Option[] | any) {
+    const metric =
+      states.metricList.filter((d: Option) => states.metrics[index] === d.value)[0] || {};
+    const l = setMetricTypeList(metric.type);
+    if (states.isList) {
+      states.metricTypes[index] = opt[0].value;
+      states.metricTypeList[index] = l;
+    } else {
+      states.metricTypes = states.metricTypes.map((d: string) => {
+        d = opt[0].value;
+        return d;
+      });
+      states.metricTypeList = states.metricTypeList.map((d: Option[]) => {
+        d = l;
+
+        return d;
+      });
+    }
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      ...{ metricTypes: states.metricTypes },
+    });
+    if (states.isList) {
+      return;
+    }
+    queryMetrics();
+  }
+  async function queryMetrics() {
+    if (states.isList) {
+      return;
+    }
+    const { metricConfig, metricTypes, metrics } = dashboardStore.selectedGrid;
+    if (!(metrics && metrics[0] && metricTypes && metricTypes[0])) {
+      return;
+    }
+    const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
+    const params = useQueryProcessor({ ...states, metricConfig, catalog });
+    if (!params) {
+      emit("update", {});
+      return;
+    }
+
+    emit("loading", true);
+    const json = await dashboardStore.fetchMetricValue(params);
+    emit("loading", false);
+    if (json.errors) {
+      ElMessage.error(json.errors);
+      return;
+    }
+    const source = useSourceProcessor(json, { ...states, metricConfig });
+    emit("update", source);
+  }
+
+  function changeDashboard(opt: any) {
+    if (!opt[0]) {
+      states.dashboardName = "";
+    } else {
+      states.dashboardName = opt[0].value;
+    }
+    const graph = {
+      ...dashboardStore.selectedGrid.graph,
+      dashboardName: states.dashboardName,
+    };
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      graph,
+    });
+  }
+  function addMetric() {
+    states.metrics.push("");
+    if (!states.isList) {
+      states.metricTypes.push(states.metricTypes[0]);
+      states.metricTypeList.push(states.metricTypeList[0]);
+      return;
+    }
+    states.metricTypes.push("");
+  }
+  function deleteMetric(index: number) {
+    if (states.metrics.length === 1) {
+      states.metrics = [""];
+      states.metricTypes = [""];
+      dashboardStore.selectWidget({
+        ...dashboardStore.selectedGrid,
+        ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+        metricConfig: [],
+      });
+      return;
+    }
+    states.metrics.splice(index, 1);
+    states.metricTypes.splice(index, 1);
+    const config = dashboardStore.selectedGrid.metricConfig || [];
+    const metricConfig = config[index] ? config.splice(index, 1) : config;
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+      metricConfig,
+    });
+  }
+  function setMetricTypeList(type: string) {
+    if (type !== MetricsType.REGULAR_VALUE) {
+      return MetricTypes[type];
+    }
+    if (states.isList || graph.value.type === "Table") {
+      return [MetricTypes.REGULAR_VALUE[0], MetricTypes.REGULAR_VALUE[1]];
+    }
     return MetricTypes[type];
   }
-  if (states.isList || graph.value.type === "Table") {
-    return [MetricTypes.REGULAR_VALUE[0], MetricTypes.REGULAR_VALUE[1]];
+  function setMetricConfig(index: number) {
+    const n = {
+      unit: "",
+      label: "",
+      calculation: "",
+      labelsIndex: "",
+      sortOrder: "DES",
+    };
+    if (
+      !dashboardStore.selectedGrid.metricConfig ||
+      !dashboardStore.selectedGrid.metricConfig[index]
+    ) {
+      currentMetricConfig.value = n;
+      return;
+    }
+    currentMetricConfig.value = {
+      ...n,
+      ...dashboardStore.selectedGrid.metricConfig[index],
+    };
   }
-  return MetricTypes[type];
-}
-function setMetricConfig(index: number) {
-  const n = {
-    unit: "",
-    label: "",
-    calculation: "",
-    labelsIndex: "",
-    sortOrder: "DES",
-  };
-  if (
-    !dashboardStore.selectedGrid.metricConfig ||
-    !dashboardStore.selectedGrid.metricConfig[index]
-  ) {
-    currentMetricConfig.value = n;
-    return;
-  }
-  currentMetricConfig.value = {
-    ...n,
-    ...dashboardStore.selectedGrid.metricConfig[index],
-  };
-}
 </script>
 <style lang="scss" scoped>
-.ds-name {
-  margin-bottom: 10px;
-}
-
-.selectors {
-  width: 500px;
-  margin-right: 10px;
-}
-
-.metric-item {
-  margin-bottom: 10px;
-}
-
-.chart-types {
-  span {
-    display: inline-block;
-    padding: 2px 10px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    border-right: 0;
-    cursor: pointer;
+  .ds-name {
+    margin-bottom: 10px;
   }
 
-  span:nth-last-child(1) {
-    border-right: 1px solid #ccc;
+  .selectors {
+    width: 500px;
+    margin-right: 10px;
   }
-}
 
-span.active {
-  background-color: #409eff;
-  color: #fff;
-}
+  .metric-item {
+    margin-bottom: 10px;
+  }
+
+  .chart-types {
+    span {
+      display: inline-block;
+      padding: 2px 10px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      border-right: 0;
+      cursor: pointer;
+    }
+
+    span:nth-last-child(1) {
+      border-right: 1px solid #ccc;
+    }
+  }
+
+  span.active {
+    background-color: #409eff;
+    color: #fff;
+  }
 </style>

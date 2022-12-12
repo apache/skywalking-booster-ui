@@ -20,8 +20,8 @@ import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { Instance, Endpoint, Service } from "@/types/selector";
-import { MetricConfigOpt } from "@/types/dashboard";
+import type { Instance, Endpoint, Service } from "@/types/selector";
+import type { MetricConfigOpt } from "@/types/dashboard";
 import { MetricCatalog } from "@/views/dashboard/data";
 
 export function useQueryProcessor(config: any) {
@@ -54,21 +54,14 @@ export function useQueryProcessor(config: any) {
   const fragment = config.metrics.map((name: string, index: number) => {
     const metricType = config.metricTypes[index] || "";
     const c = (config.metricConfig && config.metricConfig[index]) || {};
-    if (
-      [
-        MetricQueryTypes.ReadSampledRecords,
-        MetricQueryTypes.SortMetrics,
-      ].includes(metricType)
-    ) {
+    if ([MetricQueryTypes.ReadSampledRecords, MetricQueryTypes.SortMetrics].includes(metricType)) {
       variables.push(`$condition${index}: TopNCondition!`);
       conditions[`condition${index}`] = {
         name,
         parentService: ["All"].includes(dashboardStore.entity)
           ? null
           : selectorStore.currentService.value,
-        normal: selectorStore.currentService
-          ? selectorStore.currentService.normal
-          : true,
+        normal: selectorStore.currentService ? selectorStore.currentService.normal : true,
         scope: config.catalog,
         topN: c.topN || 10,
         order: c.sortOrder || "DES",
@@ -77,13 +70,8 @@ export function useQueryProcessor(config: any) {
       const entity = {
         scope: config.catalog,
         serviceName:
-          dashboardStore.entity === "All"
-            ? undefined
-            : selectorStore.currentService.value,
-        normal:
-          dashboardStore.entity === "All"
-            ? undefined
-            : selectorStore.currentService.normal,
+          dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
+        normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
         serviceInstanceName: [
           "ServiceInstance",
           "ServiceInstanceRelation",
@@ -97,16 +85,11 @@ export function useQueryProcessor(config: any) {
         processName: dashboardStore.entity.includes("Process")
           ? selectorStore.currentProcess && selectorStore.currentProcess.value
           : undefined,
-        destNormal: isRelation
-          ? selectorStore.currentDestService.normal
-          : undefined,
-        destServiceName: isRelation
-          ? selectorStore.currentDestService.value
-          : undefined,
-        destServiceInstanceName: [
-          "ServiceInstanceRelation",
-          "ProcessRelation",
-        ].includes(dashboardStore.entity)
+        destNormal: isRelation ? selectorStore.currentDestService.normal : undefined,
+        destServiceName: isRelation ? selectorStore.currentDestService.value : undefined,
+        destServiceInstanceName: ["ServiceInstanceRelation", "ProcessRelation"].includes(
+          dashboardStore.entity,
+        )
           ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
           : undefined,
         destEndpointName:
@@ -114,8 +97,7 @@ export function useQueryProcessor(config: any) {
             ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
             : undefined,
         destProcessName: dashboardStore.entity.includes("ProcessRelation")
-          ? selectorStore.currentDestProcess &&
-            selectorStore.currentDestProcess.value
+          ? selectorStore.currentDestProcess && selectorStore.currentDestProcess.value
           : undefined,
       };
       if ([MetricQueryTypes.ReadRecords].includes(metricType)) {
@@ -161,7 +143,7 @@ export function useSourceProcessor(
     metrics: string[];
     metricTypes: string[];
     metricConfig: MetricConfigOpt[];
-  }
+  },
 ) {
   if (resp.errors) {
     ElMessage.error(resp.errors);
@@ -180,9 +162,7 @@ export function useSourceProcessor(
 
     if (type === MetricQueryTypes.ReadMetricsValues) {
       source[c.label || m] =
-        (resp.data[keys[index]] &&
-          calculateExp(resp.data[keys[index]].values.values, c)) ||
-        [];
+        (resp.data[keys[index]] && calculateExp(resp.data[keys[index]].values.values, c)) || [];
     }
     if (type === MetricQueryTypes.ReadLabeledMetricsValues) {
       const resVal = Object.values(resp.data)[0] || [];
@@ -194,7 +174,7 @@ export function useSourceProcessor(
         .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
       for (const item of resVal) {
         const values = item.values.values.map((d: { value: number }) =>
-          aggregation(Number(d.value), c)
+          aggregation(Number(d.value), c),
         );
         const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
         if (labels[indexNum] && indexNum > -1) {
@@ -216,13 +196,11 @@ export function useSourceProcessor(
         ] as string[]
       ).includes(type)
     ) {
-      source[m] = (Object.values(resp.data)[0] || []).map(
-        (d: { value: unknown; name: string }) => {
-          d.value = aggregation(Number(d.value), c);
+      source[m] = (Object.values(resp.data)[0] || []).map((d: { value: unknown; name: string }) => {
+        d.value = aggregation(Number(d.value), c);
 
-          return d;
-        }
-      );
+        return d;
+      });
     }
     if (type === MetricQueryTypes.READHEATMAP) {
       const resVal = Object.values(resp.data)[0] || {};
@@ -240,9 +218,7 @@ export function useSourceProcessor(
       if (resVal.buckets.length) {
         buckets = [
           resVal.buckets[0].min,
-          ...resVal.buckets.map(
-            (item: { min: string; max: string }) => item.max
-          ),
+          ...resVal.buckets.map((item: { min: string; max: string }) => item.max),
         ];
       }
 
@@ -260,7 +236,7 @@ export function useQueryPodsMetrics(
     metricTypes: string[];
     metricConfig: MetricConfigOpt[];
   },
-  scope: string
+  scope: string,
 ) {
   const metricTypes = (config.metricTypes || []).filter((m: string) => m);
   if (!metricTypes.length) {
@@ -278,10 +254,7 @@ export function useQueryPodsMetrics(
   const variables: string[] = [`$duration: Duration!`];
   const currentService = selectorStore.currentService || {};
   const fragmentList = pods.map(
-    (
-      d: (Instance | Endpoint | Service) & { normal: boolean },
-      index: number
-    ) => {
+    (d: (Instance | Endpoint | Service) & { normal: boolean }, index: number) => {
       const param = {
         scope,
         serviceName: scope === "Service" ? d.label : currentService.label,
@@ -309,7 +282,7 @@ export function useQueryPodsMetrics(
         return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[metricType]}`;
       });
       return f;
-    }
+    },
   );
   const fragment = fragmentList.flat(1).join(" ");
   const queryStr = `query queryData(${variables}) {${fragment}}`;
@@ -324,7 +297,7 @@ export function usePodsSource(
     metrics: string[];
     metricTypes: string[];
     metricConfig: MetricConfigOpt[];
-  }
+  },
 ): any {
   if (resp.errors) {
     ElMessage.error(resp.errors);
@@ -348,16 +321,14 @@ export function usePodsSource(
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
         d[name] = {};
         if (
-          [
-            Calculations.Average,
-            Calculations.ApdexAvg,
-            Calculations.PercentageAvg,
-          ].includes(c.calculation)
+          [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(
+            c.calculation,
+          )
         ) {
           d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
         }
-        d[name]["values"] = resp.data[key].values.values.map(
-          (val: { value: number }) => aggregation(val.value, c)
+        d[name]["values"] = resp.data[key].values.values.map((val: { value: number }) =>
+          aggregation(val.value, c),
         );
         if (idx === 0) {
           names.push(name);
@@ -365,9 +336,7 @@ export function usePodsSource(
           metricTypesArr.push(config.metricTypes[index]);
         }
       }
-      if (
-        config.metricTypes[index] === MetricQueryTypes.ReadLabeledMetricsValues
-      ) {
+      if (config.metricTypes[index] === MetricQueryTypes.ReadLabeledMetricsValues) {
         const resVal = resp.data[key] || [];
         const labels = (c.label || "")
           .split(",")
@@ -378,7 +347,7 @@ export function usePodsSource(
         for (let i = 0; i < resVal.length; i++) {
           const item = resVal[i];
           const values = item.values.values.map((d: { value: number }) =>
-            aggregation(Number(d.value), c)
+            aggregation(Number(d.value), c),
           );
           const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
           let key = item.label;
@@ -389,11 +358,9 @@ export function usePodsSource(
             d[key] = {};
           }
           if (
-            [
-              Calculations.Average,
-              Calculations.ApdexAvg,
-              Calculations.PercentageAvg,
-            ].includes(c.calculation)
+            [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(
+              c.calculation,
+            )
           ) {
             d[key]["avg"] = calculateExp(item.values.values, c);
           }
@@ -437,11 +404,9 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
 }
 function calculateExp(
   arr: { value: number }[],
-  config: { calculation?: string }
+  config: { calculation?: string },
 ): (number | string)[] {
-  const sum = arr
-    .map((d: { value: number }) => d.value)
-    .reduce((a, b) => a + b);
+  const sum = arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b);
   let data: (number | string)[] = [];
   switch (config.calculation) {
     case Calculations.Average:
@@ -460,10 +425,7 @@ function calculateExp(
   return data;
 }
 
-export function aggregation(
-  val: number,
-  config: { calculation?: string }
-): number | string {
+export function aggregation(val: number, config: { calculation?: string }): number | string {
   let data: number | string = Number(val);
 
   switch (config.calculation) {

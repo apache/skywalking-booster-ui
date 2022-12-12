@@ -15,12 +15,7 @@ limitations under the License. -->
 <template>
   <div class="topology flex-v">
     <div class="operation">
-      <el-popover
-        placement="bottom"
-        trigger="click"
-        :width="100"
-        v-if="dashboardStore.editMode"
-      >
+      <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
         <template #reference>
           <span>
             <Icon iconName="ellipsis_v" size="middle" />
@@ -38,64 +33,64 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import Topology from "../related/topology/Index.vue";
+  import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import Topology from "../related/topology/Index.vue";
 
-/*global defineProps */
-const props = defineProps({
-  data: {
-    type: Object as PropType<any>,
-    default: () => ({ graph: {} }),
-  },
-  activeIndex: { type: String, default: "" },
-});
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
+  /*global defineProps */
+  const props = defineProps({
+    data: {
+      type: Object as PropType<any>,
+      default: () => ({ graph: {} }),
+    },
+    activeIndex: { type: String, default: "" },
+  });
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
 
-function removeTopo() {
-  dashboardStore.removeControls(props.data);
-}
-function editConfig() {
-  dashboardStore.setConfigPanel(true);
-  dashboardStore.selectWidget(props.data);
-}
+  function removeTopo() {
+    dashboardStore.removeControls(props.data);
+  }
+  function editConfig() {
+    dashboardStore.setConfigPanel(true);
+    dashboardStore.selectWidget(props.data);
+  }
 </script>
 <style lang="scss" scoped>
-.topology {
-  background-color: #333840;
-  width: 100%;
-  height: 100%;
-  font-size: 12px;
-  position: relative;
-}
-
-.operation {
-  position: absolute;
-  top: 5px;
-  right: 3px;
-  cursor: pointer;
-}
-
-.tools {
-  padding: 5px 0;
-  color: #999;
-  cursor: pointer;
-  position: relative;
-  text-align: center;
-
-  &:hover {
-    color: #409eff;
-    background-color: #eee;
+  .topology {
+    background-color: #333840;
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    position: relative;
   }
-}
 
-.no-data {
-  font-size: 14px;
-  color: #888;
-  width: 100%;
-  text-align: center;
-  padding-top: 20px;
-}
+  .operation {
+    position: absolute;
+    top: 5px;
+    right: 3px;
+    cursor: pointer;
+  }
+
+  .tools {
+    padding: 5px 0;
+    color: #999;
+    cursor: pointer;
+    position: relative;
+    text-align: center;
+
+    &:hover {
+      color: #409eff;
+      background-color: #eee;
+    }
+  }
+
+  .no-data {
+    font-size: 14px;
+    color: #888;
+    width: 100%;
+    text-align: center;
+    padding-top: 20px;
+  }
 </style>

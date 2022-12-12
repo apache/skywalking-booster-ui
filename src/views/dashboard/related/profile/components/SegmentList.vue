@@ -52,103 +52,103 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useProfileStore } from "@/store/modules/profile";
-import { Trace } from "@/types/trace";
-import { ElMessage } from "element-plus";
-import { dateFormat } from "@/utils/dateFormat";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useProfileStore } from "@/store/modules/profile";
+  import type { Trace } from "@/types/trace";
+  import { ElMessage } from "element-plus";
+  import { dateFormat } from "@/utils/dateFormat";
 
-const { t } = useI18n();
-const profileStore = useProfileStore();
-const selectedKey = ref<string>("");
+  const { t } = useI18n();
+  const profileStore = useProfileStore();
+  const selectedKey = ref<string>("");
 
-async function selectTrace(item: Trace) {
-  profileStore.setCurrentSegment(item);
-  selectedKey.value = item.segmentId;
-  const res = await profileStore.getSegmentSpans({ segmentId: item.segmentId });
+  async function selectTrace(item: Trace) {
+    profileStore.setCurrentSegment(item);
+    selectedKey.value = item.segmentId;
+    const res = await profileStore.getSegmentSpans({ segmentId: item.segmentId });
 
-  if (res.errors) {
-    ElMessage.error(res.errors);
+    if (res.errors) {
+      ElMessage.error(res.errors);
+    }
   }
-}
 </script>
 <style lang="scss" scoped>
-.profile-trace-wrapper {
-  width: 300px;
-  height: 50%;
-  overflow: auto;
-
-  .no-data {
-    text-align: center;
-    margin-top: 10px;
-  }
-
-  .profile-t-wrapper {
+  .profile-trace-wrapper {
+    width: 300px;
+    height: 50%;
     overflow: auto;
-    flex-grow: 1;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-  }
 
-  .profile-t-loading {
-    text-align: center;
-    position: absolute;
-    width: 100%;
-    height: 70px;
-    margin-top: 40px;
-    line-height: 88px;
-    overflow: hidden;
+    .no-data {
+      text-align: center;
+      margin-top: 10px;
+    }
 
-    .icon {
-      width: 30px;
-      height: 30px;
+    .profile-t-wrapper {
+      overflow: auto;
+      flex-grow: 1;
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-t-loading {
+      text-align: center;
+      position: absolute;
+      width: 100%;
+      height: 70px;
+      margin-top: 40px;
+      line-height: 88px;
+      overflow: hidden;
+
+      .icon {
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    .profile-t {
+      width: 100%;
+      border-spacing: 0;
+      table-layout: fixed;
+      flex-grow: 1;
+      position: relative;
+    }
+
+    .profile-tr {
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+      }
+    }
+
+    .profile-td {
+      padding: 5px 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+
+      &.selected {
+        background-color: #ededed;
+      }
+    }
+
+    .profile-t-tool {
+      padding: 5px 10px;
+      font-weight: bold;
+      border-right: 1px solid rgba(0, 0, 0, 0.07);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+      background: #f3f4f9;
+    }
+
+    .log-item {
+      margin-top: 20px;
+    }
+
+    .profile-btn {
+      color: #3d444f;
+      padding: 1px 3px;
+      border-radius: 2px;
+      font-size: 12px;
     }
   }
 
-  .profile-t {
-    width: 100%;
-    border-spacing: 0;
-    table-layout: fixed;
-    flex-grow: 1;
-    position: relative;
+  .profile-segment {
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
   }
-
-  .profile-tr {
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
-    }
-  }
-
-  .profile-td {
-    padding: 5px 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-
-    &.selected {
-      background-color: #ededed;
-    }
-  }
-
-  .profile-t-tool {
-    padding: 5px 10px;
-    font-weight: bold;
-    border-right: 1px solid rgba(0, 0, 0, 0.07);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-    background: #f3f4f9;
-  }
-
-  .log-item {
-    margin-top: 20px;
-  }
-
-  .profile-btn {
-    color: #3d444f;
-    padding: 1px 3px;
-    border-radius: 2px;
-    font-size: 12px;
-  }
-}
-
-.profile-segment {
-  border-top: 1px solid rgba(0, 0, 0, 0.07);
-}
 </style>

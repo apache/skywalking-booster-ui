@@ -19,11 +19,7 @@ limitations under the License. -->
       <div class="tools" @click="associateMetrics" v-if="associate.length">
         {{ t("associateMetrics") }}
       </div>
-      <div
-        class="tools"
-        @click="viewTrace"
-        v-if="relatedTrace && relatedTrace.enableRelate"
-      >
+      <div class="tools" @click="viewTrace" v-if="relatedTrace && relatedTrace.enableRelate">
         {{ t("viewTrace") }}
       </div>
     </div>
@@ -40,224 +36,214 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import {
-  watch,
-  ref,
-  Ref,
-  onMounted,
-  onBeforeUnmount,
-  unref,
-  computed,
-} from "vue";
-import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
-import { EventParams } from "@/types/app";
-import { Filters, RelatedTrace } from "@/types/dashboard";
-import { useECharts } from "@/hooks/useEcharts";
-import { addResizeListener, removeResizeListener } from "@/utils/event";
-import Trace from "@/views/dashboard/related/trace/Index.vue";
-import associateProcessor from "@/hooks/useAssociateProcessor";
+  import { watch, ref, onMounted, onBeforeUnmount, unref, computed } from "vue";
+  import type { PropType, Ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import type { EventParams } from "@/types/app";
+  import type { Filters, RelatedTrace } from "@/types/dashboard";
+  import { useECharts } from "@/hooks/useEcharts";
+  import { addResizeListener, removeResizeListener } from "@/utils/event";
+  import Trace from "@/views/dashboard/related/trace/Index.vue";
+  import associateProcessor from "@/hooks/useAssociateProcessor";
 
-/*global Nullable, defineProps, defineEmits*/
-const emits = defineEmits(["select"]);
-const { t } = useI18n();
-const chartRef = ref<Nullable<HTMLDivElement>>(null);
-const menus = ref<Nullable<HTMLDivElement>>(null);
-const visMenus = ref<boolean>(false);
-const { setOptions, resize, getInstance } = useECharts(
-  chartRef as Ref<HTMLDivElement>
-);
-const currentParams = ref<Nullable<EventParams>>(null);
-const showTrace = ref<boolean>(false);
-const traceOptions = ref<{ type: string; filters?: unknown }>({
-  type: "Trace",
-});
-const props = defineProps({
-  height: { type: String, default: "100%" },
-  width: { type: String, default: "100%" },
-  option: {
-    type: Object as PropType<{ [key: string]: any }>,
-    default: () => ({}),
-  },
-  filters: {
-    type: Object as PropType<Filters>,
-  },
-  relatedTrace: {
-    type: Object as PropType<RelatedTrace>,
-  },
-  associate: {
-    type: Array as PropType<{ widgetId: string }[]>,
-    default: () => [],
-  },
-});
-const available = computed(
-  () =>
-    (Array.isArray(props.option.series) &&
-      props.option.series[0] &&
-      props.option.series[0].data) ||
-    (Array.isArray(props.option.series.data) && props.option.series.data[0])
-);
-onMounted(async () => {
-  await setOptions(props.option);
-  chartRef.value && addResizeListener(unref(chartRef), resize);
-  instanceEvent();
-});
+  /*global Nullable, defineProps, defineEmits*/
+  const emits = defineEmits(["select"]);
+  const { t } = useI18n();
+  const chartRef = ref<Nullable<HTMLDivElement>>(null);
+  const menus = ref<Nullable<HTMLDivElement>>(null);
+  const visMenus = ref<boolean>(false);
+  const { setOptions, resize, getInstance } = useECharts(chartRef as Ref<HTMLDivElement>);
+  const currentParams = ref<Nullable<EventParams>>(null);
+  const showTrace = ref<boolean>(false);
+  const traceOptions = ref<{ type: string; filters?: unknown }>({
+    type: "Trace",
+  });
+  const props = defineProps({
+    height: { type: String, default: "100%" },
+    width: { type: String, default: "100%" },
+    option: {
+      type: Object as PropType<{ [key: string]: any }>,
+      default: () => ({}),
+    },
+    filters: {
+      type: Object as PropType<Filters>,
+    },
+    relatedTrace: {
+      type: Object as PropType<RelatedTrace>,
+    },
+    associate: {
+      type: Array as PropType<{ widgetId: string }[]>,
+      default: () => [],
+    },
+  });
+  const available = computed(
+    () =>
+      (Array.isArray(props.option.series) &&
+        props.option.series[0] &&
+        props.option.series[0].data) ||
+      (Array.isArray(props.option.series.data) && props.option.series.data[0]),
+  );
+  onMounted(async () => {
+    await setOptions(props.option);
+    chartRef.value && addResizeListener(unref(chartRef), resize);
+    instanceEvent();
+  });
 
-function instanceEvent() {
-  setTimeout(() => {
+  function instanceEvent() {
+    setTimeout(() => {
+      const instance = getInstance();
+
+      if (!instance) {
+        return;
+      }
+      instance.on("click", (params: EventParams) => {
+        currentParams.value = params;
+        if (!menus.value || !chartRef.value) {
+          return;
+        }
+        visMenus.value = true;
+        const w = chartRef.value.getBoundingClientRect().width || 0;
+        const h = chartRef.value.getBoundingClientRect().height || 0;
+        if (w - params.event.offsetX > 120) {
+          menus.value.style.left = params.event.offsetX + "px";
+        } else {
+          menus.value.style.left = params.event.offsetX - 120 + "px";
+        }
+        if (h - params.event.offsetY < 50) {
+          menus.value.style.top = params.event.offsetY - 40 + "px";
+        } else {
+          menus.value.style.top = params.event.offsetY + 2 + "px";
+        }
+      });
+      document.addEventListener(
+        "click",
+        () => {
+          if (instance.isDisposed()) {
+            return;
+          }
+          visMenus.value = false;
+          instance.dispatchAction({
+            type: "updateAxisPointer",
+            currTrigger: "leave",
+          });
+        },
+        true,
+      );
+    }, 1000);
+  }
+
+  function associateMetrics() {
+    emits("select", currentParams.value);
+    const { dataIndex, seriesIndex } = currentParams.value || {
+      dataIndex: 0,
+      seriesIndex: 0,
+    };
+    updateOptions({ dataIndex, seriesIndex });
+  }
+
+  function updateOptions(params?: { dataIndex: number; seriesIndex: number }) {
     const instance = getInstance();
-
     if (!instance) {
       return;
     }
-    instance.on("click", (params: EventParams) => {
-      currentParams.value = params;
-      if (!menus.value || !chartRef.value) {
+    if (!props.filters) {
+      return;
+    }
+    if (props.filters.isRange) {
+      const { eventAssociate } = associateProcessor(props);
+      const options = eventAssociate();
+      setOptions(options || props.option);
+    } else {
+      instance.dispatchAction({
+        type: "updateAxisPointer",
+        dataIndex: params ? params.dataIndex : props.filters.dataIndex,
+        seriesIndex: params ? params.seriesIndex : 0,
+      });
+      const ids = props.option.series.map((_: unknown, index: number) => index);
+      instance.dispatchAction({
+        type: "highlight",
+        dataIndex: params ? params.dataIndex : props.filters.dataIndex,
+        seriesIndex: ids,
+      });
+    }
+  }
+
+  function viewTrace() {
+    const item = associateProcessor(props).traceFilters(currentParams.value);
+    traceOptions.value = {
+      ...traceOptions.value,
+      filters: item,
+    };
+    showTrace.value = true;
+    visMenus.value = true;
+  }
+
+  watch(
+    () => props.option,
+    (newVal, oldVal) => {
+      if (!available.value) {
         return;
       }
-      visMenus.value = true;
-      const w = chartRef.value.getBoundingClientRect().width || 0;
-      const h = chartRef.value.getBoundingClientRect().height || 0;
-      if (w - params.event.offsetX > 120) {
-        menus.value.style.left = params.event.offsetX + "px";
-      } else {
-        menus.value.style.left = params.event.offsetX - 120 + "px";
+      if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
+        return;
       }
-      if (h - params.event.offsetY < 50) {
-        menus.value.style.top = params.event.offsetY - 40 + "px";
-      } else {
-        menus.value.style.top = params.event.offsetY + 2 + "px";
+      let options;
+      if (props.filters && props.filters.isRange) {
+        const { eventAssociate } = associateProcessor(props);
+        options = eventAssociate();
       }
-    });
-    document.addEventListener(
-      "click",
-      () => {
-        if (instance.isDisposed()) {
-          return;
-        }
-        visMenus.value = false;
-        instance.dispatchAction({
-          type: "updateAxisPointer",
-          currTrigger: "leave",
-        });
-      },
-      true
-    );
-  }, 1000);
-}
+      setOptions(options || props.option);
+    },
+  );
+  watch(
+    () => props.filters,
+    () => {
+      updateOptions();
+    },
+  );
 
-function associateMetrics() {
-  emits("select", currentParams.value);
-  const { dataIndex, seriesIndex } = currentParams.value || {
-    dataIndex: 0,
-    seriesIndex: 0,
-  };
-  updateOptions({ dataIndex, seriesIndex });
-}
-
-function updateOptions(params?: { dataIndex: number; seriesIndex: number }) {
-  const instance = getInstance();
-  if (!instance) {
-    return;
-  }
-  if (!props.filters) {
-    return;
-  }
-  if (props.filters.isRange) {
-    const { eventAssociate } = associateProcessor(props);
-    const options = eventAssociate();
-    setOptions(options || props.option);
-  } else {
-    instance.dispatchAction({
-      type: "updateAxisPointer",
-      dataIndex: params ? params.dataIndex : props.filters.dataIndex,
-      seriesIndex: params ? params.seriesIndex : 0,
-    });
-    const ids = props.option.series.map((_: unknown, index: number) => index);
-    instance.dispatchAction({
-      type: "highlight",
-      dataIndex: params ? params.dataIndex : props.filters.dataIndex,
-      seriesIndex: ids,
-    });
-  }
-}
-
-function viewTrace() {
-  const item = associateProcessor(props).traceFilters(currentParams.value);
-  traceOptions.value = {
-    ...traceOptions.value,
-    filters: item,
-  };
-  showTrace.value = true;
-  visMenus.value = true;
-}
-
-watch(
-  () => props.option,
-  (newVal, oldVal) => {
-    if (!available.value) {
-      return;
-    }
-    if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
-      return;
-    }
-    let options;
-    if (props.filters && props.filters.isRange) {
-      const { eventAssociate } = associateProcessor(props);
-      options = eventAssociate();
-    }
-    setOptions(options || props.option);
-  }
-);
-watch(
-  () => props.filters,
-  () => {
-    updateOptions();
-  }
-);
-
-onBeforeUnmount(() => {
-  removeResizeListener(unref(chartRef), resize);
-});
+  onBeforeUnmount(() => {
+    removeResizeListener(unref(chartRef), resize);
+  });
 </script>
 <style lang="scss" scoped>
-.no-data {
-  font-size: 12px;
-  height: 100%;
-  box-sizing: border-box;
-  display: -webkit-box;
-  -webkit-box-orient: horizontal;
-  -webkit-box-pack: center;
-  -webkit-box-align: center;
-  color: #666;
-}
-
-.chart {
-  overflow: hidden;
-  flex: 1;
-}
-
-.menus {
-  position: absolute;
-  display: block;
-  white-space: nowrap;
-  z-index: 9999999;
-  box-shadow: #ddd 1px 2px 10px;
-  transition: all cubic-bezier(0.075, 0.82, 0.165, 1) linear;
-  background-color: rgb(255, 255, 255);
-  border-radius: 4px;
-  color: rgb(51, 51, 51);
-  padding: 5px;
-}
-
-.tools {
-  padding: 5px;
-  color: #999;
-  cursor: pointer;
-
-  &:hover {
-    color: #409eff;
-    background-color: #eee;
+  .no-data {
+    font-size: 12px;
+    height: 100%;
+    box-sizing: border-box;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+    color: #666;
   }
-}
+
+  .chart {
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .menus {
+    position: absolute;
+    display: block;
+    white-space: nowrap;
+    z-index: 9999999;
+    box-shadow: #ddd 1px 2px 10px;
+    transition: all cubic-bezier(0.075, 0.82, 0.165, 1) linear;
+    background-color: rgb(255, 255, 255);
+    border-radius: 4px;
+    color: rgb(51, 51, 51);
+    padding: 5px;
+  }
+
+  .tools {
+    padding: 5px;
+    color: #999;
+    cursor: pointer;
+
+    &:hover {
+      color: #409eff;
+      background-color: #eee;
+    }
+  }
 </style>

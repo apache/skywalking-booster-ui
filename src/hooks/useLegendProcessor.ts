@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LegendOptions } from "@/types/dashboard";
+import type { LegendOptions } from "@/types/dashboard";
 import { isDef } from "@/utils/is";
 
 export default function useLegendProcess(legend?: LegendOptions) {
@@ -37,13 +37,10 @@ export default function useLegendProcess(legend?: LegendOptions) {
     }
     return true;
   }
-  function aggregations(
-    data: { [key: string]: number[] },
-    intervalTime: string[]
-  ) {
+  function aggregations(data: { [key: string]: number[] }, intervalTime: string[]) {
     const source: { [key: string]: unknown }[] = [];
     const keys = Object.keys(data || {}).filter(
-      (i: any) => Array.isArray(data[i]) && data[i].length
+      (i: any) => Array.isArray(data[i]) && data[i].length,
     );
     const headers = [];
 
@@ -59,10 +56,8 @@ export default function useLegendProcess(legend?: LegendOptions) {
             };
           })
           .sort(
-            (
-              a: { key: string; value: number },
-              b: { key: string; value: number }
-            ) => b.value - a.value
+            (a: { key: string; value: number }, b: { key: string; value: number }) =>
+              b.value - a.value,
           )
           .filter((_: unknown, index: number) => index < 10),
       };

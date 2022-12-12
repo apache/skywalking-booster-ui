@@ -30,53 +30,53 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { useI18n } from "vue-i18n";
-import { ref } from "vue";
-import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useI18n } from "vue-i18n";
+  import { ref } from "vue";
+  import { useDashboardStore } from "@/store/modules/dashboard";
 
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const originConfig = dashboardStore.selectedGrid;
-const eventAssociate = ref(dashboardStore.selectedGrid.eventAssociate || false);
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const originConfig = dashboardStore.selectedGrid;
+  const eventAssociate = ref(dashboardStore.selectedGrid.eventAssociate || false);
 
-function updateConfig() {
-  dashboardStore.selectedGrid = {
-    ...dashboardStore.selectedGrid,
-    eventAssociate,
-  };
-  dashboardStore.selectWidget(dashboardStore.selectedGrid);
-}
+  function updateConfig() {
+    dashboardStore.selectedGrid = {
+      ...dashboardStore.selectedGrid,
+      eventAssociate,
+    };
+    dashboardStore.selectWidget(dashboardStore.selectedGrid);
+  }
 
-function applyConfig() {
-  dashboardStore.setConfigPanel(false);
-  dashboardStore.setConfigs(dashboardStore.selectedGrid);
-}
+  function applyConfig() {
+    dashboardStore.setConfigPanel(false);
+    dashboardStore.setConfigs(dashboardStore.selectedGrid);
+  }
 
-function cancelConfig() {
-  dashboardStore.selectWidget(originConfig);
-  dashboardStore.setConfigPanel(false);
-}
+  function cancelConfig() {
+    dashboardStore.selectWidget(originConfig);
+    dashboardStore.setConfigPanel(false);
+  }
 </script>
 <style lang="scss" scoped>
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
-}
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+  }
 
-.item {
-  margin: 10px 0;
-}
+  .item {
+    margin: 10px 0;
+  }
 
-.footer {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  border-top: 1px solid #eee;
-  padding: 10px;
-  text-align: right;
-  width: 100%;
-  background-color: #fff;
-}
+  .footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    border-top: 1px solid #eee;
+    padding: 10px;
+    text-align: right;
+    width: 100%;
+    background-color: #fff;
+  }
 </style>

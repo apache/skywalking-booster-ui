@@ -37,42 +37,40 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
-import LogTable from "./LogTable/Index.vue";
-import { useLogStore } from "@/store/modules/log";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { ElMessage } from "element-plus";
+  import { ref, computed } from "vue";
+  import { useI18n } from "vue-i18n";
+  import LogTable from "./LogTable/Index.vue";
+  import { useLogStore } from "@/store/modules/log";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { ElMessage } from "element-plus";
 
-const { t } = useI18n();
-const logStore = useLogStore();
-const dashboardStore = useDashboardStore();
-const type = ref<string>(
-  dashboardStore.layerId === "BROWSER" ? "browser" : "service"
-);
-const pageSize = ref<number>(15);
-const total = computed(() =>
-  logStore.logs.length === pageSize.value
-    ? pageSize.value * logStore.conditions.paging.pageNum + 1
-    : pageSize.value * logStore.conditions.paging.pageNum
-);
-function updatePage(p: number) {
-  logStore.setLogCondition({
-    paging: { pageNum: p, pageSize: pageSize.value },
-  });
-  queryLogs();
-}
-async function queryLogs() {
-  const res = await logStore.getLogs();
-  if (res && res.errors) {
-    ElMessage.error(res.errors);
+  const { t } = useI18n();
+  const logStore = useLogStore();
+  const dashboardStore = useDashboardStore();
+  const type = ref<string>(dashboardStore.layerId === "BROWSER" ? "browser" : "service");
+  const pageSize = ref<number>(15);
+  const total = computed(() =>
+    logStore.logs.length === pageSize.value
+      ? pageSize.value * logStore.conditions.paging.pageNum + 1
+      : pageSize.value * logStore.conditions.paging.pageNum,
+  );
+  function updatePage(p: number) {
+    logStore.setLogCondition({
+      paging: { pageNum: p, pageSize: pageSize.value },
+    });
+    queryLogs();
   }
-}
+  async function queryLogs() {
+    const res = await logStore.getLogs();
+    if (res && res.errors) {
+      ElMessage.error(res.errors);
+    }
+  }
 </script>
 <style lang="scss" scoped>
-.log-tips {
-  width: 100%;
-  text-align: center;
-  margin: 50px 0;
-}
+  .log-tips {
+    width: 100%;
+    text-align: center;
+    margin: 50px 0;
+  }
 </style>

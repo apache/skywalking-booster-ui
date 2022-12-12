@@ -16,13 +16,13 @@
  */
 import { defineStore } from "pinia";
 import { store } from "@/store";
-import { LayoutConfig } from "@/types/dashboard";
+import type { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
 import query from "@/graphql/fetch";
-import { DashboardItem } from "@/types/dashboard";
+import type { DashboardItem } from "@/types/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl, TextConfig, TimeRangeConfig } from "../data";
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 import { EntityType } from "@/views/dashboard/data";
@@ -106,23 +106,10 @@ export const dashboardStore = defineStore({
         newItem.graph = {
           showDepth: true,
           depth:
-            this.entity === EntityType[1].value
-              ? 1
-              : this.entity === EntityType[0].value
-              ? 2
-              : 3,
+            this.entity === EntityType[1].value ? 1 : this.entity === EntityType[0].value ? 2 : 3,
         };
       }
-      if (
-        [
-          "Trace",
-          "Profile",
-          "Log",
-          "DemandLog",
-          "Ebpf",
-          "NetworkProfiling",
-        ].includes(type)
-      ) {
+      if (["Trace", "Profile", "Log", "DemandLog", "Ebpf", "NetworkProfiling"].includes(type)) {
         newItem.h = 36;
       }
       if (type === "Text") {
@@ -156,9 +143,7 @@ export const dashboardStore = defineStore({
     },
     addTabControls(type: string) {
       const activedGridItem = this.activedGridItem.split("-")[0];
-      const idx = this.layout.findIndex(
-        (d: LayoutConfig) => d.i === activedGridItem
-      );
+      const idx = this.layout.findIndex((d: LayoutConfig) => d.i === activedGridItem);
       if (idx < 0) {
         return;
       }
@@ -184,16 +169,7 @@ export const dashboardStore = defineStore({
           showDepth: true,
         };
       }
-      if (
-        [
-          "Trace",
-          "Profile",
-          "Log",
-          "DemandLog",
-          "Ebpf",
-          "NetworkProfiling",
-        ].includes(type)
-      ) {
+      if (["Trace", "Profile", "Log", "DemandLog", "Ebpf", "NetworkProfiling"].includes(type)) {
         newItem.h = 32;
       }
       if (type === "Text") {
@@ -238,18 +214,14 @@ export const dashboardStore = defineStore({
     },
     removeControls(item: LayoutConfig) {
       const actived = this.activedGridItem.split("-");
-      const index = this.layout.findIndex(
-        (d: LayoutConfig) => actived[0] === d.i
-      );
+      const index = this.layout.findIndex((d: LayoutConfig) => actived[0] === d.i);
 
       if (this.selectedGrid && this.selectedGrid.i === item.i) {
         this.selectedGrid = null;
       }
       if (actived.length === 3) {
         const tabIndex = Number(actived[1]);
-        this.currentTabItems = this.currentTabItems.filter(
-          (d: LayoutConfig) => actived[2] !== d.i
-        );
+        this.currentTabItems = this.currentTabItems.filter((d: LayoutConfig) => actived[2] !== d.i);
         this.layout[index].children[tabIndex].children = this.currentTabItems;
         return;
       }
@@ -285,21 +257,18 @@ export const dashboardStore = defineStore({
     },
     setConfigs(param: { [key: string]: unknown }) {
       const actived = this.activedGridItem.split("-");
-      const index = this.layout.findIndex(
-        (d: LayoutConfig) => actived[0] === d.i
-      );
+      const index = this.layout.findIndex((d: LayoutConfig) => actived[0] === d.i);
       if (actived.length === 3) {
         const tabIndex = Number(actived[1]);
-        const itemIndex = this.layout[index].children[
-          tabIndex
-        ].children.findIndex((d: LayoutConfig) => actived[2] === d.i);
+        const itemIndex = this.layout[index].children[tabIndex].children.findIndex(
+          (d: LayoutConfig) => actived[2] === d.i,
+        );
 
         this.layout[index].children[tabIndex].children[itemIndex] = {
           ...this.layout[index].children[tabIndex].children[itemIndex],
           ...param,
         };
-        this.selectedGrid =
-          this.layout[index].children[tabIndex].children[itemIndex];
+        this.selectedGrid = this.layout[index].children[tabIndex].children[itemIndex];
         this.setCurrentTabItems(this.layout[index].children[tabIndex].children);
         return;
       }
@@ -332,23 +301,16 @@ export const dashboardStore = defineStore({
       }
     },
     async fetchMetricType(item: string) {
-      const res: AxiosResponse = await graphql
-        .query("queryTypeOfMetrics")
-        .params({ name: item });
+      const res: AxiosResponse = await graphql.query("queryTypeOfMetrics").params({ name: item });
 
       return res.data;
     },
     async fetchMetricList(regex: string) {
-      const res: AxiosResponse = await graphql
-        .query("queryMetrics")
-        .params({ regex });
+      const res: AxiosResponse = await graphql.query("queryMetrics").params({ regex });
 
       return res.data;
     },
-    async fetchMetricValue(param: {
-      queryStr: string;
-      conditions: { [key: string]: unknown };
-    }) {
+    async fetchMetricValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
       const res: AxiosResponse = await query(param);
       return res.data;
     },
@@ -371,10 +333,7 @@ export const dashboardStore = defineStore({
           name: c.name,
           isRoot: c.isRoot,
         });
-        sessionStorage.setItem(
-          key,
-          JSON.stringify({ id: t.id, configuration: c })
-        );
+        sessionStorage.setItem(key, JSON.stringify({ id: t.id, configuration: c }));
       }
       list = list.sort((a, b) => {
         const nameA = a.name.toUpperCase();
@@ -399,9 +358,7 @@ export const dashboardStore = defineStore({
           return;
         }
       }
-      this.dashboards = JSON.parse(
-        sessionStorage.getItem("dashboards") || "[]"
-      );
+      this.dashboards = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
     },
     async resetTemplates() {
       const res = await this.fetchTemplates();
@@ -410,9 +367,7 @@ export const dashboardStore = defineStore({
         ElMessage.error(res.errors);
         return;
       }
-      this.dashboards = JSON.parse(
-        sessionStorage.getItem("dashboards") || "[]"
-      );
+      this.dashboards = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
     },
     async updateDashboard(setting: { id: string; configuration: string }) {
       const res: AxiosResponse = await graphql.query("updateTemplate").params({
@@ -454,7 +409,7 @@ export const dashboardStore = defineStore({
           (d: DashboardItem) =>
             d.name === this.currentDashboard.name &&
             d.entity === this.currentDashboard.entity &&
-            d.layer === this.currentDashboard.layerId
+            d.layer === this.currentDashboard.layerId,
         );
         if (index > -1) {
           const { t } = useI18n();
@@ -487,7 +442,7 @@ export const dashboardStore = defineStore({
       if (this.currentDashboard.id) {
         sessionStorage.removeItem(key);
         this.dashboards = this.dashboards.filter(
-          (d: DashboardItem) => d.id !== this.currentDashboard.id
+          (d: DashboardItem) => d.id !== this.currentDashboard.id,
         );
       }
       this.dashboards.push(this.currentDashboard);
@@ -511,9 +466,7 @@ export const dashboardStore = defineStore({
         ElMessage.error(json.message);
         return res.data;
       }
-      this.dashboards = this.dashboards.filter(
-        (d: any) => d.id !== this.currentDashboard.id
-      );
+      this.dashboards = this.dashboards.filter((d: any) => d.id !== this.currentDashboard.id);
       const key = [
         this.currentDashboard.layer,
         this.currentDashboard.entity,

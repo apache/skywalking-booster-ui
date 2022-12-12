@@ -24,40 +24,40 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { provide } from "vue";
-import type { PropType } from "vue";
-import Header from "./Header.vue";
-import TraceList from "./TraceList.vue";
-import TraceDetail from "./Detail.vue";
+  import { provide } from "vue";
+  import type { PropType } from "vue";
+  import Header from "./Header.vue";
+  import TraceList from "./TraceList.vue";
+  import TraceDetail from "./Detail.vue";
 
-/*global defineProps */
-const props = defineProps({
-  data: {
-    type: Object as PropType<any>,
-    default: () => ({ graph: {} }),
-  },
-});
-provide("options", props.data);
+  /*global defineProps */
+  const props = defineProps({
+    data: {
+      type: Object as PropType<any>,
+      default: () => ({ graph: {} }),
+    },
+  });
+  provide("options", props.data);
 </script>
 <style lang="scss" scoped>
-.trace-wrapper {
-  width: 100%;
-  height: 100%;
-  font-size: 12px;
-  position: relative;
-  overflow: auto;
-}
+  .trace-wrapper {
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    position: relative;
+    overflow: auto;
+  }
 
-.header {
-  padding: 10px;
-  font-size: 12px;
-  border-bottom: 1px solid #dcdfe6;
-  min-width: 1200px;
-}
+  .header {
+    padding: 10px;
+    font-size: 12px;
+    border-bottom: 1px solid #dcdfe6;
+    min-width: 1200px;
+  }
 
-.trace {
-  width: 100%;
-  overflow: auto;
-  min-width: 1200px;
-}
+  .trace {
+    width: 100%;
+    overflow: auto;
+    min-width: 1200px;
+  }
 </style>

@@ -18,11 +18,7 @@ import { ref, watch } from "vue";
 import { tryOnUnmounted } from "@vueuse/core";
 import { isFunction } from "@/utils/is";
 
-export function useTimeoutFn(
-  handle: Fn<any>,
-  wait: number,
-  native = false
-): any {
+export function useTimeoutFn(handle: Fn<any>, wait: number, native = false): any {
   if (!isFunction(handle)) {
     throw new Error("handle is not Function!");
   }
@@ -36,7 +32,7 @@ export function useTimeoutFn(
       (maturity) => {
         maturity && handle();
       },
-      { immediate: false }
+      { immediate: false },
     );
   }
   return { readyRef, stop, start };

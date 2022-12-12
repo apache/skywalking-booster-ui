@@ -33,7 +33,7 @@ class Orientation {
     b1: number,
     b2: number,
     b3: number,
-    start_angle: number
+    start_angle: number,
   ) {
     this.f0 = f0;
     this.f1 = f1;
@@ -58,7 +58,7 @@ class Layout {
     -1.0 / 3.0,
     0.0,
     2.0 / 3.0,
-    0.5
+    0.5,
   );
   static Flat = new Orientation(
     3.0 / 2.0,
@@ -69,7 +69,7 @@ class Layout {
     0.0,
     -1.0 / 3.0,
     SQRT3 / 3.0,
-    0.0
+    0.0,
   );
 
   static spacing(radius: number, isPointy = false): number[] {
@@ -135,9 +135,7 @@ class Hex extends Int16Array {
   }
 
   get len(): number {
-    return Math.floor(
-      (Math.abs(this[0]) + Math.abs(this[1]) + Math.abs(this[2])) / 2
-    );
+    return Math.floor((Math.abs(this[0]) + Math.abs(this[1]) + Math.abs(this[2])) / 2);
   }
 }
 

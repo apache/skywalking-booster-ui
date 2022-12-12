@@ -28,86 +28,82 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import getDashboard from "@/hooks/useDashboardsSession";
-import { Option } from "@/types/app";
+  import { ref, computed } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import getDashboard from "@/hooks/useDashboardsSession";
+  import type { Option } from "@/types/app";
 
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const associate = dashboardStore.selectedGrid.associate || [];
-const widgetIds = ref<string[]>(
-  associate.map((d: { widgetId: string }) => d.widgetId)
-);
-const widgets: any = computed(() => {
-  const widgetList = getDashboard(dashboardStore.currentDashboard).widgets;
-  const items = [];
-  for (const d of widgetList) {
-    const isLinear = ["Bar", "Line", "Area"].includes(
-      (d.graph && d.graph.type) || ""
-    );
-    if (isLinear && d.id && dashboardStore.selectedGrid.id !== d.id) {
-      items.push({ value: d.id, label: (d.widget && d.widget.name) || d.id });
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const associate = dashboardStore.selectedGrid.associate || [];
+  const widgetIds = ref<string[]>(associate.map((d: { widgetId: string }) => d.widgetId));
+  const widgets: any = computed(() => {
+    const widgetList = getDashboard(dashboardStore.currentDashboard).widgets;
+    const items = [];
+    for (const d of widgetList) {
+      const isLinear = ["Bar", "Line", "Area"].includes((d.graph && d.graph.type) || "");
+      if (isLinear && d.id && dashboardStore.selectedGrid.id !== d.id) {
+        items.push({ value: d.id, label: (d.widget && d.widget.name) || d.id });
+      }
     }
-  }
-  return items;
-});
-function updateWidgetConfig(options: Option[]) {
-  const arr: any = getDashboard(dashboardStore.currentDashboard).widgets;
-  const opt = options.map((d: Option) => {
-    return { widgetId: d.value };
+    return items;
   });
-  const newVal = options.map((d: Option) => d.value);
-  // add association options in the source widget
-  const widget = {
-    ...dashboardStore.selectedGrid,
-    associate: opt,
-  };
-  dashboardStore.selectWidget({ ...widget });
+  function updateWidgetConfig(options: Option[]) {
+    const arr: any = getDashboard(dashboardStore.currentDashboard).widgets;
+    const opt = options.map((d: Option) => {
+      return { widgetId: d.value };
+    });
+    const newVal = options.map((d: Option) => d.value);
+    // add association options in the source widget
+    const widget = {
+      ...dashboardStore.selectedGrid,
+      associate: opt,
+    };
+    dashboardStore.selectWidget({ ...widget });
 
-  // remove unuse association widget option
-  for (const id of widgetIds.value) {
-    if (!newVal.includes(id)) {
-      const w = arr.find((d: { id: string }) => d.id === id);
+    // remove unuse association widget option
+    for (const id of widgetIds.value) {
+      if (!newVal.includes(id)) {
+        const w = arr.find((d: { id: string }) => d.id === id);
+        const config = {
+          ...w,
+          associate: [],
+        };
+        dashboardStore.setWidget(config);
+      }
+    }
+    // add association options in target widgets
+    for (let i = 0; i < opt.length; i++) {
+      const item = JSON.parse(JSON.stringify(opt));
+      item[i] = { widgetId: dashboardStore.selectedGrid.id };
+      const w = arr.find((d: { id: string }) => d.id === opt[i].widgetId);
       const config = {
         ...w,
-        associate: [],
+        associate: item,
       };
       dashboardStore.setWidget(config);
     }
+    widgetIds.value = newVal;
   }
-  // add association options in target widgets
-  for (let i = 0; i < opt.length; i++) {
-    const item = JSON.parse(JSON.stringify(opt));
-    item[i] = { widgetId: dashboardStore.selectedGrid.id };
-    const w = arr.find((d: { id: string }) => d.id === opt[i].widgetId);
-    const config = {
-      ...w,
-      associate: item,
-    };
-    dashboardStore.setWidget(config);
-  }
-  widgetIds.value = newVal;
-}
 </script>
 <style lang="scss" scoped>
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
-}
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+  }
 
-.input {
-  width: 500px;
-}
+  .input {
+    width: 500px;
+  }
 
-.item {
-  margin-bottom: 10px;
-}
+  .item {
+    margin-bottom: 10px;
+  }
 
-.selectors {
-  width: 500px;
-}
+  .selectors {
+    width: 500px;
+  }
 </style>

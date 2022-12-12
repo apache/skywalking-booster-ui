@@ -68,52 +68,52 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { RefIdTypes } from "../../data";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { RefIdTypes } from "../../data";
 
-const QueryOrders = [
-  { label: "None", value: "BY_START_TIME" },
-  { label: "Duration", value: "BY_DURATION" },
-];
-const Status = [
-  { label: "None", value: "ALL" },
-  { label: "Success", value: "SUCCESS" },
-  { label: "Error", value: "ERROR" },
-];
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const { graph, relatedTrace } = dashboardStore.selectedGrid;
-const traceOpt = relatedTrace || {};
-const status = ref<string>(traceOpt.status || Status[0].value);
-const queryOrder = ref<string>(traceOpt.queryOrder || QueryOrders[0].value);
-const latency = ref<boolean>(traceOpt.latency || false);
-const enableRelate = ref<boolean>(traceOpt.enableRelate || false);
-const type = ref<string>((graph && graph.type) || "");
-const refIdType = ref<string>(traceOpt.refIdType || "traceId");
+  const QueryOrders = [
+    { label: "None", value: "BY_START_TIME" },
+    { label: "Duration", value: "BY_DURATION" },
+  ];
+  const Status = [
+    { label: "None", value: "ALL" },
+    { label: "Success", value: "SUCCESS" },
+    { label: "Error", value: "ERROR" },
+  ];
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const { graph, relatedTrace } = dashboardStore.selectedGrid;
+  const traceOpt = relatedTrace || {};
+  const status = ref<string>(traceOpt.status || Status[0].value);
+  const queryOrder = ref<string>(traceOpt.queryOrder || QueryOrders[0].value);
+  const latency = ref<boolean>(traceOpt.latency || false);
+  const enableRelate = ref<boolean>(traceOpt.enableRelate || false);
+  const type = ref<string>((graph && graph.type) || "");
+  const refIdType = ref<string>(traceOpt.refIdType || "traceId");
 
-function updateConfig(param: { [key: string]: unknown }) {
-  const relatedTrace = {
-    ...dashboardStore.selectedGrid.relatedTrace,
-    ...param,
-  };
-  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, relatedTrace });
-}
+  function updateConfig(param: { [key: string]: unknown }) {
+    const relatedTrace = {
+      ...dashboardStore.selectedGrid.relatedTrace,
+      ...param,
+    };
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, relatedTrace });
+  }
 </script>
 <style lang="scss" scoped>
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
-}
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+  }
 
-.item {
-  margin-bottom: 10px;
-}
+  .item {
+    margin-bottom: 10px;
+  }
 
-.selector {
-  width: 500px;
-}
+  .selector {
+    width: 500px;
+  }
 </style>

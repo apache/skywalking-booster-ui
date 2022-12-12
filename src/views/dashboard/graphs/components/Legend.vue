@@ -81,115 +81,111 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
-import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
-import { LegendOptions } from "@/types/dashboard";
-import useLegendProcess from "@/hooks/useLegendProcessor";
+  import { computed } from "vue";
+  import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
+  import type { LegendOptions } from "@/types/dashboard";
+  import useLegendProcess from "@/hooks/useLegendProcessor";
 
-/*global defineProps */
-const props = defineProps({
-  data: {
-    type: Object as PropType<{ [key: string]: number[] }>,
-    default: () => ({}),
-  },
-  config: {
-    type: Object as PropType<LegendOptions>,
-    default: () => ({}),
-  },
-  intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-});
-const { t } = useI18n();
-const tableData: any = computed(() => {
-  const { aggregations } = useLegendProcess(props.config);
-  return aggregations(props.data, props.intervalTime).source;
-});
-const headerRow = computed(() => {
-  const { aggregations } = useLegendProcess(props.config);
-  return aggregations(props.data, props.intervalTime).headers;
-});
-const isRight = computed(() => useLegendProcess(props.config).isRight);
-const width = computed(() =>
-  props.config.width
-    ? props.config.width + "px"
-    : isRight.value
-    ? "150px"
-    : "100%"
-);
-const colors = computed(() => {
-  const keys = Object.keys(props.data || {}).filter(
-    (i: any) => Array.isArray(props.data[i]) && props.data[i].length
+  /*global defineProps */
+  const props = defineProps({
+    data: {
+      type: Object as PropType<{ [key: string]: number[] }>,
+      default: () => ({}),
+    },
+    config: {
+      type: Object as PropType<LegendOptions>,
+      default: () => ({}),
+    },
+    intervalTime: { type: Array as PropType<string[]>, default: () => [] },
+  });
+  const { t } = useI18n();
+  const tableData: any = computed(() => {
+    const { aggregations } = useLegendProcess(props.config);
+    return aggregations(props.data, props.intervalTime).source;
+  });
+  const headerRow = computed(() => {
+    const { aggregations } = useLegendProcess(props.config);
+    return aggregations(props.data, props.intervalTime).headers;
+  });
+  const isRight = computed(() => useLegendProcess(props.config).isRight);
+  const width = computed(() =>
+    props.config.width ? props.config.width + "px" : isRight.value ? "150px" : "100%",
   );
-  const { chartColors } = useLegendProcess(props.config);
-  return chartColors(keys);
-});
+  const colors = computed(() => {
+    const keys = Object.keys(props.data || {}).filter(
+      (i: any) => Array.isArray(props.data[i]) && props.data[i].length,
+    );
+    const { chartColors } = useLegendProcess(props.config);
+    return chartColors(keys);
+  });
 </script>
 <style lang="scss" scoped>
-table {
-  font-size: 12px;
-  white-space: nowrap;
-  margin: 0;
-  border: none;
-  border-collapse: separate;
-  border-spacing: 0;
-  table-layout: fixed;
-}
-
-table th {
-  padding: 5px;
-}
-
-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  width: 25vw;
-  background: #fff;
-  text-align: left;
-}
-
-.name {
-  cursor: pointer;
-}
-
-table td {
-  padding: 5px;
-}
-
-table thead th:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 2;
-}
-
-table tbody th {
-  font-weight: bold;
-  font-style: normal;
-  text-align: left;
-  background: #fff;
-  position: sticky;
-  left: 0;
-  z-index: 1;
-}
-
-[role="region"][aria-labelledby][tabindex] {
-  overflow: auto;
-}
-
-i {
-  font-style: normal;
-}
-
-.value {
-  span {
-    display: inline-block;
-    padding: 5px;
-    width: 80px;
+  table {
+    font-size: 12px;
+    white-space: nowrap;
+    margin: 0;
+    border: none;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
   }
-}
 
-.list {
-  height: 360px;
-  overflow: auto;
-}
+  table th {
+    padding: 5px;
+  }
+
+  table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    width: 25vw;
+    background: #fff;
+    text-align: left;
+  }
+
+  .name {
+    cursor: pointer;
+  }
+
+  table td {
+    padding: 5px;
+  }
+
+  table thead th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+  }
+
+  table tbody th {
+    font-weight: bold;
+    font-style: normal;
+    text-align: left;
+    background: #fff;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+  }
+
+  [role="region"][aria-labelledby][tabindex] {
+    overflow: auto;
+  }
+
+  i {
+    font-style: normal;
+  }
+
+  .value {
+    span {
+      display: inline-block;
+      padding: 5px;
+      width: 80px;
+    }
+  }
+
+  .list {
+    height: 360px;
+    overflow: auto;
+  }
 </style>

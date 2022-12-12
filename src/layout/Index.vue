@@ -22,15 +22,15 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { AppMain, SideBar, NavBar } from "./components";
+  import { AppMain, SideBar, NavBar } from "./components";
 </script>
 <style lang="scss" scoped>
-.app-wrapper {
-  height: 100%;
-}
+  .app-wrapper {
+    height: 100%;
+  }
 
-.main-container {
-  flex-grow: 2;
-  height: 100%;
-}
+  .main-container {
+    flex-grow: 2;
+    height: 100%;
+  }
 </style>

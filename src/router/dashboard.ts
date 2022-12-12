@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
 
 export const routesDashboard: Array<RouteRecordRaw> = [
@@ -88,8 +88,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "",
-        redirect:
-          "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
+        redirect: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
         component: () => import("@/views/dashboard/Edit.vue"),
         name: "ViewServiceRelation",
         meta: {
@@ -131,8 +130,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "",
-        redirect:
-          "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
+        redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
         component: () => import("@/views/dashboard/Edit.vue"),
         name: "PodRelation",
         meta: {

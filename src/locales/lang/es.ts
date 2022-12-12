@@ -77,10 +77,8 @@ const msg = {
   editGraph: "Editar Opciones",
   dashboardName: "Selecciona Nombre del Panel",
   linkDashboard: "Nombre del panel relacionado con llamadas de la topología",
-  linkServerMetrics:
-    "Métricas de servidor relacionadas con llamadas de la topología",
-  linkClientMetrics:
-    "Métricas de cliente relacionadas con llamadas de la topología",
+  linkServerMetrics: "Métricas de servidor relacionadas con llamadas de la topología",
+  linkClientMetrics: "Métricas de cliente relacionadas con llamadas de la topología",
   nodeDashboard: "Nombre del panel relacionado con nodos de la topología",
   nodeMetrics: "Mêtricas relacionas con nodos de la topología",
   instanceDashboard: "Nombre del panel relacionado con instancias de servicio",
@@ -315,8 +313,7 @@ const msg = {
   viewLogs: "Ver Registro de Datos",
   logsTagsTip: `Solamente etiquetas definidas en core/default/searchableLogsTags pueden ser buscadas.
   Más información en la página de Vocabulario de Configuración`,
-  keywordsOfContentLogTips:
-    "El almacenamiento actual del servidor SkyWalking OAP no lo soporta.",
+  keywordsOfContentLogTips: "El almacenamiento actual del servidor SkyWalking OAP no lo soporta.",
   setEvent: "Establecer Evento",
   viewAttributes: "Ver",
   serviceEvents: "Eventos Servico",
@@ -347,8 +344,7 @@ const msg = {
   destEndpoint: "Endpoint Destinación",
   eventSource: "Fuente Envento",
   modalTitle: "Inspección",
-  selectRedirectPage:
-    "Quiere inspeccionar las Trazas or Registros de datos del servicio %s?",
+  selectRedirectPage: "Quiere inspeccionar las Trazas or Registros de datos del servicio %s?",
   logAnalysis: "Lenguaje de Análisis de Registro de Datos",
   logDataBody: "Contenido del Registro de Datos",
   addType: "Por favor introduzca un tipo",
@@ -369,10 +365,8 @@ const msg = {
   addTraceID: "Por favor introduzca el ID de la traza",
   addTags: "Por favor introduzaca una etiqueta",
   addKeywordsOfContent: "Por favor introduzca una clave de contenido",
-  addExcludingKeywordsOfContent:
-    "Por favor introduzca una clave excluyente de contenido",
-  noticeTag:
-    "Por favor presione Intro después de introducir una etiqueta(clave=valor).",
+  addExcludingKeywordsOfContent: "Por favor introduzca una clave excluyente de contenido",
+  noticeTag: "Por favor presione Intro después de introducir una etiqueta(clave=valor).",
   conditionNotice:
     "Aviso: Por favor presione Intro después de introducir una clave de contenido, excluir clave de contenido(clave=valor).",
   language: "Lenguaje",
