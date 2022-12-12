@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import type { UserConfig, ConfigEnv } from 'vite';
+import type { UserConfig, ConfigEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import { loadEnv } from "vite";
-import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 // import monacoEditorPlugin from "vite-plugin-monaco-editor";
 
 
@@ -39,11 +39,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         resolvers: [
           ElementPlusResolver(),
         ],
-        // dts: "./src/types/auto-imports.d.ts",
+        dts: "./src/types/auto-imports.d.ts",
       }),
       Components({
         resolvers: [ElementPlusResolver()],
-        // dts: "./src/types/components.d.ts",
+        dts: "./src/types/components.d.ts",
       }),
     ],
     resolve: {
@@ -52,6 +52,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         "@": path.resolve(__dirname, "./src"),
         "vue-i18n": "vue-i18n/dist/vue-i18n.cjs.js",
       },
+      preserveSymlinks: true,
     },
     server: {
       host: true,
