@@ -53,6 +53,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     },
     server: {
       host: true,
+      port: 3000,
       proxy: {
         "/graphql": {
           target: `${
