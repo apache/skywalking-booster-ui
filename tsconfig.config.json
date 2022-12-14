@@ -20,5 +20,6 @@
   "compilerOptions": {
     "composite": true,
     "types": ["node"],
+    "noImplicitThis": false
   }
 }

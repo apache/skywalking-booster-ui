@@ -139,9 +139,8 @@ limitations under the License. -->
         }
       }
     }
-    this.tableData = element;
-    this.componentKey += 1;
-    this.flag = !this.flag;
+    componentKey.value += 1;
+    flag.value = !flag.value;
   }
 </script>
 <style lang="scss" scoped>

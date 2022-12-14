@@ -16,7 +16,7 @@
  */
 /* global module */
 module.exports = {
-  printWidth: 100,
+  printWidth: 120,
   semi: true,
   vueIndentScriptAndStyle: true,
   trailingComma: "all",

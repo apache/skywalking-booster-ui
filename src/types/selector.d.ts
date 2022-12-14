@@ -29,6 +29,7 @@ export type Instance = {
   language?: string;
   instanceUUID?: string;
   attributes?: { name: string; value: string }[];
+  id?: string;
 };
 
 export type Endpoint = {

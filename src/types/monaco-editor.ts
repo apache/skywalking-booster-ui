@@ -15,3 +15,4 @@
  * limitations under the License.
  */
 declare module "monaco-editor";
+export {};

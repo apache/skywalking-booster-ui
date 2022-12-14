@@ -59,9 +59,7 @@ export const demandLogStore = defineStore({
       this.message = message || "";
     },
     async getInstances(id: string) {
-      const serviceId = this.selectorStore.currentService
-        ? this.selectorStore.currentService.id
-        : id;
+      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -96,15 +94,13 @@ export const demandLogStore = defineStore({
     },
     async getDemandLogs() {
       this.loadLogs = true;
-      const res: AxiosResponse = await graphql
-        .query("fetchDemandPodLogs")
-        .params({ condition: this.conditions });
+      const res: AxiosResponse = await graphql.query("fetchDemandPodLogs").params({ condition: this.conditions });
       this.loadLogs = false;
       if (res.data.errors) {
         return res.data;
       }
       if (res.data.data.logs.errorReason) {
-        this.setLogs("", res.data.data.logs.errorReason);
+        this.setLogs([], res.data.data.logs.errorReason);
         return res.data;
       }
       this.total = res.data.data.logs.logs.length;

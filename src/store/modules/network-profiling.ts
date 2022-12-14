@@ -24,7 +24,7 @@ import type { LayoutConfig } from "@/types/dashboard";
 import { ElMessage } from "element-plus";
 
 interface NetworkProfilingState {
-  networkTasks: EBPFTaskList[];
+  networkTasks: Array<Recordable<EBPFTaskList>>;
   networkTip: string;
   selectedNetworkTask: Recordable<EBPFTaskList>;
   nodes: ProcessNode[];
@@ -55,10 +55,10 @@ export const networkProfilingStore = defineStore({
     loadNodes: false,
   }),
   actions: {
-    setSelectedNetworkTask(task: EBPFTaskList) {
+    setSelectedNetworkTask(task: Recordable<EBPFTaskList>) {
       this.selectedNetworkTask = task || {};
     },
-    setNode(node: Node) {
+    setNode(node: Nullable<ProcessNode>) {
       this.node = node;
     },
     setLink(link: Call) {
@@ -156,7 +156,6 @@ export const networkProfilingStore = defineStore({
       }
       const res: AxiosResponse = await graphql.query("aliveNetworkProfiling").params({ taskId });
 
-      this.aliveMessage = "";
       if (res.data.errors) {
         return res.data;
       }

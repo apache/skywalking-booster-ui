@@ -16,17 +16,12 @@
  */
 import { defineStore } from "pinia";
 import type { Option } from "@/types/app";
-import type {
-  EBPFTaskCreationRequest,
-  EBPFProfilingSchedule,
-  EBPFTaskList,
-  AnalyzationTrees,
-} from "@/types/ebpf";
+import type { EBPFTaskCreationRequest, EBPFProfilingSchedule, EBPFTaskList, AnalyzationTrees } from "@/types/ebpf";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
 interface EbpfState {
-  taskList: EBPFTaskList[];
+  taskList: Array<Recordable<EBPFTaskList>>;
   eBPFSchedules: EBPFProfilingSchedule[];
   currentSchedule: EBPFProfilingSchedule | Record<string, never>;
   analyzeTrees: AnalyzationTrees[];
@@ -51,7 +46,7 @@ export const ebpfStore = defineStore({
     aggregateType: "COUNT",
   }),
   actions: {
-    setSelectedTask(task: EBPFTaskList) {
+    setSelectedTask(task: Recordable<EBPFTaskList>) {
       this.selectedTask = task || {};
     },
     setCurrentSchedule(s: EBPFProfilingSchedule) {
@@ -85,7 +80,7 @@ export const ebpfStore = defineStore({
       });
       return res.data;
     },
-    async getTaskList(params: { serviceId: string; serviceInstanceId: string; targets: string[] }) {
+    async getTaskList(params: { serviceId: string; targets: string[] }) {
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
@@ -101,7 +96,7 @@ export const ebpfStore = defineStore({
       if (!this.taskList.length) {
         return res.data;
       }
-      this.getEBPFSchedules({ taskId: this.taskList[0].taskId });
+      this.getEBPFSchedules({ taskId: String(this.taskList[0].taskId) });
       return res.data;
     },
     async getEBPFSchedules(params: { taskId: string }) {

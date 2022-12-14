@@ -23,7 +23,7 @@ import type {
   TaskLog,
   ProfileTaskCreationRequest,
 } from "@/types/profile";
-import type { Trace, Span } from "@/types/trace";
+import type { Trace } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
@@ -35,9 +35,9 @@ interface ProfileState {
   condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
   segmentList: Trace[];
-  currentSegment: Trace | Record<string, never>;
-  segmentSpans: SegmentSpan[];
-  currentSpan: SegmentSpan | Record<string, never>;
+  currentSegment: Recordable<Trace>;
+  segmentSpans: Array<Recordable<SegmentSpan>>;
+  currentSpan: Recordable<SegmentSpan>;
   analyzeTrees: ProfileAnalyzationTrees;
   taskLogs: TaskLog[];
   highlightTop: boolean;
@@ -65,10 +65,10 @@ export const profileStore = defineStore({
         ...data,
       };
     },
-    setCurrentSpan(span: Span) {
+    setCurrentSpan(span: Recordable<SegmentSpan>) {
       this.currentSpan = span;
     },
-    setCurrentSegment(s: Trace) {
+    setCurrentSegment(s: Recordable<Trace>) {
       this.currentSegment = s;
     },
     setHighlightTop() {
@@ -139,7 +139,7 @@ export const profileStore = defineStore({
         this.currentSegment = segmentList[0];
         this.getSegmentSpans({ segmentId: segmentList[0].segmentId });
       } else {
-        this.currentSegment = null;
+        this.currentSegment = {};
       }
       return res.data;
     },
@@ -161,8 +161,8 @@ export const profileStore = defineStore({
       this.segmentSpans = segment.spans.map((d: SegmentSpan) => {
         return {
           ...d,
-          segmentId: this.currentSegment.segmentId,
-          traceId: this.currentSegment.traceIds[0],
+          segmentId: this.currentSegment?.segmentId,
+          traceId: (this.currentSegment.traceIds as any)[0],
         };
       });
       if (!(segment.spans && segment.spans.length)) {
@@ -173,10 +173,7 @@ export const profileStore = defineStore({
       this.currentSpan = segment.spans[index];
       return res.data;
     },
-    async getProfileAnalyze(params: {
-      segmentId: string;
-      timeRanges: Array<{ start: number; end: number }>;
-    }) {
+    async getProfileAnalyze(params: { segmentId: string; timeRanges: Array<{ start: number; end: number }> }) {
       if (!params.segmentId) {
         return new Promise((resolve) => resolve({}));
       }
@@ -203,9 +200,7 @@ export const profileStore = defineStore({
       return res.data;
     },
     async createTask(param: ProfileTaskCreationRequest) {
-      const res: AxiosResponse = await graphql
-        .query("saveProfileTask")
-        .params({ creationRequest: param });
+      const res: AxiosResponse = await graphql.query("saveProfileTask").params({ creationRequest: param });
 
       if (res.data.errors) {
         return res.data;

@@ -46,7 +46,7 @@ limitations under the License. -->
           filters?: Filters;
           relatedTrace?: RelatedTrace;
           id?: string;
-          associate: { widgetId: string }[];
+          associate?: { widgetId: string }[];
         }
       >,
       default: () => ({
@@ -66,15 +66,10 @@ limitations under the License. -->
   function getOption() {
     const { showEchartsLegend, isRight, chartColors } = useLegendProcess(props.config.legend);
     setRight.value = isRight;
-    const keys = Object.keys(props.data || {}).filter(
-      (i: any) => Array.isArray(props.data[i]) && props.data[i].length,
-    );
+    const keys = Object.keys(props.data || {}).filter((i: any) => Array.isArray(props.data[i]) && props.data[i].length);
     const temp = keys.map((i: any) => {
       const serie: any = {
-        data: props.data[i].map((item: any, itemIndex: number) => [
-          props.intervalTime[itemIndex],
-          item,
-        ]),
+        data: props.data[i].map((item: any, itemIndex: number) => [props.intervalTime[itemIndex], item]),
         name: i,
         type: "line",
         symbol: "circle",
