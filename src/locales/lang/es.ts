@@ -32,7 +32,7 @@ const msg = {
   dashboards: "Paneles",
   profiles: "Perfiles",
   database: "Base de Datos",
-  mySQL: "MySQL",
+  mySQL: "MySQL/MariaDB",
   serviceName: "Nombre Servicio",
   technologies: "Tecnologías",
   generalServicePanel: "Panel Servicio General",
