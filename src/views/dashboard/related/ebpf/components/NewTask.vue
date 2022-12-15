@@ -42,18 +42,9 @@ limitations under the License. -->
     <div>
       <div class="label">{{ t("monitorTime") }}</div>
       <div>
-        <Radio
-          :value="monitorTime"
-          :options="InitTaskField.monitorTimeEn"
-          @change="changeMonitorTime"
-        />
+        <Radio :value="monitorTime" :options="InitTaskField.monitorTimeEn" @change="changeMonitorTime" />
         <span class="date">
-          <TimePicker
-            :value="time"
-            position="bottom"
-            format="YYYY-MM-DD HH:mm:ss"
-            @input="changeTimeRange"
-          />
+          <TimePicker :value="time" position="bottom" format="YYYY-MM-DD HH:mm:ss" @input="changeTimeRange" />
         </span>
       </div>
     </div>

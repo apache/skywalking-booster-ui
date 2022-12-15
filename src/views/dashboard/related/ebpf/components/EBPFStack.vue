@@ -101,8 +101,7 @@ limitations under the License. -->
           (d.parent &&
             `<div class="mb-5">Percentage Of Selected: ${
               (
-                (d.data.dumpCount /
-                  ((selectStack.value && selectStack.value.dumpCount) || root.dumpCount)) *
+                (d.data.dumpCount / ((selectStack.value && selectStack.value.dumpCount) || root.dumpCount)) *
                 100
               ).toFixed(3) + "%"
             }</div>`) ||

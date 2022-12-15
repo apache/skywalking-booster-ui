@@ -93,10 +93,7 @@ limitations under the License. -->
   );
   const key = computed(() => Object.keys(props.data)[0] || "");
   const available = computed(
-    () =>
-      Array.isArray(props.data[key.value]) &&
-      props.data[key.value][0] &&
-      props.data[key.value][0].value,
+    () => Array.isArray(props.data[key.value]) && props.data[key.value][0] && props.data[key.value][0].value,
   );
   const maxValue = computed(() => {
     if (!(props.data[key.value] && props.data[key.value].length)) {

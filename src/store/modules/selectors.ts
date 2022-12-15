@@ -90,10 +90,7 @@ export const selectorStore = defineStore({
       }
       return res.data;
     },
-    async getServiceInstances(param?: {
-      serviceId: string;
-      isRelation: boolean;
-    }): Promise<Nullable<AxiosResponse>> {
+    async getServiceInstances(param?: { serviceId: string; isRelation: boolean }): Promise<Nullable<AxiosResponse>> {
       const serviceId = param ? param.serviceId : this.currentService?.id;
       if (!serviceId) {
         return null;
@@ -111,10 +108,7 @@ export const selectorStore = defineStore({
       }
       return res.data;
     },
-    async getProcesses(param?: {
-      instanceId: string;
-      isRelation: boolean;
-    }): Promise<Nullable<AxiosResponse>> {
+    async getProcesses(param?: { instanceId: string; isRelation: boolean }): Promise<Nullable<AxiosResponse>> {
       const instanceId = param ? param.instanceId : this.currentPod?.id;
       if (!instanceId) {
         return null;

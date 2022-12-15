@@ -55,9 +55,7 @@ limitations under the License. -->
   const metricConfig = computed(() => props.config.metricConfig || []);
   const key = computed(() => Object.keys(props.data)[0]);
   const singleVal = computed(() => Number(props.data[key.value]));
-  const unit = computed(
-    () => metricConfig.value[0] && encodeURIComponent(metricConfig.value[0].unit || ""),
-  );
+  const unit = computed(() => metricConfig.value[0] && encodeURIComponent(metricConfig.value[0].unit || ""));
 </script>
 <style lang="scss" scoped>
   .chart-card {

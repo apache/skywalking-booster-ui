@@ -21,12 +21,7 @@ import { routesSetting } from "./setting";
 import { routesAlarm } from "./alarm";
 import routesLayers from "./layer";
 
-const routes: Array<RouteRecordRaw> = [
-  ...routesLayers,
-  ...routesDashboard,
-  ...routesAlarm,
-  ...routesSetting,
-];
+const routes: Array<RouteRecordRaw> = [...routesLayers, ...routesDashboard, ...routesAlarm, ...routesSetting];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

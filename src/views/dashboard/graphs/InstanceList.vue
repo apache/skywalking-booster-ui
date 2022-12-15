@@ -15,12 +15,7 @@ limitations under the License. -->
 <template>
   <div class="table">
     <div class="search">
-      <el-input
-        v-model="searchText"
-        placeholder="Please input instance name"
-        @change="searchList"
-        class="inputs"
-      >
+      <el-input v-model="searchText" placeholder="Please input instance name" @change="searchList" class="inputs">
         <template #append>
           <el-button class="btn" @click="searchList">
             <Icon size="sm" iconName="search" />
@@ -32,11 +27,7 @@ limitations under the License. -->
       <el-table v-loading="chartLoading" :data="instances" style="width: 100%">
         <el-table-column label="Service Instances" fixed min-width="320">
           <template #default="scope">
-            <span
-              class="link"
-              @click="clickInstance(scope)"
-              :style="{ fontSize: `${config.fontSize}px` }"
-            >
+            <span class="link" @click="clickInstance(scope)" :style="{ fontSize: `${config.fontSize}px` }">
               {{ scope.row.label }}
             </span>
           </template>
@@ -167,14 +158,10 @@ limitations under the License. -->
         ElMessage.error(json.errors);
         return;
       }
-      const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(
-        currentInstances,
-        json,
-        {
-          ...props.config,
-          metricConfig: metricConfig.value,
-        },
-      );
+      const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(currentInstances, json, {
+        ...props.config,
+        metricConfig: metricConfig.value,
+      });
       instances.value = data;
       colMetrics.value = names;
       metricTypes.value = metricTypesArr;
@@ -211,19 +198,13 @@ limitations under the License. -->
   }
 
   function searchList() {
-    const searchInstances = selectorStore.pods.filter((d: { label: string }) =>
-      d.label.includes(searchText.value),
-    );
+    const searchInstances = selectorStore.pods.filter((d: { label: string }) => d.label.includes(searchText.value));
     instances.value = searchInstances.filter((d: unknown, index: number) => index < pageSize);
     queryInstanceMetrics(instances.value);
   }
 
   watch(
-    () => [
-      ...(props.config.metricTypes || []),
-      ...(props.config.metrics || []),
-      ...(props.config.metricConfig || []),
-    ],
+    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;

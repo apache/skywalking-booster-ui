@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* eslint-env node */
+
 require("@rushstack/eslint-patch/modern-module-resolution");
 
 module.exports = {
@@ -33,6 +33,10 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: "latest",
+  },
+  env: {
+    browser: true,
+    node: true,
   },
   rules: {
     "@typescript-eslint/no-explicit-any": "off",

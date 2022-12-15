@@ -97,10 +97,7 @@ limitations under the License. -->
 
   function getUnit(index: string) {
     const i = Number(index);
-    const u =
-      props.config.metricConfig &&
-      props.config.metricConfig[i] &&
-      props.config.metricConfig[i].unit;
+    const u = props.config.metricConfig && props.config.metricConfig[i] && props.config.metricConfig[i].unit;
     if (u) {
       return `(${encodeURIComponent(u)})`;
     }
@@ -108,10 +105,7 @@ limitations under the License. -->
   }
   function getLabel(metric: string, index: string) {
     const i = Number(index);
-    const label =
-      props.config.metricConfig &&
-      props.config.metricConfig[i] &&
-      props.config.metricConfig[i].label;
+    const label = props.config.metricConfig && props.config.metricConfig[i] && props.config.metricConfig[i].label;
     if (label) {
       if (props.config.metricTypes[i] === MetricQueryTypes.ReadLabeledMetricsValues) {
         const name = (label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""))[

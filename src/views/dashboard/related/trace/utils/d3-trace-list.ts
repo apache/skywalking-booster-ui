@@ -124,9 +124,7 @@ export default class ListGraph {
       n.x = ++index * this.barHeight + 24;
       n.y = n.depth * 12;
     });
-    const node = this.svg
-      .selectAll(".trace-node")
-      .data(nodes, (d: any) => d.id || (d.id = ++this.i));
+    const node = this.svg.selectAll(".trace-node").data(nodes, (d: any) => d.id || (d.id = ++this.i));
     const nodeEnter = node
       .enter()
       .append("g")
@@ -170,8 +168,7 @@ export default class ListGraph {
         if (d.data.label === "TRACE_ROOT") {
           return "";
         }
-        const label =
-          d.data.label.length > 30 ? `${d.data.label.slice(0, 30)}...` : `${d.data.label}`;
+        const label = d.data.label.length > 30 ? `${d.data.label.slice(0, 30)}...` : `${d.data.label}`;
         return label;
       });
     nodeEnter
@@ -217,12 +214,7 @@ export default class ListGraph {
       .attr("y", 12)
       .attr("fill", "#ccc")
       .style("font-size", "11px")
-      .text(
-        (d: any) =>
-          `${d.data.layer || ""} ${
-            d.data.component ? "- " + d.data.component : d.data.component || ""
-          }`,
-      );
+      .text((d: any) => `${d.data.layer || ""} ${d.data.component ? "- " + d.data.component : d.data.component || ""}`);
     nodeEnter
       .append("rect")
       .attr("rx", 2)
@@ -250,14 +242,10 @@ export default class ListGraph {
       .style("cursor", "pointer")
       .attr("stroke-width", 2.5)
       .attr("fill", (d: any) =>
-        d._children
-          ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`
-          : "rbga(0,0,0,0)",
+        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "rbga(0,0,0,0)",
       )
       .style("stroke", (d: any) =>
-        d.data.label === "TRACE_ROOT"
-          ? ""
-          : `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`,
+        d.data.label === "TRACE_ROOT" ? "" : `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`,
       )
       .on("click", (d: any) => {
         this.click(d, this);
@@ -268,9 +256,7 @@ export default class ListGraph {
       .attr("transform", (d: any) => `translate(${d.y + 5},${d.x})`)
       .style("opacity", 1)
       .select("circle")
-      .attr("fill", (d: any) =>
-        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "",
-      );
+      .attr("fill", (d: any) => (d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : ""));
 
     // Transition exiting nodes to the parent's new position.
     node

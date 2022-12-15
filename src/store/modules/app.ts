@@ -92,8 +92,7 @@ export const appStore = defineStore({
               this.duration.start.getMonth());
           break;
       }
-      const utcSpace =
-        (this.utcHour + new Date().getTimezoneOffset() / 60) * 3600000 + this.utcMin * 60000;
+      const utcSpace = (this.utcHour + new Date().getTimezoneOffset() / 60) * 3600000 + this.utcMin * 60000;
       const startUnix: number = this.duration.start.getTime();
       const endUnix: number = this.duration.end.getTime();
       const timeIntervals: number[] = [];

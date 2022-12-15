@@ -13,22 +13,11 @@ limitations under the License. -->
 <template>
   <div class="item">
     <span class="label">{{ t("showDepth") }}</span>
-    <el-switch
-      v-model="showDepth"
-      active-text="Yes"
-      inactive-text="No"
-      @change="changeConfig({ showDepth })"
-    />
+    <el-switch v-model="showDepth" active-text="Yes" inactive-text="No" @change="changeConfig({ showDepth })" />
   </div>
   <div class="item" v-show="showDepth">
     <span class="label">{{ t("defaultDepth") }}</span>
-    <Selector
-      class="input"
-      size="small"
-      :value="depth"
-      :options="DepthList"
-      @change="changeDepth($event)"
-    />
+    <Selector class="input" size="small" :value="depth" :options="DepthList" @change="changeDepth($event)" />
   </div>
   <div class="footer">
     <el-button size="small">

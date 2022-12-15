@@ -28,12 +28,7 @@ limitations under the License. -->
       </div>
       <div class="mr-10 ml-10">
         <span class="grey">{{ t("searchKeyword") }}: </span>
-        <el-input
-          size="small"
-          v-model="keyword"
-          class="alarm-tool-input"
-          @change="refreshAlarms({ pageNum: 1 })"
-        />
+        <el-input size="small" v-model="keyword" class="alarm-tool-input" @change="refreshAlarms({ pageNum: 1 })" />
       </div>
       <div class="pagination">
         <el-pagination
@@ -48,10 +43,7 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <ConditionTags
-      :type="'ALARM'"
-      @update="(data) => refreshAlarms({ pageNum: 1, tagsMap: data.tagsMap })"
-    />
+    <ConditionTags :type="'ALARM'" @update="(data) => refreshAlarms({ pageNum: 1, tagsMap: data.tagsMap })" />
   </nav>
 </template>
 <script lang="ts" setup>

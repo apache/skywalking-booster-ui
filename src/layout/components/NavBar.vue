@@ -23,20 +23,12 @@ limitations under the License. -->
         format="YYYY-MM-DD HH:mm"
         @input="changeTimeRange"
       />
-      <span>
-        UTC{{ appStore.utcHour >= 0 ? "+" : "" }}{{ `${appStore.utcHour}:${appStore.utcMin}` }}
-      </span>
+      <span> UTC{{ appStore.utcHour >= 0 ? "+" : "" }}{{ `${appStore.utcHour}:${appStore.utcMin}` }} </span>
       <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
       <span class="version ml-5 cp">
-        <el-popover
-          trigger="hover"
-          width="250"
-          placement="bottom"
-          effect="light"
-          :content="appStore.version"
-        >
+        <el-popover trigger="hover" width="250" placement="bottom" effect="light" :content="appStore.version">
           <template #reference>
             <span>
               <Icon iconName="info_outline" size="middle" />

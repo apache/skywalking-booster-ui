@@ -34,12 +34,7 @@ limitations under the License. -->
     </div>
     <div class="trace-t-wrapper" v-loading="loading">
       <table class="list" v-if="traceStore.traceList.length">
-        <tr
-          class="trace-tr cp"
-          v-for="(i, index) in traceStore.traceList"
-          @click="selectTrace(i)"
-          :key="index"
-        >
+        <tr class="trace-tr cp" v-for="(i, index) in traceStore.traceList" @click="selectTrace(i)" :key="index">
           <td
             class="trace-td"
             :class="{

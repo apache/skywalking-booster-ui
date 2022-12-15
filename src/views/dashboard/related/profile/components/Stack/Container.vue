@@ -36,12 +36,7 @@ limitations under the License. -->
       </div>
       <div class="dump-count">Dump Count</div>
     </div>
-    <TableItem
-      :thread="thread"
-      v-for="(item, index) in tableData"
-      :data="item"
-      :key="'key' + index"
-    />
+    <TableItem :thread="thread" v-for="(item, index) in tableData" :data="item" :key="'key' + index" />
     <slot></slot>
   </div>
 </template>

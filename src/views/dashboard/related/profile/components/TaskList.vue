@@ -21,12 +21,7 @@ limitations under the License. -->
           {{ t("noData") }}
         </div>
         <table class="profile-t">
-          <tr
-            class="profile-tr cp"
-            v-for="(i, index) in profileStore.taskList"
-            @click="changeTask(i)"
-            :key="index"
-          >
+          <tr class="profile-tr cp" v-for="(i, index) in profileStore.taskList" @click="changeTask(i)" :key="index">
             <td
               class="profile-td"
               :class="{
@@ -89,9 +84,7 @@ limitations under the License. -->
         </div>
       </div>
       <div>
-        <h5 class="mb-10 mt-10" v-show="selectedTask.logs && selectedTask.logs.length">
-          {{ t("logs") }}.
-        </h5>
+        <h5 class="mb-10 mt-10" v-show="selectedTask.logs && selectedTask.logs.length"> {{ t("logs") }}. </h5>
         <div class="log-item" v-for="(i, index) in Object.keys(instanceLogs)" :key="index">
           <div class="mb-10 sm">
             <span class="mr-10 grey">{{ t("instance") }}:</span>
@@ -138,9 +131,7 @@ limitations under the License. -->
     window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
     viewDetail.value = true;
     selectedTask.value = item;
-    service.value = (
-      selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}
-    ).label;
+    service.value = (selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}).label;
     const res = await profileStore.getTaskLogs({ taskID: item.id });
 
     if (res.errors) {
@@ -156,9 +147,7 @@ limitations under the License. -->
           operationTime: d.operationTime,
         });
       } else {
-        instanceLogs.value[d.instanceName] = [
-          { operationType: d.operationType, operationTime: d.operationTime },
-        ];
+        instanceLogs.value[d.instanceName] = [{ operationType: d.operationType, operationTime: d.operationTime }];
       }
     }
     selectedTask.value = item;

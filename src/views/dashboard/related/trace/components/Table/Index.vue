@@ -17,12 +17,7 @@ limitations under the License. -->
     <div class="trace-t-loading" v-show="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
-    <TableContainer
-      :tableData="tableData"
-      type="table"
-      :headerType="headerType"
-      @select="handleSelectSpan"
-    >
+    <TableContainer :tableData="tableData" type="table" :headerType="headerType" @select="handleSelectSpan">
       <div class="trace-tips" v-if="!tableData.length">{{ $t("noData") }}</div>
     </TableContainer>
   </div>

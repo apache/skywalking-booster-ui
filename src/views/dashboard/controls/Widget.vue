@@ -73,11 +73,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import graphs from "../graphs";
   import { useI18n } from "vue-i18n";
-  import {
-    useQueryProcessor,
-    useSourceProcessor,
-    useGetMetricEntity,
-  } from "@/hooks/useMetricsProcessor";
+  import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
   import { EntityType, ListChartTypes } from "../data";
   import type { EventParams } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
@@ -107,9 +103,7 @@ limitations under the License. -->
       const selectorStore = useSelectorStore();
       const graph = computed(() => props.data.graph || {});
       const widget = computed(() => props.data.widget || {});
-      const isList = computed(() =>
-        ListChartTypes.includes((props.data.graph && props.data.graph.type) || ""),
-      );
+      const isList = computed(() => ListChartTypes.includes((props.data.graph && props.data.graph.type) || ""));
 
       if ((props.needQuery || !dashboardStore.currentDashboard.id) && !isList.value) {
         queryMetrics();
@@ -189,10 +183,7 @@ limitations under the License. -->
           if (isList.value) {
             return;
           }
-          if (
-            dashboardStore.entity === EntityType[0].value ||
-            dashboardStore.entity === EntityType[4].value
-          ) {
+          if (dashboardStore.entity === EntityType[0].value || dashboardStore.entity === EntityType[4].value) {
             queryMetrics();
           }
         },
@@ -200,10 +191,7 @@ limitations under the License. -->
       watch(
         () => [selectorStore.currentPod, selectorStore.currentDestPod],
         () => {
-          if (
-            dashboardStore.entity === EntityType[0].value ||
-            dashboardStore.entity === EntityType[7].value
-          ) {
+          if (dashboardStore.entity === EntityType[0].value || dashboardStore.entity === EntityType[7].value) {
             return;
           }
           if (isList.value) {

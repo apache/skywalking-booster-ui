@@ -74,11 +74,7 @@ limitations under the License. -->
     <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
       <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
       <span class="log-tags">
-        <span
-          class="selected"
-          v-for="(item, index) in keywordsOfContent"
-          :key="`keywordsOfContent${index}`"
-        >
+        <span class="selected" v-for="(item, index) in keywordsOfContent" :key="`keywordsOfContent${index}`">
           <span>{{ item }}</span>
           <span class="remove-icon" @click="removeContent(index)">×</span>
         </span>
@@ -148,9 +144,7 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const logStore = useLogStore();
   const traceId = ref<string>((props.data.filters && props.data.filters.traceId) || "");
-  const duration = ref<DurationTime>(
-    (props.data.filters && props.data.filters.duration) || appStore.durationTime,
-  );
+  const duration = ref<DurationTime>((props.data.filters && props.data.filters.duration) || appStore.durationTime);
   const keywordsOfContent = ref<string[]>([]);
   const excludingKeywordsOfContent = ref<string[]>([]);
   const tagsList = ref<string[]>([]);
@@ -237,9 +231,7 @@ limitations under the License. -->
     }
     if (dashboardStore.layerId === "BROWSER") {
       logStore.setLogCondition({
-        serviceId: selectorStore.currentService
-          ? selectorStore.currentService.id
-          : state.service.id,
+        serviceId: selectorStore.currentService ? selectorStore.currentService.id : state.service.id,
         pagePathId: endpoint || state.endpoint.id || undefined,
         serviceVersionId: instance || state.instance.id || undefined,
         paging: { pageNum: 1, pageSize: 15 },
@@ -253,9 +245,7 @@ limitations under the License. -->
         spanId = props.data.filters.spanId;
       }
       logStore.setLogCondition({
-        serviceId: selectorStore.currentService
-          ? selectorStore.currentService.id
-          : state.service.id,
+        serviceId: selectorStore.currentService ? selectorStore.currentService.id : state.service.id,
         endpointId: endpoint || state.endpoint.id || undefined,
         serviceInstanceId: instance || state.instance.id || undefined,
         queryDuration: duration.value,

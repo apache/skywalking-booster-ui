@@ -121,9 +121,7 @@ export default class TraceUtil {
       if (span.refs && span.refs.length) {
         span.refs.forEach((ref) => {
           const index = data.findIndex((patchSpan: Span) => {
-            return (
-              ref.parentSegmentId === patchSpan.segmentId && ref.parentSpanId === patchSpan.spanId
-            );
+            return ref.parentSegmentId === patchSpan.segmentId && ref.parentSpanId === patchSpan.spanId;
           });
           if (index === -1) {
             // create a known broken node.
@@ -197,9 +195,7 @@ export default class TraceUtil {
     });
 
     segmentIdGroup.forEach((segmentId: string) => {
-      const currentSegmentSet = segmentGroup[segmentId].sort(
-        (a: Span, b: Span) => b.parentSpanId - a.parentSpanId,
-      );
+      const currentSegmentSet = segmentGroup[segmentId].sort((a: Span, b: Span) => b.parentSpanId - a.parentSpanId);
       currentSegmentSet.forEach((curSegment: Span) => {
         const index = currentSegmentSet.findIndex(
           (curSegment2: Span) => curSegment2.spanId === curSegment.parentSpanId,
@@ -262,10 +258,7 @@ export default class TraceUtil {
     }
   }
 
-  private static getSpanGroupData(
-    groupspans: Span[],
-    groupRef: StatisticsGroupRef,
-  ): StatisticsSpan {
+  private static getSpanGroupData(groupspans: Span[], groupRef: StatisticsGroupRef): StatisticsSpan {
     let maxTime = 0;
     let minTime = 0;
     let sumTime = 0;

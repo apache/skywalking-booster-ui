@@ -15,12 +15,7 @@ limitations under the License. -->
 <template>
   <div class="table">
     <div class="search">
-      <el-input
-        v-model="searchText"
-        placeholder="Search for more endpoints"
-        @change="searchList"
-        class="inputs"
-      >
+      <el-input v-model="searchText" placeholder="Search for more endpoints" @change="searchList" class="inputs">
         <template #append>
           <el-button @click="searchList" class="btn">
             <Icon size="middle" iconName="search" />
@@ -33,11 +28,7 @@ limitations under the License. -->
       <el-table v-loading="chartLoading" :data="endpoints" style="width: 100%">
         <el-table-column label="Endpoints" fixed min-width="220">
           <template #default="scope">
-            <span
-              class="link"
-              @click="clickEndpoint(scope)"
-              :style="{ fontSize: `${config.fontSize}px` }"
-            >
+            <span class="link" @click="clickEndpoint(scope)" :style="{ fontSize: `${config.fontSize}px` }">
               {{ scope.row.label }}
             </span>
           </template>
@@ -169,11 +160,7 @@ limitations under the License. -->
     await queryEndpoints();
   }
   watch(
-    () => [
-      ...(props.config.metricTypes || []),
-      ...(props.config.metrics || []),
-      ...(props.config.metricConfig || []),
-    ],
+    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;

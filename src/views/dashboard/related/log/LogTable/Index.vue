@@ -15,10 +15,7 @@ limitations under the License. -->
 
 <template>
   <div class="log">
-    <div
-      class="log-header"
-      :class="type === 'browser' ? ['browser-header', 'flex-h'] : 'service-header'"
-    >
+    <div class="log-header" :class="type === 'browser' ? ['browser-header', 'flex-h'] : 'service-header'">
       <template v-for="(item, index) in columns" :key="`col${index}`">
         <div :class="[item.label, ['message', 'stack'].includes(item.label) ? 'max-item' : '']">
           {{ t(item.value) }}
@@ -26,12 +23,7 @@ limitations under the License. -->
       </template>
     </div>
     <div v-if="type === 'browser'">
-      <LogBrowser
-        v-for="(item, index) in tableData"
-        :data="item"
-        :key="'browser' + index"
-        @select="setCurrentLog"
-      />
+      <LogBrowser v-for="(item, index) in tableData" :data="item" :key="'browser' + index" @select="setCurrentLog" />
     </div>
     <div v-else>
       <LogService

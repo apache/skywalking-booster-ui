@@ -42,12 +42,7 @@ limitations under the License. -->
         />
       </template>
       <div class="content">
-        <span
-          v-for="(item, index) in tagList"
-          :key="index"
-          @click="selectTag(item)"
-          class="tag-item"
-        >
+        <span v-for="(item, index) in tagList" :key="index" @click="selectTag(item)" class="tag-item">
           {{ item }}
         </span>
       </div>

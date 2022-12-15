@@ -47,21 +47,11 @@ limitations under the License. -->
           <span class="sm">{{ traceStore.traceSpans.length }}</span>
         </div>
         <div>
-          <el-button
-            class="grey"
-            size="small"
-            :class="{ ghost: displayMode !== 'List' }"
-            @click="displayMode = 'List'"
-          >
+          <el-button class="grey" size="small" :class="{ ghost: displayMode !== 'List' }" @click="displayMode = 'List'">
             <Icon class="mr-5" size="sm" iconName="list-bulleted" />
             {{ t("list") }}
           </el-button>
-          <el-button
-            class="grey"
-            size="small"
-            :class="{ ghost: displayMode !== 'Tree' }"
-            @click="displayMode = 'Tree'"
-          >
+          <el-button class="grey" size="small" :class="{ ghost: displayMode !== 'Tree' }" @click="displayMode = 'Tree'">
             <Icon class="mr-5" size="sm" iconName="issue-child" />
             {{ t("tree") }}
           </el-button>

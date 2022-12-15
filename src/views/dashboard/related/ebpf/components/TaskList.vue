@@ -21,12 +21,7 @@ limitations under the License. -->
           {{ t("noData") }}
         </div>
         <table class="profile-t">
-          <tr
-            class="profile-tr cp"
-            v-for="(i, index) in ebpfStore.taskList"
-            @click="changeTask(i)"
-            :key="index"
-          >
+          <tr class="profile-tr cp" v-for="(i, index) in ebpfStore.taskList" @click="changeTask(i)" :key="index">
             <td
               class="profile-td"
               :class="{
@@ -35,11 +30,7 @@ limitations under the License. -->
             >
               <div class="ell">
                 <span>
-                  {{
-                    i.targetType +
-                    ": " +
-                    (i.processLabels.length ? i.processLabels.join(" ") : `All Processes`)
-                  }}
+                  {{ i.targetType + ": " + (i.processLabels.length ? i.processLabels.join(" ") : `All Processes`) }}
                 </span>
                 <a class="profile-btn r" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />

@@ -58,20 +58,12 @@ limitations under the License. -->
         <div>
           <ul>
             <li>
-              <span
-                v-for="(i, index) of EventsDetailHeaders"
-                :class="i.class"
-                :key="i.class + index"
-              >
+              <span v-for="(i, index) of EventsDetailHeaders" :class="i.class" :key="i.class + index">
                 {{ t(i.text) }}
               </span>
             </li>
             <li v-for="event in currentEvents" :key="event.uuid" @click="viewEventDetail(event)">
-              <span
-                v-for="(d, index) of EventsDetailHeaders"
-                :class="d.class"
-                :key="event.uuid + index"
-              >
+              <span v-for="(d, index) of EventsDetailHeaders" :class="d.class" :key="event.uuid + index">
                 <span v-if="d.class === 'startTime' || d.class === 'endTime'">
                   {{ dateFormat(event[d.class]) }}
                 </span>
@@ -97,9 +89,7 @@ limitations under the License. -->
       <div class="mb-10" v-for="(eventKey, index) in EventsDetailKeys" :key="index">
         <span class="keys">{{ t(eventKey.text) }}</span>
         <span v-if="eventKey.class === 'parameters'">
-          <span v-for="(d, index) of currentEvent[eventKey.class]" :key="index">
-            {{ d.key }}={{ d.value }};
-          </span>
+          <span v-for="(d, index) of currentEvent[eventKey.class]" :key="index"> {{ d.key }}={{ d.value }}; </span>
         </span>
         <span v-else-if="eventKey.class === 'startTime' || eventKey.class === 'endTime'">
           {{ dateFormat(currentEvent[eventKey.class]) }}

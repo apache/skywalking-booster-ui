@@ -42,12 +42,9 @@ export function useQueryProcessor(config: any) {
     duration: appStore.durationTime,
   };
   const variables: string[] = [`$duration: Duration!`];
-  const isRelation = [
-    "ServiceRelation",
-    "ServiceInstanceRelation",
-    "EndpointRelation",
-    "ProcessRelation",
-  ].includes(dashboardStore.entity);
+  const isRelation = ["ServiceRelation", "ServiceInstanceRelation", "EndpointRelation", "ProcessRelation"].includes(
+    dashboardStore.entity,
+  );
   if (isRelation && !selectorStore.currentDestService) {
     return;
   }
@@ -58,9 +55,7 @@ export function useQueryProcessor(config: any) {
       variables.push(`$condition${index}: TopNCondition!`);
       conditions[`condition${index}`] = {
         name,
-        parentService: ["All"].includes(dashboardStore.entity)
-          ? null
-          : selectorStore.currentService.value,
+        parentService: ["All"].includes(dashboardStore.entity) ? null : selectorStore.currentService.value,
         normal: selectorStore.currentService ? selectorStore.currentService.normal : true,
         scope: config.catalog,
         topN: c.topN || 10,
@@ -69,14 +64,11 @@ export function useQueryProcessor(config: any) {
     } else {
       const entity = {
         scope: config.catalog,
-        serviceName:
-          dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
+        serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
         normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
-        serviceInstanceName: [
-          "ServiceInstance",
-          "ServiceInstanceRelation",
-          "ProcessRelation",
-        ].includes(dashboardStore.entity)
+        serviceInstanceName: ["ServiceInstance", "ServiceInstanceRelation", "ProcessRelation"].includes(
+          dashboardStore.entity,
+        )
           ? selectorStore.currentPod && selectorStore.currentPod.value
           : undefined,
         endpointName: dashboardStore.entity.includes("Endpoint")
@@ -87,9 +79,7 @@ export function useQueryProcessor(config: any) {
           : undefined,
         destNormal: isRelation ? selectorStore.currentDestService.normal : undefined,
         destServiceName: isRelation ? selectorStore.currentDestService.value : undefined,
-        destServiceInstanceName: ["ServiceInstanceRelation", "ProcessRelation"].includes(
-          dashboardStore.entity,
-        )
+        destServiceInstanceName: ["ServiceInstanceRelation", "ProcessRelation"].includes(dashboardStore.entity)
           ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
           : undefined,
         destEndpointName:
@@ -111,9 +101,7 @@ export function useQueryProcessor(config: any) {
       } else {
         entity.scope = dashboardStore.entity;
         if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
-          const labels = (c.labelsIndex || "")
-            .split(",")
-            .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+          const labels = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
           variables.push(`$labels${index}: [String!]!`);
           conditions[`labels${index}`] = labels;
         }
@@ -161,21 +149,14 @@ export function useSourceProcessor(
     const c = (config.metricConfig && config.metricConfig[index]) || {};
 
     if (type === MetricQueryTypes.ReadMetricsValues) {
-      source[c.label || m] =
-        (resp.data[keys[index]] && calculateExp(resp.data[keys[index]].values.values, c)) || [];
+      source[c.label || m] = (resp.data[keys[index]] && calculateExp(resp.data[keys[index]].values.values, c)) || [];
     }
     if (type === MetricQueryTypes.ReadLabeledMetricsValues) {
       const resVal = Object.values(resp.data)[0] || [];
-      const labels = (c.label || "")
-        .split(",")
-        .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-      const labelsIdx = (c.labelsIndex || "")
-        .split(",")
-        .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+      const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+      const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
       for (const item of resVal) {
-        const values = item.values.values.map((d: { value: number }) =>
-          aggregation(Number(d.value), c),
-        );
+        const values = item.values.values.map((d: { value: number }) => aggregation(Number(d.value), c));
         const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
         if (labels[indexNum] && indexNum > -1) {
           source[labels[indexNum]] = values;
@@ -189,11 +170,7 @@ export function useSourceProcessor(
     }
     if (
       (
-        [
-          MetricQueryTypes.ReadRecords,
-          MetricQueryTypes.ReadSampledRecords,
-          MetricQueryTypes.SortMetrics,
-        ] as string[]
+        [MetricQueryTypes.ReadRecords, MetricQueryTypes.ReadSampledRecords, MetricQueryTypes.SortMetrics] as string[]
       ).includes(type)
     ) {
       source[m] = (Object.values(resp.data)[0] || []).map((d: { value: unknown; name: string }) => {
@@ -216,10 +193,7 @@ export function useSourceProcessor(
       });
       let buckets = [] as any;
       if (resVal.buckets.length) {
-        buckets = [
-          resVal.buckets[0].min,
-          ...resVal.buckets.map((item: { min: string; max: string }) => item.max),
-        ];
+        buckets = [resVal.buckets[0].min, ...resVal.buckets.map((item: { min: string; max: string }) => item.max)];
       }
 
       source[m] = { nodes, buckets }; // nodes: number[][]
@@ -253,37 +227,33 @@ export function useQueryPodsMetrics(
   };
   const variables: string[] = [`$duration: Duration!`];
   const currentService = selectorStore.currentService || {};
-  const fragmentList = pods.map(
-    (d: (Instance | Endpoint | Service) & { normal: boolean }, index: number) => {
-      const param = {
-        scope,
-        serviceName: scope === "Service" ? d.label : currentService.label,
-        serviceInstanceName: scope === "ServiceInstance" ? d.label : undefined,
-        endpointName: scope === "Endpoint" ? d.label : undefined,
-        normal: scope === "Service" ? d.normal : currentService.normal,
+  const fragmentList = pods.map((d: (Instance | Endpoint | Service) & { normal: boolean }, index: number) => {
+    const param = {
+      scope,
+      serviceName: scope === "Service" ? d.label : currentService.label,
+      serviceInstanceName: scope === "ServiceInstance" ? d.label : undefined,
+      endpointName: scope === "Endpoint" ? d.label : undefined,
+      normal: scope === "Service" ? d.normal : currentService.normal,
+    };
+    const f = metrics.map((name: string, idx: number) => {
+      const metricType = metricTypes[idx] || "";
+      variables.push(`$condition${index}${idx}: MetricsCondition!`);
+      conditions[`condition${index}${idx}`] = {
+        name,
+        entity: param,
       };
-      const f = metrics.map((name: string, idx: number) => {
-        const metricType = metricTypes[idx] || "";
-        variables.push(`$condition${index}${idx}: MetricsCondition!`);
-        conditions[`condition${index}${idx}`] = {
-          name,
-          entity: param,
-        };
-        let labelStr = "";
-        if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
-          const c = config.metricConfig[idx] || {};
-          variables.push(`$labels${index}${idx}: [String!]!`);
-          labelStr = `labels: $labels${index}${idx}, `;
-          const labels = (c.labelsIndex || "")
-            .split(",")
-            .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-          conditions[`labels${index}${idx}`] = labels;
-        }
-        return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[metricType]}`;
-      });
-      return f;
-    },
-  );
+      let labelStr = "";
+      if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
+        const c = config.metricConfig[idx] || {};
+        variables.push(`$labels${index}${idx}: [String!]!`);
+        labelStr = `labels: $labels${index}${idx}, `;
+        const labels = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+        conditions[`labels${index}${idx}`] = labels;
+      }
+      return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[metricType]}`;
+    });
+    return f;
+  });
   const fragment = fragmentList.flat(1).join(" ");
   const queryStr = `query queryData(${variables}) {${fragment}}`;
 
@@ -320,16 +290,10 @@ export function usePodsSource(
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
         d[name] = {};
-        if (
-          [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(
-            c.calculation,
-          )
-        ) {
+        if ([Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(c.calculation)) {
           d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
         }
-        d[name]["values"] = resp.data[key].values.values.map((val: { value: number }) =>
-          aggregation(val.value, c),
-        );
+        d[name]["values"] = resp.data[key].values.values.map((val: { value: number }) => aggregation(val.value, c));
         if (idx === 0) {
           names.push(name);
           metricConfigArr.push(c);
@@ -338,17 +302,11 @@ export function usePodsSource(
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadLabeledMetricsValues) {
         const resVal = resp.data[key] || [];
-        const labels = (c.label || "")
-          .split(",")
-          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-        const labelsIdx = (c.labelsIndex || "")
-          .split(",")
-          .map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+        const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+        const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
         for (let i = 0; i < resVal.length; i++) {
           const item = resVal[i];
-          const values = item.values.values.map((d: { value: number }) =>
-            aggregation(Number(d.value), c),
-          );
+          const values = item.values.values.map((d: { value: number }) => aggregation(Number(d.value), c));
           const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
           let key = item.label;
           if (labels[indexNum] && indexNum > -1) {
@@ -357,11 +315,7 @@ export function usePodsSource(
           if (!d[key]) {
             d[key] = {};
           }
-          if (
-            [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(
-              c.calculation,
-            )
-          ) {
+          if ([Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(c.calculation)) {
             d[key]["avg"] = calculateExp(item.values.values, c);
           }
           d[key]["values"] = values;
@@ -402,10 +356,7 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
 
   return { queryStr, conditions };
 }
-function calculateExp(
-  arr: { value: number }[],
-  config: { calculation?: string },
-): (number | string)[] {
+function calculateExp(arr: { value: number }[], config: { calculation?: string }): (number | string)[] {
   const sum = arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b);
   let data: (number | string)[] = [];
   switch (config.calculation) {
@@ -480,11 +431,9 @@ export async function useGetMetricEntity(metric: string, metricType: any) {
   let catalog = "";
   const dashboardStore = useDashboardStore();
   if (
-    [
-      MetricQueryTypes.ReadSampledRecords,
-      MetricQueryTypes.SortMetrics,
-      MetricQueryTypes.ReadRecords,
-    ].includes(metricType)
+    [MetricQueryTypes.ReadSampledRecords, MetricQueryTypes.SortMetrics, MetricQueryTypes.ReadRecords].includes(
+      metricType,
+    )
   ) {
     const res = await dashboardStore.fetchMetricList(metric);
     if (res.errors) {

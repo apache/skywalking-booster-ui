@@ -28,12 +28,7 @@ limitations under the License. -->
   </div>
   <div class="item">
     <span class="label">{{ t("showUnit") }}</span>
-    <el-switch
-      v-model="showUnit"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ showUnit })"
-    />
+    <el-switch v-model="showUnit" active-text="Yes" inactive-text="No" @change="updateConfig({ showUnit })" />
   </div>
 </template>
 <script lang="ts" setup>

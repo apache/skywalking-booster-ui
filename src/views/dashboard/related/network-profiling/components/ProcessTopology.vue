@@ -250,9 +250,7 @@ limitations under the License. -->
       count: 1,
       radius, // layout hexagons radius 300
     };
-    const nodeArr = networkProfilingStore.nodes.filter(
-      (d: ProcessNode) => d.isReal || d.name === "UNKNOWN_LOCAL",
-    );
+    const nodeArr = networkProfilingStore.nodes.filter((d: ProcessNode) => d.isReal || d.name === "UNKNOWN_LOCAL");
     const count = nodeArr.length;
     // layout
     const centers = hexGrid(p.count, 68, origin); // cube centers
@@ -310,9 +308,7 @@ limitations under the License. -->
       nodeArr[v].x = x;
       nodeArr[v].y = y;
     }
-    const outNodes = networkProfilingStore.nodes.filter(
-      (d: ProcessNode) => !(d.isReal || d.name === "UNKNOWN_LOCAL"),
-    );
+    const outNodes = networkProfilingStore.nodes.filter((d: ProcessNode) => !(d.isReal || d.name === "UNKNOWN_LOCAL"));
     const interval = 30;
     let r = 250;
     let pointArr = getCirclePoint(r, interval);
@@ -359,9 +355,7 @@ limitations under the License. -->
     } else {
       const { taskStartTime, fixedTriggerDuration } = networkProfilingStore.selectedNetworkTask;
       const startTime =
-        fixedTriggerDuration > 1800
-          ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
-          : taskStartTime;
+        fixedTriggerDuration > 1800 ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000 : taskStartTime;
       times = {
         start: startTime,
         end: taskStartTime + fixedTriggerDuration * 1000,
@@ -394,10 +388,7 @@ limitations under the License. -->
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
       const cr = entry.contentRect;
-      if (
-        Math.abs(cr.width - oldVal.value.width) < 5 &&
-        Math.abs(cr.height - oldVal.value.height) < 5
-      ) {
+      if (Math.abs(cr.width - oldVal.value.width) < 5 && Math.abs(cr.height - oldVal.value.height) < 5) {
         return;
       }
       freshNodes();
@@ -487,9 +478,7 @@ limitations under the License. -->
     if (types.includes("tls")) {
       l = "TLS";
     }
-    const tipHtml = `<div><span class="grey">${t("detectPoint")}: </span>${link.detectPoints.join(
-      " | ",
-    )}</div>
+    const tipHtml = `<div><span class="grey">${t("detectPoint")}: </span>${link.detectPoints.join(" | ")}</div>
         <div><span class="grey">Type: </span>${l}</div>`;
 
     tooltip.value

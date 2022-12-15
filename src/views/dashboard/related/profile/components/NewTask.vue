@@ -31,19 +31,9 @@ limitations under the License. -->
     <div>
       <div class="label">{{ t("monitorTime") }}</div>
       <div>
-        <Radio
-          class="mb-5"
-          :value="monitorTime"
-          :options="InitTaskField.monitorTimeEn"
-          @change="changeMonitorTime"
-        />
+        <Radio class="mb-5" :value="monitorTime" :options="InitTaskField.monitorTimeEn" @change="changeMonitorTime" />
         <span class="date">
-          <TimePicker
-            :value="time"
-            position="bottom"
-            format="YYYY-MM-DD HH:mm:ss"
-            @input="changeTimeRange"
-          />
+          <TimePicker :value="time" position="bottom" format="YYYY-MM-DD HH:mm:ss" @input="changeTimeRange" />
         </span>
       </div>
     </div>
@@ -62,12 +52,7 @@ limitations under the License. -->
     </div>
     <div>
       <div class="label">{{ t("dumpPeriod") }}</div>
-      <Radio
-        class="mb-5"
-        :value="dumpPeriod"
-        :options="InitTaskField.dumpPeriod"
-        @change="changeDumpPeriod"
-      />
+      <Radio class="mb-5" :value="dumpPeriod" :options="InitTaskField.dumpPeriod" @change="changeDumpPeriod" />
     </div>
     <div>
       <div class="label">{{ t("maxSamplingCount") }}</div>

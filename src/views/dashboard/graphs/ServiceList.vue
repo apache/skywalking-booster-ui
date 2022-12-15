@@ -15,12 +15,7 @@ limitations under the License. -->
 <template>
   <div class="table">
     <div class="search">
-      <el-input
-        v-model="searchText"
-        placeholder="Please input service name"
-        @change="searchList"
-        class="inputs mt-5"
-      >
+      <el-input v-model="searchText" placeholder="Please input service name" @change="searchList" class="inputs mt-5">
         <template #append>
           <el-button class="btn" @click="searchList">
             <Icon size="sm" iconName="search" />
@@ -44,11 +39,7 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column fixed label="Service Names" min-width="220">
           <template #default="scope">
-            <span
-              class="link"
-              :style="{ fontSize: `${config.fontSize}px` }"
-              @click="clickService(scope)"
-            >
+            <span class="link" :style="{ fontSize: `${config.fontSize}px` }" @click="clickService(scope)">
               {{ scope.row.label }}
             </span>
           </template>
@@ -156,20 +147,17 @@ limitations under the License. -->
 
   function setServices(arr: (Service & { merge: boolean })[]) {
     groups.value = {};
-    const map: { [key: string]: any[] } = arr.reduce(
-      (result: { [key: string]: any[] }, item: any) => {
-        item.group = item.group || "";
-        if (result[item.group]) {
-          item.merge = true;
-        } else {
-          item.merge = false;
-          result[item.group] = [];
-        }
-        result[item.group].push(item);
-        return result;
-      },
-      {},
-    );
+    const map: { [key: string]: any[] } = arr.reduce((result: { [key: string]: any[] }, item: any) => {
+      item.group = item.group || "";
+      if (result[item.group]) {
+        item.merge = true;
+      } else {
+        item.merge = false;
+        result[item.group] = [];
+      }
+      result[item.group].push(item);
+      return result;
+    }, {});
     const list = Object.values(map).flat(1);
     const obj = {} as any;
     for (const s of list) {
@@ -219,14 +207,10 @@ limitations under the License. -->
         return;
       }
 
-      const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(
-        currentServices,
-        json,
-        {
-          ...props.config,
-          metricConfig: metricConfig.value || [],
-        },
-      );
+      const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(currentServices, json, {
+        ...props.config,
+        metricConfig: metricConfig.value || [],
+      });
       services.value = data;
       colMetrics.value = names;
       metricTypes.value = metricTypesArr;
@@ -261,19 +245,13 @@ limitations under the License. -->
     setServices(arr);
   }
   function searchList() {
-    const searchServices = sortServices.value.filter((d: { label: string }) =>
-      d.label.includes(searchText.value),
-    );
+    const searchServices = sortServices.value.filter((d: { label: string }) => d.label.includes(searchText.value));
     const services = searchServices.filter((d: unknown, index: number) => index < pageSize);
     setServices(services);
   }
 
   watch(
-    () => [
-      ...(props.config.metricTypes || []),
-      ...(props.config.metrics || []),
-      ...(props.config.metricConfig || []),
-    ],
+    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;

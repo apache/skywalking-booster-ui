@@ -55,11 +55,7 @@ limitations under the License. -->
     }
     if (props.type === "List") {
       tree.value = new ListGraph(traceGraph.value, handleSelectSpan);
-      tree.value.init(
-        { label: "TRACE_ROOT", children: segmentId.value },
-        props.data,
-        fixSpansSize.value,
-      );
+      tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
       tree.value.draw();
     } else {
       tree.value = new TreeGraph(traceGraph.value, handleSelectSpan);
@@ -105,9 +101,7 @@ limitations under the License. -->
       if (span.parentSpanId === -1) {
         segmentHeaders.push(span);
       } else {
-        const item = props.data.find(
-          (i: Span) => i.segmentId === span.segmentId && i.spanId === span.spanId - 1,
-        );
+        const item = props.data.find((i: Span) => i.segmentId === span.segmentId && i.spanId === span.spanId - 1);
         const fixSpanKeyContent = {
           traceId: span.traceId,
           segmentId: span.segmentId,
@@ -211,9 +205,7 @@ limitations under the License. -->
     });
     fixSpansSize.value = fixSpans.length;
     segmentIdGroup.forEach((id: string) => {
-      const currentSegment = segmentGroup[id].sort(
-        (a: Span, b: Span) => b.parentSpanId - a.parentSpanId,
-      );
+      const currentSegment = segmentGroup[id].sort((a: Span, b: Span) => b.parentSpanId - a.parentSpanId);
       currentSegment.forEach((s: any) => {
         const index = currentSegment.findIndex((i: Span) => i.spanId === s.parentSpanId);
         if (index !== -1) {
@@ -243,12 +235,7 @@ limitations under the License. -->
     segmentIdGroup.forEach((id: string) => {
       segmentGroup[id].refs.forEach((ref: any) => {
         if (ref.traceId === props.traceId) {
-          traverseTree(
-            segmentGroup[ref.parentSegmentId],
-            ref.parentSpanId,
-            ref.parentSegmentId,
-            segmentGroup[id],
-          );
+          traverseTree(segmentGroup[ref.parentSegmentId], ref.parentSpanId, ref.parentSegmentId, segmentGroup[id]);
         }
       });
     });
@@ -263,9 +250,7 @@ limitations under the License. -->
   }
   function collapse(d: Span) {
     if (d.children) {
-      const item = refSpans.value.find(
-        (s: Ref) => s.parentSpanId === d.spanId && s.parentSegmentId === d.segmentId,
-      );
+      const item = refSpans.value.find((s: Ref) => s.parentSpanId === d.spanId && s.parentSegmentId === d.segmentId);
       let dur = d.endTime - d.startTime;
       d.children.forEach((i: Span) => {
         dur -= i.endTime - i.startTime;
@@ -296,11 +281,7 @@ limitations under the License. -->
       }
       loading.value = true;
       changeTree();
-      tree.value.init(
-        { label: "TRACE_ROOT", children: segmentId.value },
-        props.data,
-        fixSpansSize.value,
-      );
+      tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
       tree.value.draw(() => {
         setTimeout(() => {
           loading.value = false;

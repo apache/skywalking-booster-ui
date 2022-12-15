@@ -63,9 +63,7 @@ limitations under the License. -->
           const { layer, entity, name } = dashboardStore.currentDashboard;
           layoutKey.value = `${layer}_${entity}_${name}`;
         }
-        const c: { configuration: string; id: string } = JSON.parse(
-          sessionStorage.getItem(layoutKey.value) || "{}",
-        );
+        const c: { configuration: string; id: string } = JSON.parse(sessionStorage.getItem(layoutKey.value) || "{}");
         const layout: any = c.configuration || {};
 
         dashboardStore.setLayout(setWidgetsID(layout.children || []));

@@ -26,11 +26,7 @@ limitations under the License. -->
     <div class="row flex-h" v-for="key in dataKeys" :key="key">
       <div class="name" :style="`width: ${nameWidth}`">{{ key }}</div>
       <div class="value-col" v-if="config.showTableValues">
-        {{
-          config.metricTypes[0] === "readMetricsValue"
-            ? data[key]
-            : data[key][data[key].length - 1 || 0]
-        }}
+        {{ config.metricTypes[0] === "readMetricsValue" ? data[key] : data[key][data[key].length - 1 || 0] }}
       </div>
     </div>
   </div>

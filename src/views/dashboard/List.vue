@@ -171,8 +171,7 @@ limitations under the License. -->
     for (const item of arr) {
       const { layer, name, entity } = item.configuration;
       const index = dashboardStore.dashboards.findIndex(
-        (d: DashboardItem) =>
-          d.name === name && d.entity === entity && d.layer === layer && !item.id,
+        (d: DashboardItem) => d.name === name && d.entity === entity && d.layer === layer && !item.id,
       );
       if (index > -1) {
         return ElMessage.error(t("nameError"));
@@ -447,8 +446,7 @@ limitations under the License. -->
 
     total.value = arr.length;
     dashboards.value = arr.filter(
-      (d: { name: string }, index: number) =>
-        index < pageIndex * pageSize && index >= (pageIndex - 1) * pageSize,
+      (d: { name: string }, index: number) => index < pageIndex * pageSize && index >= (pageIndex - 1) * pageSize,
     );
     currentPage.value = pageIndex;
   }

@@ -120,17 +120,13 @@ limitations under the License. -->
     const graph = dashboardStore.selectedGrid.graph || {};
     return (
       ListChartTypes.includes(graph.type) ||
-      [ProtocolTypes.ReadLabeledMetricsValues, ProtocolTypes.ReadMetricsValues].includes(
-        metricType.value,
-      )
+      [ProtocolTypes.ReadLabeledMetricsValues, ProtocolTypes.ReadMetricsValues].includes(metricType.value)
     );
   });
   const isTopn = computed(() =>
-    [
-      ProtocolTypes.SortMetrics,
-      ProtocolTypes.ReadSampledRecords,
-      ProtocolTypes.ReadRecords,
-    ].includes(metricTypes[props.index]),
+    [ProtocolTypes.SortMetrics, ProtocolTypes.ReadSampledRecords, ProtocolTypes.ReadRecords].includes(
+      metricTypes[props.index],
+    ),
   );
   function updateConfig(index: number, param: { [key: string]: string }) {
     const key = Object.keys(param)[0];

@@ -24,10 +24,7 @@ function computeControlPoint(ps: number[], pe: number[], arc = 0.5) {
   const theta = Math.atan(deltaY / deltaX);
   const len = (Math.sqrt(deltaX * deltaX + deltaY * deltaY) / 2) * arc;
   const newTheta = theta - Math.PI / 2;
-  return [
-    (ps[0] + pe[0]) / 2 + len * Math.cos(newTheta),
-    (ps[1] + pe[1]) / 2 + len * Math.sin(newTheta),
-  ];
+  return [(ps[0] + pe[0]) / 2 + len * Math.cos(newTheta), (ps[1] + pe[1]) / 2 + len * Math.sin(newTheta)];
 }
 // Point coordinates of quadratic Bezier curve
 /**
@@ -73,11 +70,7 @@ export function linkPath(d: Call) {
   if (isNaN(d.target.x) || isNaN(d.target.y)) {
     return;
   }
-  const controlPos = computeControlPoint(
-    [d.source.x, d.source.y - 5],
-    [d.target.x, d.target.y - 5],
-    0.5,
-  );
+  const controlPos = computeControlPoint([d.source.x, d.source.y - 5], [d.target.x, d.target.y - 5], 0.5);
   if (d.lowerArc) {
     controlPos[1] = -controlPos[1] - 10;
   }

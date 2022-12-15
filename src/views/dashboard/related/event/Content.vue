@@ -239,10 +239,7 @@ limitations under the License. -->
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
       const cr = entry.contentRect;
-      if (
-        Math.abs(cr.width - oldVal.value.width) < 3 &&
-        Math.abs(cr.height - oldVal.value.height) < 3
-      ) {
+      if (Math.abs(cr.width - oldVal.value.width) < 3 && Math.abs(cr.height - oldVal.value.height) < 3) {
         return;
       }
       visTimeline();

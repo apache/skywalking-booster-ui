@@ -16,12 +16,7 @@ limitations under the License. -->
   <div class="config-panel">
     <div class="item mb-10">
       <span class="label">{{ t("metrics") }}</span>
-      <SelectSingle
-        :value="currentMetric"
-        :options="metrics"
-        @change="changeMetric"
-        class="selectors"
-      />
+      <SelectSingle :value="currentMetric" :options="metrics" @change="changeMetric" class="selectors" />
     </div>
     <div class="item mb-10">
       <span class="label">{{ t("unit") }}</span>

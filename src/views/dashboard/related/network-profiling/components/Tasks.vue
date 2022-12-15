@@ -18,11 +18,7 @@ limitations under the License. -->
       <div class="profile-t-tool">
         <span>{{ t("taskList") }}</span>
         <span class="new-task cp" @click="createTask">
-          <Icon
-            :style="{ color: inProcess ? '#ccc' : '#000' }"
-            iconName="library_add"
-            size="middle"
-          />
+          <Icon :style="{ color: inProcess ? '#ccc' : '#000' }" iconName="library_add" size="middle" />
         </span>
       </div>
       <div class="profile-t-wrapper">
@@ -65,13 +61,7 @@ limitations under the License. -->
   <el-dialog v-model="viewDetail" :destroy-on-close="true" fullscreen @closed="viewDetail = false">
     <TaskDetails :details="networkProfilingStore.selectedNetworkTask" />
   </el-dialog>
-  <el-dialog
-    v-model="newTask"
-    :title="t('taskTitle')"
-    :destroy-on-close="true"
-    fullscreen
-    @closed="newTask = false"
-  >
+  <el-dialog v-model="newTask" :title="t('taskTitle')" :destroy-on-close="true" fullscreen @closed="newTask = false">
     <NewTask @create="saveNewTask" />
   </el-dialog>
 </template>
@@ -107,13 +97,10 @@ limitations under the License. -->
     getTopology();
   }
   async function getTopology() {
-    const { taskStartTime, fixedTriggerDuration, taskId } =
-      networkProfilingStore.selectedNetworkTask;
+    const { taskStartTime, fixedTriggerDuration, taskId } = networkProfilingStore.selectedNetworkTask;
     const serviceInstanceId = (selectorStore.currentPod && selectorStore.currentPod.id) || "";
     const startTime =
-      fixedTriggerDuration > 1800
-        ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000
-        : taskStartTime;
+      fixedTriggerDuration > 1800 ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000 : taskStartTime;
     let endTime = taskStartTime + fixedTriggerDuration * 1000;
     if (taskStartTime + fixedTriggerDuration * 1000 > new Date().getTime()) {
       endTime = new Date().getTime();
@@ -121,16 +108,8 @@ limitations under the License. -->
     const resp = await networkProfilingStore.getProcessTopology({
       serviceInstanceId,
       duration: {
-        start: dateFormatStep(
-          getLocalTime(appStore.utc, new Date(startTime)),
-          appStore.duration.step,
-          true,
-        ),
-        end: dateFormatStep(
-          getLocalTime(appStore.utc, new Date(endTime)),
-          appStore.duration.step,
-          true,
-        ),
+        start: dateFormatStep(getLocalTime(appStore.utc, new Date(startTime)), appStore.duration.step, true),
+        end: dateFormatStep(getLocalTime(appStore.utc, new Date(endTime)), appStore.duration.step, true),
         step: appStore.duration.step,
       },
     });
@@ -139,8 +118,7 @@ limitations under the License. -->
     }
     const task = networkProfilingStore.networkTasks[0] || {};
     if (task.taskId === taskId) {
-      inProcess.value =
-        task.taskStartTime + task.fixedTriggerDuration * 1000 > new Date().getTime() ? true : false;
+      inProcess.value = task.taskStartTime + task.fixedTriggerDuration * 1000 > new Date().getTime() ? true : false;
     }
     if (!inProcess.value) {
       intervalFn.value && clearInterval(intervalFn.value);
@@ -187,9 +165,7 @@ limitations under the License. -->
   }
 
   async function keepAliveNetwork() {
-    const res = await networkProfilingStore.keepNetworkProfiling(
-      networkProfilingStore.selectedNetworkTask.taskId,
-    );
+    const res = await networkProfilingStore.keepNetworkProfiling(networkProfilingStore.selectedNetworkTask.taskId);
     if (res.errors) {
       intervalKeepAlive.value && clearInterval(intervalKeepAlive.value);
       return ElMessage.error(res.errors);

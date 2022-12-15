@@ -36,7 +36,7 @@ limitations under the License. -->
             />
           </div>
         </template>
-        <NewCondition :name="index" :condition="item" :key="index" @change="changeConfig" />
+        <NewCondition :name="index" :condition="item" :index="index" @change="changeConfig" />
       </el-collapse-item>
     </el-collapse>
     <div>

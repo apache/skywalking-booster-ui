@@ -158,9 +158,7 @@ export default class TraceMap {
         if (!that.timeUpdate) {
           return;
         }
-        const _node = that.timeUpdate._groups[0].filter(
-          (group: any) => group.__data__.id === that.i + 1,
-        );
+        const _node = that.timeUpdate._groups[0].filter((group: any) => group.__data__.id === that.i + 1);
         if (_node.length) {
           that.timeTip.show(d, _node[0].children[1]);
         }
@@ -170,9 +168,7 @@ export default class TraceMap {
         if (!that.timeUpdate) {
           return;
         }
-        const _node = that.timeUpdate._groups[0].filter(
-          (group: any) => group.__data__.id === that.i + 1,
-        );
+        const _node = that.timeUpdate._groups[0].filter((group: any) => group.__data__.id === that.i + 1);
         if (_node.length) {
           that.timeTip.hide(d, _node[0].children[1]);
         }
@@ -220,9 +216,7 @@ export default class TraceMap {
       .append("circle")
       .attr("class", "node")
       .attr("r", 1e-6)
-      .style("fill", (d: any) =>
-        d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
-      )
+      .style("fill", (d: any) => (d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff"))
       .attr("stroke", (d: any) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)))
       .attr("stroke-width", 2.5);
 
@@ -254,12 +248,7 @@ export default class TraceMap {
         return d.children || d._children ? "end" : "start";
       })
       .style("font-size", "10px")
-      .text(
-        (d: any) =>
-          `${d.data.layer || ""}${
-            d.data.component ? "-" + d.data.component : d.data.component || ""
-          }`,
-      );
+      .text((d: any) => `${d.data.layer || ""}${d.data.component ? "-" + d.data.component : d.data.component || ""}`);
     nodeEnter
       .append("rect")
       .attr("rx", 1)
@@ -302,9 +291,7 @@ export default class TraceMap {
     nodeUpdate
       .select("circle.node")
       .attr("r", 5)
-      .style("fill", (d: any) =>
-        d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
-      )
+      .style("fill", (d: any) => (d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff"))
       .attr("cursor", "pointer")
       .on("click", (d: any) => {
         click(d);
@@ -395,10 +382,7 @@ export default class TraceMap {
     d3.selectAll(".trace-tree-node-selfchild").style("opacity", 1);
     this.nodeUpdate._groups[0].forEach((i: any) => {
       d3.select(i).style("opacity", 0.2);
-      if (
-        i.__data__.data.children.length >= this.topChildMin &&
-        i.__data__.data.children.length <= this.topChildMax
-      ) {
+      if (i.__data__.data.children.length >= this.topChildMin && i.__data__.data.children.length <= this.topChildMax) {
         d3.select(i).style("opacity", 1);
       }
     });

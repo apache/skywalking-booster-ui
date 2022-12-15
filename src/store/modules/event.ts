@@ -45,9 +45,7 @@ export const eventStore = defineStore({
       this.condition = data;
     },
     async getInstances() {
-      const serviceId = useSelectorStore().currentService
-        ? useSelectorStore().currentService.id
-        : "";
+      const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -56,15 +54,11 @@ export const eventStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.instances = [{ value: "", label: "All" }, ...res.data.data.pods] || [
-        { value: "", label: "All" },
-      ];
+      this.instances = [{ value: "", label: "All" }, ...res.data.data.pods] || [{ value: "", label: "All" }];
       return res.data;
     },
     async getEndpoints() {
-      const serviceId = useSelectorStore().currentService
-        ? useSelectorStore().currentService.id
-        : "";
+      const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
       if (!serviceId) {
         return;
       }
@@ -76,9 +70,7 @@ export const eventStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods] || [
-        { value: "", label: "All" },
-      ];
+      this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods] || [{ value: "", label: "All" }];
       return res.data;
     },
     async getEvents() {

@@ -48,10 +48,7 @@ limitations under the License. -->
     </div>
   </div>
   <div v-else>
-    <div
-      @click="selectSpan"
-      :class="['trace-item', 'level' + (data.level - 1), { 'trace-item-error': data.isError }]"
-    >
+    <div @click="selectSpan" :class="['trace-item', 'level' + (data.level - 1), { 'trace-item-error': data.isError }]">
       <div
         :class="['method', 'level' + (data.level - 1)]"
         :style="{
@@ -103,10 +100,7 @@ limitations under the License. -->
         <span>{{ data.attachedEvents && data.attachedEvents.length }}</span>
       </div>
     </div>
-    <div
-      v-show="data.children && data.children.length > 0 && displayChildren"
-      class="children-trace"
-    >
+    <div v-show="data.children && data.children.length > 0 && displayChildren" class="children-trace">
       <table-item
         :method="method"
         v-for="(child, index) in data.children"
@@ -117,12 +111,7 @@ limitations under the License. -->
         @select="selectedItem(child)"
       />
     </div>
-    <el-dialog
-      v-model="showDetail"
-      :destroy-on-close="true"
-      fullscreen
-      @closed="showDetail = false"
-    >
+    <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
       <SpanDetail :currentSpan="data" />
     </el-dialog>
   </div>

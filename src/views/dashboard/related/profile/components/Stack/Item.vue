@@ -14,10 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <div
-      :class="['profile-item', 'level' + data.parentId]"
-      :style="{ color: data.topDur ? '#448dfe' : '#3d444f' }"
-    >
+    <div :class="['profile-item', 'level' + data.parentId]" :style="{ color: data.topDur ? '#448dfe' : '#3d444f' }">
       <div
         :class="['thread', 'level' + data.parentId]"
         :style="{
@@ -43,12 +40,7 @@ limitations under the License. -->
       <div class="dump-count">{{ data.count }}</div>
     </div>
     <div v-show="data.children && data.children.length && displayChildren" class="children-trace">
-      <table-item
-        :thread="thread"
-        v-for="(item, index) in data.children"
-        :key="index"
-        :data="item"
-      />
+      <table-item :thread="thread" v-for="(item, index) in data.children" :key="index" :data="item" />
     </div>
   </div>
 </template>

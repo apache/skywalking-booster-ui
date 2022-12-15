@@ -14,11 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="tool">
-    <span
-      v-show="
-        dashboardStore.entity === EntityType[2].value && config.graph && config.graph.showDepth
-      "
-    >
+    <span v-show="dashboardStore.entity === EntityType[2].value && config.graph && config.graph.showDepth">
       <span class="label">{{ t("currentDepth") }}</span>
       <Selector
         class="inputs"
@@ -28,12 +24,7 @@ limitations under the License. -->
         @change="changeDepth"
       />
     </span>
-    <span
-      class="switch-icon ml-5"
-      title="Settings"
-      @click="setConfig"
-      v-if="dashboardStore.editMode"
-    >
+    <span class="switch-icon ml-5" title="Settings" @click="setConfig" v-if="dashboardStore.editMode">
       <Icon size="middle" iconName="settings" />
     </span>
     <span class="switch-icon ml-5" title="Back to overview topology" @click="backToTopology">
@@ -61,12 +52,7 @@ limitations under the License. -->
     }"
   >
     <i v-for="(item, index) of items" :key="index" @click="item.func">
-      <span
-        v-if="
-          ['alarm', 'inspect'].includes(item.id) ||
-          (item.id === 'dashboard' && settings.nodeDashboard)
-        "
-      >
+      <span v-if="['alarm', 'inspect'].includes(item.id) || (item.id === 'dashboard' && settings.nodeDashboard)">
         {{ item.title }}
       </span>
     </i>
@@ -161,8 +147,7 @@ limitations under the License. -->
     topologyStore.setNode(null);
   }
   function goDashboard() {
-    const entity =
-      dashboardStore.entity === EntityType[2].value ? EntityType[2].value : EntityType[3].value;
+    const entity = dashboardStore.entity === EntityType[2].value ? EntityType[2].value : EntityType[3].value;
     const { dashboard } = getDashboard({
       name: settings.value.nodeDashboard,
       layer: dashboardStore.layerId,
@@ -201,8 +186,7 @@ limitations under the License. -->
         return;
       }
       const { sourceObj, targetObj } = d.data;
-      const entity =
-        dashboardStore.entity === EntityType[2].value ? EntityType[6].value : EntityType[5].value;
+      const entity = dashboardStore.entity === EntityType[2].value ? EntityType[6].value : EntityType[5].value;
       const { dashboard } = getDashboard({
         name: settings.value.linkDashboard,
         layer: dashboardStore.layerId,

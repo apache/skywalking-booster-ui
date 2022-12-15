@@ -26,12 +26,7 @@ limitations under the License. -->
   </div>
   <div v-else class="item">
     <span class="label">{{ t("enableRelatedTrace") }}</span>
-    <el-switch
-      v-model="enableRelate"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ enableRelate })"
-    />
+    <el-switch v-model="enableRelate" active-text="Yes" inactive-text="No" @change="updateConfig({ enableRelate })" />
   </div>
   <div v-if="enableRelate">
     <div class="item">
@@ -58,12 +53,7 @@ limitations under the License. -->
     </div>
     <div class="item">
       <span class="label">{{ t("setLatencyDuration") }}</span>
-      <el-switch
-        v-model="latency"
-        active-text="Yes"
-        inactive-text="No"
-        @change="updateConfig({ latency })"
-      />
+      <el-switch v-model="latency" active-text="Yes" inactive-text="No" @change="updateConfig({ latency })" />
     </div>
   </div>
 </template>

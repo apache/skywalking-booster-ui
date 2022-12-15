@@ -84,9 +84,7 @@ limitations under the License. -->
   const appStore = useAppStoreWithOut();
   const { t } = useI18n();
   const name = ref<string>(String(useRouter().currentRoute.value.name));
-  const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "")
-    ? ref("light")
-    : ref("black");
+  const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "") ? ref("light") : ref("black");
   const routes = ref<RouteRecordRaw[] | any>(useRouter().options.routes);
   if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
     appStore.setIsMobile(true);

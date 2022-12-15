@@ -50,9 +50,7 @@ limitations under the License. -->
     function compare(val: number, val1: number) {
       return val1 - val;
     }
-    const topDur = durationChildExcluded
-      .sort(compare)
-      .filter((item: any, index: number) => index < 10 && item !== 0);
+    const topDur = durationChildExcluded.sort(compare).filter((item: any, index: number) => index < 10 && item !== 0);
     const trees = [];
 
     for (const item of props.data) {

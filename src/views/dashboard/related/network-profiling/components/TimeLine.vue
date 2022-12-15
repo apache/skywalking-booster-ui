@@ -58,8 +58,7 @@ limitations under the License. -->
     if (!networkProfilingStore.selectedNetworkTask.taskId) {
       return;
     }
-    const { taskStartTime, fixedTriggerDuration, targetType, taskId } =
-      networkProfilingStore.selectedNetworkTask;
+    const { taskStartTime, fixedTriggerDuration, targetType, taskId } = networkProfilingStore.selectedNetworkTask;
     if (task.value[0] && task.value[0].data.taskId === taskId) {
       if (isUpdate.value) {
         return;
@@ -127,16 +126,8 @@ limitations under the License. -->
     const resp = await networkProfilingStore.getProcessTopology({
       serviceInstanceId,
       duration: {
-        start: dateFormatStep(
-          getLocalTime(appStore.utc, new Date(task.value[0].start)),
-          appStore.duration.step,
-          true,
-        ),
-        end: dateFormatStep(
-          getLocalTime(appStore.utc, new Date(task.value[0].end)),
-          appStore.duration.step,
-          true,
-        ),
+        start: dateFormatStep(getLocalTime(appStore.utc, new Date(task.value[0].start)), appStore.duration.step, true),
+        end: dateFormatStep(getLocalTime(appStore.utc, new Date(task.value[0].end)), appStore.duration.step, true),
         step: appStore.duration.step,
       },
     });

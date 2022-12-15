@@ -20,12 +20,7 @@ limitations under the License. -->
         {{ t("noData") }}
       </div>
       <table class="profile-t">
-        <tr
-          class="profile-tr cp"
-          v-for="(i, index) in profileStore.segmentList"
-          @click="selectTrace(i)"
-          :key="index"
-        >
+        <tr class="profile-tr cp" v-for="(i, index) in profileStore.segmentList" @click="selectTrace(i)" :key="index">
           <td
             class="profile-td"
             :class="{

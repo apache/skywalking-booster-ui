@@ -29,11 +29,7 @@ limitations under the License. -->
         </div>
         <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5">
           <span class="label">
-            {{
-              ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity)
-                ? "$Endpoint"
-                : "$ServiceInstance"
-            }}
+            {{ ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity) ? "$Endpoint" : "$ServiceInstance" }}
           </span>
           <Selector
             v-model="states.currentPod"
@@ -72,11 +68,7 @@ limitations under the License. -->
         </div>
         <div class="selectors-item" v-if="key === 4 || key === 5">
           <span class="label">
-            {{
-              dashboardStore.entity === "EndpointRelation"
-                ? "$DestinationEndpoint"
-                : "$DestinationServiceInstance"
-            }}
+            {{ dashboardStore.entity === "EndpointRelation" ? "$DestinationEndpoint" : "$DestinationServiceInstance" }}
           </span>
           <Selector
             v-model="states.currentDestPod"
@@ -110,12 +102,7 @@ limitations under the License. -->
           </i>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item
-                @click="clickIcons(t)"
-                v-for="(t, index) in toolIcons"
-                :key="index"
-                :title="t.content"
-              >
+              <el-dropdown-item @click="clickIcons(t)" v-for="(t, index) in toolIcons" :key="index" :title="t.content">
                 <Icon class="mr-5" size="middle" :iconName="t.name" />
                 <span>{{ t.content }}</span>
               </el-dropdown-item>
@@ -198,9 +185,7 @@ limitations under the License. -->
   });
 
   const isRelation = computed(() => {
-    return [EntityType[7].value, EntityType[6].value, EntityType[5].value].includes(
-      dashboardStore.entity,
-    );
+    return [EntityType[7].value, EntityType[6].value, EntityType[5].value].includes(dashboardStore.entity);
   });
 
   setCurrentDashboard();
@@ -269,8 +254,7 @@ limitations under the License. -->
     selectorStore.setCurrentService(currentService);
     selectorStore.setCurrentDestService(currentDestService);
     states.currentService = selectorStore.currentService && selectorStore.currentService.value;
-    states.currentDestService =
-      selectorStore.currentDestService && selectorStore.currentDestService.value;
+    states.currentDestService = selectorStore.currentDestService && selectorStore.currentDestService.value;
   }
 
   async function setSourceSelector() {
@@ -303,9 +287,7 @@ limitations under the License. -->
     }
     let s;
     if (states.currentService) {
-      s = (selectorStore.services || []).find(
-        (d: { label: string }) => d.label === states.currentService,
-      );
+      s = (selectorStore.services || []).find((d: { label: string }) => d.label === states.currentService);
     } else {
       s = (selectorStore.services || []).find((d: unknown, index: number) => index === 0);
     }
@@ -316,9 +298,7 @@ limitations under the License. -->
       val = 0;
     }
     if (states.currentService) {
-      d = (selectorStore.services || []).find(
-        (d: { label: string }) => d.label === states.currentDestService,
-      );
+      d = (selectorStore.services || []).find((d: { label: string }) => d.label === states.currentDestService);
     } else {
       d = (selectorStore.services || []).find((d: unknown, index: number) => index === val);
     }
@@ -344,11 +324,7 @@ limitations under the License. -->
       return;
     }
     states.currentDestService = selectorStore.currentDestService.value;
-    if (
-      [EntityType[5].value, EntityType[6].value, EntityType[7].value].includes(
-        dashboardStore.entity,
-      )
-    ) {
+    if ([EntityType[5].value, EntityType[6].value, EntityType[7].value].includes(dashboardStore.entity)) {
       await fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
     }
   }
@@ -521,12 +497,7 @@ limitations under the License. -->
     }
   }
 
-  async function fetchPods(
-    type: string,
-    serviceId: string,
-    setPod: boolean,
-    param?: { keyword?: string },
-  ) {
+  async function fetchPods(type: string, serviceId: string, setPod: boolean, param?: { keyword?: string }) {
     let resp;
     switch (type) {
       case EntityType[2].value:
@@ -597,9 +568,7 @@ limitations under the License. -->
     });
     if (setPod) {
       const destProcess = params.destProcessId || selectorStore.destProcesses[0].id;
-      const currentDestProcess = selectorStore.destProcesses.find(
-        (d: { id: string }) => d.id === destProcess,
-      );
+      const currentDestProcess = selectorStore.destProcesses.find((d: { id: string }) => d.id === destProcess);
       if (!currentDestProcess) {
         states.currentDestProcess = "";
         selectorStore.setCurrentDestProcess(null);

@@ -27,23 +27,13 @@ limitations under the License. -->
     />
     <div class="label">
       <span>{{ t("linkServerMetrics") }}</span>
-      <el-popover
-        placement="left"
-        :width="400"
-        trigger="click"
-        effect="dark"
-        v-if="states.linkServerMetrics.length"
-      >
+      <el-popover placement="left" :width="400" trigger="click" effect="dark" v-if="states.linkServerMetrics.length">
         <template #reference>
           <span @click="setConfigType('linkServerMetricConfig')">
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Metrics
-          :type="configType"
-          :metrics="states.linkServerMetrics"
-          @update="changeLinkServerMetrics"
-        />
+        <Metrics :type="configType" :metrics="states.linkServerMetrics" @update="changeLinkServerMetrics" />
       </el-popover>
     </div>
     <Selector
@@ -58,23 +48,13 @@ limitations under the License. -->
     <span v-show="dashboardStore.entity !== EntityType[2].value">
       <div class="label">
         <span>{{ t("linkClientMetrics") }}</span>
-        <el-popover
-          placement="left"
-          :width="400"
-          trigger="click"
-          effect="dark"
-          v-if="states.linkClientMetrics.length"
-        >
+        <el-popover placement="left" :width="400" trigger="click" effect="dark" v-if="states.linkClientMetrics.length">
           <template #reference>
             <span @click="setConfigType('linkClientMetricConfig')">
               <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
             </span>
           </template>
-          <Metrics
-            :type="configType"
-            :metrics="states.linkClientMetrics"
-            @update="changeLinkClientMetrics"
-          />
+          <Metrics :type="configType" :metrics="states.linkClientMetrics" @update="changeLinkClientMetrics" />
         </el-popover>
       </div>
       <Selector
@@ -118,12 +98,7 @@ limitations under the License. -->
         class="item mr-5"
       />
       <span>
-        <Icon
-          class="cp mr-5"
-          iconName="remove_circle_outline"
-          size="middle"
-          @click="deleteItem(index)"
-        />
+        <Icon class="cp mr-5" iconName="remove_circle_outline" size="middle" @click="deleteItem(index)" />
         <Icon
           class="cp"
           v-show="index === items.length - 1 && items.length < 5"
@@ -135,13 +110,7 @@ limitations under the License. -->
     </div>
     <div class="label">
       <span>{{ t("nodeMetrics") }}</span>
-      <el-popover
-        placement="left"
-        :width="400"
-        trigger="click"
-        effect="dark"
-        v-if="states.nodeMetrics.length"
-      >
+      <el-popover placement="left" :width="400" trigger="click" effect="dark" v-if="states.nodeMetrics.length">
         <template #reference>
           <span @click="setConfigType('nodeMetricConfig')">
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
@@ -189,12 +158,7 @@ limitations under the License. -->
         class="item"
       />
       <span>
-        <Icon
-          class="cp delete"
-          iconName="remove_circle_outline"
-          size="middle"
-          @click="deleteMetric(index)"
-        />
+        <Icon class="cp delete" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
         <Icon
           class="cp"
           iconName="add_circle_outlinecontrol_point"
@@ -206,19 +170,9 @@ limitations under the License. -->
       <div v-show="index !== legend.metric.length - 1">&&</div>
     </div>
     <div class="label">Healthy Description</div>
-    <el-input
-      v-model="description.healthy"
-      placeholder="Please input description"
-      size="small"
-      class="mt-5"
-    />
+    <el-input v-model="description.healthy" placeholder="Please input description" size="small" class="mt-5" />
     <div class="label">Unhealthy Description</div>
-    <el-input
-      v-model="description.unhealthy"
-      placeholder="Please input description"
-      size="small"
-      class="mt-5"
-    />
+    <el-input v-model="description.unhealthy" placeholder="Please input description" size="small" class="mt-5" />
     <el-button @click="setLegend" class="legend-btn" size="small" type="primary">
       {{ t("setLegend") }}
     </el-button>
@@ -245,9 +199,7 @@ limitations under the License. -->
   const topologyStore = useTopologyStore();
   const { selectedGrid } = dashboardStore;
   const nodeDashboard =
-    selectedGrid.nodeDashboard && selectedGrid.nodeDashboard.length
-      ? selectedGrid.nodeDashboard
-      : "";
+    selectedGrid.nodeDashboard && selectedGrid.nodeDashboard.length ? selectedGrid.nodeDashboard : "";
   const isService = [EntityType[0].value, EntityType[1].value].includes(dashboardStore.entity);
   const items = reactive<
     {
@@ -316,8 +268,7 @@ limitations under the License. -->
     );
     states.linkMetricList = (json.data.metrics || []).filter(
       (d: { catalog: string; type: string }) =>
-        entity + "Relation" === (MetricCatalog as any)[d.catalog] &&
-        d.type === MetricsType.REGULAR_VALUE,
+        entity + "Relation" === (MetricCatalog as any)[d.catalog] && d.type === MetricsType.REGULAR_VALUE,
     );
     if (isService) {
       return;

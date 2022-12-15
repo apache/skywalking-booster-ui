@@ -13,12 +13,7 @@ limitations under the License. -->
 <template>
   <div>
     <span class="label">{{ t("enableAssociate") }}</span>
-    <el-switch
-      v-model="eventAssociate"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig"
-    />
+    <el-switch v-model="eventAssociate" active-text="Yes" inactive-text="No" @change="updateConfig" />
   </div>
   <div class="footer">
     <el-button size="small" @click="cancelConfig">

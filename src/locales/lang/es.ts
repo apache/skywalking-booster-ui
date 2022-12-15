@@ -178,10 +178,8 @@ const msg = {
   asTable: "Como tabla",
   toTheRight: "Derecha",
   minDuration: "Duración mínima de la solicitud",
-  when4xx:
-    "Ejemplo de solicitud y respuesta http con seguimiento cuando el Código de respuesta está entre 400 y 499",
-  when5xx:
-    "Ejemplo de solicitud y respuesta http con seguimiento cuando el Código de respuesta está entre 500 y 599",
+  when4xx: "Ejemplo de solicitud y respuesta http con seguimiento cuando el Código de respuesta está entre 400 y 499",
+  when5xx: "Ejemplo de solicitud y respuesta http con seguimiento cuando el Código de respuesta está entre 500 y 599",
   taskTitle: "Reglas de recolección de peticiones y respuestas HTTP",
   second: "s",
   yearSuffix: "Año",

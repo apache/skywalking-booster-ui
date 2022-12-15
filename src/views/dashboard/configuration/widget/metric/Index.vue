@@ -59,12 +59,7 @@ limitations under the License. -->
         size="middle"
         @click="addMetric"
       />
-      <Icon
-        class="cp"
-        iconName="remove_circle_outline"
-        size="middle"
-        @click="deleteMetric(index)"
-      />
+      <Icon class="cp" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
     </span>
   </div>
   <div>{{ t("visualization") }}</div>
@@ -97,11 +92,7 @@ limitations under the License. -->
   } from "../../../data";
   import { ElMessage } from "element-plus";
   import Icon from "@/components/Icon.vue";
-  import {
-    useQueryProcessor,
-    useSourceProcessor,
-    useGetMetricEntity,
-  } from "@/hooks/useMetricsProcessor";
+  import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
   import { useI18n } from "vue-i18n";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
   import Standard from "./Standard.vue";
@@ -146,9 +137,7 @@ limitations under the License. -->
   const setVisTypes = computed(() => {
     let graphs = [];
     if (dashboardStore.entity === EntityType[0].value) {
-      graphs = ChartTypes.filter(
-        (d: Option) => ![ChartTypes[7].value, ChartTypes[8].value].includes(d.value),
-      );
+      graphs = ChartTypes.filter((d: Option) => ![ChartTypes[7].value, ChartTypes[8].value].includes(d.value));
     } else if (dashboardStore.entity === EntityType[1].value) {
       graphs = ChartTypes.filter((d: Option) => !PodsChartTypes.includes(d.value));
     } else {
@@ -215,28 +204,24 @@ limitations under the License. -->
   }
 
   function setDashboards(type?: string) {
-    const chart =
-      type || (dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type);
+    const chart = type || (dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type);
     const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-    const arr = list.reduce(
-      (prev: (DashboardItem & { label: string; value: string })[], d: DashboardItem) => {
-        if (d.layer === dashboardStore.layerId) {
-          if (
-            (d.entity === EntityType[0].value && chart === "ServiceList") ||
-            (d.entity === EntityType[2].value && chart === "EndpointList") ||
-            (d.entity === EntityType[3].value && chart === "InstanceList")
-          ) {
-            prev.push({
-              ...d,
-              value: d.name,
-              label: d.name,
-            });
-          }
+    const arr = list.reduce((prev: (DashboardItem & { label: string; value: string })[], d: DashboardItem) => {
+      if (d.layer === dashboardStore.layerId) {
+        if (
+          (d.entity === EntityType[0].value && chart === "ServiceList") ||
+          (d.entity === EntityType[2].value && chart === "EndpointList") ||
+          (d.entity === EntityType[3].value && chart === "InstanceList")
+        ) {
+          prev.push({
+            ...d,
+            value: d.name,
+            label: d.name,
+          });
         }
-        return prev;
-      },
-      [],
-    );
+      }
+      return prev;
+    }, []);
 
     states.dashboardList = arr.length ? arr : [{ label: "", value: "" }];
   }
@@ -286,8 +271,7 @@ limitations under the License. -->
   }
 
   function changeMetricType(index: number, opt: Option[] | any) {
-    const metric =
-      states.metricList.filter((d: Option) => states.metrics[index] === d.value)[0] || {};
+    const metric = states.metricList.filter((d: Option) => states.metrics[index] === d.value)[0] || {};
     const l = setMetricTypeList(metric.type);
     if (states.isList) {
       states.metricTypes[index] = opt[0].value;
@@ -400,10 +384,7 @@ limitations under the License. -->
       labelsIndex: "",
       sortOrder: "DES",
     };
-    if (
-      !dashboardStore.selectedGrid.metricConfig ||
-      !dashboardStore.selectedGrid.metricConfig[index]
-    ) {
+    if (!dashboardStore.selectedGrid.metricConfig || !dashboardStore.selectedGrid.metricConfig[index]) {
       currentMetricConfig.value = n;
       return;
     }

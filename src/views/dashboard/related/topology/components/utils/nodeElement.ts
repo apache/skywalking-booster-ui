@@ -21,9 +21,7 @@ icons["KAFKA-CONSUMER"] = icons.KAFKA;
 export default (d3: any, graph: any, funcs: any, tip: any, legend?: any) => {
   const nodeEnter = graph
     .append("g")
-    .call(
-      d3.drag().on("start", funcs.dragstart).on("drag", funcs.dragged).on("end", funcs.dragended),
-    )
+    .call(d3.drag().on("start", funcs.dragstart).on("drag", funcs.dragged).on("end", funcs.dragended))
     .on("mouseover", function (event: any, d: Node) {
       tip.html(funcs.tipHtml).show(d, this);
     })

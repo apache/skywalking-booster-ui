@@ -71,9 +71,7 @@ export const logStore = defineStore({
       return res.data;
     },
     async getInstances(id: string) {
-      const serviceId = this.selectorStore.currentService
-        ? this.selectorStore.currentService.id
-        : id;
+      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -82,15 +80,11 @@ export const logStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.instances = [{ value: "0", label: "All" }, ...res.data.data.pods] || [
-        { value: " 0", label: "All" },
-      ];
+      this.instances = [{ value: "0", label: "All" }, ...res.data.data.pods] || [{ value: " 0", label: "All" }];
       return res.data;
     },
     async getEndpoints(id: string, keyword?: string) {
-      const serviceId = this.selectorStore.currentService
-        ? this.selectorStore.currentService.id
-        : id;
+      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -99,9 +93,7 @@ export const logStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.endpoints = [{ value: "0", label: "All" }, ...res.data.data.pods] || [
-        { value: "0", label: "All" },
-      ];
+      this.endpoints = [{ value: "0", label: "All" }, ...res.data.data.pods] || [{ value: "0", label: "All" }];
       return res.data;
     },
     async getLogsByKeywords() {
@@ -123,9 +115,7 @@ export const logStore = defineStore({
     },
     async getServiceLogs() {
       this.loadLogs = true;
-      const res: AxiosResponse = await graphql
-        .query("queryServiceLogs")
-        .params({ condition: this.conditions });
+      const res: AxiosResponse = await graphql.query("queryServiceLogs").params({ condition: this.conditions });
       this.loadLogs = false;
       if (res.data.errors) {
         return res.data;
@@ -136,9 +126,7 @@ export const logStore = defineStore({
     },
     async getBrowserLogs() {
       this.loadLogs = true;
-      const res: AxiosResponse = await graphql
-        .query("queryBrowserErrorLogs")
-        .params({ condition: this.conditions });
+      const res: AxiosResponse = await graphql.query("queryBrowserErrorLogs").params({ condition: this.conditions });
 
       this.loadLogs = false;
       if (res.data.errors) {

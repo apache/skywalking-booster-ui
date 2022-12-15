@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global module */
+
 module.exports = {
   ignores: [(commit) => commit.includes("init")],
   extends: ["@commitlint/config-conventional"],

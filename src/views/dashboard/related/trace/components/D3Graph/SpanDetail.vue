@@ -47,18 +47,12 @@ limitations under the License. -->
       <span class="g-sm-4 grey">{{ i.key }}:</span>
       <span class="g-sm-8 wba">
         {{ i.value }}
-        <span
-          v-if="i.key === 'db.statement' && i.value"
-          class="grey link-hover cp ml-5"
-          @click="copy(i.value)"
-        >
+        <span v-if="i.key === 'db.statement' && i.value" class="grey link-hover cp ml-5" @click="copy(i.value)">
           <Icon size="middle" iconName="review-list" />
         </span>
       </span>
     </div>
-    <h5 class="mb-10" v-if="currentSpan.logs" v-show="currentSpan.logs.length">
-      {{ t("logs") }}.
-    </h5>
+    <h5 class="mb-10" v-if="currentSpan.logs" v-show="currentSpan.logs.length"> {{ t("logs") }}. </h5>
     <div v-for="(i, index) in currentSpan.logs" :key="index">
       <div class="mb-10 sm">
         <span class="mr-10">{{ t("time") }}:</span>
@@ -77,9 +71,7 @@ limitations under the License. -->
         <pre class="pl-15 mt-0 mb-0 sm oa">{{ _i.value }}</pre>
       </div>
     </div>
-    <h5 class="mb-10" v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length">
-      {{ t("events") }}.
-    </h5>
+    <h5 class="mb-10" v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"> {{ t("events") }}. </h5>
     <div
       class="attach-events"
       ref="timeline"
@@ -89,12 +81,7 @@ limitations under the License. -->
       {{ t("relatedTraceLogs") }}
     </el-button>
   </div>
-  <el-dialog
-    v-model="showEventDetail"
-    :destroy-on-close="true"
-    fullscreen
-    @closed="showEventDetail = false"
-  >
+  <el-dialog v-model="showEventDetail" :destroy-on-close="true" fullscreen @closed="showEventDetail = false">
     <div>
       <div class="mb-10">
         <span class="grey title">Name:</span>
@@ -102,50 +89,27 @@ limitations under the License. -->
       </div>
       <div class="mb-10">
         <span class="grey title">Start Time:</span>
-        {{
-          currentEvent.startTime
-            ? `${visDate(Number(currentEvent.startTime))}:${currentEvent.startTimeNanos}`
-            : ""
-        }}
+        {{ currentEvent.startTime ? `${visDate(Number(currentEvent.startTime))}:${currentEvent.startTimeNanos}` : "" }}
       </div>
       <div class="mb-10">
         <span class="grey title">End Time:</span>
-        {{
-          currentEvent.endTime
-            ? `${visDate(Number(currentEvent.endTime))}:${currentEvent.endTimeNanos}`
-            : ""
-        }}
+        {{ currentEvent.endTime ? `${visDate(Number(currentEvent.endTime))}:${currentEvent.endTimeNanos}` : "" }}
       </div>
       <div class="mb-10">
         <span class="grey title">Summary:</span>
-        <div
-          class="mb-5"
-          v-for="(d, index) in currentEvent.summary || []"
-          :key="index"
-          style="white-space: pre-wrap"
-        >
+        <div class="mb-5" v-for="(d, index) in currentEvent.summary || []" :key="index" style="white-space: pre-wrap">
           {{ d.key + "=" + d.value }};
         </div>
       </div>
       <div>
         <span class="grey title">Tags:</span>
-        <div
-          class="mb-5"
-          v-for="(tag, index) in currentEvent.tags || []"
-          :key="index"
-          style="white-space: pre-wrap"
-        >
+        <div class="mb-5" v-for="(tag, index) in currentEvent.tags || []" :key="index" style="white-space: pre-wrap">
           {{ tag.key + "=" + tag.value }};
         </div>
       </div>
     </div>
   </el-dialog>
-  <el-dialog
-    v-model="showRelatedLogs"
-    :destroy-on-close="true"
-    fullscreen
-    @closed="showRelatedLogs = false"
-  >
+  <el-dialog v-model="showRelatedLogs" :destroy-on-close="true" fullscreen @closed="showRelatedLogs = false">
     <el-pagination
       v-model:currentPage="pageNum"
       v-model:page-size="pageSize"
@@ -190,12 +154,9 @@ limitations under the License. -->
   const currentEvent = ref<any>({});
   const pageSize = 10;
   const total = computed(() =>
-    traceStore.traceList.length === pageSize
-      ? pageSize * pageNum.value + 1
-      : pageSize * pageNum.value,
+    traceStore.traceList.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
   );
-  const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") =>
-    dayjs(date).format(pattern);
+  const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
 
   onMounted(() => {
     setTimeout(() => {

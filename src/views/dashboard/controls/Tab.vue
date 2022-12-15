@@ -140,9 +140,7 @@ limitations under the License. -->
       dashboardStore.setActiveTabIndex(activeTabIndex);
       const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
       if (dashboardStore.layout[l].children.length) {
-        dashboardStore.setCurrentTabItems(
-          dashboardStore.layout[l].children[activeTabIndex.value].children,
-        );
+        dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
         dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
       }
 
@@ -153,9 +151,7 @@ limitations under the License. -->
         dashboardStore.selectWidget(props.data);
         dashboardStore.setActiveTabIndex(idx);
         const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
-        dashboardStore.setCurrentTabItems(
-          dashboardStore.layout[l].children[activeTabIndex.value].children,
-        );
+        dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
         needQuery.value = true;
         if (route.params.activeTabIndex) {
           let p = location.href.split("/tab/")[0];
@@ -204,9 +200,7 @@ limitations under the License. -->
       }
       function layoutUpdatedEvent() {
         const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
-        dashboardStore.setCurrentTabItems(
-          dashboardStore.layout[l].children[activeTabIndex.value].children,
-        );
+        dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
       }
       function copyLink() {
         let path = "";
@@ -241,9 +235,7 @@ limitations under the License. -->
           dashboardStore.activeGridItem(props.data.i);
           dashboardStore.selectWidget(props.data);
           const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
-          dashboardStore.setCurrentTabItems(
-            dashboardStore.layout[l].children[activeTabIndex.value].children,
-          );
+          dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
           needQuery.value = true;
           if (route.params.activeTabIndex) {
             let p = location.href.split("/tab/")[0];

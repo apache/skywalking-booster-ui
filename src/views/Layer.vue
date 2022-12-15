@@ -41,9 +41,7 @@ limitations under the License. -->
     await dashboardStore.setDashboards();
     const item = dashboardStore.dashboards.find(
       (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
-        d.layer === dashboardStore.layerId &&
-        [EntityType[0].value, EntityType[1].value].includes(d.entity) &&
-        d.isRoot,
+        d.layer === dashboardStore.layerId && [EntityType[0].value, EntityType[1].value].includes(d.entity) && d.isRoot,
     );
     if (!item) {
       appStore.setPageTitle(dashboardStore.layer);

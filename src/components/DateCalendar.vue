@@ -21,19 +21,12 @@ limitations under the License. -->
       <a :class="`${state.pre}-prev-year-btn`" v-show="!state.showYears" @click="state.year--">
         <Icon size="sm" iconName="angle-double-left" />
       </a>
-      <a
-        :class="`${state.pre}-prev-month-btn`"
-        v-show="!state.showYears && !state.showMonths"
-        @click="pm"
-      >
+      <a :class="`${state.pre}-prev-month-btn`" v-show="!state.showYears && !state.showMonths" @click="pm">
         <Icon size="middle" iconName="chevron-left" />
       </a>
       <a :class="`${state.pre}-year-select`" v-show="state.showYears">{{ ys + "-" + ye }}</a>
       <template v-if="local.yearSuffix">
-        <a
-          :class="`${state.pre}-year-select`"
-          @click="state.showYears = !state.showYears"
-          v-show="!state.showYears"
+        <a :class="`${state.pre}-year-select`" @click="state.showYears = !state.showYears" v-show="!state.showYears"
           >{{ state.year }}{{ local.yearSuffix }}</a
         >
         <a
@@ -50,18 +43,11 @@ limitations under the License. -->
           v-show="!state.showYears && !state.showMonths"
           >{{ local.monthsHead[state.month] }}</a
         >
-        <a
-          :class="`${state.pre}-year-select`"
-          @click="state.showYears = !state.showYears"
-          v-show="!state.showYears"
-          >{{ state.year }}</a
-        >
+        <a :class="`${state.pre}-year-select`" @click="state.showYears = !state.showYears" v-show="!state.showYears">{{
+          state.year
+        }}</a>
       </template>
-      <a
-        :class="`${state.pre}-next-month-btn`"
-        v-show="!state.showYears && !state.showMonths"
-        @click="nm"
-      >
+      <a :class="`${state.pre}-next-month-btn`" v-show="!state.showYears && !state.showMonths" @click="nm">
         <Icon size="middle" iconName="chevron-right" />
       </a>
       <a :class="`${state.pre}-next-year-btn`" v-show="!state.showYears" @click="state.year++">
@@ -88,13 +74,8 @@ limitations under the License. -->
       <div :class="`${state.pre}-months`" v-show="state.showMonths">
         <a
           v-for="(i, j) in local.months"
-          @click="
-            is($event) &&
-              ((state.showMonths = state.m === 'M'), (state.month = j), state.m === 'M' && ok('m'))
-          "
-          :class="[
-            status(state.year, j, state.day, state.hour, state.minute, state.second, 'YYYYMM'),
-          ]"
+          @click="is($event) && ((state.showMonths = state.m === 'M'), (state.month = j), state.m === 'M' && ok('m'))"
+          :class="[status(state.year, j, state.day, state.hour, state.minute, state.second, 'YYYYMM')]"
           :key="j"
           >{{ i }}</a
         >
@@ -102,10 +83,7 @@ limitations under the License. -->
       <div :class="`${state.pre}-years`" v-show="state.showYears">
         <a
           v-for="(i, j) in years"
-          @click="
-            is($event) &&
-              ((state.showYears = state.m === 'Y'), (state.year = i), state.m === 'Y' && ok('y'))
-          "
+          @click="is($event) && ((state.showYears = state.m === 'Y'), (state.year = i), state.m === 'Y' && ok('y'))"
           :class="[
             j === 0 || j === 11 ? `${state.pre}-date-out` : '',
             status(i, state.month, state.day, state.hour, state.minute, state.second, 'YYYY'),
@@ -120,17 +98,7 @@ limitations under the License. -->
           <a
             v-for="(j, i) in 24"
             @click="is($event) && ((state.showHours = false), (state.hour = i), ok('h'))"
-            :class="[
-              status(
-                state.year,
-                state.month,
-                state.day,
-                i,
-                state.minute,
-                state.second,
-                'YYYYMMDDHH',
-              ),
-            ]"
+            :class="[status(state.year, state.month, state.day, i, state.minute, state.second, 'YYYYMMDDHH')]"
             :key="i"
             >{{ i }}</a
           >
@@ -142,17 +110,7 @@ limitations under the License. -->
           <a
             v-for="(j, i) in 60"
             @click="is($event) && ((state.showMinutes = false), (state.minute = i), ok('h'))"
-            :class="[
-              status(
-                state.year,
-                state.month,
-                state.day,
-                state.hour,
-                i,
-                state.second,
-                'YYYYMMDDHHmm',
-              ),
-            ]"
+            :class="[status(state.year, state.month, state.day, state.hour, i, state.second, 'YYYYMMDDHHmm')]"
             :key="i"
             >{{ i }}</a
           >
@@ -164,17 +122,7 @@ limitations under the License. -->
           <a
             v-for="(j, i) in 60"
             @click="is($event) && ((state.showSeconds = false), (state.second = i), ok('h'))"
-            :class="[
-              status(
-                state.year,
-                state.month,
-                state.day,
-                state.hour,
-                state.minute,
-                i,
-                'YYYYMMDDHHmmss',
-              ),
-            ]"
+            :class="[status(state.year, state.month, state.day, state.hour, state.minute, i, 'YYYYMMDDHHmmss')]"
             :key="i"
             >{{ i }}</a
           >
@@ -185,18 +133,14 @@ limitations under the License. -->
       <div :class="`${state.pre}-hour`">
         <a
           :title="local.hourTip"
-          @click="
-            (state.showHours = !state.showHours), (state.showMinutes = state.showSeconds = false)
-          "
+          @click="(state.showHours = !state.showHours), (state.showMinutes = state.showSeconds = false)"
           :class="{ on: state.showHours }"
           >{{ dd(state.hour) }}</a
         >
         <span>:</span>
         <a
           :title="local.minuteTip"
-          @click="
-            (state.showMinutes = !state.showMinutes), (state.showHours = state.showSeconds = false)
-          "
+          @click="(state.showMinutes = !state.showMinutes), (state.showHours = state.showSeconds = false)"
           :class="{ on: state.showMinutes }"
           >{{ dd(state.minute) }}</a
         >
@@ -204,10 +148,7 @@ limitations under the License. -->
           <span>:</span>
           <a
             :title="local.secondTip"
-            @click="
-              (state.showSeconds = !state.showSeconds),
-                (state.showHours = state.showMinutes = false)
-            "
+            @click="(state.showSeconds = !state.showSeconds), (state.showHours = state.showMinutes = false)"
             :class="{ on: state.showSeconds }"
             >{{ dd(state.second) }}</a
           >
@@ -416,10 +357,7 @@ limitations under the License. -->
         s: seconds,
         S: milliseconds,
       };
-      return (format || props.format).replace(
-        /Y+|M+|D+|H+|h+|m+|s+|S+/g,
-        (str: string) => map[str],
-      );
+      return (format || props.format).replace(/Y+|M+|D+|H+|h+|m+|s+|S+/g, (str: string) => map[str]);
     };
     const classObj: any = {};
     let flag = false;
@@ -431,10 +369,8 @@ limitations under the License. -->
       flag = tf(props.value, format) === tf(time, format);
     }
     classObj[`${state.pre}-date`] = true;
-    classObj[`${state.pre}-date-disabled`] =
-      (props.right && t < start.value) || props.disabledDate(time, format);
-    classObj[`${state.pre}-date-on`] =
-      (props.left && t > start.value) || (props.right && t < end.value);
+    classObj[`${state.pre}-date-disabled`] = (props.right && t < start.value) || props.disabledDate(time, format);
+    classObj[`${state.pre}-date-on`] = (props.left && t > start.value) || (props.right && t < end.value);
     classObj[`${state.pre}-date-selected`] = flag;
     return classObj;
   };

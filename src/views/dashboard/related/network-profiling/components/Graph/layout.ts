@@ -49,33 +49,11 @@ class Orientation {
 
 const SQRT3 = Math.sqrt(3.0);
 class Layout {
-  static Pointy = new Orientation(
-    SQRT3,
-    SQRT3 / 2.0,
-    0.0,
-    3.0 / 2.0,
-    SQRT3 / 3.0,
-    -1.0 / 3.0,
-    0.0,
-    2.0 / 3.0,
-    0.5,
-  );
-  static Flat = new Orientation(
-    3.0 / 2.0,
-    0.0,
-    SQRT3 / 2.0,
-    SQRT3,
-    2.0 / 3.0,
-    0.0,
-    -1.0 / 3.0,
-    SQRT3 / 3.0,
-    0.0,
-  );
+  static Pointy = new Orientation(SQRT3, SQRT3 / 2.0, 0.0, 3.0 / 2.0, SQRT3 / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5);
+  static Flat = new Orientation(3.0 / 2.0, 0.0, SQRT3 / 2.0, SQRT3, 2.0 / 3.0, 0.0, -1.0 / 3.0, SQRT3 / 3.0, 0.0);
 
   static spacing(radius: number, isPointy = false): number[] {
-    return isPointy
-      ? [SQRT3 * radius, 2 * radius * (3 / 4)]
-      : [2 * radius * (3 / 4), SQRT3 * radius];
+    return isPointy ? [SQRT3 * radius, 2 * radius * (3 / 4)] : [2 * radius * (3 / 4), SQRT3 * radius];
   }
 
   private radius = 1;

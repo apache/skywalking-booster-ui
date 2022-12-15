@@ -42,12 +42,7 @@ limitations under the License. -->
         <span class="label">{{ t("currentDepth") }}</span>
         <Selector class="inputs" :value="depth" :options="DepthList" @change="changeDepth" />
       </span>
-      <span
-        class="switch-icon ml-5"
-        title="Settings"
-        @click="setConfig"
-        v-if="dashboardStore.editMode"
-      >
+      <span class="switch-icon ml-5" title="Settings" @click="setConfig" v-if="dashboardStore.editMode">
         <Icon size="middle" iconName="settings" />
       </span>
       <span class="switch-icon ml-5" title="Back to overview topology" @click="backToTopology">
@@ -159,10 +154,7 @@ limitations under the License. -->
   });
   async function init() {
     tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
-    graph.value = svg.value
-      .append("g")
-      .attr("class", "topo-svg-graph")
-      .attr("transform", `translate(-100, -100)`);
+    graph.value = svg.value.append("g").attr("class", "topo-svg-graph").attr("transform", `translate(-100, -100)`);
     graph.value.call(tip.value);
     simulation.value = simulationInit(d3, topologyStore.nodes, topologyStore.calls, ticked);
     node.value = graph.value.append("g").selectAll(".topo-node");
@@ -201,9 +193,7 @@ limitations under the License. -->
     anchor.value.attr(
       "transform",
       (d: Call | any) =>
-        `translate(${(d.source.x + d.target.x) / 2}, ${
-          (d.target.y + d.source.y) / 2 - d.loopFactor * 45
-        })`,
+        `translate(${(d.source.x + d.target.x) / 2}, ${(d.target.y + d.source.y) / 2 - d.loopFactor * 45})`,
     );
     node.value.attr("transform", (d: Node | any) => `translate(${d.x - 22},${d.y - 22})`);
   }
@@ -252,8 +242,7 @@ limitations under the License. -->
       return;
     }
     const origin = dashboardStore.entity;
-    const e =
-      dashboardStore.entity === EntityType[1].value ? EntityType[0].value : dashboardStore.entity;
+    const e = dashboardStore.entity === EntityType[1].value ? EntityType[0].value : dashboardStore.entity;
     const { dashboard } = getDashboard({
       name: settings.value.linkDashboard,
       layer: dashboardStore.layerId,
@@ -294,14 +283,9 @@ limitations under the License. -->
               ) || {};
             const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
             const v = aggregation(metric.value, opt);
-            return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${
-              opt.unit || ""
-            }</div>`;
+            return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
           });
-          return [
-            ` <div class="mb-5"><span class="grey">name: </span>${data.name}</div>`,
-            ...html,
-          ].join(" ");
+          return [` <div class="mb-5"><span class="grey">name: </span>${data.name}</div>`, ...html].join(" ");
         },
       },
       tip.value,
@@ -320,10 +304,8 @@ limitations under the License. -->
         handleLinkClick: handleLinkClick,
         tipHtml: (data: Call) => {
           const linkClientMetrics: string[] = settings.value.linkClientMetrics || [];
-          const linkServerMetricConfig: MetricConfigOpt[] =
-            settings.value.linkServerMetricConfig || [];
-          const linkClientMetricConfig: MetricConfigOpt[] =
-            settings.value.linkClientMetricConfig || [];
+          const linkServerMetricConfig: MetricConfigOpt[] = settings.value.linkServerMetricConfig || [];
+          const linkClientMetricConfig: MetricConfigOpt[] = settings.value.linkClientMetricConfig || [];
           const linkServerMetrics: string[] = settings.value.linkServerMetrics || [];
           const htmlServer = linkServerMetrics.map((m, index) => {
             const metric = topologyStore.linkServerMetrics[m].values.find(
@@ -332,9 +314,7 @@ limitations under the License. -->
             if (metric) {
               const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
               const v = aggregation(metric.value, opt);
-              return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${
-                opt.unit || ""
-              }</div>`;
+              return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
             }
           });
           const htmlClient = linkClientMetrics.map((m: string, index: number) => {
@@ -344,17 +324,13 @@ limitations under the License. -->
             );
             if (metric) {
               const v = aggregation(metric.value, opt);
-              return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${
-                opt.unit || ""
-              }</div>`;
+              return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
             }
           });
           const html = [
             ...htmlServer,
             ...htmlClient,
-            `<div><span class="grey">${t("detectPoint")}:</span>${data.detectPoints.join(
-              " | ",
-            )}</div>`,
+            `<div><span class="grey">${t("detectPoint")}:</span>${data.detectPoints.join(" | ")}</div>`,
           ].join(" ");
 
           return html;
@@ -447,8 +423,7 @@ limitations under the License. -->
   }
   async function getTopology() {
     const ids = selectorStore.services.map((d: Service) => d.id);
-    const serviceIds =
-      dashboardStore.entity === EntityType[0].value ? [selectorStore.currentService.id] : ids;
+    const serviceIds = dashboardStore.entity === EntityType[0].value ? [selectorStore.currentService.id] : ids;
     const resp = await topologyStore.getDepthServiceTopology(serviceIds, Number(depth.value));
     return resp;
   }

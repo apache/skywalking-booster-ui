@@ -21,31 +21,15 @@ limitations under the License. -->
     </div>
     <div>
       <div class="label">{{ t("minDuration") }} (ms)</div>
-      <el-input
-        size="small"
-        class="profile-input"
-        :min="0"
-        v-model="states.minDuration"
-        type="number"
-      />
+      <el-input size="small" class="profile-input" :min="0" v-model="states.minDuration" type="number" />
     </div>
     <div>
       <div class="label">{{ t("when4xx") }}</div>
-      <Radio
-        class="mb-5"
-        :value="states.when4xx"
-        :options="InitTaskField.Whenxx"
-        @change="changeWhen4xx"
-      />
+      <Radio class="mb-5" :value="states.when4xx" :options="InitTaskField.Whenxx" @change="changeWhen4xx" />
     </div>
     <div>
       <div class="label">{{ t("when5xx") }}</div>
-      <Radio
-        class="mb-5"
-        :value="states.when5xx"
-        :options="InitTaskField.Whenxx"
-        @change="changeWhen5xx"
-      />
+      <Radio class="mb-5" :value="states.when5xx" :options="InitTaskField.Whenxx" @change="changeWhen5xx" />
     </div>
   </div>
 </template>
@@ -63,7 +47,7 @@ limitations under the License. -->
       type: Object as PropType<NetworkProfilingRequest>,
       default: () => ({ children: [] }),
     },
-    key: {
+    index: {
       type: Number,
       default: () => 0,
     },
@@ -73,11 +57,11 @@ limitations under the License. -->
 
   function changeWhen5xx(value: string) {
     states.when5xx = value;
-    emits("change", states, props.key);
+    emits("change", states, props.index);
   }
   function changeWhen4xx(value: string) {
     states.when4xx = value;
-    emits("change", states, props.key);
+    emits("change", states, props.index);
   }
 </script>
 <style lang="scss" scoped>

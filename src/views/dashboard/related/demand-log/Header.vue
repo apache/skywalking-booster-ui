@@ -72,11 +72,7 @@ limitations under the License. -->
     <div class="mr-5">
       <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
       <span class="log-tags">
-        <span
-          class="selected"
-          v-for="(item, index) in keywordsOfContent"
-          :key="`keywordsOfContent${index}`"
-        >
+        <span class="selected" v-for="(item, index) in keywordsOfContent" :key="`keywordsOfContent${index}`">
           <span>{{ item }}</span>
           <span class="remove-icon" @click="removeContent(index)">×</span>
         </span>
@@ -111,13 +107,7 @@ limitations under the License. -->
     </div>
   </div>
   <div class="flex-h row btn-row">
-    <el-button
-      class="search-btn mt-10"
-      size="small"
-      type="primary"
-      @click="runInterval"
-      :disabled="disabled"
-    >
+    <el-button class="search-btn mt-10" size="small" type="primary" @click="runInterval" :disabled="disabled">
       <Icon size="middle" iconName="retry" :loading="!!intervalFn" class="mr-5" />
       {{ intervalFn ? t("pause") : t("start") }}
     </el-button>
@@ -172,9 +162,7 @@ limitations under the License. -->
     if (!(state.instance.id || (selectorStore.currentPod && selectorStore.currentPod.id))) {
       return;
     }
-    const resp = await demandLogStore.getContainers(
-      state.instance.id || selectorStore.currentPod.id,
-    );
+    const resp = await demandLogStore.getContainers(state.instance.id || selectorStore.currentPod.id);
     if (resp.errors) {
       disabled.value = true;
       ElMessage.error(resp.errors);
@@ -236,10 +224,7 @@ limitations under the License. -->
   function rangeTime() {
     {
       const times = {
-        start: getLocalTime(
-          appStore.utc,
-          new Date(new Date().getTime() - state.duration.value * 1000),
-        ),
+        start: getLocalTime(appStore.utc, new Date(new Date().getTime() - state.duration.value * 1000)),
         end: getLocalTime(appStore.utc, new Date()),
         step: "SECOND",
       };

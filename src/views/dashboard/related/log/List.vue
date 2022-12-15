@@ -14,12 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <LogTable
-      v-loading="logStore.loadLogs"
-      :tableData="logStore.logs || []"
-      :type="type"
-      :noLink="false"
-    >
+    <LogTable v-loading="logStore.loadLogs" :tableData="logStore.logs || []" :type="type" :noLink="false">
       <div class="log-tips" v-if="!logStore.logs.length">{{ t("noData") }}</div>
     </LogTable>
     <div class="mt-5 mb-5">

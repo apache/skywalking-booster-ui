@@ -13,12 +13,7 @@ limitations under the License. -->
 <template>
   <div class="charts">
     <div>
-      <span
-        class="charts-item mr-5"
-        v-for="(i, index) in list"
-        :key="index"
-        :style="`color:${computedScale(index)}`"
-      >
+      <span class="charts-item mr-5" v-for="(i, index) in list" :key="index" :style="`color:${computedScale(index)}`">
         <Icon iconName="issue-open-m" class="mr-5" size="sm" />
         <span>{{ i }}</span>
       </span>
@@ -58,9 +53,7 @@ limitations under the License. -->
   function downloadTrace() {
     const serializer = new XMLSerializer();
     const svgNode: any = d3.select(".trace-list-dowanload").node();
-    const source = `<?xml version="1.0" standalone="no"?>\r\n${serializer.serializeToString(
-      svgNode,
-    )}`;
+    const source = `<?xml version="1.0" standalone="no"?>\r\n${serializer.serializeToString(svgNode)}`;
     const canvas = document.createElement("canvas");
     const context: any = canvas.getContext("2d");
     canvas.width = (d3.select(".trace-list-dowanload") as any)._groups[0][0].clientWidth;

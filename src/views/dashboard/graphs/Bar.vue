@@ -14,12 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="graph" :class="isRight ? 'flex-h' : 'flex-v'">
-    <Graph
-      :option="option"
-      @select="clickEvent"
-      :filters="config.filters"
-      :associate="config.associate || []"
-    />
+    <Graph :option="option" @select="clickEvent" :filters="config.filters" :associate="config.associate || []" />
     <Legend :config="config.legend" :data="data" :intervalTime="intervalTime" />
   </div>
 </template>
@@ -54,18 +49,13 @@ limitations under the License. -->
   const option = computed(() => getOption());
 
   function getOption() {
-    const keys = Object.keys(props.data || {}).filter(
-      (i: any) => Array.isArray(props.data[i]) && props.data[i].length,
-    );
+    const keys = Object.keys(props.data || {}).filter((i: any) => Array.isArray(props.data[i]) && props.data[i].length);
     const temp = keys.map((i: string) => {
       if (!props.intervalTime) {
         return;
       }
       return {
-        data: props.data[i].map((item: number, itemIndex: number) => [
-          props.intervalTime[itemIndex],
-          item,
-        ]),
+        data: props.data[i].map((item: number, itemIndex: number) => [props.intervalTime[itemIndex], item]),
         name: i,
         type: "bar",
         symbol: "none",

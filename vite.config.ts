@@ -27,7 +27,7 @@ import path from "path";
 
 const OUTPUT_DIR = "dist";
 // https://vitejs.dev/config/
-export default ({ command, mode }: ConfigEnv): UserConfig => {
+export default ({ mode }: ConfigEnv): UserConfig => {
   const { VITE_SW_PROXY_TARGET } = loadEnv(mode, process.cwd());
   return {
     plugins: [

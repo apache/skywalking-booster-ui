@@ -19,12 +19,7 @@ limitations under the License. -->
   </div>
   <div class="conditions flex-h" v-else>
     <el-radio-group v-model="conditions" @change="changeCondition" size="small">
-      <el-radio-button
-        v-for="(item, index) in items"
-        :label="item.label"
-        :key="item.label + index"
-        border
-      >
+      <el-radio-button v-for="(item, index) in items" :label="item.label" :key="item.label + index" border>
         {{ t(item.label) }}
       </el-radio-button>
     </el-radio-group>
@@ -53,9 +48,7 @@ limitations under the License. -->
           >
             {{ t(key) }}: {{ traceStore.conditions[FiltersKeys[key]] }}
           </span>
-          <span v-else-if="key !== 'duration'">
-            {{ t(key) }}: {{ traceStore.conditions[FiltersKeys[key]] }}
-          </span>
+          <span v-else-if="key !== 'duration'"> {{ t(key) }}: {{ traceStore.conditions[FiltersKeys[key]] }} </span>
         </div>
       </div>
     </el-popover>
@@ -67,9 +60,7 @@ limitations under the License. -->
       </template>
       <div>
         <div class="title">{{ t("metricValues") }}</div>
-        <div v-for="metric in filters.metricValue" :key="metric.value">
-          {{ metric.label }}: {{ metric.data }}
-        </div>
+        <div v-for="metric in filters.metricValue" :key="metric.value"> {{ metric.label }}: {{ metric.data }} </div>
       </div>
     </el-popover>
   </div>

@@ -47,10 +47,7 @@ limitations under the License. -->
       </div>
     </div>
     <div class="collapse" :style="{ height: configHeight + 'px' }">
-      <el-collapse
-        v-model="states.activeNames"
-        :style="{ '--el-collapse-header-font-size': '15px' }"
-      >
+      <el-collapse v-model="states.activeNames" :style="{ '--el-collapse-header-font-size': '15px' }">
         <el-collapse-item :title="t('selectVisualization')" name="1">
           <MetricOptions @update="getSource" @loading="setLoading" />
         </el-collapse-item>

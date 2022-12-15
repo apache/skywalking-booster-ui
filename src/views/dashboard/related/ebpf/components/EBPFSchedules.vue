@@ -59,11 +59,7 @@ limitations under the License. -->
             </el-button>
           </template>
         </el-input>
-        <el-table
-          :data="currentProcesses"
-          ref="multipleTableRef"
-          @selection-change="handleSelectionChange"
-        >
+        <el-table :data="currentProcesses" ref="multipleTableRef" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" />
           <el-table-column
             v-for="(h, index) of TableHeader"
@@ -213,8 +209,7 @@ limitations under the License. -->
         searchAttribute(d.attributes, searchText.value),
     );
     currentProcesses.value = arr.filter(
-      (d, index: number) =>
-        (pageIndex - 1 || 0) * pageSize <= index && pageSize * (pageIndex || 1) > index,
+      (d, index: number) => (pageIndex - 1 || 0) * pageSize <= index && pageSize * (pageIndex || 1) > index,
     );
   }
 

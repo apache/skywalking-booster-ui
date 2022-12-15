@@ -30,24 +30,10 @@ limitations under the License. -->
       <div>
         <span>UTC</span>
         <span class="ml-5 mr-5">{{ utcHour >= 0 ? "+" : "" }}</span>
-        <input
-          type="number"
-          v-model="utcHour"
-          min="-12"
-          max="14"
-          class="utc-input"
-          @change="setUTCHour"
-        />
+        <input type="number" v-model="utcHour" min="-12" max="14" class="utc-input" @change="setUTCHour" />
         <span class="ml-5 mr-5">:</span>
         <span class="utc-min">{{ utcMin > 9 || utcMin === 0 ? null : 0 }}</span>
-        <input
-          type="number"
-          v-model="utcMin"
-          min="0"
-          max="59"
-          class="utc-input"
-          @change="setUTCMin"
-        />
+        <input type="number" v-model="utcMin" min="0" max="59" class="utc-input" @change="setUTCMin" />
       </div>
     </div>
     <div class="flex-h item">
