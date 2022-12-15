@@ -29,4 +29,3 @@ PATH="/usr/local/bin:$PATH"
 npm run lint
 npm run lint:prettier
 npm run lint:stylelint
-npm run lint:lint-staged
