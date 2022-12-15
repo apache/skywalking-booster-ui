@@ -7,7 +7,6 @@
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "test:unit": "vitest --environment jsdom --root src/",
-    "test:e2e": "start-server-and-test preview :4173 'cypress run --e2e'",
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' :4173 'cypress open --e2e'",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
@@ -84,23 +83,19 @@
     "not dead"
   ],
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,vue}": [
+    "*.{js,jsx,ts,tsx,vue,scss,less}": [
       "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-      "prettier --write  \"src/**/*.{js,json,tsx,css,less,scss,vue,html,md}\"",
+      "prettier --write  \"src/**/*.{js,tsx,css,less,scss,vue,html,md}\"",
       "stylelint --cache --fix \"**/*.{vue,less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/"
     ],
     "{!(package)*.json,*.code-snippets,.!(browserslist)*rc}": [
-      "prettier --write  \"src/**/*.{js,json,tsx,css,less,scss,vue,html,md}\""
+      "prettier --write"
     ],
     "package.json": [
-      "prettier --write  \"src/**/*.{js,json,tsx,css,less,scss,vue,html,md}\""
-    ],
-    "*.{scss,less,styl}": [
-      "prettier --write  \"src/**/*.{js,json,tsx,css,less,scss,vue,html,md}\"",
-      "stylelint --cache --fix \"**/*.{vue,less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/"
+      "prettier --write"
     ],
     "*.md": [
-      "prettier --write  \"src/**/*.{js,json,tsx,css,less,scss,vue,html,md}\""
+      "prettier --write"
     ]
   }
 }
