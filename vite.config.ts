@@ -24,6 +24,7 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import monacoEditorPlugin from "vite-plugin-monaco-editor";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import path from "path";
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 const OUTPUT_DIR = "dist";
 // https://vitejs.dev/config/
@@ -42,6 +43,12 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       Components({
         resolvers: [ElementPlusResolver()],
         dts: path.resolve(__dirname, "./src/types/components.d.ts"),
+      }),
+      createSvgIconsPlugin({
+        // Specify the icon folder to be cached
+        iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
+        // Specify symbolId format
+        symbolId: "[dir]-[name]",
       }),
     ],
     resolve: {

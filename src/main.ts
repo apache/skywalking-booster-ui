@@ -22,6 +22,7 @@ import components from "@/components";
 import i18n from "./locales";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import "./styles/index.ts";
+import "virtual:svg-icons-register";
 
 const app = createApp(App);
 const appStore = useAppStoreWithOut();

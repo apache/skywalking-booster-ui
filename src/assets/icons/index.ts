@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireAll = (requireContext: Recordable) => Object.keys(requireContext);
-const req = import.meta.glob("./*.svg");
+const requireAll = (requireContext: Recordable) => Object.values(requireContext);
+const req = import.meta.glob("./*.svg", { eager: true });
+
 requireAll(req);
 console.log(requireAll(req));
 export {};
