@@ -28,6 +28,7 @@ import path from "path";
 const OUTPUT_DIR = "dist";
 // https://vitejs.dev/config/
 export default ({ command, mode }: ConfigEnv): UserConfig => {
+  const { VITE_SW_PROXY_TARGET } = loadEnv(mode, process.cwd());
   return {
     plugins: [
       vue(),
@@ -36,11 +37,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       AutoImport({
         imports: ["vue"],
         resolvers: [ElementPlusResolver()],
-        dts: "./src/types/auto-imports.d.ts",
+        dts: path.resolve(__dirname, "./src/types/auto-imports.d.ts"),
       }),
       Components({
         resolvers: [ElementPlusResolver()],
-        dts: "./src/types/components.d.ts",
+        dts: path.resolve(__dirname, "./src/types/components.d.ts"),
       }),
     ],
     resolve: {
@@ -56,9 +57,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: 3000,
       proxy: {
         "/graphql": {
-          target: `${
-            loadEnv(mode, process.cwd()).VITE_SW_PROXY_TARGET || "http://127.0.0.1:12800"
-          }`,
+          target: `${VITE_SW_PROXY_TARGET || "http://127.0.0.1:12800"}`,
           changeOrigin: true,
         },
       },
