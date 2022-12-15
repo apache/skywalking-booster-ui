@@ -17,3 +17,5 @@
 const requireAll = (requireContext: Recordable) => Object.keys(requireContext);
 const req = import.meta.glob("./*.svg");
 requireAll(req);
+console.log(requireAll(req));
+export {};
