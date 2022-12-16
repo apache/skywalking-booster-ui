@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireComponent: any = import.meta.glob("./technologies/*.png", { eager: true });
-const requireTool: any = import.meta.glob("./tools/*.png", { eager: true });
+const requireComponent = import.meta.glob("./technologies/*.png", { eager: true });
+const requireTool = import.meta.glob("./tools/*.png", { eager: true });
 const result: { [key: string]: string } = {};
 const t: { [key: string]: string } = {};
 
@@ -30,13 +30,13 @@ function validateFileName(str: string): string | undefined {
 Object.keys(requireComponent).forEach((filePath: string) => {
   const fileName = validateFileName(filePath);
   if (fileName) {
-    result[fileName] = requireComponent[filePath].default;
+    result[fileName] = (requireComponent as { [key: string]: any })[filePath].default;
   }
 });
 Object.keys(requireTool).forEach((filePath: string) => {
   const fileName = validateFileName(filePath);
   if (fileName) {
-    t[fileName] = requireTool[filePath].default;
+    t[fileName] = (requireTool as { [key: string]: any })[filePath].default;
   }
 });
 
