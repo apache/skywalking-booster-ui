@@ -46,9 +46,9 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       }),
       createSvgIconsPlugin({
         // Specify the icon folder to be cached
-        iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
+        iconDirs: [path.resolve(__dirname, "./src/assets/icons")],
         // Specify symbolId format
-        symbolId: "[dir]-[name]",
+        symbolId: "icon-[dir]-[name]",
       }),
     ],
     resolve: {
