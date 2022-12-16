@@ -24,22 +24,16 @@ limitations under the License. -->
       loading,
     }"
   >
-    <use :href="symbolId"></use>
+    <use :href="`#${iconName}`"></use>
   </svg>
 </template>
 <script lang="ts" setup>
-  import { computed } from "vue";
   /*global defineProps */
-  const props = defineProps({
+  defineProps({
     iconName: { type: String, default: "" },
     size: { type: String, default: "sm" },
     loading: { type: Boolean, default: false },
-    prefix: {
-      type: String,
-      default: "icon",
-    },
   });
-  const symbolId = computed(() => `#${props.prefix}-${props.iconName}`);
 </script>
 <style lang="scss" scoped>
   .icon {

@@ -48,7 +48,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         // Specify the icon folder to be cached
         iconDirs: [path.resolve(__dirname, "./src/assets/icons")],
         // Specify symbolId format
-        symbolId: "icon-[dir]-[name]",
+        symbolId: "[name]",
       }),
     ],
     resolve: {
