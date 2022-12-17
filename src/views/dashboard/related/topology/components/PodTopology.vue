@@ -105,7 +105,7 @@ limitations under the License. -->
     window.addEventListener("resize", resize);
   });
 
-  async function loadTopology(id: string) {
+  async function loadTopology(id?: string) {
     loading.value = true;
     const resp = await getTopology(id);
     loading.value = false;
@@ -212,7 +212,7 @@ limitations under the License. -->
     loadTopology(selectorStore.currentPod.id);
   }
 
-  async function getTopology(id: string) {
+  async function getTopology(id?: string) {
     let resp;
     switch (dashboardStore.entity) {
       case EntityType[2].value:
@@ -238,6 +238,18 @@ limitations under the License. -->
     () => [selectorStore.currentPod],
     () => {
       loadTopology(selectorStore.currentPod.id);
+      topologyStore.setNode(null);
+      topologyStore.setLink(null);
+    },
+  );
+  watch(
+    () => [selectorStore.currentService, selectorStore.currentDestService],
+    () => {
+      console.log(selectorStore.currentService);
+      if (dashboardStore.entity !== EntityType[4].value) {
+        return;
+      }
+      loadTopology();
       topologyStore.setNode(null);
       topologyStore.setLink(null);
     },

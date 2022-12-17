@@ -191,8 +191,12 @@ export const topologyStore = defineStore({
       return res.data.data.topology;
     },
     async getInstanceTopology() {
-      const serverServiceId = useSelectorStore().currentService.id;
-      const clientServiceId = useSelectorStore().currentDestService.id;
+      const { currentService, currentDestService } = useSelectorStore();
+      const serverServiceId = currentService && currentService.id;
+      const clientServiceId = currentDestService && currentDestService.id;
+      if (!(serverServiceId && clientServiceId)) {
+        return;
+      }
       const duration = useAppStoreWithOut().durationTime;
       const res: AxiosResponse = await graphql.query("getInstanceTopology").params({
         clientServiceId,

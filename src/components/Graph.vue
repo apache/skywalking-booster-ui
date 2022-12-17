@@ -117,6 +117,9 @@ limitations under the License. -->
           menus.value.style.top = params.event.offsetY + 2 + "px";
         }
       });
+      if (props.option.series.type === "sankey") {
+        return;
+      }
       document.addEventListener(
         "click",
         () => {
