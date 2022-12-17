@@ -245,7 +245,6 @@ limitations under the License. -->
   watch(
     () => [selectorStore.currentService, selectorStore.currentDestService],
     () => {
-      console.log(selectorStore.currentService);
       if (dashboardStore.entity !== EntityType[4].value) {
         return;
       }
