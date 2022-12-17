@@ -96,6 +96,10 @@ limitations under the License. -->
       }
       instance.on("click", (params: EventParams) => {
         currentParams.value = params;
+        if (props.option.series.type === "sankey") {
+          emits("select", currentParams.value);
+          return;
+        }
         if (!menus.value || !chartRef.value) {
           return;
         }
