@@ -19,95 +19,89 @@ limitations under the License. -->
       {{ t("newTask") }}
     </el-button>
   </div>
-  <el-dialog
-    v-model="newTask"
-    :destroy-on-close="true"
-    fullscreen
-    @closed="newTask = false"
-  >
+  <el-dialog v-model="newTask" :destroy-on-close="true" fullscreen @closed="newTask = false">
     <NewTask @close="newTask = false" />
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { useEbpfStore } from "@/store/modules/ebpf";
-import { useSelectorStore } from "@/store/modules/selectors";
-import { ElMessage } from "element-plus";
-import NewTask from "./components/NewTask.vue";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { EntityType } from "../../data";
+  import { ref, watch } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useEbpfStore } from "@/store/modules/ebpf";
+  import { useSelectorStore } from "@/store/modules/selectors";
+  import { ElMessage } from "element-plus";
+  import NewTask from "./components/NewTask.vue";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { EntityType } from "../../data";
 
-/*global defineProps */
-const props = defineProps({
-  needQuery: { type: Boolean, default: true },
-});
-const ebpfStore = useEbpfStore();
-const appStore = useAppStoreWithOut();
-const selectorStore = useSelectorStore();
-const dashboardStore = useDashboardStore();
-const { t } = useI18n();
-const newTask = ref<boolean>(false);
-
-if (props.needQuery) {
-  searchTasks();
-}
-
-async function searchTasks() {
-  const serviceId =
-    (selectorStore.currentService && selectorStore.currentService.id) || "";
-  const res = await ebpfStore.getTaskList({
-    serviceId,
-    targets: ["ON_CPU", "OFF_CPU"],
+  /*global defineProps */
+  const props = defineProps({
+    needQuery: { type: Boolean, default: true },
   });
+  const ebpfStore = useEbpfStore();
+  const appStore = useAppStoreWithOut();
+  const selectorStore = useSelectorStore();
+  const dashboardStore = useDashboardStore();
+  const { t } = useI18n();
+  const newTask = ref<boolean>(false);
 
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
-}
-
-async function createTask() {
-  if (!selectorStore.currentService) {
-    return;
-  }
-  newTask.value = true;
-  ebpfStore.getCreateTaskData(selectorStore.currentService.id);
-}
-
-watch(
-  () => selectorStore.currentService,
-  () => {
+  if (props.needQuery) {
     searchTasks();
   }
-);
-watch(
-  () => appStore.durationTime,
-  () => {
-    if (dashboardStore.entity === EntityType[1].value) {
-      searchTasks();
+
+  async function searchTasks() {
+    const serviceId = (selectorStore.currentService && selectorStore.currentService.id) || "";
+    const res = await ebpfStore.getTaskList({
+      serviceId,
+      targets: ["ON_CPU", "OFF_CPU"],
+    });
+
+    if (res.errors) {
+      ElMessage.error(res.errors);
     }
   }
-);
+
+  async function createTask() {
+    if (!selectorStore.currentService) {
+      return;
+    }
+    newTask.value = true;
+    ebpfStore.getCreateTaskData(selectorStore.currentService.id);
+  }
+
+  watch(
+    () => selectorStore.currentService,
+    () => {
+      searchTasks();
+    },
+  );
+  watch(
+    () => appStore.durationTime,
+    () => {
+      if (dashboardStore.entity === EntityType[1].value) {
+        searchTasks();
+      }
+    },
+  );
 </script>
 <style lang="scss" scoped>
-.header {
-  padding: 5px 20px 5px 10px;
-  font-size: 12px;
-  border-bottom: 1px solid #dcdfe6;
-  justify-content: space-between;
-}
+  .header {
+    padding: 5px 20px 5px 10px;
+    font-size: 12px;
+    border-bottom: 1px solid #dcdfe6;
+    justify-content: space-between;
+  }
 
-.name {
-  width: 270px;
-}
+  .name {
+    width: 270px;
+  }
 
-.new-btn {
-  float: right;
-}
+  .new-btn {
+    float: right;
+  }
 
-.title {
-  font-weight: bold;
-  line-height: 24px;
-}
+  .title {
+    font-weight: bold;
+    line-height: 24px;
+  }
 </style>

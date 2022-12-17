@@ -140,9 +140,7 @@ export const MetricTypes: {
       value: "readLabeledMetricsValues",
     },
   ],
-  HEATMAP: [
-    { label: "read heatmap values in the duration", value: "readHeatMap" },
-  ],
+  HEATMAP: [{ label: "read heatmap values in the duration", value: "readHeatMap" }],
   SAMPLED_RECORD: [{ label: "get sorted topN values", value: "readRecords" }],
 };
 

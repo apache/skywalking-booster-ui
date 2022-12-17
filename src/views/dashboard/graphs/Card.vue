@@ -30,52 +30,49 @@ limitations under the License. -->
   <div class="center no-data" v-else>{{ t("noData") }}</div>
 </template>
 <script lang="ts" setup>
-import { computed, PropType } from "vue";
-import { useI18n } from "vue-i18n";
-import { CardConfig, MetricConfigOpt } from "@/types/dashboard";
+  import { computed } from "vue";
+  import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
+  import type { CardConfig, MetricConfigOpt } from "@/types/dashboard";
 
-/*global defineProps */
-const props = defineProps({
-  data: {
-    type: Object as PropType<{ [key: string]: number }>,
-    default: () => ({}),
-  },
-  config: {
-    type: Object as PropType<CardConfig & { metricConfig?: MetricConfigOpt[] }>,
-    default: () => ({
-      fontSize: 12,
-      showUnit: true,
-      textAlign: "center",
-      metricConfig: [],
-    }),
-  },
-});
-const { t } = useI18n();
-const metricConfig = computed(() => props.config.metricConfig || []);
-const key = computed(() => Object.keys(props.data)[0]);
-const singleVal = computed(() => Number(props.data[key.value]));
-const unit = computed(
-  () =>
-    metricConfig.value[0] &&
-    encodeURIComponent(metricConfig.value[0].unit || "")
-);
+  /*global defineProps */
+  const props = defineProps({
+    data: {
+      type: Object as PropType<{ [key: string]: number }>,
+      default: () => ({}),
+    },
+    config: {
+      type: Object as PropType<CardConfig & { metricConfig?: MetricConfigOpt[] }>,
+      default: () => ({
+        fontSize: 12,
+        showUnit: true,
+        textAlign: "center",
+        metricConfig: [],
+      }),
+    },
+  });
+  const { t } = useI18n();
+  const metricConfig = computed(() => props.config.metricConfig || []);
+  const key = computed(() => Object.keys(props.data)[0]);
+  const singleVal = computed(() => Number(props.data[key.value]));
+  const unit = computed(() => metricConfig.value[0] && encodeURIComponent(metricConfig.value[0].unit || ""));
 </script>
 <style lang="scss" scoped>
-.chart-card {
-  color: #333;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
+  .chart-card {
+    color: #333;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
 
-.no-data {
-  height: 100%;
-  color: #666;
-}
+  .no-data {
+    height: 100%;
+    color: #666;
+  }
 
-.unit {
-  display: inline-block;
-  margin-left: 2px;
-}
+  .unit {
+    display: inline-block;
+    margin-left: 2px;
+  }
 </style>

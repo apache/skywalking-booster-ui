@@ -34,12 +34,7 @@ limitations under the License. -->
     </div>
     <div class="trace-t-wrapper" v-loading="loading">
       <table class="list" v-if="traceStore.traceList.length">
-        <tr
-          class="trace-tr cp"
-          v-for="(i, index) in traceStore.traceList"
-          @click="selectTrace(i)"
-          :key="index"
-        >
+        <tr class="trace-tr cp" v-for="(i, index) in traceStore.traceList" @click="selectTrace(i)" :key="index">
           <td
             class="trace-td"
             :class="{
@@ -70,146 +65,146 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
-import { useTraceStore } from "@/store/modules/trace";
-import { ElMessage } from "element-plus";
-import { QueryOrders } from "../../data";
-import { Option } from "@/types/app";
-import { Trace } from "@/types/trace";
-import { dateFormat } from "@/utils/dateFormat";
+  import { ref, computed } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useTraceStore } from "@/store/modules/trace";
+  import { ElMessage } from "element-plus";
+  import { QueryOrders } from "../../data";
+  import type { Option } from "@/types/app";
+  import type { Trace } from "@/types/trace";
+  import { dateFormat } from "@/utils/dateFormat";
 
-const { t } = useI18n();
-const traceStore = useTraceStore();
-const loading = ref<boolean>(false);
-const selectedKey = ref<string>("");
-const pageSize = ref<number>(20);
-const total = computed(() =>
-  traceStore.traceList.length === pageSize.value
-    ? pageSize.value * traceStore.conditions.paging.pageNum + 1
-    : pageSize.value * traceStore.conditions.paging.pageNum
-);
+  const { t } = useI18n();
+  const traceStore = useTraceStore();
+  const loading = ref<boolean>(false);
+  const selectedKey = ref<string>("");
+  const pageSize = ref<number>(20);
+  const total = computed(() =>
+    traceStore.traceList.length === pageSize.value
+      ? pageSize.value * traceStore.conditions.paging.pageNum + 1
+      : pageSize.value * traceStore.conditions.paging.pageNum,
+  );
 
-function searchTrace() {
-  loading.value = true;
-  queryTraces();
-  loading.value = false;
-}
+  function searchTrace() {
+    loading.value = true;
+    queryTraces();
+    loading.value = false;
+  }
 
-function updatePage(p: number) {
-  traceStore.setTraceCondition({
-    paging: { pageNum: p, pageSize: pageSize.value },
-  });
-  searchTrace();
-}
-
-function changeSort(opt: Option[] | any) {
-  traceStore.setTraceCondition({
-    queryOrder: opt[0].value,
-    paging: { pageNum: 1, pageSize: pageSize.value },
-  });
-  searchTrace();
-}
-
-async function selectTrace(i: Trace) {
-  traceStore.setCurrentTrace(i);
-  selectedKey.value = i.key;
-  if (i.traceIds.length) {
-    const res = await traceStore.getTraceSpans({
-      traceId: i.traceIds[0].value,
+  function updatePage(p: number) {
+    traceStore.setTraceCondition({
+      paging: { pageNum: p, pageSize: pageSize.value },
     });
+    searchTrace();
+  }
+
+  function changeSort(opt: Option[] | any) {
+    traceStore.setTraceCondition({
+      queryOrder: opt[0].value,
+      paging: { pageNum: 1, pageSize: pageSize.value },
+    });
+    searchTrace();
+  }
+
+  async function selectTrace(i: Trace) {
+    traceStore.setCurrentTrace(i);
+    selectedKey.value = i.key;
+    if (i.traceIds.length) {
+      const res = await traceStore.getTraceSpans({
+        traceId: i.traceIds[0].value,
+      });
+      if (res.errors) {
+        ElMessage.error(res.errors);
+      }
+    }
+  }
+
+  async function queryTraces() {
+    const res = await traceStore.getTraces();
     if (res.errors) {
       ElMessage.error(res.errors);
     }
   }
-}
-
-async function queryTraces() {
-  const res = await traceStore.getTraces();
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
-}
 </script>
 <style lang="scss" scoped>
-.trace-t-tool {
-  background-color: rgba(196, 200, 225, 0.2);
-  justify-content: space-between;
-  border-bottom: 1px solid #c1c5ca41;
-  border-right: 1px solid #c1c5ca41;
-  height: 35px;
-}
-
-.selectors {
-  margin: 2px 2px 0 0;
-}
-
-.trace-t-wrapper {
-  overflow: auto;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.trace-t-loading {
-  text-align: center;
-  position: absolute;
-  width: 420px;
-  height: 70px;
-  margin-top: 40px;
-  line-height: 88px;
-  overflow: hidden;
-
-  .icon {
-    width: 30px;
-    height: 30px;
+  .trace-t-tool {
+    background-color: rgba(196, 200, 225, 0.2);
+    justify-content: space-between;
+    border-bottom: 1px solid #c1c5ca41;
+    border-right: 1px solid #c1c5ca41;
+    height: 35px;
   }
-}
 
-.trace-t {
-  width: 420px;
-}
-
-.list {
-  width: 300px;
-}
-
-.trace-tr {
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+  .selectors {
+    margin: 2px 2px 0 0;
   }
-}
 
-.trace-td {
-  padding: 5px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-
-  &.selected {
-    background-color: #ededed;
+  .trace-t-wrapper {
+    overflow: auto;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
   }
-}
 
-.trace-success {
-  border-left: 4px solid rgba(46, 47, 51, 0.1);
-}
+  .trace-t-loading {
+    text-align: center;
+    position: absolute;
+    width: 420px;
+    height: 70px;
+    margin-top: 40px;
+    line-height: 88px;
+    overflow: hidden;
 
-.trace-warning {
-  border-left: 4px solid #fbb03b;
-}
+    .icon {
+      width: 30px;
+      height: 30px;
+    }
+  }
 
-.trace-error {
-  border-left: 4px solid #e54c17;
-}
+  .trace-t {
+    width: 420px;
+  }
 
-.tag {
-  border-radius: 4px;
-  padding-right: 5px;
-  padding-left: 5px;
-  background-color: #40454e;
-  color: #eee;
-}
+  .list {
+    width: 300px;
+  }
 
-.no-data {
-  padding-top: 50px;
-  width: 100%;
-  text-align: center;
-}
+  .trace-tr {
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .trace-td {
+    padding: 5px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+
+    &.selected {
+      background-color: #ededed;
+    }
+  }
+
+  .trace-success {
+    border-left: 4px solid rgba(46, 47, 51, 0.1);
+  }
+
+  .trace-warning {
+    border-left: 4px solid #fbb03b;
+  }
+
+  .trace-error {
+    border-left: 4px solid #e54c17;
+  }
+
+  .tag {
+    border-radius: 4px;
+    padding-right: 5px;
+    padding-left: 5px;
+    background-color: #40454e;
+    color: #eee;
+  }
+
+  .no-data {
+    padding-top: 50px;
+    width: 100%;
+    text-align: center;
+  }
 </style>

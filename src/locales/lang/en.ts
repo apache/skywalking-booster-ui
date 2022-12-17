@@ -176,10 +176,8 @@ const msg = {
   toTheRight: "To The Right",
   legendValues: "Legend Values",
   minDuration: "Minimal Request Duration",
-  when4xx:
-    "Sample HTTP requests and responses with tracing when response code between 400 and 499",
-  when5xx:
-    "Sample HTTP requests and responses with tracing when response code between 500 and 599",
+  when4xx: "Sample HTTP requests and responses with tracing when response code between 400 and 499",
+  when5xx: "Sample HTTP requests and responses with tracing when response code between 500 and 599",
   taskTitle: "HTTP request and response collecting rules",
   seconds: "Seconds",
   hourTip: "Select Hour",
@@ -315,8 +313,7 @@ const msg = {
   viewLogs: "View Logs",
   logsTagsTip: `Only tags defined in the core/default/searchableLogsTags are searchable.
   Check more details on the Configuration Vocabulary page`,
-  keywordsOfContentLogTips:
-    "Current storage of SkyWalking OAP server does not support this.",
+  keywordsOfContentLogTips: "Current storage of SkyWalking OAP server does not support this.",
   setEvent: "Set Event",
   viewAttributes: "View",
   serviceEvents: "Service Events",
@@ -370,8 +367,7 @@ const msg = {
   addKeywordsOfContent: "Please input a keyword of content",
   addExcludingKeywordsOfContent: "Please input a keyword of excluding content",
   noticeTag: "Please press Enter after inputting a tag(key=value).",
-  conditionNotice:
-    "Notice: Please press Enter after inputting a key of content, exclude key of content(key=value).",
+  conditionNotice: "Notice: Please press Enter after inputting a key of content, exclude key of content(key=value).",
   language: "Language",
   gateway: "Gateway",
   virtualMQ: "Virtual MQ",

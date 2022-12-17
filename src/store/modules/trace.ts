@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Instance, Endpoint, Service } from "@/types/selector";
-import { Trace, Span } from "@/types/trace";
+import type { Instance, Endpoint, Service } from "@/types/selector";
+import type { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { QueryOrders } from "@/views/dashboard/data";
@@ -30,7 +30,7 @@ interface TraceState {
   endpoints: Endpoint[];
   traceList: Trace[];
   traceSpans: Span[];
-  currentTrace: Trace | any;
+  currentTrace: Recordable<Trace>;
   conditions: any;
   traceSpanLogs: any[];
   selectorStore: any;
@@ -58,10 +58,10 @@ export const traceStore = defineStore({
     setTraceCondition(data: any) {
       this.conditions = { ...this.conditions, ...data };
     },
-    setCurrentTrace(trace: Trace) {
+    setCurrentTrace(trace: Recordable<Trace>) {
       this.currentTrace = trace;
     },
-    setTraceSpans(spans: Span) {
+    setTraceSpans(spans: Span[]) {
       this.traceSpans = spans;
     },
     resetState() {
@@ -116,9 +116,7 @@ export const traceStore = defineStore({
       return res.data;
     },
     async getInstances(id: string) {
-      const serviceId = this.selectorStore.currentService
-        ? this.selectorStore.currentService.id
-        : id;
+      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId: serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -131,9 +129,7 @@ export const traceStore = defineStore({
       return res.data;
     },
     async getEndpoints(id: string, keyword?: string) {
-      const serviceId = this.selectorStore.currentService
-        ? this.selectorStore.currentService.id
-        : id;
+      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -146,9 +142,7 @@ export const traceStore = defineStore({
       return res.data;
     },
     async getTraces() {
-      const res: AxiosResponse = await graphql
-        .query("queryTraces")
-        .params({ condition: this.conditions });
+      const res: AxiosResponse = await graphql.query("queryTraces").params({ condition: this.conditions });
       if (res.data.errors) {
         return res.data;
       }
@@ -169,9 +163,7 @@ export const traceStore = defineStore({
       return res.data;
     },
     async getTraceSpans(params: { traceId: string }) {
-      const res: AxiosResponse = await graphql
-        .query("queryTrace")
-        .params(params);
+      const res: AxiosResponse = await graphql.query("queryTrace").params(params);
       if (res.data.errors) {
         return res.data;
       }
@@ -180,9 +172,7 @@ export const traceStore = defineStore({
       return res.data;
     },
     async getSpanLogs(params: any) {
-      const res: AxiosResponse = await graphql
-        .query("queryServiceLogs")
-        .params(params);
+      const res: AxiosResponse = await graphql.query("queryServiceLogs").params(params);
       if (res.data.errors) {
         this.traceSpanLogs = [];
         return res.data;

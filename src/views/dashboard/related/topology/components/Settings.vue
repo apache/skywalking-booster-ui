@@ -27,23 +27,13 @@ limitations under the License. -->
     />
     <div class="label">
       <span>{{ t("linkServerMetrics") }}</span>
-      <el-popover
-        placement="left"
-        :width="400"
-        trigger="click"
-        effect="dark"
-        v-if="states.linkServerMetrics.length"
-      >
+      <el-popover placement="left" :width="400" trigger="click" effect="dark" v-if="states.linkServerMetrics.length">
         <template #reference>
           <span @click="setConfigType('linkServerMetricConfig')">
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Metrics
-          :type="configType"
-          :metrics="states.linkServerMetrics"
-          @update="changeLinkServerMetrics"
-        />
+        <Metrics :type="configType" :metrics="states.linkServerMetrics" @update="changeLinkServerMetrics" />
       </el-popover>
     </div>
     <Selector
@@ -58,23 +48,13 @@ limitations under the License. -->
     <span v-show="dashboardStore.entity !== EntityType[2].value">
       <div class="label">
         <span>{{ t("linkClientMetrics") }}</span>
-        <el-popover
-          placement="left"
-          :width="400"
-          trigger="click"
-          effect="dark"
-          v-if="states.linkClientMetrics.length"
-        >
+        <el-popover placement="left" :width="400" trigger="click" effect="dark" v-if="states.linkClientMetrics.length">
           <template #reference>
             <span @click="setConfigType('linkClientMetricConfig')">
               <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
             </span>
           </template>
-          <Metrics
-            :type="configType"
-            :metrics="states.linkClientMetrics"
-            @update="changeLinkClientMetrics"
-          />
+          <Metrics :type="configType" :metrics="states.linkClientMetrics" @update="changeLinkClientMetrics" />
         </el-popover>
       </div>
       <Selector
@@ -100,12 +80,7 @@ limitations under the License. -->
       @change="changeNodeDashboard"
       class="inputs"
     />
-    <div
-      v-show="isService"
-      v-for="(item, index) in items"
-      :key="index"
-      class="metric-item"
-    >
+    <div v-show="isService" v-for="(item, index) in items" :key="index" class="metric-item">
       <Selector
         :value="item.scope"
         :options="ScopeType"
@@ -123,12 +98,7 @@ limitations under the License. -->
         class="item mr-5"
       />
       <span>
-        <Icon
-          class="cp mr-5"
-          iconName="remove_circle_outline"
-          size="middle"
-          @click="deleteItem(index)"
-        />
+        <Icon class="cp mr-5" iconName="remove_circle_outline" size="middle" @click="deleteItem(index)" />
         <Icon
           class="cp"
           v-show="index === items.length - 1 && items.length < 5"
@@ -140,23 +110,13 @@ limitations under the License. -->
     </div>
     <div class="label">
       <span>{{ t("nodeMetrics") }}</span>
-      <el-popover
-        placement="left"
-        :width="400"
-        trigger="click"
-        effect="dark"
-        v-if="states.nodeMetrics.length"
-      >
+      <el-popover placement="left" :width="400" trigger="click" effect="dark" v-if="states.nodeMetrics.length">
         <template #reference>
           <span @click="setConfigType('nodeMetricConfig')">
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Metrics
-          :type="configType"
-          :metrics="states.nodeMetrics"
-          @update="changeNodeMetrics"
-        />
+        <Metrics :type="configType" :metrics="states.nodeMetrics" @update="changeNodeMetrics" />
       </el-popover>
     </div>
     <Selector
@@ -198,366 +158,315 @@ limitations under the License. -->
         class="item"
       />
       <span>
-        <Icon
-          class="cp delete"
-          iconName="remove_circle_outline"
-          size="middle"
-          @click="deleteMetric(index)"
-        />
+        <Icon class="cp delete" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
         <Icon
           class="cp"
           iconName="add_circle_outlinecontrol_point"
           size="middle"
-          v-show="
-            index === legend.metric.length - 1 && legend.metric.length < 5
-          "
+          v-show="index === legend.metric.length - 1 && legend.metric.length < 5"
           @click="addMetric"
         />
       </span>
       <div v-show="index !== legend.metric.length - 1">&&</div>
     </div>
     <div class="label">Healthy Description</div>
-    <el-input
-      v-model="description.healthy"
-      placeholder="Please input description"
-      size="small"
-      class="mt-5"
-    />
+    <el-input v-model="description.healthy" placeholder="Please input description" size="small" class="mt-5" />
     <div class="label">Unhealthy Description</div>
-    <el-input
-      v-model="description.unhealthy"
-      placeholder="Please input description"
-      size="small"
-      class="mt-5"
-    />
-    <el-button
-      @click="setLegend"
-      class="legend-btn"
-      size="small"
-      type="primary"
-    >
+    <el-input v-model="description.unhealthy" placeholder="Please input description" size="small" class="mt-5" />
+    <el-button @click="setLegend" class="legend-btn" size="small" type="primary">
       {{ t("setLegend") }}
     </el-button>
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { useTopologyStore } from "@/store/modules/topology";
-import { ElMessage } from "element-plus";
-import { MetricCatalog, ScopeType, MetricConditions } from "../../../data";
-import { Option } from "@/types/app";
-import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
-import { Node } from "@/types/topology";
-import { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
-import { EntityType, LegendOpt, MetricsType } from "../../../data";
-import Metrics from "./Metrics.vue";
+  import { reactive, ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useTopologyStore } from "@/store/modules/topology";
+  import { ElMessage } from "element-plus";
+  import { MetricCatalog, ScopeType, MetricConditions } from "../../../data";
+  import type { Option } from "@/types/app";
+  import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
+  import type { Node } from "@/types/topology";
+  import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
+  import { EntityType, LegendOpt, MetricsType } from "../../../data";
+  import Metrics from "./Metrics.vue";
 
-/*global defineEmits */
-const emit = defineEmits(["update", "updateNodes"]);
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const topologyStore = useTopologyStore();
-const { selectedGrid } = dashboardStore;
-const nodeDashboard =
-  selectedGrid.nodeDashboard && selectedGrid.nodeDashboard.length
-    ? selectedGrid.nodeDashboard
-    : "";
-const isService = [EntityType[0].value, EntityType[1].value].includes(
-  dashboardStore.entity
-);
-const items = reactive<
-  {
-    scope: string;
-    dashboard: string;
-  }[]
->(isService && nodeDashboard ? nodeDashboard : [{ scope: "", dashboard: "" }]);
-const states = reactive<{
-  linkDashboard: string;
-  nodeDashboard: {
-    scope: string;
-    dashboard: string;
-  }[];
-  linkServerMetrics: string[];
-  linkClientMetrics: string[];
-  nodeMetrics: string[];
-  nodeMetricList: Option[];
-  linkMetricList: Option[];
-  linkDashboards: (DashboardItem & { label: string; value: string })[];
-  nodeDashboards: (DashboardItem & { label: string; value: string })[];
-}>({
-  linkDashboard: selectedGrid.linkDashboard || "",
-  nodeDashboard: selectedGrid.nodeDashboard || [],
-  linkServerMetrics: selectedGrid.linkServerMetrics || [],
-  linkClientMetrics: selectedGrid.linkClientMetrics || [],
-  nodeMetrics: selectedGrid.nodeMetrics || [],
-  nodeMetricList: [],
-  linkMetricList: [],
-  linkDashboards: [],
-  nodeDashboards: [],
-});
-const l = selectedGrid.legend && selectedGrid.legend.length;
-const legend = reactive<{
-  metric: { name: string; condition: string; value: string }[];
-}>({
-  metric: l ? selectedGrid.legend : [{ name: "", condition: "", value: "" }],
-});
-const configType = ref<string>("");
-const description = reactive<any>(selectedGrid.description || {});
+  /*global defineEmits */
+  const emit = defineEmits(["update", "updateNodes"]);
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const topologyStore = useTopologyStore();
+  const { selectedGrid } = dashboardStore;
+  const nodeDashboard =
+    selectedGrid.nodeDashboard && selectedGrid.nodeDashboard.length ? selectedGrid.nodeDashboard : "";
+  const isService = [EntityType[0].value, EntityType[1].value].includes(dashboardStore.entity);
+  const items = reactive<
+    {
+      scope: string;
+      dashboard: string;
+    }[]
+  >(isService && nodeDashboard ? nodeDashboard : [{ scope: "", dashboard: "" }]);
+  const states = reactive<{
+    linkDashboard: string;
+    nodeDashboard: {
+      scope: string;
+      dashboard: string;
+    }[];
+    linkServerMetrics: string[];
+    linkClientMetrics: string[];
+    nodeMetrics: string[];
+    nodeMetricList: Option[];
+    linkMetricList: Option[];
+    linkDashboards: (DashboardItem & { label: string; value: string })[];
+    nodeDashboards: (DashboardItem & { label: string; value: string })[];
+  }>({
+    linkDashboard: selectedGrid.linkDashboard || "",
+    nodeDashboard: selectedGrid.nodeDashboard || [],
+    linkServerMetrics: selectedGrid.linkServerMetrics || [],
+    linkClientMetrics: selectedGrid.linkClientMetrics || [],
+    nodeMetrics: selectedGrid.nodeMetrics || [],
+    nodeMetricList: [],
+    linkMetricList: [],
+    linkDashboards: [],
+    nodeDashboards: [],
+  });
+  const l = selectedGrid.legend && selectedGrid.legend.length;
+  const legend = reactive<{
+    metric: { name: string; condition: string; value: string }[];
+  }>({
+    metric: l ? selectedGrid.legend : [{ name: "", condition: "", value: "" }],
+  });
+  const configType = ref<string>("");
+  const description = reactive<any>(selectedGrid.description || {});
 
-getMetricList();
-async function getMetricList() {
-  const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-  const json = await dashboardStore.fetchMetricList();
-  if (json.errors) {
-    ElMessage.error(json.errors);
-    return;
+  getMetricList();
+  async function getMetricList() {
+    const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
+    const json = await dashboardStore.fetchMetricList();
+    if (json.errors) {
+      ElMessage.error(json.errors);
+      return;
+    }
+    const entity =
+      dashboardStore.entity === EntityType[1].value
+        ? EntityType[0].value
+        : dashboardStore.entity === EntityType[4].value
+        ? EntityType[3].value
+        : dashboardStore.entity;
+    states.linkDashboards = list.reduce(
+      (prev: (DashboardItem & { label: string; value: string })[], d: DashboardItem) => {
+        if (d.layer === dashboardStore.layerId && d.entity === entity + "Relation") {
+          prev.push({ ...d, label: d.name, value: d.name });
+        }
+        return prev;
+      },
+      [],
+    );
+    states.nodeMetricList = (json.data.metrics || []).filter(
+      (d: { type: string }) => d.type === MetricsType.REGULAR_VALUE,
+    );
+    states.linkMetricList = (json.data.metrics || []).filter(
+      (d: { catalog: string; type: string }) =>
+        entity + "Relation" === (MetricCatalog as any)[d.catalog] && d.type === MetricsType.REGULAR_VALUE,
+    );
+    if (isService) {
+      return;
+    }
+    states.nodeDashboards = list.reduce(
+      (prev: (DashboardItem & { label: string; value: string })[], d: DashboardItem) => {
+        if (d.layer === dashboardStore.layerId && d.entity === entity) {
+          prev.push({ ...d, label: d.name, value: d.name });
+        }
+        return prev;
+      },
+      [],
+    );
   }
-  const entity =
-    dashboardStore.entity === EntityType[1].value
-      ? EntityType[0].value
-      : dashboardStore.entity === EntityType[4].value
-      ? EntityType[3].value
-      : dashboardStore.entity;
-  states.linkDashboards = list.reduce(
-    (
-      prev: (DashboardItem & { label: string; value: string })[],
-      d: DashboardItem
-    ) => {
-      if (
-        d.layer === dashboardStore.layerId &&
-        d.entity === entity + "Relation"
-      ) {
-        prev.push({ ...d, label: d.name, value: d.name });
-      }
-      return prev;
-    },
-    []
-  );
-  states.nodeMetricList = (json.data.metrics || []).filter(
-    (d: { type: string }) => d.type === MetricsType.REGULAR_VALUE
-  );
-  states.linkMetricList = (json.data.metrics || []).filter(
-    (d: { catalog: string; type: string }) =>
-      entity + "Relation" === (MetricCatalog as any)[d.catalog] &&
-      d.type === MetricsType.REGULAR_VALUE
-  );
-  if (isService) {
-    return;
-  }
-  states.nodeDashboards = list.reduce(
-    (
-      prev: (DashboardItem & { label: string; value: string })[],
-      d: DashboardItem
-    ) => {
-      if (d.layer === dashboardStore.layerId && d.entity === entity) {
-        prev.push({ ...d, label: d.name, value: d.name });
-      }
-      return prev;
-    },
-    []
-  );
-}
-async function setLegend() {
-  updateSettings();
-  const ids = topologyStore.nodes.map((d: Node) => d.id);
-  const names = dashboardStore.selectedGrid.legend.map((d: any) => d.name);
-  if (!names.length) {
+  async function setLegend() {
+    updateSettings();
+    const ids = topologyStore.nodes.map((d: Node) => d.id);
+    const names = dashboardStore.selectedGrid.legend.map((d: any) => d.name);
+    if (!names.length) {
+      emit("updateNodes");
+      return;
+    }
+    const param = await useQueryTopologyMetrics(names, ids);
+    const res = await topologyStore.getLegendMetrics(param);
+
+    if (res.errors) {
+      ElMessage.error(res.errors);
+    }
     emit("updateNodes");
-    return;
   }
-  const param = await useQueryTopologyMetrics(names, ids);
-  const res = await topologyStore.getLegendMetrics(param);
-
-  if (res.errors) {
-    ElMessage.error(res.errors);
+  function changeNodeDashboard(opt: any) {
+    states.nodeDashboard = opt[0].value;
+    updateSettings();
   }
-  emit("updateNodes");
-}
-function changeNodeDashboard(opt: any) {
-  states.nodeDashboard = opt[0].value;
-  updateSettings();
-}
-function changeLinkDashboard(opt: any) {
-  states.linkDashboard = opt[0].value;
-  updateSettings();
-}
-function changeLegend(type: string, opt: any, index: number) {
-  (legend.metric[index] as any)[type] = opt[0].value || opt;
-}
-function changeScope(index: number, opt: Option[] | any) {
-  items[index].scope = opt[0].value;
-  const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-  states.nodeDashboards = list.reduce(
-    (
-      prev: (DashboardItem & { label: string; value: string })[],
-      d: DashboardItem
-    ) => {
-      if (d.layer === dashboardStore.layerId && d.entity === opt[0].value) {
-        prev.push({ ...d, label: d.name, value: d.name });
-      }
-      return prev;
-    },
-    []
-  );
-  items[index].dashboard = states.nodeDashboards[0].value;
-  updateSettings();
-}
-function updateNodeDashboards(index: number, content: Option[] | any) {
-  items[index].dashboard = content[0].value;
-  updateSettings();
-}
-function addItem() {
-  items.push({ scope: "", dashboard: "" });
-}
-function deleteItem(index: number) {
-  if (items.length === 1) {
+  function changeLinkDashboard(opt: any) {
+    states.linkDashboard = opt[0].value;
+    updateSettings();
+  }
+  function changeLegend(type: string, opt: any, index: number) {
+    (legend.metric[index] as any)[type] = opt[0].value || opt;
+  }
+  function changeScope(index: number, opt: Option[] | any) {
+    items[index].scope = opt[0].value;
+    const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
+    states.nodeDashboards = list.reduce(
+      (prev: (DashboardItem & { label: string; value: string })[], d: DashboardItem) => {
+        if (d.layer === dashboardStore.layerId && d.entity === opt[0].value) {
+          prev.push({ ...d, label: d.name, value: d.name });
+        }
+        return prev;
+      },
+      [],
+    );
+    items[index].dashboard = states.nodeDashboards[0].value;
+    updateSettings();
+  }
+  function updateNodeDashboards(index: number, content: Option[] | any) {
+    items[index].dashboard = content[0].value;
+    updateSettings();
+  }
+  function addItem() {
     items.push({ scope: "", dashboard: "" });
   }
-  items.splice(index, 1);
-  updateSettings();
-}
-function updateSettings(metricConfig?: { [key: string]: MetricConfigOpt[] }) {
-  const metrics = legend.metric.filter(
-    (d: any) => d.name && d.value && d.condition
-  );
-  const param = {
-    ...dashboardStore.selectedGrid,
-    linkDashboard: states.linkDashboard,
-    nodeDashboard: isService
-      ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
-      : states.nodeDashboard,
-    linkServerMetrics: states.linkServerMetrics,
-    linkClientMetrics: states.linkClientMetrics,
-    nodeMetrics: states.nodeMetrics,
-    legend: metrics,
-    ...metricConfig,
-    description,
-  };
-  dashboardStore.selectWidget(param);
-  dashboardStore.setConfigs(param);
-  emit("update", param);
-}
-function updateLinkServerMetrics(options: Option[] | any) {
-  const opt = options.map((d: Option) => d.value);
-  const index = states.linkServerMetrics.findIndex(
-    (d: any) => !opt.includes(d)
-  );
-  states.linkServerMetrics = opt;
-  if (index < 0) {
-    changeLinkServerMetrics();
-    return;
+  function deleteItem(index: number) {
+    if (items.length === 1) {
+      items.push({ scope: "", dashboard: "" });
+    }
+    items.splice(index, 1);
+    updateSettings();
   }
-  const origin = dashboardStore.selectedGrid.linkServerMetricConfig || [];
-  const config = origin.length === 1 ? [] : origin.splice(index, 1);
-  changeLinkServerMetrics({ linkServerMetricConfig: config });
-}
-async function changeLinkServerMetrics(config?: {
-  [key: string]: MetricConfigOpt[];
-}) {
-  updateSettings(config);
-  if (!states.linkServerMetrics.length) {
-    topologyStore.setLinkServerMetrics({});
-    return;
+  function updateSettings(metricConfig?: { [key: string]: MetricConfigOpt[] }) {
+    const metrics = legend.metric.filter((d: any) => d.name && d.value && d.condition);
+    const param = {
+      ...dashboardStore.selectedGrid,
+      linkDashboard: states.linkDashboard,
+      nodeDashboard: isService
+        ? items.filter((d: { scope: string; dashboard: string }) => d.dashboard)
+        : states.nodeDashboard,
+      linkServerMetrics: states.linkServerMetrics,
+      linkClientMetrics: states.linkClientMetrics,
+      nodeMetrics: states.nodeMetrics,
+      legend: metrics,
+      ...metricConfig,
+      description,
+    };
+    dashboardStore.selectWidget(param);
+    dashboardStore.setConfigs(param);
+    emit("update", param);
   }
-  topologyStore.getLinkServerMetrics(states.linkServerMetrics);
-}
-function updateLinkClientMetrics(options: Option[] | any) {
-  const opt = options.map((d: Option) => d.value);
-  const index = states.linkClientMetrics.findIndex(
-    (d: any) => !opt.includes(d)
-  );
-  states.linkClientMetrics = opt;
-  if (index < 0) {
-    changeLinkClientMetrics();
-    return;
+  function updateLinkServerMetrics(options: Option[] | any) {
+    const opt = options.map((d: Option) => d.value);
+    const index = states.linkServerMetrics.findIndex((d: any) => !opt.includes(d));
+    states.linkServerMetrics = opt;
+    if (index < 0) {
+      changeLinkServerMetrics();
+      return;
+    }
+    const origin = dashboardStore.selectedGrid.linkServerMetricConfig || [];
+    const config = origin.length === 1 ? [] : origin.splice(index, 1);
+    changeLinkServerMetrics({ linkServerMetricConfig: config });
   }
-  const origin = dashboardStore.selectedGrid.linkClientMetricConfig || [];
-  const config = origin.length === 1 ? [] : origin.splice(index, 1);
-  changeLinkClientMetrics({ linkClientMetricConfig: config });
-}
-async function changeLinkClientMetrics(config?: {
-  [key: string]: MetricConfigOpt[];
-}) {
-  updateSettings(config);
-  if (!states.linkClientMetrics.length) {
-    topologyStore.setLinkClientMetrics({});
-    return;
+  async function changeLinkServerMetrics(config?: { [key: string]: MetricConfigOpt[] }) {
+    updateSettings(config);
+    if (!states.linkServerMetrics.length) {
+      topologyStore.setLinkServerMetrics({});
+      return;
+    }
+    topologyStore.getLinkServerMetrics(states.linkServerMetrics);
   }
-  topologyStore.getLinkClientMetrics(states.linkClientMetrics);
-}
-function updateNodeMetrics(options: Option[] | any) {
-  const opt = options.map((d: Option) => d.value);
-  const index = states.nodeMetrics.findIndex((d: any) => !opt.includes(d));
-  states.nodeMetrics = opt;
-  if (index < 0) {
-    changeNodeMetrics();
-    return;
+  function updateLinkClientMetrics(options: Option[] | any) {
+    const opt = options.map((d: Option) => d.value);
+    const index = states.linkClientMetrics.findIndex((d: any) => !opt.includes(d));
+    states.linkClientMetrics = opt;
+    if (index < 0) {
+      changeLinkClientMetrics();
+      return;
+    }
+    const origin = dashboardStore.selectedGrid.linkClientMetricConfig || [];
+    const config = origin.length === 1 ? [] : origin.splice(index, 1);
+    changeLinkClientMetrics({ linkClientMetricConfig: config });
   }
-  const origin = dashboardStore.selectedGrid.nodeMetricConfig || [];
-  const config = origin.length === 1 ? [] : origin.splice(index, 1);
-  changeNodeMetrics({ nodeMetricConfig: config });
-}
-async function changeNodeMetrics(config?: {
-  [key: string]: MetricConfigOpt[];
-}) {
-  updateSettings(config);
-  if (!states.nodeMetrics.length) {
-    topologyStore.setNodeMetricValue({});
-    return;
+  async function changeLinkClientMetrics(config?: { [key: string]: MetricConfigOpt[] }) {
+    updateSettings(config);
+    if (!states.linkClientMetrics.length) {
+      topologyStore.setLinkClientMetrics({});
+      return;
+    }
+    topologyStore.getLinkClientMetrics(states.linkClientMetrics);
   }
-  topologyStore.queryNodeMetrics(states.nodeMetrics);
-}
-function deleteMetric(index: number) {
-  if (legend.metric.length === 1) {
-    legend.metric = [{ name: "", condition: "", value: "" }];
-    return;
+  function updateNodeMetrics(options: Option[] | any) {
+    const opt = options.map((d: Option) => d.value);
+    const index = states.nodeMetrics.findIndex((d: any) => !opt.includes(d));
+    states.nodeMetrics = opt;
+    if (index < 0) {
+      changeNodeMetrics();
+      return;
+    }
+    const origin = dashboardStore.selectedGrid.nodeMetricConfig || [];
+    const config = origin.length === 1 ? [] : origin.splice(index, 1);
+    changeNodeMetrics({ nodeMetricConfig: config });
   }
-  legend.metric.splice(index, 1);
-}
-function addMetric() {
-  legend.metric.push({ name: "", condition: "", value: "" });
-}
-function setConfigType(type: string) {
-  configType.value = type;
-}
+  async function changeNodeMetrics(config?: { [key: string]: MetricConfigOpt[] }) {
+    updateSettings(config);
+    if (!states.nodeMetrics.length) {
+      topologyStore.setNodeMetricValue({});
+      return;
+    }
+    topologyStore.queryNodeMetrics(states.nodeMetrics);
+  }
+  function deleteMetric(index: number) {
+    if (legend.metric.length === 1) {
+      legend.metric = [{ name: "", condition: "", value: "" }];
+      return;
+    }
+    legend.metric.splice(index, 1);
+  }
+  function addMetric() {
+    legend.metric.push({ name: "", condition: "", value: "" });
+  }
+  function setConfigType(type: string) {
+    configType.value = type;
+  }
 </script>
 <style lang="scss" scoped>
-.link-settings {
-  margin-bottom: 20px;
-}
+  .link-settings {
+    margin-bottom: 20px;
+  }
 
-.inputs {
-  margin-top: 8px;
-  width: 355px;
-}
+  .inputs {
+    margin-top: 8px;
+    width: 355px;
+  }
 
-.item {
-  width: 130px;
-  margin-top: 5px;
-}
+  .item {
+    width: 130px;
+    margin-top: 5px;
+  }
 
-.input-small {
-  width: 45px;
-  margin: 0 3px;
-}
+  .input-small {
+    width: 45px;
+    margin: 0 3px;
+  }
 
-.title {
-  margin-bottom: 0;
-}
+  .title {
+    margin-bottom: 0;
+  }
 
-.label {
-  font-size: 12px;
-  margin-top: 10px;
-}
+  .label {
+    font-size: 12px;
+    margin-top: 10px;
+  }
 
-.legend-btn {
-  margin: 20px 0;
-  cursor: pointer;
-}
+  .legend-btn {
+    margin: 20px 0;
+    cursor: pointer;
+  }
 
-.delete {
-  margin: 0 3px;
-}
+  .delete {
+    margin: 0 3px;
+  }
 </style>

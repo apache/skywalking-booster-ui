@@ -24,64 +24,62 @@ limitations under the License. -->
       loading,
     }"
   >
-    <use :xlink:href="`#${iconName}`"></use>
+    <use :href="`#${iconName}`"></use>
   </svg>
 </template>
 <script lang="ts" setup>
-import "@/assets/icons/index";
-
-/*global defineProps */
-defineProps({
-  iconName: { type: String, default: "" },
-  size: { type: String, default: "sm" },
-  loading: { type: Boolean, default: false },
-});
+  /*global defineProps */
+  defineProps({
+    iconName: { type: String, default: "" },
+    size: { type: String, default: "sm" },
+    loading: { type: Boolean, default: false },
+  });
 </script>
 <style lang="scss" scoped>
-.icon {
-  width: 16px;
-  height: 16px;
-  vertical-align: middle;
-  fill: currentColor;
+  .icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    fill: currentColor;
 
-  &.sm {
-    width: 14px;
-    height: 14px;
-  }
+    &.sm {
+      width: 14px;
+      height: 14px;
+    }
 
-  &.middle {
-    width: 18px;
-    height: 18px;
-  }
+    &.middle {
+      width: 18px;
+      height: 18px;
+    }
 
-  &.lg {
-    width: 22px;
-    height: 22px;
-  }
+    &.lg {
+      width: 22px;
+      height: 22px;
+    }
 
-  &.loading {
-    animation: loading 1.5s linear infinite;
-  }
+    &.loading {
+      animation: loading 1.5s linear infinite;
+    }
 
-  &.logo {
-    height: 30px;
-    width: 110px;
-  }
+    &.logo {
+      height: 30px;
+      width: 110px;
+    }
 
-  &.xl {
-    height: 30px;
-    width: 30px;
+    &.xl {
+      height: 30px;
+      width: 30px;
+    }
   }
-}
-@keyframes loading {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
+  @keyframes loading {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
 
-  to {
-    -webkit-transform: rotate(1turn);
-    transform: rotate(1turn);
+    to {
+      -webkit-transform: rotate(1turn);
+      transform: rotate(1turn);
+    }
   }
-}
 </style>

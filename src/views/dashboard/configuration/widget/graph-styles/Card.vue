@@ -28,43 +28,38 @@ limitations under the License. -->
   </div>
   <div class="item">
     <span class="label">{{ t("showUnit") }}</span>
-    <el-switch
-      v-model="showUnit"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ showUnit })"
-    />
+    <el-switch v-model="showUnit" active-text="Yes" inactive-text="No" @change="updateConfig({ showUnit })" />
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
 
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const graph = dashboardStore.selectedGrid.graph || {};
-const fontSize = ref(graph.fontSize);
-const showUnit = ref<boolean>(graph.showUnit);
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const graph = dashboardStore.selectedGrid.graph || {};
+  const fontSize = ref(graph.fontSize);
+  const showUnit = ref<boolean>(graph.showUnit);
 
-function updateConfig(param: { [key: string]: unknown }) {
-  const graph = {
-    ...dashboardStore.selectedGrid.graph,
-    ...param,
-  };
-  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
-}
+  function updateConfig(param: { [key: string]: unknown }) {
+    const graph = {
+      ...dashboardStore.selectedGrid.graph,
+      ...param,
+    };
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
+  }
 </script>
 <style lang="scss" scoped>
-.slider {
-  width: 500px;
-  margin-top: -13px;
-}
+  .slider {
+    width: 500px;
+    margin-top: -13px;
+  }
 
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
-}
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+  }
 </style>

@@ -17,7 +17,7 @@
 
 import * as d3 from "d3";
 import d3tip from "d3-tip";
-import { Trace, Span } from "@/types/trace";
+import type { Trace, Span } from "@/types/trace";
 
 export default class TraceMap {
   private i = 0;
@@ -65,23 +65,15 @@ export default class TraceMap {
       .html(
         (d: any) => `
       <div class="mb-5">${d.data.label}</div>
-      ${
-        d.data.dur
-          ? '<div class="sm">SelfDuration: ' + d.data.dur + "ms</div>"
-          : ""
-      }
+      ${d.data.dur ? '<div class="sm">SelfDuration: ' + d.data.dur + "ms</div>" : ""}
       ${
         d.data.endTime - d.data.startTime
-          ? '<div class="sm">TotalDuration: ' +
-            (d.data.endTime - d.data.startTime) +
-            "ms</div>"
+          ? '<div class="sm">TotalDuration: ' + (d.data.endTime - d.data.startTime) + "ms</div>"
           : ""
       }
-      `
+      `,
       );
-    this.svg = this.body
-      .append("g")
-      .attr("transform", () => `translate(120, 0)`);
+    this.svg = this.body.append("g").attr("transform", () => `translate(120, 0)`);
     this.svg.call(this.tip);
   }
   resize() {
@@ -166,9 +158,7 @@ export default class TraceMap {
         if (!that.timeUpdate) {
           return;
         }
-        const _node = that.timeUpdate._groups[0].filter(
-          (group: any) => group.__data__.id === that.i + 1
-        );
+        const _node = that.timeUpdate._groups[0].filter((group: any) => group.__data__.id === that.i + 1);
         if (_node.length) {
           that.timeTip.show(d, _node[0].children[1]);
         }
@@ -178,9 +168,7 @@ export default class TraceMap {
         if (!that.timeUpdate) {
           return;
         }
-        const _node = that.timeUpdate._groups[0].filter(
-          (group: any) => group.__data__.id === that.i + 1
-        );
+        const _node = that.timeUpdate._groups[0].filter((group: any) => group.__data__.id === that.i + 1);
         if (_node.length) {
           that.timeTip.hide(d, _node[0].children[1]);
         }
@@ -228,14 +216,8 @@ export default class TraceMap {
       .append("circle")
       .attr("class", "node")
       .attr("r", 1e-6)
-      .style("fill", (d: any) =>
-        d._children
-          ? this.sequentialScale(this.list.indexOf(d.data.serviceCode))
-          : "#fff"
-      )
-      .attr("stroke", (d: any) =>
-        this.sequentialScale(this.list.indexOf(d.data.serviceCode))
-      )
+      .style("fill", (d: any) => (d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff"))
+      .attr("stroke", (d: any) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)))
       .attr("stroke-width", 2.5);
 
     nodeEnter
@@ -251,7 +233,7 @@ export default class TraceMap {
       .text((d: any) =>
         d.data.label.length > 19
           ? (d.data.isError ? "◉ " : "") + d.data.label.slice(0, 10) + "..."
-          : (d.data.isError ? "◉ " : "") + d.data.label
+          : (d.data.isError ? "◉ " : "") + d.data.label,
       )
       .style("fill", (d: any) => (!d.data.isError ? "#3d444f" : "#E54C17"));
     nodeEnter
@@ -266,12 +248,7 @@ export default class TraceMap {
         return d.children || d._children ? "end" : "start";
       })
       .style("font-size", "10px")
-      .text(
-        (d: any) =>
-          `${d.data.layer || ""}${
-            d.data.component ? "-" + d.data.component : d.data.component || ""
-          }`
-      );
+      .text((d: any) => `${d.data.layer || ""}${d.data.component ? "-" + d.data.component : d.data.component || ""}`);
     nodeEnter
       .append("rect")
       .attr("rx", 1)
@@ -302,9 +279,7 @@ export default class TraceMap {
         return 10 + this.xScale(d.data.startTime - this.min);
       })
       .attr("y", -1)
-      .style("fill", (d: any) =>
-        this.sequentialScale(this.list.indexOf(d.data.serviceCode))
-      );
+      .style("fill", (d: any) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)));
     const nodeUpdate = nodeEnter.merge(node);
     this.nodeUpdate = nodeUpdate;
     nodeUpdate
@@ -316,11 +291,7 @@ export default class TraceMap {
     nodeUpdate
       .select("circle.node")
       .attr("r", 5)
-      .style("fill", (d: any) =>
-        d._children
-          ? this.sequentialScale(this.list.indexOf(d.data.serviceCode))
-          : "#fff"
-      )
+      .style("fill", (d: any) => (d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff"))
       .attr("cursor", "pointer")
       .on("click", (d: any) => {
         click(d);
@@ -411,10 +382,7 @@ export default class TraceMap {
     d3.selectAll(".trace-tree-node-selfchild").style("opacity", 1);
     this.nodeUpdate._groups[0].forEach((i: any) => {
       d3.select(i).style("opacity", 0.2);
-      if (
-        i.__data__.data.children.length >= this.topChildMin &&
-        i.__data__.data.children.length <= this.topChildMax
-      ) {
+      if (i.__data__.data.children.length >= this.topChildMin && i.__data__.data.children.length <= this.topChildMax) {
         d3.select(i).style("opacity", 1);
       }
     });
@@ -426,10 +394,7 @@ export default class TraceMap {
     d3.selectAll(".trace-tree-node-selfdur").style("opacity", 1);
     this.nodeUpdate._groups[0].forEach((i: any) => {
       d3.select(i).style("opacity", 0.2);
-      if (
-        i.__data__.data.dur >= this.topSlowMin &&
-        i.__data__.data.dur <= this.topSlowMax
-      ) {
+      if (i.__data__.data.dur >= this.topSlowMin && i.__data__.data.dur <= this.topSlowMax) {
         d3.select(i).style("opacity", 1);
       }
     });
@@ -440,7 +405,7 @@ export default class TraceMap {
       .scaleExtent([0.3, 10])
       .on("zoom", (d: any) => {
         g.attr("transform", d3.zoomTransform(this.svg.node())).attr(
-          `translate(${d.transform.x},${d.transform.y})scale(${d.transform.k})`
+          `translate(${d.transform.x},${d.transform.y})scale(${d.transform.k})`,
         );
       });
   }

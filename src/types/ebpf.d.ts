@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Process } from "./selector";
+import type { Process } from "./selector";
 export interface EBPFTaskCreationRequest {
   serviceId: string;
   processLabels: string[];

@@ -17,9 +17,9 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
-import { Event, QueryEventCondition } from "@/types/events";
-import { Instance, Endpoint } from "@/types/selector";
+import type { AxiosResponse } from "axios";
+import type { Event, QueryEventCondition } from "@/types/events";
+import type { Instance, Endpoint } from "@/types/selector";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 
@@ -45,9 +45,7 @@ export const eventStore = defineStore({
       this.condition = data;
     },
     async getInstances() {
-      const serviceId = useSelectorStore().currentService
-        ? useSelectorStore().currentService.id
-        : "";
+      const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -56,15 +54,11 @@ export const eventStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.instances = [{ value: "", label: "All" }, ...res.data.data.pods] || [
-        { value: "", label: "All" },
-      ];
+      this.instances = [{ value: "", label: "All" }, ...res.data.data.pods] || [{ value: "", label: "All" }];
       return res.data;
     },
     async getEndpoints() {
-      const serviceId = useSelectorStore().currentService
-        ? useSelectorStore().currentService.id
-        : "";
+      const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
       if (!serviceId) {
         return;
       }
@@ -76,9 +70,7 @@ export const eventStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods] || [
-        { value: "", label: "All" },
-      ];
+      this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods] || [{ value: "", label: "All" }];
       return res.data;
     },
     async getEvents() {
@@ -94,22 +86,20 @@ export const eventStore = defineStore({
         return res.data;
       }
       if (res.data.data.fetchEvents) {
-        this.events = (res.data.data.fetchEvents.events || []).map(
-          (item: Event) => {
-            let scope = "Service";
-            if (item.source.serviceInstance) {
-              scope = "ServiceInstance";
-            }
-            if (item.source.endpoint) {
-              scope = "Endpoint";
-            }
-            item.scope = scope;
-            if (!item.endTime || item.endTime === item.startTime) {
-              item.endTime = Number(item.startTime) + 60000;
-            }
-            return item;
+        this.events = (res.data.data.fetchEvents.events || []).map((item: Event) => {
+          let scope = "Service";
+          if (item.source.serviceInstance) {
+            scope = "ServiceInstance";
           }
-        );
+          if (item.source.endpoint) {
+            scope = "Endpoint";
+          }
+          item.scope = scope;
+          if (!item.endTime || item.endTime === item.startTime) {
+            item.endTime = Number(item.startTime) + 60000;
+          }
+          return item;
+        });
       }
       return res.data;
     },

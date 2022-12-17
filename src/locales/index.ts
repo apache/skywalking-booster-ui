@@ -32,6 +32,7 @@ if (!savedLanguage) {
 }
 language = savedLanguage ? savedLanguage : language;
 const i18n = createI18n({
+  legacy: false,
   locale: language,
   messages,
 });

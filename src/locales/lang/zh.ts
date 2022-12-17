@@ -282,12 +282,9 @@ const msg = {
   chartType: "图表类型",
   currentDepth: "当前深度",
   defaultDepth: "默认深度",
-  traceTagsTip:
-    "只有core/default/searchableTracesTags中定义的标记才可搜索。查看配置词汇表页面上的更多详细信息。",
-  logTagsTip:
-    "只有core/default/searchableTracesTags中定义的标记才可搜索。查看配置词汇表页面上的更多详细信息。",
-  alarmTagsTip:
-    "只有core/default/searchableTracesTags中定义的标记才可搜索。查看配置词汇表页面上的更多详细信息。",
+  traceTagsTip: "只有core/default/searchableTracesTags中定义的标记才可搜索。查看配置词汇表页面上的更多详细信息。",
+  logTagsTip: "只有core/default/searchableTracesTags中定义的标记才可搜索。查看配置词汇表页面上的更多详细信息。",
+  alarmTagsTip: "只有core/default/searchableTracesTags中定义的标记才可搜索。查看配置词汇表页面上的更多详细信息。",
   tagsLink: "配置词汇页",
   addTag: "请添加标签",
   logCategory: "日志类别",
@@ -310,8 +307,7 @@ const msg = {
   contentType: "内容类型",
   content: "内容",
   viewLogs: "查看日志",
-  logsTagsTip:
-    "只有core/default/searchableLogsTags中定义的标记才可搜索。查看配置词汇表页面上的更多详细信息。",
+  logsTagsTip: "只有core/default/searchableLogsTags中定义的标记才可搜索。查看配置词汇表页面上的更多详细信息。",
   keywordsOfContentLogTips: "SkyWalking OAP服务器的当前存储不支持此操作",
   setEvent: "设置事件",
   viewAttributes: "查看",
@@ -368,8 +364,7 @@ const msg = {
   addKeywordsOfContent: "请输入一个内容关键词",
   addExcludingKeywordsOfContent: "请输入一个内容不包含的关键词",
   noticeTag: "请输入一个标签(key=value)之后回车",
-  conditionNotice:
-    "请输入一个内容关键词或者内容不包含的关键词(key=value)之后回车",
+  conditionNotice: "请输入一个内容关键词或者内容不包含的关键词(key=value)之后回车",
   language: "语言",
   gateway: "网关",
   virtualMQ: "虚拟消息队列",

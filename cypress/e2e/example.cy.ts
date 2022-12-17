@@ -14,16 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-declare module "*.vue" {
-  import { defineComponent } from "vue";
-  const Component: ReturnType<typeof defineComponent>;
-  export default Component;
-}
-declare global {
-  namespace JSX {}
-  interface Window {
-    Promise: any;
-    moment: any;
-    axiosCancel: any;
-  }
-}
+describe("My First Test", () => {
+  it("visits the app root url", () => {
+    cy.visit("/");
+    cy.contains("h1", "You did it!");
+  });
+});

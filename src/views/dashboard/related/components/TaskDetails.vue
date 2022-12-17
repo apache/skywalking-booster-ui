@@ -42,9 +42,7 @@ limitations under the License. -->
       </div>
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span>
-        <span class="g-sm-8 wba">
-          {{ details.fixedTriggerDuration / 60 }} min
-        </span>
+        <span class="g-sm-8 wba"> {{ details.fixedTriggerDuration / 60 }} min </span>
       </div>
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("triggerType") }}:</span>
@@ -58,24 +56,23 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import type { PropType } from "vue";
-import dayjs from "dayjs";
-import { useI18n } from "vue-i18n";
-import { EBPFTaskList } from "@/types/ebpf";
+  import type { PropType } from "vue";
+  import dayjs from "dayjs";
+  import { useI18n } from "vue-i18n";
+  import type { EBPFTaskList } from "@/types/ebpf";
 
-/*global defineProps */
-defineProps({
-  details: {
-    type: Object as PropType<EBPFTaskList>,
-    default: () => ({}),
-  },
-});
-const { t } = useI18n();
-const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") =>
-  dayjs(date).format(pattern);
+  /*global defineProps */
+  defineProps({
+    details: {
+      type: Object as PropType<EBPFTaskList>,
+      default: () => ({}),
+    },
+  });
+  const { t } = useI18n();
+  const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") => dayjs(date).format(pattern);
 </script>
 <style lang="scss" scoped>
-.item span {
-  height: 21px;
-}
+  .item span {
+    height: 21px;
+  }
 </style>

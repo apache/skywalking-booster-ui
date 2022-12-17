@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireComponent = require.context("./technologies", false, /\.png$/);
-const requireTool = require.context("./tools", false, /\.png$/);
+const requireComponent = import.meta.glob("./technologies/*.png", { eager: true });
+const requireTool = import.meta.glob("./tools/*.png", { eager: true });
 const result: { [key: string]: string } = {};
 const t: { [key: string]: string } = {};
 
@@ -24,25 +24,19 @@ function capitalizeFirstLetter(str: string) {
 }
 function validateFileName(str: string): string | undefined {
   if (/^\S+\.png$/.test(str)) {
-    return str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) =>
-      capitalizeFirstLetter($1)
-    );
+    return str.replace(/^\S+\/(\w+)\.png$/, (rs, $1) => capitalizeFirstLetter($1));
   }
 }
-[...requireComponent.keys()].forEach((filePath: string) => {
-  const componentConfig = requireComponent(filePath);
-
+Object.keys(requireComponent).forEach((filePath: string) => {
   const fileName = validateFileName(filePath);
   if (fileName) {
-    result[fileName] = componentConfig;
+    result[fileName] = (requireComponent as { [key: string]: any })[filePath].default;
   }
 });
-[...requireTool.keys()].forEach((filePath: string) => {
-  const componentConfig = requireTool(filePath);
-
+Object.keys(requireTool).forEach((filePath: string) => {
   const fileName = validateFileName(filePath);
   if (fileName) {
-    t[fileName] = componentConfig;
+    t[fileName] = (requireTool as { [key: string]: any })[filePath].default;
   }
 });
 

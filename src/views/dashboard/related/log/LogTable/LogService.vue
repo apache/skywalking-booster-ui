@@ -27,10 +27,7 @@ limitations under the License. -->
       <span v-else-if="item.label === 'tags'">
         {{ tags }}
       </span>
-      <span
-        v-else-if="item.label === 'traceId' && !noLink"
-        :class="noLink ? '' : 'blue'"
-      >
+      <span v-else-if="item.label === 'traceId' && !noLink" :class="noLink ? '' : 'blue'">
         {{ data[item.label] }}
       </span>
       <span v-else>{{ data[item.label] }}</span>
@@ -38,116 +35,112 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, inject } from "vue";
-import { ServiceLogConstants } from "./data";
-import getDashboard from "@/hooks/useDashboardsSession";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { LayoutConfig } from "@/types/dashboard";
-import { dateFormat } from "@/utils/dateFormat";
+  import { computed, inject } from "vue";
+  import { ServiceLogConstants } from "./data";
+  import getDashboard from "@/hooks/useDashboardsSession";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import type { LayoutConfig } from "@/types/dashboard";
+  import { dateFormat } from "@/utils/dateFormat";
 
-/*global defineProps, defineEmits, Recordable */
-const props = defineProps({
-  data: { type: Object as any, default: () => ({}) },
-  noLink: { type: Boolean, default: true },
-});
-const dashboardStore = useDashboardStore();
-const options: Recordable<LayoutConfig> = inject("options") || {};
-const emit = defineEmits(["select"]);
-const columns = ServiceLogConstants;
-const tags = computed(() => {
-  if (!props.data.tags) {
-    return "";
-  }
-  return String(
-    props.data.tags.map(
-      (d: { key: string; value: string }) => `${d.key}=${d.value}`
-    )
-  );
-});
+  /*global defineProps, defineEmits, Recordable */
+  const props = defineProps({
+    data: { type: Object as any, default: () => ({}) },
+    noLink: { type: Boolean, default: true },
+  });
+  const dashboardStore = useDashboardStore();
+  const options: Recordable<LayoutConfig> = inject("options") || {};
+  const emit = defineEmits(["select"]);
+  const columns = ServiceLogConstants;
+  const tags = computed(() => {
+    if (!props.data.tags) {
+      return "";
+    }
+    return String(props.data.tags.map((d: { key: string; value: string }) => `${d.key}=${d.value}`));
+  });
 
-function selectLog(label: string, value: string) {
-  if (label === "traceId") {
-    if (!value) {
-      emit("select", props.data);
+  function selectLog(label: string, value: string) {
+    if (label === "traceId") {
+      if (!value) {
+        emit("select", props.data);
+        return;
+      }
+      linkTrace(value);
       return;
     }
-    linkTrace(value);
-    return;
+    emit("select", props.data);
   }
-  emit("select", props.data);
-}
-function linkTrace(id: string) {
-  const { associationWidget } = getDashboard(dashboardStore.currentDashboard);
-  associationWidget(
-    (options.id as any) || "",
-    {
-      sourceId: options.id || "",
-      traceId: id,
-    },
-    "Trace"
-  );
-}
+  function linkTrace(id: string) {
+    const { associationWidget } = getDashboard(dashboardStore.currentDashboard);
+    associationWidget(
+      (options.id as any) || "",
+      {
+        sourceId: options.id || "",
+        traceId: id,
+      },
+      "Trace",
+    );
+  }
 </script>
 <style lang="scss" scoped>
-.log-item {
-  white-space: nowrap;
-  position: relative;
-  cursor: pointer;
-
-  .traceId {
-    width: 390px;
+  .log-item {
+    white-space: nowrap;
+    position: relative;
     cursor: pointer;
 
-    span {
-      display: inline-block;
-      width: 100%;
-      line-height: 30px;
+    .traceId {
+      width: 390px;
+      cursor: pointer;
+
+      span {
+        display: inline-block;
+        width: 100%;
+        line-height: 30px;
+      }
+
+      .blue {
+        color: #448dfe;
+      }
     }
 
-    .blue {
-      color: #448dfe;
+    .content,
+    .tags {
+      width: 300px;
+    }
+
+    .serviceInstanceName,
+    .endpointName,
+    .serviceName {
+      width: 200px;
     }
   }
 
-  .content,
-  .tags {
-    width: 300px;
+  .log-item:hover {
+    background: rgba(0, 0, 0, 0.04);
   }
 
-  .serviceInstanceName,
-  .endpointName,
-  .serviceName {
-    width: 200px;
+  .log-item > div {
+    width: 140px;
+    padding: 0 5px;
+    display: inline-block;
+    border: 1px solid transparent;
+    border-right: 1px dotted silver;
+    overflow: hidden;
+    height: 30px;
+    line-height: 30px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-}
 
-.log-item:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
+  .log-item .text {
+    width: 100%;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.log-item > div {
-  width: 140px;
-  padding: 0 5px;
-  display: inline-block;
-  border: 1px solid transparent;
-  border-right: 1px dotted silver;
-  overflow: hidden;
-  height: 30px;
-  line-height: 30px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.log-item .text {
-  width: 100%;
-  display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.log-item > div.method {
-  height: 100%;
-  padding: 3px 8px;
-}
+  .log-item > div.method {
+    height: 100%;
+    padding: 3px 8px;
+  }
 </style>

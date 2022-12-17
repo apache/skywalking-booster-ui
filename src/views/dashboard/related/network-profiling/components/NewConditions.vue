@@ -21,76 +21,60 @@ limitations under the License. -->
     </div>
     <div>
       <div class="label">{{ t("minDuration") }} (ms)</div>
-      <el-input
-        size="small"
-        class="profile-input"
-        :min="0"
-        v-model="states.minDuration"
-        type="number"
-      />
+      <el-input size="small" class="profile-input" :min="0" v-model="states.minDuration" type="number" />
     </div>
     <div>
       <div class="label">{{ t("when4xx") }}</div>
-      <Radio
-        class="mb-5"
-        :value="states.when4xx"
-        :options="InitTaskField.Whenxx"
-        @change="changeWhen4xx"
-      />
+      <Radio class="mb-5" :value="states.when4xx" :options="InitTaskField.Whenxx" @change="changeWhen4xx" />
     </div>
     <div>
       <div class="label">{{ t("when5xx") }}</div>
-      <Radio
-        class="mb-5"
-        :value="states.when5xx"
-        :options="InitTaskField.Whenxx"
-        @change="changeWhen5xx"
-      />
+      <Radio class="mb-5" :value="states.when5xx" :options="InitTaskField.Whenxx" @change="changeWhen5xx" />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
-import { useI18n } from "vue-i18n";
-import type { PropType } from "vue";
-import { InitTaskField } from "./data";
-import { NetworkProfilingRequest } from "@/types/ebpf";
+  import { reactive } from "vue";
+  import { useI18n } from "vue-i18n";
+  import type { PropType } from "vue";
+  import { InitTaskField } from "./data";
+  import type { NetworkProfilingRequest } from "@/types/ebpf";
 
-/* global defineProps, defineEmits */
-const emits = defineEmits(["change"]);
-const props = defineProps({
-  condition: {
-    type: Object as PropType<NetworkProfilingRequest>,
-    default: () => ({ children: [] }),
-  },
-  key: {
-    type: Number,
-    default: () => 0,
-  },
-});
-const { t } = useI18n();
-const states = reactive<NetworkProfilingRequest>(props.condition);
+  /* global defineEmits, defineProps */
+  const emits = defineEmits(["change"]);
+  const props = defineProps({
+    condition: {
+      type: Object as PropType<NetworkProfilingRequest>,
+      default: () => ({ children: [] }),
+    },
+    index: {
+      type: Number,
+      default: () => 0,
+    },
+  });
+  const { t } = useI18n();
+  const states = reactive<NetworkProfilingRequest>(props.condition);
 
-function changeWhen5xx(value: string) {
-  states.when5xx = value;
-  emits("change", states, props.key);
-}
-function changeWhen4xx(value: string) {
-  states.when4xx = value;
-  emits("change", states, props.key);
-}
+  function changeWhen5xx(value: string) {
+    states.when5xx = value;
+    emits("change", states, props.index);
+  }
+  function changeWhen4xx(value: string) {
+    states.when4xx = value;
+    emits("change", states, props.index);
+  }
 </script>
 <style lang="scss" scoped>
-.date {
-  font-size: 12px;
-}
+  .date {
+    font-size: 12px;
+  }
 
-.label {
-  margin-top: 10px;
-  font-size: 14px;
-}
+  .label {
+    margin-top: 10px;
+    font-size: 14px;
+  }
 
-.profile-input {
-  width: 300px;
-}
+  .profile-input {
+    width: 300px;
+  }
 </style>

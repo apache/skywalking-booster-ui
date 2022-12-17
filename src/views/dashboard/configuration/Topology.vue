@@ -13,22 +13,11 @@ limitations under the License. -->
 <template>
   <div class="item">
     <span class="label">{{ t("showDepth") }}</span>
-    <el-switch
-      v-model="showDepth"
-      active-text="Yes"
-      inactive-text="No"
-      @change="changeConfig({ showDepth })"
-    />
+    <el-switch v-model="showDepth" active-text="Yes" inactive-text="No" @change="changeConfig({ showDepth })" />
   </div>
   <div class="item" v-show="showDepth">
     <span class="label">{{ t("defaultDepth") }}</span>
-    <Selector
-      class="input"
-      size="small"
-      :value="depth"
-      :options="DepthList"
-      @change="changeDepth($event)"
-    />
+    <Selector class="input" size="small" :value="depth" :options="DepthList" @change="changeDepth($event)" />
   </div>
   <div class="footer">
     <el-button size="small">
@@ -40,55 +29,55 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { DepthList } from "../data";
-import { Option } from "@/types/app";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { DepthList } from "../data";
+  import type { Option } from "@/types/app";
 
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const graph = dashboardStore.selectedGrid.graph || {};
-const showDepth = ref<boolean>(graph.showDepth);
-const depth = ref<number>(graph.depth || 2);
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const graph = dashboardStore.selectedGrid.graph || {};
+  const showDepth = ref<boolean>(graph.showDepth);
+  const depth = ref<number>(graph.depth || 2);
 
-function applyConfig() {
-  dashboardStore.setConfigs(dashboardStore.selectedGrid);
-  dashboardStore.setConfigPanel(false);
-}
-function changeConfig(param: { [key: string]: unknown }) {
-  const { selectedGrid } = dashboardStore;
-  const graph = {
-    ...selectedGrid.graph,
-    ...param,
-  };
-  dashboardStore.selectWidget({ ...selectedGrid, graph });
-}
-function changeDepth(opt: Option[] | any) {
-  const val = opt[0].value;
-  changeConfig({ depth: val });
-}
+  function applyConfig() {
+    dashboardStore.setConfigs(dashboardStore.selectedGrid);
+    dashboardStore.setConfigPanel(false);
+  }
+  function changeConfig(param: { [key: string]: unknown }) {
+    const { selectedGrid } = dashboardStore;
+    const graph = {
+      ...selectedGrid.graph,
+      ...param,
+    };
+    dashboardStore.selectWidget({ ...selectedGrid, graph });
+  }
+  function changeDepth(opt: Option[] | any) {
+    const val = opt[0].value;
+    changeConfig({ depth: val });
+  }
 </script>
 <style lang="scss" scoped>
-.footer {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  border-top: 1px solid #eee;
-  padding: 10px;
-  text-align: right;
-  width: 100%;
-  background-color: #fff;
-}
+  .footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    border-top: 1px solid #eee;
+    padding: 10px;
+    text-align: right;
+    width: 100%;
+    background-color: #fff;
+  }
 
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
-}
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+  }
 
-.item {
-  margin: 10px 0;
-}
+  .item {
+    margin: 10px 0;
+  }
 </style>

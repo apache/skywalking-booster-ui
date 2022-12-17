@@ -34,48 +34,48 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import TaskList from "./components/TaskList.vue";
-import SegmentList from "./components/SegmentList.vue";
-import SpanTree from "./components/SpanTree.vue";
-import StackTable from "./components/Stack/Index.vue";
-import { useProfileStore } from "@/store/modules/profile";
+  import { ref } from "vue";
+  import TaskList from "./components/TaskList.vue";
+  import SegmentList from "./components/SegmentList.vue";
+  import SpanTree from "./components/SpanTree.vue";
+  import StackTable from "./components/Stack/Index.vue";
+  import { useProfileStore } from "@/store/modules/profile";
 
-const loading = ref<boolean>(false);
-const profileStore = useProfileStore();
+  const loading = ref<boolean>(false);
+  const profileStore = useProfileStore();
 
-function loadTrees(l: boolean) {
-  loading.value = l;
-}
+  function loadTrees(l: boolean) {
+    loading.value = l;
+  }
 </script>
 <style lang="scss" scoped>
-.content {
-  height: calc(100% - 30px);
-  width: 100%;
-}
+  .content {
+    height: calc(100% - 30px);
+    width: 100%;
+  }
 
-.item {
-  height: 100%;
-  flex-grow: 2;
-  overflow: auto;
-}
+  .item {
+    height: 100%;
+    flex-grow: 2;
+    overflow: auto;
+  }
 
-.list {
-  width: 300px;
-  height: 100%;
-}
+  .list {
+    width: 300px;
+    height: 100%;
+  }
 
-.thread-stack {
-  padding: 5px;
-  height: calc(50% - 20px);
-  overflow: auto;
-  width: 100%;
-}
+  .thread-stack {
+    padding: 5px;
+    height: calc(50% - 20px);
+    overflow: auto;
+    width: 100%;
+  }
 
-.t-loading {
-  text-align: center;
-  width: 100%;
-  overflow: hidden;
-  height: calc(50% - 20px);
-}
+  .t-loading {
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    height: calc(50% - 20px);
+  }
 </style>

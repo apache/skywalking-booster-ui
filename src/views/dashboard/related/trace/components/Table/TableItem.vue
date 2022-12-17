@@ -48,14 +48,7 @@ limitations under the License. -->
     </div>
   </div>
   <div v-else>
-    <div
-      @click="selectSpan"
-      :class="[
-        'trace-item',
-        'level' + (data.level - 1),
-        { 'trace-item-error': data.isError },
-      ]"
-    >
+    <div @click="selectSpan" :class="['trace-item', 'level' + (data.level - 1), { 'trace-item-error': data.isError }]">
       <div
         :class="['method', 'level' + (data.level - 1)]"
         :style="{
@@ -80,16 +73,11 @@ limitations under the License. -->
         {{ dateFormat(data.startTime) }}
       </div>
       <div class="exec-ms">
-        {{
-          data.endTime - data.startTime ? data.endTime - data.startTime : "0"
-        }}
+        {{ data.endTime - data.startTime ? data.endTime - data.startTime : "0" }}
       </div>
       <div class="exec-percent">
         <div class="outer-progress_bar" :style="{ width: outterPercent }">
-          <div
-            class="inner-progress_bar"
-            :style="{ width: innerPercent }"
-          ></div>
+          <div class="inner-progress_bar" :style="{ width: innerPercent }"></div>
         </div>
       </div>
       <div class="self">
@@ -105,21 +93,14 @@ limitations under the License. -->
           <span>{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
-      <div
-        class="application"
-        v-show="headerType === 'profile'"
-        @click="viewSpan($event)"
-      >
+      <div class="application" v-show="headerType === 'profile'" @click="viewSpan($event)">
         <span>{{ t("view") }}</span>
       </div>
       <div class="application" v-show="headerType !== 'profile'">
         <span>{{ data.attachedEvents && data.attachedEvents.length }}</span>
       </div>
     </div>
-    <div
-      v-show="data.children && data.children.length > 0 && displayChildren"
-      class="children-trace"
-    >
+    <div v-show="data.children && data.children.length > 0 && displayChildren" class="children-trace">
       <table-item
         :method="method"
         v-for="(child, index) in data.children"
@@ -130,210 +111,198 @@ limitations under the License. -->
         @select="selectedItem(child)"
       />
     </div>
-    <el-dialog
-      v-model="showDetail"
-      :destroy-on-close="true"
-      fullscreen
-      @closed="showDetail = false"
-    >
+    <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
       <SpanDetail :currentSpan="data" />
     </el-dialog>
   </div>
 </template>
 <script lang="ts">
-import { useI18n } from "vue-i18n";
-import { ref, computed, defineComponent } from "vue";
-import type { PropType } from "vue";
-import SpanDetail from "../D3Graph/SpanDetail.vue";
-import { dateFormat } from "@/utils/dateFormat";
-import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useI18n } from "vue-i18n";
+  import { ref, computed, defineComponent } from "vue";
+  import type { PropType } from "vue";
+  import SpanDetail from "../D3Graph/SpanDetail.vue";
+  import { dateFormat } from "@/utils/dateFormat";
+  import { useAppStoreWithOut } from "@/store/modules/app";
 
-const props = {
-  data: { type: Object as PropType<any>, default: () => ({}) },
-  method: { type: Number, default: 0 },
-  type: { type: String, default: "" },
-  headerType: { type: String, default: "" },
-};
-export default defineComponent({
-  name: "TableItem",
-  props,
-  emits: ["select"],
-  components: { SpanDetail },
-  setup(props, { emit }) {
-    const appStore = useAppStoreWithOut();
-    const displayChildren = ref<boolean>(true);
-    const showDetail = ref<boolean>(false);
-    const { t } = useI18n();
-    const selfTime = computed(() => (props.data.dur ? props.data.dur : 0));
-    const execTime = computed(() =>
-      props.data.endTime - props.data.startTime
-        ? props.data.endTime - props.data.startTime
-        : 0
-    );
-    const outterPercent = computed(() => {
-      if (props.data.level === 1) {
-        return "100%";
-      } else {
-        const data = props.data;
-        const exec =
-          data.endTime - data.startTime ? data.endTime - data.startTime : 0;
-        let result = (exec / data.totalExec) * 100;
-        result = result > 100 ? 100 : result;
+  const props = {
+    data: { type: Object as PropType<any>, default: () => ({}) },
+    method: { type: Number, default: 0 },
+    type: { type: String, default: "" },
+    headerType: { type: String, default: "" },
+  };
+  export default defineComponent({
+    name: "TableItem",
+    props,
+    emits: ["select"],
+    components: { SpanDetail },
+    setup(props, { emit }) {
+      const appStore = useAppStoreWithOut();
+      const displayChildren = ref<boolean>(true);
+      const showDetail = ref<boolean>(false);
+      const { t } = useI18n();
+      const selfTime = computed(() => (props.data.dur ? props.data.dur : 0));
+      const execTime = computed(() =>
+        props.data.endTime - props.data.startTime ? props.data.endTime - props.data.startTime : 0,
+      );
+      const outterPercent = computed(() => {
+        if (props.data.level === 1) {
+          return "100%";
+        } else {
+          const data = props.data;
+          const exec = data.endTime - data.startTime ? data.endTime - data.startTime : 0;
+          let result = (exec / data.totalExec) * 100;
+          result = result > 100 ? 100 : result;
+          const resultStr = result.toFixed(4) + "%";
+          return resultStr === "0.0000%" ? "0.9%" : resultStr;
+        }
+      });
+      const innerPercent = computed(() => {
+        const result = (selfTime.value / execTime.value) * 100;
         const resultStr = result.toFixed(4) + "%";
         return resultStr === "0.0000%" ? "0.9%" : resultStr;
-      }
-    });
-    const innerPercent = computed(() => {
-      const result = (selfTime.value / execTime.value) * 100;
-      const resultStr = result.toFixed(4) + "%";
-      return resultStr === "0.0000%" ? "0.9%" : resultStr;
-    });
+      });
 
-    function toggle() {
-      displayChildren.value = !displayChildren.value;
-    }
-    function showSelectSpan(dom: HTMLSpanElement) {
-      if (!dom) {
-        return;
+      function toggle() {
+        displayChildren.value = !displayChildren.value;
       }
-      const items: any = document.querySelectorAll(".trace-item");
-      for (const item of items) {
-        item.style.background = "#fff";
+      function showSelectSpan(dom: HTMLSpanElement) {
+        if (!dom) {
+          return;
+        }
+        const items: any = document.querySelectorAll(".trace-item");
+        for (const item of items) {
+          item.style.background = "#fff";
+        }
+        dom.style.background = "rgba(0, 0, 0, 0.1)";
       }
-      dom.style.background = "rgba(0, 0, 0, 0.1)";
-    }
-    function selectSpan(event: any) {
-      const dom = event
-        .composedPath()
-        .find((d: any) => d.className.includes("trace-item"));
+      function selectSpan(event: any) {
+        const dom = event.composedPath().find((d: any) => d.className.includes("trace-item"));
 
-      emit("select", props.data);
-      if (props.headerType === "profile") {
+        emit("select", props.data);
+        if (props.headerType === "profile") {
+          showSelectSpan(dom);
+          return;
+        }
+        viewSpanDetail(dom);
+      }
+      function viewSpan(event: any) {
+        const dom = event.composedPath().find((d: any) => d.className.includes("trace-item"));
+        emit("select", props.data);
+        viewSpanDetail(dom);
+      }
+
+      function selectedItem(data: HTMLSpanElement) {
+        emit("select", data);
+      }
+      function viewSpanDetail(dom: HTMLSpanElement) {
         showSelectSpan(dom);
-        return;
+        showDetail.value = true;
       }
-      viewSpanDetail(dom);
-    }
-    function viewSpan(event: any) {
-      const dom = event
-        .composedPath()
-        .find((d: any) => d.className.includes("trace-item"));
-      emit("select", props.data);
-      viewSpanDetail(dom);
-    }
-
-    function selectedItem(data: HTMLSpanElement) {
-      emit("select", data);
-    }
-    function viewSpanDetail(dom: HTMLSpanElement) {
-      showSelectSpan(dom);
-      showDetail.value = true;
-    }
-    return {
-      displayChildren,
-      outterPercent,
-      innerPercent,
-      viewSpanDetail,
-      toggle,
-      dateFormat,
-      showSelectSpan,
-      showDetail,
-      selectSpan,
-      selectedItem,
-      viewSpan,
-      t,
-      appStore,
-    };
-  },
-});
+      return {
+        displayChildren,
+        outterPercent,
+        innerPercent,
+        viewSpanDetail,
+        toggle,
+        dateFormat,
+        showSelectSpan,
+        showDetail,
+        selectSpan,
+        selectedItem,
+        viewSpan,
+        t,
+        appStore,
+      };
+    },
+  });
 </script>
 <style lang="scss" scoped>
-@import "./table.scss";
+  @import "./table.scss";
 
-.event-tag {
-  width: 12px;
-  height: 12px;
-  border-radius: 12px;
-  border: 1px solid #e66;
-  color: #e66;
-  display: inline-block;
-}
+  .event-tag {
+    width: 12px;
+    height: 12px;
+    border-radius: 12px;
+    border: 1px solid #e66;
+    color: #e66;
+    display: inline-block;
+  }
 
-.trace-item.level0 {
-  color: #448dfe;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.04);
+  .trace-item.level0 {
     color: #448dfe;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+      color: #448dfe;
+    }
+
+    &::before {
+      position: absolute;
+      content: "";
+      width: 5px;
+      height: 100%;
+      background: #448dfe;
+      left: 0;
+    }
   }
 
-  &::before {
-    position: absolute;
-    content: "";
-    width: 5px;
-    height: 100%;
-    background: #448dfe;
-    left: 0;
+  .trace-item-error {
+    color: #e54c17;
   }
-}
 
-.trace-item-error {
-  color: #e54c17;
-}
-
-.trace-item {
-  // display: flex;
-  white-space: nowrap;
-  position: relative;
-  cursor: pointer;
-}
-
-.trace-item.selected {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.trace-item:not(.level0):hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.trace-item > div {
-  padding: 0 5px;
-  display: inline-block;
-  border: 1px solid transparent;
-  border-right: 1px dotted silver;
-  overflow: hidden;
-  line-height: 30px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.trace-item > div.method {
-  padding-left: 10px;
-}
-
-.trace-item div.exec-percent {
-  width: 100px;
-  height: 30px;
-  padding: 0 8px;
-
-  .outer-progress_bar {
-    width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: rgb(63, 177, 227);
+  .trace-item {
+    // display: flex;
+    white-space: nowrap;
     position: relative;
-    margin-top: 11px;
-    border: none;
+    cursor: pointer;
   }
 
-  .inner-progress_bar {
-    position: absolute;
-    background: rgb(110, 64, 170);
-    height: 4px;
-    border-radius: 2px;
-    left: 0;
-    border: none;
-    top: 1px;
+  .trace-item.selected {
+    background: rgba(0, 0, 0, 0.04);
   }
-}
+
+  .trace-item:not(.level0):hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .trace-item > div {
+    padding: 0 5px;
+    display: inline-block;
+    border: 1px solid transparent;
+    border-right: 1px dotted silver;
+    overflow: hidden;
+    line-height: 30px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .trace-item > div.method {
+    padding-left: 10px;
+  }
+
+  .trace-item div.exec-percent {
+    width: 100px;
+    height: 30px;
+    padding: 0 8px;
+
+    .outer-progress_bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgb(63, 177, 227);
+      position: relative;
+      margin-top: 11px;
+      border: none;
+    }
+
+    .inner-progress_bar {
+      position: absolute;
+      background: rgb(110, 64, 170);
+      height: 4px;
+      border-radius: 2px;
+      left: 0;
+      border: none;
+      top: 1px;
+    }
+  }
 </style>

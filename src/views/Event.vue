@@ -19,18 +19,18 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { useAppStoreWithOut } from "@/store/modules/app";
-import Header from "./event/Header.vue";
-import Content from "./event/Content.vue";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import Header from "./event/Header.vue";
+  import Content from "./event/Content.vue";
 
-const appStore = useAppStoreWithOut();
+  const appStore = useAppStoreWithOut();
 
-appStore.setPageTitle("Events");
+  appStore.setPageTitle("Events");
 </script>
 <style lang="scss" scoped>
-.event {
-  flex-grow: 1;
-  height: 100%;
-  font-size: 12px;
-}
+  .event {
+    flex-grow: 1;
+    height: 100%;
+    font-size: 12px;
+  }
 </style>

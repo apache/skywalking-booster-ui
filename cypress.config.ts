@@ -14,6 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-{
-  "pluginsFile": "tests/e2e/plugins/index.js"
-}
+
+import { defineConfig } from "cypress";
+
+export default defineConfig({
+  e2e: {
+    specPattern: "cypress/e2e/**/*.{cy,spec}.{js,jsx,ts,tsx}",
+    baseUrl: "http://localhost:4173",
+  },
+});

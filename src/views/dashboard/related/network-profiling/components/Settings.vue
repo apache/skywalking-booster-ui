@@ -25,62 +25,54 @@ limitations under the License. -->
   />
 </template>
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
-import { useI18n } from "vue-i18n";
-import { DashboardItem } from "@/types/dashboard";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { EntityType } from "@/views/dashboard/data";
-/*global defineEmits */
-const emits = defineEmits(["update"]);
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const linkDashboards = ref<
-  (DashboardItem & { label: string; value: string })[]
->([]);
+  import { ref, onMounted } from "vue";
+  import { useI18n } from "vue-i18n";
+  import type { DashboardItem } from "@/types/dashboard";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { EntityType } from "@/views/dashboard/data";
+  /*global defineEmits */
+  const emits = defineEmits(["update"]);
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const linkDashboards = ref<(DashboardItem & { label: string; value: string })[]>([]);
 
-onMounted(() => {
-  getDashboards();
-});
+  onMounted(() => {
+    getDashboards();
+  });
 
-function getDashboards() {
-  const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-  linkDashboards.value = list.reduce(
-    (
-      prev: (DashboardItem & { label: string; value: string })[],
-      d: DashboardItem
-    ) => {
-      if (
-        d.layer === dashboardStore.layerId &&
-        d.entity === EntityType[7].value
-      ) {
-        prev.push({ ...d, label: d.name, value: d.name });
-      }
-      return prev;
-    },
-    []
-  );
-}
+  function getDashboards() {
+    const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
+    linkDashboards.value = list.reduce(
+      (prev: (DashboardItem & { label: string; value: string })[], d: DashboardItem) => {
+        if (d.layer === dashboardStore.layerId && d.entity === EntityType[7].value) {
+          prev.push({ ...d, label: d.name, value: d.name });
+        }
+        return prev;
+      },
+      [],
+    );
+  }
 
-function changeLinkDashboard(opt: { value: string }[]) {
-  const linkDashboard = opt.length ? opt[0].value : "";
-  const p = {
-    ...dashboardStore.selectedGrid,
-    linkDashboard,
-  };
-  dashboardStore.selectWidget(p);
-  dashboardStore.setConfigs(p);
-  emits("update", p);
-}
+  function changeLinkDashboard(opt: { value: string }[]) {
+    const linkDashboard = opt.length ? opt[0].value : "";
+    const p = {
+      ...dashboardStore.selectedGrid,
+      linkDashboard,
+    };
+    dashboardStore.selectWidget(p);
+    dashboardStore.setConfigs(p);
+    emits("update", p);
+  }
 </script>
 <style lang="scss" scoped>
-.label {
-  font-size: 12px;
-  margin-top: 10px;
-}
+  .label {
+    font-size: 12px;
+    margin-top: 10px;
+  }
 
-.inputs {
-  margin-top: 8px;
-  width: 270px;
-  margin-bottom: 30px;
-}
+  .inputs {
+    margin-top: 8px;
+    width: 270px;
+    margin-bottom: 30px;
+  }
 </style>

@@ -42,20 +42,12 @@ limitations under the License. -->
         />
       </template>
       <div class="content">
-        <span
-          v-for="(item, index) in tagList"
-          :key="index"
-          @click="selectTag(item)"
-          class="tag-item"
-        >
+        <span v-for="(item, index) in tagList" :key="index" @click="selectTag(item)" class="tag-item">
           {{ item }}
         </span>
       </div>
     </el-popover>
-    <span
-      class="tags-tip"
-      :class="type !== 'ALARM' && tagArr.length ? 'link-tips' : ''"
-    >
+    <span class="tags-tip" :class="type !== 'ALARM' && tagArr.length ? 'link-tips' : ''">
       <a
         target="blank"
         href="https://github.com/apache/skywalking/blob/master/docs/en/setup/backend/configuration-vocabulary.md"
@@ -72,219 +64,219 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { useTraceStore } from "@/store/modules/trace";
-import { useLogStore } from "@/store/modules/log";
-import { ElMessage } from "element-plus";
-import { useAppStoreWithOut } from "@/store/modules/app";
+  import { ref, watch } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useTraceStore } from "@/store/modules/trace";
+  import { useLogStore } from "@/store/modules/log";
+  import { ElMessage } from "element-plus";
+  import { useAppStoreWithOut } from "@/store/modules/app";
 
-/*global defineEmits, defineProps */
-const emit = defineEmits(["update"]);
-const props = defineProps({
-  type: { type: String, default: "TRACE" },
-});
-const traceStore = useTraceStore();
-const logStore = useLogStore();
-const appStore = useAppStoreWithOut();
-const { t } = useI18n();
-const tags = ref<string>("");
-const tagsList = ref<string[]>([]);
-const tagArr = ref<string[]>([]);
-const tagList = ref<string[]>([]);
-const tagKeys = ref<string[]>([]);
-const keysList = ref<string[]>([]);
-const visible = ref<boolean>(false);
-const tipsMap = {
-  LOG: "logTagsTip",
-  TRACE: "traceTagsTip",
-  ALARM: "alarmTagsTip",
-};
-
-fetchTagKeys();
-
-function removeTags(index: number) {
-  tagsList.value.splice(index, 1);
-  updateTags();
-}
-function addLabels() {
-  if (!tags.value) {
-    return;
-  }
-  tagsList.value.push(tags.value);
-  tags.value = "";
-  updateTags();
-}
-function updateTags() {
-  const tagsMap = tagsList.value.map((item: string) => {
-    const key = item.substring(0, item.indexOf("="));
-    return {
-      key,
-      value: item.substring(item.indexOf("=") + 1, item.length),
-    };
+  /*global defineEmits, defineProps */
+  const emit = defineEmits(["update"]);
+  const props = defineProps({
+    type: { type: String, default: "TRACE" },
   });
-  emit("update", { tagsMap, tagsList: tagsList.value });
-}
-async function fetchTagKeys() {
-  let resp: any = {};
-  if (props.type === "TRACE") {
-    resp = await traceStore.getTagKeys();
-  } else {
-    resp = await logStore.getLogTagKeys();
+  const traceStore = useTraceStore();
+  const logStore = useLogStore();
+  const appStore = useAppStoreWithOut();
+  const { t } = useI18n();
+  const tags = ref<string>("");
+  const tagsList = ref<string[]>([]);
+  const tagArr = ref<string[]>([]);
+  const tagList = ref<string[]>([]);
+  const tagKeys = ref<string[]>([]);
+  const keysList = ref<string[]>([]);
+  const visible = ref<boolean>(false);
+  const tipsMap = {
+    LOG: "logTagsTip",
+    TRACE: "traceTagsTip",
+    ALARM: "alarmTagsTip",
+  };
+
+  fetchTagKeys();
+
+  function removeTags(index: number) {
+    tagsList.value.splice(index, 1);
+    updateTags();
+  }
+  function addLabels() {
+    if (!tags.value) {
+      return;
+    }
+    tagsList.value.push(tags.value);
+    tags.value = "";
+    updateTags();
+  }
+  function updateTags() {
+    const tagsMap = tagsList.value.map((item: string) => {
+      const key = item.substring(0, item.indexOf("="));
+      return {
+        key,
+        value: item.substring(item.indexOf("=") + 1, item.length),
+      };
+    });
+    emit("update", { tagsMap, tagsList: tagsList.value });
+  }
+  async function fetchTagKeys() {
+    let resp: any = {};
+    if (props.type === "TRACE") {
+      resp = await traceStore.getTagKeys();
+    } else {
+      resp = await logStore.getLogTagKeys();
+    }
+
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+      return;
+    }
+    tagArr.value = resp.data.tagKeys;
+    tagKeys.value = resp.data.tagKeys;
+    keysList.value = resp.data.tagKeys;
+    searchTags();
   }
 
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return;
-  }
-  tagArr.value = resp.data.tagKeys;
-  tagKeys.value = resp.data.tagKeys;
-  keysList.value = resp.data.tagKeys;
-  searchTags();
-}
+  async function fetchTagValues() {
+    const param = tags.value.split("=")[0];
+    let resp: any = {};
+    if (props.type === "TRACE") {
+      resp = await traceStore.getTagValues(param);
+    } else {
+      resp = await logStore.getLogTagValues(param);
+    }
 
-async function fetchTagValues() {
-  const param = tags.value.split("=")[0];
-  let resp: any = {};
-  if (props.type === "TRACE") {
-    resp = await traceStore.getTagValues(param);
-  } else {
-    resp = await logStore.getLogTagValues(param);
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+      return;
+    }
+    tagArr.value = resp.data.tagValues;
+    searchTags();
   }
 
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return;
+  function inputTags() {
+    if (!tags.value) {
+      tagArr.value = keysList.value;
+      tagKeys.value = keysList.value;
+      tagList.value = tagArr.value;
+      return;
+    }
+    let search = "";
+    if (tags.value.includes("=")) {
+      search = tags.value.split("=")[1];
+      fetchTagValues();
+    } else {
+      search = tags.value;
+    }
+    tagList.value = tagArr.value.filter((d: string) => d.includes(search));
   }
-  tagArr.value = resp.data.tagValues;
-  searchTags();
-}
 
-function inputTags() {
-  if (!tags.value) {
-    tagArr.value = keysList.value;
-    tagKeys.value = keysList.value;
-    tagList.value = tagArr.value;
-    return;
+  function addTags() {
+    if (!tags.value.includes("=")) {
+      return;
+    }
+    addLabels();
+    tagArr.value = tagKeys.value;
+    searchTags();
   }
-  let search = "";
-  if (tags.value.includes("=")) {
-    search = tags.value.split("=")[1];
+
+  function selectTag(item: string) {
+    if (tags.value.includes("=")) {
+      const key = tags.value.split("=")[0];
+      tags.value = key + "=" + item;
+      addTags();
+      return;
+    }
+    tags.value = item + "=";
     fetchTagValues();
-  } else {
-    search = tags.value;
   }
-  tagList.value = tagArr.value.filter((d: string) => d.includes(search));
-}
 
-function addTags() {
-  if (!tags.value.includes("=")) {
-    return;
+  function searchTags() {
+    let search = "";
+    if (tags.value.includes("=")) {
+      search = tags.value.split("=")[1];
+    } else {
+      search = tags.value;
+    }
+    tagList.value = tagArr.value.filter((d: string) => d.includes(search));
   }
-  addLabels();
-  tagArr.value = tagKeys.value;
-  searchTags();
-}
 
-function selectTag(item: string) {
-  if (tags.value.includes("=")) {
-    const key = tags.value.split("=")[0];
-    tags.value = key + "=" + item;
-    addTags();
-    return;
-  }
-  tags.value = item + "=";
-  fetchTagValues();
-}
-
-function searchTags() {
-  let search = "";
-  if (tags.value.includes("=")) {
-    search = tags.value.split("=")[1];
-  } else {
-    search = tags.value;
-  }
-  tagList.value = tagArr.value.filter((d: string) => d.includes(search));
-}
-
-watch(
-  () => appStore.durationTime,
-  () => {
-    fetchTagKeys();
-  }
-);
+  watch(
+    () => appStore.durationTime,
+    () => {
+      fetchTagKeys();
+    },
+  );
 </script>
 <style lang="scss" scoped>
-.trace-tags {
-  padding: 1px 5px 0 0;
-  border-radius: 3px;
-  height: 24px;
-  display: inline-block;
-  vertical-align: top;
-}
-
-.selected {
-  display: inline-block;
-  padding: 0 3px;
-  border-radius: 3px;
-  overflow: hidden;
-  border: 1px dashed #aaa;
-  font-size: 12px;
-  margin: 3px 2px 0 2px;
-}
-
-.trace-new-tag {
-  border-style: unset;
-  outline: 0;
-  padding: 2px 5px;
-  border-radius: 3px;
-  width: 250px;
-}
-
-.remove-icon {
-  display: inline-block;
-  margin-left: 3px;
-  cursor: pointer;
-}
-
-.tag-item {
-  display: inline-block;
-  min-width: 210px;
-  cursor: pointer;
-  margin-top: 10px;
-
-  &:hover {
-    color: #409eff;
-  }
-}
-
-.tags-tip {
-  color: #a7aebb;
-}
-
-.link-tips {
-  display: inline-block;
-}
-
-.light {
-  color: #3d444f;
-
-  input {
-    border: 1px solid #ccc;
+  .trace-tags {
+    padding: 1px 5px 0 0;
+    border-radius: 3px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: top;
   }
 
   .selected {
-    color: #3d444f;
+    display: inline-block;
+    padding: 0 3px;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px dashed #aaa;
+    font-size: 12px;
+    margin: 3px 2px 0 2px;
   }
-}
 
-.icon-help {
-  cursor: pointer;
-}
+  .trace-new-tag {
+    border-style: unset;
+    outline: 0;
+    padding: 2px 5px;
+    border-radius: 3px;
+    width: 250px;
+  }
 
-.content {
-  width: 300px;
-  max-height: 400px;
-  overflow: auto;
-}
+  .remove-icon {
+    display: inline-block;
+    margin-left: 3px;
+    cursor: pointer;
+  }
+
+  .tag-item {
+    display: inline-block;
+    min-width: 210px;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:hover {
+      color: #409eff;
+    }
+  }
+
+  .tags-tip {
+    color: #a7aebb;
+  }
+
+  .link-tips {
+    display: inline-block;
+  }
+
+  .light {
+    color: #3d444f;
+
+    input {
+      border: 1px solid #ccc;
+    }
+
+    .selected {
+      color: #3d444f;
+    }
+  }
+
+  .icon-help {
+    cursor: pointer;
+  }
+
+  .content {
+    width: 300px;
+    max-height: 400px;
+    overflow: auto;
+  }
 </style>

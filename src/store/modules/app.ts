@@ -17,9 +17,9 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { Duration, DurationTime } from "@/types/app";
+import type { Duration, DurationTime } from "@/types/app";
 import getLocalTime from "@/utils/localtime";
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
 /*global Nullable*/
@@ -92,9 +92,7 @@ export const appStore = defineStore({
               this.duration.start.getMonth());
           break;
       }
-      const utcSpace =
-        (this.utcHour + new Date().getTimezoneOffset() / 60) * 3600000 +
-        this.utcMin * 60000;
+      const utcSpace = (this.utcHour + new Date().getTimezoneOffset() / 60) * 3600000 + this.utcMin * 60000;
       const startUnix: number = this.duration.start.getTime();
       const endUnix: number = this.duration.end.getTime();
       const timeIntervals: number[] = [];
@@ -157,13 +155,11 @@ export const appStore = defineStore({
           this.eventStack.forEach((event: any) => {
             setTimeout(event(), 0);
           }),
-        500
+        500,
       );
     },
     async queryOAPTimeInfo() {
-      const res: AxiosResponse = await graphql
-        .query("queryOAPTimeInfo")
-        .params({});
+      const res: AxiosResponse = await graphql.query("queryOAPTimeInfo").params({});
       if (res.data.errors) {
         this.utc = -(new Date().getTimezoneOffset() / 60) + ":0";
       } else {
@@ -176,9 +172,7 @@ export const appStore = defineStore({
       return res.data;
     },
     async fetchVersion(): Promise<void> {
-      const res: AxiosResponse = await graphql
-        .query("queryOAPVersion")
-        .params({});
+      const res: AxiosResponse = await graphql.query("queryOAPVersion").params({});
       if (res.data.errors) {
         return res.data;
       }

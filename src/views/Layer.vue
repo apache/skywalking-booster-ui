@@ -14,54 +14,50 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <Dashboard v-if="dashboardStore.currentDashboard" />
-  <div v-else class="no-root">
-    {{ t("noRoot") }} {{ dashboardStore.layerId }}
-  </div>
+  <div v-else class="no-root"> {{ t("noRoot") }} {{ dashboardStore.layerId }} </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useRoute } from "vue-router";
-import { EntityType } from "./dashboard/data";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import Dashboard from "./dashboard/Edit.vue";
-import { useI18n } from "vue-i18n";
-import { useAppStoreWithOut } from "@/store/modules/app";
+  import { ref } from "vue";
+  import { useRoute } from "vue-router";
+  import { EntityType } from "./dashboard/data";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import Dashboard from "./dashboard/Edit.vue";
+  import { useI18n } from "vue-i18n";
+  import { useAppStoreWithOut } from "@/store/modules/app";
 
-const route = useRoute();
-const { t } = useI18n();
-const appStore = useAppStoreWithOut();
-const dashboardStore = useDashboardStore();
-const layer = ref<string>("GENERAL");
+  const route = useRoute();
+  const { t } = useI18n();
+  const appStore = useAppStoreWithOut();
+  const dashboardStore = useDashboardStore();
+  const layer = ref<string>("GENERAL");
 
-getDashboard();
+  getDashboard();
 
-async function getDashboard() {
-  layer.value = String(route.meta.layer);
-  dashboardStore.setLayer(layer.value);
-  dashboardStore.setMode(false);
-  await dashboardStore.setDashboards();
-  const item = dashboardStore.dashboards.find(
-    (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
-      d.layer === dashboardStore.layerId &&
-      [EntityType[0].value, EntityType[1].value].includes(d.entity) &&
-      d.isRoot
-  );
-  if (!item) {
-    appStore.setPageTitle(dashboardStore.layer);
-    dashboardStore.setCurrentDashboard(null);
-    dashboardStore.setEntity(EntityType[1].value);
-    return;
+  async function getDashboard() {
+    layer.value = String(route.meta.layer);
+    dashboardStore.setLayer(layer.value);
+    dashboardStore.setMode(false);
+    await dashboardStore.setDashboards();
+    const item = dashboardStore.dashboards.find(
+      (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
+        d.layer === dashboardStore.layerId && [EntityType[0].value, EntityType[1].value].includes(d.entity) && d.isRoot,
+    );
+    if (!item) {
+      appStore.setPageTitle(dashboardStore.layer);
+      dashboardStore.setCurrentDashboard(null);
+      dashboardStore.setEntity(EntityType[1].value);
+      return;
+    }
+    dashboardStore.setEntity(item.entity);
+    dashboardStore.setCurrentDashboard(item);
   }
-  dashboardStore.setEntity(item.entity);
-  dashboardStore.setCurrentDashboard(item);
-}
 </script>
 <style lang="scss" scoped>
-.no-root {
-  padding: 15px;
-  width: 100%;
-  text-align: center;
-  color: #888;
-}
+  .no-root {
+    padding: 15px;
+    width: 100%;
+    text-align: center;
+    color: #888;
+  }
 </style>

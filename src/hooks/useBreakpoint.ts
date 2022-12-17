@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ref, computed, ComputedRef, unref } from "vue";
+import type { ComputedRef } from "vue";
+import { ref, computed, unref } from "vue";
 import { useEventListener } from "./useEventListener";
 import { screenMap, sizeEnum, screenEnum } from "./data";
 
@@ -40,9 +41,7 @@ export function useBreakpoint(): any {
   };
 }
 
-export function createBreakpointListen(
-  fn?: (opt: CreateCallbackParams) => void
-): any {
+export function createBreakpointListen(fn?: (opt: CreateCallbackParams) => void): any {
   const screenRef = ref<sizeEnum>(sizeEnum.XL || "");
   const realWidthRef = ref(window.innerWidth);
 

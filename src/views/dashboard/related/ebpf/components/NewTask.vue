@@ -42,18 +42,9 @@ limitations under the License. -->
     <div>
       <div class="label">{{ t("monitorTime") }}</div>
       <div>
-        <Radio
-          :value="monitorTime"
-          :options="InitTaskField.monitorTimeEn"
-          @change="changeMonitorTime"
-        />
+        <Radio :value="monitorTime" :options="InitTaskField.monitorTimeEn" @change="changeMonitorTime" />
         <span class="date">
-          <TimePicker
-            :value="time"
-            position="bottom"
-            format="YYYY-MM-DD HH:mm:ss"
-            @input="changeTimeRange"
-          />
+          <TimePicker :value="time" position="bottom" format="YYYY-MM-DD HH:mm:ss" @input="changeTimeRange" />
         </span>
       </div>
     </div>
@@ -79,90 +70,90 @@ limitations under the License. -->
   <div v-else>{{ t("ebpfTip") }}</div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useEbpfStore } from "@/store/modules/ebpf";
-import { useSelectorStore } from "@/store/modules/selectors";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { ElMessage } from "element-plus";
-import { InitTaskField, TargetTypes } from "./data";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useEbpfStore } from "@/store/modules/ebpf";
+  import { useSelectorStore } from "@/store/modules/selectors";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { ElMessage } from "element-plus";
+  import { InitTaskField, TargetTypes } from "./data";
 
-/* global defineEmits */
-const emits = defineEmits(["close"]);
-const eBPFStore = useEbpfStore();
-const selectorStore = useSelectorStore();
-const appStore = useAppStoreWithOut();
-const { t } = useI18n();
-const labels = ref<string[]>([]);
-const type = ref<string>(TargetTypes[0].value);
-const monitorTime = ref<string>(InitTaskField.monitorTimeEn[0].value);
-const monitorDuration = ref<number>(10);
-const time = ref<Date>(appStore.durationRow.start);
-const disabled = ref<boolean>(false);
+  /* global defineEmits */
+  const emits = defineEmits(["close"]);
+  const eBPFStore = useEbpfStore();
+  const selectorStore = useSelectorStore();
+  const appStore = useAppStoreWithOut();
+  const { t } = useI18n();
+  const labels = ref<string[]>([]);
+  const type = ref<string>(TargetTypes[0].value);
+  const monitorTime = ref<string>(InitTaskField.monitorTimeEn[0].value);
+  const monitorDuration = ref<number>(10);
+  const time = ref<Date>(appStore.durationRow.start);
+  const disabled = ref<boolean>(false);
 
-function changeMonitorTime(opt: string) {
-  monitorTime.value = opt;
-}
-
-function changeLabel(opt: any[]) {
-  labels.value = opt.map((d) => d.value);
-}
-
-function changeType(opt: any[]) {
-  type.value = opt[0].value;
-}
-
-async function createTask() {
-  if (disabled.value) {
-    return;
+  function changeMonitorTime(opt: string) {
+    monitorTime.value = opt;
   }
-  disabled.value = true;
-  const date = monitorTime.value === "0" ? new Date() : time.value;
-  const params = {
-    serviceId: selectorStore.currentService.id,
-    processLabels: labels.value,
-    startTime: date.getTime(),
-    duration: monitorDuration.value * 60,
-    targetType: type.value,
-  };
-  const res = await eBPFStore.createTask(params);
-  if (res.errors) {
-    ElMessage.error(res.errors);
-    return;
+
+  function changeLabel(opt: any[]) {
+    labels.value = opt.map((d) => d.value);
   }
-  disabled.value = false;
-  if (!res.data.createTaskData.status) {
-    ElMessage.error(res.data.createTaskData.errorReason);
-    return;
+
+  function changeType(opt: any[]) {
+    type.value = opt[0].value;
   }
-  ElMessage.success("Task created successfully");
-  emits("close");
-}
-function changeTimeRange(val: Date) {
-  time.value = val;
-}
+
+  async function createTask() {
+    if (disabled.value) {
+      return;
+    }
+    disabled.value = true;
+    const date = monitorTime.value === "0" ? new Date() : time.value;
+    const params = {
+      serviceId: selectorStore.currentService.id,
+      processLabels: labels.value,
+      startTime: date.getTime(),
+      duration: monitorDuration.value * 60,
+      targetType: type.value,
+    };
+    const res = await eBPFStore.createTask(params);
+    if (res.errors) {
+      ElMessage.error(res.errors);
+      return;
+    }
+    disabled.value = false;
+    if (!res.data.createTaskData.status) {
+      ElMessage.error(res.data.createTaskData.errorReason);
+      return;
+    }
+    ElMessage.success("Task created successfully");
+    emits("close");
+  }
+  function changeTimeRange(val: Date) {
+    time.value = val;
+  }
 </script>
 <style lang="scss" scoped>
-.ebpf-task {
-  margin: 0 auto;
-  width: 400px;
-}
+  .ebpf-task {
+    margin: 0 auto;
+    width: 400px;
+  }
 
-.date {
-  font-size: 12px;
-}
+  .date {
+    font-size: 12px;
+  }
 
-.label {
-  margin-top: 10px;
-  font-size: 14px;
-}
+  .label {
+    margin-top: 10px;
+    font-size: 14px;
+  }
 
-.profile-input {
-  width: 300px;
-}
+  .profile-input {
+    width: 300px;
+  }
 
-.create-task-btn {
-  width: 300px;
-  margin-top: 50px;
-}
+  .create-task-btn {
+    width: 300px;
+    margin-top: 50px;
+  }
 </style>

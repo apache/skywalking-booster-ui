@@ -17,19 +17,11 @@
 class Vec3 extends Float32Array {
   constructor(v?: unknown, y?: unknown, z?: unknown) {
     super(3);
-    if (
-      v instanceof Vec3 ||
-      v instanceof Float32Array ||
-      (v instanceof Array && v.length == 3)
-    ) {
+    if (v instanceof Vec3 || v instanceof Float32Array || (v instanceof Array && v.length == 3)) {
       this[0] = v[0];
       this[1] = v[1];
       this[2] = v[2];
-    } else if (
-      typeof v === "number" &&
-      typeof y === "number" &&
-      typeof z === "number"
-    ) {
+    } else if (typeof v === "number" && typeof y === "number" && typeof z === "number") {
       this[0] = v;
       this[1] = y;
       this[2] = z;
@@ -158,17 +150,9 @@ class Vec3 extends Float32Array {
   }
   static norm(x: unknown, y: unknown, z: unknown): Vec3 {
     const rtn = new Vec3();
-    if (
-      x instanceof Vec3 ||
-      x instanceof Float32Array ||
-      (x instanceof Array && x.length == 3)
-    ) {
+    if (x instanceof Vec3 || x instanceof Float32Array || (x instanceof Array && x.length == 3)) {
       rtn.copy(x);
-    } else if (
-      typeof x === "number" &&
-      typeof y === "number" &&
-      typeof z === "number"
-    ) {
+    } else if (typeof x === "number" && typeof y === "number" && typeof z === "number") {
       rtn.xyz(x, y, z);
     }
     return rtn.norm();

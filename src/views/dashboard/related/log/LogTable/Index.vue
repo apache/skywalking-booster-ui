@@ -15,30 +15,15 @@ limitations under the License. -->
 
 <template>
   <div class="log">
-    <div
-      class="log-header"
-      :class="
-        type === 'browser' ? ['browser-header', 'flex-h'] : 'service-header'
-      "
-    >
+    <div class="log-header" :class="type === 'browser' ? ['browser-header', 'flex-h'] : 'service-header'">
       <template v-for="(item, index) in columns" :key="`col${index}`">
-        <div
-          :class="[
-            item.label,
-            ['message', 'stack'].includes(item.label) ? 'max-item' : '',
-          ]"
-        >
+        <div :class="[item.label, ['message', 'stack'].includes(item.label) ? 'max-item' : '']">
           {{ t(item.value) }}
         </div>
       </template>
     </div>
     <div v-if="type === 'browser'">
-      <LogBrowser
-        v-for="(item, index) in tableData"
-        :data="item"
-        :key="'browser' + index"
-        @select="setCurrentLog"
-      />
+      <LogBrowser v-for="(item, index) in tableData" :data="item" :key="'browser' + index" @select="setCurrentLog" />
     </div>
     <div v-else>
       <LogService
@@ -62,86 +47,85 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { ServiceLogConstants, BrowserLogConstants } from "./data";
-import LogBrowser from "./LogBrowser.vue";
-import LogService from "./LogService.vue";
-import LogDetail from "./LogDetail.vue";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { ServiceLogConstants, BrowserLogConstants } from "./data";
+  import LogBrowser from "./LogBrowser.vue";
+  import LogService from "./LogService.vue";
+  import LogDetail from "./LogDetail.vue";
 
-/*global defineProps */
-const props = defineProps({
-  type: { type: String, default: "service" },
-  tableData: { type: Array, default: () => [] },
-  noLink: { type: Boolean, default: true },
-});
-const { t } = useI18n();
-const currentLog = ref<any>({});
-const showDetail = ref<boolean>(false);
-const columns: any[] =
-  props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
+  /*global defineProps */
+  const props = defineProps({
+    type: { type: String, default: "service" },
+    tableData: { type: Array, default: () => [] },
+    noLink: { type: Boolean, default: true },
+  });
+  const { t } = useI18n();
+  const currentLog = ref<any>({});
+  const showDetail = ref<boolean>(false);
+  const columns: any[] = props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
 
-function setCurrentLog(log: any) {
-  showDetail.value = true;
-  currentLog.value = log;
-}
+  function setCurrentLog(log: any) {
+    showDetail.value = true;
+    currentLog.value = log;
+  }
 </script>
 <style lang="scss" scoped>
-.log {
-  font-size: 12px;
-  height: 100%;
-  border-bottom: 1px solid #eee;
-  width: 100%;
-  overflow: auto;
-}
-
-.log-header {
-  white-space: nowrap;
-  user-select: none;
-  border-left: 0;
-  border-right: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
-  .traceId {
-    width: 390px;
+  .log {
+    font-size: 12px;
+    height: 100%;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    overflow: auto;
   }
 
-  .content,
-  .tags {
-    width: 300px;
+  .log-header {
+    white-space: nowrap;
+    user-select: none;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+    .traceId {
+      width: 390px;
+    }
+
+    .content,
+    .tags {
+      width: 300px;
+    }
+
+    .serviceInstanceName,
+    .endpointName,
+    .serviceName {
+      width: 200px;
+    }
   }
 
-  .serviceInstanceName,
-  .endpointName,
-  .serviceName {
-    width: 200px;
-  }
-}
-
-.log-header div {
-  display: inline-block;
-  padding: 0 5px;
-  border: 1px solid transparent;
-  border-right: 1px dotted silver;
-  line-height: 30px;
-  background-color: #f3f4f9;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.browser-header {
-  div {
-    min-width: 140px;
-    width: 10%;
+  .log-header div {
+    display: inline-block;
+    padding: 0 5px;
+    border: 1px solid transparent;
+    border-right: 1px dotted silver;
+    line-height: 30px;
+    background-color: #f3f4f9;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .max-item {
-    width: 20%;
-  }
-}
+  .browser-header {
+    div {
+      min-width: 140px;
+      width: 10%;
+    }
 
-.service-header div {
-  width: 140px;
-}
+    .max-item {
+      width: 20%;
+    }
+  }
+
+  .service-header div {
+    width: 140px;
+  }
 </style>

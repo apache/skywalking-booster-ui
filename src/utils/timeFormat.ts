@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Duration } from "@/types/app";
+import type { Duration } from "@/types/app";
 import { TimeType } from "@/constants/data";
 
 const timeFormat = (time: Date[]): Duration => {

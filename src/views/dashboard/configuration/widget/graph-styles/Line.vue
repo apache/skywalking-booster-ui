@@ -34,58 +34,43 @@ limitations under the License. -->
   </div>
   <div>
     <span class="label">{{ t("smooth") }}</span>
-    <el-switch
-      v-model="smooth"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ smooth })"
-    />
+    <el-switch v-model="smooth" active-text="Yes" inactive-text="No" @change="updateConfig({ smooth })" />
   </div>
   <div>
     <span class="label">{{ t("showSymbol") }}</span>
-    <el-switch
-      v-model="showSymbol"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ showSymbol })"
-    />
+    <el-switch v-model="showSymbol" active-text="Yes" inactive-text="No" @change="updateConfig({ showSymbol })" />
   </div>
   <div>
     <span class="label">{{ t("step") }}</span>
-    <el-switch
-      v-model="step"
-      active-text="Yes"
-      inactive-text="No"
-      @change="updateConfig({ step })"
-    />
+    <el-switch v-model="step" active-text="Yes" inactive-text="No" @change="updateConfig({ step })" />
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import Legend from "./components/Legend.vue";
+  import { ref, computed } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import Legend from "./components/Legend.vue";
 
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const graph = computed(() => dashboardStore.selectedGrid.graph || {});
-const smooth = ref(graph.value.smooth);
-const showSymbol = ref(graph.value.showSymbol);
-const step = ref(graph.value.step);
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+  const smooth = ref(graph.value.smooth);
+  const showSymbol = ref(graph.value.showSymbol);
+  const step = ref(graph.value.step);
 
-function updateConfig(param: { [key: string]: unknown }) {
-  const graph = {
-    ...dashboardStore.selectedGrid.graph,
-    ...param,
-  };
-  dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
-}
+  function updateConfig(param: { [key: string]: unknown }) {
+    const graph = {
+      ...dashboardStore.selectedGrid.graph,
+      ...param,
+    };
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
+  }
 </script>
 <style lang="scss" scoped>
-.label {
-  font-size: 13px;
-  display: block;
-  margin-top: 5px;
-  margin-bottom: -5px;
-}
+  .label {
+    font-size: 13px;
+    display: block;
+    margin-top: 5px;
+    margin-bottom: -5px;
+  }
 </style>

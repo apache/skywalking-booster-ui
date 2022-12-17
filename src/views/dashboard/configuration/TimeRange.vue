@@ -13,12 +13,7 @@ limitations under the License. -->
 <template>
   <div class="item">
     <span class="label">{{ t("text") }}</span>
-    <el-input
-      class="input"
-      v-model="text"
-      size="small"
-      @change="changeConfig({ text })"
-    />
+    <el-input class="input" v-model="text" size="small" @change="changeConfig({ text })" />
   </div>
   <div class="item">
     <span class="label">{{ t("textAlign") }}</span>
@@ -76,86 +71,86 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { useI18n } from "vue-i18n";
-import { ref } from "vue";
-import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useI18n } from "vue-i18n";
+  import { ref } from "vue";
+  import { useDashboardStore } from "@/store/modules/dashboard";
 
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const originConfig = dashboardStore.selectedGrid;
-const graph = originConfig.graph || {};
-const backgroundColor = ref(graph.backgroundColor || "green");
-const fontColor = ref(graph.fontColor || "white");
-const fontSize = ref<number>(graph.fontSize || 12);
-const textAlign = ref(graph.textAlign || "left");
-const text = ref<string>(graph.text || "");
-const Colors = [
-  {
-    label: "Green",
-    value: "green",
-  },
-  { label: "Blue", value: "blue" },
-  { label: "Red", value: "red" },
-  { label: "Grey", value: "grey" },
-  { label: "White", value: "white" },
-  { label: "Black", value: "black" },
-  { label: "Orange", value: "orange" },
-];
-const AlignStyle = [
-  {
-    label: "Left",
-    value: "left",
-  },
-  { label: "Center", value: "center" },
-  { label: "Right", value: "right" },
-];
-function changeConfig(param: { [key: string]: unknown }) {
-  const { selectedGrid } = dashboardStore;
-  const graph = {
-    ...selectedGrid.graph,
-    ...param,
-  };
-  dashboardStore.selectWidget({ ...selectedGrid, graph });
-}
-function applyConfig() {
-  dashboardStore.setConfigPanel(false);
-  dashboardStore.setConfigs(dashboardStore.selectedGrid);
-}
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const originConfig = dashboardStore.selectedGrid;
+  const graph = originConfig.graph || {};
+  const backgroundColor = ref(graph.backgroundColor || "green");
+  const fontColor = ref(graph.fontColor || "white");
+  const fontSize = ref<number>(graph.fontSize || 12);
+  const textAlign = ref(graph.textAlign || "left");
+  const text = ref<string>(graph.text || "");
+  const Colors = [
+    {
+      label: "Green",
+      value: "green",
+    },
+    { label: "Blue", value: "blue" },
+    { label: "Red", value: "red" },
+    { label: "Grey", value: "grey" },
+    { label: "White", value: "white" },
+    { label: "Black", value: "black" },
+    { label: "Orange", value: "orange" },
+  ];
+  const AlignStyle = [
+    {
+      label: "Left",
+      value: "left",
+    },
+    { label: "Center", value: "center" },
+    { label: "Right", value: "right" },
+  ];
+  function changeConfig(param: { [key: string]: unknown }) {
+    const { selectedGrid } = dashboardStore;
+    const graph = {
+      ...selectedGrid.graph,
+      ...param,
+    };
+    dashboardStore.selectWidget({ ...selectedGrid, graph });
+  }
+  function applyConfig() {
+    dashboardStore.setConfigPanel(false);
+    dashboardStore.setConfigs(dashboardStore.selectedGrid);
+  }
 
-function cancelConfig() {
-  dashboardStore.selectWidget(originConfig);
-  dashboardStore.setConfigPanel(false);
-}
+  function cancelConfig() {
+    dashboardStore.selectWidget(originConfig);
+    dashboardStore.setConfigPanel(false);
+  }
 </script>
 <style lang="scss" scoped>
-.slider {
-  width: 500px;
-  margin-top: -3px;
-}
+  .slider {
+    width: 500px;
+    margin-top: -3px;
+  }
 
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 5px;
-}
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+  }
 
-.input {
-  width: 500px;
-}
+  .input {
+    width: 500px;
+  }
 
-.item {
-  margin-bottom: 10px;
-}
+  .item {
+    margin-bottom: 10px;
+  }
 
-.footer {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  border-top: 1px solid #eee;
-  padding: 10px;
-  text-align: right;
-  width: 100%;
-  background-color: #fff;
-}
+  .footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    border-top: 1px solid #eee;
+    padding: 10px;
+    text-align: right;
+    width: 100%;
+    background-color: #fff;
+  }
 </style>

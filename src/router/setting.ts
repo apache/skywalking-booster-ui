@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
 
 export const routesSetting: Array<RouteRecordRaw> = [
@@ -36,8 +36,7 @@ export const routesSetting: Array<RouteRecordRaw> = [
           icon: "settings",
           hasGroup: false,
         },
-        component: () =>
-          import(/* webpackChunkName: "settings" */ "@/views/Settings.vue"),
+        component: () => import("@/views/Settings.vue"),
       },
     ],
   },

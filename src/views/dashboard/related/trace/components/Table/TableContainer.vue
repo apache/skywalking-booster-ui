@@ -35,11 +35,7 @@ limitations under the License. -->
         </span>
         {{ headerData[0].value }}
       </div>
-      <div
-        :class="item.label"
-        v-for="(item, index) in headerData.slice(1)"
-        :key="index"
-      >
+      <div :class="item.label" v-for="(item, index) in headerData.slice(1)" :key="index">
         {{ item.value }}
       </div>
     </div>
@@ -56,129 +52,128 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
-import type { PropType } from "vue";
-import { Span } from "@/types/trace";
-import TableItem from "./TableItem.vue";
-import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
+  import { ref, onMounted } from "vue";
+  import type { PropType } from "vue";
+  import type { Span } from "@/types/trace";
+  import TableItem from "./TableItem.vue";
+  import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
 
-/* global defineProps, Nullable, defineEmits */
-const props = defineProps({
-  tableData: { type: Array as PropType<any>, default: () => [] },
-  type: { type: String, default: "" },
-  headerType: { type: String, default: "" },
-});
-const emits = defineEmits(["select"]);
-const method = ref<number>(300);
-const componentKey = ref<number>(300);
-const flag = ref<boolean>(true);
-const dragger = ref<Nullable<HTMLSpanElement>>(null);
-let headerData: any[] = TraceConstant;
+  /* global defineProps, Nullable, defineEmits */
+  const props = defineProps({
+    tableData: { type: Array as PropType<any>, default: () => [] },
+    type: { type: String, default: "" },
+    headerType: { type: String, default: "" },
+  });
+  const emits = defineEmits(["select"]);
+  const method = ref<number>(300);
+  const componentKey = ref<number>(300);
+  const flag = ref<boolean>(true);
+  const dragger = ref<Nullable<HTMLSpanElement>>(null);
+  let headerData: any[] = TraceConstant;
 
-if (props.headerType === "profile") {
-  headerData = ProfileConstant;
-}
-if (props.type === "statistics") {
-  headerData = StatisticsConstant;
-}
-onMounted(() => {
-  if (props.type === "statistics") {
-    return;
+  if (props.headerType === "profile") {
+    headerData = ProfileConstant;
   }
-  const drag: any = dragger.value;
-  drag.onmousedown = (event: any) => {
-    const diffX = event.clientX;
-    const copy = method.value;
-    document.onmousemove = (documentEvent) => {
-      const moveX = documentEvent.clientX - diffX;
-      method.value = copy + moveX;
+  if (props.type === "statistics") {
+    headerData = StatisticsConstant;
+  }
+  onMounted(() => {
+    if (props.type === "statistics") {
+      return;
+    }
+    const drag: any = dragger.value;
+    drag.onmousedown = (event: any) => {
+      const diffX = event.clientX;
+      const copy = method.value;
+      document.onmousemove = (documentEvent) => {
+        const moveX = documentEvent.clientX - diffX;
+        method.value = copy + moveX;
+      };
+      document.onmouseup = () => {
+        document.onmousemove = null;
+        document.onmouseup = null;
+      };
     };
-    document.onmouseup = () => {
-      document.onmousemove = null;
-      document.onmouseup = null;
-    };
-  };
-});
-function selectItem(span: Span) {
-  emits("select", span);
-}
-function sortStatistics(key: string) {
-  const element = props.tableData;
-  for (let i = 0; i < element.length; i++) {
-    for (let j = 0; j < element.length - i - 1; j++) {
-      let val1;
-      let val2;
-      if (key === "maxTime") {
-        val1 = element[j].maxTime;
-        val2 = element[j + 1].maxTime;
-      }
-      if (key === "minTime") {
-        val1 = element[j].minTime;
-        val2 = element[j + 1].minTime;
-      }
-      if (key === "avgTime") {
-        val1 = element[j].avgTime;
-        val2 = element[j + 1].avgTime;
-      }
-      if (key === "sumTime") {
-        val1 = element[j].sumTime;
-        val2 = element[j + 1].sumTime;
-      }
-      if (key === "count") {
-        val1 = element[j].count;
-        val2 = element[j + 1].count;
-      }
-      if (flag.value) {
-        if (val1 < val2) {
-          const tmp = element[j];
-          element[j] = element[j + 1];
-          element[j + 1] = tmp;
+  });
+  function selectItem(span: Span) {
+    emits("select", span);
+  }
+  function sortStatistics(key: string) {
+    const element = props.tableData;
+    for (let i = 0; i < element.length; i++) {
+      for (let j = 0; j < element.length - i - 1; j++) {
+        let val1;
+        let val2;
+        if (key === "maxTime") {
+          val1 = element[j].maxTime;
+          val2 = element[j + 1].maxTime;
         }
-      } else {
-        if (val1 > val2) {
-          const tmp = element[j];
-          element[j] = element[j + 1];
-          element[j + 1] = tmp;
+        if (key === "minTime") {
+          val1 = element[j].minTime;
+          val2 = element[j + 1].minTime;
+        }
+        if (key === "avgTime") {
+          val1 = element[j].avgTime;
+          val2 = element[j + 1].avgTime;
+        }
+        if (key === "sumTime") {
+          val1 = element[j].sumTime;
+          val2 = element[j + 1].sumTime;
+        }
+        if (key === "count") {
+          val1 = element[j].count;
+          val2 = element[j + 1].count;
+        }
+        if (flag.value) {
+          if (val1 < val2) {
+            const tmp = element[j];
+            element[j] = element[j + 1];
+            element[j + 1] = tmp;
+          }
+        } else {
+          if (val1 > val2) {
+            const tmp = element[j];
+            element[j] = element[j + 1];
+            element[j + 1] = tmp;
+          }
         }
       }
     }
+    componentKey.value += 1;
+    flag.value = !flag.value;
   }
-  this.tableData = element;
-  this.componentKey += 1;
-  this.flag = !this.flag;
-}
 </script>
 <style lang="scss" scoped>
-@import "./table.scss";
+  @import "./table.scss";
 
-.trace {
-  font-size: 12px;
-  height: 100%;
-  overflow: auto;
-  width: 100%;
-}
+  .trace {
+    font-size: 12px;
+    height: 100%;
+    overflow: auto;
+    width: 100%;
+  }
 
-.dragger {
-  float: right;
-}
+  .dragger {
+    float: right;
+  }
 
-.trace-header {
-  white-space: nowrap;
-  user-select: none;
-  border-left: 0;
-  border-right: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
+  .trace-header {
+    white-space: nowrap;
+    user-select: none;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
 
-.trace-header div {
-  display: inline-block;
-  background-color: #f3f4f9;
-  padding: 0 4px;
-  border: 1px solid transparent;
-  border-right: 1px dotted silver;
-  overflow: hidden;
-  line-height: 30px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+  .trace-header div {
+    display: inline-block;
+    background-color: #f3f4f9;
+    padding: 0 4px;
+    border: 1px solid transparent;
+    border-right: 1px dotted silver;
+    overflow: hidden;
+    line-height: 30px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 </style>

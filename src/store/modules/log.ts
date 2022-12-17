@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Instance, Endpoint, Service } from "@/types/selector";
+import type { Instance, Endpoint, Service } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -71,9 +71,7 @@ export const logStore = defineStore({
       return res.data;
     },
     async getInstances(id: string) {
-      const serviceId = this.selectorStore.currentService
-        ? this.selectorStore.currentService.id
-        : id;
+      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -82,16 +80,11 @@ export const logStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.instances = [
-        { value: "0", label: "All" },
-        ...res.data.data.pods,
-      ] || [{ value: " 0", label: "All" }];
+      this.instances = [{ value: "0", label: "All" }, ...res.data.data.pods] || [{ value: " 0", label: "All" }];
       return res.data;
     },
     async getEndpoints(id: string, keyword?: string) {
-      const serviceId = this.selectorStore.currentService
-        ? this.selectorStore.currentService.id
-        : id;
+      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -100,16 +93,11 @@ export const logStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.endpoints = [
-        { value: "0", label: "All" },
-        ...res.data.data.pods,
-      ] || [{ value: "0", label: "All" }];
+      this.endpoints = [{ value: "0", label: "All" }, ...res.data.data.pods] || [{ value: "0", label: "All" }];
       return res.data;
     },
     async getLogsByKeywords() {
-      const res: AxiosResponse = await graphql
-        .query("queryLogsByKeywords")
-        .params({});
+      const res: AxiosResponse = await graphql.query("queryLogsByKeywords").params({});
 
       if (res.data.errors) {
         return res.data;
@@ -127,9 +115,7 @@ export const logStore = defineStore({
     },
     async getServiceLogs() {
       this.loadLogs = true;
-      const res: AxiosResponse = await graphql
-        .query("queryServiceLogs")
-        .params({ condition: this.conditions });
+      const res: AxiosResponse = await graphql.query("queryServiceLogs").params({ condition: this.conditions });
       this.loadLogs = false;
       if (res.data.errors) {
         return res.data;
@@ -140,9 +126,7 @@ export const logStore = defineStore({
     },
     async getBrowserLogs() {
       this.loadLogs = true;
-      const res: AxiosResponse = await graphql
-        .query("queryBrowserErrorLogs")
-        .params({ condition: this.conditions });
+      const res: AxiosResponse = await graphql.query("queryBrowserErrorLogs").params({ condition: this.conditions });
 
       this.loadLogs = false;
       if (res.data.errors) {

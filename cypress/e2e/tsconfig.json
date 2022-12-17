@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const requireAll = (requireContext: Recordable) =>
-  requireContext.keys().map(requireContext);
-const req = require.context("./", true, /\.svg$/);
-requireAll(req);
+{
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": ["./**/*", "../support/**/*"],
+  "compilerOptions": {
+    "isolatedModules": false,
+    "target": "es5",
+    "lib": ["es5", "dom"],
+    "types": ["cypress"]
+  }
+}

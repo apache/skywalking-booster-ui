@@ -23,21 +23,12 @@ limitations under the License. -->
         format="YYYY-MM-DD HH:mm"
         @input="changeTimeRange"
       />
-      <span>
-        UTC{{ appStore.utcHour >= 0 ? "+" : ""
-        }}{{ `${appStore.utcHour}:${appStore.utcMin}` }}
-      </span>
+      <span> UTC{{ appStore.utcHour >= 0 ? "+" : "" }}{{ `${appStore.utcHour}:${appStore.utcMin}` }} </span>
       <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
       <span class="version ml-5 cp">
-        <el-popover
-          trigger="hover"
-          width="250"
-          placement="bottom"
-          effect="light"
-          :content="appStore.version"
-        >
+        <el-popover trigger="hover" width="250" placement="bottom" effect="light" :content="appStore.version">
           <template #reference>
             <span>
               <Icon iconName="info_outline" size="middle" />
@@ -49,92 +40,90 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from "vue";
-import { useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import timeFormat from "@/utils/timeFormat";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { ElMessage } from "element-plus";
+  import { ref, watch } from "vue";
+  import { useRoute } from "vue-router";
+  import { useI18n } from "vue-i18n";
+  import timeFormat from "@/utils/timeFormat";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { ElMessage } from "element-plus";
 
-const { t } = useI18n();
-const appStore = useAppStoreWithOut();
-const route = useRoute();
-const pageName = ref<string>("");
-const timeRange = ref<number>(0);
+  const { t } = useI18n();
+  const appStore = useAppStoreWithOut();
+  const route = useRoute();
+  const pageName = ref<string>("");
+  const timeRange = ref<number>(0);
 
-resetDuration();
-getVersion();
-const setConfig = (value: string) => {
-  pageName.value = value || "";
-};
+  resetDuration();
+  getVersion();
+  const setConfig = (value: string) => {
+    pageName.value = value || "";
+  };
 
-function handleReload() {
-  const gap =
-    appStore.duration.end.getTime() - appStore.duration.start.getTime();
-  const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
-  appStore.setDuration(timeFormat(dates));
-}
-
-function changeTimeRange(val: Date[] | any) {
-  timeRange.value =
-    val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
-  if (timeRange.value) {
-    return;
+  function handleReload() {
+    const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
+    const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
+    appStore.setDuration(timeFormat(dates));
   }
-  appStore.setDuration(timeFormat(val));
-}
-setConfig(String(route.meta.title));
-watch(
-  () => route.meta.title,
-  (title: unknown) => {
-    setConfig(String(title));
-  }
-);
-async function getVersion() {
-  const res = await appStore.fetchVersion();
-  if (res.errors) {
-    ElMessage.error(res.errors);
-  }
-}
-function resetDuration() {
-  const { duration }: any = route.params;
-  if (duration) {
-    const d = JSON.parse(duration);
 
-    appStore.updateDurationRow({
-      start: new Date(d.start),
-      end: new Date(d.end),
-      step: d.step,
-    });
-    appStore.updateUTC(d.utc);
+  function changeTimeRange(val: Date[] | any) {
+    timeRange.value = val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
+    if (timeRange.value) {
+      return;
+    }
+    appStore.setDuration(timeFormat(val));
   }
-}
+  setConfig(String(route.meta.title));
+  watch(
+    () => route.meta.title,
+    (title: unknown) => {
+      setConfig(String(title));
+    },
+  );
+  async function getVersion() {
+    const res = await appStore.fetchVersion();
+    if (res.errors) {
+      ElMessage.error(res.errors);
+    }
+  }
+  function resetDuration() {
+    const { duration }: any = route.params;
+    if (duration) {
+      const d = JSON.parse(duration);
+
+      appStore.updateDurationRow({
+        start: new Date(d.start),
+        end: new Date(d.end),
+        step: d.step,
+      });
+      appStore.updateUTC(d.utc);
+    }
+  }
 </script>
 <style lang="scss" scoped>
-.nav-bar {
-  padding: 5px 10px 5px 28px;
-  text-align: left;
-  justify-content: space-between;
-  background-color: #fafbfc;
-  border-bottom: 1px solid #dfe4e8;
-  color: #222;
-  font-size: 12px;
-}
+  .nav-bar {
+    padding: 5px 10px 5px 28px;
+    text-align: left;
+    justify-content: space-between;
+    background-color: #fafbfc;
+    border-bottom: 1px solid #dfe4e8;
+    color: #222;
+    font-size: 12px;
+  }
 
-.nav-bar.dark {
-  background-color: #333840;
-  border-bottom: 1px solid #252a2f;
-  color: #fafbfc;
-}
+  .nav-bar.dark {
+    background-color: #333840;
+    border-bottom: 1px solid #252a2f;
+    color: #fafbfc;
+  }
 
-.title {
-  font-size: 14px;
-  font-weight: 500;
-  height: 28px;
-  line-height: 28px;
-}
+  .title {
+    font-size: 14px;
+    font-weight: 500;
+    height: 28px;
+    line-height: 28px;
+  }
 
-.nav-tabs {
-  padding: 10px;
-}
+  .nav-tabs {
+    padding: 10px;
+  }
 </style>

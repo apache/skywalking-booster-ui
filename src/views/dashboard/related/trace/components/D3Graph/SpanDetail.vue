@@ -42,25 +42,17 @@ limitations under the License. -->
       <span class="g-sm-4 grey">{{ t("isError") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.isError }}</span>
     </div>
-    <h5 class="mb-10" v-if="currentSpan.tags && currentSpan.tags.length">
-      {{ t("tags") }}.
-    </h5>
+    <h5 class="mb-10" v-if="currentSpan.tags && currentSpan.tags.length"> {{ t("tags") }}. </h5>
     <div class="mb-10 clear item" v-for="i in currentSpan.tags" :key="i.key">
       <span class="g-sm-4 grey">{{ i.key }}:</span>
       <span class="g-sm-8 wba">
         {{ i.value }}
-        <span
-          v-if="i.key === 'db.statement' && i.value"
-          class="grey link-hover cp ml-5"
-          @click="copy(i.value)"
-        >
+        <span v-if="i.key === 'db.statement' && i.value" class="grey link-hover cp ml-5" @click="copy(i.value)">
           <Icon size="middle" iconName="review-list" />
         </span>
       </span>
     </div>
-    <h5 class="mb-10" v-if="currentSpan.logs" v-show="currentSpan.logs.length">
-      {{ t("logs") }}.
-    </h5>
+    <h5 class="mb-10" v-if="currentSpan.logs" v-show="currentSpan.logs.length"> {{ t("logs") }}. </h5>
     <div v-for="(i, index) in currentSpan.logs" :key="index">
       <div class="mb-10 sm">
         <span class="mr-10">{{ t("time") }}:</span>
@@ -79,12 +71,7 @@ limitations under the License. -->
         <pre class="pl-15 mt-0 mb-0 sm oa">{{ _i.value }}</pre>
       </div>
     </div>
-    <h5
-      class="mb-10"
-      v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"
-    >
-      {{ t("events") }}.
-    </h5>
+    <h5 class="mb-10" v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"> {{ t("events") }}. </h5>
     <div
       class="attach-events"
       ref="timeline"
@@ -94,12 +81,7 @@ limitations under the License. -->
       {{ t("relatedTraceLogs") }}
     </el-button>
   </div>
-  <el-dialog
-    v-model="showEventDetail"
-    :destroy-on-close="true"
-    fullscreen
-    @closed="showEventDetail = false"
-  >
+  <el-dialog v-model="showEventDetail" :destroy-on-close="true" fullscreen @closed="showEventDetail = false">
     <div>
       <div class="mb-10">
         <span class="grey title">Name:</span>
@@ -107,54 +89,27 @@ limitations under the License. -->
       </div>
       <div class="mb-10">
         <span class="grey title">Start Time:</span>
-        {{
-          currentEvent.startTime
-            ? `${visDate(Number(currentEvent.startTime))}:${
-                currentEvent.startTimeNanos
-              }`
-            : ""
-        }}
+        {{ currentEvent.startTime ? `${visDate(Number(currentEvent.startTime))}:${currentEvent.startTimeNanos}` : "" }}
       </div>
       <div class="mb-10">
         <span class="grey title">End Time:</span>
-        {{
-          currentEvent.endTime
-            ? `${visDate(Number(currentEvent.endTime))}:${
-                currentEvent.endTimeNanos
-              }`
-            : ""
-        }}
+        {{ currentEvent.endTime ? `${visDate(Number(currentEvent.endTime))}:${currentEvent.endTimeNanos}` : "" }}
       </div>
       <div class="mb-10">
         <span class="grey title">Summary:</span>
-        <div
-          class="mb-5"
-          v-for="(d, index) in currentEvent.summary || []"
-          :key="index"
-          style="white-space: pre-wrap"
-        >
+        <div class="mb-5" v-for="(d, index) in currentEvent.summary || []" :key="index" style="white-space: pre-wrap">
           {{ d.key + "=" + d.value }};
         </div>
       </div>
       <div>
         <span class="grey title">Tags:</span>
-        <div
-          class="mb-5"
-          v-for="(tag, index) in currentEvent.tags || []"
-          :key="index"
-          style="white-space: pre-wrap"
-        >
+        <div class="mb-5" v-for="(tag, index) in currentEvent.tags || []" :key="index" style="white-space: pre-wrap">
           {{ tag.key + "=" + tag.value }};
         </div>
       </div>
     </div>
   </el-dialog>
-  <el-dialog
-    v-model="showRelatedLogs"
-    :destroy-on-close="true"
-    fullscreen
-    @closed="showRelatedLogs = false"
-  >
+  <el-dialog v-model="showRelatedLogs" :destroy-on-close="true" fullscreen @closed="showRelatedLogs = false">
     <el-pagination
       v-model:currentPage="pageNum"
       v-model:page-size="pageSize"
@@ -164,11 +119,7 @@ limitations under the License. -->
       :total="total"
       @current-change="turnPage"
     />
-    <LogTable
-      :tableData="traceStore.traceSpanLogs || []"
-      :type="`service`"
-      :noLink="true"
-    >
+    <LogTable :tableData="traceStore.traceSpanLogs || []" :type="`service`" :noLink="true">
       <div class="log-tips" v-if="!traceStore.traceSpanLogs.length">
         {{ t("noData") }}
       </div>
@@ -176,72 +127,68 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref, computed, onMounted } from "vue";
-import { useI18n } from "vue-i18n";
-import type { PropType } from "vue";
-import dayjs from "dayjs";
-import { DataSet, Timeline } from "vis-timeline/standalone";
-import "vis-timeline/styles/vis-timeline-graph2d.css";
-import copy from "@/utils/copy";
-import { ElMessage } from "element-plus";
-import { dateFormat } from "@/utils/dateFormat";
-import { useTraceStore } from "@/store/modules/trace";
-import LogTable from "@/views/dashboard/related/log/LogTable/Index.vue";
-import { SpanAttachedEvent } from "@/types/trace";
+  import { ref, computed, onMounted } from "vue";
+  import { useI18n } from "vue-i18n";
+  import type { PropType } from "vue";
+  import dayjs from "dayjs";
+  import { DataSet, Timeline } from "vis-timeline/standalone";
+  import "vis-timeline/styles/vis-timeline-graph2d.css";
+  import copy from "@/utils/copy";
+  import { ElMessage } from "element-plus";
+  import { dateFormat } from "@/utils/dateFormat";
+  import { useTraceStore } from "@/store/modules/trace";
+  import LogTable from "@/views/dashboard/related/log/LogTable/Index.vue";
+  import type { SpanAttachedEvent } from "@/types/trace";
 
-/*global defineProps, Nullable */
-const props = defineProps({
-  currentSpan: { type: Object as PropType<any>, default: () => ({}) },
-});
-const { t } = useI18n();
-const traceStore = useTraceStore();
-const timeline = ref<Nullable<HTMLDivElement>>(null);
-const visGraph = ref<Nullable<any>>(null);
-const pageNum = ref<number>(1);
-const showRelatedLogs = ref<boolean>(false);
-const showEventDetail = ref<boolean>(false);
-const currentEvent = ref<any>({});
-const pageSize = 10;
-const total = computed(() =>
-  traceStore.traceList.length === pageSize
-    ? pageSize * pageNum.value + 1
-    : pageSize * pageNum.value
-);
-const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") =>
-  dayjs(date).format(pattern);
-
-onMounted(() => {
-  setTimeout(() => {
-    visTimeline();
-  }, 500);
-});
-async function getTaceLogs() {
-  showRelatedLogs.value = true;
-  const res = await traceStore.getSpanLogs({
-    condition: {
-      relatedTrace: {
-        traceId: props.currentSpan.traceId,
-        segmentId: props.currentSpan.segmentId,
-        spanId: props.currentSpan.spanId,
-      },
-      paging: { pageNum: pageNum.value, pageSize },
-    },
+  /*global defineProps, Nullable */
+  const props = defineProps({
+    currentSpan: { type: Object as PropType<any>, default: () => ({}) },
   });
-  if (res.errors) {
-    ElMessage.error(res.errors);
+  const { t } = useI18n();
+  const traceStore = useTraceStore();
+  const timeline = ref<Nullable<HTMLDivElement>>(null);
+  const visGraph = ref<Nullable<any>>(null);
+  const pageNum = ref<number>(1);
+  const showRelatedLogs = ref<boolean>(false);
+  const showEventDetail = ref<boolean>(false);
+  const currentEvent = ref<any>({});
+  const pageSize = 10;
+  const total = computed(() =>
+    traceStore.traceList.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
+  );
+  const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
+
+  onMounted(() => {
+    setTimeout(() => {
+      visTimeline();
+    }, 500);
+  });
+  async function getTaceLogs() {
+    showRelatedLogs.value = true;
+    const res = await traceStore.getSpanLogs({
+      condition: {
+        relatedTrace: {
+          traceId: props.currentSpan.traceId,
+          segmentId: props.currentSpan.segmentId,
+          spanId: props.currentSpan.spanId,
+        },
+        paging: { pageNum: pageNum.value, pageSize },
+      },
+    });
+    if (res.errors) {
+      ElMessage.error(res.errors);
+    }
   }
-}
-function visTimeline() {
-  if (!timeline.value) {
-    return;
-  }
-  if (visGraph.value) {
-    visGraph.value.destroy();
-  }
-  const h = timeline.value.getBoundingClientRect().height;
-  const attachedEvents = props.currentSpan.attachedEvents || [];
-  const events: any[] = attachedEvents.map(
-    (d: SpanAttachedEvent, index: number) => {
+  function visTimeline() {
+    if (!timeline.value) {
+      return;
+    }
+    if (visGraph.value) {
+      visGraph.value.destroy();
+    }
+    const h = timeline.value.getBoundingClientRect().height;
+    const attachedEvents = props.currentSpan.attachedEvents || [];
+    const events: any[] = attachedEvents.map((d: SpanAttachedEvent, index: number) => {
       let startTimeNanos = String(d.startTime.nanos).slice(-6).padStart(6, "0");
       let endTimeNanos = String(d.endTime.nanos).slice(-6).padStart(6, "0");
       endTimeNanos = toString(endTimeNanos);
@@ -249,12 +196,8 @@ function visTimeline() {
       return {
         id: index + 1,
         content: d.event,
-        start: new Date(
-          Number(d.startTime.seconds * 1000 + d.startTime.nanos / 1000000)
-        ),
-        end: new Date(
-          Number(d.endTime.seconds * 1000 + d.endTime.nanos / 1000000)
-        ),
+        start: new Date(Number(d.startTime.seconds * 1000 + d.startTime.nanos / 1000000)),
+        end: new Date(Number(d.endTime.seconds * 1000 + d.endTime.nanos / 1000000)),
         ...d,
         startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000000,
         endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000000,
@@ -262,69 +205,68 @@ function visTimeline() {
         startTimeNanos,
         endTimeNanos,
       };
-    }
-  );
+    });
 
-  const items = new DataSet(events);
-  const options: any = {
-    height: h,
-    width: "100%",
-    locale: "en",
-    groupHeightMode: "fitItems",
-    zoomMin: 80,
-  };
+    const items = new DataSet(events);
+    const options: any = {
+      height: h,
+      width: "100%",
+      locale: "en",
+      groupHeightMode: "fitItems",
+      zoomMin: 80,
+    };
 
-  visGraph.value = new Timeline(timeline.value, items, options);
-  visGraph.value.on("select", (data: { items: number[] }) => {
-    const index = data.items[0];
-    currentEvent.value = events[index - 1 || 0] || {};
-    console.log(currentEvent.value);
-    if (data.items.length) {
-      showEventDetail.value = true;
-      return;
-    }
-    showEventDetail.value = false;
-  });
-}
-function toString(str: string) {
-  return str.replace(/\d(?=(\d{3})+$)/g, "$&,");
-}
-function turnPage(p: number) {
-  pageNum.value = p;
-  getTaceLogs();
-}
-function showCurrentSpanDetail(text: string) {
-  copy(text);
-}
+    visGraph.value = new Timeline(timeline.value, items, options);
+    visGraph.value.on("select", (data: { items: number[] }) => {
+      const index = data.items[0];
+      currentEvent.value = events[index - 1 || 0] || {};
+      console.log(currentEvent.value);
+      if (data.items.length) {
+        showEventDetail.value = true;
+        return;
+      }
+      showEventDetail.value = false;
+    });
+  }
+  function toString(str: string) {
+    return str.replace(/\d(?=(\d{3})+$)/g, "$&,");
+  }
+  function turnPage(p: number) {
+    pageNum.value = p;
+    getTaceLogs();
+  }
+  function showCurrentSpanDetail(text: string) {
+    copy(text);
+  }
 </script>
 <style lang="scss" scoped>
-.title {
-  display: inline-block;
-  width: 70px;
-}
+  .title {
+    display: inline-block;
+    width: 70px;
+  }
 
-.attach-events {
-  width: 100%;
-  margin: 0 5px 5px 0;
-  height: 200px;
-}
+  .attach-events {
+    width: 100%;
+    margin: 0 5px 5px 0;
+    height: 200px;
+  }
 
-.popup-btn {
-  color: #fff;
-  margin-top: 40px;
-  width: 100%;
-  text-align: center;
-}
+  .popup-btn {
+    color: #fff;
+    margin-top: 40px;
+    width: 100%;
+    text-align: center;
+  }
 
-.item span {
-  min-height: 21px;
-}
+  .item span {
+    min-height: 21px;
+  }
 
-.link-hover {
-  cursor: pointer;
-}
+  .link-hover {
+    cursor: pointer;
+  }
 
-.link-hover:hover {
-  color: #448dfe;
-}
+  .link-hover:hover {
+    color: #448dfe;
+  }
 </style>

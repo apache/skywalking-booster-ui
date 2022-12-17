@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RouteRecordRaw } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
 
 export const routesAlarm: Array<RouteRecordRaw> = [
@@ -31,8 +31,7 @@ export const routesAlarm: Array<RouteRecordRaw> = [
       {
         path: "/alerting",
         name: "Alarm",
-        component: () =>
-          import(/* webpackChunkName: "alerting" */ "@/views/Alarm.vue"),
+        component: () => import("@/views/Alarm.vue"),
       },
     ],
   },

@@ -14,11 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="timeline-table clear">
-    <div
-      v-for="(i, index) in alarmStore.alarms"
-      :key="index"
-      class="clear timeline-item"
-    >
+    <div v-for="(i, index) in alarmStore.alarms" :key="index" class="clear timeline-item">
       <div class="g-sm-3 grey sm hide-xs time-line tr">
         {{ dateFormat(parseInt(i.startTime)) }}
       </div>
@@ -50,11 +46,7 @@ limitations under the License. -->
     :destroy-on-close="true"
     @closed="isShowDetails = false"
   >
-    <div
-      class="mb-10 clear alarm-detail"
-      v-for="(item, index) in AlarmDetailCol"
-      :key="index"
-    >
+    <div class="mb-10 clear alarm-detail" v-for="(item, index) in AlarmDetailCol" :key="index">
       <span class="g-sm-2 grey">{{ t(item.value) }}:</span>
       <span v-if="item.label === 'startTime'">
         {{ dateFormat(currentDetail[item.label]) }}
@@ -66,24 +58,12 @@ limitations under the License. -->
         <div>
           <ul>
             <li>
-              <span
-                v-for="(i, index) of EventsDetailHeaders"
-                :class="i.class"
-                :key="i.class + index"
-              >
+              <span v-for="(i, index) of EventsDetailHeaders" :class="i.class" :key="i.class + index">
                 {{ t(i.text) }}
               </span>
             </li>
-            <li
-              v-for="event in currentEvents"
-              :key="event.uuid"
-              @click="viewEventDetail(event)"
-            >
-              <span
-                v-for="(d, index) of EventsDetailHeaders"
-                :class="d.class"
-                :key="event.uuid + index"
-              >
+            <li v-for="event in currentEvents" :key="event.uuid" @click="viewEventDetail(event)">
+              <span v-for="(d, index) of EventsDetailHeaders" :class="d.class" :key="event.uuid + index">
                 <span v-if="d.class === 'startTime' || d.class === 'endTime'">
                   {{ dateFormat(event[d.class]) }}
                 </span>
@@ -106,29 +86,16 @@ limitations under the License. -->
     @closed="showEventDetails = false"
   >
     <div class="event-detail">
-      <div
-        class="mb-10"
-        v-for="(eventKey, index) in EventsDetailKeys"
-        :key="index"
-      >
+      <div class="mb-10" v-for="(eventKey, index) in EventsDetailKeys" :key="index">
         <span class="keys">{{ t(eventKey.text) }}</span>
         <span v-if="eventKey.class === 'parameters'">
-          <span v-for="(d, index) of currentEvent[eventKey.class]" :key="index">
-            {{ d.key }}={{ d.value }};
-          </span>
+          <span v-for="(d, index) of currentEvent[eventKey.class]" :key="index"> {{ d.key }}={{ d.value }}; </span>
         </span>
-        <span
-          v-else-if="
-            eventKey.class === 'startTime' || eventKey.class === 'endTime'
-          "
-        >
+        <span v-else-if="eventKey.class === 'startTime' || eventKey.class === 'endTime'">
           {{ dateFormat(currentEvent[eventKey.class]) }}
         </span>
         <span v-else-if="eventKey.class === 'source'" class="source">
-          <span
-            >{{ t("service") }}:
-            {{ currentEvent[eventKey.class].service }}</span
-          >
+          <span>{{ t("service") }}: {{ currentEvent[eventKey.class].service }}</span>
           <div v-show="currentEvent[eventKey.class].endpoint">
             {{ t("endpoint") }}:
             {{ currentEvent[eventKey.class].endpoint }}
@@ -144,45 +111,43 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { Alarm, Event } from "@/types/alarm";
-import { useAlarmStore } from "@/store/modules/alarm";
-import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys } from "./data";
-import { dateFormat } from "@/utils/dateFormat";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import type { Alarm, Event } from "@/types/alarm";
+  import { useAlarmStore } from "@/store/modules/alarm";
+  import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys } from "./data";
+  import { dateFormat } from "@/utils/dateFormat";
 
-const { t } = useI18n();
-const alarmStore = useAlarmStore();
-const isShowDetails = ref<boolean>(false);
-const showEventDetails = ref<boolean>(false);
-const currentDetail = ref<Alarm | any>({});
-const alarmTags = ref<string[]>([]);
-const currentEvents = ref<any[]>([]);
-const currentEvent = ref<Event | any>({});
+  const { t } = useI18n();
+  const alarmStore = useAlarmStore();
+  const isShowDetails = ref<boolean>(false);
+  const showEventDetails = ref<boolean>(false);
+  const currentDetail = ref<Alarm | any>({});
+  const alarmTags = ref<string[]>([]);
+  const currentEvents = ref<any[]>([]);
+  const currentEvent = ref<Event | any>({});
 
-function showDetails(item: Alarm) {
-  isShowDetails.value = true;
-  currentDetail.value = item;
-  currentEvents.value = item.events;
-  alarmTags.value = currentDetail.value.tags.map(
-    (d: { key: string; value: string }) => {
+  function showDetails(item: Alarm) {
+    isShowDetails.value = true;
+    currentDetail.value = item;
+    currentEvents.value = item.events;
+    alarmTags.value = currentDetail.value.tags.map((d: { key: string; value: string }) => {
       return `${d.key} = ${d.value}`;
-    }
-  );
-}
+    });
+  }
 
-function viewEventDetail(event: Event) {
-  currentEvent.value = event;
-  showEventDetails.value = true;
-}
+  function viewEventDetail(event: Event) {
+    currentEvent.value = event;
+    showEventDetails.value = true;
+  }
 </script>
 <style lang="scss" scoped>
-@import "../components/style.scss";
+  @import "../components/style.scss";
 
-.tips {
-  width: 100%;
-  margin: 20px 0;
-  text-align: center;
-  font-size: 14px;
-}
+  .tips {
+    width: 100%;
+    margin: 20px 0;
+    text-align: center;
+    font-size: 14px;
+  }
 </style>

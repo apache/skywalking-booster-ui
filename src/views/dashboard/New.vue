@@ -17,11 +17,7 @@ limitations under the License. -->
     <div class="title">{{ t("newDashboard") }}</div>
     <div class="item">
       <div class="label">{{ t("name") }}</div>
-      <el-input
-        size="default"
-        v-model="states.name"
-        placeholder="Please input name"
-      />
+      <el-input size="default" v-model="states.name" placeholder="Please input name" />
     </div>
     <div class="item">
       <div class="label">{{ t("layer") }}</div>
@@ -51,95 +47,93 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
-import { useI18n } from "vue-i18n";
-import router from "@/router";
-import { useSelectorStore } from "@/store/modules/selectors";
-import { EntityType } from "./data";
-import { ElMessage } from "element-plus";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { useDashboardStore } from "@/store/modules/dashboard";
+  import { reactive } from "vue";
+  import { useI18n } from "vue-i18n";
+  import router from "@/router";
+  import { useSelectorStore } from "@/store/modules/selectors";
+  import { EntityType } from "./data";
+  import { ElMessage } from "element-plus";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useDashboardStore } from "@/store/modules/dashboard";
 
-const appStore = useAppStoreWithOut();
-const dashboardStore = useDashboardStore();
-appStore.setPageTitle("Dashboard New");
-const { t } = useI18n();
-const selectorStore = useSelectorStore();
-const states = reactive({
-  name: "",
-  selectedLayer: "",
-  entity: EntityType[0].value,
-  layers: [],
-});
-setLayers();
-dashboardStore.setDashboards();
+  const appStore = useAppStoreWithOut();
+  const dashboardStore = useDashboardStore();
+  appStore.setPageTitle("Dashboard New");
+  const { t } = useI18n();
+  const selectorStore = useSelectorStore();
+  const states = reactive({
+    name: "",
+    selectedLayer: "",
+    entity: EntityType[0].value,
+    layers: [],
+  });
+  setLayers();
+  dashboardStore.setDashboards();
 
-const onCreate = () => {
-  const index = dashboardStore.dashboards.findIndex(
-    (d: { name: string; entity: string; layer: string }) =>
-      d.name === states.name &&
-      states.entity === d.entity &&
-      states.selectedLayer === d.layer
-  );
-  if (!states.name) {
-    ElMessage.error(t("nameEmptyError"));
-    return;
+  const onCreate = () => {
+    const index = dashboardStore.dashboards.findIndex(
+      (d: { name: string; entity: string; layer: string }) =>
+        d.name === states.name && states.entity === d.entity && states.selectedLayer === d.layer,
+    );
+    if (!states.name) {
+      ElMessage.error(t("nameEmptyError"));
+      return;
+    }
+    if (index > -1) {
+      ElMessage.error(t("nameError"));
+      return;
+    }
+    dashboardStore.setCurrentDashboard({
+      name: states.name,
+      entity: states.entity,
+      layer: states.selectedLayer,
+    });
+    const name = states.name;
+    const path = `/dashboard/${states.selectedLayer}/${states.entity}/${name}`;
+    router.push(path);
+  };
+  async function setLayers() {
+    const resp = await selectorStore.fetchLayers();
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+    }
+    states.selectedLayer = resp.data.layers[0];
+    states.layers = resp.data.layers.map((d: string) => {
+      return { label: d, value: d };
+    });
   }
-  if (index > -1) {
-    ElMessage.error(t("nameError"));
-    return;
+  function changeLayer(opt: { label: string; value: string }[] | any) {
+    states.selectedLayer = opt[0].value;
   }
-  dashboardStore.setCurrentDashboard({
-    name: states.name,
-    entity: states.entity,
-    layer: states.selectedLayer,
-  });
-  const name = states.name;
-  const path = `/dashboard/${states.selectedLayer}/${states.entity}/${name}`;
-  router.push(path);
-};
-async function setLayers() {
-  const resp = await selectorStore.fetchLayers();
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
+  function changeEntity(opt: { label: string; value: string }[] | any) {
+    states.entity = opt[0].value;
   }
-  states.selectedLayer = resp.data.layers[0];
-  states.layers = resp.data.layers.map((d: string) => {
-    return { label: d, value: d };
-  });
-}
-function changeLayer(opt: { label: string; value: string }[] | any) {
-  states.selectedLayer = opt[0].value;
-}
-function changeEntity(opt: { label: string; value: string }[] | any) {
-  states.entity = opt[0].value;
-}
 </script>
 <style lang="scss" scoped>
-.title {
-  font-size: 18px;
-  font-weight: bold;
-  padding-top: 20px;
-}
+  .title {
+    font-size: 18px;
+    font-weight: bold;
+    padding-top: 20px;
+  }
 
-.new-dashboard {
-  margin: 0 auto;
-}
+  .new-dashboard {
+    margin: 0 auto;
+  }
 
-.item {
-  margin-top: 20px;
-}
+  .item {
+    margin-top: 20px;
+  }
 
-.new-dashboard,
-.selectors {
-  width: 600px;
-}
+  .new-dashboard,
+  .selectors {
+    width: 600px;
+  }
 
-.create {
-  width: 600px;
-}
+  .create {
+    width: 600px;
+  }
 
-.btn {
-  margin-top: 40px;
-}
+  .btn {
+    margin-top: 40px;
+  }
 </style>

@@ -82,57 +82,57 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, reactive } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { LegendOptions } from "@/types/dashboard";
+  import { computed, reactive } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import type { LegendOptions } from "@/types/dashboard";
 
-const { t } = useI18n();
-const dashboardStore = useDashboardStore();
-const graph = computed(() => dashboardStore.selectedGrid.graph || {});
-const legend = reactive<LegendOptions>({
-  show: true,
-  total: false,
-  min: false,
-  max: false,
-  mean: false,
-  asTable: false,
-  toTheRight: false,
-  width: 130,
-  ...graph.value.legend,
-});
-
-function updateLegendConfig(param: { [key: string]: unknown }) {
-  const g = {
-    ...dashboardStore.selectedGrid.graph,
-    legend: {
-      ...dashboardStore.selectedGrid.graph.legend,
-      ...param,
-    },
-  };
-  dashboardStore.selectWidget({
-    ...dashboardStore.selectedGrid,
-    graph: g,
+  const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+  const legend = reactive<LegendOptions>({
+    show: true,
+    total: false,
+    min: false,
+    max: false,
+    mean: false,
+    asTable: false,
+    toTheRight: false,
+    width: 130,
+    ...graph.value.legend,
   });
-}
+
+  function updateLegendConfig(param: { [key: string]: unknown }) {
+    const g = {
+      ...dashboardStore.selectedGrid.graph,
+      legend: {
+        ...dashboardStore.selectedGrid.graph.legend,
+        ...param,
+      },
+    };
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      graph: g,
+    });
+  }
 </script>
 <style lang="scss" scoped>
-.label {
-  font-size: 13px;
-  display: block;
-  margin-top: 5px;
-  margin-bottom: -5px;
-}
+  .label {
+    font-size: 13px;
+    display: block;
+    margin-top: 5px;
+    margin-bottom: -5px;
+  }
 
-.title {
-  font-size: 12px;
-  display: inline-flex;
-  height: 32px;
-  line-height: 34px;
-  vertical-align: middle;
-}
+  .title {
+    font-size: 12px;
+    display: inline-flex;
+    height: 32px;
+    line-height: 34px;
+    vertical-align: middle;
+  }
 
-.inputs {
-  width: 120px;
-}
+  .inputs {
+    width: 120px;
+  }
 </style>

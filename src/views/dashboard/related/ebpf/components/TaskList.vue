@@ -21,12 +21,7 @@ limitations under the License. -->
           {{ t("noData") }}
         </div>
         <table class="profile-t">
-          <tr
-            class="profile-tr cp"
-            v-for="(i, index) in ebpfStore.taskList"
-            @click="changeTask(i)"
-            :key="index"
-          >
+          <tr class="profile-tr cp" v-for="(i, index) in ebpfStore.taskList" @click="changeTask(i)" :key="index">
             <td
               class="profile-td"
               :class="{
@@ -35,13 +30,7 @@ limitations under the License. -->
             >
               <div class="ell">
                 <span>
-                  {{
-                    i.targetType +
-                    ": " +
-                    (i.processLabels.length
-                      ? i.processLabels.join(" ")
-                      : `All Processes`)
-                  }}
+                  {{ i.targetType + ": " + (i.processLabels.length ? i.processLabels.join(" ") : `All Processes`) }}
                 </span>
                 <a class="profile-btn r" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
@@ -50,9 +39,7 @@ limitations under the License. -->
               <div class="grey ell sm">
                 <span class="mr-10 sm">{{ dateFormat(i.taskStartTime) }}</span>
                 <span class="mr-10 sm">
-                  {{
-                    dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000)
-                  }}
+                  {{ dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000) }}
                 </span>
               </div>
             </td>
@@ -61,97 +48,92 @@ limitations under the License. -->
       </div>
     </div>
   </div>
-  <el-dialog
-    v-model="viewDetail"
-    :destroy-on-close="true"
-    fullscreen
-    @closed="viewDetail = false"
-  >
+  <el-dialog v-model="viewDetail" :destroy-on-close="true" fullscreen @closed="viewDetail = false">
     <TaskDetails :details="ebpfStore.selectedTask" />
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useEbpfStore } from "@/store/modules/ebpf";
-import { EBPFTaskList } from "@/types/ebpf";
-import { ElMessage } from "element-plus";
-import TaskDetails from "../../components/TaskDetails.vue";
-import { dateFormat } from "@/utils/dateFormat";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useEbpfStore } from "@/store/modules/ebpf";
+  import type { EBPFTaskList } from "@/types/ebpf";
+  import { ElMessage } from "element-plus";
+  import TaskDetails from "../../components/TaskDetails.vue";
+  import { dateFormat } from "@/utils/dateFormat";
 
-const { t } = useI18n();
-const ebpfStore = useEbpfStore();
-const viewDetail = ref<boolean>(false);
+  const { t } = useI18n();
+  const ebpfStore = useEbpfStore();
+  const viewDetail = ref<boolean>(false);
 
-async function changeTask(item: EBPFTaskList) {
-  ebpfStore.setSelectedTask(item);
-  const res = await ebpfStore.getEBPFSchedules({
-    taskId: item.taskId,
-  });
-  if (res.errors) {
-    ElMessage.error(res.errors);
+  async function changeTask(item: EBPFTaskList) {
+    ebpfStore.setSelectedTask(item);
+    const res = await ebpfStore.getEBPFSchedules({
+      taskId: item.taskId,
+    });
+    if (res.errors) {
+      ElMessage.error(res.errors);
+    }
   }
-}
 </script>
 <style lang="scss" scoped>
-.profile-task-list {
-  width: 300px;
-  height: calc(100% - 10px);
-  overflow: auto;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.item span {
-  height: 21px;
-}
-
-.profile-td {
-  padding: 5px 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-
-  &.selected {
-    background-color: #ededed;
+  .profile-task-list {
+    width: 300px;
+    height: calc(100% - 10px);
+    overflow: auto;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
   }
-}
 
-.no-data {
-  text-align: center;
-  margin-top: 10px;
-}
-
-.profile-t-wrapper {
-  overflow: auto;
-  flex-grow: 1;
-}
-
-.profile-t {
-  width: 100%;
-  border-spacing: 0;
-  table-layout: fixed;
-  flex-grow: 1;
-  position: relative;
-  border: none;
-}
-
-.profile-tr {
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+  .item span {
+    height: 21px;
   }
-}
 
-.profile-t-tool {
-  padding: 5px 10px;
-  font-weight: bold;
-  border-right: 1px solid rgba(0, 0, 0, 0.07);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-  background: #f3f4f9;
-}
+  .profile-td {
+    padding: 5px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 
-.profile-btn {
-  color: #3d444f;
-  padding: 1px 3px;
-  border-radius: 2px;
-  font-size: 12px;
-  float: right;
-}
+    &.selected {
+      background-color: #ededed;
+    }
+  }
+
+  .no-data {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .profile-t-wrapper {
+    overflow: auto;
+    flex-grow: 1;
+  }
+
+  .profile-t {
+    width: 100%;
+    border-spacing: 0;
+    table-layout: fixed;
+    flex-grow: 1;
+    position: relative;
+    border: none;
+  }
+
+  .profile-tr {
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .profile-t-tool {
+    padding: 5px 10px;
+    font-weight: bold;
+    border-right: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    background: #f3f4f9;
+  }
+
+  .profile-btn {
+    color: #3d444f;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-size: 12px;
+    float: right;
+  }
 </style>

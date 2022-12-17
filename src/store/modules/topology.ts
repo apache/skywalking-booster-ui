@@ -16,12 +16,12 @@
  */
 import { defineStore } from "pinia";
 import { store } from "@/store";
-import { Service } from "@/types/selector";
-import { Node, Call } from "@/types/topology";
+import type { Service } from "@/types/selector";
+import type { Node, Call } from "@/types/topology";
 import graphql from "@/graphql";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 import query from "@/graphql/fetch";
 import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
 import { ElMessage } from "element-plus";
@@ -105,21 +105,19 @@ export const topologyStore = defineStore({
       this.calls = calls;
       this.nodes = nodes;
     },
-    setNodeMetricValue(m: { id: string; value: unknown }[]) {
+    setNodeMetricValue(m: MetricVal) {
       this.nodeMetricValue = m;
     },
-    setLinkServerMetrics(m: { id: string; value: unknown }[]) {
+    setLinkServerMetrics(m: MetricVal) {
       this.linkServerMetrics = m;
     },
-    setLinkClientMetrics(m: { id: string; value: unknown }[]) {
+    setLinkClientMetrics(m: MetricVal) {
       this.linkClientMetrics = m;
     },
     async getDepthServiceTopology(serviceIds: string[], depth: number) {
       const res = await this.getServicesTopology(serviceIds);
       if (depth > 1) {
-        const ids = (res.nodes || [])
-          .map((item: Node) => item.id)
-          .filter((d: string) => !serviceIds.includes(d));
+        const ids = (res.nodes || []).map((item: Node) => item.id).filter((d: string) => !serviceIds.includes(d));
         if (!ids.length) {
           this.setTopology(res);
           return;
@@ -139,9 +137,7 @@ export const topologyStore = defineStore({
           if (depth > 3) {
             const services = topo.nodes
               .map((item: Node) => item.id)
-              .filter(
-                (d: string) => ![...ids, ...pods, ...serviceIds].includes(d)
-              );
+              .filter((d: string) => ![...ids, ...pods, ...serviceIds].includes(d));
             if (!services.length) {
               const nodes = [...res.nodes, ...json.nodes, ...topo.nodes];
               const calls = [...res.calls, ...json.calls, ...topo.calls];
@@ -152,55 +148,20 @@ export const topologyStore = defineStore({
             if (depth > 4) {
               const nodeIds = data.nodes
                 .map((item: Node) => item.id)
-                .filter(
-                  (d: string) =>
-                    ![...services, ...ids, ...pods, ...serviceIds].includes(d)
-                );
+                .filter((d: string) => ![...services, ...ids, ...pods, ...serviceIds].includes(d));
               if (!nodeIds.length) {
-                const nodes = [
-                  ...res.nodes,
-                  ...json.nodes,
-                  ...topo.nodes,
-                  ...data.nodes,
-                ];
-                const calls = [
-                  ...res.calls,
-                  ...json.calls,
-                  ...topo.calls,
-                  ...data.calls,
-                ];
+                const nodes = [...res.nodes, ...json.nodes, ...topo.nodes, ...data.nodes];
+                const calls = [...res.calls, ...json.calls, ...topo.calls, ...data.calls];
                 this.setTopology({ nodes, calls });
                 return;
               }
               const toposObj = await this.getServicesTopology(nodeIds);
-              const nodes = [
-                ...res.nodes,
-                ...json.nodes,
-                ...topo.nodes,
-                ...data.nodes,
-                ...toposObj.nodes,
-              ];
-              const calls = [
-                ...res.calls,
-                ...json.calls,
-                ...topo.calls,
-                ...data.calls,
-                ...toposObj.calls,
-              ];
+              const nodes = [...res.nodes, ...json.nodes, ...topo.nodes, ...data.nodes, ...toposObj.nodes];
+              const calls = [...res.calls, ...json.calls, ...topo.calls, ...data.calls, ...toposObj.calls];
               this.setTopology({ nodes, calls });
             } else {
-              const nodes = [
-                ...res.nodes,
-                ...json.nodes,
-                ...topo.nodes,
-                ...data.nodes,
-              ];
-              const calls = [
-                ...res.calls,
-                ...json.calls,
-                ...topo.calls,
-                ...data.calls,
-              ];
+              const nodes = [...res.nodes, ...json.nodes, ...topo.nodes, ...data.nodes];
+              const calls = [...res.calls, ...json.calls, ...topo.calls, ...data.calls];
               this.setTopology({ nodes, calls });
             }
           } else {
@@ -220,12 +181,10 @@ export const topologyStore = defineStore({
     },
     async getServicesTopology(serviceIds: string[]) {
       const duration = useAppStoreWithOut().durationTime;
-      const res: AxiosResponse = await graphql
-        .query("getServicesTopology")
-        .params({
-          serviceIds,
-          duration,
-        });
+      const res: AxiosResponse = await graphql.query("getServicesTopology").params({
+        serviceIds,
+        duration,
+      });
       if (res.data.errors) {
         return res.data;
       }
@@ -235,13 +194,11 @@ export const topologyStore = defineStore({
       const serverServiceId = useSelectorStore().currentService.id;
       const clientServiceId = useSelectorStore().currentDestService.id;
       const duration = useAppStoreWithOut().durationTime;
-      const res: AxiosResponse = await graphql
-        .query("getInstanceTopology")
-        .params({
-          clientServiceId,
-          serverServiceId,
-          duration,
-        });
+      const res: AxiosResponse = await graphql.query("getInstanceTopology").params({
+        clientServiceId,
+        serverServiceId,
+        duration,
+      });
       if (!res.data.errors) {
         this.setInstanceTopology(res.data.data.topology);
       }
@@ -250,9 +207,7 @@ export const topologyStore = defineStore({
     async updateEndpointTopology(endpointIds: string[], depth: number) {
       const res = await this.getEndpointTopology(endpointIds);
       if (depth > 1) {
-        const ids = res.nodes
-          .map((item: Node) => item.id)
-          .filter((d: string) => !endpointIds.includes(d));
+        const ids = res.nodes.map((item: Node) => item.id).filter((d: string) => !endpointIds.includes(d));
         if (!ids.length) {
           this.setTopology(res);
           return;
@@ -272,9 +227,7 @@ export const topologyStore = defineStore({
           if (depth > 3) {
             const endpoints = topo.nodes
               .map((item: Node) => item.id)
-              .filter(
-                (d: string) => ![...ids, ...pods, ...endpointIds].includes(d)
-              );
+              .filter((d: string) => ![...ids, ...pods, ...endpointIds].includes(d));
             if (!endpoints.length) {
               const nodes = [...res.nodes, ...json.nodes, ...topo.nodes];
               const calls = [...res.calls, ...json.calls, ...topo.calls];
@@ -285,55 +238,20 @@ export const topologyStore = defineStore({
             if (depth > 4) {
               const nodeIds = data.nodes
                 .map((item: Node) => item.id)
-                .filter(
-                  (d: string) =>
-                    ![...endpoints, ...ids, ...pods, ...endpointIds].includes(d)
-                );
+                .filter((d: string) => ![...endpoints, ...ids, ...pods, ...endpointIds].includes(d));
               if (!nodeIds.length) {
-                const nodes = [
-                  ...res.nodes,
-                  ...json.nodes,
-                  ...topo.nodes,
-                  ...data.nodes,
-                ];
-                const calls = [
-                  ...res.calls,
-                  ...json.calls,
-                  ...topo.calls,
-                  ...data.calls,
-                ];
+                const nodes = [...res.nodes, ...json.nodes, ...topo.nodes, ...data.nodes];
+                const calls = [...res.calls, ...json.calls, ...topo.calls, ...data.calls];
                 this.setTopology({ nodes, calls });
                 return;
               }
               const toposObj = await this.getEndpointTopology(nodeIds);
-              const nodes = [
-                ...res.nodes,
-                ...json.nodes,
-                ...topo.nodes,
-                ...data.nodes,
-                ...toposObj.nodes,
-              ];
-              const calls = [
-                ...res.calls,
-                ...json.calls,
-                ...topo.calls,
-                ...data.calls,
-                ...toposObj.calls,
-              ];
+              const nodes = [...res.nodes, ...json.nodes, ...topo.nodes, ...data.nodes, ...toposObj.nodes];
+              const calls = [...res.calls, ...json.calls, ...topo.calls, ...data.calls, ...toposObj.calls];
               this.setTopology({ nodes, calls });
             } else {
-              const nodes = [
-                ...res.nodes,
-                ...json.nodes,
-                ...topo.nodes,
-                ...data.nodes,
-              ];
-              const calls = [
-                ...res.calls,
-                ...json.calls,
-                ...topo.calls,
-                ...data.calls,
-              ];
+              const nodes = [...res.nodes, ...json.nodes, ...topo.nodes, ...data.nodes];
+              const calls = [...res.calls, ...json.calls, ...topo.calls, ...data.calls];
               this.setTopology({ nodes, calls });
             }
           } else {
@@ -390,10 +308,7 @@ export const topologyStore = defineStore({
 
       return { calls, nodes };
     },
-    async getNodeMetricValue(param: {
-      queryStr: string;
-      conditions: { [key: string]: unknown };
-    }) {
+    async getNodeMetricValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
       const res: AxiosResponse = await query(param);
 
       if (res.data.errors) {
@@ -407,9 +322,7 @@ export const topologyStore = defineStore({
         this.setLinkClientMetrics({});
         return;
       }
-      const idsC = this.calls
-        .filter((i: Call) => i.detectPoints.includes("CLIENT"))
-        .map((b: Call) => b.id);
+      const idsC = this.calls.filter((i: Call) => i.detectPoints.includes("CLIENT")).map((b: Call) => b.id);
       if (!idsC.length) {
         return;
       }
@@ -425,9 +338,7 @@ export const topologyStore = defineStore({
         this.setLinkServerMetrics({});
         return;
       }
-      const idsS = this.calls
-        .filter((i: Call) => i.detectPoints.includes("SERVER"))
-        .map((b: Call) => b.id);
+      const idsS = this.calls.filter((i: Call) => i.detectPoints.includes("SERVER")).map((b: Call) => b.id);
       if (!idsS.length) {
         return;
       }
@@ -454,10 +365,7 @@ export const topologyStore = defineStore({
         ElMessage.error(res.errors);
       }
     },
-    async getLegendMetrics(param: {
-      queryStr: string;
-      conditions: { [key: string]: unknown };
-    }) {
+    async getLegendMetrics(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
       const res: AxiosResponse = await query(param);
 
       if (res.data.errors) {
@@ -477,10 +385,7 @@ export const topologyStore = defineStore({
       });
       return res.data;
     },
-    async getCallServerMetrics(param: {
-      queryStr: string;
-      conditions: { [key: string]: unknown };
-    }) {
+    async getCallServerMetrics(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
       const res: AxiosResponse = await query(param);
 
       if (res.data.errors) {
@@ -489,10 +394,7 @@ export const topologyStore = defineStore({
       this.setLinkServerMetrics(res.data.data);
       return res.data;
     },
-    async getCallClientMetrics(param: {
-      queryStr: string;
-      conditions: { [key: string]: unknown };
-    }) {
+    async getCallClientMetrics(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
       const res: AxiosResponse = await query(param);
 
       if (res.data.errors) {

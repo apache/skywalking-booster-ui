@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { DurationTime } from "./app";
+import type { DurationTime } from "./app";
 
 export interface Conditions {
   container: string;

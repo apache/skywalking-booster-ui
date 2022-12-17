@@ -21,89 +21,86 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-import { useI18n } from "vue-i18n";
-import { ref, onMounted, watch } from "vue";
-import type { PropType } from "vue";
-import Container from "./Container.vue";
+  import { useI18n } from "vue-i18n";
+  import { ref, onMounted, watch } from "vue";
+  import type { PropType } from "vue";
+  import Container from "./Container.vue";
 
-const { t } = useI18n();
-/* global defineProps */
-const props = defineProps({
-  data: { type: Array as PropType<any>, default: () => [] },
-  highlightTop: { type: Boolean, default: false },
-});
-const tableData = ref<any>([]);
+  const { t } = useI18n();
+  /* global defineProps */
+  const props = defineProps({
+    data: { type: Array as PropType<any>, default: () => [] },
+    highlightTop: { type: Boolean, default: false },
+  });
+  const tableData = ref<any>([]);
 
-onMounted(() => {
-  tableData.value = processTree();
-});
-function processTree() {
-  if (!props.data.length) {
-    return [];
-  }
-
-  const durationChildExcluded = props.data
-    .map((d: any) => {
-      return d.elements.map((item: any) => item.durationChildExcluded);
-    })
-    .flat(1);
-  function compare(val: number, val1: number) {
-    return val1 - val;
-  }
-  const topDur = durationChildExcluded
-    .sort(compare)
-    .filter((item: any, index: number) => index < 10 && item !== 0);
-  const trees = [];
-
-  for (const item of props.data) {
-    const newArr = sortArr(item.elements, topDur);
-    trees.push(...newArr);
-  }
-
-  return trees;
-}
-
-function sortArr(arr: any[], topDur: any) {
-  const copyArr = JSON.parse(JSON.stringify(arr));
-  const obj: any = {};
-  const res = [];
-  for (const item of copyArr) {
-    obj[item.id] = item;
-  }
-  for (const item of copyArr) {
-    item.topDur =
-      topDur.includes(item.durationChildExcluded) && props.highlightTop;
-    if (item.parentId === "0") {
-      res.push(item);
+  onMounted(() => {
+    tableData.value = processTree();
+  });
+  function processTree() {
+    if (!props.data.length) {
+      return [];
     }
-    for (const key in obj) {
-      if (item.id === obj[key].parentId) {
-        if (item.children) {
-          item.children.push(obj[key]);
-        } else {
-          item.children = [obj[key]];
+
+    const durationChildExcluded = props.data
+      .map((d: any) => {
+        return d.elements.map((item: any) => item.durationChildExcluded);
+      })
+      .flat(1);
+    function compare(val: number, val1: number) {
+      return val1 - val;
+    }
+    const topDur = durationChildExcluded.sort(compare).filter((item: any, index: number) => index < 10 && item !== 0);
+    const trees = [];
+
+    for (const item of props.data) {
+      const newArr = sortArr(item.elements, topDur);
+      trees.push(...newArr);
+    }
+
+    return trees;
+  }
+
+  function sortArr(arr: any[], topDur: any) {
+    const copyArr = JSON.parse(JSON.stringify(arr));
+    const obj: any = {};
+    const res = [];
+    for (const item of copyArr) {
+      obj[item.id] = item;
+    }
+    for (const item of copyArr) {
+      item.topDur = topDur.includes(item.durationChildExcluded) && props.highlightTop;
+      if (item.parentId === "0") {
+        res.push(item);
+      }
+      for (const key in obj) {
+        if (item.id === obj[key].parentId) {
+          if (item.children) {
+            item.children.push(obj[key]);
+          } else {
+            item.children = [obj[key]];
+          }
         }
       }
     }
+
+    return res;
   }
 
-  return res;
-}
-
-watch(
-  () => [props.data, props.highlightTop],
-  () => {
-    if (!props.data.length) {
-      tableData.value = [];
-      return;
-    }
-    tableData.value = processTree();
-  }
-);
+  watch(
+    () => [props.data, props.highlightTop],
+    () => {
+      if (!props.data.length) {
+        tableData.value = [];
+        return;
+      }
+      tableData.value = processTree();
+    },
+  );
 </script>
 <style lang="scss" scoped>
-.profile-detail-chart-table {
-  height: 100%;
-  overflow: auto;
-}
+  .profile-detail-chart-table {
+    height: 100%;
+    overflow: auto;
+  }
 </style>

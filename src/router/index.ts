@@ -14,21 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import { routesDashboard } from "./dashboard";
 import { routesSetting } from "./setting";
 import { routesAlarm } from "./alarm";
 import routesLayers from "./layer";
 
-const routes: Array<RouteRecordRaw> = [
-  ...routesLayers,
-  ...routesDashboard,
-  ...routesAlarm,
-  ...routesSetting,
-];
+const routes: Array<RouteRecordRaw> = [...routesLayers, ...routesDashboard, ...routesAlarm, ...routesSetting];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 

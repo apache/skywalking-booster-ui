@@ -26,103 +26,97 @@ limitations under the License. -->
     <div class="row flex-h" v-for="key in dataKeys" :key="key">
       <div class="name" :style="`width: ${nameWidth}`">{{ key }}</div>
       <div class="value-col" v-if="config.showTableValues">
-        {{
-          config.metricTypes[0] === "readMetricsValue"
-            ? data[key]
-            : data[key][data[key].length - 1 || 0]
-        }}
+        {{ config.metricTypes[0] === "readMetricsValue" ? data[key] : data[key][data[key].length - 1 || 0] }}
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
-import type { PropType } from "vue";
-import { useI18n } from "vue-i18n";
-/*global defineProps */
-const props = defineProps({
-  data: {
-    type: Object as PropType<{ [key: string]: number[] }>,
-    default: () => ({}),
-  },
-  config: {
-    type: Object as PropType<{
-      showTableValues: boolean;
-      tableHeaderCol2: string;
-      tableHeaderCol1: string;
-      metricTypes: string[];
-    }>,
-    default: () => ({ showTableValues: true }),
-  },
-});
+  import { computed } from "vue";
+  import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
+  /*global defineProps */
+  const props = defineProps({
+    data: {
+      type: Object as PropType<{ [key: string]: number[] }>,
+      default: () => ({}),
+    },
+    config: {
+      type: Object as PropType<{
+        showTableValues: boolean;
+        tableHeaderCol2: string;
+        tableHeaderCol1: string;
+        metricTypes: string[];
+      }>,
+      default: () => ({ showTableValues: true }),
+    },
+  });
 
-const { t } = useI18n();
-const nameWidth = computed(() =>
-  props.config.showTableValues ? "80%" : "100%"
-);
-const dataKeys = computed(() => {
-  if (props.config.metricTypes[0] === "readMetricsValue") {
-    const keys = Object.keys(props.data || {});
+  const { t } = useI18n();
+  const nameWidth = computed(() => (props.config.showTableValues ? "80%" : "100%"));
+  const dataKeys = computed(() => {
+    if (props.config.metricTypes[0] === "readMetricsValue") {
+      const keys = Object.keys(props.data || {});
+      return keys;
+    }
+    const keys = Object.keys(props.data || {}).filter(
+      (i: string) => Array.isArray(props.data[i]) && props.data[i].length,
+    );
     return keys;
-  }
-  const keys = Object.keys(props.data || {}).filter(
-    (i: string) => Array.isArray(props.data[i]) && props.data[i].length
-  );
-  return keys;
-});
+  });
 </script>
 <style lang="scss" scoped>
-.chart-table {
-  height: 100%;
-  width: 100%;
-  overflow: auto;
-
-  .name {
-    padding-left: 15px;
-  }
-
-  .row {
-    border-left: 1px solid #ccc;
-    height: 20px;
+  .chart-table {
+    height: 100%;
     width: 100%;
+    overflow: auto;
 
-    div {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      border-right: 1px solid #ccc;
-      text-align: center;
+    .name {
+      padding-left: 15px;
+    }
+
+    .row {
+      border-left: 1px solid #ccc;
       height: 20px;
-      line-height: 20px;
-      display: inline-block;
+      width: 100%;
+
+      div {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-right: 1px solid #ccc;
+        text-align: center;
+        height: 20px;
+        line-height: 20px;
+        display: inline-block;
+      }
+
+      div:last-child {
+        border-bottom: 1px solid #ccc;
+      }
+
+      div:nth-last-child(2) {
+        border-bottom: 1px solid #ccc;
+      }
     }
 
-    div:last-child {
-      border-bottom: 1px solid #ccc;
+    .dark {
+      color: #eee;
     }
 
-    div:nth-last-child(2) {
-      border-bottom: 1px solid #ccc;
+    .row:first-child {
+      div {
+        border-top: 1px solid #ccc;
+        background: #eee;
+      }
+    }
+
+    .header {
+      color: #000;
+      font-weight: bold;
+    }
+
+    .value-col {
+      width: 50%;
     }
   }
-
-  .dark {
-    color: #eee;
-  }
-
-  .row:first-child {
-    div {
-      border-top: 1px solid #ccc;
-      background: #eee;
-    }
-  }
-
-  .header {
-    color: #000;
-    font-weight: bold;
-  }
-
-  .value-col {
-    width: 50%;
-  }
-}
 </style>

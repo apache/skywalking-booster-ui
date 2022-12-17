@@ -39,69 +39,66 @@ limitations under the License. -->
   <div class="no-data-tips" v-else>{{ t("noWidget") }}</div>
 </template>
 <script lang="ts">
-import { defineComponent, onBeforeUnmount } from "vue";
-import { useI18n } from "vue-i18n";
-import { useDashboardStore } from "@/store/modules/dashboard";
-import { useSelectorStore } from "@/store/modules/selectors";
-import { LayoutConfig } from "@/types/dashboard";
-import controls from "../controls/index";
-import { dragIgnoreFrom } from "../data";
+  import { defineComponent, onBeforeUnmount } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useSelectorStore } from "@/store/modules/selectors";
+  import type { LayoutConfig } from "@/types/dashboard";
+  import controls from "../controls/index";
+  import { dragIgnoreFrom } from "../data";
 
-export default defineComponent({
-  name: "Layout",
-  components: { ...controls },
-  setup() {
-    const { t } = useI18n();
-    const dashboardStore = useDashboardStore();
-    const selectorStore = useSelectorStore();
+  export default defineComponent({
+    name: "Layout",
+    components: { ...controls },
+    setup() {
+      const { t } = useI18n();
+      const dashboardStore = useDashboardStore();
+      const selectorStore = useSelectorStore();
 
-    function clickGrid(item: LayoutConfig, event: Event) {
-      dashboardStore.activeGridItem(item.i);
-      dashboardStore.selectWidget(item);
-      if (
-        item.type === "Tab" &&
-        (event.target as HTMLDivElement)?.className !== "tab-layout"
-      ) {
-        dashboardStore.setActiveTabIndex(0);
+      function clickGrid(item: LayoutConfig, event: Event) {
+        dashboardStore.activeGridItem(item.i);
+        dashboardStore.selectWidget(item);
+        if (item.type === "Tab" && (event.target as HTMLDivElement)?.className !== "tab-layout") {
+          dashboardStore.setActiveTabIndex(0);
+        }
       }
-    }
-    onBeforeUnmount(() => {
-      dashboardStore.setLayout([]);
-      selectorStore.setCurrentService(null);
-      selectorStore.setCurrentPod(null);
-      dashboardStore.setEntity("");
-      dashboardStore.setConfigPanel(false);
-    });
-    return {
-      dashboardStore,
-      clickGrid,
-      t,
-      dragIgnoreFrom,
-    };
-  },
-});
+      onBeforeUnmount(() => {
+        dashboardStore.setLayout([]);
+        selectorStore.setCurrentService(null);
+        selectorStore.setCurrentPod(null);
+        dashboardStore.setEntity("");
+        dashboardStore.setConfigPanel(false);
+      });
+      return {
+        dashboardStore,
+        clickGrid,
+        t,
+        dragIgnoreFrom,
+      };
+    },
+  });
 </script>
 <style lang="scss" scoped>
-.vue-grid-layout {
-  background: #f7f9fa;
-  height: auto !important;
-}
+  .vue-grid-layout {
+    background: #f7f9fa;
+    height: auto !important;
+  }
 
-.vue-grid-item:not(.vue-grid-placeholder) {
-  background: #fff;
-  box-shadow: 0px 1px 4px 0px #00000029;
-  border-radius: 3px;
-}
+  .vue-grid-item:not(.vue-grid-placeholder) {
+    background: #fff;
+    box-shadow: 0px 1px 4px 0px #00000029;
+    border-radius: 3px;
+  }
 
-.vue-grid-item.active {
-  border: 1px solid #409eff;
-}
+  .vue-grid-item.active {
+    border: 1px solid #409eff;
+  }
 
-.no-data-tips {
-  width: 100%;
-  text-align: center;
-  font-size: 14px;
-  padding-top: 30px;
-  color: #888;
-}
+  .no-data-tips {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 30px;
+    color: #888;
+  }
 </style>

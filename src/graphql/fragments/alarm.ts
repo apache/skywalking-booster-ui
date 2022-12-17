@@ -16,8 +16,7 @@
  */
 
 export const Alarm = {
-  variable:
-    "$keyword: String, $scope: Scope, $duration:Duration!, $tags:[AlarmTag], $paging: Pagination!",
+  variable: "$keyword: String, $scope: Scope, $duration:Duration!, $tags:[AlarmTag], $paging: Pagination!",
   query: `
     getAlarm(keyword: $keyword, scope: $scope, duration: $duration, paging: $paging, tags: $tags) {
       items: msgs {

@@ -27,73 +27,71 @@ limitations under the License. -->
     :remote-method="remoteMethod"
     :filterable="filterable"
   >
-    <el-option
-      v-for="item in options"
-      :key="item.value || ''"
-      :label="item.label || ''"
-      :value="item.value || ''"
-    >
+    <el-option v-for="item in options" :key="item.value || ''" :label="item.label || ''" :value="item.value || ''">
     </el-option>
   </el-select>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from "vue";
-import type { PropType } from "vue";
+  import { ref, watch } from "vue";
+  import type { PropType } from "vue";
 
-interface Option {
-  label: string | number;
-  value: string | number;
-}
+  // interface Option {
+  //   label: string | number;
+  //   value: string | number;
+  // }
 
-/*global  defineProps, defineEmits*/
-const emit = defineEmits(["change", "query"]);
-const props = defineProps({
-  options: {
-    type: Array as PropType<(Option & { disabled?: boolean })[]>,
-    default: () => [],
-  },
-  value: {
-    type: [Array, String, Number, undefined] as PropType<any>,
-    default: () => [],
-  },
-  size: { type: null, default: "default" },
-  placeholder: {
-    type: [String, undefined] as PropType<string>,
-    default: "Select a option",
-  },
-  borderRadius: { type: Number, default: 3 },
-  multiple: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  clearable: { type: Boolean, default: false },
-  isRemote: { type: Boolean, default: false },
-  filterable: { type: Boolean, default: true },
-});
+  /*global  defineProps, defineEmits*/
+  const emit = defineEmits(["change", "query"]);
+  const props = defineProps({
+    options: {
+      type: Array as PropType<
+        ({
+          label: string | number;
+          value: string | number;
+        } & { disabled?: boolean })[]
+      >,
+      default: () => [],
+    },
+    value: {
+      type: [Array, String, Number, undefined] as PropType<any>,
+      default: () => [],
+    },
+    size: { type: null, default: "default" },
+    placeholder: {
+      type: [String, undefined] as PropType<string>,
+      default: "Select a option",
+    },
+    borderRadius: { type: Number, default: 3 },
+    multiple: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
+    clearable: { type: Boolean, default: false },
+    isRemote: { type: Boolean, default: false },
+    filterable: { type: Boolean, default: true },
+  });
 
-const selected = ref<string[] | string>(props.value);
-function changeSelected() {
-  const options = props.options.filter((d: any) =>
-    props.multiple
-      ? selected.value.includes(d.value)
-      : selected.value === d.value
+  const selected = ref<string[] | string>(props.value);
+  function changeSelected() {
+    const options = props.options.filter((d: any) =>
+      props.multiple ? selected.value.includes(d.value) : selected.value === d.value,
+    );
+    emit("change", options);
+  }
+
+  function remoteMethod(query: string) {
+    if (props.isRemote) {
+      emit("query", query);
+    }
+  }
+
+  watch(
+    () => props.value,
+    (data) => {
+      selected.value = data;
+    },
   );
-  emit("change", options);
-}
-
-function remoteMethod(query: string) {
-  if (props.isRemote) {
-    emit("query", query);
-  }
-}
-
-watch(
-  () => props.value,
-  (data) => {
-    selected.value = data;
-  }
-);
 </script>
 <style lang="scss" scoped>
-.el-input__inner {
-  border-radius: unset !important;
-}
+  .el-input__inner {
+    border-radius: unset !important;
+  }
 </style>

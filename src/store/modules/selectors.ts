@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import { Service, Instance, Endpoint, Process } from "@/types/selector";
+import type { Service, Instance, Endpoint, Process } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 interface SelectorState {
   services: Service[];
@@ -82,9 +82,7 @@ export const selectorStore = defineStore({
       return res.data || {};
     },
     async fetchServices(layer: string): Promise<AxiosResponse> {
-      const res: AxiosResponse = await graphql
-        .query("queryServices")
-        .params({ layer });
+      const res: AxiosResponse = await graphql.query("queryServices").params({ layer });
 
       if (!res.data.errors) {
         this.services = res.data.data.services || [];
@@ -92,10 +90,7 @@ export const selectorStore = defineStore({
       }
       return res.data;
     },
-    async getServiceInstances(param?: {
-      serviceId: string;
-      isRelation: boolean;
-    }): Promise<Nullable<AxiosResponse>> {
+    async getServiceInstances(param?: { serviceId: string; isRelation: boolean }): Promise<Nullable<AxiosResponse>> {
       const serviceId = param ? param.serviceId : this.currentService?.id;
       if (!serviceId) {
         return null;
@@ -113,10 +108,7 @@ export const selectorStore = defineStore({
       }
       return res.data;
     },
-    async getProcesses(param?: {
-      instanceId: string;
-      isRelation: boolean;
-    }): Promise<Nullable<AxiosResponse>> {
+    async getProcesses(param?: { instanceId: string; isRelation: boolean }): Promise<Nullable<AxiosResponse>> {
       const instanceId = param ? param.instanceId : this.currentPod?.id;
       if (!instanceId) {
         return null;
