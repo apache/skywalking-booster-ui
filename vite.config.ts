@@ -73,7 +73,35 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       target: "es2015",
       cssTarget: "chrome80",
       outDir: OUTPUT_DIR,
+      manifest: false,
+      sourcemap: false,
       chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        output: {
+          chunkFileNames: "static/js/[name]-[hash].js",
+          entryFileNames: "static/js/[name]-[hash].js",
+          assetFileNames: "static/[ext]/[name]-[hash].[ext]",
+          manualChunks(id) {
+            if (id.includes("node_modules")) {
+              if (id.includes("lodash")) {
+                return "lodash";
+              } else if (id.includes("echarts")) {
+                return "echarts";
+              } else if (id.includes("element-plus")) {
+                return "element-plus";
+              } else if (id.includes("monaco-editor")) {
+                return "monaco-editor";
+              } else if (id.includes("d3")) {
+                return "d3";
+              } else if (id.includes("vue")) {
+                return "vue";
+              } else {
+                return "vendors";
+              }
+            }
+          },
+        },
+      },
     },
   };
 };
