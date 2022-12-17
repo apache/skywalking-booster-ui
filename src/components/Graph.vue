@@ -96,6 +96,10 @@ limitations under the License. -->
       }
       instance.on("click", (params: EventParams) => {
         currentParams.value = params;
+        if (props.option.series.type === "sankey") {
+          emits("select", currentParams.value);
+          return;
+        }
         if (!menus.value || !chartRef.value) {
           return;
         }
@@ -113,6 +117,9 @@ limitations under the License. -->
           menus.value.style.top = params.event.offsetY + 2 + "px";
         }
       });
+      if (props.option.series.type === "sankey") {
+        return;
+      }
       document.addEventListener(
         "click",
         () => {
