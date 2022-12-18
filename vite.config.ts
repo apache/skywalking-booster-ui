@@ -93,10 +93,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
                 return "monaco-editor";
               } else if (id.includes("d3")) {
                 return "d3";
-              } else if (id.includes("vue")) {
-                return "vue";
-              } else {
-                return "vendors";
               }
             }
           },
