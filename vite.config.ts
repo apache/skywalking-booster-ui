@@ -85,13 +85,17 @@ export default ({ mode }: ConfigEnv): UserConfig => {
             if (id.includes("node_modules")) {
               if (id.includes("lodash")) {
                 return "lodash";
-              } else if (id.includes("echarts")) {
+              }
+              if (id.includes("echarts")) {
                 return "echarts";
-              } else if (id.includes("element-plus")) {
+              }
+              if (id.includes("element-plus")) {
                 return "element-plus";
-              } else if (id.includes("monaco-editor")) {
+              }
+              if (id.includes("monaco-editor")) {
                 return "monaco-editor";
-              } else if (id.includes("d3")) {
+              }
+              if (id.includes("d3")) {
                 return "d3";
               }
             }
