@@ -29,32 +29,15 @@ limitations under the License. -->
         </div>
       </el-popover>
     </div>
-    <div
-      class="body"
-      :style="{
-        backgroundColor: TextColors[graph.backgroundColor],
-        justifyContent: graph.textAlign,
-      }"
-    >
-      <a
-        :href="graph.url"
-        target="_blank"
-        :style="{
-          color: TextColors[graph.fontColor],
-          fontSize: graph.fontSize + 'px',
-        }"
-      >
-        {{ graph.content }}
-      </a>
+    <div class="body">
+      <iframe src="/general" width="100%" height="100%"></iframe>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { TextColors } from "@/views/dashboard/data";
 
   /*global defineProps */
   const props = defineProps({
@@ -65,7 +48,6 @@ limitations under the License. -->
     activeIndex: { type: String, default: "" },
   });
   const { t } = useI18n();
-  const graph = computed(() => props.data.graph || {});
   const dashboardStore = useDashboardStore();
 
   function removeTopo() {
