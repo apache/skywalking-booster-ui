@@ -324,7 +324,9 @@ limitations under the License. -->
     const drag: any = d3.drag().on("drag", (d: ProcessNode) => {
       moveNode(d);
     });
-    d3.selectAll(".node").call(drag);
+    setTimeout(() => {
+      d3.selectAll(".node").call(drag);
+    }, 1000);
   }
 
   function shuffleArray(array: number[][]) {
