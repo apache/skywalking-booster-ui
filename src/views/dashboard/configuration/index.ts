@@ -20,6 +20,7 @@ import Widget from "./Widget.vue";
 import Topology from "./Topology.vue";
 import Event from "./Event.vue";
 import TimeRange from "./TimeRange.vue";
+import ThirdPartyApp from "./ThirdPartyApp.vue";
 
 export default {
   Text,
@@ -27,4 +28,5 @@ export default {
   Topology,
   Event,
   TimeRange,
+  ThirdPartyApp,
 };

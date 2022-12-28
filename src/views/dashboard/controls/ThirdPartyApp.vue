@@ -30,7 +30,7 @@ limitations under the License. -->
       </el-popover>
     </div>
     <div class="body">
-      <iframe src="/general" width="100%" height="100%"></iframe>
+      <iframe src="/general" width="100%" height="100%" scrolling="no"></iframe>
     </div>
   </div>
 </template>

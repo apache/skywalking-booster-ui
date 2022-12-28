@@ -449,7 +449,7 @@ limitations under the License. -->
         dashboardStore.addTabControls("TimeRange");
         break;
       case "addIframe":
-        dashboardStore.addTabControls("Iframe");
+        dashboardStore.addTabControls("ThirdPartyApp");
         break;
       default:
         ElMessage.info("Don't support this control");
@@ -496,7 +496,7 @@ limitations under the License. -->
         dashboardStore.addControl("TimeRange");
         break;
       case "addIframe":
-        dashboardStore.addControl("Iframe");
+        dashboardStore.addControl("ThirdPartyApp");
         break;
       default:
         dashboardStore.addControl("Widget");
