@@ -29,23 +29,16 @@ limitations under the License. -->
         </div>
       </el-popover>
     </div>
-    <div
-      class="body"
-      :style="{
-        backgroundColor: TextColors[graph.backgroundColor],
-        justifyContent: graph.textAlign,
-      }"
-    >
-      <a
-        :href="graph.url"
-        target="_blank"
-        :style="{
-          color: TextColors[graph.fontColor],
-          fontSize: graph.fontSize + 'px',
-        }"
-      >
-        {{ graph.content }}
-      </a>
+    <div class="body">
+      <iframe
+        v-if="widget.url"
+        :src="widget.url"
+        width="100%"
+        height="100%"
+        scrolling="no"
+        style="border: none"
+      ></iframe>
+      <div v-else class="tips">{{ t("iframeWidgetTip") }}</div>
     </div>
   </div>
 </template>
@@ -54,7 +47,6 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { TextColors } from "@/views/dashboard/data";
 
   /*global defineProps */
   const props = defineProps({
@@ -65,8 +57,8 @@ limitations under the License. -->
     activeIndex: { type: String, default: "" },
   });
   const { t } = useI18n();
-  const graph = computed(() => props.data.graph || {});
   const dashboardStore = useDashboardStore();
+  const widget = computed(() => props.data.widget || {});
 
   function removeTopo() {
     dashboardStore.removeControls(props.data);
@@ -94,7 +86,6 @@ limitations under the License. -->
   }
 
   .body {
-    padding: 0 20px 0 10px;
     width: 100%;
     height: 100%;
     cursor: pointer;
@@ -114,5 +105,12 @@ limitations under the License. -->
       color: #409eff;
       background-color: #eee;
     }
+  }
+
+  .tips {
+    font-size: 14px;
+    color: #888;
+    width: 100%;
+    text-align: center;
   }
 </style>

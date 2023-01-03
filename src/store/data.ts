@@ -37,3 +37,5 @@ export const TimeRangeConfig = {
   textAlign: "center",
   text: "text",
 };
+
+export const ControlsTypes = ["Trace", "Profile", "Log", "DemandLog", "Ebpf", "NetworkProfiling", "ThirdPartyApp"];

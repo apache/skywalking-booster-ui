@@ -179,6 +179,8 @@ const msg = {
   when4xx: "Sample HTTP requests and responses with tracing when response code between 400 and 499",
   when5xx: "Sample HTTP requests and responses with tracing when response code between 500 and 599",
   taskTitle: "HTTP request and response collecting rules",
+  iframeWidgetTip: "Add a link to a widget",
+  iframeSrc: "Iframe Link",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

@@ -184,6 +184,7 @@ export const AllTools = [
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const ServiceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
@@ -196,6 +197,7 @@ export const ServiceTools = [
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
   { name: "event", content: "Add Event", id: "addEvent" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const InstanceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
@@ -205,6 +207,7 @@ export const InstanceTools = [
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
   { name: "event", content: "Add Event", id: "addEvent" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
   {
     name: "timeline",
     content: "Add Network Profiling",
@@ -218,31 +221,36 @@ export const EndpointTools = [
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
-  { name: "event", content: "Add Event", id: "addEvent" },
+  { name: "event", content: "Add Event", id: "c" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const ProcessTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "time_range", content: "Add Time Range Text", id: "addTimeRange" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const ServiceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 
 export const EndpointRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const InstanceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 
 export const ScopeType = [
