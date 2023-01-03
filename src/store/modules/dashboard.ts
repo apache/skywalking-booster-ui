@@ -21,7 +21,7 @@ import graphql from "@/graphql";
 import query from "@/graphql/fetch";
 import type { DashboardItem } from "@/types/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
-import { NewControl, TextConfig, TimeRangeConfig } from "../data";
+import { NewControl, TextConfig, TimeRangeConfig, ControlsTypes } from "../data";
 import type { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
@@ -108,7 +108,7 @@ export const dashboardStore = defineStore({
           depth: this.entity === EntityType[1].value ? 1 : this.entity === EntityType[0].value ? 2 : 3,
         };
       }
-      if (["Trace", "Profile", "Log", "DemandLog", "Ebpf", "NetworkProfiling", "ThirdPartyApp"].includes(type)) {
+      if (ControlsTypes.includes(type)) {
         newItem.h = 36;
       }
       if (type === "Text") {
@@ -168,7 +168,7 @@ export const dashboardStore = defineStore({
           showDepth: true,
         };
       }
-      if (["Trace", "Profile", "Log", "DemandLog", "Ebpf", "NetworkProfiling", "ThirdPartyApp"].includes(type)) {
+      if (ControlsTypes.includes(type)) {
         newItem.h = 32;
       }
       if (type === "Text") {
