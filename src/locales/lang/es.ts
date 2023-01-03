@@ -163,6 +163,7 @@ const msg = {
   metricValues: "Valor métrico",
   legendValues: "Valor de la leyenda",
   iframeWidgetTip: "Añadir enlaces a los gadgets",
+  iframeSrc: "Enlace Iframe",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

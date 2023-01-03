@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="item">
-    <span class="label">{{ t("textUrl") }}</span>
+    <span class="label">{{ t("iframeSrc") }}</span>
     <el-input class="input" v-model="url" size="small" @change="changeConfig({ url: encodeURIComponent(url) })" />
   </div>
   <div class="footer">
