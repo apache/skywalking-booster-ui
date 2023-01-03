@@ -13,7 +13,7 @@ limitations under the License. -->
 <template>
   <div class="item">
     <span class="label">{{ t("textUrl") }}</span>
-    <el-input class="input" v-model="url" size="small" @change="changeConfig({ url })" />
+    <el-input class="input" v-model="url" size="small" @change="changeConfig({ url: encodeURIComponent(url) })" />
   </div>
   <div class="footer">
     <el-button size="small" @click="cancelConfig">
@@ -31,15 +31,19 @@ limitations under the License. -->
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
-  const graph = originConfig.graph || {};
-  const url = ref(graph.url || "");
-  function changeConfig(param: { [key: string]: unknown }) {
+  const widget = originConfig.widget || {};
+  const url = ref(widget.url || "");
+  function changeConfig(param: { [key: string]: string }) {
+    const key = Object.keys(param)[0];
+    if (!key) {
+      return;
+    }
     const { selectedGrid } = dashboardStore;
-    const graph = {
-      ...selectedGrid.graph,
-      ...param,
+    const widget = {
+      ...dashboardStore.selectedGrid.widget,
+      [key]: decodeURIComponent(param[key]),
     };
-    dashboardStore.selectWidget({ ...selectedGrid, graph });
+    dashboardStore.selectWidget({ ...selectedGrid, widget });
   }
   function applyConfig() {
     dashboardStore.setConfigPanel(false);

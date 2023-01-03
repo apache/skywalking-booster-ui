@@ -30,11 +30,12 @@ limitations under the License. -->
       </el-popover>
     </div>
     <div class="body">
-      <iframe src="/general" width="100%" height="100%" scrolling="no"></iframe>
+      <iframe :src="widget.url" width="100%" height="100%" scrolling="no" style="border: none"></iframe>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+  import { computed } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
@@ -49,6 +50,7 @@ limitations under the License. -->
   });
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
+  const widget = computed(() => props.data.widget || {});
 
   function removeTopo() {
     dashboardStore.removeControls(props.data);
