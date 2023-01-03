@@ -30,7 +30,15 @@ limitations under the License. -->
       </el-popover>
     </div>
     <div class="body">
-      <iframe :src="widget.url" width="100%" height="100%" scrolling="no" style="border: none"></iframe>
+      <iframe
+        v-if="widget.url"
+        :src="widget.url"
+        width="100%"
+        height="100%"
+        scrolling="no"
+        style="border: none"
+      ></iframe>
+      <div v-else class="tips">{{ t("iframeWidgetTip") }}</div>
     </div>
   </div>
 </template>
@@ -78,7 +86,6 @@ limitations under the License. -->
   }
 
   .body {
-    padding: 0 20px 0 10px;
     width: 100%;
     height: 100%;
     cursor: pointer;
@@ -98,5 +105,12 @@ limitations under the License. -->
       color: #409eff;
       background-color: #eee;
     }
+  }
+
+  .tips {
+    font-size: 14px;
+    color: #888;
+    width: 100%;
+    text-align: center;
   }
 </style>
