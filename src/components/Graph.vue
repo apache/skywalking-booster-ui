@@ -108,13 +108,13 @@ limitations under the License. -->
           emits("select", currentParams.value);
           return;
         }
-        if (!chartRef.value) {
-          return;
-        }
         instance.dispatchAction({
           type: "hideTip",
         });
         visMenus.value = true;
+        if (!chartRef.value) {
+          return;
+        }
         const w = chartRef.value.getBoundingClientRect().width || 0;
         const h = chartRef.value.getBoundingClientRect().height || 0;
         if (w - params.event.offsetX > 120) {
@@ -148,6 +148,10 @@ limitations under the License. -->
           visMenus.value = false;
           instance.dispatchAction({
             type: "hideTip",
+          });
+          instance.dispatchAction({
+            type: "updateAxisPointer",
+            currTrigger: "leave",
           });
         },
         true,
