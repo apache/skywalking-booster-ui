@@ -22,6 +22,7 @@ limitations under the License. -->
         top: menuPos.y + 'px',
         left: menuPos.x + 'px',
       }"
+      @mouseenter="hideTooltips"
     >
       <div class="tools" @click="associateMetrics" v-if="associate.length">
         {{ t("associateMetrics") }}
@@ -29,16 +30,6 @@ limitations under the License. -->
       <div class="tools" @click="viewTrace" v-if="relatedTrace && relatedTrace.enableRelate">
         {{ t("viewTrace") }}
       </div>
-    </div>
-    <div
-      class="menus"
-      v-show="showTooltip"
-      :style="{
-        top: tooltipPos.y + 'px',
-        left: tooltipPos.x + 'px',
-      }"
-    >
-      <div v-for="(item, index) in tipValues" :key="index">{{ item.name }}: {{ item.value }}</div>
     </div>
     <el-drawer
       v-model="showTrace"
@@ -76,8 +67,6 @@ limitations under the License. -->
   });
   const menuPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
   const showTooltip = ref<boolean>(false);
-  const tooltipPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
-  const tipValues = ref<{ name: string; value: number }[]>([]);
   const props = defineProps({
     height: { type: String, default: "100%" },
     width: { type: String, default: "100%" },
@@ -124,6 +113,9 @@ limitations under the License. -->
         if (!chartRef.value) {
           return;
         }
+        instance.dispatchAction({
+          type: "hideTip",
+        });
         visMenus.value = true;
         const w = chartRef.value.getBoundingClientRect().width || 0;
         const h = chartRef.value.getBoundingClientRect().height || 0;
@@ -135,17 +127,20 @@ limitations under the License. -->
         if (h - params.event.offsetY < 50) {
           menuPos.y = params.event.offsetY - 40;
         } else {
-          menuPos.y = params.event.offsetY + 2;
+          menuPos.y = params.event.offsetY;
         }
       });
       if (props.option.series.type === "sankey") {
         return;
       }
-      instance.on("mouseover", (params: EventParams) => {
-        setTooltips(params);
+      instance.on("mouseover", () => {
+        visMenus.value = false;
       });
       instance.on("mouseout", () => {
         showTooltip.value = false;
+        instance.dispatchAction({
+          type: "hideTip",
+        });
       });
       document.addEventListener(
         "click",
@@ -156,40 +151,12 @@ limitations under the License. -->
           visMenus.value = false;
           showTooltip.value = false;
           instance.dispatchAction({
-            type: "updateAxisPointer",
-            currTrigger: "leave",
+            type: "hideTip",
           });
         },
         true,
       );
     }, 1000);
-  }
-
-  function setTooltips(params: EventParams | undefined) {
-    if (!chartRef.value || !params) {
-      return;
-    }
-    tipValues.value = [];
-    showTooltip.value = true;
-    visMenus.value = false;
-    const w = chartRef.value.getBoundingClientRect().width || 0;
-    const h = chartRef.value.getBoundingClientRect().height || 0;
-    if (w - params.event.offsetX > 50) {
-      tooltipPos.x = params.event.offsetX;
-    } else {
-      tooltipPos.x = params.event.offsetX - 30;
-    }
-    if (h - params.event.offsetY < 50) {
-      tooltipPos.y = params.event.offsetY - 20;
-    } else {
-      tooltipPos.y = params.event.offsetY + 2;
-    }
-    for (const item of props.option.series) {
-      tipValues.value.push({
-        name: item.name,
-        value: item.data[params.dataIndex] ? item.data[params.dataIndex][1] : null,
-      });
-    }
   }
 
   function associateMetrics() {
@@ -211,15 +178,9 @@ limitations under the License. -->
       setOptions(options || props.option);
     } else {
       instance.dispatchAction({
-        type: "updateAxisPointer",
+        type: "showTip",
         dataIndex: params ? params.dataIndex : props.filters.dataIndex,
         seriesIndex: params ? params.seriesIndex : 0,
-      });
-      const ids = props.option.series.map((_: unknown, index: number) => index);
-      instance.dispatchAction({
-        type: "highlight",
-        dataIndex: params ? params.dataIndex : props.filters.dataIndex,
-        seriesIndex: ids,
       });
     }
   }
@@ -232,6 +193,13 @@ limitations under the License. -->
     };
     showTrace.value = true;
     visMenus.value = true;
+  }
+
+  function hideTooltips() {
+    const instance = getInstance();
+    instance.dispatchAction({
+      type: "hideTip",
+    });
   }
 
   watch(

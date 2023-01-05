@@ -91,17 +91,13 @@ limitations under the License. -->
     });
     const color: string[] = chartColors(keys);
     const tooltip = {
-      trigger: "none",
-      axisPointer: {
-        type: "cross",
+      trigger: "axis",
+      textStyle: {
+        fontSize: 12,
+        color: "#333",
       },
-      // trigger: "axis",
-      // textStyle: {
-      //   fontSize: 12,
-      //   color: "#333",
-      // },
-      // enterable: true,
-      // confine: true,
+      enterable: true,
+      confine: true,
       extraCssText: "max-height: 300px; overflow: auto; border: none;",
     };
     const tips = {
@@ -129,12 +125,6 @@ limitations under the License. -->
         itemWidth: 12,
         textStyle: {
           color: props.theme === "dark" ? "#fff" : "#333",
-        },
-      },
-      axisPointer: {
-        label: {
-          color: "#333",
-          backgroundColor: "rgba(255, 255, 255, 0.8)",
         },
       },
       grid: {
