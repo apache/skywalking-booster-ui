@@ -66,7 +66,6 @@ limitations under the License. -->
     type: "Trace",
   });
   const menuPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
-  const showTooltip = ref<boolean>(false);
   const props = defineProps({
     height: { type: String, default: "100%" },
     width: { type: String, default: "100%" },
@@ -109,7 +108,6 @@ limitations under the License. -->
           emits("select", currentParams.value);
           return;
         }
-        showTooltip.value = false;
         if (!chartRef.value) {
           return;
         }
@@ -137,7 +135,6 @@ limitations under the License. -->
         visMenus.value = false;
       });
       instance.on("mouseout", () => {
-        showTooltip.value = false;
         instance.dispatchAction({
           type: "hideTip",
         });
@@ -149,7 +146,6 @@ limitations under the License. -->
             return;
           }
           visMenus.value = false;
-          showTooltip.value = false;
           instance.dispatchAction({
             type: "hideTip",
           });
