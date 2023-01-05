@@ -94,8 +94,6 @@ limitations under the License. -->
       trigger: "none",
       axisPointer: {
         type: "cross",
-        color: "#333",
-        backgroundColor: "rgba(255, 255, 255, 0.8)",
       },
       // trigger: "axis",
       // textStyle: {
