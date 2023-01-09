@@ -176,6 +176,27 @@ export const routesDashboard: Array<RouteRecordRaw> = [
           },
         ],
       },
+      {
+        path: "",
+        redirect: "/widget/:entityScope/:metricName/:title/:metricType/:graph/:calculation",
+        name: "Widget",
+        component: () => import("@/views/dashboard/Widget.vue"),
+        meta: {
+          notShow: true,
+        },
+        children: [
+          {
+            path: "/widget/:entityScope/:metricName/:title/:metricType/:graph/:calculation",
+            component: () => import("@/views/dashboard/Widget.vue"),
+            name: "ViewWidget",
+          },
+          {
+            path: "/widget/:entityScope/:metricName/:title/:metricType/:graph/:calculation/:duration",
+            component: () => import("@/views/dashboard/Widget.vue"),
+            name: "ViewWidget",
+          },
+        ],
+      },
     ],
   },
 ];
