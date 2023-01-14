@@ -178,7 +178,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "",
-        redirect: "/widget/:entityScope/:metricName/:title/:metricType/:graph/:calculation",
+        redirect: "/widget/:config",
         name: "Widget",
         component: () => import("@/views/dashboard/Widget.vue"),
         meta: {
@@ -186,12 +186,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: "/widget/:entityScope/:metricName/:title/:metricType/:graph/:calculation",
-            component: () => import("@/views/dashboard/Widget.vue"),
-            name: "ViewWidget",
-          },
-          {
-            path: "/widget/:entityScope/:metricName/:title/:metricType/:graph/:calculation/:duration",
+            path: "/widget/:config",
             component: () => import("@/views/dashboard/Widget.vue"),
             name: "ViewWidget",
           },
