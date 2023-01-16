@@ -23,7 +23,9 @@ limitations under the License. -->
         class="content mb-10"
         :readonly="true"
         v-else-if="item.label === 'content'"
-        :value="currentLog[item.label]"
+        :value="
+          currentLog.contentType === 'JSON' ? formatJson(JSON.parse(currentLog[item.label])) : currentLog[item.label]
+        "
       />
       <span v-else-if="item.label === 'tags'" class="g-sm-8 mb-10">
         <div v-for="(d, index) in logTags" :key="index">{{ d }}</div>
@@ -38,6 +40,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import type { Option } from "@/types/app";
   import { dateFormat } from "@/utils/dateFormat";
+  import { formatJson } from "@/utils/formatJson";
 
   /*global defineProps */
   const props = defineProps({
