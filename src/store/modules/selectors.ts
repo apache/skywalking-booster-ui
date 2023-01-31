@@ -211,12 +211,12 @@ export const selectorStore = defineStore({
 
       return res.data;
     },
-    async getProcess(instanceId: string, isRelation?: boolean) {
-      if (!instanceId) {
+    async getProcess(processId: string, isRelation?: boolean) {
+      if (!processId) {
         return;
       }
       const res: AxiosResponse = await graphql.query("queryProcess").params({
-        instanceId,
+        processId,
       });
       if (!res.data.errors) {
         if (isRelation) {

@@ -178,7 +178,6 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "",
-        redirect: "/widget/:config",
         name: "Widget",
         component: () => import("@/views/dashboard/Widget.vue"),
         meta: {
@@ -186,7 +185,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: "/widget/:config",
+            path: "/page/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:config",
             component: () => import("@/views/dashboard/Widget.vue"),
             name: "ViewWidget",
           },

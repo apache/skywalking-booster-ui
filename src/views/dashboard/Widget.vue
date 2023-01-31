@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="render-chart">
+  <div class="widget-chart">
     <component
       :is="graph.type"
       :intervalTime="appStoreWithOut.intervalTime"
@@ -21,13 +21,13 @@ limitations under the License. -->
       :config="{
         i: 0,
         ...graph,
-        metrics: widget.metricNames,
-        metricTypes: widget.metricTypes,
-        metricConfig: widget.metricConfig,
+        metrics: config.metrics,
+        metricTypes: config.metricTypes,
+        metricConfig: config.metricConfig,
       }"
       :needQuery="true"
     />
-    <div v-show="!widget.type" class="no-data">
+    <div v-show="!config.type" class="no-data">
       {{ t("noData") }}
     </div>
   </div>
@@ -41,10 +41,10 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
   import graphs from "./graphs";
-  import { EntityType, QueryOrders, Status } from "./data";
+  import { EntityType } from "./data";
 
   export default defineComponent({
-    name: "WidgetEdit",
+    name: "WidgetPage",
     components: {
       ...graphs,
     },
@@ -52,34 +52,57 @@ limitations under the License. -->
       const { t } = useI18n();
       const appStoreWithOut = useAppStoreWithOut();
       const selectorStore = useSelectorStore();
-      const widget = computed<any>(() => JSON.parse(useRoute().params.config as string));
-      const graph = computed(() => widget.value.graph || {});
+      const route = useRoute();
+      const config = computed<any>(() => JSON.parse(route.params.config as string));
+      const graph = computed(() => config.value.graph || {});
       const source = ref<unknown>({});
       const loading = ref<boolean>(false);
       const dashboardStore = useDashboardStore();
 
       init();
       async function init() {
-        dashboardStore.setEntity(widget.value.entity);
+        dashboardStore.setEntity(route.params.entity);
         await setSelector();
         await queryMetrics();
       }
       async function setSelector() {
-        if (widget.value.serviceId) {
-          await selectorStore.getService(widget.value.serviceId);
+        const { serviceId, podId, processId, destServiceId, destPodId, destProcessId, entity } = route.params;
+        if (serviceId) {
+          await selectorStore.getService(serviceId);
         }
-        if (widget.value.serviceInstanceId) {
-          await selectorStore.getInstance(widget.value.serviceInstanceId);
+        if (
+          [EntityType[4].value, EntityType[5].value, EntityType[6].value, EntityType[7].value].includes(
+            entity as string,
+          )
+        ) {
+          await selectorStore.getService(destServiceId);
         }
-        if (widget.value.serviceInstanceId) {
-          await selectorStore.getEndpoint(widget.value.endpointId);
+        if (
+          [EntityType[3].value, EntityType[5].value, EntityType[6].value, EntityType[7].value].includes(
+            entity as string,
+          )
+        ) {
+          await selectorStore.getInstance(podId);
+        }
+        if ([EntityType[2].value, EntityType[6].value].includes(entity as string)) {
+          await selectorStore.getEndpoint(podId);
+        }
+        if (EntityType[6].value === entity) {
+          await selectorStore.getEndpoint(destPodId, true);
+        }
+        if ([EntityType[5].value, EntityType[7].value].includes(entity as string)) {
+          await selectorStore.getInstance(destPodId, true);
+        }
+        if (EntityType[7].value === entity) {
+          selectorStore.getProcess(processId);
+          selectorStore.getProcess(destProcessId, true);
         }
       }
       async function queryMetrics() {
-        const metricTypes = widget.value.metricTypes || [];
-        const metrics = widget.value.metricNames || [];
+        const metricTypes = config.value.metricTypes || [];
+        const metrics = config.value.metrics || [];
         const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
-        const params = await useQueryProcessor({ ...widget.value.data, catalog });
+        const params = await useQueryProcessor({ ...config.value, catalog });
         if (!params) {
           source.value = {};
           return;
@@ -91,9 +114,9 @@ limitations under the License. -->
           return;
         }
         const d = {
-          metrics: widget.value.metricNames || [],
-          metricTypes: widget.value.metricTypes || [],
-          metricConfig: widget.value.metricConfig || [],
+          metrics: config.value.metrics || [],
+          metricTypes: config.value.metricTypes || [],
+          metricConfig: config.value.metricConfig || [],
         };
         source.value = useSourceProcessor(json, d);
       }
@@ -102,13 +125,16 @@ limitations under the License. -->
         graph,
         source,
         appStoreWithOut,
-        widget,
+        config,
       };
     },
   });
 </script>
 <style lang="scss" scoped>
-  .render-chart {
+  .widget-chart {
+    background: #fff;
+    box-shadow: 0px 1px 4px 0px #00000029;
+    border-radius: 3px;
     padding: 5px;
     height: 400px;
     width: 100%;
