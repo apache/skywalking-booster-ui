@@ -30,6 +30,21 @@ limitations under the License. -->
     >
       <component :is="dashboardStore.selectedGrid.type" />
     </el-dialog>
+    <el-dialog
+      v-model="dashboardStore.showLinkConfig"
+      :title="t('generateLink')"
+      :destroy-on-close="true"
+      @closed="dashboardStore.setWidgetLink(false)"
+    >
+      <div>
+        <label>{{ t("setDuration") }}</label>
+        <el-switch v-model="hasDuration" />
+      </div>
+      <div>
+        <span class="link">{{ widgetLink }}</span>
+        <el-button type="primary">{{ t("generateLink") }}</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script lang="ts">
@@ -52,6 +67,8 @@ limitations under the License. -->
       const { t } = useI18n();
       const p = useRoute().params;
       const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
+      const hasDuration = ref<boolean>(false);
+      const widgetLink = ref<string>("");
       setTemplate();
       async function setTemplate() {
         await dashboardStore.setDashboards();
@@ -108,6 +125,8 @@ limitations under the License. -->
         t,
         handleClick,
         dashboardStore,
+        hasDuration,
+        widgetLink,
       };
     },
   });
@@ -115,5 +134,9 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .ds-main {
     overflow: auto;
+  }
+
+  .link {
+    color: #999;
   }
 </style>

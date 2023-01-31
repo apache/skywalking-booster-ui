@@ -38,6 +38,9 @@ limitations under the License. -->
           <div class="tools" @click="removeWidget">
             <span>{{ t("delete") }}</span>
           </div>
+          <div class="tools" @click="generateLink">
+            <span>{{ t("generateLink") }}</span>
+          </div>
         </el-popover>
       </div>
     </div>
@@ -161,6 +164,9 @@ limitations under the License. -->
           }
         }
       }
+      function generateLink() {
+        dashboardStore.setWidgetLink(true);
+      }
       watch(
         () => [props.data.metricTypes, props.data.metrics],
         () => {
@@ -227,6 +233,7 @@ limitations under the License. -->
         state,
         appStore,
         removeWidget,
+        generateLink,
         editConfig,
         data,
         loading,

@@ -164,6 +164,8 @@ const msg = {
   legendValues: "Valor de la leyenda",
   iframeWidgetTip: "Añadir enlaces a los gadgets",
   iframeSrc: "Enlace Iframe",
+  generateLink: "Generar enlaces",
+  setDuration: "Establecer la duración",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

@@ -40,6 +40,7 @@ interface DashboardState {
   currentDashboard: Nullable<DashboardItem>;
   editMode: boolean;
   currentTabIndex: number;
+  showLinkConfig: boolean;
 }
 
 export const dashboardStore = defineStore({
@@ -58,6 +59,7 @@ export const dashboardStore = defineStore({
     currentDashboard: null,
     editMode: false,
     currentTabIndex: 0,
+    showLinkConfig: false,
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -65,6 +67,9 @@ export const dashboardStore = defineStore({
     },
     setMode(mode: boolean) {
       this.editMode = mode;
+    },
+    setWidgetLink(show: boolean) {
+      this.showLinkConfig = show;
     },
     resetDashboards(list: DashboardItem[]) {
       this.dashboards = list;
