@@ -13,22 +13,34 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="widget-chart">
-    <component
-      :is="graph.type"
-      :intervalTime="appStoreWithOut.intervalTime"
-      :data="source"
-      :config="{
-        i: 0,
-        ...graph,
-        metrics: config.metrics,
-        metricTypes: config.metricTypes,
-        metricConfig: config.metricConfig,
-      }"
-      :needQuery="true"
-    />
-    <div v-show="!config.type" class="no-data">
-      {{ t("noData") }}
+  <div class="content">
+    <div class="header">
+      <span>{{ decodeURIComponent(title) }}</span>
+      <div class="tips" v-show="tips">
+        <el-tooltip :content="decodeURIComponent(tips) || ''">
+          <span>
+            <Icon iconName="info_outline" size="sm" />
+          </span>
+        </el-tooltip>
+      </div>
+    </div>
+    <div class="widget-chart">
+      <component
+        :is="graph.type"
+        :intervalTime="appStoreWithOut.intervalTime"
+        :data="source"
+        :config="{
+          i: 0,
+          ...graph,
+          metrics: config.metrics,
+          metricTypes: config.metricTypes,
+          metricConfig: config.metricConfig,
+        }"
+        :needQuery="true"
+      />
+      <div v-show="!config.type" class="no-data">
+        {{ t("noData") }}
+      </div>
     </div>
   </div>
 </template>
@@ -58,6 +70,8 @@ limitations under the License. -->
       const source = ref<unknown>({});
       const loading = ref<boolean>(false);
       const dashboardStore = useDashboardStore();
+      const title = computed(() => encodeURIComponent((config.value.widget && config.value.widget.title) || ""));
+      const tips = computed(() => encodeURIComponent((config.value.widget && config.value.widget.tips) || ""));
 
       init();
       async function init() {
@@ -126,11 +140,20 @@ limitations under the License. -->
         source,
         appStoreWithOut,
         config,
+        title,
+        tips,
       };
     },
   });
 </script>
 <style lang="scss" scoped>
+  .content {
+    min-width: 800px;
+    border: 1px solid #eee;
+    background-color: #fff;
+    position: relative;
+  }
+
   .widget-chart {
     background: #fff;
     box-shadow: 0px 1px 4px 0px #00000029;
@@ -144,5 +167,20 @@ limitations under the License. -->
     font-size: 14px;
     text-align: center;
     line-height: 400px;
+  }
+
+  .header {
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    background-color: aliceblue;
+    font-size: 12px;
+    position: relative;
+  }
+
+  .tips {
+    position: absolute;
+    right: 5px;
+    top: 0;
   }
 </style>
