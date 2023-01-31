@@ -45,7 +45,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-  import { computed, ref, defineComponent } from "vue";
+  import { computed, ref, defineComponent, watch } from "vue";
   import { useI18n } from "vue-i18n";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useRoute } from "vue-router";
@@ -134,6 +134,12 @@ limitations under the License. -->
         };
         source.value = useSourceProcessor(json, d);
       }
+      watch(
+        () => appStoreWithOut.durationTime,
+        () => {
+          queryMetrics();
+        },
+      );
       return {
         t,
         graph,
