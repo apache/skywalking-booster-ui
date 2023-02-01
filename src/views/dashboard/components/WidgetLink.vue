@@ -28,7 +28,7 @@ limitations under the License. -->
       />
     </div>
     <el-button size="small" type="primary" class="mt-10" @click="getLink">{{ t("generateLink") }}</el-button>
-    <div class="link mt-10" @click="viewPage">{{ widgetLink }}</div>
+    <div v-show="widgetLink" class="link mt-10" @click="viewPage">{{ host + widgetLink }}</div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -37,6 +37,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
+  import router from "@/router";
 
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
@@ -45,41 +46,47 @@ limitations under the License. -->
   const hasDuration = ref<boolean>(false);
   const widgetLink = ref<string>("");
   const dates = ref<Date[]>([]);
+  const host = window.location.host;
 
   function changeTimeRange(val: Date[] | any) {
     dates.value = val;
   }
   function getLink() {
+    if (!dashboardStore.selectedGrid) {
+      return;
+    }
     const serviceId = selectorStore.currentService ? selectorStore.currentService.id : null;
     const podId = selectorStore.currentPod ? selectorStore.currentPod.id : null;
     const processId = selectorStore.currentProcess ? selectorStore.currentProcess.id : null;
     const destServiceId = selectorStore.currentDestService ? selectorStore.currentDestService.id : null;
     const destPodId = selectorStore.currentDestPod ? selectorStore.currentDestPod.id : null;
     const destProcessId = selectorStore.currentDestProcess ? selectorStore.currentDestProcess.id : null;
-    const duration = hasDuration.value
-      ? JSON.stringify({
-          start: dates.value[0],
-          end: dates.value[1],
-          step: appStore.duration.step,
-          utc: appStore.utc,
-        })
-      : undefined;
-    const config = {
+    const duration = JSON.stringify({
+      start: dates.value[0] || appStore.duration.start,
+      end: dates.value[1] || appStore.duration.endT,
+      step: appStore.duration.step,
+      utc: appStore.utc,
+    });
+    const config = JSON.stringify({
       type: dashboardStore.selectedGrid.type,
       widget: dashboardStore.selectedGrid.widget,
       graph: dashboardStore.selectedGrid.graph,
       metrics: dashboardStore.selectedGrid.metrics,
       metricTypes: dashboardStore.selectedGrid.metricTypes,
-    };
-    widgetLink.value = `${window.location.host}/page/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}/${duration}`;
+    });
+    widgetLink.value = hasDuration.value
+      ? `/page/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}/${duration}`
+      : `/page/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}`;
   }
   function viewPage() {
-    window.open(widgetLink.value, "_blank");
+    const routeUrl = router.resolve({ path: widgetLink.value });
+    window.open(routeUrl.href, "_blank");
   }
 </script>
 <style lang="scss" scoped>
   .link {
-    color: #999;
+    color: #409eff;
+    cursor: pointer;
   }
 
   .link-content {

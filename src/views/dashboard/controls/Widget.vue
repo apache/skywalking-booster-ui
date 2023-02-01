@@ -166,6 +166,7 @@ limitations under the License. -->
       }
       function generateLink() {
         dashboardStore.setWidgetLink(true);
+        dashboardStore.selectWidget(props.data);
       }
       watch(
         () => [props.data.metricTypes, props.data.metrics],
