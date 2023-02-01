@@ -63,7 +63,7 @@ limitations under the License. -->
     const destProcessId = selectorStore.currentDestProcess ? selectorStore.currentDestProcess.id : null;
     const duration = JSON.stringify({
       start: dates.value[0] || appStore.duration.start,
-      end: dates.value[1] || appStore.duration.endT,
+      end: dates.value[1] || appStore.duration.end,
       step: appStore.duration.step,
       utc: appStore.utc,
     });
