@@ -85,10 +85,14 @@
     "not dead"
   ],
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,vue,scss,less}": [
-      "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "*.{js,jsx,ts,tsx,vue}": [
+      "eslint . --ext .vue,.js,.jsx,.ts,.tsx --fix --ignore-path .gitignore",
       "prettier --write  \"src/**/*.{js,tsx,css,less,scss,vue,html,md}\"",
-      "stylelint --cache --fix \"**/*.{vue,less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/"
+      "stylelint --cache --fix \"**/*.{vue}\" --cache --cache-location node_modules/.cache/stylelint/"
+    ],
+    "*.{scss,less}": [
+      "prettier --write  \"src/**/*.{js,tsx,css,less,scss,vue,html,md}\"",
+      "stylelint --cache --fix \"**/*.{less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/"
     ],
     "{!(package)*.json,*.code-snippets,.!(browserslist)*rc}": [
       "prettier --write"
