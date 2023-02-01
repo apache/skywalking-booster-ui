@@ -32,7 +32,6 @@ limitations under the License. -->
     </el-dialog>
     <el-dialog
       v-model="dashboardStore.showLinkConfig"
-      :title="t('generateLink')"
       :destroy-on-close="true"
       @closed="dashboardStore.setWidgetLink(false)"
     >

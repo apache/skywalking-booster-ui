@@ -12,26 +12,82 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<template lang="">
-  <div>
+<template>
+  <div class="link-content">
     <div>
-      <label>{{ t("setDuration") }}</label>
+      <label class="mr-5">{{ t("setDuration") }}</label>
       <el-switch v-model="hasDuration" />
     </div>
-    <div>
-      <span class="link">{{ widgetLink }}</span>
-      <el-button type="primary">{{ t("generateLink") }}</el-button>
+    <div class="time-range" v-if="hasDuration">
+      <label class="mr-20">{{ t("duration") }}</label>
+      <TimePicker
+        :value="[appStore.durationRow.start, appStore.durationRow.end]"
+        position="bottom"
+        format="YYYY-MM-DD HH:mm"
+        @input="changeTimeRange"
+      />
     </div>
+    <el-button size="small" type="primary" class="mt-10" @click="getLink">{{ t("generateLink") }}</el-button>
+    <div class="link mt-10" @click="viewPage">{{ widgetLink }}</div>
   </div>
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useSelectorStore } from "@/store/modules/selectors";
 
+  const { t } = useI18n();
+  const appStore = useAppStoreWithOut();
+  const dashboardStore = useDashboardStore();
+  const selectorStore = useSelectorStore();
   const hasDuration = ref<boolean>(false);
   const widgetLink = ref<string>("");
+  const dates = ref<Date[]>([]);
+
+  function changeTimeRange(val: Date[] | any) {
+    dates.value = val;
+  }
+  function getLink() {
+    const serviceId = selectorStore.currentService ? selectorStore.currentService.id : null;
+    const podId = selectorStore.currentPod ? selectorStore.currentPod.id : null;
+    const processId = selectorStore.currentProcess ? selectorStore.currentProcess.id : null;
+    const destServiceId = selectorStore.currentDestService ? selectorStore.currentDestService.id : null;
+    const destPodId = selectorStore.currentDestPod ? selectorStore.currentDestPod.id : null;
+    const destProcessId = selectorStore.currentDestProcess ? selectorStore.currentDestProcess.id : null;
+    const duration = hasDuration.value
+      ? JSON.stringify({
+          start: dates.value[0],
+          end: dates.value[1],
+          step: appStore.duration.step,
+          utc: appStore.utc,
+        })
+      : undefined;
+    const config = {
+      type: dashboardStore.selectedGrid.type,
+      widget: dashboardStore.selectedGrid.widget,
+      graph: dashboardStore.selectedGrid.graph,
+      metrics: dashboardStore.selectedGrid.metrics,
+      metricTypes: dashboardStore.selectedGrid.metricTypes,
+    };
+    widgetLink.value = `${window.location.host}/page/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}/${duration}`;
+  }
+  function viewPage() {
+    window.open(widgetLink.value, "_blank");
+  }
 </script>
 <style lang="scss" scoped>
   .link {
     color: #999;
+  }
+
+  .link-content {
+    height: 300px;
+    font-size: 12px;
+  }
+
+  .time-range {
+    margin-bottom: 20px;
   }
 </style>
