@@ -62,8 +62,8 @@ limitations under the License. -->
     const destPodId = selectorStore.currentDestPod ? selectorStore.currentDestPod.id : null;
     const destProcessId = selectorStore.currentDestProcess ? selectorStore.currentDestProcess.id : null;
     const duration = JSON.stringify({
-      start: dates.value[0] || appStore.duration.start,
-      end: dates.value[1] || appStore.duration.end,
+      start: new Date(dates.value[0] || appStore.duration.start).getTime(),
+      end: new Date(dates.value[1] || appStore.duration.end).getTime(),
       step: appStore.duration.step,
       utc: appStore.utc,
     });
@@ -73,10 +73,10 @@ limitations under the License. -->
       graph: dashboardStore.selectedGrid.graph,
       metrics: dashboardStore.selectedGrid.metrics,
       metricTypes: dashboardStore.selectedGrid.metricTypes,
+      metricConfig: dashboardStore.selectedGrid.metricConfig,
     });
-    widgetLink.value = hasDuration.value
-      ? `/page/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}/${duration}`
-      : `/page/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}`;
+    const path = `/page/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}`;
+    widgetLink.value = hasDuration.value ? `${path}/${duration}` : path;
   }
   function viewPage() {
     const routeUrl = router.resolve({ path: widgetLink.value });
