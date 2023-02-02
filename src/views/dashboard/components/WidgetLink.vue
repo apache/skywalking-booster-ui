@@ -28,7 +28,14 @@ limitations under the License. -->
       />
     </div>
     <el-button size="small" type="primary" class="mt-20" @click="getLink">{{ t("generateLink") }}</el-button>
-    <div v-show="widgetLink" class="link mt-10" @click="viewPage">{{ host + widgetLink }}</div>
+    <div v-show="widgetLink" class="link mt-10">
+      <span @click="viewPage">
+        {{ host + widgetLink }}
+      </span>
+      <span>
+        <Icon class="cp ml-5" iconName="copy" @click="copyLink" />
+      </span>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -38,6 +45,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
   import router from "@/router";
+  import copy from "@/utils/copy";
 
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
@@ -81,6 +89,9 @@ limitations under the License. -->
   function viewPage() {
     const routeUrl = router.resolve({ path: widgetLink.value });
     window.open(routeUrl.href, "_blank");
+  }
+  function copyLink() {
+    copy(host + widgetLink.value);
   }
 </script>
 <style lang="scss" scoped>
