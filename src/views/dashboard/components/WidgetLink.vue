@@ -70,9 +70,9 @@ limitations under the License. -->
     const destPodId = selectorStore.currentDestPod ? selectorStore.currentDestPod.id : null;
     const destProcessId = selectorStore.currentDestProcess ? selectorStore.currentDestProcess.id : null;
     const duration = JSON.stringify({
-      start: new Date(dates.value[0] || appStore.duration.start).getTime(),
-      end: new Date(dates.value[1] || appStore.duration.end).getTime(),
-      step: appStore.duration.step,
+      start: dates.value[0] ? new Date(dates.value[0]).getTime() : appStore.durationRow.start.getTime(),
+      end: dates.value[1] ? new Date(dates.value[1]).getTime() : appStore.durationRow.end.getTime(),
+      step: appStore.durationRow.step,
       utc: appStore.utc,
     });
     const w = {
