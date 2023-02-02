@@ -18,7 +18,7 @@ limitations under the License. -->
       <label class="mr-5">{{ t("setDuration") }}</label>
       <el-switch v-model="hasDuration" />
     </div>
-    <div class="time-range" v-if="hasDuration">
+    <div v-if="hasDuration">
       <label class="mr-20">{{ t("duration") }}</label>
       <TimePicker
         :value="[appStore.durationRow.start, appStore.durationRow.end]"
@@ -27,7 +27,7 @@ limitations under the License. -->
         @input="changeTimeRange"
       />
     </div>
-    <el-button size="small" type="primary" class="mt-10" @click="getLink">{{ t("generateLink") }}</el-button>
+    <el-button size="small" type="primary" class="mt-20" @click="getLink">{{ t("generateLink") }}</el-button>
     <div v-show="widgetLink" class="link mt-10" @click="viewPage">{{ host + widgetLink }}</div>
   </div>
 </template>
@@ -43,7 +43,7 @@ limitations under the License. -->
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
-  const hasDuration = ref<boolean>(false);
+  const hasDuration = ref<boolean>(true);
   const widgetLink = ref<string>("");
   const dates = ref<Date[]>([]);
   const host = window.location.host;
@@ -92,9 +92,5 @@ limitations under the License. -->
   .link-content {
     height: 300px;
     font-size: 12px;
-  }
-
-  .time-range {
-    margin-bottom: 20px;
   }
 </style>
