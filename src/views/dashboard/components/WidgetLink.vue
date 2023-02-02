@@ -75,9 +75,13 @@ limitations under the License. -->
       step: appStore.duration.step,
       utc: appStore.utc,
     });
+    const w = {
+      title: encodeURIComponent(dashboardStore.selectedGrid.widget.title),
+      tips: encodeURIComponent(dashboardStore.selectedGrid.widget.tips),
+    };
     const config = JSON.stringify({
       type: dashboardStore.selectedGrid.type,
-      widget: dashboardStore.selectedGrid.widget,
+      widget: w,
       graph: dashboardStore.selectedGrid.graph,
       metrics: dashboardStore.selectedGrid.metrics,
       metricTypes: dashboardStore.selectedGrid.metricTypes,
