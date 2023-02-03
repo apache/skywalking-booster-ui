@@ -90,13 +90,9 @@ limitations under the License. -->
             entity as string,
           )
         ) {
-          await selectorStore.getService(destServiceId);
+          await selectorStore.getService(destServiceId, true);
         }
-        if (
-          [EntityType[3].value, EntityType[5].value, EntityType[6].value, EntityType[7].value].includes(
-            entity as string,
-          )
-        ) {
+        if ([EntityType[3].value, EntityType[5].value, EntityType[7].value].includes(entity as string)) {
           await selectorStore.getInstance(podId);
         }
         if ([EntityType[2].value, EntityType[6].value].includes(entity as string)) {
