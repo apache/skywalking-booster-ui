@@ -80,11 +80,13 @@ limitations under the License. -->
       tips: encodeURIComponent(dashboardStore.selectedGrid.widget.tips),
     };
     const metricConfig = (dashboardStore.selectedGrid.metricConfig || []).map((d: any) => {
-      return {
-        ...d,
-        label: encodeURIComponent(d.label),
-        unit: encodeURIComponent(d.unit),
-      };
+      if (d.label) {
+        d.label = encodeURIComponent(d.label);
+      }
+      if (d.unit) {
+        d.unit = encodeURIComponent(d.unit);
+      }
+      return d;
     });
     const config = JSON.stringify({
       type: dashboardStore.selectedGrid.type,
