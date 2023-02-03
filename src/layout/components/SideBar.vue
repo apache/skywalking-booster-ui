@@ -26,6 +26,7 @@ limitations under the License. -->
       :unique-opened="true"
       :collapse="isCollapse"
       :style="{ border: 'none' }"
+      v-if="showMenu"
     >
       <template v-for="(menu, index) in routes" :key="index">
         <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
@@ -76,7 +77,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import type { RouteRecordRaw } from "vue-router";
-  import { useRouter } from "vue-router";
+  import { useRouter, useRoute } from "vue-router";
   import { useI18n } from "vue-i18n";
   import Icon from "@/components/Icon.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
@@ -86,12 +87,19 @@ limitations under the License. -->
   const name = ref<string>(String(useRouter().currentRoute.value.name));
   const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "") ? ref("light") : ref("black");
   const routes = ref<RouteRecordRaw[] | any>(useRouter().options.routes);
+  const route = useRoute();
+  const isCollapse = ref(false);
+  const showMenu = ref(true);
+
   if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
     appStore.setIsMobile(true);
   } else {
     appStore.setIsMobile(false);
   }
-  const isCollapse = ref(false);
+  if (route.params.config) {
+    isCollapse.value = true;
+    showMenu.value = false;
+  }
   const controlMenu = () => {
     isCollapse.value = !isCollapse.value;
   };
