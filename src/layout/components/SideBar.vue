@@ -68,6 +68,7 @@ limitations under the License. -->
       :style="{
         color: theme === 'light' ? '#eee' : '#252a2f',
       }"
+      v-if="showMenu"
     >
       <Icon size="middle" iconName="format_indent_decrease" @click="controlMenu" />
     </div>
