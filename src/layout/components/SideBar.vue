@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="side-bar">
+  <div class="side-bar" v-if="showMenu">
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon :size="isCollapse ? 'xl' : 'logo'" :iconName="isCollapse ? 'logo' : 'logo-sw'" />
     </div>
@@ -26,7 +26,6 @@ limitations under the License. -->
       :unique-opened="true"
       :collapse="isCollapse"
       :style="{ border: 'none' }"
-      v-if="showMenu"
     >
       <template v-for="(menu, index) in routes" :key="index">
         <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
@@ -68,7 +67,6 @@ limitations under the License. -->
       :style="{
         color: theme === 'light' ? '#eee' : '#252a2f',
       }"
-      v-if="showMenu"
     >
       <Icon size="middle" iconName="format_indent_decrease" @click="controlMenu" />
     </div>
@@ -98,7 +96,6 @@ limitations under the License. -->
     appStore.setIsMobile(false);
   }
   if (route.params.config) {
-    isCollapse.value = true;
     showMenu.value = false;
   }
   const controlMenu = () => {
