@@ -128,7 +128,7 @@ limitations under the License. -->
 
   .logo-icon-collapse {
     width: 65px;
-    margin: 15px 0 10px 0;
+    margin: 5px 0 10px 0;
     text-align: center;
   }
 
