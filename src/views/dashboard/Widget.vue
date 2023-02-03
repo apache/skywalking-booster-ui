@@ -24,7 +24,7 @@ limitations under the License. -->
         </el-tooltip>
       </div>
     </div>
-    <div class="widget-chart">
+    <div class="widget-chart" :class="config.graph.type.includes('List') ? 'list' : 'chart'">
       <component
         :is="graph.type"
         :intervalTime="appStoreWithOut.intervalTime"
@@ -75,6 +75,7 @@ limitations under the License. -->
 
       init();
       async function init() {
+        dashboardStore.setLayer(route.params.layer);
         dashboardStore.setEntity(route.params.entity);
         await setSelector();
         await queryMetrics();
@@ -165,8 +166,15 @@ limitations under the License. -->
     box-shadow: 0px 1px 4px 0px #00000029;
     border-radius: 3px;
     padding: 5px;
-    height: 400px;
     width: 100%;
+  }
+
+  .list {
+    min-height: 400px;
+  }
+
+  .chart {
+    height: 450px;
   }
 
   .no-data {

@@ -185,7 +185,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: "/page/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:config/:duration?",
+            path: "/page/:layer/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:config/:duration?",
             component: () => import("@/views/dashboard/Widget.vue"),
             name: "ViewWidget",
           },

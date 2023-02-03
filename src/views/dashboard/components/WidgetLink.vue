@@ -28,12 +28,12 @@ limitations under the License. -->
       />
     </div>
     <el-button size="small" type="primary" class="mt-20" @click="getLink">{{ t("generateLink") }}</el-button>
-    <div v-show="widgetLink" class="link mt-10">
-      <span @click="viewPage">
+    <div v-show="widgetLink" class="mt-10">
+      <span @click="viewPage" class="link">
         {{ host + widgetLink }}
       </span>
       <span>
-        <Icon class="cp ml-5" iconName="copy" @click="copyLink" />
+        <Icon class="cp ml-10" iconName="copy" @click="copyLink" />
       </span>
     </div>
   </div>
@@ -79,15 +79,22 @@ limitations under the License. -->
       title: encodeURIComponent(dashboardStore.selectedGrid.widget.title),
       tips: encodeURIComponent(dashboardStore.selectedGrid.widget.tips),
     };
+    const metricConfig = (dashboardStore.selectedGrid.metricConfig || []).map((d: any) => {
+      return {
+        ...d,
+        label: encodeURIComponent(d.label),
+        unit: encodeURIComponent(d.unit),
+      };
+    });
     const config = JSON.stringify({
       type: dashboardStore.selectedGrid.type,
       widget: w,
       graph: dashboardStore.selectedGrid.graph,
       metrics: dashboardStore.selectedGrid.metrics,
       metricTypes: dashboardStore.selectedGrid.metricTypes,
-      metricConfig: dashboardStore.selectedGrid.metricConfig,
+      metricConfig: metricConfig,
     });
-    const path = `/page/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}`;
+    const path = `/page/${dashboardStore.layerId}/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}`;
     widgetLink.value = hasDuration.value ? `${path}/${duration}` : path;
   }
   function viewPage() {
