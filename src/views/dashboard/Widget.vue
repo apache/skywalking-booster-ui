@@ -75,6 +75,7 @@ limitations under the License. -->
 
       init();
       async function init() {
+        appStoreWithOut.setPageTitle("Widget");
         dashboardStore.setLayer(route.params.layer);
         dashboardStore.setEntity(route.params.entity);
         await setSelector();
