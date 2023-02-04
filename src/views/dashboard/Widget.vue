@@ -24,7 +24,7 @@ limitations under the License. -->
         </el-tooltip>
       </div>
     </div>
-    <div class="widget-chart" :class="config.graph.type.includes('List') ? 'list' : 'chart'">
+    <div class="widget-chart" :style="{ height: config.height + 'px' }">
       <component
         :is="graph.type"
         :intervalTime="appStoreWithOut.intervalTime"
@@ -164,14 +164,6 @@ limitations under the License. -->
     border-radius: 3px;
     padding: 5px;
     width: 100%;
-  }
-
-  .list {
-    min-height: 400px;
-  }
-
-  .chart {
-    height: 450px;
   }
 
   .no-data {

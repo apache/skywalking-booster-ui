@@ -95,6 +95,7 @@ limitations under the License. -->
       metrics: dashboardStore.selectedGrid.metrics,
       metricTypes: dashboardStore.selectedGrid.metricTypes,
       metricConfig: metricConfig,
+      height: dashboardStore.selectedGrid.h * 20,
     });
     const path = `/page/${dashboardStore.layerId}/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}`;
     widgetLink.value = hasDuration.value ? `${path}/${duration}` : path;
