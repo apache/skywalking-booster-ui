@@ -76,8 +76,8 @@ limitations under the License. -->
       utc: appStore.utc,
     });
     const w = {
-      title: encodeURIComponent(dashboardStore.selectedGrid.widget.title),
-      tips: encodeURIComponent(dashboardStore.selectedGrid.widget.tips),
+      title: encodeURIComponent(dashboardStore.selectedGrid.widget.title || ""),
+      tips: encodeURIComponent(dashboardStore.selectedGrid.widget.tips || ""),
     };
     const metricConfig = (dashboardStore.selectedGrid.metricConfig || []).map((d: any) => {
       if (d.label) {
