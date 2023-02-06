@@ -65,13 +65,13 @@ limitations under the License. -->
       const appStoreWithOut = useAppStoreWithOut();
       const selectorStore = useSelectorStore();
       const route = useRoute();
-      const config = computed<any>(() => JSON.parse(route.params.config as string));
+      const config = computed<any>(() => JSON.parse(decodeURIComponent(route.params.config as string) as string));
       const graph = computed(() => config.value.graph || {});
       const source = ref<unknown>({});
       const loading = ref<boolean>(false);
       const dashboardStore = useDashboardStore();
-      const title = computed(() => encodeURIComponent((config.value.widget && config.value.widget.title) || ""));
-      const tips = computed(() => encodeURIComponent((config.value.widget && config.value.widget.tips) || ""));
+      const title = computed(() => (config.value.widget && config.value.widget.title) || "");
+      const tips = computed(() => (config.value.widget && config.value.widget.tips) || "");
 
       init();
       async function init() {

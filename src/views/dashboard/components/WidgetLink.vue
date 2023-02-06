@@ -97,8 +97,10 @@ limitations under the License. -->
       metricConfig: metricConfig,
       height: dashboardStore.selectedGrid.h * 20,
     });
-    const path = `/page/${dashboardStore.layerId}/${dashboardStore.entity}/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${config}`;
-    widgetLink.value = hasDuration.value ? `${path}/${duration}` : path;
+    const path = `/page/${dashboardStore.layerId}/${
+      dashboardStore.entity
+    }/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${encodeURIComponent(config)}`;
+    widgetLink.value = hasDuration.value ? `${path}/${encodeURIComponent(duration)}` : path;
   }
   function viewPage() {
     const routeUrl = router.resolve({ path: widgetLink.value });
