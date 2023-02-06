@@ -22,17 +22,24 @@ export default [
     meta: {
       title: "functions",
       icon: "functions",
-      layer: "FAAS",
+      hasGroup: true,
     },
-    redirect: "/functions",
     children: [
       {
-        path: "/functions",
-        name: "Functions",
+        path: "/openFunction",
+        name: "OpenFunction",
+        meta: {
+          title: "openFunction",
+          layer: "FAAS",
+        },
       },
       {
-        path: "/functions/tab/:activeTabIndex",
-        name: "FunctionsActiveTabIndex",
+        path: "/openFunction/tab/:activeTabIndex",
+        name: "OpenFunctionActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "FAAS",
+        },
       },
     ],
   },

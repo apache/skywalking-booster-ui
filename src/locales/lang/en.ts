@@ -183,6 +183,7 @@ const msg = {
   iframeSrc: "Iframe Link",
   generateLink: "Generate Link",
   setDuration: "Set Duration",
+  openFunction: "OpenFunction",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
