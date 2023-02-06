@@ -166,6 +166,7 @@ const msg = {
   iframeSrc: "Enlace Iframe",
   generateLink: "Generar enlaces",
   setDuration: "Establecer la duración",
+  openFunction: "OpenFunction",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",

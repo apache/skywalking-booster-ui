@@ -180,6 +180,7 @@ const msg = {
   iframeSrc: "Iframe链接",
   generateLink: "生成链接",
   setDuration: "设置时间区间",
+  openFunction: "OpenFunction",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
