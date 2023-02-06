@@ -95,7 +95,7 @@ limitations under the License. -->
       metrics: dashboardStore.selectedGrid.metrics,
       metricTypes: dashboardStore.selectedGrid.metricTypes,
       metricConfig: metricConfig,
-      height: dashboardStore.selectedGrid.h * 20,
+      height: dashboardStore.selectedGrid.h * 20 + 60,
     });
     const path = `/page/${dashboardStore.layerId}/${
       dashboardStore.entity

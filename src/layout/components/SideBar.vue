@@ -95,7 +95,7 @@ limitations under the License. -->
   } else {
     appStore.setIsMobile(false);
   }
-  if (route.params.config) {
+  if (route.name === "ViewWidget") {
     showMenu.value = false;
   }
   const controlMenu = () => {

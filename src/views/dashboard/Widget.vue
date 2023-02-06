@@ -24,7 +24,7 @@ limitations under the License. -->
         </el-tooltip>
       </div>
     </div>
-    <div class="widget-chart" :style="{ height: config.height + 'px' }">
+    <div class="widget-chart" :style="{ height: config.height - 60 + 'px' }">
       <component
         :is="graph.type"
         :intervalTime="appStoreWithOut.intervalTime"
@@ -75,7 +75,6 @@ limitations under the License. -->
 
       init();
       async function init() {
-        appStoreWithOut.setPageTitle("Widget");
         dashboardStore.setLayer(route.params.layer);
         dashboardStore.setEntity(route.params.entity);
         await setSelector();
@@ -152,7 +151,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .content {
-    min-width: 800px;
+    min-width: 100px;
     border: 1px solid #eee;
     background-color: #fff;
     position: relative;
