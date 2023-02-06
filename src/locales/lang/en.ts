@@ -181,6 +181,8 @@ const msg = {
   taskTitle: "HTTP request and response collecting rules",
   iframeWidgetTip: "Add a link to a widget",
   iframeSrc: "Iframe Link",
+  generateLink: "Generate Link",
+  setDuration: "Set Duration",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

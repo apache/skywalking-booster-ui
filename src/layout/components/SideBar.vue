@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="side-bar">
+  <div class="side-bar" v-if="showMenu">
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon :size="isCollapse ? 'xl' : 'logo'" :iconName="isCollapse ? 'logo' : 'logo-sw'" />
     </div>
@@ -76,7 +76,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import type { RouteRecordRaw } from "vue-router";
-  import { useRouter } from "vue-router";
+  import { useRouter, useRoute } from "vue-router";
   import { useI18n } from "vue-i18n";
   import Icon from "@/components/Icon.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
@@ -86,12 +86,18 @@ limitations under the License. -->
   const name = ref<string>(String(useRouter().currentRoute.value.name));
   const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "") ? ref("light") : ref("black");
   const routes = ref<RouteRecordRaw[] | any>(useRouter().options.routes);
+  const route = useRoute();
+  const isCollapse = ref(false);
+  const showMenu = ref(true);
+
   if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
     appStore.setIsMobile(true);
   } else {
     appStore.setIsMobile(false);
   }
-  const isCollapse = ref(false);
+  if (route.name === "ViewWidget") {
+    showMenu.value = false;
+  }
   const controlMenu = () => {
     isCollapse.value = !isCollapse.value;
   };
@@ -119,7 +125,7 @@ limitations under the License. -->
 
   .logo-icon-collapse {
     width: 65px;
-    margin: 15px 0 10px 0;
+    margin: 5px 0 10px 0;
     text-align: center;
   }
 

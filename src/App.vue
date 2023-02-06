@@ -15,11 +15,22 @@ limitations under the License. -->
 <template>
   <router-view />
 </template>
+<script lang="ts" setup>
+  import { useRoute } from "vue-router";
+  const route = useRoute();
+
+  setTimeout(() => {
+    if (route.name === "ViewWidget") {
+      (document.querySelector("#app") as any).style.minWidth = "120px";
+    } else {
+      (document.querySelector("#app") as any).style.minWidth = "1024px";
+    }
+  }, 500);
+</script>
 <style>
   #app {
     color: #2c3e50;
     height: 100%;
     overflow: hidden;
-    min-width: 1024px;
   }
 </style>

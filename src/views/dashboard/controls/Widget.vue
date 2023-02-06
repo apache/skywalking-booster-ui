@@ -26,17 +26,20 @@ limitations under the License. -->
             <Icon iconName="info_outline" size="sm" class="operation" v-show="widget.tips" />
           </span>
         </el-tooltip>
-        <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
+        <el-popover placement="bottom" trigger="click" :width="100">
           <template #reference>
             <span>
               <Icon iconName="ellipsis_v" size="middle" class="operation" />
             </span>
           </template>
-          <div class="tools" @click="editConfig">
+          <div class="tools" @click="editConfig" v-if="dashboardStore.editMode">
             <span>{{ t("edit") }}</span>
           </div>
-          <div class="tools" @click="removeWidget">
+          <div class="tools" @click="removeWidget" v-if="dashboardStore.editMode">
             <span>{{ t("delete") }}</span>
+          </div>
+          <div class="tools" @click="generateLink">
+            <span>{{ t("generateLink") }}</span>
           </div>
         </el-popover>
       </div>
@@ -161,6 +164,10 @@ limitations under the License. -->
           }
         }
       }
+      function generateLink() {
+        dashboardStore.setWidgetLink(true);
+        dashboardStore.selectWidget(props.data);
+      }
       watch(
         () => [props.data.metricTypes, props.data.metrics],
         () => {
@@ -227,6 +234,7 @@ limitations under the License. -->
         state,
         appStore,
         removeWidget,
+        generateLink,
         editConfig,
         data,
         loading,
