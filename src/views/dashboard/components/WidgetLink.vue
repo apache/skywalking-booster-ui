@@ -119,5 +119,7 @@ limitations under the License. -->
   .link-content {
     height: 300px;
     font-size: 12px;
+    overflow: auto;
+    padding-bottom: 10px;
   }
 </style>
