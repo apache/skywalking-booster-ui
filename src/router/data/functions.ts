@@ -26,16 +26,16 @@ export default [
     },
     children: [
       {
-        path: "/functions",
-        name: "Functions",
+        path: "/openFunction",
+        name: "OpenFunction",
         meta: {
           title: "openFunction",
           layer: "FAAS",
         },
       },
       {
-        path: "/functions/tab/:activeTabIndex",
-        name: "FunctionsActiveTabIndex",
+        path: "/openFunction/tab/:activeTabIndex",
+        name: "OpenFunctionActiveTabIndex",
         meta: {
           notShow: true,
           layer: "FAAS",
