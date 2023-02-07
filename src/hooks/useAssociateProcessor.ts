@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { useDashboardStore } from "@/store/modules/dashboard";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 import type { EventParams } from "@/types/app";
-import type { LayoutConfig } from "@/types/dashboard";
 
 export default function associateProcessor(props: any) {
   function eventAssociate() {
