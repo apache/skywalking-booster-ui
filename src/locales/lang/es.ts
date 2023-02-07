@@ -377,5 +377,6 @@ const msg = {
   virtualMQ: "MQ virtual",
   AWSCloud: "AWS Cloud",
   AWSCloudEKS: "EKS",
+  AWSCloudS3: "S3",
 };
 export default msg;
