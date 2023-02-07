@@ -15,20 +15,20 @@ limitations under the License. -->
 <template>
   <div class="link-content">
     <div>
-      <label class="mr-5">{{ t("setDuration") }}</label>
+      <label>{{ t("setDuration") }}</label>
       <el-switch v-model="hasDuration" />
     </div>
     <div v-if="hasDuration">
-      <label class="mr-20">{{ t("duration") }}</label>
+      <label>{{ t("duration") }}</label>
       <TimePicker
         :value="[appStore.durationRow.start, appStore.durationRow.end]"
-        position="bottom"
+        position="right"
         format="YYYY-MM-DD HH:mm"
         @input="changeTimeRange"
       />
     </div>
     <div v-if="!hasDuration">
-      <span class="label-auto">{{ t("auto") }}</span>
+      <label>{{ t("auto") }}</label>
       <el-switch class="mr-5" v-model="auto" style="height: 25px" />
       <Selector v-model="freshOpt" :options="RefreshOptions" size="small" />
     </div>
@@ -142,10 +142,11 @@ limitations under the License. -->
     height: 300px;
     font-size: 12px;
     overflow: auto;
-    padding-bottom: 10px;
+    padding-bottom: 50px;
   }
 
-  .label-auto {
-    margin-right: 45px;
+  label {
+    display: inline-block;
+    width: 250px;
   }
 </style>

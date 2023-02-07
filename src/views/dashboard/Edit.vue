@@ -32,6 +32,7 @@ limitations under the License. -->
     </el-dialog>
     <el-dialog
       v-model="dashboardStore.showLinkConfig"
+      width="800px"
       :destroy-on-close="true"
       @closed="dashboardStore.setWidgetLink(false)"
     >
