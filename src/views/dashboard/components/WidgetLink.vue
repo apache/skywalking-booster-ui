@@ -118,7 +118,6 @@ limitations under the License. -->
       if (f.step === TimeType.DAY_TIME) {
         opt.auto = Number(f.value) * 60 * 60 * 60 * 1000;
       }
-      console.log(opt.auto);
     }
     const config = JSON.stringify(opt);
     const path = `/page/${dashboardStore.layerId}/${

@@ -77,14 +77,14 @@ limitations under the License. -->
 
       init();
       async function init() {
+        dashboardStore.setLayer(route.params.layer);
+        dashboardStore.setEntity(route.params.entity);
         const { auto } = config.value;
 
         if (auto) {
           await setDuration();
           appStoreWithOut.setReloadTimer(setInterval(setDuration, auto));
         }
-        dashboardStore.setLayer(route.params.layer);
-        dashboardStore.setEntity(route.params.entity);
         await setSelector();
         await queryMetrics();
       }
