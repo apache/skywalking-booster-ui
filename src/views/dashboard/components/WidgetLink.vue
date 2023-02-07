@@ -15,17 +15,22 @@ limitations under the License. -->
 <template>
   <div class="link-content">
     <div>
-      <label class="mr-5">{{ t("setDuration") }}</label>
+      <label>{{ t("setDuration") }}</label>
       <el-switch v-model="hasDuration" />
     </div>
     <div v-if="hasDuration">
-      <label class="mr-20">{{ t("duration") }}</label>
+      <label>{{ t("duration") }}</label>
       <TimePicker
         :value="[appStore.durationRow.start, appStore.durationRow.end]"
-        position="bottom"
+        position="right"
         format="YYYY-MM-DD HH:mm"
         @input="changeTimeRange"
       />
+    </div>
+    <div v-if="!hasDuration">
+      <label>{{ t("auto") }}</label>
+      <el-switch class="mr-5" v-model="auto" style="height: 25px" />
+      <Selector v-model="freshOpt" :options="RefreshOptions" size="small" />
     </div>
     <el-button size="small" type="primary" class="mt-20" @click="getLink">{{ t("generateLink") }}</el-button>
     <div v-show="widgetLink" class="mt-10">
@@ -46,15 +51,19 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import router from "@/router";
   import copy from "@/utils/copy";
+  import { RefreshOptions } from "@/views/dashboard/data";
+  import { TimeType } from "@/constants/data";
 
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
-  const hasDuration = ref<boolean>(true);
+  const hasDuration = ref<boolean>(false);
   const widgetLink = ref<string>("");
   const dates = ref<Date[]>([]);
   const host = window.location.host;
+  const auto = ref<boolean>(true);
+  const freshOpt = ref<string>(RefreshOptions[0].value);
 
   function changeTimeRange(val: Date[] | any) {
     dates.value = val;
@@ -75,28 +84,42 @@ limitations under the License. -->
       step: appStore.durationRow.step,
       utc: appStore.utc,
     });
-    const w = {
-      title: encodeURIComponent(dashboardStore.selectedGrid.widget.title || ""),
-      tips: encodeURIComponent(dashboardStore.selectedGrid.widget.tips || ""),
-    };
-    const metricConfig = (dashboardStore.selectedGrid.metricConfig || []).map((d: any) => {
+    const { widget, graph, metrics, metricTypes, metricConfig } = dashboardStore.selectedGrid;
+    const c = (metricConfig || []).map((d: any) => {
+      const t: any = {};
       if (d.label) {
-        d.label = encodeURIComponent(d.label);
+        t.label = encodeURIComponent(d.label);
       }
       if (d.unit) {
-        d.unit = encodeURIComponent(d.unit);
+        t.unit = encodeURIComponent(d.unit);
       }
-      return d;
+      return { ...d, ...t };
     });
-    const config = JSON.stringify({
+    const opt: any = {
       type: dashboardStore.selectedGrid.type,
-      widget: w,
-      graph: dashboardStore.selectedGrid.graph,
-      metrics: dashboardStore.selectedGrid.metrics,
-      metricTypes: dashboardStore.selectedGrid.metricTypes,
-      metricConfig: metricConfig,
+      graph: graph,
+      metrics: metrics,
+      metricTypes: metricTypes,
+      metricConfig: c,
       height: dashboardStore.selectedGrid.h * 20 + 60,
-    });
+    };
+    if (widget) {
+      opt.widget = {
+        title: encodeURIComponent(widget.title || ""),
+        tips: encodeURIComponent(widget.tips || ""),
+      };
+    }
+    if (auto.value) {
+      const f = RefreshOptions.filter((d: { value: string }) => d.value === freshOpt.value)[0] || {};
+      opt.auto = Number(f.value) * 60 * 1000;
+      if (f.step === TimeType.HOUR_TIME) {
+        opt.auto = Number(f.value) * 60 * 60 * 1000;
+      }
+      if (f.step === TimeType.DAY_TIME) {
+        opt.auto = Number(f.value) * 60 * 60 * 60 * 1000;
+      }
+    }
+    const config = JSON.stringify(opt);
     const path = `/page/${dashboardStore.layerId}/${
       dashboardStore.entity
     }/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${encodeURIComponent(config)}`;
@@ -120,6 +143,11 @@ limitations under the License. -->
     height: 300px;
     font-size: 12px;
     overflow: auto;
-    padding-bottom: 10px;
+    padding-bottom: 50px;
+  }
+
+  label {
+    display: inline-block;
+    width: 250px;
   }
 </style>
