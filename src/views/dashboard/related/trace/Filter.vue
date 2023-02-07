@@ -246,7 +246,9 @@ limitations under the License. -->
   }
   onUnmounted(() => {
     traceStore.resetState();
-    removeAssociationFilters(props.data);
+    const config = props.data;
+    delete config.filters;
+    dashboardStore.setWidget(config);
   });
   watch(
     () => [selectorStore.currentPod],

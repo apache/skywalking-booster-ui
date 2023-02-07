@@ -117,13 +117,6 @@ export default function associateProcessor(props: any) {
     item.metricValue = value;
     return item;
   }
-  function removeAssociationFilters(config: LayoutConfig) {
-    const dashboardStore = useDashboardStore();
-    if (!config.filters) {
-      return;
-    }
-    delete config.filters;
-    dashboardStore.setWidget(config);
-  }
-  return { eventAssociate, traceFilters, removeAssociationFilters };
+
+  return { eventAssociate, traceFilters };
 }
