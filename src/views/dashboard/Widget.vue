@@ -54,7 +54,6 @@ limitations under the License. -->
   import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
-  import { TimeType } from "@/constants/data";
   import getLocalTime from "@/utils/localtime";
   import timeFormat from "@/utils/timeFormat";
 
@@ -75,22 +74,14 @@ limitations under the License. -->
       const dashboardStore = useDashboardStore();
       const title = computed(() => (config.value.widget && config.value.widget.title) || "");
       const tips = computed(() => (config.value.widget && config.value.widget.tips) || "");
-      const gap = ref<number>(0);
 
       init();
       async function init() {
         const { auto } = config.value;
 
         if (auto) {
-          gap.value = Number(auto.value) * 60 * 1000;
-          if (auto.step === TimeType.HOUR_TIME) {
-            gap.value = Number(auto.value) * 60 * 60 * 1000;
-          }
-          if (auto.step === TimeType.DAY_TIME) {
-            gap.value = Number(auto.value) * 60 * 60 * 60 * 1000;
-          }
           await setDuration();
-          appStoreWithOut.setReloadTimer(setInterval(setDuration, gap.value));
+          appStoreWithOut.setReloadTimer(setInterval(setDuration, auto));
         }
         dashboardStore.setLayer(route.params.layer);
         dashboardStore.setEntity(route.params.entity);
@@ -99,7 +90,7 @@ limitations under the License. -->
       }
       async function setDuration() {
         const dates: Date[] = [
-          getLocalTime(appStoreWithOut.utc, new Date(new Date().getTime() - gap.value)),
+          getLocalTime(appStoreWithOut.utc, new Date(new Date().getTime() - config.value.auto)),
           getLocalTime(appStoreWithOut.utc, new Date()),
         ];
         appStoreWithOut.setDuration(timeFormat(dates));

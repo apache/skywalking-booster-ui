@@ -52,6 +52,7 @@ limitations under the License. -->
   import router from "@/router";
   import copy from "@/utils/copy";
   import { RefreshOptions } from "@/views/dashboard/data";
+  import { TimeType } from "@/constants/data";
 
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
@@ -109,10 +110,13 @@ limitations under the License. -->
     }
     if (auto.value) {
       const f = RefreshOptions.filter((d: { value: string }) => d.value === freshOpt.value)[0] || {};
-      opt.auto = {
-        value: f.value,
-        step: f.step,
-      };
+      opt.auto = Number(auto.value) * 60 * 1000;
+      if (f.step === TimeType.HOUR_TIME) {
+        opt.auto = Number(auto.value) * 60 * 60 * 1000;
+      }
+      if (f.step === TimeType.DAY_TIME) {
+        opt.auto = Number(auto.value) * 60 * 60 * 60 * 1000;
+      }
     }
     const config = JSON.stringify(opt);
     const path = `/page/${dashboardStore.layerId}/${
