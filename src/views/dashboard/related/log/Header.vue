@@ -129,7 +129,6 @@ limitations under the License. -->
   import { ErrorCategory } from "./data";
   import type { LayoutConfig } from "@/types/dashboard";
   import type { DurationTime } from "@/types/app";
-  import removeAssociationFilters from "@/hooks/useAssociateProcessor";
 
   /*global defineProps, Recordable */
   const props = defineProps({
