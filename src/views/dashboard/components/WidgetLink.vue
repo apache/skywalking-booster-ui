@@ -111,13 +111,14 @@ limitations under the License. -->
     }
     if (auto.value) {
       const f = RefreshOptions.filter((d: { value: string }) => d.value === freshOpt.value)[0] || {};
-      opt.auto = Number(auto.value) * 60 * 1000;
+      opt.auto = Number(f.value) * 60 * 1000;
       if (f.step === TimeType.HOUR_TIME) {
-        opt.auto = Number(auto.value) * 60 * 60 * 1000;
+        opt.auto = Number(f.value) * 60 * 60 * 1000;
       }
       if (f.step === TimeType.DAY_TIME) {
-        opt.auto = Number(auto.value) * 60 * 60 * 60 * 1000;
+        opt.auto = Number(f.value) * 60 * 60 * 60 * 1000;
       }
+      console.log(opt.auto);
     }
     const config = JSON.stringify(opt);
     const path = `/page/${dashboardStore.layerId}/${
