@@ -93,7 +93,7 @@ limitations under the License. -->
       if (d.unit) {
         t.unit = encodeURIComponent(d.unit);
       }
-      return t;
+      return { ...d, ...t };
     });
     const opt: any = {
       type: dashboardStore.selectedGrid.type,
