@@ -86,13 +86,14 @@ limitations under the License. -->
     });
     const { widget, graph, metrics, metricTypes, metricConfig } = dashboardStore.selectedGrid;
     const c = (metricConfig || []).map((d: any) => {
+      const t: any = {};
       if (d.label) {
-        d.label = encodeURIComponent(d.label);
+        t.label = encodeURIComponent(d.label);
       }
       if (d.unit) {
-        d.unit = encodeURIComponent(d.unit);
+        t.unit = encodeURIComponent(d.unit);
       }
-      return d;
+      return t;
     });
     const opt: any = {
       type: dashboardStore.selectedGrid.type,
