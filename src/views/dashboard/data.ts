@@ -318,3 +318,8 @@ export const RefIdTypes = [
   { label: "Trace ID", value: "traceId" },
   { label: "None", value: "none" },
 ];
+export const RefreshOptions = [
+  { label: "Last 30 minutes", value: "30", step: "MINUTE" },
+  { label: "Last 8 hours", value: "8", step: "HOUR" },
+  { label: "Last 7 days", value: "7", step: "DAY" },
+];

@@ -25,5 +25,6 @@ limitations under the License. -->
   .app-main {
     height: calc(100% - 40px);
     background: #f7f9fa;
+    overflow: auto;
   }
 </style>

@@ -104,7 +104,6 @@ limitations under the License. -->
     () => selectorStore.currentService,
     () => {
       searchTasks();
-      console.log("service");
     },
   );
   watch(

@@ -54,6 +54,7 @@ limitations under the License. -->
   import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
+  import timeFormat from "@/utils/timeFormat";
 
   export default defineComponent({
     name: "WidgetPage",
@@ -77,8 +78,19 @@ limitations under the License. -->
       async function init() {
         dashboardStore.setLayer(route.params.layer);
         dashboardStore.setEntity(route.params.entity);
+        const { auto } = config.value;
+
+        if (auto) {
+          await setDuration();
+          appStoreWithOut.setReloadTimer(setInterval(setDuration, auto));
+        }
         await setSelector();
         await queryMetrics();
+      }
+      async function setDuration() {
+        const dates: Date[] = [new Date(new Date().getTime() - config.value.auto), new Date()];
+
+        appStoreWithOut.setDuration(timeFormat(dates));
       }
       async function setSelector() {
         const { serviceId, podId, processId, destServiceId, destPodId, destProcessId, entity } = route.params;

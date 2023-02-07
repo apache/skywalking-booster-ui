@@ -220,7 +220,6 @@ limitations under the License. -->
     visGraph.value.on("select", (data: { items: number[] }) => {
       const index = data.items[0];
       currentEvent.value = events[index - 1 || 0] || {};
-      console.log(currentEvent.value);
       if (data.items.length) {
         showEventDetail.value = true;
         return;
