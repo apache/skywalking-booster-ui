@@ -1,3 +1,4 @@
+import { dashboardStore } from "./../store/modules/dashboard";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,9 +16,11 @@
  * limitations under the License.
  */
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { useDashboardStore } from "@/store/modules/dashboard";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 import type { EventParams } from "@/types/app";
+import type { LayoutConfig } from "@/types/dashboard";
 
 export default function associateProcessor(props: any) {
   function eventAssociate() {
@@ -115,5 +118,13 @@ export default function associateProcessor(props: any) {
     item.metricValue = value;
     return item;
   }
-  return { eventAssociate, traceFilters };
+  function removeAssociationFilters(config: LayoutConfig) {
+    const dashboardStore = useDashboardStore();
+    if (!config.filters) {
+      return;
+    }
+    delete config.filters;
+    dashboardStore.setWidget(config);
+  }
+  return { eventAssociate, traceFilters, removeAssociationFilters };
 }

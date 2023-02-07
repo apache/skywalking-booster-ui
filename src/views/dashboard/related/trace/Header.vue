@@ -86,6 +86,7 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import { EntityType, QueryOrders, Status } from "../../data";
   import type { LayoutConfig } from "@/types/dashboard";
+  import removeAssociationFilters from "@/hooks/useAssociateProcessor";
 
   const FiltersKeys: { [key: string]: string } = {
     status: "traceState",
@@ -229,6 +230,7 @@ limitations under the License. -->
   }
   onUnmounted(() => {
     traceStore.resetState();
+    removeAssociationFilters(props.data);
   });
 </script>
 <style lang="scss" scoped>

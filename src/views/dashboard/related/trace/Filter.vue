@@ -89,6 +89,7 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import { EntityType, QueryOrders, Status } from "../../data";
   import type { LayoutConfig } from "@/types/dashboard";
+  import removeAssociationFilters from "@/hooks/useAssociateProcessor";
 
   /*global defineProps, Recordable */
   const props = defineProps({
@@ -245,6 +246,7 @@ limitations under the License. -->
   }
   onUnmounted(() => {
     traceStore.resetState();
+    removeAssociationFilters(props.data);
   });
   watch(
     () => [selectorStore.currentPod],
