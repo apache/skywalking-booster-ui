@@ -115,5 +115,6 @@ export default function associateProcessor(props: any) {
     item.metricValue = value;
     return item;
   }
+
   return { eventAssociate, traceFilters };
 }

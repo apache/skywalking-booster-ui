@@ -319,6 +319,9 @@ limitations under the License. -->
   }
   onUnmounted(() => {
     logStore.resetState();
+    const config = props.data;
+    delete config.filters;
+    dashboardStore.setWidget(config);
   });
   watch(
     () => selectorStore.currentService,

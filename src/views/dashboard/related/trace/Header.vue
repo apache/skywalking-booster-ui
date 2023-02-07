@@ -229,6 +229,9 @@ limitations under the License. -->
   }
   onUnmounted(() => {
     traceStore.resetState();
+    const config = props.data;
+    delete config.filters;
+    dashboardStore.setWidget(config);
   });
 </script>
 <style lang="scss" scoped>
