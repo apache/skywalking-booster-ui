@@ -54,7 +54,6 @@ limitations under the License. -->
   import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
-  import getLocalTime from "@/utils/localtime";
   import timeFormat from "@/utils/timeFormat";
 
   export default defineComponent({
