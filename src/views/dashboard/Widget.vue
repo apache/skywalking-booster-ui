@@ -89,10 +89,8 @@ limitations under the License. -->
         await queryMetrics();
       }
       async function setDuration() {
-        const dates: Date[] = [
-          getLocalTime(appStoreWithOut.utc, new Date(new Date().getTime() - config.value.auto)),
-          getLocalTime(appStoreWithOut.utc, new Date()),
-        ];
+        const dates: Date[] = [new Date(new Date().getTime() - config.value.auto), new Date()];
+
         appStoreWithOut.setDuration(timeFormat(dates));
       }
       async function setSelector() {
