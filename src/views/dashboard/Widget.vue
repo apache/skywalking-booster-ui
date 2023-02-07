@@ -77,8 +77,13 @@ limitations under the License. -->
       async function init() {
         dashboardStore.setLayer(route.params.layer);
         dashboardStore.setEntity(route.params.entity);
+        await setDuration();
         await setSelector();
         await queryMetrics();
+      }
+      async function setDuration() {
+        // if (config.value.auto) {
+        // }
       }
       async function setSelector() {
         const { serviceId, podId, processId, destServiceId, destPodId, destProcessId, entity } = route.params;

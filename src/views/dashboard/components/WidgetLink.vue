@@ -27,6 +27,11 @@ limitations under the License. -->
         @input="changeTimeRange"
       />
     </div>
+    <div v-if="!hasDuration">
+      <span class="label-auto">{{ t("auto") }}</span>
+      <el-switch class="mr-5" v-model="auto" style="height: 25px" />
+      <Selector v-model="freshOpt" :options="RefreshOptions" size="small" />
+    </div>
     <el-button size="small" type="primary" class="mt-20" @click="getLink">{{ t("generateLink") }}</el-button>
     <div v-show="widgetLink" class="mt-10">
       <span @click="viewPage" class="link">
@@ -46,15 +51,18 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import router from "@/router";
   import copy from "@/utils/copy";
+  import { RefreshOptions } from "@/views/dashboard/data";
 
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
-  const hasDuration = ref<boolean>(true);
+  const hasDuration = ref<boolean>(false);
   const widgetLink = ref<string>("");
   const dates = ref<Date[]>([]);
   const host = window.location.host;
+  const auto = ref<boolean>(true);
+  const freshOpt = ref<string>(RefreshOptions[0].value);
 
   function changeTimeRange(val: Date[] | any) {
     dates.value = val;
@@ -75,11 +83,8 @@ limitations under the License. -->
       step: appStore.durationRow.step,
       utc: appStore.utc,
     });
-    const w = {
-      title: encodeURIComponent(dashboardStore.selectedGrid.widget.title || ""),
-      tips: encodeURIComponent(dashboardStore.selectedGrid.widget.tips || ""),
-    };
-    const metricConfig = (dashboardStore.selectedGrid.metricConfig || []).map((d: any) => {
+    const { widget, graph, metrics, metricTypes, metricConfig } = dashboardStore.selectedGrid;
+    const c = (metricConfig || []).map((d: any) => {
       if (d.label) {
         d.label = encodeURIComponent(d.label);
       }
@@ -88,15 +93,28 @@ limitations under the License. -->
       }
       return d;
     });
-    const config = JSON.stringify({
+    const opt: any = {
       type: dashboardStore.selectedGrid.type,
-      widget: w,
-      graph: dashboardStore.selectedGrid.graph,
-      metrics: dashboardStore.selectedGrid.metrics,
-      metricTypes: dashboardStore.selectedGrid.metricTypes,
-      metricConfig: metricConfig,
+      graph: graph,
+      metrics: metrics,
+      metricTypes: metricTypes,
+      metricConfig: c,
       height: dashboardStore.selectedGrid.h * 20 + 60,
-    });
+    };
+    if (widget) {
+      opt.widget = {
+        title: encodeURIComponent(widget.title || ""),
+        tips: encodeURIComponent(widget.tips || ""),
+      };
+    }
+    if (auto.value) {
+      const f = RefreshOptions.filter((d: { value: string }) => d.value === freshOpt.value)[0] || {};
+      opt.auto = {
+        value: f.value,
+        step: f.step,
+      };
+    }
+    const config = JSON.stringify(opt);
     const path = `/page/${dashboardStore.layerId}/${
       dashboardStore.entity
     }/${serviceId}/${podId}/${processId}/${destServiceId}/${destPodId}/${destProcessId}/${encodeURIComponent(config)}`;
@@ -121,5 +139,9 @@ limitations under the License. -->
     font-size: 12px;
     overflow: auto;
     padding-bottom: 10px;
+  }
+
+  .label-auto {
+    margin-right: 45px;
   }
 </style>
