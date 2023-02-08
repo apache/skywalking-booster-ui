@@ -42,6 +42,22 @@ export default [
           layer: "AWS_EKS",
         },
       },
+      {
+        path: "/aws-s3",
+        name: "AWSCloudS3",
+        meta: {
+          title: "AWSCloudS3",
+          layer: "AWS_S3",
+        },
+      },
+      {
+        path: "/aws-s3/tab/:activeTabIndex",
+        name: "S3ActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "AWS_S3",
+        },
+      },      
     ],
   },
 ];
