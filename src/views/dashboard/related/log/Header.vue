@@ -343,6 +343,7 @@ limitations under the License. -->
   watch(
     () => appStore.durationTime,
     () => {
+      duration.value = appStore.durationTime;
       if (dashboardStore.entity === EntityType[1].value) {
         init();
       }
