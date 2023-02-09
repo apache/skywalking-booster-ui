@@ -69,7 +69,6 @@ limitations under the License. -->
   import { ref } from "vue";
   import type { RouteRecordRaw } from "vue-router";
   import { useRouter, useRoute } from "vue-router";
-  import { useThrottleFn } from "@vueuse/core";
   import { useI18n } from "vue-i18n";
   import Icon from "@/components/Icon.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
