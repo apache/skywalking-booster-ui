@@ -13,62 +13,54 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="side-bar" v-if="showMenu">
+  <div class="side-bar" v-if="showMenu" @click="isCollapse = false" @mouseleave="isCollapse = true">
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon :size="isCollapse ? 'xl' : 'logo'" :iconName="isCollapse ? 'logo' : 'logo-sw'" />
     </div>
-    <el-menu
-      active-text-color="#448dfe"
-      background-color="#252a2f"
-      class="el-menu-vertical"
-      :default-active="name"
-      text-color="#efefef"
-      :unique-opened="true"
-      :collapse="isCollapse"
-      :style="{ border: 'none' }"
-    >
-      <template v-for="(menu, index) in routes" :key="index">
-        <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
-          <template #title>
-            <router-link class="items" :to="menu.path">
-              <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
-                <Icon size="lg" :iconName="menu.meta.icon" />
-              </el-icon>
-              <span class="title" :class="isCollapse ? 'collapse' : ''">
-                {{ t(menu.meta.title) }}
-              </span>
-            </router-link>
-          </template>
-          <el-menu-item-group>
-            <el-menu-item v-for="(m, idx) in filterMenus(menu.children)" :index="m.name" :key="idx">
-              <router-link class="items" :to="m.path">
-                <span class="title">{{ m.meta && t(m.meta.title) }}</span>
+    <div class="menu scroll_bar_dark" :style="isCollapse ? {} : { width: '220px' }">
+      <el-menu
+        active-text-color="#448dfe"
+        background-color="#252a2f"
+        class="el-menu-vertical"
+        :default-active="name"
+        text-color="#efefef"
+        :collapse="isCollapse"
+        :style="{ border: 'none' }"
+      >
+        <template v-for="(menu, index) in routes" :key="index">
+          <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
+            <template #title>
+              <router-link class="items" :to="menu.path">
+                <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
+                  <Icon size="lg" :iconName="menu.meta.icon" />
+                </el-icon>
+                <span class="title" :class="isCollapse ? 'collapse' : ''">
+                  {{ t(menu.meta.title) }}
+                </span>
               </router-link>
-            </el-menu-item>
-          </el-menu-item-group>
-        </el-sub-menu>
-        <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
-          <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
-            <router-link class="items" :to="menu.children[0].path">
-              <Icon size="lg" :iconName="menu.meta.icon" />
-            </router-link>
-          </el-icon>
-          <template #title>
-            <router-link class="items" :to="menu.children[0].path">
-              <span class="title">{{ t(menu.meta.title) }}</span>
-            </router-link>
-          </template>
-        </el-menu-item>
-      </template>
-    </el-menu>
-    <div
-      class="menu-control"
-      :class="isCollapse ? 'collapse' : ''"
-      :style="{
-        color: theme === 'light' ? '#eee' : '#252a2f',
-      }"
-    >
-      <Icon size="middle" iconName="format_indent_decrease" @click="controlMenu" />
+            </template>
+            <el-menu-item-group>
+              <el-menu-item v-for="(m, idx) in filterMenus(menu.children)" :index="m.name" :key="idx">
+                <router-link class="items" :to="m.path">
+                  <span class="title">{{ m.meta && t(m.meta.title) }}</span>
+                </router-link>
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-sub-menu>
+          <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
+            <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
+              <router-link class="items" :to="menu.children[0].path">
+                <Icon size="lg" :iconName="menu.meta.icon" />
+              </router-link>
+            </el-icon>
+            <template #title>
+              <router-link class="items" :to="menu.children[0].path">
+                <span class="title">{{ t(menu.meta.title) }}</span>
+              </router-link>
+            </template>
+          </el-menu-item>
+        </template>
+      </el-menu>
     </div>
   </div>
 </template>
@@ -87,7 +79,7 @@ limitations under the License. -->
   const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "") ? ref("light") : ref("black");
   const routes = ref<RouteRecordRaw[] | any>(useRouter().options.routes);
   const route = useRoute();
-  const isCollapse = ref(false);
+  const isCollapse = ref(true);
   const showMenu = ref(true);
 
   if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
@@ -98,29 +90,37 @@ limitations under the License. -->
   if (route.name === "ViewWidget") {
     showMenu.value = false;
   }
-  const controlMenu = () => {
-    isCollapse.value = !isCollapse.value;
-  };
   const changePage = (menu: RouteRecordRaw) => {
     theme.value = ["VirtualMachine", "Kubernetes"].includes(String(menu.name)) ? "light" : "black";
   };
   const filterMenus = (menus: any[]) => {
     return menus.filter((d) => d.meta && !d.meta.notShow);
   };
+  function setCollapse() {
+    isCollapse.value = false;
+  }
 </script>
 
 <style lang="scss" scoped>
   .side-bar {
     background: #252a2f;
     height: 100%;
-    margin-bottom: 100px;
+    overflow: hidden;
+    margin-bottom: 180px;
+  }
+
+  .menu {
+    height: calc(100% - 30px);
+    overflow: hidden;
+  }
+
+  .menu:hover {
     overflow-y: auto;
-    overflow-x: hidden;
   }
 
   .el-menu-vertical:not(.el-menu--collapse) {
     width: 220px;
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .logo-icon-collapse {
@@ -140,16 +140,6 @@ limitations under the License. -->
   .logo-icon {
     margin: 15px 0 10px 20px;
     width: 110px;
-  }
-
-  .menu-control {
-    position: absolute;
-    top: 7px;
-    left: 220px;
-    cursor: pointer;
-    transition: all 0.2s linear;
-    z-index: 99;
-    color: #252a2f;
   }
 
   .menu-control.collapse {

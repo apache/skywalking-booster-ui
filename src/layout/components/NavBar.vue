@@ -101,7 +101,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .nav-bar {
-    padding: 5px 10px 5px 28px;
+    padding: 5px 10px;
     text-align: left;
     justify-content: space-between;
     background-color: #fafbfc;
