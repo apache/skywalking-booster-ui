@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="side-bar" v-if="showMenu" @click="setCollapse" @mouseleave="closeMenu">
+  <div class="side-bar" v-if="showMenu" @click="isCollapse = false" @mouseleave="isCollapse = true">
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon :size="isCollapse ? 'xl' : 'logo'" :iconName="isCollapse ? 'logo' : 'logo-sw'" />
     </div>
@@ -69,6 +69,7 @@ limitations under the License. -->
   import { ref } from "vue";
   import type { RouteRecordRaw } from "vue-router";
   import { useRouter, useRoute } from "vue-router";
+  import { useThrottleFn } from "@vueuse/core";
   import { useI18n } from "vue-i18n";
   import Icon from "@/components/Icon.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
@@ -98,9 +99,6 @@ limitations under the License. -->
   };
   function setCollapse() {
     isCollapse.value = false;
-  }
-  function closeMenu() {
-    isCollapse.value = true;
   }
 </script>
 
