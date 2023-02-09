@@ -17,50 +17,52 @@ limitations under the License. -->
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon :size="isCollapse ? 'xl' : 'logo'" :iconName="isCollapse ? 'logo' : 'logo-sw'" />
     </div>
-    <el-menu
-      active-text-color="#448dfe"
-      background-color="#252a2f"
-      class="el-menu-vertical"
-      :default-active="name"
-      text-color="#efefef"
-      :unique-opened="true"
-      :collapse="isCollapse"
-      :style="{ border: 'none' }"
-    >
-      <template v-for="(menu, index) in routes" :key="index">
-        <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
-          <template #title>
-            <router-link class="items" :to="menu.path">
-              <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
-                <Icon size="lg" :iconName="menu.meta.icon" />
-              </el-icon>
-              <span class="title" :class="isCollapse ? 'collapse' : ''">
-                {{ t(menu.meta.title) }}
-              </span>
-            </router-link>
-          </template>
-          <el-menu-item-group>
-            <el-menu-item v-for="(m, idx) in filterMenus(menu.children)" :index="m.name" :key="idx">
-              <router-link class="items" :to="m.path">
-                <span class="title">{{ m.meta && t(m.meta.title) }}</span>
+    <div class="menu scroll_bar_dark">
+      <el-menu
+        active-text-color="#448dfe"
+        background-color="#252a2f"
+        class="el-menu-vertical"
+        :default-active="name"
+        text-color="#efefef"
+        :unique-opened="true"
+        :collapse="isCollapse"
+        :style="{ border: 'none' }"
+      >
+        <template v-for="(menu, index) in routes" :key="index">
+          <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
+            <template #title>
+              <router-link class="items" :to="menu.path">
+                <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
+                  <Icon size="lg" :iconName="menu.meta.icon" />
+                </el-icon>
+                <span class="title" :class="isCollapse ? 'collapse' : ''">
+                  {{ t(menu.meta.title) }}
+                </span>
               </router-link>
-            </el-menu-item>
-          </el-menu-item-group>
-        </el-sub-menu>
-        <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
-          <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
-            <router-link class="items" :to="menu.children[0].path">
-              <Icon size="lg" :iconName="menu.meta.icon" />
-            </router-link>
-          </el-icon>
-          <template #title>
-            <router-link class="items" :to="menu.children[0].path">
-              <span class="title">{{ t(menu.meta.title) }}</span>
-            </router-link>
-          </template>
-        </el-menu-item>
-      </template>
-    </el-menu>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item v-for="(m, idx) in filterMenus(menu.children)" :index="m.name" :key="idx">
+                <router-link class="items" :to="m.path">
+                  <span class="title">{{ m.meta && t(m.meta.title) }}</span>
+                </router-link>
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-sub-menu>
+          <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
+            <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
+              <router-link class="items" :to="menu.children[0].path">
+                <Icon size="lg" :iconName="menu.meta.icon" />
+              </router-link>
+            </el-icon>
+            <template #title>
+              <router-link class="items" :to="menu.children[0].path">
+                <span class="title">{{ t(menu.meta.title) }}</span>
+              </router-link>
+            </template>
+          </el-menu-item>
+        </template>
+      </el-menu>
+    </div>
     <div
       class="menu-control"
       :class="isCollapse ? 'collapse' : ''"
@@ -113,7 +115,17 @@ limitations under the License. -->
   .side-bar {
     background: #252a2f;
     height: 100%;
-    margin-bottom: 100px;
+    overflow: hidden;
+    margin-bottom: 180px;
+  }
+
+  .menu {
+    height: calc(100% - 30px);
+    overflow: hidden;
+    width: 220px;
+  }
+
+  .menu:hover {
     overflow-y: auto;
     overflow-x: hidden;
   }
