@@ -17,7 +17,7 @@ limitations under the License. -->
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon :size="isCollapse ? 'xl' : 'logo'" :iconName="isCollapse ? 'logo' : 'logo-sw'" />
     </div>
-    <div class="menu scroll_bar_dark">
+    <div class="menu scroll_bar_dark" :style="isCollapse ? {} : { width: '220px' }">
       <el-menu
         active-text-color="#448dfe"
         background-color="#252a2f"
@@ -122,7 +122,6 @@ limitations under the License. -->
   .menu {
     height: calc(100% - 30px);
     overflow: hidden;
-    width: 220px;
   }
 
   .menu:hover {
@@ -132,7 +131,7 @@ limitations under the License. -->
 
   .el-menu-vertical:not(.el-menu--collapse) {
     width: 220px;
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .logo-icon-collapse {

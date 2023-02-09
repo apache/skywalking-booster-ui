@@ -57,7 +57,7 @@ export default [
           notShow: true,
           layer: "AWS_S3",
         },
-      },      
+      },
     ],
   },
 ];
