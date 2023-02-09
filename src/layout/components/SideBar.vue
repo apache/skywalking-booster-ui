@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="side-bar" v-if="showMenu">
+  <div class="side-bar" v-if="showMenu" @click="setCollapse" @mouseleave="closeMenu">
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon :size="isCollapse ? 'xl' : 'logo'" :iconName="isCollapse ? 'logo' : 'logo-sw'" />
     </div>
@@ -24,7 +24,6 @@ limitations under the License. -->
         class="el-menu-vertical"
         :default-active="name"
         text-color="#efefef"
-        :unique-opened="true"
         :collapse="isCollapse"
         :style="{ border: 'none' }"
       >
@@ -32,7 +31,7 @@ limitations under the License. -->
           <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
             <template #title>
               <router-link class="items" :to="menu.path">
-                <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
+                <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
                   <Icon size="lg" :iconName="menu.meta.icon" />
                 </el-icon>
                 <span class="title" :class="isCollapse ? 'collapse' : ''">
@@ -49,7 +48,7 @@ limitations under the License. -->
             </el-menu-item-group>
           </el-sub-menu>
           <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
-            <el-icon class="menu-icons" :style="{ marginRight: '12px' }">
+            <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
               <router-link class="items" :to="menu.children[0].path">
                 <Icon size="lg" :iconName="menu.meta.icon" />
               </router-link>
@@ -62,15 +61,6 @@ limitations under the License. -->
           </el-menu-item>
         </template>
       </el-menu>
-    </div>
-    <div
-      class="menu-control"
-      :class="isCollapse ? 'collapse' : ''"
-      :style="{
-        color: theme === 'light' ? '#eee' : '#252a2f',
-      }"
-    >
-      <Icon size="middle" iconName="format_indent_decrease" @click="controlMenu" />
     </div>
   </div>
 </template>
@@ -89,7 +79,7 @@ limitations under the License. -->
   const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "") ? ref("light") : ref("black");
   const routes = ref<RouteRecordRaw[] | any>(useRouter().options.routes);
   const route = useRoute();
-  const isCollapse = ref(false);
+  const isCollapse = ref(true);
   const showMenu = ref(true);
 
   if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
@@ -100,15 +90,18 @@ limitations under the License. -->
   if (route.name === "ViewWidget") {
     showMenu.value = false;
   }
-  const controlMenu = () => {
-    isCollapse.value = !isCollapse.value;
-  };
   const changePage = (menu: RouteRecordRaw) => {
     theme.value = ["VirtualMachine", "Kubernetes"].includes(String(menu.name)) ? "light" : "black";
   };
   const filterMenus = (menus: any[]) => {
     return menus.filter((d) => d.meta && !d.meta.notShow);
   };
+  function setCollapse() {
+    isCollapse.value = false;
+  }
+  function closeMenu() {
+    isCollapse.value = true;
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -126,7 +119,6 @@ limitations under the License. -->
 
   .menu:hover {
     overflow-y: auto;
-    overflow-x: hidden;
   }
 
   .el-menu-vertical:not(.el-menu--collapse) {
