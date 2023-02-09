@@ -142,16 +142,6 @@ limitations under the License. -->
     width: 110px;
   }
 
-  .menu-control {
-    position: absolute;
-    top: 7px;
-    left: 220px;
-    cursor: pointer;
-    transition: all 0.2s linear;
-    z-index: 99;
-    color: #252a2f;
-  }
-
   .menu-control.collapse {
     left: 70px;
   }
