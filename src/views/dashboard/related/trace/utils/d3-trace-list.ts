@@ -72,6 +72,9 @@ export default class ListGraph {
     L${d.target.y} ${d.target.x - 5}`;
   }
   init(data: any, row: any[], fixSpansSize: number) {
+    console.log(data);
+    console.log(row);
+    console.log(fixSpansSize);
     d3.select(".trace-xaxis").remove();
     this.row = row;
     this.data = data;
