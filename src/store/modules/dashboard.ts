@@ -423,13 +423,15 @@ export const dashboardStore = defineStore({
         res = await graphql.query("addNewTemplate").params({ setting: { configuration: JSON.stringify(c) } });
 
         json = res.data.data.addTemplate;
+        if (!json.status) {
+          ElMessage.error(json.message);
+        }
       }
       if (res.data.errors || res.errors) {
         ElMessage.error(res.data.errors);
         return res.data;
       }
       if (!json.status) {
-        ElMessage.error(json.message);
         return json;
       }
       if (!this.currentDashboard.id) {
