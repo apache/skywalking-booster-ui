@@ -432,7 +432,6 @@ export const dashboardStore = defineStore({
         return res.data;
       }
       if (!json.status) {
-        ElMessage.error(json.message);
         return json;
       }
       if (!this.currentDashboard.id) {
