@@ -20,12 +20,14 @@
   flex-grow: 1;
   overflow: auto;
   height: 100%;
+  font-size: 12px;
 }
 
 .time-line {
   padding: 14px 30px;
   min-height: 63px;
   max-width: 132px;
+  overflow: auto;
 }
 
 .timeline-table-i {

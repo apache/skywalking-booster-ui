@@ -71,12 +71,32 @@ limitations under the License. -->
         <pre class="pl-15 mt-0 mb-0 sm oa">{{ _i.value }}</pre>
       </div>
     </div>
-    <h5 class="mb-10" v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"> {{ t("events") }}. </h5>
-    <div
-      class="attach-events"
-      ref="timeline"
-      v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"
-    ></div>
+    <h5 class="mb-10" v-if="attachedEvents.length"> {{ t("events") }}. </h5>
+    <div class="timeline-table clear attach-events" v-if="attachedEvents.length">
+      <div v-for="(i, index) in attachedEvents" :key="index" class="clear timeline-item" @click="selectEvent(i)">
+        <div class="g-sm-3 grey sm hide-xs time-line tr">
+          {{ `${visDate(Number(i.startTime))}` }}
+        </div>
+        <div class="timeline-table-i g-sm-9">
+          <div class="message mb-5 b">
+            {{ i.event }}
+          </div>
+          <div
+            class="timeline-table-i-scope mr-10 l sm"
+            :class="{
+              blue: i.scope === 'Service',
+              green: i.scope === 'Endpoint',
+              yellow: i.scope === 'ServiceInstance',
+            }"
+          >
+            {{ t(i.scope.toLowerCase()) }}
+          </div>
+          <div class="grey sm show-xs">
+            {{ `${visDate(Number(i.startTime))}` }}
+          </div>
+        </div>
+      </div>
+    </div>
     <el-button class="popup-btn" type="primary" @click="getTaceLogs">
       {{ t("relatedTraceLogs") }}
     </el-button>
@@ -131,8 +151,6 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import type { PropType } from "vue";
   import dayjs from "dayjs";
-  import { DataSet, Timeline } from "vis-timeline/standalone";
-  import "vis-timeline/styles/vis-timeline-graph2d.css";
   import copy from "@/utils/copy";
   import { ElMessage } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
@@ -140,28 +158,25 @@ limitations under the License. -->
   import LogTable from "@/views/dashboard/related/log/LogTable/Index.vue";
   import type { SpanAttachedEvent } from "@/types/trace";
 
-  /*global defineProps, Nullable */
+  /*global defineProps */
   const props = defineProps({
     currentSpan: { type: Object as PropType<any>, default: () => ({}) },
   });
   const { t } = useI18n();
   const traceStore = useTraceStore();
-  const timeline = ref<Nullable<HTMLDivElement>>(null);
-  const visGraph = ref<Nullable<any>>(null);
   const pageNum = ref<number>(1);
   const showRelatedLogs = ref<boolean>(false);
   const showEventDetail = ref<boolean>(false);
+  const attachedEvents = ref<any[]>([]);
   const currentEvent = ref<any>({});
   const pageSize = 10;
   const total = computed(() =>
     traceStore.traceList.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
   );
-  const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
+  const visDate = (date: any, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
 
   onMounted(() => {
-    setTimeout(() => {
-      visTimeline();
-    }, 500);
+    visTimeline();
   });
   async function getTaceLogs() {
     showRelatedLogs.value = true;
@@ -180,15 +195,7 @@ limitations under the License. -->
     }
   }
   function visTimeline() {
-    if (!timeline.value) {
-      return;
-    }
-    if (visGraph.value) {
-      visGraph.value.destroy();
-    }
-    const h = timeline.value.getBoundingClientRect().height;
-    const attachedEvents = props.currentSpan.attachedEvents || [];
-    const events: any[] = attachedEvents.map((d: SpanAttachedEvent, index: number) => {
+    attachedEvents.value = (props.currentSpan.attachedEvents || []).map((d: SpanAttachedEvent, index: number) => {
       let startTimeNanos = String(d.startTime.nanos).slice(-6).padStart(6, "0");
       let endTimeNanos = String(d.endTime.nanos).slice(-6).padStart(6, "0");
       endTimeNanos = toString(endTimeNanos);
@@ -196,36 +203,19 @@ limitations under the License. -->
       return {
         id: index + 1,
         content: d.event,
-        start: new Date(Number(d.startTime.seconds * 1000 + d.startTime.nanos / 1000000)),
-        end: new Date(Number(d.endTime.seconds * 1000 + d.endTime.nanos / 1000000)),
         ...d,
         startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000000,
         endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000000,
         className: "Normal",
         startTimeNanos,
         endTimeNanos,
+        scope: "Service",
       };
     });
-
-    const items = new DataSet(events);
-    const options: any = {
-      height: h,
-      width: "100%",
-      locale: "en",
-      groupHeightMode: "fitItems",
-      zoomMin: 80,
-    };
-
-    visGraph.value = new Timeline(timeline.value, items, options);
-    visGraph.value.on("select", (data: { items: number[] }) => {
-      const index = data.items[0];
-      currentEvent.value = events[index - 1 || 0] || {};
-      if (data.items.length) {
-        showEventDetail.value = true;
-        return;
-      }
-      showEventDetail.value = false;
-    });
+  }
+  function selectEvent(event: SpanAttachedEvent) {
+    currentEvent.value = event;
+    showEventDetail.value = true;
   }
   function toString(str: string) {
     return str.replace(/\d(?=(\d{3})+$)/g, "$&,");
@@ -239,15 +229,26 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
+  @import "../../../../../components/style.scss";
+
   .title {
     display: inline-block;
     width: 70px;
   }
 
+  .timeline-table {
+    padding: 0;
+  }
+
+  .time-line {
+    max-width: 240px;
+    padding-top: 18px;
+  }
+
   .attach-events {
     width: 100%;
     margin: 0 5px 5px 0;
-    height: 200px;
+    height: 400px;
   }
 
   .popup-btn {
