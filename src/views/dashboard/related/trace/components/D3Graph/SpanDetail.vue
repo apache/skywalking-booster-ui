@@ -75,7 +75,7 @@ limitations under the License. -->
     <div class="timeline-table clear attach-events" v-if="attachedEvents.length">
       <div v-for="(i, index) in attachedEvents" :key="index" class="clear timeline-item" @click="selectEvent(i)">
         <div class="g-sm-3 grey sm hide-xs time-line tr">
-          {{ `${visDate(Number(i.startTime))}` }}
+          {{ `${visDate(Number(i.endTime))}:${i.endTimeNanos}` }}
         </div>
         <div class="timeline-table-i g-sm-9">
           <div class="message mb-5 b">
@@ -92,7 +92,7 @@ limitations under the License. -->
             {{ t(i.scope.toLowerCase()) }}
           </div>
           <div class="grey sm show-xs">
-            {{ `${visDate(Number(i.startTime))}` }}
+            {{ `${visDate(Number(i.endTime))}:${i.endTimeNanos}` }}
           </div>
         </div>
       </div>
@@ -195,23 +195,25 @@ limitations under the License. -->
     }
   }
   function visTimeline() {
-    attachedEvents.value = (props.currentSpan.attachedEvents || []).map((d: SpanAttachedEvent, index: number) => {
-      let startTimeNanos = String(d.startTime.nanos).slice(-6).padStart(6, "0");
-      let endTimeNanos = String(d.endTime.nanos).slice(-6).padStart(6, "0");
-      endTimeNanos = toString(endTimeNanos);
-      startTimeNanos = toString(startTimeNanos);
-      return {
-        id: index + 1,
-        content: d.event,
-        ...d,
-        startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000000,
-        endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000000,
-        className: "Normal",
-        startTimeNanos,
-        endTimeNanos,
-        scope: "Service",
-      };
-    });
+    attachedEvents.value = (props.currentSpan.attachedEvents || [])
+      .map((d: SpanAttachedEvent, index: number) => {
+        let startTimeNanos = String(d.startTime.nanos).slice(-6).padStart(6, "0");
+        let endTimeNanos = String(d.endTime.nanos).slice(-6).padStart(6, "0");
+        endTimeNanos = toString(endTimeNanos);
+        startTimeNanos = toString(startTimeNanos);
+        return {
+          id: index + 1,
+          content: d.event,
+          ...d,
+          startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000000,
+          endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000000,
+          className: "Normal",
+          startTimeNanos,
+          endTimeNanos,
+          scope: "Service",
+        };
+      })
+      .reverse();
   }
   function selectEvent(event: SpanAttachedEvent) {
     currentEvent.value = event;
@@ -241,8 +243,9 @@ limitations under the License. -->
   }
 
   .time-line {
-    max-width: 240px;
-    padding-top: 18px;
+    padding: 0;
+    max-width: 260px;
+    padding-top: 19px;
   }
 
   .attach-events {
