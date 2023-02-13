@@ -81,15 +81,16 @@ limitations under the License. -->
           <div class="message mb-5 b">
             {{ i.event }}
           </div>
-          <div
-            class="timeline-table-i-scope mr-10 l sm"
-            :class="{
-              blue: i.scope === 'Service',
-              green: i.scope === 'Endpoint',
-              yellow: i.scope === 'ServiceInstance',
-            }"
-          >
-            {{ t(i.scope.toLowerCase()) }}
+          <div class="timeline-table-i-scope mr-10 l sm">
+            <el-progress
+              :percentage="((i.endTime - i.startTime) / currentSpan.dur) * 100"
+              :show-text="false"
+              :stroke-width="15"
+            />
+            <span>
+              <b>{{ t("duration") }}: </b>
+              <b>{{ (i.endTime - i.startTime) * 1000000 }} ns</b>
+            </span>
           </div>
           <div class="grey sm show-xs">
             {{ `${visDate(Number(i.endTime))}:${i.endTimeNanos}` }}
@@ -242,6 +243,16 @@ limitations under the License. -->
     padding: 0;
   }
 
+  .el-progress--line {
+    width: 300px;
+    font-size: 12px;
+  }
+
+  .timeline-table-i-scope {
+    border: none;
+    padding: 0;
+  }
+
   .time-line {
     padding: 0;
     max-width: 260px;
@@ -271,5 +282,9 @@ limitations under the License. -->
 
   .link-hover:hover {
     color: #448dfe;
+  }
+
+  b {
+    font-weight: normal;
   }
 </style>
