@@ -31,6 +31,14 @@ limitations under the License. -->
       <span class="g-sm-8 wba">{{ currentSpan.type }}</span>
     </div>
     <div class="mb-10 clear item">
+      <span class="g-sm-4 grey">{{ t("selfDuration") }}:</span>
+      <span class="g-sm-8 wba">{{ currentSpan.dur }} ms</span>
+    </div>
+    <div class="mb-10 clear item">
+      <span class="g-sm-4 grey">{{ t("totalDuration") }}:</span>
+      <span class="g-sm-8 wba">{{ currentSpan.endTime - currentSpan.startTime }} ms</span>
+    </div>
+    <div class="mb-10 clear item">
       <span class="g-sm-4 grey">{{ t("component") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.component }}</span>
     </div>
@@ -73,15 +81,6 @@ limitations under the License. -->
     </div>
     <h5 class="mb-10" v-if="attachedEvents.length"> {{ t("events") }}. </h5>
     <div class="timeline-table clear attach-events" v-if="attachedEvents.length">
-      <div class="timeline-item clear">
-        <div class="g-sm-3"></div>
-        <div class="g-sm-4"></div>
-        <div class="g-sm-5">
-          <div class="ruler">
-            <div class="cm" v-for="r in currentSpan.dur" :key="r + 1"></div>
-          </div>
-        </div>
-      </div>
       <div v-for="(i, index) in attachedEvents" :key="index" class="clear timeline-item" @click="selectEvent(i)">
         <div class="g-sm-3 grey sm hide-xs time-line tr">
           {{ `${visDate(Number(i.endTime))}:${i.endTimeNanos}` }}
@@ -184,6 +183,7 @@ limitations under the License. -->
 
   onMounted(() => {
     visTimeline();
+    console.log(props.currentSpan);
   });
   async function getTaceLogs() {
     showRelatedLogs.value = true;
@@ -296,112 +296,5 @@ limitations under the License. -->
 
   .message {
     padding: 10px 0;
-  }
-
-  .ruler {
-    position: relative;
-    width: 300px;
-    height: 14px;
-  }
-
-  .ruler .cm {
-    position: absolute;
-    border-left: 1px solid #555;
-    height: 14px;
-    width: 10%;
-  }
-
-  .ruler .cm:after {
-    position: absolute;
-    bottom: -15px;
-    font: 11px/1 sans-serif;
-  }
-
-  .ruler .cm:nth-of-type(1) {
-    left: 0%;
-  }
-
-  .ruler .cm:nth-of-type(1):after {
-    content: "0";
-  }
-
-  .ruler .cm:nth-of-type(2) {
-    left: 10%;
-  }
-
-  .ruler .cm:nth-of-type(2):after {
-    content: "1";
-  }
-
-  .ruler .cm:nth-of-type(3) {
-    left: 20%;
-  }
-
-  .ruler .cm:nth-of-type(3):after {
-    content: "2";
-  }
-
-  .ruler .cm:nth-of-type(4) {
-    left: 30%;
-  }
-
-  .ruler .cm:nth-of-type(4):after {
-    content: "3";
-  }
-
-  .ruler .cm:nth-of-type(5) {
-    left: 40%;
-  }
-
-  .ruler .cm:nth-of-type(5):after {
-    content: "4";
-  }
-
-  .ruler .cm:nth-of-type(6) {
-    left: 50%;
-  }
-
-  .ruler .cm:nth-of-type(6):after {
-    content: "5";
-  }
-
-  .ruler .cm:nth-of-type(7) {
-    left: 60%;
-  }
-
-  .ruler .cm:nth-of-type(7):after {
-    content: "6";
-  }
-
-  .ruler .cm:nth-of-type(8) {
-    left: 70%;
-  }
-
-  .ruler .cm:nth-of-type(8):after {
-    content: "7";
-  }
-
-  .ruler .cm:nth-of-type(9) {
-    left: 80%;
-  }
-
-  .ruler .cm:nth-of-type(9):after {
-    content: "8";
-  }
-
-  .ruler .cm:nth-of-type(10) {
-    left: 90%;
-  }
-
-  .ruler .cm:nth-of-type(10):after {
-    content: "9";
-  }
-
-  .ruler .cm:nth-of-type(11) {
-    left: 100%;
-  }
-
-  .ruler .cm:nth-of-type(11):after {
-    content: "10";
   }
 </style>

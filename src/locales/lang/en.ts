@@ -184,6 +184,8 @@ const msg = {
   generateLink: "Generate Link",
   setDuration: "Lock Query Duration",
   openFunction: "OpenFunction",
+  selfDuration: "Self Duration",
+  totalDuration: "Total Duration",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",
