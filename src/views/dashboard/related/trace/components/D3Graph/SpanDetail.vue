@@ -85,12 +85,12 @@ limitations under the License. -->
         <div class="g-sm-3 grey sm hide-xs time-line tr">
           {{ `${visDate(Number(i.endTime))}:${i.endTimeNanos}` }}
         </div>
-        <div class="timeline-table-i g-sm-4">
+        <div class="timeline-table-i g-sm-3">
           <div class="message mb-5 b">
             {{ i.event }}
           </div>
         </div>
-        <div class="g-sm-5 progress">
+        <div class="g-sm-6 progress">
           <el-progress
             :percentage="((i.endTime - i.startTime) / currentSpan.dur) * 100"
             :show-text="false"
@@ -183,7 +183,6 @@ limitations under the License. -->
 
   onMounted(() => {
     visTimeline();
-    console.log(props.currentSpan);
   });
   async function getTaceLogs() {
     showRelatedLogs.value = true;
