@@ -183,27 +183,36 @@ limitations under the License. -->
       return;
     }
     const attachedEvents = props.currentSpan.attachedEvents || [];
-    const events: any[] = attachedEvents.map((d: SpanAttachedEvent, index: number) => {
-      let startTimeNanos = String(d.startTime.nanos).slice(-6).padStart(6, "0");
-      let endTimeNanos = String(d.endTime.nanos).slice(-6).padStart(6, "0");
-      endTimeNanos = toString(endTimeNanos);
-      startTimeNanos = toString(startTimeNanos);
-      return {
-        id: index + 1,
-        content: d.event,
-        start: new Date(Number(d.startTime.seconds * 1000 + d.startTime.nanos / 1000000)),
-        end: new Date(Number(d.endTime.seconds * 1000 + d.endTime.nanos / 1000000)),
-        ...d,
-        startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000000,
-        endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000000,
-        className: "Normal",
-        startTimeNanos,
-        endTimeNanos,
-      };
-    });
+    const events: any[] = attachedEvents
+      .map((d: SpanAttachedEvent) => {
+        let startTimeNanos = String(d.startTime.nanos).slice(-6).padStart(6, "0");
+        let endTimeNanos = String(d.endTime.nanos).slice(-6).padStart(6, "0");
+        endTimeNanos = toString(endTimeNanos);
+        startTimeNanos = toString(startTimeNanos);
+        const startTime = d.startTime.seconds * 1000 + d.startTime.nanos / 1000000;
+        const endTime = d.endTime.seconds * 1000 + d.endTime.nanos / 1000000;
+        return {
+          label: d.event,
+          ...d,
+          startTime,
+          endTime,
+          startTimeNanos,
+          endTimeNanos,
+        };
+      })
+      .sort((a: { startTime: number }, b: { startTime: number }) => {
+        return a.startTime - b.startTime;
+      });
 
     tree.value = new ListGraph(eventGraph.value, selectEvent);
-    tree.value.init({ label: "TRACE_ROOT", children: props.currentSpan.segmentId }, events, 0);
+    tree.value.init(
+      {
+        children: events,
+        label: "",
+      },
+      events,
+      0,
+    );
     tree.value.draw();
   }
 
@@ -231,7 +240,8 @@ limitations under the License. -->
   .attach-events {
     width: 100%;
     margin: 0 5px 5px 0;
-    height: 200px;
+    height: 400px;
+    overflow: auto;
   }
 
   .popup-btn {
