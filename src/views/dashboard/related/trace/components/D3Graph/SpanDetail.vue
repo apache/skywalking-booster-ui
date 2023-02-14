@@ -73,27 +73,33 @@ limitations under the License. -->
     </div>
     <h5 class="mb-10" v-if="attachedEvents.length"> {{ t("events") }}. </h5>
     <div class="timeline-table clear attach-events" v-if="attachedEvents.length">
+      <div class="timeline-item clear">
+        <div class="g-sm-3"></div>
+        <div class="g-sm-4"></div>
+        <div class="g-sm-5">
+          <div class="ruler">
+            <div class="cm" v-for="r in currentSpan.dur" :key="r + 1"></div>
+          </div>
+        </div>
+      </div>
       <div v-for="(i, index) in attachedEvents" :key="index" class="clear timeline-item" @click="selectEvent(i)">
         <div class="g-sm-3 grey sm hide-xs time-line tr">
           {{ `${visDate(Number(i.endTime))}:${i.endTimeNanos}` }}
         </div>
-        <div class="timeline-table-i g-sm-9">
+        <div class="timeline-table-i g-sm-4">
           <div class="message mb-5 b">
             {{ i.event }}
           </div>
-          <div class="timeline-table-i-scope mr-10 l sm">
-            <el-progress
-              :percentage="((i.endTime - i.startTime) / currentSpan.dur) * 100"
-              :show-text="false"
-              :stroke-width="15"
-            />
-            <span>
-              <b>{{ t("duration") }}: </b>
-              <b>{{ (i.endTime - i.startTime) * 1000000 }} ns</b>
-            </span>
-          </div>
-          <div class="grey sm show-xs">
-            {{ `${visDate(Number(i.endTime))}:${i.endTimeNanos}` }}
+        </div>
+        <div class="g-sm-5 progress">
+          <el-progress
+            :percentage="((i.endTime - i.startTime) / currentSpan.dur) * 100"
+            :show-text="false"
+            :stroke-width="10"
+          />
+          <div class="mr-10 l sm">
+            <!-- <span>{{ t("duration") }}: </span> -->
+            <span>{{ (i.endTime - i.startTime) * 1000000 }} ns</span>
           </div>
         </div>
       </div>
@@ -262,7 +268,7 @@ limitations under the License. -->
   .attach-events {
     width: 100%;
     margin: 0 5px 5px 0;
-    height: 400px;
+    height: 350px;
   }
 
   .popup-btn {
@@ -284,7 +290,118 @@ limitations under the License. -->
     color: #448dfe;
   }
 
-  b {
-    font-weight: normal;
+  .progress {
+    padding-top: 20px;
+  }
+
+  .message {
+    padding: 10px 0;
+  }
+
+  .ruler {
+    position: relative;
+    width: 300px;
+    height: 14px;
+  }
+
+  .ruler .cm {
+    position: absolute;
+    border-left: 1px solid #555;
+    height: 14px;
+    width: 10%;
+  }
+
+  .ruler .cm:after {
+    position: absolute;
+    bottom: -15px;
+    font: 11px/1 sans-serif;
+  }
+
+  .ruler .cm:nth-of-type(1) {
+    left: 0%;
+  }
+
+  .ruler .cm:nth-of-type(1):after {
+    content: "0";
+  }
+
+  .ruler .cm:nth-of-type(2) {
+    left: 10%;
+  }
+
+  .ruler .cm:nth-of-type(2):after {
+    content: "1";
+  }
+
+  .ruler .cm:nth-of-type(3) {
+    left: 20%;
+  }
+
+  .ruler .cm:nth-of-type(3):after {
+    content: "2";
+  }
+
+  .ruler .cm:nth-of-type(4) {
+    left: 30%;
+  }
+
+  .ruler .cm:nth-of-type(4):after {
+    content: "3";
+  }
+
+  .ruler .cm:nth-of-type(5) {
+    left: 40%;
+  }
+
+  .ruler .cm:nth-of-type(5):after {
+    content: "4";
+  }
+
+  .ruler .cm:nth-of-type(6) {
+    left: 50%;
+  }
+
+  .ruler .cm:nth-of-type(6):after {
+    content: "5";
+  }
+
+  .ruler .cm:nth-of-type(7) {
+    left: 60%;
+  }
+
+  .ruler .cm:nth-of-type(7):after {
+    content: "6";
+  }
+
+  .ruler .cm:nth-of-type(8) {
+    left: 70%;
+  }
+
+  .ruler .cm:nth-of-type(8):after {
+    content: "7";
+  }
+
+  .ruler .cm:nth-of-type(9) {
+    left: 80%;
+  }
+
+  .ruler .cm:nth-of-type(9):after {
+    content: "8";
+  }
+
+  .ruler .cm:nth-of-type(10) {
+    left: 90%;
+  }
+
+  .ruler .cm:nth-of-type(10):after {
+    content: "9";
+  }
+
+  .ruler .cm:nth-of-type(11) {
+    left: 100%;
+  }
+
+  .ruler .cm:nth-of-type(11):after {
+    content: "10";
   }
 </style>
