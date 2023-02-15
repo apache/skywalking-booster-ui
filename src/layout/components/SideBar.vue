@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="side-bar" v-if="showMenu" @click="isCollapse = false" @mouseleave="isCollapse = true">
+  <div class="side-bar" v-if="showMenu" @click="isCollapse = false" @mouseleave="closeMenu">
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon :size="isCollapse ? 'xl' : 'logo'" :iconName="isCollapse ? 'logo' : 'logo-sw'" />
     </div>
@@ -81,6 +81,7 @@ limitations under the License. -->
   const route = useRoute();
   const isCollapse = ref(true);
   const showMenu = ref(true);
+  const open = ref<boolean>(false);
 
   if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
     appStore.setIsMobile(true);
@@ -97,7 +98,17 @@ limitations under the License. -->
     return menus.filter((d) => d.meta && !d.meta.notShow);
   };
   function setCollapse() {
-    isCollapse.value = false;
+    open.value = true;
+    setTimeout(() => {
+      if (open.value) {
+        isCollapse.value = false;
+      }
+      open.value = false;
+    }, 1000);
+  }
+  function closeMenu() {
+    isCollapse.value = true;
+    open.value = false;
   }
 </script>
 

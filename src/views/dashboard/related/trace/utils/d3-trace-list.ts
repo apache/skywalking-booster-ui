@@ -18,6 +18,7 @@
 import * as d3 from "d3";
 import d3tip from "d3-tip";
 import type { Trace } from "@/types/trace";
+import dayjs from "dayjs";
 
 export default class ListGraph {
   private barHeight = 48;
@@ -91,7 +92,6 @@ export default class ListGraph {
     this.svg
       .append("g")
       .attr("class", "trace-xaxis")
-
       .attr("transform", `translate(${this.width * 0.618 - 20},${30})`)
       .call(this.xAxis);
     this.sequentialScale = d3
@@ -164,6 +164,7 @@ export default class ListGraph {
       .attr("x", 35)
       .attr("y", -6)
       .attr("fill", "#333")
+      .style("font-size", "12px")
       .html((d: any) => {
         if (d.data.label === "TRACE_ROOT") {
           return "";
@@ -214,7 +215,16 @@ export default class ListGraph {
       .attr("y", 12)
       .attr("fill", "#ccc")
       .style("font-size", "11px")
-      .text((d: any) => `${d.data.layer || ""} ${d.data.component ? "- " + d.data.component : d.data.component || ""}`);
+      .text(
+        (d: any) =>
+          `${d.data.layer || ""} ${
+            d.data.component
+              ? "- " + d.data.component
+              : d.data.event
+              ? this.visDate(d.data.startTime) + ":" + d.data.startTimeNanos
+              : ""
+          }`,
+      );
     nodeEnter
       .append("rect")
       .attr("rx", 2)
@@ -304,6 +314,9 @@ export default class ListGraph {
     if (callback) {
       callback();
     }
+  }
+  visDate(date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") {
+    return dayjs(date).format(pattern);
   }
   resize() {
     if (!this.el) {
