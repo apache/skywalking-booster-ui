@@ -201,7 +201,7 @@ limitations under the License. -->
         };
       })
       .sort((a: { startTime: number; endTime: number }, b: { startTime: number; endTime: number }) => {
-        return b.endTime - b.startTime - (a.endTime - a.startTime);
+        return a.startTime - b.startTime;
       });
 
     tree.value = new ListGraph(eventGraph.value, selectEvent);
