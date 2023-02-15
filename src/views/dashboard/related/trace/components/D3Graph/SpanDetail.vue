@@ -74,7 +74,7 @@ limitations under the License. -->
     <h5 class="mb-10" v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"> {{ t("events") }}. </h5>
     <div
       class="attach-events"
-      ref="timeline"
+      ref="eventGraph"
       v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"
     ></div>
     <el-button class="popup-btn" type="primary" @click="getTaceLogs">
@@ -131,8 +131,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import type { PropType } from "vue";
   import dayjs from "dayjs";
-  import { DataSet, Timeline } from "vis-timeline/standalone";
-  import "vis-timeline/styles/vis-timeline-graph2d.css";
+  import ListGraph from "../../utils/d3-trace-list";
   import copy from "@/utils/copy";
   import { ElMessage } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
@@ -146,8 +145,6 @@ limitations under the License. -->
   });
   const { t } = useI18n();
   const traceStore = useTraceStore();
-  const timeline = ref<Nullable<HTMLDivElement>>(null);
-  const visGraph = ref<Nullable<any>>(null);
   const pageNum = ref<number>(1);
   const showRelatedLogs = ref<boolean>(false);
   const showEventDetail = ref<boolean>(false);
@@ -156,6 +153,8 @@ limitations under the License. -->
   const total = computed(() =>
     traceStore.traceList.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
   );
+  const tree = ref<any>(null);
+  const eventGraph = ref<Nullable<HTMLDivElement>>(null);
   const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
 
   onMounted(() => {
@@ -180,52 +179,46 @@ limitations under the License. -->
     }
   }
   function visTimeline() {
-    if (!timeline.value) {
+    if (!eventGraph.value) {
       return;
     }
-    if (visGraph.value) {
-      visGraph.value.destroy();
-    }
-    const h = timeline.value.getBoundingClientRect().height;
     const attachedEvents = props.currentSpan.attachedEvents || [];
-    const events: any[] = attachedEvents.map((d: SpanAttachedEvent, index: number) => {
-      let startTimeNanos = String(d.startTime.nanos).slice(-6).padStart(6, "0");
-      let endTimeNanos = String(d.endTime.nanos).slice(-6).padStart(6, "0");
-      endTimeNanos = toString(endTimeNanos);
-      startTimeNanos = toString(startTimeNanos);
-      return {
-        id: index + 1,
-        content: d.event,
-        start: new Date(Number(d.startTime.seconds * 1000 + d.startTime.nanos / 1000000)),
-        end: new Date(Number(d.endTime.seconds * 1000 + d.endTime.nanos / 1000000)),
-        ...d,
-        startTime: d.startTime.seconds * 1000 + d.startTime.nanos / 1000000,
-        endTime: d.endTime.seconds * 1000 + d.endTime.nanos / 1000000,
-        className: "Normal",
-        startTimeNanos,
-        endTimeNanos,
-      };
-    });
+    const events: any[] = attachedEvents
+      .map((d: SpanAttachedEvent) => {
+        let startTimeNanos = String(d.startTime.nanos).slice(-6).padStart(6, "0");
+        let endTimeNanos = String(d.endTime.nanos).slice(-6).padStart(6, "0");
+        endTimeNanos = toString(endTimeNanos);
+        startTimeNanos = toString(startTimeNanos);
+        const startTime = d.startTime.seconds * 1000 + d.startTime.nanos / 1000000;
+        const endTime = d.endTime.seconds * 1000 + d.endTime.nanos / 1000000;
+        return {
+          label: d.event,
+          ...d,
+          startTime,
+          endTime,
+          startTimeNanos,
+          endTimeNanos,
+        };
+      })
+      .sort((a: { startTime: number; endTime: number }, b: { startTime: number; endTime: number }) => {
+        return a.startTime - b.startTime;
+      });
 
-    const items = new DataSet(events);
-    const options: any = {
-      height: h,
-      width: "100%",
-      locale: "en",
-      groupHeightMode: "fitItems",
-      zoomMin: 80,
-    };
+    tree.value = new ListGraph(eventGraph.value, selectEvent);
+    tree.value.init(
+      {
+        children: events,
+        label: "",
+      },
+      events,
+      0,
+    );
+    tree.value.draw();
+  }
 
-    visGraph.value = new Timeline(timeline.value, items, options);
-    visGraph.value.on("select", (data: { items: number[] }) => {
-      const index = data.items[0];
-      currentEvent.value = events[index - 1 || 0] || {};
-      if (data.items.length) {
-        showEventDetail.value = true;
-        return;
-      }
-      showEventDetail.value = false;
-    });
+  function selectEvent(i: any) {
+    currentEvent.value = i.data;
+    showEventDetail.value = true;
   }
   function toString(str: string) {
     return str.replace(/\d(?=(\d{3})+$)/g, "$&,");
@@ -247,7 +240,8 @@ limitations under the License. -->
   .attach-events {
     width: 100%;
     margin: 0 5px 5px 0;
-    height: 200px;
+    height: 400px;
+    overflow: auto;
   }
 
   .popup-btn {
