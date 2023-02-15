@@ -200,8 +200,8 @@ limitations under the License. -->
           endTimeNanos,
         };
       })
-      .sort((a: { startTime: number }, b: { startTime: number }) => {
-        return a.startTime - b.startTime;
+      .sort((a: { startTime: number; endTime: number }, b: { startTime: number; endTime: number }) => {
+        return b.endTime - b.startTime - (a.endTime - a.startTime);
       });
 
     tree.value = new ListGraph(eventGraph.value, selectEvent);
