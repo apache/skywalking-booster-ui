@@ -31,6 +31,12 @@ limitations under the License. -->
       <label>{{ t("auto") }}</label>
       <el-switch class="mr-5" v-model="auto" style="height: 25px" />
       <Selector v-model="freshOpt" :options="RefreshOptions" size="small" />
+      <div class="mt-5">
+        <label>{{ t("period") }}</label>
+        <el-input class="auto-period" size="small" type="number" v-model="period" min="1" />
+        <span class="ml-5">{{ t("second") }}</span>
+        <i class="ml-10">{{ t("timeReload") }}</i>
+      </div>
     </div>
     <el-button size="small" type="primary" class="mt-20" @click="getLink">{{ t("generateLink") }}</el-button>
     <div v-show="widgetLink" class="mt-10">
@@ -63,6 +69,7 @@ limitations under the License. -->
   const dates = ref<Date[]>([]);
   const host = window.location.host;
   const auto = ref<boolean>(true);
+  const period = ref<number>(6);
   const freshOpt = ref<string>(RefreshOptions[0].value);
 
   function changeTimeRange(val: Date[] | any) {
@@ -112,6 +119,7 @@ limitations under the License. -->
     if (auto.value) {
       const f = RefreshOptions.filter((d: { value: string }) => d.value === freshOpt.value)[0] || {};
       opt.auto = Number(f.value) * 60 * 1000;
+      opt.autoPeriod = period.value;
       if (f.step === TimeType.HOUR_TIME) {
         opt.auto = Number(f.value) * 60 * 60 * 1000;
       }
@@ -149,5 +157,9 @@ limitations under the License. -->
   label {
     display: inline-block;
     width: 250px;
+  }
+
+  .auto-period {
+    width: 50px;
   }
 </style>

@@ -181,6 +181,7 @@ const msg = {
   generateLink: "生成链接",
   setDuration: "锁定查询持续时间",
   openFunction: "OpenFunction",
+  period: "周期",
   seconds: "秒",
   hourTip: "选择小时",
   minuteTip: "选择分钟",
