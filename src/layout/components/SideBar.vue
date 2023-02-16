@@ -25,6 +25,7 @@ limitations under the License. -->
         :default-active="name"
         text-color="#efefef"
         :collapse="isCollapse"
+        :collapse-transition="false"
         :style="{ border: 'none' }"
       >
         <template v-for="(menu, index) in routes" :key="index">
