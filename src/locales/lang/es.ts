@@ -187,6 +187,7 @@ const msg = {
   when5xx: "Ejemplo de solicitud y respuesta http con seguimiento cuando el Código de respuesta está entre 500 y 599",
   taskTitle: "Reglas de recolección de peticiones y respuestas HTTP",
   period: "Period",
+  windows: "Windows",
   second: "s",
   yearSuffix: "Año",
   monthsHead: "Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Set_Oct_Nov_Dic",
