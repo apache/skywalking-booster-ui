@@ -29,7 +29,7 @@ limitations under the License. -->
         :style="{ border: 'none' }"
       >
         <template v-for="(menu, index) in routes" :key="index">
-          <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
+          <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup" popper-class="sub-list">
             <template #title>
               <router-link class="items" :to="menu.path">
                 <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
