@@ -43,6 +43,23 @@ export default [
           layer: "OS_LINUX",
         },
       },
+      {
+        path: "/windows",
+        name: "Windows",
+        meta: {
+          title: "windows",
+          layer: "OS_WINDOWS",
+        },
+      },
+      {
+        path: "/windows/tab/:activeTabIndex",
+        name: "WindowsActiveTabIndex",
+        meta: {
+          title: "windows",
+          notShow: true,
+          layer: "OS_WINDOWS",
+        },
+      },
     ],
   },
 ];

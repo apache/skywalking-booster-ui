@@ -185,6 +185,7 @@ const msg = {
   setDuration: "Lock Query Duration",
   openFunction: "OpenFunction",
   period: "Period",
+  windows: "Windows",
   seconds: "Seconds",
   hourTip: "Select Hour",
   minuteTip: "Select Minute",

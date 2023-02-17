@@ -204,3 +204,11 @@ div.vis-tooltip {
 .vis-item.vis-selected.Normal {
   color: #1a1a1a !important;
 }
+
+.el-menu--vertical.sub-list {
+  display: none;
+}
+
+div:has(> a.menu-title) {
+  display: none;
+}

@@ -25,10 +25,11 @@ limitations under the License. -->
         :default-active="name"
         text-color="#efefef"
         :collapse="isCollapse"
+        :collapse-transition="false"
         :style="{ border: 'none' }"
       >
         <template v-for="(menu, index) in routes" :key="index">
-          <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup">
+          <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup" popper-class="sub-list">
             <template #title>
               <router-link class="items" :to="menu.path">
                 <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
@@ -49,12 +50,12 @@ limitations under the License. -->
           </el-sub-menu>
           <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
             <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
-              <router-link class="items" :to="menu.children[0].path">
+              <router-link class="items menu-title" :to="menu.children[0].path">
                 <Icon size="lg" :iconName="menu.meta.icon" />
               </router-link>
             </el-icon>
             <template #title>
-              <router-link class="items" :to="menu.children[0].path">
+              <router-link class="items menu-title" :to="menu.children[0].path">
                 <span class="title">{{ t(menu.meta.title) }}</span>
               </router-link>
             </template>
