@@ -208,3 +208,7 @@ div.vis-tooltip {
 .el-menu--vertical.sub-list {
   display: none;
 }
+
+div:has(> a.menu-title) {
+  display: none;
+}

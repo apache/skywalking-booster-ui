@@ -50,12 +50,12 @@ limitations under the License. -->
           </el-sub-menu>
           <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
             <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
-              <router-link class="items" :to="menu.children[0].path">
+              <router-link class="items menu-title" :to="menu.children[0].path">
                 <Icon size="lg" :iconName="menu.meta.icon" />
               </router-link>
             </el-icon>
             <template #title>
-              <router-link class="items" :to="menu.children[0].path">
+              <router-link class="items menu-title" :to="menu.children[0].path">
                 <span class="title">{{ t(menu.meta.title) }}</span>
               </router-link>
             </template>
