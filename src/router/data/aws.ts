@@ -58,6 +58,22 @@ export default [
           layer: "AWS_S3",
         },
       },
+      {
+        path: "/aws-dynamodb",
+        name: "AWSCloudDynamoDB",
+        meta: {
+          title: "AWSCloudDynamoDB",
+          layer: "AWS_DYNAMODB",
+        },
+      },
+      {
+        path: "/aws-dynamodb/tab/:activeTabIndex",
+        name: "DynamoDBActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "AWS_DYNAMODB",
+        },
+      },
     ],
   },
 ];
