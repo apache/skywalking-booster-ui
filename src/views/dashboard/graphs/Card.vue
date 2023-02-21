@@ -22,7 +22,7 @@ limitations under the License. -->
       justifyContent: config.textAlign || 'center',
     }"
   >
-    {{ singleVal.toFixed(2) }}
+    {{ singleVal }}
     <span class="unit" v-show="config.showUnit && unit">
       {{ decodeURIComponent(unit) }}
     </span>
@@ -54,7 +54,7 @@ limitations under the License. -->
   const { t } = useI18n();
   const metricConfig = computed(() => props.config.metricConfig || []);
   const key = computed(() => Object.keys(props.data)[0]);
-  const singleVal = computed(() => Number(props.data[key.value]));
+  const singleVal = computed(() => props.data[key.value]);
   const unit = computed(() => metricConfig.value[0] && encodeURIComponent(metricConfig.value[0].unit || ""));
 </script>
 <style lang="scss" scoped>
