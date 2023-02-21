@@ -30,7 +30,6 @@ export enum Calculations {
   ByteToMB = "byteToMB",
   ByteToGB = "byteToGB",
   Apdex = "apdex",
-  Precision = "precision",
   ConvertSeconds = "convertSeconds",
   ConvertMilliseconds = "convertMilliseconds",
   MsToS = "msTos",
@@ -39,7 +38,7 @@ export enum Calculations {
   ApdexAvg = "apdexAvg",
   SecondToDay = "secondToDay",
   NanosecondToMillisecond = "nanosecondToMillisecond",
-  PrecisionIs5 = "precisionIs5",
+  CPM5D = "cpm5d",
 }
 export enum sizeEnum {
   XS = "XS",
