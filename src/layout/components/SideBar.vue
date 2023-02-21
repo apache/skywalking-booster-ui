@@ -117,7 +117,6 @@ limitations under the License. -->
   .side-bar {
     background: #252a2f;
     height: 100%;
-    overflow: hidden;
     margin-bottom: 180px;
   }
 
