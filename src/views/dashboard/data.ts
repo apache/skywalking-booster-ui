@@ -310,6 +310,7 @@ export const CalculationOpts = [
   },
   { label: "Seconds to YYYY-MM-DD HH:mm:ss", value: "convertSeconds" },
   { label: "Precision is 2", value: "precision" },
+  { label: "Precision is 5", value: "precisionIs5" },
   { label: "Milliseconds to seconds", value: "msTos" },
   { label: "Seconds to days", value: "secondToDay" },
   { label: "Nanoseconds to milliseconds", value: "nanosecondToMillisecond" },

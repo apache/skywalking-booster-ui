@@ -407,6 +407,9 @@ export function aggregation(val: number, config: { calculation?: string }): numb
     case Calculations.Precision:
       data = data.toFixed(2);
       break;
+    case Calculations.PrecisionIs5:
+      data = data.toFixed(5);
+      break;
     case Calculations.MsToS:
       data = (val / 1000).toFixed(2);
       break;
