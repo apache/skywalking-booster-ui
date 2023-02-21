@@ -380,5 +380,6 @@ const msg = {
   AWSCloud: "AWS Cloud",
   AWSCloudEKS: "EKS",
   AWSCloudS3: "S3",
+  AWSCloudDynamoDB: "DynamoDB",
 };
 export default msg;
