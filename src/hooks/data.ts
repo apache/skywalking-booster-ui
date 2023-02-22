@@ -67,7 +67,7 @@ screenMap.set(sizeEnum.LG, screenEnum.LG);
 screenMap.set(sizeEnum.XL, screenEnum.XL);
 screenMap.set(sizeEnum.XXL, screenEnum.XXL);
 
-export const RespFields: any = {
+export const RespFields: { [key: string]: string } = {
   readMetricsValues: `{
     label
     values {

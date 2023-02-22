@@ -399,7 +399,7 @@ export function aggregation(val: number, config: { calculation?: string }): numb
       data = (val / 10000).toFixed(2);
       break;
     case Calculations.CPM5D:
-      data = (val / 100000).toFixed(2);
+      data = val / 100000 < 1 ? (val / 100000).toFixed(5) : (val / 100000).toFixed(2);
       break;
     case Calculations.ConvertSeconds:
       data = dayjs(val * 1000).format("YYYY-MM-DD HH:mm:ss");
