@@ -471,7 +471,7 @@ limitations under the License. -->
   .dashboard-list {
     padding: 20px;
     width: 100%;
-    overflow: hidden;
+    overflow: auto;
   }
 
   .input-with-search {

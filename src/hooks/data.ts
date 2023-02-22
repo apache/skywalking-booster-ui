@@ -30,7 +30,6 @@ export enum Calculations {
   ByteToMB = "byteToMB",
   ByteToGB = "byteToGB",
   Apdex = "apdex",
-  Precision = "precision",
   ConvertSeconds = "convertSeconds",
   ConvertMilliseconds = "convertMilliseconds",
   MsToS = "msTos",
@@ -39,6 +38,7 @@ export enum Calculations {
   ApdexAvg = "apdexAvg",
   SecondToDay = "secondToDay",
   NanosecondToMillisecond = "nanosecondToMillisecond",
+  CPM5D = "cpm5d",
 }
 export enum sizeEnum {
   XS = "XS",
@@ -67,7 +67,7 @@ screenMap.set(sizeEnum.LG, screenEnum.LG);
 screenMap.set(sizeEnum.XL, screenEnum.XL);
 screenMap.set(sizeEnum.XXL, screenEnum.XXL);
 
-export const RespFields: any = {
+export const RespFields: { [key: string]: string } = {
   readMetricsValues: `{
     label
     values {
