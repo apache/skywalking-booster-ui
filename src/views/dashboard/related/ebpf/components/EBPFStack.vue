@@ -128,7 +128,7 @@ limitations under the License. -->
   }
 
   function processTree(arr: StackElement[]) {
-    const copyArr = (window as any).structuredClone(arr);
+    const copyArr = JSON.parse(JSON.stringify(arr));
     const obj: any = {};
     let res = null;
     for (const item of copyArr) {
