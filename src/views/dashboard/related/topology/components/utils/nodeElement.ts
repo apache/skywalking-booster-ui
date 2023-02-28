@@ -22,16 +22,16 @@ export default (d3: any, graph: any, funcs: any, tip: any, legend?: any) => {
   const nodeEnter = graph
     .append("g")
     .call(d3.drag().on("start", funcs.dragstart).on("drag", funcs.dragged).on("end", funcs.dragended))
-    .on("mouseover", function (event: any, d: Node) {
+    .on("mouseover", function (event: PointerEvent, d: Node) {
       tip.html(funcs.tipHtml).show(d, this);
     })
     .on("mouseout", function () {
       tip.hide(this);
     })
-    .on("click", (event: any, d: Node | any) => {
+    .on("click", (event: PointerEvent, d: Node | any) => {
       event.stopPropagation();
       event.preventDefault();
-      funcs.handleNodeClick(d);
+      funcs.handleNodeClick(event, d);
     });
   nodeEnter
     .append("image")
