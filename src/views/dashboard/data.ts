@@ -300,6 +300,7 @@ export const CalculationOpts = [
   { label: "Apdex", value: "apdex" },
   { label: "Avg-preview", value: "average" },
   { label: "Percentage + Avg-preview", value: "percentageAvg" },
+  { label: "CPM5D + Avg-preview", value: "cpm5dAvg" },
   { label: "Apdex + Avg-preview", value: "apdexAvg" },
   { label: "Byte to KB", value: "byteToKB" },
   { label: "Byte to MB", value: "byteToMB" },
