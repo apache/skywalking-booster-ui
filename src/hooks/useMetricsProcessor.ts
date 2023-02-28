@@ -290,7 +290,11 @@ export function usePodsSource(
       }
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValues) {
         d[name] = {};
-        if ([Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(c.calculation)) {
+        if (
+          [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg, Calculations.CPM5DAvg].includes(
+            c.calculation,
+          )
+        ) {
           d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
         }
         d[name]["values"] = resp.data[key].values.values.map((val: { value: number }) => aggregation(val.value, c));
@@ -315,7 +319,11 @@ export function usePodsSource(
           if (!d[key]) {
             d[key] = {};
           }
-          if ([Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(c.calculation)) {
+          if (
+            [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg, Calculations.CPM5DAvg].includes(
+              c.calculation,
+            )
+          ) {
             d[key]["avg"] = calculateExp(item.values.values, c);
           }
           d[key]["values"] = values;
@@ -369,6 +377,13 @@ function calculateExp(arr: { value: number }[], config: { calculation?: string }
     case Calculations.ApdexAvg:
       data = [(sum / arr.length / 10000).toFixed(2)];
       break;
+    case Calculations.CPM5DAvg:
+      data = [
+        sum / arr.length / 100000 < 1 && sum / arr.length / 100000 !== 0
+          ? (sum / arr.length / 100000).toFixed(5)
+          : (sum / arr.length / 100000).toFixed(2),
+      ];
+      break;
     default:
       data = arr.map((d) => aggregation(d.value, config));
       break;
@@ -415,6 +430,12 @@ export function aggregation(val: number, config: { calculation?: string }): numb
       break;
     case Calculations.NanosecondToMillisecond:
       data = (val / 1000 / 1000).toFixed(2);
+      break;
+    case Calculations.ApdexAvg:
+      data = (val / 10000).toFixed(2);
+      break;
+    case Calculations.CPM5DAvg:
+      data = val / 100000 < 1 && val / 100000 !== 0 ? (val / 100000).toFixed(5) : (val / 100000).toFixed(2);
       break;
     default:
       data;
