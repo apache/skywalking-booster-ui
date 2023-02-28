@@ -162,7 +162,7 @@ limitations under the License. -->
     anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
     arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
     svg.value.call(zoom(d3, graph.value, [-100, -100]));
-    svg.value.on("click", (event: any) => {
+    svg.value.on("click", (event: PointerEvent) => {
       event.stopPropagation();
       event.preventDefault();
       topologyStore.setNode(null);
@@ -218,11 +218,11 @@ limitations under the License. -->
       simulation.value.alphaTarget(0);
     }
   }
-  function handleNodeClick(d: Node & { x: number; y: number }) {
+  function handleNodeClick(event: PointerEvent, d: Node & { x: number; y: number }) {
     topologyStore.setNode(d);
     topologyStore.setLink(null);
-    operationsPos.x = d.x - 100;
-    operationsPos.y = d.y - 70;
+    operationsPos.x = event.offsetX;
+    operationsPos.y = event.offsetY;
     if (d.layer === String(dashboardStore.layerId)) {
       return;
     }
@@ -231,7 +231,7 @@ limitations under the License. -->
       { id: "alarm", title: "Alarm", func: handleGoAlarm },
     ];
   }
-  function handleLinkClick(event: any, d: Call) {
+  function handleLinkClick(event: PointerEvent, d: Call) {
     if (d.source.layer !== dashboardStore.layerId || d.target.layer !== dashboardStore.layerId) {
       return;
     }
