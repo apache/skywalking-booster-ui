@@ -89,6 +89,8 @@ limitations under the License. -->
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
+  import { constructTangleLayout } from "./utils/layout";
+  import { data } from "./utils/data";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -122,6 +124,7 @@ limitations under the License. -->
   const depth = ref<number>(graphConfig.value.depth || 2);
 
   onMounted(async () => {
+    constructTangleLayout(data);
     await nextTick();
     const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
       height: 40,

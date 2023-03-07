@@ -19,7 +19,7 @@ export const simulationInit = (d3: any, nodes: any, links: any, ticked: any) => 
     .forceSimulation(nodes)
     .force(
       "collide",
-      d3.forceCollide().radius(() => 60),
+      d3.forceCollide().radius(() => 110),
     )
     .force("yPos", d3.forceY().strength(1))
     .force("xPos", d3.forceX().strength(1))
