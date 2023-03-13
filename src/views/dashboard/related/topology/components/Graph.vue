@@ -20,7 +20,28 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <div class="legend">
+    <svg :width="width - 100" :height="height" style="background-color: #fff">
+      <g v-for="(n, index) in tangleLayout.nodes" :key="index">
+        <path
+          class="selectable node"
+          stroke="black"
+          stroke-width="8"
+          :d="`M${n.x} ${n.y - n.height / 2}
+        L${n.x} ${n.y + n.height / 2}`"
+        />
+        <path
+          class="node"
+          stroke="white"
+          stroke-width="4"
+          :d="`M${n.x} ${n.y - n.height / 2} L${n.x} ${n.y + n.height / 2}`"
+        />
+        <text class="selectable" :x="n.x + 4" :y="n.y - n.height / 2 - 4" stroke="white" stroke-width="2">
+          {{ n.id }}
+        </text>
+        <text :x="n.x + 4" :y="n.y - n.height / 2 - 4" style="pointer-events: none">{{ n.id }}</text>
+      </g>
+    </svg>
+    <!-- <div class="legend">
       <div>
         <img :src="icons.CUBE" />
         <span>
@@ -60,7 +81,7 @@ limitations under the License. -->
       <span v-for="(item, index) of items" :key="index" @click="item.func(item.dashboard)">
         {{ item.title }}
       </span>
-    </div>
+    </div> -->
   </div>
 </template>
 <script lang="ts" setup>
@@ -122,9 +143,9 @@ limitations under the License. -->
   const items = ref<{ id: string; title: string; func: any; dashboard?: string }[]>([]);
   const graphConfig = computed(() => props.config.graph || {});
   const depth = ref<number>(graphConfig.value.depth || 2);
+  const tangleLayout = ref<any>({});
 
   onMounted(async () => {
-    constructTangleLayout(data);
     await nextTick();
     const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
       height: 40,
@@ -133,28 +154,36 @@ limitations under the License. -->
     height.value = dom.height - 40;
     width.value = dom.width;
 
-    loading.value = true;
-    const json = await selectorStore.fetchServices(dashboardStore.layerId);
-    if (json.errors) {
-      ElMessage.error(json.errors);
-      return;
-    }
-    const resp = await getTopology();
-    loading.value = false;
+    // loading.value = true;
+    // const json = await selectorStore.fetchServices(dashboardStore.layerId);
+    // if (json.errors) {
+    //   ElMessage.error(json.errors);
+    //   return;
+    // }
+    // const resp = await getTopology();
+    // loading.value = false;
 
-    if (resp && resp.errors) {
-      ElMessage.error(resp.errors);
-    }
-    topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-    topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
-    window.addEventListener("resize", resize);
-    svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
-    await initLegendMetrics();
-    await init();
-    update();
-    setNodeTools(settings.value.nodeDashboard);
+    // if (resp && resp.errors) {
+    //   ElMessage.error(resp.errors);
+    // }
+    // topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+    // topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+    // topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+    // window.addEventListener("resize", resize);
+    // svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
+    // await initLegendMetrics();
+    // await init();
+    // update();
+    // setNodeTools(settings.value.nodeDashboard);
+    draw();
   });
+
+  function draw() {
+    const color = d3.scaleOrdinal(d3.schemeDark2);
+    const options = {};
+    tangleLayout.value = constructTangleLayout(data, options);
+  }
+
   async function init() {
     tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
     graph.value = svg.value.append("g").attr("class", "topo-svg-graph").attr("transform", `translate(-100, -100)`);
@@ -515,6 +544,14 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss">
+  .node {
+    stroke-linecap: round;
+  }
+
+  .link {
+    fill: none;
+  }
+
   .topo-svg {
     width: 100%;
     height: calc(100% - 5px);
