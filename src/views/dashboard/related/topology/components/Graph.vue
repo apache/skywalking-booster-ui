@@ -22,23 +22,8 @@ limitations under the License. -->
   >
     <svg :width="width - 100" :height="height" style="background-color: #fff">
       <g v-for="(n, index) in tangleLayout.nodes" :key="index">
-        <path
-          class="selectable node"
-          stroke="black"
-          stroke-width="8"
-          :d="`M${n.x} ${n.y - n.height / 2}
-        L${n.x} ${n.y + n.height / 2}`"
-        />
-        <path
-          class="node"
-          stroke="white"
-          stroke-width="4"
-          :d="`M${n.x} ${n.y - n.height / 2} L${n.x} ${n.y + n.height / 2}`"
-        />
-        <text class="selectable" :x="n.x + 4" :y="n.y - n.height / 2 - 4" stroke="white" stroke-width="2">
-          {{ n.id }}
-        </text>
-        <text :x="n.x + 4" :y="n.y - n.height / 2 - 4" style="pointer-events: none">{{ n.id }}</text>
+        <circle class="node" r="18" stroke-width="2" stroke="#72c59f" fill="#fff" :cx="n.x" :cy="n.y" />
+        <text :x="n.x + 10" :y="n.y - n.height / 2 + 5" style="pointer-events: none">{{ n.id }}</text>
       </g>
     </svg>
     <!-- <div class="legend">
@@ -179,15 +164,16 @@ limitations under the License. -->
   });
 
   function draw() {
-    const color = d3.scaleOrdinal(d3.schemeDark2);
     const options = {};
     tangleLayout.value = constructTangleLayout(data, options);
+    console.log(tangleLayout.value);
   }
 
   async function init() {
     tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
     graph.value = svg.value.append("g").attr("class", "topo-svg-graph").attr("transform", `translate(-100, -100)`);
     graph.value.call(tip.value);
+    console.log(topologyStore.calls);
     simulation.value = simulationInit(d3, topologyStore.nodes, topologyStore.calls, ticked);
     node.value = graph.value.append("g").selectAll(".topo-node");
     link.value = graph.value.append("g").selectAll(".topo-line");

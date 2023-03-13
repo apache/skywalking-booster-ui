@@ -92,21 +92,12 @@ export function constructTangleLayout(levels: any, options: any = {}) {
     n.bundles.forEach((b: any, i: any) => (b.i = i));
   });
 
-  links.forEach((l: any) => {
-    if (l.bundle.links === undefined) {
-      l.bundle.links = [];
-    }
-    l.bundle.links.push(l);
-  });
-
   // layout
-  const padding = 8;
-  const node_height = 22;
-  const node_width = 70;
+  const padding = 30;
+  const node_height = 120;
+  const node_width = 100;
   const bundle_width = 14;
-  const level_y_padding = 16;
   const metro_d = 4;
-  const min_family_height = 22;
 
   options.c ||= 16;
   const c = options.c;
@@ -115,73 +106,21 @@ export function constructTangleLayout(levels: any, options: any = {}) {
   nodes.forEach((n: any) => (n.height = (Math.max(1, n.bundles.length) - 1) * metro_d));
 
   let x_offset = padding;
-  let y_offset = padding;
+  let y_offset = 0;
   levels.forEach((l: any) => {
-    x_offset += l.bundles.length * bundle_width;
-    y_offset += level_y_padding;
+    y_offset = 0;
+    x_offset += 5 * bundle_width;
     l.forEach((n: any) => {
       n.x = n.level * node_width + x_offset;
       n.y = node_height + y_offset + n.height / 2;
-
       y_offset += node_height + n.height;
     });
-  });
-
-  let i = 0;
-  levels.forEach((l: any) => {
-    l.bundles.forEach((b: any) => {
-      b.x =
-        (b.parents && d3.max(b.parents, (d: any) => d.x)) ||
-        0 + node_width + (l.bundles.length - 1 - b.i) * bundle_width;
-      b.y = i * node_height;
-    });
-    i += l.length;
-  });
-
-  links.forEach((l: any) => {
-    l.xt = l.target.x;
-    l.yt =
-      l.target.y +
-      l.target.bundles_index[l.bundle.id].i * metro_d -
-      (l.target.bundles.length * metro_d) / 2 +
-      metro_d / 2;
-    l.xb = l.bundle.x;
-    l.yb = l.bundle.y;
-    l.xs = l.source.x;
-    l.ys = l.source.y;
-  });
-
-  // compress vertical space
-  let y_negative_offset = 0;
-  levels.forEach((l: any) => {
-    y_negative_offset +=
-      (-min_family_height + l.bundles &&
-        d3.min(l.bundles, (b: any) => b.links && d3.min(b.links, (link: any) => link.ys - 2 * c - (link.yt + c)))) ||
-      0;
-    l.forEach((n: any) => (n.y -= y_negative_offset));
-  });
-
-  // very ugly, I know
-  links.forEach((l: any) => {
-    l.yt =
-      l.target.y +
-      l.target.bundles_index[l.bundle.id].i * metro_d -
-      (l.target.bundles.length * metro_d) / 2 +
-      metro_d / 2;
-    l.ys = l.source.y;
-    l.c1 = l.source.level - l.target.level > 1 ? Math.min(options.bigc, l.xb - l.xt, l.yb - l.yt) - c : c;
-    l.c2 = c;
   });
 
   const layout = {
     width: d3.max(nodes, (n: any) => n.x) || 0 + node_width + 2 * padding,
     height: d3.max(nodes, (n: any) => n.y) || 0 + node_height / 2 + 2 * padding,
-    node_height,
-    node_width,
-    bundle_width,
-    level_y_padding,
-    metro_d,
   };
-  console.log({ levels, nodes, nodes_index, links, bundles, layout });
-  return { levels, nodes, nodes_index, links, bundles, layout };
+
+  return { nodes, bundles, layout };
 }
