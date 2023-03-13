@@ -56,13 +56,7 @@ export function constructTangleLayout(levels: any, options: any = {}) {
     l.bundles.forEach((b: any, i: any) => (b.i = i));
   });
 
-  const links: any = [];
-  nodes.forEach((d: any) => {
-    d.parents.forEach((p: any) => links.push({ source: d, bundle: d.bundle, target: p }));
-  });
-
   const bundles = levels.reduce((a: any, x: any) => a.concat(x.bundles), []);
-
   // reverse pointer from parent to bundles
   bundles.forEach((b: any) =>
     b.parents.forEach((p: any) => {

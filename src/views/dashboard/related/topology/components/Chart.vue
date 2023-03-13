@@ -4,9 +4,7 @@ this work for additional information regarding copyright ownership.
 The ASF licenses this file to You under the Apache License, Version 2.0
 (the "License"); you may not use this file except in compliance with
 the License.  You may obtain a copy of the License at
-
   http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +18,7 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <svg :width="width - 100" :height="height" style="background-color: #fff">
-      <g v-for="(n, index) in tangleLayout.nodes" :key="index">
-        <circle class="node" r="18" stroke-width="6" stroke="#72c59f" fill="#fff" :cx="n.x" :cy="n.y" />
-        <text :x="n.x + 10" :y="n.y - n.height / 2 + 5" style="pointer-events: none">{{ n.id }}</text>
-      </g>
-    </svg>
-    <!-- <div class="legend">
+    <div class="legend">
       <div>
         <img :src="icons.CUBE" />
         <span>
@@ -66,7 +58,7 @@ limitations under the License. -->
       <span v-for="(item, index) of items" :key="index" @click="item.func(item.dashboard)">
         {{ item.title }}
       </span>
-    </div> -->
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -95,9 +87,6 @@ limitations under the License. -->
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
-  import { constructTangleLayout } from "./utils/layout";
-  import { data } from "./utils/data";
-
   /*global Nullable, defineProps */
   const props = defineProps({
     config: {
@@ -128,8 +117,6 @@ limitations under the License. -->
   const items = ref<{ id: string; title: string; func: any; dashboard?: string }[]>([]);
   const graphConfig = computed(() => props.config.graph || {});
   const depth = ref<number>(graphConfig.value.depth || 2);
-  const tangleLayout = ref<any>({});
-
   onMounted(async () => {
     await nextTick();
     const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
@@ -138,7 +125,6 @@ limitations under the License. -->
     };
     height.value = dom.height - 40;
     width.value = dom.width;
-
     loading.value = true;
     const json = await selectorStore.fetchServices(dashboardStore.layerId);
     if (json.errors) {
@@ -147,29 +133,19 @@ limitations under the License. -->
     }
     const resp = await getTopology();
     loading.value = false;
-
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
-    console.log(topologyStore.nodes);
-    console.log(topologyStore.calls);
-    // topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-    // topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-    // topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
-    // window.addEventListener("resize", resize);
-    // svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
-    // await initLegendMetrics();
-    // await init();
-    // update();
-    // setNodeTools(settings.value.nodeDashboard);
-    draw();
+    topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+    topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+    window.addEventListener("resize", resize);
+    svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
+    await initLegendMetrics();
+    await init();
+    update();
+    setNodeTools(settings.value.nodeDashboard);
   });
-
-  function draw() {
-    const options = {};
-    tangleLayout.value = constructTangleLayout(data, options);
-  }
-
   async function init() {
     tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
     graph.value = svg.value.append("g").attr("class", "topo-svg-graph").attr("transform", `translate(-100, -100)`);
@@ -188,7 +164,6 @@ limitations under the License. -->
       dashboardStore.selectWidget(props.config);
     });
   }
-
   async function initLegendMetrics() {
     const ids = topologyStore.nodes.map((d: Node) => d.id);
     const names = props.config.legend.map((d: any) => d.name);
@@ -350,7 +325,6 @@ limitations under the License. -->
             ...htmlClient,
             `<div><span class="grey">${t("detectPoint")}:</span>${data.detectPoints.join(" | ")}</div>`,
           ].join(" ");
-
           return html;
         },
       },
@@ -401,28 +375,24 @@ limitations under the License. -->
   function handleGoEndpoint(name: string) {
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${name}`;
     const routeUrl = router.resolve({ path });
-
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
   }
   function handleGoInstance(name: string) {
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${topologyStore.node.id}/${name}`;
     const routeUrl = router.resolve({ path });
-
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
   }
   function handleGoDashboard(name: string) {
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${name}`;
     const routeUrl = router.resolve({ path });
-
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
   }
   function handleGoAlarm() {
     const path = `/alarm`;
     const routeUrl = router.resolve({ path });
-
     window.open(routeUrl.href, "_blank");
   }
   async function backToTopology() {
@@ -430,7 +400,6 @@ limitations under the License. -->
     loading.value = true;
     const resp = await getTopology();
     loading.value = false;
-
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
@@ -505,7 +474,6 @@ limitations under the License. -->
     await init();
     update();
   }
-
   async function changeDepth(opt: Option[] | any) {
     depth.value = opt[0].value;
     await getTopology();
@@ -530,14 +498,6 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss">
-  .node {
-    stroke-linecap: round;
-  }
-
-  .link {
-    fill: none;
-  }
-
   .topo-svg {
     width: 100%;
     height: calc(100% - 5px);
