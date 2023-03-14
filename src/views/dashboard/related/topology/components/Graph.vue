@@ -23,7 +23,7 @@ limitations under the License. -->
     <svg :width="width - 100" :height="height" style="background-color: #fff">
       <g v-for="(n, index) in tangleLayout.nodes" :key="index">
         <circle class="node" r="18" stroke-width="6" stroke="#72c59f" fill="#fff" :cx="n.x" :cy="n.y" />
-        <text :x="n.x + 10" :y="n.y - n.height / 2 + 5" style="pointer-events: none">{{ n.id }}</text>
+        <text :x="n.x + 10" :y="n.y - n.height / 2 + 5" style="pointer-events: none">{{ n.name }}</text>
       </g>
     </svg>
     <!-- <div class="legend">
@@ -95,8 +95,7 @@ limitations under the License. -->
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
-  import { constructTangleLayout } from "./utils/layout";
-  import { data } from "./utils/data";
+  import { layout } from "./utils/layout";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -151,9 +150,9 @@ limitations under the License. -->
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
+    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
     topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
     topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
     // window.addEventListener("resize", resize);
     // svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
     await initLegendMetrics();
@@ -161,22 +160,42 @@ limitations under the License. -->
     // await init();
     // update();
     // setNodeTools(settings.value.nodeDashboard);
-    draw();
   });
   function initData() {
     const levels = [];
-    console.log(topologyStore.nodes);
-    // for (const n of topologyStore.nodes) {
-    //   if (n.type === "USER") {
-    //     levels[0] = n;
-    //   }
-    // }
-    const nodes = topologyStore.nodes.sort((a: any, b: any) => b.service_cpm - a.service_cpm);
-  }
-
-  function draw() {
+    const nodes = topologyStore.nodes.sort(
+      (a: { service_cpm: number }, b: { service_cpm: number }) => b.service_cpm - a.service_cpm,
+    );
+    const index = nodes.findIndex((n: Node) => n.type === "USER") || 0;
+    levels.push([nodes[index]]);
+    nodes.splice(index, 1);
+    for (const level of levels) {
+      const a = [];
+      for (const l of level) {
+        for (const n of topologyStore.calls) {
+          if (n.target === l.id) {
+            const i = nodes.findIndex((d: Node) => d.id === n.source);
+            if (i > -1) {
+              a.push(nodes[i]);
+              nodes.splice(i, 1);
+            }
+          }
+          if (n.source === l.id) {
+            const i = nodes.findIndex((d: Node) => d.id === n.target);
+            if (i > -1) {
+              a.push(nodes[i]);
+              nodes.splice(i, 1);
+            }
+          }
+        }
+      }
+      if (a.length) {
+        levels.push(a);
+      }
+    }
+    console.log(levels);
     const options = {};
-    tangleLayout.value = constructTangleLayout(data, options);
+    tangleLayout.value = layout(levels, options);
   }
 
   async function init() {

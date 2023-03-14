@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import * as d3 from "d3";
-export function constructTangleLayout(levels: any, options: any = {}) {
+export function layout(levels: any, options: any = {}) {
   // precompute level depth
   levels.forEach((l: any, i: any) => l.forEach((n: any) => (n.level = i)));
 
