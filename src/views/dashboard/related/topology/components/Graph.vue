@@ -151,19 +151,28 @@ limitations under the License. -->
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
-    console.log(topologyStore.nodes);
-    console.log(topologyStore.calls);
-    // topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-    // topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-    // topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+    topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+    topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
     // window.addEventListener("resize", resize);
     // svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
-    // await initLegendMetrics();
+    await initLegendMetrics();
+    initData();
     // await init();
     // update();
     // setNodeTools(settings.value.nodeDashboard);
     draw();
   });
+  function initData() {
+    const levels = [];
+    console.log(topologyStore.nodes);
+    // for (const n of topologyStore.nodes) {
+    //   if (n.type === "USER") {
+    //     levels[0] = n;
+    //   }
+    // }
+    const nodes = topologyStore.nodes.sort((a: any, b: any) => b.service_cpm - a.service_cpm);
+  }
 
   function draw() {
     const options = {};

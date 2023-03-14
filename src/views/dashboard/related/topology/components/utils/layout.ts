@@ -23,69 +23,6 @@ export function constructTangleLayout(levels: any, options: any = {}) {
   const nodes_index: any = {};
   nodes.forEach((d: any) => (nodes_index[d.id] = d));
 
-  // objectification
-  nodes.forEach((d: any) => {
-    d.parents = (d.parents === undefined ? [] : d.parents).map((p: any) => nodes_index[p]);
-  });
-
-  // precompute bundles
-  levels.forEach((l: any, i: any) => {
-    const index: any = {};
-    l.forEach((n: any) => {
-      if (n.parents.length == 0) {
-        return;
-      }
-
-      const id = n.parents
-        .map((d: any) => d.id)
-        .sort()
-        .join("-X-");
-      if (id in index) {
-        index[id].parents = index[id].parents.concat(n.parents);
-      } else {
-        index[id] = {
-          id: id,
-          parents: n.parents.slice(),
-          level: i,
-          span: i - n.parents && d3.min(n.parents, (p: any) => p.level),
-        };
-      }
-      n.bundle = index[id];
-    });
-    l.bundles = Object.keys(index).map((k) => index[k]);
-    l.bundles.forEach((b: any, i: any) => (b.i = i));
-  });
-
-  const bundles = levels.reduce((a: any, x: any) => a.concat(x.bundles), []);
-  // reverse pointer from parent to bundles
-  bundles.forEach((b: any) =>
-    b.parents.forEach((p: any) => {
-      if (p.bundles_index === undefined) {
-        p.bundles_index = {};
-      }
-      if (!(b.id in p.bundles_index)) {
-        p.bundles_index[b.id] = [];
-      }
-      p.bundles_index[b.id].push(b);
-    }),
-  );
-
-  nodes.forEach((n: any) => {
-    if (n.bundles_index !== undefined) {
-      n.bundles = Object.keys(n.bundles_index).map((k) => n.bundles_index[k]);
-    } else {
-      n.bundles_index = {};
-      n.bundles = [];
-    }
-    n.bundles.sort((a: any, b: any) =>
-      d3.descending(
-        d3.max(a, (d: any) => d.span),
-        d3.max(b, (d: any) => d.span),
-      ),
-    );
-    n.bundles.forEach((b: any, i: any) => (b.i = i));
-  });
-
   // layout
   const padding = 30;
   const node_height = 120;
@@ -97,7 +34,7 @@ export function constructTangleLayout(levels: any, options: any = {}) {
   const c = options.c;
   options.bigc ||= node_width + c;
 
-  nodes.forEach((n: any) => (n.height = (Math.max(1, n.bundles.length) - 1) * metro_d));
+  nodes.forEach((n: any) => (n.height = 5 * metro_d));
 
   let x_offset = padding;
   let y_offset = 0;
@@ -116,5 +53,5 @@ export function constructTangleLayout(levels: any, options: any = {}) {
     height: d3.max(nodes, (n: any) => n.y) || 0 + node_height / 2 + 2 * padding,
   };
 
-  return { nodes, bundles, layout };
+  return { nodes, layout };
 }
