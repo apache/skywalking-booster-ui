@@ -21,9 +21,11 @@ limitations under the License. -->
     :style="`height: ${height}px`"
   >
     <svg :width="width - 100" :height="height" style="background-color: #fff">
-      <g v-for="(n, index) in tangleLayout.nodes" :key="index">
+      <g v-for="(n, index) in topologyLayout.nodes" :key="index">
         <circle class="node" r="18" stroke-width="6" stroke="#72c59f" fill="#fff" :cx="n.x" :cy="n.y" />
-        <text :x="n.x + 10" :y="n.y - n.height / 2 + 5" style="pointer-events: none">{{ n.name }}</text>
+        <text :x="n.x - (n.name.length * 6) / 2" :y="n.y + n.height + 12" style="pointer-events: none">
+          {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
+        </text>
       </g>
     </svg>
     <!-- <div class="legend">
@@ -127,7 +129,7 @@ limitations under the License. -->
   const items = ref<{ id: string; title: string; func: any; dashboard?: string }[]>([]);
   const graphConfig = computed(() => props.config.graph || {});
   const depth = ref<number>(graphConfig.value.depth || 2);
-  const tangleLayout = ref<any>({});
+  const topologyLayout = ref<any>({});
 
   onMounted(async () => {
     await nextTick();
@@ -193,9 +195,8 @@ limitations under the License. -->
         levels.push(a);
       }
     }
-    console.log(levels);
     const options = {};
-    tangleLayout.value = layout(levels, options);
+    topologyLayout.value = layout(levels, options);
   }
 
   async function init() {
