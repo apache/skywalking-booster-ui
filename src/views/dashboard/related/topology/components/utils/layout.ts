@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 import * as d3 from "d3";
-export function layout(levels: any) {
+import type { Node, Call } from "@/types/topology";
+
+export function layout(levels: Node[][], calls: Call[]) {
   // precompute level depth
   levels.forEach((l: any, i: any) => l.forEach((n: any) => (n.level = i)));
 
   const nodes = levels.reduce((a: any, x: any) => a.concat(x), []);
-  const nodes_index: any = {};
-  nodes.forEach((d: any) => (nodes_index[d.id] = d));
-
   // layout
   const padding = 30;
   const node_height = 120;
@@ -30,7 +29,7 @@ export function layout(levels: any) {
   const bundle_width = 14;
   const metro_d = 4;
 
-  nodes.forEach((n: any) => (n.height = 5 * metro_d));
+  nodes.forEach((n: { height: number }) => (n.height = 5 * metro_d));
 
   let x_offset = padding;
   let y_offset = 0;
@@ -38,6 +37,14 @@ export function layout(levels: any) {
     y_offset = 0;
     x_offset += 5 * bundle_width;
     l.forEach((n: any) => {
+      for (const call of calls) {
+        if (call.source === n.id) {
+          call.sourceObj = n;
+        }
+        if (call.target === n.id) {
+          call.targetObj = n;
+        }
+      }
       n.x = n.level * node_width + x_offset;
       n.y = node_height + y_offset + n.height / 2;
       y_offset += node_height + n.height;
@@ -45,9 +52,9 @@ export function layout(levels: any) {
   });
 
   const layout = {
-    width: d3.max(nodes, (n: any) => n.x) || 0 + node_width + 2 * padding,
-    height: d3.max(nodes, (n: any) => n.y) || 0 + node_height / 2 + 2 * padding,
+    width: d3.max(nodes, (n: { x: number }) => n.x) || 0 + node_width + 2 * padding,
+    height: d3.max(nodes, (n: { y: number }) => n.y) || 0 + node_height / 2 + 2 * padding,
   };
 
-  return { nodes, layout };
+  return { nodes, layout, calls };
 }

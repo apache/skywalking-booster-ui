@@ -35,6 +35,15 @@ limitations under the License. -->
           {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
         </text>
       </g>
+      <path
+        v-for="(l, index) in topologyLayout.calls"
+        :key="index"
+        class="link"
+        :d="`M${l.sourceObj.x} ${l.sourceObj.y}
+      L${l.targetObj.x} ${l.targetObj.y}`"
+        stroke="#999"
+        stroke-width="1"
+      />
     </svg>
     <!-- <div class="legend">
       <div>
@@ -166,19 +175,18 @@ limitations under the License. -->
     // window.addEventListener("resize", resize);
     // svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
     await initLegendMetrics();
-    initData();
+    draw();
     // await init();
     // update();
     // setNodeTools(settings.value.nodeDashboard);
   });
-  function initData() {
+  function draw() {
     const levels = [];
-    const nodes = topologyStore.nodes.sort(
-      (a: { service_cpm: number }, b: { service_cpm: number }) => b.service_cpm - a.service_cpm,
-    );
-    const index = nodes.findIndex((n: Node) => n.type === "USER") || 0;
-    levels.push([nodes[index]]);
-    nodes.splice(index, 1);
+    const nodes = topologyStore.nodes.sort((a: any, b: any) => b.service_cpm - a.service_cpm);
+    const index = nodes.findIndex((n: Node) => n.type === "USER");
+    const key = index < 0 ? 0 : index;
+    levels.push([nodes[key]]);
+    nodes.splice(key, 1);
     for (const level of levels) {
       const a = [];
       for (const l of level) {
@@ -203,7 +211,8 @@ limitations under the License. -->
         levels.push(a);
       }
     }
-    topologyLayout.value = layout(levels);
+    topologyLayout.value = layout(levels, topologyStore.calls);
+    console.log(topologyLayout.value);
   }
 
   async function init() {
