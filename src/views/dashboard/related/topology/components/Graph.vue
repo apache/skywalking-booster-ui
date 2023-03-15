@@ -22,7 +22,15 @@ limitations under the License. -->
   >
     <svg :width="width - 100" :height="height" style="background-color: #fff">
       <g v-for="(n, index) in topologyLayout.nodes" :key="index">
-        <circle class="node" r="18" stroke-width="6" stroke="#72c59f" fill="#fff" :cx="n.x" :cy="n.y" />
+        <circle
+          class="node"
+          r="18"
+          stroke-width="6"
+          :stroke="n.isReal ? '#72c59f' : 'red'"
+          fill="#fff"
+          :cx="n.x"
+          :cy="n.y"
+        />
         <text :x="n.x - (n.name.length * 6) / 2" :y="n.y + n.height + 12" style="pointer-events: none">
           {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
         </text>
@@ -195,8 +203,7 @@ limitations under the License. -->
         levels.push(a);
       }
     }
-    const options = {};
-    topologyLayout.value = layout(levels, options);
+    topologyLayout.value = layout(levels);
   }
 
   async function init() {

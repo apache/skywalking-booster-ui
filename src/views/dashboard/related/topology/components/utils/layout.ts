@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import * as d3 from "d3";
-export function layout(levels: any, options: any = {}) {
+export function layout(levels: any) {
   // precompute level depth
   levels.forEach((l: any, i: any) => l.forEach((n: any) => (n.level = i)));
 
@@ -29,10 +29,6 @@ export function layout(levels: any, options: any = {}) {
   const node_width = 100;
   const bundle_width = 14;
   const metro_d = 4;
-
-  options.c ||= 16;
-  const c = options.c;
-  options.bigc ||= node_width + c;
 
   nodes.forEach((n: any) => (n.height = 5 * metro_d));
 
