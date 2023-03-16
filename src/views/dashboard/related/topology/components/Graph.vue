@@ -20,7 +20,7 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <svg :width="width - 100" :height="height" style="background-color: #fff" @click="handleSvg($event)">
+    <svg ref="svg" :width="width - 100" :height="height" style="background-color: #fff" @click="handleSvg($event)">
       <g
         v-for="(n, index) in topologyLayout.nodes"
         :key="index"
@@ -168,12 +168,8 @@ limitations under the License. -->
   const height = ref<number>(100);
   const width = ref<number>(100);
   const loading = ref<boolean>(false);
-  const simulation = ref<any>(null);
   const svg = ref<Nullable<any>>(null);
   const chart = ref<Nullable<HTMLDivElement>>(null);
-  const node = ref<any>(null);
-  const link = ref<any>(null);
-  const anchor = ref<any>(null);
   const showSetting = ref<boolean>(false);
   const settings = ref<any>(props.config);
   const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
@@ -185,6 +181,9 @@ limitations under the License. -->
 
   onMounted(async () => {
     await nextTick();
+    init();
+  });
+  async function init() {
     const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
       height: 40,
       width: 0,
@@ -208,12 +207,11 @@ limitations under the License. -->
     topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
     topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
     // window.addEventListener("resize", resize);
-    // svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
     await initLegendMetrics();
     draw();
     tooltip.value = d3.select("#tooltip");
     setNodeTools(settings.value.nodeDashboard);
-  });
+  }
   function draw() {
     const levels = [];
     const nodes = topologyStore.nodes.sort((a: any, b: any) => b.service_cpm - a.service_cpm);
@@ -326,42 +324,6 @@ limitations under the License. -->
   function hideTip() {
     tooltip.value.style("visibility", "hidden");
   }
-  function ticked() {
-    link.value.attr(
-      "d",
-      (d: Call | any) =>
-        `M${d.source.x} ${d.source.y} Q ${(d.source.x + d.target.x) / 2} ${
-          (d.target.y + d.source.y) / 2 - d.loopFactor * 90
-        } ${d.target.x} ${d.target.y}`,
-    );
-    anchor.value.attr(
-      "transform",
-      (d: Call | any) =>
-        `translate(${(d.source.x + d.target.x) / 2}, ${(d.target.y + d.source.y) / 2 - d.loopFactor * 45})`,
-    );
-    node.value.attr("transform", (d: Node | any) => `translate(${d.x - 22},${d.y - 22})`);
-  }
-  function dragstart(d: any) {
-    node.value._groups[0].forEach((g: any) => {
-      g.__data__.fx = g.__data__.x;
-      g.__data__.fy = g.__data__.y;
-    });
-    if (!d.active) {
-      simulation.value.alphaTarget(0.1).restart();
-    }
-    d.subject.fx = d.subject.x;
-    d.subject.fy = d.subject.y;
-    d.sourceEvent.stopPropagation();
-  }
-  function dragged(d: any) {
-    d.subject.fx = d.x;
-    d.subject.fy = d.y;
-  }
-  function dragended(d: any) {
-    if (!d.active) {
-      simulation.value.alphaTarget(0);
-    }
-  }
   function handleNodeClick(event: MouseEvent, d: Node & { x: number; y: number }) {
     hideTip();
     topologyStore.setNode(d);
@@ -471,7 +433,6 @@ limitations under the License. -->
     };
     height.value = dom.height - 40;
     width.value = dom.width;
-    svg.value.attr("height", height.value).attr("width", width.value);
   }
   function updateSettings(config: any) {
     settings.value = config;
