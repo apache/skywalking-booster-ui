@@ -20,7 +20,7 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <svg ref="svg" :width="width - 100" :height="height" style="background-color: #fff" @click="handleSvg($event)">
+    <svg ref="svg" :width="width - 100" :height="height" style="background-color: #fff" @click="svgEvent">
       <g
         v-for="(n, index) in topologyLayout.nodes"
         :key="index"
@@ -120,8 +120,8 @@ limitations under the License. -->
       class="operations-list"
       v-if="topologyStore.node"
       :style="{
-        top: operationsPos.y + 'px',
-        left: operationsPos.x + 'px',
+        top: operationsPos.y + 5 + 'px',
+        left: operationsPos.x + 5 + 'px',
       }"
     >
       <span v-for="(item, index) of items" :key="index" @click="item.func(item.dashboard)">
@@ -211,6 +211,14 @@ limitations under the License. -->
     draw();
     tooltip.value = d3.select("#tooltip");
     setNodeTools(settings.value.nodeDashboard);
+    if (!svg.value) {
+      return;
+    }
+  }
+  function svgEvent() {
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
+    dashboardStore.selectWidget(props.config);
   }
   function draw() {
     const levels = [];
@@ -244,14 +252,6 @@ limitations under the License. -->
       }
     }
     topologyLayout.value = layout(levels, topologyStore.calls);
-  }
-
-  function handleSvg(event: MouseEvent) {
-    event.stopPropagation();
-    event.preventDefault();
-    topologyStore.setNode(null);
-    topologyStore.setLink(null);
-    dashboardStore.selectWidget(props.config);
   }
 
   async function initLegendMetrics() {
@@ -325,6 +325,7 @@ limitations under the License. -->
     tooltip.value.style("visibility", "hidden");
   }
   function handleNodeClick(event: MouseEvent, d: Node & { x: number; y: number }) {
+    event.stopPropagation();
     hideTip();
     topologyStore.setNode(d);
     topologyStore.setLink(null);
@@ -339,10 +340,10 @@ limitations under the License. -->
     ];
   }
   function handleLinkClick(event: MouseEvent, d: Call) {
-    if (d.source.layer !== dashboardStore.layerId || d.target.layer !== dashboardStore.layerId) {
+    event.stopPropagation();
+    if (d.sourceObj.layer !== dashboardStore.layerId || d.targetObj.layer !== dashboardStore.layerId) {
       return;
     }
-    event.stopPropagation();
     topologyStore.setNode(null);
     topologyStore.setLink(d);
     if (!settings.value.linkDashboard) {
@@ -360,7 +361,7 @@ limitations under the License. -->
       return;
     }
     dashboardStore.setEntity(dashboard.entity);
-    const path = `/dashboard/related/${dashboard.layer}/${e}Relation/${d.source.id}/${d.target.id}/${dashboard.name}`;
+    const path = `/dashboard/related/${dashboard.layer}/${e}Relation/${d.sourceObj.id}/${d.targetObj.id}/${dashboard.name}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
@@ -572,8 +573,10 @@ limitations under the License. -->
       color: #333;
       cursor: pointer;
       background-color: #fff;
-      border-radius: 3px;
+      border-radius: 5px;
       padding: 10px 0;
+      border: 1px solid #999;
+      box-shadow: #ddd 1px 2px 10px;
 
       span {
         display: block;
@@ -601,7 +604,7 @@ limitations under the License. -->
       background: rgba(0, 0, 0, 0.3);
       color: #fff;
       display: inline-block;
-      padding: 5px 8px 8px;
+      padding: 2px 4px;
       border-radius: 3px;
     }
 
