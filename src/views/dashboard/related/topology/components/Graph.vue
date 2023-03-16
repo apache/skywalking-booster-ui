@@ -228,7 +228,7 @@ limitations under the License. -->
     }
     items.value = [
       { id: "inspect", title: "Inspect", func: handleInspect },
-      { id: "alarm", title: "Alarm", func: handleGoAlarm },
+      { id: "alerting", title: "Alerting", func: handleGoAlerting },
     ];
   }
   function handleLinkClick(event: PointerEvent, d: Call) {
@@ -401,8 +401,8 @@ limitations under the License. -->
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
   }
-  function handleGoAlarm() {
-    const path = `/alarm`;
+  function handleGoAlerting() {
+    const path = `/alerting`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
@@ -447,7 +447,7 @@ limitations under the License. -->
   function setNodeTools(nodeDashboard: any) {
     items.value = [
       { id: "inspect", title: "Inspect", func: handleInspect },
-      { id: "alarm", title: "Alarm", func: handleGoAlarm },
+      { id: "alerting", title: "Alerting", func: handleGoAlerting },
     ];
     if (!(nodeDashboard && nodeDashboard.length)) {
       return;
