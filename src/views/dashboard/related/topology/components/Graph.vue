@@ -34,7 +34,7 @@ limitations under the License. -->
           r="18"
           stroke-width="6"
           :stroke="n.isReal ? '#72c59f' : '#ed374d'"
-          fill="#fff"
+          fill="none"
           :cx="n.x"
           :cy="n.y"
         />
@@ -85,17 +85,17 @@ limitations under the License. -->
           </marker>
         </defs>
       </g>
+      <circle class="node" r="10" stroke-width="4" stroke="#ed374d" :cx="34" :cy="65" fill="none" />
+      <circle class="node" r="10" stroke-width="4" stroke="#72c59f" fill="none" :cx="35" :cy="25" />
     </svg>
     <div id="tooltip"></div>
     <div class="legend">
       <div>
-        <img :src="icons.CUBE" />
         <span>
           {{ settings.description ? settings.description.healthy || "" : "" }}
         </span>
       </div>
       <div>
-        <img :src="icons.CUBEERROR" />
         <span>
           {{ settings.description ? settings.description.unhealthy || "" : "" }}
         </span>
@@ -135,8 +135,6 @@ limitations under the License. -->
   import { ref, onMounted, onBeforeUnmount, reactive, watch, computed, nextTick } from "vue";
   import { useI18n } from "vue-i18n";
   import * as d3 from "d3";
-  import zoom from "../../components/utils/zoom";
-  // import { simulationInit, simulationSkip } from "./utils/simulation";
   import type { Node, Call } from "@/types/topology";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useTopologyStore } from "@/store/modules/topology";
@@ -173,7 +171,6 @@ limitations under the License. -->
   const simulation = ref<any>(null);
   const svg = ref<Nullable<any>>(null);
   const chart = ref<Nullable<HTMLDivElement>>(null);
-  const graph = ref<any>(null);
   const node = ref<any>(null);
   const link = ref<any>(null);
   const anchor = ref<any>(null);
@@ -569,8 +566,8 @@ limitations under the License. -->
     .legend {
       position: absolute;
       top: 10px;
-      left: 15px;
-      color: #ccc;
+      left: 50px;
+      color: #666;
 
       div {
         margin-bottom: 8px;
@@ -604,7 +601,7 @@ limitations under the License. -->
     }
 
     .label {
-      color: #ccc;
+      color: #666;
       display: inline-block;
       margin-right: 5px;
     }
@@ -640,8 +637,8 @@ limitations under the License. -->
     .switch-icon {
       cursor: pointer;
       transition: all 0.5ms linear;
-      background-color: #252a2f99;
-      color: #ddd;
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
       display: inline-block;
       padding: 5px 8px 8px;
       border-radius: 3px;
@@ -649,8 +646,8 @@ limitations under the License. -->
 
     .topo-line {
       stroke-linecap: round;
-      stroke-width: 3px;
-      stroke-dasharray: 13 7;
+      stroke-width: 1px;
+      stroke-dasharray: 20 15;
       fill: none;
       animation: topo-dash 0.5s linear infinite;
     }
