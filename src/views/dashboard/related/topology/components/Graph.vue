@@ -189,6 +189,9 @@ limitations under the License. -->
       ElMessage.error(json.errors);
       return;
     }
+    freshNodes();
+  }
+  async function freshNodes() {
     const resp = await getTopology();
     loading.value = false;
 
@@ -203,9 +206,6 @@ limitations under the License. -->
     draw();
     tooltip.value = d3.select("#tooltip");
     setNodeTools(settings.value.nodeDashboard);
-    if (!svg.value) {
-      return;
-    }
   }
   function draw() {
     const levels = [];
@@ -484,16 +484,9 @@ limitations under the License. -->
     topologyStore.setLink(null);
     dashboardStore.selectWidget(props.config);
   }
-  async function freshNodes() {
-    if (!svg.value) {
-      return;
-    }
-    svg.value.selectAll(".topo-svg-graph").remove();
-  }
 
   async function changeDepth(opt: Option[] | any) {
     depth.value = opt[0].value;
-    await getTopology();
     freshNodes();
   }
   onBeforeUnmount(() => {
