@@ -28,15 +28,17 @@ export function layout(levels: Node[][], calls: Call[]) {
   const node_width = 100;
   const bundle_width = 14;
   const metro_d = 4;
-
-  nodes.forEach((n: { height: number }) => (n.height = 5 * metro_d));
+  for (const n of nodes) {
+    n.height = 5 * metro_d;
+  }
 
   let x_offset = padding;
   let y_offset = 0;
-  levels.forEach((l: any) => {
+  for (const level of levels) {
     y_offset = 0;
     x_offset += 5 * bundle_width;
-    l.forEach((n: any) => {
+    for (const l of level) {
+      const n: any = l;
       for (const call of calls) {
         if (call.source === n.id) {
           call.sourceObj = n;
@@ -48,13 +50,59 @@ export function layout(levels: Node[][], calls: Call[]) {
       n.x = n.level * node_width + x_offset;
       n.y = node_height + y_offset + n.height / 2;
       y_offset += node_height + n.height;
-    });
-  });
-
+    }
+  }
+  for (const call of calls) {
+    const sp = lineCircleIntersection(
+      call.sourceObj.x,
+      call.sourceObj.y,
+      call.targetObj.x,
+      call.targetObj.y,
+      call.sourceObj.x,
+      call.sourceObj.y,
+      18,
+    );
+    const tp = lineCircleIntersection(
+      call.sourceObj.x,
+      call.sourceObj.y,
+      call.targetObj.x,
+      call.targetObj.y,
+      call.targetObj.x,
+      call.targetObj.y,
+      18,
+    );
+    call.sourceObj.ax = sp[0];
+    call.sourceObj.ay = sp[1];
+    call.targetObj.ax = tp[0];
+    call.targetObj.ay = tp[1];
+  }
   const layout = {
     width: d3.max(nodes, (n: { x: number }) => n.x) || 0 + node_width + 2 * padding,
     height: d3.max(nodes, (n: { y: number }) => n.y) || 0 + node_height / 2 + 2 * padding,
   };
 
   return { nodes, layout, calls };
+}
+
+function lineCircleIntersection(x1: number, y1: number, x2: number, y2: number, cx: number, cy: number, r: number) {
+  const k = (y2 - y1) / (x2 - x1);
+  const b = y1 - k * x1;
+
+  let x = 0;
+  if (k == Infinity || k == -Infinity) {
+    x = x1;
+  } else {
+    x =
+      (b -
+        cy +
+        k * cx +
+        Math.sqrt(
+          Math.abs((cy - b - k * cx) * (cy - b - k * cx) - (1 + k * k) * (cx * cx - 2 * k * cx * cy + cy * cy - r * r)),
+        )) /
+      (1 + k * k);
+  }
+
+  const y = k * x + b;
+
+  return [x, y];
 }
