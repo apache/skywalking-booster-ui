@@ -29,15 +29,7 @@ limitations under the License. -->
         @click="handleNodeClick($event, n)"
         class="topo-node"
       >
-        <circle
-          class="node"
-          r="18"
-          stroke-width="6"
-          :stroke="n.isReal ? '#72c59f' : '#ed374d'"
-          fill="none"
-          :cx="n.x"
-          :cy="n.y"
-        />
+        <circle class="node" r="18" stroke-width="6" :stroke="getNodeStatus(n)" fill="none" :cx="n.x" :cy="n.y" />
         <image
           width="18"
           height="18"
@@ -215,11 +207,6 @@ limitations under the License. -->
       return;
     }
   }
-  function svgEvent() {
-    topologyStore.setNode(null);
-    topologyStore.setLink(null);
-    dashboardStore.selectWidget(props.config);
-  }
   function draw() {
     const levels = [];
     const nodes = topologyStore.nodes.sort((a: any, b: any) => b.service_cpm - a.service_cpm);
@@ -264,6 +251,24 @@ limitations under the License. -->
         ElMessage.error(res.errors);
       }
     }
+  }
+  function getNodeStatus(d: any) {
+    const legend = settings.value.legend;
+    if (!legend) {
+      return "#72c59f";
+    }
+    if (!legend.length) {
+      return "#72c59f";
+    }
+    let c = true;
+    for (const l of legend) {
+      if (l.condition === "<") {
+        c = c && d[l.name] < Number(l.value);
+      } else {
+        c = c && d[l.name] > Number(l.value);
+      }
+    }
+    return c && d.isReal ? "#f18586" : "#72c59f";
   }
   function showNodeTip(event: MouseEvent, data: Node) {
     const nodeMetrics: string[] = settings.value.nodeMetrics || [];
@@ -473,6 +478,11 @@ limitations under the License. -->
         });
       }
     }
+  }
+  function svgEvent() {
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
+    dashboardStore.selectWidget(props.config);
   }
   async function freshNodes() {
     if (!svg.value) {
