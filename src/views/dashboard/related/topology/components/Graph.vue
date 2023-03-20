@@ -198,6 +198,10 @@ limitations under the License. -->
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
+    update();
+  }
+
+  async function update() {
     topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
     topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
     topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
@@ -207,7 +211,6 @@ limitations under the License. -->
     tooltip.value = d3.select("#tooltip");
     setNodeTools(settings.value.nodeDashboard);
   }
-
   function draw() {
     const node = findMostFrequent(topologyStore.calls);
     const levels = [];
@@ -400,16 +403,16 @@ limitations under the License. -->
     dashboardStore.setEntity(origin);
   }
   async function handleInspect() {
-    svg.value.selectAll(".topo-svg-graph").remove();
     const id = topologyStore.node.id;
-    topologyStore.setNode(null);
-    topologyStore.setLink(null);
     loading.value = true;
     const resp = await topologyStore.getDepthServiceTopology([id], Number(depth.value));
     loading.value = false;
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
+    update();
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
   }
   function handleGoEndpoint(name: string) {
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${name}`;
@@ -439,14 +442,8 @@ limitations under the License. -->
     window.open(routeUrl.href, "_blank");
   }
   async function backToTopology() {
-    svg.value.selectAll(".topo-svg-graph").remove();
     loading.value = true;
-    const resp = await getTopology();
-    loading.value = false;
-
-    if (resp && resp.errors) {
-      ElMessage.error(resp.errors);
-    }
+    await freshNodes();
     topologyStore.setNode(null);
     topologyStore.setLink(null);
   }
