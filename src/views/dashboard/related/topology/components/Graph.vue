@@ -193,7 +193,6 @@ limitations under the License. -->
       return;
     }
     freshNodes();
-    window.addEventListener("resize", resize);
   }
   async function freshNodes() {
     topologyStore.setNode(null);
@@ -211,7 +210,7 @@ limitations under the License. -->
     topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
     topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
     topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-    // window.addEventListener("resize", resize);
+    window.addEventListener("resize", resize);
     await initLegendMetrics();
     draw();
     tooltip.value = d3.select("#tooltip");
