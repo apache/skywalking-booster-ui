@@ -53,18 +53,11 @@ export function layout(levels: Node[][], calls: Call[]) {
     }
   }
   for (const call of calls) {
-    const pos: any = getIntersection(
-      call.sourceObj.x,
-      call.sourceObj.y,
-      18,
-      call.targetObj.x,
-      call.targetObj.y,
-      18,
-    ) || [{}, {}];
-    call.sourceObj.ax = pos[0].x;
-    call.sourceObj.ay = pos[0].y;
-    call.targetObj.ax = pos[1].x;
-    call.targetObj.ay = pos[1].y;
+    const pos: any = circleIntersection(call.sourceObj.x, call.sourceObj.y, 18, call.targetObj.x, call.targetObj.y, 18);
+    // call.sourceObj.ax = pos[0].x;
+    // call.sourceObj.ay = pos[0].y;
+    // call.targetObj.ax = pos[1].x;
+    // call.targetObj.ay = pos[1].y;
   }
   const layout = {
     width: d3.max(nodes, (n: { x: number }) => n.x) || 0 + node_width + 2 * padding,
@@ -74,32 +67,27 @@ export function layout(levels: Node[][], calls: Call[]) {
   return { nodes, layout, calls };
 }
 
-function getIntersection(x1: number, y1: number, r1: number, x2: number, y2: number, r2: number) {
-  const k = (y2 - y1) / (x2 - x1);
-  const b = y1 - k * x1;
-
-  const A = k * k + 1;
-  const B = 2 * (k * b - k * y1 - x1);
-  const C = y1 * y1 + k * k * x1 * x1 - 2 * k * x1 * y1 - b * b - r1 * r1;
-
-  const delta = B * B - 4 * A * C;
-
-  if (delta < 0) {
+function circleIntersection(ax: number, ay: number, ar: number, bx: number, by: number, br: number) {
+  const distance = Math.sqrt(Math.pow(bx - ax, 2) + Math.pow(by - ay, 2));
+  const dx = (bx - ax) / distance;
+  const dy = (by - ay) / distance;
+  const t = dx * (bx - ax) + dy * (by - ay);
+  const ex = t * dx + ax;
+  const ey = t * dy + ay;
+  const d1 = Math.sqrt(Math.pow(ex - ax, 2) + Math.pow(ey - ay, 2));
+  const d2 = Math.sqrt(Math.pow(ex - bx, 2) + Math.pow(ey - by, 2));
+  if (d1 > ar || d2 > br) {
     return null;
-  } else if (delta == 0) {
-    const x = -B / (2 * A);
-    const y = k * x + b;
-    return { x, y };
-  } else {
-    const x1 = (-B + Math.sqrt(delta)) / (2 * A);
-    const y1 = k * x1 + b;
-
-    const x2 = (-B - Math.sqrt(delta)) / (2 * A);
-    const y2 = k * x2 + b;
-
-    return [
-      { x: x1, y: y1 },
-      { x: x2, y: y2 },
-    ];
   }
+
+  const dt = Math.sqrt(Math.pow(ar, 2) - Math.pow(d1, 2));
+  const fx = ex + (dt * (by - ay)) / distance;
+  const fy = ey - (dt * (bx - ax)) / distance;
+  const gx = ex - (dt * (by - ay)) / distance;
+  const gy = ey + (dt * (bx - ax)) / distance;
+
+  return [
+    { x: fx, y: fy },
+    { x: gx, y: gy },
+  ];
 }
