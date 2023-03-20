@@ -207,11 +207,17 @@ limitations under the License. -->
     tooltip.value = d3.select("#tooltip");
     setNodeTools(settings.value.nodeDashboard);
   }
+
   function draw() {
+    const node = findMostFrequent(topologyStore.calls);
     const levels = [];
-    const nodes = topologyStore.nodes.sort((a: any, b: any) => b.service_cpm - a.service_cpm);
+    const nodes = JSON.parse(JSON.stringify(topologyStore.nodes));
     const index = nodes.findIndex((n: Node) => n.type === "USER");
-    const key = index < 0 ? 0 : index;
+    let key = index;
+    if (index < 0) {
+      const idx = nodes.findIndex((n: Node) => n.id === node.id);
+      key = idx;
+    }
     levels.push([nodes[key]]);
     nodes.splice(key, 1);
     for (const level of levels) {
@@ -239,6 +245,28 @@ limitations under the License. -->
       }
     }
     topologyLayout.value = layout(levels, topologyStore.calls);
+  }
+
+  function findMostFrequent(arr: Call[]) {
+    let count: any = {};
+    let maxCount = 0;
+    let maxItem = null;
+
+    for (let i = 0; i < arr.length; i++) {
+      let item = arr[i];
+      count[item.sourceObj.id] = (count[item.sourceObj.id] || 0) + 1;
+      if (count[item.sourceObj.id] > maxCount) {
+        maxCount = count[item.sourceObj.id];
+        maxItem = item.sourceObj;
+      }
+      count[item.targetObj.id] = (count[item.targetObj.id] || 0) + 1;
+      if (count[item.targetObj.id] > maxCount) {
+        maxCount = count[item.targetObj.id];
+        maxItem = item.targetObj;
+      }
+    }
+
+    return maxItem;
   }
 
   async function initLegendMetrics() {
