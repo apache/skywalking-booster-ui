@@ -21,61 +21,63 @@ limitations under the License. -->
     :style="`height: ${height}px`"
   >
     <svg ref="svg" :width="width - 100" :height="height" style="background-color: #fff" @click="svgEvent">
-      <g
-        v-for="(n, index) in topologyLayout.nodes"
-        :key="index"
-        @mouseout="hideTip"
-        @mouseover="showNodeTip($event, n)"
-        @click="handleNodeClick($event, n)"
-        class="topo-node"
-      >
-        <circle class="node" r="18" stroke-width="6" :stroke="getNodeStatus(n)" fill="none" :cx="n.x" :cy="n.y" />
-        <image
-          width="18"
-          height="18"
-          :x="n.x - 8"
-          :y="n.y - 10"
-          :href="!n.type || n.type === `N/A` ? icons.UNDEFINED : icons[n.type.toUpperCase().replace('-', '')]"
-        />
-        <text :x="n.x - (n.name.length * 6) / 2" :y="n.y + n.height + 12" style="pointer-events: none">
-          {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
-        </text>
-      </g>
-      <g v-for="(l, index) in topologyLayout.calls" :key="index">
-        <path
-          class="topo-line"
-          :d="`M${l.sourceObj.x} ${l.sourceObj.y}
-          L${l.targetObj.x} ${l.targetObj.y}`"
-          stroke="#aaa"
-          stroke-width="1"
-          marker-end="url(#arrow)"
-        />
-        <circle
-          class="topo-line-anchor"
-          :cx="(l.sourceObj.x + l.targetObj.x) / 2"
-          :cy="(l.sourceObj.y + l.targetObj.y) / 2"
-          r="4"
-          fill="#aaa"
-          @click="handleLinkClick($event, l)"
-          @mouseover="showLinkTip($event, l)"
+      <g :style="`transform: translate(${(width - graphWidth - 100) / 2}px, 100px)`">
+        <g
+          v-for="(n, index) in topologyLayout.nodes"
+          :key="index"
           @mouseout="hideTip"
-        />
-      </g>
-      <g class="arrows">
-        <defs v-for="(_, index) in topologyLayout.calls" :key="index">
-          <marker
-            id="arrow"
-            markerUnits="strokeWidth"
-            markerWidth="8"
-            markerHeight="8"
-            viewBox="0 0 12 12"
-            refX="10"
-            refY="6"
-            orient="auto"
-          >
-            <path d="M2,2 L10,6 L2,10 L6,6 L2,2" fill="#999" />
-          </marker>
-        </defs>
+          @mouseover="showNodeTip($event, n)"
+          @click="handleNodeClick($event, n)"
+          class="topo-node"
+        >
+          <circle class="node" r="18" stroke-width="6" :stroke="getNodeStatus(n)" fill="none" :cx="n.x" :cy="n.y" />
+          <image
+            width="18"
+            height="18"
+            :x="n.x - 8"
+            :y="n.y - 10"
+            :href="!n.type || n.type === `N/A` ? icons.UNDEFINED : icons[n.type.toUpperCase().replace('-', '')]"
+          />
+          <text :x="n.x - (n.name.length * 6) / 2" :y="n.y + n.height + 12" style="pointer-events: none">
+            {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
+          </text>
+        </g>
+        <g v-for="(l, index) in topologyLayout.calls" :key="index">
+          <path
+            class="topo-line"
+            :d="`M${l.sourceObj.x} ${l.sourceObj.y}
+          L${l.targetObj.x} ${l.targetObj.y}`"
+            stroke="#aaa"
+            stroke-width="1"
+            marker-end="url(#arrow)"
+          />
+          <circle
+            class="topo-line-anchor"
+            :cx="(l.sourceObj.x + l.targetObj.x) / 2"
+            :cy="(l.sourceObj.y + l.targetObj.y) / 2"
+            r="4"
+            fill="#aaa"
+            @click="handleLinkClick($event, l)"
+            @mouseover="showLinkTip($event, l)"
+            @mouseout="hideTip"
+          />
+        </g>
+        <g class="arrows">
+          <defs v-for="(_, index) in topologyLayout.calls" :key="index">
+            <marker
+              id="arrow"
+              markerUnits="strokeWidth"
+              markerWidth="8"
+              markerHeight="8"
+              viewBox="0 0 12 12"
+              refX="10"
+              refY="6"
+              orient="auto"
+            >
+              <path d="M2,2 L10,6 L2,10 L6,6 L2,2" fill="#999" />
+            </marker>
+          </defs>
+        </g>
       </g>
       <circle class="node" r="10" stroke-width="4" stroke="#ed374d" :cx="34" :cy="65" fill="none" />
       <circle class="node" r="10" stroke-width="4" stroke="#72c59f" fill="none" :cx="35" :cy="25" />
@@ -170,6 +172,7 @@ limitations under the License. -->
   const depth = ref<number>(graphConfig.value.depth || 2);
   const topologyLayout = ref<any>({});
   const tooltip = ref<Nullable<any>>(null);
+  const graphWidth = ref<number>(100);
 
   onMounted(async () => {
     await nextTick();
@@ -190,6 +193,7 @@ limitations under the License. -->
       return;
     }
     freshNodes();
+    window.addEventListener("resize", resize);
   }
   async function freshNodes() {
     topologyStore.setNode(null);
@@ -250,6 +254,7 @@ limitations under the License. -->
       }
     }
     topologyLayout.value = layout(levels, topologyStore.calls);
+    graphWidth.value = topologyLayout.value.layout.width;
   }
 
   function findMostFrequent(arr: Call[]) {
