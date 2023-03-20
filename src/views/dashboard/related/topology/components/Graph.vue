@@ -192,6 +192,8 @@ limitations under the License. -->
     freshNodes();
   }
   async function freshNodes() {
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
     const resp = await getTopology();
     loading.value = false;
 
@@ -411,8 +413,6 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
     }
     update();
-    topologyStore.setNode(null);
-    topologyStore.setLink(null);
   }
   function handleGoEndpoint(name: string) {
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${name}`;
@@ -519,7 +519,13 @@ limitations under the License. -->
   });
   watch(
     () => [selectorStore.currentService, selectorStore.currentDestService],
-    () => {
+    (newVal, oldVal) => {
+      if (oldVal[0].id === newVal[0].id && !oldVal[1]) {
+        return;
+      }
+      if (oldVal[0].id === newVal[0].id && oldVal[1].id === newVal[1].id) {
+        return;
+      }
       freshNodes();
     },
   );
