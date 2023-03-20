@@ -45,8 +45,8 @@ limitations under the License. -->
         <g v-for="(l, index) in topologyLayout.calls" :key="index">
           <path
             class="topo-line"
-            :d="`M${l.sourceObj.x} ${l.sourceObj.y}
-          L${l.targetObj.x} ${l.targetObj.y}`"
+            :d="`M${l.sourceX} ${l.sourceY}
+          L${l.targetX} ${l.targetY}`"
             stroke="#aaa"
             stroke-width="1"
             marker-end="url(#arrow)"

@@ -17,7 +17,7 @@
 import * as d3 from "d3";
 import type { Node, Call } from "@/types/topology";
 
-export function layout(levels: Node[][], calls: Call[]) {
+export function layout(levels: Node[][], calls: any[]) {
   // precompute level depth
   levels.forEach((l: any, i: any) => l.forEach((n: any) => (n.level = i)));
 
@@ -54,10 +54,10 @@ export function layout(levels: Node[][], calls: Call[]) {
   }
   for (const call of calls) {
     const pos: any = circleIntersection(call.sourceObj.x, call.sourceObj.y, 18, call.targetObj.x, call.targetObj.y, 18);
-    // call.sourceObj.ax = pos[0].x;
-    // call.sourceObj.ay = pos[0].y;
-    // call.targetObj.ax = pos[1].x;
-    // call.targetObj.ay = pos[1].y;
+    call.sourceX = pos[0].x;
+    call.sourceY = pos[0].y;
+    call.targetX = pos[1].x;
+    call.targetY = pos[1].y;
   }
   const layout = {
     width: d3.max(nodes, (n: { x: number }) => n.x) || 0 + node_width + 2 * padding,
@@ -68,23 +68,17 @@ export function layout(levels: Node[][], calls: Call[]) {
 }
 
 function circleIntersection(ax: number, ay: number, ar: number, bx: number, by: number, br: number) {
-  const distance = Math.sqrt(Math.pow(bx - ax, 2) + Math.pow(by - ay, 2));
-  const dx = (bx - ax) / distance;
-  const dy = (by - ay) / distance;
-  const t = dx * (bx - ax) + dy * (by - ay);
-  const ex = t * dx + ax;
-  const ey = t * dy + ay;
-  const d1 = Math.sqrt(Math.pow(ex - ax, 2) + Math.pow(ey - ay, 2));
-  const d2 = Math.sqrt(Math.pow(ex - bx, 2) + Math.pow(ey - by, 2));
-  if (d1 > ar || d2 > br) {
-    return null;
-  }
+  const dab = Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2));
 
-  const dt = Math.sqrt(Math.pow(ar, 2) - Math.pow(d1, 2));
-  const fx = ex + (dt * (by - ay)) / distance;
-  const fy = ey - (dt * (bx - ax)) / distance;
-  const gx = ex - (dt * (by - ay)) / distance;
-  const gy = ey + (dt * (bx - ax)) / distance;
+  const dfx = (ar * Math.abs(ax - bx)) / dab;
+  const dfy = (ar * Math.abs(ay - by)) / dab;
+  const fx = bx > ax ? ax + dfx : ax - dfx;
+  const fy = ay > by ? ay - dfy : ay + dfy;
+
+  const dgx = (br * Math.abs(ax - bx)) / dab;
+  const dgy = (br * Math.abs(ay - by)) / dab;
+  const gx = bx > ax ? bx - dgx : bx + dgx;
+  const gy = ay > by ? by + dgy : by - dgy;
 
   return [
     { x: fx, y: fy },
