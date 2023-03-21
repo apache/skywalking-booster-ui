@@ -20,8 +20,8 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <svg ref="svg" :width="width - 100" :height="height" style="background-color: #fff" @click="svgEvent">
-      <g :style="`transform: translate(${(width - graphWidth - 100) / 2}px, 100px)`">
+    <svg class="svg-topology" :width="width - 100" :height="height" style="background-color: #fff" @click="svgEvent">
+      <g class="graph" :style="`transform: translate(${diff[0]}px, ${diff[1]}px)`">
         <g
           class="topo-node"
           v-for="(n, index) in topologyLayout.nodes"
@@ -58,7 +58,7 @@ limitations under the License. -->
             :cx="(l.sourceObj.x + l.targetObj.x) / 2"
             :cy="(l.sourceObj.y + l.targetObj.y) / 2"
             r="4"
-            fill="#aaa"
+            fill="#bbb"
             @click="handleLinkClick($event, l)"
             @mouseover="showLinkTip($event, l)"
             @mouseout="hideTip"
@@ -69,8 +69,8 @@ limitations under the License. -->
             <marker
               id="arrow"
               markerUnits="strokeWidth"
-              markerWidth="8"
-              markerHeight="8"
+              markerWidth="16"
+              markerHeight="16"
               viewBox="0 0 12 12"
               refX="10"
               refY="6"
@@ -148,6 +148,7 @@ limitations under the License. -->
   import icons from "@/assets/img/icons";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
   import { layout, circleIntersection } from "./utils/layout";
+  import zoom from "../../components/utils/zoom";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -165,6 +166,7 @@ limitations under the License. -->
   const width = ref<number>(100);
   const loading = ref<boolean>(false);
   const svg = ref<Nullable<any>>(null);
+  const graph = ref<Nullable<any>>(null);
   const chart = ref<Nullable<HTMLDivElement>>(null);
   const showSetting = ref<boolean>(false);
   const settings = ref<any>(props.config);
@@ -176,6 +178,7 @@ limitations under the License. -->
   const tooltip = ref<Nullable<any>>(null);
   const graphWidth = ref<number>(100);
   const currentNode = ref<Nullable<Node>>();
+  const diff = computed(() => [(width.value - graphWidth.value - 100) / 2, 100]);
 
   onMounted(async () => {
     await nextTick();
@@ -188,14 +191,16 @@ limitations under the License. -->
     };
     height.value = dom.height - 40;
     width.value = dom.width;
-
+    svg.value = d3.select(".svg-topology");
+    graph.value = d3.select(".graph");
+    svg.value.call(zoom(d3, graph.value, diff.value));
     loading.value = true;
     const json = await selectorStore.fetchServices(dashboardStore.layerId);
     if (json.errors) {
       ElMessage.error(json.errors);
       return;
     }
-    freshNodes();
+    await freshNodes();
   }
   async function freshNodes() {
     topologyStore.setNode(null);
@@ -206,7 +211,7 @@ limitations under the License. -->
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
-    update();
+    await update();
   }
 
   async function update() {
@@ -703,9 +708,9 @@ limitations under the License. -->
     .topo-line {
       stroke-linecap: round;
       stroke-width: 1px;
-      stroke-dasharray: 20 15;
+      stroke-dasharray: 10 10;
       fill: none;
-      animation: topo-dash 0.5s linear infinite;
+      animation: topo-dash 0.3s linear infinite;
     }
 
     .topo-line-anchor,
@@ -722,7 +727,7 @@ limitations under the License. -->
   }
   @keyframes topo-dash {
     from {
-      stroke-dashoffset: 20;
+      stroke-dashoffset: 10;
     }
 
     to {
