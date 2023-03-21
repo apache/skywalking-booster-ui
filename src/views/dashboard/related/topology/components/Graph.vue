@@ -55,8 +55,8 @@ limitations under the License. -->
           />
           <circle
             class="topo-line-anchor"
-            :cx="(l.sourceObj.x + l.targetObj.x) / 2"
-            :cy="(l.sourceObj.y + l.targetObj.y) / 2"
+            :cx="(l.sourceX + l.targetX) / 2"
+            :cy="(l.sourceY + l.targetY) / 2"
             r="4"
             fill="#bbb"
             @click="handleLinkClick($event, l)"
@@ -147,7 +147,7 @@ limitations under the License. -->
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
-  import { layout, circleIntersection } from "./utils/layout";
+  import { layout, circleIntersection, computeCallPos } from "./utils/layout";
   import zoom from "../../components/utils/zoom";
 
   /*global Nullable, defineProps */
@@ -304,6 +304,7 @@ limitations under the License. -->
         call.targetY = pos[1].y;
       }
     }
+    topologyLayout.value.calls = computeCallPos(topologyLayout.value.calls);
   }
 
   function startMoveNode(event: MouseEvent, d: Node) {

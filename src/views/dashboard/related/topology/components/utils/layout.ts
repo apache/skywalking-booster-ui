@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import * as d3 from "d3";
-import type { Node, Call } from "@/types/topology";
+import type { Node } from "@/types/topology";
 
 export function layout(levels: Node[][], calls: any[]) {
   // precompute level depth
@@ -52,32 +52,47 @@ export function layout(levels: Node[][], calls: any[]) {
       y_offset += node_height + n.height;
     }
   }
-  for (const call of calls) {
-    const pos: any = circleIntersection(call.sourceObj.x, call.sourceObj.y, 18, call.targetObj.x, call.targetObj.y, 18);
-    call.sourceX = pos[0].x;
-    call.sourceY = pos[0].y;
-    call.targetX = pos[1].x;
-    call.targetY = pos[1].y;
-  }
-  // for (const call of calls) {
-  //   for (const link of calls) {
-  //     if (
-  //       (call.id !== link.id && call.sourceX === link.targetX && call.sourceY === link.targetY) ||
-  //       (call.id !== link.id && call.targetX === link.sourceX && call.targetY === link.sourceY)
-  //     ) {
-  //       call.sourceX += 10;
-  //       link.targetX -= 10;
-  //       call.sourceY += 10;
-  //       link.targetY -= 10;
-  //     }
-  //   }
-  // }
   const layout = {
     width: d3.max(nodes, (n: { x: number }) => n.x) || 0 + node_width + 2 * padding,
     height: d3.max(nodes, (n: { y: number }) => n.y) || 0 + node_height / 2 + 2 * padding,
   };
 
-  return { nodes, layout, calls };
+  return { nodes, layout, calls: computeCallPos(calls) };
+}
+
+export function computeCallPos(calls: any[]) {
+  for (const [index, call] of calls.entries()) {
+    const centrePoints = [call.sourceObj.x, call.sourceObj.y, call.targetObj.x, call.targetObj.y];
+    for (const [idx, link] of calls.entries()) {
+      if (
+        index < idx &&
+        call.id !== link.id &&
+        call.sourceObj.x === link.targetObj.x &&
+        call.sourceObj.y === link.targetObj.y &&
+        call.targetObj.x === link.sourceObj.x &&
+        call.targetObj.y === link.sourceObj.y
+      ) {
+        if (call.targetObj.y === call.sourceObj.y) {
+          centrePoints[1] = centrePoints[1] - 8;
+          centrePoints[3] = centrePoints[3] - 8;
+        } else if (call.targetObj.x === call.sourceObj.x) {
+          centrePoints[0] = centrePoints[0] - 8;
+          centrePoints[2] = centrePoints[2] - 8;
+        } else {
+          centrePoints[1] = centrePoints[1] + 6;
+          centrePoints[3] = centrePoints[3] + 6;
+          centrePoints[0] = centrePoints[0] - 6;
+          centrePoints[2] = centrePoints[2] - 6;
+        }
+      }
+    }
+    const pos: any = circleIntersection(centrePoints[0], centrePoints[1], 18, centrePoints[2], centrePoints[3], 18);
+    call.sourceX = pos[0].x;
+    call.sourceY = pos[0].y;
+    call.targetX = pos[1].x;
+    call.targetY = pos[1].y;
+  }
+  return calls;
 }
 
 export function circleIntersection(ax: number, ay: number, ar: number, bx: number, by: number, br: number) {
