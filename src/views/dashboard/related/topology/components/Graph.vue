@@ -21,7 +21,7 @@ limitations under the License. -->
     :style="`height: ${height}px`"
   >
     <svg class="svg-topology" :width="width - 100" :height="height" style="background-color: #fff" @click="svgEvent">
-      <g class="svg-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
+      <g class="graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
         <g
           class="topo-node"
           v-for="(n, index) in topologyLayout.nodes"
@@ -192,7 +192,7 @@ limitations under the License. -->
     height.value = dom.height - 40;
     width.value = dom.width;
     svg.value = d3.select(".svg-topology");
-    graph.value = d3.select(".svg-graph");
+    graph.value = d3.select(".graph");
     loading.value = true;
     const json = await selectorStore.fetchServices(dashboardStore.layerId);
     if (json.errors) {
@@ -612,9 +612,7 @@ limitations under the License. -->
     fill: none;
   }
 
-  .topo-svg {
-    width: 100%;
-    height: calc(100% - 5px);
+  .svg-topology {
     cursor: move;
   }
 
