@@ -59,6 +59,19 @@ export function layout(levels: Node[][], calls: any[]) {
     call.targetX = pos[1].x;
     call.targetY = pos[1].y;
   }
+  // for (const call of calls) {
+  //   for (const link of calls) {
+  //     if (
+  //       (call.id !== link.id && call.sourceX === link.targetX && call.sourceY === link.targetY) ||
+  //       (call.id !== link.id && call.targetX === link.sourceX && call.targetY === link.sourceY)
+  //     ) {
+  //       call.sourceX += 10;
+  //       link.targetX -= 10;
+  //       call.sourceY += 10;
+  //       link.targetY -= 10;
+  //     }
+  //   }
+  // }
   const layout = {
     width: d3.max(nodes, (n: { x: number }) => n.x) || 0 + node_width + 2 * padding,
     height: d3.max(nodes, (n: { y: number }) => n.y) || 0 + node_height / 2 + 2 * padding,
@@ -67,7 +80,7 @@ export function layout(levels: Node[][], calls: any[]) {
   return { nodes, layout, calls };
 }
 
-function circleIntersection(ax: number, ay: number, ar: number, bx: number, by: number, br: number) {
+export function circleIntersection(ax: number, ay: number, ar: number, bx: number, by: number, br: number) {
   const dab = Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2));
 
   const dfx = (ar * Math.abs(ax - bx)) / dab;

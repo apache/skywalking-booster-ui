@@ -23,14 +23,16 @@ limitations under the License. -->
     <svg ref="svg" :width="width - 100" :height="height" style="background-color: #fff" @click="svgEvent">
       <g :style="`transform: translate(${(width - graphWidth - 100) / 2}px, 100px)`">
         <g
+          class="topo-node"
           v-for="(n, index) in topologyLayout.nodes"
           :key="index"
           @mouseout="hideTip"
           @mouseover="showNodeTip($event, n)"
           @click="handleNodeClick($event, n)"
-          class="topo-node"
+          @mousedown="startMoveNode($event, n)"
+          @mouseup="stopMoveNode($event)"
         >
-          <circle class="node" r="18" stroke-width="6" :stroke="getNodeStatus(n)" fill="none" :cx="n.x" :cy="n.y" />
+          <circle class="node" fill="#fff" r="18" stroke-width="6" :stroke="getNodeStatus(n)" :cx="n.x" :cy="n.y" />
           <image
             width="18"
             height="18"
@@ -145,7 +147,7 @@ limitations under the License. -->
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
-  import { layout } from "./utils/layout";
+  import { layout, circleIntersection } from "./utils/layout";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -173,6 +175,7 @@ limitations under the License. -->
   const topologyLayout = ref<any>({});
   const tooltip = ref<Nullable<any>>(null);
   const graphWidth = ref<number>(100);
+  const currentNode = ref<Nullable<Node>>();
 
   onMounted(async () => {
     await nextTick();
@@ -254,6 +257,57 @@ limitations under the License. -->
     }
     topologyLayout.value = layout(levels, topologyStore.calls);
     graphWidth.value = topologyLayout.value.layout.width;
+    const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {
+      moveNode(d);
+    });
+    setTimeout(() => {
+      d3.selectAll(".node").call(drag);
+    }, 1000);
+  }
+
+  function moveNode(d: { x: number; y: number }) {
+    if (!currentNode.value) {
+      return;
+    }
+    for (const node of topologyLayout.value.nodes) {
+      if (node.id === currentNode.value.id) {
+        node.x = d.x;
+        node.y = d.y;
+      }
+    }
+    for (const call of topologyLayout.value.calls) {
+      if (call.sourceObj.id === currentNode.value.id) {
+        call.sourceObj.x = d.x;
+        call.sourceObj.y = d.y;
+      }
+      if (call.targetObj.id === currentNode.value.id) {
+        call.targetObj.x = d.x;
+        call.targetObj.y = d.y;
+      }
+      if (call.targetObj.id === currentNode.value.id || call.sourceObj.id === currentNode.value.id) {
+        const pos: any = circleIntersection(
+          call.sourceObj.x,
+          call.sourceObj.y,
+          18,
+          call.targetObj.x,
+          call.targetObj.y,
+          18,
+        );
+        call.sourceX = pos[0].x;
+        call.sourceY = pos[0].y;
+        call.targetX = pos[1].x;
+        call.targetY = pos[1].y;
+      }
+    }
+  }
+
+  function startMoveNode(event: MouseEvent, d: Node) {
+    event.stopPropagation();
+    currentNode.value = d;
+  }
+  function stopMoveNode(event: MouseEvent) {
+    event.stopPropagation();
+    currentNode.value = null;
   }
 
   function findMostFrequent(arr: Call[]) {
