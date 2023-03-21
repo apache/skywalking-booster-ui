@@ -21,7 +21,7 @@ limitations under the License. -->
     :style="`height: ${height}px`"
   >
     <svg class="svg-topology" :width="width - 100" :height="height" style="background-color: #fff" @click="svgEvent">
-      <g class="graph" :style="`transform: translate(${diff[0]}px, ${diff[1]}px)`">
+      <g class="svg-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
         <g
           class="topo-node"
           v-for="(n, index) in topologyLayout.nodes"
@@ -192,8 +192,7 @@ limitations under the License. -->
     height.value = dom.height - 40;
     width.value = dom.width;
     svg.value = d3.select(".svg-topology");
-    graph.value = d3.select(".graph");
-    svg.value.call(zoom(d3, graph.value, diff.value));
+    graph.value = d3.select(".svg-graph");
     loading.value = true;
     const json = await selectorStore.fetchServices(dashboardStore.layerId);
     if (json.errors) {
@@ -201,6 +200,7 @@ limitations under the License. -->
       return;
     }
     await freshNodes();
+    svg.value.call(zoom(d3, graph.value, diff.value));
   }
   async function freshNodes() {
     topologyStore.setNode(null);
@@ -475,7 +475,9 @@ limitations under the License. -->
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
-    update();
+    await update();
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
   }
   function handleGoEndpoint(name: string) {
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${name}`;
