@@ -17,7 +17,7 @@
 import { MetricQueryTypes, Calculations } from "./data";
 export function useListConfig(config: any, index: string) {
   const i = Number(index);
-  const types = [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg, Calculations.CPM5DAvg];
+  const types = [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg];
   const calculation = config.metricConfig && config.metricConfig[i] && config.metricConfig[i].calculation;
   const isLinear =
     [MetricQueryTypes.ReadMetricsValues, MetricQueryTypes.ReadLabeledMetricsValues].includes(config.metricTypes[i]) &&

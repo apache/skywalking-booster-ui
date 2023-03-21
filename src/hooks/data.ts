@@ -38,8 +38,6 @@ export enum Calculations {
   ApdexAvg = "apdexAvg",
   SecondToDay = "secondToDay",
   NanosecondToMillisecond = "nanosecondToMillisecond",
-  CPM5D = "cpm5d",
-  CPM5DAvg = "cpm5dAvg",
 }
 export enum sizeEnum {
   XS = "XS",
