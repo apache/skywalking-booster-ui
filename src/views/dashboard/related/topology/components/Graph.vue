@@ -21,7 +21,7 @@ limitations under the License. -->
     :style="`height: ${height}px`"
   >
     <svg class="svg-topology" :width="width - 100" :height="height" style="background-color: #fff" @click="svgEvent">
-      <g class="graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
+      <g class="svg-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
         <g
           class="topo-node"
           v-for="(n, index) in topologyLayout.nodes"
@@ -32,7 +32,7 @@ limitations under the License. -->
           @mousedown="startMoveNode($event, n)"
           @mouseup="stopMoveNode($event)"
         >
-          <circle class="node" fill="#fff" r="18" stroke-width="6" :stroke="getNodeStatus(n)" :cx="n.x" :cy="n.y" />
+          <circle fill="#fff" r="18" stroke-width="6" :stroke="getNodeStatus(n)" :cx="n.x" :cy="n.y" />
           <image
             width="18"
             height="18"
@@ -192,7 +192,7 @@ limitations under the License. -->
     height.value = dom.height - 40;
     width.value = dom.width;
     svg.value = d3.select(".svg-topology");
-    graph.value = d3.select(".graph");
+    graph.value = d3.select(".svg-graph");
     loading.value = true;
     const json = await selectorStore.fetchServices(dashboardStore.layerId);
     if (json.errors) {
@@ -266,7 +266,7 @@ limitations under the License. -->
       moveNode(d);
     });
     setTimeout(() => {
-      d3.selectAll(".node").call(drag);
+      d3.selectAll(".topo-node").call(drag);
     }, 1000);
   }
 
@@ -375,13 +375,18 @@ limitations under the License. -->
         topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id) || {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
       const v = aggregation(metric.value, opt);
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || "unknown"}</div>`;
     });
-    const tipHtml = [` <div class="mb-5"><span class="grey">name: </span>${data.name}</div>`, ...html].join(" ");
+    const tipHtml = [
+      `<div class="mb-5"><span class="grey">name: </span>${
+        data.name
+      }</div><div class="mb-5"><span class="grey">type: </span>${data.type || ""}</div>`,
+      ...html,
+    ].join(" ");
 
     tooltip.value
-      .style("top", event.offsetY + "px")
-      .style("left", event.offsetX + "px")
+      .style("top", event.offsetY + 10 + "px")
+      .style("left", event.offsetX + 10 + "px")
       .style("visibility", "visible")
       .html(tipHtml);
   }
@@ -605,23 +610,15 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss">
-  .node {
-    stroke-linecap: round;
-  }
-
-  .link {
-    fill: none;
-  }
-
-  .svg-topology {
-    cursor: move;
-  }
-
   .micro-topo-chart {
     position: relative;
     height: calc(100% - 30px);
     overflow: auto;
     margin-top: 30px;
+
+    .svg-topology {
+      cursor: move;
+    }
 
     .legend {
       position: absolute;
