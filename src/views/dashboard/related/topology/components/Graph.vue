@@ -34,7 +34,7 @@ limitations under the License. -->
         >
           <image width="36" height="36" :x="n.x - 15" :y="n.y - 18" :href="getNodeStatus(n)" />
           <!-- <circle :cx="n.x" :cy="n.y" r="12" fill="none" stroke="red"/> -->
-          <image width="28" height="25" :x="n.x - 14" :y="n.y - 43" :href="icons.LOCAL" style="opacity: 0.5" />
+          <image width="28" height="25" :x="n.x - 14" :y="n.y - 43" :href="icons.LOCAL" style="opacity: 0.8" />
           <image
             width="12"
             height="12"
@@ -389,7 +389,7 @@ limitations under the License. -->
     const tipHtml = [
       `<div class="mb-5"><span class="grey">name: </span>${
         data.name
-      }</div><div class="mb-5"><span class="grey">type: </span>${data.type || ""}</div>`,
+      }</div><div class="mb-5"><span class="grey">type: </span>${data.type || "UNKNOWN"}</div>`,
       ...html,
     ].join(" ");
 
