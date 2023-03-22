@@ -17,7 +17,7 @@
 import Mock from "mockjs";
 
 const Random = Mock.Random;
-const nodes: any = Mock.mock({
+const nodes = Mock.mock({
   "nodes|500": [
     {
       //id
@@ -28,7 +28,7 @@ const nodes: any = Mock.mock({
     },
   ],
 });
-const calls: any = Mock.mock({
+const calls = Mock.mock({
   "links|500": [
     {
       //id

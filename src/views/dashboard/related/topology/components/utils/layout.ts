@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 import * as d3 from "d3";
-import type { Node } from "@/types/topology";
+import type { Node, Call } from "@/types/topology";
 
-export function layout(levels: Node[][], calls: any[], radius: number) {
+export function layout(levels: Node[][], calls: Call[], radius: number) {
   // precompute level depth
-  levels.forEach((l: any, i: any) => l.forEach((n: any) => (n.level = i)));
+  levels.forEach((l: Node[], i: number) => l.forEach((n: any) => (n.level = i)));
 
-  const nodes = levels.reduce((a: any, x: any) => a.concat(x), []);
+  const nodes: Node[] = levels.reduce((a, x) => a.concat(x), []);
   // layout
   const padding = 30;
   const node_height = 120;
@@ -53,14 +53,14 @@ export function layout(levels: Node[][], calls: any[], radius: number) {
     }
   }
   const layout = {
-    width: d3.max(nodes, (n: { x: number }) => n.x) || 0 + node_width + 2 * padding,
-    height: d3.max(nodes, (n: { y: number }) => n.y) || 0 + node_height / 2 + 2 * padding,
+    width: d3.max(nodes as any, (n: { x: number }) => n.x) || 0 + node_width + 2 * padding,
+    height: d3.max(nodes as any, (n: { y: number }) => n.y) || 0 + node_height / 2 + 2 * padding,
   };
 
   return { nodes, layout, calls: computeCallPos(calls, radius) };
 }
 
-export function computeCallPos(calls: any[], radius: number) {
+export function computeCallPos(calls: Call[], radius: number) {
   for (const [index, call] of calls.entries()) {
     const centrePoints = [call.sourceObj.x, call.sourceObj.y, call.targetObj.x, call.targetObj.y];
     for (const [idx, link] of calls.entries()) {
@@ -86,7 +86,7 @@ export function computeCallPos(calls: any[], radius: number) {
         }
       }
     }
-    const pos: any = circleIntersection(
+    const pos: { x: number; y: number }[] = circleIntersection(
       centrePoints[0],
       centrePoints[1],
       radius,
