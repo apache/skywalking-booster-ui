@@ -17,7 +17,7 @@
 import * as d3 from "d3";
 import type { Node } from "@/types/topology";
 
-export function layout(levels: Node[][], calls: any[]) {
+export function layout(levels: Node[][], calls: any[], radius: number) {
   // precompute level depth
   levels.forEach((l: any, i: any) => l.forEach((n: any) => (n.level = i)));
 
@@ -57,10 +57,10 @@ export function layout(levels: Node[][], calls: any[]) {
     height: d3.max(nodes, (n: { y: number }) => n.y) || 0 + node_height / 2 + 2 * padding,
   };
 
-  return { nodes, layout, calls: computeCallPos(calls) };
+  return { nodes, layout, calls: computeCallPos(calls, radius) };
 }
 
-export function computeCallPos(calls: any[]) {
+export function computeCallPos(calls: any[], radius: number) {
   for (const [index, call] of calls.entries()) {
     const centrePoints = [call.sourceObj.x, call.sourceObj.y, call.targetObj.x, call.targetObj.y];
     for (const [idx, link] of calls.entries()) {
@@ -86,7 +86,14 @@ export function computeCallPos(calls: any[]) {
         }
       }
     }
-    const pos: any = circleIntersection(centrePoints[0], centrePoints[1], 18, centrePoints[2], centrePoints[3], 18);
+    const pos: any = circleIntersection(
+      centrePoints[0],
+      centrePoints[1],
+      radius,
+      centrePoints[2],
+      centrePoints[3],
+      radius,
+    );
     call.sourceX = pos[0].x;
     call.sourceY = pos[0].y;
     call.targetX = pos[1].x;

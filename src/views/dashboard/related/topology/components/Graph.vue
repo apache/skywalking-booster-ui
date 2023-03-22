@@ -32,26 +32,25 @@ limitations under the License. -->
           @mousedown="startMoveNode($event, n)"
           @mouseup="stopMoveNode($event)"
         >
-          <image width="49" height="49" :x="n.x - 20" :y="n.y - 24" :href="getNodeStatus(n)" />
-          <image width="32" height="32" :x="n.x - 15" :y="n.y - 50" :href="icons.LOCAL" style="opacity: 0.6" />
+          <image width="36" height="36" :x="n.x - 15" :y="n.y - 18" :href="getNodeStatus(n)" />
+          <!-- <circle :cx="n.x" :cy="n.y" r="12" fill="none" stroke="red"/> -->
+          <image width="28" height="25" :x="n.x - 14" :y="n.y - 43" :href="icons.LOCAL" style="opacity: 0.5" />
           <image
-            width="18"
-            height="18"
-            :x="n.x - 8"
-            :y="n.y - 45"
+            width="12"
+            height="12"
+            :x="n.x - 6"
+            :y="n.y - 38"
             :href="!n.type || n.type === `N/A` ? icons.UNDEFINED : icons[n.type.toUpperCase().replace('-', '')]"
           />
-          <text :x="n.x - (n.name.length * 6) / 2" :y="n.y + n.height + 12" style="pointer-events: none">
+          <text :x="n.x - (n.name.length * 6) / 2 + 6" :y="n.y + n.height + 8" style="pointer-events: none">
             {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
           </text>
         </g>
         <g v-for="(l, index) in topologyLayout.calls" :key="index">
           <path
             class="topo-line"
-            :d="`M${l.sourceX} ${l.sourceY}
-          L${l.targetX} ${l.targetY}`"
-            stroke="#aaa"
-            stroke-width="1"
+            :d="`M${l.sourceX} ${l.sourceY} L${l.targetX} ${l.targetY}`"
+            stroke="#97B0F8"
             marker-end="url(#arrow)"
           />
           <circle
@@ -59,7 +58,7 @@ limitations under the License. -->
             :cx="(l.sourceX + l.targetX) / 2"
             :cy="(l.sourceY + l.targetY) / 2"
             r="4"
-            fill="#bbb"
+            fill="#97B0F8"
             @click="handleLinkClick($event, l)"
             @mouseover="showLinkTip($event, l)"
             @mouseout="hideTip"
@@ -77,22 +76,22 @@ limitations under the License. -->
               refY="6"
               orient="auto"
             >
-              <path d="M2,2 L10,6 L2,10 L6,6 L2,2" fill="#999" />
+              <path d="M2,2 L10,6 L2,10 L6,6 L2,2" fill="#97B0F8" />
             </marker>
           </defs>
         </g>
       </g>
-      <circle class="node" r="10" stroke-width="4" stroke="#ed374d" :cx="34" :cy="65" fill="none" />
-      <circle class="node" r="10" stroke-width="4" stroke="#72c59f" fill="none" :cx="35" :cy="25" />
     </svg>
     <div id="tooltip"></div>
     <div class="legend">
       <div>
+        <img :src="icons.CUBE" />
         <span>
           {{ settings.description ? settings.description.healthy || "" : "" }}
         </span>
       </div>
       <div>
+        <img :src="icons.CUBEERROR" />
         <span>
           {{ settings.description ? settings.description.unhealthy || "" : "" }}
         </span>
@@ -179,7 +178,8 @@ limitations under the License. -->
   const tooltip = ref<Nullable<any>>(null);
   const graphWidth = ref<number>(100);
   const currentNode = ref<Nullable<Node>>();
-  const diff = computed(() => [(width.value - graphWidth.value - 100) / 2, 100]);
+  const diff = computed(() => [(width.value - graphWidth.value - 130) / 2, 100]);
+  const radius = 8;
 
   onMounted(async () => {
     await nextTick();
@@ -261,7 +261,7 @@ limitations under the License. -->
         levels.push(a);
       }
     }
-    topologyLayout.value = layout(levels, topologyStore.calls);
+    topologyLayout.value = layout(levels, topologyStore.calls, radius);
     graphWidth.value = topologyLayout.value.layout.width;
     const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {
       moveNode(d);
@@ -294,10 +294,10 @@ limitations under the License. -->
         const pos: any = circleIntersection(
           call.sourceObj.x,
           call.sourceObj.y,
-          18,
+          radius,
           call.targetObj.x,
           call.targetObj.y,
-          18,
+          radius,
         );
         call.sourceX = pos[0].x;
         call.sourceY = pos[0].y;
@@ -305,7 +305,7 @@ limitations under the License. -->
         call.targetY = pos[1].y;
       }
     }
-    topologyLayout.value.calls = computeCallPos(topologyLayout.value.calls);
+    topologyLayout.value.calls = computeCallPos(topologyLayout.value.calls, radius);
   }
 
   function startMoveNode(event: MouseEvent, d: Node) {
@@ -623,7 +623,7 @@ limitations under the License. -->
     .legend {
       position: absolute;
       top: 10px;
-      left: 50px;
+      left: 25px;
       color: #666;
 
       div {
