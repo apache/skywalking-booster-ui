@@ -228,7 +228,15 @@ limitations under the License. -->
   function draw() {
     const node = findMostFrequent(topologyStore.calls);
     const levels = [];
-    const nodes = JSON.parse(JSON.stringify(topologyStore.nodes));
+    const nodes = topologyStore.nodes.sort((a: Node, b: Node) => {
+      if (a.name.toLowerCase() < b.name.toLowerCase()) {
+        return -1;
+      }
+      if (a.name.toLowerCase() > b.name.toLowerCase()) {
+        return 1;
+      }
+      return 0;
+    });
     const index = nodes.findIndex((n: Node) => n.type === "USER");
     let key = index;
     if (index < 0) {
