@@ -32,12 +32,13 @@ limitations under the License. -->
           @mousedown="startMoveNode($event, n)"
           @mouseup="stopMoveNode($event)"
         >
-          <circle fill="#fff" r="18" stroke-width="6" :stroke="getNodeStatus(n)" :cx="n.x" :cy="n.y" />
+          <image width="49" height="49" :x="n.x - 20" :y="n.y - 24" :href="getNodeStatus(n)" />
+          <image width="32" height="32" :x="n.x - 15" :y="n.y - 50" :href="icons.LOCAL" style="opacity: 0.6" />
           <image
             width="18"
             height="18"
             :x="n.x - 8"
-            :y="n.y - 10"
+            :y="n.y - 45"
             :href="!n.type || n.type === `N/A` ? icons.UNDEFINED : icons[n.type.toUpperCase().replace('-', '')]"
           />
           <text :x="n.x - (n.name.length * 6) / 2" :y="n.y + n.height + 12" style="pointer-events: none">
@@ -352,10 +353,10 @@ limitations under the License. -->
   function getNodeStatus(d: any) {
     const legend = settings.value.legend;
     if (!legend) {
-      return "#72c59f";
+      return icons.CUBE;
     }
     if (!legend.length) {
-      return "#72c59f";
+      return icons.CUBE;
     }
     let c = true;
     for (const l of legend) {
@@ -365,7 +366,7 @@ limitations under the License. -->
         c = c && d[l.name] > Number(l.value);
       }
     }
-    return c && d.isReal ? "#f18586" : "#72c59f";
+    return c && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
     const nodeMetrics: string[] = settings.value.nodeMetrics || [];
