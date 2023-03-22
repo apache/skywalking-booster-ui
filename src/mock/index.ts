@@ -14,32 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface Call {
-  source: string | any;
-  target: string | any;
-  id: string;
-  detectPoints: string[];
-  type?: string;
-  sourceObj?: any;
-  targetObj?: any;
-  value?: number;
-  lowerArc?: boolean;
-  sourceComponents: string[];
-  targetComponents: string[];
-  sourceX?: number;
-  sourceY?: number;
-  targetY?: number;
-  targetX?: number;
-}
-export interface Node {
-  id: string;
-  name: string;
-  type: string;
-  isReal: boolean;
-  layer?: string;
-  serviceName?: string;
-  height?: number;
-  x?: number;
-  y?: number;
-  level?: number;
-}
+import Mock from "mockjs";
+
+const Random = Mock.Random;
+const nodes = Mock.mock({
+  "nodes|500": [
+    {
+      //id
+      id: "@guid",
+      name: "@name",
+      "type|1": ["ActiveMQ", "activemq-consumer", "H2", "APISIX", "Express", "USER", "Flash"],
+      "isReal|1": [true, false],
+    },
+  ],
+});
+const calls = Mock.mock({
+  "links|500": [
+    {
+      //id
+      id: "@guid",
+      detectPoints: ["SERVER", "CLIENT"],
+      source: function () {
+        const d = Random.integer(0, 250);
+        return nodes.nodes[d].id;
+      },
+      target: function () {
+        const d = Random.integer(250, 499);
+        return nodes.nodes[d].id;
+      },
+    },
+  ],
+});
+const callsMock = calls.links;
+const nodesMock = nodes.nodes;
+export { callsMock, nodesMock };

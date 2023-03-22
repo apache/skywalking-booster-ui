@@ -27,7 +27,7 @@ limitations under the License. -->
     />
     <div class="label">
       <span>{{ t("linkServerMetrics") }}</span>
-      <el-popover placement="left" :width="400" trigger="click" effect="dark" v-if="states.linkServerMetrics.length">
+      <el-popover placement="left" :width="400" trigger="click" v-if="states.linkServerMetrics.length">
         <template #reference>
           <span @click="setConfigType('linkServerMetricConfig')">
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
@@ -48,7 +48,7 @@ limitations under the License. -->
     <span v-show="dashboardStore.entity !== EntityType[2].value">
       <div class="label">
         <span>{{ t("linkClientMetrics") }}</span>
-        <el-popover placement="left" :width="400" trigger="click" effect="dark" v-if="states.linkClientMetrics.length">
+        <el-popover placement="left" :width="400" trigger="click" v-if="states.linkClientMetrics.length">
           <template #reference>
             <span @click="setConfigType('linkClientMetricConfig')">
               <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
@@ -110,7 +110,7 @@ limitations under the License. -->
     </div>
     <div class="label">
       <span>{{ t("nodeMetrics") }}</span>
-      <el-popover placement="left" :width="400" trigger="click" effect="dark" v-if="states.nodeMetrics.length">
+      <el-popover placement="left" :width="400" trigger="click" v-if="states.nodeMetrics.length">
         <template #reference>
           <span @click="setConfigType('nodeMetricConfig')">
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
@@ -454,6 +454,7 @@ limitations under the License. -->
 
   .title {
     margin-bottom: 0;
+    color: #666;
   }
 
   .label {

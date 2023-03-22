@@ -14,32 +14,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface Call {
-  source: string | any;
-  target: string | any;
-  id: string;
-  detectPoints: string[];
-  type?: string;
-  sourceObj?: any;
-  targetObj?: any;
-  value?: number;
-  lowerArc?: boolean;
-  sourceComponents: string[];
-  targetComponents: string[];
-  sourceX?: number;
-  sourceY?: number;
-  targetY?: number;
-  targetX?: number;
-}
-export interface Node {
-  id: string;
-  name: string;
-  type: string;
-  isReal: boolean;
-  layer?: string;
-  serviceName?: string;
-  height?: number;
-  x?: number;
-  y?: number;
-  level?: number;
-}
+declare module "mockjs";
