@@ -612,7 +612,6 @@ limitations under the License. -->
 <style lang="scss">
   .micro-topo-chart {
     position: relative;
-    height: calc(100% - 30px);
     overflow: auto;
     margin-top: 30px;
 
@@ -649,12 +648,18 @@ limitations under the License. -->
       right: 10px;
       width: 400px;
       height: 600px;
-      background-color: #2b3037;
       overflow: auto;
       padding: 0 15px;
       border-radius: 3px;
       color: #ccc;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      box-shadow: #eee 1px 2px 10px;
       transition: all 0.5ms linear;
+
+      &.dark {
+        background-color: #2b3037;
+      }
     }
 
     .label {
