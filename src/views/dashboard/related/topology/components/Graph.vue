@@ -448,6 +448,7 @@ limitations under the License. -->
     operationsPos.x = event.offsetX;
     operationsPos.y = event.offsetY;
     if (d.layer === String(dashboardStore.layerId)) {
+      setNodeTools(settings.value.nodeDashboard);
       return;
     }
     items.value = [
