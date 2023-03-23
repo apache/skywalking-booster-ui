@@ -64,7 +64,7 @@ limitations under the License. -->
   import copy from "@/utils/copy";
   import { TextColors } from "@/views/dashboard/data";
   import Trace from "@/views/dashboard/related/trace/Index.vue";
-  import { QueryOrders, Status, RefIdTypes } from "../data";
+  import { QueryOrders, Status, RefIdTypes, ProtocolTypes } from "../data";
   /*global defineProps */
   const props = defineProps({
     data: {
@@ -77,6 +77,7 @@ limitations under the License. -->
       type: Object as PropType<{
         color: string;
         metrics: string[];
+        metricTypes: string[];
         relatedTrace: any;
       }>,
       default: () => ({ color: "purple" }),
@@ -112,6 +113,7 @@ limitations under the License. -->
       status: Status[2].value,
       id: item.id || item.name,
       metricValue: [{ label: props.config.metrics[0], data: item.value, value: item.name }],
+      isReadRecords: props.config.metricTypes.includes(ProtocolTypes.ReadRecords) || undefined,
     };
     traceOptions.value = {
       ...traceOptions.value,

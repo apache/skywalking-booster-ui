@@ -144,6 +144,10 @@ limitations under the License. -->
       await queryTraces();
       return;
     }
+    if (filters.isReadRecords) {
+      await queryTraces();
+      return;
+    }
     if (dashboardStore.entity === EntityType[1].value) {
       await getService();
     }
