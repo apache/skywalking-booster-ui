@@ -74,6 +74,22 @@ export default [
           layer: "AWS_DYNAMODB",
         },
       },
+      {
+        path: "/aws-gateway",
+        name: "AWSGateway",
+        meta: {
+          title: "AWSGateway",
+          layer: "AWS_GATEWAY",
+        },
+      },
+      {
+        path: "/aws-gateway/tab/:activeTabIndex",
+        name: "GatewayActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "AWS_GATEWAY",
+        },
+      },
     ],
   },
 ];
