@@ -184,7 +184,7 @@ limitations under the License. -->
 
   .title {
     display: inline-block;
-    max-width: 110px;
+    max-width: 200px;
     text-overflow: ellipsis;
     overflow: hidden;
   }

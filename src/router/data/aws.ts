@@ -75,16 +75,16 @@ export default [
         },
       },
       {
-        path: "/aws-gateway",
-        name: "AWSGateway",
+        path: "/aws-api-gateway",
+        name: "APIGateway",
         meta: {
-          title: "AWSGateway",
+          title: "APIGateway",
           layer: "AWS_GATEWAY",
         },
       },
       {
-        path: "/aws-gateway/tab/:activeTabIndex",
-        name: "GatewayActiveTabIndex",
+        path: "/aws-api-gateway/tab/:activeTabIndex",
+        name: "APIGatewayActiveTabIndex",
         meta: {
           notShow: true,
           layer: "AWS_GATEWAY",
