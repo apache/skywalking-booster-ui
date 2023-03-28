@@ -115,7 +115,7 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const viewDetail = ref<boolean>(false);
   const service = ref<string>("");
-  const selectedTask = ref<TaskListItem | Record<string, never>>({});
+  const selectedTask = ref<TaskListItem | Record<string, never>>(profileStore.taskList[0] || {});
   const instanceLogs = ref<TaskLog | any>({});
 
   async function changeTask(item: TaskListItem) {

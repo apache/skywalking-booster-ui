@@ -24,7 +24,7 @@ limitations under the License. -->
           <td
             class="profile-td"
             :class="{
-              selected: selectedKey == i.segmentId,
+              selected: selectedKey === i.segmentId,
             }"
           >
             <div
@@ -55,7 +55,7 @@ limitations under the License. -->
 
   const { t } = useI18n();
   const profileStore = useProfileStore();
-  const selectedKey = ref<string>("");
+  const selectedKey = ref<string>(profileStore.currentSegment && profileStore.currentSegment.segmentId);
 
   async function selectTrace(item: Trace) {
     profileStore.setCurrentSegment(item);

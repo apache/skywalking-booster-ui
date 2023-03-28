@@ -107,7 +107,7 @@ export const profileStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      const list = res.data.data.taskList;
+      const list = res.data.data.taskList || [];
       this.taskList = list;
       if (!list.length) {
         this.segmentList = [];
