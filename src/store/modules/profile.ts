@@ -148,23 +148,15 @@ export const profileStore = defineStore({
     },
     async getSegmentSpans() {
       this.analyzeTrees = [];
-      this.segmentSpans = this.currentSegment.spans.map((d: SegmentSpan) => {
-        return {
-          ...d,
-          // traceId: (this.currentSegment.traceIds as any)[0],
-        };
-      });
+      this.segmentSpans = this.currentSegment.spans;
       const index = this.currentSegment.spans.length - 1 || 0;
       this.currentSpan = this.currentSegment.spans[index];
     },
     async getProfileAnalyze(params: Array<{ segmentId: string; timeRange: { start: number; end: number } }>) {
-      // if (!params.segmentId) {
-      //   return new Promise((resolve) => resolve({}));
-      // }
       if (!params.length) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getProfileAnalyze").params(params);
+      const res: AxiosResponse = await graphql.query("getProfileAnalyze").params({ queries: params });
 
       if (res.data.errors) {
         this.analyzeTrees = [];

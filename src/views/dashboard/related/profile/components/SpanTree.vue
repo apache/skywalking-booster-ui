@@ -17,14 +17,6 @@ limitations under the License. -->
     <div class="profile-trace-detail-wrapper">
       <Selector
         size="small"
-        :value="traceId || (traceIds[0] && traceIds[0].value) || ''"
-        :options="traceIds"
-        placeholder="Select a trace id"
-        @change="changeTraceId"
-        class="profile-trace-detail-ids mr-10"
-      />
-      <Selector
-        size="small"
         :value="mode"
         :options="ProfileMode"
         placeholder="Select a mode"
@@ -38,7 +30,7 @@ limitations under the License. -->
     <div class="profile-table">
       <Table
         :data="profileStore.segmentSpans"
-        :traceId="profileStore.currentSegment.traceIds && profileStore.currentSegment.traceIds[0]"
+        :traceId="profileStore.currentSegment.traceId"
         :showBtnDetail="true"
         headerType="profile"
         @select="selectSpan"
@@ -47,7 +39,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, computed } from "vue";
+  import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import Table from "../../trace/components/Table/Index.vue";
   import { useProfileStore } from "@/store/modules/profile";
@@ -64,13 +56,6 @@ limitations under the License. -->
   const mode = ref<string>("include");
   const message = ref<string>("");
   const timeRange = ref<Array<{ start: number; end: number }>>([]);
-  const traceId = ref<string>("");
-  const traceIds = computed(() =>
-    (profileStore.currentSegment.traceIds || []).map((id: string) => ({
-      label: id,
-      value: id,
-    })),
-  );
 
   function selectSpan(span: Span) {
     profileStore.setCurrentSpan(span);
@@ -81,20 +66,16 @@ limitations under the License. -->
     updateTimeRange();
   }
 
-  function changeTraceId(opt: Option[]) {
-    traceId.value = opt[0].value;
-  }
-
   async function analyzeProfile() {
     emits("loading", true);
     updateTimeRange();
-    const param = timeRange.value.map((t: { start: number; end: number }) => {
+    const params = timeRange.value.map((t: { start: number; end: number }) => {
       return {
-        segmentId: profileStore.currentSegment.segmentId,
+        segmentId: profileStore.currentSpan.segmentId,
         timeRange: t,
       };
     });
-    const res = await profileStore.getProfileAnalyze(param);
+    const res = await profileStore.getProfileAnalyze(params);
     emits("loading", false);
     if (res.errors) {
       ElMessage.error(res.errors);
