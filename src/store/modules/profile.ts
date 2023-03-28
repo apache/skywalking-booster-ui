@@ -34,6 +34,7 @@ interface ProfileState {
   taskEndpoints: Endpoint[];
   condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
+  currentTask: Recordable<TaskListItem>;
   segmentList: Trace[];
   currentSegment: Recordable<Trace>;
   segmentSpans: Array<Recordable<SegmentSpan>>;
@@ -51,6 +52,7 @@ export const profileStore = defineStore({
     condition: { serviceId: "", endpointName: "" },
     taskList: [],
     segmentList: [],
+    currentTask: {},
     currentSegment: {},
     segmentSpans: [],
     currentSpan: {},
@@ -65,7 +67,12 @@ export const profileStore = defineStore({
         ...data,
       };
     },
+    setCurrentTask(task: TaskListItem) {
+      this.currentTask = task || {};
+    },
     setSegmentSpans(spans: Recordable<SegmentSpan>[]) {
+      const index = spans.length - 1 || 0;
+      this.currentSpan = spans[index];
       this.segmentSpans = spans;
     },
     setCurrentSpan(span: Recordable<SegmentSpan>) {
@@ -109,6 +116,7 @@ export const profileStore = defineStore({
       }
       const list = res.data.data.taskList || [];
       this.taskList = list;
+      this.currentTask = list[0] || {};
       if (!list.length) {
         this.segmentList = [];
         this.segmentSpans = [];

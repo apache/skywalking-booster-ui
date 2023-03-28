@@ -24,7 +24,7 @@ limitations under the License. -->
           <td
             class="profile-td"
             :class="{
-              selected: selectedKey === i.segmentId,
+              selected: key === i.spans[0].segmentId,
             }"
           >
             <div
@@ -47,7 +47,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { computed } from "vue";
   import { useI18n } from "vue-i18n";
   import { useProfileStore } from "@/store/modules/profile";
   import type { Trace } from "@/types/trace";
@@ -55,11 +55,10 @@ limitations under the License. -->
 
   const { t } = useI18n();
   const profileStore = useProfileStore();
-  const selectedKey = ref<string>(profileStore.currentSegment && profileStore.currentSegment.segmentId);
+  const key = computed(() => (profileStore.currentSpan && profileStore.currentSpan.segmentId) || "");
 
   async function selectTrace(item: Trace) {
     profileStore.setCurrentSegment(item);
-    selectedKey.value = item.segmentId;
     profileStore.setSegmentSpans(item.spans);
   }
 </script>

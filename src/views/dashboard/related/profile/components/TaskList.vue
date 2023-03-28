@@ -25,7 +25,7 @@ limitations under the License. -->
             <td
               class="profile-td"
               :class="{
-                selected: selectedTask.id === i.id,
+                selected: profileStore.currentTask && profileStore.currentTask.id === i.id,
               }"
             >
               <div class="ell">
@@ -49,7 +49,7 @@ limitations under the License. -->
     </div>
   </div>
   <el-dialog v-model="viewDetail" :destroy-on-close="true" fullscreen @closed="viewDetail = false">
-    <div class="profile-detail flex-v">
+    <div class="profile-detail flex-v" v-if="profileStore.currentTask">
       <div>
         <h5 class="mb-10">{{ t("task") }}.</h5>
         <div class="mb-10 clear item">
@@ -58,33 +58,35 @@ limitations under the License. -->
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("endpoint") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.endpointName }}</span>
+          <span class="g-sm-8 wba">{{ profileStore.currentTask.endpointName }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
           <span class="g-sm-8 wba">
-            {{ dateFormat(selectedTask.startTime) }}
+            {{ dateFormat(profileStore.currentTask.startTime) }}
           </span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span
-          ><span class="g-sm-8 wba">{{ selectedTask.duration }} min</span>
+          ><span class="g-sm-8 wba">{{ profileStore.currentTask.duration }} min</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("minThreshold") }}:</span>
-          <span class="g-sm-8 wba"> {{ selectedTask.minDurationThreshold }} ms </span>
+          <span class="g-sm-8 wba"> {{ profileStore.currentTask.minDurationThreshold }} ms </span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("dumpPeriod") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.dumpPeriod }}</span>
+          <span class="g-sm-8 wba">{{ profileStore.currentTask.dumpPeriod }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("maxSamplingCount") }}:</span>
-          <span class="g-sm-8 wba">{{ selectedTask.maxSamplingCount }}</span>
+          <span class="g-sm-8 wba">{{ profileStore.currentTask.maxSamplingCount }}</span>
         </div>
       </div>
       <div>
-        <h5 class="mb-10 mt-10" v-show="selectedTask.logs && selectedTask.logs.length"> {{ t("logs") }}. </h5>
+        <h5 class="mb-10 mt-10" v-show="profileStore.currentTask.logs && profileStore.currentTask.logs.length">
+          {{ t("logs") }}.
+        </h5>
         <div class="log-item" v-for="(i, index) in Object.keys(instanceLogs)" :key="index">
           <div class="mb-10 sm">
             <span class="mr-10 grey">{{ t("instance") }}:</span>
@@ -115,12 +117,12 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const viewDetail = ref<boolean>(false);
   const service = ref<string>("");
-  const selectedTask = ref<TaskListItem | Record<string, never>>(profileStore.taskList[0] || {});
+  // const selectedTask = ref<TaskListItem | Record<string, never>>({});
   const instanceLogs = ref<TaskLog | any>({});
 
   async function changeTask(item: TaskListItem) {
     profileStore.setCurrentSegment({});
-    selectedTask.value = item;
+    profileStore.setCurrentTask(item);
     const res = await profileStore.getSegmentList({ taskID: item.id });
     if (res.errors) {
       ElMessage.error(res.errors);
@@ -130,7 +132,7 @@ limitations under the License. -->
   async function viewTask(e: Event, item: TaskListItem) {
     window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
     viewDetail.value = true;
-    selectedTask.value = item;
+    profileStore.setCurrentTask(item);
     service.value = (selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}).label;
     const res = await profileStore.getTaskLogs({ taskID: item.id });
 
@@ -150,7 +152,7 @@ limitations under the License. -->
         instanceLogs.value[d.instanceName] = [{ operationType: d.operationType, operationTime: d.operationTime }];
       }
     }
-    selectedTask.value = item;
+    profileStore.setCurrentTask(item);
   }
 </script>
 <style lang="scss" scoped>
