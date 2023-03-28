@@ -51,7 +51,6 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useProfileStore } from "@/store/modules/profile";
   import type { Trace } from "@/types/trace";
-  import { ElMessage } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
 
   const { t } = useI18n();
@@ -61,11 +60,7 @@ limitations under the License. -->
   async function selectTrace(item: Trace) {
     profileStore.setCurrentSegment(item);
     selectedKey.value = item.segmentId;
-    const res = await profileStore.getSegmentSpans({ segmentId: item.segmentId });
-
-    if (res.errors) {
-      ElMessage.error(res.errors);
-    }
+    profileStore.setSegmentSpans(item.spans);
   }
 </script>
 <style lang="scss" scoped>

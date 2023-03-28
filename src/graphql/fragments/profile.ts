@@ -22,6 +22,13 @@ export const ProfileSegment = {
     spans {
       spanId
       parentSpanId
+      segmentId
+      refs {
+        traceId
+        parentSegmentId
+        parentSpanId
+        type
+      }
       serviceCode
       startTime
       endTime
@@ -41,6 +48,7 @@ export const ProfileSegment = {
           value
         }
       }
+      profiled
     }
   }
   `,
@@ -79,23 +87,55 @@ export const GetProfileTaskList = {
   `,
 };
 export const GetProfileTaskSegmentList = {
-  variable: "$taskID: String",
+  variable: "$taskID: ID!",
   query: `
-  segmentList: getProfileTaskSegmentList(taskID: $taskID) {
-    segmentId
+  segmentList: getProfileTaskSegments(taskID: $taskID) {
+    traceId
+    instanceId
+    instanceName
     endpointNames
-    start
     duration
-    traceIds
-    isError
+    start
+    spans {
+      spanId
+      parentSpanId
+      segmentId
+      refs {
+        traceId
+        parentSegmentId
+        parentSpanId
+        type
+      }
+      serviceCode
+      serviceInstanceName
+      startTime
+      endTime
+      endpointName
+      type
+      peer
+      component
+      isError
+      layer
+      tags {
+        key value
+      }
+      logs {
+        time
+        data {
+          key
+          value
+        }
+      }
+      profiled
+    }
   }
   `,
 };
 
 export const GetProfileAnalyze = {
-  variable: "$segmentId: String!, $timeRanges: [ProfileAnalyzeTimeRange!]!",
+  variable: "$queries: [SegmentProfileAnalyzeQuery!]!",
   query: `
-  analyze: getProfileAnalyze(segmentId: $segmentId, timeRanges: $timeRanges) {
+  analyze: getSegmentsProfileAnalyze(queries: $queries) {
     tip
     trees {
       elements {

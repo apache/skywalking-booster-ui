@@ -65,6 +65,9 @@ export const profileStore = defineStore({
         ...data,
       };
     },
+    setSegmentSpans(spans: Recordable<SegmentSpan>[]) {
+      this.segmentSpans = spans;
+    },
     setCurrentSpan(span: Recordable<SegmentSpan>) {
       this.currentSpan = span;
     },
@@ -128,7 +131,7 @@ export const profileStore = defineStore({
       }
       const { segmentList } = res.data.data;
 
-      this.segmentList = segmentList;
+      this.segmentList = segmentList || [];
       if (!segmentList.length) {
         this.segmentSpans = [];
         this.analyzeTrees = [];
@@ -137,47 +140,28 @@ export const profileStore = defineStore({
       }
       if (segmentList[0]) {
         this.currentSegment = segmentList[0];
-        this.getSegmentSpans({ segmentId: segmentList[0].segmentId });
+        this.getSegmentSpans(segmentList[0].segmentId);
       } else {
         this.currentSegment = {};
       }
       return res.data;
     },
-    async getSegmentSpans(params: { segmentId: string }) {
-      if (!params.segmentId) {
-        return new Promise((resolve) => resolve({}));
-      }
-      const res: AxiosResponse = await graphql.query("queryProfileSegment").params(params);
-      if (res.data.errors) {
-        this.segmentSpans = [];
-        return res.data;
-      }
-      const { segment } = res.data.data;
-      if (!segment) {
-        this.segmentSpans = [];
-        this.analyzeTrees = [];
-        return res.data;
-      }
-      this.segmentSpans = segment.spans.map((d: SegmentSpan) => {
+    async getSegmentSpans() {
+      this.analyzeTrees = [];
+      this.segmentSpans = this.currentSegment.spans.map((d: SegmentSpan) => {
         return {
           ...d,
-          segmentId: this.currentSegment?.segmentId,
-          traceId: (this.currentSegment.traceIds as any)[0],
+          // traceId: (this.currentSegment.traceIds as any)[0],
         };
       });
-      if (!(segment.spans && segment.spans.length)) {
-        this.analyzeTrees = [];
-        return res.data;
-      }
-      const index = segment.spans.length - 1 || 0;
-      this.currentSpan = segment.spans[index];
-      return res.data;
+      const index = this.currentSegment.spans.length - 1 || 0;
+      this.currentSpan = this.currentSegment.spans[index];
     },
-    async getProfileAnalyze(params: { segmentId: string; timeRanges: Array<{ start: number; end: number }> }) {
-      if (!params.segmentId) {
-        return new Promise((resolve) => resolve({}));
-      }
-      if (!params.timeRanges.length) {
+    async getProfileAnalyze(params: Array<{ segmentId: string; timeRange: { start: number; end: number } }>) {
+      // if (!params.segmentId) {
+      //   return new Promise((resolve) => resolve({}));
+      // }
+      if (!params.length) {
         return new Promise((resolve) => resolve({}));
       }
       const res: AxiosResponse = await graphql.query("getProfileAnalyze").params(params);

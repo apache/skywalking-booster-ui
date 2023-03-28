@@ -88,10 +88,13 @@ limitations under the License. -->
   async function analyzeProfile() {
     emits("loading", true);
     updateTimeRange();
-    const res = await profileStore.getProfileAnalyze({
-      segmentId: profileStore.currentSegment.segmentId,
-      timeRanges: timeRange.value,
+    const param = timeRange.value.map((t: { start: number; end: number }) => {
+      return {
+        segmentId: profileStore.currentSegment.segmentId,
+        timeRange: t,
+      };
     });
+    const res = await profileStore.getProfileAnalyze(param);
     emits("loading", false);
     if (res.errors) {
       ElMessage.error(res.errors);
