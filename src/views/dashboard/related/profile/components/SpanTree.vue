@@ -15,6 +15,8 @@ limitations under the License. -->
 <template>
   <div class="profile-trace-dashboard" v-if="profileStore.currentSegment">
     <div class="profile-trace-detail-wrapper">
+      <label>Trace ID</label>
+      <el-input class="input mr-10 ml-5" readonly :value="profileStore.currentSegment.traceId" size="small" />
       <Selector
         size="small"
         :value="mode"
@@ -158,5 +160,9 @@ limitations under the License. -->
 
   .profile-trace-detail-ids {
     width: 300px;
+  }
+
+  .input {
+    width: 250px;
   }
 </style>
