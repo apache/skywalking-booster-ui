@@ -69,6 +69,7 @@ export const profileStore = defineStore({
     },
     setCurrentTask(task: TaskListItem) {
       this.currentTask = task || {};
+      this.analyzeTrees = [];
     },
     setSegmentSpans(spans: Recordable<SegmentSpan>[]) {
       const index = spans.length - 1 || 0;
@@ -77,9 +78,18 @@ export const profileStore = defineStore({
     },
     setCurrentSpan(span: Recordable<SegmentSpan>) {
       this.currentSpan = span;
+      this.analyzeTrees = [];
     },
-    setCurrentSegment(s: Recordable<Trace>) {
-      this.currentSegment = s;
+    setCurrentSegment(segment: Trace) {
+      this.currentSegment = segment;
+      this.segmentSpans = segment.spans || [];
+      if (segment.spans) {
+        const index = segment.spans.length - 1 || 0;
+        this.currentSpan = segment.spans[index];
+      } else {
+        this.currentSpan = {};
+      }
+      this.analyzeTrees = [];
     },
     setHighlightTop() {
       this.highlightTop = !this.highlightTop;

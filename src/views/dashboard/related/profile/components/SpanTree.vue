@@ -69,6 +69,10 @@ limitations under the License. -->
   }
 
   async function analyzeProfile() {
+    if (!profileStore.currentSpan.profiled) {
+      ElMessage.info("It's a un-profiled span");
+      return;
+    }
     emits("loading", true);
     updateTimeRange();
     const params = timeRange.value.map((t: { start: number; end: number }) => {

@@ -20,7 +20,7 @@ limitations under the License. -->
         {{ t("noData") }}
       </div>
       <table class="profile-t">
-        <tr class="profile-tr cp" v-for="(i, index) in profileStore.segmentList" @click="selectTrace(i)" :key="index">
+        <tr class="profile-tr cp" v-for="(i, index) in profileStore.segmentList" @click="selectSegment(i)" :key="index">
           <td
             class="profile-td"
             :class="{
@@ -57,7 +57,7 @@ limitations under the License. -->
   const profileStore = useProfileStore();
   const key = computed(() => (profileStore.currentSpan && profileStore.currentSpan.segmentId) || "");
 
-  async function selectTrace(item: Trace) {
+  async function selectSegment(item: Trace) {
     profileStore.setCurrentSegment(item);
     profileStore.setSegmentSpans(item.spans);
   }
