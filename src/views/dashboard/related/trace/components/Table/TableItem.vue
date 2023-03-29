@@ -271,8 +271,8 @@ limitations under the License. -->
   .profiled:before {
     content: attr(data-text);
     position: absolute;
-    top: 80%;
-    left: 30%;
+    top: 30px;
+    left: 220px;
     width: 100px;
     padding: 10px;
     border-radius: 5px;
@@ -287,8 +287,8 @@ limitations under the License. -->
   .profiled:after {
     content: "";
     position: absolute;
-    left: 40%;
-    top: 50%;
+    left: 250px;
+    top: 20px;
     border: 6px solid #333;
     border-color: transparent transparent #333 transparent;
     display: none;
