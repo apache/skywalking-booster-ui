@@ -56,6 +56,7 @@ limitations under the License. -->
         { 'trace-item-error': data.isError },
         { profiled: data.profiled === false },
       ]"
+      :data-text="data.profiled === false ? 'No Thread Dump' : ''"
     >
       <div
         :class="['method', 'level' + (data.level - 1)]"
@@ -83,6 +84,7 @@ limitations under the License. -->
           <span>
             {{ data.endpointName }}
           </span>
+          <span v-if="data.profiled === false"></span>
         </el-tooltip>
       </div>
       <div class="start-time">
@@ -258,21 +260,44 @@ limitations under the License. -->
 
     &:hover {
       background: rgba(0, 0, 0, 0.04);
-      color: #448dfe;
-    }
-
-    &::before {
-      position: absolute;
-      content: "";
-      width: 5px;
-      height: 100%;
-      background: #448dfe;
-      left: 0;
     }
   }
 
   .profiled {
     background-color: #eee;
+    position: relative;
+  }
+
+  .profiled:before {
+    content: attr(data-text);
+    position: absolute;
+    top: 80%;
+    left: 30%;
+    width: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    box-shadow: #eee 1px 2px 10px;
+    display: none;
+  }
+
+  .profiled:after {
+    content: "";
+    position: absolute;
+    left: 40%;
+    top: 50%;
+    border: 6px solid #333;
+    border-color: transparent transparent #333 transparent;
+    display: none;
+  }
+
+  .profiled:hover:before,
+  .profiled:hover:after {
+    display: block;
+    z-index: 999;
   }
 
   .trace-item-error {

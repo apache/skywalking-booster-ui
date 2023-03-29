@@ -72,8 +72,7 @@ export const profileStore = defineStore({
       this.analyzeTrees = [];
     },
     setSegmentSpans(spans: Recordable<SegmentSpan>[]) {
-      const index = spans.length - 1 || 0;
-      this.currentSpan = spans[index];
+      this.currentSpan = spans[0] || {};
       this.segmentSpans = spans;
     },
     setCurrentSpan(span: Recordable<SegmentSpan>) {
@@ -84,8 +83,7 @@ export const profileStore = defineStore({
       this.currentSegment = segment;
       this.segmentSpans = segment.spans || [];
       if (segment.spans) {
-        const index = segment.spans.length - 1 || 0;
-        this.currentSpan = segment.spans[index];
+        this.currentSpan = segment.spans[0] || {};
       } else {
         this.currentSpan = {};
       }
@@ -167,8 +165,7 @@ export const profileStore = defineStore({
     async getSegmentSpans() {
       this.analyzeTrees = [];
       this.segmentSpans = this.currentSegment.spans;
-      const index = this.currentSegment.spans.length - 1 || 0;
-      this.currentSpan = this.currentSegment.spans[index];
+      this.currentSpan = this.currentSegment.spans[0] || {};
     },
     async getProfileAnalyze(params: Array<{ segmentId: string; timeRange: { start: number; end: number } }>) {
       if (!params.length) {
