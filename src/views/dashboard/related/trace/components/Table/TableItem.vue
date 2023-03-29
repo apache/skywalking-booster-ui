@@ -62,7 +62,15 @@ limitations under the License. -->
           v-if="data.children && data.children.length"
           iconName="arrow-down"
           size="sm"
+          class="mr-5"
         />
+        <Icon
+          v-if="['Entry', 'Exit'].includes(data.type)"
+          :iconName="data.type === 'Entry' ? 'entry' : 'exit'"
+          size="sm"
+          class="mr-5"
+        />
+        <Icon v-if="isCrossThread" iconName="cross" size="sm" class="mr-5" />
         <el-tooltip :content="data.endpointName" placement="bottom">
           <span>
             {{ data.endpointName }}
@@ -161,6 +169,10 @@ limitations under the License. -->
         const resultStr = result.toFixed(4) + "%";
         return resultStr === "0.0000%" ? "0.9%" : resultStr;
       });
+      const isCrossThread = computed(() => {
+        const key = props.data.refs.findIndex((d: { type: string }) => d.type === "CROSS_THREAD");
+        return key > -1 ? true : false;
+      });
 
       function toggle() {
         displayChildren.value = !displayChildren.value;
@@ -202,6 +214,7 @@ limitations under the License. -->
         displayChildren,
         outterPercent,
         innerPercent,
+        isCrossThread,
         viewSpanDetail,
         toggle,
         dateFormat,
