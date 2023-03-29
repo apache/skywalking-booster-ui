@@ -48,7 +48,15 @@ limitations under the License. -->
     </div>
   </div>
   <div v-else>
-    <div @click="selectSpan" :class="['trace-item', 'level' + (data.level - 1), { 'trace-item-error': data.isError }]">
+    <div
+      @click="selectSpan"
+      :class="[
+        'trace-item',
+        'level' + (data.level - 1),
+        { 'trace-item-error': data.isError },
+        { profiled: data.profiled === false },
+      ]"
+    >
       <div
         :class="['method', 'level' + (data.level - 1)]"
         :style="{
@@ -186,6 +194,10 @@ limitations under the License. -->
           item.style.background = "#fff";
         }
         dom.style.background = "rgba(0, 0, 0, 0.1)";
+        const p: any = document.getElementsByClassName("profiled")[0];
+        if (p) {
+          p.style.background = "#eee";
+        }
       }
       function selectSpan(event: any) {
         const dom = event.composedPath().find((d: any) => d.className.includes("trace-item"));
@@ -257,6 +269,10 @@ limitations under the License. -->
       background: #448dfe;
       left: 0;
     }
+  }
+
+  .profiled {
+    background-color: #eee;
   }
 
   .trace-item-error {

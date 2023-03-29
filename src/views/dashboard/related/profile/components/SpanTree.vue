@@ -25,7 +25,7 @@ limitations under the License. -->
         @change="spanModeChange"
         class="mr-10"
       />
-      <el-button type="primary" size="small" @click="analyzeProfile()">
+      <el-button type="primary" size="small" :disabled="!profileStore.currentSpan.profiled" @click="analyzeProfile()">
         {{ t("analyze") }}
       </el-button>
     </div>
