@@ -19,6 +19,7 @@ import * as d3 from "d3";
 import d3tip from "d3-tip";
 import type { Trace } from "@/types/trace";
 import dayjs from "dayjs";
+import icons from "@/assets/img/icons";
 
 export default class ListGraph {
   private barHeight = 48;
@@ -152,6 +153,25 @@ export default class ListGraph {
       .attr("x", 20)
       .attr("width", "100%")
       .attr("fill", "rgba(0,0,0,0)");
+    nodeEnter
+      .append("image")
+      .attr("width", 16)
+      .attr("height", 16)
+      .attr("x", 6)
+      .attr("y", -10)
+      .attr("xlink:href", (d: any) =>
+        d.data.type === "Entry" ? icons.ENTRY : d.data.type === "Exit" ? icons.EXIT : "",
+      );
+    nodeEnter
+      .append("image")
+      .attr("width", 16)
+      .attr("height", 16)
+      .attr("x", 6)
+      .attr("y", -10)
+      .attr("xlink:href", (d: any) => {
+        const key = (d.data.refs || []).findIndex((d: { type: string }) => d.type === "CROSS_THREAD");
+        return key > -1 ? icons.STREAM : "";
+      });
     nodeEnter
       .append("text")
       .attr("x", 13)
