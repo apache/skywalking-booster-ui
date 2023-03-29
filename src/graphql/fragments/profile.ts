@@ -15,45 +15,6 @@
  * limitations under the License.
  */
 
-export const ProfileSegment = {
-  variable: "$segmentId: String",
-  query: `
-  segment: getProfiledSegment(segmentId: $segmentId) {
-    spans {
-      spanId
-      parentSpanId
-      segmentId
-      refs {
-        traceId
-        parentSegmentId
-        parentSpanId
-        type
-      }
-      serviceCode
-      startTime
-      endTime
-      endpointName
-      type
-      peer
-      component
-      isError
-      layer
-      tags {
-        key value
-      }
-      logs {
-        time
-        data {
-          key
-          value
-        }
-      }
-      profiled
-    }
-  }
-  `,
-};
-
 export const CreateProfileTask = {
   variable: "$creationRequest: ProfileTaskCreationRequest",
   query: `
