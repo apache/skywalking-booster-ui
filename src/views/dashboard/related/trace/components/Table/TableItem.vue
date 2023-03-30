@@ -73,13 +73,20 @@ limitations under the License. -->
           size="sm"
           class="mr-5"
         />
-        <Icon
+        <el-tooltip
+          :content="data.type === 'Entry' ? 'Entry' : 'Exit'"
+          placement="bottom"
           v-if="['Entry', 'Exit'].includes(data.type)"
-          :iconName="data.type === 'Entry' ? 'entry' : 'exit'"
-          size="sm"
-          class="mr-5"
-        />
-        <Icon v-if="isCrossThread" iconName="cross" size="sm" class="mr-5" />
+        >
+          <span>
+            <Icon :iconName="data.type === 'Entry' ? 'entry' : 'exit'" size="sm" class="mr-5" />
+          </span>
+        </el-tooltip>
+        <el-tooltip v-if="isCrossThread" content="CROSS_THREAD" placement="bottom">
+          <span>
+            <Icon iconName="cross" size="sm" class="mr-5" />
+          </span>
+        </el-tooltip>
         <el-tooltip :content="data.endpointName" placement="bottom">
           <span>
             {{ data.endpointName }}
