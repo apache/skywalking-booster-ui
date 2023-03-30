@@ -15,14 +15,8 @@ limitations under the License. -->
 <template>
   <div class="profile-trace-dashboard" v-if="profileStore.currentSegment">
     <div class="profile-trace-detail-wrapper">
-      <Selector
-        size="small"
-        :value="traceId || (traceIds[0] && traceIds[0].value) || ''"
-        :options="traceIds"
-        placeholder="Select a trace id"
-        @change="changeTraceId"
-        class="profile-trace-detail-ids mr-10"
-      />
+      <label>Trace ID</label>
+      <el-input class="input mr-10 ml-5" readonly :value="profileStore.currentSegment.traceId" size="small" />
       <Selector
         size="small"
         :value="mode"
@@ -31,14 +25,14 @@ limitations under the License. -->
         @change="spanModeChange"
         class="mr-10"
       />
-      <el-button type="primary" size="small" @click="analyzeProfile()">
+      <el-button type="primary" size="small" :disabled="!profileStore.currentSpan.profiled" @click="analyzeProfile()">
         {{ t("analyze") }}
       </el-button>
     </div>
     <div class="profile-table">
       <Table
         :data="profileStore.segmentSpans"
-        :traceId="profileStore.currentSegment.traceIds && profileStore.currentSegment.traceIds[0]"
+        :traceId="profileStore.currentSegment.traceId"
         :showBtnDetail="true"
         headerType="profile"
         @select="selectSpan"
@@ -47,7 +41,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, computed } from "vue";
+  import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import Table from "../../trace/components/Table/Index.vue";
   import { useProfileStore } from "@/store/modules/profile";
@@ -64,13 +58,6 @@ limitations under the License. -->
   const mode = ref<string>("include");
   const message = ref<string>("");
   const timeRange = ref<Array<{ start: number; end: number }>>([]);
-  const traceId = ref<string>("");
-  const traceIds = computed(() =>
-    (profileStore.currentSegment.traceIds || []).map((id: string) => ({
-      label: id,
-      value: id,
-    })),
-  );
 
   function selectSpan(span: Span) {
     profileStore.setCurrentSpan(span);
@@ -81,17 +68,20 @@ limitations under the License. -->
     updateTimeRange();
   }
 
-  function changeTraceId(opt: Option[]) {
-    traceId.value = opt[0].value;
-  }
-
   async function analyzeProfile() {
+    if (!profileStore.currentSpan.profiled) {
+      ElMessage.info("It's a un-profiled span");
+      return;
+    }
     emits("loading", true);
     updateTimeRange();
-    const res = await profileStore.getProfileAnalyze({
-      segmentId: profileStore.currentSegment.segmentId,
-      timeRanges: timeRange.value,
+    const params = timeRange.value.map((t: { start: number; end: number }) => {
+      return {
+        segmentId: profileStore.currentSpan.segmentId,
+        timeRange: t,
+      };
     });
+    const res = await profileStore.getProfileAnalyze(params);
     emits("loading", false);
     if (res.errors) {
       ElMessage.error(res.errors);
@@ -174,5 +164,9 @@ limitations under the License. -->
 
   .profile-trace-detail-ids {
     width: 300px;
+  }
+
+  .input {
+    width: 250px;
   }
 </style>

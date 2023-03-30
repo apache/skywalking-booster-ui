@@ -20,11 +20,11 @@ limitations under the License. -->
         {{ t("noData") }}
       </div>
       <table class="profile-t">
-        <tr class="profile-tr cp" v-for="(i, index) in profileStore.segmentList" @click="selectTrace(i)" :key="index">
+        <tr class="profile-tr cp" v-for="(i, index) in profileStore.segmentList" @click="selectSegment(i)" :key="index">
           <td
             class="profile-td"
             :class="{
-              selected: selectedKey == i.segmentId,
+              selected: key === i.spans[0].segmentId,
             }"
           >
             <div
@@ -47,25 +47,25 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { computed } from "vue";
   import { useI18n } from "vue-i18n";
   import { useProfileStore } from "@/store/modules/profile";
   import type { Trace } from "@/types/trace";
-  import { ElMessage } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
 
   const { t } = useI18n();
   const profileStore = useProfileStore();
-  const selectedKey = ref<string>("");
+  const key = computed(
+    () =>
+      (profileStore.currentSegment &&
+        profileStore.currentSegment.spans.length &&
+        profileStore.currentSegment.spans[0].segmentId) ||
+      "",
+  );
 
-  async function selectTrace(item: Trace) {
+  async function selectSegment(item: Trace) {
     profileStore.setCurrentSegment(item);
-    selectedKey.value = item.segmentId;
-    const res = await profileStore.getSegmentSpans({ segmentId: item.segmentId });
-
-    if (res.errors) {
-      ElMessage.error(res.errors);
-    }
+    profileStore.setSegmentSpans(item.spans);
   }
 </script>
 <style lang="scss" scoped>
