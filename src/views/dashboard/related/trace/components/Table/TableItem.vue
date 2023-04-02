@@ -17,14 +17,14 @@ limitations under the License. -->
   <div v-if="type === 'statistics'">
     <div class="trace-item">
       <div :class="['method']">
-        <el-tooltip :content="data.groupRef.endpointName" placement="bottom">
+        <el-tooltip :content="data.groupRef.endpointName" placement="bottom" :show-after="300">
           <span>
             {{ data.groupRef.endpointName }}
           </span>
         </el-tooltip>
       </div>
       <div :class="['type']">
-        <el-tooltip :content="data.groupRef.type" placement="bottom">
+        <el-tooltip :content="data.groupRef.type" placement="bottom" :show-after="300">
           <span>
             {{ data.groupRef.type }}
           </span>
@@ -76,22 +76,22 @@ limitations under the License. -->
         <el-tooltip
           :content="data.type === 'Entry' ? 'Entry' : 'Exit'"
           placement="bottom"
+          :show-after="300"
           v-if="['Entry', 'Exit'].includes(data.type)"
         >
           <span>
             <Icon :iconName="data.type === 'Entry' ? 'entry' : 'exit'" size="sm" class="mr-5" />
           </span>
         </el-tooltip>
-        <el-tooltip v-if="isCrossThread" content="CROSS_THREAD" placement="bottom">
+        <el-tooltip v-if="isCrossThread" content="CROSS_THREAD" placement="bottom" :show-after="300">
           <span>
             <Icon iconName="cross" size="sm" class="mr-5" />
           </span>
         </el-tooltip>
-        <el-tooltip :content="data.endpointName" placement="bottom">
+        <el-tooltip :content="data.endpointName" placement="bottom" :show-after="300">
           <span>
             {{ data.endpointName }}
           </span>
-          <span v-if="data.profiled === false"></span>
         </el-tooltip>
       </div>
       <div class="start-time">
@@ -109,12 +109,12 @@ limitations under the License. -->
         {{ data.dur ? data.dur + "" : "0" }}
       </div>
       <div class="api">
-        <el-tooltip :content="data.component || '-'" placement="bottom">
+        <el-tooltip :show-after="300" :content="data.component || '-'" placement="bottom">
           <span>{{ data.component || "-" }}</span>
         </el-tooltip>
       </div>
       <div class="application">
-        <el-tooltip :content="data.serviceCode || '-'" placement="bottom">
+        <el-tooltip :show-after="300" :content="data.serviceCode || '-'" placement="bottom">
           <span>{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
