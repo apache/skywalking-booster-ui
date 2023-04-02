@@ -141,13 +141,13 @@ export default class ListGraph {
       .attr("class", "trace-node")
       .attr("style", "cursor: pointer")
       .style("opacity", 0)
-      .on("mouseover", function (event: any, d: Trace) {
+      .on("mouseover", function (event: MouseEvent, d: Trace) {
         t.tip.show(d, this);
       })
-      .on("mouseout", function (event: any, d: Trace) {
+      .on("mouseout", function (event: MouseEvent, d: Trace) {
         t.tip.hide(d, this);
       })
-      .on("click", (event: any, d: Trace) => {
+      .on("click", (event: MouseEvent, d: Trace) => {
         if (this.handleSelectSpan) {
           this.handleSelectSpan(d);
         }
