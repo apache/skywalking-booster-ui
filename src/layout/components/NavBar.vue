@@ -14,7 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="nav-bar flex-h">
-    <div class="title">{{ route.name === "ViewWidget" ? "" : appStore.pageTitle || t(pageName) }}</div>
+    <div class="title flex-h">
+      <div class="mr-10">
+        {{ route.name === "ViewWidget" ? "" : appStore.pageTitle || t(pageName) }}
+      </div>
+      <el-breadcrumb separator=">">
+        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
     <div class="app-config">
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
       <TimePicker
