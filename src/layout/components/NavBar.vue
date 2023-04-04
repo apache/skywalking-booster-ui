@@ -15,11 +15,10 @@ limitations under the License. -->
 <template>
   <div class="nav-bar flex-h">
     <div class="title flex-h">
-      <div class="mr-10">
-        {{ route.name === "ViewWidget" ? "" : appStore.pageTitle || t(pageName) }}
-      </div>
       <el-breadcrumb separator=">">
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
+        <el-breadcrumb-item v-for="(item, index) in appStore.pathNames" :key="index" :to="{ path: '/' }">
+          {{ route.name === "ViewWidget" ? "" : appStore.pageTitle || t(pageName) }}
+        </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="app-config">
@@ -53,6 +52,7 @@ limitations under the License. -->
   import timeFormat from "@/utils/timeFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { ElMessage } from "element-plus";
+  import { deduplication } from "@/utils/arrayAlgorithm";
 
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
@@ -62,9 +62,8 @@ limitations under the License. -->
 
   resetDuration();
   getVersion();
-  const setConfig = (value: string) => {
-    pageName.value = value || "";
-  };
+  setConfig(String(route.meta.title));
+  getPathNames();
 
   function handleReload() {
     const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
@@ -79,19 +78,38 @@ limitations under the License. -->
     }
     appStore.setDuration(timeFormat(val));
   }
-  setConfig(String(route.meta.title));
+
+  function setConfig(value: string) {
+    pageName.value = value || "";
+  }
+
+  function getPathNames() {
+    const p = route.params;
+    if (appStore.pathNames.length && p.layerId === appStore.pathNames[0].layerId) {
+      const arr = [...appStore.pathNames, p];
+
+      const list = deduplication(arr, ["layerId", "entity", "name"]);
+      appStore.setPathNames(list);
+    } else {
+      appStore.setPathNames([p]);
+    }
+    // console.log(route.params);
+  }
+
   watch(
     () => route.meta.title,
     (title: unknown) => {
       setConfig(String(title));
     },
   );
+
   async function getVersion() {
     const res = await appStore.fetchVersion();
     if (res.errors) {
       ElMessage.error(res.errors);
     }
   }
+
   function resetDuration() {
     const { duration }: any = route.params;
     if (duration) {
@@ -108,7 +126,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .nav-bar {
-    padding: 5px 10px;
+    padding: 5px;
     text-align: left;
     justify-content: space-between;
     background-color: #fafbfc;

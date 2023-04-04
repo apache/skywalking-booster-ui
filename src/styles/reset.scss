@@ -212,3 +212,7 @@ div.vis-tooltip {
 div:has(> a.menu-title) {
   display: none;
 }
+
+.el-breadcrumb {
+  line-height: 28px;
+}
