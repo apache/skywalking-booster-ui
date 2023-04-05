@@ -74,6 +74,22 @@ export default [
           layer: "AWS_DYNAMODB",
         },
       },
+      {
+        path: "/redis",
+        name: "Redis",
+        meta: {
+          title: "redis",
+          layer: "REDIS",
+        },
+      },
+      {
+        path: "/redis/tab/:activeTabIndex",
+        name: "RedisActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "REDIS",
+        },
+      },
     ],
   },
 ];
