@@ -27,10 +27,10 @@ interface LogState {
   services: Service[];
   instances: Instance[];
   endpoints: Endpoint[];
-  conditions: any;
-  selectorStore: any;
+  conditions: Recordable;
+  selectorStore: Recordable;
   supportQueryLogsByKeywords: boolean;
-  logs: any[];
+  logs: Recordable[];
   loadLogs: boolean;
 }
 
@@ -50,7 +50,7 @@ export const logStore = defineStore({
     loadLogs: false,
   }),
   actions: {
-    setLogCondition(data: any) {
+    setLogCondition(data: Recordable) {
       this.conditions = { ...this.conditions, ...data };
     },
     resetState() {
@@ -152,6 +152,6 @@ export const logStore = defineStore({
   },
 });
 
-export function useLogStore(): any {
+export function useLogStore(): Recordable {
   return logStore(store);
 }

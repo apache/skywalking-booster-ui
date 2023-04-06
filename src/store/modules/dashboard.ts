@@ -74,7 +74,7 @@ export const dashboardStore = defineStore({
       this.currentDashboard = item;
     },
     addControl(type: string) {
-      const arr = this.layout.map((d: any) => Number(d.i));
+      const arr = this.layout.map((d: Recordable) => Number(d.i));
       let index = String(Math.max(...arr) + 1);
       if (!this.layout.length) {
         index = "0";
@@ -148,7 +148,7 @@ export const dashboardStore = defineStore({
       }
       const tabIndex = this.layout[idx].activedTabIndex || 0;
       const { children } = (this.layout[idx].children || [])[tabIndex];
-      const arr = children.map((d: any) => Number(d.i));
+      const arr = children.map((d: Recordable) => Number(d.i));
       let index = String(Math.max(...arr) + 1);
       if (!children.length) {
         index = "0";
@@ -393,7 +393,7 @@ export const dashboardStore = defineStore({
         children: this.layout,
         ...this.currentDashboard,
       };
-      let res: any;
+      let res: Recordable;
       let json;
 
       if (this.currentDashboard.id) {

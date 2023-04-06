@@ -22,6 +22,7 @@ import type { AxiosResponse } from "axios";
 import type { Call } from "@/types/topology";
 import type { LayoutConfig } from "@/types/dashboard";
 import { ElMessage } from "element-plus";
+import type { DurationTime } from "@/types/app";
 
 interface NetworkProfilingState {
   networkTasks: Array<Recordable<EBPFTaskList>>;
@@ -74,7 +75,7 @@ export const networkProfilingStore = defineStore({
       this.activeMetricIndex = index;
     },
     setTopology(data: { nodes: ProcessNode[]; calls: Call[] }) {
-      const obj = {} as any;
+      const obj = {} as Recordable;
       let calls = (data.calls || []).reduce((prev: Call[], next: Call) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
@@ -92,8 +93,8 @@ export const networkProfilingStore = defineStore({
         }
         return prev;
       }, []);
-      const param = {} as any;
-      calls = data.calls.reduce((prev: (Call | any)[], next: Call | any) => {
+      const param = {} as Recordable;
+      calls = data.calls.reduce((prev: (Call & Recordable)[], next: Call & Recordable) => {
         if (param[next.targetId + next.sourceId]) {
           next.lowerArc = true;
         }
@@ -165,7 +166,7 @@ export const networkProfilingStore = defineStore({
       }
       return res.data;
     },
-    async getProcessTopology(params: { duration: any; serviceInstanceId: string }) {
+    async getProcessTopology(params: { duration: DurationTime; serviceInstanceId: string }) {
       this.loadNodes = true;
       const res: AxiosResponse = await graphql.query("getProcessTopology").params(params);
       this.loadNodes = false;
@@ -182,6 +183,6 @@ export const networkProfilingStore = defineStore({
   },
 });
 
-export function useNetworkProfilingStore(): any {
+export function useNetworkProfilingStore(): Recordable {
   return networkProfilingStore(store);
 }

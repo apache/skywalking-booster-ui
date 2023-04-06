@@ -53,7 +53,7 @@ limitations under the License. -->
       default: () => [],
     },
     value: {
-      type: [Array, String, Number, undefined] as PropType<unknown>,
+      type: [Array, String, Number, undefined] as PropType<any>,
       default: () => [],
     },
     size: { type: null, default: "default" },

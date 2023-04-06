@@ -162,7 +162,7 @@ export const profileStore = defineStore({
         return {
           ...d,
           segmentId: this.currentSegment?.segmentId,
-          traceId: (this.currentSegment.traceIds as any)[0],
+          traceId: (this.currentSegment.traceIds as string[])[0],
         };
       });
       if (!(segment.spans && segment.spans.length)) {
@@ -220,6 +220,6 @@ export const profileStore = defineStore({
   },
 });
 
-export function useProfileStore(): any {
+export function useProfileStore(): Recordable {
   return profileStore(store);
 }

@@ -27,7 +27,7 @@ interface DemandLogState {
   containers: Instance[];
   instances: Instance[];
   conditions: Conditions;
-  selectorStore: any;
+  selectorStore: Recordable;
   logs: Log[];
   loadLogs: boolean;
   message: string;
@@ -111,6 +111,6 @@ export const demandLogStore = defineStore({
   },
 });
 
-export function useDemandLogStore(): any {
+export function useDemandLogStore(): Recordable {
   return demandLogStore(store);
 }
