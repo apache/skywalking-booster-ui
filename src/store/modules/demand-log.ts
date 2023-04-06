@@ -27,7 +27,7 @@ interface DemandLogState {
   containers: Instance[];
   instances: Instance[];
   conditions: Conditions;
-  selectorStore: any;
+  selectorStore: Recordable;
   logs: Log[];
   loadLogs: boolean;
   message: string;

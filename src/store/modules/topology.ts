@@ -73,7 +73,7 @@ export const topologyStore = defineStore({
       this.nodes = data.nodes;
     },
     setTopology(data: { nodes: Node[]; calls: Call[] }) {
-      const obj = {} as any;
+      const obj = {} as Recordable;
       const services = useSelectorStore().services;
       const nodes = (data.nodes || []).reduce((prev: Node[], next: Node) => {
         if (!obj[next.id]) {

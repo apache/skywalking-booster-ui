@@ -31,9 +31,9 @@ interface TraceState {
   traceList: Trace[];
   traceSpans: Span[];
   currentTrace: Recordable<Trace>;
-  conditions: any;
-  traceSpanLogs: any[];
-  selectorStore: any;
+  conditions: Recordable;
+  traceSpanLogs: Recordable[];
+  selectorStore: Recordable;
 }
 
 export const traceStore = defineStore({
@@ -55,7 +55,7 @@ export const traceStore = defineStore({
     selectorStore: useSelectorStore(),
   }),
   actions: {
-    setTraceCondition(data: any) {
+    setTraceCondition(data: Recordable) {
       this.conditions = { ...this.conditions, ...data };
     },
     setCurrentTrace(trace: Recordable<Trace>) {
@@ -171,7 +171,7 @@ export const traceStore = defineStore({
       this.setTraceSpans(data || []);
       return res.data;
     },
-    async getSpanLogs(params: any) {
+    async getSpanLogs(params: Recordable) {
       const res: AxiosResponse = await graphql.query("queryServiceLogs").params(params);
       if (res.data.errors) {
         this.traceSpanLogs = [];
@@ -197,6 +197,6 @@ export const traceStore = defineStore({
   },
 });
 
-export function useTraceStore(): any {
+export function useTraceStore() {
   return traceStore(store);
 }

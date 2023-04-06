@@ -74,7 +74,7 @@ export const networkProfilingStore = defineStore({
       this.activeMetricIndex = index;
     },
     setTopology(data: { nodes: ProcessNode[]; calls: Call[] }) {
-      const obj = {} as any;
+      const obj = {} as Recordable;
       let calls = (data.calls || []).reduce((prev: Call[], next: Call) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
@@ -92,7 +92,7 @@ export const networkProfilingStore = defineStore({
         }
         return prev;
       }, []);
-      const param = {} as any;
+      const param = {} as Recordable;
       calls = data.calls.reduce((prev: (Call | any)[], next: Call | any) => {
         if (param[next.targetId + next.sourceId]) {
           next.lowerArc = true;
@@ -182,6 +182,6 @@ export const networkProfilingStore = defineStore({
   },
 });
 
-export function useNetworkProfilingStore(): any {
+export function useNetworkProfilingStore(): Recordable {
   return networkProfilingStore(store);
 }

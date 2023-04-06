@@ -44,6 +44,6 @@ export type EventParams = {
   dataType: string;
   value: number | Array;
   color: string;
-  event: any;
+  event: Record<string, T>;
   dataIndex: number;
 };

@@ -262,7 +262,7 @@ export function useQueryPodsMetrics(
 
 export function usePodsSource(
   pods: Array<Instance | Endpoint>,
-  resp: { errors: string; data: { [key: string]: any } },
+  resp: { errors: string; data: Recordable },
   config: {
     metrics: string[];
     metricTypes: string[];
