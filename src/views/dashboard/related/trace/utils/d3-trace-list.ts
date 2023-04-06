@@ -55,7 +55,7 @@ export default class ListGraph {
     this.tip = (d3tip as any)()
       .attr("class", "d3-tip")
       .offset([-8, 0])
-      .html((d: any) => {
+      .html((d: Recordable) => {
         return `
           <div class="mb-5">${d.data.label}</div>
           ${d.data.dur ? '<div class="sm">SelfDuration: ' + d.data.dur + "ms</div>" : ""}
@@ -75,13 +75,13 @@ export default class ListGraph {
     this.svg.call(this.tip);
     this.svg.call(this.prompt);
   }
-  diagonal(d: any) {
+  diagonal(d: Recordable) {
     return `M ${d.source.y} ${d.source.x + 5}
     L ${d.source.y} ${d.target.x - 30}
     L${d.target.y} ${d.target.x - 20}
     L${d.target.y} ${d.target.x - 5}`;
   }
-  init(data: any, row: any[], fixSpansSize: number) {
+  init(data: Recordable, row: Recordable[], fixSpansSize: number) {
     d3.select(".trace-xaxis").remove();
     this.row = row;
     this.data = data;
@@ -111,10 +111,10 @@ export default class ListGraph {
     this.root.x0 = 0;
     this.root.y0 = 0;
   }
-  draw(callback: any) {
+  draw(callback: Function) {
     this.update(this.root, callback);
   }
-  click(d: any, scope: any) {
+  click(d: Recordable, scope: Recordable) {
     if (!d.data.type) return;
     if (d.children) {
       d._children = d.children;
@@ -125,15 +125,15 @@ export default class ListGraph {
     }
     scope.update(d);
   }
-  update(source: any, callback: any) {
+  update(source: Recordable, callback: Function) {
     const t = this;
     const nodes = this.root.descendants();
     let index = -1;
-    this.root.eachBefore((n: any) => {
+    this.root.eachBefore((n: Recordable) => {
       n.x = ++index * this.barHeight + 24;
       n.y = n.depth * 12;
     });
-    const node = this.svg.selectAll(".trace-node").data(nodes, (d: any) => d.id || (d.id = ++this.i));
+    const node = this.svg.selectAll(".trace-node").data(nodes, (d: Recordable) => d.id || (d.id = ++this.i));
     const nodeEnter = node
       .enter()
       .append("g")
@@ -215,15 +215,14 @@ export default class ListGraph {
       .attr("x", 13)
       .attr("y", 5)
       .attr("fill", "#E54C17")
-      .html((d: any) => (d.data.isError ? "◉" : ""));
+      .html((d: Recordable) => (d.data.isError ? "◉" : ""));
     nodeEnter
       .append("text")
       .attr("class", "node-text")
       .attr("x", 35)
       .attr("y", -6)
       .attr("fill", "#333")
-      .style("font-size", "12px")
-      .html((d: any) => {
+      .html((d: Recordable) => {
         if (d.data.label === "TRACE_ROOT") {
           return "";
         }
@@ -233,7 +232,7 @@ export default class ListGraph {
     nodeEnter
       .append("circle")
       .attr("r", 10)
-      .attr("cx", (d: any) => {
+      .attr("cx", (d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length > 9) {
           return 272;
@@ -244,7 +243,7 @@ export default class ListGraph {
       .attr("cy", -5)
       .attr("fill", "none")
       .attr("stroke", "#e66")
-      .style("opacity", (d: any) => {
+      .style("opacity", (d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
           return 0.5;
@@ -258,7 +257,7 @@ export default class ListGraph {
       .attr("y", -1)
       .attr("fill", "#e66")
       .style("font-size", "10px")
-      .text((d: any) => {
+      .text((d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
           return `${events.length}`;
@@ -274,7 +273,7 @@ export default class ListGraph {
       .attr("fill", "#ccc")
       .style("font-size", "11px")
       .text(
-        (d: any) =>
+        (d: Recordable) =>
           `${d.data.layer || ""} ${
             d.data.component
               ? "- " + d.data.component
@@ -288,43 +287,45 @@ export default class ListGraph {
       .attr("rx", 2)
       .attr("ry", 2)
       .attr("height", 4)
-      .attr("width", (d: any) => {
+      .attr("width", (d: Recordable) => {
         if (!d.data.endTime || !d.data.startTime) return 0;
         return this.xScale(d.data.endTime - d.data.startTime) + 1 || 0;
       })
-      .attr("x", (d: any) =>
+      .attr("x", (d: Recordable) =>
         !d.data.endTime || !d.data.startTime
           ? 0
           : this.width * 0.618 - 20 - d.y + this.xScale(d.data.startTime - this.min) || 0,
       )
       .attr("y", -2)
-      .style("fill", (d: any) => `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`);
+      .style("fill", (d: Recordable) => `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`);
     nodeEnter
       .transition()
       .duration(400)
-      .attr("transform", (d: any) => `translate(${d.y + 5},${d.x})`)
+      .attr("transform", (d: Recordable) => `translate(${d.y + 5},${d.x})`)
       .style("opacity", 1);
     nodeEnter
       .append("circle")
       .attr("r", 3)
       .style("cursor", "pointer")
       .attr("stroke-width", 2.5)
-      .attr("fill", (d: any) =>
+      .attr("fill", (d: Recordable) =>
         d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "rbga(0,0,0,0)",
       )
-      .style("stroke", (d: any) =>
+      .style("stroke", (d: Recordable) =>
         d.data.label === "TRACE_ROOT" ? "" : `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`,
       )
-      .on("click", (d: any) => {
+      .on("click", (d: Recordable) => {
         this.click(d, this);
       });
     node
       .transition()
       .duration(400)
-      .attr("transform", (d: any) => `translate(${d.y + 5},${d.x})`)
+      .attr("transform", (d: Recordable) => `translate(${d.y + 5},${d.x})`)
       .style("opacity", 1)
       .select("circle")
-      .attr("fill", (d: any) => (d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : ""));
+      .attr("fill", (d: Recordable) =>
+        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "",
+      );
 
     // Transition exiting nodes to the parent's new position.
     node
@@ -334,7 +335,7 @@ export default class ListGraph {
       .attr("transform", `translate(${source.y},${source.x})`)
       .style("opacity", 0)
       .remove();
-    const link = this.svg.selectAll(".trace-link").data(this.root.links(), function (d: any) {
+    const link = this.svg.selectAll(".trace-link").data(this.root.links(), function (d: Recordable) {
       return d.target.id;
     });
 
@@ -365,7 +366,7 @@ export default class ListGraph {
         return this.diagonal({ source: o, target: o });
       })
       .remove();
-    this.root.each(function (d: any) {
+    this.root.each(function (d: Recordable) {
       d.x0 = d.x;
       d.y0 = d.y;
     });

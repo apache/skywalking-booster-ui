@@ -74,6 +74,7 @@ limitations under the License. -->
   import Icon from "@/components/Icon.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
+  /*global Recordable*/
   const appStore = useAppStoreWithOut();
   const { t } = useI18n();
   const name = ref<string>(String(useRouter().currentRoute.value.name));
@@ -95,7 +96,7 @@ limitations under the License. -->
   const changePage = (menu: RouteRecordRaw) => {
     theme.value = ["VirtualMachine", "Kubernetes"].includes(String(menu.name)) ? "light" : "black";
   };
-  const filterMenus = (menus: any[]) => {
+  const filterMenus = (menus: Recordable[]) => {
     return menus.filter((d) => d.meta && !d.meta.notShow);
   };
   function setCollapse() {

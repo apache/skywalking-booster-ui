@@ -111,6 +111,6 @@ export const demandLogStore = defineStore({
   },
 });
 
-export function useDemandLogStore(): any {
+export function useDemandLogStore(): Recordable {
   return demandLogStore(store);
 }

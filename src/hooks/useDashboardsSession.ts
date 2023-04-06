@@ -59,7 +59,7 @@ export default function getDashboard(param?: { name: string; layer: string; enti
     if (targetTabIndex[1] === undefined) {
       container = document.querySelector(".ds-main");
     } else {
-      const w = widgets.find((d: any) => d.id === targetTabIndex[0]);
+      const w = widgets.find((d: Indexable) => d.id === targetTabIndex[0]);
       container = document.querySelector(".tab-layout");
       const layout: Nullable<Element> = document.querySelector(".ds-main");
       if (w && layout) {

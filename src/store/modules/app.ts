@@ -24,17 +24,17 @@ import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
 /*global Nullable*/
 interface AppState {
-  durationRow: any;
+  durationRow: Recordable;
   utc: string;
   utcHour: number;
   utcMin: number;
   eventStack: (() => unknown)[];
-  timer: Nullable<any>;
+  timer: Nullable<TimeoutHandle>;
   autoRefresh: boolean;
   pageTitle: string;
   version: string;
   isMobile: boolean;
-  reloadTimer: Nullable<any>;
+  reloadTimer: Nullable<IntervalHandle>;
   pathNames: { name: string; layer: string; entity: string }[];
 }
 
@@ -157,7 +157,7 @@ export const appStore = defineStore({
       }
       this.timer = setTimeout(
         () =>
-          this.eventStack.forEach((event: any) => {
+          this.eventStack.forEach((event: Function) => {
             setTimeout(event(), 0);
           }),
         500,
@@ -184,11 +184,11 @@ export const appStore = defineStore({
       this.version = res.data.data.version;
       return res.data;
     },
-    setReloadTimer(timer: any): void {
+    setReloadTimer(timer: IntervalHandle) {
       this.reloadTimer = timer;
     },
   },
 });
-export function useAppStoreWithOut(): any {
+export function useAppStoreWithOut(): Recordable {
   return appStore(store);
 }

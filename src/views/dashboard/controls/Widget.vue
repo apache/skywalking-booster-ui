@@ -113,7 +113,7 @@ limitations under the License. -->
       }
 
       async function queryMetrics() {
-        const metricTypes = props.data.metricTypes || [];
+        const metricTypes: string[] = props.data.metricTypes || [];
         const metrics = props.data.metrics || [];
         const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
         const params = await useQueryProcessor({ ...props.data, catalog });

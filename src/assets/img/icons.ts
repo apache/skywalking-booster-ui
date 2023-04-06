@@ -30,13 +30,13 @@ function validateFileName(str: string): string | undefined {
 Object.keys(requireComponent).forEach((filePath: string) => {
   const fileName = validateFileName(filePath);
   if (fileName) {
-    result[fileName] = (requireComponent as { [key: string]: any })[filePath].default;
+    result[fileName] = (requireComponent as Indexable)[filePath].default;
   }
 });
 Object.keys(requireTool).forEach((filePath: string) => {
   const fileName = validateFileName(filePath);
   if (fileName) {
-    t[fileName] = (requireTool as { [key: string]: any })[filePath].default;
+    t[fileName] = (requireTool as Indexable)[filePath].default;
   }
 });
 

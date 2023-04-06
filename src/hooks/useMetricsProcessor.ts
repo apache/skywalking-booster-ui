@@ -24,7 +24,7 @@ import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { MetricConfigOpt } from "@/types/dashboard";
 import { MetricCatalog } from "@/views/dashboard/data";
 
-export function useQueryProcessor(config: any) {
+export function useQueryProcessor(config: Indexable) {
   if (!(config.metrics && config.metrics[0])) {
     return;
   }
@@ -38,7 +38,7 @@ export function useQueryProcessor(config: any) {
   if (!selectorStore.currentService && dashboardStore.entity !== "All") {
     return;
   }
-  const conditions: { [key: string]: unknown } = {
+  const conditions: Recordable = {
     duration: appStore.durationTime,
   };
   const variables: string[] = [`$duration: Duration!`];
@@ -126,7 +126,7 @@ export function useQueryProcessor(config: any) {
   };
 }
 export function useSourceProcessor(
-  resp: { errors: string; data: { [key: string]: any } },
+  resp: { errors: string; data: Indexable },
   config: {
     metrics: string[];
     metricTypes: string[];
@@ -181,7 +181,7 @@ export function useSourceProcessor(
     }
     if (type === MetricQueryTypes.READHEATMAP) {
       const resVal = Object.values(resp.data)[0] || {};
-      const nodes = [] as any;
+      const nodes = [] as Indexable[];
       if (!(resVal && resVal.values)) {
         source[m] = { nodes: [] };
         return;
@@ -191,7 +191,7 @@ export function useSourceProcessor(
 
         nodes.push(...grids);
       });
-      let buckets = [] as any;
+      let buckets = [] as Indexable[];
       if (resVal.buckets.length) {
         buckets = [resVal.buckets[0].min, ...resVal.buckets.map((item: { min: string; max: string }) => item.max)];
       }
@@ -204,7 +204,7 @@ export function useSourceProcessor(
 }
 
 export function useQueryPodsMetrics(
-  pods: Array<Instance | Endpoint | Service | any>,
+  pods: Array<(Instance | Endpoint | Service) & Indexable>,
   config: {
     metrics: string[];
     metricTypes: string[];
@@ -227,7 +227,7 @@ export function useQueryPodsMetrics(
   };
   const variables: string[] = [`$duration: Duration!`];
   const currentService = selectorStore.currentService || {};
-  const fragmentList = pods.map((d: (Instance | Endpoint | Service) & { normal: boolean }, index: number) => {
+  const fragmentList = pods.map((d: (Instance | Endpoint | Service) & Indexable, index: number) => {
     const param = {
       scope,
       serviceName: scope === "Service" ? d.label : currentService.label,
@@ -262,13 +262,13 @@ export function useQueryPodsMetrics(
 
 export function usePodsSource(
   pods: Array<Instance | Endpoint>,
-  resp: { errors: string; data: Recordable },
+  resp: { errors: string; data: Indexable },
   config: {
     metrics: string[];
     metricTypes: string[];
     metricConfig: MetricConfigOpt[];
   },
-): any {
+): Indexable {
   if (resp.errors) {
     ElMessage.error(resp.errors);
     return {};
@@ -276,7 +276,7 @@ export function usePodsSource(
   const names: string[] = [];
   const metricConfigArr: MetricConfigOpt[] = [];
   const metricTypesArr: string[] = [];
-  const data = pods.map((d: Instance | any, idx: number) => {
+  const data = pods.map((d: Instance & Indexable, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
       const key = name + idx + index;
@@ -424,14 +424,14 @@ export function aggregation(val: number, config: { calculation?: string }): numb
   return data;
 }
 
-export async function useGetMetricEntity(metric: string, metricType: any) {
+export async function useGetMetricEntity(metric: string, metricType: string) {
   if (!metric || !metricType) {
     return;
   }
   let catalog = "";
   const dashboardStore = useDashboardStore();
   if (
-    [MetricQueryTypes.ReadSampledRecords, MetricQueryTypes.SortMetrics, MetricQueryTypes.ReadRecords].includes(
+    ([MetricQueryTypes.ReadSampledRecords, MetricQueryTypes.SortMetrics, MetricQueryTypes.ReadRecords] as any).includes(
       metricType,
     )
   ) {
@@ -441,7 +441,7 @@ export async function useGetMetricEntity(metric: string, metricType: any) {
       return;
     }
     const c: string = res.data.metrics[0].catalog;
-    catalog = (MetricCatalog as any)[c];
+    catalog = (MetricCatalog as Indexable)[c];
   }
 
   return catalog;

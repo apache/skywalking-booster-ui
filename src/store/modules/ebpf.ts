@@ -153,6 +153,6 @@ export const ebpfStore = defineStore({
   },
 });
 
-export function useEbpfStore(): any {
+export function useEbpfStore(): Recordable {
   return ebpfStore(store);
 }

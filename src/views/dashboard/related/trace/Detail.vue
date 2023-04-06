@@ -121,7 +121,7 @@ limitations under the License. -->
         copy(traceId.value || traceStore.currentTrace.traceIds[0].value);
       }
 
-      async function changeTraceId(opt: Option[] | any) {
+      async function changeTraceId(opt: Option[]) {
         traceId.value = opt[0].value;
         loading.value = true;
         const res = await traceStore.getTraceSpans({ traceId: opt[0].value });

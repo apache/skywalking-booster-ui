@@ -40,7 +40,7 @@ limitations under the License. -->
   //   value: string | number;
   // }
 
-  /*global  defineProps, defineEmits*/
+  /*global  defineProps, defineEmits, Indexable*/
   const emit = defineEmits(["change", "query"]);
   const props = defineProps({
     options: {
@@ -71,7 +71,7 @@ limitations under the License. -->
 
   const selected = ref<string[] | string>(props.value);
   function changeSelected() {
-    const options = props.options.filter((d: any) =>
+    const options = props.options.filter((d: Indexable) =>
       props.multiple ? selected.value.includes(d.value) : selected.value === d.value,
     );
     emit("change", options);

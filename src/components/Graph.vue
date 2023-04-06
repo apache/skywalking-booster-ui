@@ -54,7 +54,7 @@ limitations under the License. -->
   import Trace from "@/views/dashboard/related/trace/Index.vue";
   import associateProcessor from "@/hooks/useAssociateProcessor";
 
-  /*global Nullable, defineProps, defineEmits*/
+  /*global Nullable, defineProps, defineEmits, Indexable*/
   const emits = defineEmits(["select"]);
   const { t } = useI18n();
   const chartRef = ref<Nullable<HTMLDivElement>>(null);
@@ -70,7 +70,7 @@ limitations under the License. -->
     height: { type: String, default: "100%" },
     width: { type: String, default: "100%" },
     option: {
-      type: Object as PropType<{ [key: string]: any }>,
+      type: Object as PropType<Indexable>,
       default: () => ({}),
     },
     filters: {

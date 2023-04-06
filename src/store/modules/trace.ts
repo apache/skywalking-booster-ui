@@ -197,6 +197,6 @@ export const traceStore = defineStore({
   },
 });
 
-export function useTraceStore() {
+export function useTraceStore(): Recordable {
   return traceStore(store);
 }

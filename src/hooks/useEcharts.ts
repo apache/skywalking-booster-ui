@@ -43,7 +43,7 @@ export type ECOption = echarts.ComposeOption<
   | SankeySeriesOption
 >;
 
-export function useECharts(elRef: Ref<HTMLDivElement>, theme: "light" | "dark" | "default" = "default"): any {
+export function useECharts(elRef: Ref<HTMLDivElement>, theme: "light" | "dark" | "default" = "default"): Indexable {
   const getDarkMode = computed(() => {
     return theme === "default" ? "light" : theme;
   });

@@ -383,5 +383,6 @@ const msg = {
   AWSCloudDynamoDB: "DynamoDB",
   AWSGateway: "AWS API Gateway",
   APIGateway: "API Gateway",
+  redis: "Redis",
 };
 export default msg;

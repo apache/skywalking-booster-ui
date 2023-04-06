@@ -34,7 +34,7 @@ limitations under the License. -->
   import type { Span } from "@/types/trace";
   import Graph from "./D3Graph/Index.vue";
 
-  /* global defineProps*/
+  /* global defineProps, Recordable*/
   const props = defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
@@ -56,8 +56,8 @@ limitations under the License. -->
     const source = `<?xml version="1.0" standalone="no"?>\r\n${serializer.serializeToString(svgNode)}`;
     const canvas = document.createElement("canvas");
     const context: any = canvas.getContext("2d");
-    canvas.width = (d3.select(".trace-list-dowanload") as any)._groups[0][0].clientWidth;
-    canvas.height = (d3.select(".trace-list-dowanload") as any)._groups[0][0].clientHeight;
+    canvas.width = (d3.select(".trace-list-dowanload") as Recordable)._groups[0][0].clientWidth;
+    canvas.height = (d3.select(".trace-list-dowanload") as Recordable)._groups[0][0].clientHeight;
     context.fillStyle = "#fff";
     context.fillRect(0, 0, canvas.width, canvas.height);
     const image = new Image();

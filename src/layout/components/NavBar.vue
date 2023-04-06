@@ -54,6 +54,7 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import { deduplication } from "@/utils/arrayAlgorithm";
 
+  /*global Indexable */
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
   const route = useRoute();
@@ -71,7 +72,7 @@ limitations under the License. -->
     appStore.setDuration(timeFormat(dates));
   }
 
-  function changeTimeRange(val: Date[] | any) {
+  function changeTimeRange(val: Date[]) {
     timeRange.value = val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
     if (timeRange.value) {
       return;
@@ -113,7 +114,7 @@ limitations under the License. -->
   }
 
   function resetDuration() {
-    const { duration }: any = route.params;
+    const { duration }: Indexable = route.params;
     if (duration) {
       const d = JSON.parse(duration);
 

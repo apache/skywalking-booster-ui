@@ -162,7 +162,7 @@ limitations under the License. -->
   import { computed, onMounted, watch, reactive } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  /*global defineProps, defineEmits */
+  /*global defineProps, defineEmits, Indexable, Recordable*/
   const emit = defineEmits(["input", "setDates", "ok"]);
   const { t } = useI18n();
   const props = defineProps({
@@ -191,7 +191,7 @@ limitations under the License. -->
     minute: 0,
     second: 0,
   });
-  const get = (time: Date): { [key: string]: any } => {
+  const get = (time: Date): Indexable => {
     return {
       year: time.getFullYear(),
       month: time.getMonth(),
@@ -390,7 +390,7 @@ limitations under the License. -->
       state.year--;
     }
   };
-  const is = (e: any) => {
+  const is = (e: Recordable) => {
     return e.target.className.indexOf(`${state.pre}-date-disabled`) === -1;
   };
   const ok = (info: any) => {

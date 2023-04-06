@@ -139,16 +139,16 @@ limitations under the License. -->
   import LogTable from "@/views/dashboard/related/log/LogTable/Index.vue";
   import type { SpanAttachedEvent } from "@/types/trace";
 
-  /*global defineProps, Nullable */
+  /*global defineProps, Nullable, Recordable */
   const props = defineProps({
-    currentSpan: { type: Object as PropType<any>, default: () => ({}) },
+    currentSpan: { type: Object as PropType<Recordable>, default: () => ({}) },
   });
   const { t } = useI18n();
   const traceStore = useTraceStore();
   const pageNum = ref<number>(1);
   const showRelatedLogs = ref<boolean>(false);
   const showEventDetail = ref<boolean>(false);
-  const currentEvent = ref<any>({});
+  const currentEvent = ref<Recordable>({});
   const pageSize = 10;
   const total = computed(() =>
     traceStore.traceList.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,

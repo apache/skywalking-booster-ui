@@ -49,7 +49,9 @@ declare global {
 
   declare type Nullable<T> = T | null;
   declare type NonNullable<T> = T extends null | undefined ? never : T;
+  // String type object
   declare type Recordable<T = any> = Record<string, T>;
+  // Object of read-only string type
   declare type ReadonlyRecordable<T = any> = {
     readonly [key: string]: T;
   };
@@ -108,6 +110,11 @@ declare global {
     }
   }
 }
+type AnyNormalFunction = (...arg: any) => any;
+
+type AnyPromiseFunction = (...arg: any) => PromiseLike<any>;
+
+declare type AnyFunction = AnyNormalFunction | AnyPromiseFunction;
 
 declare module "vue" {
   export type JSXComponent<Props = any> = { new (): ComponentPublicInstance<Props> } | FunctionalComponent<Props>;

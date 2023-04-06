@@ -39,7 +39,7 @@ export default function useLegendProcess(legend?: LegendOptions) {
   }
   function aggregations(data: { [key: string]: number[] }, intervalTime: string[]) {
     const source: { [key: string]: unknown }[] = [];
-    const keys = Object.keys(data || {}).filter((i: any) => Array.isArray(data[i]) && data[i].length);
+    const keys = Object.keys(data || {}).filter((i: string) => Array.isArray(data[i]) && data[i].length);
     const headers = [];
 
     for (const [key, value] of keys.entries()) {
