@@ -20,6 +20,73 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
+    <svg class="svg-topology" :width="width - 100" :height="height" style="background-color: #fff" @click="svgEvent">
+      <g class="svg-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
+        <g
+          class="topo-node"
+          v-for="(n, index) in topologyLayout.nodes"
+          :key="index"
+          @mouseout="hideTip"
+          @mouseover="showNodeTip($event, n)"
+          @click="handleNodeClick($event, n)"
+          @mousedown="startMoveNode($event, n)"
+          @mouseup="stopMoveNode($event)"
+        >
+          <image width="36" height="36" :x="n.x - 15" :y="n.y - 18" :href="getNodeStatus(n)" />
+          <!-- <circle :cx="n.x" :cy="n.y" r="12" fill="none" stroke="red"/> -->
+          <image width="28" height="25" :x="n.x - 14" :y="n.y - 43" :href="icons.LOCAL" style="opacity: 0.8" />
+          <image
+            width="12"
+            height="12"
+            :x="n.x - 6"
+            :y="n.y - 38"
+            :href="!n.type || n.type === `N/A` ? icons.UNDEFINED : icons[n.type.toUpperCase().replace('-', '')]"
+          />
+          <text
+            :x="n.x - (Math.min(n.name.length, 20) * 6) / 2 + 6"
+            :y="n.y + n.height + 8"
+            style="pointer-events: none"
+          >
+            {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
+          </text>
+        </g>
+        <g v-for="(l, index) in topologyLayout.calls" :key="index">
+          <path
+            class="topo-line"
+            :d="`M${l.sourceX} ${l.sourceY} L${l.targetX} ${l.targetY}`"
+            stroke="#97B0F8"
+            marker-end="url(#arrow)"
+          />
+          <circle
+            class="topo-line-anchor"
+            :cx="(l.sourceX + l.targetX) / 2"
+            :cy="(l.sourceY + l.targetY) / 2"
+            r="4"
+            fill="#97B0F8"
+            @click="handleLinkClick($event, l)"
+            @mouseover="showLinkTip($event, l)"
+            @mouseout="hideTip"
+          />
+        </g>
+        <g class="arrows">
+          <defs v-for="(_, index) in topologyLayout.calls" :key="index">
+            <marker
+              id="arrow"
+              markerUnits="strokeWidth"
+              markerWidth="16"
+              markerHeight="16"
+              viewBox="0 0 12 12"
+              refX="10"
+              refY="6"
+              orient="auto"
+            >
+              <path d="M2,2 L10,6 L2,10 L6,6 L2,2" fill="#97B0F8" />
+            </marker>
+          </defs>
+        </g>
+      </g>
+    </svg>
+    <div id="tooltip"></div>
     <div class="legend">
       <div>
         <img :src="icons.CUBE" />
@@ -53,8 +120,8 @@ limitations under the License. -->
       class="operations-list"
       v-if="topologyStore.node"
       :style="{
-        top: operationsPos.y + 'px',
-        left: operationsPos.x + 'px',
+        top: operationsPos.y + 5 + 'px',
+        left: operationsPos.x + 5 + 'px',
       }"
     >
       <span v-for="(item, index) of items" :key="index" @click="item.func(item.dashboard)">
@@ -68,11 +135,6 @@ limitations under the License. -->
   import { ref, onMounted, onBeforeUnmount, reactive, watch, computed, nextTick } from "vue";
   import { useI18n } from "vue-i18n";
   import * as d3 from "d3";
-  import d3tip from "d3-tip";
-  import zoom from "../../components/utils/zoom";
-  import { simulationInit, simulationSkip } from "./utils/simulation";
-  import nodeElement from "./utils/nodeElement";
-  import { linkElement, anchorElement, arrowMarker } from "./utils/linkElement";
   import type { Node, Call } from "@/types/topology";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useTopologyStore } from "@/store/modules/topology";
@@ -89,6 +151,8 @@ limitations under the License. -->
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
+  import { layout, circleIntersection, computeCallPos } from "./utils/layout";
+  import zoom from "../../components/utils/zoom";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -105,70 +169,186 @@ limitations under the License. -->
   const height = ref<number>(100);
   const width = ref<number>(100);
   const loading = ref<boolean>(false);
-  const simulation = ref<any>(null);
   const svg = ref<Nullable<any>>(null);
+  const graph = ref<Nullable<any>>(null);
   const chart = ref<Nullable<HTMLDivElement>>(null);
-  const tip = ref<Nullable<HTMLDivElement>>(null);
-  const graph = ref<any>(null);
-  const node = ref<any>(null);
-  const link = ref<any>(null);
-  const anchor = ref<any>(null);
-  const arrow = ref<any>(null);
   const showSetting = ref<boolean>(false);
   const settings = ref<any>(props.config);
   const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
   const items = ref<{ id: string; title: string; func: any; dashboard?: string }[]>([]);
   const graphConfig = computed(() => props.config.graph || {});
   const depth = ref<number>(graphConfig.value.depth || 2);
+  const topologyLayout = ref<any>({});
+  const tooltip = ref<Nullable<any>>(null);
+  const graphWidth = ref<number>(100);
+  const currentNode = ref<Nullable<Node>>();
+  const diff = computed(() => [(width.value - graphWidth.value - 130) / 2, 100]);
+  const radius = 8;
 
   onMounted(async () => {
     await nextTick();
+    init();
+  });
+  async function init() {
     const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
       height: 40,
       width: 0,
     };
     height.value = dom.height - 40;
     width.value = dom.width;
-
+    svg.value = d3.select(".svg-topology");
+    graph.value = d3.select(".svg-graph");
     loading.value = true;
     const json = await selectorStore.fetchServices(dashboardStore.layerId);
     if (json.errors) {
       ElMessage.error(json.errors);
       return;
     }
+    await freshNodes();
+    svg.value.call(zoom(d3, graph.value, diff.value));
+  }
+  async function freshNodes() {
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
     const resp = await getTopology();
     loading.value = false;
 
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
+    await update();
+  }
+
+  async function update() {
+    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
     topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
     topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
     window.addEventListener("resize", resize);
-    svg.value = d3.select(chart.value).append("svg").attr("class", "topo-svg");
     await initLegendMetrics();
-    await init();
-    update();
+    draw();
+    tooltip.value = d3.select("#tooltip");
     setNodeTools(settings.value.nodeDashboard);
-  });
-  async function init() {
-    tip.value = (d3tip as any)().attr("class", "d3-tip").offset([-8, 0]);
-    graph.value = svg.value.append("g").attr("class", "topo-svg-graph").attr("transform", `translate(-100, -100)`);
-    graph.value.call(tip.value);
-    simulation.value = simulationInit(d3, topologyStore.nodes, topologyStore.calls, ticked);
-    node.value = graph.value.append("g").selectAll(".topo-node");
-    link.value = graph.value.append("g").selectAll(".topo-line");
-    anchor.value = graph.value.append("g").selectAll(".topo-line-anchor");
-    arrow.value = graph.value.append("g").selectAll(".topo-line-arrow");
-    svg.value.call(zoom(d3, graph.value, [-100, -100]));
-    svg.value.on("click", (event: any) => {
-      event.stopPropagation();
-      event.preventDefault();
-      topologyStore.setNode(null);
-      topologyStore.setLink(null);
-      dashboardStore.selectWidget(props.config);
+  }
+  function draw() {
+    const node = findMostFrequent(topologyStore.calls);
+    const levels = [];
+    const nodes = topologyStore.nodes.sort((a: Node, b: Node) => {
+      if (a.name.toLowerCase() < b.name.toLowerCase()) {
+        return -1;
+      }
+      if (a.name.toLowerCase() > b.name.toLowerCase()) {
+        return 1;
+      }
+      return 0;
     });
+    const index = nodes.findIndex((n: Node) => n.type === "USER");
+    let key = index;
+    if (index < 0) {
+      const idx = nodes.findIndex((n: Node) => n.id === node.id);
+      key = idx;
+    }
+    levels.push([nodes[key]]);
+    nodes.splice(key, 1);
+    for (const level of levels) {
+      const a = [];
+      for (const l of level) {
+        for (const n of topologyStore.calls) {
+          if (n.target === l.id) {
+            const i = nodes.findIndex((d: Node) => d.id === n.source);
+            if (i > -1) {
+              a.push(nodes[i]);
+              nodes.splice(i, 1);
+            }
+          }
+          if (n.source === l.id) {
+            const i = nodes.findIndex((d: Node) => d.id === n.target);
+            if (i > -1) {
+              a.push(nodes[i]);
+              nodes.splice(i, 1);
+            }
+          }
+        }
+      }
+      if (a.length) {
+        levels.push(a);
+      }
+    }
+    topologyLayout.value = layout(levels, topologyStore.calls, radius);
+    graphWidth.value = topologyLayout.value.layout.width;
+    const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {
+      moveNode(d);
+    });
+    setTimeout(() => {
+      d3.selectAll(".topo-node").call(drag);
+    }, 1000);
+  }
+
+  function moveNode(d: { x: number; y: number }) {
+    if (!currentNode.value) {
+      return;
+    }
+    for (const node of topologyLayout.value.nodes) {
+      if (node.id === currentNode.value.id) {
+        node.x = d.x;
+        node.y = d.y;
+      }
+    }
+    for (const call of topologyLayout.value.calls) {
+      if (call.sourceObj.id === currentNode.value.id) {
+        call.sourceObj.x = d.x;
+        call.sourceObj.y = d.y;
+      }
+      if (call.targetObj.id === currentNode.value.id) {
+        call.targetObj.x = d.x;
+        call.targetObj.y = d.y;
+      }
+      if (call.targetObj.id === currentNode.value.id || call.sourceObj.id === currentNode.value.id) {
+        const pos: any = circleIntersection(
+          call.sourceObj.x,
+          call.sourceObj.y,
+          radius,
+          call.targetObj.x,
+          call.targetObj.y,
+          radius,
+        );
+        call.sourceX = pos[0].x;
+        call.sourceY = pos[0].y;
+        call.targetX = pos[1].x;
+        call.targetY = pos[1].y;
+      }
+    }
+    topologyLayout.value.calls = computeCallPos(topologyLayout.value.calls, radius);
+  }
+
+  function startMoveNode(event: MouseEvent, d: Node) {
+    event.stopPropagation();
+    currentNode.value = d;
+  }
+  function stopMoveNode(event: MouseEvent) {
+    event.stopPropagation();
+    currentNode.value = null;
+  }
+
+  function findMostFrequent(arr: Call[]) {
+    let count: any = {};
+    let maxCount = 0;
+    let maxItem = null;
+
+    for (let i = 0; i < arr.length; i++) {
+      let item = arr[i];
+      count[item.sourceObj.id] = (count[item.sourceObj.id] || 0) + 1;
+      if (count[item.sourceObj.id] > maxCount) {
+        maxCount = count[item.sourceObj.id];
+        maxItem = item.sourceObj;
+      }
+      count[item.targetObj.id] = (count[item.targetObj.id] || 0) + 1;
+      if (count[item.targetObj.id] > maxCount) {
+        maxCount = count[item.targetObj.id];
+        maxItem = item.targetObj;
+      }
+    }
+
+    return maxItem;
   }
 
   async function initLegendMetrics() {
@@ -182,60 +362,109 @@ limitations under the License. -->
       }
     }
   }
-  function ticked() {
-    link.value.attr(
-      "d",
-      (d: Call | any) =>
-        `M${d.source.x} ${d.source.y} Q ${(d.source.x + d.target.x) / 2} ${
-          (d.target.y + d.source.y) / 2 - d.loopFactor * 90
-        } ${d.target.x} ${d.target.y}`,
-    );
-    anchor.value.attr(
-      "transform",
-      (d: Call | any) =>
-        `translate(${(d.source.x + d.target.x) / 2}, ${(d.target.y + d.source.y) / 2 - d.loopFactor * 45})`,
-    );
-    node.value.attr("transform", (d: Node | any) => `translate(${d.x - 22},${d.y - 22})`);
+  function getNodeStatus(d: any) {
+    const legend = settings.value.legend;
+    if (!legend) {
+      return icons.CUBE;
+    }
+    if (!legend.length) {
+      return icons.CUBE;
+    }
+    let c = true;
+    for (const l of legend) {
+      if (l.condition === "<") {
+        c = c && d[l.name] < Number(l.value);
+      } else {
+        c = c && d[l.name] > Number(l.value);
+      }
+    }
+    return c && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
-  function dragstart(d: any) {
-    node.value._groups[0].forEach((g: any) => {
-      g.__data__.fx = g.__data__.x;
-      g.__data__.fy = g.__data__.y;
+  function showNodeTip(event: MouseEvent, data: Node) {
+    const nodeMetrics: string[] = settings.value.nodeMetrics || [];
+    const nodeMetricConfig = settings.value.nodeMetricConfig || [];
+    const html = nodeMetrics.map((m, index) => {
+      const metric =
+        topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id) || {};
+      const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
+      const v = aggregation(metric.value, opt);
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || "unknown"}</div>`;
     });
-    if (!d.active) {
-      simulation.value.alphaTarget(0.1).restart();
-    }
-    d.subject.fx = d.subject.x;
-    d.subject.fy = d.subject.y;
-    d.sourceEvent.stopPropagation();
+    const tipHtml = [
+      `<div class="mb-5"><span class="grey">name: </span>${
+        data.name
+      }</div><div class="mb-5"><span class="grey">type: </span>${data.type || "UNKNOWN"}</div>`,
+      ...html,
+    ].join(" ");
+
+    tooltip.value
+      .style("top", event.offsetY + 10 + "px")
+      .style("left", event.offsetX + 10 + "px")
+      .style("visibility", "visible")
+      .html(tipHtml);
   }
-  function dragged(d: any) {
-    d.subject.fx = d.x;
-    d.subject.fy = d.y;
+  function showLinkTip(event: MouseEvent, data: Call) {
+    const linkClientMetrics: string[] = settings.value.linkClientMetrics || [];
+    const linkServerMetricConfig: MetricConfigOpt[] = settings.value.linkServerMetricConfig || [];
+    const linkClientMetricConfig: MetricConfigOpt[] = settings.value.linkClientMetricConfig || [];
+    const linkServerMetrics: string[] = settings.value.linkServerMetrics || [];
+    const htmlServer = linkServerMetrics.map((m, index) => {
+      const metric = topologyStore.linkServerMetrics[m].values.find(
+        (val: { id: string; value: unknown }) => val.id === data.id,
+      );
+      if (metric) {
+        const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
+        const v = aggregation(metric.value, opt);
+        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
+      }
+    });
+    const htmlClient = linkClientMetrics.map((m: string, index: number) => {
+      const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
+      const metric = topologyStore.linkClientMetrics[m].values.find(
+        (val: { id: string; value: unknown }) => val.id === data.id,
+      );
+      if (metric) {
+        const v = aggregation(metric.value, opt);
+        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
+      }
+    });
+    const html = [
+      ...htmlServer,
+      ...htmlClient,
+      `<div><span class="grey">${t("detectPoint")}:</span>${data.detectPoints.join(" | ")}</div>`,
+    ].join(" ");
+
+    tooltip.value
+      .style("top", event.offsetY + "px")
+      .style("left", event.offsetX + "px")
+      .style("visibility", "visible")
+      .html(html);
   }
-  function dragended(d: any) {
-    if (!d.active) {
-      simulation.value.alphaTarget(0);
-    }
+
+  function hideTip() {
+    tooltip.value.style("visibility", "hidden");
   }
-  function handleNodeClick(d: Node & { x: number; y: number }) {
+  function handleNodeClick(event: MouseEvent, d: Node & { x: number; y: number }) {
+    event.stopPropagation();
+    hideTip();
     topologyStore.setNode(d);
     topologyStore.setLink(null);
-    operationsPos.x = d.x - 100;
-    operationsPos.y = d.y - 70;
+    operationsPos.x = event.offsetX;
+    operationsPos.y = event.offsetY;
     if (d.layer === String(dashboardStore.layerId)) {
+      setNodeTools(settings.value.nodeDashboard);
       return;
     }
     items.value = [
       { id: "inspect", title: "Inspect", func: handleInspect },
-      { id: "alarm", title: "Alarm", func: handleGoAlarm },
+      { id: "alerting", title: "Alerting", func: handleGoAlerting },
     ];
   }
-  function handleLinkClick(event: any, d: Call) {
-    if (d.source.layer !== dashboardStore.layerId || d.target.layer !== dashboardStore.layerId) {
+  function handleLinkClick(event: MouseEvent, d: Call) {
+    event.stopPropagation();
+    if (d.sourceObj.layer !== dashboardStore.layerId || d.targetObj.layer !== dashboardStore.layerId) {
       return;
     }
-    event.stopPropagation();
     topologyStore.setNode(null);
     topologyStore.setLink(d);
     if (!settings.value.linkDashboard) {
@@ -253,132 +482,22 @@ limitations under the License. -->
       return;
     }
     dashboardStore.setEntity(dashboard.entity);
-    const path = `/dashboard/related/${dashboard.layer}/${e}Relation/${d.source.id}/${d.target.id}/${dashboard.name}`;
+    const path = `/dashboard/related/${dashboard.layer}/${e}Relation/${d.sourceObj.id}/${d.targetObj.id}/${dashboard.name}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
   }
-  function update() {
-    // node element
-    if (!node.value || !link.value) {
-      return;
-    }
-    node.value = node.value.data(topologyStore.nodes, (d: Node) => d.id);
-    node.value.exit().remove();
-    node.value = nodeElement(
-      d3,
-      node.value.enter(),
-      {
-        dragstart: dragstart,
-        dragged: dragged,
-        dragended: dragended,
-        handleNodeClick: handleNodeClick,
-        tipHtml: (data: Node) => {
-          const nodeMetrics: string[] = settings.value.nodeMetrics || [];
-          const nodeMetricConfig = settings.value.nodeMetricConfig || [];
-          const html = nodeMetrics.map((m, index) => {
-            const metric =
-              topologyStore.nodeMetricValue[m].values.find(
-                (val: { id: string; value: unknown }) => val.id === data.id,
-              ) || {};
-            const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-            const v = aggregation(metric.value, opt);
-            return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
-          });
-          return [` <div class="mb-5"><span class="grey">name: </span>${data.name}</div>`, ...html].join(" ");
-        },
-      },
-      tip.value,
-      settings.value.legend,
-    ).merge(node.value);
-    // line element
-    link.value = link.value.data(topologyStore.calls, (d: Call) => d.id);
-    link.value.exit().remove();
-    link.value = linkElement(link.value.enter()).merge(link.value);
-    // anchorElement
-    anchor.value = anchor.value.data(topologyStore.calls, (d: Call) => d.id);
-    anchor.value.exit().remove();
-    anchor.value = anchorElement(
-      anchor.value.enter(),
-      {
-        handleLinkClick: handleLinkClick,
-        tipHtml: (data: Call) => {
-          const linkClientMetrics: string[] = settings.value.linkClientMetrics || [];
-          const linkServerMetricConfig: MetricConfigOpt[] = settings.value.linkServerMetricConfig || [];
-          const linkClientMetricConfig: MetricConfigOpt[] = settings.value.linkClientMetricConfig || [];
-          const linkServerMetrics: string[] = settings.value.linkServerMetrics || [];
-          const htmlServer = linkServerMetrics.map((m, index) => {
-            const metric = topologyStore.linkServerMetrics[m].values.find(
-              (val: { id: string; value: unknown }) => val.id === data.id,
-            );
-            if (metric) {
-              const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
-              const v = aggregation(metric.value, opt);
-              return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
-            }
-          });
-          const htmlClient = linkClientMetrics.map((m: string, index: number) => {
-            const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
-            const metric = topologyStore.linkClientMetrics[m].values.find(
-              (val: { id: string; value: unknown }) => val.id === data.id,
-            );
-            if (metric) {
-              const v = aggregation(metric.value, opt);
-              return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
-            }
-          });
-          const html = [
-            ...htmlServer,
-            ...htmlClient,
-            `<div><span class="grey">${t("detectPoint")}:</span>${data.detectPoints.join(" | ")}</div>`,
-          ].join(" ");
-
-          return html;
-        },
-      },
-      tip.value,
-    ).merge(anchor.value);
-    // arrow marker
-    arrow.value = arrow.value.data(topologyStore.calls, (d: Call) => d.id);
-    arrow.value.exit().remove();
-    arrow.value = arrowMarker(arrow.value.enter()).merge(arrow.value);
-    // force element
-    simulation.value.nodes(topologyStore.nodes);
-    simulation.value
-      .force("link")
-      .links(topologyStore.calls)
-      .id((d: Call) => d.id);
-    simulationSkip(d3, simulation.value, ticked);
-    const loopMap: any = {};
-    for (let i = 0; i < topologyStore.calls.length; i++) {
-      const link: any = topologyStore.calls[i];
-      link.loopFactor = 1;
-      for (let j = 0; j < topologyStore.calls.length; j++) {
-        if (i === j || loopMap[i]) {
-          continue;
-        }
-        const otherLink = topologyStore.calls[j];
-        if (link.source.id === otherLink.target.id && link.target.id === otherLink.source.id) {
-          link.loopFactor = -1;
-          loopMap[j] = 1;
-          break;
-        }
-      }
-    }
-  }
   async function handleInspect() {
-    svg.value.selectAll(".topo-svg-graph").remove();
     const id = topologyStore.node.id;
-    topologyStore.setNode(null);
-    topologyStore.setLink(null);
     loading.value = true;
     const resp = await topologyStore.getDepthServiceTopology([id], Number(depth.value));
     loading.value = false;
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
-    await init();
-    update();
+    await update();
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
   }
   function handleGoEndpoint(name: string) {
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${name}`;
@@ -401,23 +520,15 @@ limitations under the License. -->
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
   }
-  function handleGoAlarm() {
-    const path = `/alarm`;
+  function handleGoAlerting() {
+    const path = `/alerting`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
   }
   async function backToTopology() {
-    svg.value.selectAll(".topo-svg-graph").remove();
     loading.value = true;
-    const resp = await getTopology();
-    loading.value = false;
-
-    if (resp && resp.errors) {
-      ElMessage.error(resp.errors);
-    }
-    await init();
-    update();
+    await freshNodes();
     topologyStore.setNode(null);
     topologyStore.setLink(null);
   }
@@ -438,7 +549,6 @@ limitations under the License. -->
     };
     height.value = dom.height - 40;
     width.value = dom.width;
-    svg.value.attr("height", height.value).attr("width", width.value);
   }
   function updateSettings(config: any) {
     settings.value = config;
@@ -447,7 +557,7 @@ limitations under the License. -->
   function setNodeTools(nodeDashboard: any) {
     items.value = [
       { id: "inspect", title: "Inspect", func: handleInspect },
-      { id: "alarm", title: "Alarm", func: handleGoAlarm },
+      { id: "alerting", title: "Alerting", func: handleGoAlerting },
     ];
     if (!(nodeDashboard && nodeDashboard.length)) {
       return;
@@ -479,18 +589,14 @@ limitations under the License. -->
       }
     }
   }
-  async function freshNodes() {
-    if (!svg.value) {
-      return;
-    }
-    svg.value.selectAll(".topo-svg-graph").remove();
-    await init();
-    update();
+  function svgEvent() {
+    topologyStore.setNode(null);
+    topologyStore.setLink(null);
+    dashboardStore.selectWidget(props.config);
   }
 
   async function changeDepth(opt: Option[] | any) {
     depth.value = opt[0].value;
-    await getTopology();
     freshNodes();
   }
   onBeforeUnmount(() => {
@@ -498,7 +604,13 @@ limitations under the License. -->
   });
   watch(
     () => [selectorStore.currentService, selectorStore.currentDestService],
-    () => {
+    (newVal, oldVal) => {
+      if (oldVal[0].id === newVal[0].id && !oldVal[1]) {
+        return;
+      }
+      if (oldVal[0].id === newVal[0].id && oldVal[1].id === newVal[1].id) {
+        return;
+      }
       freshNodes();
     },
   );
@@ -512,23 +624,20 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss">
-  .topo-svg {
-    width: 100%;
-    height: calc(100% - 5px);
-    cursor: move;
-  }
-
   .micro-topo-chart {
     position: relative;
-    height: calc(100% - 30px);
     overflow: auto;
     margin-top: 30px;
+
+    .svg-topology {
+      cursor: move;
+    }
 
     .legend {
       position: absolute;
       top: 10px;
-      left: 15px;
-      color: #ccc;
+      left: 25px;
+      color: #666;
 
       div {
         margin-bottom: 8px;
@@ -553,16 +662,22 @@ limitations under the License. -->
       right: 10px;
       width: 400px;
       height: 600px;
-      background-color: #2b3037;
       overflow: auto;
       padding: 0 15px;
       border-radius: 3px;
       color: #ccc;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      box-shadow: #eee 1px 2px 10px;
       transition: all 0.5ms linear;
+
+      &.dark {
+        background-color: #2b3037;
+      }
     }
 
     .label {
-      color: #ccc;
+      color: #666;
       display: inline-block;
       margin-right: 5px;
     }
@@ -572,8 +687,10 @@ limitations under the License. -->
       color: #333;
       cursor: pointer;
       background-color: #fff;
-      border-radius: 3px;
+      border-radius: 5px;
       padding: 10px 0;
+      border: 1px solid #999;
+      box-shadow: #ddd 1px 2px 10px;
 
       span {
         display: block;
@@ -598,22 +715,23 @@ limitations under the License. -->
     .switch-icon {
       cursor: pointer;
       transition: all 0.5ms linear;
-      background-color: #252a2f99;
-      color: #ddd;
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
       display: inline-block;
-      padding: 5px 8px 8px;
+      padding: 2px 4px;
       border-radius: 3px;
     }
 
     .topo-line {
       stroke-linecap: round;
-      stroke-width: 3px;
-      stroke-dasharray: 13 7;
+      stroke-width: 1px;
+      stroke-dasharray: 10 10;
       fill: none;
-      animation: topo-dash 0.5s linear infinite;
+      animation: topo-dash 0.3s linear infinite;
     }
 
-    .topo-line-anchor {
+    .topo-line-anchor,
+    .topo-node {
       cursor: pointer;
     }
 
@@ -624,37 +742,9 @@ limitations under the License. -->
       opacity: 0.8;
     }
   }
-
-  .d3-tip {
-    line-height: 1;
-    padding: 8px;
-    color: #eee;
-    border-radius: 4px;
-    font-size: 12px;
-    z-index: 9999;
-    background: #252a2f;
-  }
-
-  .d3-tip:after {
-    box-sizing: border-box;
-    display: block;
-    font-size: 10px;
-    width: 100%;
-    line-height: 0.8;
-    color: #252a2f;
-    content: "\25BC";
-    position: absolute;
-    text-align: center;
-  }
-
-  .d3-tip.n:after {
-    margin: -2px 0 0 0;
-    top: 100%;
-    left: 0;
-  }
   @keyframes topo-dash {
     from {
-      stroke-dashoffset: 20;
+      stroke-dashoffset: 10;
     }
 
     to {
@@ -664,5 +754,14 @@ limitations under the License. -->
 
   .el-loading-spinner {
     top: 30%;
+  }
+
+  #tooltip {
+    position: absolute;
+    visibility: hidden;
+    padding: 5px;
+    border: 1px solid #000;
+    border-radius: 3px;
+    background-color: #fff;
   }
 </style>

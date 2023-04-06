@@ -26,6 +26,7 @@ import DemandLog from "./DemandLog.vue";
 import Event from "./Event.vue";
 import NetworkProfiling from "./NetworkProfiling.vue";
 import TimeRange from "./TimeRange.vue";
+import ThirdPartyApp from "./ThirdPartyApp.vue";
 
 export default {
   Tab,
@@ -40,4 +41,5 @@ export default {
   Event,
   NetworkProfiling,
   TimeRange,
+  ThirdPartyApp,
 };

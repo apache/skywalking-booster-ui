@@ -74,12 +74,14 @@ limitations under the License. -->
     return {
       color,
       tooltip: {
-        trigger: "none",
-        axisPointer: {
-          type: "cross",
+        trigger: "axis",
+        textStyle: {
+          fontSize: 12,
           color: "#333",
-          backgroundColor: "rgba(255, 255, 255, 0.8)",
         },
+        enterable: true,
+        confine: true,
+        extraCssText: "max-height: 300px; overflow: auto; border: none;",
       },
       legend: {
         type: "scroll",
@@ -98,12 +100,6 @@ limitations under the License. -->
         right: 10,
         bottom: 5,
         containLabel: true,
-      },
-      axisPointer: {
-        label: {
-          color: "#333",
-          backgroundColor: "rgba(255, 255, 255, 0.8)",
-        },
       },
       xAxis: {
         type: "category",

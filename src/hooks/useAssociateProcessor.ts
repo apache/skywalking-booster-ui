@@ -115,5 +115,6 @@ export default function associateProcessor(props: Indexable) {
     item.metricValue = value;
     return item;
   }
+
   return { eventAssociate, traceFilters };
 }

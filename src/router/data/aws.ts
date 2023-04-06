@@ -42,6 +42,54 @@ export default [
           layer: "AWS_EKS",
         },
       },
+      {
+        path: "/aws-s3",
+        name: "AWSCloudS3",
+        meta: {
+          title: "AWSCloudS3",
+          layer: "AWS_S3",
+        },
+      },
+      {
+        path: "/aws-s3/tab/:activeTabIndex",
+        name: "S3ActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "AWS_S3",
+        },
+      },
+      {
+        path: "/aws-dynamodb",
+        name: "AWSCloudDynamoDB",
+        meta: {
+          title: "AWSCloudDynamoDB",
+          layer: "AWS_DYNAMODB",
+        },
+      },
+      {
+        path: "/aws-dynamodb/tab/:activeTabIndex",
+        name: "DynamoDBActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "AWS_DYNAMODB",
+        },
+      },
+      {
+        path: "/aws-api-gateway",
+        name: "APIGateway",
+        meta: {
+          title: "APIGateway",
+          layer: "AWS_GATEWAY",
+        },
+      },
+      {
+        path: "/aws-api-gateway/tab/:activeTabIndex",
+        name: "APIGatewayActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "AWS_GATEWAY",
+        },
+      },
     ],
   },
 ];

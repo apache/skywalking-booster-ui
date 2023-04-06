@@ -404,9 +404,6 @@ export function aggregation(val: number, config: { calculation?: string }): numb
     case Calculations.ConvertMilliseconds:
       data = dayjs(val).format("YYYY-MM-DD HH:mm:ss");
       break;
-    case Calculations.Precision:
-      data = data.toFixed(2);
-      break;
     case Calculations.MsToS:
       data = (val / 1000).toFixed(2);
       break;
@@ -415,6 +412,9 @@ export function aggregation(val: number, config: { calculation?: string }): numb
       break;
     case Calculations.NanosecondToMillisecond:
       data = (val / 1000 / 1000).toFixed(2);
+      break;
+    case Calculations.ApdexAvg:
+      data = (val / 10000).toFixed(2);
       break;
     default:
       data;

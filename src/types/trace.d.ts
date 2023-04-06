@@ -22,6 +22,7 @@ export interface Trace {
   start: string;
   traceIds: Array<string | any>;
   segmentId: string;
+  spans: Span[];
 }
 
 export interface Span {

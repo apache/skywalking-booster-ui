@@ -17,14 +17,14 @@ limitations under the License. -->
   <div v-if="type === 'statistics'">
     <div class="trace-item">
       <div :class="['method']">
-        <el-tooltip :content="data.groupRef.endpointName" placement="bottom">
+        <el-tooltip :content="data.groupRef.endpointName" placement="bottom" :show-after="300">
           <span>
             {{ data.groupRef.endpointName }}
           </span>
         </el-tooltip>
       </div>
       <div :class="['type']">
-        <el-tooltip :content="data.groupRef.type" placement="bottom">
+        <el-tooltip :content="data.groupRef.type" placement="bottom" :show-after="300">
           <span>
             {{ data.groupRef.type }}
           </span>
@@ -48,7 +48,16 @@ limitations under the License. -->
     </div>
   </div>
   <div v-else>
-    <div @click="selectSpan" :class="['trace-item', 'level' + (data.level - 1), { 'trace-item-error': data.isError }]">
+    <div
+      @click="selectSpan"
+      :class="[
+        'trace-item',
+        'level' + (data.level - 1),
+        { 'trace-item-error': data.isError },
+        { profiled: data.profiled === false },
+      ]"
+      :data-text="data.profiled === false ? 'No Thread Dump' : ''"
+    >
       <div
         :class="['method', 'level' + (data.level - 1)]"
         :style="{
@@ -62,8 +71,24 @@ limitations under the License. -->
           v-if="data.children && data.children.length"
           iconName="arrow-down"
           size="sm"
+          class="mr-5"
         />
-        <el-tooltip :content="data.endpointName" placement="bottom">
+        <el-tooltip
+          :content="data.type === 'Entry' ? 'Entry' : 'Exit'"
+          placement="bottom"
+          :show-after="300"
+          v-if="['Entry', 'Exit'].includes(data.type)"
+        >
+          <span>
+            <Icon :iconName="data.type === 'Entry' ? 'entry' : 'exit'" size="sm" class="mr-5" />
+          </span>
+        </el-tooltip>
+        <el-tooltip v-if="isCrossThread" content="CROSS_THREAD" placement="bottom" :show-after="300">
+          <span>
+            <Icon iconName="cross" size="sm" class="mr-5" />
+          </span>
+        </el-tooltip>
+        <el-tooltip :content="data.endpointName" placement="bottom" :show-after="300">
           <span>
             {{ data.endpointName }}
           </span>
@@ -84,12 +109,12 @@ limitations under the License. -->
         {{ data.dur ? data.dur + "" : "0" }}
       </div>
       <div class="api">
-        <el-tooltip :content="data.component || '-'" placement="bottom">
+        <el-tooltip :show-after="300" :content="data.component || '-'" placement="bottom">
           <span>{{ data.component || "-" }}</span>
         </el-tooltip>
       </div>
       <div class="application">
-        <el-tooltip :content="data.serviceCode || '-'" placement="bottom">
+        <el-tooltip :show-after="300" :content="data.serviceCode || '-'" placement="bottom">
           <span>{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
@@ -162,6 +187,10 @@ limitations under the License. -->
         const resultStr = result.toFixed(4) + "%";
         return resultStr === "0.0000%" ? "0.9%" : resultStr;
       });
+      const isCrossThread = computed(() => {
+        const key = props.data.refs.findIndex((d: { type: string }) => d.type === "CROSS_THREAD");
+        return key > -1 ? true : false;
+      });
 
       function toggle() {
         displayChildren.value = !displayChildren.value;
@@ -175,6 +204,10 @@ limitations under the License. -->
           item.style.background = "#fff";
         }
         dom.style.background = "rgba(0, 0, 0, 0.1)";
+        const p: any = document.getElementsByClassName("profiled")[0];
+        if (p) {
+          p.style.background = "#eee";
+        }
       }
       function selectSpan(event: Recordable) {
         const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
@@ -203,6 +236,7 @@ limitations under the License. -->
         displayChildren,
         outterPercent,
         innerPercent,
+        isCrossThread,
         viewSpanDetail,
         toggle,
         dateFormat,
@@ -234,17 +268,44 @@ limitations under the License. -->
 
     &:hover {
       background: rgba(0, 0, 0, 0.04);
-      color: #448dfe;
     }
+  }
 
-    &::before {
-      position: absolute;
-      content: "";
-      width: 5px;
-      height: 100%;
-      background: #448dfe;
-      left: 0;
-    }
+  .profiled {
+    background-color: #eee;
+    position: relative;
+  }
+
+  .profiled:before {
+    content: attr(data-text);
+    position: absolute;
+    top: 30px;
+    left: 220px;
+    width: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    box-shadow: #eee 1px 2px 10px;
+    display: none;
+  }
+
+  .profiled:after {
+    content: "";
+    position: absolute;
+    left: 250px;
+    top: 20px;
+    border: 6px solid #333;
+    border-color: transparent transparent #333 transparent;
+    display: none;
+  }
+
+  .profiled:hover:before,
+  .profiled:hover:after {
+    display: block;
+    z-index: 999;
   }
 
   .trace-item-error {

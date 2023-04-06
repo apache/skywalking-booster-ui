@@ -18,6 +18,8 @@
 import * as d3 from "d3";
 import d3tip from "d3-tip";
 import type { Trace } from "@/types/trace";
+import dayjs from "dayjs";
+import icons from "@/assets/img/icons";
 
 export default class ListGraph {
   private barHeight = 48;
@@ -28,6 +30,7 @@ export default class ListGraph {
   private height = 0;
   private svg: any = null;
   private tip: any = null;
+  private prompt: any = null;
   private row: any[] = [];
   private data: any = [];
   private min = 0;
@@ -63,7 +66,14 @@ export default class ListGraph {
           }
           `;
       });
+    this.prompt = (d3tip as any)()
+      .attr("class", "d3-tip")
+      .offset([-8, 0])
+      .html((d: any) => {
+        return `<div class="mb-5">${d.data.type}</div>`;
+      });
     this.svg.call(this.tip);
+    this.svg.call(this.prompt);
   }
   diagonal(d: Recordable) {
     return `M ${d.source.y} ${d.source.x + 5}
@@ -91,7 +101,6 @@ export default class ListGraph {
     this.svg
       .append("g")
       .attr("class", "trace-xaxis")
-
       .attr("transform", `translate(${this.width * 0.618 - 20},${30})`)
       .call(this.xAxis);
     this.sequentialScale = d3
@@ -152,6 +161,55 @@ export default class ListGraph {
       .attr("x", 20)
       .attr("width", "100%")
       .attr("fill", "rgba(0,0,0,0)");
+    nodeEnter
+      .append("image")
+      .attr("width", 16)
+      .attr("height", 16)
+      .attr("x", 6)
+      .attr("y", -10)
+      .attr("xlink:href", (d: any) =>
+        d.data.type === "Entry" ? icons.ENTRY : d.data.type === "Exit" ? icons.EXIT : "",
+      )
+      .style("display", (d: any) => {
+        ["Entry", "Exit"].includes(d.data.type) ? "inline" : "none";
+      })
+      .on("mouseover", function (event: any, d: Trace) {
+        event.stopPropagation();
+        t.prompt.show(d, this);
+      })
+      .on("mouseout", function (event: any, d: Trace) {
+        event.stopPropagation();
+        t.prompt.hide(d, this);
+      });
+    nodeEnter
+      .append("image")
+      .attr("width", 16)
+      .attr("height", 16)
+      .attr("x", 6)
+      .attr("y", -10)
+      .attr("xlink:href", (d: any) => {
+        const key = (d.data.refs || []).findIndex((d: { type: string }) => d.type === "CROSS_THREAD");
+        return key > -1 ? icons.STREAM : "";
+      })
+      .style("display", (d: any) => {
+        const key = (d.data.refs || []).findIndex((d: { type: string }) => d.type === "CROSS_THREAD");
+        return key > -1 ? "inline" : "none";
+      })
+      .on("mouseover", function (event: any, d: any) {
+        const a = {
+          ...d,
+          data: {
+            ...d.data,
+            type: "CROSS_THREAD",
+          },
+        };
+        event.stopPropagation();
+        t.prompt.show(a, this);
+      })
+      .on("mouseout", function (event: any, d: Trace) {
+        event.stopPropagation();
+        t.prompt.hide(d, this);
+      });
     nodeEnter
       .append("text")
       .attr("x", 13)
@@ -216,7 +274,13 @@ export default class ListGraph {
       .style("font-size", "11px")
       .text(
         (d: Recordable) =>
-          `${d.data.layer || ""} ${d.data.component ? "- " + d.data.component : d.data.component || ""}`,
+          `${d.data.layer || ""} ${
+            d.data.component
+              ? "- " + d.data.component
+              : d.data.event
+              ? this.visDate(d.data.startTime) + ":" + d.data.startTimeNanos
+              : ""
+          }`,
       );
     nodeEnter
       .append("rect")
@@ -309,6 +373,9 @@ export default class ListGraph {
     if (callback) {
       callback();
     }
+  }
+  visDate(date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") {
+    return dayjs(date).format(pattern);
   }
   resize() {
     if (!this.el) {

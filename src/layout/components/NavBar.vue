@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="nav-bar flex-h">
-    <div class="title">{{ appStore.pageTitle || t(pageName) }}</div>
+    <div class="title">{{ route.name === "ViewWidget" ? "" : appStore.pageTitle || t(pageName) }}</div>
     <div class="app-config">
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
       <TimePicker
@@ -102,7 +102,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .nav-bar {
-    padding: 5px 10px 5px 28px;
+    padding: 5px 10px;
     text-align: left;
     justify-content: space-between;
     background-color: #fafbfc;

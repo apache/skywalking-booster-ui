@@ -30,6 +30,14 @@ limitations under the License. -->
     >
       <component :is="dashboardStore.selectedGrid.type" />
     </el-dialog>
+    <el-dialog
+      v-model="dashboardStore.showLinkConfig"
+      width="800px"
+      :destroy-on-close="true"
+      @closed="dashboardStore.setWidgetLink(false)"
+    >
+      <WidgetLink />
+    </el-dialog>
   </div>
 </template>
 <script lang="ts">
@@ -42,16 +50,18 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import Configuration from "./configuration";
   import type { LayoutConfig } from "@/types/dashboard";
+  import WidgetLink from "./components/WidgetLink.vue";
 
   export default defineComponent({
     name: "Dashboard",
-    components: { ...Configuration, GridLayout, Tool },
+    components: { ...Configuration, GridLayout, Tool, WidgetLink },
     setup() {
       const dashboardStore = useDashboardStore();
       const appStore = useAppStoreWithOut();
       const { t } = useI18n();
       const p = useRoute().params;
       const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
+
       setTemplate();
       async function setTemplate() {
         await dashboardStore.setDashboards();

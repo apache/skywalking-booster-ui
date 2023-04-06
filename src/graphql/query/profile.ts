@@ -16,15 +16,12 @@
  */
 
 import {
-  ProfileSegment,
   CreateProfileTask,
   GetProfileTaskList,
   GetProfileTaskSegmentList,
   GetProfileAnalyze,
   GetProfileTaskLogs,
 } from "../fragments/profile";
-
-export const queryProfileSegment = `query queryProfileSegment(${ProfileSegment.variable}) {${ProfileSegment.query}}`;
 
 export const saveProfileTask = `mutation createProfileTask(${CreateProfileTask.variable}) {${CreateProfileTask.query}}`;
 

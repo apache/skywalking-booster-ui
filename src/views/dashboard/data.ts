@@ -184,6 +184,7 @@ export const AllTools = [
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const ServiceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
@@ -196,6 +197,7 @@ export const ServiceTools = [
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
   { name: "event", content: "Add Event", id: "addEvent" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const InstanceTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
@@ -205,6 +207,7 @@ export const InstanceTools = [
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
   { name: "event", content: "Add Event", id: "addEvent" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
   {
     name: "timeline",
     content: "Add Network Profiling",
@@ -218,31 +221,36 @@ export const EndpointTools = [
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "assignment", content: "Add Log", id: "addLog" },
-  { name: "event", content: "Add Event", id: "addEvent" },
+  { name: "event", content: "Add Event", id: "c" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const ProcessTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "time_range", content: "Add Time Range Text", id: "addTimeRange" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const ServiceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 
 export const EndpointRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const InstanceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "device_hub", content: "Add Topology", id: "addTopology" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 
 export const ScopeType = [
@@ -301,7 +309,6 @@ export const CalculationOpts = [
     value: "convertMilliseconds",
   },
   { label: "Seconds to YYYY-MM-DD HH:mm:ss", value: "convertSeconds" },
-  { label: "Precision is 2", value: "precision" },
   { label: "Milliseconds to seconds", value: "msTos" },
   { label: "Seconds to days", value: "secondToDay" },
   { label: "Nanoseconds to milliseconds", value: "nanosecondToMillisecond" },
@@ -309,4 +316,9 @@ export const CalculationOpts = [
 export const RefIdTypes = [
   { label: "Trace ID", value: "traceId" },
   { label: "None", value: "none" },
+];
+export const RefreshOptions = [
+  { label: "Last 30 minutes", value: "30", step: "MINUTE" },
+  { label: "Last 8 hours", value: "8", step: "HOUR" },
+  { label: "Last 7 days", value: "7", step: "DAY" },
 ];

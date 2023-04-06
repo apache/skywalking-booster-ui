@@ -135,7 +135,7 @@ pre {
 .el-sub-menu .el-menu-item {
   height: 40px;
   line-height: 40px;
-  padding-left: 56px !important;
+  padding: 0 0 0 56px !important;
 }
 
 .el-sub-menu__title {
@@ -203,4 +203,12 @@ div.vis-tooltip {
 .vis-item.vis-selected.Error,
 .vis-item.vis-selected.Normal {
   color: #1a1a1a !important;
+}
+
+.el-menu--vertical.sub-list {
+  display: none;
+}
+
+div:has(> a.menu-title) {
+  display: none;
 }

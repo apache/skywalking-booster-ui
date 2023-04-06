@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="topology">
+  <div class="text">
     <div class="header">
       <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
         <template #reference>
@@ -77,7 +77,7 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  .topology {
+  .text {
     font-size: 12px;
     height: 100%;
     position: relative;

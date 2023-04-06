@@ -226,6 +226,7 @@ limitations under the License. -->
       standard?: unknown;
       label?: string;
       value?: string;
+      filters?: unknown;
     })[],
   ) {
     for (const child of children || []) {
@@ -235,6 +236,7 @@ limitations under the License. -->
       delete child.id;
       delete child.label;
       delete child.value;
+      delete child.filters;
       if (isEmptyObject(child.graph)) {
         delete child.graph;
       }
@@ -469,7 +471,7 @@ limitations under the License. -->
   .dashboard-list {
     padding: 20px;
     width: 100%;
-    overflow: hidden;
+    overflow: auto;
   }
 
   .input-with-search {

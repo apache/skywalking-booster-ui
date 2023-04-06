@@ -26,6 +26,10 @@ export interface Call {
   lowerArc?: boolean;
   sourceComponents: string[];
   targetComponents: string[];
+  sourceX?: number;
+  sourceY?: number;
+  targetY?: number;
+  targetX?: number;
 }
 export interface Node {
   id: string;
@@ -34,4 +38,8 @@ export interface Node {
   isReal: boolean;
   layer?: string;
   serviceName?: string;
+  height?: number;
+  x?: number;
+  y?: number;
+  level?: number;
 }

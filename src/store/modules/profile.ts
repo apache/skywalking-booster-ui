@@ -34,6 +34,7 @@ interface ProfileState {
   taskEndpoints: Endpoint[];
   condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
+  currentTask: Recordable<TaskListItem>;
   segmentList: Trace[];
   currentSegment: Recordable<Trace>;
   segmentSpans: Array<Recordable<SegmentSpan>>;
@@ -51,6 +52,7 @@ export const profileStore = defineStore({
     condition: { serviceId: "", endpointName: "" },
     taskList: [],
     segmentList: [],
+    currentTask: {},
     currentSegment: {},
     segmentSpans: [],
     currentSpan: {},
@@ -65,11 +67,27 @@ export const profileStore = defineStore({
         ...data,
       };
     },
+    setCurrentTask(task: TaskListItem) {
+      this.currentTask = task || {};
+      this.analyzeTrees = [];
+    },
+    setSegmentSpans(spans: Recordable<SegmentSpan>[]) {
+      this.currentSpan = spans[0] || {};
+      this.segmentSpans = spans;
+    },
     setCurrentSpan(span: Recordable<SegmentSpan>) {
       this.currentSpan = span;
+      this.analyzeTrees = [];
     },
-    setCurrentSegment(s: Recordable<Trace>) {
-      this.currentSegment = s;
+    setCurrentSegment(segment: Trace) {
+      this.currentSegment = segment;
+      this.segmentSpans = segment.spans || [];
+      if (segment.spans) {
+        this.currentSpan = segment.spans[0] || {};
+      } else {
+        this.currentSpan = {};
+      }
+      this.analyzeTrees = [];
     },
     setHighlightTop() {
       this.highlightTop = !this.highlightTop;
@@ -104,8 +122,9 @@ export const profileStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      const list = res.data.data.taskList;
+      const list = res.data.data.taskList || [];
       this.taskList = list;
+      this.currentTask = list[0] || {};
       if (!list.length) {
         this.segmentList = [];
         this.segmentSpans = [];
@@ -128,7 +147,7 @@ export const profileStore = defineStore({
       }
       const { segmentList } = res.data.data;
 
-      this.segmentList = segmentList;
+      this.segmentList = segmentList || [];
       if (!segmentList.length) {
         this.segmentSpans = [];
         this.analyzeTrees = [];
@@ -137,7 +156,7 @@ export const profileStore = defineStore({
       }
       if (segmentList[0]) {
         this.currentSegment = segmentList[0];
-        this.getSegmentSpans({ segmentId: segmentList[0].segmentId });
+        this.getSegmentSpans(segmentList[0].segmentId);
       } else {
         this.currentSegment = {};
       }
@@ -173,14 +192,11 @@ export const profileStore = defineStore({
       this.currentSpan = segment.spans[index];
       return res.data;
     },
-    async getProfileAnalyze(params: { segmentId: string; timeRanges: Array<{ start: number; end: number }> }) {
-      if (!params.segmentId) {
+    async getProfileAnalyze(params: Array<{ segmentId: string; timeRange: { start: number; end: number } }>) {
+      if (!params.length) {
         return new Promise((resolve) => resolve({}));
       }
-      if (!params.timeRanges.length) {
-        return new Promise((resolve) => resolve({}));
-      }
-      const res: AxiosResponse = await graphql.query("getProfileAnalyze").params(params);
+      const res: AxiosResponse = await graphql.query("getProfileAnalyze").params({ queries: params });
 
       if (res.data.errors) {
         this.analyzeTrees = [];

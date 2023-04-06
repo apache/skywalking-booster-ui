@@ -1,0 +1,15 @@
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+<svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32"><path d="M856.32 428.064a32 32 0 0 0-32 32v163.328H372.48c-0.896 0-1.664 0.448-2.56 0.512v-177.696h244.48a32 32 0 1 0 0-64H130.56c-0.896 0-1.664 0.448-2.56 0.512V231.68h488.16a32 32 0 1 0 0-64H96a32 32 0 0 0-32 32v701.824a32 32 0 0 0 32 32h760.32a32 32 0 0 0 32-32V460.064a32 32 0 0 0-32-32zM128 445.728c0.896 0.064 1.664 0.512 2.56 0.512h175.36v423.264H128V445.728z m241.92 423.776v-182.624c0.896 0.064 1.664 0.512 2.56 0.512h451.84v182.08h-454.4zM960 174.656h-61.376V113.28a32 32 0 1 0-64 0v61.344H752.64a32 32 0 1 0 0 64h81.984v81.984a32 32 0 1 0 64 0V238.656H960a32 32 0 1 0 0-64z" fill="#2c2c2c"></path></svg>

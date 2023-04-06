@@ -30,7 +30,6 @@ export enum Calculations {
   ByteToMB = "byteToMB",
   ByteToGB = "byteToGB",
   Apdex = "apdex",
-  Precision = "precision",
   ConvertSeconds = "convertSeconds",
   ConvertMilliseconds = "convertMilliseconds",
   MsToS = "msTos",

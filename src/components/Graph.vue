@@ -15,7 +15,15 @@ limitations under the License. -->
 <template>
   <div class="chart" ref="chartRef" :style="`height:${height};width:${width};`">
     <div v-if="!available" class="no-data">No Data</div>
-    <div class="menus" v-show="visMenus" ref="menus">
+    <div
+      class="menus"
+      v-show="visMenus"
+      :style="{
+        top: menuPos.y + 'px',
+        left: menuPos.x + 'px',
+      }"
+      @mouseenter="hideTooltips"
+    >
       <div class="tools" @click="associateMetrics" v-if="associate.length">
         {{ t("associateMetrics") }}
       </div>
@@ -36,7 +44,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { watch, ref, onMounted, onBeforeUnmount, unref, computed } from "vue";
+  import { watch, ref, onMounted, onBeforeUnmount, unref, computed, reactive } from "vue";
   import type { PropType, Ref } from "vue";
   import { useI18n } from "vue-i18n";
   import type { EventParams } from "@/types/app";
@@ -50,7 +58,6 @@ limitations under the License. -->
   const emits = defineEmits(["select"]);
   const { t } = useI18n();
   const chartRef = ref<Nullable<HTMLDivElement>>(null);
-  const menus = ref<Nullable<HTMLDivElement>>(null);
   const visMenus = ref<boolean>(false);
   const { setOptions, resize, getInstance } = useECharts(chartRef as Ref<HTMLDivElement>);
   const currentParams = ref<Nullable<EventParams>>(null);
@@ -58,6 +65,7 @@ limitations under the License. -->
   const traceOptions = ref<{ type: string; filters?: unknown }>({
     type: "Trace",
   });
+  const menuPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
   const props = defineProps({
     height: { type: String, default: "100%" },
     width: { type: String, default: "100%" },
@@ -100,26 +108,37 @@ limitations under the License. -->
           emits("select", currentParams.value);
           return;
         }
-        if (!menus.value || !chartRef.value) {
+        instance.dispatchAction({
+          type: "hideTip",
+        });
+        visMenus.value = true;
+        if (!chartRef.value) {
           return;
         }
-        visMenus.value = true;
         const w = chartRef.value.getBoundingClientRect().width || 0;
         const h = chartRef.value.getBoundingClientRect().height || 0;
         if (w - params.event.offsetX > 120) {
-          menus.value.style.left = params.event.offsetX + "px";
+          menuPos.x = params.event.offsetX;
         } else {
-          menus.value.style.left = params.event.offsetX - 120 + "px";
+          menuPos.x = params.event.offsetX - 120;
         }
         if (h - params.event.offsetY < 50) {
-          menus.value.style.top = params.event.offsetY - 40 + "px";
+          menuPos.y = params.event.offsetY - 40;
         } else {
-          menus.value.style.top = params.event.offsetY + 2 + "px";
+          menuPos.y = params.event.offsetY;
         }
       });
       if (props.option.series.type === "sankey") {
         return;
       }
+      instance.on("mouseover", () => {
+        visMenus.value = false;
+      });
+      instance.on("mouseout", () => {
+        instance.dispatchAction({
+          type: "hideTip",
+        });
+      });
       document.addEventListener(
         "click",
         () => {
@@ -127,6 +146,9 @@ limitations under the License. -->
             return;
           }
           visMenus.value = false;
+          instance.dispatchAction({
+            type: "hideTip",
+          });
           instance.dispatchAction({
             type: "updateAxisPointer",
             currTrigger: "leave",
@@ -139,14 +161,10 @@ limitations under the License. -->
 
   function associateMetrics() {
     emits("select", currentParams.value);
-    const { dataIndex, seriesIndex } = currentParams.value || {
-      dataIndex: 0,
-      seriesIndex: 0,
-    };
-    updateOptions({ dataIndex, seriesIndex });
+    updateOptions(currentParams.value || undefined);
   }
 
-  function updateOptions(params?: { dataIndex: number; seriesIndex: number }) {
+  function updateOptions(params?: EventParams) {
     const instance = getInstance();
     if (!instance) {
       return;
@@ -160,15 +178,9 @@ limitations under the License. -->
       setOptions(options || props.option);
     } else {
       instance.dispatchAction({
-        type: "updateAxisPointer",
+        type: "showTip",
         dataIndex: params ? params.dataIndex : props.filters.dataIndex,
         seriesIndex: params ? params.seriesIndex : 0,
-      });
-      const ids = props.option.series.map((_: unknown, index: number) => index);
-      instance.dispatchAction({
-        type: "highlight",
-        dataIndex: params ? params.dataIndex : props.filters.dataIndex,
-        seriesIndex: ids,
       });
     }
   }
@@ -181,6 +193,13 @@ limitations under the License. -->
     };
     showTrace.value = true;
     visMenus.value = true;
+  }
+
+  function hideTooltips() {
+    const instance = getInstance();
+    instance.dispatchAction({
+      type: "hideTip",
+    });
   }
 
   watch(

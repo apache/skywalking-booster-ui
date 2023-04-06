@@ -21,7 +21,7 @@ import graphql from "@/graphql";
 import query from "@/graphql/fetch";
 import type { DashboardItem } from "@/types/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
-import { NewControl, TextConfig, TimeRangeConfig } from "../data";
+import { NewControl, TextConfig, TimeRangeConfig, ControlsTypes } from "../data";
 import type { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
@@ -40,6 +40,7 @@ interface DashboardState {
   currentDashboard: Nullable<DashboardItem>;
   editMode: boolean;
   currentTabIndex: number;
+  showLinkConfig: boolean;
 }
 
 export const dashboardStore = defineStore({
@@ -58,6 +59,7 @@ export const dashboardStore = defineStore({
     currentDashboard: null,
     editMode: false,
     currentTabIndex: 0,
+    showLinkConfig: false,
   }),
   actions: {
     setLayout(data: LayoutConfig[]) {
@@ -65,6 +67,9 @@ export const dashboardStore = defineStore({
     },
     setMode(mode: boolean) {
       this.editMode = mode;
+    },
+    setWidgetLink(show: boolean) {
+      this.showLinkConfig = show;
     },
     resetDashboards(list: DashboardItem[]) {
       this.dashboards = list;
@@ -108,7 +113,7 @@ export const dashboardStore = defineStore({
           depth: this.entity === EntityType[1].value ? 1 : this.entity === EntityType[0].value ? 2 : 3,
         };
       }
-      if (["Trace", "Profile", "Log", "DemandLog", "Ebpf", "NetworkProfiling"].includes(type)) {
+      if (ControlsTypes.includes(type)) {
         newItem.h = 36;
       }
       if (type === "Text") {
@@ -168,7 +173,7 @@ export const dashboardStore = defineStore({
           showDepth: true,
         };
       }
-      if (["Trace", "Profile", "Log", "DemandLog", "Ebpf", "NetworkProfiling"].includes(type)) {
+      if (ControlsTypes.includes(type)) {
         newItem.h = 32;
       }
       if (type === "Text") {
@@ -418,13 +423,15 @@ export const dashboardStore = defineStore({
         res = await graphql.query("addNewTemplate").params({ setting: { configuration: JSON.stringify(c) } });
 
         json = res.data.data.addTemplate;
+        if (!json.status) {
+          ElMessage.error(json.message);
+        }
       }
       if (res.data.errors || res.errors) {
         ElMessage.error(res.data.errors);
         return res.data;
       }
       if (!json.status) {
-        ElMessage.error(json.message);
         return json;
       }
       if (!this.currentDashboard.id) {
