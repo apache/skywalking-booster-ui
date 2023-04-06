@@ -424,7 +424,7 @@ export function aggregation(val: number, config: { calculation?: string }): numb
   return data;
 }
 
-export async function useGetMetricEntity(metric: string, metricType: string[]) {
+export async function useGetMetricEntity(metric: string, metricType: string) {
   if (!metric || !metricType) {
     return;
   }
