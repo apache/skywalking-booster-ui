@@ -38,7 +38,7 @@ export function useQueryProcessor(config: Indexable) {
   if (!selectorStore.currentService && dashboardStore.entity !== "All") {
     return;
   }
-  const conditions: { [key: string]: unknown } = {
+  const conditions: Recordable = {
     duration: appStore.durationTime,
   };
   const variables: string[] = [`$duration: Duration!`];
@@ -424,14 +424,14 @@ export function aggregation(val: number, config: { calculation?: string }): numb
   return data;
 }
 
-export async function useGetMetricEntity(metric: string, metricType: MetricQueryTypes) {
+export async function useGetMetricEntity(metric: string, metricType: string[]) {
   if (!metric || !metricType) {
     return;
   }
   let catalog = "";
   const dashboardStore = useDashboardStore();
   if (
-    [MetricQueryTypes.ReadSampledRecords, MetricQueryTypes.SortMetrics, MetricQueryTypes.ReadRecords].includes(
+    ([MetricQueryTypes.ReadSampledRecords, MetricQueryTypes.SortMetrics, MetricQueryTypes.ReadRecords] as any).includes(
       metricType,
     )
   ) {

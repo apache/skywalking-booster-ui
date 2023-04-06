@@ -85,7 +85,6 @@ limitations under the License. -->
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { ElMessage } from "element-plus";
   import { EntityType, QueryOrders, Status } from "../../data";
-  import type { LayoutConfig } from "@/types/dashboard";
 
   const FiltersKeys: { [key: string]: string } = {
     status: "traceState",
@@ -98,7 +97,7 @@ limitations under the License. -->
   const props = defineProps({
     needQuery: { type: Boolean, default: true },
     data: {
-      type: Object as PropType<LayoutConfig>,
+      type: Object as PropType<Recordable>,
       default: () => ({ graph: {} }),
     },
   });

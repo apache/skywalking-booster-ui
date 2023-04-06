@@ -30,10 +30,10 @@ limitations under the License. -->
   import TraceList from "./TraceList.vue";
   import TraceDetail from "./Detail.vue";
   import type { LayoutConfig } from "@/types/dashboard";
-  /*global defineProps */
+  /*global defineProps, Recordable */
   const props = defineProps({
     data: {
-      type: Object as PropType<LayoutConfig>,
+      type: Object as PropType<LayoutConfig | Recordable>,
       default: () => ({ graph: {} }),
     },
   });
