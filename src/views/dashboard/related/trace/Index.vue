@@ -29,11 +29,11 @@ limitations under the License. -->
   import Header from "./Header.vue";
   import TraceList from "./TraceList.vue";
   import TraceDetail from "./Detail.vue";
-
+  import type { LayoutConfig } from "@/types/dashboard";
   /*global defineProps */
   const props = defineProps({
     data: {
-      type: Object as PropType<any>,
+      type: Object as PropType<LayoutConfig>,
       default: () => ({ graph: {} }),
     },
   });

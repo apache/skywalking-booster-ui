@@ -181,7 +181,7 @@ limitations under the License. -->
     return item;
   }
   function setCondition() {
-    let param: any = {
+    let param: Recordable = {
       traceState: state.status.value || "ALL",
       tags: tagsMap.value.length ? tagsMap.value : undefined,
       queryOrder: traceStore.conditions.queryOrder || QueryOrders[1].value,
@@ -226,7 +226,7 @@ limitations under the License. -->
       ElMessage.error(res.errors);
     }
   }
-  function changeField(type: string, opt: any) {
+  function changeField(type: string, opt: Recordable) {
     state[type] = opt[0];
     if (type === "service") {
       getEndpoints(state.service.id);

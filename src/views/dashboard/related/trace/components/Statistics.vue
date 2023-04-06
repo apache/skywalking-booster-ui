@@ -29,16 +29,16 @@ limitations under the License. -->
   import traceTable from "../utils/trace-table";
   import type { StatisticsSpan, Span, StatisticsGroupRef } from "@/types/trace";
 
-  /* global defineProps, defineEmits */
+  /* global defineProps, defineEmits, Recordable*/
   const props = defineProps({
-    data: { type: Array as PropType<any>, default: () => [] },
+    data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
     showBtnDetail: { type: Boolean, default: false },
     HeaderType: { type: String, default: "" },
   });
   const emit = defineEmits(["load"]);
   const loading = ref<boolean>(true);
-  const tableData = ref<any>([]);
+  const tableData = ref<Recordable>([]);
   const list = ref<any[]>([]);
 
   onMounted(() => {

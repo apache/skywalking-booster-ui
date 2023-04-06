@@ -124,8 +124,9 @@ limitations under the License. -->
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
+  /*global Recordable*/
   const props = {
-    data: { type: Object as PropType<any>, default: () => ({}) },
+    data: { type: Object as PropType<Recordable>, default: () => ({}) },
     method: { type: Number, default: 0 },
     type: { type: String, default: "" },
     headerType: { type: String, default: "" },
@@ -175,8 +176,8 @@ limitations under the License. -->
         }
         dom.style.background = "rgba(0, 0, 0, 0.1)";
       }
-      function selectSpan(event: any) {
-        const dom = event.composedPath().find((d: any) => d.className.includes("trace-item"));
+      function selectSpan(event: Recordable) {
+        const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
 
         emit("select", props.data);
         if (props.headerType === "profile") {
@@ -185,8 +186,8 @@ limitations under the License. -->
         }
         viewSpanDetail(dom);
       }
-      function viewSpan(event: any) {
-        const dom = event.composedPath().find((d: any) => d.className.includes("trace-item"));
+      function viewSpan(event: Recordable) {
+        const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
         emit("select", props.data);
         viewSpanDetail(dom);
       }

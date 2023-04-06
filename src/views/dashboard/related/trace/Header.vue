@@ -193,7 +193,7 @@ limitations under the License. -->
     state.instance = (resp.data.instance && resp.data.instance.id) || "";
   }
   function setCondition() {
-    let params: any = {
+    let params: Recordable = {
       traceState: Status[0].value,
       queryOrder: QueryOrders[0].value,
       queryDuration: duration.value,

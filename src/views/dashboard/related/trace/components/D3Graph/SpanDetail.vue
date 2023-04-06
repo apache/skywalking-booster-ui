@@ -140,9 +140,9 @@ limitations under the License. -->
   import LogTable from "@/views/dashboard/related/log/LogTable/Index.vue";
   import type { SpanAttachedEvent } from "@/types/trace";
 
-  /*global defineProps, Nullable */
+  /*global defineProps, Nullable, Recordable */
   const props = defineProps({
-    currentSpan: { type: Object as PropType<any>, default: () => ({}) },
+    currentSpan: { type: Object as PropType<Recordable>, default: () => ({}) },
   });
   const { t } = useI18n();
   const traceStore = useTraceStore();
@@ -151,7 +151,7 @@ limitations under the License. -->
   const pageNum = ref<number>(1);
   const showRelatedLogs = ref<boolean>(false);
   const showEventDetail = ref<boolean>(false);
-  const currentEvent = ref<any>({});
+  const currentEvent = ref<Recordable>({});
   const pageSize = 10;
   const total = computed(() =>
     traceStore.traceList.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
@@ -208,7 +208,7 @@ limitations under the License. -->
     });
 
     const items = new DataSet(events);
-    const options: any = {
+    const options: Recordable = {
       height: h,
       width: "100%",
       locale: "en",
@@ -220,7 +220,6 @@ limitations under the License. -->
     visGraph.value.on("select", (data: { items: number[] }) => {
       const index = data.items[0];
       currentEvent.value = events[index - 1 || 0] || {};
-      console.log(currentEvent.value);
       if (data.items.length) {
         showEventDetail.value = true;
         return;

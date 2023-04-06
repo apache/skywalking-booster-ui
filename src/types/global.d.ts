@@ -114,7 +114,7 @@ type AnyNormalFunction = (...arg: any) => any;
 
 type AnyPromiseFunction = (...arg: any) => PromiseLike<any>;
 
-type AnyFunction = AnyNormalFunction | AnyPromiseFunction;
+declare type AnyFunction = AnyNormalFunction | AnyPromiseFunction;
 
 declare module "vue" {
   export type JSXComponent<Props = any> = { new (): ComponentPublicInstance<Props> } | FunctionalComponent<Props>;

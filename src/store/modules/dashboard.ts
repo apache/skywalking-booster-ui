@@ -33,7 +33,7 @@ interface DashboardState {
   entity: string;
   layerId: string;
   activedGridItem: string;
-  selectorStore: any;
+  selectorStore: Recordable;
   showTopology: boolean;
   currentTabItems: LayoutConfig[];
   dashboards: DashboardItem[];
@@ -455,13 +455,13 @@ export const dashboardStore = defineStore({
         ElMessage.error(json.message);
         return res.data;
       }
-      this.dashboards = this.dashboards.filter((d: any) => d.id !== this.currentDashboard?.id);
+      this.dashboards = this.dashboards.filter((d: Recordable) => d.id !== this.currentDashboard?.id);
       const key = [this.currentDashboard?.layer, this.currentDashboard?.entity, this.currentDashboard?.name].join("_");
       sessionStorage.removeItem(key);
     },
   },
 });
 
-export function useDashboardStore(): any {
+export function useDashboardStore(): Recordable {
   return dashboardStore(store);
 }

@@ -162,7 +162,7 @@ limitations under the License. -->
   import { computed, onMounted, watch, reactive } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  /*global defineProps, defineEmits, Indexable, Recordable */
+  /*global defineProps, defineEmits, Indexable, Recordable*/
   const emit = defineEmits(["input", "setDates", "ok"]);
   const { t } = useI18n();
   const props = defineProps({

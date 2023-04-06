@@ -29,7 +29,7 @@ limitations under the License. -->
   import type { Span, Ref } from "@/types/trace";
   import SpanDetail from "./SpanDetail.vue";
 
-  /* global defineProps, Nullable, defineExpose*/
+  /* global defineProps, Nullable, defineExpose,Recordable*/
   const props = defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
@@ -38,10 +38,10 @@ limitations under the License. -->
   const loading = ref<boolean>(false);
   const showDetail = ref<boolean>(false);
   const fixSpansSize = ref<number>(0);
-  const segmentId = ref<any>([]);
+  const segmentId = ref<Recordable[]>([]);
   const currentSpan = ref<Array<Span>>([]);
   const refSpans = ref<Array<Ref>>([]);
-  const tree = ref<any>(null);
+  const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
   defineExpose({
     tree,
@@ -67,11 +67,11 @@ limitations under the License. -->
   function resize() {
     tree.value.resize();
   }
-  function handleSelectSpan(i: any) {
+  function handleSelectSpan(i: Recordable) {
     currentSpan.value = i.data;
     showDetail.value = true;
   }
-  function traverseTree(node: any, spanId: string, segmentId: string, data: any) {
+  function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
     if (!node || node.isBroken) {
       return;
     }
@@ -80,7 +80,7 @@ limitations under the License. -->
       return;
     }
     if (node.children && node.children.length > 0) {
-      node.children.forEach((nodeItem: any) => {
+      node.children.forEach((nodeItem: Recordable) => {
         traverseTree(nodeItem, spanId, segmentId, data);
       });
     }
@@ -90,8 +90,8 @@ limitations under the License. -->
       return [];
     }
     segmentId.value = [];
-    const segmentGroup: any = {};
-    const segmentIdGroup: any = [];
+    const segmentGroup: Recordable = {};
+    const segmentIdGroup: Recordable = [];
     const fixSpans: Span[] = [];
     const segmentHeaders: Span[] = [];
     for (const span of props.data) {
@@ -132,7 +132,7 @@ limitations under the License. -->
       if (span.refs.length) {
         span.refs.forEach((ref) => {
           const index = props.data.findIndex(
-            (i: any) => ref.parentSegmentId === i.segmentId && ref.parentSpanId === i.spanId,
+            (i: Recordable) => ref.parentSegmentId === i.segmentId && ref.parentSpanId === i.spanId,
           );
           if (index === -1) {
             // create a known broken node.
@@ -206,7 +206,7 @@ limitations under the License. -->
     fixSpansSize.value = fixSpans.length;
     segmentIdGroup.forEach((id: string) => {
       const currentSegment = segmentGroup[id].sort((a: Span, b: Span) => b.parentSpanId - a.parentSpanId);
-      currentSegment.forEach((s: any) => {
+      currentSegment.forEach((s: Recordable) => {
         const index = currentSegment.findIndex((i: Span) => i.spanId === s.parentSpanId);
         if (index !== -1) {
           if (
@@ -233,7 +233,7 @@ limitations under the License. -->
       segmentGroup[id] = currentSegment[currentSegment.length - 1];
     });
     segmentIdGroup.forEach((id: string) => {
-      segmentGroup[id].refs.forEach((ref: any) => {
+      segmentGroup[id].refs.forEach((ref: Recordable) => {
         if (ref.traceId === props.traceId) {
           traverseTree(segmentGroup[ref.parentSegmentId], ref.parentSpanId, ref.parentSegmentId, segmentGroup[id]);
         }
@@ -244,11 +244,11 @@ limitations under the License. -->
         segmentId.value.push(segmentGroup[i]);
       }
     }
-    segmentId.value.forEach((i: any) => {
+    segmentId.value.forEach((i: Span | Recordable) => {
       collapse(i);
     });
   }
-  function collapse(d: Span) {
+  function collapse(d: Span | Recordable) {
     if (d.children) {
       const item = refSpans.value.find((s: Ref) => s.parentSpanId === d.spanId && s.parentSegmentId === d.segmentId);
       let dur = d.endTime - d.startTime;
@@ -263,7 +263,7 @@ limitations under the License. -->
     }
   }
   function compare(p: string) {
-    return (m: any, n: any) => {
+    return (m: Recordable, n: Recordable) => {
       const a = m[p];
       const b = n[p];
       return a - b;

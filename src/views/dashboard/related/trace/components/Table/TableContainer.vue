@@ -58,9 +58,9 @@ limitations under the License. -->
   import TableItem from "./TableItem.vue";
   import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
 
-  /* global defineProps, Nullable, defineEmits */
+  /* global defineProps, Nullable, defineEmits, Recordable*/
   const props = defineProps({
-    tableData: { type: Array as PropType<any>, default: () => [] },
+    tableData: { type: Array as PropType<Recordable>, default: () => [] },
     type: { type: String, default: "" },
     headerType: { type: String, default: "" },
   });
@@ -69,7 +69,7 @@ limitations under the License. -->
   const componentKey = ref<number>(300);
   const flag = ref<boolean>(true);
   const dragger = ref<Nullable<HTMLSpanElement>>(null);
-  let headerData: any[] = TraceConstant;
+  let headerData: Recordable[] = TraceConstant;
 
   if (props.headerType === "profile") {
     headerData = ProfileConstant;
@@ -81,8 +81,11 @@ limitations under the License. -->
     if (props.type === "statistics") {
       return;
     }
-    const drag: any = dragger.value;
-    drag.onmousedown = (event: any) => {
+    const drag: Nullable<HTMLSpanElement> = dragger.value;
+    if (!drag) {
+      return;
+    }
+    drag.onmousedown = (event: MouseEvent) => {
       const diffX = event.clientX;
       const copy = method.value;
       document.onmousemove = (documentEvent) => {

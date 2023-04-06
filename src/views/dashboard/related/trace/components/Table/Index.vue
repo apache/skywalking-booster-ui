@@ -29,18 +29,18 @@ limitations under the License. -->
   import traceTable from "../../utils/trace-table";
   import type { Span } from "@/types/trace";
 
-  /* global defineProps, defineEmits */
+  /* global defineProps, defineEmits, Recordable */
   const props = defineProps({
-    data: { type: Array as PropType<any>, default: () => [] },
+    data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
     showBtnDetail: { type: Boolean, default: false },
     headerType: { type: String, default: "" },
   });
   const emit = defineEmits(["select", "view", "load"]);
   const loading = ref<boolean>(true);
-  const tableData = ref<any>([]);
+  const tableData = ref<Recordable[]>([]);
   const showDetail = ref<boolean>(false);
-  const currentSpan = ref<Span | any>({});
+  const currentSpan = ref<Span | Recordable>({});
 
   onMounted(() => {
     tableData.value = formatData(traceTable.changeTree(props.data, props.traceId));
@@ -50,7 +50,7 @@ limitations under the License. -->
     });
   });
 
-  function formatData(arr: any[], level = 1, totalExec?: number) {
+  function formatData(arr: Recordable[], level = 1, totalExec?: number) {
     for (const item of arr) {
       item.level = level;
       totalExec = totalExec || item.endTime - item.startTime;
