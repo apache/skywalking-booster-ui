@@ -20,7 +20,7 @@ import { useThrottleFn, useDebounceFn } from "@vueuse/core";
 
 export type RemoveEventFn = () => void;
 export interface UseEventParams {
-  el?: Element | Ref<Element | undefined> | Window | any;
+  el?: Element | Ref<Element | undefined> | Window | Recordable;
   name: string;
   listener: EventListener;
   options?: boolean | AddEventListenerOptions;

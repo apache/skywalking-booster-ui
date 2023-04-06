@@ -23,27 +23,27 @@ export default class TraceMap {
   private i = 0;
   private el: Nullable<HTMLDivElement> = null;
   private handleSelectSpan: Nullable<(i: Trace) => void> = null;
-  private topSlow: any = [];
+  private topSlow: Nullable<any> = [];
   private height = 0;
   private width = 0;
-  private topChild: any[] = [];
-  private body: any = null;
-  private tip: any = null;
-  private svg: any = null;
-  private treemap: any = null;
-  private data: any = null;
-  private row: any = null;
+  private topChild: Nullable<any>[] = [];
+  private body: Nullable<any> = null;
+  private tip: Nullable<any> = null;
+  private svg: Nullable<any> = null;
+  private treemap: Nullable<any> = null;
+  private data: Nullable<any> = null;
+  private row: Nullable<any> = null;
   private min = 0;
   private max = 0;
   private list: string[] = [];
-  private xScale: any = null;
-  private sequentialScale: any = null;
-  private root: any = null;
+  private xScale: Nullable<any> = null;
+  private sequentialScale: Nullable<any> = null;
+  private root: Nullable<any> = null;
   private topSlowMax: number[] = [];
   private topSlowMin: number[] = [];
   private topChildMax: number[] = [];
   private topChildMin: number[] = [];
-  private nodeUpdate: any = null;
+  private nodeUpdate: Nullable<any> = null;
 
   constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
     this.el = el;
@@ -63,7 +63,7 @@ export default class TraceMap {
       .attr("class", "d3-tip")
       .offset([-8, 0])
       .html(
-        (d: any) => `
+        (d: Recordable) => `
       <div class="mb-5">${d.data.label}</div>
       ${d.data.dur ? '<div class="sm">SelfDuration: ' + d.data.dur + "ms</div>" : ""}
       ${
@@ -87,7 +87,7 @@ export default class TraceMap {
     const transform = d3.zoomTransform(this.body).translate(0, 0);
     d3.zoom().transform(this.body, transform);
   }
-  init(data: any, row: any) {
+  init(data: Recordable, row: Recordable) {
     this.treemap = d3.tree().size([row.length * 35, this.width]);
     this.row = row;
     this.data = data;
@@ -114,10 +114,10 @@ export default class TraceMap {
     this.topChildMin = this.topChild.sort((a: number, b: number) => b - a)[4];
     this.update(this.root);
     // Collapse the node and all it's children
-    function collapse(d: any) {
+    function collapse(d: Recordable) {
       if (d.children) {
         let dur = d.data.endTime - d.data.startTime;
-        d.children.forEach((i: any) => {
+        d.children.forEach((i: Recordable) => {
           dur -= i.data.endTime - i.data.startTime;
         });
         d.dur = dur < 0 ? 0 : dur;
@@ -131,17 +131,17 @@ export default class TraceMap {
   draw() {
     this.update(this.root);
   }
-  update(source: any) {
+  update(source: Recordable) {
     const that: any = this;
     const treeData = this.treemap(this.root);
     const nodes = treeData.descendants(),
       links = treeData.descendants().slice(1);
 
-    nodes.forEach(function (d: any) {
+    nodes.forEach(function (d: Recordable) {
       d.y = d.depth * 140;
     });
 
-    const node = this.svg.selectAll("g.node").data(nodes, (d: any) => {
+    const node = this.svg.selectAll("g.node").data(nodes, (d: Recordable) => {
       return d.id || (d.id = ++this.i);
     });
 
@@ -153,39 +153,39 @@ export default class TraceMap {
       .attr("transform", function () {
         return "translate(" + source.y0 + "," + source.x0 + ")";
       })
-      .on("mouseover", function (event: any, d: any) {
+      .on("mouseover", function (event: MouseEvent, d: Recordable) {
         that.tip.show(d, this);
         if (!that.timeUpdate) {
           return;
         }
-        const _node = that.timeUpdate._groups[0].filter((group: any) => group.__data__.id === that.i + 1);
+        const _node = that.timeUpdate._groups[0].filter((group: Recordable) => group.__data__.id === that.i + 1);
         if (_node.length) {
           that.timeTip.show(d, _node[0].children[1]);
         }
       })
-      .on("mouseout", function (event: any, d: any) {
+      .on("mouseout", function (event: MouseEvent, d: Recordable) {
         that.tip.hide(d, this);
         if (!that.timeUpdate) {
           return;
         }
-        const _node = that.timeUpdate._groups[0].filter((group: any) => group.__data__.id === that.i + 1);
+        const _node = that.timeUpdate._groups[0].filter((group: Recordable) => group.__data__.id === that.i + 1);
         if (_node.length) {
           that.timeTip.hide(d, _node[0].children[1]);
         }
       })
-      .on("click", function (event: any, d: any) {
+      .on("click", function (event: MouseEvent, d: Recordable) {
         that.handleSelectSpan(d);
       });
     nodeEnter
       .append("circle")
       .attr("r", 8)
       .attr("cy", "-12")
-      .attr("cx", function (d: any) {
+      .attr("cx", function (d: Recordable) {
         return d.children || d._children ? -15 : 110;
       })
       .attr("fill", "none")
       .attr("stroke", "#e66")
-      .style("opacity", (d: any) => {
+      .style("opacity", (d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
           return 0.5;
@@ -195,7 +195,7 @@ export default class TraceMap {
       });
     nodeEnter
       .append("text")
-      .attr("x", function (d: any) {
+      .attr("x", function (d: Recordable) {
         const events = d.data.attachedEvents || [];
         let p = d.children || d._children ? -18 : 107;
         p = events.length > 9 ? p - 2 : p;
@@ -204,7 +204,7 @@ export default class TraceMap {
       .attr("dy", "-0.8em")
       .attr("fill", "#e66")
       .style("font-size", "10px")
-      .text((d: any) => {
+      .text((d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
           return `${events.length}`;
@@ -216,46 +216,50 @@ export default class TraceMap {
       .append("circle")
       .attr("class", "node")
       .attr("r", 1e-6)
-      .style("fill", (d: any) => (d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff"))
-      .attr("stroke", (d: any) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)))
+      .style("fill", (d: Recordable) =>
+        d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
+      )
+      .attr("stroke", (d: Recordable) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)))
       .attr("stroke-width", 2.5);
 
     nodeEnter
       .append("text")
       .attr("font-size", 11)
       .attr("dy", "-0.5em")
-      .attr("x", function (d: any) {
+      .attr("x", function (d: Recordable) {
         return d.children || d._children ? -45 : 15;
       })
-      .attr("text-anchor", function (d: any) {
+      .attr("text-anchor", function (d: Recordable) {
         return d.children || d._children ? "end" : "start";
       })
-      .text((d: any) =>
+      .text((d: Recordable) =>
         d.data.label.length > 19
           ? (d.data.isError ? "◉ " : "") + d.data.label.slice(0, 10) + "..."
           : (d.data.isError ? "◉ " : "") + d.data.label,
       )
-      .style("fill", (d: any) => (!d.data.isError ? "#3d444f" : "#E54C17"));
+      .style("fill", (d: Recordable) => (!d.data.isError ? "#3d444f" : "#E54C17"));
     nodeEnter
       .append("text")
       .attr("class", "node-text")
-      .attr("x", function (d: any) {
+      .attr("x", function (d: Recordable) {
         return d.children || d._children ? -45 : 15;
       })
       .attr("dy", "1em")
       .attr("fill", "#bbb")
-      .attr("text-anchor", function (d: any) {
+      .attr("text-anchor", function (d: Recordable) {
         return d.children || d._children ? "end" : "start";
       })
       .style("font-size", "10px")
-      .text((d: any) => `${d.data.layer || ""}${d.data.component ? "-" + d.data.component : d.data.component || ""}`);
+      .text(
+        (d: Recordable) => `${d.data.layer || ""}${d.data.component ? "-" + d.data.component : d.data.component || ""}`,
+      );
     nodeEnter
       .append("rect")
       .attr("rx", 1)
       .attr("ry", 1)
       .attr("height", 2)
       .attr("width", 100)
-      .attr("x", function (d: any) {
+      .attr("x", function (d: Recordable) {
         return d.children || d._children ? "-110" : "10";
       })
       .attr("y", -1)
@@ -265,11 +269,11 @@ export default class TraceMap {
       .attr("rx", 1)
       .attr("ry", 1)
       .attr("height", 2)
-      .attr("width", (d: any) => {
+      .attr("width", (d: Recordable) => {
         if (!d.data.endTime || !d.data.startTime) return 0;
         return this.xScale(d.data.endTime - d.data.startTime) + 1 || 0;
       })
-      .attr("x", (d: any) => {
+      .attr("x", (d: Recordable) => {
         if (!d.data.endTime || !d.data.startTime) {
           return 0;
         }
@@ -279,21 +283,23 @@ export default class TraceMap {
         return 10 + this.xScale(d.data.startTime - this.min);
       })
       .attr("y", -1)
-      .style("fill", (d: any) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)));
+      .style("fill", (d: Recordable) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)));
     const nodeUpdate = nodeEnter.merge(node);
     this.nodeUpdate = nodeUpdate;
     nodeUpdate
       .transition()
       .duration(600)
-      .attr("transform", function (d: any) {
+      .attr("transform", function (d: Recordable) {
         return "translate(" + d.y + "," + d.x + ")";
       });
     nodeUpdate
       .select("circle.node")
       .attr("r", 5)
-      .style("fill", (d: any) => (d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff"))
+      .style("fill", (d: Recordable) =>
+        d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
+      )
       .attr("cursor", "pointer")
-      .on("click", (d: any) => {
+      .on("click", (d: Recordable) => {
         click(d);
       });
     const nodeExit = node
@@ -332,7 +338,7 @@ export default class TraceMap {
     linkUpdate
       .transition()
       .duration(600)
-      .attr("d", function (d: any) {
+      .attr("d", function (d: Recordable) {
         return diagonal(d, d.parent);
       });
     link
@@ -346,16 +352,16 @@ export default class TraceMap {
       .style("stroke-width", 1.5)
       .remove();
 
-    nodes.forEach(function (d: any) {
+    nodes.forEach(function (d: Recordable) {
       d.x0 = d.x;
       d.y0 = d.y;
     });
-    function diagonal(s: any, d: any) {
+    function diagonal(s: Recordable, d: Recordable) {
       return `M ${s.y} ${s.x}
       C ${(s.y + d.y) / 2} ${s.x}, ${(s.y + d.y) / 2} ${d.x},
       ${d.y} ${d.x}`;
     }
-    function click(d: any) {
+    function click(d: Recordable) {
       if (d.children) {
         d._children = d.children;
         d.children = null;
@@ -399,11 +405,11 @@ export default class TraceMap {
       }
     });
   }
-  getZoomBehavior(g: any) {
+  getZoomBehavior(g: Recordable) {
     return d3
       .zoom()
       .scaleExtent([0.3, 10])
-      .on("zoom", (d: any) => {
+      .on("zoom", (d: Recordable) => {
         g.attr("transform", d3.zoomTransform(this.svg.node())).attr(
           `translate(${d.transform.x},${d.transform.y})scale(${d.transform.k})`,
         );

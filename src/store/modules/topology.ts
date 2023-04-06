@@ -73,7 +73,7 @@ export const topologyStore = defineStore({
       this.nodes = data.nodes;
     },
     setTopology(data: { nodes: Node[]; calls: Call[] }) {
-      const obj = {} as any;
+      const obj = {} as Recordable;
       const services = useSelectorStore().services;
       const nodes = (data.nodes || []).reduce((prev: Node[], next: Node) => {
         if (!obj[next.id]) {
@@ -302,8 +302,8 @@ export const topologyStore = defineStore({
         return res.data;
       }
       const topo = res.data.data;
-      const calls = [] as any;
-      const nodes = [] as any;
+      const calls = [] as Call[];
+      const nodes = [] as Node[];
       for (const key of Object.keys(topo)) {
         calls.push(...topo[key].calls);
         nodes.push(...topo[key].nodes);
@@ -377,7 +377,7 @@ export const topologyStore = defineStore({
       }
       const data = res.data.data;
       const metrics = Object.keys(data);
-      this.nodes = this.nodes.map((d: Node | any) => {
+      this.nodes = this.nodes.map((d: Node & Recordable) => {
         for (const m of metrics) {
           for (const val of data[m].values) {
             if (d.id === val.id) {
@@ -410,6 +410,6 @@ export const topologyStore = defineStore({
   },
 });
 
-export function useTopologyStore(): any {
+export function useTopologyStore(): Recordable {
   return topologyStore(store);
 }

@@ -32,7 +32,7 @@ export interface CreateCallbackParams {
   sizeEnum: typeof sizeEnum;
 }
 
-export function useBreakpoint(): any {
+export function useBreakpoint(): Indexable {
   return {
     screenRef: computed(() => unref(globalScreenRef)),
     widthRef: globalWidthRef,
@@ -41,7 +41,7 @@ export function useBreakpoint(): any {
   };
 }
 
-export function createBreakpointListen(fn?: (opt: CreateCallbackParams) => void): any {
+export function createBreakpointListen(fn?: (opt: CreateCallbackParams) => void): Indexable {
   const screenRef = ref<sizeEnum>(sizeEnum.XL || "");
   const realWidthRef = ref(window.innerWidth);
 

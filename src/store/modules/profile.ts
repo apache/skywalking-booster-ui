@@ -162,10 +162,35 @@ export const profileStore = defineStore({
       }
       return res.data;
     },
-    async getSegmentSpans() {
-      this.analyzeTrees = [];
-      this.segmentSpans = this.currentSegment.spans;
-      this.currentSpan = this.currentSegment.spans[0] || {};
+    async getSegmentSpans(params: { segmentId: string }) {
+      if (!params.segmentId) {
+        return new Promise((resolve) => resolve({}));
+      }
+      const res: AxiosResponse = await graphql.query("queryProfileSegment").params(params);
+      if (res.data.errors) {
+        this.segmentSpans = [];
+        return res.data;
+      }
+      const { segment } = res.data.data;
+      if (!segment) {
+        this.segmentSpans = [];
+        this.analyzeTrees = [];
+        return res.data;
+      }
+      this.segmentSpans = segment.spans.map((d: SegmentSpan) => {
+        return {
+          ...d,
+          segmentId: this.currentSegment?.segmentId,
+          traceId: (this.currentSegment.traceIds as string[])[0],
+        };
+      });
+      if (!(segment.spans && segment.spans.length)) {
+        this.analyzeTrees = [];
+        return res.data;
+      }
+      const index = segment.spans.length - 1 || 0;
+      this.currentSpan = segment.spans[index];
+      return res.data;
     },
     async getProfileAnalyze(params: Array<{ segmentId: string; timeRange: { start: number; end: number } }>) {
       if (!params.length) {
@@ -211,6 +236,6 @@ export const profileStore = defineStore({
   },
 });
 
-export function useProfileStore(): any {
+export function useProfileStore(): Recordable {
   return profileStore(store);
 }

@@ -112,7 +112,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import DateCalendar from "./DateCalendar.vue";
   import { useTimeoutFn } from "@/hooks/useTimeout";
-  /*global defineProps, defineEmits */
+  /*global defineProps, defineEmits*/
   const datepicker = ref(null);
   const { t } = useI18n();
   const show = ref<boolean>(false);
@@ -241,7 +241,7 @@ limitations under the License. -->
     }
     dates.value[0] = d;
   };
-  const dc = (e: any) => {
+  const dc = (e: MouseEvent) => {
     show.value = (datepicker.value as any).contains(e.target) && !props.disabled;
   };
   const quickPick = (type: string) => {

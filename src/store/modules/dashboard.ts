@@ -33,7 +33,7 @@ interface DashboardState {
   entity: string;
   layerId: string;
   activedGridItem: string;
-  selectorStore: any;
+  selectorStore: Recordable;
   showTopology: boolean;
   currentTabItems: LayoutConfig[];
   dashboards: DashboardItem[];
@@ -79,7 +79,7 @@ export const dashboardStore = defineStore({
       this.currentDashboard = item;
     },
     addControl(type: string) {
-      const arr = this.layout.map((d: any) => Number(d.i));
+      const arr = this.layout.map((d: Recordable) => Number(d.i));
       let index = String(Math.max(...arr) + 1);
       if (!this.layout.length) {
         index = "0";
@@ -153,7 +153,7 @@ export const dashboardStore = defineStore({
       }
       const tabIndex = this.layout[idx].activedTabIndex || 0;
       const { children } = (this.layout[idx].children || [])[tabIndex];
-      const arr = children.map((d: any) => Number(d.i));
+      const arr = children.map((d: Recordable) => Number(d.i));
       let index = String(Math.max(...arr) + 1);
       if (!children.length) {
         index = "0";
@@ -398,7 +398,7 @@ export const dashboardStore = defineStore({
         children: this.layout,
         ...this.currentDashboard,
       };
-      let res: any;
+      let res: Recordable;
       let json;
 
       if (this.currentDashboard.id) {
@@ -462,13 +462,13 @@ export const dashboardStore = defineStore({
         ElMessage.error(json.message);
         return res.data;
       }
-      this.dashboards = this.dashboards.filter((d: any) => d.id !== this.currentDashboard?.id);
+      this.dashboards = this.dashboards.filter((d: Recordable) => d.id !== this.currentDashboard?.id);
       const key = [this.currentDashboard?.layer, this.currentDashboard?.entity, this.currentDashboard?.name].join("_");
       sessionStorage.removeItem(key);
     },
   },
 });
 
-export function useDashboardStore(): any {
+export function useDashboardStore(): Recordable {
   return dashboardStore(store);
 }

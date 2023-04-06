@@ -98,7 +98,7 @@ limitations under the License. -->
     searchTrace();
   }
 
-  function changeSort(opt: Option[] | any) {
+  function changeSort(opt: Option[]) {
     traceStore.setTraceCondition({
       queryOrder: opt[0].value,
       paging: { pageNum: 1, pageSize: pageSize.value },

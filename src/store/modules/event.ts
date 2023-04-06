@@ -106,6 +106,6 @@ export const eventStore = defineStore({
   },
 });
 
-export function useEventStore(): any {
+export function useEventStore(): Recordable {
   return eventStore(store);
 }

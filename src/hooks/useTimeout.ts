@@ -38,7 +38,7 @@ export function useTimeoutFn(handle: Fn<any>, wait: number, native = false): any
   return { readyRef, stop, start };
 }
 
-export function useTimeoutRef(wait: number): any {
+export function useTimeoutRef(wait: number) {
   const readyRef = ref(false);
 
   let timer: TimeoutHandle;

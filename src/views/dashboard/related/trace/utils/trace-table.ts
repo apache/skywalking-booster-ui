@@ -25,7 +25,7 @@ export default class TraceUtil {
 
   public static changeTree(data: Span[], currentTraceId: string) {
     const segmentIdList: Span[] = [];
-    const traceTreeRef: any = this.changeTreeCore(data);
+    const traceTreeRef: Recordable = this.changeTreeCore(data);
     traceTreeRef.segmentIdGroup.forEach((segmentId: string) => {
       if (traceTreeRef.segmentMap.get(segmentId).refs) {
         traceTreeRef.segmentMap.get(segmentId).refs.forEach((ref: Ref) => {
@@ -79,7 +79,7 @@ export default class TraceUtil {
         segmentIdGroup: [],
       };
     }
-    const segmentGroup: any = {};
+    const segmentGroup: Recordable = {};
     const segmentMap: Map<string, Span> = new Map();
     const segmentIdGroup: string[] = [];
     const fixSpans: Span[] = [];

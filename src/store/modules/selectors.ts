@@ -233,6 +233,6 @@ export const selectorStore = defineStore({
   },
 });
 
-export function useSelectorStore(): any {
+export function useSelectorStore(): Recordable {
   return selectorStore(store);
 }

@@ -19,7 +19,7 @@ import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 import type { EventParams } from "@/types/app";
 
-export default function associateProcessor(props: any) {
+export default function associateProcessor(props: Indexable) {
   function eventAssociate() {
     if (!props.filters) {
       return;
@@ -85,7 +85,7 @@ export default function associateProcessor(props: any) {
     const queryOrder = relatedTrace.queryOrder;
     const latency = relatedTrace.latency;
     const series = props.option.series || [];
-    const item: any = {
+    const item: Indexable = {
       duration,
       queryOrder,
       status,

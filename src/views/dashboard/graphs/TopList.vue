@@ -65,6 +65,7 @@ limitations under the License. -->
   import { TextColors } from "@/views/dashboard/data";
   import Trace from "@/views/dashboard/related/trace/Index.vue";
   import { QueryOrders, Status, RefIdTypes, ProtocolTypes } from "../data";
+
   /*global defineProps */
   const props = defineProps({
     data: {

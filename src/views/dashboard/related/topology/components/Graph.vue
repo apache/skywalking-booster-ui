@@ -42,7 +42,11 @@ limitations under the License. -->
             :y="n.y - 38"
             :href="!n.type || n.type === `N/A` ? icons.UNDEFINED : icons[n.type.toUpperCase().replace('-', '')]"
           />
-          <text :x="n.x - (Math.min(n.name.length, 20) * 6) / 2 + 6" :y="n.y + n.height + 8" style="pointer-events: none">
+          <text
+            :x="n.x - (Math.min(n.name.length, 20) * 6) / 2 + 6"
+            :y="n.y + n.height + 8"
+            style="pointer-events: none"
+          >
             {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
           </text>
         </g>
