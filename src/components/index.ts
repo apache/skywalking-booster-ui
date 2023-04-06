@@ -23,7 +23,7 @@ import Radio from "./Radio.vue";
 import SelectSingle from "./SelectSingle.vue";
 import VueGridLayout from "vue-grid-layout";
 
-const components: { [key: string]: any } = {
+const components: Indexable = {
   Icon,
   TimePicker,
   VueGridLayout,

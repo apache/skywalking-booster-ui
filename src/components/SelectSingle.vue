@@ -76,7 +76,7 @@ limitations under the License. -->
   function handleClick() {
     visible.value = false;
   }
-  function setPopper(event: any) {
+  function setPopper(event: MouseEvent) {
     event.stopPropagation();
     visible.value = !visible.value;
   }

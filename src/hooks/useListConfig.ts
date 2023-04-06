@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import { MetricQueryTypes, Calculations } from "./data";
-export function useListConfig(config: any, index: string) {
+export function useListConfig(config: Indexable, index: string) {
   const i = Number(index);
   const types = [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg];
   const calculation = config.metricConfig && config.metricConfig[i] && config.metricConfig[i].calculation;
