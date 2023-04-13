@@ -114,9 +114,10 @@ export function useQueryProcessor(config: Indexable) {
     }
     if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
       return `${name}${index}: ${metricType}(condition: $condition${index}, labels: $labels${index}, duration: $duration)${RespFields[metricType]}`;
-    } else {
-      return `${name}${index}: ${metricType}(condition: $condition${index}, duration: $duration)${RespFields[metricType]}`;
     }
+    const t = metricType === MetricQueryTypes.ReadMetricsValue ? MetricQueryTypes.ReadNullableMetricsValue : metricType;
+
+    return `${name}${index}: ${t}(condition: $condition${index}, duration: $duration)${RespFields[t]}`;
   });
   const queryStr = `query queryData(${variables}) {${fragment}}`;
 
@@ -156,7 +157,9 @@ export function useSourceProcessor(
       const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
       const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
       for (const item of resVal) {
-        const values = item.values.values.map((d: { value: number }) => aggregation(Number(d.value), c));
+        const values = item.values.values.map((d: { value: number; isEmptyValue: boolean }) =>
+          d.isEmptyValue ? NaN : aggregation(Number(d.value), c),
+        );
         const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
         if (labels[indexNum] && indexNum > -1) {
           source[labels[indexNum]] = values;
@@ -166,7 +169,8 @@ export function useSourceProcessor(
       }
     }
     if (type === MetricQueryTypes.ReadMetricsValue) {
-      source[m] = aggregation(Number(Object.values(resp.data)[0]), c);
+      const v = Object.values(resp.data)[0] || {};
+      source[m] = v.isEmptyValue ? NaN : aggregation(Number(v.value), c);
     }
     if (
       (
@@ -250,7 +254,9 @@ export function useQueryPodsMetrics(
         const labels = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
         conditions[`labels${index}${idx}`] = labels;
       }
-      return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[metricType]}`;
+      const t =
+        metricType === MetricQueryTypes.ReadMetricsValue ? MetricQueryTypes.ReadNullableMetricsValue : metricType;
+      return `${name}${index}${idx}: ${t}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[t]}`;
     });
     return f;
   });
@@ -281,7 +287,8 @@ export function usePodsSource(
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
       const key = name + idx + index;
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValue) {
-        d[name] = aggregation(resp.data[key], c);
+        const v = resp.data[key];
+        d[name] = v.isEmptyValue ? NaN : aggregation(v.value, c);
         if (idx === 0) {
           names.push(name);
           metricConfigArr.push(c);
@@ -293,7 +300,9 @@ export function usePodsSource(
         if ([Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(c.calculation)) {
           d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
         }
-        d[name]["values"] = resp.data[key].values.values.map((val: { value: number }) => aggregation(val.value, c));
+        d[name]["values"] = resp.data[key].values.values.map((val: { value: number; isEmptyValue: boolean }) =>
+          val.isEmptyValue ? NaN : aggregation(val.value, c),
+        );
         if (idx === 0) {
           names.push(name);
           metricConfigArr.push(c);
@@ -306,7 +315,9 @@ export function usePodsSource(
         const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
         for (let i = 0; i < resVal.length; i++) {
           const item = resVal[i];
-          const values = item.values.values.map((d: { value: number }) => aggregation(Number(d.value), c));
+          const values = item.values.values.map((d: { value: number; isEmptyValue: boolean }) =>
+            d.isEmptyValue ? NaN : aggregation(Number(d.value), c),
+          );
           const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
           let key = item.label;
           if (labels[indexNum] && indexNum > -1) {
@@ -356,8 +367,12 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
 
   return { queryStr, conditions };
 }
-function calculateExp(arr: { value: number }[], config: { calculation?: string }): (number | string)[] {
-  const sum = arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b);
+function calculateExp(
+  list: { value: number; isEmptyValue: boolean }[],
+  config: { calculation?: string },
+): (number | string)[] {
+  const arr = list.filter((d: { value: number; isEmptyValue: boolean }) => !d.isEmptyValue);
+  const sum = arr.length ? arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) : 0;
   let data: (number | string)[] = [];
   switch (config.calculation) {
     case Calculations.Average:
@@ -370,7 +385,9 @@ function calculateExp(arr: { value: number }[], config: { calculation?: string }
       data = [(sum / arr.length / 10000).toFixed(2)];
       break;
     default:
-      data = arr.map((d) => aggregation(d.value, config));
+      data = list.map((d: { value: number; isEmptyValue: boolean }) =>
+        d.isEmptyValue ? NaN : aggregation(d.value, config),
+      );
       break;
   }
   return data;
