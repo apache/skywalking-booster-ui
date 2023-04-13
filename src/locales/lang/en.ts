@@ -385,5 +385,6 @@ const msg = {
   AWSGateway: "AWS API Gateway",
   APIGateway: "API Gateway",
   redis: "Redis",
+  elasticsearch: "Elasticsearch",
 };
 export default msg;
