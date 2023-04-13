@@ -22,6 +22,7 @@ export enum MetricQueryTypes {
   READHEATMAP = "readHeatMap",
   ReadSampledRecords = "readSampledRecords",
   ReadRecords = "readRecords",
+  ReadNullableMetricsValue = "readNullableMetricsValue",
 }
 
 export enum Calculations {
@@ -73,7 +74,11 @@ export const RespFields: Indexable = {
       values {value}
     }
   }`,
-  readMetricsValue: "",
+  readMetricsValue: ``,
+  readNullableMetricsValue: `{
+    value
+    isEmptyValue
+  }`,
   sortMetrics: `{
     name
     id

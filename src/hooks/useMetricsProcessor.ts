@@ -114,9 +114,10 @@ export function useQueryProcessor(config: Indexable) {
     }
     if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
       return `${name}${index}: ${metricType}(condition: $condition${index}, labels: $labels${index}, duration: $duration)${RespFields[metricType]}`;
-    } else {
-      return `${name}${index}: ${metricType}(condition: $condition${index}, duration: $duration)${RespFields[metricType]}`;
     }
+    const t = metricType === MetricQueryTypes.ReadMetricsValue ? MetricQueryTypes.ReadNullableMetricsValue : metricType;
+
+    return `${name}${index}: ${t}(condition: $condition${index}, duration: $duration)${RespFields[t]}`;
   });
   const queryStr = `query queryData(${variables}) {${fragment}}`;
 
@@ -166,7 +167,8 @@ export function useSourceProcessor(
       }
     }
     if (type === MetricQueryTypes.ReadMetricsValue) {
-      source[m] = aggregation(Number(Object.values(resp.data)[0]), c);
+      const v = Object.values(resp.data)[0] || {};
+      source[m] = v.isEmptyValue ? NaN : aggregation(Number(v.value), c);
     }
     if (
       (
@@ -250,7 +252,9 @@ export function useQueryPodsMetrics(
         const labels = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
         conditions[`labels${index}${idx}`] = labels;
       }
-      return `${name}${index}${idx}: ${metricType}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[metricType]}`;
+      const t =
+        metricType === MetricQueryTypes.ReadMetricsValue ? MetricQueryTypes.ReadNullableMetricsValue : metricType;
+      return `${name}${index}${idx}: ${t}(condition: $condition${index}${idx}, ${labelStr}duration: $duration)${RespFields[t]}`;
     });
     return f;
   });
@@ -281,7 +285,8 @@ export function usePodsSource(
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
       const key = name + idx + index;
       if (config.metricTypes[index] === MetricQueryTypes.ReadMetricsValue) {
-        d[name] = aggregation(resp.data[key], c);
+        const v = resp.data[key];
+        d[name] = v.isEmptyValue ? NaN : aggregation(v.value, c);
         if (idx === 0) {
           names.push(name);
           metricConfigArr.push(c);
