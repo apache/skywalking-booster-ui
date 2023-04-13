@@ -361,7 +361,8 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
 
   return { queryStr, conditions };
 }
-function calculateExp(arr: { value: number }[], config: { calculation?: string }): (number | string)[] {
+function calculateExp(list: { value: number }[], config: { calculation?: string }): (number | string)[] {
+  const arr = list.filter((d: any) => !d.isEmptyValue);
   const sum = arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b);
   let data: (number | string)[] = [];
   switch (config.calculation) {

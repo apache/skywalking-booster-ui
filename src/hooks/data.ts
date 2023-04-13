@@ -71,7 +71,7 @@ export const RespFields: Indexable = {
   readMetricsValues: `{
     label
     values {
-      values {value}
+      values {value isEmptyValue}
     }
   }`,
   readMetricsValue: ``,
@@ -88,7 +88,7 @@ export const RespFields: Indexable = {
   readLabeledMetricsValues: `{
     label
     values {
-      values {value}
+      values {value isEmptyValue}
     }
   }`,
   readHeatMap: `{
