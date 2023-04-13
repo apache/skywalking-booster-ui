@@ -367,8 +367,11 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
 
   return { queryStr, conditions };
 }
-function calculateExp(list: { value: number }[], config: { calculation?: string }): (number | string)[] {
-  const arr = list.filter((d: any) => !d.isEmptyValue);
+function calculateExp(
+  list: { value: number; isEmptyValue: boolean }[],
+  config: { calculation?: string },
+): (number | string)[] {
+  const arr = list.filter((d: { value: number; isEmptyValue: boolean }) => !d.isEmptyValue);
   const sum = arr.length ? arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) : 0;
   let data: (number | string)[] = [];
   switch (config.calculation) {
@@ -382,7 +385,9 @@ function calculateExp(list: { value: number }[], config: { calculation?: string 
       data = [(sum / arr.length / 10000).toFixed(2)];
       break;
     default:
-      data = list.map((d: Recordable) => (d.isEmptyValue ? NaN : aggregation(d.value, config)));
+      data = list.map((d: { value: number; isEmptyValue: boolean }) =>
+        d.isEmptyValue ? NaN : aggregation(d.value, config),
+      );
       break;
   }
   return data;
