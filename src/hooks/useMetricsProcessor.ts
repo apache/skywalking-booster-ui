@@ -157,7 +157,9 @@ export function useSourceProcessor(
       const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
       const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
       for (const item of resVal) {
-        const values = item.values.values.map((d: { value: number }) => aggregation(Number(d.value), c));
+        const values = item.values.values.map((d: { value: number; isEmptyValue: boolean }) =>
+          d.isEmptyValue ? NaN : aggregation(Number(d.value), c),
+        );
         const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
         if (labels[indexNum] && indexNum > -1) {
           source[labels[indexNum]] = values;
@@ -298,7 +300,9 @@ export function usePodsSource(
         if ([Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(c.calculation)) {
           d[name]["avg"] = calculateExp(resp.data[key].values.values, c);
         }
-        d[name]["values"] = resp.data[key].values.values.map((val: { value: number }) => aggregation(val.value, c));
+        d[name]["values"] = resp.data[key].values.values.map((val: { value: number; isEmptyValue: boolean }) =>
+          val.isEmptyValue ? NaN : aggregation(val.value, c),
+        );
         if (idx === 0) {
           names.push(name);
           metricConfigArr.push(c);
@@ -311,7 +315,9 @@ export function usePodsSource(
         const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
         for (let i = 0; i < resVal.length; i++) {
           const item = resVal[i];
-          const values = item.values.values.map((d: { value: number }) => aggregation(Number(d.value), c));
+          const values = item.values.values.map((d: { value: number; isEmptyValue: boolean }) =>
+            d.isEmptyValue ? NaN : aggregation(Number(d.value), c),
+          );
           const indexNum = labelsIdx.findIndex((d: string) => d === item.label);
           let key = item.label;
           if (labels[indexNum] && indexNum > -1) {
@@ -363,7 +369,7 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
 }
 function calculateExp(list: { value: number }[], config: { calculation?: string }): (number | string)[] {
   const arr = list.filter((d: any) => !d.isEmptyValue);
-  const sum = arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b);
+  const sum = arr.length ? arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) : 0;
   let data: (number | string)[] = [];
   switch (config.calculation) {
     case Calculations.Average:
@@ -376,7 +382,7 @@ function calculateExp(list: { value: number }[], config: { calculation?: string 
       data = [(sum / arr.length / 10000).toFixed(2)];
       break;
     default:
-      data = arr.map((d) => aggregation(d.value, config));
+      data = list.map((d: Recordable) => (d.isEmptyValue ? NaN : aggregation(d.value, config)));
       break;
   }
   return data;
