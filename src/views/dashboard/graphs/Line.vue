@@ -30,6 +30,7 @@ limitations under the License. -->
   import type { LineConfig, EventParams, RelatedTrace, Filters } from "@/types/dashboard";
   import Legend from "./components/Legend.vue";
   import useLegendProcess from "@/hooks/useLegendProcessor";
+  import { isDef } from "@/utils/is";
 
   /*global defineProps, defineEmits */
   const emits = defineEmits(["click"]);
@@ -73,7 +74,7 @@ limitations under the License. -->
         name: i,
         type: "line",
         symbolSize: 5,
-        showSymbol: props.config.showSymbol,
+        showSymbol: isDef(props.config.showSymbol) ? props.config.showSymbol : true,
         step: props.config.step,
         smooth: props.config.smooth,
         lineStyle: {
