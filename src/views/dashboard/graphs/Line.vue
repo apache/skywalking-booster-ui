@@ -82,9 +82,6 @@ limitations under the License. -->
           width: 2,
           type: "solid",
         },
-        emphasis: {
-          scale: false,
-        },
       };
       if (props.config.type === "Area") {
         serie.areaStyle = {
