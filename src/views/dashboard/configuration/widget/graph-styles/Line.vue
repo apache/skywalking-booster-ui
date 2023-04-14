@@ -50,12 +50,13 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import Legend from "./components/Legend.vue";
+  import { isDef } from "@/utils/is";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const graph = computed(() => dashboardStore.selectedGrid.graph || {});
   const smooth = ref(graph.value.smooth);
-  const showSymbol = ref(graph.value.showSymbol);
+  const showSymbol = ref(isDef(graph.value.showSymbol) ? graph.value.showSymbol : true);
   const step = ref(graph.value.step);
 
   function updateConfig(param: { [key: string]: unknown }) {
