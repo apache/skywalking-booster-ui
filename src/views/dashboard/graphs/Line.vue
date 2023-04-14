@@ -73,13 +73,17 @@ limitations under the License. -->
         data: props.data[i].map((item: any, itemIndex: number) => [props.intervalTime[itemIndex], item]),
         name: i,
         type: "line",
-        symbolSize: 5,
+        symbol: "circle",
+        symbolSize: 4,
         showSymbol: isDef(props.config.showSymbol) ? props.config.showSymbol : true,
         step: props.config.step,
         smooth: props.config.smooth,
         lineStyle: {
-          width: 1.5,
+          width: 2,
           type: "solid",
+        },
+        emphasis: {
+          scale: false,
         },
       };
       if (props.config.type === "Area") {
