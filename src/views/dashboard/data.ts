@@ -65,7 +65,7 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     type: "Line",
     step: false,
     smooth: false,
-    showSymbol: false,
+    showSymbol: true,
     showXAxis: true,
     showYAxis: true,
   },
