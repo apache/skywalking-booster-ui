@@ -118,8 +118,8 @@ limitations under the License. -->
       <div class="switch">
         <el-switch
           v-model="dashboardStore.editMode"
-          active-text="Edit"
-          inactive-text="View"
+          active-text="E"
+          inactive-text="V"
           size="small"
           inline-prompt
           active-color="#409eff"

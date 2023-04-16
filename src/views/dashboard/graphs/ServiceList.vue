@@ -17,7 +17,7 @@ limitations under the License. -->
     <div class="search">
       <el-input v-model="searchText" placeholder="Please input service name" @change="searchList" class="inputs mt-5">
         <template #append>
-          <el-button class="btn" @click="searchList">
+          <el-button @click="searchList">
             <Icon size="sm" iconName="search" />
           </el-button>
         </template>
