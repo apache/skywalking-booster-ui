@@ -383,5 +383,7 @@ const msg = {
   APIGateway: "API Gateway",
   redis: "Redis",
   elasticsearch: "Elasticsearch",
+  mq: "消息队列",
+  rabbitMQ: "RabbitMQ",
 };
 export default msg;
