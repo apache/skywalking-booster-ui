@@ -14,28 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import general from "./general";
-import serviceMesh from "./serviceMesh";
-import database from "./database";
-import infrastructure from "./infrastructure";
-import selfObservability from "./selfObservability";
-import functions from "./functions";
-import browser from "./browser";
-import k8s from "./k8s";
-import gateway from "./gateway";
-import aws from "./aws";
-import mq from "./mq";
 
 export default [
-  ...general,
-  ...serviceMesh,
-  ...functions,
-  ...k8s,
-  ...infrastructure,
-  ...aws,
-  ...browser,
-  ...gateway,
-  ...database,
-  ...mq,
-  ...selfObservability,
+  {
+    path: "",
+    name: "MQ",
+    meta: {
+      title: "mq",
+      icon: "mq",
+      hasGroup: true,
+    },
+    redirect: "/rabbitMQ",
+    children: [
+      {
+        path: "/rabbitMQ",
+        name: "RabbitMQ",
+        meta: {
+          title: "rabbitMQ",
+          layer: "RABBITMQ",
+        },
+      },
+      {
+        path: "/rabbitMQ/tab/:activeTabIndex",
+        name: "RabbitMQActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "RABBITMQ",
+        },
+      },
+    ],
+  },
 ];
