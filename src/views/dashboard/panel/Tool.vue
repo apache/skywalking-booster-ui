@@ -520,23 +520,23 @@ limitations under the License. -->
         resp = await selectorStore.getServiceInstances({ serviceId });
         break;
       case EntityType[6].value:
+        if (setPod) {
+          await updateCurrentDestPod(EntityType[6].value);
+        }
         resp = await selectorStore.getEndpoints({
           serviceId,
           isRelation: true,
           ...param,
         });
-        if (setPod) {
-          updateCurrentDestPod();
-        }
         break;
       case EntityType[5].value:
+        if (setPod) {
+          await updateCurrentDestPod(EntityType[5].value);
+        }
         resp = await selectorStore.getServiceInstances({
           serviceId,
           isRelation: true,
         });
-        if (setPod) {
-          updateCurrentDestPod();
-        }
         break;
       case EntityType[7].value:
         await fetchPods(EntityType[5].value, serviceId, setPod, param);
@@ -587,13 +587,29 @@ limitations under the License. -->
     return resp;
   }
 
-  function updateCurrentDestPod() {
+  async function updateCurrentDestPod(type: string) {
+    if (params.destPodId) {
+      let resp;
+      if (type === EntityType[6].value) {
+        resp = await selectorStore.getEndpoint(params.destPodId, true);
+      } else {
+        resp = await selectorStore.getInstance(params.destPodId, true);
+      }
+
+      if (resp.errors) {
+        return ElMessage.error(resp.errors);
+      }
+      const pod = resp.data.endpoint || resp.data.instance || {};
+      selectorStore.setCurrentDestPod(pod);
+      states.currentDestPod = pod.label;
+      return;
+    }
     if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
       selectorStore.setCurrentDestPod(null);
       states.currentDestPod = "";
       return;
     }
-    const destPod = params.destPodId || selectorStore.destPods[0].id;
+    const destPod = selectorStore.destPods[0].id;
     const currentDestPod = selectorStore.destPods.find((d: { id: string }) => d.id === destPod);
     if (!currentDestPod) {
       states.currentDestPod = "";
