@@ -508,35 +508,53 @@ limitations under the License. -->
     let resp;
     switch (type) {
       case EntityType[2].value:
-        if (setPod) {
-          await updateCurrentPod(EntityType[2].value);
+        if (params.podId) {
+          if (setPod) {
+            await setCurrentEndpoint();
+          }
+          resp = await selectorStore.getEndpoints({ serviceId, ...param });
+        } else {
+          resp = await selectorStore.getEndpoints({ serviceId, ...param });
+          if (setPod) {
+            await updateCurrentPod();
+          }
         }
-        resp = await selectorStore.getEndpoints({ serviceId, ...param });
         break;
       case EntityType[3].value:
-        if (setPod) {
-          await updateCurrentPod(EntityType[3].value);
-        }
         resp = await selectorStore.getServiceInstances({ serviceId });
+        if (setPod) {
+          await updateCurrentPod();
+        }
         break;
       case EntityType[6].value:
-        if (setPod) {
-          await updateCurrentDestPod(EntityType[6].value);
+        if (params.destPodId) {
+          if (setPod) {
+            await updateCurrentDestEndpoint();
+          }
+          resp = await selectorStore.getEndpoints({
+            serviceId,
+            isRelation: true,
+            ...param,
+          });
+        } else {
+          resp = await selectorStore.getEndpoints({
+            serviceId,
+            isRelation: true,
+            ...param,
+          });
+          if (setPod) {
+            await updateCurrentDestPod();
+          }
         }
-        resp = await selectorStore.getEndpoints({
-          serviceId,
-          isRelation: true,
-          ...param,
-        });
         break;
       case EntityType[5].value:
-        if (setPod) {
-          await updateCurrentDestPod(EntityType[5].value);
-        }
         resp = await selectorStore.getServiceInstances({
           serviceId,
           isRelation: true,
         });
+        if (setPod) {
+          await updateCurrentDestPod();
+        }
         break;
       case EntityType[7].value:
         await fetchPods(EntityType[5].value, serviceId, setPod, param);
@@ -586,30 +604,24 @@ limitations under the License. -->
     }
     return resp;
   }
+  async function updateCurrentDestEndpoint() {
+    const resp = await selectorStore.getEndpoint(params.destPodId, true);
 
-  async function updateCurrentDestPod(type: string) {
-    if (params.destPodId) {
-      let resp;
-      if (type === EntityType[6].value) {
-        resp = await selectorStore.getEndpoint(params.destPodId, true);
-      } else {
-        resp = await selectorStore.getInstance(params.destPodId, true);
-      }
-
-      if (resp.errors) {
-        return ElMessage.error(resp.errors);
-      }
-      const pod = resp.data.endpoint || resp.data.instance || {};
-      selectorStore.setCurrentDestPod(pod);
-      states.currentDestPod = pod.label;
-      return;
+    if (resp.errors) {
+      return ElMessage.error(resp.errors);
     }
+    const pod = resp.data.endpoint || {};
+    selectorStore.setCurrentDestPod(pod);
+    states.currentDestPod = pod.label;
+  }
+
+  async function updateCurrentDestPod() {
     if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
       selectorStore.setCurrentDestPod(null);
       states.currentDestPod = "";
       return;
     }
-    const destPod = selectorStore.destPods[0].id;
+    const destPod = params.destPodId || selectorStore.destPods[0].id;
     const currentDestPod = selectorStore.destPods.find((d: { id: string }) => d.id === destPod);
     if (!currentDestPod) {
       states.currentDestPod = "";
@@ -619,29 +631,23 @@ limitations under the License. -->
     selectorStore.setCurrentDestPod(currentDestPod);
     states.currentDestPod = currentDestPod.label;
   }
-  async function updateCurrentPod(type: string) {
-    if (params.podId) {
-      let resp;
-      if (type === EntityType[2].value) {
-        resp = await selectorStore.getEndpoint(params.podId);
-      } else {
-        resp = await selectorStore.getInstance(params.podId);
-      }
+  async function setCurrentEndpoint() {
+    const resp = await selectorStore.getEndpoint(params.podId);
 
-      if (resp.errors) {
-        return ElMessage.error(resp.errors);
-      }
-      const pod = resp.data.endpoint || resp.data.instance || {};
-      selectorStore.setCurrentPod(pod);
-      states.currentPod = pod.label;
-      return;
+    if (resp.errors) {
+      return ElMessage.error(resp.errors);
     }
+    const pod = resp.data.endpoint || {};
+    selectorStore.setCurrentPod(pod);
+    states.currentPod = pod.label;
+  }
+  async function updateCurrentPod() {
     if (!(selectorStore.pods.length && selectorStore.pods[0])) {
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
       return;
     }
-    const pod = selectorStore.pods[0].id;
+    const pod = params.podId || selectorStore.pods[0].id;
     const currentPod = selectorStore.pods.find((d: { id: string }) => d.id === pod);
     if (!currentPod) {
       selectorStore.setCurrentPod(null);
