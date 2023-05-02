@@ -611,6 +611,9 @@ limitations under the License. -->
       return ElMessage.error(resp.errors);
     }
     const pod = resp.data.endpoint || {};
+    if (!pod.id) {
+      ElMessage.info("The Destination endpoint ID doesn't exist.");
+    }
     selectorStore.setCurrentDestPod(pod);
     states.currentDestPod = pod.label;
   }
@@ -626,6 +629,9 @@ limitations under the License. -->
     if (!currentDestPod) {
       states.currentDestPod = "";
       selectorStore.setCurrentDestPod(null);
+      ElMessage.info(
+        `The Destination ${params.entity === EntityType[6].value ? "endpoint" : "instance"} ID doesn't exist.`,
+      );
       return;
     }
     selectorStore.setCurrentDestPod(currentDestPod);
@@ -638,8 +644,11 @@ limitations under the License. -->
       return ElMessage.error(resp.errors);
     }
     const pod = resp.data.endpoint || {};
+    if (!pod.id) {
+      ElMessage.info("The endpoint ID doesn't exist.");
+    }
     selectorStore.setCurrentPod(pod);
-    states.currentPod = pod.label;
+    states.currentPod = pod.label || "";
   }
   async function updateCurrentPod() {
     if (!(selectorStore.pods.length && selectorStore.pods[0])) {
@@ -652,6 +661,7 @@ limitations under the License. -->
     if (!currentPod) {
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
+      ElMessage.info(`The ${params.entity === EntityType[2].value ? "endpoint" : "instance"} ID doesn't exist.`);
       return;
     }
     selectorStore.setCurrentPod(currentPod);
