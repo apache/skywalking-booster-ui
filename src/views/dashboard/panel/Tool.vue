@@ -261,6 +261,7 @@ limitations under the License. -->
     await selectorStore.getService(String(params.serviceId));
     states.currentService = selectorStore.currentService.value;
     const e = String(params.entity).split("Relation")[0];
+
     await fetchPods(e, selectorStore.currentService.id, true);
   }
 
@@ -507,16 +508,16 @@ limitations under the License. -->
     let resp;
     switch (type) {
       case EntityType[2].value:
-        resp = await selectorStore.getEndpoints({ serviceId, ...param });
         if (setPod) {
-          updateCurrentPod();
+          await updateCurrentPod(EntityType[2].value);
         }
+        resp = await selectorStore.getEndpoints({ serviceId, ...param });
         break;
       case EntityType[3].value:
-        resp = await selectorStore.getServiceInstances({ serviceId });
         if (setPod) {
-          updateCurrentPod();
+          await updateCurrentPod(EntityType[3].value);
         }
+        resp = await selectorStore.getServiceInstances({ serviceId });
         break;
       case EntityType[6].value:
         resp = await selectorStore.getEndpoints({
@@ -602,13 +603,29 @@ limitations under the License. -->
     selectorStore.setCurrentDestPod(currentDestPod);
     states.currentDestPod = currentDestPod.label;
   }
-  function updateCurrentPod() {
+  async function updateCurrentPod(type: string) {
+    if (params.podId) {
+      let resp;
+      if (type === EntityType[2].value) {
+        resp = await selectorStore.getEndpoint(params.podId);
+      } else {
+        resp = await selectorStore.getInstance(params.podId);
+      }
+
+      if (resp.errors) {
+        return ElMessage.error(resp.errors);
+      }
+      const pod = resp.data.endpoint || resp.data.instance || {};
+      selectorStore.setCurrentPod(pod);
+      states.currentPod = pod.label;
+      return;
+    }
     if (!(selectorStore.pods.length && selectorStore.pods[0])) {
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
       return;
     }
-    const pod = params.podId || selectorStore.pods[0].id;
+    const pod = selectorStore.pods[0].id;
     const currentPod = selectorStore.pods.find((d: { id: string }) => d.id === pod);
     if (!currentPod) {
       selectorStore.setCurrentPod(null);
