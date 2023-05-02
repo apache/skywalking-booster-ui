@@ -516,14 +516,14 @@ limitations under the License. -->
         } else {
           resp = await selectorStore.getEndpoints({ serviceId, ...param });
           if (setPod) {
-            await updateCurrentPod();
+            updateCurrentPod();
           }
         }
         break;
       case EntityType[3].value:
         resp = await selectorStore.getServiceInstances({ serviceId });
         if (setPod) {
-          await updateCurrentPod();
+          updateCurrentPod();
         }
         break;
       case EntityType[6].value:
@@ -543,7 +543,7 @@ limitations under the License. -->
             ...param,
           });
           if (setPod) {
-            await updateCurrentDestPod();
+            updateCurrentDestPod();
           }
         }
         break;
@@ -553,7 +553,7 @@ limitations under the License. -->
           isRelation: true,
         });
         if (setPod) {
-          await updateCurrentDestPod();
+          updateCurrentDestPod();
         }
         break;
       case EntityType[7].value:
@@ -618,7 +618,7 @@ limitations under the License. -->
     states.currentDestPod = pod.label;
   }
 
-  async function updateCurrentDestPod() {
+  function updateCurrentDestPod() {
     if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
       selectorStore.setCurrentDestPod(null);
       states.currentDestPod = "";
@@ -650,7 +650,7 @@ limitations under the License. -->
     selectorStore.setCurrentPod(pod);
     states.currentPod = pod.label || "";
   }
-  async function updateCurrentPod() {
+  function updateCurrentPod() {
     if (!(selectorStore.pods.length && selectorStore.pods[0])) {
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
