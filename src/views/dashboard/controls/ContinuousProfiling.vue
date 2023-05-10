@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="profile-wrapper flex-v">
-    <div class="title">Network Profiling</div>
+    <div class="title">Continuous Profiling</div>
     <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
       <template #reference>
         <span class="operation cp">
