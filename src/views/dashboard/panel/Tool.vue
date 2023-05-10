@@ -446,6 +446,9 @@ limitations under the License. -->
       case "addNetworkProfiling":
         dashboardStore.addTabControls("NetworkProfiling");
         break;
+      case "addContinuousProfiling":
+        dashboardStore.addTabControls("ContinuousProfiling");
+        break;
       case "addTimeRange":
         dashboardStore.addTabControls("TimeRange");
         break;
@@ -492,6 +495,9 @@ limitations under the License. -->
         break;
       case "addNetworkProfiling":
         dashboardStore.addControl("NetworkProfiling");
+        break;
+      case "addContinuousProfiling":
+        dashboardStore.addControl("ContinuousProfiling");
         break;
       case "addTimeRange":
         dashboardStore.addControl("TimeRange");
