@@ -25,13 +25,14 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
-    <div>Content</div>
+    <Content :config="props.data" />
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import Content from "../related/continuous-profiling/Content.vue";
 
   /*global defineProps */
   const props = defineProps({
