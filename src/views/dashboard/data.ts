@@ -194,7 +194,7 @@ export const ServiceTools = [
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "timeline", content: "Add Trace Profiling", id: "addProfile" },
   { name: "insert_chart", content: "Add eBPF Profiling", id: "addEbpf" },
-  { name: "insert_chart", content: "Add Continuous Profiling", id: "addContinuousProfiling" },
+  { name: "continuous_profiling", content: "Add Continuous Profiling", id: "addContinuousProfiling" },
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
   { name: "event", content: "Add Event", id: "addEvent" },
