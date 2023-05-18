@@ -21,6 +21,8 @@ import {
   GetProfileTaskSegmentList,
   GetProfileAnalyze,
   GetProfileTaskLogs,
+  GetStrategyList,
+  EditStrategy,
 } from "../fragments/profile";
 
 export const saveProfileTask = `mutation createProfileTask(${CreateProfileTask.variable}) {${CreateProfileTask.query}}`;
@@ -34,3 +36,7 @@ export const getProfileTaskSegmentList = `query getProfileTaskSegmentList(${GetP
 export const getProfileAnalyze = `query getProfileAnalyze(${GetProfileAnalyze.variable}) {${GetProfileAnalyze.query}}`;
 
 export const getProfileTaskLogs = `query profileTaskLogs(${GetProfileTaskLogs.variable}) {${GetProfileTaskLogs.query}}`;
+
+export const getStrategyList = `query GetStrategyList(${GetStrategyList.variable}) {${GetStrategyList.query}}`;
+
+export const editStrategy = `query GetStrategyList(${EditStrategy.variable}) {${EditStrategy.query}}`;

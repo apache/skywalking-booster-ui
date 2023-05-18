@@ -123,3 +123,32 @@ export const GetProfileTaskLogs = {
   }
   `,
 };
+export const GetStrategyList = {
+  variable: "$serviceId: ID",
+  query: `
+  strategyList: getStrategyList(serviceId: $serviceId) {
+    serviceId
+    targets {
+      targetType
+      checkItems {
+        type
+        threshold
+        period
+        count
+        uriList
+        uriRegex
+      }
+    }
+  }
+  `,
+};
+
+export const EditStrategy = {
+  variable: "$request: ContinuousProfilingPolicyCreation!",
+  query: `
+  strategy: setContinuousProfilingPolicy(request: $request) {
+    errorReason
+    status
+  }
+  `,
+};
