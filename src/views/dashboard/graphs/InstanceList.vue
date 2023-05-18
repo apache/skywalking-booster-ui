@@ -70,7 +70,7 @@ limitations under the License. -->
       small
       layout="prev, pager, next"
       :page-size="pageSize"
-      :total="selectorStore.pods.length"
+      :total="pods.length"
       @current-change="changePage"
       @prev-click="changePage"
       @next-click="changePage"
@@ -125,6 +125,7 @@ limitations under the License. -->
   const colMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const metricTypes = ref<string[]>(props.config.metricTypes || []);
+  const pods = ref<Instance[]>([]); // all instances
   if (props.needQuery) {
     queryInstance();
   }
@@ -137,9 +138,11 @@ limitations under the License. -->
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
       instances.value = [];
+      pods.value = [];
       return;
     }
-    instances.value = selectorStore.pods.filter((d: unknown, index: number) => index < pageSize);
+    pods.value = resp.data.pods || [];
+    instances.value = pods.value.filter((d: unknown, index: number) => index < pageSize);
     queryInstanceMetrics(instances.value);
   }
 
@@ -189,7 +192,7 @@ limitations under the License. -->
   }
 
   function changePage(pageIndex: number) {
-    instances.value = selectorStore.pods.filter((d: unknown, index: number) => {
+    instances.value = pods.value.filter((d: unknown, index: number) => {
       if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
         return d;
       }
@@ -198,7 +201,7 @@ limitations under the License. -->
   }
 
   function searchList() {
-    const searchInstances = selectorStore.pods.filter((d: { label: string }) => d.label.includes(searchText.value));
+    const searchInstances = pods.value.filter((d: { label: string }) => d.label.includes(searchText.value));
     instances.value = searchInstances.filter((d: unknown, index: number) => index < pageSize);
     queryInstanceMetrics(instances.value);
   }

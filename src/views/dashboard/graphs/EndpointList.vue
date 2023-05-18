@@ -113,7 +113,7 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
       return;
     }
-    endpoints.value = selectorStore.pods;
+    endpoints.value = resp.data.pods || [];
     queryEndpointMetrics(endpoints.value);
   }
   async function queryEndpointMetrics(currentPods: Endpoint[]) {
