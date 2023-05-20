@@ -140,9 +140,13 @@ export const continousProfilingStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.strategyList = res.data.data.queryEBPFTasks || [];
-      this.selectedStrategyTask = this.strategyList[0] || {};
-      this.setSelectedStrategyTask(this.selectedStrategyTask);
+      this.strategyList = (res.data.data.strategyList || []).map((d: StrategyItem, index: number) => {
+        return {
+          ...d,
+          id: index,
+        };
+      });
+      this.setSelectedStrategyTask(this.strategyList[0] || {});
       if (!this.strategyList.length) {
         this.nodes = [];
         this.calls = [];

@@ -385,5 +385,7 @@ const msg = {
   elasticsearch: "Elasticsearch",
   mq: "消息队列",
   rabbitMQ: "RabbitMQ",
+  save: "保存",
+  editStrategy: "编辑策略",
 };
 export default msg;

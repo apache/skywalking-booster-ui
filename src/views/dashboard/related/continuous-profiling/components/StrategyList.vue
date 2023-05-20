@@ -25,13 +25,36 @@ limitations under the License. -->
         <div class="no-data" v-show="!continousProfilingStore.strategyList.length">
           {{ t("noData") }}
         </div>
-        <div>data</div>
+        <table class="profile-t">
+          <tr
+            class="profile-tr cp"
+            v-for="(i, index) in continousProfilingStore.strategyList"
+            @click="changePolicy(i)"
+            :key="index"
+          >
+            <td
+              class="profile-td"
+              :class="{
+                selected: continousProfilingStore.selectedStrategyTask.id === i.id,
+              }"
+            >
+              <div class="ell">
+                <span class="mr-10 sm">
+                  {{ i.type }}
+                </span>
+                <span class="mr-10 sm">
+                  {{ policyItem(i.checkItems) }}
+                </span>
+              </div>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
   </div>
   <el-dialog
     v-model="updateStrategies"
-    :title="t('editStrategies')"
+    :title="t('editStrategy')"
     :destroy-on-close="true"
     fullscreen
     @closed="updateStrategies = false"
@@ -56,8 +79,12 @@ limitations under the License. -->
 
   fetchStrategyList();
 
-  async function changeStrategy(item: StrategyItem) {
-    continousProfilingStore.setSelectedNetworkTask(item);
+  function policyItem(items: CheckItems[]) {
+    return items.map((d: CheckItems) => d.type).join(";");
+  }
+
+  async function changePolicy(item: StrategyItem) {
+    continousProfilingStore.setSelectedStrategyTask(item);
   }
 
   function setStrategies() {

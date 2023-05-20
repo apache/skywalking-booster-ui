@@ -388,5 +388,7 @@ const msg = {
   elasticsearch: "Elasticsearch",
   mq: "MQ",
   rabbitMQ: "RabbitMQ",
+  save: "Save",
+  editStrategy: "Edit Policies",
 };
 export default msg;
