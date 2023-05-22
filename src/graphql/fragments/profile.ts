@@ -124,20 +124,17 @@ export const GetProfileTaskLogs = {
   `,
 };
 export const GetStrategyList = {
-  variable: "$serviceId: ID",
+  variable: "$serviceId: ID!",
   query: `
-  strategyList: getStrategyList(serviceId: $serviceId) {
-    serviceId
-    targets {
-      targetType
-      checkItems {
-        type
-        threshold
-        period
-        count
-        uriList
-        uriRegex
-      }
+  strategyList: queryContinuousProfilingServiceTargets(serviceId: $serviceId) {
+    type
+    checkItems {
+      type
+      threshold
+      period
+      count
+      uriList
+      uriRegex
     }
   }
   `,

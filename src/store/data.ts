@@ -38,4 +38,13 @@ export const TimeRangeConfig = {
   text: "text",
 };
 
-export const ControlsTypes = ["Trace", "Profile", "Log", "DemandLog", "Ebpf", "NetworkProfiling", "ThirdPartyApp"];
+export const ControlsTypes = [
+  "Trace",
+  "Profile",
+  "Log",
+  "DemandLog",
+  "Ebpf",
+  "NetworkProfiling",
+  "ThirdPartyApp",
+  "ContinuousProfiling",
+];

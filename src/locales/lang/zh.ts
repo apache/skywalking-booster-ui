@@ -387,5 +387,6 @@ const msg = {
   rabbitMQ: "RabbitMQ",
   save: "保存",
   editStrategy: "编辑策略",
+  policyList: "策略列表",
 };
 export default msg;

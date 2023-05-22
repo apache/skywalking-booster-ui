@@ -390,5 +390,6 @@ const msg = {
   rabbitMQ: "RabbitMQ",
   save: "Save",
   editStrategy: "Edit Policies",
+  policyList: "Policy List",
 };
 export default msg;

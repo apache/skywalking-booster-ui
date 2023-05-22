@@ -37,6 +37,6 @@ export const getProfileAnalyze = `query getProfileAnalyze(${GetProfileAnalyze.va
 
 export const getProfileTaskLogs = `query profileTaskLogs(${GetProfileTaskLogs.variable}) {${GetProfileTaskLogs.query}}`;
 
-export const getStrategyList = `query GetStrategyList(${GetStrategyList.variable}) {${GetStrategyList.query}}`;
+export const getStrategyList = `query getStrategyList(${GetStrategyList.variable}) {${GetStrategyList.query}}`;
 
-export const editStrategy = `query GetStrategyList(${EditStrategy.variable}) {${EditStrategy.query}}`;
+export const editStrategy = `mutation editStrategy(${EditStrategy.variable}) {${EditStrategy.query}}`;

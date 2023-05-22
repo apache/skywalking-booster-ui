@@ -16,9 +16,9 @@ limitations under the License. -->
   <div class="profile-task-list flex-v">
     <div class="profile-task-wrapper flex-v">
       <div class="profile-t-tool">
-        <span>{{ t("taskList") }}</span>
+        <span>{{ t("policyList") }}</span>
         <span class="new-task cp" @click="setStrategies">
-          <Icon iconName="library_add" size="middle" />
+          <Icon iconName="edit" size="middle" />
         </span>
       </div>
       <div class="profile-t-wrapper">
@@ -80,7 +80,7 @@ limitations under the License. -->
   fetchStrategyList();
 
   function policyItem(items: CheckItems[]) {
-    return items.map((d: CheckItems) => d.type).join(";");
+    return items.map((d: CheckItems) => `${d.type}>=${d.threshold}`).join(";");
   }
 
   async function changePolicy(item: StrategyItem) {
@@ -187,6 +187,7 @@ limitations under the License. -->
     border-bottom: 1px solid rgba(0, 0, 0, 0.07);
     background: #f3f4f9;
     width: 100%;
+    font-weight: bold;
   }
 
   .new-task {
