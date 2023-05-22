@@ -15,7 +15,7 @@ limitations under the License. -->
 
 <template>
   <div class="profile-task">
-    Edit Strategy
+    <Policy v-for="(item, index) in continousProfilingStore.strategyList" :key="index" :data="item" />
     <div>
       <el-button @click="save" type="primary" class="create-task-btn">
         {{ t("save") }}
@@ -25,13 +25,16 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
+  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
+  import Policy from "./Policy.vue";
 
   /* global defineEmits */
-  const emits = defineEmits(["create"]);
+  const emits = defineEmits(["save"]);
   const { t } = useI18n();
+  const continousProfilingStore = useContinousProfilingStore();
 
   function save() {
-    emits("create", {});
+    emits("save", {});
   }
 </script>
 <style lang="scss" scoped>

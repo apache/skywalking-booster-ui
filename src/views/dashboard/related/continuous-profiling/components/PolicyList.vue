@@ -59,7 +59,7 @@ limitations under the License. -->
     fullscreen
     @closed="updateStrategies = false"
   >
-    <EditStrategy @create="editStrategies" />
+    <EditPolicy @save="editStrategies" />
   </el-dialog>
 </template>
 <script lang="ts" setup>
@@ -69,7 +69,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
   import { ElMessage } from "element-plus";
-  import EditStrategy from "./EditStrategy.vue";
+  import EditPolicy from "./EditPolicy.vue";
 
   const { t } = useI18n();
   const selectorStore = useSelectorStore();
