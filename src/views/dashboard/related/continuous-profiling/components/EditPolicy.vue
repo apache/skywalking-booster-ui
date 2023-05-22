@@ -14,35 +14,62 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="profile-task">
-    <Policy v-for="(item, index) in continousProfilingStore.strategyList" :key="index" :data="item" />
+  <div class="policy-list">
+    <el-collapse v-model="activeNames" @change="handleChange">
+      <el-collapse-item
+        v-for="(item, index) in continousProfilingStore.strategyList"
+        :key="index"
+        :title="`Policy${index + 1}`"
+        :name="index"
+      >
+        <Policy :data="item" @edit="changePolicy" :order="index" />
+      </el-collapse-item>
+    </el-collapse>
     <div>
-      <el-button @click="save" type="primary" class="create-task-btn">
+      <el-button @click="save" type="primary" class="save-btn">
         {{ t("save") }}
       </el-button>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+  import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import Policy from "./Policy.vue";
+  import type { StrategyItem } from "@/types/continous-profiling";
 
   /* global defineEmits */
   const emits = defineEmits(["save"]);
   const { t } = useI18n();
   const continousProfilingStore = useContinousProfilingStore();
+  const activeNames = ref<string[]>(["1"]);
+  const requestParams = ref<StrategyItem[]>([]);
+
+  function changePolicy(params: StrategyItem, order: number) {
+    requestParams.value = requestParams.value.map((d: StrategyItem, index: number) => {
+      if (order === index) {
+        return params;
+      }
+      return d;
+    });
+  }
 
   function save() {
-    emits("save", {});
+    emits("save", requestParams.value);
+  }
+
+  function handleChange(val: any) {
+    activeNames.value = val;
   }
 </script>
 <style lang="scss" scoped>
-  .profile-task {
-    width: 100%;
+  .policy-list {
+    margin: 0 auto;
+    width: 300px;
   }
 
-  .create-task-btn {
+  .save-btn {
     width: 300px;
     margin-top: 50px;
   }

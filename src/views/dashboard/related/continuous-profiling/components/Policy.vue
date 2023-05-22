@@ -15,7 +15,7 @@ limitations under the License. -->
 
 <template>
   <div>
-    <div class="label">{{ t("type") }}</div>
+    <div class="label">{{ t("targetTypes") }}</div>
     <Selector
       class="profile-input"
       size="small"
@@ -27,7 +27,7 @@ limitations under the License. -->
   </div>
   <div v-for="(item, index) in states.checkItems" :key="index">
     <div>
-      <div class="label">{{ t("type") }}</div>
+      <div class="label">{{ t("monitorType") }}</div>
       <Selector
         class="profile-input"
         size="small"
@@ -39,23 +39,25 @@ limitations under the License. -->
     </div>
     <div>
       <div class="label">{{ t("count") }}</div>
-      <el-input size="small" class="profile-input" :min="0" v-model="item.count" type="number" />
+      <el-input size="small" class="profile-input" :min="0" v-model="item.count" type="number" @change="changeParam" />
     </div>
     <div>
       <div class="label">{{ t("threshold") }}</div>
-      <el-input size="small" class="profile-input" v-model="item.threshold" />
+      <el-input size="small" class="profile-input" v-model="item.threshold" @change="changeParam" />
     </div>
     <div>
       <div class="label">{{ t("period") }}</div>
-      <el-input size="small" class="profile-input" :min="0" v-model="item.period" type="number" />
+      <el-input size="small" class="profile-input" :min="0" v-model="item.period" type="number" @change="changeParam" />
     </div>
     <div>
       <div class="label">{{ t("uriRegex") }}</div>
-      <el-input size="small" class="profile-input" v-model="item.uriRegex" />
+      <el-input size="small" class="profile-input" v-model="item.uriRegex" @change="changeParam" />
     </div>
     <div>
-      <div class="label">{{ t("uriRegex") }}</div>
-      <el-input size="small" class="profile-input" v-model="item.uriRegex" />
+      <div class="label">{{ t("uriList") }}</div>
+      <div id="uri-param" contenteditable="true" @input="changeURI($event, index)" class="profile-input">
+        {{ (item.uriList || []).join("; ") }}
+      </div>
     </div>
   </div>
 </template>
@@ -63,7 +65,7 @@ limitations under the License. -->
   import { reactive } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import type { StrategyItem } from "@/types/continous-profiling";
+  import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
   import { MonitorType, TargetTypes } from "../data";
 
   /* global defineEmits, defineProps */
@@ -72,33 +74,59 @@ limitations under the License. -->
       type: Object as PropType<StrategyItem>,
       default: () => ({}),
     },
+    order: {
+      type: Number,
+      default: 0,
+    },
   });
-  const emits = defineEmits(["save"]);
+  const emits = defineEmits(["edit"]);
   const { t } = useI18n();
   const states = reactive<StrategyItem>(props.data);
 
   function changeType(opt: any[]) {
     states.type = (opt.map((d) => d.value)[0] || {}).value;
-    emits("save", states);
+    emits("edit", states, props.order);
   }
 
   function changeMonitorType(opt: any[], index: number) {
     states.checkItems[index].type = (opt.map((d) => d.value)[0] || {}).value;
-    emits("save", states);
+    emits("edit", states, props.order);
+  }
+
+  function changeURI(event: any, index: number) {
+    const params = event.target.textContent;
+    const regex = /http[^;]*;/g;
+    const arr = params.match(regex);
+    states.checkItems[index].uriList = arr.length ? arr : null;
+    emits("edit", states, props.order);
+  }
+
+  function changeParam() {
+    const checkItems = states.checkItems.map((d: CheckItems) => {
+      d.count = Number(d.count);
+      d.period = Number(d.period);
+      return d;
+    });
+    emits("edit", { ...states, checkItems }, props.order);
   }
 </script>
 <style lang="scss" scoped>
-  .profile-task {
-    width: 100%;
-  }
-
-  .create-task-btn {
+  .profile-input {
     width: 300px;
-    margin-top: 50px;
+    margin-bottom: 10px;
   }
 
-  .title {
-    display: inline-block;
-    margin-right: 5px;
+  #uri-param {
+    border: 1px solid #dcdfe6;
+    cursor: text;
+    padding: 0 5px;
+    border-radius: 4px;
+    color: #606266;
+    outline: none;
+    height: 100px;
+
+    &:focus {
+      border-color: #409eff;
+    }
   }
 </style>

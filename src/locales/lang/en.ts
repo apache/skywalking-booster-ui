@@ -391,5 +391,11 @@ const msg = {
   save: "Save",
   editStrategy: "Edit Policies",
   policyList: "Policy List",
+  targetTypes: "Target Type",
+  monitorType: "Monitor Type",
+  count: "Count",
+  threshold: "Threshold",
+  uriRegex: "URI Regex",
+  uriList: "URI List",
 };
 export default msg;

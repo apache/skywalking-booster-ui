@@ -388,5 +388,11 @@ const msg = {
   save: "保存",
   editStrategy: "编辑策略",
   policyList: "策略列表",
+  targetTypes: "目标类型",
+  monitorType: "监视器类型",
+  count: "总数",
+  threshold: "阈值",
+  uriRegex: "URI规则",
+  uriList: "URI列表",
 };
 export default msg;

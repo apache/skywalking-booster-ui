@@ -390,5 +390,11 @@ const msg = {
   save: "Salvar",
   editStrategy: "Estrategia editorial",
   policyList: "Lista de políticas",
+  targetTypes: "Tipo de objetivo",
+  monitorType: "Tipo de Monitor",
+  count: "Contar",
+  threshold: "Umbral",
+  uriRegex: "Lista URI",
+  uriList: "URI List",
 };
 export default msg;
