@@ -395,6 +395,7 @@ const msg = {
   count: "Contar",
   threshold: "Umbral",
   uriRegex: "Lista URI",
-  uriList: "URI List",
+  uriList: "Lista URI",
+  process: "Proceso",
 };
 export default msg;

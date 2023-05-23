@@ -397,5 +397,6 @@ const msg = {
   threshold: "Threshold",
   uriRegex: "URI Regex",
   uriList: "URI List",
+  process: "Process",
 };
 export default msg;

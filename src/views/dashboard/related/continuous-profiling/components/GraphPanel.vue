@@ -18,7 +18,7 @@ limitations under the License. -->
     <div class="header">
       <span class="label mr-5">{{ t("instance") }}</span>
       <Selector
-        class="selector"
+        class="selector mr-10"
         size="small"
         :value="instanceId"
         :options="continousProfilingStore.instances"
@@ -27,18 +27,21 @@ limitations under the License. -->
       />
       <span class="label mr-5">{{ t("process") }}</span>
       <Selector
-        class="selector"
+        class="selector mr-10"
         size="small"
         :value="processId"
         :options="continousProfilingStore.processes"
         placeholder="Select a process"
         @change="changeProcess"
       />
+      <el-button type="primary" size="small">
+        {{ t("analysis") }}
+      </el-button>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, watch } from "vue";
   import { useI18n } from "vue-i18n";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
@@ -49,7 +52,6 @@ limitations under the License. -->
   const processId = ref<string>("");
   const instanceId = ref<string>("");
 
-  getSelectors();
   function changeInstance(opt: { id: string }[]) {
     instanceId.value = opt[0].id;
   }
@@ -60,9 +62,20 @@ limitations under the License. -->
 
   async function getSelectors() {
     const serviceId = (selectorStore.currentService && selectorStore.currentService.id) || "";
-    await continousProfilingStore.getServiceInstances(serviceId.value);
+
+    await continousProfilingStore.getServiceInstances(serviceId);
+    instanceId.value = (continousProfilingStore.instances[0] || {}).id || "";
     await continousProfilingStore.getProcesses(instanceId.value);
+    processId.value = (continousProfilingStore.processes[0] || {}).id || "";
   }
+  getSelectors();
+
+  watch(
+    () => selectorStore.currentService,
+    () => {
+      getSelectors();
+    },
+  );
 </script>
 <style lang="scss" scoped>
   .header {
