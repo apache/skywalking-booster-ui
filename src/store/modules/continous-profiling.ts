@@ -16,7 +16,7 @@
  */
 import { defineStore } from "pinia";
 import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
-import type { ProcessNode } from "@/types/ebpf";
+import type { ProcessNode, EBPFTaskList } from "@/types/ebpf";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
@@ -26,7 +26,10 @@ import type { DurationTime } from "@/types/app";
 
 interface ContinousProfilingState {
   strategyList: Array<Recordable<StrategyItem>>;
-  selectedStrategyTask: Recordable<StrategyItem>;
+  selectedStrategy: Recordable<StrategyItem>;
+  taskList: Array<Recordable<EBPFTaskList>>;
+  selectedContinousTask: Recordable<EBPFTaskList>;
+  errorTip: string;
   errorReason: string;
   nodes: ProcessNode[];
   calls: Call[];
@@ -43,8 +46,11 @@ export const continousProfilingStore = defineStore({
   id: "continousProfiling",
   state: (): ContinousProfilingState => ({
     strategyList: [],
-    selectedStrategyTask: {},
+    selectedStrategy: {},
+    taskList: [],
+    selectedContinousTask: {},
     errorReason: "",
+    errorTip: "",
     nodes: [],
     calls: [],
     node: null,
@@ -56,8 +62,11 @@ export const continousProfilingStore = defineStore({
     loadNodes: false,
   }),
   actions: {
-    setSelectedStrategyTask(task: Recordable<StrategyItem>) {
-      this.selectedStrategyTask = task || {};
+    setSelectedStrategy(task: Recordable<StrategyItem>) {
+      this.selectedStrategy = task || {};
+    },
+    setSelectedContinousTask(task: Recordable<EBPFTaskList>) {
+      this.selectedContinousTask = task || {};
     },
     setNode(node: Nullable<ProcessNode>) {
       this.node = node;
@@ -146,8 +155,32 @@ export const continousProfilingStore = defineStore({
           id: index,
         };
       });
-      this.setSelectedStrategyTask(this.strategyList[0] || {});
+      this.setSelectedStrategy(this.strategyList[0] || {});
       if (!this.strategyList.length) {
+        this.nodes = [];
+        this.calls = [];
+      }
+      return res.data;
+    },
+    async getContinousTaskList(params: {
+      serviceId: string;
+      serviceInstanceId: string;
+      targets: string[];
+      triggerType: string;
+    }) {
+      if (!params.serviceId) {
+        return new Promise((resolve) => resolve({}));
+      }
+      const res: AxiosResponse = await graphql.query("getEBPFTasks").params(params);
+
+      this.errorTip = "";
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.taskList = res.data.data.queryEBPFTasks || [];
+      this.selectedContinousTask = this.taskList[0] || {};
+      this.setSelectedContinousTask(this.selectedContinousTask);
+      if (!this.taskList.length) {
         this.nodes = [];
         this.calls = [];
       }

@@ -48,3 +48,9 @@ export const ControlsTypes = [
   "ThirdPartyApp",
   "ContinuousProfiling",
 ];
+export enum EBPFProfilingTriggerType {
+  // Appoint the task executing total duration
+  FIXED_TIME,
+  // Trigger by the reach the continuous profiling policy
+  CONTINUOUS_PROFILING,
+}

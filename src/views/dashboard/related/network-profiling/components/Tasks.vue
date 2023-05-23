@@ -77,6 +77,7 @@ limitations under the License. -->
   import getLocalTime from "@/utils/localtime";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import NewTask from "./NewTask.vue";
+  import { EBPFProfilingTriggerType } from "@/store/data";
 
   /*global Nullable */
   const { t } = useI18n();
@@ -185,6 +186,7 @@ limitations under the License. -->
       serviceId,
       serviceInstanceId,
       targets: ["NETWORK"],
+      triggerType: EBPFProfilingTriggerType.FIXED_TIME,
     });
 
     if (res.errors) {

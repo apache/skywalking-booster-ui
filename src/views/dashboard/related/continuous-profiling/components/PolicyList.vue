@@ -35,7 +35,7 @@ limitations under the License. -->
             <td
               class="profile-td"
               :class="{
-                selected: continousProfilingStore.selectedStrategyTask.id === i.id,
+                selected: continousProfilingStore.selectedStrategy.id === i.id,
               }"
             >
               <div class="ell">
@@ -84,7 +84,7 @@ limitations under the License. -->
   }
 
   async function changePolicy(item: StrategyItem) {
-    continousProfilingStore.setSelectedStrategyTask(item);
+    continousProfilingStore.setSelectedStrategy(item);
   }
 
   function setStrategies() {

@@ -20,6 +20,7 @@ import type { EBPFTaskCreationRequest, EBPFProfilingSchedule, EBPFTaskList, Anal
 import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
+import { EBPFProfilingTriggerType } from "../data";
 interface EbpfState {
   taskList: Array<Recordable<EBPFTaskList>>;
   eBPFSchedules: EBPFProfilingSchedule[];
@@ -77,6 +78,7 @@ export const ebpfStore = defineStore({
       this.getTaskList({
         serviceId: param.serviceId,
         targets: ["ON_CPU", "OFF_CPU"],
+        triggerType: EBPFProfilingTriggerType.FIXED_TIME,
       });
       return res.data;
     },
