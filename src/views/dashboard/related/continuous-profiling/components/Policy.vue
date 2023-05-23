@@ -83,13 +83,13 @@ limitations under the License. -->
   const { t } = useI18n();
   const states = reactive<StrategyItem>(props.data);
 
-  function changeType(opt: any[]) {
-    states.type = (opt.map((d) => d.value)[0] || {}).value;
+  function changeType(opt: { value: string }[]) {
+    states.type = opt[0].value;
     emits("edit", states, props.order);
   }
 
-  function changeMonitorType(opt: any[], index: number) {
-    states.checkItems[index].type = (opt.map((d) => d.value)[0] || {}).value;
+  function changeMonitorType(opt: { value: string }[], index: number) {
+    states.checkItems[index].type = opt[0].value;
     emits("edit", states, props.order);
   }
 

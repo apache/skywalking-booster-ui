@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
 import type { ProcessNode, EBPFTaskList } from "@/types/ebpf";
+import type { Instance, Process } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
@@ -32,6 +34,8 @@ interface ContinousProfilingState {
   selectedContinousTask: Recordable<EBPFTaskList>;
   errorTip: string;
   errorReason: string;
+  processes: Process[];
+  instances: Instance[];
   nodes: ProcessNode[];
   calls: Call[];
   node: Nullable<ProcessNode>;
@@ -52,6 +56,8 @@ export const continousProfilingStore = defineStore({
     selectedContinousTask: {},
     errorReason: "",
     errorTip: "",
+    processes: [],
+    instances: [],
     nodes: [],
     calls: [],
     node: null,
@@ -189,6 +195,32 @@ export const continousProfilingStore = defineStore({
       if (!this.taskList.length) {
         this.nodes = [];
         this.calls = [];
+      }
+      return res.data;
+    },
+    async getServiceInstances(serviceId: string): Promise<Nullable<AxiosResponse>> {
+      if (!serviceId) {
+        return null;
+      }
+      const res: AxiosResponse = await graphql.query("queryInstances").params({
+        serviceId,
+        duration: useAppStoreWithOut().durationTime,
+      });
+      if (!res.data.errors) {
+        this.instances = res.data.data.pods || [];
+      }
+      return res.data;
+    },
+    async getProcesses(instanceId: string): Promise<Nullable<AxiosResponse>> {
+      if (!instanceId) {
+        return null;
+      }
+      const res: AxiosResponse = await graphql.query("queryProcesses").params({
+        instanceId,
+        duration: useAppStoreWithOut().durationTime,
+      });
+      if (!res.data.errors) {
+        this.processes = res.data.data.processes || [];
       }
       return res.data;
     },
