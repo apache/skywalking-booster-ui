@@ -49,8 +49,6 @@ export const ControlsTypes = [
   "ContinuousProfiling",
 ];
 export enum EBPFProfilingTriggerType {
-  // Appoint the task executing total duration
-  FIXED_TIME,
-  // Trigger by the reach the continuous profiling policy
-  CONTINUOUS_PROFILING,
+  FIXED_TIME = "FIXED_TIME",
+  CONTINUOUS_PROFILING = "CONTINUOUS_PROFILING",
 }

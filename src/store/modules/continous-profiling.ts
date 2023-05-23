@@ -23,6 +23,7 @@ import type { AxiosResponse } from "axios";
 import type { Call } from "@/types/topology";
 import type { LayoutConfig } from "@/types/dashboard";
 import type { DurationTime } from "@/types/app";
+import { EBPFProfilingTriggerType } from "../data";
 
 interface ContinousProfilingState {
   strategyList: Array<Recordable<StrategyItem>>;
@@ -156,6 +157,11 @@ export const continousProfilingStore = defineStore({
         };
       });
       this.setSelectedStrategy(this.strategyList[0] || {});
+      this.getContinousTaskList({
+        serviceId: params.serviceId,
+        targets: [this.selectedStrategy.type],
+        triggerType: EBPFProfilingTriggerType.CONTINUOUS_PROFILING,
+      });
       if (!this.strategyList.length) {
         this.nodes = [];
         this.calls = [];

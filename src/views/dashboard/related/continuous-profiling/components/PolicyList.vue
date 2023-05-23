@@ -70,6 +70,7 @@ limitations under the License. -->
   import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
   import { ElMessage } from "element-plus";
   import EditPolicy from "./EditPolicy.vue";
+  import { EBPFProfilingTriggerType } from "@/store/data";
 
   const { t } = useI18n();
   const selectorStore = useSelectorStore();
@@ -85,6 +86,12 @@ limitations under the License. -->
 
   async function changePolicy(item: StrategyItem) {
     continousProfilingStore.setSelectedStrategy(item);
+    const serviceId = (selectorStore.currentService && selectorStore.currentService.id) || "";
+    await continousProfilingStore.getContinousTaskList({
+      serviceId,
+      targets: [item.type],
+      triggerType: EBPFProfilingTriggerType.CONTINUOUS_PROFILING,
+    });
   }
 
   function setStrategies() {

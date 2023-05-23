@@ -34,7 +34,7 @@ export const createEBPFTask = {
 };
 export const queryEBPFTasks = {
   variable:
-    "$serviceId: ID, $serviceInstanceId: ID, $targets: [EBPFProfilingTargetType!], triggerType: EBPFProfilingTriggerType",
+    "$serviceId: ID, $serviceInstanceId: ID, $targets: [EBPFProfilingTargetType!], $triggerType: EBPFProfilingTriggerType",
   query: `
   queryEBPFTasks: queryEBPFProfilingTasks(serviceId: $serviceId, serviceInstanceId: $serviceInstanceId, targets: $targets, triggerType: $triggerType) {
     taskId

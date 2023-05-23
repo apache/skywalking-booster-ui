@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="flex-h content">
     <div class="list flex-v">
       <PolicyList />
-      <div>tasks</div>
+      <TaskList />
     </div>
     <div>graph</div>
   </div>
@@ -25,6 +25,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import PolicyList from "./components/PolicyList.vue";
+  import TaskList from "./components/TaskList.vue";
   /*global defineProps */
   defineProps({
     config: {
