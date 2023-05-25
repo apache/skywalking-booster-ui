@@ -38,6 +38,7 @@ limitations under the License. -->
         {{ t("analysis") }}
       </el-button>
     </div>
+    <div class="graph"> graph </div>
   </div>
 </template>
 <script lang="ts" setup>
