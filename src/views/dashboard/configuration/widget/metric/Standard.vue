@@ -85,7 +85,7 @@ limitations under the License. -->
         type="number"
         :min="1"
         :max="100"
-        @change="changeConfigs(index, { topN: currentMetric.topN || 10 })"
+        @change="changeConfigs(index, { topN: Number(currentMetric.topN) || 10 })"
       />
     </div>
   </div>
@@ -150,7 +150,7 @@ limitations under the License. -->
     () => {
       currentMetric.value = {
         ...props.currentMetricConfig,
-        topN: props.currentMetricConfig.topN || 10,
+        topN: Number(props.currentMetricConfig.topN) || 10,
       };
     },
   );

@@ -58,7 +58,7 @@ export function useQueryProcessor(config: Indexable) {
         parentService: ["All"].includes(dashboardStore.entity) ? null : selectorStore.currentService.value,
         normal: selectorStore.currentService ? selectorStore.currentService.normal : true,
         scope: config.catalog,
-        topN: c.topN || 10,
+        topN: Number(c.topN) || 10,
         order: c.sortOrder || "DES",
       };
     } else {
@@ -95,7 +95,7 @@ export function useQueryProcessor(config: Indexable) {
         conditions[`condition${index}`] = {
           name,
           parentEntity: entity,
-          topN: c.topN || 10,
+          topN: Number(c.topN) || 10,
           order: c.sortOrder || "DES",
         };
       } else {
