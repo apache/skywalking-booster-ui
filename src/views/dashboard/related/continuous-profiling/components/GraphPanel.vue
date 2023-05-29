@@ -34,20 +34,42 @@ limitations under the License. -->
         placeholder="Select a process"
         @change="changeProcess"
       />
-      <el-button type="primary" size="small">
+      <el-button type="primary" size="small" @click="analyzeTask">
         {{ t("analysis") }}
       </el-button>
     </div>
-    <div class="graph"> graph </div>
+    <div
+      class="vis-graph ml-5"
+      v-loading="networkProfilingStore.loadNodes"
+      v-if="continousProfilingStore.selectedContinousTask.type === TargetTypes[2].value"
+    >
+      <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
+      <div class="text" v-else>
+        {{ t("noData") }}
+      </div>
+    </div>
+    <div v-else class="vis-graph ml-5"> ebpf </div>
   </div>
 </template>
 <script lang="ts" setup>
   import { ref, watch } from "vue";
+  import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
+  import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
+  import ProcessTopology from "@/views/dashboard/related/network-profiling/components/ProcessTopology.vue";
+  import { TargetTypes } from "../data";
 
+  /*global defineProps */
+  defineProps({
+    config: {
+      type: Object as PropType<any>,
+      default: () => ({ graph: {} }),
+    },
+  });
   const continousProfilingStore = useContinousProfilingStore();
+  const networkProfilingStore = useNetworkProfilingStore();
   const selectorStore = useSelectorStore();
   const { t } = useI18n();
   const processId = ref<string>("");
@@ -59,6 +81,10 @@ limitations under the License. -->
 
   function changeProcess(opt: { id: string }[]) {
     processId.value = opt[0].id;
+  }
+
+  function analyzeTask() {
+    networkProfilingStore.setSelectedNetworkTask(continousProfilingStore.selectedContinousTask);
   }
 
   async function getSelectors() {

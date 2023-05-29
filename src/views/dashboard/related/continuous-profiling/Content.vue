@@ -18,15 +18,15 @@ limitations under the License. -->
       <PolicyList />
       <TaskList />
     </div>
-    <GraphPanel />
+    <GraphPanel :config="config" />
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
-  import { useI18n } from "vue-i18n";
   import PolicyList from "./components/PolicyList.vue";
   import TaskList from "./components/TaskList.vue";
   import GraphPanel from "./components/GraphPanel.vue";
+
   /*global defineProps */
   defineProps({
     config: {
@@ -34,7 +34,6 @@ limitations under the License. -->
       default: () => ({ graph: {} }),
     },
   });
-  const { t } = useI18n();
 </script>
 <style lang="scss" scoped>
   .content {
