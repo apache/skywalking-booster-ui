@@ -65,6 +65,12 @@ export const networkProfilingStore = defineStore({
     setLink(link: Call) {
       this.call = link;
     },
+    seNodes(nodes: Node[]) {
+      this.nodes = nodes;
+    },
+    setLinks(links: Call[]) {
+      this.calls = links;
+    },
     setMetricsLayout(layout: LayoutConfig[]) {
       this.metricsLayout = layout;
     },

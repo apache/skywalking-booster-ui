@@ -39,7 +39,7 @@ limitations under the License. -->
       </el-button>
     </div>
     <div
-      class="vis-graph ml-5"
+      class="vis-graph-topology ml-5"
       v-loading="networkProfilingStore.loadNodes"
       v-if="continousProfilingStore.selectedContinousTask.type === TargetTypes[2].value"
     >
@@ -48,7 +48,14 @@ limitations under the License. -->
         {{ t("noData") }}
       </div>
     </div>
-    <div v-else class="vis-graph ml-5"> ebpf </div>
+    <div class="vis-graph ml-5" v-else>
+      <div class="schedules">
+        <EBPFSchedules :type="ComponentType" />
+      </div>
+      <div class="item">
+        <EBPFStack :type="ComponentType" />
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -61,7 +68,9 @@ limitations under the License. -->
   import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import ProcessTopology from "@/views/dashboard/related/network-profiling/components/ProcessTopology.vue";
-  import { TargetTypes } from "../data";
+  import EBPFSchedules from "@/views/dashboard/related/ebpf/components/EBPFSchedules.vue";
+  import EBPFStack from "@/views/dashboard/related/ebpf/components/EBPFStack.vue";
+  import { TargetTypes, ComponentType } from "../data";
   import dateFormatStep from "@/utils/dateFormat";
   import getLocalTime from "@/utils/localtime";
 
@@ -94,6 +103,12 @@ limitations under the License. -->
       await getTopology();
 
       return;
+    }
+    const res = await continousProfilingStore.getEBPFSchedules({
+      taskId: continousProfilingStore.selectedContinousTask.taskId,
+    });
+    if (res.errors) {
+      ElMessage.error(res.errors);
     }
   }
 
@@ -147,5 +162,21 @@ limitations under the License. -->
 
   .selector {
     width: 220px;
+  }
+
+  .vis-graph {
+    height: 100%;
+    flex-grow: 2;
+    min-width: 700px;
+    overflow: auto;
+  }
+
+  .vis-graph-topology {
+    height: 100%;
+    flex-grow: 2;
+    min-width: 700px;
+    overflow: hidden;
+    position: relative;
+    width: calc(100% - 330px);
   }
 </style>

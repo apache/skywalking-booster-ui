@@ -16,15 +16,13 @@
  */
 import { defineStore } from "pinia";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
-import type { ProcessNode, EBPFTaskList } from "@/types/ebpf";
+import type { EBPFTaskList, EBPFProfilingSchedule, AnalyzationTrees } from "@/types/ebpf";
 import type { Instance, Process } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
-import type { Call } from "@/types/topology";
-import type { LayoutConfig } from "@/types/dashboard";
-import type { DurationTime } from "@/types/app";
 import { EBPFProfilingTriggerType } from "../data";
 
 interface ContinousProfilingState {
@@ -36,15 +34,11 @@ interface ContinousProfilingState {
   errorReason: string;
   processes: Process[];
   instances: Instance[];
-  nodes: ProcessNode[];
-  calls: Call[];
-  node: Nullable<ProcessNode>;
-  call: Nullable<Call>;
-  metricsLayout: LayoutConfig[];
-  selectedMetric: Nullable<LayoutConfig>;
-  activeMetricIndex: string;
-  aliveNetwork: boolean;
-  loadNodes: boolean;
+  eBPFSchedules: EBPFProfilingSchedule[];
+  currentSchedule: EBPFProfilingSchedule | Record<string, never>;
+  analyzeTrees: AnalyzationTrees[];
+  ebpfTips: string;
+  aggregateType: string;
 }
 
 export const continousProfilingStore = defineStore({
@@ -56,17 +50,13 @@ export const continousProfilingStore = defineStore({
     selectedContinousTask: {},
     errorReason: "",
     errorTip: "",
+    ebpfTips: "",
     processes: [],
     instances: [],
-    nodes: [],
-    calls: [],
-    node: null,
-    call: null,
-    metricsLayout: [],
-    selectedMetric: null,
-    activeMetricIndex: "",
-    aliveNetwork: false,
-    loadNodes: false,
+    eBPFSchedules: [],
+    currentSchedule: {},
+    analyzeTrees: [],
+    aggregateType: "COUNT",
   }),
   actions: {
     setSelectedStrategy(task: Recordable<StrategyItem>) {
@@ -75,57 +65,11 @@ export const continousProfilingStore = defineStore({
     setSelectedContinousTask(task: Recordable<EBPFTaskList>) {
       this.selectedContinousTask = task || {};
     },
-    setNode(node: Nullable<ProcessNode>) {
-      this.node = node;
+    setCurrentSchedule(s: EBPFProfilingSchedule) {
+      this.currentSchedule = s;
     },
-    setLink(link: Call) {
-      this.call = link;
-    },
-    setMetricsLayout(layout: LayoutConfig[]) {
-      this.metricsLayout = layout;
-    },
-    setSelectedMetric(item: LayoutConfig) {
-      this.selectedMetric = item;
-    },
-    setActiveItem(index: string) {
-      this.activeMetricIndex = index;
-    },
-    setTopology(data: { nodes: ProcessNode[]; calls: Call[] }) {
-      const obj = {} as Recordable;
-      let calls = (data.calls || []).reduce((prev: Call[], next: Call) => {
-        if (!obj[next.id]) {
-          obj[next.id] = true;
-          next.value = next.value || 1;
-          for (const node of data.nodes) {
-            if (next.source === node.id) {
-              next.sourceObj = node;
-            }
-            if (next.target === node.id) {
-              next.targetObj = node;
-            }
-          }
-          next.value = next.value || 1;
-          prev.push(next);
-        }
-        return prev;
-      }, []);
-      const param = {} as Recordable;
-      calls = data.calls.reduce((prev: (Call & Recordable)[], next: Call & Recordable) => {
-        if (param[next.targetId + next.sourceId]) {
-          next.lowerArc = true;
-        }
-        param[next.sourceId + next.targetId] = true;
-        next.sourceId = next.source;
-        next.targetId = next.target;
-        next.source = next.sourceObj;
-        next.target = next.targetObj;
-        delete next.sourceObj;
-        delete next.targetObj;
-        prev.push(next);
-        return prev;
-      }, []);
-      this.calls = calls;
-      this.nodes = data.nodes;
+    setAnalyzeTrees(tree: AnalyzationTrees[]) {
+      this.analyzeTrees = tree;
     },
     async setContinuousProfilingPolicy(
       serviceId: string,
@@ -193,8 +137,11 @@ export const continousProfilingStore = defineStore({
       this.selectedContinousTask = this.taskList[0] || {};
       this.setSelectedContinousTask(this.selectedContinousTask);
       if (!this.taskList.length) {
-        this.nodes = [];
-        this.calls = [];
+        const networkProfilingStore = useNetworkProfilingStore();
+        networkProfilingStore.seNodes([]);
+        networkProfilingStore.setLinks([]);
+        this.eBPFSchedules = [];
+        this.analyzeTrees = [];
       }
       return res.data;
     },
@@ -224,18 +171,55 @@ export const continousProfilingStore = defineStore({
       }
       return res.data;
     },
-    async getProcessTopology(params: { duration: DurationTime; serviceInstanceId: string }) {
-      this.loadNodes = true;
-      const res: AxiosResponse = await graphql.query("getProcessTopology").params(params);
-      this.loadNodes = false;
+    async getEBPFSchedules(params: { taskId: string }) {
+      if (!params.taskId) {
+        return new Promise((resolve) => resolve({}));
+      }
+      const res: AxiosResponse = await graphql.query("getEBPFSchedules").params({ ...params });
+
       if (res.data.errors) {
-        this.nodes = [];
-        this.calls = [];
+        this.eBPFSchedules = [];
         return res.data;
       }
-      const { topology } = res.data.data;
+      this.ebpftTips = "";
+      const { eBPFSchedules } = res.data.data;
 
-      this.setTopology(topology);
+      this.eBPFSchedules = eBPFSchedules;
+      if (!eBPFSchedules.length) {
+        this.eBPFSchedules = [];
+        this.analyzeTrees = [];
+      }
+      return res.data;
+    },
+    async getEBPFAnalyze(params: {
+      scheduleIdList: string[];
+      timeRanges: Array<{ start: number; end: number }>;
+      aggregateType: string;
+    }) {
+      this.aggregateType = params.aggregateType;
+      if (!params.scheduleIdList.length) {
+        return new Promise((resolve) => resolve({}));
+      }
+      if (!params.timeRanges.length) {
+        return new Promise((resolve) => resolve({}));
+      }
+      const res: AxiosResponse = await graphql.query("getEBPFResult").params(params);
+
+      if (res.data.errors) {
+        this.analyzeTrees = [];
+        return res.data;
+      }
+      const { analysisEBPFResult } = res.data.data;
+      this.ebpftTips = analysisEBPFResult.tip;
+      if (!analysisEBPFResult) {
+        this.analyzeTrees = [];
+        return res.data;
+      }
+      if (analysisEBPFResult.tip) {
+        this.analyzeTrees = [];
+        return res.data;
+      }
+      this.analyzeTrees = analysisEBPFResult.trees;
       return res.data;
     },
   },

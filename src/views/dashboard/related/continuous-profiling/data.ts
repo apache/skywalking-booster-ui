@@ -28,3 +28,5 @@ export const TargetTypes = [
   { label: "OFF_CPU", value: "OFF_CPU" },
   { label: "NETWORK", value: "NETWORK" },
 ];
+
+export const ComponentType = "CONTINOUS_PROFILING";

@@ -28,7 +28,7 @@ interface EbpfState {
   analyzeTrees: AnalyzationTrees[];
   labels: Option[];
   couldProfiling: boolean;
-  tip: string;
+  ebpfTips: string;
   selectedTask: Recordable<EBPFTaskList>;
   aggregateType: string;
 }
@@ -42,7 +42,7 @@ export const ebpfStore = defineStore({
     analyzeTrees: [],
     labels: [{ value: "", label: "" }],
     couldProfiling: false,
-    tip: "",
+    ebpfTips: "",
     selectedTask: {},
     aggregateType: "COUNT",
   }),
@@ -88,7 +88,7 @@ export const ebpfStore = defineStore({
       }
       const res: AxiosResponse = await graphql.query("getEBPFTasks").params(params);
 
-      this.tip = "";
+      this.ebpfTips = "";
       if (res.data.errors) {
         return res.data;
       }
@@ -111,7 +111,7 @@ export const ebpfStore = defineStore({
         this.eBPFSchedules = [];
         return res.data;
       }
-      this.tip = "";
+      this.ebpfTips = "";
       const { eBPFSchedules } = res.data.data;
 
       this.eBPFSchedules = eBPFSchedules;
@@ -140,7 +140,7 @@ export const ebpfStore = defineStore({
         return res.data;
       }
       const { analysisEBPFResult } = res.data.data;
-      this.tip = analysisEBPFResult.tip;
+      this.ebpfTips = analysisEBPFResult.tip;
       if (!analysisEBPFResult) {
         this.analyzeTrees = [];
         return res.data;

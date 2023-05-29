@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div id="graph-stack" ref="graph">
-    <span class="tip" v-show="ebpfStore.tip">{{ ebpfStore.tip }}</span>
+    <span class="tip" v-show="ebpfStore.ebpfTips">{{ ebpfStore.ebpfTips }}</span>
   </div>
 </template>
 <script lang="ts" setup>
@@ -23,12 +23,20 @@ limitations under the License. -->
   import d3tip from "d3-tip";
   import { flamegraph } from "d3-flame-graph";
   import { useEbpfStore } from "@/store/modules/ebpf";
+  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
+  import { ComponentType } from "@/views/dashboard/related/continuous-profiling/data";
   import type { StackElement } from "@/types/ebpf";
   import { AggregateTypes } from "./data";
   import "d3-flame-graph/dist/d3-flamegraph.css";
 
-  /*global Nullable*/
-  const ebpfStore = useEbpfStore();
+  /*global Nullable, defineProps*/
+  const props = defineProps({
+    type: {
+      type: String,
+      default: "",
+    },
+  });
+  const ebpfStore = props.type === ComponentType ? useContinousProfilingStore() : useEbpfStore();
   const stackTree = ref<Nullable<StackElement>>(null);
   const selectStack = ref<Nullable<StackElement>>(null);
   const graph = ref<Nullable<HTMLDivElement>>(null);
