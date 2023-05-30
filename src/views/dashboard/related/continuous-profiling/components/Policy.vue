@@ -19,7 +19,7 @@ limitations under the License. -->
     <Selector
       class="profile-input"
       size="small"
-      :value="states.type"
+      :value="states.targetType"
       :options="TargetTypes"
       placeholder="Select a type"
       @change="changeType"
@@ -84,7 +84,7 @@ limitations under the License. -->
   const states = reactive<StrategyItem>(props.data);
 
   function changeType(opt: { value: string }[]) {
-    states.type = opt[0].value;
+    states.targetType = opt[0].value;
     emits("edit", states, props.order);
   }
 

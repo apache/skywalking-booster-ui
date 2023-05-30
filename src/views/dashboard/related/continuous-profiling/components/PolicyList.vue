@@ -82,16 +82,12 @@ limitations under the License. -->
 
   fetchStrategyList();
 
-  function policyItem(items: CheckItems[]) {
-    return items.map((d: CheckItems) => `${d.type}>=${d.threshold}`).join(";");
-  }
-
   async function changePolicy(item: StrategyItem) {
     continousProfilingStore.setSelectedStrategy(item);
     const serviceId = (selectorStore.currentService && selectorStore.currentService.id) || "";
     await continousProfilingStore.getContinousTaskList({
       serviceId,
-      targets: [item.type],
+      targets: [item.targetType],
       triggerType: EBPFProfilingTriggerType.CONTINUOUS_PROFILING,
     });
   }

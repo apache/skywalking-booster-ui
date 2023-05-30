@@ -16,7 +16,7 @@
  */
 
 export interface StrategyItem {
-  type: string;
+  targetType: string;
   checkItems: CheckItems[];
 }
 export type CheckItems = {
@@ -24,6 +24,6 @@ export type CheckItems = {
   threshold: string;
   period: number;
   count: number;
-  uriList: string[];
-  uriRegex: string;
+  uriList?: string[];
+  uriRegex?: string;
 };
