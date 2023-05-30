@@ -41,7 +41,7 @@ limitations under the License. -->
     <div
       class="vis-graph-topology ml-5"
       v-loading="networkProfilingStore.loadNodes"
-      v-if="continousProfilingStore.selectedContinousTask.type === TargetTypes[2].value"
+      v-if="continousProfilingStore.selectedTask.type === TargetTypes[2].value"
     >
       <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
       <div class="text" v-else>
@@ -98,14 +98,14 @@ limitations under the License. -->
   }
 
   async function analyzeTask() {
-    if (continousProfilingStore.selectedContinousTask.type === TargetTypes[2].value) {
-      await networkProfilingStore.setSelectedNetworkTask(continousProfilingStore.selectedContinousTask);
+    if (continousProfilingStore.selectedTask.type === TargetTypes[2].value) {
+      await networkProfilingStore.setSelectedNetworkTask(continousProfilingStore.selectedTask);
       await getTopology();
 
       return;
     }
     const res = await continousProfilingStore.getEBPFSchedules({
-      taskId: continousProfilingStore.selectedContinousTask.taskId,
+      taskId: continousProfilingStore.selectedTask.taskId,
     });
     if (res.errors) {
       ElMessage.error(res.errors);

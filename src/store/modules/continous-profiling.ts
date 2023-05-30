@@ -29,7 +29,7 @@ interface ContinousProfilingState {
   strategyList: Array<Recordable<StrategyItem>>;
   selectedStrategy: Recordable<StrategyItem>;
   taskList: Array<Recordable<EBPFTaskList>>;
-  selectedContinousTask: Recordable<EBPFTaskList>;
+  selectedTask: Recordable<EBPFTaskList>;
   errorTip: string;
   errorReason: string;
   processes: Process[];
@@ -47,7 +47,7 @@ export const continousProfilingStore = defineStore({
     strategyList: [],
     selectedStrategy: {},
     taskList: [],
-    selectedContinousTask: {},
+    selectedTask: {},
     errorReason: "",
     errorTip: "",
     ebpfTips: "",
@@ -62,8 +62,8 @@ export const continousProfilingStore = defineStore({
     setSelectedStrategy(task: Recordable<StrategyItem>) {
       this.selectedStrategy = task || {};
     },
-    setSelectedContinousTask(task: Recordable<EBPFTaskList>) {
-      this.selectedContinousTask = task || {};
+    setselectedTask(task: Recordable<EBPFTaskList>) {
+      this.selectedTask = task || {};
     },
     setCurrentSchedule(s: EBPFProfilingSchedule) {
       this.currentSchedule = s;
@@ -134,8 +134,8 @@ export const continousProfilingStore = defineStore({
         return res.data;
       }
       this.taskList = res.data.data.queryEBPFTasks || [];
-      this.selectedContinousTask = this.taskList[0] || {};
-      this.setSelectedContinousTask(this.selectedContinousTask);
+      this.selectedTask = this.taskList[0] || {};
+      this.setselectedTask(this.selectedTask);
       if (!this.taskList.length) {
         const networkProfilingStore = useNetworkProfilingStore();
         networkProfilingStore.seNodes([]);

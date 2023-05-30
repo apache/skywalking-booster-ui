@@ -30,7 +30,7 @@ limitations under the License. -->
             <td
               class="profile-td"
               :class="{
-                selected: continousProfilingStore.selectedContinousTask.taskId === i.taskId,
+                selected: continousProfilingStore.selectedTask.taskId === i.taskId,
               }"
             >
               <div class="ell">
@@ -70,7 +70,7 @@ limitations under the License. -->
   const viewDetail = ref<boolean>(false);
 
   async function changeTask(item: EBPFTaskList) {
-    continousProfilingStore.setSelectedContinousTask(item);
+    continousProfilingStore.setselectedTask(item);
   }
 </script>
 <style lang="scss" scoped>
