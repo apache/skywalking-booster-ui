@@ -33,13 +33,13 @@ limitations under the License. -->
                 selected: continousProfilingStore.selectedTask.taskId === i.taskId,
               }"
             >
-              <div class="ell">
+              <div class="ell" v-for="(cause, j) in i.continuousProfilingCauses" :key="j">
                 <span>
-                  {{ i.targetType + ": " + (i.processLabels.length ? i.processLabels.join(" ") : `All Processes`) }}
+                  {{ `${cause.type}: ${getURI(cause.uri)}${cause.uri.threshold}>=${cause.uri.current}; ` }}
                 </span>
-                <a class="profile-view r" @click="viewDetail = true">
+                <!-- <a class="profile-view r" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
-                </a>
+                </a> -->
               </div>
               <div class="grey ell sm">
                 <span class="mr-10 sm">{{ dateFormat(i.taskStartTime) }}</span>
@@ -53,29 +53,33 @@ limitations under the License. -->
       </div>
     </div>
   </div>
-  <el-dialog v-model="viewDetail" :destroy-on-close="true" fullscreen @closed="viewDetail = false">
+  <!-- <el-dialog v-model="viewDetail" :destroy-on-close="true" fullscreen @closed="viewDetail = false">
     <TaskDetails :details="continousProfilingStore.selectedTask" />
-  </el-dialog>
+  </el-dialog> -->
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  // import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import type { EBPFTaskList } from "@/types/ebpf";
-  import TaskDetails from "../../components/TaskDetails.vue";
+  // import TaskDetails from "../../components/TaskDetails.vue";
   import { dateFormat } from "@/utils/dateFormat";
 
   const { t } = useI18n();
   const continousProfilingStore = useContinousProfilingStore();
-  const viewDetail = ref<boolean>(false);
+  // const viewDetail = ref<boolean>(false);
 
   async function changeTask(item: EBPFTaskList) {
-    continousProfilingStore.setselectedTask(item);
+    continousProfilingStore.setSelectedContinousTask(item);
+  }
+
+  function getURI(uri: { uriRegex: string; uriPath: string }) {
+    return uri ? `(${uri.uriRegex || ""} | ${uri.uriPath || ""})` : "";
   }
 </script>
 <style lang="scss" scoped>
   .profile-task-list {
-    width: 330px;
+    width: 300px;
     height: calc(100% - 10px);
     overflow: auto;
     border-right: 1px solid rgba(0, 0, 0, 0.1);

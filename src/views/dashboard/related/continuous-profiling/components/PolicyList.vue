@@ -145,7 +145,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .profile-task-list {
-    width: 330px;
+    width: 300px;
     height: calc(100% - 10px);
     overflow: auto;
     border-right: 1px solid rgba(0, 0, 0, 0.1);
