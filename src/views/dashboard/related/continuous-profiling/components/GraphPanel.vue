@@ -38,22 +38,24 @@ limitations under the License. -->
         {{ t("analysis") }}
       </el-button>
     </div>
-    <div
-      class="vis-graph-topology ml-5"
-      v-loading="networkProfilingStore.loadNodes"
-      v-if="continousProfilingStore.selectedTask.type === TargetTypes[2].value"
-    >
-      <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
-      <div class="text" v-else>
-        {{ t("noData") }}
+    <div v-if="continousProfilingStore.selectedTask.type">
+      <div
+        class="vis-graph-topology ml-5"
+        v-loading="networkProfilingStore.loadNodes"
+        v-if="continousProfilingStore.selectedTask.type === TargetTypes[2].value"
+      >
+        <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
+        <div class="text" v-else>
+          {{ t("noData") }}
+        </div>
       </div>
-    </div>
-    <div class="vis-graph ml-5" v-else>
-      <div class="schedules">
-        <EBPFSchedules :type="ComponentType" />
-      </div>
-      <div class="item">
-        <EBPFStack :type="ComponentType" />
+      <div class="vis-graph ml-5" v-else>
+        <div class="schedules">
+          <EBPFSchedules :type="ComponentType" />
+        </div>
+        <div class="item">
+          <EBPFStack :type="ComponentType" />
+        </div>
       </div>
     </div>
   </div>
