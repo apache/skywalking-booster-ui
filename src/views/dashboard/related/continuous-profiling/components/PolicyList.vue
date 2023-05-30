@@ -39,11 +39,13 @@ limitations under the License. -->
               }"
             >
               <div class="ell">
-                <span class="mr-10 sm">
+                <span class="sm">
                   {{ i.type }}
                 </span>
-                <span class="mr-10 sm">
-                  {{ policyItem(i.checkItems) }}
+              </div>
+              <div class="grey ell sm" v-for="(item, index) in i.checkItems" :key="index">
+                <span class="sm">
+                  {{ `${item.type} >= ${item.threshold}; ` }}
                 </span>
               </div>
             </td>

@@ -35,7 +35,7 @@ limitations under the License. -->
             >
               <div class="ell" v-for="(cause, j) in i.continuousProfilingCauses" :key="j">
                 <span>
-                  {{ `${cause.type}: ${getURI(cause.uri)}${cause.uri.threshold}>=${cause.uri.current}; ` }}
+                  {{ `${cause.type}: ${getURI(cause.uri)}${cause.uri.threshold}>=${cause.uri.current}` }}
                 </span>
                 <!-- <a class="profile-view r" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
