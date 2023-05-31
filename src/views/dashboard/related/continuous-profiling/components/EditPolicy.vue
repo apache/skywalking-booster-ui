@@ -80,7 +80,7 @@ limitations under the License. -->
   function createPolicy(e: PointerEvent) {
     e.stopPropagation();
     policyList.value.push({
-      targetType: "",
+      type: "",
       checkItems: [
         {
           type: "",
@@ -99,9 +99,9 @@ limitations under the License. -->
       const checkItems = d.checkItems.filter(
         (item: CheckItems) => item.type && item.threshold && item.period && item.count,
       );
-      if (d.targetType && checkItems.length) {
+      if (d.type && checkItems.length) {
         const v = {
-          ...d,
+          targetType: d.type,
           checkItems,
         };
         params.push(v);

@@ -87,7 +87,7 @@ limitations under the License. -->
     const serviceId = (selectorStore.currentService && selectorStore.currentService.id) || "";
     await continousProfilingStore.getContinousTaskList({
       serviceId,
-      targets: [item.targetType],
+      targets: [item.type],
       triggerType: EBPFProfilingTriggerType.CONTINUOUS_PROFILING,
     });
   }

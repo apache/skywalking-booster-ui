@@ -16,7 +16,7 @@
  */
 
 export interface StrategyItem {
-  targetType: string;
+  type: string;
   checkItems: CheckItems[];
 }
 export type CheckItems = {

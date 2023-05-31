@@ -18,7 +18,7 @@ limitations under the License. -->
     <Selector
       class="profile-input"
       size="small"
-      :value="states.targetType"
+      :value="states.type"
       :options="TargetTypes"
       placeholder="Select a type"
       @change="changeType"
@@ -58,8 +58,17 @@ limitations under the License. -->
       <el-input-number size="small" class="profile-input" :min="0" v-model="item.count" @change="changeParam" />
     </div>
     <div>
-      <div class="label">{{ t("threshold") }}</div>
-      <el-input size="small" class="profile-input" v-model="item.threshold" @change="changeParam" />
+      <div class="label">
+        <span class="mr-5">{{ t("threshold") }}</span>
+        <span>({{ getNotice(item.type) }} )</span>
+      </div>
+      <el-input
+        type="number"
+        size="small"
+        class="profile-input"
+        v-model="item.threshold"
+        @change="changeThreshold(index)"
+      />
     </div>
     <div>
       <div class="label">{{ t("period") }}</div>
@@ -100,13 +109,12 @@ limitations under the License. -->
   const { t } = useI18n();
   const states = reactive<StrategyItem>(props.policyList[props.order]);
   const TYPES = ["HTTP_ERROR_RATE", "HTTP_AVG_RESPONSE_TIME"];
-
   function changeType(opt: { value: string }[]) {
-    const types = props.policyList.map((item: StrategyItem) => item.targetType);
+    const types = props.policyList.map((item: StrategyItem) => item.type);
     if (types.includes(opt[0].value)) {
       return ElMessage.warning("Target type cannot be configured repeatedly.");
     }
-    states.targetType = opt[0].value;
+    states.type = opt[0].value;
     emits("edit", states, props.order);
   }
 
@@ -127,6 +135,24 @@ limitations under the License. -->
     const regex = /http[^;]*;/g;
     const arr = params.match(regex);
     states.checkItems[index].uriList = arr.length ? arr : null;
+    emits("edit", states, props.order);
+  }
+
+  function changeThreshold(index: number) {
+    let regex = /^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?)%$/;
+    if (MonitorType[1].value === states.checkItems[index].type) {
+      regex = /^\d+$/;
+    }
+    if (MonitorType[2].value === states.checkItems[index].type) {
+      regex = /^(\d+)(\.\d+)?$/;
+    }
+    if (MonitorType[4].value === states.checkItems[index].type) {
+      regex = /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/;
+    }
+
+    if (!regex.test(states.checkItems[index].threshold)) {
+      return ElMessage.warning(getNotice(states.checkItems[index].type));
+    }
     emits("edit", states, props.order);
   }
 
@@ -160,6 +186,18 @@ limitations under the License. -->
     }
     states.checkItems = states.checkItems.filter((_, index: number) => index !== key);
     emits("edit", states, props.order);
+  }
+
+  function getNotice(type: string) {
+    const map: { [key: string]: string } = {
+      PROCESS_CPU: "It should be percentage data",
+      PROCESS_THREAD_COUNT: "It should be a positive integer",
+      SYSTEM_LOAD: "It should be a floating point number",
+      HTTP_ERROR_RATE: "It should be percentage data",
+      HTTP_AVG_RESPONSE_TIME: "It should be a response time in milliseconds",
+    };
+
+    return map[type];
   }
 </script>
 <style lang="scss" scoped>
