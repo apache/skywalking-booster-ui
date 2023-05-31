@@ -107,6 +107,9 @@ export const continousProfilingStore = defineStore({
         };
       });
       this.setSelectedStrategy(this.strategyList[0] || {});
+      if (!this.selectedStrategy.type) {
+        return res.data;
+      }
       this.getContinousTaskList({
         serviceId: params.serviceId,
         targets: [this.selectedStrategy.type],

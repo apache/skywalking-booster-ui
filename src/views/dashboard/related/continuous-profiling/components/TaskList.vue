@@ -70,7 +70,7 @@ limitations under the License. -->
   // const viewDetail = ref<boolean>(false);
 
   async function changeTask(item: EBPFTaskList) {
-    continousProfilingStore.setSelectedContinousTask(item);
+    continousProfilingStore.setselectedTask(item);
   }
 
   function getURI(uri: { uriRegex: string; uriPath: string }) {
