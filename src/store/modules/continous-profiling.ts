@@ -108,6 +108,11 @@ export const continousProfilingStore = defineStore({
         };
       });
       this.setSelectedStrategy(this.strategyList[0] || {});
+      if (!this.strategyList.length) {
+        this.nodes = [];
+        this.calls = [];
+        this.taskList = [];
+      }
       if (!this.selectedStrategy.type) {
         return res.data;
       }
@@ -116,10 +121,6 @@ export const continousProfilingStore = defineStore({
         targets: [this.selectedStrategy.type],
         triggerType: EBPFProfilingTriggerType.CONTINUOUS_PROFILING,
       });
-      if (!this.strategyList.length) {
-        this.nodes = [];
-        this.calls = [];
-      }
       return res.data;
     },
     async getContinousTaskList(params: {

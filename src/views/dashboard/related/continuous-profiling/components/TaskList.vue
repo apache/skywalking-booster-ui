@@ -41,7 +41,7 @@ limitations under the License. -->
                   <Icon iconName="view" size="middle" />
                 </a> -->
               </div>
-              <div class="grey ell sm">
+              <div class="ell sm">
                 <span class="mr-10 sm">{{ dateFormat(i.taskStartTime) }}</span>
                 <span class="mr-10 sm">
                   {{ dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000) }}
