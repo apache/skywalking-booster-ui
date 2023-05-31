@@ -12,7 +12,6 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-
 <template>
   <div>
     <div class="label">{{ t("targetTypes") }}</div>
@@ -66,11 +65,11 @@ limitations under the License. -->
       <div class="label">{{ t("period") }}</div>
       <el-input-number size="small" class="profile-input" :min="0" v-model="item.period" @change="changeParam" />
     </div>
-    <div>
+    <div v-show="TYPES.includes(item.type)">
       <div class="label">{{ t("uriRegex") }}</div>
-      <el-input size="small" class="profile-input" v-model="item.uriRegex" @change="changeParam" />
+      <el-input size="small" class="profile-input" v-model="item.uriRegex" @change="changeParam(index)" />
     </div>
-    <div>
+    <div v-show="TYPES.includes(item.type)">
       <div class="label">{{ t("uriList") }}</div>
       <div id="uri-param" contenteditable="true" @input="changeURI($event, index)" class="profile-input">
         {{ (item.uriList || []).join("; ") }}
@@ -82,13 +81,14 @@ limitations under the License. -->
   import { reactive } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
   import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
   import { MonitorType, TargetTypes } from "../data";
 
   /* global defineEmits, defineProps */
   const props = defineProps({
-    data: {
-      type: Object as PropType<StrategyItem>,
+    policyList: {
+      type: Object as PropType<StrategyItem[]>,
       default: () => ({}),
     },
     order: {
@@ -98,19 +98,31 @@ limitations under the License. -->
   });
   const emits = defineEmits(["edit"]);
   const { t } = useI18n();
-  const states = reactive<StrategyItem>(props.data);
+  const states = reactive<StrategyItem>(props.policyList[props.order]);
+  const TYPES = ["HTTP_ERROR_RATE", "HTTP_AVG_RESPONSE_TIME"];
 
   function changeType(opt: { value: string }[]) {
+    const types = props.policyList.map((item: StrategyItem) => item.targetType);
+    if (types.includes(opt[0].value)) {
+      return ElMessage.warning("Target type cannot be configured repeatedly.");
+    }
     states.targetType = opt[0].value;
     emits("edit", states, props.order);
   }
 
   function changeMonitorType(opt: { value: string }[], index: number) {
+    const types = states.checkItems.map((item: CheckItems) => item.type);
+    if (types.includes(opt[0].value)) {
+      return ElMessage.warning("Monitor type cannot be configured repeatedly.");
+    }
     states.checkItems[index].type = opt[0].value;
     emits("edit", states, props.order);
   }
 
   function changeURI(event: any, index: number) {
+    if (states.checkItems[index].uriRegex) {
+      return ElMessage.warning("UriList or UriRegex only be configured with one option.");
+    }
     const params = event.target.textContent;
     const regex = /http[^;]*;/g;
     const arr = params.match(regex);
@@ -118,7 +130,10 @@ limitations under the License. -->
     emits("edit", states, props.order);
   }
 
-  function changeParam() {
+  function changeParam(index?: any) {
+    if (index !== undefined && (states.checkItems[index] || {}).uriList) {
+      return ElMessage.warning("UriList or UriRegex only be configured with one option");
+    }
     const checkItems = states.checkItems.map((d: CheckItems) => {
       d.count = Number(d.count);
       d.period = Number(d.period);
@@ -135,6 +150,7 @@ limitations under the License. -->
       period: NaN,
       count: NaN,
     });
+    emits("edit", states, props.order);
   }
 
   function removeItem(e: PointerEvent, key: number) {
@@ -143,6 +159,7 @@ limitations under the License. -->
       return;
     }
     states.checkItems = states.checkItems.filter((_, index: number) => index !== key);
+    emits("edit", states, props.order);
   }
 </script>
 <style lang="scss" scoped>

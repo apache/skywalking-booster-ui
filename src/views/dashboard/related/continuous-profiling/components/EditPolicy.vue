@@ -36,7 +36,7 @@ limitations under the License. -->
             />
           </div>
         </template>
-        <Policy :data="item" @edit="changePolicy" :order="index" />
+        <Policy :policyList="policyList" @edit="changePolicy" :order="index" />
       </el-collapse-item>
     </el-collapse>
     <div>
