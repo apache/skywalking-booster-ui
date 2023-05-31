@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
+import { ElMessage } from "element-plus";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
@@ -137,8 +138,6 @@ export const continousProfilingStore = defineStore({
         return res.data;
       }
       this.taskList = res.data.data.queryEBPFTasks || [];
-      this.selectedTask = this.taskList[0] || {};
-      this.setselectedTask(this.selectedTask);
       if (!this.taskList.length) {
         const networkProfilingStore = useNetworkProfilingStore();
         networkProfilingStore.seNodes([]);
@@ -146,6 +145,9 @@ export const continousProfilingStore = defineStore({
         this.eBPFSchedules = [];
         this.analyzeTrees = [];
       }
+      this.selectedTask = this.taskList[0] || {};
+      this.setselectedTask(this.selectedTask);
+      this.preAnalyzeTask();
       return res.data;
     },
     async getServiceInstances(serviceId: string): Promise<Nullable<AxiosResponse>> {
@@ -178,6 +180,7 @@ export const continousProfilingStore = defineStore({
       if (!params.taskId) {
         return new Promise((resolve) => resolve({}));
       }
+      params.taskId = "71d96efb81b0be93b1322be1b17334c87d45d6216e299504a778264f94692d1b";
       const res: AxiosResponse = await graphql.query("getEBPFSchedules").params({ ...params });
 
       if (res.data.errors) {
@@ -224,6 +227,19 @@ export const continousProfilingStore = defineStore({
       }
       this.analyzeTrees = analysisEBPFResult.trees;
       return res.data;
+    },
+    async preAnalyzeTask() {
+      if (this.selectedStrategy.type === "NETWORK") {
+        const networkProfilingStore = useNetworkProfilingStore();
+        await networkProfilingStore.setSelectedNetworkTask(this.selectedTask);
+        return;
+      }
+      const res = await this.getEBPFSchedules({
+        taskId: this.selectedTask.taskId,
+      });
+      if (res.errors) {
+        ElMessage.error(res.errors);
+      }
     },
   },
 });

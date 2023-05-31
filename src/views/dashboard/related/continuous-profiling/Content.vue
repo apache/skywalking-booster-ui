@@ -40,24 +40,4 @@ limitations under the License. -->
     height: calc(100% - 30px);
     width: 100%;
   }
-
-  .vis-graph {
-    height: 100%;
-    flex-grow: 2;
-    min-width: 700px;
-    overflow: auto;
-  }
-
-  .item {
-    width: 100%;
-    overflow: auto;
-    height: calc(100% - 100px);
-    padding-bottom: 10px;
-  }
-
-  .schedules {
-    height: 90px;
-    border-bottom: 1px solid #ccc;
-    padding-right: 10px;
-  }
 </style>

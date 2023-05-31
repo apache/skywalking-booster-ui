@@ -42,7 +42,7 @@ limitations under the License. -->
       />
       <el-popover placement="bottom" :width="680" trigger="click" :persistent="false">
         <template #reference>
-          <el-button type="primary" size="small">
+          <el-button size="small">
             {{ t("processSelect") }}
           </el-button>
         </template>
