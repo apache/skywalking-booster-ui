@@ -26,6 +26,23 @@ limitations under the License. -->
     />
   </div>
   <div v-for="(item, index) in states.checkItems" :key="index">
+    <div class="item-title">
+      <span class="title">{{ `Item - ${index + 1}` }}</span>
+      <Icon
+        class="ml-5 cp"
+        iconName="remove_circle_outline"
+        size="middle"
+        v-show="states.checkItems.length !== 1"
+        @click="removeItem($event, index)"
+      />
+      <Icon
+        class="ml-5 cp"
+        v-show="index === states.checkItems.length - 1"
+        iconName="add_circle_outlinecontrol_point"
+        size="middle"
+        @click="createItem"
+      />
+    </div>
     <div>
       <div class="label">{{ t("monitorType") }}</div>
       <Selector
@@ -39,7 +56,7 @@ limitations under the License. -->
     </div>
     <div>
       <div class="label">{{ t("count") }}</div>
-      <el-input size="small" class="profile-input" :min="0" v-model="item.count" type="number" @change="changeParam" />
+      <el-input-number size="small" class="profile-input" :min="0" v-model="item.count" @change="changeParam" />
     </div>
     <div>
       <div class="label">{{ t("threshold") }}</div>
@@ -47,7 +64,7 @@ limitations under the License. -->
     </div>
     <div>
       <div class="label">{{ t("period") }}</div>
-      <el-input size="small" class="profile-input" :min="0" v-model="item.period" type="number" @change="changeParam" />
+      <el-input-number size="small" class="profile-input" :min="0" v-model="item.period" @change="changeParam" />
     </div>
     <div>
       <div class="label">{{ t("uriRegex") }}</div>
@@ -109,6 +126,24 @@ limitations under the License. -->
     });
     emits("edit", { ...states, checkItems }, props.order);
   }
+
+  function createItem(e: PointerEvent) {
+    e.stopPropagation();
+    states.checkItems.push({
+      type: "",
+      threshold: "",
+      period: NaN,
+      count: NaN,
+    });
+  }
+
+  function removeItem(e: PointerEvent, key: number) {
+    e.stopPropagation();
+    if (states.checkItems.length === 1) {
+      return;
+    }
+    states.checkItems = states.checkItems.filter((_, index: number) => index !== key);
+  }
 </script>
 <style lang="scss" scoped>
   .profile-input {
@@ -128,5 +163,10 @@ limitations under the License. -->
     &:focus {
       border-color: #409eff;
     }
+  }
+
+  .item-title {
+    margin-bottom: 5px;
+    font-size: 14px;
   }
 </style>
