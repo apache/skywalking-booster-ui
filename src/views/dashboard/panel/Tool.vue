@@ -27,7 +27,7 @@ limitations under the License. -->
             class="selectors"
           />
         </div>
-        <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5">
+        <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5 || key === 6">
           <span class="label">
             {{ ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity) ? "$Endpoint" : "$ServiceInstance" }}
           </span>
@@ -42,7 +42,7 @@ limitations under the License. -->
             :isRemote="['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)"
           />
         </div>
-        <div class="selectors-item" v-if="key === 5">
+        <div class="selectors-item" v-if="key === 5 || key === 6">
           <span class="label"> $Process </span>
           <Selector
             v-model="states.currentProcess"
@@ -216,10 +216,11 @@ limitations under the License. -->
         EntityType[5].value,
         EntityType[6].value,
         EntityType[7].value,
+        EntityType[8].value,
       ].includes(String(params.entity))
     ) {
       setSourceSelector();
-      if ([EntityType[2].value, EntityType[3].value].includes(String(params.entity))) {
+      if ([EntityType[2].value, EntityType[3].value, EntityType[8].value].includes(String(params.entity))) {
         return;
       }
       setDestSelector();
@@ -317,6 +318,7 @@ limitations under the License. -->
         EntityType[5].value,
         EntityType[6].value,
         EntityType[7].value,
+        EntityType[8].value,
       ].includes(dashboardStore.entity)
     ) {
       await fetchPods(e, selectorStore.currentService.id, true);
@@ -337,11 +339,8 @@ limitations under the License. -->
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
       states.currentProcess = "";
-      if (dashboardStore.entity === EntityType[7].value) {
-        fetchPods("Process", selectorStore.currentService.id, true);
-      } else {
-        fetchPods(dashboardStore.entity, selectorStore.currentService.id, true);
-      }
+      const e = dashboardStore.entity === EntityType[7].value ? EntityType[8].value : dashboardStore.entity;
+      fetchPods(e, selectorStore.currentService.id, true);
     } else {
       selectorStore.setCurrentService(null);
     }
@@ -362,7 +361,7 @@ limitations under the License. -->
 
   async function changePods(pod: Option[]) {
     selectorStore.setCurrentPod(pod[0] || null);
-    if (dashboardStore.entity === EntityType[7].value) {
+    if ([EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
       selectorStore.setCurrentProcess(null);
       states.currentProcess = "";
       fetchProcess(true);
@@ -566,7 +565,7 @@ limitations under the License. -->
         await fetchPods(EntityType[5].value, serviceId, setPod, param);
         resp = await fetchDestProcess(setPod);
         break;
-      case "Process":
+      case EntityType[8].value:
         await fetchPods(EntityType[3].value, serviceId, setPod, param);
         resp = await fetchProcess(setPod);
         break;
