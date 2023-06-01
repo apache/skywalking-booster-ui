@@ -18,14 +18,14 @@ limitations under the License. -->
       <PolicyList />
       <TaskList />
     </div>
-    <GraphPanel :config="config" />
+    <Panel :config="config" />
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
   import PolicyList from "./components/PolicyList.vue";
   import TaskList from "./components/TaskList.vue";
-  import GraphPanel from "./components/GraphPanel.vue";
+  import Panel from "./components/Panel.vue";
 
   /*global defineProps */
   defineProps({

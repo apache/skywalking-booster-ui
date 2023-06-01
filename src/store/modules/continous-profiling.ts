@@ -155,9 +155,9 @@ export const continousProfilingStore = defineStore({
         this.selectedTask = {};
         return;
       }
-      this.selectedTask = this.taskList[0] || {};
-      this.setselectedTask(this.selectedTask);
-      await this.getGraphData();
+      // this.selectedTask = this.taskList[0] || {};
+      // this.setselectedTask(this.selectedTask);
+      // await this.getGraphData();
       return res.data;
     },
     async getGraphData() {

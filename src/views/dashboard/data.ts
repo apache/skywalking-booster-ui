@@ -167,6 +167,7 @@ export const EntityType = [
   },
   { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },
   { value: "ProcessRelation", label: "Process Relation", key: 5 },
+  { value: "Process", label: "Process Relation", key: 3 },
 ];
 export const ListEntity: any = {
   InstanceList: EntityType[3].value,

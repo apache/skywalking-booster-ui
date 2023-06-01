@@ -35,7 +35,7 @@ limitations under the License. -->
         @change="changeProcess"
       />
     </div>
-    <div v-if="continousProfilingStore.selectedStrategy.type" class="vis-graph">
+    <div v-if="continousProfilingStore.selectedTask.taskId" class="vis-graph">
       <div
         class="graph-topology ml-5"
         v-loading="networkProfilingStore.loadNodes"
@@ -55,6 +55,7 @@ limitations under the License. -->
         </div>
       </div>
     </div>
+    <!-- <div v-else> dashboard </div> -->
   </div>
 </template>
 <script lang="ts" setup>
@@ -120,7 +121,7 @@ limitations under the License. -->
   }
 
   .selector {
-    width: 220px;
+    width: 300px;
   }
 
   .vis-graph {
