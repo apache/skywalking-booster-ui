@@ -20,7 +20,7 @@ limitations under the License. -->
       <Selector
         class="selector mr-10"
         size="small"
-        :value="instanceId"
+        :value="instance.label"
         :options="continousProfilingStore.instances"
         placeholder="Select a instance"
         @change="changeInstance"
@@ -29,18 +29,15 @@ limitations under the License. -->
       <Selector
         class="selector mr-10"
         size="small"
-        :value="processId"
+        :value="process.label"
         :options="continousProfilingStore.processes"
         placeholder="Select a process"
         @change="changeProcess"
       />
-      <!-- <el-button type="primary" size="small" @click="analyzeTask">
-        {{ t("analysis") }}
-      </el-button> -->
     </div>
-    <div v-if="continousProfilingStore.selectedStrategy.type">
+    <div v-if="continousProfilingStore.selectedStrategy.type" class="vis-graph">
       <div
-        class="vis-graph-topology ml-5"
+        class="graph-topology ml-5"
         v-loading="networkProfilingStore.loadNodes"
         v-if="continousProfilingStore.selectedStrategy.type === TargetTypes[2].value"
       >
@@ -49,7 +46,7 @@ limitations under the License. -->
           {{ t("noData") }}
         </div>
       </div>
-      <div class="vis-graph ml-5" v-else>
+      <div class="graph-flame ml-5" v-else>
         <div class="schedules">
           <EBPFSchedules :type="ComponentType" />
         </div>
@@ -71,8 +68,9 @@ limitations under the License. -->
   import EBPFSchedules from "@/views/dashboard/related/ebpf/components/EBPFSchedules.vue";
   import EBPFStack from "@/views/dashboard/related/ebpf/components/EBPFStack.vue";
   import { TargetTypes, ComponentType } from "../data";
+  import type { Instance, Process } from "@/types/selector";
 
-  /*global defineProps */
+  /*global defineProps, Recordable */
   defineProps({
     config: {
       type: Object as PropType<any>,
@@ -83,24 +81,25 @@ limitations under the License. -->
   const networkProfilingStore = useNetworkProfilingStore();
   const selectorStore = useSelectorStore();
   const { t } = useI18n();
-  const processId = ref<string>("");
-  const instanceId = ref<string>("");
+  const process = ref<Recordable<Process>>({});
+  const instance = ref<Recordable<Instance>>({});
 
-  function changeInstance(opt: { id: string }[]) {
-    instanceId.value = opt[0].id;
+  function changeInstance(opt: Recordable<Instance>[]) {
+    instance.value = opt[0];
+    continousProfilingStore.setCurrentInstance(instance.value);
   }
 
-  function changeProcess(opt: { id: string }[]) {
-    processId.value = opt[0].id;
+  function changeProcess(opt: Recordable<Process>[]) {
+    process.value = opt[0];
   }
 
   async function getSelectors() {
     const serviceId = (selectorStore.currentService && selectorStore.currentService.id) || "";
 
     await continousProfilingStore.getServiceInstances(serviceId);
-    instanceId.value = (continousProfilingStore.instances[0] || {}).id || "";
-    await continousProfilingStore.getProcesses(instanceId.value);
-    processId.value = (continousProfilingStore.processes[0] || {}).id || "";
+    instance.value = continousProfilingStore.instances[0] || {};
+    await continousProfilingStore.getProcesses(instance.value.id);
+    process.value = continousProfilingStore.processes[0] || {};
   }
   getSelectors();
 
@@ -125,24 +124,34 @@ limitations under the License. -->
   }
 
   .vis-graph {
-    height: 100%;
-    flex-grow: 2;
-    min-width: 700px;
-    overflow: auto;
-  }
-
-  .vis-graph-topology {
     height: calc(100% - 20px);
     flex-grow: 2;
     min-width: 700px;
+    overflow: auto;
+    width: 100%;
+  }
+
+  .graph-topology,
+  .graph-flame {
+    height: 100%;
     overflow: hidden;
     position: relative;
-    width: calc(100% - 330px);
+    width: calc(100% - 5px);
+  }
+
+  .graph-flame {
+    overflow: auto;
   }
 
   .policy-graph {
-    height: calc(100% - 20px);
+    height: 100%;
     flex-grow: 2;
     overflow: auto;
+  }
+
+  .text {
+    height: 100%;
+    text-align: center;
+    margin-top: 100px;
   }
 </style>

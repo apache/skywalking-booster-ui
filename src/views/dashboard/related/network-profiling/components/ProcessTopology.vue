@@ -19,7 +19,7 @@ limitations under the License. -->
         <g class="hex-polygon">
           <path :d="getHexPolygonVertices()" stroke="#D5DDF6" stroke-width="2" fill="none" />
           <text :x="0" :y="radius - 15" fill="#000" text-anchor="middle">
-            {{ selectorStore.currentPod.label }}
+            {{ selectorStore.currentPod && selectorStore.currentPod.label }}
           </text>
         </g>
         <g class="nodes">
@@ -530,11 +530,11 @@ limitations under the License. -->
     border-radius: 3px;
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 20px;
   }
 
   .range {
-    right: 50px;
+    right: 60px;
   }
 
   .topo-call {
