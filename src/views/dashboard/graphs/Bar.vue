@@ -23,6 +23,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import type { BarConfig, EventParams, RelatedTrace, Filters } from "@/types/dashboard";
   import useLegendProcess from "@/hooks/useLegendProcessor";
+  import Legend from "./components/Legend.vue";
 
   /*global defineProps, defineEmits */
   const emits = defineEmits(["click"]);

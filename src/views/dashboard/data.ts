@@ -56,6 +56,15 @@ export enum ProtocolTypes {
   ReadMetricsValues = "readMetricsValues",
   ReadMetricsValue = "readMetricsValue",
 }
+
+export enum ExpressionResultType {
+  UNKNOWN = "UNKNOWN",
+  SINGLE_VALUE = "SINGLE_VALUE",
+  TIME_SERIES_VALUES = "TIME_SERIES_VALUES",
+  SORTED_LIST = "SORTED_LIST",
+  RECORD_LIST = "RECORD_LIST",
+}
+
 export const DefaultGraphConfig: { [key: string]: any } = {
   Bar: {
     type: "Bar",

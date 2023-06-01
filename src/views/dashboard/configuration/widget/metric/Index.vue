@@ -26,23 +26,43 @@ limitations under the License. -->
     />
   </div>
   <div>{{ t("metrics") }}</div>
+  <el-switch
+    v-model="isExpression"
+    class="mb-5 mt-5"
+    active-text="Expression"
+    inactive-text="General"
+    size="small"
+    @change="changeMetricMode"
+  />
   <div v-for="(metric, index) in states.metrics" :key="index" class="metric-item">
-    <Selector
-      :value="metric"
-      :options="states.metricList"
-      size="small"
-      placeholder="Select a metric"
-      @change="changeMetrics(index, $event)"
+    <!-- <el-input
+      v-if="isExpression"
       class="selectors"
-    />
-    <Selector
-      :value="states.metricTypes[index]"
-      :options="states.metricTypeList[index]"
       size="small"
-      :disabled="graph.type && !states.isList && index !== 0"
-      @change="changeMetricType(index, $event)"
-      class="selectors"
-    />
+      placeholder="Please input a expression"
+      @change="changeExpression"
+    /> -->
+    <div v-if="isExpression" id="expression-param" contenteditable="true" @input="changeExpression($event, index)">
+      {{ metric }}
+    </div>
+    <span v-else>
+      <Selector
+        :value="metric"
+        :options="states.metricList"
+        size="small"
+        placeholder="Select a metric"
+        @change="changeMetrics(index, $event)"
+        class="selectors"
+      />
+      <Selector
+        :value="states.metricTypes[index]"
+        :options="states.metricTypeList[index]"
+        size="small"
+        :disabled="graph.type && !states.isList && index !== 0"
+        @change="changeMetricType(index, $event)"
+        class="selectors"
+      />
+    </span>
     <el-popover placement="top" :width="400" trigger="click">
       <template #reference>
         <span @click="setMetricConfig(index)">
@@ -51,7 +71,12 @@ limitations under the License. -->
       </template>
       <Standard @update="queryMetrics" :currentMetricConfig="currentMetricConfig" :index="index" />
     </el-popover>
-    <span v-show="states.isList || states.metricTypes[0] === ProtocolTypes.ReadMetricsValues">
+    <span
+      v-show="
+        states.isList ||
+        [ProtocolTypes.ReadMetricsValues as string, ExpressionResultType.TIME_SERIES_VALUES as string].includes(states.metricTypes[0])
+      "
+    >
       <Icon
         class="cp mr-5"
         v-if="index === states.metrics.length - 1 && states.metrics.length < defaultLen"
@@ -89,6 +114,7 @@ limitations under the License. -->
     PodsChartTypes,
     MetricsType,
     ProtocolTypes,
+    ExpressionResultType,
   } from "../../../data";
   import { ElMessage } from "element-plus";
   import Icon from "@/components/Icon.vue";
@@ -104,6 +130,7 @@ limitations under the License. -->
   const metrics = computed(() => dashboardStore.selectedGrid.metrics || []);
   const graph = computed(() => dashboardStore.selectedGrid.graph || {});
   const metricTypes = computed(() => dashboardStore.selectedGrid.metricTypes || []);
+  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === "Expression" ? true : false);
   const states = reactive<{
     metrics: string[];
     metricTypes: string[];
@@ -393,6 +420,18 @@ limitations under the License. -->
       ...dashboardStore.selectedGrid.metricConfig[index],
     };
   }
+  function changeMetricMode() {
+    console.log(isExpression.value);
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      metricMode: isExpression.value ? "Expression" : "General",
+    });
+  }
+  function changeExpression(event: any, index: number) {
+    const params = event.target.textContent;
+    states.metrics[index] = params;
+    // states.metricTypes[index] =
+  }
 </script>
 <style lang="scss" scoped>
   .ds-name {
@@ -426,5 +465,22 @@ limitations under the License. -->
   span.active {
     background-color: #409eff;
     color: #fff;
+  }
+
+  #expression-param {
+    display: inline-block;
+    width: 500px;
+    border: 1px solid #dcdfe6;
+    cursor: text;
+    padding: 0 5px;
+    border-radius: 3px;
+    color: #606266;
+    outline: none;
+    height: 26px;
+    margin-right: 5px;
+
+    &:focus {
+      border-color: #409eff;
+    }
   }
 </style>
