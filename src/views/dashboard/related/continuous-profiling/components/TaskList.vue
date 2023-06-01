@@ -37,9 +37,9 @@ limitations under the License. -->
                 <span>
                   {{ `${cause.type}: ${getURI(cause.uri)}${cause.uri.threshold}>=${cause.uri.current}` }}
                 </span>
-                <!-- <a class="profile-view r" @click="viewDetail = true">
+                <a class="profile-view r" @click="viewDetail = true">
                   <Icon iconName="view" size="middle" />
-                </a> -->
+                </a>
               </div>
               <div class="ell sm">
                 <span class="mr-10 sm">{{ dateFormat(i.taskStartTime) }}</span>
@@ -53,15 +53,15 @@ limitations under the License. -->
       </div>
     </div>
   </div>
-  <!-- <el-dialog v-model="viewDetail" :destroy-on-close="true" fullscreen @closed="viewDetail = false">
+  <el-dialog v-model="viewDetail" :destroy-on-close="true" fullscreen @closed="viewDetail = false">
     <TaskDetails :details="continousProfilingStore.selectedTask" />
-  </el-dialog> -->
+  </el-dialog>
 </template>
 <script lang="ts" setup>
-  // import { ref } from "vue";
+  import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import type { EBPFTaskList } from "@/types/ebpf";
-  // import TaskDetails from "../../components/TaskDetails.vue";
+  import TaskDetails from "../../components/TaskDetails.vue";
   import { dateFormat } from "@/utils/dateFormat";
   import { ElMessage } from "element-plus";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
@@ -72,7 +72,7 @@ limitations under the License. -->
 
   const { t } = useI18n();
   const continousProfilingStore = useContinousProfilingStore();
-  // const viewDetail = ref<boolean>(false);
+  const viewDetail = ref<boolean>(false);
 
   async function changeTask(item: EBPFTaskList) {
     continousProfilingStore.setselectedTask(item);
