@@ -25,6 +25,8 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
 import { EBPFProfilingTriggerType } from "../data";
+import dateFormatStep from "@/utils/dateFormat";
+import getLocalTime from "@/utils/localtime";
 
 interface ContinousProfilingState {
   strategyList: Array<Recordable<StrategyItem>>;
@@ -35,6 +37,7 @@ interface ContinousProfilingState {
   errorReason: string;
   processes: Process[];
   instances: Instance[];
+  instance: Nullable<Instance>;
   eBPFSchedules: EBPFProfilingSchedule[];
   currentSchedule: EBPFProfilingSchedule | Record<string, never>;
   analyzeTrees: AnalyzationTrees[];
@@ -58,6 +61,7 @@ export const continousProfilingStore = defineStore({
     currentSchedule: {},
     analyzeTrees: [],
     aggregateType: "COUNT",
+    instance: null,
   }),
   actions: {
     setSelectedStrategy(task: Recordable<StrategyItem>) {
@@ -71,6 +75,9 @@ export const continousProfilingStore = defineStore({
     },
     setAnalyzeTrees(tree: AnalyzationTrees[]) {
       this.analyzeTrees = tree;
+    },
+    setCurrentInstance(instance: Nullable<Instance>) {
+      this.instance = instance;
     },
     async setContinuousProfilingPolicy(
       serviceId: string,
@@ -145,11 +152,20 @@ export const continousProfilingStore = defineStore({
         networkProfilingStore.setLinks([]);
         this.eBPFSchedules = [];
         this.analyzeTrees = [];
+        this.selectedTask = {};
+        return;
       }
       this.selectedTask = this.taskList[0] || {};
       this.setselectedTask(this.selectedTask);
-      this.preAnalyzeTask();
+      await this.getGraphData();
       return res.data;
+    },
+    async getGraphData() {
+      if (this.selectedStrategy.type === "NETWORK") {
+        await this.getTopology();
+      } else {
+        await this.preAnalyzeTask();
+      }
     },
     async getServiceInstances(serviceId: string): Promise<Nullable<AxiosResponse>> {
       if (!serviceId) {
@@ -161,6 +177,7 @@ export const continousProfilingStore = defineStore({
       });
       if (!res.data.errors) {
         this.instances = res.data.data.pods || [];
+        this.instance = this.instances[0] || null;
       }
       return res.data;
     },
@@ -176,6 +193,30 @@ export const continousProfilingStore = defineStore({
         this.processes = res.data.data.processes || [];
       }
       return res.data;
+    },
+    async getTopology() {
+      const networkProfilingStore = useNetworkProfilingStore();
+      const appStore = useAppStoreWithOut();
+      networkProfilingStore.setSelectedNetworkTask(this.selectedTask);
+      const { taskStartTime, fixedTriggerDuration } = this.selectedTask;
+      const startTime =
+        fixedTriggerDuration > 1800 ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000 : taskStartTime;
+      let endTime = taskStartTime + fixedTriggerDuration * 1000;
+      if (taskStartTime + fixedTriggerDuration * 1000 > new Date().getTime()) {
+        endTime = new Date().getTime();
+      }
+      const resp = await networkProfilingStore.getProcessTopology({
+        serviceInstanceId: this.instance.id || "",
+        duration: {
+          start: dateFormatStep(getLocalTime(appStore.utc, new Date(startTime)), appStore.duration.step, true),
+          end: dateFormatStep(getLocalTime(appStore.utc, new Date(endTime)), appStore.duration.step, true),
+          step: appStore.duration.step,
+        },
+      });
+      if (resp.errors) {
+        ElMessage.error(resp.errors);
+      }
+      return resp;
     },
     async getEBPFSchedules(params: { taskId: string }) {
       if (!params.taskId) {

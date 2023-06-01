@@ -37,14 +37,14 @@ limitations under the License. -->
                 <span>
                   {{ `${cause.type}: ${getURI(cause.uri)}${cause.uri.threshold}>=${cause.uri.current}` }}
                 </span>
-                <a class="profile-view r" @click="viewDetail = true">
-                  <Icon iconName="view" size="middle" />
-                </a>
               </div>
               <div class="ell sm">
                 <span class="mr-10 sm">{{ dateFormat(i.taskStartTime) }}</span>
                 <span class="mr-10 sm">
                   {{ dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000) }}
+                </span>
+                <span class="profile-view r" @click="viewDetail = true">
+                  <Icon iconName="view" size="middle" />
                 </span>
               </div>
             </td>
@@ -63,12 +63,7 @@ limitations under the License. -->
   import type { EBPFTaskList } from "@/types/ebpf";
   import TaskDetails from "../../components/TaskDetails.vue";
   import { dateFormat } from "@/utils/dateFormat";
-  import { ElMessage } from "element-plus";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
-  import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
-  import { TargetTypes } from "../data";
-  import dateFormatStep from "@/utils/dateFormat";
-  import getLocalTime from "@/utils/localtime";
 
   const { t } = useI18n();
   const continousProfilingStore = useContinousProfilingStore();
@@ -76,30 +71,8 @@ limitations under the License. -->
 
   async function changeTask(item: EBPFTaskList) {
     continousProfilingStore.setselectedTask(item);
-    continousProfilingStore.preAnalyzeTask();
+    continousProfilingStore.getGraphData();
   }
-
-  // async function getTopology() {
-  //   const { taskStartTime, fixedTriggerDuration } = networkProfilingStore.selectedNetworkTask;
-  //   const startTime =
-  //     fixedTriggerDuration > 1800 ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000 : taskStartTime;
-  //   let endTime = taskStartTime + fixedTriggerDuration * 1000;
-  //   if (taskStartTime + fixedTriggerDuration * 1000 > new Date().getTime()) {
-  //     endTime = new Date().getTime();
-  //   }
-  //   const resp = await networkProfilingStore.getProcessTopology({
-  //     serviceInstanceId: instanceId.value,
-  //     duration: {
-  //       start: dateFormatStep(getLocalTime(appStore.utc, new Date(startTime)), appStore.duration.step, true),
-  //       end: dateFormatStep(getLocalTime(appStore.utc, new Date(endTime)), appStore.duration.step, true),
-  //       step: appStore.duration.step,
-  //     },
-  //   });
-  //   if (resp.errors) {
-  //     ElMessage.error(resp.errors);
-  //   }
-  //   return resp;
-  // }
 
   function getURI(uri: { uriRegex: string; uriPath: string }) {
     return uri ? `(${uri.uriRegex || ""} | ${uri.uriPath || ""})` : "";
@@ -163,7 +136,6 @@ limitations under the License. -->
     color: #3d444f;
     padding: 1px 3px;
     border-radius: 2px;
-    font-size: 12px;
-    float: right;
+    font-size: 10px;
   }
 </style>
