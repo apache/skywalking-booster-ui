@@ -57,13 +57,11 @@ export function useQueryProcessor(config: Indexable) {
         name,
         parentService: ["All"].includes(dashboardStore.entity) ? null : selectorStore.currentService.value,
         normal: selectorStore.currentService ? selectorStore.currentService.normal : true,
-        scope: config.catalog,
         topN: Number(c.topN) || 10,
         order: c.sortOrder || "DES",
       };
     } else {
       const entity = {
-        scope: config.catalog,
         serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
         normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
         serviceInstanceName: ["ServiceInstance", "ServiceInstanceRelation", "ProcessRelation"].includes(
@@ -99,7 +97,6 @@ export function useQueryProcessor(config: Indexable) {
           order: c.sortOrder || "DES",
         };
       } else {
-        entity.scope = dashboardStore.entity;
         if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
           const labels = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
           variables.push(`$labels${index}: [String!]!`);
@@ -233,7 +230,6 @@ export function useQueryPodsMetrics(
   const currentService = selectorStore.currentService || {};
   const fragmentList = pods.map((d: (Instance | Endpoint | Service) & Indexable, index: number) => {
     const param = {
-      scope,
       serviceName: scope === "Service" ? d.label : currentService.label,
       serviceInstanceName: scope === "ServiceInstance" ? d.label : undefined,
       endpointName: scope === "Endpoint" ? d.label : undefined,
@@ -439,27 +435,4 @@ export function aggregation(val: number, config: { calculation?: string }): numb
   }
 
   return data;
-}
-
-export async function useGetMetricEntity(metric: string, metricType: string) {
-  if (!metric || !metricType) {
-    return;
-  }
-  let catalog = "";
-  const dashboardStore = useDashboardStore();
-  if (
-    ([MetricQueryTypes.ReadSampledRecords, MetricQueryTypes.SortMetrics, MetricQueryTypes.ReadRecords] as any).includes(
-      metricType,
-    )
-  ) {
-    const res = await dashboardStore.fetchMetricList(metric);
-    if (res.errors) {
-      ElMessage.error(res.errors);
-      return;
-    }
-    const c: string = res.data.metrics[0].catalog;
-    catalog = (MetricCatalog as Indexable)[c];
-  }
-
-  return catalog;
 }

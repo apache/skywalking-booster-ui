@@ -108,12 +108,10 @@ limitations under the License. -->
     ChartTypes,
     PodsChartTypes,
     MetricsType,
-    ProtocolTypes,
-    ExpressionResultType,
   } from "../../../data";
   import { ElMessage } from "element-plus";
   import Icon from "@/components/Icon.vue";
-  import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
+  import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
   import { useExpressionsQueryProcessor, useExpressionsSourceProcessor } from "@/hooks/useExpressionsProcessor";
   import { useI18n } from "vue-i18n";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
@@ -185,7 +183,7 @@ limitations under the License. -->
       }
       arr = json.data.metrics;
     }
-    states.metricList = (arr || []).filter((d: { catalog: string; type: string }) => {
+    states.metricList = (arr || []).filter((d: { type: string }) => {
       if (states.isList) {
         if (d.type === MetricsType.REGULAR_VALUE || d.type === MetricsType.LABELED_VALUE) {
           return d;
@@ -335,8 +333,7 @@ limitations under the License. -->
     if (!(metrics && metrics[0] && metricTypes && metricTypes[0])) {
       return;
     }
-    const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
-    const params = useQueryProcessor({ ...states, metricConfig, catalog });
+    const params = useQueryProcessor({ ...states, metricConfig });
     if (!params) {
       emit("update", {});
       return;

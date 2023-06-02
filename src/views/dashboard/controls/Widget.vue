@@ -76,7 +76,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import graphs from "../graphs";
   import { useI18n } from "vue-i18n";
-  import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
+  import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
   import { EntityType, ListChartTypes } from "../data";
   import type { EventParams } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
@@ -113,10 +113,7 @@ limitations under the License. -->
       }
 
       async function queryMetrics() {
-        const metricTypes: string[] = props.data.metricTypes || [];
-        const metrics = props.data.metrics || [];
-        const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
-        const params = await useQueryProcessor({ ...props.data, catalog });
+        const params = await useQueryProcessor({ ...props.data });
 
         if (!params) {
           state.source = {};

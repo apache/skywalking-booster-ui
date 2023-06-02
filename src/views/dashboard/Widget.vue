@@ -51,7 +51,7 @@ limitations under the License. -->
   import { useRoute } from "vue-router";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
+  import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
   import timeFormat from "@/utils/timeFormat";
@@ -122,10 +122,7 @@ limitations under the License. -->
         }
       }
       async function queryMetrics() {
-        const metricTypes = config.value.metricTypes || [];
-        const metrics = config.value.metrics || [];
-        const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
-        const params = await useQueryProcessor({ ...config.value, catalog });
+        const params = await useQueryProcessor({ ...config.value });
         if (!params) {
           source.value = {};
           return;
