@@ -114,10 +114,10 @@ export function useExpressionsSourceProcessor(
   }
   const source: { [key: string]: unknown } = {};
   const keys = Object.keys(resp.data);
-
-  config.metricTypes.forEach((type: string, index) => {
-    const c = (config.metricConfig && config.metricConfig[index]) || {};
-    const results = (resp.data[keys[index]] && resp.data[keys[index]].results) || [];
+  for (let i = 0; i < config.metricTypes.length; i++) {
+    const type = config.metricTypes[i];
+    const c = (config.metricConfig && config.metricConfig[i]) || {};
+    const results = (resp.data[keys[i]] && resp.data[keys[i]].results) || [];
     const name = ((results[0] || {}).metric || {}).name;
 
     if (type === ExpressionResultType.TIME_SERIES_VALUES) {
@@ -131,7 +131,7 @@ export function useExpressionsSourceProcessor(
     if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
       source[name] = results[0].values;
     }
-  });
+  }
 
   return source;
 }
