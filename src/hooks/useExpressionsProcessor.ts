@@ -14,23 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import dayjs from "dayjs";
-import { RespFields, MetricQueryTypes, Calculations } from "./data";
+import { RespFields } from "./data";
 import { ExpressionResultType } from "@/views/dashboard/data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { MetricConfigOpt } from "@/types/dashboard";
-import { MetricCatalog } from "@/views/dashboard/data";
-import { calculateExp, aggregation } from "./useMetricsProcessor";
 
-export function useExpressionsQueryProcessor(config: {
-  metrics: string[];
-  metricTypes: string[];
-  metricConfig: MetricConfigOpt[];
-}) {
+export function useExpressionsQueryProcessor(config: Indexable) {
   if (!(config.metrics && config.metrics[0])) {
     return;
   }

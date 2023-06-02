@@ -56,7 +56,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-show="!isExpression">
+    <div class="item mb-10" v-show="dashboardStore.selectedGrid.metricMode !== 'Expression'">
       <span class="label">{{ t("aggregation") }}</span>
       <SelectSingle
         :value="currentMetric.calculation"

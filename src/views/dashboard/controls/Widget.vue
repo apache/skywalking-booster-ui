@@ -77,6 +77,7 @@ limitations under the License. -->
   import graphs from "../graphs";
   import { useI18n } from "vue-i18n";
   import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
+  import { useExpressionsQueryProcessor, useExpressionsSourceProcessor } from "@/hooks/useExpressionsProcessor";
   import { EntityType, ListChartTypes } from "../data";
   import type { EventParams } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
@@ -113,7 +114,14 @@ limitations under the License. -->
       }
 
       async function queryMetrics() {
-        const params = await useQueryProcessor({ ...props.data });
+        const isExpression = props.data.metricMode === "Expression";
+        const params = isExpression
+          ? await useExpressionsQueryProcessor({
+              metrics: props.data.expressions,
+              metricTypes: props.data.typesOfMQE,
+              metricConfig: props.data.metricConfig,
+            })
+          : await useQueryProcessor({ ...props.data });
 
         if (!params) {
           state.source = {};
@@ -130,7 +138,12 @@ limitations under the License. -->
           metricTypes: props.data.metricTypes || [],
           metricConfig: props.data.metricConfig || [],
         };
-        state.source = useSourceProcessor(json, d);
+        const e = {
+          metrics: props.data.expressions || [],
+          metricTypes: props.data.typesOfMQE || [],
+          metricConfig: props.data.metricConfig || [],
+        };
+        state.source = isExpression ? await useExpressionsSourceProcessor(json, e) : await useSourceProcessor(json, d);
       }
 
       function removeWidget() {
@@ -166,7 +179,7 @@ limitations under the License. -->
         dashboardStore.selectWidget(props.data);
       }
       watch(
-        () => [props.data.metricTypes, props.data.metrics],
+        () => [props.data.metricTypes, props.data.metrics, props.data.expressions],
         () => {
           if (!dashboardStore.selectedGrid) {
             return;

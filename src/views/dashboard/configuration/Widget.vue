@@ -128,6 +128,23 @@ limitations under the License. -->
 
       function applyConfig() {
         dashboardStore.setConfigPanel(false);
+        const { metricMode } = dashboardStore.selectedGrid;
+        let p = {};
+        if (metricMode === "Expression") {
+          p = {
+            metrics: [],
+            metricTypes: [],
+          };
+        } else {
+          p = {
+            expressions: [],
+            typesOfMQE: [],
+          };
+        }
+        dashboardStore.selectWidget({
+          ...dashboardStore.selectedGrid,
+          ...p,
+        });
         dashboardStore.setConfigs(dashboardStore.selectedGrid);
       }
 
