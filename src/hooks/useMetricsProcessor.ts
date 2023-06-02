@@ -178,7 +178,6 @@ export function useSourceProcessor(
 
         return d;
       });
-      console.log(source);
     }
     if (type === MetricQueryTypes.READHEATMAP) {
       const resVal = Object.values(resp.data)[0] || {};

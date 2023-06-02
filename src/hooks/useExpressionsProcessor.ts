@@ -121,12 +121,23 @@ export function useExpressionsSourceProcessor(
     const name = ((results[0] || {}).metric || {}).name;
 
     if (type === ExpressionResultType.TIME_SERIES_VALUES) {
-      source[c.label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
-      return;
+      if (results.length === 1) {
+        source[c.label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
+      } else {
+        const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+        for (const item of results) {
+          const values = item.values.map((d: { value: unknown }) => Number(d.value)) || [];
+          const index = Number(item.metric.labels[0].value);
+          if (labels[index]) {
+            source[labels[index]] = values;
+          } else {
+            source[index] = values;
+          }
+        }
+      }
     }
     if (type === ExpressionResultType.SINGLE_VALUE) {
       source[c.label || name] = results[0].values[0].value;
-      return;
     }
     if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
       source[name] = results[0].values;

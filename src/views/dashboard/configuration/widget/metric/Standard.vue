@@ -56,7 +56,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10">
+    <div class="item mb-10" v-show="!isExpression">
       <span class="label">{{ t("aggregation") }}</span>
       <SelectSingle
         :value="currentMetric.calculation"
@@ -131,13 +131,9 @@ limitations under the License. -->
     );
   });
   const isTopn = computed(() =>
-    [
-      ProtocolTypes.SortMetrics,
-      ProtocolTypes.ReadSampledRecords,
-      ProtocolTypes.ReadRecords,
-      ExpressionResultType.SORTED_LIST,
-      ExpressionResultType.RECORD_LIST,
-    ].includes(metricTypes.value[props.index]),
+    [ProtocolTypes.SortMetrics, ProtocolTypes.ReadSampledRecords, ProtocolTypes.ReadRecords].includes(
+      metricTypes.value[props.index],
+    ),
   );
   function updateConfig(index: number, param: { [key: string]: string }) {
     const key = Object.keys(param)[0];
