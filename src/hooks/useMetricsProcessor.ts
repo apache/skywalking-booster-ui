@@ -367,7 +367,7 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
 
   return { queryStr, conditions };
 }
-function calculateExp(
+export function calculateExp(
   list: { value: number; isEmptyValue: boolean }[],
   config: { calculation?: string },
 ): (number | string)[] {

@@ -29,7 +29,7 @@ limitations under the License. -->
   <el-switch
     v-model="isExpression"
     class="mb-5 mt-5"
-    active-text="Expression"
+    active-text="Expressions"
     inactive-text="General"
     size="small"
     @change="changeMetricMode"
@@ -71,12 +71,7 @@ limitations under the License. -->
       </template>
       <Standard @update="queryMetrics" :currentMetricConfig="currentMetricConfig" :index="index" />
     </el-popover>
-    <span
-      v-show="
-        states.isList ||
-        [ProtocolTypes.ReadMetricsValues as string, ExpressionResultType.TIME_SERIES_VALUES as string].includes(states.metricTypes[0])
-      "
-    >
+    <span>
       <Icon
         class="cp mr-5"
         v-if="index === states.metrics.length - 1 && states.metrics.length < defaultLen"
@@ -119,6 +114,7 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import Icon from "@/components/Icon.vue";
   import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
+  import { useExpressionsQueryProcessor, useExpressionsSourceProcessor } from "@/hooks/useExpressionsProcessor";
   import { useI18n } from "vue-i18n";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
   import Standard from "./Standard.vue";
@@ -127,10 +123,14 @@ limitations under the License. -->
   const { t } = useI18n();
   const emit = defineEmits(["update", "loading"]);
   const dashboardStore = useDashboardStore();
-  const metrics = computed(() => dashboardStore.selectedGrid.metrics || []);
-  const graph = computed(() => dashboardStore.selectedGrid.graph || {});
-  const metricTypes = computed(() => dashboardStore.selectedGrid.metricTypes || []);
   const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === "Expression" ? true : false);
+  const metrics = computed(
+    () => (isExpression.value ? dashboardStore.selectedGrid.expressions : dashboardStore.selectedGrid.metrics) || [],
+  );
+  const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+  const metricTypes = computed(
+    () => (isExpression.value ? dashboardStore.selectedGrid.typesOfMQE : dashboardStore.selectedGrid.metricTypes) || [],
+  );
   const states = reactive<{
     metrics: string[];
     metricTypes: string[];
@@ -324,6 +324,10 @@ limitations under the License. -->
     queryMetrics();
   }
   async function queryMetrics() {
+    if (isExpression.value) {
+      queryMetricsWithExpressions();
+      return;
+    }
     if (states.isList) {
       return;
     }
@@ -349,6 +353,32 @@ limitations under the License. -->
     emit("update", source);
   }
 
+  async function queryMetricsWithExpressions() {
+    if (states.isList) {
+      return;
+    }
+    const { metricConfig, typesOfMQE, expressions } = dashboardStore.selectedGrid;
+    if (!(expressions && expressions[0] && typesOfMQE && typesOfMQE[0])) {
+      return;
+    }
+
+    const params = useExpressionsQueryProcessor({ ...states, metricConfig });
+    if (!params) {
+      emit("update", {});
+      return;
+    }
+
+    emit("loading", true);
+    const json = await dashboardStore.fetchMetricValue(params);
+    emit("loading", false);
+    if (json.errors) {
+      ElMessage.error(json.errors);
+      return;
+    }
+    const source = useExpressionsSourceProcessor(json, { ...states, metricConfig });
+    emit("update", source);
+  }
+
   function changeDashboard(opt: any) {
     if (!opt[0]) {
       states.dashboardName = "";
@@ -368,7 +398,9 @@ limitations under the License. -->
     states.metrics.push("");
     if (!states.isList) {
       states.metricTypes.push(states.metricTypes[0]);
-      states.metricTypeList.push(states.metricTypeList[0]);
+      if (!isExpression.value) {
+        states.metricTypeList.push(states.metricTypeList[0]);
+      }
       return;
     }
     states.metricTypes.push("");
@@ -421,16 +453,19 @@ limitations under the License. -->
     };
   }
   function changeMetricMode() {
-    console.log(isExpression.value);
-    dashboardStore.selectWidget({
-      ...dashboardStore.selectedGrid,
-      metricMode: isExpression.value ? "Expression" : "General",
-    });
+    states.metrics = metrics.value.length ? metrics.value : [""];
+    (states.metricTypes = metricTypes.value.length ? metricTypes.value : [""]),
+      dashboardStore.selectWidget({
+        ...dashboardStore.selectedGrid,
+        metricMode: isExpression.value ? "Expression" : "General",
+      });
   }
-  function changeExpression(event: any, index: number) {
+  async function changeExpression(event: any, index: number) {
     const params = event.target.textContent;
     states.metrics[index] = params;
-    // states.metricTypes[index] =
+    const resp = await dashboardStore.getTypeOfMQE(params);
+    console.log(resp);
+    // states.metricTypes[index] = resp.data.metricType
   }
 </script>
 <style lang="scss" scoped>

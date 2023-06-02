@@ -42,7 +42,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-if="metricType === 'readLabeledMetricsValues'">
+    <div class="item mb-10" v-if="metricType === ProtocolTypes.ReadLabeledMetricsValues">
       <span class="label">{{ t("labelsIndex") }}</span>
       <el-input
         class="input"
@@ -97,7 +97,7 @@ limitations under the License. -->
   import { SortOrder, CalculationOpts } from "../../../data";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { MetricConfigOpt } from "@/types/dashboard";
-  import { ListChartTypes, ProtocolTypes } from "../../../data";
+  import { ListChartTypes, ProtocolTypes, ExpressionResultType } from "../../../data";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
@@ -110,23 +110,34 @@ limitations under the License. -->
   const { t } = useI18n();
   const emit = defineEmits(["update"]);
   const dashboardStore = useDashboardStore();
+  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === "Expression" ? true : false);
   const currentMetric = ref<MetricConfigOpt>({
     ...props.currentMetricConfig,
     topN: props.currentMetricConfig.topN || 10,
   });
-  const metricTypes = dashboardStore.selectedGrid.metricTypes || [];
-  const metricType = computed(() => (dashboardStore.selectedGrid.metricTypes || [])[props.index]);
+  const metricTypes = computed(
+    () => (isExpression.value ? dashboardStore.selectedGrid.typesOfMQE : dashboardStore.selectedGrid.metricTypes) || [],
+  );
+  const metricType = computed(() => metricTypes.value[props.index]);
   const hasLabel = computed(() => {
     const graph = dashboardStore.selectedGrid.graph || {};
     return (
       ListChartTypes.includes(graph.type) ||
-      [ProtocolTypes.ReadLabeledMetricsValues, ProtocolTypes.ReadMetricsValues].includes(metricType.value)
+      [
+        ProtocolTypes.ReadLabeledMetricsValues,
+        ProtocolTypes.ReadMetricsValues,
+        ExpressionResultType.TIME_SERIES_VALUES,
+      ].includes(metricType.value)
     );
   });
   const isTopn = computed(() =>
-    [ProtocolTypes.SortMetrics, ProtocolTypes.ReadSampledRecords, ProtocolTypes.ReadRecords].includes(
-      metricTypes[props.index],
-    ),
+    [
+      ProtocolTypes.SortMetrics,
+      ProtocolTypes.ReadSampledRecords,
+      ProtocolTypes.ReadRecords,
+      ExpressionResultType.SORTED_LIST,
+      ExpressionResultType.RECORD_LIST,
+    ].includes(metricTypes.value[props.index]),
   );
   function updateConfig(index: number, param: { [key: string]: string }) {
     const key = Object.keys(param)[0];

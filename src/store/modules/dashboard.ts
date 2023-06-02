@@ -309,6 +309,11 @@ export const dashboardStore = defineStore({
 
       return res.data;
     },
+    async getTypeOfMQE(expression: string) {
+      const res: AxiosResponse = await graphql.query("getTypeOfMQE").params({ expression });
+
+      return res.data;
+    },
     async fetchMetricList(regex: string) {
       const res: AxiosResponse = await graphql.query("queryMetrics").params({ regex });
 
