@@ -42,7 +42,7 @@ limitations under the License. -->
       placeholder="Please input a expression"
       @change="changeExpression"
     /> -->
-    <div v-if="isExpression" id="expression-param" contenteditable="true" @input="changeExpression($event, index)">
+    <div v-if="isExpression" id="expression-param" contenteditable="true" @blur="changeExpression($event, index)">
       {{ metric }}
     </div>
     <span v-else>
@@ -71,7 +71,12 @@ limitations under the License. -->
       </template>
       <Standard @update="queryMetrics" :currentMetricConfig="currentMetricConfig" :index="index" />
     </el-popover>
-    <span>
+    <span
+      v-show="
+        states.isList ||
+        [ProtocolTypes.ReadMetricsValues, ExpressionResultType.TIME_SERIES_VALUES as string].includes(states.metricTypes[0])
+      "
+    >
       <Icon
         class="cp mr-5"
         v-if="index === states.metrics.length - 1 && states.metrics.length < defaultLen"
@@ -81,6 +86,7 @@ limitations under the License. -->
       />
       <Icon class="cp" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
     </span>
+    <span v-if="states.tips[index]" class="ml-10 red">{{ states.tips[index] }}</span>
   </div>
   <div>{{ t("visualization") }}</div>
   <div class="chart-types">
@@ -108,6 +114,8 @@ limitations under the License. -->
     ChartTypes,
     PodsChartTypes,
     MetricsType,
+    ProtocolTypes,
+    ExpressionResultType,
   } from "../../../data";
   import { ElMessage } from "element-plus";
   import Icon from "@/components/Icon.vue";
@@ -137,6 +145,7 @@ limitations under the License. -->
     metricList: (Option & { type: string })[];
     dashboardName: string;
     dashboardList: ((DashboardItem & { label: string; value: string }) | any)[];
+    tips: string[];
   }>({
     metrics: metrics.value.length ? metrics.value : [""],
     metricTypes: metricTypes.value.length ? metricTypes.value : [""],
@@ -145,6 +154,7 @@ limitations under the License. -->
     metricList: [],
     dashboardName: graph.value.dashboardName,
     dashboardList: [{ label: "", value: "" }],
+    tips: [],
   });
   const currentMetricConfig = ref<MetricConfigOpt>({
     unit: "",
@@ -322,11 +332,11 @@ limitations under the License. -->
     queryMetrics();
   }
   async function queryMetrics() {
-    if (isExpression.value) {
-      queryMetricsWithExpressions();
+    if (states.isList) {
       return;
     }
-    if (states.isList) {
+    if (isExpression.value) {
+      queryMetricsWithExpressions();
       return;
     }
     const { metricConfig, metricTypes, metrics } = dashboardStore.selectedGrid;
@@ -351,9 +361,6 @@ limitations under the License. -->
   }
 
   async function queryMetricsWithExpressions() {
-    if (states.isList) {
-      return;
-    }
     const { metricConfig, typesOfMQE, expressions } = dashboardStore.selectedGrid;
     if (!(expressions && expressions[0] && typesOfMQE && typesOfMQE[0])) {
       return;
@@ -393,6 +400,7 @@ limitations under the License. -->
   }
   function addMetric() {
     states.metrics.push("");
+    states.tips.push("");
     if (!states.isList) {
       states.metricTypes.push(states.metricTypes[0]);
       if (!isExpression.value) {
@@ -406,6 +414,7 @@ limitations under the License. -->
     if (states.metrics.length === 1) {
       states.metrics = [""];
       states.metricTypes = [""];
+      states.tips = [""];
       dashboardStore.selectWidget({
         ...dashboardStore.selectedGrid,
         ...{ metricTypes: states.metricTypes, metrics: states.metrics },
@@ -415,6 +424,7 @@ limitations under the License. -->
     }
     states.metrics.splice(index, 1);
     states.metricTypes.splice(index, 1);
+    states.tips.splice(index, 1);
     const config = dashboardStore.selectedGrid.metricConfig || [];
     const metricConfig = config[index] ? config.splice(index, 1) : config;
     dashboardStore.selectWidget({
@@ -459,10 +469,25 @@ limitations under the License. -->
   }
   async function changeExpression(event: any, index: number) {
     const params = event.target.textContent;
-    states.metrics[index] = params;
-    const resp = await dashboardStore.getTypeOfMQE(params);
-    console.log(resp);
-    // states.metricTypes[index] = resp.data.metricType
+    if (params) {
+      const resp = await dashboardStore.getTypeOfMQE(params);
+      states.metrics[index] = params;
+      states.metricTypes[index] = resp.data.metricType.type;
+      states.tips[index] = resp.data.metricType.error || "";
+    } else {
+      states.metrics[index] = params;
+      states.metricTypes[index] = "";
+      states.tips[index] = "";
+    }
+
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      expressions: states.metrics,
+      typesOfMQE: states.metricTypes,
+    });
+    if (params) {
+      await queryMetrics();
+    }
   }
 </script>
 <style lang="scss" scoped>

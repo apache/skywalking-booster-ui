@@ -55,65 +55,36 @@ export function useExpressionsQueryProcessor(config: {
     return;
   }
   const fragment = config.metrics.map((name: string, index: number) => {
-    variables.push(`expression${index}: String!`, `$entity${index}: Entity!`);
-    const metricType = config.metricTypes[index] || "";
-    const c = (config.metricConfig && config.metricConfig[index]) || {};
+    variables.push(`$expression${index}: String!`, `$entity${index}: Entity!`);
     conditions[`expression${index}`] = name;
-    if ([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST as string].includes(metricType)) {
-      conditions[`entity${index}`] = {
-        parentService: ["All"].includes(dashboardStore.entity) ? null : selectorStore.currentService.value,
-        normal: selectorStore.currentService ? selectorStore.currentService.normal : true,
-        topN: Number(c.topN) || 10,
-        order: c.sortOrder || "DES",
-      };
-    } else {
-      const entity = {
-        serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
-        normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
-        serviceInstanceName: ["ServiceInstance", "ServiceInstanceRelation", "ProcessRelation"].includes(
-          dashboardStore.entity,
-        )
-          ? selectorStore.currentPod && selectorStore.currentPod.value
-          : undefined,
-        endpointName: dashboardStore.entity.includes("Endpoint")
-          ? selectorStore.currentPod && selectorStore.currentPod.value
-          : undefined,
-        processName: dashboardStore.entity.includes("Process")
-          ? selectorStore.currentProcess && selectorStore.currentProcess.value
-          : undefined,
-        destNormal: isRelation ? selectorStore.currentDestService.normal : undefined,
-        destServiceName: isRelation ? selectorStore.currentDestService.value : undefined,
-        destServiceInstanceName: ["ServiceInstanceRelation", "ProcessRelation"].includes(dashboardStore.entity)
+    const entity = {
+      serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
+      normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
+      serviceInstanceName: ["ServiceInstance", "ServiceInstanceRelation", "ProcessRelation"].includes(
+        dashboardStore.entity,
+      )
+        ? selectorStore.currentPod && selectorStore.currentPod.value
+        : undefined,
+      endpointName: dashboardStore.entity.includes("Endpoint")
+        ? selectorStore.currentPod && selectorStore.currentPod.value
+        : undefined,
+      processName: dashboardStore.entity.includes("Process")
+        ? selectorStore.currentProcess && selectorStore.currentProcess.value
+        : undefined,
+      destNormal: isRelation ? selectorStore.currentDestService.normal : undefined,
+      destServiceName: isRelation ? selectorStore.currentDestService.value : undefined,
+      destServiceInstanceName: ["ServiceInstanceRelation", "ProcessRelation"].includes(dashboardStore.entity)
+        ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
+        : undefined,
+      destEndpointName:
+        dashboardStore.entity === "EndpointRelation"
           ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
           : undefined,
-        destEndpointName:
-          dashboardStore.entity === "EndpointRelation"
-            ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
-            : undefined,
-        destProcessName: dashboardStore.entity.includes("ProcessRelation")
-          ? selectorStore.currentDestProcess && selectorStore.currentDestProcess.value
-          : undefined,
-      };
-      if ([ExpressionResultType.RECORD_LIST as string].includes(metricType)) {
-        conditions[`entity${index}`] = {
-          parentEntity: entity,
-          topN: Number(c.topN) || 10,
-          order: c.sortOrder || "DES",
-        };
-      } else {
-        // if (metricType === ExpressionResultType.TIME_SERIES_VALUES) {
-        //   const labels = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-        //   variables.push(`$labels${index}: [String!]!`);
-        //   conditions[`labels${index}`] = labels;
-        // }
-        conditions[`entity${index}`] = {
-          entity,
-        };
-      }
-    }
-    // if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
-    //   return `${name}${index}: ${metricType}(condition: $condition${index}, labels: $labels${index}, duration: $duration)${RespFields[metricType]}`;
-    // }
+      destProcessName: dashboardStore.entity.includes("ProcessRelation")
+        ? selectorStore.currentDestProcess && selectorStore.currentDestProcess.value
+        : undefined,
+    };
+    conditions[`entity${index}`] = entity;
 
     return `expression${index}: execExpression(expression: $expression${index}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
   });
@@ -145,22 +116,20 @@ export function useExpressionsSourceProcessor(
   const keys = Object.keys(resp.data);
 
   config.metricTypes.forEach((type: string, index) => {
-    const m = config.metrics[index];
     const c = (config.metricConfig && config.metricConfig[index]) || {};
+    const results = (resp.data[keys[index]] && resp.data[keys[index]].results) || [];
+    const name = ((results[0] || {}).metric || {}).name;
 
     if (type === ExpressionResultType.TIME_SERIES_VALUES) {
-      source[c.label || m] = (resp.data[keys[index]] && calculateExp(resp.data.results[keys[index]].values, c)) || [];
+      source[c.label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
+      return;
     }
     if (type === ExpressionResultType.SINGLE_VALUE) {
-      const v = Object.values(resp.data)[0] || {};
-      source[m] = v.isEmptyValue ? NaN : aggregation(Number(v.value), c);
+      source[c.label || name] = results[0].values[0].value;
+      return;
     }
     if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
-      source[m] = (Object.values(resp.data)[0] || []).map((d: { value: unknown; name: string }) => {
-        d.value = aggregation(Number(d.value), c);
-
-        return d;
-      });
+      source[name] = results[0].values;
     }
   });
 

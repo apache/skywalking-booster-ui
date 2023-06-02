@@ -22,7 +22,6 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { MetricConfigOpt } from "@/types/dashboard";
-import { MetricCatalog } from "@/views/dashboard/data";
 
 export function useQueryProcessor(config: Indexable) {
   if (!(config.metrics && config.metrics[0])) {
@@ -179,6 +178,7 @@ export function useSourceProcessor(
 
         return d;
       });
+      console.log(source);
     }
     if (type === MetricQueryTypes.READHEATMAP) {
       const resVal = Object.values(resp.data)[0] || {};
