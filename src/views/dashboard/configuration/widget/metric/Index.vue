@@ -421,9 +421,15 @@ limitations under the License. -->
       states.metrics = [""];
       states.metricTypes = [""];
       states.tips = [""];
+      let v = {};
+      if (isExpression.value) {
+        v = { typesOfMQE: states.metricTypes, expressions: states.metrics };
+      } else {
+        v = { metricTypes: states.metricTypes, metrics: states.metrics };
+      }
       dashboardStore.selectWidget({
         ...dashboardStore.selectedGrid,
-        ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+        ...v,
         metricConfig: [],
       });
       return;
@@ -433,9 +439,15 @@ limitations under the License. -->
     states.tips.splice(index, 1);
     const config = dashboardStore.selectedGrid.metricConfig || [];
     const metricConfig = config[index] ? config.splice(index, 1) : config;
+    let p = {};
+    if (isExpression.value) {
+      p = { typesOfMQE: states.metricTypes, expressions: states.metrics };
+    } else {
+      p = { metricTypes: states.metricTypes, metrics: states.metrics };
+    }
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
-      ...{ metricTypes: states.metricTypes, metrics: states.metrics },
+      ...p,
       metricConfig,
     });
   }

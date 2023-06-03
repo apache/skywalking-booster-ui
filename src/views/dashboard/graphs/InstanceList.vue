@@ -191,6 +191,9 @@ limitations under the License. -->
       return;
     }
     instances.value = currentInstances;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
   }
 
   async function queryInstanceExpressions(currentInstances: Instance[]) {
@@ -211,6 +214,9 @@ limitations under the License. -->
       return;
     }
     instances.value = currentInstances;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
   }
 
   function clickInstance(scope: any) {
@@ -251,6 +257,7 @@ limitations under the License. -->
       ...(props.config.metrics || []),
       ...(props.config.metricConfig || []),
       ...(props.config.expressions || []),
+      props.config.metricMode,
     ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {

@@ -230,6 +230,7 @@ limitations under the License. -->
         ...props.config,
         metricConfig: metricConfig.value || [],
       });
+
       services.value = data;
       colMetrics.value = names;
       metricTypes.value = metricTypesArr;
@@ -238,6 +239,10 @@ limitations under the License. -->
       return;
     }
     services.value = currentServices;
+    colMetrics.value = [];
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
   }
   async function queryServiceExpressions(currentServices: Service[]) {
     const expressions = props.config.expressions || [];
@@ -257,6 +262,9 @@ limitations under the License. -->
       return;
     }
     services.value = currentServices;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
   }
   function objectSpanMethod(param: any): any {
     if (!props.config.showGroup) {
@@ -294,6 +302,7 @@ limitations under the License. -->
       ...(props.config.metrics || []),
       ...(props.config.metricConfig || []),
       ...(props.config.expressions || []),
+      props.config.metricMode,
     ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {

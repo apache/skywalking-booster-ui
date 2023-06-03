@@ -157,6 +157,9 @@ limitations under the License. -->
       return;
     }
     endpoints.value = currentPods;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
   }
   async function queryEndpointExpressions(currentPods: Endpoint[]) {
     const expressions = props.config.expressions || [];
@@ -176,6 +179,9 @@ limitations under the License. -->
       return;
     }
     endpoints.value = currentPods;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
   }
   function clickEndpoint(scope: any) {
     const { dashboard } = getDashboard({
@@ -200,6 +206,7 @@ limitations under the License. -->
       ...(props.config.metrics || []),
       ...(props.config.metricConfig || []),
       ...(props.config.expressions || []),
+      props.config.metricMode,
     ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
