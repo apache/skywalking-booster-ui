@@ -252,7 +252,6 @@ limitations under the License. -->
     const expressions = props.config.expressions || [];
     const typesOfMQE = props.config.typesOfMQE || [];
     const subExpressions = props.config.subExpressions || [];
-    const subTypesOfMQE = props.config.subTypesOfMQE || [];
 
     if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
       const params = await useExpressionsQueryPodsMetrics(

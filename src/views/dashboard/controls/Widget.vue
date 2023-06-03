@@ -62,6 +62,8 @@ limitations under the License. -->
           metricMode: data.metricMode,
           expressions: data.expressions || [],
           typesOfMQE: data.typesOfMQE || [],
+          subExpressions: data.subExpressions || [],
+          subTypesOfMQE: data.subTypesOfMQE || [],
         }"
         :needQuery="needQuery"
         @click="clickHandle"

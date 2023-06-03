@@ -38,6 +38,8 @@ limitations under the License. -->
           metricMode: config.metricMode,
           expressions: config.expressions || [],
           typesOfMQE: config.typesOfMQE || [],
+          subExpressions: config.subExpressions || [],
+          subTypesOfMQE: config.subTypesOfMQE || [],
         }"
         :needQuery="true"
       />

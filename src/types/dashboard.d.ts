@@ -44,6 +44,8 @@ export interface LayoutConfig {
   eventAssociate?: boolean;
   filters?: Filters;
   relatedTrace?: RelatedTrace;
+  subExpressions?: string[];
+  subTypesOfMQE?: string[];
 }
 export type RelatedTrace = {
   duration: DurationTime;
