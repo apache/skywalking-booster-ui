@@ -35,13 +35,6 @@ limitations under the License. -->
     @change="changeMetricMode"
   />
   <div v-for="(metric, index) in states.metrics" :key="index" class="metric-item">
-    <!-- <el-input
-      v-if="isExpression"
-      class="selectors"
-      size="small"
-      placeholder="Please input a expression"
-      @change="changeExpression"
-    /> -->
     <div v-if="isExpression" id="expression-param" contenteditable="true" @blur="changeExpression($event, index)">
       {{ metric }}
     </div>
@@ -505,7 +498,8 @@ limitations under the License. -->
     queryMetrics();
   }
   async function changeExpression(event: any, index: number) {
-    const params = event.target.textContent;
+    const params = (event.target.textContent || "").replace(/\s+/g, "");
+
     if (params) {
       const resp = await dashboardStore.getTypeOfMQE(params);
       states.metrics[index] = params;

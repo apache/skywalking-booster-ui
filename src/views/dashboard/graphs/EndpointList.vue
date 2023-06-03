@@ -41,6 +41,7 @@ limitations under the License. -->
             metrics: colMetrics,
             metricConfig,
             metricTypes,
+            metricMode,
           }"
           v-if="colMetrics.length"
         />
@@ -102,6 +103,7 @@ limitations under the License. -->
   const colMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const metricTypes = ref<string[]>(props.config.metricTypes || []);
+  const metricMode = ref<string>(props.config.metricMode);
 
   if (props.needQuery) {
     queryEndpoints();
@@ -213,6 +215,7 @@ limitations under the License. -->
         return;
       }
       metricConfig.value = props.config.metricConfig;
+      metricMode.value = props.config.metricMode;
       queryEndpointMetrics(endpoints.value);
     },
   );

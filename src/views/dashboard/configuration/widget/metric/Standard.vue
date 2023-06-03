@@ -44,7 +44,10 @@ limitations under the License. -->
     </div>
     <div
       class="item mb-10"
-      v-if="[ProtocolTypes.ReadLabeledMetricsValues, ExpressionResultType.TIME_SERIES_VALUES].includes(metricType)"
+      v-if="
+        [ProtocolTypes.ReadLabeledMetricsValues].includes(metricType) ||
+        dashboardStore.selectedGrid.metricMode === MetricModes.Expression
+      "
     >
       <span class="label">{{ t("labelsIndex") }}</span>
       <el-input
@@ -113,7 +116,7 @@ limitations under the License. -->
   const { t } = useI18n();
   const emit = defineEmits(["update"]);
   const dashboardStore = useDashboardStore();
-  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression ? true : false);
+  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression);
   const currentMetric = ref<MetricConfigOpt>({
     ...props.currentMetricConfig,
     topN: props.currentMetricConfig.topN || 10,
@@ -138,10 +141,7 @@ limitations under the License. -->
       metricTypes.value[props.index],
     ),
   );
-  const isExec = computed(() => {
-    const graph = dashboardStore.selectedGrid.graph || {};
-    return dashboardStore.selectedGrid.metricMode === MetricModes.General || ListChartTypes.includes(graph.type);
-  });
+  const isExec = computed(() => dashboardStore.selectedGrid.metricMode === MetricModes.General);
   function updateConfig(index: number, param: { [key: string]: string }) {
     const key = Object.keys(param)[0];
     if (!key) {

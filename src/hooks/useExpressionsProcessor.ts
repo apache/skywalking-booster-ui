@@ -199,58 +199,64 @@ export async function useExpressionsQueryPodsMetrics(
     const metricConfigArr: MetricConfigOpt[] = [];
     const metricTypesArr: string[] = [];
     const data = pods.map((d: any, idx: number) => {
-      config.expressions.map((exp: string, index: number) => {
+      for (let index = 0; index < config.expressions.length; index++) {
         const c: any = (config.metricConfig && config.metricConfig[index]) || {};
         const k = "expression" + idx + index;
         const results = (resp.data[k] && resp.data[k].results) || [];
-        if (config.typesOfMQE[index] === ExpressionResultType.SINGLE_VALUE) {
-          const name = results[0].metric.name || "";
-          d[name] = results[0].values[0].value;
-          if (idx === 0) {
-            names.push(name);
-            metricConfigArr.push(c);
-            metricTypesArr.push(config.typesOfMQE[index]);
-          }
-        }
-        if (config.typesOfMQE[index] === ExpressionResultType.TIME_SERIES_VALUES) {
-          if (results.length > 1) {
-            const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-            const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-            for (let i = 0; i < results.length; i++) {
-              let name = results[i].metric.name || "";
-              const values = results[i].values.map((d: { value: unknown }) => d.value);
-              const indexNum = labelsIdx.findIndex((d: string) => d === results[i].metric.labels[0].value);
-              if (labels[indexNum] && indexNum > -1) {
-                name = labels[indexNum];
-              }
-              if (!d[name]) {
-                d[name] = {};
-              }
-              if ([Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(c.calculation)) {
-                d[name]["avg"] = calculateExp(results[i].values, c);
-              }
-              d[name]["values"] = values;
-              if (idx === 0) {
-                names.push(name);
-                metricConfigArr.push({ ...c, index: i });
-                metricTypesArr.push(config.typesOfMQE[index]);
-              }
+        if (results.length > 1) {
+          const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+          const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+          for (let i = 0; i < results.length; i++) {
+            let name = results[i].metric.labels[0].value || "";
+            const values = results[i].values.map((d: { value: unknown }) => d.value);
+            const num = labelsIdx.findIndex((d: string) => d === results[i].metric.labels[0].value);
+
+            if (labels[num]) {
+              name = labels[num];
             }
-            return;
+            if (!d[name]) {
+              d[name] = {};
+            }
+            if (config.typesOfMQE[index] === ExpressionResultType.SINGLE_VALUE) {
+              d[name]["avg"] = results[i].values[0].value;
+            } else {
+              d[name]["values"] = values;
+            }
+
+            const j = names.findIndex((d: string) => d === name);
+
+            if (j < 0) {
+              names.push(name);
+              metricConfigArr.push({ ...c, index: i });
+              metricTypesArr.push(config.typesOfMQE[index]);
+            } else {
+              metricConfigArr[j] = { ...metricConfigArr[j], ...c };
+            }
+          }
+        } else {
+          if (!results[0]) {
+            return d;
           }
           const name = results[0].metric.name || "";
-          d[name] = {};
-          if ([Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(c.calculation)) {
-            d[name]["avg"] = calculateExp(results[0].values, c);
+          if (!d[name]) {
+            d[name] = {};
           }
-          d[name]["values"] = results[0].values.map((d: { value: number }) => d.value);
-          if (idx === 0) {
+          if (config.typesOfMQE[index] === ExpressionResultType.SINGLE_VALUE) {
+            d[name]["avg"] = [results[0].values[0].value];
+          }
+          if (config.typesOfMQE[index] === ExpressionResultType.TIME_SERIES_VALUES) {
+            d[name]["values"] = results[0].values.map((d: { value: number }) => d.value);
+          }
+          const j = names.findIndex((d: string) => d === name);
+          if (j < 0) {
             names.push(name);
             metricConfigArr.push(c);
             metricTypesArr.push(config.typesOfMQE[index]);
+          } else {
+            metricConfigArr[j] = { ...metricConfigArr[j], ...c };
           }
         }
-      });
+      }
       return d;
     });
 
