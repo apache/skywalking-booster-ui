@@ -84,6 +84,7 @@ limitations under the License. -->
   import { EntityType, ListChartTypes } from "../data";
   import type { EventParams } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
+  import { MetricModes } from "../data";
 
   const props = {
     data: {
@@ -117,7 +118,7 @@ limitations under the License. -->
       }
 
       async function queryMetrics() {
-        const isExpression = props.data.metricMode === "Expression";
+        const isExpression = props.data.metricMode === MetricModes.Expression;
         const params = isExpression
           ? await useExpressionsQueryProcessor({
               metrics: props.data.expressions,

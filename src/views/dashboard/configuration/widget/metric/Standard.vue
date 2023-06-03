@@ -97,7 +97,7 @@ limitations under the License. -->
   import { ref, watch, computed } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import { SortOrder, CalculationOpts } from "../../../data";
+  import { SortOrder, CalculationOpts, MetricModes } from "../../../data";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { MetricConfigOpt } from "@/types/dashboard";
   import { ListChartTypes, ProtocolTypes, ExpressionResultType } from "../../../data";
@@ -113,7 +113,7 @@ limitations under the License. -->
   const { t } = useI18n();
   const emit = defineEmits(["update"]);
   const dashboardStore = useDashboardStore();
-  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === "Expression" ? true : false);
+  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression ? true : false);
   const currentMetric = ref<MetricConfigOpt>({
     ...props.currentMetricConfig,
     topN: props.currentMetricConfig.topN || 10,
@@ -140,7 +140,7 @@ limitations under the License. -->
   );
   const isExec = computed(() => {
     const graph = dashboardStore.selectedGrid.graph || {};
-    return dashboardStore.selectedGrid.metricMode !== "Expression" || ListChartTypes.includes(graph.type);
+    return dashboardStore.selectedGrid.metricMode === MetricModes.General || ListChartTypes.includes(graph.type);
   });
   function updateConfig(index: number, param: { [key: string]: string }) {
     const key = Object.keys(param)[0];

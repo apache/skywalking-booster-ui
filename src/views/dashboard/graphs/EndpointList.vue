@@ -59,7 +59,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
   import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
-  import { EntityType } from "../data";
+  import { EntityType, MetricModes } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
@@ -132,7 +132,7 @@ limitations under the License. -->
         merge: d.merge,
       };
     });
-    if (props.config.metricMode === "Expression") {
+    if (props.config.metricMode === MetricModes.Expression) {
       queryEndpointExpressions(currentPods);
       return;
     }

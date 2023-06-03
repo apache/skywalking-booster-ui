@@ -86,6 +86,7 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import graphs from "../graphs";
   import CustomOptions from "./widget/index";
+  import { MetricModes } from "../data";
 
   export default defineComponent({
     name: "WidgetEdit",
@@ -133,7 +134,7 @@ limitations under the License. -->
         dashboardStore.setConfigPanel(false);
         const { metricMode } = dashboardStore.selectedGrid;
         let p = {};
-        if (metricMode === "Expression") {
+        if (metricMode === MetricModes.Expression) {
           p = {
             metrics: [],
             metricTypes: [],

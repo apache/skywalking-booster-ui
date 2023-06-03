@@ -116,6 +116,7 @@ limitations under the License. -->
     MetricsType,
     ProtocolTypes,
     ExpressionResultType,
+    MetricModes,
   } from "../../../data";
   import { ElMessage } from "element-plus";
   import Icon from "@/components/Icon.vue";
@@ -129,7 +130,7 @@ limitations under the License. -->
   const { t } = useI18n();
   const emit = defineEmits(["update", "loading"]);
   const dashboardStore = useDashboardStore();
-  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === "Expression" ? true : false);
+  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression ? true : false);
   const metrics = computed(
     () => (isExpression.value ? dashboardStore.selectedGrid.expressions : dashboardStore.selectedGrid.metrics) || [],
   );
@@ -467,7 +468,7 @@ limitations under the License. -->
     const config = dashboardStore.selectedGrid.metricTypes;
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
-      metricMode: isExpression.value ? "Expression" : "General",
+      metricMode: isExpression.value ? MetricModes.Expression : MetricModes.General,
       metricTypes: backupMetricConfig.value,
     });
     backupMetricConfig.value = config;

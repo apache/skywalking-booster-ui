@@ -331,3 +331,8 @@ export const RefreshOptions = [
   { label: "Last 8 hours", value: "8", step: "HOUR" },
   { label: "Last 7 days", value: "7", step: "DAY" },
 ];
+
+export enum MetricModes {
+  Expression = "Expression",
+  General = "General",
+}
