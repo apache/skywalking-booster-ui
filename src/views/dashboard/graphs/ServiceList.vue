@@ -127,7 +127,6 @@ limitations under the License. -->
   queryServices();
 
   async function queryServices() {
-    console.log(props.config);
     chartLoading.value = true;
     const resp = await selectorStore.fetchServices(dashboardStore.layerId);
 

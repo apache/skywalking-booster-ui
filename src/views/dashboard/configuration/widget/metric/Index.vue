@@ -86,7 +86,7 @@ limitations under the License. -->
       />
       <Icon class="cp" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
     </span>
-    <span v-if="states.tips[index]" class="ml-10 red sm">{{ states.tips[index] }}</span>
+    <span v-if="states.tips[index] && isExpression" class="ml-10 red sm">{{ states.tips[index] }}</span>
   </div>
   <div>{{ t("visualization") }}</div>
   <div class="chart-types">
@@ -210,6 +210,11 @@ limitations under the License. -->
       }
     });
     if (isExpression.value) {
+      if (states.metrics && states.metrics[0]) {
+        queryMetrics();
+      } else {
+        emit("update", {});
+      }
       return;
     }
     const metrics: any = states.metricList.filter((d: { value: string; type: string }) =>
@@ -487,6 +492,7 @@ limitations under the License. -->
       metricConfig: backupMetricConfig.value,
     });
     backupMetricConfig.value = config;
+    queryMetrics();
   }
   async function changeExpression(event: any, index: number) {
     const params = event.target.textContent;
