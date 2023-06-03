@@ -87,6 +87,7 @@ limitations under the License. -->
   import type { InstanceListConfig } from "@/types/dashboard";
   import type { Instance } from "@/types/selector";
   import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
+  import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
   import { EntityType } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
@@ -102,6 +103,9 @@ limitations under the License. -->
           metrics: string[];
           metricTypes: string[];
           isEdit: boolean;
+          metricMode: string;
+          expressions: string[];
+          typesOfMQE: string[];
         } & { metricConfig: MetricConfigOpt[] }
       >,
       default: () => ({
@@ -150,6 +154,10 @@ limitations under the License. -->
     if (!currentInstances.length) {
       return;
     }
+    if (props.config.metricMode === "Expression") {
+      queryInstanceExpressions(currentInstances);
+      return;
+    }
     const metrics = props.config.metrics || [];
     const types = props.config.metricTypes || [];
 
@@ -169,6 +177,26 @@ limitations under the License. -->
       colMetrics.value = names;
       metricTypes.value = metricTypesArr;
       metricConfig.value = metricConfigArr;
+      return;
+    }
+    instances.value = currentInstances;
+  }
+
+  async function queryInstanceExpressions(currentInstances: Instance[]) {
+    const expressions = props.config.expressions || [];
+    const typesOfMQE = props.config.typesOfMQE || [];
+
+    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+      const params = await useExpressionsQueryPodsMetrics(
+        currentInstances,
+        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions },
+        EntityType[3].value,
+      );
+      instances.value = params.data;
+      colMetrics.value = params.names;
+      metricTypes.value = params.metricTypesArr;
+      metricConfig.value = params.metricConfigArr;
+
       return;
     }
     instances.value = currentInstances;
@@ -207,7 +235,12 @@ limitations under the License. -->
   }
 
   watch(
-    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
+    () => [
+      ...(props.config.metricTypes || []),
+      ...(props.config.metrics || []),
+      ...(props.config.metricConfig || []),
+      ...(props.config.expressions || []),
+    ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;
