@@ -149,6 +149,7 @@ limitations under the License. -->
           metrics: config.value.metrics || [],
           metricTypes: config.value.metricTypes || [],
           metricConfig: config.value.metricConfig || [],
+          subExpressions: config.value.subExpressions || [],
         };
         source.value = isExpression ? await useExpressionsSourceProcessor(json, d) : await useSourceProcessor(json, d);
       }

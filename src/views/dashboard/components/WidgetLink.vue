@@ -92,7 +92,7 @@ limitations under the License. -->
       step: appStore.durationRow.step,
       utc: appStore.utc,
     });
-    const { widget, graph, metrics, metricTypes, metricConfig, metricMode, expressions, typesOfMQE } =
+    const { widget, graph, metrics, metricTypes, metricConfig, metricMode, expressions, typesOfMQE, subExpressions } =
       dashboardStore.selectedGrid;
     const c = (metricConfig || []).map((d: any) => {
       const t: any = {};
@@ -114,6 +114,9 @@ limitations under the License. -->
     if (metricMode === MetricModes.Expression) {
       opt.expressions = expressions;
       opt.typesOfMQE = typesOfMQE;
+      if (subExpressions && subExpressions.length) {
+        opt.subExpressions = subExpressions;
+      }
     } else {
       opt.metrics = metrics;
       opt.metricTypes = metricTypes;

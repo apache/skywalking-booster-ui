@@ -34,6 +34,10 @@ limitations under the License. -->
     size="small"
     @change="changeMetricMode"
   />
+  <div v-if="isExpression">
+    <span class="title">Summary</span>
+    <span>Detail</span>
+  </div>
   <div v-for="(metric, index) in states.metrics" :key="index" class="mb-10">
     <span v-if="isExpression">
       <div class="expression-param" contenteditable="true" @blur="changeExpression($event, index)">
@@ -642,5 +646,10 @@ limitations under the License. -->
     &:focus {
       border-color: #409eff;
     }
+  }
+
+  .title {
+    display: inline-block;
+    width: 410px;
   }
 </style>
