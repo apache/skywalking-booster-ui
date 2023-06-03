@@ -120,10 +120,18 @@ limitations under the License. -->
     endpoints.value = resp.data.pods || [];
     queryEndpointMetrics(endpoints.value);
   }
-  async function queryEndpointMetrics(currentPods: Endpoint[]) {
-    if (!currentPods.length) {
+  async function queryEndpointMetrics(arr: Endpoint[]) {
+    if (!arr.length) {
       return;
     }
+    const currentPods = arr.map((d: Endpoint) => {
+      return {
+        id: d.id,
+        value: d.value,
+        label: d.label,
+        merge: d.merge,
+      };
+    });
     if (props.config.metricMode === "Expression") {
       queryEndpointExpressions(currentPods);
       return;

@@ -22,6 +22,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { MetricConfigOpt } from "@/types/dashboard";
+import type { E } from "vitest/dist/types-c441ef31";
 
 export function useQueryProcessor(config: Indexable) {
   if (!(config.metrics && config.metrics[0])) {
@@ -277,7 +278,7 @@ export function usePodsSource(
   const names: string[] = [];
   const metricConfigArr: MetricConfigOpt[] = [];
   const metricTypesArr: string[] = [];
-  const data = pods.map((d: Instance & Indexable, idx: number) => {
+  const data = pods.map((d: any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
       const key = name + idx + index;

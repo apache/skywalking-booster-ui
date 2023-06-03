@@ -191,10 +191,21 @@ limitations under the License. -->
 
     router.push(path);
   }
-  async function queryServiceMetrics(currentServices: Service[]) {
-    if (!currentServices.length) {
+  async function queryServiceMetrics(arr: Service[]) {
+    if (!arr.length) {
       return;
     }
+    const currentServices = arr.map((d: Service) => {
+      return {
+        id: d.id,
+        value: d.value,
+        label: d.label,
+        layers: d.layers,
+        group: d.group,
+        normal: d.normal,
+        merge: d.merge,
+      };
+    });
     if (props.config.metricMode === "Expression") {
       queryServiceExpressions(currentServices);
       return;

@@ -15,16 +15,24 @@
  * limitations under the License.
  */
 import { MetricQueryTypes, Calculations } from "./data";
+import { ExpressionResultType } from "@/views/dashboard/data";
+
 export function useListConfig(config: Indexable, index: string) {
   const i = Number(index);
   const types = [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg];
   const calculation = config.metricConfig && config.metricConfig[i] && config.metricConfig[i].calculation;
   const isLinear =
-    [MetricQueryTypes.ReadMetricsValues, MetricQueryTypes.ReadLabeledMetricsValues].includes(config.metricTypes[i]) &&
-    !types.includes(calculation);
+    [
+      MetricQueryTypes.ReadMetricsValues,
+      MetricQueryTypes.ReadLabeledMetricsValues,
+      ExpressionResultType.TIME_SERIES_VALUES,
+    ].includes(config.metricTypes[i]) && !types.includes(calculation);
   const isAvg =
-    [MetricQueryTypes.ReadMetricsValues, MetricQueryTypes.ReadLabeledMetricsValues].includes(config.metricTypes[i]) &&
-    types.includes(calculation);
+    [
+      MetricQueryTypes.ReadMetricsValues,
+      MetricQueryTypes.ReadLabeledMetricsValues,
+      ExpressionResultType.TIME_SERIES_VALUES,
+    ].includes(config.metricTypes[i]) && types.includes(calculation);
   return {
     isLinear,
     isAvg,

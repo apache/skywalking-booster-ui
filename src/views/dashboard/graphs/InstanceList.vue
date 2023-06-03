@@ -150,10 +150,21 @@ limitations under the License. -->
     queryInstanceMetrics(instances.value);
   }
 
-  async function queryInstanceMetrics(currentInstances: Instance[]) {
-    if (!currentInstances.length) {
+  async function queryInstanceMetrics(arr: Instance[]) {
+    if (!arr.length) {
       return;
     }
+    const currentInstances = arr.map((d: Instance) => {
+      return {
+        id: d.id,
+        value: d.value,
+        label: d.label,
+        merge: d.merge,
+        language: d.language,
+        instanceUUID: d.instanceUUID,
+        attributes: d.attributes,
+      };
+    });
     if (props.config.metricMode === "Expression") {
       queryInstanceExpressions(currentInstances);
       return;
