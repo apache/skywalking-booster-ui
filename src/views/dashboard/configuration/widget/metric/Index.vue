@@ -280,12 +280,22 @@ limitations under the License. -->
         ...dashboardStore.selectedGrid,
         metrics: [""],
         metricTypes: [""],
+        expressions: [""],
+        typesOfMQE: [""],
       });
       states.metrics = [""];
       states.metricTypes = [""];
       defaultLen.value = 5;
     }
-    setMetricType(chart);
+
+    if (isExpression.value) {
+      dashboardStore.selectWidget({
+        ...dashboardStore.selectedGrid,
+        graph: chart,
+      });
+    } else {
+      setMetricType(chart);
+    }
     setDashboards(chart.type);
     states.dashboardName = "";
     defaultLen.value = 10;
