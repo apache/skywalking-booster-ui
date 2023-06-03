@@ -35,6 +35,9 @@ limitations under the License. -->
           metrics: config.metrics,
           metricTypes: config.metricTypes,
           metricConfig: config.metricConfig,
+          metricMode: config.metricMode,
+          expressions: config.expressions || [],
+          typesOfMQE: config.typesOfMQE || [],
         }"
         :needQuery="true"
       />

@@ -367,7 +367,7 @@ export function calculateExp(
   config: { calculation?: string },
 ): (number | string)[] {
   const arr = list.filter((d: { value: number; isEmptyValue: boolean }) => !d.isEmptyValue);
-  const sum = arr.length ? arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) : 0;
+  const sum = arr.length ? arr.map((d: { value: number }) => Number(d.value)).reduce((a, b) => a + b) : 0;
   let data: (number | string)[] = [];
   switch (config.calculation) {
     case Calculations.Average:

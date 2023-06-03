@@ -80,6 +80,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import type { Service } from "@/types/selector";
   import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
+  import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
   import { EntityType } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
@@ -100,6 +101,9 @@ limitations under the License. -->
           isEdit: boolean;
           names: string[];
           metricConfig: MetricConfigOpt[];
+          metricMode: string;
+          expressions: string[];
+          typesOfMQE: string[];
         }
       >,
       default: () => ({ dashboardName: "", fontSize: 12 }),
@@ -191,6 +195,10 @@ limitations under the License. -->
     if (!currentServices.length) {
       return;
     }
+    if (props.config.metricMode === "Expression") {
+      queryServiceExpressions(currentServices);
+      return;
+    }
     const metrics = props.config.metrics || [];
     const types = props.config.metricTypes || [];
 
@@ -215,6 +223,25 @@ limitations under the License. -->
       colMetrics.value = names;
       metricTypes.value = metricTypesArr;
       metricConfig.value = metricConfigArr;
+
+      return;
+    }
+    services.value = currentServices;
+  }
+  async function queryServiceExpressions(currentServices: Service[]) {
+    const expressions = props.config.expressions || [];
+    const typesOfMQE = props.config.typesOfMQE || [];
+
+    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+      const params = await useExpressionsQueryPodsMetrics(
+        currentServices,
+        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions },
+        EntityType[0].value,
+      );
+      services.value = params.data;
+      colMetrics.value = params.names;
+      metricTypes.value = params.metricTypesArr;
+      metricConfig.value = params.metricConfigArr;
 
       return;
     }
@@ -251,7 +278,12 @@ limitations under the License. -->
   }
 
   watch(
-    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
+    () => [
+      ...(props.config.metricTypes || []),
+      ...(props.config.metrics || []),
+      ...(props.config.metricConfig || []),
+      ...(props.config.expressions || []),
+    ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;
@@ -260,6 +292,7 @@ limitations under the License. -->
       queryServiceMetrics(services.value);
     },
   );
+
   watch(
     () => appStore.durationTime,
     () => {

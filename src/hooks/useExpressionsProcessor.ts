@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RespFields } from "./data";
+import { RespFields, Calculations } from "./data";
 import { ExpressionResultType } from "@/views/dashboard/data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MetricConfigOpt } from "@/types/dashboard";
+import type { Instance, Endpoint, Service } from "@/types/selector";
+import { calculateExp } from "./useMetricsProcessor";
 
 export function useExpressionsQueryProcessor(config: Indexable) {
   if (!(config.metrics && config.metrics[0])) {
@@ -117,11 +119,13 @@ export function useExpressionsSourceProcessor(
         source[c.label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
       } else {
         const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+        const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
         for (const item of results) {
-          const values = item.values.map((d: { value: unknown }) => Number(d.value)) || [];
-          const index = Number(item.metric.labels[0].value);
-          if (labels[index]) {
-            source[labels[index]] = values;
+          const values = item.values.map((d: { value: unknown }) => d.value) || [];
+          const index = item.metric.labels[0].value;
+          const indexNum = labelsIdx.findIndex((d: string) => d === index);
+          if (labels[indexNum] && indexNum > -1) {
+            source[labels[indexNum]] = values;
           } else {
             source[index] = values;
           }
@@ -137,4 +141,130 @@ export function useExpressionsSourceProcessor(
   }
 
   return source;
+}
+
+export async function useExpressionsQueryPodsMetrics(
+  pods: Array<(Instance | Endpoint | Service) & Indexable>,
+  config: {
+    expressions: string[];
+    typesOfMQE: string[];
+    metricConfig: MetricConfigOpt[];
+  },
+  scope: string,
+) {
+  function expressionsGraphqlPods() {
+    const metricTypes = (config.typesOfMQE || []).filter((m: string) => m);
+    if (!metricTypes.length) {
+      return;
+    }
+    const metrics = (config.expressions || []).filter((m: string) => m);
+    if (!metrics.length) {
+      return;
+    }
+    const appStore = useAppStoreWithOut();
+    const selectorStore = useSelectorStore();
+    const conditions: { [key: string]: unknown } = {
+      duration: appStore.durationTime,
+    };
+    const variables: string[] = [`$duration: Duration!`];
+    const currentService = selectorStore.currentService || {};
+    const fragmentList = pods.map((d: (Instance | Endpoint | Service) & Indexable, index: number) => {
+      const entity = {
+        serviceName: scope === "Service" ? d.label : currentService.label,
+        serviceInstanceName: scope === "ServiceInstance" ? d.label : undefined,
+        endpointName: scope === "Endpoint" ? d.label : undefined,
+        normal: scope === "Service" ? d.normal : currentService.normal,
+      };
+      const f = metrics.map((name: string, idx: number) => {
+        variables.push(`$expression${index}${idx}: String!`, `$entity${index}${idx}: Entity!`);
+        conditions[`entity${index}${idx}`] = entity;
+        conditions[`expression${index}${idx}`] = name;
+
+        return `expression${index}${idx}: execExpression(expression: $expression${index}${idx}, entity: $entity${index}${idx}, duration: $duration)${RespFields.execExpression}`;
+      });
+      return f;
+    });
+    const fragment = fragmentList.flat(1).join(" ");
+    const queryStr = `query queryData(${variables}) {${fragment}}`;
+
+    return { queryStr, conditions };
+  }
+
+  function expressionsPodsSource(resp: { errors: string; data: Indexable }): Indexable {
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+      return {};
+    }
+    const names: string[] = [];
+    const metricConfigArr: MetricConfigOpt[] = [];
+    const metricTypesArr: string[] = [];
+    const data = pods.map((d: Instance & Indexable, idx: number) => {
+      config.expressions.map((exp: string, index: number) => {
+        const c: any = (config.metricConfig && config.metricConfig[index]) || {};
+        const k = "expression" + idx + index;
+        const results = (resp.data[k] && resp.data[k].results) || [];
+        if (config.typesOfMQE[index] === ExpressionResultType.SINGLE_VALUE) {
+          const name = results[0].metric.name || "";
+          d[name] = results[0].values[0].value;
+          if (idx === 0) {
+            names.push(name);
+            metricConfigArr.push(c);
+            metricTypesArr.push(config.typesOfMQE[index]);
+          }
+        }
+        if (config.typesOfMQE[index] === ExpressionResultType.TIME_SERIES_VALUES) {
+          if (results.length > 1) {
+            const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+            const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+            for (let i = 0; i < results.length; i++) {
+              let name = results[i].metric.name || "";
+              const values = results[i].values.map((d: { value: unknown }) => d.value);
+              const indexNum = labelsIdx.findIndex((d: string) => d === results[i].metric.labels[0].value);
+              if (labels[indexNum] && indexNum > -1) {
+                name = labels[indexNum];
+              }
+              if (!d[name]) {
+                d[name] = {};
+              }
+              if ([Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(c.calculation)) {
+                d[name]["avg"] = calculateExp(results[i].values, c);
+              }
+              d[name]["values"] = values;
+              if (idx === 0) {
+                names.push(name);
+                metricConfigArr.push({ ...c, index: i });
+                metricTypesArr.push(config.typesOfMQE[index]);
+              }
+            }
+            return;
+          }
+          const name = results[0].metric.name || "";
+          d[name] = {};
+          if ([Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg].includes(c.calculation)) {
+            d[name]["avg"] = calculateExp(results[0].values, c);
+          }
+          d[name]["values"] = results[0].values.map((d: { value: number }) => d.value);
+          if (idx === 0) {
+            names.push(name);
+            metricConfigArr.push(c);
+            metricTypesArr.push(config.typesOfMQE[index]);
+          }
+        }
+      });
+      return d;
+    });
+
+    return { data, names, metricConfigArr, metricTypesArr };
+  }
+  const dashboardStore = useDashboardStore();
+  const params = await expressionsGraphqlPods();
+  const json = await dashboardStore.fetchMetricValue(params);
+
+  if (json.errors) {
+    ElMessage.error(json.errors);
+    return {};
+  }
+  const { data, names, metricTypesArr, metricConfigArr } = expressionsPodsSource(json);
+
+  return { data, names, metricTypesArr, metricConfigArr };
 }

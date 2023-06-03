@@ -59,6 +59,9 @@ limitations under the License. -->
           filters: data.filters || {},
           relatedTrace: data.relatedTrace || {},
           associate: data.associate || [],
+          metricMode: data.metricMode,
+          expressions: data.expressions || [],
+          typesOfMQE: data.typesOfMQE || [],
         }"
         :needQuery="needQuery"
         @click="clickHandle"

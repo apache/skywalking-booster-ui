@@ -42,7 +42,10 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-if="metricType === ProtocolTypes.ReadLabeledMetricsValues">
+    <div
+      class="item mb-10"
+      v-if="[ProtocolTypes.ReadLabeledMetricsValues, ExpressionResultType.TIME_SERIES_VALUES].includes(metricType)"
+    >
       <span class="label">{{ t("labelsIndex") }}</span>
       <el-input
         class="input"
@@ -56,7 +59,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-show="dashboardStore.selectedGrid.metricMode !== 'Expression'">
+    <div class="item mb-10" v-show="isExec">
       <span class="label">{{ t("aggregation") }}</span>
       <SelectSingle
         :value="currentMetric.calculation"
@@ -135,6 +138,10 @@ limitations under the License. -->
       metricTypes.value[props.index],
     ),
   );
+  const isExec = computed(() => {
+    const graph = dashboardStore.selectedGrid.graph || {};
+    return dashboardStore.selectedGrid.metricMode !== "Expression" || ListChartTypes.includes(graph.type);
+  });
   function updateConfig(index: number, param: { [key: string]: string }) {
     const key = Object.keys(param)[0];
     if (!key) {
