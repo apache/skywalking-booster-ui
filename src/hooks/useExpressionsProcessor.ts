@@ -262,7 +262,9 @@ export async function useExpressionsQueryPodsMetrics(
             d[name] = {};
           }
           d[name]["avg"] = [results[0].values[0].value];
-          d[name]["values"] = subResults[0].values.map((d: { value: number }) => d.value);
+          if (subResults[0]) {
+            d[name]["values"] = subResults[0].values.map((d: { value: number }) => d.value);
+          }
           const j = names.find((d: string) => d === name);
           if (!j) {
             names.push(name);
