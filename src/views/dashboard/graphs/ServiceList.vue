@@ -263,7 +263,6 @@ limitations under the License. -->
       colMetrics.value = params.names;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
-      console.log(colMetrics.value);
       return;
     }
     services.value = currentServices;
