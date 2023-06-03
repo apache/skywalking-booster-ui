@@ -58,6 +58,7 @@ limitations under the License. -->
   import type { Endpoint } from "@/types/selector";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
+  import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
   import { EntityType } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
@@ -75,6 +76,9 @@ limitations under the License. -->
           i: string;
           metrics: string[];
           metricTypes: string[];
+          metricMode: string;
+          expressions: string[];
+          typesOfMQE: string[];
         } & { metricConfig: MetricConfigOpt[] }
       >,
       default: () => ({
@@ -120,6 +124,10 @@ limitations under the License. -->
     if (!currentPods.length) {
       return;
     }
+    if (props.config.metricMode === "Expression") {
+      queryEndpointExpressions(currentPods);
+      return;
+    }
     const metrics = props.config.metrics || [];
     const types = props.config.metricTypes || [];
     if (metrics.length && metrics[0] && types.length && types[0]) {
@@ -142,6 +150,25 @@ limitations under the License. -->
     }
     endpoints.value = currentPods;
   }
+  async function queryEndpointExpressions(currentPods: Endpoint[]) {
+    const expressions = props.config.expressions || [];
+    const typesOfMQE = props.config.typesOfMQE || [];
+
+    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+      const params = await useExpressionsQueryPodsMetrics(
+        currentPods,
+        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions },
+        EntityType[2].value,
+      );
+      endpoints.value = params.data;
+      colMetrics.value = params.names;
+      metricTypes.value = params.metricTypesArr;
+      metricConfig.value = params.metricConfigArr;
+
+      return;
+    }
+    endpoints.value = currentPods;
+  }
   function clickEndpoint(scope: any) {
     const { dashboard } = getDashboard({
       name: props.config.dashboardName,
@@ -160,7 +187,12 @@ limitations under the License. -->
     await queryEndpoints();
   }
   watch(
-    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
+    () => [
+      ...(props.config.metricTypes || []),
+      ...(props.config.metrics || []),
+      ...(props.config.metricConfig || []),
+      ...(props.config.expressions || []),
+    ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;
