@@ -86,7 +86,7 @@ limitations under the License. -->
       />
       <Icon class="cp" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
     </span>
-    <span v-if="states.tips[index]" class="ml-10 red">{{ states.tips[index] }}</span>
+    <span v-if="states.tips[index]" class="ml-10 red sm">{{ states.tips[index] }}</span>
   </div>
   <div>{{ t("visualization") }}</div>
   <div class="chart-types">
@@ -209,6 +209,9 @@ limitations under the License. -->
         return d;
       }
     });
+    if (isExpression.value) {
+      return;
+    }
     const metrics: any = states.metricList.filter((d: { value: string; type: string }) =>
       states.metrics.includes(d.value),
     );
@@ -465,11 +468,11 @@ limitations under the License. -->
   function changeMetricMode() {
     states.metrics = metrics.value.length ? metrics.value : [""];
     states.metricTypes = metricTypes.value.length ? metricTypes.value : [""];
-    const config = dashboardStore.selectedGrid.metricTypes;
+    const config = dashboardStore.selectedGrid.metricConfig;
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       metricMode: isExpression.value ? MetricModes.Expression : MetricModes.General,
-      metricTypes: backupMetricConfig.value,
+      metricConfig: backupMetricConfig.value,
     });
     backupMetricConfig.value = config;
   }
