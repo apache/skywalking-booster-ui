@@ -55,9 +55,11 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
+  import { useExpressionsQueryProcessor, useExpressionsSourceProcessor } from "@/hooks/useExpressionsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
   import timeFormat from "@/utils/timeFormat";
+  import { MetricModes } from "./data";
 
   export default defineComponent({
     name: "WidgetPage",
@@ -125,7 +127,12 @@ limitations under the License. -->
         }
       }
       async function queryMetrics() {
-        const params = await useQueryProcessor({ ...config.value });
+        const isExpression = config.value.metricMode === MetricModes.Expression;
+        const params = isExpression
+          ? await useExpressionsQueryProcessor({
+              ...config.value,
+            })
+          : await useQueryProcessor({ ...config.value });
         if (!params) {
           source.value = {};
           return;
@@ -141,7 +148,7 @@ limitations under the License. -->
           metricTypes: config.value.metricTypes || [],
           metricConfig: config.value.metricConfig || [],
         };
-        source.value = useSourceProcessor(json, d);
+        source.value = isExpression ? await useExpressionsSourceProcessor(json, d) : await useSourceProcessor(json, d);
       }
       watch(
         () => appStoreWithOut.durationTime,
