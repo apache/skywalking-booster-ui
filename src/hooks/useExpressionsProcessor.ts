@@ -148,16 +148,26 @@ export async function useExpressionsQueryPodsMetrics(
   config: {
     expressions: string[];
     typesOfMQE: string[];
+    subExpressions: string[];
     metricConfig: MetricConfigOpt[];
   },
   scope: string,
 ) {
   function expressionsGraphqlPods() {
-    const metricTypes = (config.typesOfMQE || []).filter((m: string) => m);
-    if (!metricTypes.length) {
-      return;
+    const metrics: string[] = [];
+    const subMetrics: string[] = [];
+    const metricTypes: string[] = [];
+    config.expressions = config.expressions || [];
+    config.subExpressions = config.subExpressions || [];
+    config.typesOfMQE = config.typesOfMQE || [];
+
+    for (let i = 0; i < config.expressions.length; i++) {
+      if (config.expressions[i]) {
+        metrics.push(config.expressions[i]);
+        subMetrics.push(config.subExpressions[i]);
+        metricTypes.push(config.typesOfMQE[i]);
+      }
     }
-    const metrics = (config.expressions || []).filter((m: string) => m);
     if (!metrics.length) {
       return;
     }
@@ -175,12 +185,22 @@ export async function useExpressionsQueryPodsMetrics(
         endpointName: scope === "Endpoint" ? d.label : undefined,
         normal: scope === "Service" ? d.normal : currentService.normal,
       };
+      variables.push(`$entity${index}: Entity!`);
+      conditions[`entity${index}`] = entity;
       const f = metrics.map((name: string, idx: number) => {
-        variables.push(`$expression${index}${idx}: String!`, `$entity${index}${idx}: Entity!`);
-        conditions[`entity${index}${idx}`] = entity;
+        variables.push(`$expression${index}${idx}: String!`);
         conditions[`expression${index}${idx}`] = name;
+        let str = "";
+        if (config.subExpressions[idx]) {
+          variables.push(`$subExpression${index}${idx}: String!`);
+          conditions[`subExpression${index}${idx}`] = config.subExpressions[idx];
+          str = `subexpression${index}${idx}: execExpression(expression: $subExpression${index}${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
+        }
 
-        return `expression${index}${idx}: execExpression(expression: $expression${index}${idx}, entity: $entity${index}${idx}, duration: $duration)${RespFields.execExpression}`;
+        return (
+          str +
+          `expression${index}${idx}: execExpression(expression: $expression${index}${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`
+        );
       });
       return f;
     });
@@ -199,28 +219,19 @@ export async function useExpressionsQueryPodsMetrics(
     const metricConfigArr: MetricConfigOpt[] = [];
     const metricTypesArr: string[] = [];
     const data = pods.map((d: any, idx: number) => {
-      const map: any = {};
       for (let index = 0; index < config.expressions.length; index++) {
-        let c: any = (config.metricConfig && config.metricConfig[index]) || {};
+        const c: any = (config.metricConfig && config.metricConfig[index]) || {};
         const k = "expression" + idx + index;
+        const sub = "subexpression" + idx + index;
         const results = (resp.data[k] && resp.data[k].results) || [];
-        const n = results[0] && results[0].metric.name;
+        const subResults = (resp.data[sub] && resp.data[sub].results) || [];
 
-        if (map[n]) {
-          map[n] = {
-            ...c,
-            ...map[n],
-          };
-          c = map[n];
-        } else {
-          map[n] = c;
-        }
         if (results.length > 1) {
           const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
           const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
           for (let i = 0; i < results.length; i++) {
             let name = results[i].metric.labels[0].value || "";
-            const values = results[i].values.map((d: { value: unknown }) => d.value);
+            const subValues = subResults[i] && subResults[i].values.map((d: { value: unknown }) => d.value);
             const num = labelsIdx.findIndex((d: string) => d === results[i].metric.labels[0].value);
 
             if (labels[num]) {
@@ -229,20 +240,17 @@ export async function useExpressionsQueryPodsMetrics(
             if (!d[name]) {
               d[name] = {};
             }
-            if (config.typesOfMQE[index] === ExpressionResultType.SINGLE_VALUE) {
-              d[name]["avg"] = results[i].values[0].value;
-            } else {
-              d[name]["values"] = values;
+            if (subValues) {
+              d[name]["values"] = subValues;
             }
+            d[name]["avg"] = results[i].values[0].value;
 
-            const j = names.findIndex((d: string) => d === name);
+            const j = names.find((d: string) => d === name);
 
-            if (j < 0) {
+            if (!j) {
               names.push(name);
               metricConfigArr.push({ ...c, index: i });
               metricTypesArr.push(config.typesOfMQE[index]);
-            } else {
-              metricConfigArr[j] = { ...metricConfigArr[j], ...c };
             }
           }
         } else {
@@ -253,19 +261,13 @@ export async function useExpressionsQueryPodsMetrics(
           if (!d[name]) {
             d[name] = {};
           }
-          if (config.typesOfMQE[index] === ExpressionResultType.SINGLE_VALUE) {
-            d[name]["avg"] = [results[0].values[0].value];
-          }
-          if (config.typesOfMQE[index] === ExpressionResultType.TIME_SERIES_VALUES) {
-            d[name]["values"] = results[0].values.map((d: { value: number }) => d.value);
-          }
-          const j = names.findIndex((d: string) => d === name);
-          if (j < 0) {
+          d[name]["avg"] = [results[0].values[0].value];
+          d[name]["values"] = subResults[0].values.map((d: { value: number }) => d.value);
+          const j = names.find((d: string) => d === name);
+          if (!j) {
             names.push(name);
             metricConfigArr.push(c);
             metricTypesArr.push(config.typesOfMQE[index]);
-          } else {
-            metricConfigArr[j] = { ...metricConfigArr[j], ...c };
           }
         }
       }

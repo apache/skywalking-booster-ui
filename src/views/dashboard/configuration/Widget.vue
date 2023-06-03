@@ -33,14 +33,7 @@ limitations under the License. -->
           :config="{
             ...graph,
             legend: (dashboardStore.selectedGrid.graph || {}).legend,
-            i: dashboardStore.selectedGrid.i,
-            metrics: dashboardStore.selectedGrid.metrics,
-            metricTypes: dashboardStore.selectedGrid.metricTypes,
-            metricConfig: dashboardStore.selectedGrid.metricConfig,
-            relatedTrace: dashboardStore.selectedGrid.relatedTrace,
-            metricMode: dashboardStore.selectedGrid.metricMode,
-            expressions: dashboardStore.selectedGrid.expressions || [],
-            typesOfMQE: dashboardStore.selectedGrid.typesOfMQE || [],
+            ...dashboardStore.selectedGrid,
           }"
           :needQuery="true"
         />

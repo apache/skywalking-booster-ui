@@ -105,6 +105,8 @@ limitations under the License. -->
           metricMode: string;
           expressions: string[];
           typesOfMQE: string[];
+          subExpressions: string[];
+          subTypesOfMQE: string[];
         }
       >,
       default: () => ({ dashboardName: "", fontSize: 12 }),
@@ -249,18 +251,20 @@ limitations under the License. -->
   async function queryServiceExpressions(currentServices: Service[]) {
     const expressions = props.config.expressions || [];
     const typesOfMQE = props.config.typesOfMQE || [];
+    const subExpressions = props.config.subExpressions || [];
+    const subTypesOfMQE = props.config.subTypesOfMQE || [];
 
     if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
       const params = await useExpressionsQueryPodsMetrics(
         currentServices,
-        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions },
+        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions, subExpressions },
         EntityType[0].value,
       );
       services.value = params.data;
       colMetrics.value = params.names;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
-
+      console.log(colMetrics.value);
       return;
     }
     services.value = currentServices;
@@ -304,6 +308,7 @@ limitations under the License. -->
       ...(props.config.metrics || []),
       ...(props.config.metricConfig || []),
       ...(props.config.expressions || []),
+      ...(props.config.subExpressions || []),
       props.config.metricMode,
     ],
     (data, old) => {
