@@ -362,7 +362,7 @@ limitations under the License. -->
     }
     const { metricConfig, metricTypes, metrics } = dashboardStore.selectedGrid;
     if (!(metrics && metrics[0] && metricTypes && metricTypes[0])) {
-      return;
+      return emit("update", {});
     }
     const params = useQueryProcessor({ ...states, metricConfig });
     if (!params) {
@@ -384,7 +384,7 @@ limitations under the License. -->
   async function queryMetricsWithExpressions() {
     const { metricConfig, typesOfMQE, expressions } = dashboardStore.selectedGrid;
     if (!(expressions && expressions[0] && typesOfMQE && typesOfMQE[0])) {
-      return;
+      return emit("update", {});
     }
 
     const params = useExpressionsQueryProcessor({ ...states, metricConfig });
