@@ -199,10 +199,22 @@ export async function useExpressionsQueryPodsMetrics(
     const metricConfigArr: MetricConfigOpt[] = [];
     const metricTypesArr: string[] = [];
     const data = pods.map((d: any, idx: number) => {
+      const map: any = {};
       for (let index = 0; index < config.expressions.length; index++) {
-        const c: any = (config.metricConfig && config.metricConfig[index]) || {};
+        let c: any = (config.metricConfig && config.metricConfig[index]) || {};
         const k = "expression" + idx + index;
         const results = (resp.data[k] && resp.data[k].results) || [];
+        const n = results[0] && results[0].metric.name;
+
+        if (map[n]) {
+          map[n] = {
+            ...c,
+            ...map[n],
+          };
+          c = map[n];
+        } else {
+          map[n] = c;
+        }
         if (results.length > 1) {
           const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
           const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));

@@ -209,7 +209,7 @@ limitations under the License. -->
 
   .render-chart {
     padding: 5px;
-    height: 400px;
+    height: 420px;
     width: 100%;
   }
 
