@@ -198,7 +198,7 @@ export async function useExpressionsQueryPodsMetrics(
     const names: string[] = [];
     const metricConfigArr: MetricConfigOpt[] = [];
     const metricTypesArr: string[] = [];
-    const data = pods.map((d: Instance & Indexable, idx: number) => {
+    const data = pods.map((d: any, idx: number) => {
       config.expressions.map((exp: string, index: number) => {
         const c: any = (config.metricConfig && config.metricConfig[index]) || {};
         const k = "expression" + idx + index;

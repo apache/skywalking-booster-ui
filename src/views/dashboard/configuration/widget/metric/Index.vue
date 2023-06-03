@@ -166,6 +166,8 @@ limitations under the License. -->
 
   states.isList = ListChartTypes.includes(graph.value.type);
   const defaultLen = ref<number>(states.isList ? 5 : 20);
+  const backupMetricConfig = ref<MetricConfigOpt[]>([]);
+
   setDashboards();
   setMetricType();
 
@@ -461,11 +463,14 @@ limitations under the License. -->
   }
   function changeMetricMode() {
     states.metrics = metrics.value.length ? metrics.value : [""];
-    (states.metricTypes = metricTypes.value.length ? metricTypes.value : [""]),
-      dashboardStore.selectWidget({
-        ...dashboardStore.selectedGrid,
-        metricMode: isExpression.value ? "Expression" : "General",
-      });
+    states.metricTypes = metricTypes.value.length ? metricTypes.value : [""];
+    const config = dashboardStore.selectedGrid.metricTypes;
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      metricMode: isExpression.value ? "Expression" : "General",
+      metricTypes: backupMetricConfig.value,
+    });
+    backupMetricConfig.value = config;
   }
   async function changeExpression(event: any, index: number) {
     const params = event.target.textContent;
