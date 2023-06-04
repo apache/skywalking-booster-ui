@@ -40,6 +40,7 @@ limitations under the License. -->
             metrics: colMetrics,
             metricConfig,
             metricTypes,
+            metricMode,
           }"
           v-if="colMetrics.length"
         />
@@ -87,7 +88,8 @@ limitations under the License. -->
   import type { InstanceListConfig } from "@/types/dashboard";
   import type { Instance } from "@/types/selector";
   import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
-  import { EntityType } from "../data";
+  import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
+  import { EntityType, MetricModes } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
@@ -102,6 +104,11 @@ limitations under the License. -->
           metrics: string[];
           metricTypes: string[];
           isEdit: boolean;
+          metricMode: string;
+          expressions: string[];
+          typesOfMQE: string[];
+          subExpressions: string[];
+          subTypesOfMQE: string[];
         } & { metricConfig: MetricConfigOpt[] }
       >,
       default: () => ({
@@ -126,6 +133,7 @@ limitations under the License. -->
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const metricTypes = ref<string[]>(props.config.metricTypes || []);
   const pods = ref<Instance[]>([]); // all instances
+  const metricMode = ref<string>(props.config.metricMode);
   if (props.needQuery) {
     queryInstance();
   }
@@ -146,8 +154,23 @@ limitations under the License. -->
     queryInstanceMetrics(instances.value);
   }
 
-  async function queryInstanceMetrics(currentInstances: Instance[]) {
-    if (!currentInstances.length) {
+  async function queryInstanceMetrics(arr: Instance[]) {
+    if (!arr.length) {
+      return;
+    }
+    const currentInstances = arr.map((d: Instance) => {
+      return {
+        id: d.id,
+        value: d.value,
+        label: d.label,
+        merge: d.merge,
+        language: d.language,
+        instanceUUID: d.instanceUUID,
+        attributes: d.attributes,
+      };
+    });
+    if (props.config.metricMode === MetricModes.Expression) {
+      queryInstanceExpressions(currentInstances);
       return;
     }
     const metrics = props.config.metrics || [];
@@ -172,6 +195,33 @@ limitations under the License. -->
       return;
     }
     instances.value = currentInstances;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
+  }
+
+  async function queryInstanceExpressions(currentInstances: Instance[]) {
+    const expressions = props.config.expressions || [];
+    const typesOfMQE = props.config.typesOfMQE || [];
+    const subExpressions = props.config.subExpressions || [];
+
+    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+      const params = await useExpressionsQueryPodsMetrics(
+        currentInstances,
+        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions, subExpressions },
+        EntityType[3].value,
+      );
+      instances.value = params.data;
+      colMetrics.value = params.names;
+      metricTypes.value = params.metricTypesArr;
+      metricConfig.value = params.metricConfigArr;
+
+      return;
+    }
+    instances.value = currentInstances;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
   }
 
   function clickInstance(scope: any) {
@@ -207,12 +257,19 @@ limitations under the License. -->
   }
 
   watch(
-    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
+    () => [
+      ...(props.config.metricTypes || []),
+      ...(props.config.metrics || []),
+      ...(props.config.metricConfig || []),
+      ...(props.config.expressions || []),
+      props.config.metricMode,
+    ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;
       }
       metricConfig.value = props.config.metricConfig;
+      metricMode.value = props.config.metricMode;
       queryInstanceMetrics(instances.value);
     },
   );

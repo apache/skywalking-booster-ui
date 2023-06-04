@@ -112,4 +112,22 @@ export const RespFields: Indexable = {
     value
     refId
   }`,
+  execExpression: `{
+    type
+    results {
+      metric {
+        name
+        labels {
+          key
+          value
+        }
+      }
+      values {
+        id
+        value
+        traceID
+      }
+    }
+    error
+  }`,
 };

@@ -23,7 +23,7 @@ limitations under the License. -->
     <template #default="scope">
       <div class="chart">
         <Line
-          v-if="useListConfig(config, index).isLinear"
+          v-if="useListConfig(config, index).isLinear && config.metricMode !== MetricModes.Expression"
           :data="{
             [metric]: scope.row[metric] && scope.row[metric].values,
           }"
@@ -35,7 +35,10 @@ limitations under the License. -->
             showlabels: false,
           }"
         />
-        <span class="item flex-h" v-else-if="useListConfig(config, index).isAvg">
+        <span
+          class="item flex-h"
+          v-else-if="useListConfig(config, index).isAvg || config.metricMode === MetricModes.Expression"
+        >
           <el-popover placement="left" :width="400" trigger="click">
             <template #reference>
               <span class="trend">
@@ -79,6 +82,7 @@ limitations under the License. -->
   import Line from "../Line.vue";
   import Card from "../Card.vue";
   import { MetricQueryTypes } from "@/hooks/data";
+  import { ExpressionResultType, MetricModes } from "@/views/dashboard/data";
 
   /*global defineProps */
   const props = defineProps({
@@ -89,6 +93,7 @@ limitations under the License. -->
         metrics: string[];
         metricTypes: string[];
         metricConfig: MetricConfigOpt[];
+        metricMode: string;
       }>,
       default: () => ({}),
     },
@@ -107,7 +112,15 @@ limitations under the License. -->
     const i = Number(index);
     const label = props.config.metricConfig && props.config.metricConfig[i] && props.config.metricConfig[i].label;
     if (label) {
-      if (props.config.metricTypes[i] === MetricQueryTypes.ReadLabeledMetricsValues) {
+      if (
+        (
+          [
+            MetricQueryTypes.ReadLabeledMetricsValues,
+            ExpressionResultType.TIME_SERIES_VALUES,
+            ExpressionResultType.SINGLE_VALUE,
+          ] as string[]
+        ).includes(props.config.metricTypes[i])
+      ) {
         const name = (label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""))[
           props.config.metricConfig[i].index || 0
         ];

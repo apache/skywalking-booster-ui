@@ -20,7 +20,7 @@ limitations under the License. -->
         <div class="desc">
           <span class="calls mr-10">{{ i.value }}</span>
           <span class="cp mr-20">
-            {{ i.name }}
+            {{ i.name || i.id }}
           </span>
         </div>
         <el-popover placement="bottom" trigger="click">

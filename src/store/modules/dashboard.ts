@@ -25,7 +25,7 @@ import { NewControl, TextConfig, TimeRangeConfig, ControlsTypes } from "../data"
 import type { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
-import { EntityType } from "@/views/dashboard/data";
+import { EntityType, MetricModes } from "@/views/dashboard/data";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -92,6 +92,9 @@ export const dashboardStore = defineStore({
         metricTypes: [""],
         metrics: [""],
       };
+      if (type === "Widget") {
+        newItem.metricMode = MetricModes.Expression;
+      }
       if (type === "Tab") {
         newItem.h = 36;
         newItem.activedTabIndex = 0;
@@ -167,6 +170,9 @@ export const dashboardStore = defineStore({
         metricTypes: [""],
         metrics: [""],
       };
+      if (type === "Widget") {
+        newItem.metricMode = MetricModes.Expression;
+      }
       if (type === "Topology") {
         newItem.h = 32;
         newItem.graph = {
@@ -306,6 +312,11 @@ export const dashboardStore = defineStore({
     },
     async fetchMetricType(item: string) {
       const res: AxiosResponse = await graphql.query("queryTypeOfMetrics").params({ name: item });
+
+      return res.data;
+    },
+    async getTypeOfMQE(expression: string) {
+      const res: AxiosResponse = await graphql.query("getTypeOfMQE").params({ expression });
 
       return res.data;
     },

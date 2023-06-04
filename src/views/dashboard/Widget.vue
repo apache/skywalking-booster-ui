@@ -35,6 +35,11 @@ limitations under the License. -->
           metrics: config.metrics,
           metricTypes: config.metricTypes,
           metricConfig: config.metricConfig,
+          metricMode: config.metricMode,
+          expressions: config.expressions || [],
+          typesOfMQE: config.typesOfMQE || [],
+          subExpressions: config.subExpressions || [],
+          subTypesOfMQE: config.subTypesOfMQE || [],
         }"
         :needQuery="true"
       />
@@ -51,10 +56,12 @@ limitations under the License. -->
   import { useRoute } from "vue-router";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
+  import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
+  import { useExpressionsQueryProcessor, useExpressionsSourceProcessor } from "@/hooks/useExpressionsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
   import timeFormat from "@/utils/timeFormat";
+  import { MetricModes } from "./data";
 
   export default defineComponent({
     name: "WidgetPage",
@@ -122,10 +129,12 @@ limitations under the License. -->
         }
       }
       async function queryMetrics() {
-        const metricTypes = config.value.metricTypes || [];
-        const metrics = config.value.metrics || [];
-        const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
-        const params = await useQueryProcessor({ ...config.value, catalog });
+        const isExpression = config.value.metricMode === MetricModes.Expression;
+        const params = isExpression
+          ? await useExpressionsQueryProcessor({
+              ...config.value,
+            })
+          : await useQueryProcessor({ ...config.value });
         if (!params) {
           source.value = {};
           return;
@@ -140,8 +149,9 @@ limitations under the License. -->
           metrics: config.value.metrics || [],
           metricTypes: config.value.metricTypes || [],
           metricConfig: config.value.metricConfig || [],
+          subExpressions: config.value.subExpressions || [],
         };
-        source.value = useSourceProcessor(json, d);
+        source.value = isExpression ? await useExpressionsSourceProcessor(json, d) : await useSourceProcessor(json, d);
       }
       watch(
         () => appStoreWithOut.durationTime,

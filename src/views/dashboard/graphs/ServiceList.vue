@@ -52,6 +52,7 @@ limitations under the License. -->
             metrics: colMetrics,
             metricConfig,
             metricTypes,
+            metricMode,
           }"
           v-if="colMetrics.length"
         />
@@ -80,7 +81,8 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import type { Service } from "@/types/selector";
   import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
-  import { EntityType } from "../data";
+  import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
+  import { EntityType, MetricModes } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
@@ -100,6 +102,11 @@ limitations under the License. -->
           isEdit: boolean;
           names: string[];
           metricConfig: MetricConfigOpt[];
+          metricMode: string;
+          expressions: string[];
+          typesOfMQE: string[];
+          subExpressions: string[];
+          subTypesOfMQE: string[];
         }
       >,
       default: () => ({ dashboardName: "", fontSize: 12 }),
@@ -119,6 +126,7 @@ limitations under the License. -->
   const sortServices = ref<(Service & { merge: boolean })[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const metricTypes = ref<string[]>(props.config.metricTypes || []);
+  const metricMode = ref<string>(props.config.metricMode);
 
   queryServices();
 
@@ -187,8 +195,23 @@ limitations under the License. -->
 
     router.push(path);
   }
-  async function queryServiceMetrics(currentServices: Service[]) {
-    if (!currentServices.length) {
+  async function queryServiceMetrics(arr: Service[]) {
+    if (!arr.length) {
+      return;
+    }
+    const currentServices = arr.map((d: Service) => {
+      return {
+        id: d.id,
+        value: d.value,
+        label: d.label,
+        layers: d.layers,
+        group: d.group,
+        normal: d.normal,
+        merge: d.merge,
+      };
+    });
+    if (props.config.metricMode === MetricModes.Expression) {
+      queryServiceExpressions(currentServices);
       return;
     }
     const metrics = props.config.metrics || [];
@@ -211,6 +234,7 @@ limitations under the License. -->
         ...props.config,
         metricConfig: metricConfig.value || [],
       });
+
       services.value = data;
       colMetrics.value = names;
       metricTypes.value = metricTypesArr;
@@ -219,6 +243,32 @@ limitations under the License. -->
       return;
     }
     services.value = currentServices;
+    colMetrics.value = [];
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
+  }
+  async function queryServiceExpressions(currentServices: Service[]) {
+    const expressions = props.config.expressions || [];
+    const typesOfMQE = props.config.typesOfMQE || [];
+    const subExpressions = props.config.subExpressions || [];
+
+    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+      const params = await useExpressionsQueryPodsMetrics(
+        currentServices,
+        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions, subExpressions },
+        EntityType[0].value,
+      );
+      services.value = params.data;
+      colMetrics.value = params.names;
+      metricTypes.value = params.metricTypesArr;
+      metricConfig.value = params.metricConfigArr;
+      return;
+    }
+    services.value = currentServices;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
   }
   function objectSpanMethod(param: any): any {
     if (!props.config.showGroup) {
@@ -251,15 +301,24 @@ limitations under the License. -->
   }
 
   watch(
-    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
+    () => [
+      ...(props.config.metricTypes || []),
+      ...(props.config.metrics || []),
+      ...(props.config.metricConfig || []),
+      ...(props.config.expressions || []),
+      ...(props.config.subExpressions || []),
+      props.config.metricMode,
+    ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;
       }
       metricConfig.value = props.config.metricConfig;
+      metricMode.value = props.config.metricMode;
       queryServiceMetrics(services.value);
     },
   );
+
   watch(
     () => appStore.durationTime,
     () => {

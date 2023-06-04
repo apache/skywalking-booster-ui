@@ -21,6 +21,7 @@ export type Service = {
   layers?: string[];
   normal?: boolean;
   group?: string;
+  merge?: string;
 };
 
 export type Instance = {
@@ -30,12 +31,14 @@ export type Instance = {
   instanceUUID?: string;
   attributes?: { name: string; value: string }[];
   id?: string;
+  merge?: boolean;
 };
 
 export type Endpoint = {
   id?: string;
   label: string;
   value: string;
+  merge?: string;
 };
 
 export type Service = {
