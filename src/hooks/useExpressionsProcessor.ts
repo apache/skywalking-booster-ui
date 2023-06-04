@@ -119,11 +119,10 @@ export function useExpressionsSourceProcessor(
         source[c.label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
       } else {
         const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-        const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
         for (const item of results) {
           const values = item.values.map((d: { value: unknown }) => d.value) || [];
           const index = item.metric.labels[0].value;
-          const indexNum = labelsIdx.findIndex((d: string) => d === index);
+          const indexNum = labels.findIndex((_, i: number) => i === Number(index));
           if (labels[indexNum] && indexNum > -1) {
             source[labels[indexNum]] = values;
           } else {

@@ -34,7 +34,7 @@ limitations under the License. -->
     size="small"
     @change="changeMetricMode"
   />
-  <div v-if="isExpression">
+  <div v-if="isExpression && states.isList">
     <span class="title">Summary</span>
     <span>Detail</span>
   </div>

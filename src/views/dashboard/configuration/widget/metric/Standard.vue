@@ -45,8 +45,8 @@ limitations under the License. -->
     <div
       class="item mb-10"
       v-if="
-        [ProtocolTypes.ReadLabeledMetricsValues].includes(metricType) ||
-        dashboardStore.selectedGrid.metricMode === MetricModes.Expression
+        [ProtocolTypes.ReadLabeledMetricsValues].includes(metricType) &&
+        dashboardStore.selectedGrid.metricMode === MetricModes.General
       "
     >
       <span class="label">{{ t("labelsIndex") }}</span>
