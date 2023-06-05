@@ -41,6 +41,7 @@ limitations under the License. -->
             metrics: colMetrics,
             metricConfig,
             metricTypes,
+            metricMode,
           }"
           v-if="colMetrics.length"
         />
@@ -58,7 +59,8 @@ limitations under the License. -->
   import type { Endpoint } from "@/types/selector";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
-  import { EntityType } from "../data";
+  import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
+  import { EntityType, MetricModes } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
@@ -75,6 +77,11 @@ limitations under the License. -->
           i: string;
           metrics: string[];
           metricTypes: string[];
+          metricMode: string;
+          expressions: string[];
+          typesOfMQE: string[];
+          subExpressions: string[];
+          subTypesOfMQE: string[];
         } & { metricConfig: MetricConfigOpt[] }
       >,
       default: () => ({
@@ -98,6 +105,7 @@ limitations under the License. -->
   const colMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const metricTypes = ref<string[]>(props.config.metricTypes || []);
+  const metricMode = ref<string>(props.config.metricMode);
 
   if (props.needQuery) {
     queryEndpoints();
@@ -116,8 +124,20 @@ limitations under the License. -->
     endpoints.value = resp.data.pods || [];
     queryEndpointMetrics(endpoints.value);
   }
-  async function queryEndpointMetrics(currentPods: Endpoint[]) {
-    if (!currentPods.length) {
+  async function queryEndpointMetrics(arr: Endpoint[]) {
+    if (!arr.length) {
+      return;
+    }
+    const currentPods = arr.map((d: Endpoint) => {
+      return {
+        id: d.id,
+        value: d.value,
+        label: d.label,
+        merge: d.merge,
+      };
+    });
+    if (props.config.metricMode === MetricModes.Expression) {
+      queryEndpointExpressions(currentPods);
       return;
     }
     const metrics = props.config.metrics || [];
@@ -141,6 +161,32 @@ limitations under the License. -->
       return;
     }
     endpoints.value = currentPods;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
+  }
+  async function queryEndpointExpressions(currentPods: Endpoint[]) {
+    const expressions = props.config.expressions || [];
+    const typesOfMQE = props.config.typesOfMQE || [];
+    const subExpressions = props.config.subExpressions || [];
+
+    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+      const params = await useExpressionsQueryPodsMetrics(
+        currentPods,
+        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions, subExpressions },
+        EntityType[2].value,
+      );
+      endpoints.value = params.data;
+      colMetrics.value = params.names;
+      metricTypes.value = params.metricTypesArr;
+      metricConfig.value = params.metricConfigArr;
+
+      return;
+    }
+    endpoints.value = currentPods;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
   }
   function clickEndpoint(scope: any) {
     const { dashboard } = getDashboard({
@@ -160,12 +206,19 @@ limitations under the License. -->
     await queryEndpoints();
   }
   watch(
-    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
+    () => [
+      ...(props.config.metricTypes || []),
+      ...(props.config.metrics || []),
+      ...(props.config.metricConfig || []),
+      ...(props.config.expressions || []),
+      props.config.metricMode,
+    ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;
       }
       metricConfig.value = props.config.metricConfig;
+      metricMode.value = props.config.metricMode;
       queryEndpointMetrics(endpoints.value);
     },
   );

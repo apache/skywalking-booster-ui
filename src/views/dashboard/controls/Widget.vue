@@ -59,6 +59,11 @@ limitations under the License. -->
           filters: data.filters || {},
           relatedTrace: data.relatedTrace || {},
           associate: data.associate || [],
+          metricMode: data.metricMode,
+          expressions: data.expressions || [],
+          typesOfMQE: data.typesOfMQE || [],
+          subExpressions: data.subExpressions || [],
+          subTypesOfMQE: data.subTypesOfMQE || [],
         }"
         :needQuery="needQuery"
         @click="clickHandle"
@@ -76,10 +81,12 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import graphs from "../graphs";
   import { useI18n } from "vue-i18n";
-  import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
+  import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
+  import { useExpressionsQueryProcessor, useExpressionsSourceProcessor } from "@/hooks/useExpressionsProcessor";
   import { EntityType, ListChartTypes } from "../data";
   import type { EventParams } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
+  import { MetricModes } from "../data";
 
   const props = {
     data: {
@@ -113,10 +120,14 @@ limitations under the License. -->
       }
 
       async function queryMetrics() {
-        const metricTypes: string[] = props.data.metricTypes || [];
-        const metrics = props.data.metrics || [];
-        const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
-        const params = await useQueryProcessor({ ...props.data, catalog });
+        const isExpression = props.data.metricMode === MetricModes.Expression;
+        const params = isExpression
+          ? await useExpressionsQueryProcessor({
+              metrics: props.data.expressions,
+              metricTypes: props.data.typesOfMQE,
+              metricConfig: props.data.metricConfig,
+            })
+          : await useQueryProcessor({ ...props.data });
 
         if (!params) {
           state.source = {};
@@ -133,7 +144,12 @@ limitations under the License. -->
           metricTypes: props.data.metricTypes || [],
           metricConfig: props.data.metricConfig || [],
         };
-        state.source = useSourceProcessor(json, d);
+        const e = {
+          metrics: props.data.expressions || [],
+          metricTypes: props.data.typesOfMQE || [],
+          metricConfig: props.data.metricConfig || [],
+        };
+        state.source = isExpression ? await useExpressionsSourceProcessor(json, e) : await useSourceProcessor(json, d);
       }
 
       function removeWidget() {
@@ -169,7 +185,7 @@ limitations under the License. -->
         dashboardStore.selectWidget(props.data);
       }
       watch(
-        () => [props.data.metricTypes, props.data.metrics],
+        () => [props.data.metricTypes, props.data.metrics, props.data.expressions],
         () => {
           if (!dashboardStore.selectedGrid) {
             return;

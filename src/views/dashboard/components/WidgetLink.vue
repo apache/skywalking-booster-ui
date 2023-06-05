@@ -59,6 +59,7 @@ limitations under the License. -->
   import copy from "@/utils/copy";
   import { RefreshOptions } from "@/views/dashboard/data";
   import { TimeType } from "@/constants/data";
+  import { MetricModes } from "../data";
 
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
@@ -91,7 +92,8 @@ limitations under the License. -->
       step: appStore.durationRow.step,
       utc: appStore.utc,
     });
-    const { widget, graph, metrics, metricTypes, metricConfig } = dashboardStore.selectedGrid;
+    const { widget, graph, metrics, metricTypes, metricConfig, metricMode, expressions, typesOfMQE, subExpressions } =
+      dashboardStore.selectedGrid;
     const c = (metricConfig || []).map((d: any) => {
       const t: any = {};
       if (d.label) {
@@ -105,11 +107,20 @@ limitations under the License. -->
     const opt: any = {
       type: dashboardStore.selectedGrid.type,
       graph: graph,
-      metrics: metrics,
-      metricTypes: metricTypes,
+      metricMode,
       metricConfig: c,
       height: dashboardStore.selectedGrid.h * 20 + 60,
     };
+    if (metricMode === MetricModes.Expression) {
+      opt.expressions = expressions;
+      opt.typesOfMQE = typesOfMQE;
+      if (subExpressions && subExpressions.length) {
+        opt.subExpressions = subExpressions;
+      }
+    } else {
+      opt.metrics = metrics;
+      opt.metricTypes = metricTypes;
+    }
     if (widget) {
       opt.widget = {
         title: encodeURIComponent(widget.title || ""),

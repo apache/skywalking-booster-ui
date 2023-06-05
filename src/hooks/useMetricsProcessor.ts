@@ -22,7 +22,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { MetricConfigOpt } from "@/types/dashboard";
-import { MetricCatalog } from "@/views/dashboard/data";
+import type { E } from "vitest/dist/types-c441ef31";
 
 export function useQueryProcessor(config: Indexable) {
   if (!(config.metrics && config.metrics[0])) {
@@ -57,13 +57,11 @@ export function useQueryProcessor(config: Indexable) {
         name,
         parentService: ["All"].includes(dashboardStore.entity) ? null : selectorStore.currentService.value,
         normal: selectorStore.currentService ? selectorStore.currentService.normal : true,
-        scope: config.catalog,
         topN: Number(c.topN) || 10,
         order: c.sortOrder || "DES",
       };
     } else {
       const entity = {
-        scope: config.catalog,
         serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
         normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
         serviceInstanceName: ["ServiceInstance", "ServiceInstanceRelation", "ProcessRelation"].includes(
@@ -99,7 +97,6 @@ export function useQueryProcessor(config: Indexable) {
           order: c.sortOrder || "DES",
         };
       } else {
-        entity.scope = dashboardStore.entity;
         if (metricType === MetricQueryTypes.ReadLabeledMetricsValues) {
           const labels = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
           variables.push(`$labels${index}: [String!]!`);
@@ -233,7 +230,6 @@ export function useQueryPodsMetrics(
   const currentService = selectorStore.currentService || {};
   const fragmentList = pods.map((d: (Instance | Endpoint | Service) & Indexable, index: number) => {
     const param = {
-      scope,
       serviceName: scope === "Service" ? d.label : currentService.label,
       serviceInstanceName: scope === "ServiceInstance" ? d.label : undefined,
       endpointName: scope === "Endpoint" ? d.label : undefined,
@@ -282,7 +278,7 @@ export function usePodsSource(
   const names: string[] = [];
   const metricConfigArr: MetricConfigOpt[] = [];
   const metricTypesArr: string[] = [];
-  const data = pods.map((d: Instance & Indexable, idx: number) => {
+  const data = pods.map((d: any, idx: number) => {
     config.metrics.map((name: string, index: number) => {
       const c: any = (config.metricConfig && config.metricConfig[index]) || {};
       const key = name + idx + index;
@@ -367,12 +363,12 @@ export function useQueryTopologyMetrics(metrics: string[], ids: string[]) {
 
   return { queryStr, conditions };
 }
-function calculateExp(
+export function calculateExp(
   list: { value: number; isEmptyValue: boolean }[],
   config: { calculation?: string },
 ): (number | string)[] {
   const arr = list.filter((d: { value: number; isEmptyValue: boolean }) => !d.isEmptyValue);
-  const sum = arr.length ? arr.map((d: { value: number }) => d.value).reduce((a, b) => a + b) : 0;
+  const sum = arr.length ? arr.map((d: { value: number }) => Number(d.value)).reduce((a, b) => a + b) : 0;
   let data: (number | string)[] = [];
   switch (config.calculation) {
     case Calculations.Average:
@@ -439,27 +435,4 @@ export function aggregation(val: number, config: { calculation?: string }): numb
   }
 
   return data;
-}
-
-export async function useGetMetricEntity(metric: string, metricType: string) {
-  if (!metric || !metricType) {
-    return;
-  }
-  let catalog = "";
-  const dashboardStore = useDashboardStore();
-  if (
-    ([MetricQueryTypes.ReadSampledRecords, MetricQueryTypes.SortMetrics, MetricQueryTypes.ReadRecords] as any).includes(
-      metricType,
-    )
-  ) {
-    const res = await dashboardStore.fetchMetricList(metric);
-    if (res.errors) {
-      ElMessage.error(res.errors);
-      return;
-    }
-    const c: string = res.data.metrics[0].catalog;
-    catalog = (MetricCatalog as Indexable)[c];
-  }
-
-  return catalog;
 }
