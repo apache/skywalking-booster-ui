@@ -15,15 +15,18 @@ limitations under the License. -->
 <template>
   <div class="flex-h content">
     <policy-list />
-    <div class="instance-list">
+    <div class="instance-list" v-loading="continousProfilingStore.instancesLoading">
       <instance-list />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
+  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import PolicyList from "./components/PolicyList.vue";
   import InstanceList from "./components/InstanceList.vue";
+
+  const continousProfilingStore = useContinousProfilingStore();
 
   /*global defineProps */
   defineProps({

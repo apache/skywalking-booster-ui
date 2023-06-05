@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-table :data="currentInstances" style="width: 100%">
+  <el-table :data="currentInstances" style="width: 99%">
     <el-table-column type="expand">
       <template #default="props">
         <div class="child">
@@ -21,13 +21,14 @@ limitations under the License. -->
           <div v-for="(attr, index) in props.row.attributes" :key="index">
             {{ `${attr.name}: ${attr.value}` }}
           </div>
-          <div class="title mt-20">Processes</div>
-          <el-table :data="props.row.processes" size="small">
+          <div class="title mt-10">Processes</div>
+          <el-table :data="props.row.processes" size="small" max-height="300">
             <el-table-column
               v-for="item in HeaderChildLabels"
               :key="item.value"
               :label="item.label"
               :prop="item.value"
+              :width="item.width"
             />
           </el-table>
         </div>

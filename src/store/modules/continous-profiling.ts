@@ -43,6 +43,8 @@ interface ContinousProfilingState {
   analyzeTrees: AnalyzationTrees[];
   ebpfTips: string;
   aggregateType: string;
+  instancesLoading: boolean;
+  policyLoading: boolean;
 }
 
 export const continousProfilingStore = defineStore({
@@ -62,6 +64,8 @@ export const continousProfilingStore = defineStore({
     analyzeTrees: [],
     aggregateType: "COUNT",
     instance: null,
+    instancesLoading: false,
+    policyLoading: false,
   }),
   actions: {
     setSelectedStrategy(task: Recordable<StrategyItem>) {
@@ -103,8 +107,10 @@ export const continousProfilingStore = defineStore({
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
+      this.policyLoading = true;
       const res: AxiosResponse = await graphql.query("getStrategyList").params(params);
 
+      this.policyLoading = false;
       if (res.data.errors) {
         return res.data;
       }
@@ -127,6 +133,7 @@ export const continousProfilingStore = defineStore({
       return res.data;
     },
     async getMonitoringInstances(serviceId: string): Promise<Nullable<AxiosResponse>> {
+      this.instancesLoading = true;
       if (!serviceId) {
         return null;
       }
@@ -134,6 +141,7 @@ export const continousProfilingStore = defineStore({
         serviceId,
         target: this.selectedStrategy.type,
       });
+      this.instancesLoading = false;
       if (!res.data.errors) {
         this.instances = res.data.data.instances || [];
         this.instance = this.instances[0] || null;

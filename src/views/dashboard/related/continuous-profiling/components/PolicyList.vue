@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="profile-task-list flex-v">
+  <div class="profile-task-list flex-v" v-loading="continousProfilingStore.policyLoading">
     <div class="profile-task-wrapper flex-v">
       <div class="profile-t-tool">
         <span>{{ t("policyList") }}</span>
