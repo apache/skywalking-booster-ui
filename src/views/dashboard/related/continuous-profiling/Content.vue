@@ -15,11 +15,8 @@ limitations under the License. -->
 <template>
   <div class="flex-h content">
     <policy-list />
-    <div class="flex-v list">
-      <div class="title">{{ t("monitorInstances") }}</div>
-      <div class="instance-list" v-loading="continousProfilingStore.instancesLoading">
-        <instance-list />
-      </div>
+    <div class="flex-v list" v-loading="continousProfilingStore.instancesLoading">
+      <instance-list />
     </div>
   </div>
 </template>
@@ -52,19 +49,5 @@ limitations under the License. -->
     flex-grow: 2;
     min-width: 600px;
     overflow: hidden;
-  }
-
-  .instance-list {
-    height: 100%;
-    width: 100%;
-    overflow: auto;
-  }
-
-  .title {
-    font-size: 13px;
-    font-weight: bold;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-    padding: 10px 20px;
-    background-color: #f3f4f9;
   }
 </style>

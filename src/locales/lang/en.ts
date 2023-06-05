@@ -400,5 +400,7 @@ const msg = {
   uriList: "URI List",
   processes: "Processes",
   monitorInstances: "Monitor Instances",
+  processDashboards: "Process Dashboards",
+  instanceDashboards: "Instance Dashboards",
 };
 export default msg;

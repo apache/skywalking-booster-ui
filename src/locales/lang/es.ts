@@ -399,5 +399,7 @@ const msg = {
   processes: "Proceso",
   attributes: "Atributos",
   monitorInstances: "Ejemplo de Monitor",
+  processDashboards: "Tablero de proceso",
+  instanceDashboards: "Tablero de ejemplo",
 };
 export default msg;

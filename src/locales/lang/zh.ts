@@ -397,5 +397,7 @@ const msg = {
   processes: "进程",
   attributes: "属性",
   monitorInstances: "监视实例",
+  processDashboards: "进程仪表板",
+  instanceDashboards: "实例仪表板",
 };
 export default msg;

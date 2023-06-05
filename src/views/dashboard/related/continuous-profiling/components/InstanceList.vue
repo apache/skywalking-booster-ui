@@ -13,7 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-table :data="currentInstances" style="width: 99%">
+  <div class="header">
+    {{ t("monitorInstances") }}
+  </div>
+  <el-table :data="currentInstances" style="width: 99%" height="440">
     <el-table-column type="expand">
       <template #default="props">
         <div class="child">
@@ -23,6 +26,13 @@ limitations under the License. -->
           </div>
           <div class="title mt-10">{{ t("processes") }}</div>
           <el-table :data="props.row.processes" size="small" max-height="300">
+            <el-table-column prop="name" label="Name">
+              <template #default="scope">
+                <span class="link">
+                  {{ scope.row.name }}
+                </span>
+              </template>
+            </el-table-column>
             <el-table-column
               v-for="item in HeaderChildLabels"
               :key="item.value"
@@ -32,6 +42,13 @@ limitations under the License. -->
             />
           </el-table>
         </div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="name" label="Name">
+      <template #default="scope">
+        <span class="link">
+          {{ scope.row.name }}
+        </span>
       </template>
     </el-table-column>
     <el-table-column
@@ -107,5 +124,29 @@ limitations under the License. -->
 
   .child {
     padding-left: 20px;
+  }
+
+  .header {
+    font-size: 13px;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    padding: 10px 20px;
+    background-color: #f3f4f9;
+  }
+
+  .settings {
+    padding: 1px 0;
+    border: 1px solid #666;
+    border-radius: 3px;
+    color: #666;
+    cursor: pointer;
+  }
+
+  .link {
+    cursor: pointer;
+    color: #409eff;
+    display: inline-block;
+    width: 100%;
+    text-decoration: underline;
   }
 </style>
