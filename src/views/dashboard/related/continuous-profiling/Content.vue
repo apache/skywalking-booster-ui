@@ -35,7 +35,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .content {
-    height: calc(100% - 30px);
+    height: calc(100% - 50px);
     width: 100%;
   }
 

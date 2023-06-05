@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-table :data="tableData" style="width: 100%">
+  <el-table :data="currentInstances" style="width: 100%">
     <el-table-column type="expand">
       <template #default="props">
         <div class="child">
@@ -41,18 +41,28 @@ limitations under the License. -->
       :width="item.width"
     />
   </el-table>
+  <el-pagination
+    class="mt-10"
+    small
+    background
+    layout="prev, pager, next"
+    :page-size="pageSize"
+    :total="instances.length"
+    @current-change="changePage"
+    @prev-click="changePage"
+    @next-click="changePage"
+  />
 </template>
 <script lang="ts" setup>
-  import { computed } from "vue";
-  import type { EBPFTaskList } from "@/types/ebpf";
+  import { ref, computed, watch } from "vue";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import type { MonitorInstance, MonitorProcess } from "@/types/continous-profiling";
   import { HeaderLabels, HeaderChildLabels } from "../data";
   import { dateFormat } from "@/utils/dateFormat";
 
   const continousProfilingStore = useContinousProfilingStore();
-
-  const tableData = computed(() => {
+  const pageSize = 12;
+  const instances = computed(() => {
     return continousProfilingStore.instances.map((d: MonitorInstance) => {
       const processes = (d.processes || []).map((p: MonitorProcess) => {
         return {
@@ -65,11 +75,22 @@ limitations under the License. -->
       return { ...d, processes, lastTriggerTime: d.lastTriggerTimestamp ? dateFormat(d.lastTriggerTimestamp) : "" };
     });
   });
+  const currentInstances = ref<MonitorInstance[]>([]);
 
-  async function changeTask(item: EBPFTaskList) {
-    continousProfilingStore.setselectedTask(item);
-    continousProfilingStore.getGraphData();
+  async function changePage(pageIndex: number) {
+    currentInstances.value = instances.value.filter((d: unknown, index: number) => {
+      if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
+        return d;
+      }
+    });
   }
+
+  watch(
+    () => instances.value,
+    () => {
+      currentInstances.value = instances.value.filter((_: unknown, index: number) => index < pageSize);
+    },
+  );
 </script>
 <style lang="scss" scoped>
   .title {
