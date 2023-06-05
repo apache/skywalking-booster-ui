@@ -394,6 +394,6 @@ const msg = {
   threshold: "阈值",
   uriRegex: "URI规则",
   uriList: "URI列表",
-  process: "进程",
+  processes: "进程",
 };
 export default msg;

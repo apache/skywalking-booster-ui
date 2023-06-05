@@ -112,3 +112,26 @@ export const keepNetworkProfiling = {
     errorReason
   }`,
 };
+
+export const monitoringInstances = {
+  variable: "$serviceId: ID!, $target: ContinuousProfilingTargetType!",
+  query: `
+  instances: queryContinuousProfilingMonitoringInstances(serviceId: $serviceId, target: $target) {
+    id
+    name
+    attributes {
+      name
+      value
+    }
+    triggeredCount
+    lastTriggerTimestamp
+    processes {
+      id
+      name
+      detectType
+      labels
+      lastTriggerTimestamp
+      triggeredCount
+    }
+  }`,
+};

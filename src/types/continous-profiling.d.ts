@@ -1,3 +1,4 @@
+import { MonitorType } from "./../views/dashboard/related/continuous-profiling/data";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -27,3 +28,19 @@ export type CheckItems = {
   uriList?: string[];
   uriRegex?: string;
 };
+export interface MonitorInstance {
+  id: string;
+  name: string;
+  attributes: { name: string; value: string }[];
+  triggeredCount: number;
+  lastTriggerTimestamp: number;
+  processes: MonitorProcess[];
+}
+interface MonitorProcess {
+  id: string;
+  name: string;
+  detectType: string;
+  labels: string[];
+  lastTriggerTimestamp: number;
+  triggeredCount: number;
+}

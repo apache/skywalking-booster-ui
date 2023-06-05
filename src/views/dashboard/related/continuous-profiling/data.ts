@@ -30,3 +30,17 @@ export const TargetTypes = [
 ];
 
 export const ComponentType = "CONTINOUS_PROFILING";
+
+export const HeaderLabels = [
+  { value: "name", label: "Name", width: 400 },
+  { value: "triggeredCount", label: "Triggered Count", width: 150 },
+  { value: "lastTriggerTime", label: "Last Trigger Time", width: 150 },
+];
+
+export const HeaderChildLabels = [
+  { value: "name", label: "Name" },
+  { value: "detectType", label: "Detect Type" },
+  { value: "triggeredCount", label: "Triggered Count" },
+  { value: "labels", label: "Labels" },
+  { value: "lastTriggerTime", label: "Last Trigger Time" },
+];

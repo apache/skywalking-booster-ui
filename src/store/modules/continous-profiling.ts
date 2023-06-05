@@ -123,11 +123,21 @@ export const continousProfilingStore = defineStore({
       if (!this.selectedStrategy.type) {
         return res.data;
       }
-      this.getContinousTaskList({
-        serviceId: params.serviceId,
-        targets: [this.selectedStrategy.type],
-        triggerType: EBPFProfilingTriggerType.CONTINUOUS_PROFILING,
+      this.getMonitoringInstances(params.serviceId);
+      return res.data;
+    },
+    async getMonitoringInstances(serviceId: string): Promise<Nullable<AxiosResponse>> {
+      if (!serviceId) {
+        return null;
+      }
+      const res: AxiosResponse = await graphql.query("getMonitoringInstances").params({
+        serviceId,
+        target: this.selectedStrategy.type,
       });
+      if (!res.data.errors) {
+        this.instances = res.data.data.instances || [];
+        this.instance = this.instances[0] || null;
+      }
       return res.data;
     },
     async getContinousTaskList(params: {

@@ -323,6 +323,7 @@ const msg = {
   keywordsOfContentLogTips: "Current storage of SkyWalking OAP server does not support this.",
   setEvent: "Set Event",
   viewAttributes: "View",
+  attributes: "Attributes",
   serviceEvents: "Service Events",
   select: "Select",
   eventID: "Event ID",
@@ -397,6 +398,6 @@ const msg = {
   threshold: "Threshold",
   uriRegex: "URI Regex",
   uriList: "URI List",
-  process: "Process",
+  processes: "Processes",
 };
 export default msg;

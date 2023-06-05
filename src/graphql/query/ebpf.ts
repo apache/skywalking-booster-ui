@@ -23,6 +23,7 @@ import {
   analysisEBPFResult,
   createNetworkProfiling,
   keepNetworkProfiling,
+  monitoringInstances,
 } from "../fragments/ebpf";
 
 export const getCreateTaskData = `query queryCreateTaskData(${queryCreateTaskData.variable}) {${queryCreateTaskData.query}}`;
@@ -38,3 +39,5 @@ export const getEBPFResult = `query analysisEBPFResult(${analysisEBPFResult.vari
 export const newNetworkProfiling = `mutation createNetworkProfiling(${createNetworkProfiling.variable}) {${createNetworkProfiling.query}}`;
 
 export const aliveNetworkProfiling = `mutation keepNetworkProfiling(${keepNetworkProfiling.variable}) {${keepNetworkProfiling.query}}`;
+
+export const getMonitoringInstances = `query continuousProfilingMonitoringInstances(${monitoringInstances.variable}) {${monitoringInstances.query}}`;

@@ -396,6 +396,6 @@ const msg = {
   threshold: "Umbral",
   uriRegex: "Lista URI",
   uriList: "Lista URI",
-  process: "Proceso",
+  processes: "Proceso",
 };
 export default msg;

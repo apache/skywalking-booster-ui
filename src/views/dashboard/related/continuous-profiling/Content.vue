@@ -14,18 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h content">
-    <div class="list flex-v">
-      <PolicyList />
-      <TaskList />
+    <policy-list />
+    <div class="instance-list">
+      <instance-list />
     </div>
-    <Panel :config="config" />
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
   import PolicyList from "./components/PolicyList.vue";
-  import TaskList from "./components/TaskList.vue";
-  import Panel from "./components/Panel.vue";
+  import InstanceList from "./components/InstanceList.vue";
 
   /*global defineProps */
   defineProps({
@@ -39,5 +37,12 @@ limitations under the License. -->
   .content {
     height: calc(100% - 30px);
     width: 100%;
+  }
+
+  .instance-list {
+    height: 100%;
+    flex-grow: 2;
+    min-width: 600px;
+    overflow: auto;
   }
 </style>
