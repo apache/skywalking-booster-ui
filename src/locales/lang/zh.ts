@@ -395,5 +395,7 @@ const msg = {
   uriRegex: "URI规则",
   uriList: "URI列表",
   processes: "进程",
+  attributes: "属性",
+  monitorInstances: "监视实例",
 };
 export default msg;

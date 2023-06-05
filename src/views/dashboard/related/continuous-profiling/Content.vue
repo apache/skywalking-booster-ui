@@ -15,18 +15,23 @@ limitations under the License. -->
 <template>
   <div class="flex-h content">
     <policy-list />
-    <div class="instance-list" v-loading="continousProfilingStore.instancesLoading">
-      <instance-list />
+    <div class="flex-v list">
+      <div class="title">{{ t("monitorInstances") }}</div>
+      <div class="instance-list" v-loading="continousProfilingStore.instancesLoading">
+        <instance-list />
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import PolicyList from "./components/PolicyList.vue";
   import InstanceList from "./components/InstanceList.vue";
 
   const continousProfilingStore = useContinousProfilingStore();
+  const { t } = useI18n();
 
   /*global defineProps */
   defineProps({
@@ -42,10 +47,24 @@ limitations under the License. -->
     width: 100%;
   }
 
-  .instance-list {
+  .list {
     height: 100%;
     flex-grow: 2;
     min-width: 600px;
+    overflow: hidden;
+  }
+
+  .instance-list {
+    height: 100%;
+    width: 100%;
     overflow: auto;
+  }
+
+  .title {
+    font-size: 13px;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    padding: 10px 20px;
+    background-color: #f3f4f9;
   }
 </style>

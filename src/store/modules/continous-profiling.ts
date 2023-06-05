@@ -35,7 +35,6 @@ interface ContinousProfilingState {
   selectedTask: Recordable<EBPFTaskList>;
   errorTip: string;
   errorReason: string;
-  processes: Process[];
   instances: Instance[];
   instance: Nullable<Instance>;
   eBPFSchedules: EBPFProfilingSchedule[];
@@ -57,7 +56,6 @@ export const continousProfilingStore = defineStore({
     errorReason: "",
     errorTip: "",
     ebpfTips: "",
-    processes: [],
     instances: [],
     eBPFSchedules: [],
     currentSchedule: {},
@@ -184,33 +182,6 @@ export const continousProfilingStore = defineStore({
       } else {
         await this.preAnalyzeTask();
       }
-    },
-    async getServiceInstances(serviceId: string): Promise<Nullable<AxiosResponse>> {
-      if (!serviceId) {
-        return null;
-      }
-      const res: AxiosResponse = await graphql.query("queryInstances").params({
-        serviceId,
-        duration: useAppStoreWithOut().durationTime,
-      });
-      if (!res.data.errors) {
-        this.instances = res.data.data.pods || [];
-        this.instance = this.instances[0] || null;
-      }
-      return res.data;
-    },
-    async getProcesses(instanceId: string): Promise<Nullable<AxiosResponse>> {
-      if (!instanceId) {
-        return null;
-      }
-      const res: AxiosResponse = await graphql.query("queryProcesses").params({
-        instanceId,
-        duration: useAppStoreWithOut().durationTime,
-      });
-      if (!res.data.errors) {
-        this.processes = res.data.data.processes || [];
-      }
-      return res.data;
     },
     async getTopology() {
       const networkProfilingStore = useNetworkProfilingStore();

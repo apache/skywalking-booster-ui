@@ -41,6 +41,6 @@ export const HeaderChildLabels = [
   { value: "name", label: "Name" },
   { value: "detectType", label: "Detect Type", width: 100 },
   { value: "triggeredCount", label: "Triggered Count", width: 120 },
-  { value: "labels", label: "Labels" },
   { value: "lastTriggerTime", label: "Last Trigger Time", width: 160 },
+  { value: "labels", label: "Labels" },
 ];

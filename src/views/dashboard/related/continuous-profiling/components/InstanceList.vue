@@ -17,11 +17,11 @@ limitations under the License. -->
     <el-table-column type="expand">
       <template #default="props">
         <div class="child">
-          <div class="title">Attributes</div>
+          <div class="title">{{ t("attributes") }}</div>
           <div v-for="(attr, index) in props.row.attributes" :key="index">
             {{ `${attr.name}: ${attr.value}` }}
           </div>
-          <div class="title mt-10">Processes</div>
+          <div class="title mt-10">{{ t("processes") }}</div>
           <el-table :data="props.row.processes" size="small" max-height="300">
             <el-table-column
               v-for="item in HeaderChildLabels"
@@ -56,25 +56,31 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { ref, computed, watch } from "vue";
+  import { useI18n } from "vue-i18n";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import type { MonitorInstance, MonitorProcess } from "@/types/continous-profiling";
   import { HeaderLabels, HeaderChildLabels } from "../data";
   import { dateFormat } from "@/utils/dateFormat";
 
+  const { t } = useI18n();
   const continousProfilingStore = useContinousProfilingStore();
-  const pageSize = 12;
+  const pageSize = 10;
   const instances = computed(() => {
-    return continousProfilingStore.instances.map((d: MonitorInstance) => {
-      const processes = (d.processes || []).map((p: MonitorProcess) => {
-        return {
-          ...p,
-          lastTriggerTime: d.lastTriggerTimestamp ? dateFormat(d.lastTriggerTimestamp) : "",
-          labels: p.labels.join("; "),
-        };
-      });
+    return continousProfilingStore.instances
+      .map((d: MonitorInstance) => {
+        const processes = (d.processes || [])
+          .sort((c: MonitorProcess, d: MonitorProcess) => d.lastTriggerTimestamp - c.lastTriggerTimestamp)
+          .map((p: MonitorProcess) => {
+            return {
+              ...p,
+              lastTriggerTime: d.lastTriggerTimestamp ? dateFormat(d.lastTriggerTimestamp) : "",
+              labels: p.labels.join("; "),
+            };
+          });
 
-      return { ...d, processes, lastTriggerTime: d.lastTriggerTimestamp ? dateFormat(d.lastTriggerTimestamp) : "" };
-    });
+        return { ...d, processes, lastTriggerTime: d.lastTriggerTimestamp ? dateFormat(d.lastTriggerTimestamp) : "" };
+      })
+      .sort((a: MonitorInstance, b: MonitorInstance) => b.lastTriggerTimestamp - a.lastTriggerTimestamp);
   });
   const currentInstances = ref<MonitorInstance[]>([]);
 

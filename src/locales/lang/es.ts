@@ -397,5 +397,7 @@ const msg = {
   uriRegex: "Lista URI",
   uriList: "Lista URI",
   processes: "Proceso",
+  attributes: "Atributos",
+  monitorInstances: "Ejemplo de Monitor",
 };
 export default msg;
