@@ -77,7 +77,7 @@ limitations under the License. -->
       visGraph.value.destroy();
     }
     const h = timeline.value.getBoundingClientRect().height;
-    const events = taskTimelineStore.events.map((d: EBPFTaskList, index: number) => {
+    const taskList = taskTimelineStore.taskList.map((d: EBPFTaskList, index: number) => {
       return {
         id: index + 1,
         content: d.triggerType,
@@ -87,7 +87,7 @@ limitations under the License. -->
         className: d.targetType,
       };
     });
-    const items: any = new DataSet(events);
+    const items: any = new DataSet(taskList);
     const options: any = {
       height: h,
       width: "100%",
@@ -96,23 +96,36 @@ limitations under the License. -->
       autoResize: false,
       tooltip: {
         overflowMethod: "cap",
-        template(item: Event | any) {
+        template(item: EBPFTaskList | any) {
           const data = item.data || {};
-          let tmp = `<div>ID: ${data.uuid || ""}</div>
-        <div>Name: ${data.name || ""}</div>
-        <div>Event Type: ${data.type || ""}</div>
-        <div>Start Time: ${data.startTime ? visDate(data.startTime) : ""}</div>
-        <div>End Time: ${data.endTime ? visDate(data.endTime) : ""}</div>
-        <div>Message: ${data.message || ""}</div>
-        <div>Service: ${data.source.service || ""}</div>`;
-          return tmp;
+          let tmp = `
+          <div>Task ID: ${data.taskId || ""}</div>
+          <div>Service Name: ${data.serviceName || ""}</div>
+          <div>Service Instance Name: ${data.serviceInstanceName || ""}</div>
+          <div>Service Process Name: ${data.processName || ""}</div>
+          <div>Trigger Type: ${data.triggerType || ""}</div>
+          <div>Target Type: ${data.targetType || ""}</div>
+          <div>Start Time: ${data.startTime ? visDate(data.startTime) : ""}</div>
+          <div>End Time: ${data.endTime ? visDate(data.endTime) : ""}</div>
+          <div>Process Labels: ${data.processLabels.join("; ") || ""}</div>`;
+          let str = "";
+          for (const item of data.continuousProfilingCauses) {
+            str += `<div>${item.type}: ${getURI(item.uri)}${item.uri.threshold}>=${item.uri.current}</div>`;
+          }
+          return tmp + str;
         },
       },
     };
     visGraph.value = new Timeline(timeline.value, items, options);
     visGraph.value.on("select", (properties: { items: number[] }) => {
       dashboardStore.selectWidget(props.data);
+      const index = items[0];
+      taskTimelineStore.setSelectedTask(taskList[index]);
     });
+  }
+
+  function getURI(uri: { uriRegex: string; uriPath: string }) {
+    return uri ? `(${uri.uriRegex || ""} | ${uri.uriPath || ""})` : "";
   }
 
   function resize() {
@@ -140,8 +153,7 @@ limitations under the License. -->
   .task-timeline {
     width: calc(100% - 5px);
     margin: 0 5px 5px 0;
-    height: 100%;
-    min-height: 150px;
+    height: 300px;
   }
 
   .message {
