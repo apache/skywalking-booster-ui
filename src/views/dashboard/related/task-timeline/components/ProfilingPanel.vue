@@ -18,11 +18,11 @@ limitations under the License. -->
 <script lang="ts" setup>
   import type { PropType } from "vue";
 
-  /* global defineProps */
+  /*global defineProps */
   defineProps({
     config: {
       type: Object as PropType<any>,
-      default: () => ({ graph: {} }),
+      default: () => ({}),
     },
   });
 </script>

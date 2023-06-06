@@ -20,11 +20,11 @@ import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
 import type { EBPFTaskList } from "@/types/ebpf";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
-// import { EBPFProfilingTriggerType } from "../data";
 
 interface taskTimelineState {
   loading: boolean;
   taskList: EBPFTaskList[];
+  selectedTask: Recordable<EBPFTaskList>;
 }
 
 export const taskTimelineStore = defineStore({
@@ -32,8 +32,12 @@ export const taskTimelineStore = defineStore({
   state: (): taskTimelineState => ({
     loading: false,
     taskList: [],
+    selectedTask: {},
   }),
   actions: {
+    setSelectedTask(task: Recordable<EBPFTaskList>) {
+      this.selectedTask = task || {};
+    },
     async getContinousTaskList(params: {
       serviceId: string;
       serviceInstanceId: string;

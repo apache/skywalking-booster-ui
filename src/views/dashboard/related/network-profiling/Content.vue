@@ -34,7 +34,7 @@ limitations under the License. -->
   defineProps({
     config: {
       type: Object as PropType<any>,
-      default: () => ({ graph: {} }),
+      default: () => ({}),
     },
   });
   const networkProfilingStore = useNetworkProfilingStore();
