@@ -454,6 +454,9 @@ limitations under the License. -->
       case "addIframe":
         dashboardStore.addTabControls("ThirdPartyApp");
         break;
+      case "addTaskTimeline":
+        dashboardStore.addTabControls("AddTaskTimeline");
+        break;
       default:
         ElMessage.info("Don't support this control");
         break;
@@ -503,6 +506,9 @@ limitations under the License. -->
         break;
       case "addIframe":
         dashboardStore.addControl("ThirdPartyApp");
+        break;
+      case "addTaskTimeline":
+        dashboardStore.addTabControls("AddTaskTimeline");
         break;
       default:
         dashboardStore.addControl("Widget");

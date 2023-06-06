@@ -238,8 +238,8 @@ export const EndpointTools = [
 export const ProcessTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
+  { name: "task_timeline", content: "Add Task Timeline", id: "AddTaskTimeline" },
   { name: "library_books", content: "Add Text", id: "addText" },
-  { name: "time_range", content: "Add Time Range Text", id: "addTimeRange" },
   { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const ServiceRelationTools = [

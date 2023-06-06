@@ -22,7 +22,6 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { MetricConfigOpt } from "@/types/dashboard";
-import type { E } from "vitest/dist/types-c441ef31";
 
 export function useQueryProcessor(config: Indexable) {
   if (!(config.metrics && config.metrics[0])) {

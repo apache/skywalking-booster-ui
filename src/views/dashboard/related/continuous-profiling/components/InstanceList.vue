@@ -28,7 +28,7 @@ limitations under the License. -->
           <el-table :data="props.row.processes" size="small" max-height="300">
             <el-table-column prop="name" label="Name">
               <template #default="scope">
-                <span class="link">
+                <span :class="config.processDashboardName ? 'link' : ''">
                   {{ scope.row.name }}
                 </span>
               </template>
@@ -46,7 +46,7 @@ limitations under the License. -->
     </el-table-column>
     <el-table-column prop="name" label="Name">
       <template #default="scope">
-        <span class="link">
+        <span :class="config.instanceDashboardName ? 'link' : ''">
           {{ scope.row.name }}
         </span>
       </template>
@@ -73,12 +73,20 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { ref, computed, watch } from "vue";
+  import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import type { MonitorInstance, MonitorProcess } from "@/types/continous-profiling";
   import { HeaderLabels, HeaderChildLabels } from "../data";
   import { dateFormat } from "@/utils/dateFormat";
 
+  /*global defineProps */
+  defineProps({
+    config: {
+      type: Object as PropType<any>,
+      default: () => ({}),
+    },
+  });
   const { t } = useI18n();
   const continousProfilingStore = useContinousProfilingStore();
   const pageSize = 10;
@@ -145,8 +153,6 @@ limitations under the License. -->
   .link {
     cursor: pointer;
     color: #409eff;
-    display: inline-block;
-    width: 100%;
     text-decoration: underline;
   }
 </style>
