@@ -242,6 +242,12 @@ export const ProcessTools = [
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
+export const ProcessRelationTools = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
+];
 export const ServiceRelationTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },

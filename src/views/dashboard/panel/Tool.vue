@@ -145,6 +145,7 @@ limitations under the License. -->
     InstanceRelationTools,
     ServiceRelationTools,
     ProcessTools,
+    ProcessRelationTools,
   } from "../data";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { ElMessage } from "element-plus";
@@ -702,6 +703,9 @@ limitations under the License. -->
         toolIcons.value = EndpointRelationTools;
         break;
       case EntityType[7].value:
+        toolIcons.value = ProcessRelationTools;
+        break;
+      case EntityType[8].value:
         toolIcons.value = ProcessTools;
         break;
       default:

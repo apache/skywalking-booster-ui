@@ -20,11 +20,10 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
 import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
 import type { EBPFTaskList, EBPFProfilingSchedule, AnalyzationTrees } from "@/types/ebpf";
-import type { Instance, Process } from "@/types/selector";
+import type { Instance } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
-import { EBPFProfilingTriggerType } from "../data";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 
@@ -145,43 +144,6 @@ export const continousProfilingStore = defineStore({
         this.instance = this.instances[0] || null;
       }
       return res.data;
-    },
-    async getContinousTaskList(params: {
-      serviceId: string;
-      serviceInstanceId: string;
-      targets: string[];
-      triggerType: string;
-    }) {
-      if (!params.serviceId) {
-        return new Promise((resolve) => resolve({}));
-      }
-      const res: AxiosResponse = await graphql.query("getEBPFTasks").params(params);
-
-      this.errorTip = "";
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.taskList = res.data.data.queryEBPFTasks || [];
-      if (!this.taskList.length) {
-        const networkProfilingStore = useNetworkProfilingStore();
-        networkProfilingStore.seNodes([]);
-        networkProfilingStore.setLinks([]);
-        this.eBPFSchedules = [];
-        this.analyzeTrees = [];
-        this.selectedTask = {};
-        return;
-      }
-      // this.selectedTask = this.taskList[0] || {};
-      // this.setselectedTask(this.selectedTask);
-      // await this.getGraphData();
-      return res.data;
-    },
-    async getGraphData() {
-      if (this.selectedStrategy.type === "NETWORK") {
-        await this.getTopology();
-      } else {
-        await this.preAnalyzeTask();
-      }
     },
     async getTopology() {
       const networkProfilingStore = useNetworkProfilingStore();
