@@ -107,11 +107,11 @@ export function useExpressionsSourceProcessor(
   }
   const source: { [key: string]: unknown } = {};
   const keys = Object.keys(resp.data);
-  for (let i = 0; i < config.metricTypes.length; i++) {
+  for (let i = 0; i < config.metrics.length; i++) {
     const type = config.metricTypes[i];
-    const c = (config.metricConfig && config.metricConfig[i]) || {};
+    const c: any = (config.metricConfig && config.metricConfig[i]) || {};
     const results = (resp.data[keys[i]] && resp.data[keys[i]].results) || [];
-    const name = ((results[0] || {}).metric || {}).name;
+    const name = config.metrics[i];
 
     if (type === ExpressionResultType.TIME_SERIES_VALUES) {
       if (results.length === 1) {
@@ -255,7 +255,7 @@ export async function useExpressionsQueryPodsMetrics(
           if (!results[0]) {
             return d;
           }
-          const name = results[0].metric.name || "";
+          const name = config.expressions[index] || "";
           if (!d[name]) {
             d[name] = {};
           }
