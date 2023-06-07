@@ -42,8 +42,7 @@ export type EventParams = {
   dataIndex: number;
   data: unknown;
   dataType: string;
-  value: number | Array;
+  value: number | Array<any>;
   color: string;
   event: any;
-  dataIndex: number;
 };
