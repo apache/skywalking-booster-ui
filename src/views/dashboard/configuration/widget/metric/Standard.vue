@@ -57,7 +57,7 @@ limitations under the License. -->
         placeholder="auto"
         @change="
           updateConfig(index, {
-            labelsIndex: encodeURIComponent(currentMetric.labelsIndex),
+            labelsIndex: encodeURIComponent(currentMetric.labelsIndex || ''),
           })
         "
       />

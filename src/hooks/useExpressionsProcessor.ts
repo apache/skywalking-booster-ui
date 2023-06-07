@@ -109,7 +109,7 @@ export function useExpressionsSourceProcessor(
   const keys = Object.keys(resp.data);
   for (let i = 0; i < config.metrics.length; i++) {
     const type = config.metricTypes[i];
-    const c: any = (config.metricConfig && config.metricConfig[i]) || {};
+    const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[i]) || {};
     const results = (resp.data[keys[i]] && resp.data[keys[i]].results) || [];
     const name = config.metrics[i];
 
@@ -219,7 +219,7 @@ export async function useExpressionsQueryPodsMetrics(
     const metricTypesArr: string[] = [];
     const data = pods.map((d: any, idx: number) => {
       for (let index = 0; index < config.expressions.length; index++) {
-        const c: any = (config.metricConfig && config.metricConfig[index]) || {};
+        const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[index]) || {};
         const k = "expression" + idx + index;
         const sub = "subexpression" + idx + index;
         const results = (resp.data[k] && resp.data[k].results) || [];
