@@ -107,11 +107,11 @@ export function useExpressionsSourceProcessor(
   }
   const source: { [key: string]: unknown } = {};
   const keys = Object.keys(resp.data);
-  for (let i = 0; i < config.metricTypes.length; i++) {
+  for (let i = 0; i < config.metrics.length; i++) {
     const type = config.metricTypes[i];
-    const c = (config.metricConfig && config.metricConfig[i]) || {};
+    const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[i]) || {};
     const results = (resp.data[keys[i]] && resp.data[keys[i]].results) || [];
-    const name = ((results[0] || {}).metric || {}).name;
+    const name = config.metrics[i];
 
     if (type === ExpressionResultType.TIME_SERIES_VALUES) {
       if (results.length === 1) {
@@ -214,11 +214,12 @@ export async function useExpressionsQueryPodsMetrics(
       return {};
     }
     const names: string[] = [];
+    const subNames: string[] = [];
     const metricConfigArr: MetricConfigOpt[] = [];
     const metricTypesArr: string[] = [];
     const data = pods.map((d: any, idx: number) => {
       for (let index = 0; index < config.expressions.length; index++) {
-        const c: any = (config.metricConfig && config.metricConfig[index]) || {};
+        const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[index]) || {};
         const k = "expression" + idx + index;
         const sub = "subexpression" + idx + index;
         const results = (resp.data[k] && resp.data[k].results) || [];
@@ -255,17 +256,22 @@ export async function useExpressionsQueryPodsMetrics(
           if (!results[0]) {
             return d;
           }
-          const name = results[0].metric.name || "";
+          const name = config.expressions[index] || "";
+          const subName = config.subExpressions[index] || "";
           if (!d[name]) {
             d[name] = {};
           }
           d[name]["avg"] = [results[0].values[0].value];
           if (subResults[0]) {
-            d[name]["values"] = subResults[0].values.map((d: { value: number }) => d.value);
+            if (!d[subName]) {
+              d[subName] = {};
+            }
+            d[subName]["values"] = subResults[0].values.map((d: { value: number }) => d.value);
           }
           const j = names.find((d: string) => d === name);
           if (!j) {
             names.push(name);
+            subNames.push(subName);
             metricConfigArr.push(c);
             metricTypesArr.push(config.typesOfMQE[index]);
           }
@@ -274,7 +280,7 @@ export async function useExpressionsQueryPodsMetrics(
       return d;
     });
 
-    return { data, names, metricConfigArr, metricTypesArr };
+    return { data, names, subNames, metricConfigArr, metricTypesArr };
   }
   const dashboardStore = useDashboardStore();
   const params = await expressionsGraphqlPods();
@@ -284,7 +290,7 @@ export async function useExpressionsQueryPodsMetrics(
     ElMessage.error(json.errors);
     return {};
   }
-  const { data, names, metricTypesArr, metricConfigArr } = expressionsPodsSource(json);
+  const expressionParams = expressionsPodsSource(json);
 
-  return { data, names, metricTypesArr, metricConfigArr };
+  return expressionParams;
 }

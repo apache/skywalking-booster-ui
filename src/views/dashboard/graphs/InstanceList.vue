@@ -35,9 +35,9 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
+          :colSubMetrics="colSubMetrics"
           :config="{
             ...config,
-            metrics: colMetrics,
             metricConfig,
             metricTypes,
             metricMode,
@@ -130,6 +130,7 @@ limitations under the License. -->
   const pageSize = 10;
   const searchText = ref<string>("");
   const colMetrics = ref<string[]>([]);
+  const colSubMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const metricTypes = ref<string[]>(props.config.metricTypes || []);
   const pods = ref<Instance[]>([]); // all instances
@@ -213,12 +214,14 @@ limitations under the License. -->
       );
       instances.value = params.data;
       colMetrics.value = params.names;
+      colSubMetrics.value = params.colSubMetrics;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
 
       return;
     }
     instances.value = currentInstances;
+    colSubMetrics.value = [];
     colMetrics.value = [];
     metricTypes.value = [];
     metricConfig.value = [];
@@ -281,7 +284,7 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss" scoped>
-  @import "./style.scss";
+  @import url("./style.scss");
 
   .attributes {
     max-height: 400px;

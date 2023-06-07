@@ -490,13 +490,14 @@ limitations under the License. -->
     const metricConfig = config[index] ? config.splice(index, 1) : config;
     let p = {};
     if (isExpression.value) {
-      p = { typesOfMQE: states.metricTypes, expressions: states.metrics };
       if (states.isList) {
-        states.subMetrics = [""];
-        states.subMetricTypes = [""];
-        states.subTips = [""];
+        states.subMetrics.splice(index, 1);
+        states.subMetricTypes.splice(index, 1);
+        states.subTips.splice(index, 1);
         p = {
           ...p,
+          typesOfMQE: states.metricTypes,
+          expressions: states.metrics,
           subTypesOfMQE: states.subMetricTypes,
           subExpressions: states.subMetrics,
         };

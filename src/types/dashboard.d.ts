@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import { DurationTime } from "./app";
 export type DashboardItem = {
   id?: string;
   entity: string;
@@ -75,8 +75,8 @@ export type MetricConfigOpt = {
   unit?: string;
   label?: string;
   calculation?: string;
-  labelsIndex: string;
-  sortOrder: string;
+  labelsIndex?: string;
+  sortOrder?: string;
   topN?: number;
   index?: number;
 };
