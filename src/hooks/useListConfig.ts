@@ -17,7 +17,7 @@
 import { MetricQueryTypes, Calculations } from "./data";
 import { MetricModes } from "@/views/dashboard/data";
 
-export function useListConfig(config: Indexable, index: string) {
+export function useListConfig(config: Indexable, index: number) {
   if (config.metricModes === MetricModes.Expression) {
     return {
       isLinear: false,

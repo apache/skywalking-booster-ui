@@ -214,6 +214,7 @@ export async function useExpressionsQueryPodsMetrics(
       return {};
     }
     const names: string[] = [];
+    const subNames: string[] = [];
     const metricConfigArr: MetricConfigOpt[] = [];
     const metricTypesArr: string[] = [];
     const data = pods.map((d: any, idx: number) => {
@@ -256,16 +257,21 @@ export async function useExpressionsQueryPodsMetrics(
             return d;
           }
           const name = config.expressions[index] || "";
+          const subName = config.subExpressions[index] || "";
           if (!d[name]) {
             d[name] = {};
           }
           d[name]["avg"] = [results[0].values[0].value];
           if (subResults[0]) {
-            d[name]["values"] = subResults[0].values.map((d: { value: number }) => d.value);
+            if (!d[subName]) {
+              d[subName] = {};
+            }
+            d[subName]["values"] = subResults[0].values.map((d: { value: number }) => d.value);
           }
           const j = names.find((d: string) => d === name);
           if (!j) {
             names.push(name);
+            subNames.push(subName);
             metricConfigArr.push(c);
             metricTypesArr.push(config.typesOfMQE[index]);
           }
@@ -274,7 +280,7 @@ export async function useExpressionsQueryPodsMetrics(
       return d;
     });
 
-    return { data, names, metricConfigArr, metricTypesArr };
+    return { data, names, subNames, metricConfigArr, metricTypesArr };
   }
   const dashboardStore = useDashboardStore();
   const params = await expressionsGraphqlPods();
@@ -284,7 +290,7 @@ export async function useExpressionsQueryPodsMetrics(
     ElMessage.error(json.errors);
     return {};
   }
-  const { data, names, metricTypesArr, metricConfigArr } = expressionsPodsSource(json);
+  const expressionParams = expressionsPodsSource(json);
 
-  return { data, names, metricTypesArr, metricConfigArr };
+  return expressionParams;
 }

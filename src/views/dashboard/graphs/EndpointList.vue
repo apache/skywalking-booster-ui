@@ -36,9 +36,9 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
+          :colSubMetrics="colSubMetrics"
           :config="{
             ...config,
-            metrics: colMetrics,
             metricConfig,
             metricTypes,
             metricMode,
@@ -103,6 +103,7 @@ limitations under the License. -->
   const endpoints = ref<Endpoint[]>([]);
   const searchText = ref<string>("");
   const colMetrics = ref<string[]>([]);
+  const colSubMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const metricTypes = ref<string[]>(props.config.metricTypes || []);
   const metricMode = ref<string>(props.config.metricMode);
@@ -180,11 +181,13 @@ limitations under the License. -->
       colMetrics.value = params.names;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
+      colSubMetrics.value = params.colSubMetrics;
 
       return;
     }
     endpoints.value = currentPods;
     colMetrics.value = [];
+    colSubMetrics.value = [];
     metricTypes.value = [];
     metricConfig.value = [];
   }
@@ -230,9 +233,9 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss" scoped>
-  @import "./style.scss";
+  @import url("./style.scss");
 
   .tips {
-    color: rgba(255, 0, 0, 0.5);
+    color: rgb(255 0 0 / 50%);
   }
 </style>

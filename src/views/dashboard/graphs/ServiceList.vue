@@ -47,9 +47,9 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
+          :colSubMetrics="colSubMetrics"
           :config="{
             ...config,
-            metrics: colMetrics,
             metricConfig,
             metricTypes,
             metricMode,
@@ -121,6 +121,7 @@ limitations under the License. -->
   const pageSize = 10;
   const services = ref<Service[]>([]);
   const colMetrics = ref<string[]>([]);
+  const colSubMetrics = ref<string[]>([]);
   const searchText = ref<string>("");
   const groups = ref<any>({});
   const sortServices = ref<(Service & { merge: boolean })[]>([]);
@@ -261,12 +262,14 @@ limitations under the License. -->
       );
       services.value = params.data;
       colMetrics.value = params.names;
+      colSubMetrics.value = params.subNames;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
       return;
     }
     services.value = currentServices;
     colMetrics.value = [];
+    colSubMetrics.value = [];
     metricTypes.value = [];
     metricConfig.value = [];
   }
@@ -329,5 +332,5 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss" scoped>
-  @import "./style.scss";
+  @import url("./style.scss");
 </style>
