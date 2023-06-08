@@ -116,7 +116,6 @@ export const RespFields: Indexable = {
     type
     results {
       metric {
-        name
         labels {
           key
           value
