@@ -159,7 +159,6 @@ export async function useExpressionsQueryPodsMetrics(
   pods: Array<(Instance | Endpoint | Service) & Indexable>,
   config: {
     expressions: string[];
-    typesOfMQE: string[];
     subExpressions: string[];
     metricConfig: MetricConfigOpt[];
   },
@@ -168,16 +167,13 @@ export async function useExpressionsQueryPodsMetrics(
   function expressionsGraphqlPods() {
     const metrics: string[] = [];
     const subMetrics: string[] = [];
-    const metricTypes: string[] = [];
     config.expressions = config.expressions || [];
     config.subExpressions = config.subExpressions || [];
-    config.typesOfMQE = config.typesOfMQE || [];
 
     for (let i = 0; i < config.expressions.length; i++) {
       if (config.expressions[i]) {
         metrics.push(config.expressions[i]);
         subMetrics.push(config.subExpressions[i]);
-        metricTypes.push(config.typesOfMQE[i]);
       }
     }
     if (!metrics.length) {
@@ -236,7 +232,9 @@ export async function useExpressionsQueryPodsMetrics(
         const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[index]) || {};
         const k = "expression" + idx + index;
         const sub = "subexpression" + idx + index;
-        const results = (resp.data[k] && resp.data[k].results) || [];
+        const obj = resp.data[k] || {};
+        const results = obj.results || [];
+        const typesOfMQE = obj.type || "";
         const subResults = (resp.data[sub] && resp.data[sub].results) || [];
 
         if (results.length > 1) {
@@ -263,7 +261,7 @@ export async function useExpressionsQueryPodsMetrics(
             if (!j) {
               names.push(name);
               metricConfigArr.push({ ...c, index: i });
-              metricTypesArr.push(config.typesOfMQE[index]);
+              metricTypesArr.push(typesOfMQE);
             }
           }
         } else {
@@ -287,7 +285,7 @@ export async function useExpressionsQueryPodsMetrics(
             names.push(name);
             subNames.push(subName);
             metricConfigArr.push(c);
-            metricTypesArr.push(config.typesOfMQE[index]);
+            metricTypesArr.push(typesOfMQE);
           }
         }
       }

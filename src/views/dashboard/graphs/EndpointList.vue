@@ -168,13 +168,12 @@ limitations under the License. -->
   }
   async function queryEndpointExpressions(currentPods: Endpoint[]) {
     const expressions = props.config.expressions || [];
-    const typesOfMQE = props.config.typesOfMQE || [];
     const subExpressions = props.config.subExpressions || [];
 
-    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+    if (expressions.length && expressions[0]) {
       const params = await useExpressionsQueryPodsMetrics(
         currentPods,
-        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions, subExpressions },
+        { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[2].value,
       );
       endpoints.value = params.data;

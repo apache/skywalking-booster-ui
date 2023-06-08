@@ -203,13 +203,12 @@ limitations under the License. -->
 
   async function queryInstanceExpressions(currentInstances: Instance[]) {
     const expressions = props.config.expressions || [];
-    const typesOfMQE = props.config.typesOfMQE || [];
     const subExpressions = props.config.subExpressions || [];
 
-    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+    if (expressions.length && expressions[0]) {
       const params = await useExpressionsQueryPodsMetrics(
         currentInstances,
-        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions, subExpressions },
+        { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[3].value,
       );
       instances.value = params.data;
