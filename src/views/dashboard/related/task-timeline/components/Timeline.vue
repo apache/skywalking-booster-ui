@@ -117,11 +117,12 @@ limitations under the License. -->
       },
     };
     visGraph.value = new Timeline(timeline.value, items, options);
-    visGraph.value.on("select", (properties: { items: number[] }) => {
+    visGraph.value.on("select", async (properties: { items: number[] }) => {
       dashboardStore.selectWidget(props.data);
-      const index = items[0];
-      taskTimelineStore.setSelectedTask(taskList[index]);
-      taskTimelineStore.getTopology();
+      const index = properties.items[0];
+      const task = taskList[index];
+      await taskTimelineStore.setSelectedTask(task);
+      await taskTimelineStore.getGraphData();
     });
   }
 

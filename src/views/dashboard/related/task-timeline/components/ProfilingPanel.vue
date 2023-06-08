@@ -19,7 +19,14 @@ limitations under the License. -->
       {{ t("noData") }}
     </div>
   </div>
-  <div class="content" v-else>flame</div>
+  <div class="content" v-else>
+    <div class="schedules">
+      <EBPFSchedules />
+    </div>
+    <div class="item">
+      <EBPFStack />
+    </div>
+  </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
@@ -28,6 +35,8 @@ limitations under the License. -->
   import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
   import { TargetTypes } from "../../continuous-profiling/data";
   import ProcessTopology from "@/views/dashboard/related/network-profiling/components/ProcessTopology.vue";
+  import EBPFSchedules from "@/views/dashboard/related/ebpf/components/EBPFSchedules.vue";
+  import EBPFStack from "@/views/dashboard/related/ebpf/components/EBPFStack.vue";
 
   /*global defineProps */
   defineProps({
@@ -54,5 +63,18 @@ limitations under the License. -->
     width: 100%;
     text-align: center;
     margin-top: 30px;
+  }
+
+  .item {
+    width: 100%;
+    overflow: auto;
+    height: calc(100% - 100px);
+    padding-bottom: 10px;
+  }
+
+  .schedules {
+    height: 90px;
+    border-bottom: 1px solid #ccc;
+    padding-right: 10px;
   }
 </style>

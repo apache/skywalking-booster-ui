@@ -22,9 +22,11 @@ import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { EBPFTaskList } from "@/types/ebpf";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
+import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
+import { useEbpfStore } from "@/store/modules/ebpf";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
-
+import { TargetTypes } from "@/views/dashboard/related/continuous-profiling/data";
 interface taskTimelineState {
   loading: boolean;
   taskList: EBPFTaskList[];
@@ -73,6 +75,23 @@ export const taskTimelineStore = defineStore({
       // this.setselectedTask(this.selectedTask);
       // await this.getGraphData();
       return res.data;
+    },
+    async getGraphData() {
+      let res: any = {};
+      const continousProfilingStore = useContinousProfilingStore();
+
+      if (continousProfilingStore.selectedStrategy.type === TargetTypes[2].value) {
+        res = await this.getTopology();
+      } else {
+        const ebpfStore = useEbpfStore();
+        res = await ebpfStore.getEBPFSchedules({
+          taskId: this.selectedTask.taskId,
+        });
+      }
+
+      if (res.errors) {
+        ElMessage.error(res.errors);
+      }
     },
     async getTopology() {
       const networkProfilingStore = useNetworkProfilingStore();
