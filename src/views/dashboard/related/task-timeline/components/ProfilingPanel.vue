@@ -13,10 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="content"> profiling </div>
+  <div class="content" v-if="continousProfilingStore.selectedStrategy.type === TargetTypes[2].value">
+    <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
+    <div class="text" v-else>
+      {{ t("noData") }}
+    </div>
+  </div>
+  <div class="content" v-else>flame</div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
+  import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
+  import { TargetTypes } from "../../continuous-profiling/data";
+  import ProcessTopology from "@/views/dashboard/related/network-profiling/components/ProcessTopology.vue";
 
   /*global defineProps */
   defineProps({
@@ -25,9 +36,23 @@ limitations under the License. -->
       default: () => ({}),
     },
   });
+  const { t } = useI18n();
+  const continousProfilingStore = useContinousProfilingStore();
+  const networkProfilingStore = useNetworkProfilingStore();
 </script>
 <style lang="scss" scoped>
   .content {
     width: 100%;
+    height: calc(100% - 30px);
+    flex-grow: 2;
+    min-width: 700px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .text {
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
   }
 </style>

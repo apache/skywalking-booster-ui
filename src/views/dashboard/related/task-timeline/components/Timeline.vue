@@ -121,6 +121,7 @@ limitations under the License. -->
       dashboardStore.selectWidget(props.data);
       const index = items[0];
       taskTimelineStore.setSelectedTask(taskList[index]);
+      taskTimelineStore.getTopology();
     });
   }
 
