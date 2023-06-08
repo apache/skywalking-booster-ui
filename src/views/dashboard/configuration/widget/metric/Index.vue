@@ -546,21 +546,10 @@ limitations under the License. -->
   async function changeExpression(event: any, index: number) {
     const params = (event.target.textContent || "").replace(/\s+/g, "");
 
-    if (params) {
-      // const resp = await dashboardStore.getTypeOfMQE(params);
-      states.metrics[index] = params;
-      // states.metricTypes[index] = resp.data.metricType.type;
-      // states.tips[index] = resp.data.metricType.error || "";
-    } else {
-      states.metrics[index] = params;
-      // states.metricTypes[index] = "";
-      // states.tips[index] = "";
-    }
-
+    states.metrics[index] = params;
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       expressions: states.metrics,
-      // typesOfMQE: states.metricTypes,
     });
     if (params) {
       await queryMetrics();
@@ -569,17 +558,7 @@ limitations under the License. -->
   async function changeSubExpression(event: any, index: number) {
     const params = (event.target.textContent || "").replace(/\s+/g, "");
 
-    if (params) {
-      const resp = await dashboardStore.getTypeOfMQE(params);
-      states.subMetrics[index] = params;
-      states.subMetricTypes[index] = resp.data.metricType.type;
-      states.subTips[index] = resp.data.metricType.error || "";
-    } else {
-      states.subMetrics[index] = params;
-      states.subMetricTypes[index] = "";
-      states.subTips[index] = "";
-    }
-
+    states.subMetrics[index] = params;
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       subExpressions: states.subMetrics,
