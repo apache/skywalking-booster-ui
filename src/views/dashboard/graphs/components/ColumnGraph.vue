@@ -135,7 +135,7 @@ limitations under the License. -->
       }
       return encodeURIComponent(label);
     }
-    return encodeURIComponent(metric);
+    return encodeURIComponent(metric || "");
   }
 </script>
 <style lang="scss" scoped>
