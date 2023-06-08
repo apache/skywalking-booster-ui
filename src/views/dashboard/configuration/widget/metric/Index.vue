@@ -127,12 +127,12 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import Icon from "@/components/Icon.vue";
   import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
-  import { useExpressionsQueryProcessor, useExpressionsSourceProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import { useI18n } from "vue-i18n";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
   import Standard from "./Standard.vue";
 
-  /*global defineEmits */
+  /*global defineEmits, Indexable */
   const { t } = useI18n();
   const emit = defineEmits(["update", "loading"]);
   const dashboardStore = useDashboardStore();
@@ -396,26 +396,20 @@ limitations under the License. -->
   }
 
   async function queryMetricsWithExpressions() {
-    const { metricConfig, typesOfMQE, expressions } = dashboardStore.selectedGrid;
-    if (!(expressions && expressions[0] && typesOfMQE && typesOfMQE[0])) {
+    const { expressions, metricConfig } = dashboardStore.selectedGrid;
+    if (!(expressions && expressions[0])) {
       return emit("update", {});
     }
 
-    const params = useExpressionsQueryProcessor({ ...states, metricConfig });
-    if (!params) {
-      emit("update", {});
-      return;
-    }
+    const params: Indexable = (await useExpressionsQueryProcessor({ ...states, metricConfig })) || {};
+    states.tips = params.tips || [];
+    states.metricTypes = params.typesOfMQE || [];
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      typesOfMQE: states.metricTypes,
+    });
 
-    emit("loading", true);
-    const json = await dashboardStore.fetchMetricValue(params);
-    emit("loading", false);
-    if (json.errors) {
-      ElMessage.error(json.errors);
-      return;
-    }
-    const source = useExpressionsSourceProcessor(json, { ...states, metricConfig });
-    emit("update", source);
+    emit("update", params.source || {});
   }
 
   function changeDashboard(opt: any) {
@@ -551,23 +545,22 @@ limitations under the License. -->
   }
   async function changeExpression(event: any, index: number) {
     const params = (event.target.textContent || "").replace(/\s+/g, "");
-    console.log(params);
 
     if (params) {
-      const resp = await dashboardStore.getTypeOfMQE(params);
+      // const resp = await dashboardStore.getTypeOfMQE(params);
       states.metrics[index] = params;
-      states.metricTypes[index] = resp.data.metricType.type;
-      states.tips[index] = resp.data.metricType.error || "";
+      // states.metricTypes[index] = resp.data.metricType.type;
+      // states.tips[index] = resp.data.metricType.error || "";
     } else {
       states.metrics[index] = params;
-      states.metricTypes[index] = "";
-      states.tips[index] = "";
+      // states.metricTypes[index] = "";
+      // states.tips[index] = "";
     }
 
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       expressions: states.metrics,
-      typesOfMQE: states.metricTypes,
+      // typesOfMQE: states.metricTypes,
     });
     if (params) {
       await queryMetrics();

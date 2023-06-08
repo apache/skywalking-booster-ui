@@ -57,7 +57,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
-  import { useExpressionsQueryProcessor, useExpressionsSourceProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
   import timeFormat from "@/utils/timeFormat";
@@ -130,11 +130,18 @@ limitations under the License. -->
       }
       async function queryMetrics() {
         const isExpression = config.value.metricMode === MetricModes.Expression;
-        const params = isExpression
-          ? await useExpressionsQueryProcessor({
-              ...config.value,
-            })
-          : await useQueryProcessor({ ...config.value });
+        if (isExpression) {
+          loading.value = true;
+          const params = await useExpressionsQueryProcessor({
+            metrics: config.value.expressions || [],
+            metricConfig: config.value.metricConfig || [],
+            subExpressions: config.value.subExpressions || [],
+          });
+          loading.value = false;
+          source.value = params.source || {};
+          return;
+        }
+        const params = await useQueryProcessor({ ...config.value });
         if (!params) {
           source.value = {};
           return;
@@ -149,9 +156,8 @@ limitations under the License. -->
           metrics: config.value.metrics || [],
           metricTypes: config.value.metricTypes || [],
           metricConfig: config.value.metricConfig || [],
-          subExpressions: config.value.subExpressions || [],
         };
-        source.value = isExpression ? await useExpressionsSourceProcessor(json, d) : await useSourceProcessor(json, d);
+        source.value = await useSourceProcessor(json, d);
       }
       watch(
         () => appStoreWithOut.durationTime,
@@ -181,7 +187,7 @@ limitations under the License. -->
 
   .widget-chart {
     background: #fff;
-    box-shadow: 0px 1px 4px 0px #00000029;
+    box-shadow: 0 1px 4px 0 #00000029;
     border-radius: 3px;
     padding: 5px;
     width: 100%;

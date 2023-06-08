@@ -82,7 +82,7 @@ limitations under the License. -->
   import graphs from "../graphs";
   import { useI18n } from "vue-i18n";
   import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
-  import { useExpressionsQueryProcessor, useExpressionsSourceProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import { EntityType, ListChartTypes } from "../data";
   import type { EventParams } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
@@ -121,13 +121,18 @@ limitations under the License. -->
 
       async function queryMetrics() {
         const isExpression = props.data.metricMode === MetricModes.Expression;
-        const params = isExpression
-          ? await useExpressionsQueryProcessor({
-              metrics: props.data.expressions,
-              metricTypes: props.data.typesOfMQE,
-              metricConfig: props.data.metricConfig,
-            })
-          : await useQueryProcessor({ ...props.data });
+        if (isExpression) {
+          loading.value = true;
+          const e = {
+            metrics: props.data.expressions || [],
+            metricConfig: props.data.metricConfig || [],
+          };
+          const params = (await useExpressionsQueryProcessor(e)) || {};
+          loading.value = false;
+          state.source = params.source || {};
+          return;
+        }
+        const params = await useQueryProcessor({ ...props.data });
 
         if (!params) {
           state.source = {};
@@ -144,12 +149,7 @@ limitations under the License. -->
           metricTypes: props.data.metricTypes || [],
           metricConfig: props.data.metricConfig || [],
         };
-        const e = {
-          metrics: props.data.expressions || [],
-          metricTypes: props.data.typesOfMQE || [],
-          metricConfig: props.data.metricConfig || [],
-        };
-        state.source = isExpression ? await useExpressionsSourceProcessor(json, e) : await useSourceProcessor(json, d);
+        state.source = await useSourceProcessor(json, d);
       }
 
       function removeWidget() {
