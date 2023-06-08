@@ -102,9 +102,7 @@ limitations under the License. -->
       v-for="(type, index) in setVisTypes"
       :key="index"
       @click="changeChartType(type)"
-      :class="{
-        active: type.value === graph.type,
-      }"
+      :class="{ active: type.value === graph.type }"
     >
       {{ type.label }}
     </span>
@@ -641,8 +639,8 @@ limitations under the License. -->
     border-radius: 3px;
     color: #606266;
     outline: none;
-    height: 26px;
     margin-right: 5px;
+    min-height: 26px;
 
     &:focus {
       border-color: #409eff;
