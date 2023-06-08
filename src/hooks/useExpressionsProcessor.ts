@@ -227,6 +227,8 @@ export async function useExpressionsQueryPodsMetrics(
     const subNames: string[] = [];
     const metricConfigArr: MetricConfigOpt[] = [];
     const metricTypesArr: string[] = [];
+    const expressionsTips: string[] = [];
+    const subExpressionsTips: string[] = [];
     const data = pods.map((d: any, idx: number) => {
       for (let index = 0; index < config.expressions.length; index++) {
         const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[index]) || {};
@@ -235,8 +237,11 @@ export async function useExpressionsQueryPodsMetrics(
         const obj = resp.data[k] || {};
         const results = obj.results || [];
         const typesOfMQE = obj.type || "";
-        const subResults = (resp.data[sub] && resp.data[sub].results) || [];
+        const subObj = resp.data[sub] || {};
+        const subResults = subObj.results || [];
 
+        expressionsTips.push(obj.error);
+        subExpressionsTips.push(subObj.error);
         if (results.length > 1) {
           const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
           const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
@@ -292,7 +297,7 @@ export async function useExpressionsQueryPodsMetrics(
       return d;
     });
 
-    return { data, names, subNames, metricConfigArr, metricTypesArr };
+    return { data, names, subNames, metricConfigArr, metricTypesArr, expressionsTips, subExpressionsTips };
   }
   const dashboardStore = useDashboardStore();
   const params = await expressionsGraphqlPods();

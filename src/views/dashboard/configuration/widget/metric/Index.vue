@@ -93,8 +93,12 @@ limitations under the License. -->
       />
       <Icon class="cp" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
     </span>
-    <div v-if="states.tips[index] && isExpression" class="ml-10 red sm">{{ states.tips[index] }}</div>
-    <div v-if="states.tips[index] && isExpression" class="ml-10 red sm">{{ states.tips[index] }}</div>
+    <div v-if="(errors || states.tips)[index] && isExpression" class="ml-10 red sm">
+      {{ (errors || states.tips)[index] }}
+    </div>
+    <div v-if="(subErrors || states.tips)[index] && isExpression" class="ml-10 red sm">
+      {{ (subErrors || states.tips)[index] }}
+    </div>
   </div>
   <div>{{ t("visualization") }}</div>
   <div class="chart-types">
@@ -110,6 +114,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { reactive, ref, computed } from "vue";
+  import type { PropType } from "vue";
   import type { Option } from "@/types/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import {
@@ -135,6 +140,15 @@ limitations under the License. -->
   /*global defineEmits, Indexable */
   const { t } = useI18n();
   const emit = defineEmits(["update", "loading"]);
+  /*global defineProps */
+  defineProps({
+    errors: {
+      type: Array as PropType<string[]>,
+    },
+    subErrors: {
+      type: Array as PropType<string[]>,
+    },
+  });
   const dashboardStore = useDashboardStore();
   const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression ? true : false);
   const metrics = computed(

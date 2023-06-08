@@ -114,6 +114,7 @@ limitations under the License. -->
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
     isEdit: { type: Boolean, default: false },
   });
+  const emit = defineEmits(["expressionTips"]);
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
   const appStore = useAppStoreWithOut();
@@ -264,6 +265,7 @@ limitations under the License. -->
       colSubMetrics.value = params.subNames;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
+      emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
       return;
     }
     services.value = currentServices;
@@ -271,6 +273,7 @@ limitations under the License. -->
     colSubMetrics.value = [];
     metricTypes.value = [];
     metricConfig.value = [];
+    emit("expressionTips", [], []);
   }
   function objectSpanMethod(param: any): any {
     if (!props.config.showGroup) {

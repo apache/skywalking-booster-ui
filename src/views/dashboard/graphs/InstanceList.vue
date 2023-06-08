@@ -122,6 +122,7 @@ limitations under the License. -->
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
     needQuery: { type: Boolean, default: false },
   });
+  const emit = defineEmits(["expressionTips"]);
   const { t } = useI18n();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
@@ -193,6 +194,7 @@ limitations under the License. -->
       colMetrics.value = names;
       metricTypes.value = metricTypesArr;
       metricConfig.value = metricConfigArr;
+
       return;
     }
     instances.value = currentInstances;
@@ -216,6 +218,7 @@ limitations under the License. -->
       colSubMetrics.value = params.colSubMetrics;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
+      emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
 
       return;
     }
@@ -224,6 +227,7 @@ limitations under the License. -->
     colMetrics.value = [];
     metricTypes.value = [];
     metricConfig.value = [];
+    emit("expressionTips", [], []);
   }
 
   function clickInstance(scope: any) {
