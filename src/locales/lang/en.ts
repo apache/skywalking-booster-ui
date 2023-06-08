@@ -388,5 +388,8 @@ const msg = {
   elasticsearch: "Elasticsearch",
   mq: "MQ",
   rabbitMQ: "RabbitMQ",
+  detailLabel: "Detail Label",
+  summary: "Summary",
+  detail: "Detail",
 };
 export default msg;

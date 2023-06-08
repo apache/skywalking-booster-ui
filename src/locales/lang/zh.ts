@@ -385,5 +385,8 @@ const msg = {
   elasticsearch: "Elasticsearch",
   mq: "消息队列",
   rabbitMQ: "RabbitMQ",
+  detailLabel: "详细标签",
+  summary: "概括",
+  detail: "详细",
 };
 export default msg;

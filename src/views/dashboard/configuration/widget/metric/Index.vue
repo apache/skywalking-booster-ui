@@ -35,8 +35,8 @@ limitations under the License. -->
     @change="changeMetricMode"
   />
   <div v-if="isExpression && states.isList">
-    <span class="title">Summary</span>
-    <span>Detail</span>
+    <span class="title">{{ t("summary") }}</span>
+    <span>{{ t("detail") }}</span>
   </div>
   <div v-for="(metric, index) in states.metrics" :key="index" class="mb-10">
     <span v-if="isExpression">
@@ -93,8 +93,12 @@ limitations under the License. -->
       />
       <Icon class="cp" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
     </span>
-    <div v-if="states.tips[index] && isExpression" class="ml-10 red sm">{{ states.tips[index] }}</div>
-    <div v-if="states.tips[index] && isExpression" class="ml-10 red sm">{{ states.tips[index] }}</div>
+    <div v-if="(errors || states.tips)[index] && isExpression" class="ml-10 red sm">
+      {{ (errors || states.tips)[index] }}
+    </div>
+    <div v-if="(subErrors || states.tips)[index] && isExpression" class="ml-10 red sm">
+      {{ (subErrors || states.tips)[index] }}
+    </div>
   </div>
   <div>{{ t("visualization") }}</div>
   <div class="chart-types">
@@ -102,9 +106,7 @@ limitations under the License. -->
       v-for="(type, index) in setVisTypes"
       :key="index"
       @click="changeChartType(type)"
-      :class="{
-        active: type.value === graph.type,
-      }"
+      :class="{ active: type.value === graph.type }"
     >
       {{ type.label }}
     </span>
@@ -112,6 +114,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { reactive, ref, computed } from "vue";
+  import type { PropType } from "vue";
   import type { Option } from "@/types/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import {
@@ -129,14 +132,23 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import Icon from "@/components/Icon.vue";
   import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
-  import { useExpressionsQueryProcessor, useExpressionsSourceProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import { useI18n } from "vue-i18n";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
   import Standard from "./Standard.vue";
 
-  /*global defineEmits */
+  /*global defineEmits, Indexable */
   const { t } = useI18n();
   const emit = defineEmits(["update", "loading"]);
+  /*global defineProps */
+  defineProps({
+    errors: {
+      type: Array as PropType<string[]>,
+    },
+    subErrors: {
+      type: Array as PropType<string[]>,
+    },
+  });
   const dashboardStore = useDashboardStore();
   const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression ? true : false);
   const metrics = computed(
@@ -398,26 +410,20 @@ limitations under the License. -->
   }
 
   async function queryMetricsWithExpressions() {
-    const { metricConfig, typesOfMQE, expressions } = dashboardStore.selectedGrid;
-    if (!(expressions && expressions[0] && typesOfMQE && typesOfMQE[0])) {
+    const { expressions, metricConfig } = dashboardStore.selectedGrid;
+    if (!(expressions && expressions[0])) {
       return emit("update", {});
     }
 
-    const params = useExpressionsQueryProcessor({ ...states, metricConfig });
-    if (!params) {
-      emit("update", {});
-      return;
-    }
+    const params: Indexable = (await useExpressionsQueryProcessor({ ...states, metricConfig })) || {};
+    states.tips = params.tips || [];
+    states.metricTypes = params.typesOfMQE || [];
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      typesOfMQE: states.metricTypes,
+    });
 
-    emit("loading", true);
-    const json = await dashboardStore.fetchMetricValue(params);
-    emit("loading", false);
-    if (json.errors) {
-      ElMessage.error(json.errors);
-      return;
-    }
-    const source = useExpressionsSourceProcessor(json, { ...states, metricConfig });
-    emit("update", source);
+    emit("update", params.source || {});
   }
 
   function changeDashboard(opt: any) {
@@ -554,21 +560,10 @@ limitations under the License. -->
   async function changeExpression(event: any, index: number) {
     const params = (event.target.textContent || "").replace(/\s+/g, "");
 
-    if (params) {
-      const resp = await dashboardStore.getTypeOfMQE(params);
-      states.metrics[index] = params;
-      states.metricTypes[index] = resp.data.metricType.type;
-      states.tips[index] = resp.data.metricType.error || "";
-    } else {
-      states.metrics[index] = params;
-      states.metricTypes[index] = "";
-      states.tips[index] = "";
-    }
-
+    states.metrics[index] = params;
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       expressions: states.metrics,
-      typesOfMQE: states.metricTypes,
     });
     if (params) {
       await queryMetrics();
@@ -577,17 +572,7 @@ limitations under the License. -->
   async function changeSubExpression(event: any, index: number) {
     const params = (event.target.textContent || "").replace(/\s+/g, "");
 
-    if (params) {
-      const resp = await dashboardStore.getTypeOfMQE(params);
-      states.subMetrics[index] = params;
-      states.subMetricTypes[index] = resp.data.metricType.type;
-      states.subTips[index] = resp.data.metricType.error || "";
-    } else {
-      states.subMetrics[index] = params;
-      states.subMetricTypes[index] = "";
-      states.subTips[index] = "";
-    }
-
+    states.subMetrics[index] = params;
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       subExpressions: states.subMetrics,
@@ -641,8 +626,8 @@ limitations under the License. -->
     border-radius: 3px;
     color: #606266;
     outline: none;
-    height: 26px;
     margin-right: 5px;
+    min-height: 26px;
 
     &:focus {
       border-color: #409eff;

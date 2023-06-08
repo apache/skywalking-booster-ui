@@ -96,6 +96,7 @@ limitations under the License. -->
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   });
 
+  const emit = defineEmits(["expressionTips"]);
   const { t } = useI18n();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
@@ -168,13 +169,12 @@ limitations under the License. -->
   }
   async function queryEndpointExpressions(currentPods: Endpoint[]) {
     const expressions = props.config.expressions || [];
-    const typesOfMQE = props.config.typesOfMQE || [];
     const subExpressions = props.config.subExpressions || [];
 
-    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+    if (expressions.length && expressions[0]) {
       const params = await useExpressionsQueryPodsMetrics(
         currentPods,
-        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions, subExpressions },
+        { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[2].value,
       );
       endpoints.value = params.data;
@@ -182,6 +182,7 @@ limitations under the License. -->
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
       colSubMetrics.value = params.colSubMetrics;
+      emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
 
       return;
     }
@@ -190,6 +191,7 @@ limitations under the License. -->
     colSubMetrics.value = [];
     metricTypes.value = [];
     metricConfig.value = [];
+    emit("expressionTips", [], []);
   }
   function clickEndpoint(scope: any) {
     const { dashboard } = getDashboard({

@@ -45,6 +45,7 @@ limitations under the License. -->
             subTypesOfMQE: dashboardStore.selectedGrid.subTypesOfMQE || [],
           }"
           :needQuery="true"
+          @expressionTips="getErrors"
         />
         <div v-show="!graph.type" class="no-data">
           {{ t("noData") }}
@@ -54,7 +55,7 @@ limitations under the License. -->
     <div class="collapse" :style="{ height: configHeight + 'px' }">
       <el-collapse v-model="states.activeNames" :style="{ '--el-collapse-header-font-size': '15px' }">
         <el-collapse-item :title="t('selectVisualization')" name="1">
-          <MetricOptions @update="getSource" @loading="setLoading" />
+          <MetricOptions @update="getSource" @loading="setLoading" :errors="errors" :subErrors="subErrors" />
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="2">
           <component :is="`${graph.type}Config`" />
@@ -102,6 +103,8 @@ limitations under the License. -->
       const dashboardStore = useDashboardStore();
       const appStoreWithOut = useAppStoreWithOut();
       const loading = ref<boolean>(false);
+      const errors = ref<string[]>([]);
+      const subErrors = ref<string[]>([]);
       const states = reactive<{
         activeNames: string;
         source: unknown;
@@ -126,6 +129,11 @@ limitations under the License. -->
 
       function getSource(source: unknown) {
         states.source = source;
+      }
+
+      function getErrors(params: { tips: string[]; subTips: string[] }) {
+        errors.value = params.tips;
+        subErrors.value = params.subTips;
       }
 
       function setLoading(load: boolean) {
@@ -169,12 +177,15 @@ limitations under the License. -->
         applyConfig,
         cancelConfig,
         getSource,
+        getErrors,
         setLoading,
         widget,
         graph,
         title,
         tips,
         hasAssociate,
+        errors,
+        subErrors,
       };
     },
   });

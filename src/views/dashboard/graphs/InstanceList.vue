@@ -122,6 +122,7 @@ limitations under the License. -->
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
     needQuery: { type: Boolean, default: false },
   });
+  const emit = defineEmits(["expressionTips"]);
   const { t } = useI18n();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
@@ -193,6 +194,7 @@ limitations under the License. -->
       colMetrics.value = names;
       metricTypes.value = metricTypesArr;
       metricConfig.value = metricConfigArr;
+
       return;
     }
     instances.value = currentInstances;
@@ -203,13 +205,12 @@ limitations under the License. -->
 
   async function queryInstanceExpressions(currentInstances: Instance[]) {
     const expressions = props.config.expressions || [];
-    const typesOfMQE = props.config.typesOfMQE || [];
     const subExpressions = props.config.subExpressions || [];
 
-    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+    if (expressions.length && expressions[0]) {
       const params = await useExpressionsQueryPodsMetrics(
         currentInstances,
-        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions, subExpressions },
+        { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[3].value,
       );
       instances.value = params.data;
@@ -217,6 +218,7 @@ limitations under the License. -->
       colSubMetrics.value = params.colSubMetrics;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
+      emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
 
       return;
     }
@@ -225,6 +227,7 @@ limitations under the License. -->
     colMetrics.value = [];
     metricTypes.value = [];
     metricConfig.value = [];
+    emit("expressionTips", [], []);
   }
 
   function clickInstance(scope: any) {

@@ -34,7 +34,7 @@ limitations under the License. -->
         class="input"
         v-model="currentMetric.label"
         size="small"
-        placeholder="Please input a name"
+        placeholder="Please input a label"
         @change="
           updateConfig(index, {
             label: encodeURIComponent(currentMetric.label || ''),
@@ -42,13 +42,21 @@ limitations under the License. -->
         "
       />
     </div>
-    <div
-      class="item mb-10"
-      v-if="
-        [ProtocolTypes.ReadLabeledMetricsValues].includes(metricType) &&
-        dashboardStore.selectedGrid.metricMode === MetricModes.General
-      "
-    >
+    <div class="item mb-10" v-if="isList && isExpression">
+      <span class="label">{{ t("detailLabel") }}</span>
+      <el-input
+        class="input"
+        v-model="currentMetric.detailLabel"
+        size="small"
+        placeholder="Please input a label"
+        @change="
+          updateConfig(index, {
+            detailLabel: encodeURIComponent(currentMetric.detailLabel || ''),
+          })
+        "
+      />
+    </div>
+    <div class="item mb-10" v-if="[ProtocolTypes.ReadLabeledMetricsValues].includes(metricType) && !isExpression">
       <span class="label">{{ t("labelsIndex") }}</span>
       <el-input
         class="input"
@@ -136,6 +144,10 @@ limitations under the License. -->
       ].includes(metricType.value)
     );
   });
+  const isList = computed(() => {
+    const graph = dashboardStore.selectedGrid.graph || {};
+    return ListChartTypes.includes(graph.type);
+  });
   const isTopn = computed(() =>
     [ProtocolTypes.SortMetrics, ProtocolTypes.ReadSampledRecords, ProtocolTypes.ReadRecords].includes(
       metricTypes.value[props.index],
@@ -162,6 +174,7 @@ limitations under the License. -->
   watch(
     () => props.currentMetricConfig,
     () => {
+      isExpression.value = dashboardStore.selectedGrid.metricMode === MetricModes.Expression;
       currentMetric.value = {
         ...props.currentMetricConfig,
         topN: Number(props.currentMetricConfig.topN) || 10,
