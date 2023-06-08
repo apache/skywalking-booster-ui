@@ -48,7 +48,7 @@ limitations under the License. -->
             <div class="view-line">
               <Line
                 :data="{
-                  [colSubMetrics[index] || metric]:
+                  [decodeURIComponent(getLabel(colSubMetrics[index], index, true)) || metric]:
                     scope.row[colSubMetrics[index] || metric] && scope.row[colSubMetrics[index] || metric].values,
                 }"
                 :intervalTime="intervalTime"
@@ -109,9 +109,15 @@ limitations under the License. -->
     }
     return encodeURIComponent("");
   }
-  function getLabel(metric: string, index: number) {
+  function getLabel(metric: string, index: number, isDetail?: boolean) {
     const i = Number(index);
-    const label = props.config.metricConfig && props.config.metricConfig[i] && props.config.metricConfig[i].label;
+    let label = "";
+    if (isDetail) {
+      label =
+        (props.config.metricConfig && props.config.metricConfig[i] && props.config.metricConfig[i].detailLabel) || "";
+    } else {
+      label = (props.config.metricConfig && props.config.metricConfig[i] && props.config.metricConfig[i].label) || "";
+    }
     if (label) {
       if (
         (

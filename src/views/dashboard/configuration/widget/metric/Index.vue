@@ -35,8 +35,8 @@ limitations under the License. -->
     @change="changeMetricMode"
   />
   <div v-if="isExpression && states.isList">
-    <span class="title">Summary</span>
-    <span>Detail</span>
+    <span class="title">{{ t("summary") }}</span>
+    <span>{{ t("detail") }}</span>
   </div>
   <div v-for="(metric, index) in states.metrics" :key="index" class="mb-10">
     <span v-if="isExpression">
@@ -551,6 +551,7 @@ limitations under the License. -->
   }
   async function changeExpression(event: any, index: number) {
     const params = (event.target.textContent || "").replace(/\s+/g, "");
+    console.log(params);
 
     if (params) {
       const resp = await dashboardStore.getTypeOfMQE(params);

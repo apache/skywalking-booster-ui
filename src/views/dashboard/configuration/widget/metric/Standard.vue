@@ -42,6 +42,20 @@ limitations under the License. -->
         "
       />
     </div>
+    <div class="item mb-10" v-if="hasLabel && dashboardStore.selectedGrid.metricMode === MetricModes.Expression">
+      <span class="label">{{ t("detailLabel") }}</span>
+      <el-input
+        class="input"
+        v-model="currentMetric.detailLabel"
+        size="small"
+        placeholder="Please input a name"
+        @change="
+          updateConfig(index, {
+            detailLabel: encodeURIComponent(currentMetric.detailLabel || ''),
+          })
+        "
+      />
+    </div>
     <div
       class="item mb-10"
       v-if="
