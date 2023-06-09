@@ -62,15 +62,6 @@ export const taskTimelineStore = defineStore({
         return res.data;
       }
       this.taskList = res.data.data.queryEBPFTasks || [];
-      if (!this.taskList.length) {
-        const networkProfilingStore = useNetworkProfilingStore();
-        networkProfilingStore.seNodes([]);
-        networkProfilingStore.setLinks([]);
-        this.eBPFSchedules = [];
-        this.analyzeTrees = [];
-        this.selectedTask = {};
-        return;
-      }
       // this.selectedTask = this.taskList[0] || {};
       // await this.getGraphData();
       return res.data;
@@ -115,59 +106,6 @@ export const taskTimelineStore = defineStore({
         ElMessage.error(resp.errors);
       }
       return resp;
-    },
-
-    async getEBPFSchedules(params: { taskId: string }) {
-      if (!params.taskId) {
-        return new Promise((resolve) => resolve({}));
-      }
-      // params.taskId = "71d96efb81b0be93b1322be1b17334c87d45d6216e299504a778264f94692d1b";
-      const res: AxiosResponse = await graphql.query("getEBPFSchedules").params({ ...params });
-
-      if (res.data.errors) {
-        this.eBPFSchedules = [];
-        return res.data;
-      }
-      this.ebpftTips = "";
-      const { eBPFSchedules } = res.data.data;
-
-      this.eBPFSchedules = eBPFSchedules;
-      if (!eBPFSchedules.length) {
-        this.eBPFSchedules = [];
-        this.analyzeTrees = [];
-      }
-      return res.data;
-    },
-    async getEBPFAnalyze(params: {
-      scheduleIdList: string[];
-      timeRanges: Array<{ start: number; end: number }>;
-      aggregateType: string;
-    }) {
-      this.aggregateType = params.aggregateType;
-      if (!params.scheduleIdList.length) {
-        return new Promise((resolve) => resolve({}));
-      }
-      if (!params.timeRanges.length) {
-        return new Promise((resolve) => resolve({}));
-      }
-      const res: AxiosResponse = await graphql.query("getEBPFResult").params(params);
-
-      if (res.data.errors) {
-        this.analyzeTrees = [];
-        return res.data;
-      }
-      const { analysisEBPFResult } = res.data.data;
-      this.ebpftTips = analysisEBPFResult.tip;
-      if (!analysisEBPFResult) {
-        this.analyzeTrees = [];
-        return res.data;
-      }
-      if (analysisEBPFResult.tip) {
-        this.analyzeTrees = [];
-        return res.data;
-      }
-      this.analyzeTrees = analysisEBPFResult.trees;
-      return res.data;
     },
     async preAnalyzeTask() {
       if (this.selectedStrategy.type === "NETWORK") {

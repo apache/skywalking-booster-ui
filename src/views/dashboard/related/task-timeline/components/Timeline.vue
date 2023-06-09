@@ -82,7 +82,7 @@ limitations under the License. -->
     const taskList = taskTimelineStore.taskList.map((d: EBPFTaskList, index: number) => {
       return {
         id: index + 1,
-        // content: d.triggerType,
+        // content: d.targetType,
         start: new Date(Number(d.taskStartTime)),
         end: new Date(Number(d.taskStartTime + d.fixedTriggerDuration * 1000)),
         data: d,
@@ -107,8 +107,8 @@ limitations under the License. -->
           <div>Service Name: ${data.serviceName || ""}</div>
           <div>Service Instance Name: ${data.serviceInstanceName || ""}</div>
           <div>Service Process Name: ${data.processName || ""}</div>
-          <div>Trigger Type: ${data.triggerType || ""}</div>
           <div>Target Type: ${data.targetType || ""}</div>
+          <div>Trigger Type: ${data.triggerType || ""}</div>
           <div>Start Time: ${data.taskStartTime ? visDate(data.taskStartTime) : ""}</div>
           <div>End Time: ${end}</div>
           <div>Process Labels: ${data.processLabels.join("; ") || ""}</div>`;
@@ -150,7 +150,7 @@ limitations under the License. -->
     }
   }
   watch(
-    () => selectorStore.currentPod,
+    () => selectorStore.currentProcess,
     () => {
       init();
     },
