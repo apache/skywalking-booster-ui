@@ -13,13 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="content" v-if="continousProfilingStore.selectedStrategy.type === TargetTypes[2].value">
+  <div class="content" v-if="taskTimelineStore.selectedTask.targetType === TargetTypes[2].value">
     <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
     <div class="text" v-else>
       {{ t("noData") }}
     </div>
   </div>
-  <div class="content" v-else>
+  <div
+    class="content"
+    v-if="[TargetTypes[1].value, TargetTypes[0].value].includes(taskTimelineStore.selectedTask.targetType)"
+  >
     <div class="schedules">
       <EBPFSchedules />
     </div>
@@ -31,7 +34,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
+  import { useTaskTimelineStore } from "@/store/modules/task-timeline";
   import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
   import { TargetTypes } from "../../continuous-profiling/data";
   import ProcessTopology from "@/views/dashboard/related/network-profiling/components/ProcessTopology.vue";
@@ -46,7 +49,7 @@ limitations under the License. -->
     },
   });
   const { t } = useI18n();
-  const continousProfilingStore = useContinousProfilingStore();
+  const taskTimelineStore = useTaskTimelineStore();
   const networkProfilingStore = useNetworkProfilingStore();
 </script>
 <style lang="scss" scoped>

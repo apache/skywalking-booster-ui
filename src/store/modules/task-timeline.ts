@@ -22,7 +22,7 @@ import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { EBPFTaskList } from "@/types/ebpf";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
-import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
+import { useSelectorStore } from "@/store/modules/selectors";
 import { useEbpfStore } from "@/store/modules/ebpf";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
@@ -72,15 +72,13 @@ export const taskTimelineStore = defineStore({
         return;
       }
       // this.selectedTask = this.taskList[0] || {};
-      // this.setselectedTask(this.selectedTask);
       // await this.getGraphData();
       return res.data;
     },
     async getGraphData() {
       let res: any = {};
-      const continousProfilingStore = useContinousProfilingStore();
 
-      if (continousProfilingStore.selectedStrategy.type === TargetTypes[2].value) {
+      if (this.selectedTask.targetType === TargetTypes[2].value) {
         res = await this.getTopology();
       } else {
         const ebpfStore = useEbpfStore();
@@ -96,6 +94,7 @@ export const taskTimelineStore = defineStore({
     async getTopology() {
       const networkProfilingStore = useNetworkProfilingStore();
       const appStore = useAppStoreWithOut();
+      const selectorStore = useSelectorStore();
       networkProfilingStore.setSelectedNetworkTask(this.selectedTask);
       const { taskStartTime, fixedTriggerDuration } = this.selectedTask;
       const startTime =
@@ -105,7 +104,7 @@ export const taskTimelineStore = defineStore({
         endTime = new Date().getTime();
       }
       const resp = await networkProfilingStore.getProcessTopology({
-        serviceInstanceId: this.instance.id || "",
+        serviceInstanceId: (selectorStore.currentPod || {}).id || "",
         duration: {
           start: dateFormatStep(getLocalTime(appStore.utc, new Date(startTime)), appStore.duration.step, true),
           end: dateFormatStep(getLocalTime(appStore.utc, new Date(endTime)), appStore.duration.step, true),

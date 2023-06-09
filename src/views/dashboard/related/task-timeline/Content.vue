@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="flex-v content">
     <Timeline />
-    <profiling-panel :config="config" />
+    <ProfilingPanel :config="config" />
   </div>
 </template>
 <script lang="ts" setup>

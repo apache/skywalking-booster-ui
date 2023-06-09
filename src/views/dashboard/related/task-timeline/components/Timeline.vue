@@ -61,12 +61,14 @@ limitations under the License. -->
     const res = await taskTimelineStore.getContinousTaskList({
       serviceId,
       serviceInstanceId,
-      targets: [type],
+      targets: type ? [type] : null,
       triggerType: EBPFProfilingTriggerType.CONTINUOUS_PROFILING,
     });
     if (res.errors) {
       ElMessage.error(res.errors);
+      return;
     }
+    visTimeline();
   }
 
   function visTimeline() {
@@ -80,7 +82,7 @@ limitations under the License. -->
     const taskList = taskTimelineStore.taskList.map((d: EBPFTaskList, index: number) => {
       return {
         id: index + 1,
-        content: d.triggerType,
+        // content: d.triggerType,
         start: new Date(Number(d.taskStartTime)),
         end: new Date(Number(d.taskStartTime + d.fixedTriggerDuration * 1000)),
         data: d,
@@ -98,6 +100,8 @@ limitations under the License. -->
         overflowMethod: "cap",
         template(item: EBPFTaskList | any) {
           const data = item.data || {};
+          const end = data.taskStartTime ? visDate(data.taskStartTime + data.fixedTriggerDuration * 1000) : "";
+
           let tmp = `
           <div>Task ID: ${data.taskId || ""}</div>
           <div>Service Name: ${data.serviceName || ""}</div>
@@ -105,11 +109,11 @@ limitations under the License. -->
           <div>Service Process Name: ${data.processName || ""}</div>
           <div>Trigger Type: ${data.triggerType || ""}</div>
           <div>Target Type: ${data.targetType || ""}</div>
-          <div>Start Time: ${data.startTime ? visDate(data.startTime) : ""}</div>
-          <div>End Time: ${data.endTime ? visDate(data.endTime) : ""}</div>
+          <div>Start Time: ${data.taskStartTime ? visDate(data.taskStartTime) : ""}</div>
+          <div>End Time: ${end}</div>
           <div>Process Labels: ${data.processLabels.join("; ") || ""}</div>`;
           let str = "";
-          for (const item of data.continuousProfilingCauses) {
+          for (const item of data.continuousProfilingCauses || []) {
             str += `<div>${item.type}: ${getURI(item.uri)}${item.uri.threshold}>=${item.uri.current}</div>`;
           }
           return tmp + str;
@@ -120,7 +124,8 @@ limitations under the License. -->
     visGraph.value.on("select", async (properties: { items: number[] }) => {
       dashboardStore.selectWidget(props.data);
       const index = properties.items[0];
-      const task = taskList[index];
+      const task = taskTimelineStore.taskList[index];
+
       await taskTimelineStore.setSelectedTask(task);
       await taskTimelineStore.getGraphData();
     });
@@ -145,9 +150,9 @@ limitations under the License. -->
     }
   }
   watch(
-    () => taskTimelineStore.taskList,
+    () => selectorStore.currentPod,
     () => {
-      visTimeline();
+      init();
     },
   );
 </script>
@@ -155,7 +160,7 @@ limitations under the License. -->
   .task-timeline {
     width: calc(100% - 5px);
     margin: 0 5px 5px 0;
-    height: 300px;
+    height: 200px;
   }
 
   .message {
