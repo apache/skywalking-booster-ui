@@ -32,7 +32,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import Content from "../related/continuous-profiling/Content.vue";
+  import Content from "../related/task-timeline/Content.vue";
 
   /*global defineProps */
   const props = defineProps({

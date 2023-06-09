@@ -456,7 +456,7 @@ limitations under the License. -->
         dashboardStore.addTabControls("ThirdPartyApp");
         break;
       case "addTaskTimeline":
-        dashboardStore.addTabControls("AddTaskTimeline");
+        dashboardStore.addTabControls("TaskTimeline");
         break;
       default:
         ElMessage.info("Don't support this control");
@@ -509,7 +509,7 @@ limitations under the License. -->
         dashboardStore.addControl("ThirdPartyApp");
         break;
       case "addTaskTimeline":
-        dashboardStore.addTabControls("AddTaskTimeline");
+        dashboardStore.addControl("TaskTimeline");
         break;
       default:
         dashboardStore.addControl("Widget");
@@ -737,8 +737,8 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .dashboard-tool {
     text-align: right;
-    padding: 3px 5px 5px 5px;
-    background: rgb(240, 242, 245);
+    padding: 3px 5px 5px;
+    background: rgb(240 242 245);
     border-bottom: 1px solid #dfe4e8;
     justify-content: space-between;
   }

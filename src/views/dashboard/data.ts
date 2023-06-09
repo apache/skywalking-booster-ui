@@ -238,7 +238,7 @@ export const EndpointTools = [
 export const ProcessTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
-  { name: "task_timeline", content: "Add Task Timeline", id: "AddTaskTimeline" },
+  { name: "task_timeline", content: "Add Task Timeline", id: "addTaskTimeline" },
   { name: "library_books", content: "Add Text", id: "addText" },
   { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];

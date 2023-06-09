@@ -92,6 +92,7 @@ export const dashboardStore = defineStore({
         metricTypes: [""],
         metrics: [""],
       };
+
       if (type === "Widget") {
         newItem.metricMode = MetricModes.Expression;
       }

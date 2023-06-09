@@ -47,7 +47,7 @@ export const ControlsTypes = [
   "NetworkProfiling",
   "ThirdPartyApp",
   "ContinuousProfiling",
-  "AddTaskTimeline",
+  "TaskTimeline",
 ];
 export enum EBPFProfilingTriggerType {
   FIXED_TIME = "FIXED_TIME",
