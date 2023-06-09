@@ -15,7 +15,7 @@ limitations under the License. -->
 
 <template>
   <div
-    v-if="!isNaN(singleVal)"
+    v-if="singleVal !== null && !isNaN(singleVal)"
     class="chart-card"
     :style="{
       fontSize: `${config.fontSize}px`,
