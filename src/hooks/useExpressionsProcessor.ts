@@ -23,129 +23,142 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MetricConfigOpt } from "@/types/dashboard";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 
-export function useExpressionsQueryProcessor(config: Indexable) {
-  if (!(config.metrics && config.metrics[0])) {
-    return;
-  }
-  if (!(config.metricTypes && config.metricTypes[0])) {
-    return;
-  }
-  const appStore = useAppStoreWithOut();
-  const dashboardStore = useDashboardStore();
-  const selectorStore = useSelectorStore();
+export async function useExpressionsQueryProcessor(config: Indexable) {
+  function expressionsGraphqlPods() {
+    if (!(config.metrics && config.metrics[0])) {
+      return;
+    }
+    const appStore = useAppStoreWithOut();
+    const dashboardStore = useDashboardStore();
+    const selectorStore = useSelectorStore();
 
-  if (!selectorStore.currentService && dashboardStore.entity !== "All") {
-    return;
-  }
-  const conditions: Recordable = {
-    duration: appStore.durationTime,
-  };
-  const variables: string[] = [`$duration: Duration!`];
-  const isRelation = ["ServiceRelation", "ServiceInstanceRelation", "EndpointRelation", "ProcessRelation"].includes(
-    dashboardStore.entity,
-  );
-  if (isRelation && !selectorStore.currentDestService) {
-    return;
-  }
-  const fragment = config.metrics.map((name: string, index: number) => {
-    variables.push(`$expression${index}: String!`, `$entity${index}: Entity!`);
-    conditions[`expression${index}`] = name;
-    const entity = {
-      serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
-      normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
-      serviceInstanceName: ["ServiceInstance", "ServiceInstanceRelation", "ProcessRelation"].includes(
-        dashboardStore.entity,
-      )
-        ? selectorStore.currentPod && selectorStore.currentPod.value
-        : undefined,
-      endpointName: dashboardStore.entity.includes("Endpoint")
-        ? selectorStore.currentPod && selectorStore.currentPod.value
-        : undefined,
-      processName: dashboardStore.entity.includes("Process")
-        ? selectorStore.currentProcess && selectorStore.currentProcess.value
-        : undefined,
-      destNormal: isRelation ? selectorStore.currentDestService.normal : undefined,
-      destServiceName: isRelation ? selectorStore.currentDestService.value : undefined,
-      destServiceInstanceName: ["ServiceInstanceRelation", "ProcessRelation"].includes(dashboardStore.entity)
-        ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
-        : undefined,
-      destEndpointName:
-        dashboardStore.entity === "EndpointRelation"
+    if (!selectorStore.currentService && dashboardStore.entity !== "All") {
+      return;
+    }
+    const conditions: Recordable = {
+      duration: appStore.durationTime,
+    };
+    const variables: string[] = [`$duration: Duration!`];
+    const isRelation = ["ServiceRelation", "ServiceInstanceRelation", "EndpointRelation", "ProcessRelation"].includes(
+      dashboardStore.entity,
+    );
+    if (isRelation && !selectorStore.currentDestService) {
+      return;
+    }
+    const fragment = config.metrics.map((name: string, index: number) => {
+      variables.push(`$expression${index}: String!`, `$entity${index}: Entity!`);
+      conditions[`expression${index}`] = name;
+      const entity = {
+        serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
+        normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
+        serviceInstanceName: ["ServiceInstance", "ServiceInstanceRelation", "ProcessRelation"].includes(
+          dashboardStore.entity,
+        )
+          ? selectorStore.currentPod && selectorStore.currentPod.value
+          : undefined,
+        endpointName: dashboardStore.entity.includes("Endpoint")
+          ? selectorStore.currentPod && selectorStore.currentPod.value
+          : undefined,
+        processName: dashboardStore.entity.includes("Process")
+          ? selectorStore.currentProcess && selectorStore.currentProcess.value
+          : undefined,
+        destNormal: isRelation ? selectorStore.currentDestService.normal : undefined,
+        destServiceName: isRelation ? selectorStore.currentDestService.value : undefined,
+        destServiceInstanceName: ["ServiceInstanceRelation", "ProcessRelation"].includes(dashboardStore.entity)
           ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
           : undefined,
-      destProcessName: dashboardStore.entity.includes("ProcessRelation")
-        ? selectorStore.currentDestProcess && selectorStore.currentDestProcess.value
-        : undefined,
+        destEndpointName:
+          dashboardStore.entity === "EndpointRelation"
+            ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
+            : undefined,
+        destProcessName: dashboardStore.entity.includes("ProcessRelation")
+          ? selectorStore.currentDestProcess && selectorStore.currentDestProcess.value
+          : undefined,
+      };
+      conditions[`entity${index}`] = entity;
+
+      return `expression${index}: execExpression(expression: $expression${index}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
+    });
+    const queryStr = `query queryData(${variables}) {${fragment}}`;
+
+    return {
+      queryStr,
+      conditions,
     };
-    conditions[`entity${index}`] = entity;
-
-    return `expression${index}: execExpression(expression: $expression${index}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
-  });
-  const queryStr = `query queryData(${variables}) {${fragment}}`;
-
-  return {
-    queryStr,
-    conditions,
-  };
-}
-
-export function useExpressionsSourceProcessor(
-  resp: { errors: string; data: Indexable },
-  config: {
-    metrics: string[];
-    metricTypes: string[];
-    metricConfig: MetricConfigOpt[];
-  },
-) {
-  if (resp.errors) {
-    ElMessage.error(resp.errors);
-    return {};
   }
-  if (!resp.data) {
-    ElMessage.error("The query is wrong");
-    return {};
-  }
-  const source: { [key: string]: unknown } = {};
-  const keys = Object.keys(resp.data);
-  for (let i = 0; i < config.metricTypes.length; i++) {
-    const type = config.metricTypes[i];
-    const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[i]) || {};
-    const results = (resp.data[keys[i]] && resp.data[keys[i]].results) || [];
-    const name = ((results[0] || {}).metric || {}).name;
 
-    if (type === ExpressionResultType.TIME_SERIES_VALUES) {
-      if (results.length === 1) {
-        source[c.label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
-      } else {
-        const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
-        for (const item of results) {
-          const values = item.values.map((d: { value: unknown }) => d.value) || [];
-          const index = item.metric.labels[0].value;
-          const indexNum = labels.findIndex((_, i: number) => i === Number(index));
-          if (labels[indexNum] && indexNum > -1) {
-            source[labels[indexNum]] = values;
+  function expressionsSource(resp: { errors: string; data: Indexable }) {
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+      return { source: {}, tips: [], typesOfMQE: [] };
+    }
+    if (!resp.data) {
+      ElMessage.error("The query is wrong");
+      return { source: {}, tips: [], typesOfMQE: [] };
+    }
+    const tips: string[] = [];
+    const source: { [key: string]: unknown } = {};
+    const keys = Object.keys(resp.data);
+    const typesOfMQE: string[] = [];
+
+    for (let i = 0; i < config.metrics.length; i++) {
+      const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[i]) || {};
+      const obj = resp.data[keys[i]] || {};
+      const results = obj.results || [];
+      const name = config.metrics[i];
+      const type = obj.type;
+
+      tips.push(obj.error);
+      typesOfMQE.push(type);
+      if (!obj.error) {
+        if (type === ExpressionResultType.TIME_SERIES_VALUES) {
+          if (results.length === 1) {
+            source[c.label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
           } else {
-            source[index] = values;
+            const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
+            for (const item of results) {
+              const values = item.values.map((d: { value: unknown }) => d.value) || [];
+              const index = item.metric.labels[0].value;
+              const indexNum = labels.findIndex((_, i: number) => i === Number(index));
+              if (labels[indexNum] && indexNum > -1) {
+                source[labels[indexNum]] = values;
+              } else {
+                source[index] = values;
+              }
+            }
           }
+        }
+        if (type === ExpressionResultType.SINGLE_VALUE) {
+          source[c.label || name] = results[0].values[0].value;
+        }
+        if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
+          source[name] = results[0].values;
         }
       }
     }
-    if (type === ExpressionResultType.SINGLE_VALUE) {
-      source[c.label || name] = results[0].values[0].value;
-    }
-    if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
-      source[name] = results[0].values;
-    }
+
+    return { source, tips, typesOfMQE };
+  }
+  const params = await expressionsGraphqlPods();
+  if (!params) {
+    return { source: {}, tips: [], typesOfMQE: [] };
   }
 
-  return source;
+  const dashboardStore = useDashboardStore();
+  const json = await dashboardStore.fetchMetricValue(params);
+  if (json.errors) {
+    ElMessage.error(json.errors);
+    return { source: {}, tips: [], typesOfMQE: [] };
+  }
+  const data = expressionsSource(json);
+
+  return data;
 }
 
 export async function useExpressionsQueryPodsMetrics(
   pods: Array<(Instance | Endpoint | Service) & Indexable>,
   config: {
     expressions: string[];
-    typesOfMQE: string[];
     subExpressions: string[];
     metricConfig: MetricConfigOpt[];
   },
@@ -154,16 +167,13 @@ export async function useExpressionsQueryPodsMetrics(
   function expressionsGraphqlPods() {
     const metrics: string[] = [];
     const subMetrics: string[] = [];
-    const metricTypes: string[] = [];
     config.expressions = config.expressions || [];
     config.subExpressions = config.subExpressions || [];
-    config.typesOfMQE = config.typesOfMQE || [];
 
     for (let i = 0; i < config.expressions.length; i++) {
       if (config.expressions[i]) {
         metrics.push(config.expressions[i]);
         subMetrics.push(config.subExpressions[i]);
-        metricTypes.push(config.typesOfMQE[i]);
       }
     }
     if (!metrics.length) {
@@ -214,16 +224,24 @@ export async function useExpressionsQueryPodsMetrics(
       return {};
     }
     const names: string[] = [];
+    const subNames: string[] = [];
     const metricConfigArr: MetricConfigOpt[] = [];
     const metricTypesArr: string[] = [];
+    const expressionsTips: string[] = [];
+    const subExpressionsTips: string[] = [];
     const data = pods.map((d: any, idx: number) => {
       for (let index = 0; index < config.expressions.length; index++) {
         const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[index]) || {};
         const k = "expression" + idx + index;
         const sub = "subexpression" + idx + index;
-        const results = (resp.data[k] && resp.data[k].results) || [];
-        const subResults = (resp.data[sub] && resp.data[sub].results) || [];
+        const obj = resp.data[k] || {};
+        const results = obj.results || [];
+        const typesOfMQE = obj.type || "";
+        const subObj = resp.data[sub] || {};
+        const subResults = subObj.results || [];
 
+        expressionsTips.push(obj.error);
+        subExpressionsTips.push(subObj.error);
         if (results.length > 1) {
           const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
           const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
@@ -248,33 +266,38 @@ export async function useExpressionsQueryPodsMetrics(
             if (!j) {
               names.push(name);
               metricConfigArr.push({ ...c, index: i });
-              metricTypesArr.push(config.typesOfMQE[index]);
+              metricTypesArr.push(typesOfMQE);
             }
           }
         } else {
           if (!results[0]) {
             return d;
           }
-          const name = results[0].metric.name || "";
+          const name = config.expressions[index] || "";
+          const subName = config.subExpressions[index] || "";
           if (!d[name]) {
             d[name] = {};
           }
           d[name]["avg"] = [results[0].values[0].value];
           if (subResults[0]) {
-            d[name]["values"] = subResults[0].values.map((d: { value: number }) => d.value);
+            if (!d[subName]) {
+              d[subName] = {};
+            }
+            d[subName]["values"] = subResults[0].values.map((d: { value: number }) => d.value);
           }
           const j = names.find((d: string) => d === name);
           if (!j) {
             names.push(name);
+            subNames.push(subName);
             metricConfigArr.push(c);
-            metricTypesArr.push(config.typesOfMQE[index]);
+            metricTypesArr.push(typesOfMQE);
           }
         }
       }
       return d;
     });
 
-    return { data, names, metricConfigArr, metricTypesArr };
+    return { data, names, subNames, metricConfigArr, metricTypesArr, expressionsTips, subExpressionsTips };
   }
   const dashboardStore = useDashboardStore();
   const params = await expressionsGraphqlPods();
@@ -284,7 +307,7 @@ export async function useExpressionsQueryPodsMetrics(
     ElMessage.error(json.errors);
     return {};
   }
-  const { data, names, metricTypesArr, metricConfigArr } = expressionsPodsSource(json);
+  const expressionParams = expressionsPodsSource(json);
 
-  return { data, names, metricTypesArr, metricConfigArr };
+  return expressionParams;
 }

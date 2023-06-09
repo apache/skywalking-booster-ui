@@ -47,9 +47,9 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
+          :colSubMetrics="colSubMetrics"
           :config="{
             ...config,
-            metrics: colMetrics,
             metricConfig,
             metricTypes,
             metricMode,
@@ -114,6 +114,7 @@ limitations under the License. -->
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
     isEdit: { type: Boolean, default: false },
   });
+  const emit = defineEmits(["expressionTips"]);
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
   const appStore = useAppStoreWithOut();
@@ -121,6 +122,7 @@ limitations under the License. -->
   const pageSize = 10;
   const services = ref<Service[]>([]);
   const colMetrics = ref<string[]>([]);
+  const colSubMetrics = ref<string[]>([]);
   const searchText = ref<string>("");
   const groups = ref<any>({});
   const sortServices = ref<(Service & { merge: boolean })[]>([]);
@@ -250,25 +252,28 @@ limitations under the License. -->
   }
   async function queryServiceExpressions(currentServices: Service[]) {
     const expressions = props.config.expressions || [];
-    const typesOfMQE = props.config.typesOfMQE || [];
     const subExpressions = props.config.subExpressions || [];
 
-    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+    if (expressions.length && expressions[0]) {
       const params = await useExpressionsQueryPodsMetrics(
         currentServices,
-        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions, subExpressions },
+        { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[0].value,
       );
       services.value = params.data;
       colMetrics.value = params.names;
+      colSubMetrics.value = params.subNames;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
+      emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
       return;
     }
     services.value = currentServices;
     colMetrics.value = [];
+    colSubMetrics.value = [];
     metricTypes.value = [];
     metricConfig.value = [];
+    emit("expressionTips", [], []);
   }
   function objectSpanMethod(param: any): any {
     if (!props.config.showGroup) {
@@ -329,5 +334,5 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss" scoped>
-  @import "./style.scss";
+  @import url("./style.scss");
 </style>

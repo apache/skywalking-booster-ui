@@ -35,9 +35,9 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
+          :colSubMetrics="colSubMetrics"
           :config="{
             ...config,
-            metrics: colMetrics,
             metricConfig,
             metricTypes,
             metricMode,
@@ -122,6 +122,7 @@ limitations under the License. -->
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
     needQuery: { type: Boolean, default: false },
   });
+  const emit = defineEmits(["expressionTips"]);
   const { t } = useI18n();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
@@ -130,6 +131,7 @@ limitations under the License. -->
   const pageSize = 10;
   const searchText = ref<string>("");
   const colMetrics = ref<string[]>([]);
+  const colSubMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const metricTypes = ref<string[]>(props.config.metricTypes || []);
   const pods = ref<Instance[]>([]); // all instances
@@ -192,6 +194,7 @@ limitations under the License. -->
       colMetrics.value = names;
       metricTypes.value = metricTypesArr;
       metricConfig.value = metricConfigArr;
+
       return;
     }
     instances.value = currentInstances;
@@ -202,26 +205,29 @@ limitations under the License. -->
 
   async function queryInstanceExpressions(currentInstances: Instance[]) {
     const expressions = props.config.expressions || [];
-    const typesOfMQE = props.config.typesOfMQE || [];
     const subExpressions = props.config.subExpressions || [];
 
-    if (expressions.length && expressions[0] && typesOfMQE.length && typesOfMQE[0]) {
+    if (expressions.length && expressions[0]) {
       const params = await useExpressionsQueryPodsMetrics(
         currentInstances,
-        { ...props.config, metricConfig: metricConfig.value || [], typesOfMQE, expressions, subExpressions },
+        { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[3].value,
       );
       instances.value = params.data;
       colMetrics.value = params.names;
+      colSubMetrics.value = params.colSubMetrics;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
+      emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
 
       return;
     }
     instances.value = currentInstances;
+    colSubMetrics.value = [];
     colMetrics.value = [];
     metricTypes.value = [];
     metricConfig.value = [];
+    emit("expressionTips", [], []);
   }
 
   function clickInstance(scope: any) {
@@ -281,7 +287,7 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss" scoped>
-  @import "./style.scss";
+  @import url("./style.scss");
 
   .attributes {
     max-height: 400px;

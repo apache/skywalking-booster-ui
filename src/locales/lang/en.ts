@@ -402,5 +402,8 @@ const msg = {
   monitorInstances: "Monitor Instances",
   processDashboards: "Process Dashboards",
   instanceDashboards: "Instance Dashboards",
+  detailLabel: "Detail Label",
+  summary: "Summary",
+  detail: "Detail",
 };
 export default msg;

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 import { DurationTime } from "./app";
-
 export type DashboardItem = {
   id?: string;
   entity: string;
@@ -80,6 +79,7 @@ export type MetricConfigOpt = {
   sortOrder?: string;
   topN?: number;
   index?: number;
+  detailLabel?: string;
 };
 
 export interface WidgetConfig {

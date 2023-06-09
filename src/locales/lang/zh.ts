@@ -399,5 +399,8 @@ const msg = {
   monitorInstances: "监视实例",
   processDashboards: "进程仪表板",
   instanceDashboards: "实例仪表板",
+  detailLabel: "详细标签",
+  summary: "概括",
+  detail: "详细",
 };
 export default msg;

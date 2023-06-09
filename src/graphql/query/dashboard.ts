@@ -21,7 +21,6 @@ import {
   addTemplate,
   changeTemplate,
   deleteTemplate,
-  TypeOfMQE,
 } from "../fragments/dashboard";
 
 export const queryTypeOfMetrics = `query typeOfMetrics(${TypeOfMetrics.variable}) {${TypeOfMetrics.query}}`;
@@ -35,5 +34,3 @@ export const updateTemplate = `mutation template(${changeTemplate.variable}) {${
 export const removeTemplate = `mutation template(${deleteTemplate.variable}) {${deleteTemplate.query}}`;
 
 export const getTemplates = `query templates {${getAllTemplates.query}}`;
-
-export const getTypeOfMQE = `query returnTypeOfMQE(${TypeOfMQE.variable}) {${TypeOfMQE.query}}`;

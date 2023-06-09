@@ -68,12 +68,3 @@ export const deleteTemplate = {
         message
     }`,
 };
-export const TypeOfMQE = {
-  variable: "$expression: String!",
-  query: `
-  metricType: returnTypeOfMQE(expression: $expression) {
-    type
-    error
-  }
-  `,
-};

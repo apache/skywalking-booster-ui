@@ -48,7 +48,8 @@ limitations under the License. -->
             <div class="view-line">
               <Line
                 :data="{
-                  [metric]: scope.row[metric] && scope.row[metric].values,
+                  [decodeURIComponent(getLabel(colSubMetrics[index], index, true)) || metric]:
+                    scope.row[colSubMetrics[index] || metric] && scope.row[colSubMetrics[index] || metric].values,
                 }"
                 :intervalTime="intervalTime"
                 :config="{
@@ -86,11 +87,11 @@ limitations under the License. -->
 
   /*global defineProps */
   const props = defineProps({
-    colMetrics: { type: Object },
+    colMetrics: { type: Array as PropType<string[]>, default: () => [] },
+    colSubMetrics: { type: Array as PropType<string[]>, default: () => [] },
     config: {
       type: Object as PropType<{
         i: string;
-        metrics: string[];
         metricTypes: string[];
         metricConfig: MetricConfigOpt[];
         metricMode: string;
@@ -100,7 +101,7 @@ limitations under the License. -->
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   });
 
-  function getUnit(index: string) {
+  function getUnit(index: number) {
     const i = Number(index);
     const u = props.config.metricConfig && props.config.metricConfig[i] && props.config.metricConfig[i].unit;
     if (u) {
@@ -108,9 +109,15 @@ limitations under the License. -->
     }
     return encodeURIComponent("");
   }
-  function getLabel(metric: string, index: string) {
+  function getLabel(metric: string, index: number, isDetail?: boolean) {
     const i = Number(index);
-    const label = props.config.metricConfig && props.config.metricConfig[i] && props.config.metricConfig[i].label;
+    let label = "";
+    if (isDetail) {
+      label =
+        (props.config.metricConfig && props.config.metricConfig[i] && props.config.metricConfig[i].detailLabel) || "";
+    } else {
+      label = (props.config.metricConfig && props.config.metricConfig[i] && props.config.metricConfig[i].label) || "";
+    }
     if (label) {
       if (
         (
@@ -128,7 +135,7 @@ limitations under the License. -->
       }
       return encodeURIComponent(label);
     }
-    return encodeURIComponent(metric);
+    return encodeURIComponent(metric || "");
   }
 </script>
 <style lang="scss" scoped>
