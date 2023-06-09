@@ -129,7 +129,7 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
           }
         }
         if (type === ExpressionResultType.SINGLE_VALUE) {
-          source[c.label || name] = results[0].values[0].value;
+          source[c.label || name] = (results[0].values[0] || {}).value;
         }
         if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
           source[name] = results[0].values;
@@ -259,7 +259,7 @@ export async function useExpressionsQueryPodsMetrics(
             if (subValues) {
               d[name]["values"] = subValues;
             }
-            d[name]["avg"] = results[i].values[0].value;
+            d[name]["avg"] = (results[i].values[0] || {}).value;
 
             const j = names.find((d: string) => d === name);
 
@@ -278,7 +278,7 @@ export async function useExpressionsQueryPodsMetrics(
           if (!d[name]) {
             d[name] = {};
           }
-          d[name]["avg"] = [results[0].values[0].value];
+          d[name]["avg"] = [(results[0].values[0] || {}).value];
           if (subResults[0]) {
             if (!d[subName]) {
               d[subName] = {};
