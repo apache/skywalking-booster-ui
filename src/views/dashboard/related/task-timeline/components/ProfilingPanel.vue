@@ -15,9 +15,6 @@ limitations under the License. -->
 <template>
   <div class="content" v-if="taskTimelineStore.selectedTask.targetType === TargetTypes[2].value">
     <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
-    <div class="text" v-else>
-      {{ t("noData") }}
-    </div>
   </div>
   <div
     class="content"
@@ -30,12 +27,16 @@ limitations under the License. -->
       <EBPFStack />
     </div>
   </div>
+  <div class="text" v-if="!(ebpfStore.analyzeTrees.length || networkProfilingStore.nodes.length)">
+    {{ t("noData") }}
+  </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useTaskTimelineStore } from "@/store/modules/task-timeline";
   import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
+  import { useEbpfStore } from "@/store/modules/ebpf";
   import { TargetTypes } from "../../continuous-profiling/data";
   import ProcessTopology from "@/views/dashboard/related/network-profiling/components/ProcessTopology.vue";
   import EBPFSchedules from "@/views/dashboard/related/ebpf/components/EBPFSchedules.vue";
@@ -51,6 +52,7 @@ limitations under the License. -->
   const { t } = useI18n();
   const taskTimelineStore = useTaskTimelineStore();
   const networkProfilingStore = useNetworkProfilingStore();
+  const ebpfStore = useEbpfStore();
 </script>
 <style lang="scss" scoped>
   .content {
@@ -65,7 +67,7 @@ limitations under the License. -->
   .text {
     width: 100%;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 100px;
   }
 
   .item {

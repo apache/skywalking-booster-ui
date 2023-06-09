@@ -150,7 +150,7 @@ limitations under the License. -->
     }
   }
   watch(
-    () => selectorStore.currentProcess,
+    () => selectorStore.currentPod,
     () => {
       init();
     },

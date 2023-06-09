@@ -139,7 +139,7 @@ limitations under the License. -->
   }
 
   function changeThreshold(index: number) {
-    let regex = /^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?)%$/;
+    let regex = /^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?)$/;
     if (MonitorType[1].value === states.checkItems[index].type) {
       regex = /^\d+$/;
     }
@@ -151,7 +151,7 @@ limitations under the License. -->
     }
 
     if (!regex.test(states.checkItems[index].threshold)) {
-      return ElMessage.warning(getNotice(states.checkItems[index].type));
+      return ElMessage.error(getNotice(states.checkItems[index].type));
     }
     emits("edit", states, props.order);
   }
@@ -190,11 +190,11 @@ limitations under the License. -->
 
   function getNotice(type: string) {
     const map: { [key: string]: string } = {
-      PROCESS_CPU: "It should be percentage data",
-      PROCESS_THREAD_COUNT: "It should be a positive integer",
-      SYSTEM_LOAD: "It should be a floating point number",
-      HTTP_ERROR_RATE: "It should be percentage data",
-      HTTP_AVG_RESPONSE_TIME: "It should be a response time in milliseconds",
+      PROCESS_CPU: "It is a percentage data",
+      PROCESS_THREAD_COUNT: "It is a positive integer",
+      SYSTEM_LOAD: "It is a floating point number",
+      HTTP_ERROR_RATE: "It is percentage data",
+      HTTP_AVG_RESPONSE_TIME: "It is a response time in milliseconds",
     };
 
     return map[type];
