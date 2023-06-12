@@ -93,11 +93,14 @@ limitations under the License. -->
       />
       <Icon class="cp" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
     </span>
-    <div v-if="(errors || states.tips)[index] && isExpression" class="ml-10 red sm">
-      {{ (errors || states.tips)[index] }}
+    <div v-if="(states.tips || [])[index] && isExpression" class="ml-10 red sm">
+      {{ states.tips[index] }}
     </div>
-    <div v-if="(subErrors || states.tips)[index] && isExpression" class="ml-10 red sm">
-      {{ (subErrors || states.tips)[index] }}
+    <div v-if="(errors || [])[index] && isExpression" class="ml-10 red sm">
+      {{ (errors || [])[index] }}
+    </div>
+    <div v-if="(subErrors || [])[index] && isExpression" class="ml-10 red sm">
+      {{ (subErrors || [])[index] }}
     </div>
   </div>
   <div>{{ t("visualization") }}</div>

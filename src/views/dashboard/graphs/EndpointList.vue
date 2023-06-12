@@ -179,9 +179,9 @@ limitations under the License. -->
       );
       endpoints.value = params.data;
       colMetrics.value = params.names;
+      colSubMetrics.value = params.subNames;
       metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
-      colSubMetrics.value = params.colSubMetrics;
       emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
 
       return;
@@ -216,6 +216,7 @@ limitations under the License. -->
       ...(props.config.metrics || []),
       ...(props.config.metricConfig || []),
       ...(props.config.expressions || []),
+      ...(props.config.subExpressions || []),
       props.config.metricMode,
     ],
     (data, old) => {
