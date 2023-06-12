@@ -30,7 +30,7 @@ limitations under the License. -->
               <template #default="scope">
                 <span
                   :class="config.processDashboardName ? 'link' : ''"
-                  @click="viewProcessDashboard(scope, props.row)"
+                  @click="viewProcessDashboard(scope.row, props.row)"
                 >
                   {{ scope.row.name }}
                 </span>
@@ -49,7 +49,7 @@ limitations under the License. -->
     </el-table-column>
     <el-table-column prop="name" label="Name">
       <template #default="scope">
-        <span :class="config.instanceDashboardName ? 'link' : ''" @click="viewInstanceDashboard(scope)">
+        <span :class="config.instanceDashboardName ? 'link' : ''" @click="viewInstanceDashboard(scope.row)">
           {{ scope.row.name }}
         </span>
       </template>
@@ -118,21 +118,21 @@ limitations under the License. -->
   });
   const currentInstances = ref<MonitorInstance[]>([]);
 
-  function viewProcessDashboard(scope: any, instance: MonitorInstance) {
+  function viewProcessDashboard(process: MonitorProcess, instance: MonitorInstance) {
     if (!props.config.processDashboardName) {
       return;
     }
     router.push(
-      `/dashboard/${dashboardStore.layerId}/${EntityType[8].value}/${selectorStore.currentService.id}/${instance.id}/${scope.row.id}/${props.config.processDashboardName}`,
+      `/dashboard/${dashboardStore.layerId}/${EntityType[8].value}/${selectorStore.currentService.id}/${instance.id}/${process.id}/${props.config.processDashboardName}`,
     );
   }
 
-  function viewInstanceDashboard(scope: any) {
+  function viewInstanceDashboard(instance: MonitorInstance) {
     if (!props.config.instanceDashboardName) {
       return;
     }
     router.push(
-      `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${selectorStore.currentService.id}/${scope.row.id}/${props.config.instanceDashboardName}`,
+      `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${selectorStore.currentService.id}/${instance.id}/${props.config.instanceDashboardName}`,
     );
   }
 
