@@ -123,7 +123,7 @@ limitations under the License. -->
       return;
     }
     router.push(
-      `/dashboard/${dashboardStore.layer}/${EntityType[8].value}/${selectorStore.currentService.id}/${instance.id}/${scope.row.id}/${props.config.processDashboardName}`,
+      `/dashboard/${dashboardStore.layerId}/${EntityType[8].value}/${selectorStore.currentService.id}/${instance.id}/${scope.row.id}/${props.config.processDashboardName}`,
     );
   }
 
@@ -132,7 +132,7 @@ limitations under the License. -->
       return;
     }
     router.push(
-      `/dashboard/${dashboardStore.layer}/${EntityType[3].value}/${selectorStore.currentService.id}/${scope.row.id}/${props.config.instanceDashboardName}`,
+      `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${selectorStore.currentService.id}/${scope.row.id}/${props.config.instanceDashboardName}`,
     );
   }
 
