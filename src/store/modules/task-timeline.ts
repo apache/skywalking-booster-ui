@@ -44,6 +44,9 @@ export const taskTimelineStore = defineStore({
     setSelectedTask(task: Recordable<EBPFTaskList>) {
       this.selectedTask = task || {};
     },
+    setTaskList(list: EBPFTaskList[]) {
+      this.taskList = list;
+    },
     async getContinousTaskList(params: {
       serviceId: string;
       serviceInstanceId: string;

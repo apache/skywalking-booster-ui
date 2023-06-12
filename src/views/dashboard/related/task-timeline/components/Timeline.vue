@@ -16,7 +16,7 @@ limitations under the License. -->
   <div ref="timeline" class="task-timeline"></div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, onMounted } from "vue";
+  import { ref, watch, onMounted, onUnmounted } from "vue";
   import dayjs from "dayjs";
   import { useThrottleFn } from "@vueuse/core";
   import { ElMessage } from "element-plus";
@@ -81,7 +81,7 @@ limitations under the License. -->
     const h = timeline.value.getBoundingClientRect().height;
     const taskList = taskTimelineStore.taskList.map((d: EBPFTaskList, index: number) => {
       return {
-        id: index + 1,
+        id: index,
         // content: d.targetType,
         start: new Date(Number(d.taskStartTime)),
         end: new Date(Number(d.taskStartTime + d.fixedTriggerDuration * 1000)),
@@ -149,6 +149,12 @@ limitations under the License. -->
       observer.observe(timeline.value);
     }
   }
+  onUnmounted(() => {
+    if (visGraph.value) {
+      visGraph.value.destroy();
+    }
+    taskTimelineStore.setTaskList([]);
+  });
   watch(
     () => selectorStore.currentPod,
     () => {
