@@ -99,11 +99,13 @@ limitations under the License. -->
       tooltip: {
         overflowMethod: "cap",
         template(item: EBPFTaskList | any) {
+          const types = ["PROCESS_CPU", "HTTP_ERROR_RATE"];
           const data = item.data || {};
           const end = data.taskStartTime ? visDate(data.taskStartTime + data.fixedTriggerDuration * 1000) : "";
           let str = "";
           for (const item of data.continuousProfilingCauses || []) {
-            str += `${item.type}: ${getURI(item.uri)}${item.uri.threshold}>=${item.uri.current}; `;
+            str += `${item.type}: ${getURI(item.uri)}${item.uri.threshold}${types.includes(item.type) ? "%" : ""}>=
+            ${item.uri.current}${types.includes(item.type) ? "%" : ""}; `;
           }
           let tmp = `
           
