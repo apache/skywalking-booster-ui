@@ -71,7 +71,7 @@ limitations under the License. -->
   .item {
     width: 100%;
     overflow: auto;
-    height: calc(100% - 100px);
+    height: calc(100% - 270px);
     padding-bottom: 10px;
   }
 
