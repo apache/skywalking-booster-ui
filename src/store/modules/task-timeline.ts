@@ -64,7 +64,10 @@ export const taskTimelineStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.taskList = res.data.data.queryEBPFTasks || [];
+      const selectorStore = useSelectorStore();
+      this.taskList = (res.data.data.queryEBPFTasks || []).filter(
+        (d: EBPFTaskList) => selectorStore.currentProcess && d.processId === selectorStore.currentProcess.id,
+      );
       // this.selectedTask = this.taskList[0] || {};
       // await this.getGraphData();
       return res.data;

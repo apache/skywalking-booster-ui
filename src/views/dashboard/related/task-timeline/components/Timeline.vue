@@ -154,7 +154,7 @@ limitations under the License. -->
     taskTimelineStore.setTaskList([]);
   });
   watch(
-    () => selectorStore.currentPod,
+    () => selectorStore.currentProcess,
     () => {
       init();
     },
