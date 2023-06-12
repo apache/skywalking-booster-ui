@@ -13,18 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div
-    class="content"
-    v-if="taskTimelineStore.selectedTask.targetType === TargetTypes[2].value && networkProfilingStore.nodes.length"
-  >
+  <div class="content" v-if="taskTimelineStore.selectedTask.targetType === TargetTypes[2].value">
     <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
   </div>
   <div
     class="content"
-    v-if="
-      [TargetTypes[1].value, TargetTypes[0].value].includes(taskTimelineStore.selectedTask.targetType) &&
-      ebpfStore.analyzeTrees.length
-    "
+    v-if="[TargetTypes[1].value, TargetTypes[0].value].includes(taskTimelineStore.selectedTask.targetType)"
   >
     <div class="schedules">
       <EBPFSchedules />
@@ -33,7 +27,7 @@ limitations under the License. -->
       <EBPFStack />
     </div>
   </div>
-  <div class="text" v-if="!(ebpfStore.analyzeTrees.length || networkProfilingStore.nodes.length)">
+  <div class="text" v-if="!taskTimelineStore.selectedTask.targetType">
     {{ t("noData") }}
   </div>
 </template>
@@ -42,7 +36,6 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useTaskTimelineStore } from "@/store/modules/task-timeline";
   import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
-  import { useEbpfStore } from "@/store/modules/ebpf";
   import { TargetTypes } from "../../continuous-profiling/data";
   import ProcessTopology from "@/views/dashboard/related/network-profiling/components/ProcessTopology.vue";
   import EBPFSchedules from "@/views/dashboard/related/ebpf/components/EBPFSchedules.vue";
@@ -58,7 +51,6 @@ limitations under the License. -->
   const { t } = useI18n();
   const taskTimelineStore = useTaskTimelineStore();
   const networkProfilingStore = useNetworkProfilingStore();
-  const ebpfStore = useEbpfStore();
 </script>
 <style lang="scss" scoped>
   .content {

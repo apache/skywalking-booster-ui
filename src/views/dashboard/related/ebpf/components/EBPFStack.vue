@@ -98,7 +98,7 @@ limitations under the License. -->
       .setColorMapper((d, originalColor) => (d.highlight ? "#6aff8f" : originalColor));
     const tip = (d3tip as any)()
       .attr("class", "d3-tip")
-      .direction("w")
+      .direction("s")
       .html((d: { data: StackElement } & { parent: { data: StackElement } }) => {
         const name = d.data.name.replace("<", "&lt;").replace(">", "&gt;");
         const valStr =
@@ -119,7 +119,7 @@ limitations under the License. -->
         }</div>`;
         return `<div class="mb-5 name">Symbol: ${name}</div>${valStr}${rateOfParent}${rateOfRoot}`;
       })
-      .style("max-width", "500px");
+      .style("max-width", "400px");
     flameChart.value.tooltip(tip);
     d3.select("#graph-stack").datum(stackTree.value).call(flameChart.value);
   }
