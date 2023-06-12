@@ -13,12 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="content" v-if="taskTimelineStore.selectedTask.targetType === TargetTypes[2].value">
+  <div
+    class="content"
+    v-if="taskTimelineStore.selectedTask.targetType === TargetTypes[2].value && networkProfilingStore.nodes.length"
+  >
     <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
   </div>
   <div
     class="content"
-    v-if="[TargetTypes[1].value, TargetTypes[0].value].includes(taskTimelineStore.selectedTask.targetType)"
+    v-if="
+      [TargetTypes[1].value, TargetTypes[0].value].includes(taskTimelineStore.selectedTask.targetType) &&
+      ebpfStore.analyzeTrees.length
+    "
   >
     <div class="schedules">
       <EBPFSchedules />

@@ -28,7 +28,10 @@ limitations under the License. -->
           <el-table :data="props.row.processes" size="small" max-height="300">
             <el-table-column prop="name" label="Name">
               <template #default="scope">
-                <span :class="config.processDashboardName ? 'link' : ''">
+                <span
+                  :class="config.processDashboardName ? 'link' : ''"
+                  @click="viewProcessDashboard(scope, props.row)"
+                >
                   {{ scope.row.name }}
                 </span>
               </template>
@@ -46,7 +49,7 @@ limitations under the License. -->
     </el-table-column>
     <el-table-column prop="name" label="Name">
       <template #default="scope">
-        <span :class="config.instanceDashboardName ? 'link' : ''">
+        <span :class="config.instanceDashboardName ? 'link' : ''" @click="viewInstanceDashboard(scope)">
           {{ scope.row.name }}
         </span>
       </template>
@@ -76,18 +79,24 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useSelectorStore } from "@/store/modules/selectors";
   import type { MonitorInstance, MonitorProcess } from "@/types/continous-profiling";
+  import router from "@/router";
   import { HeaderLabels, HeaderChildLabels } from "../data";
+  import { EntityType } from "../../../data";
   import { dateFormat } from "@/utils/dateFormat";
 
   /*global defineProps */
-  defineProps({
+  const props = defineProps({
     config: {
       type: Object as PropType<any>,
       default: () => ({}),
     },
   });
   const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
+  const selectorStore = useSelectorStore();
   const continousProfilingStore = useContinousProfilingStore();
   const pageSize = 10;
   const instances = computed(() => {
@@ -108,6 +117,24 @@ limitations under the License. -->
       .sort((a: MonitorInstance, b: MonitorInstance) => b.lastTriggerTimestamp - a.lastTriggerTimestamp);
   });
   const currentInstances = ref<MonitorInstance[]>([]);
+
+  function viewProcessDashboard(scope: any, instance: MonitorInstance) {
+    if (!props.config.processDashboardName) {
+      return;
+    }
+    router.push(
+      `/dashboard/${dashboardStore.layer}/${EntityType[8].value}/${selectorStore.currentService.id}/${instance.id}/${scope.row.id}/${props.config.processDashboardName}`,
+    );
+  }
+
+  function viewInstanceDashboard(scope: any) {
+    if (!props.config.instanceDashboardName) {
+      return;
+    }
+    router.push(
+      `/dashboard/${dashboardStore.layer}/${EntityType[3].value}/${selectorStore.currentService.id}/${scope.row.id}/${props.config.instanceDashboardName}`,
+    );
+  }
 
   async function changePage(pageIndex: number) {
     currentInstances.value = instances.value.filter((d: unknown, index: number) => {
@@ -137,7 +164,7 @@ limitations under the License. -->
   .header {
     font-size: 13px;
     font-weight: bold;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgb(0 0 0 / 7%);
     padding: 10px 20px;
     background-color: #f3f4f9;
   }

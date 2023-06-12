@@ -105,7 +105,7 @@ export const ebpfStore = defineStore({
       if (!params.taskId) {
         return new Promise((resolve) => resolve({}));
       }
-      params.taskId = "808b68c847a4de58c3d068b1d62e0c93428cd3b7a9ae64952b52f3503b663fe9";
+
       const res: AxiosResponse = await graphql.query("getEBPFSchedules").params({ ...params });
 
       if (res.data.errors) {
