@@ -114,8 +114,6 @@ export const continousProfilingStore = defineStore({
       });
       this.setSelectedStrategy(this.strategyList[0] || {});
       if (!this.strategyList.length) {
-        this.nodes = [];
-        this.calls = [];
         this.taskList = [];
       }
       if (!this.selectedStrategy.type) {

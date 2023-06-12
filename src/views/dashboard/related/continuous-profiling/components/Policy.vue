@@ -131,9 +131,8 @@ limitations under the License. -->
     if (states.checkItems[index].uriRegex) {
       return ElMessage.warning("UriList or UriRegex only be configured with one option.");
     }
-    const params = event.target.textContent;
-    const regex = /http[^;]*;/g;
-    const arr = params.match(regex);
+    const params = (event.target.textContent || "").replace(/\s+/g, "");
+    const arr = params.splice(";");
     states.checkItems[index].uriList = arr.length ? arr : null;
     emits("edit", states, props.order);
   }

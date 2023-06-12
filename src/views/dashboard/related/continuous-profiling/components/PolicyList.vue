@@ -45,7 +45,11 @@ limitations under the License. -->
               </div>
               <div class="grey ell sm" v-for="(item, index) in i.checkItems" :key="index">
                 <span class="sm">
-                  {{ `${item.type} >= ${item.threshold}; ` }}
+                  {{
+                    `${item.type} >= ${item.threshold}${
+                      [MonitorType[0].value, MonitorType[3].value].includes(item.type) ? "%" : ""
+                    }; `
+                  }}
                 </span>
               </div>
             </td>
@@ -61,7 +65,7 @@ limitations under the License. -->
     fullscreen
     @closed="updateStrategies = false"
   >
-    <EditPolicy @save="editStrategies" />
+    <EditPolicy :policyList="continousProfilingStore.strategyList" @save="editStrategies" />
   </el-dialog>
 </template>
 <script lang="ts" setup>
@@ -72,6 +76,7 @@ limitations under the License. -->
   import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
   import { ElMessage } from "element-plus";
   import EditPolicy from "./EditPolicy.vue";
+  import { MonitorType } from "../data";
 
   const { t } = useI18n();
   const selectorStore = useSelectorStore();
@@ -141,7 +146,7 @@ limitations under the License. -->
     width: 300px;
     height: 98%;
     overflow: auto;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgb(0 0 0 / 10%);
   }
 
   .item span {
@@ -150,7 +155,7 @@ limitations under the License. -->
 
   .profile-td {
     padding: 10px 5px 10px 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgb(0 0 0 / 7%);
 
     &.selected {
       background-color: #ededed;
@@ -178,13 +183,13 @@ limitations under the License. -->
 
   .profile-tr {
     &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
+      background-color: rgb(0 0 0 / 4%);
     }
   }
 
   .profile-t-tool {
     padding: 10px 5px 10px 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgb(0 0 0 / 7%);
     background: #f3f4f9;
     width: 100%;
     font-weight: bold;

@@ -16,7 +16,7 @@ limitations under the License. -->
 <template>
   <div class="policy-list">
     <el-collapse v-model="activeNames">
-      <el-collapse-item v-for="(item, index) in policyList" :key="index" :name="String(index)">
+      <el-collapse-item v-for="(_, index) in policyList" :key="index" :name="String(index)">
         <template #title>
           <div>
             <span class="title">{{ `Policy - ${index + 1}` }}</span>
@@ -48,17 +48,22 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
+  import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import Policy from "./Policy.vue";
   import type { StrategyItem, CheckItems } from "@/types/continous-profiling";
 
-  /* global defineEmits */
+  /* global defineEmits, defineProps */
+  const props = defineProps({
+    policyList: {
+      type: Array as PropType<StrategyItem[]>,
+      default: () => [],
+    },
+  });
   const emits = defineEmits(["save"]);
   const { t } = useI18n();
-  const continousProfilingStore = useContinousProfilingStore();
   const activeNames = ref(["0"]);
-  const policyList = ref<StrategyItem[]>(continousProfilingStore.strategyList);
+  const policyList = ref<StrategyItem[]>([...props.policyList]);
 
   function changePolicy(params: StrategyItem, order: number) {
     policyList.value = policyList.value.map((d: StrategyItem, index: number) => {
@@ -107,6 +112,7 @@ limitations under the License. -->
         params.push(v);
       }
     }
+
     emits("save", params);
   }
 </script>
@@ -118,7 +124,7 @@ limitations under the License. -->
 
   .save-btn {
     width: 300px;
-    margin-top: 50px;
+    margin-top: 10px;
   }
 
   .title {
