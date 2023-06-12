@@ -37,6 +37,7 @@ limitations under the License. -->
               :class="{
                 selected: continousProfilingStore.selectedStrategy.id === i.id,
               }"
+              v-if="i.type"
             >
               <div class="ell">
                 <span class="sm">
