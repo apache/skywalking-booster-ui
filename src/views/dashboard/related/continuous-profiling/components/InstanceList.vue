@@ -68,14 +68,14 @@ limitations under the License. -->
     background
     layout="prev, pager, next"
     :page-size="pageSize"
-    :total="instances.length"
+    :total="continousProfilingStore.instances.length"
     @current-change="changePage"
     @prev-click="changePage"
     @next-click="changePage"
   />
 </template>
 <script lang="ts" setup>
-  import { ref, computed, watch } from "vue";
+  import { ref, watch } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
@@ -85,7 +85,6 @@ limitations under the License. -->
   import router from "@/router";
   import { HeaderLabels, HeaderChildLabels } from "../data";
   import { EntityType } from "../../../data";
-  import { dateFormat } from "@/utils/dateFormat";
 
   /*global defineProps */
   const props = defineProps({
@@ -99,23 +98,6 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const continousProfilingStore = useContinousProfilingStore();
   const pageSize = 10;
-  const instances = computed(() => {
-    return continousProfilingStore.instances
-      .map((d: MonitorInstance) => {
-        const processes = (d.processes || [])
-          .sort((c: MonitorProcess, d: MonitorProcess) => d.lastTriggerTimestamp - c.lastTriggerTimestamp)
-          .map((p: MonitorProcess) => {
-            return {
-              ...p,
-              lastTriggerTime: d.lastTriggerTimestamp ? dateFormat(d.lastTriggerTimestamp) : "",
-              labels: p.labels.join("; "),
-            };
-          });
-
-        return { ...d, processes, lastTriggerTime: d.lastTriggerTimestamp ? dateFormat(d.lastTriggerTimestamp) : "" };
-      })
-      .sort((a: MonitorInstance, b: MonitorInstance) => b.lastTriggerTimestamp - a.lastTriggerTimestamp);
-  });
   const currentInstances = ref<MonitorInstance[]>([]);
 
   function viewProcessDashboard(process: MonitorProcess, instance: MonitorInstance) {
@@ -137,7 +119,7 @@ limitations under the License. -->
   }
 
   async function changePage(pageIndex: number) {
-    currentInstances.value = instances.value.filter((d: unknown, index: number) => {
+    currentInstances.value = continousProfilingStore.instances.filter((d: unknown, index: number) => {
       if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
         return d;
       }
@@ -145,9 +127,11 @@ limitations under the License. -->
   }
 
   watch(
-    () => instances.value,
+    () => continousProfilingStore.instances,
     () => {
-      currentInstances.value = instances.value.filter((_: unknown, index: number) => index < pageSize);
+      currentInstances.value = continousProfilingStore.instances.filter(
+        (_: unknown, index: number) => index < pageSize,
+      );
     },
   );
 </script>

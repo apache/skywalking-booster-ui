@@ -20,7 +20,9 @@ import type { EBPFTaskList, EBPFProfilingSchedule, AnalyzationTrees } from "@/ty
 import type { Instance } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
+import type { MonitorInstance, MonitorProcess } from "@/types/continous-profiling";
 import type { AxiosResponse } from "axios";
+import { dateFormat } from "@/utils/dateFormat";
 
 interface ContinousProfilingState {
   strategyList: Array<Recordable<StrategyItem>>;
@@ -106,19 +108,20 @@ export const continousProfilingStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      const arr = (res.data.data.strategyList || []).length
-        ? res.data.data.strategyList
-        : [{ type: "", checkItems: [{ type: "" }] }];
+      const list = res.data.data.strategyList || [];
+      if (!list.length) {
+        this.taskList = [];
+        this.instances = [];
+        this.instance = null;
+      }
+      const arr = list.length ? res.data.data.strategyList : [{ type: "", checkItems: [{ type: "" }] }];
       this.strategyList = arr.map((d: StrategyItem, index: number) => {
         return {
           ...d,
           id: index,
         };
       });
-      this.setSelectedStrategy(this.strategyList[0] || {});
-      if (!this.strategyList.length) {
-        this.taskList = [];
-      }
+      this.setSelectedStrategy(list[0] || {});
       if (!this.selectedStrategy.type) {
         return res.data;
       }
@@ -135,10 +138,29 @@ export const continousProfilingStore = defineStore({
         target: this.selectedStrategy.type,
       });
       this.instancesLoading = false;
-      if (!res.data.errors) {
-        this.instances = res.data.data.instances || [];
-        this.instance = this.instances[0] || null;
+      if (res.data.errors) {
+        return res.data;
       }
+      this.instances = (res.data.data.instances || [])
+        .map((d: MonitorInstance) => {
+          const processes = (d.processes || [])
+            .sort((c: MonitorProcess, d: MonitorProcess) => d.lastTriggerTimestamp - c.lastTriggerTimestamp)
+            .map((p: MonitorProcess) => {
+              return {
+                ...p,
+                lastTriggerTime: d.lastTriggerTimestamp ? dateFormat(d.lastTriggerTimestamp) : "",
+                labels: p.labels.join("; "),
+              };
+            });
+
+          return {
+            ...d,
+            processes,
+            lastTriggerTime: d.lastTriggerTimestamp ? dateFormat(d.lastTriggerTimestamp) : "",
+          };
+        })
+        .sort((a: MonitorInstance, b: MonitorInstance) => b.lastTriggerTimestamp - a.lastTriggerTimestamp);
+      this.instance = this.instances[0] || null;
       return res.data;
     },
   },
