@@ -101,22 +101,20 @@ limitations under the License. -->
         template(item: EBPFTaskList | any) {
           const data = item.data || {};
           const end = data.taskStartTime ? visDate(data.taskStartTime + data.fixedTriggerDuration * 1000) : "";
-
+          let str = "";
+          for (const item of data.continuousProfilingCauses || []) {
+            str += `${item.type}: ${getURI(item.uri)}${item.uri.threshold}>=${item.uri.current}; `;
+          }
           let tmp = `
+          
           <div>Task ID: ${data.taskId || ""}</div>
-          <div>Service Name: ${data.serviceName || ""}</div>
-          <div>Service Instance Name: ${data.serviceInstanceName || ""}</div>
-          <div>Service Process Name: ${data.processName || ""}</div>
           <div>Target Type: ${data.targetType || ""}</div>
           <div>Trigger Type: ${data.triggerType || ""}</div>
           <div>Start Time: ${data.taskStartTime ? visDate(data.taskStartTime) : ""}</div>
           <div>End Time: ${end}</div>
+          <div>Causes: ${str}</div>
           <div>Process Labels: ${data.processLabels.join("; ") || ""}</div>`;
-          let str = "";
-          for (const item of data.continuousProfilingCauses || []) {
-            str += `<div>${item.type}: ${getURI(item.uri)}${item.uri.threshold}>=${item.uri.current}</div>`;
-          }
-          return tmp + str;
+          return tmp;
         },
       },
     };
@@ -132,7 +130,7 @@ limitations under the License. -->
   }
 
   function getURI(uri: { uriRegex: string; uriPath: string }) {
-    return uri ? `(${uri.uriRegex || ""} | ${uri.uriPath || ""})` : "";
+    return uri && uri.uriRegex && uri.uriPath ? `(${uri.uriRegex || ""} | ${uri.uriPath || ""})` : "";
   }
 
   function resize() {

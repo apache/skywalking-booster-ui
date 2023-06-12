@@ -43,11 +43,26 @@ export const queryEBPFTasks = {
     serviceInstanceId
     serviceInstanceName
     processLabels
+    processName
+    processId
     taskStartTime
     triggerType
     fixedTriggerDuration
     targetType
     createTime
+    continuousProfilingCauses {
+      type
+      singleValue {
+        threshold
+        current
+      }
+      uri {
+        uriRegex
+        uriPath
+        threshold
+        current
+      }
+    }
   }`,
 };
 export const queryEBPFSchedules = {
