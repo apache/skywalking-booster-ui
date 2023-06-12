@@ -14,34 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Topology from "./Topology.vue";
-import Widget from "./Widget.vue";
-import Trace from "./Trace.vue";
-import Profile from "./Profile.vue";
-import Log from "./Log.vue";
-import Text from "./Text.vue";
-import Ebpf from "./Ebpf.vue";
-import DemandLog from "./DemandLog.vue";
-import Event from "./Event.vue";
-import NetworkProfiling from "./NetworkProfiling.vue";
-import ContinuousProfiling from "./ContinuousProfiling.vue";
-import TimeRange from "./TimeRange.vue";
-import ThirdPartyApp from "./ThirdPartyApp.vue";
-import TaskTimeline from "./TaskTimeline.vue";
 
-export default {
-  Widget,
-  Trace,
-  Topology,
-  Profile,
-  Log,
-  Text,
-  Ebpf,
-  DemandLog,
-  Event,
-  NetworkProfiling,
-  TimeRange,
-  ThirdPartyApp,
-  ContinuousProfiling,
-  TaskTimeline,
+export interface StrategyItem {
+  type: string;
+  checkItems: CheckItems[];
+}
+export type CheckItems = {
+  type: string;
+  threshold: string;
+  period: number;
+  count: number;
+  uriList?: string[];
+  uriRegex?: string;
 };
+export interface MonitorInstance {
+  id: string;
+  name: string;
+  attributes: { name: string; value: string }[];
+  triggeredCount: number;
+  lastTriggerTimestamp: number;
+  processes: MonitorProcess[];
+}
+interface MonitorProcess {
+  id: string;
+  name: string;
+  detectType: string;
+  labels: string[];
+  lastTriggerTimestamp: number;
+  triggeredCount: number;
+}

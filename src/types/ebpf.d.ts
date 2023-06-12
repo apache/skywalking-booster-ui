@@ -28,12 +28,31 @@ export interface EBPFTaskList {
   taskId: string;
   serviceName: string;
   serviceId: string;
+  serviceInstanceId: string;
+  serviceInstanceName: string;
+  processId: string;
+  processName: string;
   processLabels: string[];
   taskStartTime: number;
   fixedTriggerDuration: number;
   targetType: string;
   createTime: number;
   triggerType: string;
+  continuousProfilingCauses: ProfilingCause[];
+}
+
+interface ProfilingCause {
+  type: string;
+  singleValue: {
+    threshold: number;
+    current: number;
+  };
+  uri: {
+    uriRegex: string;
+    uriPath: string;
+    threshold: number;
+    current: number;
+  };
 }
 
 export interface EBPFProfilingSchedule {

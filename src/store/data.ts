@@ -38,4 +38,18 @@ export const TimeRangeConfig = {
   text: "text",
 };
 
-export const ControlsTypes = ["Trace", "Profile", "Log", "DemandLog", "Ebpf", "NetworkProfiling", "ThirdPartyApp"];
+export const ControlsTypes = [
+  "Trace",
+  "Profile",
+  "Log",
+  "DemandLog",
+  "Ebpf",
+  "NetworkProfiling",
+  "ThirdPartyApp",
+  "ContinuousProfiling",
+  "TaskTimeline",
+];
+export enum EBPFProfilingTriggerType {
+  FIXED_TIME = "FIXED_TIME",
+  CONTINUOUS_PROFILING = "CONTINUOUS_PROFILING",
+}

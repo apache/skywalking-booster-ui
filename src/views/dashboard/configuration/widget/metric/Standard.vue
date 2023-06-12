@@ -28,7 +28,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-if="hasLabel">
+    <div class="item mb-10" v-if="hasLabel || isExpression">
       <span class="label">{{ t("labels") }}</span>
       <el-input
         class="input"
@@ -70,7 +70,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-show="isExec">
+    <div class="item mb-10" v-show="!isExpression">
       <span class="label">{{ t("aggregation") }}</span>
       <SelectSingle
         :value="currentMetric.calculation"
@@ -111,7 +111,7 @@ limitations under the License. -->
   import { SortOrder, CalculationOpts, MetricModes } from "../../../data";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { MetricConfigOpt } from "@/types/dashboard";
-  import { ListChartTypes, ProtocolTypes, ExpressionResultType } from "../../../data";
+  import { ListChartTypes, ProtocolTypes } from "../../../data";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
@@ -137,11 +137,7 @@ limitations under the License. -->
     const graph = dashboardStore.selectedGrid.graph || {};
     return (
       ListChartTypes.includes(graph.type) ||
-      [
-        ProtocolTypes.ReadLabeledMetricsValues,
-        ProtocolTypes.ReadMetricsValues,
-        ExpressionResultType.TIME_SERIES_VALUES,
-      ].includes(metricType.value)
+      [ProtocolTypes.ReadLabeledMetricsValues, ProtocolTypes.ReadMetricsValues].includes(metricType.value)
     );
   });
   const isList = computed(() => {
@@ -153,7 +149,7 @@ limitations under the License. -->
       metricTypes.value[props.index],
     ),
   );
-  const isExec = computed(() => dashboardStore.selectedGrid.metricMode === MetricModes.General);
+
   function updateConfig(index: number, param: { [key: string]: string }) {
     const key = Object.keys(param)[0];
     if (!key) {

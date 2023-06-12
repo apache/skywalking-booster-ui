@@ -42,7 +42,7 @@ limitations under the License. -->
       />
       <el-popover placement="bottom" :width="680" trigger="click" :persistent="false">
         <template #reference>
-          <el-button type="primary" size="small">
+          <el-button size="small">
             {{ t("processSelect") }}
           </el-button>
         </template>
@@ -98,12 +98,21 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import { TableHeader, AggregateTypes } from "./data";
   import { useEbpfStore } from "@/store/modules/ebpf";
+  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import type { EBPFProfilingSchedule, Process } from "@/types/ebpf";
   import { ElMessage, ElTable } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
+  import { ComponentType } from "@/views/dashboard/related/continuous-profiling/data";
 
   const { t } = useI18n();
-  const ebpfStore = useEbpfStore();
+  /*global defineProps*/
+  const props = defineProps({
+    type: {
+      type: String,
+      default: "",
+    },
+  });
+  const ebpfStore = props.type === ComponentType ? useContinousProfilingStore() : useEbpfStore();
   const pageSize = 5;
   const multipleTableRef = ref<InstanceType<typeof ElTable>>();
   const selectedProcesses = ref<string[]>([]);

@@ -212,3 +212,6 @@ div.vis-tooltip {
 div:has(> a.menu-title) {
   display: none;
 }
+.el-input-number .el-input__inner {
+  text-align: left !important;
+}

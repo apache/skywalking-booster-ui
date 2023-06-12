@@ -13,22 +13,33 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h content">
-    <Tasks />
-    <div class="vis-graph ml-5" v-loading="networkProfilingStore.loadNodes">
-      <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
-      <div class="text" v-else>
-        {{ t("noData") }}
-      </div>
+  <div class="content" v-if="taskTimelineStore.selectedTask.targetType === TargetTypes[2].value">
+    <process-topology v-if="networkProfilingStore.nodes.length" :config="config" />
+  </div>
+  <div
+    class="content"
+    v-if="[TargetTypes[1].value, TargetTypes[0].value].includes(taskTimelineStore.selectedTask.targetType)"
+  >
+    <div class="schedules">
+      <EBPFSchedules />
     </div>
+    <div class="item">
+      <EBPFStack />
+    </div>
+  </div>
+  <div class="text" v-if="!taskTimelineStore.selectedTask.targetType">
+    {{ t("noData") }}
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import Tasks from "./components/Tasks.vue";
-  import ProcessTopology from "./components/ProcessTopology.vue";
+  import { useTaskTimelineStore } from "@/store/modules/task-timeline";
   import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
+  import { TargetTypes } from "../../continuous-profiling/data";
+  import ProcessTopology from "@/views/dashboard/related/network-profiling/components/ProcessTopology.vue";
+  import EBPFSchedules from "@/views/dashboard/related/ebpf/components/EBPFSchedules.vue";
+  import EBPFStack from "@/views/dashboard/related/ebpf/components/EBPFStack.vue";
 
   /*global defineProps */
   defineProps({
@@ -37,27 +48,36 @@ limitations under the License. -->
       default: () => ({}),
     },
   });
-  const networkProfilingStore = useNetworkProfilingStore();
   const { t } = useI18n();
+  const taskTimelineStore = useTaskTimelineStore();
+  const networkProfilingStore = useNetworkProfilingStore();
 </script>
 <style lang="scss" scoped>
   .content {
-    height: calc(100% - 30px);
     width: 100%;
-  }
-
-  .vis-graph {
-    height: 100%;
+    height: calc(100% - 30px);
     flex-grow: 2;
     min-width: 700px;
     overflow: hidden;
     position: relative;
-    width: calc(100% - 330px);
   }
 
   .text {
     width: 100%;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 100px;
+  }
+
+  .item {
+    width: 100%;
+    overflow: auto;
+    height: calc(100% - 100px);
+    padding-bottom: 10px;
+  }
+
+  .schedules {
+    height: 90px;
+    border-bottom: 1px solid #ccc;
+    padding-right: 10px;
   }
 </style>

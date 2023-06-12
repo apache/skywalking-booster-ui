@@ -176,6 +176,7 @@ export const EntityType = [
   },
   { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },
   { value: "ProcessRelation", label: "Process Relation", key: 5 },
+  { value: "Process", label: "Process", key: 6 },
 ];
 export const ListEntity: any = {
   InstanceList: EntityType[3].value,
@@ -203,6 +204,7 @@ export const ServiceTools = [
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "timeline", content: "Add Trace Profiling", id: "addProfile" },
   { name: "insert_chart", content: "Add eBPF Profiling", id: "addEbpf" },
+  { name: "continuous_profiling", content: "Add Continuous Profiling", id: "addContinuousProfiling" },
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
   { name: "event", content: "Add Event", id: "addEvent" },
@@ -236,8 +238,14 @@ export const EndpointTools = [
 export const ProcessTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
+  { name: "task_timeline", content: "Add Task Timeline", id: "addTaskTimeline" },
   { name: "library_books", content: "Add Text", id: "addText" },
-  { name: "time_range", content: "Add Time Range Text", id: "addTimeRange" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
+];
+export const ProcessRelationTools = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
   { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const ServiceRelationTools = [

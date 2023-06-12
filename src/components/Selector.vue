@@ -27,7 +27,13 @@ limitations under the License. -->
     :remote-method="remoteMethod"
     :filterable="filterable"
   >
-    <el-option v-for="item in options" :key="item.value || ''" :label="item.label || ''" :value="item.value || ''">
+    <el-option
+      v-for="item in options"
+      :key="item.value || ''"
+      :label="item.label || ''"
+      :value="item.value || ''"
+      :disabled="item.disabled || false"
+    >
     </el-option>
   </el-select>
 </template>
