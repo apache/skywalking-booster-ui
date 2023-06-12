@@ -106,7 +106,10 @@ export const continousProfilingStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.strategyList = (res.data.data.strategyList || []).map((d: StrategyItem, index: number) => {
+      const arr = (res.data.data.strategyList || []).length
+        ? res.data.data.strategyList
+        : [{ type: "", checkItems: [{ type: "" }] }];
+      this.strategyList = arr.map((d: StrategyItem, index: number) => {
         return {
           ...d,
           id: index,
