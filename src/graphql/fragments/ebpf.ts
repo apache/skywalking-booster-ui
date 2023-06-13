@@ -62,6 +62,7 @@ export const queryEBPFTasks = {
         threshold
         current
       }
+      message
     }
   }`,
 };
