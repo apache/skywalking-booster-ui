@@ -15,7 +15,7 @@
     "lint:stylelint": "stylelint --cache --fix \"**/*.{vue,less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/",
     "lint:lint-staged": "lint-staged",
     "prepare": "husky install",
-    "check-components-types": "if (! -z '${git diff -U0 ./src/types}'); then echo 'type files are not updated correctly'; git diff -U0 ./src/types; exit(1); fi"
+    "check-components-types": "if (! -z '$(git diff -U0 ./src/types)'); then echo 'type files are not updated correctly'; git diff -U0 ./src/types; exit(1); fi"
   },
   "dependencies": {
     "axios": "^0.24.0",
