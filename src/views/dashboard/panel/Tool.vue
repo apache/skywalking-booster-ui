@@ -363,8 +363,6 @@ limitations under the License. -->
   async function changePods(pod: Option[]) {
     selectorStore.setCurrentPod(pod[0] || null);
     if ([EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
-      selectorStore.setCurrentProcess(null);
-      states.currentProcess = "";
       fetchProcess(true);
     }
   }
@@ -594,6 +592,9 @@ limitations under the License. -->
       if (currentProcess) {
         selectorStore.setCurrentProcess(currentProcess);
         states.currentProcess = currentProcess.label;
+      } else {
+        selectorStore.setCurrentProcess(null);
+        states.currentProcess = "";
       }
     }
     return resp;
