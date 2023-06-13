@@ -54,10 +54,6 @@ limitations under the License. -->
       />
     </div>
     <div>
-      <div class="label">{{ t("count") }}</div>
-      <el-input-number size="small" class="profile-input" :min="0" v-model="item.count" @change="changeParam" />
-    </div>
-    <div>
       <div class="label">
         <span class="mr-5">{{ t("threshold") }}</span>
         <span>({{ getNotice(item.type) }} )</span>
@@ -69,6 +65,10 @@ limitations under the License. -->
         v-model="item.threshold"
         @change="changeThreshold(index)"
       />
+    </div>
+    <div>
+      <div class="label">{{ t("count") }}</div>
+      <el-input-number size="small" class="profile-input" :min="0" v-model="item.count" @change="changeParam" />
     </div>
     <div>
       <div class="label">{{ t("period") }}</div>
