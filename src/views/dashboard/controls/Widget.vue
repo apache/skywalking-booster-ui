@@ -121,6 +121,7 @@ limitations under the License. -->
 
       async function queryMetrics() {
         const isExpression = props.data.metricMode === MetricModes.Expression;
+
         if (isExpression) {
           loading.value = true;
           const e = {
@@ -206,7 +207,7 @@ limitations under the License. -->
           if (isList.value) {
             return;
           }
-          if (dashboardStore.entity === EntityType[0].value || dashboardStore.entity === EntityType[4].value) {
+          if ([EntityType[0].value, EntityType[4].value].includes(dashboardStore.entity)) {
             queryMetrics();
           }
         },
@@ -214,7 +215,7 @@ limitations under the License. -->
       watch(
         () => [selectorStore.currentPod, selectorStore.currentDestPod],
         () => {
-          if (dashboardStore.entity === EntityType[0].value || dashboardStore.entity === EntityType[7].value) {
+          if ([EntityType[0].value, EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
             return;
           }
           if (isList.value) {
@@ -226,10 +227,10 @@ limitations under the License. -->
       watch(
         () => [selectorStore.currentProcess, selectorStore.currentDestProcess],
         () => {
-          if (!(selectorStore.currentDestProcess && selectorStore.currentProcess)) {
+          if (isList.value) {
             return;
           }
-          if (dashboardStore.entity === EntityType[7].value) {
+          if ([EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
             queryMetrics();
           }
         },
