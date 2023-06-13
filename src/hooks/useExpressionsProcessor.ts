@@ -51,7 +51,7 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
       const entity = {
         serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
         normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
-        serviceInstanceName: ["ServiceInstance", "ServiceInstanceRelation", "ProcessRelation"].includes(
+        serviceInstanceName: ["ServiceInstance", "ServiceInstanceRelation", "ProcessRelation", "Process"].includes(
           dashboardStore.entity,
         )
           ? selectorStore.currentPod && selectorStore.currentPod.value
