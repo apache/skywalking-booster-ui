@@ -5,8 +5,6 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    DateCalendar: typeof import('./../components/DateCalendar.vue')['default']
-    ElButton: typeof import('element-plus/es')['ElButton']
     ElCollapse: typeof import('element-plus/es')['ElCollapse']
     ElCollapseItem: typeof import('element-plus/es')['ElCollapseItem']
     ElDialog: typeof import('element-plus/es')['ElDialog']
