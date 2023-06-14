@@ -128,10 +128,6 @@ limitations under the License. -->
     });
   }
 
-  function getURI(uri: { uriRegex: string; uriPath: string }) {
-    return uri && uri.uriRegex && uri.uriPath ? `(${uri.uriRegex || ""} | ${uri.uriPath || ""})` : "";
-  }
-
   function resize() {
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
