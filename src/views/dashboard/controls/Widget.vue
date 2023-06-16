@@ -61,7 +61,7 @@ limitations under the License. -->
           associate: data.associate || [],
           metricMode: data.metricMode,
           expressions: data.expressions || [],
-          typesOfMQE: data.typesOfMQE || [],
+          typesOfMQE: typesOfMQE || [],
           subExpressions: data.subExpressions || [],
           subTypesOfMQE: data.subTypesOfMQE || [],
         }"
@@ -114,6 +114,7 @@ limitations under the License. -->
       const graph = computed(() => props.data.graph || {});
       const widget = computed(() => props.data.widget || {});
       const isList = computed(() => ListChartTypes.includes((props.data.graph && props.data.graph.type) || ""));
+      const typesOfMQE = ref<string[]>([]);
 
       if ((props.needQuery || !dashboardStore.currentDashboard.id) && !isList.value) {
         queryMetrics();
@@ -131,6 +132,7 @@ limitations under the License. -->
           const params = (await useExpressionsQueryProcessor(e)) || {};
           loading.value = false;
           state.source = params.source || {};
+          typesOfMQE.value = params.typesOfMQE;
           return;
         }
         const params = await useQueryProcessor({ ...props.data });
@@ -259,6 +261,7 @@ limitations under the License. -->
         t,
         graph,
         widget,
+        typesOfMQE,
         clickHandle,
       };
     },

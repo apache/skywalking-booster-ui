@@ -122,9 +122,9 @@ export const RespFields: Indexable = {
         }
       }
       values {
-        id
+        name: id
         value
-        traceID
+        refId: traceID
       }
     }
     error

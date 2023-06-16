@@ -20,7 +20,7 @@ limitations under the License. -->
         <div class="desc">
           <span class="calls mr-10">{{ i.value }}</span>
           <span class="cp mr-20">
-            {{ i.name || i.id }}
+            {{ i.name }}
           </span>
         </div>
         <el-popover placement="bottom" trigger="click">
@@ -64,21 +64,23 @@ limitations under the License. -->
   import copy from "@/utils/copy";
   import { TextColors } from "@/views/dashboard/data";
   import Trace from "@/views/dashboard/related/trace/Index.vue";
-  import { QueryOrders, Status, RefIdTypes, ProtocolTypes } from "../data";
+  import { QueryOrders, Status, RefIdTypes, ProtocolTypes, ExpressionResultType } from "../data";
 
   /*global defineProps */
   const props = defineProps({
     data: {
       type: Object as PropType<{
-        [key: string]: { name: string; value: number; id: string }[];
+        [key: string]: { name: string; value: number; refId: string }[];
       }>,
       default: () => ({}),
     },
     config: {
       type: Object as PropType<{
+        metricMode: string;
         color: string;
         metrics: string[];
         metricTypes: string[];
+        typesOfMQE: string[];
         relatedTrace: any;
       }>,
       default: () => ({ color: "purple" }),
@@ -107,14 +109,17 @@ limitations under the License. -->
   function handleClick(i: string) {
     copy(i);
   }
-  function viewTrace(item: { name: string; id: string; value: unknown }) {
+  function viewTrace(item: { name: string; refId: string; value: unknown }) {
     const filters = {
       ...item,
       queryOrder: QueryOrders[1].value,
       status: Status[2].value,
-      id: item.id || item.name,
+      id: item.refId,
       metricValue: [{ label: props.config.metrics[0], data: item.value, value: item.name }],
-      isReadRecords: props.config.metricTypes.includes(ProtocolTypes.ReadRecords) || undefined,
+      isReadRecords:
+        props.config.typesOfMQE.includes(ExpressionResultType.RECORD_LIST) ||
+        props.config.metricTypes.includes(ProtocolTypes.ReadRecords) ||
+        undefined,
     };
     traceOptions.value = {
       ...traceOptions.value,
@@ -163,7 +168,7 @@ limitations under the License. -->
   }
 
   .chart-slow-link {
-    padding: 4px 10px 7px 10px;
+    padding: 4px 10px 7px;
     border-radius: 4px;
     border: 1px solid #ddd;
     color: #333;
