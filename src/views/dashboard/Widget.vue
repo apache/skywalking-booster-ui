@@ -37,7 +37,7 @@ limitations under the License. -->
           metricConfig: config.metricConfig,
           metricMode: config.metricMode,
           expressions: config.expressions || [],
-          typesOfMQE: config.typesOfMQE || [],
+          typesOfMQE: typesOfMQE || [],
           subExpressions: config.subExpressions || [],
           subTypesOfMQE: config.subTypesOfMQE || [],
         }"
@@ -80,6 +80,7 @@ limitations under the License. -->
       const dashboardStore = useDashboardStore();
       const title = computed(() => (config.value.widget && config.value.widget.title) || "");
       const tips = computed(() => (config.value.widget && config.value.widget.tips) || "");
+      const typesOfMQE = ref<string[]>([]);
 
       init();
       async function init() {
@@ -137,8 +138,10 @@ limitations under the License. -->
             metricConfig: config.value.metricConfig || [],
             subExpressions: config.value.subExpressions || [],
           });
+
           loading.value = false;
           source.value = params.source || {};
+          typesOfMQE.value = params.typesOfMQE;
           return;
         }
         const params = await useQueryProcessor({ ...config.value });
@@ -173,6 +176,7 @@ limitations under the License. -->
         config,
         title,
         tips,
+        typesOfMQE,
       };
     },
   });
