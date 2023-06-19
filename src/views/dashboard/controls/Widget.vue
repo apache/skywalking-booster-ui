@@ -59,6 +59,11 @@ limitations under the License. -->
           filters: data.filters || {},
           relatedTrace: data.relatedTrace || {},
           associate: data.associate || [],
+          metricMode: data.metricMode,
+          expressions: data.expressions || [],
+          typesOfMQE: typesOfMQE || [],
+          subExpressions: data.subExpressions || [],
+          subTypesOfMQE: data.subTypesOfMQE || [],
         }"
         :needQuery="needQuery"
         @click="clickHandle"
@@ -76,10 +81,12 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import graphs from "../graphs";
   import { useI18n } from "vue-i18n";
-  import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
+  import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
+  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import { EntityType, ListChartTypes } from "../data";
   import type { EventParams } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
+  import { MetricModes } from "../data";
 
   const props = {
     data: {
@@ -107,16 +114,28 @@ limitations under the License. -->
       const graph = computed(() => props.data.graph || {});
       const widget = computed(() => props.data.widget || {});
       const isList = computed(() => ListChartTypes.includes((props.data.graph && props.data.graph.type) || ""));
+      const typesOfMQE = ref<string[]>([]);
 
       if ((props.needQuery || !dashboardStore.currentDashboard.id) && !isList.value) {
         queryMetrics();
       }
 
       async function queryMetrics() {
-        const metricTypes: string[] = props.data.metricTypes || [];
-        const metrics = props.data.metrics || [];
-        const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
-        const params = await useQueryProcessor({ ...props.data, catalog });
+        const isExpression = props.data.metricMode === MetricModes.Expression;
+
+        if (isExpression) {
+          loading.value = true;
+          const e = {
+            metrics: props.data.expressions || [],
+            metricConfig: props.data.metricConfig || [],
+          };
+          const params = (await useExpressionsQueryProcessor(e)) || {};
+          loading.value = false;
+          state.source = params.source || {};
+          typesOfMQE.value = params.typesOfMQE;
+          return;
+        }
+        const params = await useQueryProcessor({ ...props.data });
 
         if (!params) {
           state.source = {};
@@ -133,7 +152,7 @@ limitations under the License. -->
           metricTypes: props.data.metricTypes || [],
           metricConfig: props.data.metricConfig || [],
         };
-        state.source = useSourceProcessor(json, d);
+        state.source = await useSourceProcessor(json, d);
       }
 
       function removeWidget() {
@@ -169,7 +188,7 @@ limitations under the License. -->
         dashboardStore.selectWidget(props.data);
       }
       watch(
-        () => [props.data.metricTypes, props.data.metrics],
+        () => [props.data.metricTypes, props.data.metrics, props.data.expressions],
         () => {
           if (!dashboardStore.selectedGrid) {
             return;
@@ -190,7 +209,7 @@ limitations under the License. -->
           if (isList.value) {
             return;
           }
-          if (dashboardStore.entity === EntityType[0].value || dashboardStore.entity === EntityType[4].value) {
+          if ([EntityType[0].value, EntityType[4].value].includes(dashboardStore.entity)) {
             queryMetrics();
           }
         },
@@ -198,7 +217,7 @@ limitations under the License. -->
       watch(
         () => [selectorStore.currentPod, selectorStore.currentDestPod],
         () => {
-          if (dashboardStore.entity === EntityType[0].value || dashboardStore.entity === EntityType[7].value) {
+          if ([EntityType[0].value, EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
             return;
           }
           if (isList.value) {
@@ -210,10 +229,10 @@ limitations under the License. -->
       watch(
         () => [selectorStore.currentProcess, selectorStore.currentDestProcess],
         () => {
-          if (!(selectorStore.currentDestProcess && selectorStore.currentProcess)) {
+          if (isList.value) {
             return;
           }
-          if (dashboardStore.entity === EntityType[7].value) {
+          if ([EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
             queryMetrics();
           }
         },
@@ -242,6 +261,7 @@ limitations under the License. -->
         t,
         graph,
         widget,
+        typesOfMQE,
         clickHandle,
       };
     },

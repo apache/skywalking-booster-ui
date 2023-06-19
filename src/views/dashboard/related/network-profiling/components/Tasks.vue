@@ -77,6 +77,7 @@ limitations under the License. -->
   import getLocalTime from "@/utils/localtime";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import NewTask from "./NewTask.vue";
+  import { EBPFProfilingTriggerType } from "@/store/data";
 
   /*global Nullable */
   const { t } = useI18n();
@@ -185,6 +186,7 @@ limitations under the License. -->
       serviceId,
       serviceInstanceId,
       targets: ["NETWORK"],
+      triggerType: EBPFProfilingTriggerType.FIXED_TIME,
     });
 
     if (res.errors) {
@@ -214,7 +216,7 @@ limitations under the License. -->
     width: 330px;
     height: calc(100% - 10px);
     overflow: auto;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgb(0 0 0 / 10%);
   }
 
   .item span {
@@ -223,7 +225,7 @@ limitations under the License. -->
 
   .profile-td {
     padding: 10px 5px 10px 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgb(0 0 0 / 7%);
 
     &.selected {
       background-color: #ededed;
@@ -251,13 +253,13 @@ limitations under the License. -->
 
   .profile-tr {
     &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
+      background-color: rgb(0 0 0 / 4%);
     }
   }
 
   .profile-t-tool {
     padding: 10px 5px 10px 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgb(0 0 0 / 7%);
     background: #f3f4f9;
     width: 100%;
   }

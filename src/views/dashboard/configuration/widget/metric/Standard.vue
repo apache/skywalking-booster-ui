@@ -28,13 +28,13 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-if="hasLabel">
+    <div class="item mb-10" v-if="hasLabel || isExpression">
       <span class="label">{{ t("labels") }}</span>
       <el-input
         class="input"
         v-model="currentMetric.label"
         size="small"
-        placeholder="Please input a name"
+        placeholder="Please input a label"
         @change="
           updateConfig(index, {
             label: encodeURIComponent(currentMetric.label || ''),
@@ -42,7 +42,21 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-if="metricType === 'readLabeledMetricsValues'">
+    <div class="item mb-10" v-if="isList && isExpression">
+      <span class="label">{{ t("detailLabel") }}</span>
+      <el-input
+        class="input"
+        v-model="currentMetric.detailLabel"
+        size="small"
+        placeholder="Please input a label"
+        @change="
+          updateConfig(index, {
+            detailLabel: encodeURIComponent(currentMetric.detailLabel || ''),
+          })
+        "
+      />
+    </div>
+    <div class="item mb-10" v-if="[ProtocolTypes.ReadLabeledMetricsValues].includes(metricType) && !isExpression">
       <span class="label">{{ t("labelsIndex") }}</span>
       <el-input
         class="input"
@@ -51,12 +65,12 @@ limitations under the License. -->
         placeholder="auto"
         @change="
           updateConfig(index, {
-            labelsIndex: encodeURIComponent(currentMetric.labelsIndex),
+            labelsIndex: encodeURIComponent(currentMetric.labelsIndex || ''),
           })
         "
       />
     </div>
-    <div class="item mb-10">
+    <div class="item mb-10" v-show="!isExpression">
       <span class="label">{{ t("aggregation") }}</span>
       <SelectSingle
         :value="currentMetric.calculation"
@@ -85,7 +99,7 @@ limitations under the License. -->
         type="number"
         :min="1"
         :max="100"
-        @change="changeConfigs(index, { topN: currentMetric.topN || 10 })"
+        @change="changeConfigs(index, { topN: Number(currentMetric.topN) || 10 })"
       />
     </div>
   </div>
@@ -94,7 +108,7 @@ limitations under the License. -->
   import { ref, watch, computed } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import { SortOrder, CalculationOpts } from "../../../data";
+  import { SortOrder, CalculationOpts, MetricModes } from "../../../data";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { MetricConfigOpt } from "@/types/dashboard";
   import { ListChartTypes, ProtocolTypes } from "../../../data";
@@ -110,12 +124,15 @@ limitations under the License. -->
   const { t } = useI18n();
   const emit = defineEmits(["update"]);
   const dashboardStore = useDashboardStore();
+  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression);
   const currentMetric = ref<MetricConfigOpt>({
     ...props.currentMetricConfig,
     topN: props.currentMetricConfig.topN || 10,
   });
-  const metricTypes = dashboardStore.selectedGrid.metricTypes || [];
-  const metricType = computed(() => (dashboardStore.selectedGrid.metricTypes || [])[props.index]);
+  const metricTypes = computed(
+    () => (isExpression.value ? dashboardStore.selectedGrid.typesOfMQE : dashboardStore.selectedGrid.metricTypes) || [],
+  );
+  const metricType = computed(() => metricTypes.value[props.index]);
   const hasLabel = computed(() => {
     const graph = dashboardStore.selectedGrid.graph || {};
     return (
@@ -123,11 +140,16 @@ limitations under the License. -->
       [ProtocolTypes.ReadLabeledMetricsValues, ProtocolTypes.ReadMetricsValues].includes(metricType.value)
     );
   });
+  const isList = computed(() => {
+    const graph = dashboardStore.selectedGrid.graph || {};
+    return ListChartTypes.includes(graph.type);
+  });
   const isTopn = computed(() =>
     [ProtocolTypes.SortMetrics, ProtocolTypes.ReadSampledRecords, ProtocolTypes.ReadRecords].includes(
-      metricTypes[props.index],
+      metricTypes.value[props.index],
     ),
   );
+
   function updateConfig(index: number, param: { [key: string]: string }) {
     const key = Object.keys(param)[0];
     if (!key) {
@@ -148,9 +170,10 @@ limitations under the License. -->
   watch(
     () => props.currentMetricConfig,
     () => {
+      isExpression.value = dashboardStore.selectedGrid.metricMode === MetricModes.Expression;
       currentMetric.value = {
         ...props.currentMetricConfig,
-        topN: props.currentMetricConfig.topN || 10,
+        topN: Number(props.currentMetricConfig.topN) || 10,
       };
     },
   );

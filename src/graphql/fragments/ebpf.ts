@@ -33,20 +33,37 @@ export const createEBPFTask = {
   }`,
 };
 export const queryEBPFTasks = {
-  variable: "$serviceId: ID, $serviceInstanceId: ID, $targets: [EBPFProfilingTargetType!]",
+  variable:
+    "$serviceId: ID, $serviceInstanceId: ID, $targets: [EBPFProfilingTargetType!], $triggerType: EBPFProfilingTriggerType",
   query: `
-  queryEBPFTasks: queryEBPFProfilingTasks(serviceId: $serviceId, serviceInstanceId: $serviceInstanceId, targets: $targets) {
+  queryEBPFTasks: queryEBPFProfilingTasks(serviceId: $serviceId, serviceInstanceId: $serviceInstanceId, targets: $targets, triggerType: $triggerType) {
     taskId
     serviceName
     serviceId
     serviceInstanceId
     serviceInstanceName
     processLabels
+    processName
+    processId
     taskStartTime
     triggerType
     fixedTriggerDuration
     targetType
     createTime
+    continuousProfilingCauses {
+      type
+      singleValue {
+        threshold
+        current
+      }
+      uri {
+        uriRegex
+        uriPath
+        threshold
+        current
+      }
+      message
+    }
   }`,
 };
 export const queryEBPFSchedules = {
@@ -109,5 +126,28 @@ export const keepNetworkProfiling = {
   keepEBPFNetworkProfiling(taskId: $taskId) {
     status
     errorReason
+  }`,
+};
+
+export const monitoringInstances = {
+  variable: "$serviceId: ID!, $target: ContinuousProfilingTargetType!",
+  query: `
+  instances: queryContinuousProfilingMonitoringInstances(serviceId: $serviceId, target: $target) {
+    id
+    name
+    attributes {
+      name
+      value
+    }
+    triggeredCount
+    lastTriggerTimestamp
+    processes {
+      id
+      name
+      detectType
+      labels
+      lastTriggerTimestamp
+      triggeredCount
+    }
   }`,
 };

@@ -24,8 +24,10 @@ import Ebpf from "./Ebpf.vue";
 import DemandLog from "./DemandLog.vue";
 import Event from "./Event.vue";
 import NetworkProfiling from "./NetworkProfiling.vue";
+import ContinuousProfiling from "./ContinuousProfiling.vue";
 import TimeRange from "./TimeRange.vue";
 import ThirdPartyApp from "./ThirdPartyApp.vue";
+import TaskTimeline from "./TaskTimeline.vue";
 
 export default {
   Widget,
@@ -40,4 +42,6 @@ export default {
   NetworkProfiling,
   TimeRange,
   ThirdPartyApp,
+  ContinuousProfiling,
+  TaskTimeline,
 };

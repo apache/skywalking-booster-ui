@@ -24,6 +24,7 @@ import browser from "./browser";
 import k8s from "./k8s";
 import gateway from "./gateway";
 import aws from "./aws";
+import mq from "./mq";
 
 export default [
   ...general,
@@ -35,5 +36,6 @@ export default [
   ...browser,
   ...gateway,
   ...database,
+  ...mq,
   ...selfObservability,
 ];

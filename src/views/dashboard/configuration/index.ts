@@ -21,6 +21,7 @@ import Topology from "./Topology.vue";
 import Event from "./Event.vue";
 import TimeRange from "./TimeRange.vue";
 import ThirdPartyApp from "./ThirdPartyApp.vue";
+import ContinuousProfiling from "./ContinuousProfiling.vue";
 
 export default {
   Text,
@@ -29,4 +30,5 @@ export default {
   Event,
   TimeRange,
   ThirdPartyApp,
+  ContinuousProfiling,
 };

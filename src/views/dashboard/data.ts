@@ -56,6 +56,15 @@ export enum ProtocolTypes {
   ReadMetricsValues = "readMetricsValues",
   ReadMetricsValue = "readMetricsValue",
 }
+
+export enum ExpressionResultType {
+  UNKNOWN = "UNKNOWN",
+  SINGLE_VALUE = "SINGLE_VALUE",
+  TIME_SERIES_VALUES = "TIME_SERIES_VALUES",
+  SORTED_LIST = "SORTED_LIST",
+  RECORD_LIST = "RECORD_LIST",
+}
+
 export const DefaultGraphConfig: { [key: string]: any } = {
   Bar: {
     type: "Bar",
@@ -65,7 +74,7 @@ export const DefaultGraphConfig: { [key: string]: any } = {
     type: "Line",
     step: false,
     smooth: false,
-    showSymbol: false,
+    showSymbol: true,
     showXAxis: true,
     showYAxis: true,
   },
@@ -167,6 +176,7 @@ export const EntityType = [
   },
   { value: "EndpointRelation", label: "Endpoint Relation", key: 4 },
   { value: "ProcessRelation", label: "Process Relation", key: 5 },
+  { value: "Process", label: "Process", key: 6 },
 ];
 export const ListEntity: any = {
   InstanceList: EntityType[3].value,
@@ -194,6 +204,7 @@ export const ServiceTools = [
   { name: "merge", content: "Add Trace", id: "addTrace" },
   { name: "timeline", content: "Add Trace Profiling", id: "addProfile" },
   { name: "insert_chart", content: "Add eBPF Profiling", id: "addEbpf" },
+  { name: "continuous_profiling", content: "Add Continuous Profiling", id: "addContinuousProfiling" },
   { name: "assignment", content: "Add Log", id: "addLog" },
   { name: "demand", content: "Add On Demand Log", id: "addDemandLog" },
   { name: "event", content: "Add Event", id: "addEvent" },
@@ -227,8 +238,14 @@ export const EndpointTools = [
 export const ProcessTools = [
   { name: "playlist_add", content: "Add Widget", id: "addWidget" },
   { name: "all_inbox", content: "Add Tabs", id: "addTab" },
+  { name: "task_timeline", content: "Add Task Timeline", id: "addTaskTimeline" },
   { name: "library_books", content: "Add Text", id: "addText" },
-  { name: "time_range", content: "Add Time Range Text", id: "addTimeRange" },
+  { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
+];
+export const ProcessRelationTools = [
+  { name: "playlist_add", content: "Add Widget", id: "addWidget" },
+  { name: "all_inbox", content: "Add Tabs", id: "addTab" },
+  { name: "library_books", content: "Add Text", id: "addText" },
   { name: "add_iframe", content: "Add Iframe", id: "addIframe" },
 ];
 export const ServiceRelationTools = [
@@ -322,3 +339,8 @@ export const RefreshOptions = [
   { label: "Last 8 hours", value: "8", step: "HOUR" },
   { label: "Last 7 days", value: "7", step: "DAY" },
 ];
+
+export enum MetricModes {
+  Expression = "Expression",
+  General = "General",
+}

@@ -130,6 +130,27 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "",
+        redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:name",
+        component: () => import("@/views/dashboard/Edit.vue"),
+        name: "ViewProcess",
+        meta: {
+          notShow: true,
+        },
+        children: [
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:name",
+            component: () => import("@/views/dashboard/Edit.vue"),
+            name: "ViewProcess",
+          },
+          {
+            path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:name/tab/:activeTabIndex",
+            component: () => import("@/views/dashboard/Edit.vue"),
+            name: "ViewProcessActiveTabIndex",
+          },
+        ],
+      },
+      {
+        path: "",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
         component: () => import("@/views/dashboard/Edit.vue"),
         name: "PodRelation",

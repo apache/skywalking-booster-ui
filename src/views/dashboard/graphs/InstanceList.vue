@@ -17,7 +17,7 @@ limitations under the License. -->
     <div class="search">
       <el-input v-model="searchText" placeholder="Please input instance name" @change="searchList" class="inputs">
         <template #append>
-          <el-button class="btn" @click="searchList">
+          <el-button @click="searchList">
             <Icon size="sm" iconName="search" />
           </el-button>
         </template>
@@ -35,11 +35,12 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
+          :colSubMetrics="colSubMetrics"
           :config="{
             ...config,
-            metrics: colMetrics,
             metricConfig,
             metricTypes,
+            metricMode,
           }"
           v-if="colMetrics.length"
         />
@@ -70,7 +71,7 @@ limitations under the License. -->
       small
       layout="prev, pager, next"
       :page-size="pageSize"
-      :total="selectorStore.pods.length"
+      :total="pods.length"
       @current-change="changePage"
       @prev-click="changePage"
       @next-click="changePage"
@@ -87,7 +88,8 @@ limitations under the License. -->
   import type { InstanceListConfig } from "@/types/dashboard";
   import type { Instance } from "@/types/selector";
   import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
-  import { EntityType } from "../data";
+  import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
+  import { EntityType, MetricModes } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
@@ -102,6 +104,11 @@ limitations under the License. -->
           metrics: string[];
           metricTypes: string[];
           isEdit: boolean;
+          metricMode: string;
+          expressions: string[];
+          typesOfMQE: string[];
+          subExpressions: string[];
+          subTypesOfMQE: string[];
         } & { metricConfig: MetricConfigOpt[] }
       >,
       default: () => ({
@@ -115,6 +122,7 @@ limitations under the License. -->
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
     needQuery: { type: Boolean, default: false },
   });
+  const emit = defineEmits(["expressionTips"]);
   const { t } = useI18n();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
@@ -123,8 +131,11 @@ limitations under the License. -->
   const pageSize = 10;
   const searchText = ref<string>("");
   const colMetrics = ref<string[]>([]);
+  const colSubMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const metricTypes = ref<string[]>(props.config.metricTypes || []);
+  const pods = ref<Instance[]>([]); // all instances
+  const metricMode = ref<string>(props.config.metricMode);
   if (props.needQuery) {
     queryInstance();
   }
@@ -137,14 +148,31 @@ limitations under the License. -->
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
       instances.value = [];
+      pods.value = [];
       return;
     }
-    instances.value = selectorStore.pods.filter((d: unknown, index: number) => index < pageSize);
+    pods.value = resp.data.pods || [];
+    instances.value = pods.value.filter((d: unknown, index: number) => index < pageSize);
     queryInstanceMetrics(instances.value);
   }
 
-  async function queryInstanceMetrics(currentInstances: Instance[]) {
-    if (!currentInstances.length) {
+  async function queryInstanceMetrics(arr: Instance[]) {
+    if (!arr.length) {
+      return;
+    }
+    const currentInstances = arr.map((d: Instance) => {
+      return {
+        id: d.id,
+        value: d.value,
+        label: d.label,
+        merge: d.merge,
+        language: d.language,
+        instanceUUID: d.instanceUUID,
+        attributes: d.attributes,
+      };
+    });
+    if (props.config.metricMode === MetricModes.Expression) {
+      queryInstanceExpressions(currentInstances);
       return;
     }
     const metrics = props.config.metrics || [];
@@ -166,9 +194,40 @@ limitations under the License. -->
       colMetrics.value = names;
       metricTypes.value = metricTypesArr;
       metricConfig.value = metricConfigArr;
+
       return;
     }
     instances.value = currentInstances;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
+  }
+
+  async function queryInstanceExpressions(currentInstances: Instance[]) {
+    const expressions = props.config.expressions || [];
+    const subExpressions = props.config.subExpressions || [];
+
+    if (expressions.length && expressions[0]) {
+      const params = await useExpressionsQueryPodsMetrics(
+        currentInstances,
+        { metricConfig: metricConfig.value || [], expressions, subExpressions },
+        EntityType[3].value,
+      );
+      instances.value = params.data;
+      colMetrics.value = params.names;
+      colSubMetrics.value = params.subNames;
+      metricTypes.value = params.metricTypesArr;
+      metricConfig.value = params.metricConfigArr;
+      emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
+
+      return;
+    }
+    instances.value = currentInstances;
+    colSubMetrics.value = [];
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
+    emit("expressionTips", [], []);
   }
 
   function clickInstance(scope: any) {
@@ -189,7 +248,7 @@ limitations under the License. -->
   }
 
   function changePage(pageIndex: number) {
-    instances.value = selectorStore.pods.filter((d: unknown, index: number) => {
+    instances.value = pods.value.filter((d: unknown, index: number) => {
       if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
         return d;
       }
@@ -198,18 +257,26 @@ limitations under the License. -->
   }
 
   function searchList() {
-    const searchInstances = selectorStore.pods.filter((d: { label: string }) => d.label.includes(searchText.value));
+    const searchInstances = pods.value.filter((d: { label: string }) => d.label.includes(searchText.value));
     instances.value = searchInstances.filter((d: unknown, index: number) => index < pageSize);
     queryInstanceMetrics(instances.value);
   }
 
   watch(
-    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
+    () => [
+      ...(props.config.metricTypes || []),
+      ...(props.config.metrics || []),
+      ...(props.config.metricConfig || []),
+      ...(props.config.expressions || []),
+      ...(props.config.subExpressions || []),
+      props.config.metricMode,
+    ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;
       }
       metricConfig.value = props.config.metricConfig;
+      metricMode.value = props.config.metricMode;
       queryInstanceMetrics(instances.value);
     },
   );
@@ -221,7 +288,7 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss" scoped>
-  @import "./style.scss";
+  @import url("./style.scss");
 
   .attributes {
     max-height: 400px;

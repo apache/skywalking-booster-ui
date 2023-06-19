@@ -17,7 +17,7 @@ limitations under the License. -->
     <div class="search">
       <el-input v-model="searchText" placeholder="Search for more endpoints" @change="searchList" class="inputs">
         <template #append>
-          <el-button @click="searchList" class="btn">
+          <el-button @click="searchList">
             <Icon size="middle" iconName="search" />
           </el-button>
         </template>
@@ -36,11 +36,12 @@ limitations under the License. -->
         <ColumnGraph
           :intervalTime="intervalTime"
           :colMetrics="colMetrics"
+          :colSubMetrics="colSubMetrics"
           :config="{
             ...config,
-            metrics: colMetrics,
             metricConfig,
             metricTypes,
+            metricMode,
           }"
           v-if="colMetrics.length"
         />
@@ -58,7 +59,8 @@ limitations under the License. -->
   import type { Endpoint } from "@/types/selector";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
-  import { EntityType } from "../data";
+  import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
+  import { EntityType, MetricModes } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
@@ -75,6 +77,11 @@ limitations under the License. -->
           i: string;
           metrics: string[];
           metricTypes: string[];
+          metricMode: string;
+          expressions: string[];
+          typesOfMQE: string[];
+          subExpressions: string[];
+          subTypesOfMQE: string[];
         } & { metricConfig: MetricConfigOpt[] }
       >,
       default: () => ({
@@ -89,6 +96,7 @@ limitations under the License. -->
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   });
 
+  const emit = defineEmits(["expressionTips"]);
   const { t } = useI18n();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
@@ -96,8 +104,10 @@ limitations under the License. -->
   const endpoints = ref<Endpoint[]>([]);
   const searchText = ref<string>("");
   const colMetrics = ref<string[]>([]);
+  const colSubMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const metricTypes = ref<string[]>(props.config.metricTypes || []);
+  const metricMode = ref<string>(props.config.metricMode);
 
   if (props.needQuery) {
     queryEndpoints();
@@ -113,11 +123,23 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
       return;
     }
-    endpoints.value = selectorStore.pods;
+    endpoints.value = resp.data.pods || [];
     queryEndpointMetrics(endpoints.value);
   }
-  async function queryEndpointMetrics(currentPods: Endpoint[]) {
-    if (!currentPods.length) {
+  async function queryEndpointMetrics(arr: Endpoint[]) {
+    if (!arr.length) {
+      return;
+    }
+    const currentPods = arr.map((d: Endpoint) => {
+      return {
+        id: d.id,
+        value: d.value,
+        label: d.label,
+        merge: d.merge,
+      };
+    });
+    if (props.config.metricMode === MetricModes.Expression) {
+      queryEndpointExpressions(currentPods);
       return;
     }
     const metrics = props.config.metrics || [];
@@ -141,6 +163,35 @@ limitations under the License. -->
       return;
     }
     endpoints.value = currentPods;
+    colMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
+  }
+  async function queryEndpointExpressions(currentPods: Endpoint[]) {
+    const expressions = props.config.expressions || [];
+    const subExpressions = props.config.subExpressions || [];
+
+    if (expressions.length && expressions[0]) {
+      const params = await useExpressionsQueryPodsMetrics(
+        currentPods,
+        { metricConfig: metricConfig.value || [], expressions, subExpressions },
+        EntityType[2].value,
+      );
+      endpoints.value = params.data;
+      colMetrics.value = params.names;
+      colSubMetrics.value = params.subNames;
+      metricTypes.value = params.metricTypesArr;
+      metricConfig.value = params.metricConfigArr;
+      emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
+
+      return;
+    }
+    endpoints.value = currentPods;
+    colMetrics.value = [];
+    colSubMetrics.value = [];
+    metricTypes.value = [];
+    metricConfig.value = [];
+    emit("expressionTips", [], []);
   }
   function clickEndpoint(scope: any) {
     const { dashboard } = getDashboard({
@@ -160,12 +211,20 @@ limitations under the License. -->
     await queryEndpoints();
   }
   watch(
-    () => [...(props.config.metricTypes || []), ...(props.config.metrics || []), ...(props.config.metricConfig || [])],
+    () => [
+      ...(props.config.metricTypes || []),
+      ...(props.config.metrics || []),
+      ...(props.config.metricConfig || []),
+      ...(props.config.expressions || []),
+      ...(props.config.subExpressions || []),
+      props.config.metricMode,
+    ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;
       }
       metricConfig.value = props.config.metricConfig;
+      metricMode.value = props.config.metricMode;
       queryEndpointMetrics(endpoints.value);
     },
   );
@@ -177,9 +236,9 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss" scoped>
-  @import "./style.scss";
+  @import url("./style.scss");
 
   .tips {
-    color: rgba(255, 0, 0, 0.5);
+    color: rgb(255 0 0 / 50%);
   }
 </style>

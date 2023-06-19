@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div id="graph-stack" ref="graph">
-    <span class="tip" v-show="ebpfStore.tip">{{ ebpfStore.tip }}</span>
+    <span class="tip" v-show="ebpfStore.ebpfTips">{{ ebpfStore.ebpfTips }}</span>
   </div>
 </template>
 <script lang="ts" setup>
@@ -23,12 +23,20 @@ limitations under the License. -->
   import d3tip from "d3-tip";
   import { flamegraph } from "d3-flame-graph";
   import { useEbpfStore } from "@/store/modules/ebpf";
+  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
+  import { ComponentType } from "@/views/dashboard/related/continuous-profiling/data";
   import type { StackElement } from "@/types/ebpf";
   import { AggregateTypes } from "./data";
   import "d3-flame-graph/dist/d3-flamegraph.css";
 
-  /*global Nullable*/
-  const ebpfStore = useEbpfStore();
+  /*global Nullable, defineProps*/
+  const props = defineProps({
+    type: {
+      type: String,
+      default: "",
+    },
+  });
+  const ebpfStore = props.type === ComponentType ? useContinousProfilingStore() : useEbpfStore();
   const stackTree = ref<Nullable<StackElement>>(null);
   const selectStack = ref<Nullable<StackElement>>(null);
   const graph = ref<Nullable<HTMLDivElement>>(null);
@@ -90,7 +98,7 @@ limitations under the License. -->
       .setColorMapper((d, originalColor) => (d.highlight ? "#6aff8f" : originalColor));
     const tip = (d3tip as any)()
       .attr("class", "d3-tip")
-      .direction("w")
+      .direction("s")
       .html((d: { data: StackElement } & { parent: { data: StackElement } }) => {
         const name = d.data.name.replace("<", "&lt;").replace(">", "&gt;");
         const valStr =
@@ -111,7 +119,7 @@ limitations under the License. -->
         }</div>`;
         return `<div class="mb-5 name">Symbol: ${name}</div>${valStr}${rateOfParent}${rateOfRoot}`;
       })
-      .style("max-width", "500px");
+      .style("max-width", "400px");
     flameChart.value.tooltip(tip);
     d3.select("#graph-stack").datum(stackTree.value).call(flameChart.value);
   }

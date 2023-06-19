@@ -90,6 +90,22 @@ export default [
           layer: "REDIS",
         },
       },
+      {
+        path: "/elasticsearch",
+        name: "Elasticsearch",
+        meta: {
+          title: "elasticsearch",
+          layer: "ELASTICSEARCH",
+        },
+      },
+      {
+        path: "/elasticsearch/tab/:activeTabIndex",
+        name: "ElasticsearchActiveTabIndex",
+        meta: {
+          notShow: true,
+          layer: "ELASTICSEARCH",
+        },
+      },
     ],
   },
 ];

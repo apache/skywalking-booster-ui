@@ -27,7 +27,7 @@ limitations under the License. -->
             class="selectors"
           />
         </div>
-        <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5">
+        <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5 || key === 6">
           <span class="label">
             {{ ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity) ? "$Endpoint" : "$ServiceInstance" }}
           </span>
@@ -42,7 +42,7 @@ limitations under the License. -->
             :isRemote="['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)"
           />
         </div>
-        <div class="selectors-item" v-if="key === 5">
+        <div class="selectors-item" v-if="key === 5 || key === 6">
           <span class="label"> $Process </span>
           <Selector
             v-model="states.currentProcess"
@@ -118,8 +118,8 @@ limitations under the License. -->
       <div class="switch">
         <el-switch
           v-model="dashboardStore.editMode"
-          active-text="Edit"
-          inactive-text="View"
+          active-text="E"
+          inactive-text="V"
           size="small"
           inline-prompt
           active-color="#409eff"
@@ -145,6 +145,7 @@ limitations under the License. -->
     InstanceRelationTools,
     ServiceRelationTools,
     ProcessTools,
+    ProcessRelationTools,
   } from "../data";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { ElMessage } from "element-plus";
@@ -216,10 +217,11 @@ limitations under the License. -->
         EntityType[5].value,
         EntityType[6].value,
         EntityType[7].value,
+        EntityType[8].value,
       ].includes(String(params.entity))
     ) {
       setSourceSelector();
-      if ([EntityType[2].value, EntityType[3].value].includes(String(params.entity))) {
+      if ([EntityType[2].value, EntityType[3].value, EntityType[8].value].includes(String(params.entity))) {
         return;
       }
       setDestSelector();
@@ -261,6 +263,7 @@ limitations under the License. -->
     await selectorStore.getService(String(params.serviceId));
     states.currentService = selectorStore.currentService.value;
     const e = String(params.entity).split("Relation")[0];
+
     await fetchPods(e, selectorStore.currentService.id, true);
   }
 
@@ -316,6 +319,7 @@ limitations under the License. -->
         EntityType[5].value,
         EntityType[6].value,
         EntityType[7].value,
+        EntityType[8].value,
       ].includes(dashboardStore.entity)
     ) {
       await fetchPods(e, selectorStore.currentService.id, true);
@@ -336,11 +340,8 @@ limitations under the License. -->
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
       states.currentProcess = "";
-      if (dashboardStore.entity === EntityType[7].value) {
-        fetchPods("Process", selectorStore.currentService.id, true);
-      } else {
-        fetchPods(dashboardStore.entity, selectorStore.currentService.id, true);
-      }
+      const e = dashboardStore.entity === EntityType[7].value ? EntityType[8].value : dashboardStore.entity;
+      fetchPods(e, selectorStore.currentService.id, true);
     } else {
       selectorStore.setCurrentService(null);
     }
@@ -361,9 +362,7 @@ limitations under the License. -->
 
   async function changePods(pod: Option[]) {
     selectorStore.setCurrentPod(pod[0] || null);
-    if (dashboardStore.entity === EntityType[7].value) {
-      selectorStore.setCurrentProcess(null);
-      states.currentProcess = "";
+    if ([EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
       fetchProcess(true);
     }
   }
@@ -445,11 +444,17 @@ limitations under the License. -->
       case "addNetworkProfiling":
         dashboardStore.addTabControls("NetworkProfiling");
         break;
+      case "addContinuousProfiling":
+        dashboardStore.addTabControls("ContinuousProfiling");
+        break;
       case "addTimeRange":
         dashboardStore.addTabControls("TimeRange");
         break;
       case "addIframe":
         dashboardStore.addTabControls("ThirdPartyApp");
+        break;
+      case "addTaskTimeline":
+        dashboardStore.addTabControls("TaskTimeline");
         break;
       default:
         ElMessage.info("Don't support this control");
@@ -492,11 +497,17 @@ limitations under the License. -->
       case "addNetworkProfiling":
         dashboardStore.addControl("NetworkProfiling");
         break;
+      case "addContinuousProfiling":
+        dashboardStore.addControl("ContinuousProfiling");
+        break;
       case "addTimeRange":
         dashboardStore.addControl("TimeRange");
         break;
       case "addIframe":
         dashboardStore.addControl("ThirdPartyApp");
+        break;
+      case "addTaskTimeline":
+        dashboardStore.addControl("TaskTimeline");
         break;
       default:
         dashboardStore.addControl("Widget");
@@ -507,9 +518,16 @@ limitations under the License. -->
     let resp;
     switch (type) {
       case EntityType[2].value:
-        resp = await selectorStore.getEndpoints({ serviceId, ...param });
-        if (setPod) {
-          updateCurrentPod();
+        if (params.podId) {
+          if (setPod) {
+            await setCurrentEndpoint();
+          }
+          resp = await selectorStore.getEndpoints({ serviceId, ...param });
+        } else {
+          resp = await selectorStore.getEndpoints({ serviceId, ...param });
+          if (setPod) {
+            updateCurrentPod();
+          }
         }
         break;
       case EntityType[3].value:
@@ -519,13 +537,24 @@ limitations under the License. -->
         }
         break;
       case EntityType[6].value:
-        resp = await selectorStore.getEndpoints({
-          serviceId,
-          isRelation: true,
-          ...param,
-        });
-        if (setPod) {
-          updateCurrentDestPod();
+        if (params.destPodId) {
+          if (setPod) {
+            await updateCurrentDestEndpoint();
+          }
+          resp = await selectorStore.getEndpoints({
+            serviceId,
+            isRelation: true,
+            ...param,
+          });
+        } else {
+          resp = await selectorStore.getEndpoints({
+            serviceId,
+            isRelation: true,
+            ...param,
+          });
+          if (setPod) {
+            updateCurrentDestPod();
+          }
         }
         break;
       case EntityType[5].value:
@@ -541,7 +570,7 @@ limitations under the License. -->
         await fetchPods(EntityType[5].value, serviceId, setPod, param);
         resp = await fetchDestProcess(setPod);
         break;
-      case "Process":
+      case EntityType[8].value:
         await fetchPods(EntityType[3].value, serviceId, setPod, param);
         resp = await fetchProcess(setPod);
         break;
@@ -563,6 +592,9 @@ limitations under the License. -->
       if (currentProcess) {
         selectorStore.setCurrentProcess(currentProcess);
         states.currentProcess = currentProcess.label;
+      } else {
+        selectorStore.setCurrentProcess(null);
+        states.currentProcess = "";
       }
     }
     return resp;
@@ -585,6 +617,19 @@ limitations under the License. -->
     }
     return resp;
   }
+  async function updateCurrentDestEndpoint() {
+    const resp = await selectorStore.getEndpoint(params.destPodId, true);
+
+    if (resp.errors) {
+      return ElMessage.error(resp.errors);
+    }
+    const pod = resp.data.endpoint || {};
+    if (!pod.id) {
+      ElMessage.info("The Destination endpoint ID doesn't exist.");
+    }
+    selectorStore.setCurrentDestPod(pod);
+    states.currentDestPod = pod.label;
+  }
 
   function updateCurrentDestPod() {
     if (!(selectorStore.destPods.length && selectorStore.destPods[0])) {
@@ -597,10 +642,26 @@ limitations under the License. -->
     if (!currentDestPod) {
       states.currentDestPod = "";
       selectorStore.setCurrentDestPod(null);
+      ElMessage.info(
+        `The Destination ${params.entity === EntityType[6].value ? "endpoint" : "instance"} ID doesn't exist.`,
+      );
       return;
     }
     selectorStore.setCurrentDestPod(currentDestPod);
     states.currentDestPod = currentDestPod.label;
+  }
+  async function setCurrentEndpoint() {
+    const resp = await selectorStore.getEndpoint(params.podId);
+
+    if (resp.errors) {
+      return ElMessage.error(resp.errors);
+    }
+    const pod = resp.data.endpoint || {};
+    if (!pod.id) {
+      ElMessage.info("The endpoint ID doesn't exist.");
+    }
+    selectorStore.setCurrentPod(pod);
+    states.currentPod = pod.label || "";
   }
   function updateCurrentPod() {
     if (!(selectorStore.pods.length && selectorStore.pods[0])) {
@@ -613,6 +674,7 @@ limitations under the License. -->
     if (!currentPod) {
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
+      ElMessage.info(`The ${params.entity === EntityType[2].value ? "endpoint" : "instance"} ID doesn't exist.`);
       return;
     }
     selectorStore.setCurrentPod(currentPod);
@@ -642,6 +704,9 @@ limitations under the License. -->
         toolIcons.value = EndpointRelationTools;
         break;
       case EntityType[7].value:
+        toolIcons.value = ProcessRelationTools;
+        break;
+      case EntityType[8].value:
         toolIcons.value = ProcessTools;
         break;
       default:
@@ -673,8 +738,8 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .dashboard-tool {
     text-align: right;
-    padding: 3px 5px 5px 5px;
-    background: rgb(240, 242, 245);
+    padding: 3px 5px 5px;
+    background: rgb(240 242 245);
     border-bottom: 1px solid #dfe4e8;
     justify-content: space-between;
   }

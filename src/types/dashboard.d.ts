@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import { DurationTime } from "./app";
 export type DashboardItem = {
   id?: string;
   entity: string;
@@ -28,11 +28,14 @@ export interface LayoutConfig {
   w: number;
   h: number;
   i: string;
+  type: string;
+  metricMode?: string;
   widget?: WidgetConfig;
   graph?: GraphConfig;
   metrics?: string[];
-  type: string;
+  expressions?: string[];
   metricTypes?: string[];
+  typesOfMQE?: string[];
   children?: { name: string; children: LayoutConfig[] }[];
   activedTabIndex?: number;
   metricConfig?: MetricConfigOpt[];
@@ -41,6 +44,8 @@ export interface LayoutConfig {
   eventAssociate?: boolean;
   filters?: Filters;
   relatedTrace?: RelatedTrace;
+  subExpressions?: string[];
+  subTypesOfMQE?: string[];
 }
 export type RelatedTrace = {
   duration: DurationTime;
@@ -70,10 +75,11 @@ export type MetricConfigOpt = {
   unit?: string;
   label?: string;
   calculation?: string;
-  labelsIndex: string;
-  sortOrder: string;
+  labelsIndex?: string;
+  sortOrder?: string;
   topN?: number;
   index?: number;
+  detailLabel?: string;
 };
 
 export interface WidgetConfig {

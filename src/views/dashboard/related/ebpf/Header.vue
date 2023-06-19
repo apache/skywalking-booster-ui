@@ -33,6 +33,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { EntityType } from "../../data";
+  import { EBPFProfilingTriggerType } from "@/store/data";
 
   /*global defineProps */
   const props = defineProps({
@@ -54,6 +55,7 @@ limitations under the License. -->
     const res = await ebpfStore.getTaskList({
       serviceId,
       targets: ["ON_CPU", "OFF_CPU"],
+      triggerType: EBPFProfilingTriggerType.FIXED_TIME,
     });
 
     if (res.errors) {

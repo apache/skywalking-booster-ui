@@ -35,6 +35,11 @@ limitations under the License. -->
           metrics: config.metrics,
           metricTypes: config.metricTypes,
           metricConfig: config.metricConfig,
+          metricMode: config.metricMode,
+          expressions: config.expressions || [],
+          typesOfMQE: typesOfMQE || [],
+          subExpressions: config.subExpressions || [],
+          subTypesOfMQE: config.subTypesOfMQE || [],
         }"
         :needQuery="true"
       />
@@ -51,10 +56,12 @@ limitations under the License. -->
   import { useRoute } from "vue-router";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useQueryProcessor, useSourceProcessor, useGetMetricEntity } from "@/hooks/useMetricsProcessor";
+  import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
+  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
   import timeFormat from "@/utils/timeFormat";
+  import { MetricModes } from "./data";
 
   export default defineComponent({
     name: "WidgetPage",
@@ -73,6 +80,7 @@ limitations under the License. -->
       const dashboardStore = useDashboardStore();
       const title = computed(() => (config.value.widget && config.value.widget.title) || "");
       const tips = computed(() => (config.value.widget && config.value.widget.tips) || "");
+      const typesOfMQE = ref<string[]>([]);
 
       init();
       async function init() {
@@ -122,10 +130,21 @@ limitations under the License. -->
         }
       }
       async function queryMetrics() {
-        const metricTypes = config.value.metricTypes || [];
-        const metrics = config.value.metrics || [];
-        const catalog = await useGetMetricEntity(metrics[0], metricTypes[0]);
-        const params = await useQueryProcessor({ ...config.value, catalog });
+        const isExpression = config.value.metricMode === MetricModes.Expression;
+        if (isExpression) {
+          loading.value = true;
+          const params = await useExpressionsQueryProcessor({
+            metrics: config.value.expressions || [],
+            metricConfig: config.value.metricConfig || [],
+            subExpressions: config.value.subExpressions || [],
+          });
+
+          loading.value = false;
+          source.value = params.source || {};
+          typesOfMQE.value = params.typesOfMQE;
+          return;
+        }
+        const params = await useQueryProcessor({ ...config.value });
         if (!params) {
           source.value = {};
           return;
@@ -141,7 +160,7 @@ limitations under the License. -->
           metricTypes: config.value.metricTypes || [],
           metricConfig: config.value.metricConfig || [],
         };
-        source.value = useSourceProcessor(json, d);
+        source.value = await useSourceProcessor(json, d);
       }
       watch(
         () => appStoreWithOut.durationTime,
@@ -157,6 +176,7 @@ limitations under the License. -->
         config,
         title,
         tips,
+        typesOfMQE,
       };
     },
   });
@@ -171,7 +191,7 @@ limitations under the License. -->
 
   .widget-chart {
     background: #fff;
-    box-shadow: 0px 1px 4px 0px #00000029;
+    box-shadow: 0 1px 4px 0 #00000029;
     border-radius: 3px;
     padding: 5px;
     width: 100%;

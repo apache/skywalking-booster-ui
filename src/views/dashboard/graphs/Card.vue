@@ -15,7 +15,7 @@ limitations under the License. -->
 
 <template>
   <div
-    v-if="!isNaN(singleVal)"
+    v-if="singleVal !== null && !isNaN(singleVal)"
     class="chart-card"
     :style="{
       fontSize: `${config.fontSize}px`,
@@ -27,7 +27,7 @@ limitations under the License. -->
       {{ decodeURIComponent(unit) }}
     </span>
   </div>
-  <div class="center no-data" v-else>{{ t("noData") }}</div>
+  <div v-else class="card-no-data" :class="config.textAlign === 'center' ? 'center' : ''">{{ t("noData") }}</div>
 </template>
 <script lang="ts" setup>
   import { computed } from "vue";
@@ -68,13 +68,20 @@ limitations under the License. -->
     align-items: center;
   }
 
-  .no-data {
+  .card-no-data {
     height: 100%;
     color: #666;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
   }
 
   .unit {
     display: inline-block;
     margin-left: 2px;
+  }
+
+  .center {
+    justify-content: center;
   }
 </style>

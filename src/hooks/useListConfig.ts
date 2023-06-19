@@ -15,7 +15,15 @@
  * limitations under the License.
  */
 import { MetricQueryTypes, Calculations } from "./data";
-export function useListConfig(config: Indexable, index: string) {
+import { MetricModes } from "@/views/dashboard/data";
+
+export function useListConfig(config: Indexable, index: number) {
+  if (config.metricModes === MetricModes.Expression) {
+    return {
+      isLinear: false,
+      isAvg: true,
+    };
+  }
   const i = Number(index);
   const types = [Calculations.Average, Calculations.ApdexAvg, Calculations.PercentageAvg];
   const calculation = config.metricConfig && config.metricConfig[i] && config.metricConfig[i].calculation;
@@ -25,6 +33,7 @@ export function useListConfig(config: Indexable, index: string) {
   const isAvg =
     [MetricQueryTypes.ReadMetricsValues, MetricQueryTypes.ReadLabeledMetricsValues].includes(config.metricTypes[i]) &&
     types.includes(calculation);
+
   return {
     isLinear,
     isAvg,

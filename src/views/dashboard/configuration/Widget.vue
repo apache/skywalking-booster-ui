@@ -38,8 +38,14 @@ limitations under the License. -->
             metricTypes: dashboardStore.selectedGrid.metricTypes,
             metricConfig: dashboardStore.selectedGrid.metricConfig,
             relatedTrace: dashboardStore.selectedGrid.relatedTrace,
+            metricMode: dashboardStore.selectedGrid.metricMode,
+            expressions: dashboardStore.selectedGrid.expressions || [],
+            typesOfMQE: dashboardStore.selectedGrid.typesOfMQE || [],
+            subExpressions: dashboardStore.selectedGrid.subExpressions || [],
+            subTypesOfMQE: dashboardStore.selectedGrid.subTypesOfMQE || [],
           }"
           :needQuery="true"
+          @expressionTips="getErrors"
         />
         <div v-show="!graph.type" class="no-data">
           {{ t("noData") }}
@@ -49,7 +55,7 @@ limitations under the License. -->
     <div class="collapse" :style="{ height: configHeight + 'px' }">
       <el-collapse v-model="states.activeNames" :style="{ '--el-collapse-header-font-size': '15px' }">
         <el-collapse-item :title="t('selectVisualization')" name="1">
-          <MetricOptions @update="getSource" @loading="setLoading" />
+          <MetricOptions @update="getSource" @loading="setLoading" :errors="errors" :subErrors="subErrors" />
         </el-collapse-item>
         <el-collapse-item :title="t('graphStyles')" name="2">
           <component :is="`${graph.type}Config`" />
@@ -83,6 +89,7 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import graphs from "../graphs";
   import CustomOptions from "./widget/index";
+  import { MetricModes } from "../data";
 
   export default defineComponent({
     name: "WidgetEdit",
@@ -96,6 +103,8 @@ limitations under the License. -->
       const dashboardStore = useDashboardStore();
       const appStoreWithOut = useAppStoreWithOut();
       const loading = ref<boolean>(false);
+      const errors = ref<string[]>([]);
+      const subErrors = ref<string[]>([]);
       const states = reactive<{
         activeNames: string;
         source: unknown;
@@ -122,12 +131,34 @@ limitations under the License. -->
         states.source = source;
       }
 
+      function getErrors(params: { tips: string[]; subTips: string[] }) {
+        errors.value = params.tips;
+        subErrors.value = params.subTips;
+      }
+
       function setLoading(load: boolean) {
         loading.value = load;
       }
 
       function applyConfig() {
         dashboardStore.setConfigPanel(false);
+        const { metricMode } = dashboardStore.selectedGrid;
+        let p = {};
+        if (metricMode === MetricModes.Expression) {
+          p = {
+            metrics: [],
+            metricTypes: [],
+          };
+        } else {
+          p = {
+            expressions: [],
+            typesOfMQE: [],
+          };
+        }
+        dashboardStore.selectWidget({
+          ...dashboardStore.selectedGrid,
+          ...p,
+        });
         dashboardStore.setConfigs(dashboardStore.selectedGrid);
       }
 
@@ -146,12 +177,15 @@ limitations under the License. -->
         applyConfig,
         cancelConfig,
         getSource,
+        getErrors,
         setLoading,
         widget,
         graph,
         title,
         tips,
         hasAssociate,
+        errors,
+        subErrors,
       };
     },
   });
@@ -188,7 +222,7 @@ limitations under the License. -->
 
   .render-chart {
     padding: 5px;
-    height: 400px;
+    height: 420px;
     width: 100%;
   }
 

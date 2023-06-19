@@ -1,0 +1,17 @@
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+<svg t="1685973573331" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2708">
+  <path d="M138 573.8V450.2c48.2-12.1 84-55.8 84-107.7 0-51.9-35.8-95.6-84-107.7V68.1c0-14.9-12.1-27-27-27s-27 12.1-27 27v166.7C35.8 246.9 0 290.6 0 342.5c0 51.9 35.8 95.6 84 107.7v123.7c-48.2 12-84 55.7-84 107.6s35.8 95.6 84 107.7v166.7c0 14.9 12.1 27 27 27s27-12.1 27-27V789.2c48.2-12.1 84-55.8 84-107.7s-35.8-95.6-84-107.7zM60 342.5c0-28.1 22.9-51 51-51s51 22.9 51 51-22.9 51-51 51-51-22.9-51-51z m51 390c-28.1 0-51-22.9-51-51s22.9-51 51-51 51 22.9 51 51-22.9 51-51 51zM942 283H352c-16.6 0-30-13.4-30-30s13.4-30 30-30h590c16.6 0 30 13.4 30 30s-13.4 30-30 30zM771.4 457H347.6c-14.2 0-25.6-11.5-25.6-25.6v-8.7c0-14.2 11.5-25.6 25.6-25.6h423.7c14.2 0 25.6 11.5 25.6 25.6v8.7c0.1 14.1-11.4 25.6-25.5 25.6z" p-id="2709"></path><path d="M942 625H352c-16.6 0-30-13.4-30-30s13.4-30 30-30h590c16.6 0 30 13.4 30 30s-13.4 30-30 30zM771.4 799H347.6c-14.2 0-25.6-11.5-25.6-25.6v-8.7c0-14.2 11.5-25.6 25.6-25.6h423.7c14.2 0 25.6 11.5 25.6 25.6v8.7c0.1 14.1-11.4 25.6-25.5 25.6z" p-id="2710"></path>
+</svg>

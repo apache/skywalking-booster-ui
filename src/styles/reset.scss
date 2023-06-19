@@ -216,3 +216,6 @@ div:has(> a.menu-title) {
 .el-breadcrumb {
   line-height: 28px;
 }
+.el-input-number .el-input__inner {
+  text-align: left !important;
+}
