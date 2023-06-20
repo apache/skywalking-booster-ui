@@ -298,7 +298,7 @@ limitations under the License. -->
     }
 
     .tab-name {
-      max-width: 130px;
+      max-width: 150px;
       height: 20px;
       line-height: 20px;
       outline: none;
