@@ -28,6 +28,7 @@ limitations under the License. -->
           class="tab-name"
           :readonly="isNaN(editTabIndex) && !canEditTabName"
           :class="{ view: !canEditTabName }"
+          :style="{ width: getStringWidth(child.name) + 'px' }"
         />
         <Icon
           v-show="activeTabIndex === idx"
@@ -202,6 +203,16 @@ limitations under the License. -->
         const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
         dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
       }
+      function getStringWidth(s: string) {
+        const dom = document.createElement("span");
+        dom.style.display = "inline-block";
+        dom.textContent = s;
+        document.body.appendChild(dom);
+        const width = dom.clientWidth;
+
+        document.body.removeChild(dom);
+        return width + 10;
+      }
       function copyLink() {
         let path = "";
         if (route.params.activeTabIndex === undefined) {
@@ -254,6 +265,7 @@ limitations under the License. -->
         removeTab,
         clickTabs,
         copyLink,
+        getStringWidth,
         ...toRefs(props),
         activeTabWidget,
         dashboardStore,
@@ -275,6 +287,7 @@ limitations under the License. -->
     overflow-x: auto;
     white-space: nowrap;
     overflow-y: hidden;
+    padding: 0 10px;
 
     span {
       display: inline-block;
@@ -285,16 +298,15 @@ limitations under the License. -->
     }
 
     .tab-name {
-      max-width: 130px;
+      max-width: 150px;
       height: 20px;
       line-height: 20px;
       outline: none;
       color: #333;
       font-style: normal;
-      margin-right: 5px;
       overflow: hidden;
       text-overflow: ellipsis;
-      text-align: center;
+      margin-right: 20px;
     }
 
     .tab-icons {
