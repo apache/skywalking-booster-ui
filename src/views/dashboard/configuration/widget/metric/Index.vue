@@ -26,14 +26,21 @@ limitations under the License. -->
     />
   </div>
   <div>{{ t("metrics") }}</div>
-  <el-switch
-    v-model="isExpression"
-    class="mb-5"
-    active-text="Expressions"
-    inactive-text="General"
-    size="small"
-    @change="changeMetricMode"
-  />
+  <div class="flex-h">
+    <el-switch
+      v-model="isExpression"
+      class="mb-5"
+      active-text="Expressions"
+      inactive-text="General"
+      size="small"
+      @change="changeMetricMode"
+    />
+    <div class="ml-5 link">
+      <a target="_blank" href="https://skywalking.apache.org/docs/main/next/en/api/metrics-query-expression/">
+        <Icon iconName="info_outline" size="middle" />
+      </a>
+    </div>
+  </div>
   <div v-if="isExpression && states.isList">
     <span class="title">{{ t("summary") }}</span>
     <span>{{ t("detail") }}</span>
@@ -640,5 +647,10 @@ limitations under the License. -->
   .title {
     display: inline-block;
     width: 410px;
+  }
+
+  .link {
+    cursor: pointer;
+    color: #409eff;
   }
 </style>

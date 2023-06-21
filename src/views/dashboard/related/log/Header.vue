@@ -107,8 +107,8 @@ limitations under the License. -->
         @change="addLabels('excludingKeywordsOfContent')"
       />
       <el-tooltip :content="t('keywordsOfContentLogTips')">
-        <span class="log-tips" v-show="!logStore.supportQueryLogsByKeywords">
-          <Icon icon="help" class="mr-5" />
+        <span v-show="!logStore.supportQueryLogsByKeywords">
+          <Icon iconName="help" class="mr-5" />
         </span>
       </el-tooltip>
     </div>
