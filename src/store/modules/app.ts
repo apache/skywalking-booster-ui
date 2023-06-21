@@ -35,7 +35,6 @@ interface AppState {
   version: string;
   isMobile: boolean;
   reloadTimer: Nullable<IntervalHandle>;
-  pathNames: { name: string; layer: string; entity: string }[];
 }
 
 export const appStore = defineStore({
@@ -56,7 +55,6 @@ export const appStore = defineStore({
     version: "",
     isMobile: false,
     reloadTimer: null,
-    pathNames: [],
   }),
   getters: {
     duration(): Duration {
@@ -147,9 +145,6 @@ export const appStore = defineStore({
     },
     setPageTitle(title: string) {
       this.pageTitle = title;
-    },
-    setPathNames(names: { name: string; layer: string; entity: string }[]) {
-      this.pathNames = names;
     },
     runEventStack() {
       if (this.timer) {

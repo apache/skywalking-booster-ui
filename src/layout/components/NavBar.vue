@@ -86,17 +86,7 @@ limitations under the License. -->
 
   function getPathNames() {
     const p = route.params;
-    // get names
-
-    // set names
-    if (appStore.pathNames.length && p.layerId === appStore.pathNames[0].layerId) {
-      const arr = [...appStore.pathNames, p];
-      const list = deduplication(arr, ["layerId", "entity", "name"]);
-      appStore.setPathNames(list);
-    } else {
-      appStore.setPathNames([p]);
-    }
-    // console.log(route.params);
+    console.log(route.meta);
   }
 
   watch(
