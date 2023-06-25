@@ -399,7 +399,7 @@ const msg = {
   uriRegex: "URI Regex",
   uriList: "URI List",
   processes: "Processes",
-  monitorInstances: "Monitor Instances",
+  monitorInstances: "Monitoring Instances",
   processDashboards: "Process Dashboards",
   instanceDashboards: "Instance Dashboards",
   detailLabel: "Detail Label",
