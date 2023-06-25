@@ -56,7 +56,7 @@ limitations under the License. -->
     <div>
       <div class="label">
         <span class="mr-5">{{ t("threshold") }}</span>
-        <span>({{ getNotice(item.type) }} )</span>
+        <span>({{ getNotice(item.type) }})</span>
       </div>
       <el-input
         type="number"
