@@ -56,7 +56,7 @@ limitations under the License. -->
     <div>
       <div class="label">
         <span class="mr-5">{{ t("threshold") }}</span>
-        <span>({{ getNotice(item.type) }})</span>
+        <span>{{ getNotice(item.type) }}</span>
       </div>
       <el-input
         type="number"
@@ -202,7 +202,7 @@ limitations under the License. -->
       HTTP_AVG_RESPONSE_TIME: "It is a response time in milliseconds",
     };
 
-    return map[type];
+    return map[type] ? `(${map[type]})` : "";
   }
 </script>
 <style lang="scss" scoped>
