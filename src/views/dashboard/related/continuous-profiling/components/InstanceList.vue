@@ -163,7 +163,7 @@ limitations under the License. -->
 
   .link {
     cursor: pointer;
-    color: #409eff;
+    color: $active-color;
     text-decoration: underline;
   }
 </style>

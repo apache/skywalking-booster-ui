@@ -443,11 +443,11 @@ limitations under the License. -->
   });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .calendar {
     float: left;
     user-select: none;
-    color: #3d444f;
+    color: $font-color;
   }
 
   .calendar + .calendar {
@@ -524,8 +524,8 @@ limitations under the License. -->
     float: left;
   }
 
-  .calendar-week:before,
-  .calendar-date:before {
+  .calendar-week::before,
+  .calendar-date::before {
     content: "";
     display: inline-block;
     height: 100%;

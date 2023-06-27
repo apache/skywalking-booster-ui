@@ -154,7 +154,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .link {
-    color: #409eff;
+    color: $active-color;
     cursor: pointer;
   }
 

@@ -80,7 +80,7 @@ limitations under the License. -->
     width: 300px;
     height: calc(100% - 10px);
     overflow: auto;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgb(0 0 0 / 10%);
   }
 
   .item span {
@@ -89,7 +89,7 @@ limitations under the License. -->
 
   .profile-td {
     padding: 5px 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgb(0 0 0 / 7%);
 
     &.selected {
       background-color: #ededed;
@@ -117,20 +117,20 @@ limitations under the License. -->
 
   .profile-tr {
     &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
+      background-color: rgb(0 0 0 / 4%);
     }
   }
 
   .profile-t-tool {
     padding: 5px 10px;
     font-weight: bold;
-    border-right: 1px solid rgba(0, 0, 0, 0.07);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-right: 1px solid rgb(0 0 0 / 7%);
+    border-bottom: 1px solid rgb(0 0 0 / 7%);
     background: #f3f4f9;
   }
 
   .profile-btn {
-    color: #3d444f;
+    color: $font-color;
     padding: 1px 3px;
     border-radius: 2px;
     font-size: 12px;

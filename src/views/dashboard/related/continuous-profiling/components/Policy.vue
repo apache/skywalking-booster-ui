@@ -221,7 +221,7 @@ limitations under the License. -->
     height: 100px;
 
     &:focus {
-      border-color: #409eff;
+      border-color: $active-color;
     }
   }
 

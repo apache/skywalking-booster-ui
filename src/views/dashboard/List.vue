@@ -514,7 +514,7 @@ limitations under the License. -->
   }
 
   .name {
-    color: #409eff;
+    color: $active-color;
   }
 
   .reload {

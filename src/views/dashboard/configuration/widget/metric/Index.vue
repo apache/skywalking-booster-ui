@@ -623,7 +623,7 @@ limitations under the License. -->
   }
 
   span.active {
-    background-color: #409eff;
+    background-color: $active-color;
     color: #fff;
   }
 
@@ -640,7 +640,7 @@ limitations under the License. -->
     min-height: 26px;
 
     &:focus {
-      border-color: #409eff;
+      border-color: $active-color;
     }
   }
 
@@ -651,6 +651,6 @@ limitations under the License. -->
 
   .link {
     cursor: pointer;
-    color: #409eff;
+    color: $active-color;
   }
 </style>

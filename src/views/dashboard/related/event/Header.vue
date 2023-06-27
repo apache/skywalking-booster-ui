@@ -226,7 +226,7 @@ limitations under the License. -->
     padding: 0 3px;
     border-radius: 3px;
     overflow: hidden;
-    color: #3d444f;
+    color: $font-color;
     border: 1px dashed #aaa;
     font-size: 12px;
     margin: 0 2px;

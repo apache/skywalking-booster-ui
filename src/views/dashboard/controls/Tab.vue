@@ -326,10 +326,10 @@ limitations under the License. -->
     }
 
     span.active {
-      border-bottom: 1px solid #409eff;
+      border-bottom: 1px solid $active-color;
 
       .tab-name {
-        color: #409eff;
+        color: $active-color;
       }
     }
   }
@@ -374,7 +374,7 @@ limitations under the License. -->
   }
 
   .vue-grid-item.active {
-    border: 1px solid #409eff;
+    border: 1px solid $active-color;
   }
 
   .no-data-tips {

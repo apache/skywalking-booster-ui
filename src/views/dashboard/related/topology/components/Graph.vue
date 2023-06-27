@@ -701,7 +701,7 @@ limitations under the License. -->
       }
 
       span:hover {
-        color: #409eff;
+        color: $active-color;
         background-color: #eee;
       }
     }
@@ -715,7 +715,7 @@ limitations under the License. -->
     .switch-icon {
       cursor: pointer;
       transition: all 0.5ms linear;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgb(0 0 0 / 30%);
       color: #fff;
       display: inline-block;
       padding: 2px 4px;
@@ -736,7 +736,7 @@ limitations under the License. -->
     }
 
     .topo-text {
-      font-family: "Lato", "Source Han Sans CN", "Microsoft YaHei", sans-serif;
+      font-family: Lato, "Source Han Sans CN", "Microsoft YaHei", sans-serif;
       fill: #ddd;
       font-size: 11px;
       opacity: 0.8;

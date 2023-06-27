@@ -79,7 +79,7 @@ limitations under the License. -->
     text-align: center;
 
     &:hover {
-      color: #409eff;
+      color: $active-color;
       background-color: #eee;
     }
   }

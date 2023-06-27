@@ -96,7 +96,7 @@ limitations under the License. -->
       padding: 0 3px;
       border-radius: 3px;
       margin: 3px;
-      color: #409eff;
+      color: $active-color;
       background-color: #fafafa;
       border: 1px solid #e8e8e8;
       text-align: center;
@@ -138,7 +138,7 @@ limitations under the License. -->
     top: 26px;
     left: 0;
     background: #fff;
-    box-shadow: 0 1px 6px rgba(99, 99, 99, 0.2);
+    box-shadow: 0 1px 6px rgb(99 99 99 / 20%);
     border: 1px solid #ddd;
     width: 100%;
     border-radius: 0 0 3px 3px;
@@ -164,7 +164,7 @@ limitations under the License. -->
     padding: 7px 15px;
 
     &.select-disabled {
-      color: #409eff;
+      color: $active-color;
       cursor: not-allowed;
     }
 
