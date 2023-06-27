@@ -44,7 +44,6 @@ limitations under the License. -->
         d.layer === dashboardStore.layerId && [EntityType[0].value, EntityType[1].value].includes(d.entity) && d.isRoot,
     );
     if (!item) {
-      appStore.setPageTitle(dashboardStore.layer);
       dashboardStore.setCurrentDashboard(null);
       dashboardStore.setEntity(EntityType[1].value);
       return;

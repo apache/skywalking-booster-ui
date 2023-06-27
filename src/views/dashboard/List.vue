@@ -135,7 +135,6 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { ElMessageBox, ElMessage } from "element-plus";
   import { ElTable } from "element-plus";
-  import { useAppStoreWithOut } from "@/store/modules/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import router from "@/router";
   import type { DashboardItem, LayoutConfig } from "@/types/dashboard";
@@ -145,7 +144,6 @@ limitations under the License. -->
 
   /*global Nullable*/
   const { t } = useI18n();
-  const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const pageSize = 20;
   const dashboards = ref<DashboardItem[]>([]);
@@ -157,7 +155,6 @@ limitations under the License. -->
   const multipleSelection = ref<DashboardItem[]>([]);
   const dashboardFile = ref<Nullable<HTMLDivElement>>(null);
 
-  appStore.setPageTitle("Dashboard List");
   const handleSelectionChange = (val: DashboardItem[]) => {
     multipleSelection.value = val;
   };
@@ -481,7 +478,7 @@ limitations under the License. -->
   .table {
     padding: 20px 10px;
     background-color: #fff;
-    box-shadow: 0px 1px 4px 0px #00000029;
+    box-shadow: 0 1px 4px 0 #00000029;
     border-radius: 5px;
     width: 100%;
     height: 100%;

@@ -15,11 +15,14 @@ limitations under the License. -->
 <template>
   <div class="nav-bar flex-h">
     <div class="title flex-h">
-      <el-breadcrumb separator=">">
-        <el-breadcrumb-item v-for="(item, index) in appStore.pathNames" :key="index" :to="{ path: '/' }">
-          {{ route.name === "ViewWidget" ? "" : appStore.pageTitle || t(pageName) }}
+      <el-breadcrumb separator=">" v-if="pathNames.length">
+        <el-breadcrumb-item v-for="(names, index) in pathNames" :key="index">
+          <a v-for="(item, i) in names" :href="item.path" :key="i">
+            {{ route.name === "ViewWidget" ? "" : item.name }}
+          </a>
         </el-breadcrumb-item>
       </el-breadcrumb>
+      <span v-else>{{ pageName && t(pageName) }}</span>
     </div>
     <div class="app-config">
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
@@ -51,20 +54,25 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import timeFormat from "@/utils/timeFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useSelectorStore } from "@/store/modules/selectors";
   import { ElMessage } from "element-plus";
-  import { deduplication } from "@/utils/arrayAlgorithm";
+  import { MetricCatalog } from "@/views/dashboard/data";
+  import type { DashboardItem } from "@/types/dashboard";
 
   /*global Indexable */
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
+  const dashboardStore = useDashboardStore();
+  const selectorStore = useSelectorStore();
   const route = useRoute();
   const pageName = ref<string>("");
+  const pathNames = ref<any[]>([]);
   const timeRange = ref<number>(0);
 
   resetDuration();
   getVersion();
   setConfig(String(route.meta.title));
-  getPathNames();
 
   function handleReload() {
     const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
@@ -85,16 +93,22 @@ limitations under the License. -->
   }
 
   function getPathNames() {
-    const p = route.params;
-    console.log(route.meta);
-  }
+    const obj = dashboardStore.currentDashboard;
 
-  watch(
-    () => route.meta.title,
-    (title: unknown) => {
-      setConfig(String(title));
-    },
-  );
+    if (!dashboardStore.entity) {
+      return;
+    }
+    console.log(dashboardStore.dashboards);
+    const root = dashboardStore.dashboards.filter((d: DashboardItem) => d.isRoot && obj.layer === d.layer);
+    pathNames.value.push(root);
+    if (obj.entity === MetricCatalog.SERVICE) {
+      const arr = dashboardStore.dashboards.filter(
+        (d: DashboardItem) => obj.entity === d.entity && obj.layer === d.layer,
+      );
+
+      pathNames.value.push(arr);
+    }
+  }
 
   async function getVersion() {
     const res = await appStore.fetchVersion();
@@ -116,6 +130,27 @@ limitations under the License. -->
       appStore.updateUTC(d.utc);
     }
   }
+
+  watch(
+    () => route.meta.title,
+    () => {
+      pathNames.value = [];
+      setConfig("");
+      if (!route.meta.layer) {
+        setConfig(String(route.meta.title));
+      }
+    },
+  );
+  watch(
+    () => dashboardStore.currentDashboard,
+    () => {
+      pathNames.value = [];
+      setConfig("");
+      if (route.meta.layer) {
+        getPathNames();
+      }
+    },
+  );
 </script>
 <style lang="scss" scoped>
   .nav-bar {
