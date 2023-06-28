@@ -82,7 +82,7 @@ limitations under the License. -->
     .profile-t-wrapper {
       overflow: auto;
       flex-grow: 1;
-      border-right: 1px solid rgba(0, 0, 0, 0.1);
+      border-right: 1px solid rgb(0 0 0 / 10%);
     }
 
     .profile-t-loading {
@@ -110,13 +110,13 @@ limitations under the License. -->
 
     .profile-tr {
       &:hover {
-        background-color: rgba(0, 0, 0, 0.04);
+        background-color: rgb(0 0 0 / 4%);
       }
     }
 
     .profile-td {
       padding: 5px 10px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+      border-bottom: 1px solid rgb(0 0 0 / 7%);
 
       &.selected {
         background-color: #ededed;
@@ -126,8 +126,8 @@ limitations under the License. -->
     .profile-t-tool {
       padding: 5px 10px;
       font-weight: bold;
-      border-right: 1px solid rgba(0, 0, 0, 0.07);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+      border-right: 1px solid rgb(0 0 0 / 7%);
+      border-bottom: 1px solid rgb(0 0 0 / 7%);
       background: #f3f4f9;
     }
 
@@ -136,14 +136,14 @@ limitations under the License. -->
     }
 
     .profile-btn {
-      color: #3d444f;
+      color: $font-color;
       padding: 1px 3px;
       border-radius: 2px;
-      font-size: 12px;
+      font-size: $font-size-smaller;
     }
   }
 
   .profile-segment {
-    border-top: 1px solid rgba(0, 0, 0, 0.07);
+    border-top: 1px solid rgb(0 0 0 / 7%);
   }
 </style>

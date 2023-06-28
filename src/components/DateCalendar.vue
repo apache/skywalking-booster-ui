@@ -443,11 +443,11 @@ limitations under the License. -->
   });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .calendar {
     float: left;
     user-select: none;
-    color: #3d444f;
+    color: $font-color;
   }
 
   .calendar + .calendar {
@@ -479,7 +479,7 @@ limitations under the License. -->
 
   .calendar-head .calendar-year-select,
   .calendar-head .calendar-month-select {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     padding: 0 2px;
     position: relative;
   }
@@ -524,8 +524,8 @@ limitations under the License. -->
     float: left;
   }
 
-  .calendar-week:before,
-  .calendar-date:before {
+  .calendar-week::before,
+  .calendar-date::before {
     content: "";
     display: inline-block;
     height: 100%;
@@ -539,27 +539,27 @@ limitations under the License. -->
   }
 
   .calendar-date-out {
-    color: #ccc;
+    color: $disabled-color;
   }
 
   .calendar-date:hover,
   .calendar-date-on {
-    color: #3f97e3;
-    background-color: #f8f8f8;
+    color: $font-color;
+    background-color: $theme-background;
   }
 
   .calendar-date-selected,
   .calendar-date-selected:hover {
-    color: #fff;
+    color: $text-color;
     font-weight: bold;
     border-radius: 14px;
-    background: #3f97e3;
+    background: $active-background;
   }
 
   .calendar-date-disabled {
     cursor: not-allowed !important;
-    color: #ccc !important;
-    background: #fff !important;
+    color: $disabled-color !important;
+    background: $theme-background !important;
   }
 
   .calendar-foot {
@@ -591,7 +591,7 @@ limitations under the License. -->
     width: 100%;
     height: 100%;
     position: absolute;
-    background: #fff;
+    background: $theme-background;
     left: 0;
     top: 0;
   }
@@ -626,7 +626,7 @@ limitations under the License. -->
     margin-top: -30px;
     height: 30px;
     line-height: 30px;
-    background: #fff;
+    background: $theme-background;
     text-align: center;
     font-weight: bold;
   }

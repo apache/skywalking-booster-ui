@@ -77,7 +77,7 @@ limitations under the License. -->
 
   .schedules {
     height: 90px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid $disabled-color;
     padding-right: 10px;
   }
 </style>

@@ -72,7 +72,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .log {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     height: 100%;
     border-bottom: 1px solid #eee;
     width: 100%;
@@ -84,7 +84,7 @@ limitations under the License. -->
     user-select: none;
     border-left: 0;
     border-right: 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgb(0 0 0 / 10%);
 
     .traceId {
       width: 390px;

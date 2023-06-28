@@ -18,8 +18,8 @@
 body {
   margin: 0;
   line-height: 1.5;
-  font-size: 14px;
-  color: #3d444f;
+  font-size: $font-size-normal;
+  color: $font-color;
   font-family: Helvetica, Arial, "Source Han Sans CN", "Microsoft YaHei", sans-serif;
   text-rendering: optimizelegibility;
   text-size-adjust: 100%;
@@ -81,7 +81,7 @@ h4 {
 }
 
 h5 {
-  font-size: 14px;
+  font-size: $font-size-normal;
 }
 
 h6 {
@@ -153,7 +153,7 @@ pre {
 }
 
 .el-switch__label * {
-  font-size: 12px;
+  font-size: $font-size-smaller;
 }
 
 .el-drawer__header {
@@ -173,9 +173,9 @@ pre {
 div.vis-tooltip {
   max-width: 600px;
   overflow: hidden;
-  background-color: #fff !important;
+  background-color: $theme-background !important;
   white-space: normal !important;
-  font-size: 12px !important;
+  font-size: $font-size-smaller !important;
 }
 
 .vis-item {
@@ -187,7 +187,7 @@ div.vis-tooltip {
   background-color: #e66;
   opacity: 0.8;
   border-color: #e66;
-  color: #fff !important;
+  color: $text-color !important;
 }
 
 .vis-item.Normal {

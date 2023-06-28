@@ -149,7 +149,7 @@ limitations under the License. -->
   .label {
     width: 150px;
     display: inline-block;
-    font-size: 12px;
+    font-size: $font-size-smaller;
   }
 
   .close {

@@ -55,7 +55,7 @@ limitations under the License. -->
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="layer" label="Layer" width="120" />
+        <el-table-column prop="layer" label="Layer" width="160" />
         <el-table-column prop="entity" label="Entity" width="200" />
         <el-table-column prop="isRoot" label="Root" width="60">
           <template #default="scope">
@@ -480,8 +480,8 @@ limitations under the License. -->
 
   .table {
     padding: 20px 10px;
-    background-color: #fff;
-    box-shadow: 0px 1px 4px 0px #00000029;
+    background-color: $theme-background;
+    box-shadow: 0 1px 4px 0 #00000029;
     border-radius: 5px;
     width: 100%;
     height: 100%;
@@ -490,7 +490,7 @@ limitations under the License. -->
 
   .toggle-selection {
     margin-top: 20px;
-    background-color: #fff;
+    background-color: $theme-background;
   }
 
   .pagination {
@@ -514,7 +514,7 @@ limitations under the License. -->
   }
 
   .name {
-    color: #409eff;
+    color: $active-color;
   }
 
   .reload {

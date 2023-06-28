@@ -252,7 +252,7 @@ limitations under the License. -->
   });
 </script>
 <style lang="scss" scoped>
-  @import "./table.scss";
+  @import url("./table.scss");
 
   .event-tag {
     width: 12px;
@@ -267,7 +267,7 @@ limitations under the License. -->
     color: #448dfe;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.04);
+      background: rgb(0 0 0 / 4%);
     }
   }
 
@@ -276,7 +276,7 @@ limitations under the License. -->
     position: relative;
   }
 
-  .profiled:before {
+  .profiled::before {
     content: attr(data-text);
     position: absolute;
     top: 30px;
@@ -284,26 +284,26 @@ limitations under the License. -->
     width: 100px;
     padding: 10px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid $disabled-color;
     background-color: #333;
-    color: #fff;
+    color: $text-color;
     text-align: center;
     box-shadow: #eee 1px 2px 10px;
     display: none;
   }
 
-  .profiled:after {
+  .profiled::after {
     content: "";
     position: absolute;
     left: 250px;
     top: 20px;
     border: 6px solid #333;
-    border-color: transparent transparent #333 transparent;
+    border-color: transparent transparent #333;
     display: none;
   }
 
-  .profiled:hover:before,
-  .profiled:hover:after {
+  .profiled:hover::before,
+  .profiled:hover::after {
     display: block;
     z-index: 999;
   }
@@ -320,11 +320,11 @@ limitations under the License. -->
   }
 
   .trace-item.selected {
-    background: rgba(0, 0, 0, 0.04);
+    background: rgb(0 0 0 / 4%);
   }
 
   .trace-item:not(.level0):hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: rgb(0 0 0 / 4%);
   }
 
   .trace-item > div {
@@ -351,7 +351,7 @@ limitations under the License. -->
       width: 100%;
       height: 6px;
       border-radius: 3px;
-      background: rgb(63, 177, 227);
+      background: rgb(63 177 227);
       position: relative;
       margin-top: 11px;
       border: none;
@@ -359,7 +359,7 @@ limitations under the License. -->
 
     .inner-progress_bar {
       position: absolute;
-      background: rgb(110, 64, 170);
+      background: rgb(110 64 170);
       height: 4px;
       border-radius: 2px;
       left: 0;

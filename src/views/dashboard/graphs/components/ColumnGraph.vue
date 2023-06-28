@@ -42,7 +42,7 @@ limitations under the License. -->
           <el-popover placement="left" :width="400" trigger="click">
             <template #reference>
               <span class="trend">
-                <Icon iconName="timeline" size="middle" style="color: #409eff" />
+                <Icon iconName="timeline" size="middle" />
               </span>
             </template>
             <div class="view-line">
@@ -159,6 +159,7 @@ limitations under the License. -->
     display: inline-block;
     height: 100%;
     cursor: pointer;
+    color: $active-color;
   }
 
   .value {

@@ -241,4 +241,8 @@ limitations under the License. -->
   .tips {
     color: rgb(255 0 0 / 50%);
   }
+
+  .link {
+    color: $active-color;
+  }
 </style>

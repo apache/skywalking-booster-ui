@@ -98,7 +98,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .alarm-tool {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     border-bottom: 1px solid #c1c5ca41;
     background-color: #f0f2f5;
     padding: 10px;

@@ -118,7 +118,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   table {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     white-space: nowrap;
     margin: 0;
     border: none;
@@ -136,7 +136,7 @@ limitations under the License. -->
     top: 0;
     z-index: 1;
     width: 25vw;
-    background: #fff;
+    background: $theme-background;
     text-align: left;
   }
 
@@ -158,7 +158,7 @@ limitations under the License. -->
     font-weight: bold;
     font-style: normal;
     text-align: left;
-    background: #fff;
+    background-color: $theme-background;
     position: sticky;
     left: 0;
     z-index: 1;

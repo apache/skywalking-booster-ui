@@ -221,12 +221,12 @@ limitations under the License. -->
     height: 100px;
 
     &:focus {
-      border-color: #409eff;
+      border-color: $active-color;
     }
   }
 
   .item-title {
     margin-bottom: 5px;
-    font-size: 14px;
+    font-size: $font-size-normal;
   }
 </style>

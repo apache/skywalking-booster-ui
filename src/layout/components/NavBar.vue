@@ -108,7 +108,7 @@ limitations under the License. -->
     background-color: #fafbfc;
     border-bottom: 1px solid #dfe4e8;
     color: #222;
-    font-size: 12px;
+    font-size: $font-size-smaller;
   }
 
   .nav-bar.dark {
@@ -118,7 +118,7 @@ limitations under the License. -->
   }
 
   .title {
-    font-size: 14px;
+    font-size: $font-size-normal;
     font-weight: 500;
     height: 28px;
     line-height: 28px;

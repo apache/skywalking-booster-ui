@@ -132,12 +132,12 @@ limitations under the License. -->
 
   .el-menu-vertical:not(.el-menu--collapse) {
     width: 220px;
-    font-size: 14px;
+    font-size: $font-size-normal;
   }
 
   .logo-icon-collapse {
     width: 65px;
-    margin: 5px 0 10px 0;
+    margin: 5px 0 10px;
     text-align: center;
   }
 
@@ -169,7 +169,7 @@ limitations under the License. -->
 
   .version {
     color: #eee;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     cursor: pointer;
     padding-left: 23px;
     margin-bottom: 10px;

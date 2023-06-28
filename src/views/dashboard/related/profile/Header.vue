@@ -118,7 +118,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .header {
     padding: 10px;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     border-bottom: 1px solid #dcdfe6;
   }
 

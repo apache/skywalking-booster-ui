@@ -14,44 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.table {
-  height: 100%;
-  overflow: auto;
-  padding: 0 10px 5px 0;
-}
 
-.list {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  height: calc(100% - 90px);
-}
-
-.pagination {
-  width: 100%;
-  text-align: center;
-  height: 30px;
-  padding: 8px 0;
-}
-
-.link {
-  cursor: pointer;
-  display: inline-block;
-  width: 100%;
-  text-decoration: underline;
-}
-
-.search {
-  margin-top: 5px;
-}
-
-.input-with-search {
-  width: 400px;
-}
-
-.chart {
-  height: 60px;
-}
-
-.inputs {
-  width: 300px;
-}
+$font-color: #3d444f;
+$text-color: #fff;
+$disabled-color: #ccc;
+$active-color: #409eff;
+$theme-background: #fff;
+$active-background: #409eff;
+$font-size-smaller: 12px;
+$font-size-normal: 14px;

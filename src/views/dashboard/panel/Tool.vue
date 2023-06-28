@@ -750,7 +750,7 @@ limitations under the License. -->
   }
 
   .label {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     display: inline-block;
     padding: 4px 2px;
   }
@@ -768,13 +768,13 @@ limitations under the License. -->
     display: inline-block;
     padding: 3px;
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid $disabled-color;
     border-radius: 3px;
     margin-left: 6px;
     cursor: pointer;
     background-color: #eee;
     color: #666;
-    font-size: 12px;
+    font-size: $font-size-smaller;
   }
 
   .selectors {

@@ -221,8 +221,8 @@ limitations under the License. -->
     border-radius: 3px;
     overflow: hidden;
     border: 1px dashed #aaa;
-    font-size: 12px;
-    margin: 3px 2px 0 2px;
+    font-size: $font-size-smaller;
+    margin: 3px 2px 0;
   }
 
   .trace-new-tag {
@@ -246,7 +246,7 @@ limitations under the License. -->
     margin-top: 10px;
 
     &:hover {
-      color: #409eff;
+      color: $active-color;
     }
   }
 
@@ -259,14 +259,14 @@ limitations under the License. -->
   }
 
   .light {
-    color: #3d444f;
+    color: $font-color;
 
     input {
-      border: 1px solid #ccc;
+      border: 1px solid $disabled-color;
     }
 
     .selected {
-      color: #3d444f;
+      color: $font-color;
     }
   }
 

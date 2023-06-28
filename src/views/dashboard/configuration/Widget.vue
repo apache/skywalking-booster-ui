@@ -202,7 +202,7 @@ limitations under the License. -->
     position: relative;
     min-width: 1280px;
     border: 1px solid #eee;
-    background-color: #fff;
+    background-color: $theme-background;
   }
 
   .header {
@@ -210,7 +210,7 @@ limitations under the License. -->
     line-height: 25px;
     text-align: center;
     background-color: aliceblue;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     position: relative;
   }
 
@@ -240,7 +240,7 @@ limitations under the License. -->
   }
 
   .no-data {
-    font-size: 14px;
+    font-size: $font-size-normal;
     text-align: center;
     line-height: 400px;
   }
@@ -253,7 +253,7 @@ limitations under the License. -->
     padding: 10px;
     text-align: right;
     width: 100%;
-    background-color: #fff;
+    background-color: $theme-background;
   }
 
   .collapse {
