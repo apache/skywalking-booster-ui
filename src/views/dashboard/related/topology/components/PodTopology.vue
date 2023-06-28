@@ -316,7 +316,7 @@ limitations under the License. -->
     padding: 10px 0;
     color: #333;
     cursor: pointer;
-    background-color: #fff;
+    background-color: $theme-background;
     border-radius: 3px;
 
     span {

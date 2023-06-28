@@ -146,7 +146,7 @@ limitations under the License. -->
 
   .auto-select {
     border-radius: 3px;
-    background-color: #fff;
+    background-color: $theme-background;
     padding: 1px;
 
     input {

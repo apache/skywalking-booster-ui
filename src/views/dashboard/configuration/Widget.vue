@@ -202,7 +202,7 @@ limitations under the License. -->
     position: relative;
     min-width: 1280px;
     border: 1px solid #eee;
-    background-color: #fff;
+    background-color: $theme-background;
   }
 
   .header {
@@ -253,7 +253,7 @@ limitations under the License. -->
     padding: 10px;
     text-align: right;
     width: 100%;
-    background-color: #fff;
+    background-color: $theme-background;
   }
 
   .collapse {

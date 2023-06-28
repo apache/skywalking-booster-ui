@@ -172,7 +172,7 @@ limitations under the License. -->
     border-radius: 4px;
     border: 1px solid #ddd;
     color: #333;
-    background-color: #fff;
+    background-color: $theme-background;
     will-change: opacity, background-color;
     transition: opacity 0.3s, background-color 0.3s;
   }

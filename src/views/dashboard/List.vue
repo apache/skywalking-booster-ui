@@ -480,7 +480,7 @@ limitations under the License. -->
 
   .table {
     padding: 20px 10px;
-    background-color: #fff;
+    background-color: $theme-background;
     box-shadow: 0 1px 4px 0 #00000029;
     border-radius: 5px;
     width: 100%;
@@ -490,7 +490,7 @@ limitations under the License. -->
 
   .toggle-selection {
     margin-top: 20px;
-    background-color: #fff;
+    background-color: $theme-background;
   }
 
   .pagination {

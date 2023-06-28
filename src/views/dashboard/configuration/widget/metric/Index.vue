@@ -612,7 +612,7 @@ limitations under the License. -->
       display: inline-block;
       padding: 2px 10px;
       border: 1px solid #ccc;
-      background-color: #fff;
+      background-color: $theme-background;
       border-right: 0;
       cursor: pointer;
     }
@@ -624,7 +624,7 @@ limitations under the License. -->
 
   span.active {
     background-color: $active-color;
-    color: #fff;
+    color: $theme-background;
   }
 
   .expression-param {

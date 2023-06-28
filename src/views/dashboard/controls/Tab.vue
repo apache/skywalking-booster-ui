@@ -359,7 +359,7 @@ limitations under the License. -->
   }
 
   .vue-grid-item:not(.vue-grid-placeholder) {
-    background: #fff;
+    background: $theme-background;
     box-shadow: 0 1px 4px 0 #00000029;
     border-radius: 3px;
   }

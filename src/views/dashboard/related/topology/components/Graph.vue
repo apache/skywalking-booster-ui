@@ -20,7 +20,7 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <svg class="svg-topology" :width="width - 100" :height="height" style="background-color: #fff" @click="svgEvent">
+    <svg class="svg-topology" :width="width - 100" :height="height" @click="svgEvent">
       <g class="svg-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
         <g
           class="topo-node"
@@ -631,6 +631,7 @@ limitations under the License. -->
 
     .svg-topology {
       cursor: move;
+      background-color: $theme-background;
     }
 
     .legend {
@@ -667,7 +668,7 @@ limitations under the License. -->
       border-radius: 3px;
       color: #ccc;
       border: 1px solid #ccc;
-      background-color: #fff;
+      background-color: $theme-background;
       box-shadow: #eee 1px 2px 10px;
       transition: all 0.5ms linear;
 
@@ -686,7 +687,7 @@ limitations under the License. -->
       position: absolute;
       color: #333;
       cursor: pointer;
-      background-color: #fff;
+      background-color: $theme-background;
       border-radius: 5px;
       padding: 10px 0;
       border: 1px solid #999;
@@ -716,7 +717,7 @@ limitations under the License. -->
       cursor: pointer;
       transition: all 0.5ms linear;
       background: rgb(0 0 0 / 30%);
-      color: #fff;
+      color: $text-color;
       display: inline-block;
       padding: 2px 4px;
       border-radius: 3px;
@@ -762,6 +763,6 @@ limitations under the License. -->
     padding: 5px;
     border: 1px solid #000;
     border-radius: 3px;
-    background-color: #fff;
+    background-color: $theme-background;
   }
 </style>

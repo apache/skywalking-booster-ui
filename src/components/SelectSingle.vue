@@ -86,7 +86,7 @@ limitations under the License. -->
     position: relative;
     justify-content: space-between;
     border: 1px solid #ddd;
-    background: #fff;
+    background: $theme-background;
     border-radius: 3px;
     color: #000;
     font-size: 12px;
@@ -137,7 +137,7 @@ limitations under the License. -->
     position: absolute;
     top: 26px;
     left: 0;
-    background: #fff;
+    background-color: $theme-background;
     box-shadow: 0 1px 6px rgb(99 99 99 / 20%);
     border: 1px solid #ddd;
     width: 100%;

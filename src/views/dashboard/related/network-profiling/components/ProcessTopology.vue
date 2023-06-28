@@ -570,6 +570,6 @@ limitations under the License. -->
     padding: 5px;
     border: 1px solid #000;
     border-radius: 3px;
-    background-color: #fff;
+    background-color: $theme-background;
   }
 </style>

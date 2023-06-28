@@ -185,12 +185,12 @@ limitations under the License. -->
   .content {
     min-width: 100px;
     border: 1px solid #eee;
-    background-color: #fff;
+    background-color: $theme-background;
     position: relative;
   }
 
   .widget-chart {
-    background: #fff;
+    background-color: $theme-background;
     box-shadow: 0 1px 4px 0 #00000029;
     border-radius: 3px;
     padding: 5px;

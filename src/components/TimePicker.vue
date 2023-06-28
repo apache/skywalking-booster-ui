@@ -302,7 +302,7 @@ limitations under the License. -->
       transform: scaleY(0.8);
     }
 
-    to {
+    100% {
       opacity: 1;
       transform: scaleY(1);
     }
@@ -314,7 +314,7 @@ limitations under the License. -->
       transform: scaleY(1);
     }
 
-    to {
+    100% {
       opacity: 0;
       transform: scaleY(0.8);
     }
@@ -343,7 +343,7 @@ limitations under the License. -->
     cursor: pointer;
   }
 
-  .datepicker-close:before {
+  .datepicker-close::before {
     display: block;
     content: "";
     position: absolute;
@@ -354,14 +354,14 @@ limitations under the License. -->
     margin-left: -8px;
     margin-top: -8px;
     text-align: center;
-    color: #fff;
+    color: $text-color;
     border-radius: 50%;
     background: #ccc
       url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3IDciIHdpZHRoPSI3IiBoZWlnaHQ9IjciPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik01LjU4LDVsMi44LTIuODFBLjQxLjQxLDAsMSwwLDcuOCwxLjZMNSw0LjQxLDIuMiwxLjZhLjQxLjQxLDAsMCwwLS41OC41OGgwTDQuNDIsNSwxLjYyLDcuOGEuNDEuNDEsMCwwLDAsLjU4LjU4TDUsNS41OCw3LjgsOC4zOWEuNDEuNDEsMCwwLDAsLjU4LS41OGgwWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEuNSAtMS40OCkiIHN0eWxlPSJmaWxsOiNmZmYiLz48L3N2Zz4NCg==")
       no-repeat 50% 50%;
   }
 
-  .datepicker__clearable:hover:before {
+  .datepicker__clearable:hover::before {
     display: none;
   }
 
@@ -369,7 +369,7 @@ limitations under the License. -->
     display: block;
   }
 
-  .datepicker-close:hover:before {
+  .datepicker-close:hover::before {
     background-color: #afafaf;
   }
 
@@ -385,7 +385,7 @@ limitations under the License. -->
     padding: 0 5px;
     width: 100%;
     user-select: none;
-    font-family: "Monaco";
+    font-family: Monaco;
     letter-spacing: -0.7px;
   }
 
@@ -399,7 +399,7 @@ limitations under the License. -->
     cursor: not-allowed;
     background-color: #ebebe4;
     border-color: #e5e5e5;
-    -webkit-box-shadow: none;
+    box-shadow: none;
     box-shadow: none;
   }
 
@@ -410,8 +410,8 @@ limitations under the License. -->
     opacity: 1;
     transform: scaleY(1);
     font-size: 12px;
-    background: #fff;
-    box-shadow: 0 1px 6px rgba(99, 99, 99, 0.2);
+    background: $theme-background;
+    box-shadow: 0 1px 6px rgb(99 99 99 / 20%);
     margin-top: 2px;
     outline: 0;
     padding: 5px;
@@ -497,7 +497,7 @@ limitations under the License. -->
   .datepicker-btn {
     padding: 5px 10px;
     background: #3f97e3;
-    color: #fff;
+    color: $text-color;
     border-radius: 2px;
     display: inline-block;
     cursor: pointer;
@@ -525,7 +525,7 @@ limitations under the License. -->
     cursor: pointer;
     margin: 10px 0 0 5px;
     padding: 5px 15px;
-    color: #ffffff;
+    color: $text-color;
   }
 
   .datepicker__buttons .datepicker__button-select {
