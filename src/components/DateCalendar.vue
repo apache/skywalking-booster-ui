@@ -539,7 +539,7 @@ limitations under the License. -->
   }
 
   .calendar-date-out {
-    color: #ccc;
+    color: $disabled-color;
   }
 
   .calendar-date:hover,
@@ -558,7 +558,7 @@ limitations under the License. -->
 
   .calendar-date-disabled {
     cursor: not-allowed !important;
-    color: #ccc !important;
+    color: $disabled-color !important;
     background: $theme-background !important;
   }
 

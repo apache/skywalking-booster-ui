@@ -262,7 +262,7 @@ limitations under the License. -->
     color: $font-color;
 
     input {
-      border: 1px solid #ccc;
+      border: 1px solid $disabled-color;
     }
 
     .selected {

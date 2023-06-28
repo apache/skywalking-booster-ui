@@ -611,14 +611,14 @@ limitations under the License. -->
     span {
       display: inline-block;
       padding: 2px 10px;
-      border: 1px solid #ccc;
+      border: 1px solid $disabled-color;
       background-color: $theme-background;
       border-right: 0;
       cursor: pointer;
     }
 
     span:nth-last-child(1) {
-      border-right: 1px solid #ccc;
+      border-right: 1px solid $disabled-color;
     }
   }
 

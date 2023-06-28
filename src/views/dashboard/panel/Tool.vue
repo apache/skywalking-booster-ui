@@ -768,7 +768,7 @@ limitations under the License. -->
     display: inline-block;
     padding: 3px;
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid $disabled-color;
     border-radius: 3px;
     margin-left: 6px;
     cursor: pointer;

@@ -284,7 +284,7 @@ limitations under the License. -->
     width: 100px;
     padding: 10px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid $disabled-color;
     background-color: #333;
     color: $text-color;
     text-align: center;

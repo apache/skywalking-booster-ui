@@ -356,7 +356,7 @@ limitations under the License. -->
     text-align: center;
     color: $text-color;
     border-radius: 50%;
-    background: #ccc
+    background: $disabled-color
       url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3IDciIHdpZHRoPSI3IiBoZWlnaHQ9IjciPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik01LjU4LDVsMi44LTIuODFBLjQxLjQxLDAsMSwwLDcuOCwxLjZMNSw0LjQxLDIuMiwxLjZhLjQxLjQxLDAsMCwwLS41OC41OGgwTDQuNDIsNSwxLjYyLDcuOGEuNDEuNDEsMCwwLDAsLjU4LjU4TDUsNS41OCw3LjgsOC4zOWEuNDEuNDEsMCwwLDAsLjU4LS41OGgwWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEuNSAtMS40OCkiIHN0eWxlPSJmaWxsOiNmZmYiLz48L3N2Zz4NCg==")
       no-repeat 50% 50%;
   }
@@ -399,7 +399,6 @@ limitations under the License. -->
     cursor: not-allowed;
     background-color: #ebebe4;
     border-color: #e5e5e5;
-    box-shadow: none;
     box-shadow: none;
   }
 

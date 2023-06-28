@@ -169,7 +169,7 @@ limitations under the License. -->
       outline: 0;
       width: 50px;
       border-radius: 3px;
-      border: 1px solid #ccc;
+      border: 1px solid $disabled-color;
       text-align: center;
       height: 25px;
     }

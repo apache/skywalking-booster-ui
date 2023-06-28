@@ -282,7 +282,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .tabs {
     height: 40px;
-    color: #ccc;
+    color: $disabled-color;
     width: 100%;
     overflow-x: auto;
     white-space: nowrap;

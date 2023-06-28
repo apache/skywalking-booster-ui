@@ -279,7 +279,7 @@ limitations under the License. -->
     overflow: auto;
     padding: 10px 15px;
     border-radius: 3px;
-    color: #ccc;
+    color: $disabled-color;
     transition: all 0.5ms linear;
     z-index: 99;
     text-align: left;
@@ -306,7 +306,7 @@ limitations under the License. -->
   }
 
   .label {
-    color: #ccc;
+    color: $disabled-color;
     display: inline-block;
     margin-right: 5px;
   }

@@ -353,7 +353,7 @@ limitations under the License. -->
     width: 30%;
     border-style: unset;
     outline: 0;
-    border: 1px solid #ccc;
+    border: 1px solid $disabled-color;
     height: 30px;
     padding: 0 5px;
   }
