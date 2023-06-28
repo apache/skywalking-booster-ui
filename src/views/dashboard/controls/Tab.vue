@@ -380,7 +380,7 @@ limitations under the License. -->
   .no-data-tips {
     width: 100%;
     text-align: center;
-    font-size: 14px;
+    font-size: $font-size-normal;
     padding-top: 30px;
     color: #888;
   }

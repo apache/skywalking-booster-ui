@@ -82,11 +82,11 @@ limitations under the License. -->
   }
 
   .profile {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     height: 100%;
 
     .profile-set-btn {
-      font-size: 12px;
+      font-size: $font-size-smaller;
       border: 1px solid $disabled-color;
       border-radius: 3px;
       text-align: center;

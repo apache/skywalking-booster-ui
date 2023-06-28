@@ -458,7 +458,7 @@ limitations under the License. -->
   }
 
   .label {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     margin-top: 10px;
   }
 

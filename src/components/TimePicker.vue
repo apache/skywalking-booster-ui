@@ -408,7 +408,7 @@ limitations under the License. -->
     transition: all 200ms ease;
     opacity: 1;
     transform: scaleY(1);
-    font-size: 12px;
+    font-size: $font-size-smaller;
     background: $theme-background;
     box-shadow: 0 1px 6px rgb(99 99 99 / 20%);
     margin-top: 2px;
@@ -456,7 +456,7 @@ limitations under the License. -->
       border: 0;
       background-color: transparent;
       line-height: 34px;
-      font-size: 12px;
+      font-size: $font-size-smaller;
       color: #666;
       text-align: left;
       outline: none;

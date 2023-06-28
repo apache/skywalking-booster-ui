@@ -137,7 +137,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .title {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     font-weight: bold;
   }
 

@@ -373,7 +373,7 @@ limitations under the License. -->
     overflow: hidden;
     color: $font-color;
     border: 1px dashed #aaa;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     margin: 0 2px;
   }
 

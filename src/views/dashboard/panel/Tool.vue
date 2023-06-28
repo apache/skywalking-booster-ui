@@ -750,7 +750,7 @@ limitations under the License. -->
   }
 
   .label {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     display: inline-block;
     padding: 4px 2px;
   }
@@ -774,7 +774,7 @@ limitations under the License. -->
     cursor: pointer;
     background-color: #eee;
     color: #666;
-    font-size: 12px;
+    font-size: $font-size-smaller;
   }
 
   .selectors {

@@ -89,7 +89,7 @@ limitations under the License. -->
     background: $theme-background;
     border-radius: 3px;
     color: #000;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     height: 24px;
 
     .selected {
@@ -126,7 +126,7 @@ limitations under the License. -->
     position: absolute;
     right: 5px;
     top: 0;
-    font-size: 14px;
+    font-size: $font-size-normal;
     display: none;
     color: #aaa;
     cursor: pointer;

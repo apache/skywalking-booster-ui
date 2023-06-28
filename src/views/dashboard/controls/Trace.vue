@@ -62,7 +62,7 @@ limitations under the License. -->
   .trace-wrapper {
     width: 100%;
     height: 100%;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     position: relative;
     overflow: auto;
   }
@@ -75,7 +75,7 @@ limitations under the License. -->
 
   .header {
     padding: 10px;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     border-bottom: 1px solid #dcdfe6;
     min-width: 1200px;
   }

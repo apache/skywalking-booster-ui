@@ -232,7 +232,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .no-data {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     height: 100%;
     box-sizing: border-box;
     display: -webkit-box;

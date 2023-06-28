@@ -479,7 +479,7 @@ limitations under the License. -->
 
   .calendar-head .calendar-year-select,
   .calendar-head .calendar-month-select {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     padding: 0 2px;
     position: relative;
   }

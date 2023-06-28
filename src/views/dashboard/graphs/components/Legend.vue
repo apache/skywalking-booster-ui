@@ -118,7 +118,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   table {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     white-space: nowrap;
     margin: 0;
     border: none;

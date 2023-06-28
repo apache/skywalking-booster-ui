@@ -147,10 +147,10 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  @import "./table.scss";
+  @import url("./table.scss");
 
   .trace {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     height: 100%;
     overflow: auto;
     width: 100%;
@@ -165,7 +165,7 @@ limitations under the License. -->
     user-select: none;
     border-left: 0;
     border-right: 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgb(0 0 0 / 10%);
   }
 
   .trace-header div {

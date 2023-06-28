@@ -221,7 +221,7 @@ limitations under the License. -->
     border-radius: 3px;
     overflow: hidden;
     border: 1px dashed #aaa;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     margin: 3px 2px 0;
   }
 

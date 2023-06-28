@@ -133,7 +133,7 @@ limitations under the License. -->
     color: $font-color;
     padding: 1px 3px;
     border-radius: 2px;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     float: right;
   }
 </style>

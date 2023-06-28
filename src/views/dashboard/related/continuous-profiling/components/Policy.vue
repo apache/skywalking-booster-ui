@@ -227,6 +227,6 @@ limitations under the License. -->
 
   .item-title {
     margin-bottom: 5px;
-    font-size: 14px;
+    font-size: $font-size-normal;
   }
 </style>

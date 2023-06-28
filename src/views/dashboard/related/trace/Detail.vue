@@ -171,7 +171,7 @@ limitations under the License. -->
   }
 
   .trace-detail-wrapper {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     padding: 5px 10px;
     border-bottom: 1px solid #eee;
     width: 100%;

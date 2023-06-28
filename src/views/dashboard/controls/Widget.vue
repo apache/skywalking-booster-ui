@@ -269,7 +269,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .widget {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     height: 100%;
   }
 
@@ -305,7 +305,7 @@ limitations under the License. -->
   }
 
   .no-data {
-    font-size: 14px;
+    font-size: $font-size-normal;
     color: #888;
     width: 100%;
     text-align: center;

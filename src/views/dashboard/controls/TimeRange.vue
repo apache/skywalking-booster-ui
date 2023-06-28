@@ -141,7 +141,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .time-range {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     height: 100%;
     position: relative;
   }

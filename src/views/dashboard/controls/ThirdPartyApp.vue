@@ -70,7 +70,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .text {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     height: 100%;
     position: relative;
   }
@@ -108,7 +108,7 @@ limitations under the License. -->
   }
 
   .tips {
-    font-size: 14px;
+    font-size: $font-size-normal;
     color: #888;
     width: 100%;
     text-align: center;

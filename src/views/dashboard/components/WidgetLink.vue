@@ -160,7 +160,7 @@ limitations under the License. -->
 
   .link-content {
     height: 300px;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     overflow: auto;
     padding-bottom: 50px;
   }

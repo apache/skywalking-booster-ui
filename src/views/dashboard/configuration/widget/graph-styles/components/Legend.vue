@@ -125,7 +125,7 @@ limitations under the License. -->
   }
 
   .title {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     display: inline-flex;
     height: 32px;
     line-height: 34px;

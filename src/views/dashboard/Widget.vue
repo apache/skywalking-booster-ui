@@ -198,7 +198,7 @@ limitations under the License. -->
   }
 
   .no-data {
-    font-size: 14px;
+    font-size: $font-size-normal;
     text-align: center;
     line-height: 400px;
   }
@@ -208,7 +208,7 @@ limitations under the License. -->
     line-height: 25px;
     text-align: center;
     background-color: aliceblue;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     position: relative;
   }
 
