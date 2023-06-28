@@ -35,8 +35,8 @@
     "vue-types": "^4.1.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.3.0",
-    "@commitlint/config-conventional": "^17.3.0",
+    "@commitlint/cli": "^17.6.6",
+    "@commitlint/config-conventional": "^17.6.6",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/d3": "^7.1.0",
     "@types/d3-tip": "^3.5.5",
