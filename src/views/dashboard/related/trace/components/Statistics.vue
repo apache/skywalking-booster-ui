@@ -67,7 +67,7 @@ limitations under the License. -->
 
   function getSpanGroupData(groupspans: Span[], groupRef: StatisticsGroupRef): StatisticsSpan {
     let maxTime = 0;
-    let minTime = 0;
+    let minTime = Infinity;
     let sumTime = 0;
     const count = groupspans.length;
     groupspans.forEach((groupspan: Span) => {
