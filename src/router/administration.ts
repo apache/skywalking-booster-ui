@@ -17,26 +17,32 @@
 import type { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
 
-export const routesSetting: Array<RouteRecordRaw> = [
+export const routesAdministration: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "Settings",
+    name: "Administration",
     meta: {
-      title: "settings",
+      title: "administration",
       icon: "settings",
-      hasGroup: false,
+      hasGroup: true,
     },
     component: Layout,
     children: [
+      {
+        path: "/menus-management",
+        name: "MenusManagement",
+        meta: {
+          title: "menusManagement",
+        },
+        component: () => import("@/views/administration/Menus.vue"),
+      },
       {
         path: "/settings",
         name: "Settings",
         meta: {
           title: "settings",
-          icon: "settings",
-          hasGroup: false,
         },
-        component: () => import("@/views/Settings.vue"),
+        component: () => import("@/views/administration/Settings.vue"),
       },
     ],
   },

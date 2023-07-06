@@ -179,6 +179,13 @@ export const appStore = defineStore({
       this.version = res.data.data.version;
       return res.data;
     },
+    async queryMenuItems() {
+      const res: AxiosResponse = await graphql.query("queryMenuItems").params({});
+      if (res.data.errors) {
+        return res.data;
+      }
+      console.log(res.data.data);
+    },
     setReloadTimer(timer: IntervalHandle) {
       this.reloadTimer = timer;
     },

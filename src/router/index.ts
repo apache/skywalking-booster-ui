@@ -17,11 +17,11 @@
 import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 import { routesDashboard } from "./dashboard";
-import { routesSetting } from "./setting";
+import { routesAdministration } from "./administration";
 import { routesAlarm } from "./alarm";
 import routesLayers from "./layer";
 
-const routes: Array<RouteRecordRaw> = [...routesLayers, ...routesDashboard, ...routesAlarm, ...routesSetting];
+const routes: Array<RouteRecordRaw> = [...routesLayers, ...routesDashboard, ...routesAlarm, ...routesAdministration];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -402,5 +402,7 @@ const msg = {
   detailLabel: "详细标签",
   summary: "概括",
   detail: "详细",
+  administration: "管理",
+  menusManagement: "菜单管理",
 };
 export default msg;

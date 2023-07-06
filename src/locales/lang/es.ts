@@ -404,5 +404,7 @@ const msg = {
   detailLabel: "Detail Label",
   summary: "Summary",
   detail: "Detail",
+  administration: "Administration",
+  menusManagement: "Menus Management",
 };
 export default msg;
