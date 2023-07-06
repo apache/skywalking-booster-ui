@@ -34,7 +34,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
         meta: {
           title: "menus",
         },
-        component: () => import("@/views/administration/Menus.vue"),
+        component: () => import("@/views/marketplace/Menus.vue"),
       },
       {
         path: "/marketplace/settings",
@@ -42,7 +42,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
         meta: {
           title: "settings",
         },
-        component: () => import("@/views/administration/Settings.vue"),
+        component: () => import("@/views/marketplace/Settings.vue"),
       },
     ],
   },
