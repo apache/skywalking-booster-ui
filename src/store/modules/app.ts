@@ -184,7 +184,8 @@ export const appStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      console.log(res.data.data);
+
+      return res.data.data;
     },
     setReloadTimer(timer: IntervalHandle) {
       this.reloadTimer = timer;

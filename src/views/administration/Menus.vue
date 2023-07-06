@@ -20,8 +20,15 @@ limitations under the License. -->
 
   const appStore = useAppStoreWithOut();
 
-  appStore.setPageTitle("Menus Management");
-  appStore.queryMenuItems();
+  appStore.setPageTitle("Menus");
+  getMenus();
+
+  async function getMenus() {
+    const resp = await appStore.queryMenuItems();
+    const menus = resp.getMenuItems;
+    console.log(menus);
+  }
+  // window.localStorage.setItem("menus", lang.value);
 </script>
 <style lang="scss" scoped>
   .menus {

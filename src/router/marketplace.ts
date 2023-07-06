@@ -17,27 +17,27 @@
 import type { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
 
-export const routesAdministration: Array<RouteRecordRaw> = [
+export const routesMarketplace: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "Administration",
+    name: "Marketplace",
     meta: {
-      title: "administration",
+      title: "marketplace",
       icon: "settings",
       hasGroup: true,
     },
     component: Layout,
     children: [
       {
-        path: "/menus-management",
+        path: "/marketplace/menus",
         name: "MenusManagement",
         meta: {
-          title: "menusManagement",
+          title: "menus",
         },
         component: () => import("@/views/administration/Menus.vue"),
       },
       {
-        path: "/settings",
+        path: "/marketplace/settings",
         name: "Settings",
         meta: {
           title: "settings",
