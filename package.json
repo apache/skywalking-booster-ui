@@ -67,7 +67,7 @@
     "prettier": "^2.7.1",
     "sass": "^1.56.1",
     "start-server-and-test": "^1.15.2",
-    "stylelint": "15.9.0",
+    "stylelint": "15.10.1",
     "stylelint-config-html": "^1.0.0",
     "stylelint-config-prettier": "9.0.4",
     "stylelint-config-standard": "^33.0.0",
