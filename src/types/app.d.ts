@@ -46,3 +46,16 @@ export type EventParams = {
   color: string;
   event: any;
 };
+
+export interface MenuOptions {
+  layer: string;
+  icon: string;
+  title: string;
+  activate: boolean;
+  subItems: {
+    layer: string;
+    icon: string;
+    title: string;
+    activate: boolean;
+  }[];
+}

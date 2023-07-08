@@ -33,12 +33,13 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
+  import { MenuOptions } from "@/types/app";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
   const appStore = useAppStoreWithOut();
   const { t } = useI18n();
   const treeRef = ref<InstanceType<any>>();
-  const activateMenus = ref<any[]>([]);
+  const activateMenus = ref<MenuOptions[]>([]);
   const checkedKeys = ref<string[]>([]);
   const defaultProps = {
     children: "subItems",
@@ -56,10 +57,10 @@ limitations under the License. -->
 
   async function getActivateMenus() {
     const resp = (await appStore.queryMenuItems()) || {};
-    const menus = (resp.getMenuItems || []).map((d: any, index: number) => {
+    const menus = (resp.getMenuItems || []).map((d: MenuOptions, index: number) => {
       d.id = String(index);
       if (d.subItems) {
-        d.subItems = d.subItems.map((item: any, subIndex: number) => {
+        d.subItems = d.subItems.map((item: MenuOptions, subIndex: number) => {
           item.id = `${index}-${subIndex}`;
           return item;
         });
@@ -69,9 +70,9 @@ limitations under the License. -->
 
       return d;
     });
-    activateMenus.value = menus.filter((d: any) => {
+    activateMenus.value = menus.filter((d: MenuOptions) => {
       if (d.activate) {
-        d.subItems = d.subItems.filter((item: any) => {
+        d.subItems = d.subItems.filter((item: MenuOptions) => {
           if (item.activate) {
             return item;
           }
@@ -95,9 +96,9 @@ limitations under the License. -->
   }
 
   function setCurrentMenus() {
-    const current = activateMenus.value.filter((d: any) => {
+    const current = activateMenus.value.filter((d: MenuOptions) => {
       if (checkedKeys.value.includes(d.id)) {
-        d.subItems = d.subItems.filter((item: any) => {
+        d.subItems = d.subItems.filter((item: MenuOptions) => {
           if (checkedKeys.value.includes(item.id)) {
             return item;
           }
