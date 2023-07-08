@@ -35,6 +35,7 @@ interface AppState {
   version: string;
   isMobile: boolean;
   reloadTimer: Nullable<IntervalHandle>;
+  currentMenus: any;
 }
 
 export const appStore = defineStore({
@@ -55,6 +56,7 @@ export const appStore = defineStore({
     version: "",
     isMobile: false,
     reloadTimer: null,
+    currentMenus: [],
   }),
   getters: {
     duration(): Duration {
@@ -124,6 +126,9 @@ export const appStore = defineStore({
     },
     updateDurationRow(data: Duration) {
       this.durationRow = data;
+    },
+    setCurrentMenus(menus: any) {
+      this.currentMenus = menus;
     },
     setUTC(utcHour: number, utcMin: number): void {
       this.runEventStack();

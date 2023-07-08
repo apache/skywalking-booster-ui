@@ -15,22 +15,30 @@ limitations under the License. -->
 <template>
   <div class="menus flex-v">
     <el-tree
-      :data="menus"
+      ref="treeRef"
+      :data="activateMenus"
       show-checkbox
       node-key="id"
-      :default-expanded-keys="[2, 3]"
-      :default-checked-keys="[5]"
+      default-expand-all
+      :default-checked-keys="checkedKeys"
       :props="defaultProps"
     />
+    <div class="footer flex-v">
+      <el-button class="btn" size="small" type="primary" @click="getCheckedNodes">
+        {{ t("save") }}
+      </el-button>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
   const appStore = useAppStoreWithOut();
-  const menus = ref<any[]>([]);
-  const expandedKeys = ref<string[]>([]);
+  const { t } = useI18n();
+  const treeRef = ref<InstanceType<any>>();
+  const activateMenus = ref<any[]>([]);
   const checkedKeys = ref<string[]>([]);
   const defaultProps = {
     children: "subItems",
@@ -38,31 +46,82 @@ limitations under the License. -->
   };
 
   appStore.setPageTitle("Menus");
-  getMenus();
+  getActivateMenus();
 
-  async function getMenus() {
+  function getCheckedNodes() {
+    checkedKeys.value = treeRef.value!.getCheckedKeys(false);
+    setCurrentMenus();
+    window.localStorage.setItem("customMenus", JSON.stringify(checkedKeys.value));
+  }
+
+  async function getActivateMenus() {
     const resp = (await appStore.queryMenuItems()) || {};
-    menus.value = (resp.getMenuItems || []).map((d: any, index: number) => {
+    const menus = (resp.getMenuItems || []).map((d: any, index: number) => {
       d.id = String(index);
-      expandedKeys.value.push(d.id);
-      checkedKeys.value.push(d.id);
-      d.subItem = d.subItems.map((item: any, subIndex: number) => {
-        item.id = `${index} + ${subIndex}`;
-        expandedKeys.value.push(item.id);
-        checkedKeys.value.push(item.id);
-        return item;
-      });
+      if (d.subItems) {
+        d.subItems = d.subItems.map((item: any, subIndex: number) => {
+          item.id = `${index}-${subIndex}`;
+          return item;
+        });
+      } else {
+        d.subItem = [];
+      }
+
       return d;
     });
-    console.log(menus.value);
+    activateMenus.value = menus.filter((d: any) => {
+      if (d.activate) {
+        d.subItems = d.subItems.filter((item: any) => {
+          if (item.activate) {
+            return item;
+          }
+        });
+        return d;
+      }
+    });
+    const customMenus = localStorage.getItem("customMenus");
+    if (customMenus) {
+      checkedKeys.value = JSON.parse(customMenus);
+    } else {
+      for (const menus of activateMenus.value) {
+        checkedKeys.value.push(menus.id);
+        for (const item of menus.subItems) {
+          checkedKeys.value.push(item.id);
+        }
+      }
+      window.localStorage.setItem("customMenus", JSON.stringify(checkedKeys.value));
+    }
+    setCurrentMenus();
   }
-  // window.localStorage.setItem("menus", lang.value);
+
+  function setCurrentMenus() {
+    const current = activateMenus.value.filter((d: any) => {
+      if (checkedKeys.value.includes(d.id)) {
+        d.subItems = d.subItems.filter((item: any) => {
+          if (checkedKeys.value.includes(item.id)) {
+            return item;
+          }
+        });
+        return d;
+      }
+    });
+    appStore.setCurrentMenus(current);
+  }
 </script>
 <style lang="scss" scoped>
   .menus {
     flex-grow: 1;
     height: 100%;
     font-size: $font-size-smaller;
-    padding: 20px;
+    padding: 10px;
+  }
+
+  .footer {
+    padding: 80px 10px 20px;
+    background-color: #fff;
+  }
+
+  .btn {
+    width: 150px;
   }
 </style>
