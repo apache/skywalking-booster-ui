@@ -30,7 +30,7 @@ const router = createRouter({
 
 (window as any).axiosCancel = [];
 
-const defaultPath = routesLayers[0].children[0].path;
+const defaultPath = (routesLayers[0] && routesLayers[0].children[0].path) || "";
 
 router.beforeEach((to, from, next) => {
   // const token = window.localStorage.getItem("skywalking-authority");

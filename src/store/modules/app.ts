@@ -172,17 +172,18 @@ export const appStore = defineStore({
       );
     },
     async getActivateMenus() {
+      // localStorage.removeItem("customMenus");
       const resp = (await this.queryMenuItems()) || {};
       const menus = (resp.getMenuItems || []).map((d: MenuOptions, index: number) => {
-        const name = `${d.title.replace(/\s+/g, "-")}-${index}`;
-        d.name = name;
-        d.path = `/${name}`;
+        const t = `${d.title.replace(/\s+/g, "-")}`;
+        d.name = `${t}-${index}`;
+        d.path = `/${t}`;
         if (d.subItems && d.subItems.length) {
           d.hasGroup = true;
           d.subItems = d.subItems.map((item: any, sub: number) => {
-            const id = `${d.title.replace(/\s+/g, "-")}-${index}${sub}`;
-            item.name = id;
-            item.path = `/${id}`;
+            const id = `${item.title.replace(/\s+/g, "-")}`;
+            item.name = `${id}-${index}${sub}`;
+            item.path = `/${t}/${id}`;
             return item;
           });
         } else {

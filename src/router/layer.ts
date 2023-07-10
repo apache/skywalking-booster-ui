@@ -25,8 +25,9 @@ async function layerDashboards() {
       path: "",
       component: Layout,
       meta: {
-        icon: item.icon,
+        icon: item.icon || "cloud_queue",
         title: item.title,
+        hasGroup: item.hasGroup,
       },
       children: item.subItems && item.subItems.length ? [] : undefined,
     };
@@ -37,6 +38,7 @@ async function layerDashboards() {
         meta: {
           title: child.title,
           layer: child.layer,
+          icon: child.icon || "cloud_queue",
         },
       };
       d.component = () => import("@/views/Layer.vue");
