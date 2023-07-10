@@ -21,5 +21,5 @@ const CancelToken = axios.CancelToken;
 export const cancelToken = (): any =>
   new CancelToken(function executor(c) {
     const w = window as any;
-    w.axiosCancel.push(c);
+    (w.axiosCancel || []).push(c);
   });

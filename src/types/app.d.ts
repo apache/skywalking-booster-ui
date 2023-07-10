@@ -52,10 +52,16 @@ export interface MenuOptions {
   icon: string;
   title: string;
   activate: boolean;
+  name?: string;
+  path?: string;
+  hasGroup?: boolean;
   subItems: {
     layer: string;
     icon: string;
     title: string;
     activate: boolean;
+    name?: string;
+    path?: string;
+    notShow?: boolean;
   }[];
 }

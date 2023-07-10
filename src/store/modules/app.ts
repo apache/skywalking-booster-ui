@@ -22,6 +22,7 @@ import getLocalTime from "@/utils/localtime";
 import type { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
+import type { MenuOptions } from "@/types/app";
 /*global Nullable*/
 interface AppState {
   durationRow: Recordable;
@@ -35,7 +36,9 @@ interface AppState {
   version: string;
   isMobile: boolean;
   reloadTimer: Nullable<IntervalHandle>;
-  currentMenus: any;
+  currentMenus: MenuOptions[];
+  activateMenus: MenuOptions[];
+  checkedKeys: string[];
 }
 
 export const appStore = defineStore({
@@ -57,6 +60,8 @@ export const appStore = defineStore({
     isMobile: false,
     reloadTimer: null,
     currentMenus: [],
+    activateMenus: [],
+    checkedKeys: [],
   }),
   getters: {
     duration(): Duration {
@@ -127,8 +132,11 @@ export const appStore = defineStore({
     updateDurationRow(data: Duration) {
       this.durationRow = data;
     },
-    setCurrentMenus(menus: any) {
+    setCurrentMenus(menus: MenuOptions[]) {
       this.currentMenus = menus;
+    },
+    setCheckedKeys(keys: string[]) {
+      this.checkedKeys = keys;
     },
     setUTC(utcHour: number, utcMin: number): void {
       this.runEventStack();
@@ -162,6 +170,72 @@ export const appStore = defineStore({
           }),
         500,
       );
+    },
+    async getActivateMenus() {
+      const resp = (await this.queryMenuItems()) || {};
+      const menus = (resp.getMenuItems || []).map((d: MenuOptions, index: number) => {
+        const name = `${d.title.replace(/\s+/g, "-")}-${index}`;
+        d.name = name;
+        d.path = `/${name}`;
+        if (d.subItems && d.subItems.length) {
+          d.hasGroup = true;
+          d.subItems = d.subItems.map((item: any, sub: number) => {
+            const id = `${d.title.replace(/\s+/g, "-")}-${index}${sub}`;
+            item.name = id;
+            item.path = `/${id}`;
+            return item;
+          });
+        } else {
+          d.subItems = [
+            {
+              name: d.name,
+              path: d.path,
+              title: d.title,
+              layer: d.layer,
+              activate: d.activate,
+              icon: d.icon,
+            },
+          ];
+        }
+
+        return d;
+      });
+      this.activateMenus = menus.filter((d: MenuOptions) => {
+        if (d.activate) {
+          d.subItems = d.subItems.filter((item: any) => {
+            if (item.activate) {
+              return item;
+            }
+          });
+          return d;
+        }
+      });
+      const customMenus = localStorage.getItem("customMenus");
+      if (customMenus) {
+        this.checkedKeys = JSON.parse(customMenus);
+      } else {
+        for (const menus of this.activateMenus) {
+          this.checkedKeys.push(menus.name);
+          for (const item of menus.subItems) {
+            this.checkedKeys.push(item.name);
+          }
+        }
+        window.localStorage.setItem("customMenus", JSON.stringify(this.checkedKeys));
+      }
+      await this.getCurrentMenus();
+    },
+    getCurrentMenus() {
+      const current = this.activateMenus.filter((d: MenuOptions) => {
+        if (this.checkedKeys.includes(d.name)) {
+          d.subItems = d.subItems.filter((item: any) => {
+            if (this.checkedKeys.includes(item.name)) {
+              return item;
+            }
+          });
+          return d;
+        }
+      });
+      this.setCurrentMenus(current);
     },
     async queryOAPTimeInfo() {
       const res: AxiosResponse = await graphql.query("queryOAPTimeInfo").params({});

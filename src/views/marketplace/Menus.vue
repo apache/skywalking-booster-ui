@@ -16,11 +16,11 @@ limitations under the License. -->
   <div class="menus flex-v">
     <el-tree
       ref="treeRef"
-      :data="activateMenus"
+      :data="appStore.activateMenus"
       show-checkbox
       node-key="id"
       default-expand-all
-      :default-checked-keys="checkedKeys"
+      :default-checked-keys="appStore.checkedKeys"
       :props="defaultProps"
     />
     <div class="footer flex-v">
@@ -33,80 +33,24 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
-  import { MenuOptions } from "@/types/app";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
   const appStore = useAppStoreWithOut();
   const { t } = useI18n();
   const treeRef = ref<InstanceType<any>>();
-  const activateMenus = ref<MenuOptions[]>([]);
-  const checkedKeys = ref<string[]>([]);
   const defaultProps = {
     children: "subItems",
     label: "title",
   };
 
   appStore.setPageTitle("Menus");
-  getActivateMenus();
 
   function getCheckedNodes() {
-    checkedKeys.value = treeRef.value!.getCheckedKeys(false);
-    setCurrentMenus();
+    const checkedKeys = treeRef.value!.getCheckedKeys(false);
+
+    appStore.setCheckedKeys(checkedKeys);
+    appStore.getCurrentMenus();
     window.localStorage.setItem("customMenus", JSON.stringify(checkedKeys.value));
-  }
-
-  async function getActivateMenus() {
-    const resp = (await appStore.queryMenuItems()) || {};
-    const menus = (resp.getMenuItems || []).map((d: MenuOptions, index: number) => {
-      d.id = String(index);
-      if (d.subItems) {
-        d.subItems = d.subItems.map((item: MenuOptions, subIndex: number) => {
-          item.id = `${index}-${subIndex}`;
-          return item;
-        });
-      } else {
-        d.subItem = [];
-      }
-
-      return d;
-    });
-    activateMenus.value = menus.filter((d: MenuOptions) => {
-      if (d.activate) {
-        d.subItems = d.subItems.filter((item: MenuOptions) => {
-          if (item.activate) {
-            return item;
-          }
-        });
-        return d;
-      }
-    });
-    const customMenus = localStorage.getItem("customMenus");
-    if (customMenus) {
-      checkedKeys.value = JSON.parse(customMenus);
-    } else {
-      for (const menus of activateMenus.value) {
-        checkedKeys.value.push(menus.id);
-        for (const item of menus.subItems) {
-          checkedKeys.value.push(item.id);
-        }
-      }
-      window.localStorage.setItem("customMenus", JSON.stringify(checkedKeys.value));
-    }
-    setCurrentMenus();
-  }
-
-  function setCurrentMenus() {
-    const current = activateMenus.value.filter((d: MenuOptions) => {
-      if (checkedKeys.value.includes(d.id)) {
-        d.subItems = d.subItems.filter((item: MenuOptions) => {
-          if (checkedKeys.value.includes(item.id)) {
-            return item;
-          }
-        });
-        return d;
-      }
-    });
-    appStore.setCurrentMenus(current);
   }
 </script>
 <style lang="scss" scoped>

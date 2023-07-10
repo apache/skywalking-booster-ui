@@ -14,21 +14,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import LayerJson from "./data";
 import Layout from "@/layout/Index.vue";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
-function layerDashboards() {
-  const routes = LayerJson.map((item: any) => {
-    item.component = Layout;
-    if (item.children) {
-      item.children = item.children.map((d: any) => {
-        d.component = () => import("@/views/Layer.vue");
-        return d;
-      });
+async function layerDashboards() {
+  const appStore = useAppStoreWithOut();
+  await appStore.getActivateMenus();
+  const routes = appStore.currentMenus.map((item: any) => {
+    const route: any = {
+      path: "",
+      component: Layout,
+      meta: {
+        icon: item.icon,
+        title: item.title,
+      },
+      children: item.subItems && item.subItems.length ? [] : undefined,
+    };
+    for (const child of item.subItems || []) {
+      const d: any = {
+        name: child.name,
+        path: child.path,
+        meta: {
+          title: child.title,
+          layer: child.layer,
+        },
+      };
+      d.component = () => import("@/views/Layer.vue");
+      route.children.push(d);
+      const tab: any = {
+        name: `${child.name}ActiveTabIndex`,
+        path: `/${child.name}/tab/:activeTabIndex`,
+        meta: {
+          notShow: true,
+          layer: child.layer,
+        },
+      };
+      tab.component = () => import("@/views/Layer.vue");
+      route.children.push(tab);
     }
-    return item;
+    return route;
   });
   return routes;
 }
 
-export default layerDashboards();
+export default await layerDashboards();
