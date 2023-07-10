@@ -16,11 +16,12 @@
  */
 import Layout from "@/layout/Index.vue";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import type { MenuOptions } from "@/types/app";
 
 async function layerDashboards() {
   const appStore = useAppStoreWithOut();
   await appStore.getActivateMenus();
-  const routes = appStore.currentMenus.map((item: any) => {
+  const routes = appStore.currentMenus.map((item: MenuOptions) => {
     const route: any = {
       path: "",
       name: item.name,
@@ -33,7 +34,7 @@ async function layerDashboards() {
       children: item.subItems && item.subItems.length ? [] : undefined,
     };
     for (const child of item.subItems || []) {
-      const d: any = {
+      const d = {
         name: child.name,
         path: child.path,
         meta: {
@@ -41,18 +42,18 @@ async function layerDashboards() {
           layer: child.layer,
           icon: child.icon || "cloud_queue",
         },
+        component: () => import("@/views/Layer.vue"),
       };
-      d.component = () => import("@/views/Layer.vue");
       route.children.push(d);
-      const tab: any = {
+      const tab = {
         name: `${child.name}ActiveTabIndex`,
         path: `/${child.name}/tab/:activeTabIndex`,
+        component: () => import("@/views/Layer.vue"),
         meta: {
           notShow: true,
           layer: child.layer,
         },
       };
-      tab.component = () => import("@/views/Layer.vue");
       route.children.push(tab);
     }
     if (!item.subItems.length) {

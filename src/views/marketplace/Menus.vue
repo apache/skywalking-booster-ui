@@ -14,16 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="menus flex-v">
-    <el-tree
-      ref="treeRef"
-      :data="appStore.activateMenus"
-      show-checkbox
-      node-key="id"
-      default-expand-all
-      :default-checked-keys="appStore.checkedKeys"
-      :props="defaultProps"
-    />
-    <div class="footer flex-v">
+    <div class="tree-body">
+      <el-tree
+        ref="treeRef"
+        :data="appStore.activateMenus"
+        show-checkbox
+        node-key="id"
+        default-expand-all
+        :default-checked-keys="appStore.checkedKeys"
+        :props="defaultProps"
+      />
       <el-button class="btn" size="small" type="primary" @click="getCheckedNodes">
         {{ t("saveReload") }}
       </el-button>
@@ -60,12 +60,21 @@ limitations under the License. -->
     padding: 10px;
   }
 
+  .tree-body {
+    padding-left: 30px;
+    padding-top: 20px;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+  }
+
   .footer {
-    padding: 80px 10px 20px;
+    padding: 0 10px;
     background-color: #fff;
   }
 
   .btn {
     width: 150px;
+    margin-top: 20px;
   }
 </style>

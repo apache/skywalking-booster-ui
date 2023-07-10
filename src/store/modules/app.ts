@@ -22,7 +22,7 @@ import getLocalTime from "@/utils/localtime";
 import type { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
-import type { MenuOptions } from "@/types/app";
+import type { MenuOptions, SubItem } from "@/types/app";
 /*global Nullable*/
 interface AppState {
   durationRow: Recordable;
@@ -180,7 +180,7 @@ export const appStore = defineStore({
         d.id = d.name;
         if (d.subItems && d.subItems.length) {
           d.hasGroup = true;
-          d.subItems = d.subItems.map((item: any, sub: number) => {
+          d.subItems = d.subItems.map((item: SubItem, sub: number) => {
             const id = `${item.title.replace(/\s+/g, "-")}`;
             item.name = `${id}-${index}${sub}`;
             item.path = `/${t}/${id}`;
@@ -193,7 +193,7 @@ export const appStore = defineStore({
       });
       this.activateMenus = menus.filter((d: MenuOptions) => {
         if (d.activate) {
-          d.subItems = d.subItems.filter((item: any) => {
+          d.subItems = d.subItems.filter((item: SubItem) => {
             if (item.activate) {
               return item;
             }

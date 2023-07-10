@@ -406,6 +406,6 @@ const msg = {
   detail: "Detail",
   marketplace: "Marketplace",
   menus: "Menus",
-  saveReload: "Save and reload page",
+  saveReload: "Save and reload the page",
 };
 export default msg;
