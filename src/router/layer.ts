@@ -23,6 +23,7 @@ async function layerDashboards() {
   const routes = appStore.currentMenus.map((item: any) => {
     const route: any = {
       path: "",
+      name: item.name,
       component: Layout,
       meta: {
         icon: item.icon || "cloud_queue",
