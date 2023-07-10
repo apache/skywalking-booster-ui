@@ -22,7 +22,7 @@ export const routesAlarm: Array<RouteRecordRaw> = [
     path: "",
     name: "Alarm",
     meta: {
-      title: "alarm",
+      title: "Alerting",
       icon: "spam",
       hasGroup: false,
     },

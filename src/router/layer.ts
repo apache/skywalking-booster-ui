@@ -55,6 +55,19 @@ async function layerDashboards() {
       tab.component = () => import("@/views/Layer.vue");
       route.children.push(tab);
     }
+    if (!item.subItems.length) {
+      route.children = [
+        {
+          name: item.name,
+          path: item.path,
+          title: item.title,
+          layer: item.layer,
+          activate: item.activate,
+          icon: item.icon,
+          id: item.id,
+        },
+      ];
+    }
     return route;
   });
   return routes;

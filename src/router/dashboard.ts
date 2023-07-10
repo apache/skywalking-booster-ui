@@ -23,7 +23,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
     component: Layout,
     name: "Dashboard",
     meta: {
-      title: "dashboards",
+      title: "Dashboards",
       icon: "dashboard_customize",
       hasGroup: true,
     },
@@ -33,7 +33,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         component: () => import("@/views/dashboard/List.vue"),
         name: "List",
         meta: {
-          title: "dashboardList",
+          title: "Dashboard List",
         },
       },
       {
@@ -41,7 +41,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         component: () => import("@/views/dashboard/New.vue"),
         name: "New",
         meta: {
-          title: "dashboardNew",
+          title: "New Dashboard",
         },
       },
       {

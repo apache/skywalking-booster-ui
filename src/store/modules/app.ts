@@ -187,18 +187,6 @@ export const appStore = defineStore({
             item.id = item.name;
             return item;
           });
-        } else {
-          d.subItems = [
-            {
-              name: d.name,
-              path: d.path,
-              title: d.title,
-              layer: d.layer,
-              activate: d.activate,
-              icon: d.icon,
-              id: d.id,
-            },
-          ];
         }
 
         return d;
@@ -236,7 +224,10 @@ export const appStore = defineStore({
             subItems.push(item);
           }
         }
-        if (subItems.length && d.activate) {
+        if (d.hasGroup && subItems.length) {
+          current.push({ ...d, subItems });
+        }
+        if (!d.hasGroup && d.activate) {
           current.push({ ...d, subItems });
         }
       }

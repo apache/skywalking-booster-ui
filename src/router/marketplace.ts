@@ -22,7 +22,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
     path: "",
     name: "Marketplace",
     meta: {
-      title: "marketplace",
+      title: "Marketplace",
       icon: "settings",
       hasGroup: true,
     },
@@ -32,7 +32,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
         path: "/marketplace/menus",
         name: "MenusManagement",
         meta: {
-          title: "menus",
+          title: "Menus",
         },
         component: () => import("@/views/marketplace/Menus.vue"),
       },
@@ -40,7 +40,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
         path: "/marketplace/settings",
         name: "Settings",
         meta: {
-          title: "settings",
+          title: "Settings",
         },
         component: () => import("@/views/marketplace/Settings.vue"),
       },
