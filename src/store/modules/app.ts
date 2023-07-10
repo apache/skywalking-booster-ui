@@ -172,18 +172,19 @@ export const appStore = defineStore({
       );
     },
     async getActivateMenus() {
-      // localStorage.removeItem("customMenus");
       const resp = (await this.queryMenuItems()) || {};
       const menus = (resp.getMenuItems || []).map((d: MenuOptions, index: number) => {
         const t = `${d.title.replace(/\s+/g, "-")}`;
         d.name = `${t}-${index}`;
         d.path = `/${t}`;
+        d.id = d.name;
         if (d.subItems && d.subItems.length) {
           d.hasGroup = true;
           d.subItems = d.subItems.map((item: any, sub: number) => {
             const id = `${item.title.replace(/\s+/g, "-")}`;
             item.name = `${id}-${index}${sub}`;
             item.path = `/${t}/${id}`;
+            item.id = item.name;
             return item;
           });
         } else {
@@ -195,6 +196,7 @@ export const appStore = defineStore({
               layer: d.layer,
               activate: d.activate,
               icon: d.icon,
+              id: d.id,
             },
           ];
         }
@@ -226,16 +228,18 @@ export const appStore = defineStore({
       await this.getCurrentMenus();
     },
     getCurrentMenus() {
-      const current = this.activateMenus.filter((d: MenuOptions) => {
-        if (this.checkedKeys.includes(d.name)) {
-          d.subItems = d.subItems.filter((item: any) => {
-            if (this.checkedKeys.includes(item.name)) {
-              return item;
-            }
-          });
-          return d;
+      const current = [];
+      for (const d of this.activateMenus) {
+        const subItems = [];
+        for (const item of d.subItems) {
+          if (this.checkedKeys.includes(item.name)) {
+            subItems.push(item);
+          }
         }
-      });
+        if (subItems.length && d.activate) {
+          current.push({ ...d, subItems });
+        }
+      }
       this.setCurrentMenus(current);
     },
     async queryOAPTimeInfo() {

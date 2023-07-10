@@ -25,7 +25,7 @@ limitations under the License. -->
     />
     <div class="footer flex-v">
       <el-button class="btn" size="small" type="primary" @click="getCheckedNodes">
-        {{ t("save") }}
+        {{ t("saveReload") }}
       </el-button>
     </div>
   </div>
@@ -46,11 +46,10 @@ limitations under the License. -->
   appStore.setPageTitle("Menus");
 
   function getCheckedNodes() {
-    const checkedKeys = treeRef.value!.getCheckedKeys(false);
+    const checkedKeys = treeRef.value!.getCheckedKeys(false, false);
 
-    appStore.setCheckedKeys(checkedKeys);
-    appStore.getCurrentMenus();
-    window.localStorage.setItem("customMenus", JSON.stringify(checkedKeys.value));
+    window.localStorage.setItem("customMenus", JSON.stringify(checkedKeys));
+    window.location.reload();
   }
 </script>
 <style lang="scss" scoped>

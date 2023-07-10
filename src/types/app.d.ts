@@ -55,6 +55,7 @@ export interface MenuOptions {
   name?: string;
   path?: string;
   hasGroup?: boolean;
+  id?: string;
   subItems: {
     layer: string;
     icon: string;
@@ -63,5 +64,6 @@ export interface MenuOptions {
     name?: string;
     path?: string;
     notShow?: boolean;
+    id?: string;
   }[];
 }
