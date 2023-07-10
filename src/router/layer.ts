@@ -21,7 +21,7 @@ import type { MenuOptions } from "@/types/app";
 async function layerDashboards() {
   const appStore = useAppStoreWithOut();
   await appStore.getActivateMenus();
-  const routes = appStore.currentMenus.map((item: MenuOptions) => {
+  const routes = appStore.activateMenus.map((item: MenuOptions) => {
     const route: any = {
       path: "",
       name: item.name,
@@ -56,16 +56,17 @@ async function layerDashboards() {
       };
       route.children.push(tab);
     }
-    if (!item.subItems.length) {
+    if (!item.hasGroup) {
       route.children = [
         {
           name: item.name,
           path: item.path,
-          title: item.title,
-          layer: item.layer,
-          activate: item.activate,
-          icon: item.icon,
-          id: item.id,
+          meta: {
+            title: item.title,
+            layer: item.layer,
+            icon: item.icon,
+          },
+          component: () => import("@/views/Layer.vue"),
         },
       ];
     }

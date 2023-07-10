@@ -36,9 +36,7 @@ interface AppState {
   version: string;
   isMobile: boolean;
   reloadTimer: Nullable<IntervalHandle>;
-  currentMenus: MenuOptions[];
   activateMenus: MenuOptions[];
-  checkedKeys: string[];
 }
 
 export const appStore = defineStore({
@@ -59,9 +57,7 @@ export const appStore = defineStore({
     version: "",
     isMobile: false,
     reloadTimer: null,
-    currentMenus: [],
     activateMenus: [],
-    checkedKeys: [],
   }),
   getters: {
     duration(): Duration {
@@ -132,12 +128,6 @@ export const appStore = defineStore({
     updateDurationRow(data: Duration) {
       this.durationRow = data;
     },
-    setCurrentMenus(menus: MenuOptions[]) {
-      this.currentMenus = menus;
-    },
-    setCheckedKeys(keys: string[]) {
-      this.checkedKeys = keys;
-    },
     setUTC(utcHour: number, utcMin: number): void {
       this.runEventStack();
       this.utcMin = utcMin;
@@ -177,14 +167,12 @@ export const appStore = defineStore({
         const t = `${d.title.replace(/\s+/g, "-")}`;
         d.name = `${t}-${index}`;
         d.path = `/${t}`;
-        d.id = d.name;
         if (d.subItems && d.subItems.length) {
           d.hasGroup = true;
           d.subItems = d.subItems.map((item: SubItem, sub: number) => {
             const id = `${item.title.replace(/\s+/g, "-")}`;
             item.name = `${id}-${index}${sub}`;
             item.path = `/${t}/${id}`;
-            item.id = item.name;
             return item;
           });
         }
@@ -201,37 +189,6 @@ export const appStore = defineStore({
           return d;
         }
       });
-      const customMenus = localStorage.getItem("customMenus");
-      if (customMenus) {
-        this.checkedKeys = JSON.parse(customMenus);
-      } else {
-        for (const menus of this.activateMenus) {
-          this.checkedKeys.push(menus.name);
-          for (const item of menus.subItems) {
-            this.checkedKeys.push(item.name);
-          }
-        }
-        window.localStorage.setItem("customMenus", JSON.stringify(this.checkedKeys));
-      }
-      await this.getCurrentMenus();
-    },
-    getCurrentMenus() {
-      const current = [];
-      for (const d of this.activateMenus) {
-        const subItems = [];
-        for (const item of d.subItems) {
-          if (this.checkedKeys.includes(item.name)) {
-            subItems.push(item);
-          }
-        }
-        if (d.hasGroup && subItems.length) {
-          current.push({ ...d, subItems });
-        }
-        if (!d.hasGroup && d.activate) {
-          current.push({ ...d, subItems });
-        }
-      }
-      this.setCurrentMenus(current);
     },
     async queryOAPTimeInfo() {
       const res: AxiosResponse = await graphql.query("queryOAPTimeInfo").params({});

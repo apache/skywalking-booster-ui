@@ -15,28 +15,15 @@ limitations under the License. -->
 <template>
   <div class="menus flex-v">
     <div class="tree-body">
-      <el-tree
-        ref="treeRef"
-        :data="appStore.activateMenus"
-        show-checkbox
-        node-key="id"
-        default-expand-all
-        :default-checked-keys="appStore.checkedKeys"
-        :props="defaultProps"
-      />
-      <el-button class="btn" size="small" type="primary" @click="getCheckedNodes">
-        {{ t("saveReload") }}
-      </el-button>
+      <el-tree ref="treeRef" :data="appStore.activateMenus" node-key="name" default-expand-all :props="defaultProps" />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
-  import { useI18n } from "vue-i18n";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
   const appStore = useAppStoreWithOut();
-  const { t } = useI18n();
   const treeRef = ref<InstanceType<any>>();
   const defaultProps = {
     children: "subItems",
@@ -44,13 +31,6 @@ limitations under the License. -->
   };
 
   appStore.setPageTitle("Menus");
-
-  function getCheckedNodes() {
-    const checkedKeys = treeRef.value!.getCheckedKeys(false, false);
-
-    window.localStorage.setItem("customMenus", JSON.stringify(checkedKeys));
-    window.location.reload();
-  }
 </script>
 <style lang="scss" scoped>
   .menus {
@@ -66,15 +46,5 @@ limitations under the License. -->
     width: 100%;
     height: 100%;
     background-color: #fff;
-  }
-
-  .footer {
-    padding: 0 10px;
-    background-color: #fff;
-  }
-
-  .btn {
-    width: 150px;
-    margin-top: 20px;
   }
 </style>
