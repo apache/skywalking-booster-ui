@@ -25,7 +25,7 @@ limitations under the License. -->
         >
           <div class="title"> {{ menu.title }}</div>
           <div class="mt-10"> {{ menu.description }} </div>
-          <el-link :href="menu.documentLink" target="_blank" class="link">
+          <el-link :href="menu.documentLink" target="_blank" class="link" v-if="menu.documentLink">
             <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
           </el-link>
         </el-card>
@@ -34,7 +34,7 @@ limitations under the License. -->
         <el-card shadow="hover" v-for="(item, index) in currentItems.subItems || []" :key="index" class="card">
           <div class="title"> {{ item.title }}</div>
           <div class="mt-10"> {{ item.description }} </div>
-          <el-link :href="item.documentLink" target="_blank" class="link">
+          <el-link :href="item.documentLink" target="_blank" class="link" v-if="item.documentLink">
             <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
           </el-link>
         </el-card>
@@ -70,7 +70,6 @@ limitations under the License. -->
     padding-left: 20px 30px;
     width: 100%;
     height: 100%;
-    overflow: auto;
     justify-content: space-between;
   }
 
@@ -87,6 +86,8 @@ limitations under the License. -->
 
   .cards {
     min-width: 400px;
+    height: 100%;
+    overflow: auto;
   }
 
   .item {
@@ -100,6 +101,8 @@ limitations under the License. -->
     flex-wrap: wrap;
     border-right: 1px solid #ddd;
     align-content: flex-start;
+    height: 100%;
+    overflow: auto;
   }
 
   .link {
