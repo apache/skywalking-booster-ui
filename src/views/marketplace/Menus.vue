@@ -62,7 +62,7 @@ limitations under the License. -->
     currentItems.value = item;
   }
 
-  appStore.setPageTitle("Categories");
+  appStore.setPageTitle("Marketplace");
 </script>
 <style lang="scss" scoped>
   .menus {
