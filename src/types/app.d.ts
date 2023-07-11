@@ -47,15 +47,8 @@ export type EventParams = {
   event: any;
 };
 
-export interface MenuOptions {
-  layer: string;
-  icon: string;
-  title: string;
-  activate: boolean;
-  name?: string;
-  path?: string;
+export interface MenuOptions extends SubItem {
   hasGroup?: boolean;
-  id?: string;
   subItems: SubItem[];
 }
 
@@ -68,4 +61,6 @@ export interface SubItem {
   path?: string;
   notShow?: boolean;
   id?: string;
+  description: string;
+  documentLink: string;
 }
