@@ -23,18 +23,22 @@ limitations under the License. -->
           @click="handleItems(menu)"
           :class="currentItems.name === menu.name ? 'active' : ''"
         >
-          <div class="title"> {{ menu.title }}</div>
+          <router-link :to="menu.hasGroup ? '' : menu.path">
+            <div class="title" :class="menu.hasGroup ? '' : 'actived-font'"> {{ menu.title }}</div>
+          </router-link>
           <div class="mt-10"> {{ menu.description }} </div>
-          <el-link :href="menu.documentLink" target="_blank" class="link" v-if="menu.documentLink">
+          <el-link :href="menu.documentLink" target="_blank" class="link" v-show="menu.documentLink">
             <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
           </el-link>
         </el-card>
       </div>
       <div class="mt-10 cards">
         <el-card shadow="hover" v-for="(item, index) in currentItems.subItems || []" :key="index" class="card">
-          <div class="title"> {{ item.title }}</div>
+          <router-link :to="item.path">
+            <div class="title actived-font"> {{ item.title }}</div>
+          </router-link>
           <div class="mt-10"> {{ item.description }} </div>
-          <el-link :href="item.documentLink" target="_blank" class="link" v-if="item.documentLink">
+          <el-link :href="item.documentLink" target="_blank" class="link" v-show="item.documentLink">
             <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
           </el-link>
         </el-card>
@@ -50,7 +54,7 @@ limitations under the License. -->
 
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
-  const currentItems = ref<MenuOptions>(appStore.activateMenus[0]);
+  const currentItems = ref<MenuOptions>(appStore.activateMenus[0] || {});
 
   function handleItems(item: MenuOptions) {
     currentItems.value = item;
@@ -76,6 +80,10 @@ limitations under the License. -->
   .title {
     font-weight: bold;
     font-size: 14px;
+  }
+
+  .actived-font {
+    color: $active-color;
   }
 
   .card {
