@@ -67,7 +67,7 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, watch } from "vue";
   import type { RouteRecordRaw } from "vue-router";
   import { useRouter, useRoute } from "vue-router";
   import Icon from "@/components/Icon.vue";
@@ -110,6 +110,13 @@ limitations under the License. -->
     isCollapse.value = true;
     open.value = false;
   }
+
+  watch(
+    () => route.name,
+    () => {
+      name.value = String(route.name);
+    },
+  );
 </script>
 
 <style lang="scss" scoped>
