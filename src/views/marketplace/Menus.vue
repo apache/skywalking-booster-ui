@@ -56,7 +56,7 @@ limitations under the License. -->
 
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
-  const currentItems = ref<MenuOptions>(appStore.activateMenus[0] || {});
+  const currentItems = ref<MenuOptions>(appStore.allMenus[0] || {});
 
   function handleItems(item: MenuOptions) {
     currentItems.value = item;
