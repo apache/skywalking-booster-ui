@@ -24,18 +24,14 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
     meta: {
       title: "Marketplace",
       icon: "marketplace",
-      hasGroup: true,
+      hasGroup: false,
       activate: true,
     },
     component: Layout,
     children: [
       {
-        path: "/marketplace/menus",
+        path: "/marketplace",
         name: "MenusManagement",
-        meta: {
-          title: "Categories",
-          activate: true,
-        },
         component: () => import("@/views/marketplace/Menus.vue"),
       },
     ],

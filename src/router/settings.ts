@@ -32,10 +32,6 @@ export const routesSettings: Array<RouteRecordRaw> = [
       {
         path: "/settings",
         name: "Settings",
-        meta: {
-          title: "Settings",
-          activate: true,
-        },
         component: () => import("@/views/marketplace/Settings.vue"),
       },
     ],
