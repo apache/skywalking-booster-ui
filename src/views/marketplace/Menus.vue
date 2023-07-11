@@ -18,13 +18,15 @@ limitations under the License. -->
       <div class="mr-20 mt-10 flex-h category">
         <el-card
           class="item"
-          v-for="(menu, index) in appStore.activateMenus"
+          v-for="(menu, index) in appStore.allMenus"
           :key="index"
           @click="handleItems(menu)"
           :class="currentItems.name === menu.name ? 'active' : ''"
         >
-          <router-link :to="menu.hasGroup ? '' : menu.path || ''">
-            <div class="title" :class="menu.hasGroup ? '' : 'actived-font'"> {{ menu.title }}</div>
+          <router-link :to="menu.hasGroup || !menu.activate ? '' : menu.path || ''">
+            <div class="title" :class="menu.activate ? (menu.hasGroup ? '' : 'actived-font') : 'disabled'">
+              {{ menu.title }}</div
+            >
           </router-link>
           <div class="mt-10"> {{ menu.description }} </div>
           <el-link :href="menu.documentLink" target="_blank" class="link" v-show="menu.documentLink">
@@ -34,8 +36,8 @@ limitations under the License. -->
       </div>
       <div class="mt-10 cards">
         <el-card shadow="hover" v-for="(item, index) in currentItems.subItems || []" :key="index" class="card">
-          <router-link :to="item.path || ''">
-            <div class="title actived-font"> {{ item.title }}</div>
+          <router-link :to="item.activate ? item.path || '' : ''">
+            <div class="title" :class="item.activate ? 'actived-font' : 'disabled'"> {{ item.title }}</div>
           </router-link>
           <div class="mt-10"> {{ item.description }} </div>
           <el-link :href="item.documentLink" target="_blank" class="link" v-show="item.documentLink">
@@ -84,6 +86,10 @@ limitations under the License. -->
 
   .actived-font {
     color: $active-color;
+  }
+
+  .disabled {
+    color: #aaa;
   }
 
   .card {
