@@ -75,9 +75,12 @@ limitations under the License. -->
 
   /*global Recordable*/
   const appStore = useAppStoreWithOut();
-  const name = ref<string>(String(useRouter().currentRoute.value.name));
+  const router = useRouter();
+  const name = ref<string>(String(router.currentRoute.value.name));
   const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "") ? ref("light") : ref("black");
-  const routes = ref<RouteRecordRaw[] | any>(useRouter().options.routes);
+  const routes = ref<RouteRecordRaw[] | any>(
+    (router.options.routes || []).filter((d: any) => d.meta && d.meta.activate),
+  );
   const route = useRoute();
   const isCollapse = ref(true);
   const showMenu = ref(true);
@@ -95,7 +98,7 @@ limitations under the License. -->
     theme.value = ["VirtualMachine", "Kubernetes"].includes(String(menu.name)) ? "light" : "black";
   };
   const filterMenus = (menus: Recordable[]) => {
-    return menus.filter((d) => d.meta && !d.meta.notShow);
+    return menus.filter((d) => d.meta && !d.meta.notShow && d.meta.activate);
   };
   function setCollapse() {
     open.value = true;

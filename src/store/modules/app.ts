@@ -36,7 +36,7 @@ interface AppState {
   version: string;
   isMobile: boolean;
   reloadTimer: Nullable<IntervalHandle>;
-  activateMenus: MenuOptions[];
+  allMenus: MenuOptions[];
 }
 
 export const appStore = defineStore({
@@ -57,7 +57,7 @@ export const appStore = defineStore({
     version: "",
     isMobile: false,
     reloadTimer: null,
-    activateMenus: [],
+    allMenus: [],
   }),
   getters: {
     duration(): Duration {
@@ -163,7 +163,8 @@ export const appStore = defineStore({
     },
     async getActivateMenus() {
       const resp = (await this.queryMenuItems()) || {};
-      const menus = (resp.getMenuItems || []).map((d: MenuOptions, index: number) => {
+
+      this.allMenus = (resp.getMenuItems || []).map((d: MenuOptions, index: number) => {
         const t = `${d.title.replace(/\s+/g, "-")}`;
         d.name = `${t}-${index}`;
         d.path = `/${t}`;
@@ -178,16 +179,6 @@ export const appStore = defineStore({
         }
 
         return d;
-      });
-      this.activateMenus = menus.filter((d: MenuOptions) => {
-        if (d.activate) {
-          d.subItems = d.subItems.filter((item: SubItem) => {
-            if (item.activate) {
-              return item;
-            }
-          });
-          return d;
-        }
       });
     },
     async queryOAPTimeInfo() {
