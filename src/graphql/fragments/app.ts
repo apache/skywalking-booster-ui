@@ -26,3 +26,24 @@ export const OAPTimeInfo = {
 export const OAPVersion = {
   query: `version { version }`,
 };
+
+export const MenuItems = {
+  query: `
+    getMenuItems {
+        title
+        icon
+        layer
+        activate
+        description
+        documentLink
+        subItems {
+          title
+          icon
+          layer
+          activate
+          description
+          documentLink
+        }
+      }
+    `,
+};

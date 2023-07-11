@@ -36,14 +36,14 @@ limitations under the License. -->
                   <Icon size="lg" :iconName="menu.meta.icon" />
                 </el-icon>
                 <span class="title" :class="isCollapse ? 'collapse' : ''">
-                  {{ t(menu.meta.title) }}
+                  {{ menu.meta.title }}
                 </span>
               </router-link>
             </template>
             <el-menu-item-group>
               <el-menu-item v-for="(m, idx) in filterMenus(menu.children)" :index="m.name" :key="idx">
                 <router-link class="items" :to="m.path">
-                  <span class="title">{{ m.meta && t(m.meta.title) }}</span>
+                  <span class="title">{{ m.meta && m.meta.title }}</span>
                 </router-link>
               </el-menu-item>
             </el-menu-item-group>
@@ -56,7 +56,7 @@ limitations under the License. -->
             </el-icon>
             <template #title>
               <router-link class="items menu-title" :to="menu.children[0].path">
-                <span class="title">{{ t(menu.meta.title) }}</span>
+                <span class="title">{{ menu.meta.title }}</span>
               </router-link>
             </template>
           </el-menu-item>
@@ -67,16 +67,14 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, watch } from "vue";
   import type { RouteRecordRaw } from "vue-router";
   import { useRouter, useRoute } from "vue-router";
-  import { useI18n } from "vue-i18n";
   import Icon from "@/components/Icon.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
   /*global Recordable*/
   const appStore = useAppStoreWithOut();
-  const { t } = useI18n();
   const name = ref<string>(String(useRouter().currentRoute.value.name));
   const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "") ? ref("light") : ref("black");
   const routes = ref<RouteRecordRaw[] | any>(useRouter().options.routes);
@@ -112,6 +110,13 @@ limitations under the License. -->
     isCollapse.value = true;
     open.value = false;
   }
+
+  watch(
+    () => route.name,
+    () => {
+      name.value = String(route.name);
+    },
+  );
 </script>
 
 <style lang="scss" scoped>

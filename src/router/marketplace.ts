@@ -14,33 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import type { RouteRecordRaw } from "vue-router";
+import Layout from "@/layout/Index.vue";
 
-export default [
+export const routesMarketplace: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "MQ",
+    name: "Marketplace",
     meta: {
-      title: "mq",
-      icon: "mq",
+      title: "Marketplace",
+      icon: "marketplace",
       hasGroup: true,
     },
-    redirect: "/rabbitMQ",
+    component: Layout,
     children: [
       {
-        path: "/rabbitMQ",
-        name: "RabbitMQ",
+        path: "/marketplace/menus",
+        name: "MenusManagement",
         meta: {
-          title: "rabbitMQ",
-          layer: "RABBITMQ",
+          title: "Categories",
         },
+        component: () => import("@/views/marketplace/Menus.vue"),
       },
       {
-        path: "/rabbitMQ/tab/:activeTabIndex",
-        name: "RabbitMQActiveTabIndex",
+        path: "/marketplace/settings",
+        name: "Settings",
         meta: {
-          notShow: true,
-          layer: "RABBITMQ",
+          title: "Settings",
         },
+        component: () => import("@/views/marketplace/Settings.vue"),
       },
     ],
   },

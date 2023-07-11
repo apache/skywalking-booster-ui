@@ -402,5 +402,9 @@ const msg = {
   detailLabel: "详细标签",
   summary: "概括",
   detail: "详细",
+  marketplace: "市场",
+  menusManagement: "菜单",
+  saveReload: "保存并重新加载页面",
+  document: "文档",
 };
 export default msg;

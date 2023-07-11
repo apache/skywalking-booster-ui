@@ -405,5 +405,9 @@ const msg = {
   detailLabel: "Detail Label",
   summary: "Summary",
   detail: "Detail",
+  marketplace: "Marketplace",
+  menus: "Menus",
+  saveReload: "Save and reload the page",
+  document: "Documentation",
 };
 export default msg;

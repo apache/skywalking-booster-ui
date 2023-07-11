@@ -17,11 +17,11 @@
 import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 import { routesDashboard } from "./dashboard";
-import { routesSetting } from "./setting";
+import { routesMarketplace } from "./marketplace";
 import { routesAlarm } from "./alarm";
 import routesLayers from "./layer";
 
-const routes: Array<RouteRecordRaw> = [...routesLayers, ...routesDashboard, ...routesAlarm, ...routesSetting];
+const routes: Array<RouteRecordRaw> = [...routesMarketplace, ...routesLayers, ...routesDashboard, ...routesAlarm];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +29,8 @@ const router = createRouter({
 });
 
 (window as any).axiosCancel = [];
+
+const defaultPath = (routesLayers[0] && routesLayers[0].children[0].path) || "";
 
 router.beforeEach((to, from, next) => {
   // const token = window.localStorage.getItem("skywalking-authority");
@@ -38,8 +40,9 @@ router.beforeEach((to, from, next) => {
     }
     (window as any).axiosCancel = [];
   }
+
   if (to.path === "/") {
-    next({ path: "/general" });
+    next({ path: defaultPath });
   } else {
     next();
   }
