@@ -23,7 +23,7 @@ limitations under the License. -->
           @click="handleItems(menu)"
           :class="currentItems.name === menu.name ? 'active' : ''"
         >
-          <router-link :to="menu.hasGroup ? '' : menu.path">
+          <router-link :to="menu.hasGroup ? '' : menu.path || ''">
             <div class="title" :class="menu.hasGroup ? '' : 'actived-font'"> {{ menu.title }}</div>
           </router-link>
           <div class="mt-10"> {{ menu.description }} </div>
@@ -34,7 +34,7 @@ limitations under the License. -->
       </div>
       <div class="mt-10 cards">
         <el-card shadow="hover" v-for="(item, index) in currentItems.subItems || []" :key="index" class="card">
-          <router-link :to="item.path">
+          <router-link :to="item.path || ''">
             <div class="title actived-font"> {{ item.title }}</div>
           </router-link>
           <div class="mt-10"> {{ item.description }} </div>
