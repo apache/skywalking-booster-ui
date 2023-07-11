@@ -25,6 +25,7 @@ export const routesAlarm: Array<RouteRecordRaw> = [
       title: "Alerting",
       icon: "spam",
       hasGroup: false,
+      activate: true,
     },
     component: Layout,
     children: [

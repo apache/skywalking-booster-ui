@@ -21,7 +21,7 @@ import type { MenuOptions } from "@/types/app";
 async function layerDashboards() {
   const appStore = useAppStoreWithOut();
   await appStore.getActivateMenus();
-  const routes = appStore.activateMenus.map((item: MenuOptions) => {
+  const routes = appStore.allMenus.map((item: MenuOptions) => {
     const route: any = {
       path: "",
       name: item.name,
@@ -30,6 +30,7 @@ async function layerDashboards() {
         icon: item.icon || "cloud_queue",
         title: item.title,
         hasGroup: item.hasGroup,
+        activate: item.activate,
       },
       children: item.subItems && item.subItems.length ? [] : undefined,
     };
@@ -41,6 +42,7 @@ async function layerDashboards() {
           title: child.title,
           layer: child.layer,
           icon: child.icon || "cloud_queue",
+          activate: child.activate,
         },
         component: () => import("@/views/Layer.vue"),
       };
@@ -65,6 +67,7 @@ async function layerDashboards() {
             title: item.title,
             layer: item.layer,
             icon: item.icon,
+            activate: item.activate,
           },
           component: () => import("@/views/Layer.vue"),
         },

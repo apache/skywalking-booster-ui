@@ -29,37 +29,39 @@ limitations under the License. -->
         :style="{ border: 'none' }"
       >
         <template v-for="(menu, index) in routes" :key="index">
-          <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup" popper-class="sub-list">
-            <template #title>
-              <router-link class="items" :to="menu.path">
-                <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
-                  <Icon size="lg" :iconName="menu.meta.icon" />
-                </el-icon>
-                <span class="title" :class="isCollapse ? 'collapse' : ''">
-                  {{ menu.meta.title }}
-                </span>
-              </router-link>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item v-for="(m, idx) in filterMenus(menu.children)" :index="m.name" :key="idx">
-                <router-link class="items" :to="m.path">
-                  <span class="title">{{ m.meta && m.meta.title }}</span>
+          <span v-if="menu.meta.activate">
+            <el-sub-menu :index="String(menu.name)" v-if="menu.meta.hasGroup" popper-class="sub-list">
+              <template #title>
+                <router-link class="items" :to="menu.path">
+                  <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
+                    <Icon size="lg" :iconName="menu.meta.icon" />
+                  </el-icon>
+                  <span class="title" :class="isCollapse ? 'collapse' : ''">
+                    {{ menu.meta.title }}
+                  </span>
                 </router-link>
-              </el-menu-item>
-            </el-menu-item-group>
-          </el-sub-menu>
-          <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
-            <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
-              <router-link class="items menu-title" :to="menu.children[0].path">
-                <Icon size="lg" :iconName="menu.meta.icon" />
-              </router-link>
-            </el-icon>
-            <template #title>
-              <router-link class="items menu-title" :to="menu.children[0].path">
-                <span class="title">{{ menu.meta.title }}</span>
-              </router-link>
-            </template>
-          </el-menu-item>
+              </template>
+              <el-menu-item-group>
+                <el-menu-item v-for="(m, idx) in filterMenus(menu.children)" :index="m.name" :key="idx">
+                  <router-link class="items" :to="m.path">
+                    <span class="title">{{ m.meta && m.meta.title }}</span>
+                  </router-link>
+                </el-menu-item>
+              </el-menu-item-group>
+            </el-sub-menu>
+            <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
+              <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
+                <router-link class="items menu-title" :to="menu.children[0].path">
+                  <Icon size="lg" :iconName="menu.meta.icon" />
+                </router-link>
+              </el-icon>
+              <template #title>
+                <router-link class="items menu-title" :to="menu.children[0].path">
+                  <span class="title">{{ menu.meta.title }}</span>
+                </router-link>
+              </template>
+            </el-menu-item>
+          </span>
         </template>
       </el-menu>
     </div>
@@ -95,7 +97,7 @@ limitations under the License. -->
     theme.value = ["VirtualMachine", "Kubernetes"].includes(String(menu.name)) ? "light" : "black";
   };
   const filterMenus = (menus: Recordable[]) => {
-    return menus.filter((d) => d.meta && !d.meta.notShow);
+    return menus.filter((d) => d.meta && !d.meta.notShow && d.meta.activate);
   };
   function setCollapse() {
     open.value = true;

@@ -25,6 +25,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
       title: "Marketplace",
       icon: "marketplace",
       hasGroup: true,
+      activate: true,
     },
     component: Layout,
     children: [
@@ -33,6 +34,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
         name: "MenusManagement",
         meta: {
           title: "Categories",
+          activate: true,
         },
         component: () => import("@/views/marketplace/Menus.vue"),
       },
@@ -41,6 +43,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
         name: "Settings",
         meta: {
           title: "Settings",
+          activate: true,
         },
         component: () => import("@/views/marketplace/Settings.vue"),
       },
