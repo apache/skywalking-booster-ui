@@ -405,5 +405,6 @@ const msg = {
   marketplace: "市场",
   menusManagement: "菜单",
   saveReload: "保存并重新加载页面",
+  document: "文档",
 };
 export default msg;

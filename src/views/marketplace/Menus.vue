@@ -14,23 +14,49 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="menus flex-v">
-    <div class="tree-body">
-      <el-tree ref="treeRef" :data="appStore.activateMenus" node-key="name" default-expand-all :props="defaultProps" />
+    <div class="category-body flex-h">
+      <div class="mr-20 mt-10 flex-h category">
+        <el-card
+          class="item"
+          v-for="(menu, index) in appStore.activateMenus"
+          :key="index"
+          @click="handleItems(menu)"
+          :class="currentItems.name === menu.name ? 'active' : ''"
+        >
+          <div class="title"> {{ menu.title }}</div>
+          <div class="mt-10"> {{ menu.description }} </div>
+          <el-link :href="menu.documentLink" target="_blank" class="link">
+            <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
+          </el-link>
+        </el-card>
+      </div>
+      <div class="mt-10 cards">
+        <el-card shadow="hover" v-for="(item, index) in currentItems.subItems || []" :key="index" class="card">
+          <div class="title"> {{ item.title }}</div>
+          <div class="mt-10"> {{ item.description }} </div>
+          <el-link :href="item.documentLink" target="_blank" class="link">
+            <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
+          </el-link>
+        </el-card>
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import type { MenuOptions } from "@/types/app";
 
+  const { t } = useI18n();
   const appStore = useAppStoreWithOut();
-  const treeRef = ref<InstanceType<any>>();
-  const defaultProps = {
-    children: "subItems",
-    label: "title",
-  };
+  const currentItems = ref<MenuOptions>(appStore.activateMenus[0]);
 
-  appStore.setPageTitle("Menus");
+  function handleItems(item: MenuOptions) {
+    currentItems.value = item;
+  }
+
+  appStore.setPageTitle("Categories");
 </script>
 <style lang="scss" scoped>
   .menus {
@@ -40,11 +66,48 @@ limitations under the License. -->
     padding: 10px;
   }
 
-  .tree-body {
-    padding-left: 30px;
-    padding-top: 20px;
+  .category-body {
+    padding-left: 20px 30px;
     width: 100%;
     height: 100%;
-    background-color: #fff;
+    overflow: auto;
+    justify-content: space-between;
+  }
+
+  .title {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .card {
+    margin-bottom: 30px;
+    cursor: pointer;
+    width: 380px;
+  }
+
+  .cards {
+    min-width: 400px;
+  }
+
+  .item {
+    margin-bottom: 20px;
+    margin-right: 10px;
+    width: 300px;
+    cursor: pointer;
+  }
+
+  .category {
+    flex-wrap: wrap;
+    border-right: 1px solid #ddd;
+    align-content: flex-start;
+  }
+
+  .link {
+    float: right;
+    margin-bottom: 20px;
+  }
+
+  .active {
+    border: 1px solid $active-color;
   }
 </style>

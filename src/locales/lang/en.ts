@@ -408,5 +408,6 @@ const msg = {
   marketplace: "Marketplace",
   menus: "Menus",
   saveReload: "Save and reload the page",
+  document: "Document",
 };
 export default msg;

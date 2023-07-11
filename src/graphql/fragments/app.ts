@@ -34,11 +34,15 @@ export const MenuItems = {
         icon
         layer
         activate
+        description
+        documentLink
         subItems {
           title
           icon
           layer
           activate
+          description
+          documentLink
         }
       }
     `,
