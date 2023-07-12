@@ -168,6 +168,7 @@ export const appStore = defineStore({
         const t = `${d.title.replace(/\s+/g, "-")}`;
         d.name = `${t}-${index}`;
         d.path = `/${t}`;
+        d.descKey = `${d.i18nKey}_desc`;
         if (d.subItems && d.subItems.length) {
           d.hasGroup = true;
           d.subItems = d.subItems.map((item: SubItem, sub: number) => {

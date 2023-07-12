@@ -25,8 +25,8 @@ limitations under the License. -->
         >
           <router-link :to="menu.hasGroup ? '' : menu.path || ''">
             <div class="title" :class="menu.activate ? (menu.hasGroup ? '' : 'actived-font') : 'disabled'">
-              {{ menu.title }}</div
-            >
+              {{ menu.title }}
+            </div>
           </router-link>
           <div class="mt-10"> {{ menu.description }} </div>
           <el-link :href="menu.documentLink" target="_blank" class="link" v-show="menu.documentLink">

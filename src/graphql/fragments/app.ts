@@ -36,6 +36,7 @@ export const MenuItems = {
         activate
         description
         documentLink
+        i18nKey
         subItems {
           title
           icon
@@ -43,6 +44,7 @@ export const MenuItems = {
           activate
           description
           documentLink
+          i18nKey
         }
       }
     `,
