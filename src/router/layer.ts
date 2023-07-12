@@ -31,6 +31,8 @@ async function layerDashboards() {
         title: item.title,
         hasGroup: item.hasGroup,
         activate: item.activate,
+        descKey: item.descKey,
+        i18nKey: item.i18nKey,
       },
       children: item.subItems && item.subItems.length ? [] : undefined,
     };
@@ -43,6 +45,8 @@ async function layerDashboards() {
           layer: child.layer,
           icon: child.icon || "cloud_queue",
           activate: child.activate,
+          descKey: child.descKey,
+          i18nKey: child.i18nKey,
         },
         component: () => import("@/views/Layer.vue"),
       };
@@ -68,6 +72,8 @@ async function layerDashboards() {
             layer: item.layer,
             icon: item.icon,
             activate: item.activate,
+            descKey: item.descKey,
+            i18nKey: item.i18nKey,
           },
           component: () => import("@/views/Layer.vue"),
         },

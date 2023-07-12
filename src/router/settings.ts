@@ -22,7 +22,7 @@ export const routesSettings: Array<RouteRecordRaw> = [
     path: "",
     name: "Settings",
     meta: {
-      title: "Settings",
+      i18nKey: "settings",
       icon: "settings",
       hasGroup: false,
       activate: true,
@@ -32,7 +32,7 @@ export const routesSettings: Array<RouteRecordRaw> = [
       {
         path: "/settings",
         name: "Settings",
-        component: () => import("@/views/marketplace/Settings.vue"),
+        component: () => import("@/views/Settings.vue"),
       },
     ],
   },

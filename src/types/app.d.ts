@@ -63,4 +63,6 @@ export interface SubItem {
   id?: string;
   description: string;
   documentLink: string;
+  descKey: string;
+  i18nKey: string;
 }

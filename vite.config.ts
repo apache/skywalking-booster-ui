@@ -80,7 +80,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     },
     build: {
       target: "esnext",
-      cssTarget: "chrome80",
       outDir: OUTPUT_DIR,
       manifest: false,
       sourcemap: false,
