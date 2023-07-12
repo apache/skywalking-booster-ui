@@ -22,7 +22,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
     path: "",
     name: "Marketplace",
     meta: {
-      title: "Marketplace",
+      i18nKey: "marketplace",
       icon: "marketplace",
       hasGroup: false,
       activate: true,

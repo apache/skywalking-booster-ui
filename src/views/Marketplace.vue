@@ -25,10 +25,10 @@ limitations under the License. -->
         >
           <router-link :to="menu.hasGroup ? '' : menu.path || ''">
             <div class="title" :class="menu.activate ? (menu.hasGroup ? '' : 'actived-font') : 'disabled'">
-              {{ menu.title }}
+              {{ t(menu.i18nKey) }}
             </div>
           </router-link>
-          <div class="mt-10"> {{ menu.description }} </div>
+          <div class="mt-10"> {{ t(menu.descKey) }} </div>
           <el-link :href="menu.documentLink" target="_blank" class="link" v-show="menu.documentLink">
             <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
           </el-link>
@@ -37,9 +37,9 @@ limitations under the License. -->
       <div class="mt-10 cards">
         <el-card shadow="hover" v-for="(item, index) in currentItems.subItems || []" :key="index" class="card">
           <router-link :to="item.path || ''">
-            <div class="title" :class="item.activate ? 'actived-font' : 'disabled'"> {{ item.title }}</div>
+            <div class="title" :class="item.activate ? 'actived-font' : 'disabled'"> {{ t(item.i18nKey) }}</div>
           </router-link>
-          <div class="mt-10"> {{ item.description }} </div>
+          <div class="mt-10"> {{ t(item.descKey) }} </div>
           <el-link :href="item.documentLink" target="_blank" class="link" v-show="item.documentLink">
             <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
           </el-link>

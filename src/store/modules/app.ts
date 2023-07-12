@@ -175,6 +175,7 @@ export const appStore = defineStore({
             const id = `${item.title.replace(/\s+/g, "-")}`;
             item.name = `${id}-${index}${sub}`;
             item.path = `/${t}/${id}`;
+            item.descKey = `${item.i18nKey}_desc`;
             return item;
           });
         }

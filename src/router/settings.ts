@@ -22,7 +22,7 @@ export const routesSettings: Array<RouteRecordRaw> = [
     path: "",
     name: "Settings",
     meta: {
-      title: "Settings",
+      i18nKey: "settings",
       icon: "settings",
       hasGroup: false,
       activate: true,
