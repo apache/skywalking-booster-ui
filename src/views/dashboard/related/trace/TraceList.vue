@@ -14,8 +14,8 @@ limitations under the License. -->
   <div class="trace-t flex-v">
     <div class="trace-t-tool flex-h">
       <el-pagination
-        v-model:currentPage="traceStore.conditions.paging.pageNum"
-        v-model:page-size="pageSize"
+        v-model="traceStore.conditions.paging.pageNum"
+        :page-size="pageSize"
         :small="true"
         layout="prev, pager, next"
         :pager-count="5"
@@ -128,7 +128,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .trace-t-tool {
-    background-color: rgba(196, 200, 225, 0.2);
+    background-color: rgb(196 200 225 / 20%);
     justify-content: space-between;
     border-bottom: 1px solid #c1c5ca41;
     border-right: 1px solid #c1c5ca41;
@@ -141,7 +141,7 @@ limitations under the License. -->
 
   .trace-t-wrapper {
     overflow: auto;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgb(0 0 0 / 10%);
   }
 
   .trace-t-loading {
@@ -169,13 +169,13 @@ limitations under the License. -->
 
   .trace-tr {
     &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
+      background-color: rgb(0 0 0 / 4%);
     }
   }
 
   .trace-td {
     padding: 5px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgb(0 0 0 / 7%);
 
     &.selected {
       background-color: #ededed;
@@ -183,7 +183,7 @@ limitations under the License. -->
   }
 
   .trace-success {
-    border-left: 4px solid rgba(46, 47, 51, 0.1);
+    border-left: 4px solid rgb(46 47 51 / 10%);
   }
 
   .trace-warning {

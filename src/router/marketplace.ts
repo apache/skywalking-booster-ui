@@ -32,7 +32,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
       {
         path: "/marketplace",
         name: "MenusManagement",
-        component: () => import("@/views/marketplace/Menus.vue"),
+        component: () => import("@/views/Marketplace.vue"),
       },
     ],
   },

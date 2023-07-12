@@ -32,8 +32,8 @@ limitations under the License. -->
       </div>
       <div class="pagination">
         <el-pagination
-          v-model:currentPage="pageNum"
-          v-model:page-size="pageSize"
+          v-model="pageNum"
+          :page-size="pageSize"
           layout="prev, pager, next"
           :total="total"
           @current-change="changePage"

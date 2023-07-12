@@ -19,8 +19,8 @@ limitations under the License. -->
     </LogTable>
     <div class="mt-5 mb-5">
       <el-pagination
-        v-model:currentPage="logStore.conditions.paging.pageNum"
-        v-model:page-size="pageSize"
+        v-model="logStore.conditions.paging.pageNum"
+        :page-size="pageSize"
         :small="true"
         layout="prev, pager, next"
         :pager-count="5"
