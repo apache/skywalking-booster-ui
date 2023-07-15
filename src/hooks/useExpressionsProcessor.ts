@@ -113,7 +113,8 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
       if (!obj.error) {
         if (type === ExpressionResultType.TIME_SERIES_VALUES) {
           if (results.length === 1) {
-            source[c.label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
+            const label = results[0].metric && results[0].metric.labels[0].value;
+            source[c.label || label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
           } else {
             const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
             for (const item of results) {
@@ -129,7 +130,8 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
           }
         }
         if (type === ExpressionResultType.SINGLE_VALUE) {
-          source[c.label || name] = (results[0].values[0] || {}).value;
+          const label = results[0].metric && results[0].metric.labels[0].value;
+          source[c.label || label || name] = (results[0].values[0] || {}).value;
         }
         if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
           source[name] = results[0].values;

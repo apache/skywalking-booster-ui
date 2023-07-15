@@ -51,7 +51,7 @@ limitations under the License. -->
       default: () => ({ showTableValues: true }),
     },
   });
-
+  console.log(props.data);
   const { t } = useI18n();
   const nameWidth = computed(() => (props.config.showTableValues ? "80%" : "100%"));
   const dataKeys = computed(() => {
