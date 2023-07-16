@@ -72,7 +72,7 @@ const titles = {
   aws_cloud_s3: "S3",
   aws_cloud_s3_desc: "Provide AWS Cloud S3 monitoring through AWS FireHose Receiver.",
   aws_cloud_dynamodb: "DynamoDB",
-  aws_cloud_dynamodb_desc: "Provide DynamoDB monitoring through Amazon CloudWatch.",
+  aws_cloud_dynamodb_desc: "Provide DynamoDB monitoring through AWS FireHose Receiver.",
   aws_cloud_api_gateway: "API Gateway",
   aws_cloud_api_gateway_desc: "Provide AWS Cloud API Gateway monitoring through AWS FireHose Receiver.",
   // Browser
