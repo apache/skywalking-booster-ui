@@ -101,6 +101,8 @@ const titles = {
   database_redis_desc: "Provide Redis monitoring through OpenTelemetry's Prometheus Receiver.",
   database_elasticsearch: "Elasticsearch",
   database_elasticsearch_desc: "Provide Elasticsearch Server monitoring through OpenTelemetry's Prometheus Receiver.",
+  database_mongodb: "MongoDB",
+  database_mongodb_desc: "Provide MongoDB monitoring through OpenTelemetry's Prometheus Receiver.",
   // Message Queue
   mq: "Message Queue",
   mq_desc:

@@ -89,6 +89,8 @@ const titles = {
   database_redis_desc: "通过OpenTelemetry的Prometheus接收器提供Redis监控。",
   database_elasticsearch: "Elasticsearch",
   database_elasticsearch_desc: "通过OpenTelemetry的Prometheus接收器提供Elasticsearch服务器监控。",
+  database_mongodb: "MongoDB",
+  database_mongodb_desc: "通过OpenTelemetry的Prometheus接收器提供MongoDB监控。",
   // Message Queue
   mq: "消息队列",
   mq_desc: "消息队列是无服务器和微服务架构中使用的异步服务对服务通信的一种形式。",
