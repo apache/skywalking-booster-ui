@@ -26,6 +26,7 @@ export const routesSettings: Array<RouteRecordRaw> = [
       icon: "settings",
       hasGroup: false,
       activate: true,
+      title: "Settings",
     },
     component: Layout,
     children: [

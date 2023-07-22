@@ -36,14 +36,16 @@ limitations under the License. -->
                   <Icon size="lg" :iconName="menu.meta.icon" />
                 </el-icon>
                 <span class="title" :class="isCollapse ? 'collapse' : ''">
-                  {{ t(menu.meta.i18nKey) }}
+                  {{ te(menu.meta.i18nKey) ? t(menu.meta.i18nKey) : menu.meta.title }}
                 </span>
               </router-link>
             </template>
             <el-menu-item-group>
               <el-menu-item v-for="(m, idx) in filterMenus(menu.children)" :index="m.name" :key="idx">
                 <router-link class="items" :to="m.path">
-                  <span class="title">{{ t(m.meta && m.meta.i18nKey) }}</span>
+                  <span class="title">
+                    {{ m.meta && (te(m.meta.i18nKey) ? t(m.meta.i18nKey) : m.meta.title) }}
+                  </span>
                 </router-link>
               </el-menu-item>
             </el-menu-item-group>
@@ -56,7 +58,9 @@ limitations under the License. -->
             </el-icon>
             <template #title>
               <router-link class="items menu-title" :to="menu.children[0].path">
-                <span class="title">{{ t(menu.meta.i18nKey) }}</span>
+                <span class="title">
+                  {{ te(menu.meta.i18nKey) ? t(menu.meta.i18nKey) : menu.meta.title }}
+                </span>
               </router-link>
             </template>
           </el-menu-item>
@@ -75,7 +79,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
 
   /*global Recordable*/
-  const { t } = useI18n();
+  const { t, te } = useI18n();
   const appStore = useAppStoreWithOut();
   const router = useRouter();
   const name = ref<string>(String(router.currentRoute.value.name));
