@@ -27,7 +27,7 @@ const titles = {
   general_service_virtual_cache: "Visual Cache",
   general_service_virtual_cache_desc:
     "Observe the virtual cache servers which are conjectured by language agents through various plugins.",
-  general_service_virtual_mq: "Visual MQ",
+  general_service_virtual_mq: "Virtual MQ",
   general_service_virtual_mq_desc:
     "Observe the virtual message queue servers which are conjectured by language agents through various plugins.",
   // Service Mesh
