@@ -26,6 +26,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
       icon: "marketplace",
       hasGroup: false,
       activate: true,
+      title: "Marketplace",
     },
     component: Layout,
     children: [

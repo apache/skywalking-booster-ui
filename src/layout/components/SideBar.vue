@@ -44,7 +44,7 @@ limitations under the License. -->
               <el-menu-item v-for="(m, idx) in filterMenus(menu.children)" :index="m.name" :key="idx">
                 <router-link class="items" :to="m.path">
                   <span class="title">
-                    {{ m.meta && (te(menu.meta.i18nKey) ? t(menu.meta.i18nKey) : menu.meta.title) }}
+                    {{ m.meta && (te(m.meta.i18nKey) ? t(m.meta.i18nKey) : m.meta.title) }}
                   </span>
                 </router-link>
               </el-menu-item>
