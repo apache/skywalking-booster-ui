@@ -91,7 +91,7 @@ limitations under the License. -->
   const isCollapse = ref(true);
   const showMenu = ref(true);
   const open = ref<boolean>(false);
-  console.log(routes.value);
+
   if (/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
     appStore.setIsMobile(true);
   } else {
