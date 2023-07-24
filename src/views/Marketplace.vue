@@ -25,10 +25,10 @@ limitations under the License. -->
         >
           <router-link :to="menu.hasGroup ? '' : menu.path || ''">
             <div class="title" :class="menu.activate ? (menu.hasGroup ? '' : 'actived-font') : 'disabled'">
-              {{ t(menu.i18nKey) }}
+              {{ te(menu.i18nKey) ? t(menu.i18nKey) : menu.title }}
             </div>
           </router-link>
-          <div class="mt-10"> {{ t(menu.descKey) }} </div>
+          <div class="mt-10"> {{ te(menu.descKey) ? t(menu.descKey) : "" }} </div>
           <el-link :href="menu.documentLink" target="_blank" class="link" v-show="menu.documentLink">
             <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
           </el-link>
@@ -37,9 +37,11 @@ limitations under the License. -->
       <div class="mt-10 cards">
         <el-card shadow="hover" v-for="(item, index) in currentItems.subItems || []" :key="index" class="card">
           <router-link :to="item.path || ''">
-            <div class="title" :class="item.activate ? 'actived-font' : 'disabled'"> {{ t(item.i18nKey) }}</div>
+            <div class="title" :class="item.activate ? 'actived-font' : 'disabled'">
+              {{ te(item.i18nKey) ? t(item.i18nKey) : item.title }}
+            </div>
           </router-link>
-          <div class="mt-10"> {{ t(item.descKey) }} </div>
+          <div class="mt-10"> {{ te(item.descKey) ? t(item.descKey) : "" }} </div>
           <el-link :href="item.documentLink" target="_blank" class="link" v-show="item.documentLink">
             <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
           </el-link>
@@ -54,7 +56,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import type { MenuOptions } from "@/types/app";
 
-  const { t } = useI18n();
+  const { t, te } = useI18n();
   const appStore = useAppStoreWithOut();
   const currentItems = ref<MenuOptions>(appStore.allMenus[0] || {});
 
