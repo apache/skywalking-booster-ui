@@ -22,7 +22,7 @@ import { routesAlarm } from "./alarm";
 import routesLayers from "./layer";
 import { routesSettings } from "./settings";
 
-const routes: Array<RouteRecordRaw> = [
+const routes: RouteRecordRaw[] = [
   ...routesMarketplace,
   ...routesLayers,
   ...routesAlarm,
