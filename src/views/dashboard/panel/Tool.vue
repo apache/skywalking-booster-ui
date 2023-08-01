@@ -340,7 +340,7 @@ limitations under the License. -->
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
       states.currentProcess = "";
-      const e = dashboardStore.entity === EntityType[7].value ? EntityType[8].value : dashboardStore.entity;
+      const e = dashboardStore.entity.split("Relation")[0];
       fetchPods(e, selectorStore.currentService.id, true);
     } else {
       selectorStore.setCurrentService(null);
