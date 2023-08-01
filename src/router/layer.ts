@@ -18,9 +18,8 @@ import Layout from "@/layout/Index.vue";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MenuOptions } from "@/types/app";
 
-async function layerDashboards() {
+function layerDashboards() {
   const appStore = useAppStoreWithOut();
-  await appStore.getActivateMenus();
   const routes = appStore.allMenus.map((item: MenuOptions) => {
     const route: any = {
       path: "",
@@ -84,4 +83,4 @@ async function layerDashboards() {
   return routes;
 }
 
-export default await layerDashboards();
+export default layerDashboards();

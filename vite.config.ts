@@ -79,7 +79,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       },
     },
     build: {
-      target: "esnext",
+      target: "es2015",
       outDir: OUTPUT_DIR,
       manifest: false,
       sourcemap: false,
