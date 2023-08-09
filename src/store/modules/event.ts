@@ -65,7 +65,7 @@ export const eventStore = defineStore({
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
-        keyword,
+        keyword: keyword || "",
       });
       if (res.data.errors) {
         return res.data;
