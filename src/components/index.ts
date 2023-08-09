@@ -21,6 +21,7 @@ import Selector from "./Selector.vue";
 import Graph from "./Graph.vue";
 import Radio from "./Radio.vue";
 import SelectSingle from "./SelectSingle.vue";
+import Tags from "./Tags.vue";
 import VueGridLayout from "vue-grid-layout";
 
 const components: Indexable = {
@@ -31,6 +32,7 @@ const components: Indexable = {
   Graph,
   Radio,
   SelectSingle,
+  Tags,
 };
 const componentsName: string[] = Object.keys(components);
 

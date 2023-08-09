@@ -33,15 +33,18 @@ declare module '@vue/runtime-core' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     Graph: typeof import('./../components/Graph.vue')['default']
     Icon: typeof import('./../components/Icon.vue')['default']
+    'Icon copy': typeof import('./../components/Icon copy.vue')['default']
     Loading: typeof import('element-plus/es')['ElLoadingDirective']
     Radio: typeof import('./../components/Radio.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Selector: typeof import('./../components/Selector.vue')['default']
     SelectSingle: typeof import('./../components/SelectSingle.vue')['default']
+    Tags: typeof import('./../components/Tags.vue')['default']
     TimePicker: typeof import('./../components/TimePicker.vue')['default']
   }
 }
