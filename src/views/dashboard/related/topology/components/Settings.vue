@@ -44,11 +44,12 @@ limitations under the License. -->
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Expressions v-if="isExpression" />
-        <Metrics v-else :type="configType" :metrics="states.linkServerMetrics" @update="changeLinkServerMetrics" />
+        <Metrics :type="configType" :metrics="states.linkServerMetrics" @update="changeLinkServerMetrics" />
       </el-popover>
     </div>
+    <Expressions v-if="isExpression" />
     <Selector
+      v-else
       class="inputs"
       :multiple="true"
       :value="states.linkServerMetrics"
@@ -66,11 +67,12 @@ limitations under the License. -->
               <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
             </span>
           </template>
-          <Expressions v-if="isExpression" />
-          <Metrics v-else :type="configType" :metrics="states.linkClientMetrics" @update="changeLinkClientMetrics" />
+          <Metrics :type="configType" :metrics="states.linkClientMetrics" @update="changeLinkClientMetrics" />
         </el-popover>
       </div>
+      <Expressions v-if="isExpression" />
       <Selector
+        v-else
         class="inputs"
         :multiple="true"
         :value="states.linkClientMetrics"
@@ -133,7 +135,9 @@ limitations under the License. -->
         <Metrics :type="configType" :metrics="states.nodeMetrics" @update="changeNodeMetrics" />
       </el-popover>
     </div>
+    <Expressions v-if="isExpression" />
     <Selector
+      v-else
       class="inputs"
       :multiple="true"
       :value="states.nodeMetrics"
