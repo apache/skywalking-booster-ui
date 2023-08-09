@@ -57,7 +57,7 @@ export const eventStore = defineStore({
       this.instances = [{ value: "", label: "All" }, ...res.data.data.pods] || [{ value: "", label: "All" }];
       return res.data;
     },
-    async getEndpoints() {
+    async getEndpoints(keyword?: string) {
       const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
       if (!serviceId) {
         return;
@@ -65,7 +65,7 @@ export const eventStore = defineStore({
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
-        keyword: "",
+        keyword: keyword || "",
       });
       if (res.data.errors) {
         return res.data;
