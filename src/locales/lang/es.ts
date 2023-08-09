@@ -378,5 +378,6 @@ const msg = {
   menus: "Menus",
   saveReload: "Save and reload the page",
   document: "Documentation",
+  metricMode: "Metric Mode",
 };
 export default msg;

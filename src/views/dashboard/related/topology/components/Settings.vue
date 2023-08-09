@@ -13,6 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <div class="mb-10 mt-20">
+    <h5 class="title">{{ t("metricMode") }}</h5>
+    <el-switch
+      v-model="isExpression"
+      class="mb-5"
+      active-text="Expressions"
+      inactive-text="General"
+      size="small"
+      @change="changeMetricMode"
+    />
+  </div>
   <div class="link-settings">
     <h5 class="title">{{ t("callSettings") }}</h5>
     <div class="label">{{ t("linkDashboard") }}</div>
@@ -33,7 +44,8 @@ limitations under the License. -->
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Metrics :type="configType" :metrics="states.linkServerMetrics" @update="changeLinkServerMetrics" />
+        <Expressions v-if="isExpression" />
+        <Metrics v-else :type="configType" :metrics="states.linkServerMetrics" @update="changeLinkServerMetrics" />
       </el-popover>
     </div>
     <Selector
@@ -54,7 +66,8 @@ limitations under the License. -->
               <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
             </span>
           </template>
-          <Metrics :type="configType" :metrics="states.linkClientMetrics" @update="changeLinkClientMetrics" />
+          <Expressions v-if="isExpression" />
+          <Metrics v-else :type="configType" :metrics="states.linkClientMetrics" @update="changeLinkClientMetrics" />
         </el-popover>
       </div>
       <Selector
@@ -116,6 +129,7 @@ limitations under the License. -->
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
+        <Expressions v-if="isExpression" />
         <Metrics :type="configType" :metrics="states.nodeMetrics" @update="changeNodeMetrics" />
       </el-popover>
     </div>
@@ -189,8 +203,9 @@ limitations under the License. -->
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
   import type { Node } from "@/types/topology";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
-  import { EntityType, LegendOpt, MetricsType } from "../../../data";
+  import { EntityType, LegendOpt, MetricsType, MetricModes } from "../../../data";
   import Metrics from "./Metrics.vue";
+  import Expressions from "./Expressions.vue";
 
   /*global defineEmits */
   const emit = defineEmits(["update", "updateNodes"]);
@@ -198,6 +213,7 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const topologyStore = useTopologyStore();
   const { selectedGrid } = dashboardStore;
+  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression ? true : false);
   const nodeDashboard =
     selectedGrid.nodeDashboard && selectedGrid.nodeDashboard.length ? selectedGrid.nodeDashboard : "";
   const isService = [EntityType[0].value, EntityType[1].value].includes(dashboardStore.entity);
@@ -431,6 +447,9 @@ limitations under the License. -->
   function setConfigType(type: string) {
     configType.value = type;
   }
+  function changeMetricMode() {
+    console.log(isExpression.value);
+  }
 </script>
 <style lang="scss" scoped>
   .link-settings {
@@ -454,6 +473,7 @@ limitations under the License. -->
 
   .title {
     margin-bottom: 0;
+    margin-top: 0;
     color: #666;
   }
 
