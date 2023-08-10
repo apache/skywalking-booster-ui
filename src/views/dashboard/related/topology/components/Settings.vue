@@ -47,7 +47,14 @@ limitations under the License. -->
         <Metrics :type="configType" :metrics="states.linkServerMetrics" @update="changeLinkServerMetrics" />
       </el-popover>
     </div>
-    <Expressions v-if="isExpression" />
+    <div v-if="isExpression">
+      <Tags
+        :tags="states.linkServerExpressions"
+        :vertical="true"
+        :text="t('addExpressions')"
+        @change="(param) => changeExpressions({ linkServerExpressions: param })"
+      />
+    </div>
     <Selector
       v-else
       class="inputs"
@@ -70,7 +77,14 @@ limitations under the License. -->
           <Metrics :type="configType" :metrics="states.linkClientMetrics" @update="changeLinkClientMetrics" />
         </el-popover>
       </div>
-      <Expressions v-if="isExpression" />
+      <div v-if="isExpression">
+        <Tags
+          :tags="states.linkClientExpressions"
+          :vertical="true"
+          :text="t('addExpressions')"
+          @change="(param) => changeExpressions({ linkClientExpressions: param })"
+        />
+      </div>
       <Selector
         v-else
         class="inputs"
@@ -131,11 +145,17 @@ limitations under the License. -->
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Expressions v-if="isExpression" />
         <Metrics :type="configType" :metrics="states.nodeMetrics" @update="changeNodeMetrics" />
       </el-popover>
     </div>
-    <Expressions v-if="isExpression" />
+    <div v-if="isExpression">
+      <Tags
+        :tags="states.nodeExpressions"
+        :vertical="true"
+        :text="t('addExpressions')"
+        @change="(param) => changeExpressions({ nodeExpressions: param })"
+      />
+    </div>
     <Selector
       v-else
       class="inputs"
@@ -209,7 +229,6 @@ limitations under the License. -->
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
   import { EntityType, LegendOpt, MetricsType, MetricModes } from "../../../data";
   import Metrics from "./Metrics.vue";
-  import Expressions from "./Expressions.vue";
 
   /*global defineEmits */
   const emit = defineEmits(["update", "updateNodes"]);
@@ -240,6 +259,9 @@ limitations under the License. -->
     linkMetricList: Option[];
     linkDashboards: (DashboardItem & { label: string; value: string })[];
     nodeDashboards: (DashboardItem & { label: string; value: string })[];
+    linkServerExpressions: string[];
+    linkClientExpressions: string[];
+    nodeExpressions: string[];
   }>({
     linkDashboard: selectedGrid.linkDashboard || "",
     nodeDashboard: selectedGrid.nodeDashboard || [],
@@ -250,6 +272,9 @@ limitations under the License. -->
     linkMetricList: [],
     linkDashboards: [],
     nodeDashboards: [],
+    linkServerExpressions: [],
+    linkClientExpressions: [],
+    nodeExpressions: [],
   });
   const l = selectedGrid.legend && selectedGrid.legend.length;
   const legend = reactive<{
@@ -453,6 +478,10 @@ limitations under the License. -->
   }
   function changeMetricMode() {
     console.log(isExpression.value);
+  }
+  function changeExpressions(params: { [key: string]: string[] }) {
+    const key: string = Object.keys(params || {})[0];
+    (states as any)[key] = params && params[key];
   }
 </script>
 <style lang="scss" scoped>

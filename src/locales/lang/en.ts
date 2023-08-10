@@ -379,5 +379,6 @@ const msg = {
   saveReload: "Save and reload the page",
   document: "Documentation",
   metricMode: "Metric Mode",
+  addExpressions: "Add Expressions",
 };
 export default msg;

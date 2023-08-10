@@ -376,6 +376,7 @@ const msg = {
   menusManagement: "菜单",
   saveReload: "保存并重新加载页面",
   document: "文档",
-  metricMode: "Metric Mode",
+  metricMode: "指标模式",
+  addExpressions: "添加表达式",
 };
 export default msg;
