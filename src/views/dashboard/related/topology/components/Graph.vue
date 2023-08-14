@@ -139,7 +139,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { EntityType, DepthList } from "../../../data";
+  import { EntityType, DepthList, MetricModes } from "../../../data";
   import router from "@/router";
   import { ElMessage } from "element-plus";
   import Settings from "./Settings.vue";
@@ -184,6 +184,7 @@ limitations under the License. -->
   const currentNode = ref<Nullable<Node>>();
   const diff = computed(() => [(width.value - graphWidth.value - 130) / 2, 100]);
   const radius = 8;
+  const isExpression = ref<boolean>(settings.value.metricMode === MetricModes.Expression ? true : false);
 
   onMounted(async () => {
     await nextTick();
@@ -220,9 +221,16 @@ limitations under the License. -->
   }
 
   async function update() {
-    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
-    topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-    topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+    if (isExpression.value) {
+      topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+      topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+      topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+    } else {
+      topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+      topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+      topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+    }
+
     window.addEventListener("resize", resize);
     await initLegendMetrics();
     draw();

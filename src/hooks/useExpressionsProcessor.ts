@@ -22,6 +22,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MetricConfigOpt } from "@/types/dashboard";
 import type { Instance, Endpoint, Service } from "@/types/selector";
+import type { Node, Call } from "@/types/topology";
 
 export async function useExpressionsQueryProcessor(config: Indexable) {
   function expressionsGraphqlPods() {
@@ -311,4 +312,35 @@ export async function useExpressionsQueryPodsMetrics(
   const expressionParams = expressionsPodsSource(json);
 
   return expressionParams;
+}
+
+export function useQueryTopologyExpressionsProcessor(metrics: string[]) {
+  const appStore = useAppStoreWithOut();
+
+  function getNodeExpressions(nodes: Node[]) {
+    const conditions: { [key: string]: unknown } = {
+      duration: appStore.durationTime,
+    };
+    const variables: string[] = [`$duration: Duration!`];
+    const fragmentList = nodes.map((d: Node, index: number) => {
+      const entity = {
+        serviceName: d.name,
+        normal: true,
+      };
+      variables.push(`$entity${index}: Entity!`);
+      conditions[`entity${index}`] = entity;
+      const f = metrics.map((name: string, idx: number) => {
+        variables.push(`$expression${index}${idx}: String!`);
+        conditions[`expression${index}${idx}`] = name;
+        return `expression${index}${idx}: execExpression(expression: $expression${index}${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
+      });
+      return f;
+    });
+    const fragment = fragmentList.flat(1).join(" ");
+    const queryStr = `query queryData(${variables}) {${fragment}}`;
+
+    return { queryStr, conditions };
+  }
+
+  return { getNodeExpressions };
 }
