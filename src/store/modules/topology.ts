@@ -319,7 +319,6 @@ export const topologyStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      console.log(res.data.data);
       this.setNodeMetricValue(res.data.data);
       return res.data;
     },
@@ -329,8 +328,7 @@ export const topologyStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      console.log(res.data.data);
-      // this.setNodeMetricValue(res.data.data);
+
       return res.data;
     },
     async getLinkClientMetrics(linkClientMetrics: string[]) {
@@ -370,7 +368,6 @@ export const topologyStore = defineStore({
         this.setNodeMetricValue({});
         return;
       }
-      console.log(this.nodes);
       const ids = this.nodes.map((d: Node) => d.id);
       if (!ids.length) {
         return;
@@ -388,15 +385,21 @@ export const topologyStore = defineStore({
         return;
       }
       if (!this.nodes.length) {
+        this.setNodeMetricValue({});
         return;
       }
-      const { getNodeExpressions } = useQueryTopologyExpressionsProcessor(expressions);
-      const param = getNodeExpressions(this.nodes);
+      const { getNodeExpressions, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
+        expressions,
+        this.nodes,
+      );
+      const param = getNodeExpressions();
       const res = await this.getNodeExpressionValue(param);
-
       if (res.errors) {
         ElMessage.error(res.errors);
+        return;
       }
+      const metrics = handleExpressionValues(res.data);
+      this.setNodeMetricValue(metrics);
     },
     async getLegendMetrics(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
       const res: AxiosResponse = await query(param);

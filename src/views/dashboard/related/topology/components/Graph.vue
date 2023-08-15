@@ -184,7 +184,7 @@ limitations under the License. -->
   const currentNode = ref<Nullable<Node>>();
   const diff = computed(() => [(width.value - graphWidth.value - 130) / 2, 100]);
   const radius = 8;
-  const isExpression = ref<boolean>(settings.value.metricMode === MetricModes.Expression ? true : false);
+  const isExpression = computed(() => settings.value.metricMode === MetricModes.Expression);
 
   onMounted(async () => {
     await nextTick();
@@ -222,7 +222,7 @@ limitations under the License. -->
 
   async function update() {
     if (isExpression.value) {
-      topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+      topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
       topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
       topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
     } else {
@@ -240,7 +240,7 @@ limitations under the License. -->
   function draw() {
     const node = findMostFrequent(topologyStore.calls);
     const levels = [];
-    const nodes = topologyStore.nodes.sort((a: Node, b: Node) => {
+    const nodes = JSON.parse(JSON.stringify(topologyStore.nodes)).sort((a: Node, b: Node) => {
       if (a.name.toLowerCase() < b.name.toLowerCase()) {
         return -1;
       }
@@ -389,7 +389,10 @@ limitations under the License. -->
     return c && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
-    const nodeMetrics: string[] = settings.value.nodeMetrics || [];
+    const nodeMetrics: string[] =
+      (settings.value.metricMode === MetricModes.Expression
+        ? settings.value.nodeExpressions
+        : settings.value.nodeMetrics) || [];
     const nodeMetricConfig = settings.value.nodeMetricConfig || [];
     const html = nodeMetrics.map((m, index) => {
       const metric =

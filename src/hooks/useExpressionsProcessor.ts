@@ -314,10 +314,10 @@ export async function useExpressionsQueryPodsMetrics(
   return expressionParams;
 }
 
-export function useQueryTopologyExpressionsProcessor(metrics: string[]) {
+export function useQueryTopologyExpressionsProcessor(metrics: string[], nodes: Node[]) {
   const appStore = useAppStoreWithOut();
 
-  function getNodeExpressions(nodes: Node[]) {
+  function getNodeExpressions() {
     const conditions: { [key: string]: unknown } = {
       duration: appStore.durationTime,
     };
@@ -330,9 +330,11 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[]) {
       variables.push(`$entity${index}: Entity!`);
       conditions[`entity${index}`] = entity;
       const f = metrics.map((name: string, idx: number) => {
-        variables.push(`$expression${index}${idx}: String!`);
-        conditions[`expression${index}${idx}`] = name;
-        return `expression${index}${idx}: execExpression(expression: $expression${index}${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
+        if (index === 0) {
+          variables.push(`$expression${idx}: String!`);
+          conditions[`expression${idx}`] = name;
+        }
+        return `expression${index}${idx}: execExpression(expression: $expression${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
       });
       return f;
     });
@@ -341,6 +343,23 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[]) {
 
     return { queryStr, conditions };
   }
+  function handleExpressionValues(resp: any) {
+    const obj: any = {};
+    for (let idx = 0; idx < nodes.length; idx++) {
+      for (let index = 0; index < metrics.length; index++) {
+        const k = "expression" + idx + index;
+        if (metrics[index]) {
+          if (!obj[metrics[index]]) {
+            obj[metrics[index]] = {
+              values: [],
+            };
+          }
+          obj[metrics[index]].values.push({ value: resp[k].results[0].values[0].value, id: nodes[idx].id });
+        }
+      }
+    }
+    return obj;
+  }
 
-  return { getNodeExpressions };
+  return { getNodeExpressions, handleExpressionValues };
 }

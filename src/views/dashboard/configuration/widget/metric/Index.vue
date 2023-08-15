@@ -160,7 +160,7 @@ limitations under the License. -->
     },
   });
   const dashboardStore = useDashboardStore();
-  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression ? true : false);
+  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression);
   const metrics = computed(
     () => (isExpression.value ? dashboardStore.selectedGrid.expressions : dashboardStore.selectedGrid.metrics) || [],
   );

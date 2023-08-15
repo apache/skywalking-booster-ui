@@ -56,15 +56,10 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { CalculationOpts } from "../../../data";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import type { MetricConfigOpt } from "@/types/dashboard";
   import type { Option } from "element-plus/es/components/select-v2/src/select.types";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
-    currentMetricConfig: {
-      type: Object as PropType<MetricConfigOpt>,
-      default: () => ({ unit: "" }),
-    },
     type: { type: String, default: "" },
     metrics: { type: Array as PropType<string[]>, default: () => [] },
   });

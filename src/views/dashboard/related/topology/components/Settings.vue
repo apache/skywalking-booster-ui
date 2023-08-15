@@ -153,7 +153,7 @@ limitations under the License. -->
         :tags="states.nodeExpressions"
         :vertical="true"
         :text="t('addExpressions')"
-        @change="(param) => changeExpressions({ nodeExpressions: param })"
+        @change="(param) => changeNodeExpressions({ nodeExpressions: param })"
       />
     </div>
     <Selector
@@ -236,7 +236,7 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const topologyStore = useTopologyStore();
   const { selectedGrid } = dashboardStore;
-  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression ? true : false);
+  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression);
   const nodeDashboard =
     selectedGrid.nodeDashboard && selectedGrid.nodeDashboard.length ? selectedGrid.nodeDashboard : "";
   const isService = [EntityType[0].value, EntityType[1].value].includes(dashboardStore.entity);
@@ -398,6 +398,7 @@ limitations under the License. -->
       linkServerExpressions: states.linkServerExpressions,
       linkClientExpressions: states.linkClientExpressions,
       nodeExpressions: states.nodeExpressions,
+      metricMode: isExpression.value ? MetricModes.Expression : MetricModes.General,
       legend: metrics,
       ...metricConfig,
       description,
@@ -479,12 +480,25 @@ limitations under the License. -->
   function setConfigType(type: string) {
     configType.value = type;
   }
-  function changeMetricMode() {
-    console.log(isExpression.value);
-  }
   function changeExpressions(params: { [key: string]: string[] }) {
     const key: string = Object.keys(params || {})[0];
     (states as any)[key] = params && params[key];
+    updateSettings();
+  }
+  function changeNodeExpressions(params: { [key: string]: string[] }) {
+    if (!isExpression.value) {
+      return;
+    }
+    states.nodeExpressions = params.nodeExpressions;
+    updateSettings();
+    if (!states.nodeExpressions.length) {
+      topologyStore.setNodeMetricValue({});
+      return;
+    }
+    topologyStore.queryNodeExpressions(states.nodeExpressions);
+  }
+  function changeMetricMode() {
+    updateSettings();
   }
 </script>
 <style lang="scss" scoped>
