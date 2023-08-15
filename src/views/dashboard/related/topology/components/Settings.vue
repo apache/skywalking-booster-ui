@@ -52,7 +52,7 @@ limitations under the License. -->
         :tags="states.linkServerExpressions"
         :vertical="true"
         :text="t('addExpressions')"
-        @change="(param) => changeExpressions({ linkServerExpressions: param })"
+        @change="(param) => changeLinkServerExpressions({ linkServerExpressions: param })"
       />
     </div>
     <Selector
@@ -82,7 +82,7 @@ limitations under the License. -->
           :tags="states.linkClientExpressions"
           :vertical="true"
           :text="t('addExpressions')"
-          @change="(param) => changeExpressions({ linkClientExpressions: param })"
+          @change="(param) => changeLinkClientExpressions({ linkClientExpressions: param })"
         />
       </div>
       <Selector
@@ -222,12 +222,19 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useTopologyStore } from "@/store/modules/topology";
   import { ElMessage } from "element-plus";
-  import { MetricCatalog, ScopeType, MetricConditions } from "../../../data";
+  import {
+    MetricCatalog,
+    ScopeType,
+    MetricConditions,
+    EntityType,
+    LegendOpt,
+    MetricsType,
+    MetricModes,
+  } from "../../../data";
   import type { Option } from "@/types/app";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
   import type { Node } from "@/types/topology";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
-  import { EntityType, LegendOpt, MetricsType, MetricModes } from "../../../data";
   import Metrics from "./Metrics.vue";
 
   /*global defineEmits */
@@ -426,6 +433,30 @@ limitations under the License. -->
       return;
     }
     topologyStore.getLinkServerMetrics(states.linkServerMetrics);
+  }
+  function changeLinkServerExpressions(params: { [key: string]: string[] }) {
+    if (!isExpression.value) {
+      return;
+    }
+    states.linkServerExpressions = params.linkServerExpressions;
+    updateSettings();
+    if (!states.linkServerExpressions.length) {
+      topologyStore.setLinkServerMetrics({});
+      return;
+    }
+    topologyStore.getLinkExpressions(states.linkServerExpressions, "SERVER");
+  }
+  function changeLinkClientExpressions(params: { [key: string]: string[] }) {
+    if (!isExpression.value) {
+      return;
+    }
+    states.linkClientExpressions = params.linkClientExpressions;
+    updateSettings();
+    if (!states.linkClientExpressions.length) {
+      topologyStore.changeLinkClientMetrics({});
+      return;
+    }
+    topologyStore.getLinkExpressions(states.linkClientExpressions, "CLIENT");
   }
   function updateLinkClientMetrics(options: Option[] | any) {
     const opt = options.map((d: Option) => d.value);

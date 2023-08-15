@@ -26,6 +26,7 @@ import query from "@/graphql/fetch";
 import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
 import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
 import { ElMessage } from "element-plus";
+import { MetricCatalog } from "@/views/dashboard/data";
 
 interface MetricVal {
   [key: string]: { values: { id: string; value: unknown }[] };
@@ -352,6 +353,7 @@ export const topologyStore = defineStore({
         this.setLinkServerMetrics({});
         return;
       }
+      console.log(this.calls);
       const idsS = this.calls.filter((i: Call) => i.detectPoints.includes("SERVER")).map((b: Call) => b.id);
       if (!idsS.length) {
         return;
@@ -361,6 +363,33 @@ export const topologyStore = defineStore({
 
       if (res.errors) {
         ElMessage.error(res.errors);
+      }
+    },
+    async getLinkExpressions(expressions: string[], type: string) {
+      if (!expressions.length) {
+        this.setLinkServerMetrics({});
+        return;
+      }
+      const calls = this.calls.filter((i: Call) => i.detectPoints.includes(type));
+      if (!calls.length) {
+        return;
+      }
+      const { getNodeExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
+        expressions,
+        calls,
+        MetricCatalog.SERVICE_RELATION,
+      );
+      const param = getNodeExpressionQuery();
+      const res = await this.getNodeExpressionValue(param);
+      if (res.errors) {
+        ElMessage.error(res.errors);
+        return;
+      }
+      const metrics = handleExpressionValues(res.data);
+      if (type === "SERVER") {
+        this.setLinkServerMetrics(metrics);
+      } else {
+        this.setLinkClientMetrics(metrics);
       }
     },
     async queryNodeMetrics(nodeMetrics: string[]) {
@@ -388,11 +417,12 @@ export const topologyStore = defineStore({
         this.setNodeMetricValue({});
         return;
       }
-      const { getNodeExpressions, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
+      const { getNodeExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
         expressions,
         this.nodes,
+        "",
       );
-      const param = getNodeExpressions();
+      const param = getNodeExpressionQuery();
       const res = await this.getNodeExpressionValue(param);
       if (res.errors) {
         ElMessage.error(res.errors);
@@ -427,6 +457,7 @@ export const topologyStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
+      console.log(res.data.data);
       this.setLinkServerMetrics(res.data.data);
       return res.data;
     },

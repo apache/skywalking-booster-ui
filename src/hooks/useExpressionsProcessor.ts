@@ -23,6 +23,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MetricConfigOpt } from "@/types/dashboard";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { Node, Call } from "@/types/topology";
+import { MetricCatalog } from "@/views/dashboard/data";
 
 export async function useExpressionsQueryProcessor(config: Indexable) {
   function expressionsGraphqlPods() {
@@ -314,18 +315,20 @@ export async function useExpressionsQueryPodsMetrics(
   return expressionParams;
 }
 
-export function useQueryTopologyExpressionsProcessor(metrics: string[], nodes: Node[]) {
+export function useQueryTopologyExpressionsProcessor(metrics: string[], source: any[], scope: string) {
   const appStore = useAppStoreWithOut();
 
-  function getNodeExpressions() {
+  function getNodeExpressionQuery() {
     const conditions: { [key: string]: unknown } = {
       duration: appStore.durationTime,
     };
     const variables: string[] = [`$duration: Duration!`];
-    const fragmentList = nodes.map((d: Node, index: number) => {
+    const fragmentList = source.map((d: any, index: number) => {
       const entity = {
-        serviceName: d.name,
+        serviceName: d.sourceObj ? d.sourceObj.name : d.name,
         normal: true,
+        destNormal: true,
+        destServiceName: (d.targetObj && d.targetObj.name) || undefined,
       };
       variables.push(`$entity${index}: Entity!`);
       conditions[`entity${index}`] = entity;
@@ -343,9 +346,9 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], nodes: N
 
     return { queryStr, conditions };
   }
-  function handleExpressionValues(resp: any) {
+  function handleExpressionValues(resp: { [key: string]: any }) {
     const obj: any = {};
-    for (let idx = 0; idx < nodes.length; idx++) {
+    for (let idx = 0; idx < source.length; idx++) {
       for (let index = 0; index < metrics.length; index++) {
         const k = "expression" + idx + index;
         if (metrics[index]) {
@@ -354,12 +357,12 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], nodes: N
               values: [],
             };
           }
-          obj[metrics[index]].values.push({ value: resp[k].results[0].values[0].value, id: nodes[idx].id });
+          obj[metrics[index]].values.push({ value: resp[k].results[0].values[0].value, id: source[idx].id });
         }
       }
     }
     return obj;
   }
 
-  return { getNodeExpressions, handleExpressionValues };
+  return { getNodeExpressionQuery, handleExpressionValues };
 }

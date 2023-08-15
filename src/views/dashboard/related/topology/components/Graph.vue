@@ -415,10 +415,16 @@ limitations under the License. -->
       .html(tipHtml);
   }
   function showLinkTip(event: MouseEvent, data: Call) {
-    const linkClientMetrics: string[] = settings.value.linkClientMetrics || [];
+    const linkClientMetrics: string[] =
+      settings.value.metricMode === MetricModes.Expression
+        ? settings.value.linkClientExpressions
+        : settings.value.linkClientMetrics || [];
     const linkServerMetricConfig: MetricConfigOpt[] = settings.value.linkServerMetricConfig || [];
     const linkClientMetricConfig: MetricConfigOpt[] = settings.value.linkClientMetricConfig || [];
-    const linkServerMetrics: string[] = settings.value.linkServerMetrics || [];
+    const linkServerMetrics: string[] =
+      settings.value.metricMode === MetricModes.Expression
+        ? settings.value.linkServerExpressions
+        : settings.value.linkServerMetrics || [];
     const htmlServer = linkServerMetrics.map((m, index) => {
       const metric = topologyStore.linkServerMetrics[m].values.find(
         (val: { id: string; value: unknown }) => val.id === data.id,
