@@ -52,7 +52,7 @@ limitations under the License. -->
         :tags="states.linkServerExpressions"
         :vertical="true"
         :text="t('addExpressions')"
-        @change="(param) => changeLinkServerExpressions({ linkServerExpressions: param })"
+        @change="(param) => changeLinkServerExpressions(param)"
       />
     </div>
     <Selector
@@ -82,7 +82,7 @@ limitations under the License. -->
           :tags="states.linkClientExpressions"
           :vertical="true"
           :text="t('addExpressions')"
-          @change="(param) => changeLinkClientExpressions({ linkClientExpressions: param })"
+          @change="(param) => changeLinkClientExpressions(param)"
         />
       </div>
       <Selector
@@ -153,7 +153,7 @@ limitations under the License. -->
         :tags="states.nodeExpressions"
         :vertical="true"
         :text="t('addExpressions')"
-        @change="(param) => changeNodeExpressions({ nodeExpressions: param })"
+        @change="(param) => changeNodeExpressions(param)"
       />
     </div>
     <Selector
@@ -279,9 +279,9 @@ limitations under the License. -->
     linkMetricList: [],
     linkDashboards: [],
     nodeDashboards: [],
-    linkServerExpressions: [],
-    linkClientExpressions: [],
-    nodeExpressions: [],
+    linkServerExpressions: selectedGrid.linkServerExpressions || [],
+    linkClientExpressions: selectedGrid.linkClientExpressions || [],
+    nodeExpressions: selectedGrid.nodeExpressions || [],
   });
   const l = selectedGrid.legend && selectedGrid.legend.length;
   const legend = reactive<{
@@ -434,11 +434,11 @@ limitations under the License. -->
     }
     topologyStore.getLinkServerMetrics(states.linkServerMetrics);
   }
-  function changeLinkServerExpressions(params: { [key: string]: string[] }) {
+  function changeLinkServerExpressions(param: string[]) {
     if (!isExpression.value) {
       return;
     }
-    states.linkServerExpressions = params.linkServerExpressions;
+    states.linkServerExpressions = param;
     updateSettings();
     if (!states.linkServerExpressions.length) {
       topologyStore.setLinkServerMetrics({});
@@ -446,11 +446,11 @@ limitations under the License. -->
     }
     topologyStore.getLinkExpressions(states.linkServerExpressions, "SERVER");
   }
-  function changeLinkClientExpressions(params: { [key: string]: string[] }) {
+  function changeLinkClientExpressions(param: string[]) {
     if (!isExpression.value) {
       return;
     }
-    states.linkClientExpressions = params.linkClientExpressions;
+    states.linkClientExpressions = param;
     updateSettings();
     if (!states.linkClientExpressions.length) {
       topologyStore.changeLinkClientMetrics({});
@@ -511,16 +511,11 @@ limitations under the License. -->
   function setConfigType(type: string) {
     configType.value = type;
   }
-  function changeExpressions(params: { [key: string]: string[] }) {
-    const key: string = Object.keys(params || {})[0];
-    (states as any)[key] = params && params[key];
-    updateSettings();
-  }
-  function changeNodeExpressions(params: { [key: string]: string[] }) {
+  function changeNodeExpressions(param: string[]) {
     if (!isExpression.value) {
       return;
     }
-    states.nodeExpressions = params.nodeExpressions;
+    states.nodeExpressions = param;
     updateSettings();
     if (!states.nodeExpressions.length) {
       topologyStore.setNodeMetricValue({});
@@ -529,6 +524,15 @@ limitations under the License. -->
     topologyStore.queryNodeExpressions(states.nodeExpressions);
   }
   function changeMetricMode() {
+    if (isExpression.value) {
+      states.linkServerMetrics = [];
+      states.linkClientMetrics = [];
+      states.nodeMetrics = [];
+    } else {
+      states.linkServerExpressions = [];
+      states.linkClientExpressions = [];
+      states.nodeExpressions = [];
+    }
     updateSettings();
   }
 </script>
