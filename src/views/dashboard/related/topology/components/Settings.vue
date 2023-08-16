@@ -197,8 +197,18 @@ limitations under the License. -->
   <div class="legend-settings" v-show="isService">
     <h5 class="title">{{ t("legendSettings") }}</h5>
     <div class="label">{{ t("conditions") }}</div>
-    <div v-for="(metric, index) of legend.metric" :key="metric.name + index">
+    <div v-for="(metric, index) of legend" :key="index">
+      <el-input
+        v-if="isExpression"
+        v-model="metric.name"
+        placeholder="Please input a expression"
+        type="number"
+        @change="changeLegend(LegendOpt.NAME, $event, index)"
+        size="small"
+        class="item"
+      />
       <Selector
+        v-else
         class="item"
         :value="metric.name"
         :options="states.nodeMetricList"
@@ -228,11 +238,11 @@ limitations under the License. -->
           class="cp"
           iconName="add_circle_outlinecontrol_point"
           size="middle"
-          v-show="index === legend.metric.length - 1 && legend.metric.length < 5"
+          v-show="index === legend.length - 1 && legend.length < 5"
           @click="addMetric"
         />
       </span>
-      <div v-show="index !== legend.metric.length - 1">&&</div>
+      <div v-show="index !== legend.length - 1">&&</div>
     </div>
     <div class="label">Healthy Description</div>
     <el-input v-model="description.healthy" placeholder="Please input description" size="small" class="mt-5" />
@@ -311,11 +321,9 @@ limitations under the License. -->
     nodeExpressions: selectedGrid.nodeExpressions || [],
   });
   const l = selectedGrid.legend && selectedGrid.legend.length;
-  const legend = reactive<{
-    metric: { name: string; condition: string; value: string }[];
-  }>({
-    metric: l ? selectedGrid.legend : [{ name: "", condition: "", value: "" }],
-  });
+  const legend = ref<{ name: string; condition: string; value: string }[]>(
+    l ? selectedGrid.legend : [{ name: "", condition: "", value: "" }],
+  );
   const configType = ref<string>("");
   const description = reactive<any>(selectedGrid.description || {});
 
@@ -387,7 +395,7 @@ limitations under the License. -->
     updateSettings();
   }
   function changeLegend(type: string, opt: any, index: number) {
-    (legend.metric[index] as any)[type] = opt[0].value || opt;
+    (legend.value[index] as any)[type] = opt[0].value || opt;
   }
   function changeScope(index: number, opt: Option[] | any) {
     items[index].scope = opt[0].value;
@@ -419,7 +427,7 @@ limitations under the License. -->
     updateSettings();
   }
   function updateSettings(metricConfig?: { [key: string]: MetricConfigOpt[] }) {
-    const metrics = legend.metric.filter((d: any) => d.name && d.value && d.condition);
+    const metrics = legend.value.filter((d: any) => d.name && d.value && d.condition);
     const param = {
       ...dashboardStore.selectedGrid,
       linkDashboard: states.linkDashboard,
@@ -526,14 +534,14 @@ limitations under the License. -->
     topologyStore.queryNodeMetrics(states.nodeMetrics);
   }
   function deleteMetric(index: number) {
-    if (legend.metric.length === 1) {
-      legend.metric = [{ name: "", condition: "", value: "" }];
+    if (legend.value.length === 1) {
+      legend.value = [{ name: "", condition: "", value: "" }];
       return;
     }
-    legend.metric.splice(index, 1);
+    legend.value.splice(index, 1);
   }
   function addMetric() {
-    legend.metric.push({ name: "", condition: "", value: "" });
+    legend.value.push({ name: "", condition: "", value: "" });
   }
   function setConfigType(type: string) {
     configType.value = type;
@@ -551,6 +559,7 @@ limitations under the License. -->
     topologyStore.queryNodeExpressions(states.nodeExpressions);
   }
   function changeMetricMode() {
+    legend.value = [{ name: "", condition: "", value: "" }];
     const config = {
       linkServerMetricConfig: [],
       linkClientMetricConfig: [],
