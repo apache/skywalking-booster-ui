@@ -353,7 +353,6 @@ export const topologyStore = defineStore({
         this.setLinkServerMetrics({});
         return;
       }
-      console.log(this.calls);
       const idsS = this.calls.filter((i: Call) => i.detectPoints.includes("SERVER")).map((b: Call) => b.id);
       if (!idsS.length) {
         return;
@@ -457,7 +456,6 @@ export const topologyStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      console.log(res.data.data);
       this.setLinkServerMetrics(res.data.data);
       return res.data;
     },

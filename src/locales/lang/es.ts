@@ -380,5 +380,6 @@ const msg = {
   document: "Documentation",
   metricMode: "Metric Mode",
   addExpressions: "Add Expressions",
+  expressions: "Expression",
 };
 export default msg;

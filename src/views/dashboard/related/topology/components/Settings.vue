@@ -38,13 +38,22 @@ limitations under the License. -->
     />
     <div class="label">
       <span>{{ t("linkServerMetrics") }}</span>
-      <el-popover placement="left" :width="400" trigger="click" v-if="states.linkServerMetrics.length">
+      <el-popover
+        placement="left"
+        :width="400"
+        trigger="click"
+        v-if="isExpression ? states.linkServerExpressions.length : states.linkServerMetrics.length"
+      >
         <template #reference>
           <span @click="setConfigType('linkServerMetricConfig')">
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Metrics :type="configType" :metrics="states.linkServerMetrics" @update="changeLinkServerMetrics" />
+        <Metrics
+          :type="configType"
+          :metrics="isExpression ? states.linkServerExpressions : states.linkServerMetrics"
+          @update="updateSettings"
+        />
       </el-popover>
     </div>
     <div v-if="isExpression">
@@ -68,13 +77,22 @@ limitations under the License. -->
     <span v-show="dashboardStore.entity !== EntityType[2].value">
       <div class="label">
         <span>{{ t("linkClientMetrics") }}</span>
-        <el-popover placement="left" :width="400" trigger="click" v-if="states.linkClientMetrics.length">
+        <el-popover
+          placement="left"
+          :width="400"
+          trigger="click"
+          v-if="isExpression ? states.linkClientExpressions.length : states.linkClientMetrics.length"
+        >
           <template #reference>
             <span @click="setConfigType('linkClientMetricConfig')">
               <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
             </span>
           </template>
-          <Metrics :type="configType" :metrics="states.linkClientMetrics" @update="changeLinkClientMetrics" />
+          <Metrics
+            :type="configType"
+            :metrics="isExpression ? states.linkClientExpressions : states.linkClientMetrics"
+            @update="updateSettings"
+          />
         </el-popover>
       </div>
       <div v-if="isExpression">
@@ -139,13 +157,22 @@ limitations under the License. -->
     </div>
     <div class="label">
       <span>{{ t("nodeMetrics") }}</span>
-      <el-popover placement="left" :width="400" trigger="click" v-if="states.nodeMetrics.length">
+      <el-popover
+        placement="left"
+        :width="400"
+        trigger="click"
+        v-if="isExpression ? states.nodeExpressions.length : states.nodeMetrics.length"
+      >
         <template #reference>
           <span @click="setConfigType('nodeMetricConfig')">
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Metrics :type="configType" :metrics="states.nodeMetrics" @update="changeNodeMetrics" />
+        <Metrics
+          :type="configType"
+          :metrics="isExpression ? states.nodeExpressions : states.nodeMetrics"
+          @update="updateSettings"
+        />
       </el-popover>
     </div>
     <div v-if="isExpression">
@@ -524,6 +551,11 @@ limitations under the License. -->
     topologyStore.queryNodeExpressions(states.nodeExpressions);
   }
   function changeMetricMode() {
+    const config = {
+      linkServerMetricConfig: [],
+      linkClientMetricConfig: [],
+      nodeMetricConfig: [],
+    };
     if (isExpression.value) {
       states.linkServerMetrics = [];
       states.linkClientMetrics = [];
@@ -533,7 +565,8 @@ limitations under the License. -->
       states.linkClientExpressions = [];
       states.nodeExpressions = [];
     }
-    updateSettings();
+
+    updateSettings(config);
   }
 </script>
 <style lang="scss" scoped>
