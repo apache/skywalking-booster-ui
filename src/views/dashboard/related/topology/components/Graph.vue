@@ -362,7 +362,13 @@ limitations under the License. -->
 
   async function initLegendMetrics() {
     const names = props.config.legend.map((d: any) => d.name);
+    if (!names.length) {
+      return;
+    }
     if (settings.value.metricMode === MetricModes.Expression) {
+      if (!topologyStore.nodes.length) {
+        return;
+      }
       const { getNodeExpressionQuery } = useQueryTopologyExpressionsProcessor(names, topologyStore.nodes);
       const param = getNodeExpressionQuery();
       const res = await topologyStore.getNodeExpressionValue(param);
@@ -373,7 +379,7 @@ limitations under the License. -->
       }
     } else {
       const ids = topologyStore.nodes.map((d: Node) => d.id);
-      if (names.length && ids.length) {
+      if (ids.length) {
         const param = await useQueryTopologyMetrics(names, ids);
         const res = await topologyStore.getLegendMetrics(param);
         if (res.errors) {
