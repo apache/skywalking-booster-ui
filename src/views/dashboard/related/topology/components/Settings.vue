@@ -202,7 +202,6 @@ limitations under the License. -->
         v-if="isExpression"
         v-model="metric.name"
         placeholder="Please input a expression"
-        type="number"
         @change="changeLegend(LegendOpt.NAME, $event, index)"
         size="small"
         class="item"
@@ -270,6 +269,7 @@ limitations under the License. -->
   } from "../../../data";
   import type { Option } from "@/types/app";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
+  import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
   import type { Node } from "@/types/topology";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
   import Metrics from "./Metrics.vue";
@@ -372,18 +372,30 @@ limitations under the License. -->
   }
   async function setLegend() {
     updateSettings();
-    const ids = topologyStore.nodes.map((d: Node) => d.id);
     const names = dashboardStore.selectedGrid.legend.map((d: any) => d.name);
     if (!names.length) {
       emit("updateNodes");
       return;
     }
-    const param = await useQueryTopologyMetrics(names, ids);
-    const res = await topologyStore.getLegendMetrics(param);
+    if (isExpression.value) {
+      const { getNodeExpressionQuery } = useQueryTopologyExpressionsProcessor(names, topologyStore.nodes);
+      const param = getNodeExpressionQuery();
+      const res = await topologyStore.getNodeExpressionValue(param);
+      if (res.errors) {
+        ElMessage.error(res.errors);
+      } else {
+        topologyStore.setLegendValues(names, res.data);
+      }
+    } else {
+      const ids = topologyStore.nodes.map((d: Node) => d.id);
+      const param = await useQueryTopologyMetrics(names, ids);
+      const res = await topologyStore.getLegendMetrics(param);
 
-    if (res.errors) {
-      ElMessage.error(res.errors);
+      if (res.errors) {
+        ElMessage.error(res.errors);
+      }
     }
+
     emit("updateNodes");
   }
   function changeNodeDashboard(opt: any) {

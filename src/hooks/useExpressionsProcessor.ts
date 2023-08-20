@@ -315,7 +315,7 @@ export async function useExpressionsQueryPodsMetrics(
   return expressionParams;
 }
 
-export function useQueryTopologyExpressionsProcessor(metrics: string[], source: any[], scope: string) {
+export function useQueryTopologyExpressionsProcessor(metrics: string[], instances: any[]) {
   const appStore = useAppStoreWithOut();
 
   function getNodeExpressionQuery() {
@@ -323,7 +323,7 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], source: 
       duration: appStore.durationTime,
     };
     const variables: string[] = [`$duration: Duration!`];
-    const fragmentList = source.map((d: any, index: number) => {
+    const fragmentList = instances.map((d: any, index: number) => {
       const entity = {
         serviceName: d.sourceObj ? d.sourceObj.name : d.name,
         normal: true,
@@ -348,7 +348,7 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], source: 
   }
   function handleExpressionValues(resp: { [key: string]: any }) {
     const obj: any = {};
-    for (let idx = 0; idx < source.length; idx++) {
+    for (let idx = 0; idx < instances.length; idx++) {
       for (let index = 0; index < metrics.length; index++) {
         const k = "expression" + idx + index;
         if (metrics[index]) {
@@ -357,7 +357,7 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], source: 
               values: [],
             };
           }
-          obj[metrics[index]].values.push({ value: resp[k].results[0].values[0].value, id: source[idx].id });
+          obj[metrics[index]].values.push({ value: resp[k].results[0].values[0].value, id: instances[idx].id });
         }
       }
     }

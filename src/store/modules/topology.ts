@@ -26,7 +26,6 @@ import query from "@/graphql/fetch";
 import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
 import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
 import { ElMessage } from "element-plus";
-import { MetricCatalog } from "@/views/dashboard/data";
 
 interface MetricVal {
   [key: string]: { values: { id: string; value: unknown }[] };
@@ -115,6 +114,16 @@ export const topologyStore = defineStore({
     },
     setLinkClientMetrics(m: MetricVal) {
       this.linkClientMetrics = m;
+    },
+    setLegendValues(expressions: string, data: { [key: string]: any }) {
+      for (let idx = 0; idx < this.nodes.length; idx++) {
+        for (let index = 0; index < expressions.length; index++) {
+          const k = "expression" + idx + index;
+          if (expressions[index]) {
+            this.nodes[idx][expressions[index]] = Number(data[k].results[0].values[0].value);
+          }
+        }
+      }
     },
     async getDepthServiceTopology(serviceIds: string[], depth: number) {
       const res = await this.getServicesTopology(serviceIds);
@@ -376,7 +385,6 @@ export const topologyStore = defineStore({
       const { getNodeExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
         expressions,
         calls,
-        MetricCatalog.SERVICE_RELATION,
       );
       const param = getNodeExpressionQuery();
       const res = await this.getNodeExpressionValue(param);
@@ -419,7 +427,6 @@ export const topologyStore = defineStore({
       const { getNodeExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
         expressions,
         this.nodes,
-        "",
       );
       const param = getNodeExpressionQuery();
       const res = await this.getNodeExpressionValue(param);

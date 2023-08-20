@@ -153,6 +153,7 @@ limitations under the License. -->
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
   import { layout, circleIntersection, computeCallPos } from "./utils/layout";
   import zoom from "../../components/utils/zoom";
+  import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -184,7 +185,6 @@ limitations under the License. -->
   const currentNode = ref<Nullable<Node>>();
   const diff = computed(() => [(width.value - graphWidth.value - 130) / 2, 100]);
   const radius = 8;
-  const isExpression = computed(() => settings.value.metricMode === MetricModes.Expression);
 
   onMounted(async () => {
     await nextTick();
@@ -221,10 +221,10 @@ limitations under the License. -->
   }
 
   async function update() {
-    if (isExpression.value) {
+    if (settings.value.metricMode === MetricModes.Expression) {
       topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
-      topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-      topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || []);
+      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || []);
     } else {
       topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
       topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
@@ -237,6 +237,7 @@ limitations under the License. -->
     tooltip.value = d3.select("#tooltip");
     setNodeTools(settings.value.nodeDashboard);
   }
+
   function draw() {
     const node = findMostFrequent(topologyStore.calls);
     const levels = [];
@@ -360,16 +361,28 @@ limitations under the License. -->
   }
 
   async function initLegendMetrics() {
-    const ids = topologyStore.nodes.map((d: Node) => d.id);
     const names = props.config.legend.map((d: any) => d.name);
-    if (names.length && ids.length) {
-      const param = await useQueryTopologyMetrics(names, ids);
-      const res = await topologyStore.getLegendMetrics(param);
+    if (settings.value.metricMode === MetricModes.Expression) {
+      const { getNodeExpressionQuery } = useQueryTopologyExpressionsProcessor(names, topologyStore.nodes);
+      const param = getNodeExpressionQuery();
+      const res = await topologyStore.getNodeExpressionValue(param);
       if (res.errors) {
         ElMessage.error(res.errors);
+      } else {
+        topologyStore.setLegendValues(names, res.data);
+      }
+    } else {
+      const ids = topologyStore.nodes.map((d: Node) => d.id);
+      if (names.length && ids.length) {
+        const param = await useQueryTopologyMetrics(names, ids);
+        const res = await topologyStore.getLegendMetrics(param);
+        if (res.errors) {
+          ElMessage.error(res.errors);
+        }
       }
     }
   }
+
   function getNodeStatus(d: any) {
     const legend = settings.value.legend;
     if (!legend) {
