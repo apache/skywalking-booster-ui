@@ -51,16 +51,16 @@ limitations under the License. -->
         data: topologyStore.nodes,
         links: topologyStore.calls,
         label: {
-          color: "#fff",
+          color: "#666",
           formatter: (param: any) => param.data.name,
         },
-        color: ["#3fe1da", "#6be6c1", "#3fcfdc", "#626c91", "#3fbcde", "#a0a7e6", "#3fa9e1", "#96dee8", "#bf99f8"],
+        color: ["#6be6c1", "#3fcfdc", "#626c91", "#3fbcde", "#a0a7e6", "#3fa9e1", "#96dee8", "#bf99f8"],
         itemStyle: {
           borderWidth: 0,
         },
         lineStyle: {
           color: "source",
-          opacity: 0.12,
+          opacity: 0.3,
         },
         tooltip: {
           position: "bottom",

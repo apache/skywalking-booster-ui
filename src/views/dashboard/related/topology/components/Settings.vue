@@ -619,6 +619,7 @@ limitations under the License. -->
   .label {
     font-size: $font-size-smaller;
     margin-top: 10px;
+    color: #666;
   }
 
   .legend-btn {

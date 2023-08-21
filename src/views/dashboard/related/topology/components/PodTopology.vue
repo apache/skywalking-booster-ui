@@ -266,7 +266,6 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .sankey {
     margin-top: 10px;
-    background-color: #333840 !important;
     color: #ddd;
   }
 
@@ -276,7 +275,8 @@ limitations under the License. -->
     right: 10px;
     width: 400px;
     height: 600px;
-    background-color: #2b3037;
+    border: 1px solid #eee;
+    background-color: $theme-background;
     overflow: auto;
     padding: 10px 15px;
     border-radius: 3px;
@@ -284,6 +284,7 @@ limitations under the License. -->
     transition: all 0.5ms linear;
     z-index: 99;
     text-align: left;
+    box-shadow: #eee 1px 2px 10px;
   }
 
   .tool {
@@ -300,8 +301,8 @@ limitations under the License. -->
     text-align: center;
     cursor: pointer;
     transition: all 0.5ms linear;
-    background-color: #252a2f99;
-    color: #ddd;
+    background: rgb(0 0 0 / 30%);
+    color: $text-color;
     display: inline-block;
     border-radius: 3px;
   }
