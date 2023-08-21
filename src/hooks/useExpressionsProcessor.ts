@@ -318,7 +318,7 @@ export async function useExpressionsQueryPodsMetrics(
 export function useQueryTopologyExpressionsProcessor(metrics: string[], instances: any[]) {
   const appStore = useAppStoreWithOut();
 
-  function getNodeExpressionQuery() {
+  function getExpressionQuery() {
     const conditions: { [key: string]: unknown } = {
       duration: appStore.durationTime,
     };
@@ -364,5 +364,5 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
     return obj;
   }
 
-  return { getNodeExpressionQuery, handleExpressionValues };
+  return { getExpressionQuery, handleExpressionValues };
 }

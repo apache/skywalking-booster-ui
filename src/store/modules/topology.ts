@@ -382,11 +382,8 @@ export const topologyStore = defineStore({
       if (!calls.length) {
         return;
       }
-      const { getNodeExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
-        expressions,
-        calls,
-      );
-      const param = getNodeExpressionQuery();
+      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(expressions, calls);
+      const param = getExpressionQuery();
       const res = await this.getNodeExpressionValue(param);
       if (res.errors) {
         ElMessage.error(res.errors);
@@ -424,11 +421,11 @@ export const topologyStore = defineStore({
         this.setNodeMetricValue({});
         return;
       }
-      const { getNodeExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
+      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
         expressions,
         this.nodes,
       );
-      const param = getNodeExpressionQuery();
+      const param = getExpressionQuery();
       const res = await this.getNodeExpressionValue(param);
       if (res.errors) {
         ElMessage.error(res.errors);

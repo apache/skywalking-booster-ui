@@ -378,8 +378,8 @@ limitations under the License. -->
       return;
     }
     if (isExpression.value) {
-      const { getNodeExpressionQuery } = useQueryTopologyExpressionsProcessor(names, topologyStore.nodes);
-      const param = getNodeExpressionQuery();
+      const { getExpressionQuery } = useQueryTopologyExpressionsProcessor(names, topologyStore.nodes);
+      const param = getExpressionQuery();
       const res = await topologyStore.getNodeExpressionValue(param);
       if (res.errors) {
         ElMessage.error(res.errors);
