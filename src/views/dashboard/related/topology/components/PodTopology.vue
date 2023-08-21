@@ -69,7 +69,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  import { EntityType, DepthList } from "../../../data";
+  import { EntityType, DepthList, MetricModes } from "../../../data";
   import { ElMessage } from "element-plus";
   import Sankey from "./Sankey.vue";
   import Settings from "./Settings.vue";
@@ -119,9 +119,15 @@ limitations under the License. -->
     };
     height.value = dom.height - 70;
     width.value = dom.width - 5;
-    topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-    topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+    if (settings.value.metricMode === MetricModes.Expression) {
+      topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
+      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || []);
+      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || []);
+    } else {
+      topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+      topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+      topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+    }
   }
 
   function resize() {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import { RespFields } from "./data";
-import { ExpressionResultType } from "@/views/dashboard/data";
+import { EntityType, ExpressionResultType } from "@/views/dashboard/data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -23,7 +23,6 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MetricConfigOpt } from "@/types/dashboard";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { Node, Call } from "@/types/topology";
-import { MetricCatalog } from "@/views/dashboard/data";
 
 export async function useExpressionsQueryProcessor(config: Indexable) {
   function expressionsGraphqlPods() {
@@ -315,8 +314,9 @@ export async function useExpressionsQueryPodsMetrics(
   return expressionParams;
 }
 
-export function useQueryTopologyExpressionsProcessor(metrics: string[], instances: any[]) {
+export function useQueryTopologyExpressionsProcessor(metrics: string[], instances: (Call | Node)[]) {
   const appStore = useAppStoreWithOut();
+  const dashboardStore = useDashboardStore();
 
   function getExpressionQuery() {
     const conditions: { [key: string]: unknown } = {
@@ -324,11 +324,43 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
     };
     const variables: string[] = [`$duration: Duration!`];
     const fragmentList = instances.map((d: any, index: number) => {
+      let serviceName;
+      let destServiceName;
+      let endpointName;
+      let serviceInstanceName;
+      let destServiceInstanceName;
+      let destEndpointName;
+      if (d.sourceObj && d.targetObj) {
+        // instances = Calls
+        serviceName = d.sourceObj.serviceName || d.sourceObj.name;
+        destServiceName = d.targetObj.serviceName || d.targetObj.name;
+        if (EntityType[4].value === dashboardStore.entity) {
+          serviceInstanceName = d.sourceObj.name;
+          destServiceInstanceName = d.targetObj.name;
+        }
+        if (EntityType[2].value === dashboardStore.entity) {
+          endpointName = d.sourceObj.name;
+          destEndpointName = d.targetObj.name;
+        }
+      } else {
+        // instances = Nodes
+        serviceName = d.serviceName || d.name;
+        if (EntityType[4].value === dashboardStore.entity) {
+          serviceInstanceName = d.name;
+        }
+        if (EntityType[2].value === dashboardStore.entity) {
+          endpointName = d.name;
+        }
+      }
       const entity = {
-        serviceName: d.sourceObj ? d.sourceObj.name : d.name,
+        serviceName,
         normal: true,
+        serviceInstanceName,
+        endpointName,
+        destServiceName,
         destNormal: true,
-        destServiceName: (d.targetObj && d.targetObj.name) || undefined,
+        destServiceInstanceName,
+        destEndpointName,
       };
       variables.push(`$entity${index}: Entity!`);
       conditions[`entity${index}`] = entity;

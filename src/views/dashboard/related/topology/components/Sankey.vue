@@ -23,6 +23,7 @@ limitations under the License. -->
   import type { Node, Call } from "@/types/topology";
   import type { MetricConfigOpt } from "@/types/dashboard";
   import { aggregation } from "@/hooks/useMetricsProcessor";
+  import { MetricModes } from "../../../data";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
@@ -75,8 +76,14 @@ limitations under the License. -->
     };
   }
   function linkTooltip(data: Call) {
-    const clientMetrics: string[] = Object.keys(topologyStore.linkClientMetrics);
-    const serverMetrics: string[] = Object.keys(topologyStore.linkServerMetrics);
+    const clientMetrics: string[] =
+      props.settings.metricMode === MetricModes.Expression
+        ? props.settings.linkClientExpressions
+        : props.settings.linkClientMetrics;
+    const serverMetrics: string[] =
+      props.settings.metricMode === MetricModes.Expression
+        ? props.settings.linkServerExpressions
+        : props.settings.linkServerMetrics;
     const linkServerMetricConfig: MetricConfigOpt[] = props.settings.linkServerMetricConfig || [];
     const linkClientMetricConfig: MetricConfigOpt[] = props.settings.linkClientMetricConfig || [];
 
@@ -108,7 +115,10 @@ limitations under the License. -->
   }
 
   function nodeTooltip(data: Node) {
-    const nodeMetrics: string[] = Object.keys(topologyStore.nodeMetricValue);
+    const nodeMetrics: string[] =
+      props.settings.metricMode === MetricModes.Expression
+        ? props.settings.nodeExpressions
+        : props.settings.nodeMetrics;
     const nodeMetricConfig = props.settings.nodeMetricConfig || [];
     const html = nodeMetrics.map((m, index) => {
       const metric =
