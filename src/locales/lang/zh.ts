@@ -379,5 +379,6 @@ const msg = {
   metricMode: "指标模式",
   addExpressions: "添加表达式",
   expressions: "表达式",
+  unhealthyExpression: "非健康表达式",
 };
 export default msg;

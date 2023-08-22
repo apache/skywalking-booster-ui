@@ -361,23 +361,27 @@ limitations under the License. -->
   }
 
   async function initLegendMetrics() {
-    const names = props.config.legend.map((d: any) => d.name);
-    if (!names.length) {
+    if (!topologyStore.nodes.length) {
       return;
     }
     if (settings.value.metricMode === MetricModes.Expression) {
-      if (!topologyStore.nodes.length) {
+      const expression = props.config.legendMQE && props.config.legendMQE.expression;
+      if (!expression) {
         return;
       }
-      const { getExpressionQuery } = useQueryTopologyExpressionsProcessor(names, topologyStore.nodes);
+      const { getExpressionQuery } = useQueryTopologyExpressionsProcessor([expression], topologyStore.nodes);
       const param = getExpressionQuery();
       const res = await topologyStore.getNodeExpressionValue(param);
       if (res.errors) {
         ElMessage.error(res.errors);
       } else {
-        topologyStore.setLegendValues(names, res.data);
+        topologyStore.setLegendValues([expression], res.data);
       }
     } else {
+      const names = props.config.legend.map((d: any) => d.name);
+      if (!names.length) {
+        return;
+      }
       const ids = topologyStore.nodes.map((d: Node) => d.id);
       if (ids.length) {
         const param = await useQueryTopologyMetrics(names, ids);
@@ -390,19 +394,21 @@ limitations under the License. -->
   }
 
   function getNodeStatus(d: any) {
-    const legend = settings.value.legend;
+    const { legend, legendMQE } = settings.value;
+    if (settings.value.metricMode === MetricModes.Expression) {
+      if (!legendMQE) {
+        return icons.CUBE;
+      }
+      if (!legendMQE.expression) {
+        return icons.CUBE;
+      }
+      return Number(d[legendMQE.expression]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
+    }
     if (!legend) {
       return icons.CUBE;
     }
     if (!legend.length) {
       return icons.CUBE;
-    }
-    if (settings.value.metricMode === MetricModes.Expression) {
-      let c = true;
-      for (const l of legend) {
-        c = c && !!Number(d[l.name]);
-      }
-      return c && d.isReal ? icons.CUBEERROR : icons.CUBE;
     }
     let c = true;
     for (const l of legend) {

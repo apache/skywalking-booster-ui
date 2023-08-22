@@ -381,5 +381,6 @@ const msg = {
   metricMode: "Metric Mode",
   addExpressions: "Add Expressions",
   expressions: "Expression",
+  unhealthyExpression: "Unhealthy Expression",
 };
 export default msg;

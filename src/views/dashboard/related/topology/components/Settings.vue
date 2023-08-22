@@ -13,11 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="mb-10 mt-20">
+  <div class="mt-20">
     <h5 class="title">{{ t("metricMode") }}</h5>
     <el-switch
       v-model="isExpression"
-      class="mb-5"
+      class="mt-5"
       active-text="Expressions"
       inactive-text="General"
       size="small"
@@ -196,42 +196,50 @@ limitations under the License. -->
   </div>
   <div class="legend-settings" v-show="isService">
     <h5 class="title">{{ t("legendSettings") }}</h5>
-    <div class="label">{{ t("conditions") }}</div>
-    <div v-for="(metric, index) of legend" :key="index">
-      <el-input
+    <span v-if="isExpression">
+      <div class="label">Healthy Description</div>
+      <el-input v-model="description.healthy" placeholder="Please input description" size="small" class="mt-5" />
+    </span>
+    <div class="label">
+      <span>{{ t(isExpression ? "unhealthyExpression" : "conditions") }}</span>
+      <el-tooltip
+        class="cp"
         v-if="isExpression"
-        v-model="metric.name"
-        placeholder="Please input a expression"
-        @change="changeLegend(LegendOpt.NAME, $event, index)"
+        content="The node would be red to indicate unhealthy status when the expression return greater than 0"
+      >
+        <span>
+          <Icon class="icon-help ml-5" iconName="help" size="small" />
+        </span>
+      </el-tooltip>
+    </div>
+    <div v-if="isExpression">
+      <el-input v-model="legendMQE.expression" placeholder="Please input a expression" size="small" class="inputs" />
+    </div>
+    <div v-for="(metric, index) of legend" :key="index" v-else>
+      <Selector
+        class="item"
+        :value="metric.name"
+        :options="states.nodeMetricList"
         size="small"
-        class="legend-inputs"
+        placeholder="Select a metric"
+        @change="changeLegend(LegendOpt.NAME, $event, index)"
       />
-      <span v-else>
-        <Selector
-          class="item"
-          :value="metric.name"
-          :options="states.nodeMetricList"
-          size="small"
-          placeholder="Select a metric"
-          @change="changeLegend(LegendOpt.NAME, $event, index)"
-        />
-        <Selector
-          class="input-small"
-          :value="metric.condition"
-          :options="MetricConditions"
-          size="small"
-          placeholder="Select a condition"
-          @change="changeLegend(LegendOpt.CONDITION, $event, index)"
-        />
-        <el-input
-          v-model="metric.value"
-          placeholder="Please input a value"
-          type="number"
-          @change="changeLegend(LegendOpt.VALUE, $event, index)"
-          size="small"
-          class="item"
-        />
-      </span>
+      <Selector
+        class="input-small"
+        :value="metric.condition"
+        :options="MetricConditions"
+        size="small"
+        placeholder="Select a condition"
+        @change="changeLegend(LegendOpt.CONDITION, $event, index)"
+      />
+      <el-input
+        v-model="metric.value"
+        placeholder="Please input a value"
+        type="number"
+        @change="changeLegend(LegendOpt.VALUE, $event, index)"
+        size="small"
+        class="item"
+      />
       <span>
         <Icon class="cp delete" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
         <Icon
@@ -244,8 +252,10 @@ limitations under the License. -->
       </span>
       <div v-show="index !== legend.length - 1">&&</div>
     </div>
-    <div class="label">Healthy Description</div>
-    <el-input v-model="description.healthy" placeholder="Please input description" size="small" class="mt-5" />
+    <span v-if="!isExpression">
+      <div class="label">Healthy Description</div>
+      <el-input v-model="description.healthy" placeholder="Please input description" size="small" class="mt-5" />
+    </span>
     <div class="label">Unhealthy Description</div>
     <el-input v-model="description.unhealthy" placeholder="Please input description" size="small" class="mt-5" />
     <el-button @click="setLegend" class="legend-btn" size="small" type="primary">
@@ -325,6 +335,7 @@ limitations under the License. -->
   const legend = ref<{ name: string; condition: string; value: string }[]>(
     l ? selectedGrid.legend : [{ name: "", condition: "", value: "" }],
   );
+  const legendMQE = ref<{ expression: string }>(selectedGrid.legendMQE || { expression: "" });
   const configType = ref<string>("");
   const description = reactive<any>(selectedGrid.description || {});
 
@@ -373,21 +384,26 @@ limitations under the License. -->
   }
   async function setLegend() {
     updateSettings();
-    const names = dashboardStore.selectedGrid.legend.map((d: any) => d.name);
-    if (!names.length) {
-      emit("updateNodes");
-      return;
-    }
     if (isExpression.value) {
-      const { getExpressionQuery } = useQueryTopologyExpressionsProcessor(names, topologyStore.nodes);
+      const expression = dashboardStore.selectedGrid.legendMQE && dashboardStore.selectedGrid.legendMQE.expression;
+      if (!expression) {
+        emit("updateNodes");
+        return;
+      }
+      const { getExpressionQuery } = useQueryTopologyExpressionsProcessor([expression], topologyStore.nodes);
       const param = getExpressionQuery();
       const res = await topologyStore.getNodeExpressionValue(param);
       if (res.errors) {
         ElMessage.error(res.errors);
       } else {
-        topologyStore.setLegendValues(names, res.data);
+        topologyStore.setLegendValues([expression], res.data);
       }
     } else {
+      const names = dashboardStore.selectedGrid.legend.map((d: any) => d.name && d.condition && d.value);
+      if (!names.length) {
+        emit("updateNodes");
+        return;
+      }
       const ids = topologyStore.nodes.map((d: Node) => d.id);
       const param = await useQueryTopologyMetrics(names, ids);
       const res = await topologyStore.getLegendMetrics(param);
@@ -461,6 +477,7 @@ limitations under the License. -->
       nodeExpressions: states.nodeExpressions,
       metricMode: isExpression.value ? MetricModes.Expression : MetricModes.General,
       legend: metrics,
+      legendMQE: legendMQE.value,
       ...metricConfig,
       description,
     };
@@ -623,9 +640,8 @@ limitations under the License. -->
   }
 
   .title {
-    margin-bottom: 0;
-    margin-top: 0;
     color: #666;
+    margin-bottom: 0;
   }
 
   .label {
