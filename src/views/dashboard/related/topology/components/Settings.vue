@@ -204,33 +204,34 @@ limitations under the License. -->
         placeholder="Please input a expression"
         @change="changeLegend(LegendOpt.NAME, $event, index)"
         size="small"
-        class="item"
+        class="legend-inputs"
       />
-      <Selector
-        v-else
-        class="item"
-        :value="metric.name"
-        :options="states.nodeMetricList"
-        size="small"
-        placeholder="Select a metric"
-        @change="changeLegend(LegendOpt.NAME, $event, index)"
-      />
-      <Selector
-        class="input-small"
-        :value="metric.condition"
-        :options="MetricConditions"
-        size="small"
-        placeholder="Select a condition"
-        @change="changeLegend(LegendOpt.CONDITION, $event, index)"
-      />
-      <el-input
-        v-model="metric.value"
-        placeholder="Please input a value"
-        type="number"
-        @change="changeLegend(LegendOpt.VALUE, $event, index)"
-        size="small"
-        class="item"
-      />
+      <span v-else>
+        <Selector
+          class="item"
+          :value="metric.name"
+          :options="states.nodeMetricList"
+          size="small"
+          placeholder="Select a metric"
+          @change="changeLegend(LegendOpt.NAME, $event, index)"
+        />
+        <Selector
+          class="input-small"
+          :value="metric.condition"
+          :options="MetricConditions"
+          size="small"
+          placeholder="Select a condition"
+          @change="changeLegend(LegendOpt.CONDITION, $event, index)"
+        />
+        <el-input
+          v-model="metric.value"
+          placeholder="Please input a value"
+          type="number"
+          @change="changeLegend(LegendOpt.VALUE, $event, index)"
+          size="small"
+          class="item"
+        />
+      </span>
       <span>
         <Icon class="cp delete" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
         <Icon
@@ -439,7 +440,13 @@ limitations under the License. -->
     updateSettings();
   }
   function updateSettings(metricConfig?: { [key: string]: MetricConfigOpt[] }) {
-    const metrics = legend.value.filter((d: any) => d.name && d.value && d.condition);
+    let metrics = [];
+    if (isExpression.value) {
+      metrics = legend.value.filter((d: any) => d.name);
+    } else {
+      metrics = legend.value.filter((d: any) => d.name && d.value && d.condition);
+    }
+
     const param = {
       ...dashboardStore.selectedGrid,
       linkDashboard: states.linkDashboard,
@@ -598,6 +605,11 @@ limitations under the License. -->
   .inputs {
     margin-top: 8px;
     width: 355px;
+  }
+
+  .legend-inputs {
+    margin-top: 8px;
+    width: 310px;
   }
 
   .item {

@@ -397,6 +397,13 @@ limitations under the License. -->
     if (!legend.length) {
       return icons.CUBE;
     }
+    if (settings.value.metricMode === MetricModes.Expression) {
+      let c = true;
+      for (const l of legend) {
+        c = c && !!Number(d[l.name]);
+      }
+      return c && d.isReal ? icons.CUBEERROR : icons.CUBE;
+    }
     let c = true;
     for (const l of legend) {
       if (l.condition === "<") {

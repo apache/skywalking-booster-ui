@@ -358,7 +358,7 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
         serviceInstanceName,
         endpointName,
         destServiceName,
-        destNormal: true,
+        destNormal: destServiceName ? true : undefined,
         destServiceInstanceName,
         destEndpointName,
       };
