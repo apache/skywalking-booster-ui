@@ -139,7 +139,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { EntityType, DepthList } from "../../../data";
+  import { EntityType, DepthList, MetricModes } from "../../../data";
   import router from "@/router";
   import { ElMessage } from "element-plus";
   import Settings from "./Settings.vue";
@@ -153,6 +153,7 @@ limitations under the License. -->
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
   import { layout, circleIntersection, computeCallPos } from "./utils/layout";
   import zoom from "../../components/utils/zoom";
+  import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -220,19 +221,27 @@ limitations under the License. -->
   }
 
   async function update() {
-    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
-    topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-    topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+    if (settings.value.metricMode === MetricModes.Expression) {
+      topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
+      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || []);
+      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || []);
+    } else {
+      topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+      topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+      topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+    }
+
     window.addEventListener("resize", resize);
     await initLegendMetrics();
     draw();
     tooltip.value = d3.select("#tooltip");
     setNodeTools(settings.value.nodeDashboard);
   }
+
   function draw() {
     const node = findMostFrequent(topologyStore.calls);
     const levels = [];
-    const nodes = topologyStore.nodes.sort((a: Node, b: Node) => {
+    const nodes = JSON.parse(JSON.stringify(topologyStore.nodes)).sort((a: Node, b: Node) => {
       if (a.name.toLowerCase() < b.name.toLowerCase()) {
         return -1;
       }
@@ -352,18 +361,49 @@ limitations under the License. -->
   }
 
   async function initLegendMetrics() {
-    const ids = topologyStore.nodes.map((d: Node) => d.id);
-    const names = props.config.legend.map((d: any) => d.name);
-    if (names.length && ids.length) {
-      const param = await useQueryTopologyMetrics(names, ids);
-      const res = await topologyStore.getLegendMetrics(param);
+    if (!topologyStore.nodes.length) {
+      return;
+    }
+    if (settings.value.metricMode === MetricModes.Expression) {
+      const expression = props.config.legendMQE && props.config.legendMQE.expression;
+      if (!expression) {
+        return;
+      }
+      const { getExpressionQuery } = useQueryTopologyExpressionsProcessor([expression], topologyStore.nodes);
+      const param = getExpressionQuery();
+      const res = await topologyStore.getNodeExpressionValue(param);
       if (res.errors) {
         ElMessage.error(res.errors);
+      } else {
+        topologyStore.setLegendValues([expression], res.data);
+      }
+    } else {
+      const names = props.config.legend.map((d: any) => d.name);
+      if (!names.length) {
+        return;
+      }
+      const ids = topologyStore.nodes.map((d: Node) => d.id);
+      if (ids.length) {
+        const param = await useQueryTopologyMetrics(names, ids);
+        const res = await topologyStore.getLegendMetrics(param);
+        if (res.errors) {
+          ElMessage.error(res.errors);
+        }
       }
     }
   }
+
   function getNodeStatus(d: any) {
-    const legend = settings.value.legend;
+    const { legend, legendMQE } = settings.value;
+    if (settings.value.metricMode === MetricModes.Expression) {
+      if (!legendMQE) {
+        return icons.CUBE;
+      }
+      if (!legendMQE.expression) {
+        return icons.CUBE;
+      }
+      return Number(d[legendMQE.expression]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
+    }
     if (!legend) {
       return icons.CUBE;
     }
@@ -381,7 +421,10 @@ limitations under the License. -->
     return c && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
-    const nodeMetrics: string[] = settings.value.nodeMetrics || [];
+    const nodeMetrics: string[] =
+      (settings.value.metricMode === MetricModes.Expression
+        ? settings.value.nodeExpressions
+        : settings.value.nodeMetrics) || [];
     const nodeMetricConfig = settings.value.nodeMetricConfig || [];
     const html = nodeMetrics.map((m, index) => {
       const metric =
@@ -404,10 +447,16 @@ limitations under the License. -->
       .html(tipHtml);
   }
   function showLinkTip(event: MouseEvent, data: Call) {
-    const linkClientMetrics: string[] = settings.value.linkClientMetrics || [];
+    const linkClientMetrics: string[] =
+      settings.value.metricMode === MetricModes.Expression
+        ? settings.value.linkClientExpressions
+        : settings.value.linkClientMetrics || [];
     const linkServerMetricConfig: MetricConfigOpt[] = settings.value.linkServerMetricConfig || [];
     const linkClientMetricConfig: MetricConfigOpt[] = settings.value.linkClientMetricConfig || [];
-    const linkServerMetrics: string[] = settings.value.linkServerMetrics || [];
+    const linkServerMetrics: string[] =
+      settings.value.metricMode === MetricModes.Expression
+        ? settings.value.linkServerExpressions
+        : settings.value.linkServerMetrics || [];
     const htmlServer = linkServerMetrics.map((m, index) => {
       const metric = topologyStore.linkServerMetrics[m].values.find(
         (val: { id: string; value: unknown }) => val.id === data.id,
@@ -667,7 +716,7 @@ limitations under the License. -->
       padding: 0 15px;
       border-radius: 3px;
       color: $disabled-color;
-      border: 1px solid $disabled-color;
+      border: 1px solid #eee;
       background-color: $theme-background;
       box-shadow: #eee 1px 2px 10px;
       transition: all 0.5ms linear;

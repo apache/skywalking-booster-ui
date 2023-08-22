@@ -22,6 +22,7 @@ limitations under the License. -->
         :options="DepthList"
         placeholder="Select a option"
         @change="changeDepth"
+        size="small"
       />
     </span>
     <span class="switch-icon ml-5" title="Settings" @click="setConfig" v-if="dashboardStore.editMode">
@@ -68,7 +69,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  import { EntityType, DepthList } from "../../../data";
+  import { EntityType, DepthList, MetricModes } from "../../../data";
   import { ElMessage } from "element-plus";
   import Sankey from "./Sankey.vue";
   import Settings from "./Settings.vue";
@@ -118,9 +119,15 @@ limitations under the License. -->
     };
     height.value = dom.height - 70;
     width.value = dom.width - 5;
-    topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-    topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-    topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+    if (settings.value.metricMode === MetricModes.Expression) {
+      topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
+      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || []);
+      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || []);
+    } else {
+      topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
+      topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
+      topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
+    }
   }
 
   function resize() {
@@ -265,7 +272,6 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .sankey {
     margin-top: 10px;
-    background-color: #333840 !important;
     color: #ddd;
   }
 
@@ -275,7 +281,8 @@ limitations under the License. -->
     right: 10px;
     width: 400px;
     height: 600px;
-    background-color: #2b3037;
+    border: 1px solid #eee;
+    background-color: $theme-background;
     overflow: auto;
     padding: 10px 15px;
     border-radius: 3px;
@@ -283,6 +290,7 @@ limitations under the License. -->
     transition: all 0.5ms linear;
     z-index: 99;
     text-align: left;
+    box-shadow: #eee 1px 2px 10px;
   }
 
   .tool {
@@ -299,8 +307,8 @@ limitations under the License. -->
     text-align: center;
     cursor: pointer;
     transition: all 0.5ms linear;
-    background-color: #252a2f99;
-    color: #ddd;
+    background: rgb(0 0 0 / 30%);
+    color: $text-color;
     display: inline-block;
     border-radius: 3px;
   }

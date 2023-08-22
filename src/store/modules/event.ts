@@ -57,7 +57,7 @@ export const eventStore = defineStore({
       this.instances = [{ value: "", label: "All" }, ...res.data.data.pods] || [{ value: "", label: "All" }];
       return res.data;
     },
-    async getEndpoints(keyword?: string) {
+    async getEndpoints(keyword: string) {
       const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
       if (!serviceId) {
         return;
