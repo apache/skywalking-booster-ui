@@ -203,6 +203,7 @@ limitations under the License. -->
     <div class="label">
       <span>{{ t(isExpression ? "unhealthyExpression" : "conditions") }}</span>
       <el-tooltip
+        class="cp"
         v-if="isExpression"
         content="The node would be red to indicate unhealthy status when the expression return greater than 0"
       >
