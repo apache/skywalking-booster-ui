@@ -16,7 +16,6 @@
  */
 import { createApp } from "vue";
 import App from "./App.vue";
-import router from "./router";
 import { store } from "./store";
 import components from "@/components";
 import i18n from "./locales";
@@ -33,6 +32,9 @@ app.use(store);
 mountApp();
 
 async function mountApp() {
+  await appStore.getActivateMenus();
   await appStore.queryOAPTimeInfo();
-  app.use(router).mount("#app");
+
+  const router = await import("./router");
+  app.use(router.default).mount("#app");
 }

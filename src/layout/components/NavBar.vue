@@ -14,16 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="nav-bar flex-h">
-    <div class="title flex-h">
-      <el-breadcrumb separator=">" v-if="pathNames.length">
-        <el-breadcrumb-item v-for="(names, index) in pathNames" :key="index">
-          <a v-for="(item, i) in names" :href="item.path" :key="i">
-            {{ route.name === "ViewWidget" ? "" : item.name }}
-          </a>
-        </el-breadcrumb-item>
-      </el-breadcrumb>
-      <span v-else>{{ pageName && t(pageName) }}</span>
-    </div>
+    <div class="title">{{ route.name === "ViewWidget" ? "" : appStore.pageTitle || pageName }}</div>
     <div class="app-config">
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
       <TimePicker
@@ -160,7 +151,7 @@ limitations under the License. -->
     background-color: #fafbfc;
     border-bottom: 1px solid #dfe4e8;
     color: #222;
-    font-size: 12px;
+    font-size: $font-size-smaller;
   }
 
   .nav-bar.dark {
@@ -170,7 +161,7 @@ limitations under the License. -->
   }
 
   .title {
-    font-size: 14px;
+    font-size: $font-size-normal;
     font-weight: 500;
     height: 28px;
     line-height: 28px;

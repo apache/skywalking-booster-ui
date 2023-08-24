@@ -171,20 +171,20 @@ limitations under the License. -->
   }
 
   .trace-detail-wrapper {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     padding: 5px 10px;
     border-bottom: 1px solid #eee;
     width: 100%;
     height: 95px;
 
     .grey {
-      color: #fff;
+      color: $text-color;
       background-color: #448dfe;
     }
 
     .ghost {
       cursor: pointer;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgb(0 0 0 / 30%);
     }
   }
 
@@ -193,7 +193,7 @@ limitations under the License. -->
   }
 
   .trace-detail-ids {
-    background-color: rgba(0, 0, 0, 0);
+    background-color: rgb(0 0 0 / 0%);
     outline: 0;
     border-style: unset;
     color: inherit;
@@ -209,7 +209,7 @@ limitations under the License. -->
   .tag {
     display: inline-block;
     border-radius: 4px;
-    padding: 0px 7px;
+    padding: 0 7px;
     background-color: #40454e;
     color: #eee;
   }

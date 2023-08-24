@@ -14,49 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import type { RouteRecordRaw } from "vue-router";
+import Layout from "@/layout/Index.vue";
 
-export default [
+export const routesMarketplace: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "Gateway",
+    name: "Marketplace",
     meta: {
-      title: "gateway",
-      icon: "gateway",
-      hasGroup: true,
+      i18nKey: "marketplace",
+      icon: "marketplace",
+      hasGroup: false,
+      activate: true,
+      title: "Marketplace",
     },
-    redirect: "/apisix",
+    component: Layout,
     children: [
       {
-        path: "/apisix",
-        name: "APISIX",
-        meta: {
-          title: "apisix",
-          layer: "APISIX",
-        },
-      },
-      {
-        path: "/apisix/tab/:activeTabIndex",
-        name: "APISIXActiveTabIndex",
-        meta: {
-          notShow: true,
-          layer: "APISIX",
-        },
-      },
-      {
-        path: "/aws-gateway",
-        name: "AWSGateway",
-        meta: {
-          title: "AWSGateway",
-          layer: "AWS_GATEWAY",
-        },
-      },
-      {
-        path: "/aws-gateway/tab/:activeTabIndex",
-        name: "GatewayActiveTabIndex",
-        meta: {
-          notShow: true,
-          layer: "AWS_GATEWAY",
-        },
+        path: "/marketplace",
+        name: "MenusManagement",
+        component: () => import("@/views/Marketplace.vue"),
       },
     ],
   },

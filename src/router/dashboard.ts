@@ -23,9 +23,11 @@ export const routesDashboard: Array<RouteRecordRaw> = [
     component: Layout,
     name: "Dashboard",
     meta: {
-      title: "dashboards",
+      i18nKey: "dashboards",
       icon: "dashboard_customize",
       hasGroup: true,
+      activate: true,
+      title: "Dashboards",
     },
     children: [
       {
@@ -33,7 +35,9 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         component: () => import("@/views/dashboard/List.vue"),
         name: "List",
         meta: {
-          title: "dashboardList",
+          i18nKey: "dashboardList",
+          activate: true,
+          title: "Dashboard List",
         },
       },
       {
@@ -41,7 +45,9 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         component: () => import("@/views/dashboard/New.vue"),
         name: "New",
         meta: {
-          title: "dashboardNew",
+          i18nKey: "dashboardNew",
+          activate: true,
+          title: "New Dashboard",
         },
       },
       {

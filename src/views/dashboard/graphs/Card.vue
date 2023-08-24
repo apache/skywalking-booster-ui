@@ -73,7 +73,7 @@ limitations under the License. -->
     color: #666;
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: $font-size-normal;
   }
 
   .unit {

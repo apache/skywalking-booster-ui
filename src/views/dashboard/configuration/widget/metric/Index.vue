@@ -160,7 +160,7 @@ limitations under the License. -->
     },
   });
   const dashboardStore = useDashboardStore();
-  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression ? true : false);
+  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression);
   const metrics = computed(
     () => (isExpression.value ? dashboardStore.selectedGrid.expressions : dashboardStore.selectedGrid.metrics) || [],
   );
@@ -611,20 +611,20 @@ limitations under the License. -->
     span {
       display: inline-block;
       padding: 2px 10px;
-      border: 1px solid #ccc;
-      background-color: #fff;
+      border: 1px solid $disabled-color;
+      background-color: $theme-background;
       border-right: 0;
       cursor: pointer;
     }
 
     span:nth-last-child(1) {
-      border-right: 1px solid #ccc;
+      border-right: 1px solid $disabled-color;
     }
   }
 
   span.active {
-    background-color: #409eff;
-    color: #fff;
+    background-color: $active-color;
+    color: $theme-background;
   }
 
   .expression-param {
@@ -640,7 +640,7 @@ limitations under the License. -->
     min-height: 26px;
 
     &:focus {
-      border-color: #409eff;
+      border-color: $active-color;
     }
   }
 
@@ -651,6 +651,6 @@ limitations under the License. -->
 
   .link {
     cursor: pointer;
-    color: #409eff;
+    color: $active-color;
   }
 </style>

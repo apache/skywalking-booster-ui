@@ -86,17 +86,17 @@ limitations under the License. -->
     position: relative;
     justify-content: space-between;
     border: 1px solid #ddd;
-    background: #fff;
+    background: $theme-background;
     border-radius: 3px;
     color: #000;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     height: 24px;
 
     .selected {
       padding: 0 3px;
       border-radius: 3px;
       margin: 3px;
-      color: #409eff;
+      color: $active-color;
       background-color: #fafafa;
       border: 1px solid #e8e8e8;
       text-align: center;
@@ -126,7 +126,7 @@ limitations under the License. -->
     position: absolute;
     right: 5px;
     top: 0;
-    font-size: 14px;
+    font-size: $font-size-normal;
     display: none;
     color: #aaa;
     cursor: pointer;
@@ -137,8 +137,8 @@ limitations under the License. -->
     position: absolute;
     top: 26px;
     left: 0;
-    background: #fff;
-    box-shadow: 0 1px 6px rgba(99, 99, 99, 0.2);
+    background-color: $theme-background;
+    box-shadow: 0 1px 6px rgb(99 99 99 / 20%);
     border: 1px solid #ddd;
     width: 100%;
     border-radius: 0 0 3px 3px;
@@ -164,7 +164,7 @@ limitations under the License. -->
     padding: 7px 15px;
 
     &.select-disabled {
-      color: #409eff;
+      color: $active-color;
       cursor: not-allowed;
     }
 

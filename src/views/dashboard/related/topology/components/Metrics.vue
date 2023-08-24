@@ -15,7 +15,9 @@ limitations under the License. -->
 <template>
   <div class="config-panel">
     <div class="item mb-10">
-      <span class="label">{{ t("metrics") }}</span>
+      <span class="label">{{
+        t(dashboardStore.selectedGrid.metricMode === MetricModes.General ? "metrics" : "expressions")
+      }}</span>
       <SelectSingle :value="currentMetric" :options="metrics" @change="changeMetric" class="selectors" />
     </div>
     <div class="item mb-10">
@@ -38,7 +40,7 @@ limitations under the License. -->
         @change="changeConfigs({ label: currentConfig.label })"
       />
     </div>
-    <div class="item mb-10">
+    <div class="item mb-10" v-if="dashboardStore.selectedGrid.metricMode === MetricModes.General">
       <span class="label">{{ t("aggregation") }}</span>
       <SelectSingle
         :value="currentConfig.calculation"
@@ -54,17 +56,12 @@ limitations under the License. -->
   import { ref, computed, watch } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import { CalculationOpts } from "../../../data";
+  import { CalculationOpts, MetricModes } from "../../../data";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import type { MetricConfigOpt } from "@/types/dashboard";
   import type { Option } from "element-plus/es/components/select-v2/src/select.types";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
-    currentMetricConfig: {
-      type: Object as PropType<MetricConfigOpt>,
-      default: () => ({ unit: "" }),
-    },
     type: { type: String, default: "" },
     metrics: { type: Array as PropType<string[]>, default: () => [] },
   });
@@ -149,7 +146,7 @@ limitations under the License. -->
   .label {
     width: 150px;
     display: inline-block;
-    font-size: 12px;
+    font-size: $font-size-smaller;
   }
 
   .close {

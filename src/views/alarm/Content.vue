@@ -142,12 +142,12 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  @import "../components/style.scss";
+  @import url("../components/style.scss");
 
   .tips {
     width: 100%;
     margin: 20px 0;
     text-align: center;
-    font-size: 14px;
+    font-size: $font-size-normal;
   }
 </style>

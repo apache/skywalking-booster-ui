@@ -523,7 +523,7 @@ limitations under the License. -->
   .switch-icon-edit {
     cursor: pointer;
     transition: all 0.5ms linear;
-    border: 1px solid #ccc;
+    border: 1px solid $disabled-color;
     color: #666;
     display: inline-block;
     padding: 5px;
@@ -570,6 +570,6 @@ limitations under the License. -->
     padding: 5px;
     border: 1px solid #000;
     border-radius: 3px;
-    background-color: #fff;
+    background-color: $theme-background;
   }
 </style>

@@ -151,6 +151,6 @@ limitations under the License. -->
     padding: 10px;
     text-align: right;
     width: 100%;
-    background-color: #fff;
+    background-color: $theme-background;
   }
 </style>

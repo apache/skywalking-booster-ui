@@ -72,7 +72,7 @@ limitations under the License. -->
     min-height: 500px;
     border: none;
     outline: none;
-    color: #3d444f;
+    color: $font-color;
     overflow: auto;
   }
 </style>

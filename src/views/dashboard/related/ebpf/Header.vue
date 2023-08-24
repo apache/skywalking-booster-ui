@@ -89,7 +89,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .header {
     padding: 5px 20px 5px 10px;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     border-bottom: 1px solid #dcdfe6;
     justify-content: space-between;
   }

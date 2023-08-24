@@ -14,33 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import type { RouteRecordRaw } from "vue-router";
+import Layout from "@/layout/Index.vue";
 
-export default [
+export const routesSettings: Array<RouteRecordRaw> = [
   {
     path: "",
-    name: "MQ",
+    name: "Settings",
     meta: {
-      title: "mq",
-      icon: "mq",
-      hasGroup: true,
+      i18nKey: "settings",
+      icon: "settings",
+      hasGroup: false,
+      activate: true,
+      title: "Settings",
     },
-    redirect: "/rabbitMQ",
+    component: Layout,
     children: [
       {
-        path: "/rabbitMQ",
-        name: "RabbitMQ",
-        meta: {
-          title: "rabbitMQ",
-          layer: "RABBITMQ",
-        },
-      },
-      {
-        path: "/rabbitMQ/tab/:activeTabIndex",
-        name: "RabbitMQActiveTabIndex",
-        meta: {
-          notShow: true,
-          layer: "RABBITMQ",
-        },
+        path: "/settings",
+        name: "Settings",
+        component: () => import("@/views/Settings.vue"),
       },
     ],
   },

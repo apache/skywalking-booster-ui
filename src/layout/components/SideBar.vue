@@ -36,14 +36,16 @@ limitations under the License. -->
                   <Icon size="lg" :iconName="menu.meta.icon" />
                 </el-icon>
                 <span class="title" :class="isCollapse ? 'collapse' : ''">
-                  {{ t(menu.meta.title) }}
+                  {{ te(menu.meta.i18nKey) ? t(menu.meta.i18nKey) : menu.meta.title }}
                 </span>
               </router-link>
             </template>
             <el-menu-item-group>
               <el-menu-item v-for="(m, idx) in filterMenus(menu.children)" :index="m.name" :key="idx">
                 <router-link class="items" :to="m.path">
-                  <span class="title">{{ m.meta && t(m.meta.title) }}</span>
+                  <span class="title">
+                    {{ m.meta && (te(m.meta.i18nKey) ? t(m.meta.i18nKey) : m.meta.title) }}
+                  </span>
                 </router-link>
               </el-menu-item>
             </el-menu-item-group>
@@ -56,7 +58,9 @@ limitations under the License. -->
             </el-icon>
             <template #title>
               <router-link class="items menu-title" :to="menu.children[0].path">
-                <span class="title">{{ t(menu.meta.title) }}</span>
+                <span class="title">
+                  {{ te(menu.meta.i18nKey) ? t(menu.meta.i18nKey) : menu.meta.title }}
+                </span>
               </router-link>
             </template>
           </el-menu-item>
@@ -67,7 +71,7 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, watch } from "vue";
   import type { RouteRecordRaw } from "vue-router";
   import { useRouter, useRoute } from "vue-router";
   import { useI18n } from "vue-i18n";
@@ -75,11 +79,14 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
 
   /*global Recordable*/
+  const { t, te } = useI18n();
   const appStore = useAppStoreWithOut();
-  const { t } = useI18n();
-  const name = ref<string>(String(useRouter().currentRoute.value.name));
+  const router = useRouter();
+  const name = ref<string>(String(router.currentRoute.value.name));
   const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "") ? ref("light") : ref("black");
-  const routes = ref<RouteRecordRaw[] | any>(useRouter().options.routes);
+  const routes = ref<RouteRecordRaw[] | any>(
+    (router.options.routes || []).filter((d: any) => d.meta && d.meta.activate),
+  );
   const route = useRoute();
   const isCollapse = ref(true);
   const showMenu = ref(true);
@@ -97,7 +104,7 @@ limitations under the License. -->
     theme.value = ["VirtualMachine", "Kubernetes"].includes(String(menu.name)) ? "light" : "black";
   };
   const filterMenus = (menus: Recordable[]) => {
-    return menus.filter((d) => d.meta && !d.meta.notShow);
+    return menus.filter((d) => d.meta && !d.meta.notShow && d.meta.activate);
   };
   function setCollapse() {
     open.value = true;
@@ -112,6 +119,13 @@ limitations under the License. -->
     isCollapse.value = true;
     open.value = false;
   }
+
+  watch(
+    () => route.name,
+    () => {
+      name.value = String(route.name);
+    },
+  );
 </script>
 
 <style lang="scss" scoped>
@@ -132,12 +146,12 @@ limitations under the License. -->
 
   .el-menu-vertical:not(.el-menu--collapse) {
     width: 220px;
-    font-size: 14px;
+    font-size: $font-size-normal;
   }
 
   .logo-icon-collapse {
     width: 65px;
-    margin: 5px 0 10px 0;
+    margin: 5px 0 10px;
     text-align: center;
   }
 
@@ -169,7 +183,7 @@ limitations under the License. -->
 
   .version {
     color: #eee;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     cursor: pointer;
     padding-left: 23px;
     margin-bottom: 10px;

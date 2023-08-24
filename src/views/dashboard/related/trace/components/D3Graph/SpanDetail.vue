@@ -111,8 +111,8 @@ limitations under the License. -->
   </el-dialog>
   <el-dialog v-model="showRelatedLogs" :destroy-on-close="true" fullscreen @closed="showRelatedLogs = false">
     <el-pagination
-      v-model:currentPage="pageNum"
-      v-model:page-size="pageSize"
+      v-model="pageNum"
+      :page-size="pageSize"
       :small="true"
       layout="prev, pager, next"
       :pager-count="5"
@@ -245,7 +245,7 @@ limitations under the License. -->
   }
 
   .popup-btn {
-    color: #fff;
+    color: $text-color;
     margin-top: 40px;
     width: 100%;
     text-align: center;

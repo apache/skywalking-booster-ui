@@ -55,7 +55,7 @@ limitations under the License. -->
   .log-wrapper {
     width: 100%;
     height: 100%;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     position: relative;
     overflow: auto;
   }
@@ -68,7 +68,7 @@ limitations under the License. -->
 
   .header {
     padding: 10px;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     border-bottom: 1px solid #dcdfe6;
     min-width: 1024px;
   }
@@ -81,7 +81,7 @@ limitations under the License. -->
     text-align: center;
 
     &:hover {
-      color: #409eff;
+      color: $active-color;
       background-color: #eee;
     }
   }

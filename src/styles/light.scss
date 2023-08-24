@@ -15,32 +15,11 @@
  * limitations under the License.
  */
 
-export default [
-  {
-    path: "",
-    name: "Functions",
-    meta: {
-      title: "functions",
-      icon: "functions",
-      hasGroup: true,
-    },
-    children: [
-      {
-        path: "/openFunction",
-        name: "OpenFunction",
-        meta: {
-          title: "openFunction",
-          layer: "FAAS",
-        },
-      },
-      {
-        path: "/openFunction/tab/:activeTabIndex",
-        name: "OpenFunctionActiveTabIndex",
-        meta: {
-          notShow: true,
-          layer: "FAAS",
-        },
-      },
-    ],
-  },
-];
+$font-color: #3d444f;
+$text-color: #fff;
+$disabled-color: #ccc;
+$active-color: #409eff;
+$theme-background: #fff;
+$active-background: #409eff;
+$font-size-smaller: 12px;
+$font-size-normal: 14px;

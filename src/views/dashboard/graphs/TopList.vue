@@ -140,7 +140,7 @@ limitations under the License. -->
   }
 
   .progress-bar {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     color: #333;
   }
 
@@ -159,7 +159,7 @@ limitations under the License. -->
   }
 
   .calls {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     padding: 0 5px;
     display: inline-block;
     background-color: #40454e;
@@ -172,7 +172,7 @@ limitations under the License. -->
     border-radius: 4px;
     border: 1px solid #ddd;
     color: #333;
-    background-color: #fff;
+    background-color: $theme-background;
     will-change: opacity, background-color;
     transition: opacity 0.3s, background-color 0.3s;
   }
@@ -197,10 +197,10 @@ limitations under the License. -->
     cursor: pointer;
     position: relative;
     text-align: center;
-    font-size: 12px;
+    font-size: $font-size-smaller;
 
     &:hover {
-      color: #409eff;
+      color: $active-color;
       background-color: #eee;
     }
   }

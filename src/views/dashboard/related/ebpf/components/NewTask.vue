@@ -140,12 +140,12 @@ limitations under the License. -->
   }
 
   .date {
-    font-size: 12px;
+    font-size: $font-size-smaller;
   }
 
   .label {
     margin-top: 10px;
-    font-size: 14px;
+    font-size: $font-size-normal;
   }
 
   .profile-input {

@@ -27,6 +27,7 @@ import path from "path";
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 const OUTPUT_DIR = "dist";
+const pathSrc = path.resolve(__dirname, "./src");
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv): UserConfig => {
   const { VITE_SW_PROXY_TARGET } = loadEnv(mode, process.cwd());
@@ -54,10 +55,18 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     resolve: {
       extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        "@": pathSrc,
         "vue-i18n": "vue-i18n/dist/vue-i18n.cjs.js",
       },
       preserveSymlinks: true,
+    },
+    css: {
+      preprocessorOptions: {
+        //define global scss variable
+        scss: {
+          additionalData: `@import "@/styles/light.scss";`,
+        },
+      },
     },
     server: {
       host: true,
@@ -71,7 +80,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     },
     build: {
       target: "es2015",
-      cssTarget: "chrome80",
       outDir: OUTPUT_DIR,
       manifest: false,
       sourcemap: false,

@@ -48,3 +48,23 @@ export type EventParams = {
   dataIndex: number;
   event: any;
 };
+
+export interface MenuOptions extends SubItem {
+  hasGroup?: boolean;
+  subItems: SubItem[];
+}
+
+export interface SubItem {
+  layer: string;
+  icon: string;
+  title: string;
+  activate: boolean;
+  name?: string;
+  path?: string;
+  notShow?: boolean;
+  id?: string;
+  description: string;
+  documentLink: string;
+  descKey: string;
+  i18nKey: string;
+}

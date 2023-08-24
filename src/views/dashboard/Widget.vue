@@ -185,12 +185,12 @@ limitations under the License. -->
   .content {
     min-width: 100px;
     border: 1px solid #eee;
-    background-color: #fff;
+    background-color: $theme-background;
     position: relative;
   }
 
   .widget-chart {
-    background: #fff;
+    background-color: $theme-background;
     box-shadow: 0 1px 4px 0 #00000029;
     border-radius: 3px;
     padding: 5px;
@@ -198,7 +198,7 @@ limitations under the License. -->
   }
 
   .no-data {
-    font-size: 14px;
+    font-size: $font-size-normal;
     text-align: center;
     line-height: 400px;
   }
@@ -208,7 +208,7 @@ limitations under the License. -->
     line-height: 25px;
     text-align: center;
     background-color: aliceblue;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     position: relative;
   }
 

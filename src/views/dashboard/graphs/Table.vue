@@ -76,14 +76,14 @@ limitations under the License. -->
     }
 
     .row {
-      border-left: 1px solid #ccc;
+      border-left: 1px solid $disabled-color;
       height: 20px;
       width: 100%;
 
       div {
         overflow: hidden;
         text-overflow: ellipsis;
-        border-right: 1px solid #ccc;
+        border-right: 1px solid $disabled-color;
         text-align: center;
         height: 20px;
         line-height: 20px;
@@ -91,11 +91,11 @@ limitations under the License. -->
       }
 
       div:last-child {
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid $disabled-color;
       }
 
       div:nth-last-child(2) {
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid $disabled-color;
       }
     }
 
@@ -105,7 +105,7 @@ limitations under the License. -->
 
     .row:first-child {
       div {
-        border-top: 1px solid #ccc;
+        border-top: 1px solid $disabled-color;
         background: #eee;
       }
     }

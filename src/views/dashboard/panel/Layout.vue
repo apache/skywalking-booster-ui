@@ -85,19 +85,19 @@ limitations under the License. -->
   }
 
   .vue-grid-item:not(.vue-grid-placeholder) {
-    background: #fff;
-    box-shadow: 0px 1px 4px 0px #00000029;
+    background-color: $theme-background;
+    box-shadow: 0 1px 4px 0 #00000029;
     border-radius: 3px;
   }
 
   .vue-grid-item.active {
-    border: 1px solid #409eff;
+    border: 1px solid $active-color;
   }
 
   .no-data-tips {
     width: 100%;
     text-align: center;
-    font-size: 14px;
+    font-size: $font-size-normal;
     padding-top: 30px;
     color: #888;
   }

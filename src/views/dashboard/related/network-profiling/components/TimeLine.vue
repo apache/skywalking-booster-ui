@@ -141,7 +141,7 @@ limitations under the License. -->
   .switch-icon-edit {
     cursor: pointer;
     transition: all 0.5ms linear;
-    border: 1px solid #ccc;
+    border: 1px solid $disabled-color;
     color: #666;
     display: inline-block;
     padding: 5px;

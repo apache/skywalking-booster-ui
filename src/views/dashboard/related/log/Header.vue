@@ -397,7 +397,7 @@ limitations under the License. -->
     width: 30%;
     border-style: unset;
     outline: 0;
-    border: 1px solid #ccc;
+    border: 1px solid $disabled-color;
     height: 30px;
     padding: 0 5px;
   }
@@ -415,9 +415,9 @@ limitations under the License. -->
     padding: 0 3px;
     border-radius: 3px;
     overflow: hidden;
-    color: #3d444f;
+    color: $font-color;
     border: 1px dashed #aaa;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     margin: 0 2px;
   }
 

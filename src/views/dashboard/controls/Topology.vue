@@ -62,7 +62,7 @@ limitations under the License. -->
     // background-color: #333840;
     width: 100%;
     height: 100%;
-    font-size: 12px;
+    font-size: $font-size-smaller;
     position: relative;
   }
 
@@ -81,13 +81,13 @@ limitations under the License. -->
     text-align: center;
 
     &:hover {
-      color: #409eff;
+      color: $active-color;
       background-color: #eee;
     }
   }
 
   .no-data {
-    font-size: 14px;
+    font-size: $font-size-normal;
     color: #888;
     width: 100%;
     text-align: center;

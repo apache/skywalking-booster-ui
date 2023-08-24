@@ -26,6 +26,6 @@ limitations under the License. -->
   .event {
     flex-grow: 1;
     height: 100%;
-    font-size: 12px;
+    font-size: $font-size-smaller;
   }
 </style>

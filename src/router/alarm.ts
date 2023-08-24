@@ -22,9 +22,11 @@ export const routesAlarm: Array<RouteRecordRaw> = [
     path: "",
     name: "Alarm",
     meta: {
-      title: "alarm",
+      i18nKey: "alarm",
       icon: "spam",
       hasGroup: false,
+      activate: true,
+      title: "Alerting",
     },
     component: Layout,
     children: [

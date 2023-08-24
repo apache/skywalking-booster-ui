@@ -340,7 +340,7 @@ limitations under the License. -->
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
       states.currentProcess = "";
-      const e = dashboardStore.entity === EntityType[7].value ? EntityType[8].value : dashboardStore.entity;
+      const e = dashboardStore.entity.split("Relation")[0];
       fetchPods(e, selectorStore.currentService.id, true);
     } else {
       selectorStore.setCurrentService(null);
@@ -750,7 +750,7 @@ limitations under the License. -->
   }
 
   .label {
-    font-size: 12px;
+    font-size: $font-size-smaller;
     display: inline-block;
     padding: 4px 2px;
   }
@@ -768,13 +768,13 @@ limitations under the License. -->
     display: inline-block;
     padding: 3px;
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid $disabled-color;
     border-radius: 3px;
     margin-left: 6px;
     cursor: pointer;
     background-color: #eee;
     color: #666;
-    font-size: 12px;
+    font-size: $font-size-smaller;
   }
 
   .selectors {

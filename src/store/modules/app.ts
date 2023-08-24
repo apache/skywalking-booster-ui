@@ -22,6 +22,7 @@ import getLocalTime from "@/utils/localtime";
 import type { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
+import type { MenuOptions, SubItem } from "@/types/app";
 /*global Nullable*/
 interface AppState {
   durationRow: Recordable;
@@ -34,6 +35,7 @@ interface AppState {
   version: string;
   isMobile: boolean;
   reloadTimer: Nullable<IntervalHandle>;
+  allMenus: MenuOptions[];
 }
 
 export const appStore = defineStore({
@@ -53,6 +55,7 @@ export const appStore = defineStore({
     version: "",
     isMobile: false,
     reloadTimer: null,
+    allMenus: [],
   }),
   getters: {
     duration(): Duration {
@@ -153,6 +156,28 @@ export const appStore = defineStore({
         500,
       );
     },
+    async getActivateMenus() {
+      const resp = (await this.queryMenuItems()) || {};
+
+      this.allMenus = (resp.getMenuItems || []).map((d: MenuOptions, index: number) => {
+        const t = `${d.title.replace(/\s+/g, "-")}`;
+        d.name = `${t}-${index}`;
+        d.path = `/${t}`;
+        d.descKey = `${d.i18nKey}_desc`;
+        if (d.subItems && d.subItems.length) {
+          d.hasGroup = true;
+          d.subItems = d.subItems.map((item: SubItem, sub: number) => {
+            const id = `${item.title.replace(/\s+/g, "-")}`;
+            item.name = `${id}-${index}${sub}`;
+            item.path = `/${t}/${id}`;
+            item.descKey = `${item.i18nKey}_desc`;
+            return item;
+          });
+        }
+
+        return d;
+      });
+    },
     async queryOAPTimeInfo() {
       const res: AxiosResponse = await graphql.query("queryOAPTimeInfo").params({});
       if (res.data.errors) {
@@ -173,6 +198,14 @@ export const appStore = defineStore({
       }
       this.version = res.data.data.version;
       return res.data;
+    },
+    async queryMenuItems() {
+      const res: AxiosResponse = await graphql.query("queryMenuItems").params({});
+      if (res.data.errors) {
+        return res.data;
+      }
+
+      return res.data.data;
     },
     setReloadTimer(timer: IntervalHandle) {
       this.reloadTimer = timer;
