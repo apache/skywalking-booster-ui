@@ -62,13 +62,11 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
   const route = useRoute();
-  const pageName = ref<string>("");
   const pathNames = ref<any[]>([]);
   const timeRange = ref<number>(0);
 
   resetDuration();
   getVersion();
-  // getPathNames();
 
   function handleReload() {
     const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
@@ -82,10 +80,6 @@ limitations under the License. -->
       return;
     }
     appStore.setDuration(timeFormat(val));
-  }
-
-  function setConfig(value: string) {
-    pageName.value = value || "";
   }
 
   function getPathNames() {
@@ -107,17 +101,35 @@ limitations under the License. -->
       }
     }
     pathNames.value.push(root);
-    if (dashboard.entity !== MetricCatalog.ALL) {
-      const d = dashboardStore.dashboards.filter(
-        (d: DashboardItem) => dashboard.entity === d.entity && dashboard.layer === d.layer,
-      )[0];
-      const id = route.params.id;
-      const path = `/dashboard/${dashboard.layer}/${dashboard.entity}/${id}/${dashboard.name}`;
-      pathNames.value.push({
-        ...d,
-        path,
-      });
+    if (dashboard.entity === MetricCatalog.ALL) {
+      return;
     }
+    if (dashboard.entity === MetricCatalog.SERVICE) {
+      pathNames.value.push({
+        name: dashboard.name,
+      });
+      return;
+    }
+    const serviceDashboard = dashboardStore.dashboards.filter(
+      (d: DashboardItem) => MetricCatalog.SERVICE === d.entity && dashboard.layer === d.layer,
+    )[0];
+    if (!serviceDashboard) {
+      return;
+    }
+    const serviceId = route.params.serviceId;
+    let path = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceDashboard.name}`;
+    if (serviceId) {
+      path = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceId}/${serviceDashboard.name}`;
+    }
+    pathNames.value.push(
+      {
+        ...serviceDashboard,
+        path,
+      },
+      {
+        name: dashboard.name,
+      },
+    );
   }
 
   async function getVersion() {
