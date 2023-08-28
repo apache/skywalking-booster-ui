@@ -14,7 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="nav-bar flex-h">
-    <div class="title">{{ route.name === "ViewWidget" ? "" : appStore.pageTitle || pageName }}</div>
+    <el-breadcrumb separator="/" class="title">
+      <el-breadcrumb-item v-for="(p, index) in pathNames" :to="{ path: p.path }" :key="index" :replace="true">
+        {{ p.name }}
+      </el-breadcrumb-item>
+    </el-breadcrumb>
+    <!-- <div class="title">{{ route.name === "ViewWidget" ? "" : appStore.pageTitle || pageName }}</div> -->
     <div class="app-config">
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
       <TimePicker
@@ -63,7 +68,7 @@ limitations under the License. -->
 
   resetDuration();
   getVersion();
-  setConfig(String(route.meta.title));
+  // getPathNames();
 
   function handleReload() {
     const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
@@ -84,20 +89,34 @@ limitations under the License. -->
   }
 
   function getPathNames() {
-    const obj = dashboardStore.currentDashboard;
-
-    if (!dashboardStore.entity) {
-      return;
+    const dashboard = dashboardStore.currentDashboard;
+    pathNames.value = [];
+    const root =
+      dashboardStore.dashboards.filter((d: DashboardItem) => d.isRoot && dashboard.layer === d.layer)[0] || {};
+    for (const item of appStore.allMenus) {
+      if (item.subItems && item.subItems.length) {
+        for (const subItem of item.subItems) {
+          if (subItem.layer === root.layer) {
+            root.path = subItem.path;
+          }
+        }
+      } else {
+        if (item.layer === root.layer) {
+          root.path = item.path;
+        }
+      }
     }
-    console.log(dashboardStore.dashboards);
-    const root = dashboardStore.dashboards.filter((d: DashboardItem) => d.isRoot && obj.layer === d.layer);
     pathNames.value.push(root);
-    if (obj.entity === MetricCatalog.SERVICE) {
-      const arr = dashboardStore.dashboards.filter(
-        (d: DashboardItem) => obj.entity === d.entity && obj.layer === d.layer,
-      );
-
-      pathNames.value.push(arr);
+    if (dashboard.entity !== MetricCatalog.ALL) {
+      const d = dashboardStore.dashboards.filter(
+        (d: DashboardItem) => dashboard.entity === d.entity && dashboard.layer === d.layer,
+      )[0];
+      const id = route.params.id;
+      const path = `/dashboard/${dashboard.layer}/${dashboard.entity}/${id}/${dashboard.name}`;
+      pathNames.value.push({
+        ...d,
+        path,
+      });
     }
   }
 
@@ -123,23 +142,9 @@ limitations under the License. -->
   }
 
   watch(
-    () => route.meta.title,
-    () => {
-      pathNames.value = [];
-      setConfig("");
-      if (!route.meta.layer) {
-        setConfig(String(route.meta.title));
-      }
-    },
-  );
-  watch(
     () => dashboardStore.currentDashboard,
     () => {
-      pathNames.value = [];
-      setConfig("");
-      if (route.meta.layer) {
-        getPathNames();
-      }
+      getPathNames();
     },
   );
 </script>
