@@ -86,7 +86,7 @@ limitations under the License. -->
     pathNames.value = [];
     pageTitle.value = "";
     const dashboard = dashboardStore.currentDashboard;
-    console.log(dashboard);
+
     if (!dashboard) {
       updateNavTitle();
       return;
@@ -136,9 +136,9 @@ limitations under the License. -->
         (d: DashboardItem) => MetricCatalog.ENDPOINT === d.entity && dashboard.layer === d.layer,
       )[0];
       const podId = route.params.podId;
-      let p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${endpointDashboard.name}`;
+      let p = `/dashboard/${endpointDashboard.layer}/${endpointDashboard.entity}/${endpointDashboard.name}`;
       if (podId) {
-        p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceId}/${podId}/${endpointDashboard.name}`;
+        p = `/dashboard/${endpointDashboard.layer}/${endpointDashboard.entity}/${serviceId}/${podId}/${endpointDashboard.name}`;
       }
       pathNames.value.push({
         ...endpointDashboard,
@@ -150,9 +150,9 @@ limitations under the License. -->
         (d: DashboardItem) => MetricCatalog.SERVICE_RELATION === d.entity && dashboard.layer === d.layer,
       )[0];
       const destServiceId = route.params.destServiceId;
-      let p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceRelationDashboard.name}`;
+      let p = `/dashboard/related/${serviceRelationDashboard.layer}/${serviceRelationDashboard.entity}/${serviceId}/${destServiceId}/${serviceRelationDashboard.name}`;
       if (destServiceId) {
-        p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceId}/${destServiceId}/${serviceRelationDashboard.name}`;
+        p = `/dashboard/related/${serviceRelationDashboard.layer}/${serviceRelationDashboard.entity}/${serviceId}/${destServiceId}/${serviceRelationDashboard.name}`;
       }
       pathNames.value.push({
         ...serviceRelationDashboard,
@@ -164,9 +164,9 @@ limitations under the License. -->
         (d: DashboardItem) => MetricCatalog.SERVICE_INSTANCE === d.entity && dashboard.layer === d.layer,
       )[0];
       const podId = route.params.podId;
-      let p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${InstanceDashboard.name}`;
+      let p = `/dashboard/${InstanceDashboard.layer}/${InstanceDashboard.entity}/${InstanceDashboard.name}`;
       if (podId) {
-        p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceId}/${podId}/${InstanceDashboard.name}`;
+        p = `/dashboard/${InstanceDashboard.layer}/${InstanceDashboard.entity}/${serviceId}/${podId}/${InstanceDashboard.name}`;
       }
       pathNames.value.push({
         ...InstanceDashboard,
@@ -176,6 +176,7 @@ limitations under the License. -->
     pathNames.value.push({
       name: dashboard.name,
     });
+    console.log(pathNames.value);
   }
 
   async function getVersion() {
@@ -205,13 +206,7 @@ limitations under the License. -->
   }
 
   watch(
-    () => dashboardStore.currentDashboard,
-    () => {
-      getNavPaths();
-    },
-  );
-  watch(
-    () => route.name,
+    () => [dashboardStore.currentDashboard, route.name],
     () => {
       getNavPaths();
     },
