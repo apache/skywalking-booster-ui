@@ -41,7 +41,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-  import { ref, defineComponent } from "vue";
+  import { ref, defineComponent, onUnmounted } from "vue";
   import { useI18n } from "vue-i18n";
   import { useRoute } from "vue-router";
   import GridLayout from "./panel/Layout.vue";
@@ -110,6 +110,10 @@ limitations under the License. -->
           dashboardStore.selectWidget(null);
         }
       }
+
+      onUnmounted(() => {
+        dashboardStore.setCurrentDashboard(null);
+      });
 
       return {
         t,

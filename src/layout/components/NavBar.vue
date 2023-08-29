@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="nav-bar flex-h">
-    <el-breadcrumb separator="/" class="title">
-      <el-breadcrumb-item v-for="(p, index) in pathNames" :to="{ path: p.path }" :key="index" :replace="true">
+    <el-breadcrumb separator=">" class="title" v-if="pathNames.length">
+      <el-breadcrumb-item v-for="(p, index) in pathNames" :to="{ path: p.path || '' }" :key="index" :replace="true">
         {{ p.name }}
       </el-breadcrumb-item>
     </el-breadcrumb>
-    <!-- <div class="title">{{ route.name === "ViewWidget" ? "" : appStore.pageTitle || pageName }}</div> -->
+    <div class="title" v-else>{{ pageTitle }}</div>
     <div class="app-config">
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
       <TimePicker
@@ -51,22 +51,22 @@ limitations under the License. -->
   import timeFormat from "@/utils/timeFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useSelectorStore } from "@/store/modules/selectors";
   import { ElMessage } from "element-plus";
   import { MetricCatalog } from "@/views/dashboard/data";
   import type { DashboardItem } from "@/types/dashboard";
 
   /*global Indexable */
-  const { t } = useI18n();
+  const { t, te } = useI18n();
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
-  const selectorStore = useSelectorStore();
   const route = useRoute();
-  const pathNames = ref<any[]>([]);
+  const pathNames = ref<{ path?: string; name: string }[]>([]);
   const timeRange = ref<number>(0);
+  const pageTitle = ref<string>("");
 
   resetDuration();
   getVersion();
+  getNavPaths();
 
   function handleReload() {
     const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
@@ -82,9 +82,15 @@ limitations under the License. -->
     appStore.setDuration(timeFormat(val));
   }
 
-  function getPathNames() {
+  function getNavPaths() {
     pathNames.value = [];
+    pageTitle.value = "";
     const dashboard = dashboardStore.currentDashboard;
+    console.log(dashboard);
+    if (!dashboard) {
+      updateNavTitle();
+      return;
+    }
     const root =
       dashboardStore.dashboards.filter((d: DashboardItem) => d.isRoot && dashboard.layer === d.layer)[0] || {};
     for (const item of appStore.allMenus) {
@@ -193,10 +199,21 @@ limitations under the License. -->
     }
   }
 
+  function updateNavTitle() {
+    const key = String(route.meta.i18nKey);
+    pageTitle.value = te(key) ? t(key) : String(route.meta.title);
+  }
+
   watch(
     () => dashboardStore.currentDashboard,
     () => {
-      getPathNames();
+      getNavPaths();
+    },
+  );
+  watch(
+    () => route.name,
+    () => {
+      getNavPaths();
     },
   );
 </script>
