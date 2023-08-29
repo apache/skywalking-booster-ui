@@ -83,8 +83,8 @@ limitations under the License. -->
   }
 
   function getPathNames() {
-    const dashboard = dashboardStore.currentDashboard;
     pathNames.value = [];
+    const dashboard = dashboardStore.currentDashboard;
     const root =
       dashboardStore.dashboards.filter((d: DashboardItem) => d.isRoot && dashboard.layer === d.layer)[0] || {};
     for (const item of appStore.allMenus) {
