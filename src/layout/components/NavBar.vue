@@ -121,15 +121,55 @@ limitations under the License. -->
     if (serviceId) {
       path = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceId}/${serviceDashboard.name}`;
     }
-    pathNames.value.push(
-      {
-        ...serviceDashboard,
-        path,
-      },
-      {
-        name: dashboard.name,
-      },
-    );
+    pathNames.value.push({
+      ...serviceDashboard,
+      path,
+    });
+    if (dashboard.entity === MetricCatalog.ENDPOINT_RELATION) {
+      const endpointDashboard = dashboardStore.dashboards.filter(
+        (d: DashboardItem) => MetricCatalog.ENDPOINT === d.entity && dashboard.layer === d.layer,
+      )[0];
+      const podId = route.params.podId;
+      let p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${endpointDashboard.name}`;
+      if (podId) {
+        p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceId}/${podId}/${endpointDashboard.name}`;
+      }
+      pathNames.value.push({
+        ...endpointDashboard,
+        path: p,
+      });
+    }
+    if (dashboard.entity === MetricCatalog.SERVICE_INSTANCE_RELATION) {
+      const serviceRelationDashboard = dashboardStore.dashboards.filter(
+        (d: DashboardItem) => MetricCatalog.SERVICE_RELATION === d.entity && dashboard.layer === d.layer,
+      )[0];
+      const destServiceId = route.params.destServiceId;
+      let p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceRelationDashboard.name}`;
+      if (destServiceId) {
+        p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceId}/${destServiceId}/${serviceRelationDashboard.name}`;
+      }
+      pathNames.value.push({
+        ...serviceRelationDashboard,
+        path: p,
+      });
+    }
+    if ([MetricCatalog.Process, MetricCatalog.PROCESS_RELATION].includes(dashboard.entity)) {
+      const InstanceDashboard = dashboardStore.dashboards.filter(
+        (d: DashboardItem) => MetricCatalog.SERVICE_INSTANCE === d.entity && dashboard.layer === d.layer,
+      )[0];
+      const podId = route.params.podId;
+      let p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${InstanceDashboard.name}`;
+      if (podId) {
+        p = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceId}/${podId}/${InstanceDashboard.name}`;
+      }
+      pathNames.value.push({
+        ...InstanceDashboard,
+        path: p,
+      });
+    }
+    pathNames.value.push({
+      name: dashboard.name,
+    });
   }
 
   async function getVersion() {
