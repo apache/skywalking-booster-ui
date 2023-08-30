@@ -203,7 +203,7 @@ limitations under the License. -->
         (d: DashboardItem) => MetricCatalog.SERVICE_RELATION === d.entity && dashboard.layer === d.layer,
       );
       const list = serviceRelationDashboards.map((d: { path: string } & DashboardItem, index: number) => {
-        let path = `/dashboard/related/${d.layer}/${d.entity}/${serviceId}/${destServiceId}/${d.name}`;
+        let path = `/dashboard/${d.layer}/${d.entity}/${d.name}`;
         if (destServiceId) {
           path = `/dashboard/related/${d.layer}/${d.entity}/${serviceId}/${destServiceId}/${d.name}`;
         }
