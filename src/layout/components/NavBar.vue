@@ -302,4 +302,12 @@ limitations under the License. -->
   .nav-tabs {
     padding: 10px;
   }
+
+  .name {
+    display: inline-block;
+    max-width: 250px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 </style>
