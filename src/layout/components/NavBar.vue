@@ -14,9 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="nav-bar flex-h">
-    <el-breadcrumb separator=">" class="title" v-if="pathNames.length">
-      <el-breadcrumb-item v-for="(p, index) in pathNames" :to="{ path: p.path || '' }" :key="index" :replace="true">
-        {{ p.name }}
+    <el-breadcrumb separator=">" class="title flex-h" v-if="pathNames.length">
+      <el-breadcrumb-item
+        v-for="(path, index) in pathNames"
+        :key="index"
+        :replace="true"
+        :to="{ path: getName(path).path || '' }"
+      >
+        <el-dropdown size="small" placement="bottom" :persistent="false">
+          <span class="cp">{{ getName(path).name }}</span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="setName(p)" v-for="(p, index) in path" :key="index">
+                <span>{{ p.name }}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </el-breadcrumb-item>
     </el-breadcrumb>
     <div class="title" v-else>{{ pageTitle }}</div>
@@ -54,19 +68,44 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import { MetricCatalog } from "@/views/dashboard/data";
   import type { DashboardItem } from "@/types/dashboard";
+  import router from "@/router";
 
   /*global Indexable */
   const { t, te } = useI18n();
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const route = useRoute();
-  const pathNames = ref<{ path?: string; name: string }[]>([]);
+  const pathNames = ref<{ path?: string; name: string; selected: boolean }[][]>([]);
   const timeRange = ref<number>(0);
   const pageTitle = ref<string>("");
 
   resetDuration();
   getVersion();
   getNavPaths();
+
+  function getName(list: any[]) {
+    return list.find((d: any) => d.selected) || {};
+  }
+
+  function setName(item: any) {
+    pathNames.value = pathNames.value.map((list: any[]) => {
+      const index = list.findIndex(
+        (i: any) => i.entity === item.entity && item.layer === i.layer && i.name === item.name,
+      );
+      if (index > -1) {
+        list = list.map((d: any) => {
+          d.selected = false;
+          if (d.entity === item.entity && item.layer === d.layer) {
+            d.selected = true;
+          }
+          return d;
+        });
+      }
+
+      return list;
+    });
+    item.path && router.push(item.path);
+  }
 
   function handleReload() {
     const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
@@ -106,77 +145,104 @@ limitations under the License. -->
         }
       }
     }
-    pathNames.value.push(root);
+    pathNames.value.push([{ ...root, selected: true }]);
     if (dashboard.entity === MetricCatalog.ALL) {
       return;
     }
     if (dashboard.entity === MetricCatalog.SERVICE) {
-      pathNames.value.push({
-        name: dashboard.name,
-      });
+      pathNames.value.push([
+        {
+          name: dashboard.name,
+          selected: true,
+        },
+      ]);
       return;
     }
-    const serviceDashboard = dashboardStore.dashboards.filter(
+    const serviceDashboards = dashboardStore.dashboards.filter(
       (d: DashboardItem) => MetricCatalog.SERVICE === d.entity && dashboard.layer === d.layer,
-    )[0];
-    if (!serviceDashboard) {
+    );
+    if (!serviceDashboards.length) {
       return;
     }
+
     const serviceId = route.params.serviceId;
-    let path = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceDashboard.name}`;
-    if (serviceId) {
-      path = `/dashboard/${serviceDashboard.layer}/${serviceDashboard.entity}/${serviceId}/${serviceDashboard.name}`;
-    }
-    pathNames.value.push({
-      ...serviceDashboard,
-      path,
+    const list = serviceDashboards.map((d: { path: string } & DashboardItem, index: number) => {
+      let path = `/dashboard/${d.layer}/${d.entity}/${d.name}`;
+      if (serviceId) {
+        path = `/dashboard/${d.layer}/${d.entity}/${serviceId}/${d.name}`;
+      }
+      const selected = index === 0;
+      return {
+        ...d,
+        path,
+        selected,
+      };
     });
+    pathNames.value.push(list);
+    const podId = route.params.podId;
     if (dashboard.entity === MetricCatalog.ENDPOINT_RELATION) {
-      const endpointDashboard = dashboardStore.dashboards.filter(
+      const endpointDashboards = dashboardStore.dashboards.filter(
         (d: DashboardItem) => MetricCatalog.ENDPOINT === d.entity && dashboard.layer === d.layer,
-      )[0];
-      const podId = route.params.podId;
-      let p = `/dashboard/${endpointDashboard.layer}/${endpointDashboard.entity}/${endpointDashboard.name}`;
-      if (podId) {
-        p = `/dashboard/${endpointDashboard.layer}/${endpointDashboard.entity}/${serviceId}/${podId}/${endpointDashboard.name}`;
-      }
-      pathNames.value.push({
-        ...endpointDashboard,
-        path: p,
+      );
+      const list = endpointDashboards.map((d: { path: string } & DashboardItem, index: number) => {
+        let path = `/dashboard/${d.layer}/${d.entity}/${d.name}`;
+        if (podId) {
+          path = `/dashboard/${d.layer}/${d.entity}/${serviceId}/${podId}/${d.name}`;
+        }
+        const selected = index === 0;
+        return {
+          ...d,
+          path,
+          selected,
+        };
       });
+
+      pathNames.value.push(list);
     }
+    const destServiceId = route.params.destServiceId;
     if (dashboard.entity === MetricCatalog.SERVICE_INSTANCE_RELATION) {
-      const serviceRelationDashboard = dashboardStore.dashboards.filter(
+      const serviceRelationDashboards = dashboardStore.dashboards.filter(
         (d: DashboardItem) => MetricCatalog.SERVICE_RELATION === d.entity && dashboard.layer === d.layer,
-      )[0];
-      const destServiceId = route.params.destServiceId;
-      let p = `/dashboard/related/${serviceRelationDashboard.layer}/${serviceRelationDashboard.entity}/${serviceId}/${destServiceId}/${serviceRelationDashboard.name}`;
-      if (destServiceId) {
-        p = `/dashboard/related/${serviceRelationDashboard.layer}/${serviceRelationDashboard.entity}/${serviceId}/${destServiceId}/${serviceRelationDashboard.name}`;
-      }
-      pathNames.value.push({
-        ...serviceRelationDashboard,
-        path: p,
+      );
+      const list = serviceRelationDashboards.map((d: { path: string } & DashboardItem, index: number) => {
+        let path = `/dashboard/related/${d.layer}/${d.entity}/${serviceId}/${destServiceId}/${d.name}`;
+        if (destServiceId) {
+          path = `/dashboard/related/${d.layer}/${d.entity}/${serviceId}/${destServiceId}/${d.name}`;
+        }
+        const selected = index === 0;
+        return {
+          ...d,
+          path,
+          selected,
+        };
       });
+      pathNames.value.push(list);
     }
     if ([MetricCatalog.Process, MetricCatalog.PROCESS_RELATION].includes(dashboard.entity)) {
-      const InstanceDashboard = dashboardStore.dashboards.filter(
+      const InstanceDashboards = dashboardStore.dashboards.filter(
         (d: DashboardItem) => MetricCatalog.SERVICE_INSTANCE === d.entity && dashboard.layer === d.layer,
-      )[0];
-      const podId = route.params.podId;
-      let p = `/dashboard/${InstanceDashboard.layer}/${InstanceDashboard.entity}/${InstanceDashboard.name}`;
-      if (podId) {
-        p = `/dashboard/${InstanceDashboard.layer}/${InstanceDashboard.entity}/${serviceId}/${podId}/${InstanceDashboard.name}`;
-      }
-      pathNames.value.push({
-        ...InstanceDashboard,
-        path: p,
+      );
+      const list = InstanceDashboards.map((d: { path: string } & DashboardItem, index: number) => {
+        let path = `/dashboard/${d.layer}/${d.entity}/${d.name}`;
+        if (podId) {
+          path = `/dashboard/${d.layer}/${d.entity}/${serviceId}/${podId}/${d.name}`;
+        }
+        const selected = index === 0;
+        return {
+          ...d,
+          path,
+          selected,
+        };
       });
+
+      pathNames.value.push(list);
     }
-    pathNames.value.push({
-      name: dashboard.name,
-    });
-    console.log(pathNames.value);
+    pathNames.value.push([
+      {
+        name: dashboard.name,
+        selected: true,
+      },
+    ]);
   }
 
   async function getVersion() {
@@ -233,7 +299,6 @@ limitations under the License. -->
     font-size: $font-size-normal;
     font-weight: 500;
     height: 28px;
-    line-height: 28px;
   }
 
   .nav-tabs {
