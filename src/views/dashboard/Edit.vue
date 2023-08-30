@@ -112,7 +112,7 @@ limitations under the License. -->
       }
 
       onUnmounted(() => {
-        dashboardStore.setCurrentDashboard(null);
+        dashboardStore.setCurrentDashboard({});
       });
 
       return {

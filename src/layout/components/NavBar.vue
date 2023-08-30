@@ -22,7 +22,7 @@ limitations under the License. -->
         :to="{ path: getName(path).path || '' }"
       >
         <el-dropdown size="small" placement="bottom" :persistent="false">
-          <span class="cp">{{ getName(path).name }}</span>
+          <span class="cp name">{{ getName(path).name }}</span>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="setName(p)" v-for="(p, index) in path" :key="index">
@@ -88,14 +88,12 @@ limitations under the License. -->
   }
 
   function setName(item: any) {
-    pathNames.value = pathNames.value.map((list: any[]) => {
-      const index = list.findIndex(
-        (i: any) => i.entity === item.entity && item.layer === i.layer && i.name === item.name,
-      );
-      if (index > -1) {
+    pathNames.value = pathNames.value.map((list: { path?: string; name: string; selected: boolean }[]) => {
+      const p = list.find((i: any) => i.entity === item.entity && item.layer === i.layer && i.name === item.name);
+      if (p) {
         list = list.map((d: any) => {
           d.selected = false;
-          if (d.entity === item.entity && item.layer === d.layer) {
+          if (d.entity === item.entity && item.layer === d.layer && d.name === item.name) {
             d.selected = true;
           }
           return d;
@@ -126,7 +124,7 @@ limitations under the License. -->
     pageTitle.value = "";
     const dashboard = dashboardStore.currentDashboard;
 
-    if (!dashboard) {
+    if (!(dashboard && dashboard.name)) {
       updateNavTitle();
       return;
     }
