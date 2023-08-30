@@ -32,7 +32,6 @@ interface AppState {
   eventStack: (() => unknown)[];
   timer: Nullable<TimeoutHandle>;
   autoRefresh: boolean;
-  pageTitle: string;
   version: string;
   isMobile: boolean;
   reloadTimer: Nullable<IntervalHandle>;
@@ -53,7 +52,6 @@ export const appStore = defineStore({
     eventStack: [],
     timer: null,
     autoRefresh: false,
-    pageTitle: "",
     version: "",
     isMobile: false,
     reloadTimer: null,
@@ -145,9 +143,6 @@ export const appStore = defineStore({
     },
     setAutoRefresh(auto: boolean) {
       this.autoRefresh = auto;
-    },
-    setPageTitle(title: string) {
-      this.pageTitle = title;
     },
     runEventStack() {
       if (this.timer) {

@@ -41,13 +41,12 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-  import { ref, defineComponent } from "vue";
+  import { ref, defineComponent, onUnmounted } from "vue";
   import { useI18n } from "vue-i18n";
   import { useRoute } from "vue-router";
   import GridLayout from "./panel/Layout.vue";
   import Tool from "./panel/Tool.vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useAppStoreWithOut } from "@/store/modules/app";
   import Configuration from "./configuration";
   import type { LayoutConfig } from "@/types/dashboard";
   import WidgetLink from "./components/WidgetLink.vue";
@@ -57,7 +56,6 @@ limitations under the License. -->
     components: { ...Configuration, GridLayout, Tool, WidgetLink },
     setup() {
       const dashboardStore = useDashboardStore();
-      const appStore = useAppStoreWithOut();
       const { t } = useI18n();
       const p = useRoute().params;
       const layoutKey = ref<string>(`${p.layerId}_${p.entity}_${p.name}`);
@@ -77,7 +75,6 @@ limitations under the License. -->
         const layout: any = c.configuration || {};
 
         dashboardStore.setLayout(setWidgetsID(layout.children || []));
-        appStore.setPageTitle(layout.name);
         if (p.entity) {
           dashboardStore.setCurrentDashboard({
             layer: p.layerId,
@@ -113,6 +110,10 @@ limitations under the License. -->
           dashboardStore.selectWidget(null);
         }
       }
+
+      onUnmounted(() => {
+        dashboardStore.setCurrentDashboard({});
+      });
 
       return {
         t,

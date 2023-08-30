@@ -24,11 +24,9 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import Dashboard from "./dashboard/Edit.vue";
   import { useI18n } from "vue-i18n";
-  import { useAppStoreWithOut } from "@/store/modules/app";
 
   const route = useRoute();
   const { t } = useI18n();
-  const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const layer = ref<string>("GENERAL");
 
@@ -44,7 +42,6 @@ limitations under the License. -->
         d.layer === dashboardStore.layerId && [EntityType[0].value, EntityType[1].value].includes(d.entity) && d.isRoot,
     );
     if (!item) {
-      appStore.setPageTitle(dashboardStore.layer);
       dashboardStore.setCurrentDashboard(null);
       dashboardStore.setEntity(EntityType[1].value);
       return;

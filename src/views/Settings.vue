@@ -66,7 +66,6 @@ limitations under the License. -->
   const utcHour = ref<number>(appStore.utcHour);
   const utcMin = ref<number>(appStore.utcMin);
 
-  appStore.setPageTitle("Setting");
   const handleReload = () => {
     const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
     const dates: Date[] = [
