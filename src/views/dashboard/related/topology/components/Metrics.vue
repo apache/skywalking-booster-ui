@@ -18,7 +18,7 @@ limitations under the License. -->
       <span class="label">{{
         t(dashboardStore.selectedGrid.metricMode === MetricModes.General ? "metrics" : "expressions")
       }}</span>
-      <SelectSingle :value="currentMetric" :options="metrics" @change="changeMetric" class="selectors" />
+      <SelectSingle :value="currentMetric" :options="metricList" @change="changeMetric" class="selectors" />
     </div>
     <div class="item mb-10">
       <span class="label">{{ t("unit") }}</span>
@@ -71,8 +71,8 @@ limitations under the License. -->
   const m = props.metrics.map((d: string) => {
     return { label: d, value: d };
   });
-  const metrics = ref<Option[]>(m.length ? m : [{ label: "", value: "" }]);
-  const currentMetric = ref<string>(metrics.value[0].value);
+  const metricList = ref<Option[]>(m.length ? m : [{ label: "", value: "" }]);
+  const currentMetric = ref<string>(metricList.value[0].value);
   const currentConfig = ref<{ unit: string; calculation: string; label: string }>({
     unit: "",
     calculation: "",
@@ -106,7 +106,7 @@ limitations under the License. -->
   }
   function changeMetric(val: string) {
     currentMetric.value = val;
-    const index = metrics.value.findIndex((d: Option) => d.value === val);
+    const index = metricList.value.findIndex((d: Option) => d.value === val);
     currentIndex.value = index || 0;
     const config = getMetricConfig.value || [];
 
@@ -123,8 +123,8 @@ limitations under the License. -->
       const m = props.metrics.map((d: string) => {
         return { label: d, value: d };
       });
-      metrics.value = m.length ? m : [{ label: "", value: "" }];
-      currentMetric.value = metrics.value[0].value;
+      metricList.value = m.length ? m : [{ label: "", value: "" }];
+      currentMetric.value = metricList.value[0].value;
       const config = getMetricConfig.value || [];
       currentIndex.value = 0;
       currentConfig.value = {
