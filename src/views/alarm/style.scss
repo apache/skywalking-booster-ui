@@ -71,31 +71,6 @@
   margin-bottom: 9px;
 }
 
-.alarm-detail {
-  max-height: 600px;
-  overflow: auto;
-
-  ul {
-    min-height: 100px;
-    overflow: auto;
-    margin-bottom: 20px;
-  }
-
-  li {
-    cursor: pointer;
-
-    > span {
-      width: 160px;
-      height: 20px;
-      line-height: 20px;
-      text-align: center;
-      display: inline-block;
-      border-bottom: 1px solid $disabled-color;
-      overflow: hidden;
-    }
-  }
-}
-
 .keys {
   font-weight: bold;
   display: inline-block;

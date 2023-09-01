@@ -142,12 +142,37 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  @import url("../components/style.scss");
+  @import url("./style.scss");
 
   .tips {
     width: 100%;
     margin: 20px 0;
     text-align: center;
     font-size: $font-size-normal;
+  }
+
+  .alarm-detail {
+    max-height: 600px;
+    overflow: auto;
+
+    ul {
+      min-height: 100px;
+      overflow: auto;
+      margin-bottom: 20px;
+    }
+
+    li {
+      cursor: pointer;
+
+      > span {
+        width: 160px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        display: inline-block;
+        border-bottom: 1px solid $disabled-color;
+        overflow: hidden;
+      }
+    }
   }
 </style>
