@@ -142,12 +142,109 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  @import url("../components/style.scss");
+  .timeline-table {
+    padding: 30px 20px 20px 40px;
+    flex-grow: 1;
+    overflow: auto;
+    height: 100%;
+  }
+
+  .time-line {
+    padding: 14px 30px;
+    min-height: 63px;
+    max-width: 132px;
+  }
+
+  .timeline-table-i {
+    padding: 10px 15px;
+    border-left: 4px solid #eee;
+    position: relative;
+
+    &::after {
+      content: "";
+      display: inline-block;
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      left: -23px;
+      top: 25px;
+      border-radius: 4px;
+      background-color: #448dfe;
+    }
+
+    &::before {
+      content: "";
+      display: inline-block;
+      position: absolute;
+      width: 1px;
+      height: calc(100% + 11px);
+      top: 0;
+      left: -20px;
+      border-radius: 5px;
+      background-color: #448dfe99;
+    }
+  }
+
+  .timeline-table-i-scope {
+    display: inline-block;
+    padding: 0 8px;
+    border: 1px solid;
+    margin-top: -1px;
+    border-radius: 4px;
+  }
+
+  .timeline-item {
+    cursor: pointer;
+    margin-bottom: 9px;
+  }
+
+  .keys {
+    font-weight: bold;
+    display: inline-block;
+    width: 120px;
+  }
+
+  .source > span {
+    display: inline-block;
+  }
+
+  .source > div {
+    padding-left: 120px;
+  }
+
+  .uuid {
+    width: 280px;
+  }
 
   .tips {
     width: 100%;
     margin: 20px 0;
     text-align: center;
     font-size: $font-size-normal;
+  }
+
+  .alarm-detail {
+    max-height: 600px;
+    overflow: auto;
+
+    ul {
+      min-height: 100px;
+      overflow: auto;
+      margin-bottom: 20px;
+    }
+
+    li {
+      cursor: pointer;
+
+      > span {
+        width: 160px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        display: inline-block;
+        border-bottom: 1px solid $disabled-color;
+        overflow: hidden;
+      }
+    }
   }
 </style>
