@@ -14,7 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="nav-bar flex-h">
-    <el-breadcrumb separator=">" class="title flex-h" v-if="pathNames.length">
+    <el-breadcrumb
+      :separator-icon="ArrowRight"
+      class="title flex-h"
+      v-if="pathNames.length"
+      :style="{ '--el-text-color-placeholder': '#666' }"
+    >
       <el-breadcrumb-item
         v-for="(path, index) in pathNames"
         :key="index"
@@ -69,6 +74,7 @@ limitations under the License. -->
   import { MetricCatalog } from "@/views/dashboard/data";
   import type { DashboardItem } from "@/types/dashboard";
   import router from "@/router";
+  import { ArrowRight } from "@element-plus/icons-vue";
 
   /*global Indexable */
   const { t, te } = useI18n();
@@ -296,7 +302,6 @@ limitations under the License. -->
   .title {
     font-size: $font-size-normal;
     font-weight: 500;
-    height: 28px;
   }
 
   .nav-tabs {
