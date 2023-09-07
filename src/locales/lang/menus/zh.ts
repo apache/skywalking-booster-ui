@@ -96,6 +96,8 @@ const titles = {
   mq_desc: "消息队列是无服务器和微服务架构中使用的异步服务对服务通信的一种形式。",
   mq_rabbitmq: "RabbitMQ",
   mq_rabbitmq_desc: "通过OpenTelemetry的Prometheus接收器提供RabbitMQ监控。",
+  mq_kafka: "Kafka",
+  mq_Kafka_desc: "通过OpenTelemetry的Prometheus接收器提供Kafka监控。",
   // self observability
   self_observability: "自监控",
   self_observability_desc: "自观察性为运行SkyWalking生态系统中的组件和服务器提供了可观察性。",
