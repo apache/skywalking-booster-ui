@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 import { RespFields } from "./data";
-import { ExpressionResultType } from "@/views/dashboard/data";
+import { EntityType, ExpressionResultType } from "@/views/dashboard/data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MetricConfigOpt } from "@/types/dashboard";
 import type { Instance, Endpoint, Service } from "@/types/selector";
+import type { Node, Call } from "@/types/topology";
 
 export async function useExpressionsQueryProcessor(config: Indexable) {
   function expressionsGraphqlPods() {
@@ -311,4 +312,89 @@ export async function useExpressionsQueryPodsMetrics(
   const expressionParams = expressionsPodsSource(json);
 
   return expressionParams;
+}
+
+export function useQueryTopologyExpressionsProcessor(metrics: string[], instances: (Call | Node)[]) {
+  const appStore = useAppStoreWithOut();
+  const dashboardStore = useDashboardStore();
+
+  function getExpressionQuery() {
+    const conditions: { [key: string]: unknown } = {
+      duration: appStore.durationTime,
+    };
+    const variables: string[] = [`$duration: Duration!`];
+    const fragmentList = instances.map((d: any, index: number) => {
+      let serviceName;
+      let destServiceName;
+      let endpointName;
+      let serviceInstanceName;
+      let destServiceInstanceName;
+      let destEndpointName;
+      if (d.sourceObj && d.targetObj) {
+        // instances = Calls
+        serviceName = d.sourceObj.serviceName || d.sourceObj.name;
+        destServiceName = d.targetObj.serviceName || d.targetObj.name;
+        if (EntityType[4].value === dashboardStore.entity) {
+          serviceInstanceName = d.sourceObj.name;
+          destServiceInstanceName = d.targetObj.name;
+        }
+        if (EntityType[2].value === dashboardStore.entity) {
+          endpointName = d.sourceObj.name;
+          destEndpointName = d.targetObj.name;
+        }
+      } else {
+        // instances = Nodes
+        serviceName = d.serviceName || d.name;
+        if (EntityType[4].value === dashboardStore.entity) {
+          serviceInstanceName = d.name;
+        }
+        if (EntityType[2].value === dashboardStore.entity) {
+          endpointName = d.name;
+        }
+      }
+      const entity = {
+        serviceName,
+        normal: true,
+        serviceInstanceName,
+        endpointName,
+        destServiceName,
+        destNormal: destServiceName ? true : undefined,
+        destServiceInstanceName,
+        destEndpointName,
+      };
+      variables.push(`$entity${index}: Entity!`);
+      conditions[`entity${index}`] = entity;
+      const f = metrics.map((name: string, idx: number) => {
+        if (index === 0) {
+          variables.push(`$expression${idx}: String!`);
+          conditions[`expression${idx}`] = name;
+        }
+        return `expression${index}${idx}: execExpression(expression: $expression${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
+      });
+      return f;
+    });
+    const fragment = fragmentList.flat(1).join(" ");
+    const queryStr = `query queryData(${variables}) {${fragment}}`;
+
+    return { queryStr, conditions };
+  }
+  function handleExpressionValues(resp: { [key: string]: any }) {
+    const obj: any = {};
+    for (let idx = 0; idx < instances.length; idx++) {
+      for (let index = 0; index < metrics.length; index++) {
+        const k = "expression" + idx + index;
+        if (metrics[index]) {
+          if (!obj[metrics[index]]) {
+            obj[metrics[index]] = {
+              values: [],
+            };
+          }
+          obj[metrics[index]].values.push({ value: resp[k].results[0].values[0].value, id: instances[idx].id });
+        }
+      }
+    }
+    return obj;
+  }
+
+  return { getExpressionQuery, handleExpressionValues };
 }

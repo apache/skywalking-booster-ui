@@ -55,8 +55,8 @@ export interface SegmentSpan {
   component: string;
   isError: boolean;
   layer: string;
-  tags: any[];
-  logs: any[];
+  tags: Recordable[];
+  logs: Recordable[];
 }
 
 export interface ProfileTaskCreationRequest {

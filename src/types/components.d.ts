@@ -6,6 +6,8 @@ import '@vue/runtime-core'
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     DateCalendar: typeof import('./../components/DateCalendar.vue')['default']
+    ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
+    ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElCollapse: typeof import('element-plus/es')['ElCollapse']
@@ -36,6 +38,7 @@ declare module '@vue/runtime-core' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     Graph: typeof import('./../components/Graph.vue')['default']
     Icon: typeof import('./../components/Icon.vue')['default']
@@ -45,6 +48,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     Selector: typeof import('./../components/Selector.vue')['default']
     SelectSingle: typeof import('./../components/SelectSingle.vue')['default']
+    Tags: typeof import('./../components/Tags.vue')['default']
     TimePicker: typeof import('./../components/TimePicker.vue')['default']
   }
 }

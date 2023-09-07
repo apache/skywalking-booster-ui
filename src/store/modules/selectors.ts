@@ -184,7 +184,7 @@ export const selectorStore = defineStore({
         if (isRelation) {
           this.currentDestPod = res.data.data.instance || null;
           this.destPods = [res.data.data.instance];
-          return;
+          return res.data;
         }
         this.currentPod = res.data.data.instance || null;
         this.pods = [res.data.data.instance];
@@ -199,16 +199,16 @@ export const selectorStore = defineStore({
       const res: AxiosResponse = await graphql.query("queryEndpoint").params({
         endpointId,
       });
-      if (!res.data.errors) {
-        if (isRelation) {
-          this.currentDestPod = res.data.data.endpoint || null;
-          this.destPods = [res.data.data.endpoint];
-          return;
-        }
-        this.currentPod = res.data.data.endpoint || null;
-        this.pods = [res.data.data.endpoint];
+      if (res.data.errors) {
+        return res.data;
       }
-
+      if (isRelation) {
+        this.currentDestPod = res.data.data.endpoint || null;
+        this.destPods = [res.data.data.endpoint];
+        return res.data;
+      }
+      this.currentPod = res.data.data.endpoint || null;
+      this.pods = [res.data.data.endpoint];
       return res.data;
     },
     async getProcess(processId: string, isRelation?: boolean) {
@@ -222,7 +222,7 @@ export const selectorStore = defineStore({
         if (isRelation) {
           this.currentDestProcess = res.data.data.process || null;
           this.destProcesses = [res.data.data.process];
-          return;
+          return res.data;
         }
         this.currentProcess = res.data.data.process || null;
         this.processes = [res.data.data.process];

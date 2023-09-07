@@ -24,6 +24,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import type { AxiosResponse } from "axios";
 import query from "@/graphql/fetch";
 import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
+import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
 import { ElMessage } from "element-plus";
 
 interface MetricVal {
@@ -113,6 +114,16 @@ export const topologyStore = defineStore({
     },
     setLinkClientMetrics(m: MetricVal) {
       this.linkClientMetrics = m;
+    },
+    setLegendValues(expressions: string, data: { [key: string]: any }) {
+      for (let idx = 0; idx < this.nodes.length; idx++) {
+        for (let index = 0; index < expressions.length; index++) {
+          const k = "expression" + idx + index;
+          if (expressions[index]) {
+            this.nodes[idx][expressions[index]] = Number(data[k].results[0].values[0].value);
+          }
+        }
+      }
     },
     async getDepthServiceTopology(serviceIds: string[], depth: number) {
       const res = await this.getServicesTopology(serviceIds);
@@ -321,6 +332,15 @@ export const topologyStore = defineStore({
       this.setNodeMetricValue(res.data.data);
       return res.data;
     },
+    async getNodeExpressionValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
+      const res: AxiosResponse = await query(param);
+
+      if (res.data.errors) {
+        return res.data;
+      }
+
+      return res.data;
+    },
     async getLinkClientMetrics(linkClientMetrics: string[]) {
       if (!linkClientMetrics.length) {
         this.setLinkClientMetrics({});
@@ -353,6 +373,29 @@ export const topologyStore = defineStore({
         ElMessage.error(res.errors);
       }
     },
+    async getLinkExpressions(expressions: string[], type: string) {
+      if (!expressions.length) {
+        this.setLinkServerMetrics({});
+        return;
+      }
+      const calls = this.calls.filter((i: Call) => i.detectPoints.includes(type));
+      if (!calls.length) {
+        return;
+      }
+      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(expressions, calls);
+      const param = getExpressionQuery();
+      const res = await this.getNodeExpressionValue(param);
+      if (res.errors) {
+        ElMessage.error(res.errors);
+        return;
+      }
+      const metrics = handleExpressionValues(res.data);
+      if (type === "SERVER") {
+        this.setLinkServerMetrics(metrics);
+      } else {
+        this.setLinkClientMetrics(metrics);
+      }
+    },
     async queryNodeMetrics(nodeMetrics: string[]) {
       if (!nodeMetrics.length) {
         this.setNodeMetricValue({});
@@ -368,6 +411,28 @@ export const topologyStore = defineStore({
       if (res.errors) {
         ElMessage.error(res.errors);
       }
+    },
+    async queryNodeExpressions(expressions: string[]) {
+      if (!expressions.length) {
+        this.setNodeMetricValue({});
+        return;
+      }
+      if (!this.nodes.length) {
+        this.setNodeMetricValue({});
+        return;
+      }
+      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
+        expressions,
+        this.nodes,
+      );
+      const param = getExpressionQuery();
+      const res = await this.getNodeExpressionValue(param);
+      if (res.errors) {
+        ElMessage.error(res.errors);
+        return;
+      }
+      const metrics = handleExpressionValues(res.data);
+      this.setNodeMetricValue(metrics);
     },
     async getLegendMetrics(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
       const res: AxiosResponse = await query(param);

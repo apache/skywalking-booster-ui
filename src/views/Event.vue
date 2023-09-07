@@ -19,13 +19,8 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { useAppStoreWithOut } from "@/store/modules/app";
   import Header from "./event/Header.vue";
   import Content from "./event/Content.vue";
-
-  const appStore = useAppStoreWithOut();
-
-  appStore.setPageTitle("Events");
 </script>
 <style lang="scss" scoped>
   .event {

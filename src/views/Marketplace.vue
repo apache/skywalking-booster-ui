@@ -63,8 +63,6 @@ limitations under the License. -->
   function handleItems(item: MenuOptions) {
     currentItems.value = item;
   }
-
-  appStore.setPageTitle("Marketplace");
 </script>
 <style lang="scss" scoped>
   .menus {

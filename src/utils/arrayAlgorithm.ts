@@ -14,33 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { App } from "vue";
-import Icon from "./Icon.vue";
-import TimePicker from "./TimePicker.vue";
-import Selector from "./Selector.vue";
-import Graph from "./Graph.vue";
-import Radio from "./Radio.vue";
-import SelectSingle from "./SelectSingle.vue";
-import Tags from "./Tags.vue";
-import VueGridLayout from "vue-grid-layout";
 
-const components: Indexable = {
-  Icon,
-  TimePicker,
-  VueGridLayout,
-  Selector,
-  Graph,
-  Radio,
-  SelectSingle,
-  Tags,
-};
-const componentsName: string[] = Object.keys(components);
-
-export default {
-  install: (vue: App): void => {
-    vue.use(components["VueGridLayout"]);
-    componentsName.forEach((i) => {
-      vue.component(i, components[i]);
-    });
-  },
-};
+export function deduplication(arr: any, labels: string[]) {
+  const map = new Map();
+  for (const i of arr) {
+    const key = labels
+      .map((d: string) => {
+        return i[d];
+      })
+      .join("");
+    if (!map.has(i[key])) {
+      map.set(i[key], i);
+    }
+  }
+  return [...map.values()];
+}

@@ -378,5 +378,9 @@ const msg = {
   menus: "Menus",
   saveReload: "Save and reload the page",
   document: "Documentation",
+  metricMode: "Metric Mode",
+  addExpressions: "Add Expressions",
+  expressions: "Expression",
+  unhealthyExpression: "Unhealthy Expression",
 };
 export default msg;

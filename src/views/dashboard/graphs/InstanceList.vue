@@ -294,4 +294,8 @@ limitations under the License. -->
     max-height: 400px;
     overflow: auto;
   }
+
+  .link {
+    color: $active-color;
+  }
 </style>

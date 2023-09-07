@@ -161,6 +161,7 @@ export enum MetricCatalog {
   SERVICE_RELATION = "ServiceRelation",
   SERVICE_INSTANCE_RELATION = "ServiceInstanceRelation",
   ENDPOINT_RELATION = "EndpointRelation",
+  Process = "Process",
   PROCESS_RELATION = "ProcessRelation",
 }
 export const EntityType = [
