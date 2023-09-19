@@ -20,14 +20,9 @@ limitations under the License. -->
     </div>
     <div v-if="hasDuration">
       <label>{{ t("duration") }}</label>
-      <TimePicker
-        :value="[appStore.durationRow.start, appStore.durationRow.end]"
-        position="right"
-        format="YYYY-MM-DD HH:mm"
-        @input="changeTimeRange"
-      />
+      <TimePicker :value="duration" position="right" format="YYYY-MM-DD HH:mm" @input="changeTimeRange" />
     </div>
-    <div v-if="!hasDuration">
+    <div v-else>
       <label>{{ t("auto") }}</label>
       <el-switch class="mr-5" v-model="auto" style="height: 25px" />
       <Selector v-model="freshOpt" :options="RefreshOptions" size="small" />
@@ -72,6 +67,7 @@ limitations under the License. -->
   const auto = ref<boolean>(true);
   const period = ref<number>(6);
   const freshOpt = ref<string>(RefreshOptions[0].value);
+  const duration = ref<string>(JSON.parse(JSON.stringify([appStore.durationRow.start, appStore.durationRow.end])));
 
   function changeTimeRange(val: Date[] | any) {
     dates.value = val;
@@ -127,7 +123,10 @@ limitations under the License. -->
         tips: encodeURIComponent(widget.tips || ""),
       };
     }
-    if (auto.value) {
+    if (hasDuration.value) {
+      opt.auto = 0;
+      opt.autoPeriod = 0;
+    } else {
       const f = RefreshOptions.filter((d: { value: string }) => d.value === freshOpt.value)[0] || {};
       opt.auto = Number(f.value) * 60 * 1000;
       opt.autoPeriod = period.value;

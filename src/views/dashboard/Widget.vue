@@ -87,10 +87,12 @@ limitations under the License. -->
         dashboardStore.setLayer(route.params.layer);
         dashboardStore.setEntity(route.params.entity);
         const { auto, autoPeriod } = config.value;
-
         if (auto) {
           await setDuration();
           appStoreWithOut.setReloadTimer(setInterval(setDuration, autoPeriod * 1000));
+        } else {
+          const duration = JSON.parse(route.params.duration as string);
+          appStoreWithOut.setDuration(duration);
         }
         await setSelector();
         await queryMetrics();
