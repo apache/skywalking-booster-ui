@@ -37,11 +37,11 @@ npm run dev
 The default UI address is `http://localhost:8080`.
 
 # Contact Us
-
-- Submit an [issue](https://github.com/apache/skywalking/issues) if you face some issues. Submit a [discussion](https://github.com/apache/skywalking/discussions) if you want to propose new feature or have any question.
-- Mailing list: **dev@skywalking.apache.org**. Mail to `dev-subscribe@skywalking.apache.org`, follow the reply to subscribe the mailing list.
-- Join Slack. Send `Request to join SkyWalking slack` mail to the mail list(`dev@skywalking.apache.org`), we will invite you in.
-- QQ Group: 392443393, 901167865
+* Mail list: **dev@skywalking.apache.org**. Mail to `dev-subscribe@skywalking.apache.org`, follow the reply to subscribe to the mail list.
+* Send `Request to join SkyWalking slack` mail to the mail list(`dev@skywalking.apache.org`), we will invite you in.
+* For Chinese speaker, send `[CN] Request to join SkyWalking slack` mail to the mail list(`dev@skywalking.apache.org`), we will invite you in.
+* Twitter, [ASFSkyWalking](https://twitter.com/AsfSkyWalking)
+* [bilibili B站 视频](https://space.bilibili.com/390683219)
 
 # License
 
