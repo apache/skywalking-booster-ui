@@ -66,9 +66,7 @@ limitations under the License. -->
       </el-table>
     </div>
     <el-pagination
-      class="pagination"
-      background
-      small
+      class="pagination flex-h"
       layout="prev, pager, next"
       :page-size="pageSize"
       :total="pods.length"

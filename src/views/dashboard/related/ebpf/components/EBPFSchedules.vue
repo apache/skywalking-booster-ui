@@ -76,7 +76,6 @@ limitations under the License. -->
         </el-table>
         <el-pagination
           class="pagination"
-          background
           small
           layout="prev, pager, next"
           :page-size="pageSize"
