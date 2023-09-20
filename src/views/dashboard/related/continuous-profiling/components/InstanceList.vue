@@ -65,7 +65,6 @@ limitations under the License. -->
   <el-pagination
     class="mt-10"
     small
-    background
     layout="prev, pager, next"
     :page-size="pageSize"
     :total="continousProfilingStore.instances.length"

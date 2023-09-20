@@ -116,8 +116,6 @@ limitations under the License. -->
         </el-button>
         <el-pagination
           class="pagination"
-          background
-          small
           layout="prev, pager, next"
           :page-size="pageSize"
           :total="total"
