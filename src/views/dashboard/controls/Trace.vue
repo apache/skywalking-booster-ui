@@ -94,6 +94,7 @@ limitations under the License. -->
   }
 
   .trace {
+    min-height: calc(100% - 150px);
     width: 100%;
     overflow: auto;
     min-width: 1200px;
