@@ -24,6 +24,7 @@ export const Services = {
     group
     layers
     normal
+    shortName
   }
   `,
 };

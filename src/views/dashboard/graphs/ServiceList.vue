@@ -40,7 +40,7 @@ limitations under the License. -->
         <el-table-column fixed label="Service Names" min-width="220">
           <template #default="scope">
             <span class="link" :style="{ fontSize: `${config.fontSize}px` }" @click="clickService(scope)">
-              {{ scope.row.label }}
+              {{ scope.row.shortName }}
             </span>
           </template>
         </el-table-column>
@@ -208,6 +208,7 @@ limitations under the License. -->
         group: d.group,
         normal: d.normal,
         merge: d.merge,
+        shortName: d.shortName,
       };
     });
     if (props.config.metricMode === MetricModes.Expression) {

@@ -22,6 +22,7 @@ export type Service = {
   normal?: boolean;
   group?: string;
   merge?: string;
+  shortName?: string;
 };
 
 export type Instance = {
