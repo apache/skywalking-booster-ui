@@ -45,7 +45,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import type { Span } from "@/types/trace";
   import { useI18n } from "vue-i18n";
-  import { ref, onMounted } from "vue";
+  import { ref, computed } from "vue";
 
   /* global defineProps */
   const props = defineProps({
@@ -53,12 +53,9 @@ limitations under the License. -->
     traceId: { type: String, default: "" },
   });
   const { t } = useI18n();
-  const list = ref<string[]>([]);
+  const list = computed(() => Array.from(new Set(props.data.map((i: Span) => i.serviceCode))));
   const charts = ref<any>(null);
 
-  onMounted(() => {
-    list.value = Array.from(new Set(props.data.map((i: Span) => i.serviceCode)));
-  });
   function computedScale(i: number) {
     const sequentialScale = d3
       .scaleSequential()
@@ -76,7 +73,7 @@ limitations under the License. -->
   .trace-tree-btn {
     display: inline-block;
     border-radius: 4px;
-    padding: 0px 7px;
+    padding: 0 7px;
     background-color: #40454e;
     color: #eee;
     font-size: 11px;
