@@ -111,6 +111,8 @@ const titles = {
   mq_rabbitmq_desc: "Provide RabbitMQ monitoring through OpenTelemetry's Prometheus Receiver.",
   mq_kafka: "Kafka",
   mq_kafka_desc: "Provide Kafka monitoring through OpenTelemetry's Prometheus Receiver.",
+  mq_pulsar: "Pulsar",
+  mq_pulsar_desc: "Provide Pulsar monitoring through OpenTelemetry's Prometheus Receiver.",
   // self observability
   self_observability: "Self Observability",
   self_observability_desc:
