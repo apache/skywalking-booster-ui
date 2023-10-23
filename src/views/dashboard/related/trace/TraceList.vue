@@ -15,9 +15,14 @@ limitations under the License. -->
     <div class="trace-t-tool flex-h">
       <div class="title">
         <span class="mr-5">Trace Segments</span>
-        <el-popover trigger="hover" width="250" placement="bottom" effect="light" :content="t('traceDesc')">
+        <el-popover
+          :width="315"
+          placement="right"
+          :content="t('traceDesc')"
+          :popper-style="{ 'word-break': 'keep-all', 'word-wrap': 'break-word' }"
+        >
           <template #reference>
-            <span>
+            <span class="cp">
               <Icon iconName="info_outline" size="small" />
             </span>
           </template>
