@@ -191,6 +191,9 @@ export const topologyStore = defineStore({
       }
     },
     async getServicesTopology(serviceIds: string[]) {
+      if (!serviceIds.length) {
+        return new Promise((resolve) => resolve({}));
+      }
       const duration = useAppStoreWithOut().durationTime;
       const res: AxiosResponse = await graphql.query("getServicesTopology").params({
         serviceIds,
@@ -207,7 +210,7 @@ export const topologyStore = defineStore({
       const clientServiceId = (currentDestService && currentDestService.id) || "";
       const duration = useAppStoreWithOut().durationTime;
       if (!(serverServiceId && clientServiceId)) {
-        return;
+        return new Promise((resolve) => resolve({}));
       }
       const res: AxiosResponse = await graphql.query("getInstanceTopology").params({
         clientServiceId,
@@ -220,6 +223,9 @@ export const topologyStore = defineStore({
       return res.data;
     },
     async updateEndpointTopology(endpointIds: string[], depth: number) {
+      if (!endpointIds.length) {
+        return new Promise((resolve) => resolve({}));
+      }
       const res = await this.getEndpointTopology(endpointIds);
       if (depth > 1) {
         const ids = res.nodes.map((item: Node) => item.id).filter((d: string) => !endpointIds.includes(d));
@@ -285,6 +291,9 @@ export const topologyStore = defineStore({
       }
     },
     async getEndpointTopology(endpointIds: string[]) {
+      if (!endpointIds.length) {
+        return new Promise((resolve) => resolve({}));
+      }
       const duration = useAppStoreWithOut().durationTime;
       const variables = ["$duration: Duration!"];
       const fragment = endpointIds.map((id: string, index: number) => {
