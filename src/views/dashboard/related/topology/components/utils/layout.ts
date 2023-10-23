@@ -19,7 +19,8 @@ import type { Node, Call } from "@/types/topology";
 
 export function layout(levels: Node[][], calls: Call[], radius: number) {
   // precompute level depth
-  levels.forEach((l: Node[], i: number) => l.forEach((n: any) => (n.level = i)));
+  console.log(levels);
+  levels.forEach((l: Node[], i: number) => l.forEach((n: any) => n && (n.level = i)));
 
   const nodes: Node[] = levels.reduce((a, x) => a.concat(x), []);
   // layout
