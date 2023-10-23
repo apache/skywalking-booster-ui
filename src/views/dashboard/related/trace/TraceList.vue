@@ -16,7 +16,7 @@ limitations under the License. -->
       <div class="title">
         <span class="mr-5">Trace Segments</span>
         <el-popover
-          :width="315"
+          :width="310"
           placement="right"
           :content="t('traceDesc')"
           :popper-style="{ 'word-break': 'keep-all', 'word-wrap': 'break-word' }"
@@ -73,7 +73,6 @@ limitations under the License. -->
         :page-size="pageSize"
         :small="true"
         layout="prev, pager, next"
-        :pager-count="5"
         :total="total"
         @current-change="updatePage"
       />
@@ -95,11 +94,11 @@ limitations under the License. -->
   const traceStore = useTraceStore();
   const loading = ref<boolean>(false);
   const selectedKey = ref<string>("");
-  const pageSize = ref<number>(20);
+  const pageSize = 20;
   const total = computed(() =>
-    traceStore.traceList.length === pageSize.value
-      ? pageSize.value * traceStore.conditions.paging.pageNum + 1
-      : pageSize.value * traceStore.conditions.paging.pageNum,
+    traceStore.traceList.length === pageSize
+      ? pageSize * traceStore.conditions.paging.pageNum + 1
+      : pageSize * traceStore.conditions.paging.pageNum,
   );
 
   function searchTrace() {
@@ -110,7 +109,7 @@ limitations under the License. -->
 
   function updatePage(p: number) {
     traceStore.setTraceCondition({
-      paging: { pageNum: p, pageSize: pageSize.value },
+      paging: { pageNum: p, pageSize },
     });
     searchTrace();
   }
@@ -118,7 +117,7 @@ limitations under the License. -->
   function changeSort(opt: Option[]) {
     traceStore.setTraceCondition({
       queryOrder: opt[0].value,
-      paging: { pageNum: 1, pageSize: pageSize.value },
+      paging: { pageNum: 1, pageSize },
     });
     searchTrace();
   }
