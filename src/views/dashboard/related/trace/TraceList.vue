@@ -13,15 +13,16 @@ limitations under the License. -->
 <template>
   <div class="trace-t flex-v">
     <div class="trace-t-tool flex-h">
-      <el-pagination
-        v-model="traceStore.conditions.paging.pageNum"
-        :page-size="pageSize"
-        :small="true"
-        layout="prev, pager, next"
-        :pager-count="5"
-        :total="total"
-        @current-change="updatePage"
-      />
+      <div class="title">
+        <span class="mr-5">Trace Segments</span>
+        <el-popover trigger="hover" width="250" placement="bottom" effect="light" :content="t('traceDesc')">
+          <template #reference>
+            <span>
+              <Icon iconName="info_outline" size="small" />
+            </span>
+          </template>
+        </el-popover>
+      </div>
       <div class="selectors">
         <Selector
           size="small"
@@ -60,6 +61,17 @@ limitations under the License. -->
         </tr>
       </table>
       <div class="no-data" v-else>{{ t("noData") }}</div>
+    </div>
+    <div class="trace-t-tool flex-h">
+      <el-pagination
+        v-model="traceStore.conditions.paging.pageNum"
+        :page-size="pageSize"
+        :small="true"
+        layout="prev, pager, next"
+        :pager-count="5"
+        :total="total"
+        @current-change="updatePage"
+      />
     </div>
   </div>
 </template>
@@ -133,6 +145,12 @@ limitations under the License. -->
     border-bottom: 1px solid #c1c5ca41;
     border-right: 1px solid #c1c5ca41;
     height: 35px;
+    align-items: center;
+  }
+
+  .title {
+    font-weight: bold;
+    padding-left: 10px;
   }
 
   .selectors {

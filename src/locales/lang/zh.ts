@@ -380,5 +380,7 @@ const msg = {
   addExpressions: "添加表达式",
   expressions: "表达式",
   unhealthyExpression: "非健康表达式",
+  traceDesc:
+    "Trace segment充当在单个操作系统进程（如JVM）中执行的跟踪部分的表示。它包括跨度的集合，通常与单个请求或执行上下文相关联并从中收集。",
 };
 export default msg;
