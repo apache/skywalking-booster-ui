@@ -13,15 +13,21 @@ limitations under the License. -->
 <template>
   <div class="trace-t flex-v">
     <div class="trace-t-tool flex-h">
-      <el-pagination
-        v-model="traceStore.conditions.paging.pageNum"
-        :page-size="pageSize"
-        :small="true"
-        layout="prev, pager, next"
-        :pager-count="5"
-        :total="total"
-        @current-change="updatePage"
-      />
+      <div class="title">
+        <span class="mr-5">Trace Segments</span>
+        <el-popover
+          :width="310"
+          placement="right"
+          :content="t('traceDesc')"
+          :popper-style="{ 'word-break': 'keep-all', 'word-wrap': 'break-word' }"
+        >
+          <template #reference>
+            <span class="cp">
+              <Icon iconName="info_outline" size="small" />
+            </span>
+          </template>
+        </el-popover>
+      </div>
       <div class="selectors">
         <Selector
           size="small"
@@ -61,6 +67,16 @@ limitations under the License. -->
       </table>
       <div class="no-data" v-else>{{ t("noData") }}</div>
     </div>
+    <div class="trace-t-tool flex-h">
+      <el-pagination
+        v-model="traceStore.conditions.paging.pageNum"
+        :page-size="pageSize"
+        :small="true"
+        layout="prev, pager, next"
+        :total="total"
+        @current-change="updatePage"
+      />
+    </div>
   </div>
 </template>
 
@@ -78,11 +94,11 @@ limitations under the License. -->
   const traceStore = useTraceStore();
   const loading = ref<boolean>(false);
   const selectedKey = ref<string>("");
-  const pageSize = ref<number>(20);
+  const pageSize = 20;
   const total = computed(() =>
-    traceStore.traceList.length === pageSize.value
-      ? pageSize.value * traceStore.conditions.paging.pageNum + 1
-      : pageSize.value * traceStore.conditions.paging.pageNum,
+    traceStore.traceList.length === pageSize
+      ? pageSize * traceStore.conditions.paging.pageNum + 1
+      : pageSize * traceStore.conditions.paging.pageNum,
   );
 
   function searchTrace() {
@@ -93,7 +109,7 @@ limitations under the License. -->
 
   function updatePage(p: number) {
     traceStore.setTraceCondition({
-      paging: { pageNum: p, pageSize: pageSize.value },
+      paging: { pageNum: p, pageSize },
     });
     searchTrace();
   }
@@ -101,7 +117,7 @@ limitations under the License. -->
   function changeSort(opt: Option[]) {
     traceStore.setTraceCondition({
       queryOrder: opt[0].value,
-      paging: { pageNum: 1, pageSize: pageSize.value },
+      paging: { pageNum: 1, pageSize },
     });
     searchTrace();
   }
@@ -133,6 +149,12 @@ limitations under the License. -->
     border-bottom: 1px solid #c1c5ca41;
     border-right: 1px solid #c1c5ca41;
     height: 35px;
+    align-items: center;
+  }
+
+  .title {
+    font-weight: bold;
+    padding-left: 10px;
   }
 
   .selectors {
