@@ -15,10 +15,10 @@ limitations under the License. -->
 
 <template>
   <div class="log">
-    <div class="log-header" :class="type === 'browser' ? ['browser-header', 'flex-h'] : 'service-header'">
+    <div class="log-header flex-h" :class="type === 'browser' ? ['browser-header', 'flex-h'] : 'service-header'">
       <template v-for="(item, index) in columns" :key="`col${index}`">
         <div :class="[item.label, ['message', 'stack'].includes(item.label) ? 'max-item' : '']">
-          {{ t(item.value) }}
+          {{ item.value && t(item.value) }}
         </div>
       </template>
     </div>
@@ -42,7 +42,7 @@ limitations under the License. -->
       @closed="showDetail = false"
       :title="t('logDetail')"
     >
-      <LogDetail :currentLog="currentLog" :columns="columns" />
+      <LogDetail :currentLog="currentLog" />
     </el-dialog>
   </div>
 </template>
@@ -80,6 +80,7 @@ limitations under the License. -->
   }
 
   .log-header {
+    width: 100%;
     white-space: nowrap;
     user-select: none;
     border-left: 0;
@@ -87,23 +88,23 @@ limitations under the License. -->
     border-bottom: 1px solid rgb(0 0 0 / 10%);
 
     .traceId {
-      width: 390px;
+      width: 140px;
     }
 
-    .content,
+    .content {
+      width: 1300px;
+    }
+
     .tags {
-      width: 300px;
+      width: 100px;
     }
 
-    .serviceInstanceName,
-    .endpointName,
     .serviceName {
       width: 200px;
     }
   }
 
   .log-header div {
-    display: inline-block;
     padding: 0 5px;
     border: 1px solid transparent;
     border-right: 1px dotted silver;

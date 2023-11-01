@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="log-item">
+  <div class="log-item flex-h">
     <div
       v-for="(item, index) in columns"
       :key="index"
@@ -25,11 +25,9 @@ limitations under the License. -->
         {{ dateFormat(data.timestamp) }}
       </span>
       <span v-else-if="item.label === 'tags'">
-        {{ tags }}
+        {{ level }}
       </span>
-      <span v-else-if="item.label === 'traceId' && !noLink" :class="noLink ? '' : 'blue'">
-        {{ data[item.label] }}
-      </span>
+      <span v-else-if="item.label === 'traceId' && !noLink" :class="noLink ? '' : 'blue'"> trace </span>
       <span v-else>{{ data[item.label] }}</span>
     </div>
   </div>
@@ -51,11 +49,11 @@ limitations under the License. -->
   const options: Recordable<LayoutConfig> = inject("options") || {};
   const emit = defineEmits(["select"]);
   const columns = ServiceLogConstants;
-  const tags = computed(() => {
+  const level = computed(() => {
     if (!props.data.tags) {
       return "";
     }
-    return String(props.data.tags.map((d: { key: string; value: string }) => `${d.key}=${d.value}`));
+    return (props.data.tags.find((d: { key: string; value: string }) => d.key === "level") || {}).value || "";
   });
 
   function selectLog(label: string, value: string) {
@@ -83,18 +81,16 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .log-item {
-    white-space: nowrap;
-    position: relative;
     cursor: pointer;
+    align-items: center;
+    min-height: 30px;
 
     .traceId {
-      width: 390px;
       cursor: pointer;
 
       span {
         display: inline-block;
         width: 100%;
-        line-height: 30px;
       }
 
       .blue {
@@ -102,20 +98,21 @@ limitations under the License. -->
       }
     }
 
-    .content,
     .tags {
-      width: 300px;
+      width: 100px;
     }
 
-    .serviceInstanceName,
-    .endpointName,
+    .content {
+      width: 1300px;
+    }
+
     .serviceName {
       width: 200px;
     }
   }
 
   .log-item:hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: rgb(0 0 0 / 4%);
   }
 
   .log-item > div {
@@ -124,16 +121,13 @@ limitations under the License. -->
     display: inline-block;
     border: 1px solid transparent;
     border-right: 1px dotted silver;
+    white-space: normal;
+    word-break: break-all;
     overflow: hidden;
-    height: 30px;
-    line-height: 30px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .log-item .text {
     width: 100%;
-    display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

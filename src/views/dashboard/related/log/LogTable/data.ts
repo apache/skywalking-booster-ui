@@ -17,36 +17,16 @@
 
 export const ServiceLogConstants = [
   {
-    label: "serviceName",
-    value: "service",
-  },
-  {
-    label: "serviceInstanceName",
-    value: "instance",
-  },
-  {
-    label: "endpointName",
-    value: "endpoint",
-  },
-  {
-    label: "timestamp",
-    value: "time",
-  },
-  {
-    label: "contentType",
-    value: "contentType",
+    label: "content",
+    value: "content",
   },
   {
     label: "tags",
-    value: "tags",
+    value: "level",
   },
   {
     label: "traceId",
-    value: "traceID",
-  },
-  {
-    label: "content",
-    value: "content",
+    value: "",
   },
 ];
 export const ServiceLogDetail = [
@@ -57,6 +37,10 @@ export const ServiceLogDetail = [
   {
     label: "serviceInstanceName",
     value: "instance",
+  },
+  {
+    label: "endpointName",
+    value: "endpoint",
   },
   {
     label: "timestamp",
