@@ -83,9 +83,8 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .log-item {
-    white-space: nowrap;
-    position: relative;
     cursor: pointer;
+    align-items: center;
 
     .traceId {
       width: 260px;
