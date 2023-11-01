@@ -95,7 +95,7 @@ limitations under the License. -->
     }
 
     .tags {
-      width: 320px;
+      width: 260px;
     }
 
     .serviceName {
