@@ -18,7 +18,7 @@ limitations under the License. -->
     <div class="log-header flex-h" :class="type === 'browser' ? ['browser-header', 'flex-h'] : 'service-header'">
       <template v-for="(item, index) in columns" :key="`col${index}`">
         <div :class="[item.label, ['message', 'stack'].includes(item.label) ? 'max-item' : '']">
-          {{ t(item.value) }}
+          {{ item.value && t(item.value) }}
         </div>
       </template>
     </div>

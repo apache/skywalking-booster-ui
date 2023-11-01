@@ -26,7 +26,7 @@ export const ServiceLogConstants = [
   },
   {
     label: "traceId",
-    value: "traceID",
+    value: "",
   },
 ];
 export const ServiceLogDetail = [
