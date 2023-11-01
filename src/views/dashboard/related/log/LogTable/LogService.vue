@@ -85,6 +85,7 @@ limitations under the License. -->
   .log-item {
     cursor: pointer;
     align-items: center;
+    min-height: 30px;
 
     .traceId {
       width: 260px;
@@ -93,7 +94,6 @@ limitations under the License. -->
       span {
         display: inline-block;
         width: 100%;
-        line-height: 30px;
       }
 
       .blue {
