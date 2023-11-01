@@ -42,7 +42,7 @@ limitations under the License. -->
       @closed="showDetail = false"
       :title="t('logDetail')"
     >
-      <LogDetail :currentLog="currentLog" :columns="columns" />
+      <LogDetail :currentLog="currentLog" />
     </el-dialog>
   </div>
 </template>
@@ -90,13 +90,14 @@ limitations under the License. -->
       width: 390px;
     }
 
-    .content,
-    .tags {
-      width: 300px;
+    .content {
+      width: 1000px;
     }
 
-    .serviceInstanceName,
-    .endpointName,
+    .tags {
+      width: 320px;
+    }
+
     .serviceName {
       width: 200px;
     }

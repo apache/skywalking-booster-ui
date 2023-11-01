@@ -88,7 +88,7 @@ limitations under the License. -->
     cursor: pointer;
 
     .traceId {
-      width: 390px;
+      width: 260px;
       cursor: pointer;
 
       span {
@@ -102,20 +102,21 @@ limitations under the License. -->
       }
     }
 
-    .content,
     .tags {
-      width: 300px;
+      width: 320px;
     }
 
-    .serviceInstanceName,
-    .endpointName,
+    .content {
+      width: 1000px;
+    }
+
     .serviceName {
       width: 200px;
     }
   }
 
   .log-item:hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: rgb(0 0 0 / 4%);
   }
 
   .log-item > div {
