@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="log-item">
+  <div class="log-item flex-h">
     <div
       v-for="(item, index) in columns"
       :key="index"
@@ -25,7 +25,7 @@ limitations under the License. -->
         {{ dateFormat(data.timestamp) }}
       </span>
       <span v-else-if="item.label === 'tags'">
-        {{ tags }}
+        {{ level }}
       </span>
       <span v-else-if="item.label === 'traceId' && !noLink" :class="noLink ? '' : 'blue'">
         {{ data[item.label] }}
@@ -51,7 +51,7 @@ limitations under the License. -->
   const options: Recordable<LayoutConfig> = inject("options") || {};
   const emit = defineEmits(["select"]);
   const columns = ServiceLogConstants;
-  const tags = computed(() => {
+  const level = computed(() => {
     if (!props.data.tags) {
       return "";
     }
@@ -125,16 +125,13 @@ limitations under the License. -->
     display: inline-block;
     border: 1px solid transparent;
     border-right: 1px dotted silver;
+    white-space: normal;
+    word-break: break-all;
     overflow: hidden;
-    height: 30px;
-    line-height: 30px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .log-item .text {
     width: 100%;
-    display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
