@@ -87,7 +87,7 @@ limitations under the License. -->
     border-bottom: 1px solid rgb(0 0 0 / 10%);
 
     .traceId {
-      width: 390px;
+      width: 260px;
     }
 
     .content {
