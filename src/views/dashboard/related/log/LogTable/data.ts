@@ -43,6 +43,10 @@ export const ServiceLogDetail = [
     value: "instance",
   },
   {
+    label: "endpointName",
+    value: "endpoint",
+  },
+  {
     label: "timestamp",
     value: "time",
   },
