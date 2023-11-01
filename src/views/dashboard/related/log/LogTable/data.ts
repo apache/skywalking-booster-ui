@@ -21,10 +21,6 @@ export const ServiceLogConstants = [
     value: "content",
   },
   {
-    label: "serviceName",
-    value: "service",
-  },
-  {
     label: "tags",
     value: "level",
   },

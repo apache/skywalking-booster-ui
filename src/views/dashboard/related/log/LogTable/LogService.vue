@@ -27,9 +27,7 @@ limitations under the License. -->
       <span v-else-if="item.label === 'tags'">
         {{ level }}
       </span>
-      <span v-else-if="item.label === 'traceId' && !noLink" :class="noLink ? '' : 'blue'">
-        {{ data[item.label] }}
-      </span>
+      <span v-else-if="item.label === 'traceId' && !noLink" :class="noLink ? '' : 'blue'"> trace </span>
       <span v-else>{{ data[item.label] }}</span>
     </div>
   </div>
@@ -88,7 +86,6 @@ limitations under the License. -->
     min-height: 30px;
 
     .traceId {
-      width: 260px;
       cursor: pointer;
 
       span {
@@ -106,7 +103,7 @@ limitations under the License. -->
     }
 
     .content {
-      width: 1000px;
+      width: 1300px;
     }
 
     .serviceName {

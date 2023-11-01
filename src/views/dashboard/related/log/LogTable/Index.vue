@@ -80,6 +80,7 @@ limitations under the License. -->
   }
 
   .log-header {
+    width: 100%;
     white-space: nowrap;
     user-select: none;
     border-left: 0;
@@ -87,11 +88,11 @@ limitations under the License. -->
     border-bottom: 1px solid rgb(0 0 0 / 10%);
 
     .traceId {
-      width: 260px;
+      width: 140px;
     }
 
     .content {
-      width: 1000px;
+      width: 1300px;
     }
 
     .tags {
