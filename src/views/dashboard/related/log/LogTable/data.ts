@@ -26,7 +26,7 @@ export const ServiceLogConstants = [
   },
   {
     label: "tags",
-    value: "tags",
+    value: "level",
   },
   {
     label: "traceId",

@@ -55,7 +55,7 @@ limitations under the License. -->
     if (!props.data.tags) {
       return "";
     }
-    return String(props.data.tags.map((d: { key: string; value: string }) => `${d.key}=${d.value}`));
+    return (props.data.tags.find((d: { key: string; value: string }) => d.key === "level") || {}).value || "";
   });
 
   function selectLog(label: string, value: string) {
@@ -103,7 +103,7 @@ limitations under the License. -->
     }
 
     .tags {
-      width: 260px;
+      width: 100px;
     }
 
     .content {

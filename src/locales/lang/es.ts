@@ -297,6 +297,7 @@ const msg = {
   isError: "Error",
   contentType: "Tipo de Contenido",
   content: "Contenido",
+  level: "Level",
   viewLogs: "Ver Registro de Datos",
   logsTagsTip: `Solamente etiquetas definidas en core/default/searchableLogsTags pueden ser buscadas.
   Más información en la página de Vocabulario de Configuración`,
