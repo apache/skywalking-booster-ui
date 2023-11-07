@@ -20,7 +20,6 @@
   --theme-background: #fff;
   --font-color: #3d444f;
   --disabled-color: #ccc;
-  --el-switch-off: #999;
   --el-text-color-regular: #606266;
   --dashboard-tool-bg: rgb(240 242 245);
   --text-color-placeholder: #666;
@@ -28,21 +27,16 @@
 }
 
 .dark {
-  --el-color-primary: #1c2022;
+  --el-color-primary: #409eff;
   --theme-background: #000;
   --font-color: #fafbfc;
   --disabled-color: #ccc;
-  --el-switch-off: #bbb;
   --el-text-color-regular: #fafbfc;
   --dashboard-tool-bg: #212224;
   --text-color-placeholder: #ccc;
   --border-color: #222;
 }
 
-.el-switch {
-  --el-switch-on-color: var(--el-color-primary);
-  --el-switch-off-color: var(--el-switch-off);
-}
 .el-breadcrumb__separator {
   --el-text-color-placeholder: var(--text-color-placeholder);
 }

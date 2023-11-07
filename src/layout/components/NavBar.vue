@@ -51,8 +51,16 @@ limitations under the License. -->
       <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
-      <span class="ghost ml-5">
-        <el-switch v-model="theme" @change="changeTheme" />
+      <span class="ml-5">
+        <el-switch
+          v-model="theme"
+          active-text="D"
+          inactive-text="H"
+          size="small"
+          inactive-color="#999"
+          inline-prompt
+          @change="changeTheme"
+        />
       </span>
       <span class="version ml-5 cp">
         <el-popover trigger="hover" width="250" placement="bottom" effect="light" :content="appStore.version">
