@@ -15,11 +15,25 @@
  * limitations under the License.
  */
 
-$font-color: #3d444f;
-$text-color: #fff;
-$disabled-color: #ccc;
-$active-color: #409eff;
-$theme-background: #fff;
-$active-background: #409eff;
+.light {
+  --primary-color: #409eff;
+  --theme-background: #fff;
+  --font-color: #3d444f;
+  --disabled-color: #ccc;
+}
+
+.dark {
+  --primary-color: #1c2022;
+  --theme-background: #000;
+  --font-color: #3d444f;
+  --disabled-color: #ccc;
+}
+
+$font-color: var(--font-color);
+$text-color: var(--theme-background);
+$disabled-color: var(--disabled-color);
+$active-color: var(--primary-color);
+$theme-background: var(--theme-background);
+$active-background: var(--primary-color);
 $font-size-smaller: 12px;
 $font-size-normal: 14px;
