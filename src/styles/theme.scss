@@ -23,26 +23,36 @@
   --el-text-color-regular: #606266;
   --dashboard-tool-bg: rgb(240 242 245);
   --text-color-placeholder: #666;
-  --border-color: #dfe4e8;
+  --border-color: #dcdfe6;
+  --layout-background: #f7f9fa;
+  --el-switch-off: #999;
 }
 
 .dark {
   --el-color-primary: #409eff;
-  --theme-background: #000;
+  --theme-background: #36383d;
   --font-color: #fafbfc;
   --disabled-color: #ccc;
   --el-text-color-regular: #fafbfc;
-  --dashboard-tool-bg: #212224;
+  --dashboard-tool-bg: #000;
   --text-color-placeholder: #ccc;
-  --border-color: #222;
+  --border-color: #262629;
+  --layout-background: #000;
+  --el-switch-off: #999;
+}
+
+.el-switch {
+  --el-switch-on-color: var(--el-color-primary);
+  --el-switch-off-color: var(--el-switch-off);
 }
 
 .el-breadcrumb__separator {
   --el-text-color-placeholder: var(--text-color-placeholder);
 }
 
+$layout-background: var(--layout-background);
 $border-color: var(--border-color);
-$dashboard-tool-bg: var(--dashboard-tool-bg);
+$dashboard-tool-bg-color: var(--dashboard-tool-bg);
 $font-color: var(--font-color);
 $text-color: var(--theme-background);
 $disabled-color: var(--disabled-color);

@@ -122,8 +122,6 @@ limitations under the License. -->
           inactive-text="V"
           size="small"
           inline-prompt
-          active-color="#409eff"
-          inactive-color="#999"
           @change="changeMode"
         />
       </div>
@@ -739,7 +737,7 @@ limitations under the License. -->
   .dashboard-tool {
     text-align: right;
     padding: 3px 5px 5px;
-    background: $dashboard-tool-bg;
+    background: $dashboard-tool-bg-color;
     border-bottom: 1px solid $border-color;
     justify-content: space-between;
   }

@@ -51,7 +51,7 @@ limitations under the License. -->
   .header {
     padding: 10px;
     font-size: $font-size-smaller;
-    border-bottom: 1px solid #dcdfe6;
+    border-bottom: 1px solid $border-color;
     min-width: 1200px;
   }
 

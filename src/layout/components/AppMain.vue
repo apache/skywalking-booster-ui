@@ -24,7 +24,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .app-main {
     height: calc(100% - 40px);
-    background: #f7f9fa;
+    background: $layout-background;
     overflow: auto;
   }
 </style>

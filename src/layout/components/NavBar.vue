@@ -52,15 +52,7 @@ limitations under the License. -->
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
       <span class="ml-5">
-        <el-switch
-          v-model="theme"
-          active-text="D"
-          inactive-text="H"
-          size="small"
-          inactive-color="#999"
-          inline-prompt
-          @change="changeTheme"
-        />
+        <el-switch v-model="theme" active-text="D" inactive-text="H" size="small" inline-prompt @change="changeTheme" />
       </span>
       <span class="version ml-5 cp">
         <el-popover trigger="hover" width="250" placement="bottom" effect="light" :content="appStore.version">
@@ -97,6 +89,7 @@ limitations under the License. -->
   const pageTitle = ref<string>("");
   const theme = ref<boolean>(false);
 
+  changeTheme();
   resetDuration();
   getVersion();
   getNavPaths();
@@ -315,12 +308,6 @@ limitations under the License. -->
     border-bottom: 1px solid $border-color;
     color: $font-color;
     font-size: $font-size-smaller;
-  }
-
-  .nav-bar.dark {
-    background-color: $theme-background;
-    border-bottom: 1px solid #252a2f;
-    color: $theme-background;
   }
 
   .title {

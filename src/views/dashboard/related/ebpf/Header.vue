@@ -90,7 +90,7 @@ limitations under the License. -->
   .header {
     padding: 5px 20px 5px 10px;
     font-size: $font-size-smaller;
-    border-bottom: 1px solid #dcdfe6;
+    border-bottom: 1px solid $border-color;
     justify-content: space-between;
   }
 

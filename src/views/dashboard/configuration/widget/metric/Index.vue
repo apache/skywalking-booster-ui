@@ -630,7 +630,7 @@ limitations under the License. -->
   .expression-param {
     display: inline-block;
     width: 400px;
-    border: 1px solid #dcdfe6;
+    border: 1px solid $border-color;
     cursor: text;
     padding: 0 5px;
     border-radius: 3px;

@@ -80,7 +80,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .vue-grid-layout {
-    background: #f7f9fa;
+    background: $layout-background;
     height: auto !important;
   }
 
