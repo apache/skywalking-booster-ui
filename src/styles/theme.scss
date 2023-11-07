@@ -27,6 +27,9 @@
   --border-color-primary: #eee;
   --layout-background: #f7f9fa;
   --el-switch-off: #999;
+  --el-input-bg-color: #fff;
+  --el-input-text-color: #3d444f;
+  --box-shadow-color: #ccc;
 }
 
 .dark {
@@ -41,6 +44,9 @@
   --border-color-primary: #4b4b52;
   --layout-background: #000;
   --el-switch-off: #999;
+  --el-input-bg-color: #212224;
+  --el-input-text-color: #fafbfc;
+  --box-shadow-color: #888;
 }
 
 .el-switch {
@@ -52,6 +58,33 @@
   --el-text-color-placeholder: var(--text-color-placeholder);
 }
 
+.el-input__inner {
+  background-color: var(--el-input-bg-color);
+  color: var(--el-input-text-color);
+}
+
+.el-select {
+  --el-select-input-color: var(--el-input-text-color);
+  --el-select-multiple-input-color: var(--el-input-text-color);
+}
+.el-input {
+  --el-input-bg-color: var(--el-input-bg-color);
+  color: var(--el-input-text-color);
+  // --el-input-text-color: var(--el-input-text-color);
+  //   --el-input-border: var(--el-border-base);
+  //   --el-input-hover-border: var(--el-border-color-hover);
+  //   --el-input-focus-border: var(--el-color-primary);
+  //   --el-input-transparent-border: 0 0 0 1px transparent inset;
+  //   --el-input-border-color: var(--el-border-color-base);
+  //   --el-input-border-radius: var(--el-border-radius-base);
+  //   --el-input-icon-color: var(--el-text-color-placeholder);
+  //   --el-input-placeholder-color: var(--el-text-color-placeholder);
+  //   --el-input-hover-border-color: var(--el-border-color-hover);
+  //   --el-input-clear-hover-color: var(--el-text-color-secondary);
+  //   --el-input-focus-border-color: var(--el-color-primary);
+}
+
+$box-shadow-color: var(--box-shadow-color);
 $border-color-primary: var(--border-color-primary);
 $layout-background: var(--layout-background);
 $border-color: var(--border-color);

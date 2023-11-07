@@ -32,5 +32,6 @@ limitations under the License. -->
     color: $font-color;
     height: 100%;
     overflow: hidden;
+    background-color: $layout-background;
   }
 </style>

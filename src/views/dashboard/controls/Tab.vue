@@ -361,7 +361,7 @@ limitations under the License. -->
 
   .vue-grid-item:not(.vue-grid-placeholder) {
     background: $theme-background;
-    box-shadow: 0 1px 4px 0 #00000029;
+    box-shadow: 0 0 3px 0 $box-shadow-color;
     border-radius: 3px;
   }
 
