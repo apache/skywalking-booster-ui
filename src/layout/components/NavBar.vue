@@ -52,7 +52,7 @@ limitations under the License. -->
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
       <span class="ml-5">
-        <el-switch v-model="theme" active-text="D" inactive-text="H" size="small" inline-prompt @change="changeTheme" />
+        <el-switch v-model="theme" active-text="D" inactive-text="L" size="small" inline-prompt @change="changeTheme" />
       </span>
       <span class="version ml-5 cp">
         <el-popover trigger="hover" width="250" placement="bottom" effect="light" :content="appStore.version">

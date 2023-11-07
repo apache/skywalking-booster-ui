@@ -277,7 +277,7 @@ limitations under the License. -->
     height: 30px;
     padding: 5px;
     width: 100%;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $border-color-primary;
     justify-content: space-between;
   }
 

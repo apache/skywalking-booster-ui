@@ -281,7 +281,7 @@ limitations under the License. -->
     right: 10px;
     width: 400px;
     height: 600px;
-    border: 1px solid #eee;
+    border: 1px solid $border-color-primary;
     background-color: $theme-background;
     overflow: auto;
     padding: 10px 15px;

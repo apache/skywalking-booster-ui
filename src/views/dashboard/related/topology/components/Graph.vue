@@ -716,7 +716,7 @@ limitations under the License. -->
       padding: 0 15px;
       border-radius: 3px;
       color: $disabled-color;
-      border: 1px solid #eee;
+      border: 1px solid $border-color-primary;
       background-color: $theme-background;
       box-shadow: #eee 1px 2px 10px;
       transition: all 0.5ms linear;

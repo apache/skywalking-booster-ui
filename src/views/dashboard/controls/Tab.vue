@@ -350,7 +350,7 @@ limitations under the License. -->
   .tab-header {
     justify-content: space-between;
     width: 100%;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $border-color-primary;
   }
 
   .vue-grid-layout {

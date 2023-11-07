@@ -74,7 +74,7 @@ limitations under the License. -->
   .log {
     font-size: $font-size-smaller;
     height: 100%;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $border-color-primary;
     width: 100%;
     overflow: auto;
   }
