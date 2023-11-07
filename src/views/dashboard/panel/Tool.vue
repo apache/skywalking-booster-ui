@@ -739,8 +739,8 @@ limitations under the License. -->
   .dashboard-tool {
     text-align: right;
     padding: 3px 5px 5px;
-    background: rgb(240 242 245);
-    border-bottom: 1px solid #dfe4e8;
+    background: $dashboard-tool-bg;
+    border-bottom: 1px solid $border-color;
     justify-content: space-between;
   }
 

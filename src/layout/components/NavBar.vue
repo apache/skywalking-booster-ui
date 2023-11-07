@@ -303,16 +303,16 @@ limitations under the License. -->
     padding: 5px;
     text-align: left;
     justify-content: space-between;
-    background-color: #fafbfc;
-    border-bottom: 1px solid #dfe4e8;
-    color: #222;
+    background-color: $theme-background;
+    border-bottom: 1px solid $border-color;
+    color: $font-color;
     font-size: $font-size-smaller;
   }
 
   .nav-bar.dark {
-    background-color: #333840;
+    background-color: $theme-background;
     border-bottom: 1px solid #252a2f;
-    color: #fafbfc;
+    color: $theme-background;
   }
 
   .title {

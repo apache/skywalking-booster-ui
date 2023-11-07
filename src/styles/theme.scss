@@ -16,24 +16,44 @@
  */
 
 .light {
-  --primary-color: #409eff;
+  --el-color-primary: #409eff;
   --theme-background: #fff;
   --font-color: #3d444f;
   --disabled-color: #ccc;
+  --el-switch-off: #999;
+  --el-text-color-regular: #606266;
+  --dashboard-tool-bg: rgb(240 242 245);
+  --text-color-placeholder: #666;
+  --border-color: #dfe4e8;
 }
 
 .dark {
-  --primary-color: #1c2022;
+  --el-color-primary: #1c2022;
   --theme-background: #000;
-  --font-color: #3d444f;
+  --font-color: #fafbfc;
   --disabled-color: #ccc;
+  --el-switch-off: #bbb;
+  --el-text-color-regular: #fafbfc;
+  --dashboard-tool-bg: #212224;
+  --text-color-placeholder: #ccc;
+  --border-color: #222;
 }
 
+.el-switch {
+  --el-switch-on-color: var(--el-color-primary);
+  --el-switch-off-color: var(--el-switch-off);
+}
+.el-breadcrumb__separator {
+  --el-text-color-placeholder: var(--text-color-placeholder);
+}
+
+$border-color: var(--border-color);
+$dashboard-tool-bg: var(--dashboard-tool-bg);
 $font-color: var(--font-color);
 $text-color: var(--theme-background);
 $disabled-color: var(--disabled-color);
-$active-color: var(--primary-color);
+$active-color: var(--el-color-primary);
 $theme-background: var(--theme-background);
-$active-background: var(--primary-color);
+$active-background: var(--el-color-primary);
 $font-size-smaller: 12px;
 $font-size-normal: 14px;
