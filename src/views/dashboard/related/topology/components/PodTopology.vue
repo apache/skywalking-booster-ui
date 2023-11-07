@@ -322,7 +322,7 @@ limitations under the License. -->
   .operations-list {
     position: absolute;
     padding: 10px 0;
-    color: #333;
+    color: $font-color;
     cursor: pointer;
     background-color: $theme-background;
     border-radius: 3px;

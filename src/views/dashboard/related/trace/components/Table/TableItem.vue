@@ -285,7 +285,7 @@ limitations under the License. -->
     padding: 10px;
     border-radius: 5px;
     border: 1px solid $disabled-color;
-    background-color: #333;
+    background-color: $font-color;
     color: $text-color;
     text-align: center;
     box-shadow: #eee 1px 2px 10px;
@@ -297,8 +297,8 @@ limitations under the License. -->
     position: absolute;
     left: 250px;
     top: 20px;
-    border: 6px solid #333;
-    border-color: transparent transparent #333;
+    border: 6px solid $font-color;
+    border-color: transparent transparent $font-color;
     display: none;
   }
 

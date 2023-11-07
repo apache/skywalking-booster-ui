@@ -59,7 +59,6 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .topology {
-    // background-color: #333840;
     width: 100%;
     height: 100%;
     font-size: $font-size-smaller;

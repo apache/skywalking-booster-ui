@@ -302,15 +302,16 @@ limitations under the License. -->
       height: 20px;
       line-height: 20px;
       outline: none;
-      color: #333;
+      color: $font-color;
       font-style: normal;
       overflow: hidden;
       text-overflow: ellipsis;
       margin-right: 20px;
+      background-color: $theme-background;
     }
 
     .tab-icons {
-      color: #333;
+      color: $font-color;
 
       i {
         margin-right: 3px;

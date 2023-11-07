@@ -734,7 +734,7 @@ limitations under the License. -->
 
     .operations-list {
       position: absolute;
-      color: #333;
+      color: $font-color;
       cursor: pointer;
       background-color: $theme-background;
       border-radius: 5px;
