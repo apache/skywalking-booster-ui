@@ -51,6 +51,9 @@ limitations under the License. -->
       <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
+      <span class="ghost ml-5">
+        <el-switch v-model="theme" @change="changeTheme" />
+      </span>
       <span class="version ml-5 cp">
         <el-popover trigger="hover" width="250" placement="bottom" effect="light" :content="appStore.version">
           <template #reference>
@@ -84,10 +87,23 @@ limitations under the License. -->
   const pathNames = ref<{ path?: string; name: string; selected: boolean }[][]>([]);
   const timeRange = ref<number>(0);
   const pageTitle = ref<string>("");
+  const theme = ref<boolean>(false);
 
   resetDuration();
   getVersion();
   getNavPaths();
+
+  function changeTheme() {
+    const root = document.documentElement;
+
+    if (theme.value) {
+      root.classList.add("dark");
+      root.classList.remove("light");
+    } else {
+      root.classList.add("light");
+      root.classList.remove("dark");
+    }
+  }
 
   function getName(list: any[]) {
     return list.find((d: any) => d.selected) || {};
