@@ -14,108 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
 
-.light {
+html {
   --el-color-primary: #409eff;
   --theme-background: #fff;
   --font-color: #3d444f;
   --disabled-color: #ccc;
-  --el-text-color-regular: #606266;
   --dashboard-tool-bg: rgb(240 242 245);
   --text-color-placeholder: #666;
   --border-color: #dcdfe6;
   --border-color-primary: #eee;
   --layout-background: #f7f9fa;
-  --el-switch-off: #999;
-  --el-input-bg-color: #fff;
-  --el-input-text-color: #3d444f;
   --box-shadow-color: #ccc;
-  --el-border-color-light: #e4e7ed;
-  --el-box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  --el-bg-color: #f5f7fa;
-  --el-text-color-placeholder: #c0c4cc;
-  --el-box-shadow-light: 0 2px 12px 0 rgba(255, 255, 255, 0.1);
+  --el-border-color: #f7f9fa;
+  --el-border: 1px solid #000000;
 }
 
-.dark {
+html.dark {
   --el-color-primary: #409eff;
   --theme-background: #212224;
   --font-color: #fafbfc;
   --disabled-color: #ccc;
-  --el-text-color-regular: #fafbfc;
   --dashboard-tool-bg: #000;
   --text-color-placeholder: #ccc;
   --border-color: #262629;
   --border-color-primary: #4b4b52;
   --layout-background: #000;
-  --el-switch-off: #999;
-  --el-input-bg-color: #212224;
-  --el-input-text-color: #fafbfc;
+  --el-border-color: #4c4d4f;
   --box-shadow-color: #666;
-  --el-border-color-light: #36383d;
-  --el-box-shadow-light: 0 2px 12px 0 rgba(255, 255, 255, 0.1);
-  --el-bg-color: #4b4b52;
-  --el-text-color-placeholder: #c0c4cc;
-  --el-box-shadow-light: 0 3px 3px 0 rgba(255, 255, 255, 0.1);
 }
-
-.el-switch {
-  --el-switch-on-color: var(--el-color-primary);
-  --el-switch-off-color: var(--el-switch-off);
-}
-
-.el-breadcrumb__separator {
-  --el-text-color-placeholder: var(--text-color-placeholder);
-}
-
-.el-input__inner {
-  background-color: var(--el-input-bg-color);
-  color: var(--el-input-text-color);
-}
-
-.el-select {
-  --el-select-input-color: var(--el-input-text-color);
-  --el-select-multiple-input-color: var(--el-input-text-color);
-}
-.el-input {
-  --el-input-bg-color: var(--el-input-bg-color);
-  color: var(--el-input-text-color);
-}
-
-.el-select__popper.el-popper[role="tooltip"] {
-  background: var(--theme-background);
-  border: 1px solid var(--el-border-color-light);
-  box-shadow: var(--el-box-shadow-light);
-}
-
-.el-popper.is-light .el-popper__arrow::before {
-  border: 1px solid var(--el-border-color-light);
-  background: var(--theme-background);
-}
-
-.el-select-dropdown__item.hover,
-.el-select-dropdown__item:hover {
-  background-color: var(--el-bg-color);
-}
-
-.el-pagination {
-  --el-pagination-bg-color: var(--theme-background);
-  --el-pagination-text-color: var(--font-color);
-}
-
-.el-pagination button:disabled {
-  background-color: var(--theme-background);
-}
-
-// .el-popover {
-//   --el-popover-bg-color: var(--theme-background);
-//   --el-popover-border-color: var(--theme-background);
-// }
-
-// .el-popover.el-popper {
-//   color: var(--font-color);
-//   box-shadow: var(--el-box-shadow-light);
-// }
 
 $box-shadow-color: var(--box-shadow-color);
 $border-color-primary: var(--border-color-primary);

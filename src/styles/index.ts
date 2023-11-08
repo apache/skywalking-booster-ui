@@ -18,7 +18,6 @@ import "element-plus/es/components/message/style/css";
 import "element-plus/es/components/message-box/style/css";
 import "element-plus/es/components/notification/style/css";
 import "element-plus/es/components/drawer/style/css";
-// import "element-plus/theme-chalk/src/dark/vars.css";
 import "./grid.scss";
 import "./lib.scss";
 import "./reset.scss";
