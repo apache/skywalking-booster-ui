@@ -109,7 +109,7 @@ limitations under the License. -->
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <el-tooltip content="Apply" placement="bottom" effect="light">
+        <el-tooltip content="Apply" placement="bottom">
           <i @click="applyDashboard">
             <Icon class="icon-btn" size="sm" iconName="save" />
           </i>

@@ -30,6 +30,11 @@
   --el-input-bg-color: #fff;
   --el-input-text-color: #3d444f;
   --box-shadow-color: #ccc;
+  --el-border-color-light: #e4e7ed;
+  --el-box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  --el-bg-color: #f5f7fa;
+  --el-text-color-placeholder: #c0c4cc;
+  --el-box-shadow-light: 0 2px 12px 0 rgba(255, 255, 255, 0.1);
 }
 
 .dark {
@@ -46,7 +51,12 @@
   --el-switch-off: #999;
   --el-input-bg-color: #212224;
   --el-input-text-color: #fafbfc;
-  --box-shadow-color: #888;
+  --box-shadow-color: #666;
+  --el-border-color-light: #36383d;
+  --el-box-shadow-light: 0 2px 12px 0 rgba(255, 255, 255, 0.1);
+  --el-bg-color: #4b4b52;
+  --el-text-color-placeholder: #c0c4cc;
+  --el-box-shadow-light: 0 3px 3px 0 rgba(255, 255, 255, 0.1);
 }
 
 .el-switch {
@@ -70,19 +80,42 @@
 .el-input {
   --el-input-bg-color: var(--el-input-bg-color);
   color: var(--el-input-text-color);
-  // --el-input-text-color: var(--el-input-text-color);
-  //   --el-input-border: var(--el-border-base);
-  //   --el-input-hover-border: var(--el-border-color-hover);
-  //   --el-input-focus-border: var(--el-color-primary);
-  //   --el-input-transparent-border: 0 0 0 1px transparent inset;
-  //   --el-input-border-color: var(--el-border-color-base);
-  //   --el-input-border-radius: var(--el-border-radius-base);
-  //   --el-input-icon-color: var(--el-text-color-placeholder);
-  //   --el-input-placeholder-color: var(--el-text-color-placeholder);
-  //   --el-input-hover-border-color: var(--el-border-color-hover);
-  //   --el-input-clear-hover-color: var(--el-text-color-secondary);
-  //   --el-input-focus-border-color: var(--el-color-primary);
 }
+
+.el-select__popper.el-popper[role="tooltip"] {
+  background: var(--theme-background);
+  border: 1px solid var(--el-border-color-light);
+  box-shadow: var(--el-box-shadow-light);
+}
+
+.el-popper.is-light .el-popper__arrow::before {
+  border: 1px solid var(--el-border-color-light);
+  background: var(--theme-background);
+}
+
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+  background-color: var(--el-bg-color);
+}
+
+.el-pagination {
+  --el-pagination-bg-color: var(--theme-background);
+  --el-pagination-text-color: var(--font-color);
+}
+
+.el-pagination button:disabled {
+  background-color: var(--theme-background);
+}
+
+// .el-popover {
+//   --el-popover-bg-color: var(--theme-background);
+//   --el-popover-border-color: var(--theme-background);
+// }
+
+// .el-popover.el-popper {
+//   color: var(--font-color);
+//   box-shadow: var(--el-box-shadow-light);
+// }
 
 $box-shadow-color: var(--box-shadow-color);
 $border-color-primary: var(--border-color-primary);
