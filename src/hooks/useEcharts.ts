@@ -30,6 +30,7 @@ import { useDebounceFn } from "@vueuse/core";
 import { useEventListener } from "./useEventListener";
 import { useBreakpoint } from "./useBreakpoint";
 import echarts from "@/utils/echarts";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 export type ECOption = echarts.ComposeOption<
   | BarSeriesOption
@@ -44,8 +45,9 @@ export type ECOption = echarts.ComposeOption<
 >;
 
 export function useECharts(elRef: Ref<HTMLDivElement>, theme: "light" | "dark" | "default" = "default"): Indexable {
+  const appStore = useAppStoreWithOut();
   const getDarkMode = computed(() => {
-    return theme === "default" ? "light" : theme;
+    return appStore.theme === "default" ? "light" : theme;
   });
   let chartInstance: Nullable<echarts.ECharts> = null;
   let resizeFn: Fn = resize;
