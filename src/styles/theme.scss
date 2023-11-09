@@ -31,6 +31,9 @@ html {
   --sw-bg-color-overlay: #fff;
   --sw-border-color-light: #e4e7ed;
   --popper-hover-bg: #eee;
+  --sw-icon-btn-bg: #eee;
+  --sw-icon-btn-color: #666;
+  --sw-icon-btn-border: #ccc;
 }
 
 html.dark {
@@ -47,6 +50,9 @@ html.dark {
   --sw-bg-color-overlay: #1d1e1f;
   --sw-border-color-light: #414243;
   --popper-hover-bg: rgb(64, 158, 255, 0.1);
+  --sw-icon-btn-bg: #222;
+  --sw-icon-btn-color: #ccc;
+  --sw-icon-btn-border: #999;
 }
 
 .el-popper.is-light {
@@ -58,6 +64,8 @@ html.dark {
   --el-switch-off-color: #aaa;
 }
 
+$tool-icon-btn-bg: var(--sw-icon-btn-bg);
+$tool-icon-btn-color: var(--sw-icon-btn-color);
 $popper-hover-bg-color: var(--popper-hover-bg);
 $box-shadow-color: var(--box-shadow-color);
 $border-color-primary: var(--border-color-primary);

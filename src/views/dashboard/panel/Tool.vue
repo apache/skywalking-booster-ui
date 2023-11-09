@@ -766,12 +766,12 @@ limitations under the License. -->
     display: inline-block;
     padding: 3px;
     text-align: center;
-    border: 1px solid $disabled-color;
+    border: 1px solid var(--sw-icon-btn-border);
     border-radius: 3px;
     margin-left: 6px;
     cursor: pointer;
-    background-color: #eee;
-    color: #666;
+    background-color: var(--sw-icon-btn-bg);
+    color: var(--sw-icon-btn-color);
     font-size: $font-size-smaller;
   }
 
