@@ -100,10 +100,13 @@ limitations under the License. -->
     if (theme.value) {
       root.classList.add("dark");
       root.classList.remove("light");
+      appStore.setTheme("dark");
     } else {
       root.classList.add("light");
       root.classList.remove("dark");
+      appStore.setTheme("light");
     }
+    console.log(appStore.theme);
   }
 
   function getName(list: any[]) {

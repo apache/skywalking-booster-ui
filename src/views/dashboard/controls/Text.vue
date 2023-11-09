@@ -15,7 +15,13 @@ limitations under the License. -->
 <template>
   <div class="text">
     <div class="header">
-      <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
+      <el-popover
+        placement="bottom"
+        trigger="click"
+        :width="100"
+        v-if="dashboardStore.editMode"
+        :effect="appStore.theme"
+      >
         <template #reference>
           <span>
             <Icon iconName="ellipsis_v" size="middle" class="operation" />
@@ -55,6 +61,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { TextColors } from "@/views/dashboard/data";
+  import { useAppStoreWithOut } from "@/store/modules/app";
 
   /*global defineProps */
   const props = defineProps({
@@ -67,6 +74,7 @@ limitations under the License. -->
   const { t } = useI18n();
   const graph = computed(() => props.data.graph || {});
   const dashboardStore = useDashboardStore();
+  const appStore = useAppStoreWithOut();
 
   function removeTopo() {
     dashboardStore.removeControls(props.data);
