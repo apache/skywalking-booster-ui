@@ -87,7 +87,7 @@ limitations under the License. -->
   const pathNames = ref<{ path?: string; name: string; selected: boolean }[][]>([]);
   const timeRange = ref<number>(0);
   const pageTitle = ref<string>("");
-  const theme = ref<boolean>(false);
+  const theme = ref<boolean>(true);
 
   changeTheme();
   resetDuration();
@@ -106,7 +106,6 @@ limitations under the License. -->
       root.classList.remove("dark");
       appStore.setTheme("light");
     }
-    console.log(appStore.theme);
   }
 
   function getName(list: any[]) {

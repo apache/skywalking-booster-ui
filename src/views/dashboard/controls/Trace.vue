@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-wrapper flex-v">
-    <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode" :effect="appStore.theme">
+    <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
       <template #reference>
         <span class="delete cp">
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
@@ -41,7 +41,6 @@ limitations under the License. -->
   import TraceDetail from "../related/trace/Detail.vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useAppStoreWithOut } from "@/store/modules/app";
 
   /*global defineProps */
   const props = defineProps({
@@ -55,7 +54,6 @@ limitations under the License. -->
   provide("options", props.data);
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const appStore = useAppStoreWithOut();
   function removeWidget() {
     dashboardStore.removeControls(props.data);
   }
@@ -91,7 +89,7 @@ limitations under the License. -->
 
     &:hover {
       color: $active-color;
-      background-color: #eee;
+      background-color: $popper-hover-bg-color;
     }
   }
 

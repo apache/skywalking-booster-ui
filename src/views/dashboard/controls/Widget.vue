@@ -26,7 +26,7 @@ limitations under the License. -->
             <Icon iconName="info_outline" size="sm" class="operation" v-show="widget.tips" />
           </span>
         </el-tooltip>
-        <el-popover placement="bottom" trigger="click" :width="100" :effect="appStore.theme">
+        <el-popover placement="bottom" trigger="click" :width="100">
           <template #reference>
             <span>
               <Icon iconName="ellipsis_v" size="middle" class="operation" />
@@ -294,7 +294,7 @@ limitations under the License. -->
 
     &:hover {
       color: $active-color;
-      background-color: #eee;
+      background-color: $popper-hover-bg-color;
     }
   }
 

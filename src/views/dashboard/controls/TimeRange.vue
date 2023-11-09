@@ -15,13 +15,7 @@ limitations under the License. -->
 <template>
   <div class="time-range">
     <div class="header">
-      <el-popover
-        placement="bottom"
-        trigger="click"
-        :width="100"
-        v-if="dashboardStore.editMode"
-        :effect="appStore.theme"
-      >
+      <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
         <template #reference>
           <span>
             <Icon iconName="ellipsis_v" size="middle" class="operation" />
@@ -182,7 +176,7 @@ limitations under the License. -->
 
     &:hover {
       color: $active-color;
-      background-color: #eee;
+      background-color: $popper-hover-bg-color;
     }
   }
 </style>

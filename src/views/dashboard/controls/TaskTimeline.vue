@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="content-wrapper flex-v">
     <div class="title">Task Timeline</div>
-    <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode" :effect="appStore.theme">
+    <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
       <template #reference>
         <span class="operation cp">
           <Icon iconName="ellipsis_v" size="middle" />
@@ -32,7 +32,6 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useAppStoreWithOut } from "@/store/modules/app";
   import Content from "../related/task-timeline/Content.vue";
 
   /*global defineProps */
@@ -46,7 +45,6 @@ limitations under the License. -->
   });
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const appStore = useAppStoreWithOut();
 
   function removeWidget() {
     dashboardStore.removeControls(props.data);
@@ -81,7 +79,7 @@ limitations under the License. -->
 
     &:hover {
       color: $active-color;
-      background-color: #eee;
+      background-color: $popper-hover-bg-color;
     }
   }
 
