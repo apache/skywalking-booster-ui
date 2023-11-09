@@ -34,6 +34,7 @@ html {
   --sw-icon-btn-bg: #eee;
   --sw-icon-btn-color: #666;
   --sw-icon-btn-border: #ccc;
+  --sw-table-col: #fff;
 }
 
 html.dark {
@@ -53,6 +54,11 @@ html.dark {
   --sw-icon-btn-bg: #222;
   --sw-icon-btn-color: #ccc;
   --sw-icon-btn-border: #999;
+  --sw-table-col: none;
+}
+
+.el-table tr {
+  background-color: var(--el-table-tr-bg-color);
 }
 
 .el-popper.is-light {
@@ -62,6 +68,27 @@ html.dark {
 
 .el-switch {
   --el-switch-off-color: #aaa;
+}
+
+.el-table__body-wrapper tr td.el-table-fixed-column--left,
+.el-table__body-wrapper tr td.el-table-fixed-column--right,
+.el-table__body-wrapper tr th.el-table-fixed-column--left,
+.el-table__body-wrapper tr th.el-table-fixed-column--right,
+.el-table__footer-wrapper tr td.el-table-fixed-column--left,
+.el-table__footer-wrapper tr td.el-table-fixed-column--right,
+.el-table__footer-wrapper tr th.el-table-fixed-column--left,
+.el-table__footer-wrapper tr th.el-table-fixed-column--right,
+.el-table__header-wrapper tr td.el-table-fixed-column--left,
+.el-table__header-wrapper tr td.el-table-fixed-column--right,
+.el-table__header-wrapper tr th.el-table-fixed-column--left,
+.el-table__header-wrapper tr th.el-table-fixed-column--right {
+  background-color: var(--sw-table-col);
+}
+
+.el-table.is-scrolling-none th.el-table-fixed-column--left,
+.el-table.is-scrolling-none th.el-table-fixed-column--right,
+.el-table th.el-table__cell {
+  background-color: var(--sw-table-col);
 }
 
 $tool-icon-btn-bg: var(--sw-icon-btn-bg);
