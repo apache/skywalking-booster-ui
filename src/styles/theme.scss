@@ -28,8 +28,8 @@ html {
   --layout-background: #f7f9fa;
   --box-shadow-color: #ccc;
   --el-border: 1px solid #000000;
-  --el-bg-color-overlay: #fff;
-  --el-border-color-light: #e4e7ed;
+  --sw-bg-color-overlay: #fff;
+  --sw-border-color-light: #e4e7ed;
   --popper-hover-bg: #eee;
 }
 
@@ -44,14 +44,18 @@ html.dark {
   --border-color-primary: #4b4b52;
   --layout-background: #000;
   --box-shadow-color: #666;
-  --el-bg-color-overlay: #1d1e1f;
-  --el-border-color-light: #414243;
+  --sw-bg-color-overlay: #1d1e1f;
+  --sw-border-color-light: #414243;
   --popper-hover-bg: rgb(64, 158, 255, 0.1);
 }
 
 .el-popper.is-light {
-  background: var(--el-bg-color-overlay);
-  border: 1px solid var(--el-border-color-light); 
+  background: var(--sw-bg-color-overlay);
+  border: 1px solid var(--sw-border-color-light);
+}
+
+.el-switch {
+  --el-switch-off-color: #aaa;
 }
 
 $popper-hover-bg-color: var(--popper-hover-bg);
