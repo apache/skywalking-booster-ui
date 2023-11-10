@@ -724,13 +724,9 @@ limitations under the License. -->
       border-radius: 3px;
       color: $disabled-color;
       border: 1px solid $border-color-primary;
-      background-color: $theme-background;
-      box-shadow: #eee 1px 2px 10px;
+      background-color: var(--sw-topology-setting-bg);
+      box-shadow: var(--sw-topology-box-shadow);
       transition: all 0.5ms linear;
-
-      &.dark {
-        background-color: #2b3037;
-      }
     }
 
     .label {
@@ -746,8 +742,8 @@ limitations under the License. -->
       background-color: var(--sw-topology-operations-bg);
       border-radius: 5px;
       padding: 10px 0;
-      border: 1px solid #999;
-      box-shadow: #ddd 1px 2px 10px;
+      border: 1px solid $border-color-primary;
+      box-shadow: --sw-topology-box-shadow;
 
       span {
         display: block;
@@ -772,7 +768,7 @@ limitations under the License. -->
     .switch-icon {
       cursor: pointer;
       transition: all 0.5ms linear;
-      background: rgb(0 0 0 / 30%);
+      background: var(--sw-topology-switch-icon);
       color: $text-color;
       display: inline-block;
       padding: 2px 4px;
@@ -810,7 +806,7 @@ limitations under the License. -->
     position: absolute;
     visibility: hidden;
     padding: 5px;
-    border: 1px solid #000;
+    border: var(--sw-topology-border);
     border-radius: 3px;
     background-color: $theme-background;
   }

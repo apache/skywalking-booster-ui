@@ -52,7 +52,7 @@ limitations under the License. -->
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
       <span class="ml-5">
-        <el-switch v-model="theme" active-text="D" inactive-text="L" size="small" inline-prompt @change="changeTheme" />
+        <el-switch v-model="theme" :active-icon="Moon" :inactive-icon="Sunny" inline-prompt @change="changeTheme" />
       </span>
       <span class="version ml-5 cp">
         <el-popover trigger="hover" width="250" placement="bottom" :content="appStore.version">
@@ -77,7 +77,7 @@ limitations under the License. -->
   import { MetricCatalog } from "@/views/dashboard/data";
   import type { DashboardItem } from "@/types/dashboard";
   import router from "@/router";
-  import { ArrowRight } from "@element-plus/icons-vue";
+  import { ArrowRight, Moon, Sunny } from "@element-plus/icons-vue";
 
   /*global Indexable */
   const { t, te } = useI18n();

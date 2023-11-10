@@ -568,7 +568,7 @@ limitations under the License. -->
     position: absolute;
     visibility: hidden;
     padding: 5px;
-    border: 1px solid #000;
+    border: var(--sw-topology-border);
     border-radius: 3px;
     background-color: $theme-background;
   }

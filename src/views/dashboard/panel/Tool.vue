@@ -120,7 +120,6 @@ limitations under the License. -->
           v-model="dashboardStore.editMode"
           active-text="E"
           inactive-text="V"
-          size="small"
           inline-prompt
           @change="changeMode"
         />
