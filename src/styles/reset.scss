@@ -144,17 +144,17 @@ pre {
   }
 }
 
-.el-switch__label--left {
-  margin-right: 5px;
-}
+// .el-switch__label--left {
+//   margin-right: 5px;
+// }
 
-.el-switch__label--right {
-  margin-left: 5px;
-}
+// .el-switch__label--right {
+//   margin-left: 5px;
+// }
 
-.el-switch__label * {
-  font-size: $font-size-smaller;
-}
+// .el-switch__label * {
+//   font-size: $font-size-smaller;
+// }
 
 .el-drawer__header {
   margin-bottom: 0;
@@ -173,7 +173,7 @@ pre {
 div.vis-tooltip {
   max-width: 600px;
   overflow: hidden;
-  background-color: $theme-background !important;
+  background-color: var(--vis-tooltip-bg) !important;
   white-space: normal !important;
   font-size: $font-size-smaller !important;
 }
@@ -193,7 +193,7 @@ div.vis-tooltip {
 .vis-item.Normal {
   background-color: #fac858;
   border-color: #fac858;
-  color: #666 !important;
+  color: $text-color !important;
 }
 
 .vis-item .vis-item-content {

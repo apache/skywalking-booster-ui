@@ -43,6 +43,7 @@ limitations under the License. -->
             :href="!n.type || n.type === `N/A` ? icons.UNDEFINED : icons[n.type.toUpperCase().replace('-', '')]"
           />
           <text
+            class="node-text"
             :x="n.x - (Math.min(n.name.length, 20) * 6) / 2 + 6"
             :y="n.y + n.height + 8"
             style="pointer-events: none"
@@ -678,6 +679,12 @@ limitations under the License. -->
     overflow: auto;
     margin-top: 30px;
 
+    .node-text {
+      fill: var(--sw-topology-color);
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
     .svg-topology {
       cursor: move;
       background-color: $theme-background;
@@ -687,7 +694,7 @@ limitations under the License. -->
       position: absolute;
       top: 10px;
       left: 25px;
-      color: #666;
+      color: var(--sw-topology-color);
 
       div {
         margin-bottom: 8px;
@@ -727,7 +734,7 @@ limitations under the License. -->
     }
 
     .label {
-      color: #666;
+      color: var(--sw-topology-color);
       display: inline-block;
       margin-right: 5px;
     }
@@ -736,7 +743,7 @@ limitations under the License. -->
       position: absolute;
       color: $font-color;
       cursor: pointer;
-      background-color: $theme-background;
+      background-color: var(--sw-topology-operations-bg);
       border-radius: 5px;
       padding: 10px 0;
       border: 1px solid #999;
@@ -752,7 +759,7 @@ limitations under the License. -->
 
       span:hover {
         color: $active-color;
-        background-color: #eee;
+        background-color: $popper-hover-bg-color;
       }
     }
 
@@ -783,13 +790,6 @@ limitations under the License. -->
     .topo-line-anchor,
     .topo-node {
       cursor: pointer;
-    }
-
-    .topo-text {
-      font-family: Lato, "Source Han Sans CN", "Microsoft YaHei", sans-serif;
-      fill: #ddd;
-      font-size: 11px;
-      opacity: 0.8;
     }
   }
   @keyframes topo-dash {

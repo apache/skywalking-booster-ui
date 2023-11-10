@@ -35,6 +35,11 @@ html {
   --sw-icon-btn-color: #666;
   --sw-icon-btn-border: #ccc;
   --sw-table-col: #fff;
+  --sw-config-header: aliceblue;
+  --sw-topology-color: #666;
+  --sw-topology-operations-bg: #f7f9fa;
+  --vis-tooltip-bg: #fff;
+  --sw-topology-switch-icon: rgba(0, 0, 0, 0.3);
 }
 
 html.dark {
@@ -55,6 +60,11 @@ html.dark {
   --sw-icon-btn-color: #ccc;
   --sw-icon-btn-border: #999;
   --sw-table-col: none;
+  --sw-config-header: #333;
+  --sw-topology-color: #ccc;
+  --sw-topology-operations-bg: #4b4b52;
+  --vis-tooltip-bg: #414243;
+  --sw-topology-switch-icon: rgba(0, 0, 0, 0.3);
 }
 
 .el-table tr {

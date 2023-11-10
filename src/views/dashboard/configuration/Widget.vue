@@ -209,7 +209,7 @@ limitations under the License. -->
     height: 25px;
     line-height: 25px;
     text-align: center;
-    background-color: aliceblue;
+    background-color: var(--sw-config-header);
     font-size: $font-size-smaller;
     position: relative;
   }

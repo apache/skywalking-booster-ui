@@ -634,7 +634,6 @@ limitations under the License. -->
     cursor: text;
     padding: 0 5px;
     border-radius: 3px;
-    color: #606266;
     outline: none;
     margin-right: 5px;
     min-height: 26px;
