@@ -36,12 +36,11 @@ html {
   --sw-table-col: #fff;
   --sw-config-header: aliceblue;
   --sw-topology-color: #666;
-  --sw-topology-operations-bg: #f7f9fa;
   --vis-tooltip-bg: #fff;
   --sw-topology-switch-icon: rgba(0, 0, 0, 0.3);
   --sw-topology-box-shadow: #eee 1px 2px 10px;
   --sw-topology-setting-bg: #fff;
-  --sw-topology-border: 1px solid #000000;
+  --sw-topology-border: 1px solid #999;
 }
 
 html.dark {
@@ -64,12 +63,11 @@ html.dark {
   --sw-table-col: none;
   --sw-config-header: #333;
   --sw-topology-color: #ccc;
-  --sw-topology-operations-bg: #4b4b52;
   --vis-tooltip-bg: #414243;
   --sw-topology-switch-icon: #aaa;
   --sw-topology-box-shadow: 0 0 2px 0 #444;
   --sw-topology-setting-bg: #333;
-  --sw-topology-border: 1px solid #999;
+  --sw-topology-border: 1px solid #666;
 }
 
 .el-table tr {

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
-    <div :class="isRelation ? 'flex-v' : 'flex-h'">
+    <div :class="isRelation ? 'flex-v' : 'flex-h'" class="tool-selectors">
       <div class="flex-h">
         <div class="selectors-item" v-if="key !== 10">
           <span class="label">$Service</span>
@@ -103,7 +103,7 @@ limitations under the License. -->
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="clickIcons(t)" v-for="(t, index) in toolIcons" :key="index" :title="t.content">
-                <Icon class="mr-5" size="middle" :iconName="t.name" />
+                <Icon class="mr-5" size="sm" :iconName="t.name" />
                 <span>{{ t.content }}</span>
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -115,7 +115,7 @@ limitations under the License. -->
           </i>
         </el-tooltip>
       </div>
-      <div class="switch">
+      <div class="ml-5">
         <el-switch
           v-model="dashboardStore.editMode"
           active-text="E"
@@ -735,15 +735,15 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .dashboard-tool {
     text-align: right;
-    padding: 3px 5px 5px;
+    padding: 5px;
     background: $dashboard-tool-bg-color;
     border-bottom: 1px solid $border-color;
     justify-content: space-between;
   }
 
-  .switch {
-    padding-top: 2px;
-    margin: 0 10px;
+  .tool-selectors {
+    align-items: center;
+    height: auto;
   }
 
   .label {
@@ -758,6 +758,7 @@ limitations under the License. -->
 
   .tools {
     justify-content: space-between;
+    align-items: center;
     height: auto;
   }
 

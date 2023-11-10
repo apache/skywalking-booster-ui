@@ -739,11 +739,10 @@ limitations under the License. -->
       position: absolute;
       color: $font-color;
       cursor: pointer;
-      background-color: var(--sw-topology-operations-bg);
-      border-radius: 5px;
+      border: var(--sw-topology-border);
+      border-radius: 3px;
+      background-color: $theme-background;
       padding: 10px 0;
-      border: 1px solid $border-color-primary;
-      box-shadow: --sw-topology-box-shadow;
 
       span {
         display: block;

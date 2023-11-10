@@ -48,11 +48,11 @@ limitations under the License. -->
         @input="changeTimeRange"
       />
       <span> UTC{{ appStore.utcHour >= 0 ? "+" : "" }}{{ `${appStore.utcHour}:${appStore.utcMin}` }} </span>
-      <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
-        <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
-      </span>
       <span class="ml-5">
         <el-switch v-model="theme" :active-icon="Moon" :inactive-icon="Sunny" inline-prompt @change="changeTheme" />
+      </span>
+      <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
+        <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
       <span class="version ml-5 cp">
         <el-popover trigger="hover" width="250" placement="bottom" :content="appStore.version">
