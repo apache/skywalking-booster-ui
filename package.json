@@ -18,7 +18,7 @@
     "check-components-types": "if (! git diff --quiet -U0 ./src/types); then echo 'type files are not updated correctly'; git diff -U0 ./src/types; exit 1; fi"
   },
   "dependencies": {
-    "axios": "^0.24.0",
+    "axios": "^1.6.0",
     "d3": "^7.3.0",
     "d3-flame-graph": "^4.1.3",
     "d3-tip": "^0.9.1",
