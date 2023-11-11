@@ -197,15 +197,15 @@ limitations under the License. -->
 
   .trace-td {
     padding: 5px;
-    border-bottom: 1px solid rgb(0 0 0 / 7%);
+    border-bottom: 1px solid var(--sw-trace-list-border);
 
     &.selected {
-      background-color: #ededed;
+      background-color: var(--sw-trace-list-hover);
     }
   }
 
   .trace-success {
-    border-left: 4px solid rgb(46 47 51 / 10%);
+    border-left: 4px solid var(--sw-trace-success);
   }
 
   .trace-warning {

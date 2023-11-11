@@ -178,7 +178,7 @@ limitations under the License. -->
     height: 95px;
 
     .grey {
-      color: $text-color;
+      color: #fff;
       background-color: $active-background;
     }
 
