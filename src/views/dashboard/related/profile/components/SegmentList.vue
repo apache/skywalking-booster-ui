@@ -58,6 +58,7 @@ limitations under the License. -->
   const key = computed(
     () =>
       (profileStore.currentSegment &&
+        profileStore.currentSegment.spans &&
         profileStore.currentSegment.spans.length &&
         profileStore.currentSegment.spans[0].segmentId) ||
       "",

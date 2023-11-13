@@ -163,7 +163,7 @@ export const profileStore = defineStore({
       return res.data;
     },
     async getSegmentSpans(params: { segmentId: string }) {
-      if (!params.segmentId) {
+      if (!(params && params.segmentId)) {
         return new Promise((resolve) => resolve({}));
       }
       const res: AxiosResponse = await graphql.query("queryProfileSegment").params(params);

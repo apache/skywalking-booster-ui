@@ -143,11 +143,12 @@ limitations under the License. -->
 </template>
 <script lang="ts">
   import { useI18n } from "vue-i18n";
-  import { ref, computed, defineComponent } from "vue";
+  import { ref, computed, defineComponent, watch } from "vue";
   import type { PropType } from "vue";
   import SpanDetail from "../D3Graph/SpanDetail.vue";
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { Themes } from "@/constants/data";
 
   /*global Recordable*/
   const props = {
@@ -201,12 +202,12 @@ limitations under the License. -->
         }
         const items: any = document.querySelectorAll(".trace-item");
         for (const item of items) {
-          item.style.background = "#fff";
+          item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
         }
-        dom.style.background = "rgba(0, 0, 0, 0.1)";
+        dom.style.background = appStore.theme === Themes.Dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
         const p: any = document.getElementsByClassName("profiled")[0];
         if (p) {
-          p.style.background = "#eee";
+          p.style.background = appStore.theme === Themes.Dark ? "#333" : "#eee";
         }
       }
       function selectSpan(event: Recordable) {
@@ -232,6 +233,19 @@ limitations under the License. -->
         showSelectSpan(dom);
         showDetail.value = true;
       }
+      watch(
+        () => appStore.theme,
+        () => {
+          const items: any = document.querySelectorAll(".trace-item");
+          for (const item of items) {
+            item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
+          }
+          const p: any = document.getElementsByClassName("profiled")[0];
+          if (p) {
+            p.style.background = appStore.theme === Themes.Dark ? "#333" : "#eee";
+          }
+        },
+      );
       return {
         displayChildren,
         outterPercent,
@@ -272,7 +286,8 @@ limitations under the License. -->
   }
 
   .profiled {
-    background-color: #eee;
+    // background-color: #eee;
+    background-color: var(--sw-table-header);
     position: relative;
   }
 
@@ -288,7 +303,7 @@ limitations under the License. -->
     background-color: $font-color;
     color: $text-color;
     text-align: center;
-    box-shadow: #eee 1px 2px 10px;
+    box-shadow: var(--box-shadow-color) 0 2px 3px;
     display: none;
   }
 
@@ -320,11 +335,11 @@ limitations under the License. -->
   }
 
   .trace-item.selected {
-    background: rgb(0 0 0 / 4%);
+    background-color: var(--sw-list-selected);
   }
 
   .trace-item:not(.level0):hover {
-    background: rgb(0 0 0 / 4%);
+    background-color: var(--sw-list-hover);
   }
 
   .trace-item > div {
