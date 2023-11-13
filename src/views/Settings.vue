@@ -156,7 +156,7 @@ limitations under the License. -->
   }
 
   .settings {
-    color: #606266;
+    color: var(--sw-setting-color);
     font-size: 13px;
     padding: 20px;
 

@@ -216,7 +216,7 @@ limitations under the License. -->
     cursor: text;
     padding: 0 5px;
     border-radius: 4px;
-    color: #606266;
+    color: var(--sw-setting-color);
     outline: none;
     height: 100px;
 

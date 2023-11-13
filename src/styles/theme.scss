@@ -46,6 +46,9 @@ html {
   --sw-list-selected: #ededed;
   --sw-table-header: #f3f4f9;
   --sw-list-hover: rgb(0 0 0 / 4%);
+  --sw-setting-color: #606266;
+  --sw-alarm-tool: #f0f2f5;
+  --sw-alarm-tool-border: #c1c5ca41;
 }
 
 html.dark {
@@ -78,6 +81,9 @@ html.dark {
   --sw-list-hover: #262629;
   --sw-table-header: #303133;
   --sw-list-selected: #3d444f;
+  --sw-setting-color: #eee;
+  --sw-alarm-tool: #303133;
+  --sw-alarm-tool-border: #444;
 }
 
 .el-table tr {

@@ -157,7 +157,7 @@ limitations under the License. -->
 
   .timeline-table-i {
     padding: 10px 15px;
-    border-left: 4px solid #eee;
+    border-left: 4px solid var(--border-color-primary);
     position: relative;
 
     &::after {
