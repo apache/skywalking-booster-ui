@@ -115,7 +115,7 @@ limitations under the License. -->
     padding: 0 4px;
     border-right: 1px dotted silver;
     line-height: 30px;
-    background-color: #f3f4f9;
+    background-color: var(--sw-table-header);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

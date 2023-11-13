@@ -44,6 +44,7 @@ html {
   --sw-trace-success: rgb(46 47 51 / 10%);
   --sw-trace-list-border: rgb(0 0 0 / 7%);
   --sw-trace-list-hover: #ededed;
+  --sw-table-header: #f3f4f9;
 }
 
 html.dark {
@@ -56,7 +57,7 @@ html.dark {
   --border-color: #262629;
   --border-color-primary: #4b4b52;
   --layout-background: #000;
-  --box-shadow-color: #666;
+  --box-shadow-color: #606266;
   --sw-bg-color-overlay: #1d1e1f;
   --sw-border-color-light: #414243;
   --popper-hover-bg: rgb(64, 158, 255, 0.1);
@@ -64,7 +65,7 @@ html.dark {
   --sw-icon-btn-color: #ccc;
   --sw-icon-btn-border: #999;
   --sw-table-col: none;
-  --sw-config-header: #333;
+  --sw-config-header: #303133;
   --sw-topology-color: #ccc;
   --vis-tooltip-bg: #414243;
   --sw-topology-switch-icon: #aaa;
@@ -72,8 +73,9 @@ html.dark {
   --sw-topology-setting-bg: #333;
   --sw-topology-border: 1px solid #666;
   --sw-trace-success: #aaa;
-  --sw-trace-list-border: #333;
+  --sw-trace-list-border: #333133;
   --sw-trace-list-hover: #3d444f;
+  --sw-table-header: #303133;
 }
 
 .el-table tr {

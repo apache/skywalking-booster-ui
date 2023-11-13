@@ -170,7 +170,7 @@ limitations under the License. -->
 
   .trace-header div {
     display: inline-block;
-    background-color: #f3f4f9;
+    background-color: var(--sw-table-header);
     padding: 0 4px;
     border: 1px solid transparent;
     border-right: 1px dotted silver;
