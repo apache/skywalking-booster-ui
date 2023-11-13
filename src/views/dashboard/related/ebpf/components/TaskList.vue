@@ -92,7 +92,7 @@ limitations under the License. -->
     border-bottom: 1px solid rgb(0 0 0 / 7%);
 
     &.selected {
-      background-color: #ededed;
+      background-color: var(--sw-list-selected);
     }
   }
 
@@ -117,7 +117,7 @@ limitations under the License. -->
 
   .profile-tr {
     &:hover {
-      background-color: rgb(0 0 0 / 4%);
+      background-color: var(--sw-list-hover);
     }
   }
 
@@ -126,7 +126,7 @@ limitations under the License. -->
     font-weight: bold;
     border-right: 1px solid rgb(0 0 0 / 7%);
     border-bottom: 1px solid rgb(0 0 0 / 7%);
-    background: #f3f4f9;
+    background-color: var(--sw-table-header);
   }
 
   .profile-btn {

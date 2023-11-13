@@ -43,8 +43,9 @@ html {
   --sw-topology-border: 1px solid #999;
   --sw-trace-success: rgb(46 47 51 / 10%);
   --sw-trace-list-border: rgb(0 0 0 / 7%);
-  --sw-trace-list-hover: #ededed;
+  --sw-list-selected: #ededed;
   --sw-table-header: #f3f4f9;
+  --sw-list-hover: rgb(0 0 0 / 4%);
 }
 
 html.dark {
@@ -74,8 +75,9 @@ html.dark {
   --sw-topology-border: 1px solid #666;
   --sw-trace-success: #aaa;
   --sw-trace-list-border: #333133;
-  --sw-trace-list-hover: #3d444f;
+  --sw-list-hover: #262629;
   --sw-table-header: #303133;
+  --sw-list-selected: #3d444f;
 }
 
 .el-table tr {

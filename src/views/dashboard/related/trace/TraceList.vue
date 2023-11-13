@@ -191,7 +191,7 @@ limitations under the License. -->
 
   .trace-tr {
     &:hover {
-      background-color: rgb(0 0 0 / 4%);
+      background-color: var(--sw-list-hover);
     }
   }
 
@@ -200,7 +200,7 @@ limitations under the License. -->
     border-bottom: 1px solid var(--sw-trace-list-border);
 
     &.selected {
-      background-color: var(--sw-trace-list-hover);
+      background-color: var(--sw-list-selected);
     }
   }
 
