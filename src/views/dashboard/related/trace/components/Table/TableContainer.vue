@@ -41,6 +41,7 @@ limitations under the License. -->
     </div>
     <TableItem
       :method="method"
+      :traceId="traceId"
       v-for="(item, index) in tableData"
       :data="item"
       :key="'key' + index"
@@ -63,6 +64,7 @@ limitations under the License. -->
     tableData: { type: Array as PropType<Recordable>, default: () => [] },
     type: { type: String, default: "" },
     headerType: { type: String, default: "" },
+    traceId: { type: String, default: "" },
   });
   const emits = defineEmits(["select"]);
   const method = ref<number>(300);

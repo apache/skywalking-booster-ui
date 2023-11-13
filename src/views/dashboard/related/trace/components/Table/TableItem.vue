@@ -137,7 +137,7 @@ limitations under the License. -->
       />
     </div>
     <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
-      <SpanDetail :currentSpan="data" />
+      <SpanDetail :currentSpan="data" :traceId="traceId" />
     </el-dialog>
   </div>
 </template>
@@ -156,6 +156,7 @@ limitations under the License. -->
     method: { type: Number, default: 0 },
     type: { type: String, default: "" },
     headerType: { type: String, default: "" },
+    traceId: { type: String, traceId: "" },
   };
   export default defineComponent({
     name: "TableItem",
