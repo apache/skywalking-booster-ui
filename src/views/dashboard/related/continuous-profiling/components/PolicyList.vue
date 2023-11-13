@@ -184,7 +184,6 @@ limitations under the License. -->
 
   .profile-tr {
     &:hover {
-      // background-color: rgb(0 0 0 / 4%);
       background-color: var(--sw-list-hover);
     }
   }

@@ -187,13 +187,13 @@ div.vis-tooltip {
   background-color: #e66;
   opacity: 0.8;
   border-color: #e66;
-  color: $text-color !important;
+  color: var(--sw-event-vis-selected) !important;
 }
 
 .vis-item.Normal {
   background-color: #fac858;
   border-color: #fac858;
-  color: $text-color !important;
+  color: var(--sw-event-vis-selected) !important;
 }
 
 .vis-item .vis-item-content {
@@ -202,7 +202,11 @@ div.vis-tooltip {
 
 .vis-item.vis-selected.Error,
 .vis-item.vis-selected.Normal {
-  color: #1a1a1a !important;
+  color: var(--sw-event-vis-selected) !important;
+}
+
+.vis-time-axis .vis-text {
+  color: var(--sw-time-axis-text) !important;
 }
 
 .el-menu--vertical.sub-list {

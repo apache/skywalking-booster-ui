@@ -156,7 +156,7 @@ limitations under the License. -->
     padding: 1px 0;
     border: 1px solid #666;
     border-radius: 3px;
-    color: #666;
+    color: var(--text-color-placeholder);
     cursor: pointer;
   }
 

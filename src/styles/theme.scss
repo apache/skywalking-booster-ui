@@ -49,6 +49,9 @@ html {
   --sw-setting-color: #606266;
   --sw-alarm-tool: #f0f2f5;
   --sw-alarm-tool-border: #c1c5ca41;
+  --sw-table-color: #000;
+  --sw-event-vis-selected: #1a1a1a;
+  --sw-time-axis-text: #4d4d4d;
 }
 
 html.dark {
@@ -84,6 +87,9 @@ html.dark {
   --sw-setting-color: #eee;
   --sw-alarm-tool: #303133;
   --sw-alarm-tool-border: #444;
+  --sw-table-color: #fff;
+  --sw-event-vis-selected: #fff;
+  --sw-time-axis-text: #aaa;
 }
 
 .el-table tr {
