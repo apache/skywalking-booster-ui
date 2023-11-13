@@ -32,6 +32,7 @@ limitations under the License. -->
   import useLegendProcess from "@/hooks/useLegendProcessor";
   import { isDef } from "@/utils/is";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { Themes } from "@/constants/data";
 
   /*global defineProps, defineEmits */
   const emits = defineEmits(["click"]);
@@ -94,11 +95,11 @@ limitations under the License. -->
     const color: string[] = chartColors(keys);
     const tooltip = {
       trigger: "axis",
-      backgroundColor: appStore.theme === "dark" ? "#333" : "#fff",
-      borderColor: appStore.theme === "dark" ? "#333" : "#fff",
+      backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
+      borderColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
       textStyle: {
         fontSize: 12,
-        color: appStore.theme === "dark" ? "#eee" : "#333",
+        color: appStore.theme === Themes.Dark ? "#eee" : "#333",
       },
       enterable: true,
       confine: true,
@@ -111,11 +112,11 @@ limitations under the License. -->
       confine: true,
       extraCssText: `height: 20px; padding:0 2px;`,
       trigger: "axis",
-      backgroundColor: appStore.theme === "dark" ? "#666" : "#eee",
-      borderColor: appStore.theme === "dark" ? "#666" : "#eee",
+      backgroundColor: appStore.theme === Themes.Dark ? "#666" : "#eee",
+      borderColor: appStore.theme === Themes.Dark ? "#666" : "#eee",
       textStyle: {
         fontSize: 12,
-        color: appStore.theme === "dark" ? "#eee" : "#333",
+        color: appStore.theme === Themes.Dark ? "#eee" : "#333",
       },
     };
 
@@ -130,7 +131,7 @@ limitations under the License. -->
         left: 0,
         itemWidth: 12,
         textStyle: {
-          color: appStore.theme === "dark" ? "#fff" : "#333",
+          color: appStore.theme === Themes.Dark ? "#fff" : "#333",
         },
       },
       grid: {

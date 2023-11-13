@@ -28,6 +28,7 @@ limitations under the License. -->
   import TreeGraph from "../../utils/d3-trace-tree";
   import type { Span, Ref } from "@/types/trace";
   import SpanDetail from "./SpanDetail.vue";
+  import { useAppStoreWithOut } from "@/store/modules/app";
 
   /* global defineProps, Nullable, defineExpose,Recordable*/
   const props = defineProps({
@@ -35,6 +36,7 @@ limitations under the License. -->
     traceId: { type: String, default: "" },
     type: { type: String, default: "List" },
   });
+  const appStore = useAppStoreWithOut();
   const loading = ref<boolean>(false);
   const showDetail = ref<boolean>(false);
   const fixSpansSize = ref<number>(0);
@@ -289,6 +291,17 @@ limitations under the License. -->
       });
     },
   );
+  watch(
+    () => appStore.theme,
+    () => {
+      tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
+      tree.value.draw(() => {
+        setTimeout(() => {
+          loading.value = false;
+        }, 200);
+      });
+    },
+  );
 </script>
 <style lang="scss" scoped>
   .d3-graph {
@@ -301,12 +314,12 @@ limitations under the License. -->
   }
 
   .trace-node-container {
-    fill: rgba(0, 0, 0, 0);
+    fill: rgb(0 0 0 / 0%);
     stroke-width: 5px;
     cursor: pointer;
 
     &:hover {
-      fill: rgba(0, 0, 0, 0.05);
+      fill: rgb(0 0 0 / 5%);
     }
   }
 

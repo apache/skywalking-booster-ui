@@ -25,6 +25,7 @@ limitations under the License. -->
   import useLegendProcess from "@/hooks/useLegendProcessor";
   import Legend from "./components/Legend.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { Themes } from "@/constants/data";
 
   /*global defineProps, defineEmits */
   const emits = defineEmits(["click"]);
@@ -93,11 +94,11 @@ limitations under the License. -->
         top: 0,
         left: 0,
         itemWidth: 12,
-        backgroundColor: appStore.theme === "dark" ? "#333" : "#fff",
-        borderColor: appStore.theme === "dark" ? "#333" : "#fff",
+        backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
+        borderColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
         textStyle: {
           fontSize: 12,
-          color: appStore.theme === "dark" ? "#eee" : "#333",
+          color: appStore.theme === Themes.Dark ? "#eee" : "#333",
         },
       },
       grid: {

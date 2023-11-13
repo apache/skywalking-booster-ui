@@ -31,6 +31,7 @@ import { useEventListener } from "./useEventListener";
 import { useBreakpoint } from "./useBreakpoint";
 import echarts from "@/utils/echarts";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { Themes } from "@/constants/data";
 
 export type ECOption = echarts.ComposeOption<
   | BarSeriesOption
@@ -47,7 +48,7 @@ export type ECOption = echarts.ComposeOption<
 export function useECharts(elRef: Ref<HTMLDivElement>, theme: "light" | "dark" | "default" = "default"): Indexable {
   const appStore = useAppStoreWithOut();
   const getDarkMode = computed(() => {
-    return appStore.theme === "default" ? "light" : theme;
+    return appStore.theme === "default" ? Themes.Light : theme;
   });
   let chartInstance: Nullable<echarts.ECharts> = null;
   let resizeFn: Fn = resize;
@@ -57,7 +58,7 @@ export function useECharts(elRef: Ref<HTMLDivElement>, theme: "light" | "dark" |
   resizeFn = useDebounceFn(resize, 200);
 
   const getOptions = computed(() => {
-    if (getDarkMode.value !== "dark") {
+    if (getDarkMode.value !== Themes.Dark) {
       return cacheOptions.value as ECOption;
     }
     return {

@@ -78,6 +78,7 @@ limitations under the License. -->
   import type { DashboardItem } from "@/types/dashboard";
   import router from "@/router";
   import { ArrowRight, Moon, Sunny } from "@element-plus/icons-vue";
+  import { Themes } from "@/constants/data";
 
   /*global Indexable */
   const { t, te } = useI18n();
@@ -98,13 +99,13 @@ limitations under the License. -->
     const root = document.documentElement;
 
     if (theme.value) {
-      root.classList.add("dark");
-      root.classList.remove("light");
-      appStore.setTheme("dark");
+      root.classList.add(Themes.Dark);
+      root.classList.remove(Themes.Light);
+      appStore.setTheme(Themes.Dark);
     } else {
-      root.classList.add("light");
-      root.classList.remove("dark");
-      appStore.setTheme("light");
+      root.classList.add(Themes.Light);
+      root.classList.remove(Themes.Dark);
+      appStore.setTheme(Themes.Light);
     }
   }
 

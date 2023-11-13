@@ -23,6 +23,7 @@ import type { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
 import type { MenuOptions, SubItem } from "@/types/app";
+import { Themes } from "@/constants/data";
 /*global Nullable*/
 interface AppState {
   durationRow: Recordable;
@@ -57,7 +58,7 @@ export const appStore = defineStore({
     isMobile: false,
     reloadTimer: null,
     allMenus: [],
-    theme: "dark",
+    theme: Themes.Dark,
   }),
   getters: {
     duration(): Duration {
