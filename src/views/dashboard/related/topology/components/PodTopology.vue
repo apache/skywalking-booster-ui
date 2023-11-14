@@ -282,15 +282,15 @@ limitations under the License. -->
     width: 400px;
     height: 600px;
     border: 1px solid $border-color-primary;
-    background-color: $theme-background;
     overflow: auto;
     padding: 10px 15px;
     border-radius: 3px;
     color: $disabled-color;
+    background-color: var(--sw-topology-setting-bg);
+    box-shadow: var(--sw-topology-box-shadow);
     transition: all 0.5ms linear;
     z-index: 99;
     text-align: left;
-    box-shadow: #eee 1px 2px 10px;
   }
 
   .tool {
@@ -307,7 +307,7 @@ limitations under the License. -->
     text-align: center;
     cursor: pointer;
     transition: all 0.5ms linear;
-    background: rgb(0 0 0 / 30%);
+    background: var(--sw-topology-switch-icon);
     color: $text-color;
     display: inline-block;
     border-radius: 3px;
@@ -338,7 +338,7 @@ limitations under the License. -->
 
     span:hover {
       color: $active-color;
-      background-color: #eee;
+      background-color: $popper-hover-bg-color;
     }
 
     i {
