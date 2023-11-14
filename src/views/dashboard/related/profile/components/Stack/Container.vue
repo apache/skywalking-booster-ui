@@ -107,7 +107,7 @@ limitations under the License. -->
     user-select: none;
     border-left: 0;
     border-right: 0;
-    border-bottom: 1px solid rgb(0 0 0 / 10%);
+    border-bottom: 1px solid var(--sw-trace-list-border);
   }
 
   .profile-header div {

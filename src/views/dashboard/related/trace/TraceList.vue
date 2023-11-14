@@ -163,7 +163,7 @@ limitations under the License. -->
 
   .trace-t-wrapper {
     overflow: auto;
-    border-right: 1px solid rgb(0 0 0 / 10%);
+    border-right: 1px solid var(--sw-trace-list-border);
   }
 
   .trace-t-loading {

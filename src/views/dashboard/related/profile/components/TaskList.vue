@@ -168,7 +168,7 @@ limitations under the License. -->
 
   .profile-td {
     padding: 5px 10px;
-    border-bottom: 1px solid rgb(0 0 0 / 7%);
+    border-bottom: 1px solid var(--sw-trace-list-border);
 
     &.selected {
       background-color: var(--sw-list-selected);
@@ -183,7 +183,7 @@ limitations under the License. -->
   .profile-t-wrapper {
     overflow: auto;
     flex-grow: 1;
-    border-right: 1px solid rgb(0 0 0 / 10%);
+    border-right: 1px solid var(--sw-trace-list-border);
   }
 
   .profile-t {
@@ -201,14 +201,14 @@ limitations under the License. -->
   }
 
   .profile-segment {
-    border-top: 1px solid rgb(0 0 0 / 7%);
+    border-top: 1px solid var(--sw-trace-list-border);
   }
 
   .profile-t-tool {
     padding: 5px 10px;
     font-weight: bold;
-    border-right: 1px solid rgb(0 0 0 / 7%);
-    border-bottom: 1px solid rgb(0 0 0 / 7%);
+    border-right: 1px solid var(--sw-trace-list-border);
+    border-bottom: 1px solid var(--sw-trace-list-border);
     background-color: var(--sw-table-header);
   }
 

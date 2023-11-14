@@ -80,7 +80,7 @@ limitations under the License. -->
     width: 300px;
     height: calc(100% - 10px);
     overflow: auto;
-    border-right: 1px solid rgb(0 0 0 / 10%);
+    border-right: 1px solid var(--sw-trace-list-border);
   }
 
   .item span {
