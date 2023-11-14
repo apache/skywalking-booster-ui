@@ -316,6 +316,7 @@ limitations under the License. -->
   .title {
     font-size: $font-size-normal;
     font-weight: 500;
+    padding-top: 5px;
   }
 
   .nav-tabs {
