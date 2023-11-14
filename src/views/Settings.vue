@@ -177,7 +177,7 @@ limitations under the License. -->
       width: 180px;
       display: inline-block;
       font-weight: 500;
-      color: #000;
+      color: $font-color;
       line-height: 25px;
     }
   }

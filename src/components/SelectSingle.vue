@@ -88,7 +88,7 @@ limitations under the License. -->
     border: 1px solid #ddd;
     background: $theme-background;
     border-radius: 3px;
-    color: #000;
+    color: $font-color;
     font-size: $font-size-smaller;
     height: 24px;
 
