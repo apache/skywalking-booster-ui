@@ -52,6 +52,7 @@ html {
   --sw-table-color: #000;
   --sw-event-vis-selected: #1a1a1a;
   --sw-time-axis-text: #4d4d4d;
+  --sw-drawer-header: #72767b;
 }
 
 html.dark {
@@ -90,6 +91,11 @@ html.dark {
   --sw-table-color: #fff;
   --sw-event-vis-selected: #fff;
   --sw-time-axis-text: #aaa;
+  --sw-drawer-header: #e9e9eb;
+}
+
+.el-drawer__header {
+  color: var(--sw-drawer-header);
 }
 
 .el-table tr {
