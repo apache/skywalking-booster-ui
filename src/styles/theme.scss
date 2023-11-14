@@ -53,6 +53,7 @@ html {
   --sw-event-vis-selected: #1a1a1a;
   --sw-time-axis-text: #4d4d4d;
   --sw-drawer-header: #72767b;
+  --sw-marketplace-border: #dedfe0;
 }
 
 html.dark {
@@ -92,6 +93,7 @@ html.dark {
   --sw-event-vis-selected: #fff;
   --sw-time-axis-text: #aaa;
   --sw-drawer-header: #e9e9eb;
+  --sw-marketplace-border: #606266;
 }
 
 .el-drawer__header {

@@ -124,8 +124,8 @@ limitations under the License. -->
   .profile-t-tool {
     padding: 5px 10px;
     font-weight: bold;
-    border-right: 1px solid rgb(0 0 0 / 7%);
-    border-bottom: 1px solid rgb(0 0 0 / 7%);
+    border-right: 1px solid var(--sw-trace-list-border);
+    border-bottom: 1px solid var(--sw-trace-list-border);
     background-color: var(--sw-table-header);
   }
 
