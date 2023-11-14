@@ -306,9 +306,9 @@ export const TextColors: { [key: string]: string } = {
   green: "#67C23A",
   blue: "#409EFF",
   red: "#F56C6C",
-  grey: "#909399",
+  grey: "#809399",
   white: "#fff",
-  black: "#000",
+  black: "#303133",
   orange: "#E6A23C",
   purple: "#bf99f8",
 };

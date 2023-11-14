@@ -103,7 +103,7 @@ limitations under the License. -->
 
     &:hover {
       color: $active-color;
-      background-color: #eee;
+      background-color: $popper-hover-bg-color;
     }
   }
 

@@ -39,7 +39,11 @@ limitations under the License. -->
           @current-change="changePage"
           :pager-count="5"
           small
-          :style="`--el-pagination-bg-color: #f0f2f5; --el-pagination-button-disabled-bg-color: #f0f2f5;`"
+          :style="
+            appStore.theme === Themes.Light
+              ? `--el-pagination-bg-color: #f0f2f5; --el-pagination-button-disabled-bg-color: #f0f2f5;`
+              : ''
+          "
         />
       </div>
     </div>
@@ -54,6 +58,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useAlarmStore } from "@/store/modules/alarm";
   import { ElMessage } from "element-plus";
+  import { Themes } from "@/constants/data";
 
   const appStore = useAppStoreWithOut();
   const alarmStore = useAlarmStore();
@@ -99,8 +104,8 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .alarm-tool {
     font-size: $font-size-smaller;
-    border-bottom: 1px solid #c1c5ca41;
-    background-color: #f0f2f5;
+    border-bottom: 1px solid var(--sw-alarm-tool-border);
+    background-color: var(--sw-alarm-tool);
     padding: 10px;
     position: relative;
   }

@@ -48,11 +48,14 @@ limitations under the License. -->
         @input="changeTimeRange"
       />
       <span> UTC{{ appStore.utcHour >= 0 ? "+" : "" }}{{ `${appStore.utcHour}:${appStore.utcMin}` }} </span>
+      <span class="ml-5">
+        <el-switch v-model="theme" :active-icon="Moon" :inactive-icon="Sunny" inline-prompt @change="changeTheme" />
+      </span>
       <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
       <span class="version ml-5 cp">
-        <el-popover trigger="hover" width="250" placement="bottom" effect="light" :content="appStore.version">
+        <el-popover trigger="hover" width="250" placement="bottom" :content="appStore.version">
           <template #reference>
             <span>
               <Icon iconName="info_outline" size="middle" />
@@ -74,7 +77,8 @@ limitations under the License. -->
   import { MetricCatalog } from "@/views/dashboard/data";
   import type { DashboardItem } from "@/types/dashboard";
   import router from "@/router";
-  import { ArrowRight } from "@element-plus/icons-vue";
+  import { ArrowRight, Moon, Sunny } from "@element-plus/icons-vue";
+  import { Themes } from "@/constants/data";
 
   /*global Indexable */
   const { t, te } = useI18n();
@@ -84,10 +88,26 @@ limitations under the License. -->
   const pathNames = ref<{ path?: string; name: string; selected: boolean }[][]>([]);
   const timeRange = ref<number>(0);
   const pageTitle = ref<string>("");
+  const theme = ref<boolean>(true);
 
+  changeTheme();
   resetDuration();
   getVersion();
   getNavPaths();
+
+  function changeTheme() {
+    const root = document.documentElement;
+
+    if (theme.value) {
+      root.classList.add(Themes.Dark);
+      root.classList.remove(Themes.Light);
+      appStore.setTheme(Themes.Dark);
+    } else {
+      root.classList.add(Themes.Light);
+      root.classList.remove(Themes.Dark);
+      appStore.setTheme(Themes.Light);
+    }
+  }
 
   function getName(list: any[]) {
     return list.find((d: any) => d.selected) || {};
@@ -287,21 +307,16 @@ limitations under the License. -->
     padding: 5px;
     text-align: left;
     justify-content: space-between;
-    background-color: #fafbfc;
-    border-bottom: 1px solid #dfe4e8;
-    color: #222;
+    background-color: $theme-background;
+    border-bottom: 1px solid $border-color;
+    color: $font-color;
     font-size: $font-size-smaller;
-  }
-
-  .nav-bar.dark {
-    background-color: #333840;
-    border-bottom: 1px solid #252a2f;
-    color: #fafbfc;
   }
 
   .title {
     font-size: $font-size-normal;
     font-weight: 500;
+    padding-top: 5px;
   }
 
   .nav-tabs {

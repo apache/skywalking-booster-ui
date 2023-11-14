@@ -524,7 +524,7 @@ limitations under the License. -->
     cursor: pointer;
     transition: all 0.5ms linear;
     border: 1px solid $disabled-color;
-    color: #666;
+    color: var(--text-color-placeholder);
     display: inline-block;
     padding: 5px;
     border-radius: 3px;
@@ -568,7 +568,7 @@ limitations under the License. -->
     position: absolute;
     visibility: hidden;
     padding: 5px;
-    border: 1px solid #000;
+    border: var(--sw-topology-border);
     border-radius: 3px;
     background-color: $theme-background;
   }

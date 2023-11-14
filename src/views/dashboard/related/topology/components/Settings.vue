@@ -640,14 +640,14 @@ limitations under the License. -->
   }
 
   .title {
-    color: #666;
+    color: var(--sw-topology-color);
     margin-bottom: 0;
   }
 
   .label {
     font-size: $font-size-smaller;
     margin-top: 10px;
-    color: #666;
+    color: var(--sw-topology-color);
   }
 
   .legend-btn {

@@ -173,13 +173,13 @@ limitations under the License. -->
   .trace-detail-wrapper {
     font-size: $font-size-smaller;
     padding: 5px 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $border-color-primary;
     width: 100%;
     height: 95px;
 
     .grey {
-      color: $text-color;
-      background-color: #448dfe;
+      color: #fff;
+      background-color: $active-background;
     }
 
     .ghost {

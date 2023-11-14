@@ -80,13 +80,13 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .vue-grid-layout {
-    background: #f7f9fa;
+    background: $layout-background;
     height: auto !important;
   }
 
   .vue-grid-item:not(.vue-grid-placeholder) {
     background-color: $theme-background;
-    box-shadow: 0 1px 4px 0 #00000029;
+    box-shadow: 0 0 3px 0 $box-shadow-color;
     border-radius: 3px;
   }
 

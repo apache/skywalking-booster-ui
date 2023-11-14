@@ -142,6 +142,7 @@ limitations under the License. -->
   /*global defineProps, Nullable, Recordable */
   const props = defineProps({
     currentSpan: { type: Object as PropType<Recordable>, default: () => ({}) },
+    traceId: { type: String, default: "" },
   });
   const { t } = useI18n();
   const traceStore = useTraceStore();
@@ -167,7 +168,7 @@ limitations under the License. -->
     const res = await traceStore.getSpanLogs({
       condition: {
         relatedTrace: {
-          traceId: props.currentSpan.traceId,
+          traceId: props.currentSpan.traceId || props.traceId,
           segmentId: props.currentSpan.segmentId,
           spanId: props.currentSpan.spanId,
         },

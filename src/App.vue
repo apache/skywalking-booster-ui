@@ -27,10 +27,11 @@ limitations under the License. -->
     }
   }, 500);
 </script>
-<style>
+<style lang="scss">
   #app {
-    color: #2c3e50;
+    color: $font-color;
     height: 100%;
     overflow: hidden;
+    background-color: $layout-background;
   }
 </style>

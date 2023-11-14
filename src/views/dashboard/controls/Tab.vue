@@ -302,15 +302,16 @@ limitations under the License. -->
       height: 20px;
       line-height: 20px;
       outline: none;
-      color: #333;
+      color: $font-color;
       font-style: normal;
       overflow: hidden;
       text-overflow: ellipsis;
       margin-right: 20px;
+      background-color: $theme-background;
     }
 
     .tab-icons {
-      color: #333;
+      color: $font-color;
 
       i {
         margin-right: 3px;
@@ -350,17 +351,17 @@ limitations under the License. -->
   .tab-header {
     justify-content: space-between;
     width: 100%;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $border-color-primary;
   }
 
   .vue-grid-layout {
-    background: #f7f9fa;
+    background: $layout-background;
     height: auto !important;
   }
 
   .vue-grid-item:not(.vue-grid-placeholder) {
     background: $theme-background;
-    box-shadow: 0 1px 4px 0 #00000029;
+    box-shadow: 0 0 3px 0 $box-shadow-color;
     border-radius: 3px;
   }
 

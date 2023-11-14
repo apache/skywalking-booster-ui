@@ -212,11 +212,11 @@ limitations under the License. -->
   }
 
   #uri-param {
-    border: 1px solid #dcdfe6;
+    border: 1px solid $border-color;
     cursor: text;
     padding: 0 5px;
     border-radius: 4px;
-    color: #606266;
+    color: var(--sw-setting-color);
     outline: none;
     height: 100px;
 

@@ -1,0 +1,152 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+
+html {
+  --el-color-primary: #409eff;
+  --theme-background: #fff;
+  --font-color: #3d444f;
+  --disabled-color: #ccc;
+  --dashboard-tool-bg: rgb(240 242 245);
+  --text-color-placeholder: #666;
+  --border-color: #dcdfe6;
+  --border-color-primary: #eee;
+  --layout-background: #f7f9fa;
+  --box-shadow-color: #ccc;
+  --sw-bg-color-overlay: #fff;
+  --sw-border-color-light: #e4e7ed;
+  --popper-hover-bg: #eee;
+  --sw-icon-btn-bg: #eee;
+  --sw-icon-btn-color: #666;
+  --sw-icon-btn-border: #ccc;
+  --sw-table-col: #fff;
+  --sw-config-header: aliceblue;
+  --sw-topology-color: #666;
+  --vis-tooltip-bg: #fff;
+  --sw-topology-switch-icon: rgba(0, 0, 0, 0.3);
+  --sw-topology-box-shadow: #eee 1px 2px 10px;
+  --sw-topology-setting-bg: #fff;
+  --sw-topology-border: 1px solid #999;
+  --sw-trace-success: rgb(46 47 51 / 10%);
+  --sw-trace-list-border: rgb(0 0 0 / 10%);
+  --sw-list-selected: #ededed;
+  --sw-table-header: #f3f4f9;
+  --sw-list-hover: rgb(0 0 0 / 4%);
+  --sw-setting-color: #606266;
+  --sw-alarm-tool: #f0f2f5;
+  --sw-alarm-tool-border: #c1c5ca41;
+  --sw-table-color: #000;
+  --sw-event-vis-selected: #1a1a1a;
+  --sw-time-axis-text: #4d4d4d;
+  --sw-drawer-header: #72767b;
+  --sw-marketplace-border: #dedfe0;
+}
+
+html.dark {
+  --el-color-primary: rgb(64, 158, 255);
+  --theme-background: #212224;
+  --font-color: #fafbfc;
+  --disabled-color: #ccc;
+  --dashboard-tool-bg: #000;
+  --text-color-placeholder: #ccc;
+  --border-color: #262629;
+  --border-color-primary: #4b4b52;
+  --layout-background: #000;
+  --box-shadow-color: #606266;
+  --sw-bg-color-overlay: #1d1e1f;
+  --sw-border-color-light: #414243;
+  --popper-hover-bg: rgb(64, 158, 255, 0.1);
+  --sw-icon-btn-bg: #222;
+  --sw-icon-btn-color: #ccc;
+  --sw-icon-btn-border: #999;
+  --sw-table-col: none;
+  --sw-config-header: #303133;
+  --sw-topology-color: #ccc;
+  --vis-tooltip-bg: #414243;
+  --sw-topology-switch-icon: #aaa;
+  --sw-topology-box-shadow: 0 0 2px 0 #444;
+  --sw-topology-setting-bg: #333;
+  --sw-topology-border: 1px solid #666;
+  --sw-trace-success: #aaa;
+  --sw-trace-list-border: #333133;
+  --sw-list-hover: #262629;
+  --sw-table-header: #303133;
+  --sw-list-selected: #3d444f;
+  --sw-setting-color: #eee;
+  --sw-alarm-tool: #303133;
+  --sw-alarm-tool-border: #444;
+  --sw-table-color: #fff;
+  --sw-event-vis-selected: #fff;
+  --sw-time-axis-text: #aaa;
+  --sw-drawer-header: #e9e9eb;
+  --sw-marketplace-border: #606266;
+}
+
+.el-drawer__header {
+  color: var(--sw-drawer-header);
+}
+
+.el-table tr {
+  background-color: var(--el-table-tr-bg-color);
+}
+
+.el-popper.is-light {
+  background: var(--sw-bg-color-overlay);
+  border: 1px solid var(--sw-border-color-light);
+}
+
+.el-switch {
+  --el-switch-off-color: #aaa;
+}
+
+.el-table__body-wrapper tr td.el-table-fixed-column--left,
+.el-table__body-wrapper tr td.el-table-fixed-column--right,
+.el-table__body-wrapper tr th.el-table-fixed-column--left,
+.el-table__body-wrapper tr th.el-table-fixed-column--right,
+.el-table__footer-wrapper tr td.el-table-fixed-column--left,
+.el-table__footer-wrapper tr td.el-table-fixed-column--right,
+.el-table__footer-wrapper tr th.el-table-fixed-column--left,
+.el-table__footer-wrapper tr th.el-table-fixed-column--right,
+.el-table__header-wrapper tr td.el-table-fixed-column--left,
+.el-table__header-wrapper tr td.el-table-fixed-column--right,
+.el-table__header-wrapper tr th.el-table-fixed-column--left,
+.el-table__header-wrapper tr th.el-table-fixed-column--right {
+  background-color: var(--sw-table-col);
+}
+
+.el-table.is-scrolling-none th.el-table-fixed-column--left,
+.el-table.is-scrolling-none th.el-table-fixed-column--right,
+.el-table th.el-table__cell {
+  background-color: var(--sw-table-col);
+}
+
+$tool-icon-btn-bg: var(--sw-icon-btn-bg);
+$tool-icon-btn-color: var(--sw-icon-btn-color);
+$popper-hover-bg-color: var(--popper-hover-bg);
+$box-shadow-color: var(--box-shadow-color);
+$border-color-primary: var(--border-color-primary);
+$layout-background: var(--layout-background);
+$border-color: var(--border-color);
+$dashboard-tool-bg-color: var(--dashboard-tool-bg);
+$font-color: var(--font-color);
+$text-color: var(--theme-background);
+$disabled-color: var(--disabled-color);
+$active-color: var(--el-color-primary);
+$theme-background: var(--theme-background);
+$active-background: var(--el-color-primary);
+$font-size-smaller: 12px;
+$font-size-normal: 14px;

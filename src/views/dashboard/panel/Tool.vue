@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="dashboard-tool flex-h">
-    <div :class="isRelation ? 'flex-v' : 'flex-h'">
+    <div :class="isRelation ? 'flex-v' : 'flex-h'" class="tool-selectors">
       <div class="flex-h">
         <div class="selectors-item" v-if="key !== 10">
           <span class="label">$Service</span>
@@ -103,27 +103,24 @@ limitations under the License. -->
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="clickIcons(t)" v-for="(t, index) in toolIcons" :key="index" :title="t.content">
-                <Icon class="mr-5" size="middle" :iconName="t.name" />
+                <Icon class="mr-5" size="sm" :iconName="t.name" />
                 <span>{{ t.content }}</span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <el-tooltip content="Apply" placement="bottom" effect="light">
+        <el-tooltip content="Apply" placement="bottom">
           <i @click="applyDashboard">
             <Icon class="icon-btn" size="sm" iconName="save" />
           </i>
         </el-tooltip>
       </div>
-      <div class="switch">
+      <div class="ml-5">
         <el-switch
           v-model="dashboardStore.editMode"
           active-text="E"
           inactive-text="V"
-          size="small"
           inline-prompt
-          active-color="#409eff"
-          inactive-color="#999"
           @change="changeMode"
         />
       </div>
@@ -738,15 +735,15 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .dashboard-tool {
     text-align: right;
-    padding: 3px 5px 5px;
-    background: rgb(240 242 245);
-    border-bottom: 1px solid #dfe4e8;
+    padding: 5px;
+    background: $dashboard-tool-bg-color;
+    border-bottom: 1px solid $border-color;
     justify-content: space-between;
   }
 
-  .switch {
-    padding-top: 2px;
-    margin: 0 10px;
+  .tool-selectors {
+    align-items: center;
+    height: auto;
   }
 
   .label {
@@ -761,6 +758,7 @@ limitations under the License. -->
 
   .tools {
     justify-content: space-between;
+    align-items: center;
     height: auto;
   }
 
@@ -768,12 +766,12 @@ limitations under the License. -->
     display: inline-block;
     padding: 3px;
     text-align: center;
-    border: 1px solid $disabled-color;
+    border: 1px solid var(--sw-icon-btn-border);
     border-radius: 3px;
     margin-left: 6px;
     cursor: pointer;
-    background-color: #eee;
-    color: #666;
+    background-color: var(--sw-icon-btn-bg);
+    color: var(--sw-icon-btn-color);
     font-size: $font-size-smaller;
   }
 

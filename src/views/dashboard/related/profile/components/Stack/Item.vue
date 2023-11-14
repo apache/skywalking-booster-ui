@@ -14,7 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <div :class="['profile-item', 'level' + data.parentId]" :style="{ color: data.topDur ? '#448dfe' : '#3d444f' }">
+    <div
+      :class="['profile-item', 'level' + data.parentId]"
+      :style="{ color: data.topDur ? '#448dfe' : appStore.theme === Themes.Dark ? '#fafbfc' : '#3d444f' }"
+    >
       <div
         :class="['thread', 'level' + data.parentId]"
         :style="{
@@ -47,6 +50,8 @@ limitations under the License. -->
 <script lang="ts">
   import { ref, defineComponent, toRefs } from "vue";
   import type { PropType } from "vue";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { Themes } from "@/constants/data";
 
   const props = {
     data: { type: Object as PropType<any>, default: () => ({}) },
@@ -56,24 +61,25 @@ limitations under the License. -->
     name: "TableItem",
     props,
     setup(props) {
+      const appStore = useAppStoreWithOut();
       const displayChildren = ref<boolean>(true);
       function toggle() {
         displayChildren.value = !displayChildren.value;
       }
-      return { toggle, displayChildren, ...toRefs(props) };
+      return { Themes, appStore, toggle, displayChildren, ...toRefs(props) };
     },
   });
 </script>
 <style lang="scss" scoped>
-  @import "./profile.scss";
+  @import url("./profile.scss");
 
   .profile-item.level0 {
-    background: rgba(0, 0, 0, 0.04);
-    color: #448dfe;
+    background-color: var(--sw-list-hover);
+    color: var(--el-color-primary);
 
     &:hover {
-      background: rgba(0, 0, 0, 0.04);
-      color: #448dfe;
+      background-color: var(--sw-list-hover);
+      color: var(--el-color-primary);
     }
 
     &::before {
@@ -81,7 +87,7 @@ limitations under the License. -->
       content: "";
       width: 5px;
       height: 100%;
-      background: #448dfe;
+      background-color: var(--el-color-primary);
       left: 0;
     }
   }
@@ -92,11 +98,11 @@ limitations under the License. -->
   }
 
   .profile-item.selected {
-    background: rgba(0, 0, 0, 0.04);
+    background-color: var(--sw-list-selected);
   }
 
   .profile-item:not(.level0):hover {
-    background: rgba(0, 0, 0, 0.04);
+    background-color: var(--sw-list-hover);
   }
 
   .profile-item > div {
@@ -123,7 +129,7 @@ limitations under the License. -->
       width: 100%;
       height: 6px;
       border-radius: 3px;
-      background: rgb(63, 177, 227);
+      background: var(--el-color-primary);
       position: relative;
       margin-top: 11px;
       border: none;
@@ -131,7 +137,7 @@ limitations under the License. -->
 
     .inner-progress_bar {
       position: absolute;
-      background: rgb(110, 64, 170);
+      background: rgb(110 64 170);
       height: 4px;
       border-radius: 2px;
       left: 0;

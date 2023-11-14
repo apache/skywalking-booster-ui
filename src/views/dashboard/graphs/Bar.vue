@@ -24,6 +24,8 @@ limitations under the License. -->
   import type { BarConfig, EventParams, RelatedTrace, Filters } from "@/types/dashboard";
   import useLegendProcess from "@/hooks/useLegendProcessor";
   import Legend from "./components/Legend.vue";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { Themes } from "@/constants/data";
 
   /*global defineProps, defineEmits */
   const emits = defineEmits(["click"]);
@@ -46,6 +48,7 @@ limitations under the License. -->
       default: () => ({}),
     },
   });
+  const appStore = useAppStoreWithOut();
   const { showEchartsLegend, isRight, chartColors } = useLegendProcess(props.config.legend);
   const option = computed(() => getOption());
 
@@ -91,8 +94,11 @@ limitations under the License. -->
         top: 0,
         left: 0,
         itemWidth: 12,
+        backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
+        borderColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
         textStyle: {
-          color: "#333",
+          fontSize: 12,
+          color: appStore.theme === Themes.Dark ? "#eee" : "#333",
         },
       },
       grid: {

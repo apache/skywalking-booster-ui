@@ -88,7 +88,7 @@ limitations under the License. -->
     border: 1px solid #ddd;
     background: $theme-background;
     border-radius: 3px;
-    color: #000;
+    color: $font-color;
     font-size: $font-size-smaller;
     height: 24px;
 
@@ -112,7 +112,7 @@ limitations under the License. -->
     width: 100%;
     padding: 2px 10px;
     overflow: auto;
-    color: #606266;
+    color: var(--sw-setting-color);
     position: relative;
 
     &:hover {
@@ -133,7 +133,7 @@ limitations under the License. -->
   }
 
   .opt-wrapper {
-    color: #606266;
+    color: var(--sw-setting-color);
     position: absolute;
     top: 26px;
     left: 0;

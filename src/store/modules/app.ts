@@ -23,6 +23,7 @@ import type { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
 import type { MenuOptions, SubItem } from "@/types/app";
+import { Themes } from "@/constants/data";
 /*global Nullable*/
 interface AppState {
   durationRow: Recordable;
@@ -36,6 +37,7 @@ interface AppState {
   isMobile: boolean;
   reloadTimer: Nullable<IntervalHandle>;
   allMenus: MenuOptions[];
+  theme: string;
 }
 
 export const appStore = defineStore({
@@ -56,6 +58,7 @@ export const appStore = defineStore({
     isMobile: false,
     reloadTimer: null,
     allMenus: [],
+    theme: Themes.Dark,
   }),
   getters: {
     duration(): Duration {
@@ -125,6 +128,9 @@ export const appStore = defineStore({
     },
     updateDurationRow(data: Duration) {
       this.durationRow = data;
+    },
+    setTheme(data: string) {
+      this.theme = data;
     },
     setUTC(utcHour: number, utcMin: number): void {
       this.runEventStack();

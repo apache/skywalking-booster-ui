@@ -24,6 +24,8 @@ limitations under the License. -->
   import type { MetricConfigOpt } from "@/types/dashboard";
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import { MetricModes } from "../../../data";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { Themes } from "@/constants/data";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
@@ -33,6 +35,7 @@ limitations under the License. -->
     },
   });
   const emit = defineEmits(["click"]);
+  const appStore = useAppStoreWithOut();
   const topologyStore = useTopologyStore();
   const option = computed(() => getOption());
 
@@ -52,7 +55,7 @@ limitations under the License. -->
         data: topologyStore.nodes,
         links: topologyStore.calls,
         label: {
-          color: "#666",
+          color: appStore.theme === Themes.Dark ? "#ccc" : "#666",
           formatter: (param: any) => param.data.name,
         },
         color: ["#6be6c1", "#3fcfdc", "#626c91", "#3fbcde", "#a0a7e6", "#3fa9e1", "#96dee8", "#bf99f8"],

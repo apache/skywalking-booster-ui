@@ -61,7 +61,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .chart-card {
-    color: #333;
+    color: $font-color;
     width: 100%;
     height: 100%;
     display: flex;

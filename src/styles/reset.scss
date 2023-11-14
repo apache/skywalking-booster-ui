@@ -144,18 +144,6 @@ pre {
   }
 }
 
-.el-switch__label--left {
-  margin-right: 5px;
-}
-
-.el-switch__label--right {
-  margin-left: 5px;
-}
-
-.el-switch__label * {
-  font-size: $font-size-smaller;
-}
-
 .el-drawer__header {
   margin-bottom: 0;
   padding-left: 10px;
@@ -173,9 +161,10 @@ pre {
 div.vis-tooltip {
   max-width: 600px;
   overflow: hidden;
-  background-color: $theme-background !important;
+  background-color: var(--vis-tooltip-bg) !important;
   white-space: normal !important;
   font-size: $font-size-smaller !important;
+  color: var(--font-color) !important;
 }
 
 .vis-item {
@@ -187,13 +176,13 @@ div.vis-tooltip {
   background-color: #e66;
   opacity: 0.8;
   border-color: #e66;
-  color: $text-color !important;
+  color: var(--sw-event-vis-selected) !important;
 }
 
 .vis-item.Normal {
   background-color: #fac858;
   border-color: #fac858;
-  color: #666 !important;
+  color: var(--sw-event-vis-selected) !important;
 }
 
 .vis-item .vis-item-content {
@@ -202,7 +191,11 @@ div.vis-tooltip {
 
 .vis-item.vis-selected.Error,
 .vis-item.vis-selected.Normal {
-  color: #1a1a1a !important;
+  color: var(--sw-event-vis-selected) !important;
+}
+
+.vis-time-axis .vis-text {
+  color: var(--sw-time-axis-text) !important;
 }
 
 .el-menu--vertical.sub-list {

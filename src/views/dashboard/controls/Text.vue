@@ -32,7 +32,7 @@ limitations under the License. -->
     <div
       class="body"
       :style="{
-        backgroundColor: TextColors[graph.backgroundColor],
+        backgroundColor,
         justifyContent: graph.textAlign,
       }"
     >
@@ -40,7 +40,7 @@ limitations under the License. -->
         :href="graph.url"
         target="_blank"
         :style="{
-          color: TextColors[graph.fontColor],
+          color: fontColor,
           fontSize: graph.fontSize + 'px',
         }"
       >
@@ -55,6 +55,8 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { TextColors } from "@/views/dashboard/data";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { Themes } from "@/constants/data";
 
   /*global defineProps */
   const props = defineProps({
@@ -65,8 +67,16 @@ limitations under the License. -->
     activeIndex: { type: String, default: "" },
   });
   const { t } = useI18n();
+  const appStore = useAppStoreWithOut();
   const graph = computed(() => props.data.graph || {});
   const dashboardStore = useDashboardStore();
+
+  const backgroundColor = computed(
+    () => TextColors[graph.value.backgroundColor] || (appStore.theme === Themes.Dark ? "#212224" : "#fff"),
+  );
+  const fontColor = computed(
+    () => TextColors[graph.value.fontColor] || (appStore.theme === Themes.Dark ? "#fafbfc" : "#3d444f"),
+  );
 
   function removeTopo() {
     dashboardStore.removeControls(props.data);
@@ -112,7 +122,7 @@ limitations under the License. -->
 
     &:hover {
       color: $active-color;
-      background-color: #eee;
+      background-color: $popper-hover-bg-color;
     }
   }
 </style>

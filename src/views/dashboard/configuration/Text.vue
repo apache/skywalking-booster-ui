@@ -89,6 +89,7 @@ limitations under the License. -->
   const fontSize = ref<number>(graph.fontSize || 12);
   const textAlign = ref(graph.textAlign || "left");
   const Colors = [
+    { label: "Theme", value: "theme" },
     {
       label: "Green",
       value: "green",
@@ -151,7 +152,7 @@ limitations under the License. -->
     position: fixed;
     bottom: 0;
     right: 0;
-    border-top: 1px solid #eee;
+    border-top: 1px solid $border-color-primary;
     padding: 10px;
     text-align: right;
     width: 100%;

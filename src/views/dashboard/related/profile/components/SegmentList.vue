@@ -58,6 +58,7 @@ limitations under the License. -->
   const key = computed(
     () =>
       (profileStore.currentSegment &&
+        profileStore.currentSegment.spans &&
         profileStore.currentSegment.spans.length &&
         profileStore.currentSegment.spans[0].segmentId) ||
       "",
@@ -82,7 +83,7 @@ limitations under the License. -->
     .profile-t-wrapper {
       overflow: auto;
       flex-grow: 1;
-      border-right: 1px solid rgb(0 0 0 / 10%);
+      border-right: 1px solid var(--sw-trace-list-border);
     }
 
     .profile-t-loading {
@@ -110,25 +111,25 @@ limitations under the License. -->
 
     .profile-tr {
       &:hover {
-        background-color: rgb(0 0 0 / 4%);
+        background-color: var(--sw-list-hover);
       }
     }
 
     .profile-td {
       padding: 5px 10px;
-      border-bottom: 1px solid rgb(0 0 0 / 7%);
+      border-bottom: 1px solid var(--sw-trace-list-border);
 
       &.selected {
-        background-color: #ededed;
+        background-color: var(--sw-list-selected);
       }
     }
 
     .profile-t-tool {
       padding: 5px 10px;
       font-weight: bold;
-      border-right: 1px solid rgb(0 0 0 / 7%);
-      border-bottom: 1px solid rgb(0 0 0 / 7%);
-      background: #f3f4f9;
+      border-right: 1px solid var(--sw-trace-list-border);
+      border-bottom: 1px solid var(--sw-trace-list-border);
+      background-color: var(--sw-table-header);
     }
 
     .log-item {
@@ -144,6 +145,6 @@ limitations under the License. -->
   }
 
   .profile-segment {
-    border-top: 1px solid rgb(0 0 0 / 7%);
+    border-top: 1px solid var(--sw-trace-list-border);
   }
 </style>

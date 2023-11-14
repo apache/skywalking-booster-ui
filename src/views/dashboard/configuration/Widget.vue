@@ -201,7 +201,7 @@ limitations under the License. -->
   .graph {
     position: relative;
     min-width: 1280px;
-    border: 1px solid #eee;
+    border: 1px solid $border-color-primary;
     background-color: $theme-background;
   }
 
@@ -209,7 +209,7 @@ limitations under the License. -->
     height: 25px;
     line-height: 25px;
     text-align: center;
-    background-color: aliceblue;
+    background-color: var(--sw-config-header);
     font-size: $font-size-smaller;
     position: relative;
   }
@@ -249,7 +249,7 @@ limitations under the License. -->
     position: fixed;
     bottom: 0;
     right: 0;
-    border-top: 1px solid #eee;
+    border-top: 1px solid $border-color-primary;
     padding: 10px;
     text-align: right;
     width: 100%;

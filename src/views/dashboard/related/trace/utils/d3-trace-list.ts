@@ -20,6 +20,8 @@ import d3tip from "d3-tip";
 import type { Trace } from "@/types/trace";
 import dayjs from "dayjs";
 import icons from "@/assets/img/icons";
+import { useAppStoreWithOut } from "@/store/modules/app";
+import { Themes } from "@/constants/data";
 
 export default class ListGraph {
   private barHeight = 48;
@@ -127,6 +129,7 @@ export default class ListGraph {
   }
   update(source: Recordable, callback: Function) {
     const t = this;
+    const appStore = useAppStoreWithOut();
     const nodes = this.root.descendants();
     let index = -1;
     this.root.eachBefore((n: Recordable) => {
@@ -166,7 +169,7 @@ export default class ListGraph {
       .attr("width", 16)
       .attr("height", 16)
       .attr("x", 6)
-      .attr("y", -10)
+      .attr("y", -8)
       .attr("xlink:href", (d: any) =>
         d.data.type === "Entry" ? icons.ENTRY : d.data.type === "Exit" ? icons.EXIT : "",
       )
@@ -186,7 +189,7 @@ export default class ListGraph {
       .attr("width", 16)
       .attr("height", 16)
       .attr("x", 6)
-      .attr("y", -10)
+      .attr("y", -8)
       .attr("xlink:href", (d: any) => {
         const key = (d.data.refs || []).findIndex((d: { type: string }) => d.type === "CROSS_THREAD");
         return key > -1 ? icons.STREAM : "";
@@ -214,14 +217,14 @@ export default class ListGraph {
       .append("text")
       .attr("x", 13)
       .attr("y", 5)
-      .attr("fill", "#E54C17")
+      .attr("fill", appStore.theme === Themes.Dark ? "#666" : "#E54C17")
       .html((d: Recordable) => (d.data.isError ? "◉" : ""));
     nodeEnter
       .append("text")
       .attr("class", "node-text")
       .attr("x", 35)
       .attr("y", -6)
-      .attr("fill", "#333")
+      .attr("fill", appStore.theme === Themes.Dark ? "#eee" : "#333")
       .html((d: Recordable) => {
         if (d.data.label === "TRACE_ROOT") {
           return "";
@@ -242,7 +245,7 @@ export default class ListGraph {
       })
       .attr("cy", -5)
       .attr("fill", "none")
-      .attr("stroke", "#e66")
+      .attr("stroke", appStore.theme === Themes.Dark ? "#666" : "#e66")
       .style("opacity", (d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
@@ -255,7 +258,7 @@ export default class ListGraph {
       .append("text")
       .attr("x", 267)
       .attr("y", -1)
-      .attr("fill", "#e66")
+      .attr("fill", appStore.theme === Themes.Dark ? "#666" : "#e66")
       .style("font-size", "10px")
       .text((d: Recordable) => {
         const events = d.data.attachedEvents;
@@ -270,7 +273,7 @@ export default class ListGraph {
       .attr("class", "node-text")
       .attr("x", 35)
       .attr("y", 12)
-      .attr("fill", "#ccc")
+      .attr("fill", appStore.theme === Themes.Dark ? "#777" : "#ccc")
       .style("font-size", "11px")
       .text(
         (d: Recordable) =>
@@ -305,11 +308,15 @@ export default class ListGraph {
       .style("opacity", 1);
     nodeEnter
       .append("circle")
-      .attr("r", 3)
+      .attr("r", appStore.theme === Themes.Dark ? 4 : 3)
       .style("cursor", "pointer")
-      .attr("stroke-width", 2.5)
+      .attr("stroke-width", appStore.theme === Themes.Dark ? 3 : 2.5)
       .attr("fill", (d: Recordable) =>
-        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "rbga(0,0,0,0)",
+        d._children
+          ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`
+          : appStore.theme === Themes.Dark
+          ? "#eee"
+          : "rbga(0,0,0,0)",
       )
       .style("stroke", (d: Recordable) =>
         d.data.label === "TRACE_ROOT" ? "" : `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`,
@@ -320,7 +327,7 @@ export default class ListGraph {
     node
       .transition()
       .duration(400)
-      .attr("transform", (d: Recordable) => `translate(${d.y + 5},${d.x})`)
+      .attr("transform", (d: Recordable) => `translate(${d.y + 3},${d.x})`)
       .style("opacity", 1)
       .select("circle")
       .attr("fill", (d: Recordable) =>
@@ -343,8 +350,8 @@ export default class ListGraph {
       .enter()
       .insert("path", "g")
       .attr("class", "trace-link")
-      .attr("fill", "rgba(0,0,0,0)")
-      .attr("stroke", "rgba(0, 0, 0, 0.1)")
+      .attr("fill", appStore.theme === Themes.Dark ? "rgba(244,244,244,0)" : "rgba(0,0,0,0)")
+      .attr("stroke", appStore.theme === Themes.Dark ? "rgba(244,244,244,0.4)" : "rgba(0, 0, 0, 0.1)")
       .attr("stroke-width", 2)
       .attr("transform", `translate(5, 0)`)
       .attr("d", () => {

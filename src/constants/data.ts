@@ -26,3 +26,8 @@ export const Languages = [
   { label: "Chinese", value: "zh" },
   { label: "Spanish", value: "es" },
 ];
+
+export enum Themes {
+  Dark = "dark",
+  Light = "light",
+}

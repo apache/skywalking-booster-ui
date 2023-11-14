@@ -156,7 +156,7 @@ limitations under the License. -->
   }
 
   .settings {
-    color: #606266;
+    color: var(--sw-setting-color);
     font-size: 13px;
     padding: 20px;
 
@@ -177,7 +177,7 @@ limitations under the License. -->
       width: 180px;
       display: inline-block;
       font-weight: 500;
-      color: #000;
+      color: $font-color;
       line-height: 25px;
     }
   }

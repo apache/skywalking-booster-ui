@@ -31,7 +31,7 @@ limitations under the License. -->
       @change="changeLatency"
       class="ml-10"
     />
-    <el-popover trigger="hover" width="250" placement="bottom" effect="light">
+    <el-popover trigger="hover" width="250" placement="bottom">
       <template #reference>
         <div class="cp conditions-popup">
           <Icon iconName="conditions" size="middle" />
@@ -52,7 +52,7 @@ limitations under the License. -->
         </div>
       </div>
     </el-popover>
-    <el-popover trigger="hover" width="250" placement="bottom" effect="light">
+    <el-popover trigger="hover" width="250" placement="bottom">
       <template #reference>
         <div class="cp metric-value">
           <Icon iconName="info_outline" size="middle" />

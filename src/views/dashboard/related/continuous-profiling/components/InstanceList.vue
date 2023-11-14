@@ -149,14 +149,14 @@ limitations under the License. -->
     font-weight: bold;
     border-bottom: 1px solid rgb(0 0 0 / 7%);
     padding: 10px 20px;
-    background-color: #f3f4f9;
+    background-color: var(--sw-table-header);
   }
 
   .settings {
     padding: 1px 0;
     border: 1px solid #666;
     border-radius: 3px;
-    color: #666;
+    color: var(--text-color-placeholder);
     cursor: pointer;
   }
 

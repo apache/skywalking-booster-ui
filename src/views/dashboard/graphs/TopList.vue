@@ -141,7 +141,7 @@ limitations under the License. -->
 
   .progress-bar {
     font-size: $font-size-smaller;
-    color: #333;
+    color: $font-color;
   }
 
   .chart-slow-i {
@@ -171,7 +171,7 @@ limitations under the License. -->
     padding: 4px 10px 7px;
     border-radius: 4px;
     border: 1px solid #ddd;
-    color: #333;
+    color: $font-color;
     background-color: $theme-background;
     will-change: opacity, background-color;
     transition: opacity 0.3s, background-color 0.3s;
@@ -188,12 +188,12 @@ limitations under the License. -->
   }
 
   .operation-icon {
-    color: #333;
+    color: $font-color;
   }
 
   .operation {
     padding: 5px 0;
-    color: #333;
+    color: $font-color;
     cursor: pointer;
     position: relative;
     text-align: center;
@@ -201,7 +201,7 @@ limitations under the License. -->
 
     &:hover {
       color: $active-color;
-      background-color: #eee;
+      background-color: $popper-hover-bg-color;
     }
   }
 </style>

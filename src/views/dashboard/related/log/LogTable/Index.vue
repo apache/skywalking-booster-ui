@@ -74,7 +74,7 @@ limitations under the License. -->
   .log {
     font-size: $font-size-smaller;
     height: 100%;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $border-color-primary;
     width: 100%;
     overflow: auto;
   }
@@ -85,7 +85,7 @@ limitations under the License. -->
     user-select: none;
     border-left: 0;
     border-right: 0;
-    border-bottom: 1px solid rgb(0 0 0 / 10%);
+    border-bottom: 1px solid var(--sw-trace-list-border);
 
     .traceId {
       width: 140px;
@@ -109,7 +109,7 @@ limitations under the License. -->
     border: 1px solid transparent;
     border-right: 1px dotted silver;
     line-height: 30px;
-    background-color: #f3f4f9;
+    background-color: var(--sw-table-header);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

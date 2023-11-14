@@ -186,7 +186,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .content {
     min-width: 100px;
-    border: 1px solid #eee;
+    border: 1px solid $border-color-primary;
     background-color: $theme-background;
     position: relative;
   }

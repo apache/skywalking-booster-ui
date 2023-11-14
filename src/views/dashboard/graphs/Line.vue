@@ -31,6 +31,8 @@ limitations under the License. -->
   import Legend from "./components/Legend.vue";
   import useLegendProcess from "@/hooks/useLegendProcessor";
   import { isDef } from "@/utils/is";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { Themes } from "@/constants/data";
 
   /*global defineProps, defineEmits */
   const emits = defineEmits(["click"]);
@@ -40,7 +42,6 @@ limitations under the License. -->
       default: () => ({}),
     },
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
-    theme: { type: String, default: "light" },
     config: {
       type: Object as PropType<
         LineConfig & {
@@ -62,6 +63,7 @@ limitations under the License. -->
       }),
     },
   });
+  const appStore = useAppStoreWithOut();
   const setRight = ref<boolean>(false);
   const option = computed(() => getOption());
   function getOption() {
@@ -93,9 +95,11 @@ limitations under the License. -->
     const color: string[] = chartColors(keys);
     const tooltip = {
       trigger: "axis",
+      backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
+      borderColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
       textStyle: {
         fontSize: 12,
-        color: "#333",
+        color: appStore.theme === Themes.Dark ? "#eee" : "#333",
       },
       enterable: true,
       confine: true,
@@ -108,9 +112,11 @@ limitations under the License. -->
       confine: true,
       extraCssText: `height: 20px; padding:0 2px;`,
       trigger: "axis",
+      backgroundColor: appStore.theme === Themes.Dark ? "#666" : "#eee",
+      borderColor: appStore.theme === Themes.Dark ? "#666" : "#eee",
       textStyle: {
         fontSize: 12,
-        color: "#333",
+        color: appStore.theme === Themes.Dark ? "#eee" : "#333",
       },
     };
 
@@ -125,7 +131,7 @@ limitations under the License. -->
         left: 0,
         itemWidth: 12,
         textStyle: {
-          color: props.theme === "dark" ? "#fff" : "#333",
+          color: appStore.theme === Themes.Dark ? "#fff" : "#333",
         },
       },
       grid: {

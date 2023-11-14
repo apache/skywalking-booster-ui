@@ -106,12 +106,12 @@ limitations under the License. -->
     .row:first-child {
       div {
         border-top: 1px solid $disabled-color;
-        background: #eee;
+        background-color: var(--border-color-primary);
       }
     }
 
     .header {
-      color: #000;
+      color: var(--sw-table-color);
       font-weight: bold;
     }
 

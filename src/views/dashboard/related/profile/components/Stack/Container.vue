@@ -107,7 +107,7 @@ limitations under the License. -->
     user-select: none;
     border-left: 0;
     border-right: 0;
-    border-bottom: 1px solid rgb(0 0 0 / 10%);
+    border-bottom: 1px solid var(--sw-trace-list-border);
   }
 
   .profile-header div {
@@ -115,7 +115,7 @@ limitations under the License. -->
     padding: 0 4px;
     border-right: 1px dotted silver;
     line-height: 30px;
-    background-color: #f3f4f9;
+    background-color: var(--sw-table-header);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

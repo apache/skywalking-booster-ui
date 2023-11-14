@@ -113,7 +113,7 @@ limitations under the License. -->
 
   .category {
     flex-wrap: wrap;
-    border-right: 1px solid #ddd;
+    border-right: 1px solid var(--sw-marketplace-border);
     align-content: flex-start;
     height: 100%;
     overflow: auto;

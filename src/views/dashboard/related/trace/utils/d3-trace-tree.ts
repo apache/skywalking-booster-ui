@@ -18,6 +18,8 @@
 import * as d3 from "d3";
 import d3tip from "d3-tip";
 import type { Trace, Span } from "@/types/trace";
+import { useAppStoreWithOut } from "@/store/modules/app";
+import { Themes } from "@/constants/data";
 
 export default class TraceMap {
   private i = 0;
@@ -132,6 +134,7 @@ export default class TraceMap {
     this.update(this.root);
   }
   update(source: Recordable) {
+    const appStore = useAppStoreWithOut();
     const that: any = this;
     const treeData = this.treemap(this.root);
     const nodes = treeData.descendants(),
@@ -237,7 +240,9 @@ export default class TraceMap {
           ? (d.data.isError ? "◉ " : "") + d.data.label.slice(0, 10) + "..."
           : (d.data.isError ? "◉ " : "") + d.data.label,
       )
-      .style("fill", (d: Recordable) => (!d.data.isError ? "#3d444f" : "#E54C17"));
+      .style("fill", (d: Recordable) =>
+        !d.data.isError ? (appStore.theme === Themes.Dark ? "#eee" : "#3d444f") : "#E54C17",
+      );
     nodeEnter
       .append("text")
       .attr("class", "node-text")
@@ -245,7 +250,7 @@ export default class TraceMap {
         return d.children || d._children ? -45 : 15;
       })
       .attr("dy", "1em")
-      .attr("fill", "#bbb")
+      .attr("fill", appStore.theme === Themes.Dark ? "#888" : "#bbb")
       .attr("text-anchor", function (d: Recordable) {
         return d.children || d._children ? "end" : "start";
       })
@@ -330,7 +335,7 @@ export default class TraceMap {
         const o = { x: source.x0, y: source.y0 };
         return diagonal(o, o);
       })
-      .attr("stroke", "rgba(0, 0, 0, 0.1)")
+      .attr("stroke", appStore.theme === Themes.Dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.1)")
       .style("stroke-width", 1.5)
       .style("fill", "none");
 
