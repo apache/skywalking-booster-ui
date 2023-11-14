@@ -89,6 +89,7 @@ limitations under the License. -->
   const fontSize = ref<number>(graph.fontSize || 12);
   const textAlign = ref(graph.textAlign || "left");
   const Colors = [
+    { label: "Theme", value: "theme" },
     {
       label: "Green",
       value: "green",
