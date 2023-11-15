@@ -375,7 +375,7 @@ limitations under the License. -->
   }
 
   .vue-grid-item.active {
-    border: 1px solid $active-color;
+    border: 1px solid var(--sw-grid-item-active);
   }
 
   .no-data-tips {
