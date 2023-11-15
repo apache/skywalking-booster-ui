@@ -92,7 +92,7 @@ limitations under the License. -->
       }
       return serie;
     });
-    const color: string[] = chartColors(keys);
+    const color: string[] = chartColors();
     const tooltip = {
       trigger: "axis",
       backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",

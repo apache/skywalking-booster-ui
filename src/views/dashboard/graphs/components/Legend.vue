@@ -111,9 +111,8 @@ limitations under the License. -->
   const isRight = computed(() => useLegendProcess(props.config).isRight);
   const width = computed(() => (props.config.width ? props.config.width + "px" : isRight.value ? "150px" : "100%"));
   const colors = computed(() => {
-    const keys = Object.keys(props.data || {}).filter((i: any) => Array.isArray(props.data[i]) && props.data[i].length);
     const { chartColors } = useLegendProcess(props.config);
-    return chartColors(keys);
+    return chartColors();
   });
 </script>
 <style lang="scss" scoped>
