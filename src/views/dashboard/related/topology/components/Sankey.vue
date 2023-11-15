@@ -44,6 +44,12 @@ limitations under the License. -->
       tooltip: {
         trigger: "item",
         confine: true,
+        backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
+        borderColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
+        textStyle: {
+          fontSize: 12,
+          color: appStore.theme === Themes.Dark ? "#eee" : "#333",
+        },
       },
       series: {
         type: "sankey",
