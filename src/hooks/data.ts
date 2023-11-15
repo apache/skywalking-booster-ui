@@ -130,3 +130,43 @@ export const RespFields: Indexable = {
     error
   }`,
 };
+
+export const DarkChartColors = [
+  "#79bbff",
+  "#a0a7e6",
+  "#30A4EB",
+  "#45BFC0",
+  "#ebbf93",
+  "#884dde",
+  "#1bbf93",
+  "#7289ab",
+  "#f56c6c",
+  "#81feb7",
+  "#4094fa",
+  "#ff894d",
+  "#884dde",
+  "#ebbf93",
+  "#fedc6d",
+  "#da7cfa",
+  "#b88230",
+  "#a0cfff",
+];
+
+export const LightChartColors = [
+  "#3f96e3",
+  "#a0a7e6",
+  "#45BFC0",
+  "#FFCC55",
+  "#FF6A84",
+  "#c23531",
+  "#2f4554",
+  "#61a0a8",
+  "#d48265",
+  "#91c7ae",
+  "#749f83",
+  "#ca8622",
+  "#bda29a",
+  "#6e7074",
+  "#546570",
+  "#c4ccd3",
+];

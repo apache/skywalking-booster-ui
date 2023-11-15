@@ -74,7 +74,7 @@ limitations under the License. -->
         },
       };
     });
-    const color: string[] = chartColors(keys);
+    const color: string[] = chartColors();
     return {
       color,
       tooltip: {
