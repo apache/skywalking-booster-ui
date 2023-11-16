@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+:root {
+  --sw-green: #70c877;
+  --sw-orange: #e6a23c;
+}
 
 html {
   --el-color-primary: #409eff;
