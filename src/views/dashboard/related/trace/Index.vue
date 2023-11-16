@@ -59,5 +59,6 @@ limitations under the License. -->
     width: 100%;
     overflow: auto;
     min-width: 1200px;
+    height: calc(100% - 100px);
   }
 </style>
