@@ -82,6 +82,8 @@ const titles = {
   gateway: "Puerta",
   gateway_desc:
     "API gateway is an API management tool that sits between a client and a collection of backend services.",
+  gateway_nginx: "Nginx",
+  gateway_nginx_desc: "Provide Nginx monitoring through OpenTelemetry's Prometheus Receiver.",
   gateway_apisix: "APISIX",
   gateway_apisix_desc: "Provide APISIX monitoring through OpenTelemetry's Prometheus Receiver.",
   gateway_aws_api_gateway: "AWS API Gateway",
