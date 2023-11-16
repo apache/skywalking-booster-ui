@@ -72,6 +72,8 @@ const titles = {
   // Gateway
   gateway: "网关",
   gateway_desc: "API网关是位于客户端和后端服务集合之间的API管理工具。",
+  gateway_nginx: "Nginx",
+  gateway_nginx_desc: "通过OpenTelemetry的Prometheus接收器提供Nginx监控。",
   gateway_apisix: "APISIX",
   gateway_apisix_desc: "通过OpenTelemetry的Prometheus接收器提供APISIX监控。",
   gateway_aws_api_gateway: "AWS API Gateway",
