@@ -25,9 +25,11 @@ limitations under the License. -->
         {{ dateFormat(data.timestamp) }}
       </span>
       <span v-else-if="item.label === 'tags'" :class="level.toLowerCase()"> > </span>
-      <span v-else-if="item.label === 'traceId'" :class="noLink ? '' : 'blue'">
-        <Icon v-if="!noLink" iconName="merge" />
-      </span>
+      <el-tooltip v-else-if="item.label === 'traceId'" content="Trace Link">
+        <span :class="noLink ? '' : 'blue'">
+          <Icon v-if="!noLink" iconName="merge" />
+        </span>
+      </el-tooltip>
       <span v-else>{{ data[item.label] }}</span>
     </div>
   </div>
@@ -89,6 +91,7 @@ limitations under the License. -->
       cursor: pointer;
       width: 20px;
       text-align: center;
+      position: relative;
 
       span {
         display: inline-block;
@@ -96,7 +99,7 @@ limitations under the License. -->
       }
 
       .blue {
-        color: #448dfe;
+        color: var(--el-color-primary);
       }
     }
 
@@ -104,7 +107,7 @@ limitations under the License. -->
       width: 15px;
       text-align: center;
       color: var(--sw-green);
-      font-weight: 600;
+      font-weight: 400;
       font-size: 14px;
     }
 
