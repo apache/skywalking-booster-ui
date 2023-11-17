@@ -25,7 +25,7 @@ limitations under the License. -->
         {{ dateFormat(data.timestamp) }}
       </span>
       <span v-else-if="item.label === 'tags'" :class="level.toLowerCase()"> > </span>
-      <el-tooltip v-else-if="item.label === 'traceId'" content="Trace Link">
+      <el-tooltip v-else-if="item.label === 'traceId' && !noLink" content="Trace Link">
         <span :class="noLink ? '' : 'blue'">
           <Icon v-if="data[item.label]" iconName="merge" />
         </span>
