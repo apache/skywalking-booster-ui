@@ -20,7 +20,7 @@ limitations under the License. -->
         {{ dateFormat(currentLog[item.label]) }}
       </span>
       <textarea
-        class="content mb-10"
+        class="content mb-10 g-sm-8"
         :readonly="true"
         v-else-if="item.label === 'content'"
         :value="contentFormat(item.label)"
@@ -66,13 +66,11 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .content {
-    max-width: 700px;
-    min-width: 500px;
     min-height: 500px;
     border: none;
     outline: none;
     color: $font-color;
     overflow: auto;
-    padding: 5px;
+    padding: 10px;
   }
 </style>
