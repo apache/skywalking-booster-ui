@@ -157,6 +157,10 @@ $active-background: var(--el-color-primary);
 $font-size-smaller: 12px;
 $font-size-normal: 14px;
 
+.el-loading-mask {
+  background-color: var(--theme-background);
+}
+
 .el-menu {
   --el-menu-item-height: 50px;
 }
