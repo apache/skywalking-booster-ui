@@ -71,6 +71,6 @@ limitations under the License. -->
     outline: none;
     color: $font-color;
     overflow: auto;
-    padding: 10px;
+    background-color: var(--el-dialog-bg-color);
   }
 </style>
