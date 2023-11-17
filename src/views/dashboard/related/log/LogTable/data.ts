@@ -17,16 +17,16 @@
 
 export const ServiceLogConstants = [
   {
-    label: "content",
-    value: "content",
-  },
-  {
     label: "tags",
-    value: "level",
+    value: "",
   },
   {
     label: "traceId",
     value: "",
+  },
+  {
+    label: "content",
+    value: "content",
   },
 ];
 export const ServiceLogDetail = [

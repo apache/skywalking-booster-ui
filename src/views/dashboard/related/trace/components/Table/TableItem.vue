@@ -287,7 +287,6 @@ limitations under the License. -->
   }
 
   .profiled {
-    // background-color: #eee;
     background-color: var(--sw-table-header);
     position: relative;
   }
@@ -329,7 +328,6 @@ limitations under the License. -->
   }
 
   .trace-item {
-    // display: flex;
     white-space: nowrap;
     position: relative;
     cursor: pointer;

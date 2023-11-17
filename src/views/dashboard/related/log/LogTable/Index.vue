@@ -88,7 +88,7 @@ limitations under the License. -->
     border-bottom: 1px solid var(--sw-trace-list-border);
 
     .traceId {
-      width: 140px;
+      width: 20px;
     }
 
     .content {
@@ -96,7 +96,7 @@ limitations under the License. -->
     }
 
     .tags {
-      width: 100px;
+      width: 15px;
     }
 
     .serviceName {
@@ -107,7 +107,6 @@ limitations under the License. -->
   .log-header div {
     padding: 0 5px;
     border: 1px solid transparent;
-    border-right: 1px dotted silver;
     line-height: 30px;
     background-color: var(--sw-table-header);
     overflow: hidden;

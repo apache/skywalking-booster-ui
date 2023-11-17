@@ -73,5 +73,6 @@ limitations under the License. -->
     outline: none;
     color: $font-color;
     overflow: auto;
+    padding: 5px;
   }
 </style>

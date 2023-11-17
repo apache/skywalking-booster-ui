@@ -24,10 +24,12 @@ limitations under the License. -->
       <span v-if="item.label === 'timestamp'">
         {{ dateFormat(data.timestamp) }}
       </span>
-      <span v-else-if="item.label === 'tags'">
-        {{ level }}
-      </span>
-      <span v-else-if="item.label === 'traceId' && !noLink" :class="noLink ? '' : 'blue'"> trace </span>
+      <span v-else-if="item.label === 'tags'" :class="level.toLowerCase()"> > </span>
+      <el-tooltip v-else-if="item.label === 'traceId'" content="Trace Link">
+        <span :class="noLink ? '' : 'blue'">
+          <Icon v-if="!noLink" iconName="merge" />
+        </span>
+      </el-tooltip>
       <span v-else>{{ data[item.label] }}</span>
     </div>
   </div>
@@ -87,6 +89,9 @@ limitations under the License. -->
 
     .traceId {
       cursor: pointer;
+      width: 20px;
+      text-align: center;
+      position: relative;
 
       span {
         display: inline-block;
@@ -94,12 +99,16 @@ limitations under the License. -->
       }
 
       .blue {
-        color: #448dfe;
+        color: var(--el-color-primary);
       }
     }
 
     .tags {
-      width: 100px;
+      width: 15px;
+      text-align: center;
+      color: var(--sw-green);
+      font-weight: 400;
+      font-size: 14px;
     }
 
     .content {
@@ -112,15 +121,14 @@ limitations under the License. -->
   }
 
   .log-item:hover {
-    background: rgb(0 0 0 / 4%);
+    background: var(--sw-list-hover);
   }
 
   .log-item > div {
-    width: 140px;
+    width: 60px;
     padding: 0 5px;
     display: inline-block;
     border: 1px solid transparent;
-    border-right: 1px dotted silver;
     white-space: normal;
     word-break: break-all;
     overflow: hidden;
@@ -136,5 +144,13 @@ limitations under the License. -->
   .log-item > div.method {
     height: 100%;
     padding: 3px 8px;
+  }
+
+  .error {
+    color: var(--sw-orange);
+  }
+
+  .warning {
+    color: var(--sw-orange);
   }
 </style>
