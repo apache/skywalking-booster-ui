@@ -90,6 +90,14 @@ limitations under the License. -->
   const pageTitle = ref<string>("");
   const theme = ref<boolean>(true);
 
+  const savedTheme = window.localStorage.getItem("theme-is-dark");
+  if (savedTheme === "false") {
+    theme.value = false;
+  } else if (savedTheme === "") {
+    // read the theme preference from system setting if there is no user setting
+    theme.value = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
   changeTheme();
   resetDuration();
   getVersion();
@@ -107,6 +115,7 @@ limitations under the License. -->
       root.classList.remove(Themes.Dark);
       appStore.setTheme(Themes.Light);
     }
+    window.localStorage.setItem("theme-is-dark", String(theme.value));
   }
 
   function getName(list: any[]) {
