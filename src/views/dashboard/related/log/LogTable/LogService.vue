@@ -76,6 +76,7 @@ limitations under the License. -->
       {
         sourceId: options.id || "",
         traceId: id,
+        id: props.data.serviceId || "",
       },
       "Trace",
     );

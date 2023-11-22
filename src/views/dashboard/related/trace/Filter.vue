@@ -178,6 +178,7 @@ limitations under the License. -->
     if (props.data.filters.id) {
       item = arr.find((d: { id: string }) => d.id === props.data.filters?.id);
     }
+
     return item;
   }
   function setCondition() {
@@ -194,7 +195,7 @@ limitations under the License. -->
     if (props.data.filters && props.data.filters.id) {
       param = {
         ...param,
-        serviceId: selectorStore.currentService.id,
+        serviceId: props.data.filters.id || undefined,
         endpointId: state.endpoint.id || undefined,
         serviceInstanceId: state.instance.id || undefined,
       };
