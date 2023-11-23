@@ -277,6 +277,7 @@ limitations under the License. -->
     LegendOpt,
     MetricsType,
     MetricModes,
+    CallTypes,
   } from "../../../data";
   import type { Option } from "@/types/app";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
@@ -515,7 +516,7 @@ limitations under the License. -->
       topologyStore.setLinkServerMetrics({});
       return;
     }
-    topologyStore.getLinkExpressions(states.linkServerExpressions, "SERVER");
+    topologyStore.getLinkExpressions(states.linkServerExpressions, CallTypes.Server);
   }
   function changeLinkClientExpressions(param: string[]) {
     if (!isExpression.value) {
@@ -527,7 +528,7 @@ limitations under the License. -->
       topologyStore.changeLinkClientMetrics({});
       return;
     }
-    topologyStore.getLinkExpressions(states.linkClientExpressions, "CLIENT");
+    topologyStore.getLinkExpressions(states.linkClientExpressions, CallTypes.Client);
   }
   function updateLinkClientMetrics(options: Option[] | any) {
     const opt = options.map((d: Option) => d.value);

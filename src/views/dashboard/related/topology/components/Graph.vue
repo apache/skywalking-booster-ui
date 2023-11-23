@@ -140,7 +140,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { EntityType, DepthList, MetricModes } from "../../../data";
+  import { EntityType, DepthList, MetricModes, CallTypes } from "../../../data";
   import router from "@/router";
   import { ElMessage } from "element-plus";
   import Settings from "./Settings.vue";
@@ -224,8 +224,8 @@ limitations under the License. -->
   async function update() {
     if (settings.value.metricMode === MetricModes.Expression) {
       topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
-      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || []);
-      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || []);
+      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || [], CallTypes.Client);
+      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || [], CallTypes.Server);
     } else {
       topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
       topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
