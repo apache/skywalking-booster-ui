@@ -179,6 +179,7 @@ export const dashboardStore = defineStore({
         newItem.graph = {
           showDepth: true,
         };
+        newItem.metricMode = MetricModes.Expression;
       }
       if (ControlsTypes.includes(type)) {
         newItem.h = 32;
