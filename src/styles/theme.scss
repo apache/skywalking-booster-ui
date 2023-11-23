@@ -157,6 +157,10 @@ $active-background: var(--el-color-primary);
 $font-size-smaller: 12px;
 $font-size-normal: 14px;
 
+.opt:hover {
+  background-color: var(--sw-list-hover) !important;
+}
+
 .el-loading-mask {
   background-color: var(--theme-background);
 }
