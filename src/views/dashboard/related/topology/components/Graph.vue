@@ -140,7 +140,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { EntityType, DepthList, MetricModes } from "../../../data";
+  import { EntityType, DepthList, MetricModes, CallTypes } from "../../../data";
   import router from "@/router";
   import { ElMessage } from "element-plus";
   import Settings from "./Settings.vue";
@@ -224,8 +224,8 @@ limitations under the License. -->
   async function update() {
     if (settings.value.metricMode === MetricModes.Expression) {
       topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
-      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || []);
-      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || []);
+      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || [], CallTypes.Client);
+      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || [], CallTypes.Server);
     } else {
       topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
       topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
@@ -239,10 +239,9 @@ limitations under the License. -->
     setNodeTools(settings.value.nodeDashboard);
   }
 
-  function draw() {
-    const node = findMostFrequent(topologyStore.calls);
-    const levels = [];
-    const nodes = JSON.parse(JSON.stringify(topologyStore.nodes)).sort((a: Node, b: Node) => {
+  function computeLevels(calls: Call[], nodeList: Node[], levels: any[]) {
+    const node = findMostFrequent(calls);
+    const nodes = JSON.parse(JSON.stringify(nodeList)).sort((a: Node, b: Node) => {
       if (a.name.toLowerCase() < b.name.toLowerCase()) {
         return -1;
       }
@@ -254,15 +253,14 @@ limitations under the License. -->
     const index = nodes.findIndex((n: Node) => n.type === "USER");
     let key = index;
     if (index < 0) {
-      const idx = nodes.findIndex((n: Node) => n.id === node.id);
-      key = idx;
+      key = nodes.findIndex((n: Node) => n.id === node.id);
     }
     levels.push([nodes[key]]);
     nodes.splice(key, 1);
     for (const level of levels) {
       const a = [];
       for (const l of level) {
-        for (const n of topologyStore.calls) {
+        for (const n of calls) {
           if (n.target === l.id) {
             const i = nodes.findIndex((d: Node) => d.id === n.source);
             if (i > -1) {
@@ -283,6 +281,18 @@ limitations under the License. -->
         levels.push(a);
       }
     }
+    if (nodes.length) {
+      const ids = nodes.map((d: Node) => d.id);
+      const links = calls.filter((item: Call) => ids.includes(item.source) || ids.includes(item.target));
+      const list = computeLevels(links, nodes, []);
+      levels = list.map((subArrayA, index) => subArrayA.concat(levels[index]));
+    }
+    return levels;
+  }
+
+  function draw() {
+    const levels = computeLevels(topologyStore.calls, topologyStore.nodes, []);
+
     topologyLayout.value = layout(levels, topologyStore.calls, radius);
     graphWidth.value = topologyLayout.value.layout.width;
     const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {

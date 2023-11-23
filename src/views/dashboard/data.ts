@@ -345,3 +345,7 @@ export enum MetricModes {
   Expression = "Expression",
   General = "General",
 }
+export enum CallTypes {
+  Server = "SERVER",
+  Client = "CLIENT",
+}

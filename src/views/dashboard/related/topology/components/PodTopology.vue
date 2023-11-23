@@ -69,7 +69,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  import { EntityType, DepthList, MetricModes } from "../../../data";
+  import { EntityType, DepthList, MetricModes, CallTypes } from "../../../data";
   import { ElMessage } from "element-plus";
   import Sankey from "./Sankey.vue";
   import Settings from "./Settings.vue";
@@ -121,8 +121,8 @@ limitations under the License. -->
     width.value = dom.width - 5;
     if (settings.value.metricMode === MetricModes.Expression) {
       topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
-      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || []);
-      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || []);
+      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || [], CallTypes.Client);
+      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || [], CallTypes.Server);
     } else {
       topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
       topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
