@@ -389,7 +389,10 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
               values: [],
             };
           }
-          obj[metrics[index]].values.push({ value: resp[k].results[0].values[0].value, id: instances[idx].id });
+          obj[metrics[index]].values.push({
+            value: resp[k].results[0] && resp[k].results[0].values[0].value,
+            id: instances[idx].id,
+          });
         }
       }
     }

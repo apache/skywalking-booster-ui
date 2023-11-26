@@ -49,11 +49,7 @@ limitations under the License. -->
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Metrics
-          :type="configType"
-          :metrics="isExpression ? states.linkServerExpressions : states.linkServerMetrics"
-          @update="updateSettings"
-        />
+        <Metrics :type="configType" :isExpression="isExpression" @update="updateSettings" />
       </el-popover>
     </div>
     <div v-if="isExpression">
@@ -88,11 +84,7 @@ limitations under the License. -->
               <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
             </span>
           </template>
-          <Metrics
-            :type="configType"
-            :metrics="isExpression ? states.linkClientExpressions : states.linkClientMetrics"
-            @update="updateSettings"
-          />
+          <Metrics :type="configType" :isExpression="isExpression" @update="updateSettings" />
         </el-popover>
       </div>
       <div v-if="isExpression">
@@ -168,11 +160,7 @@ limitations under the License. -->
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Metrics
-          :type="configType"
-          :metrics="isExpression ? states.nodeExpressions : states.nodeMetrics"
-          @update="updateSettings"
-        />
+        <Metrics :type="configType" :isExpression="isExpression" @update="updateSettings" />
       </el-popover>
     </div>
     <div v-if="isExpression">
