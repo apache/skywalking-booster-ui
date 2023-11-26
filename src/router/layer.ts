@@ -50,7 +50,6 @@ function layerDashboards() {
         component: () => import("@/views/Layer.vue"),
       };
       route.children.push(d);
-      console.log(child);
       const tab = {
         name: `${child.name}ActiveTabIndex`,
         path: `/${child.path}/tab/:activeTabIndex`,

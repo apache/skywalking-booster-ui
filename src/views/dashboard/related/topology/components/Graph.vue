@@ -189,7 +189,9 @@ limitations under the License. -->
 
   onMounted(async () => {
     await nextTick();
-    init();
+    setTimeout(() => {
+      init();
+    }, 10);
   });
   async function init() {
     const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
