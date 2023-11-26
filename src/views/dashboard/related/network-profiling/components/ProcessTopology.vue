@@ -40,7 +40,12 @@ limitations under the License. -->
               :x="(node.x || 0) - 15"
               :y="(node.y || 0) - 15"
             />
-            <text :x="node.x" :y="(node.y || 0) + 28" fill="#000" text-anchor="middle">
+            <text
+              :x="node.x"
+              :y="(node.y || 0) + 28"
+              :fill="appStore.theme === Themes.Dark ? '#fff' : '#000'"
+              text-anchor="middle"
+            >
               {{ node.name.length > 10 ? `${node.name.substring(0, 10)}...` : node.name }}
             </text>
           </g>
@@ -122,6 +127,7 @@ limitations under the License. -->
   import TimeLine from "./TimeLine.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import icons from "@/assets/img/icons";
+  import { Themes } from "@/constants/data";
 
   /*global Nullable, defineProps */
   const props = defineProps({
