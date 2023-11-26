@@ -282,7 +282,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .tabs {
     height: 40px;
-    color: $disabled-color;
+    color: var(--sw-icon-btn-color);
     width: 100%;
     overflow-x: auto;
     white-space: nowrap;
@@ -311,8 +311,6 @@ limitations under the License. -->
     }
 
     .tab-icons {
-      color: $font-color;
-
       i {
         margin-right: 3px;
       }
@@ -371,7 +369,7 @@ limitations under the License. -->
   }
 
   .tab-icon {
-    color: #666;
+    color: var(--sw-icon-btn-color);
   }
 
   .vue-grid-item.active {

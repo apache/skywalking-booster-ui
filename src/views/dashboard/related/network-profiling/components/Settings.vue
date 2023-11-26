@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="label">{{ t("linkDashboard") }}</div>
   <Selector
-    :value="dashboardStore.selectedGrid.linkDashboard || ''"
+    :value="(dashboardStore.selectedGrid && dashboardStore.selectedGrid.linkDashboard) || ''"
     :options="linkDashboards"
     size="small"
     placeholder="Please input a dashboard name for calls"

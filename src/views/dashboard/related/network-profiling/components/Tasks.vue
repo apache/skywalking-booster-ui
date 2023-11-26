@@ -18,7 +18,11 @@ limitations under the License. -->
       <div class="profile-t-tool">
         <span>{{ t("taskList") }}</span>
         <span class="new-task cp" @click="createTask">
-          <Icon :style="{ color: inProcess ? '#ccc' : '#000' }" iconName="library_add" size="middle" />
+          <Icon
+            :style="{ color: inProcess ? '#ccc' : appStore.theme === Themes.Dark ? '#fff' : '#000' }"
+            iconName="library_add"
+            size="middle"
+          />
         </span>
       </div>
       <div class="profile-t-wrapper">
@@ -78,6 +82,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import NewTask from "./NewTask.vue";
   import { EBPFProfilingTriggerType } from "@/store/data";
+  import { Themes } from "@/constants/data";
 
   /*global Nullable */
   const { t } = useI18n();
