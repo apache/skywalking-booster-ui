@@ -54,7 +54,6 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { ref, computed, watch } from "vue";
-  import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { CalculationOpts, MetricModes } from "../../../data";
   import { useDashboardStore } from "@/store/modules/dashboard";
@@ -63,15 +62,40 @@ limitations under the License. -->
   /*global defineEmits, defineProps */
   const props = defineProps({
     type: { type: String, default: "" },
-    metrics: { type: Array as PropType<string[]>, default: () => [] },
+    isExpression: { type: Boolean, default: true },
   });
   const { t } = useI18n();
   const emit = defineEmits(["update"]);
   const dashboardStore = useDashboardStore();
-  const m = props.metrics.map((d: string) => {
-    return { label: d, value: d };
+  const getMetrics = computed(() => {
+    let metrics = [];
+    const {
+      linkServerExpressions,
+      linkServerMetrics,
+      linkClientExpressions,
+      linkClientMetrics,
+      nodeExpressions,
+      nodeMetrics,
+    } = dashboardStore.selectedGrid;
+    switch (props.type) {
+      case "linkServerMetricConfig":
+        metrics = props.isExpression ? linkServerExpressions : linkServerMetrics;
+        break;
+      case "linkClientMetricConfig":
+        metrics = props.isExpression ? linkClientExpressions : linkClientMetrics;
+        break;
+      case "nodeMetricConfig":
+        metrics = props.isExpression ? nodeExpressions : nodeMetrics;
+        break;
+    }
+    return metrics || [];
   });
-  const metricList = ref<Option[]>(m.length ? m : [{ label: "", value: "" }]);
+  const metricList = computed(() => {
+    const m = getMetrics.value.map((d: string) => {
+      return { label: d, value: d };
+    });
+    return m.length ? m : [{ label: "", value: "" }];
+  });
   const currentMetric = ref<string>(metricList.value[0].value);
   const currentConfig = ref<{ unit: string; calculation: string; label: string }>({
     unit: "",
@@ -81,6 +105,7 @@ limitations under the License. -->
   const currentIndex = ref<number>(0);
   const getMetricConfig = computed(() => {
     let config = [];
+
     switch (props.type) {
       case "linkServerMetricConfig":
         config = dashboardStore.selectedGrid.linkServerMetricConfig;
@@ -120,10 +145,6 @@ limitations under the License. -->
   watch(
     () => props.type,
     () => {
-      const m = props.metrics.map((d: string) => {
-        return { label: d, value: d };
-      });
-      metricList.value = m.length ? m : [{ label: "", value: "" }];
       currentMetric.value = metricList.value[0].value;
       const config = getMetricConfig.value || [];
       currentIndex.value = 0;
