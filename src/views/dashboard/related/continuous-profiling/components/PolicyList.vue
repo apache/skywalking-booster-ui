@@ -198,6 +198,7 @@ limitations under the License. -->
 
   .new-task {
     float: right;
+    color: $font-color;
   }
 
   .reload {
