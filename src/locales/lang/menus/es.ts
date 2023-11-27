@@ -41,13 +41,6 @@ const titles = {
   service_mesh_control_plane_desc: "Provide monitoring of the behavior of Istio through its self-monitoring metrics.",
   service_mesh_data_plane: "Plano de Datos",
   service_mesh_data_plane_desc: "Observe Envoy Proxy through Envoy Metrics Service.",
-  // Functions
-  functions: "Funciones",
-  functions_desc:
-    "FaaS (Function-as-a-Service) is a type of cloud-computing service that allows you to execute code in response to events without the complex infrastructure typically associated with building and launching microservices applications.",
-  functions_openfunction: "OpenFunction",
-  functions_openfunction_desc:
-    "OpenFunction as a FaaS platform, provides out-of-box observability with SkyWalking integration.",
   // Kubernetes
   kubernetes: "Kubernetes",
   kubernetes_desc:
