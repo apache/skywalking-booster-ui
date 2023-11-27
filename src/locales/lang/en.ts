@@ -165,7 +165,6 @@ const msg = {
   iframeSrc: "Iframe Link",
   generateLink: "Generate Link",
   setDuration: "Lock Query Duration",
-  openFunction: "OpenFunction",
   period: "Period",
   windows: "Windows",
   seconds: "Seconds",

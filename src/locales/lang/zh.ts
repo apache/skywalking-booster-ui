@@ -163,7 +163,6 @@ const msg = {
   iframeSrc: "Iframe链接",
   generateLink: "生成链接",
   setDuration: "锁定查询持续时间",
-  openFunction: "OpenFunction",
   period: "周期",
   windows: "Windows",
   seconds: "秒",
