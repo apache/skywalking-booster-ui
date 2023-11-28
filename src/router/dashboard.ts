@@ -16,6 +16,10 @@
  */
 import type { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
+import List from "@/views/dashboard/List.vue";
+import New from "@/views/dashboard/New.vue";
+import Edit from "@/views/dashboard/Edit.vue";
+import Widget from "@/views/dashboard/Widget.vue";
 
 export const routesDashboard: Array<RouteRecordRaw> = [
   {
@@ -32,7 +36,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
     children: [
       {
         path: "/dashboard/list",
-        component: () => import("@/views/dashboard/List.vue"),
+        component: List,
         name: "List",
         meta: {
           i18nKey: "dashboardList",
@@ -42,7 +46,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       },
       {
         path: "/dashboard/new",
-        component: () => import("@/views/dashboard/New.vue"),
+        component: New,
         name: "New",
         meta: {
           i18nKey: "dashboardNew",
@@ -54,26 +58,26 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         path: "",
         redirect: "/dashboard/:layerId/:entity/:name",
         name: "Create",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: Edit,
         meta: {
           notShow: true,
         },
         children: [
           {
             path: "/dashboard/:layerId/:entity/:name",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "CreateChild",
           },
           {
             path: "/dashboard/:layerId/:entity/:name/tab/:activeTabIndex",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "CreateActiveTabIndex",
           },
         ],
       },
       {
         path: "",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: Edit,
         name: "View",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:name",
         meta: {
@@ -82,12 +86,12 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         children: [
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:name",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewChild",
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:name/tab/:activeTabIndex",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewActiveTabIndex",
           },
         ],
@@ -95,7 +99,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       {
         path: "",
         redirect: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: Edit,
         name: "ViewServiceRelation",
         meta: {
           notShow: true,
@@ -103,12 +107,12 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         children: [
           {
             path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewServiceRelation",
           },
           {
             path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name/tab/:activeTabIndex",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewServiceRelationActiveTabIndex",
           },
         ],
@@ -116,7 +120,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       {
         path: "",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: Edit,
         name: "ViewPod",
         meta: {
           notShow: true,
@@ -124,12 +128,12 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         children: [
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewPod",
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name/tab/:activeTabIndex",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewPodActiveTabIndex",
           },
         ],
@@ -137,7 +141,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       {
         path: "",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:name",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: Edit,
         name: "ViewProcess",
         meta: {
           notShow: true,
@@ -145,12 +149,12 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         children: [
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:name",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewProcess",
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:name/tab/:activeTabIndex",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewProcessActiveTabIndex",
           },
         ],
@@ -158,7 +162,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       {
         path: "",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: Edit,
         name: "PodRelation",
         meta: {
           notShow: true,
@@ -166,12 +170,12 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         children: [
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewPodRelation",
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name/tab/:activeTabIndex",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewPodRelationActiveTabIndex",
           },
         ],
@@ -180,7 +184,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         path: "",
         redirect:
           "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name",
-        component: () => import("@/views/dashboard/Edit.vue"),
+        component: Edit,
         name: "ProcessRelation",
         meta: {
           notShow: true,
@@ -188,17 +192,17 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         children: [
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewProcessRelation",
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name/tab/:activeTabIndex",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewProcessRelationActiveTabIndex",
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name/duration/:duration",
-            component: () => import("@/views/dashboard/Edit.vue"),
+            component: Edit,
             name: "ViewProcessRelationDuration",
           },
         ],
@@ -206,14 +210,14 @@ export const routesDashboard: Array<RouteRecordRaw> = [
       {
         path: "",
         name: "Widget",
-        component: () => import("@/views/dashboard/Widget.vue"),
+        component: Widget,
         meta: {
           notShow: true,
         },
         children: [
           {
             path: "/page/:layer/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:config/:duration?",
-            component: () => import("@/views/dashboard/Widget.vue"),
+            component: Widget,
             name: "ViewWidget",
           },
         ],

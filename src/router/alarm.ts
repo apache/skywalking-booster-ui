@@ -16,6 +16,7 @@
  */
 import type { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
+import Alarm from "@/views/Alarm.vue";
 
 export const routesAlarm: Array<RouteRecordRaw> = [
   {
@@ -33,7 +34,7 @@ export const routesAlarm: Array<RouteRecordRaw> = [
       {
         path: "/alerting",
         name: "Alarm",
-        component: () => import("@/views/Alarm.vue"),
+        component: Alarm,
       },
     ],
   },

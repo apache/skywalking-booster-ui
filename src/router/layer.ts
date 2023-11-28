@@ -17,6 +17,7 @@
 import Layout from "@/layout/Index.vue";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MenuOptions } from "@/types/app";
+import Layer from "@/views/Layer.vue";
 
 function layerDashboards() {
   const appStore = useAppStoreWithOut();
@@ -47,13 +48,13 @@ function layerDashboards() {
           descKey: child.descKey,
           i18nKey: child.i18nKey,
         },
-        component: () => import("@/views/Layer.vue"),
+        component: Layer,
       };
       route.children.push(d);
       const tab = {
         name: `${child.name}ActiveTabIndex`,
         path: `/${child.path}/tab/:activeTabIndex`,
-        component: () => import("@/views/Layer.vue"),
+        component: Layer,
         meta: {
           notShow: true,
           layer: child.layer,
@@ -74,7 +75,7 @@ function layerDashboards() {
             descKey: item.descKey,
             i18nKey: item.i18nKey,
           },
-          component: () => import("@/views/Layer.vue"),
+          component: Layer,
         },
       ];
     }

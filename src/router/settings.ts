@@ -16,6 +16,7 @@
  */
 import type { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
+import Settings from "@/views/Settings.vue";
 
 export const routesSettings: Array<RouteRecordRaw> = [
   {
@@ -33,7 +34,7 @@ export const routesSettings: Array<RouteRecordRaw> = [
       {
         path: "/settings",
         name: "Settings",
-        component: () => import("@/views/Settings.vue"),
+        component: Settings,
       },
     ],
   },
