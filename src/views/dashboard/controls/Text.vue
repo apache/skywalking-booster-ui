@@ -42,6 +42,7 @@ limitations under the License. -->
         :style="{
           color: fontColor,
           fontSize: graph.fontSize + 'px',
+          textDecoration: 'underline',
         }"
       >
         {{ graph.content }}
