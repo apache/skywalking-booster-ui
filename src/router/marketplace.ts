@@ -16,6 +16,7 @@
  */
 import type { RouteRecordRaw } from "vue-router";
 import Layout from "@/layout/Index.vue";
+import Marketplace from "@/views/Marketplace.vue";
 
 export const routesMarketplace: Array<RouteRecordRaw> = [
   {
@@ -33,7 +34,7 @@ export const routesMarketplace: Array<RouteRecordRaw> = [
       {
         path: "/marketplace",
         name: "MenusManagement",
-        component: () => import("@/views/Marketplace.vue"),
+        component: Marketplace,
       },
     ],
   },
