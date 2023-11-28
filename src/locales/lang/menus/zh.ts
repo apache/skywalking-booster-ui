@@ -35,12 +35,6 @@ const titles = {
   service_mesh_control_plane_desc: "通过Istio的自我监控指标提供对其行为的监控。",
   service_mesh_data_plane: "数据平面",
   service_mesh_data_plane_desc: "通过Envoy Metrics Service观察Envoy Proxy。",
-  // Functions
-  functions: "Functions",
-  functions_desc:
-    "FaaS（功能即服务）是一种云计算服务，允许您在没有通常与构建和启动微服务应用程序相关的复杂基础设施的情况下执行代码以响应事件。",
-  functions_openfunction: "OpenFunction",
-  functions_openfunction_desc: "OpenFunction作为一个FaaS平台，通过SkyWalking集成提供开箱即用的可观察性。",
   // Kubernetes
   kubernetes: "Kubernetes",
   kubernetes_desc: "Kubernetes是一个开源的容器编排系统，用于自动化软件部署、扩展和管理。",

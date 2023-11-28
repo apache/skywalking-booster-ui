@@ -149,7 +149,6 @@ const msg = {
   iframeSrc: "Enlace Iframe",
   generateLink: "Generar enlaces",
   setDuration: "Duración de la consulta de bloqueo",
-  openFunction: "OpenFunction",
   seconds: "Segundos",
   hourTip: "Seleccione Hora",
   minuteTip: "Seleccione Minuto",
