@@ -104,6 +104,7 @@ limitations under the License. -->
   .category-body {
     padding-left: 20px 30px;
     width: 100%;
+    height: 100%;
     justify-content: space-between;
   }
 
