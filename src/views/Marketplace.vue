@@ -63,7 +63,7 @@ limitations under the License. -->
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  import type { MenuOptions } from "@/types/app";
+  import type { MenuOptions, SubItem } from "@/types/app";
 
   const { t, te } = useI18n();
   const appStore = useAppStoreWithOut();
@@ -81,7 +81,15 @@ limitations under the License. -->
       return;
     }
 
-    menus.value = appStore.allMenus.filter((item: MenuOptions) => item.name.includes(searchText.value));
+    menus.value = appStore.allMenus.filter(
+      (item: MenuOptions) =>
+        (te(item.i18nKey) ? t(item.i18nKey) : item.title).toLowerCase().includes(searchText.value.toLowerCase()) ||
+        !!item.subItems.find((subItem: SubItem) =>
+          (te(subItem.i18nKey) ? t(subItem.i18nKey) : item.title)
+            .toLowerCase()
+            .includes(searchText.value.toLowerCase()),
+        ),
+    );
     currentItems.value = menus.value[0] || {};
   }
 </script>
