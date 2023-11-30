@@ -59,7 +59,7 @@ export interface SubItem {
   icon: string;
   title: string;
   activate: boolean;
-  name?: string;
+  name: string;
   path?: string;
   notShow?: boolean;
   id?: string;

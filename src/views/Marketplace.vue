@@ -14,11 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="menus flex-v">
+    <div>
+      <el-input v-model="searchText" placeholder="Please input name" class="input-with-search" @change="searchMenus">
+        <template #append>
+          <el-button size="small">
+            <Icon size="sm" iconName="search" />
+          </el-button>
+        </template>
+      </el-input>
+    </div>
     <div class="category-body flex-h">
       <div class="mr-20 mt-10 flex-h category">
         <el-card
           class="item"
-          v-for="(menu, index) in appStore.allMenus"
+          v-for="(menu, index) in menus"
           :key="index"
           @click="handleItems(menu)"
           :class="currentItems.name === menu.name ? 'active' : ''"
@@ -59,9 +68,19 @@ limitations under the License. -->
   const { t, te } = useI18n();
   const appStore = useAppStoreWithOut();
   const currentItems = ref<MenuOptions>(appStore.allMenus[0] || {});
+  const searchText = ref<string>("");
+  const menus = ref<MenuOptions[]>(appStore.allMenus || []);
 
   function handleItems(item: MenuOptions) {
     currentItems.value = item;
+  }
+
+  function searchMenus() {
+    if (!searchText.value) {
+      menus.value = appStore.allMenus;
+      return;
+    }
+    menus.value = appStore.allMenus.filter((item: MenuOptions) => item.name.includes(searchText.value));
   }
 </script>
 <style lang="scss" scoped>
@@ -75,7 +94,6 @@ limitations under the License. -->
   .category-body {
     padding-left: 20px 30px;
     width: 100%;
-    height: 100%;
     justify-content: space-between;
   }
 
@@ -109,6 +127,10 @@ limitations under the License. -->
     margin-right: 10px;
     width: 300px;
     cursor: pointer;
+  }
+
+  .input-with-search {
+    width: 300px;
   }
 
   .category {
