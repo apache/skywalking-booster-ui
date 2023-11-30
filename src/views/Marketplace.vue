@@ -80,7 +80,9 @@ limitations under the License. -->
       menus.value = appStore.allMenus;
       return;
     }
+
     menus.value = appStore.allMenus.filter((item: MenuOptions) => item.name.includes(searchText.value));
+    currentItems.value = menus.value[0] || {};
   }
 </script>
 <style lang="scss" scoped>
