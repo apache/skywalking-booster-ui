@@ -102,12 +102,17 @@ limitations under the License. -->
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
+  const props = {
+    serviceId: { type: String, default: "" },
+  };
+
   export default defineComponent({
     name: "TraceDetail",
     components: {
       ...graphs,
     },
-    setup() {
+    props,
+    setup(props) {
       const appStore = useAppStoreWithOut();
       /*global Recordable */
       const options: Recordable<LayoutConfig> = inject("options") || {};
@@ -138,6 +143,7 @@ limitations under the License. -->
           {
             sourceId: options?.id || "",
             traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
+            id: props.serviceId || undefined,
           },
           "Log",
         );
