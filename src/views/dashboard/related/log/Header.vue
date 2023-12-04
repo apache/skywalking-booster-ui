@@ -199,6 +199,9 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
       return;
     }
+    if (!logStore.services.length) {
+      return;
+    }
     if (props.data.filters && props.data.filters.id) {
       state.service = logStore.services.find((item: { id: string }) => item.id === props.data.filters?.id);
     } else {
