@@ -199,7 +199,11 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
       return;
     }
-    state.service = logStore.services[0];
+    if (props.data.filters && props.data.filters.id) {
+      state.service = logStore.services.find((item: { id: string }) => item.id === props.data.filters?.id);
+    } else {
+      state.service = logStore.services[0];
+    }
     getInstances(state.service.id);
     getEndpoints(state.service.id);
   }

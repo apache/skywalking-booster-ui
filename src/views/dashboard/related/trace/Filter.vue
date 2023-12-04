@@ -90,7 +90,8 @@ limitations under the License. -->
   import { EntityType, QueryOrders, Status } from "../../data";
   import type { LayoutConfig } from "@/types/dashboard";
 
-  /*global defineProps, Recordable */
+  /*global defineProps, defineEmits, Recordable */
+  const emits = defineEmits(["get"]);
   const props = defineProps({
     needQuery: { type: Boolean, default: true },
     data: {
@@ -150,6 +151,8 @@ limitations under the License. -->
       return;
     }
     state.service = getCurrentNode(traceStore.services) || traceStore.services[0];
+    emits("get", state.service.id);
+
     getEndpoints(state.service.id);
     getInstances(state.service.id);
   }
@@ -232,6 +235,7 @@ limitations under the License. -->
     if (type === "service") {
       getEndpoints(state.service.id);
       getInstances(state.service.id);
+      emits("get", state.service.id);
     }
   }
   function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {

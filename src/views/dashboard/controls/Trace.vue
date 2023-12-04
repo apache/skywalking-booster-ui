@@ -25,16 +25,16 @@ limitations under the License. -->
       </div>
     </el-popover>
     <div class="header">
-      <Filter :needQuery="needQuery" :data="data" />
+      <Filter :needQuery="needQuery" :data="data" @get="getService" />
     </div>
     <div class="trace flex-h">
       <TraceList />
-      <TraceDetail />
+      <TraceDetail :serviceId="serviceId" />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import { provide } from "vue";
+  import { provide, ref } from "vue";
   import type { PropType } from "vue";
   import Filter from "../related/trace/Filter.vue";
   import TraceList from "../related/trace/TraceList.vue";
@@ -42,7 +42,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
 
-  /*global defineProps */
+  /* global defineProps */
   const props = defineProps({
     data: {
       type: Object as PropType<any>,
@@ -52,10 +52,14 @@ limitations under the License. -->
     needQuery: { type: Boolean, default: true },
   });
   provide("options", props.data);
+  const serviceId = ref<string>("");
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   function removeWidget() {
     dashboardStore.removeControls(props.data);
+  }
+  function getService(id: string) {
+    serviceId.value = id;
   }
 </script>
 <style lang="scss" scoped>
