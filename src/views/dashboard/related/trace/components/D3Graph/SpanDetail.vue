@@ -246,7 +246,6 @@ limitations under the License. -->
   }
 
   .popup-btn {
-    color: $text-color;
     margin-top: 40px;
     width: 100%;
     text-align: center;
