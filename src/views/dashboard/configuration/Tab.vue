@@ -13,11 +13,7 @@ limitations under the License. -->
 <template>
   <div class="item">
     <span class="label">{{ t("expressions") }}</span>
-    <div v-for="(exp, index) in expressions" :key="index" class="mb-10">
-      <div class="expression-param" contenteditable="true" @blur="changeExpression($event, index)">
-        {{ exp }}
-      </div>
-    </div>
+    <el-input class="input" v-model="expressions" size="small" @change="changeConfig" />
   </div>
   <div class="footer">
     <el-button size="small" @click="cancelConfig">
@@ -35,23 +31,12 @@ limitations under the License. -->
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
-  const expressions = ref<string[]>(originConfig.expressions || []);
-  console.log(expressions);
-  async function changeExpression(event: any, index: number) {
-    const params = (event.target.textContent || "").replace(/\s+/g, "");
+  const expressions = ref<string>(originConfig.expressions);
 
-    expressions.value[index] = params;
-    dashboardStore.selectWidget({
-      ...dashboardStore.selectedGrid,
-      expressions: expressions.value,
-    });
-  }
-  function changeConfig(param: { [key: string]: unknown }) {
+  function changeConfig() {
     const { selectedGrid } = dashboardStore;
-    dashboardStore.selectWidget({
-      ...selectedGrid,
-      ...param,
-    });
+
+    dashboardStore.selectWidget({ ...selectedGrid, expressions: expressions.value });
   }
   function applyConfig() {
     dashboardStore.setConfigPanel(false);
@@ -64,22 +49,6 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  .expression-param {
-    display: inline-block;
-    width: 400px;
-    border: 1px solid $border-color;
-    cursor: text;
-    padding: 0 5px;
-    border-radius: 3px;
-    outline: none;
-    margin-right: 5px;
-    min-height: 26px;
-
-    &:focus {
-      border-color: $active-color;
-    }
-  }
-
   .label {
     font-size: 13px;
     font-weight: 500;
@@ -89,6 +58,10 @@ limitations under the License. -->
 
   .item {
     margin-bottom: 10px;
+  }
+
+  .input {
+    width: 500px;
   }
 
   .footer {

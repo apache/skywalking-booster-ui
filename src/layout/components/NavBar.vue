@@ -93,7 +93,8 @@ limitations under the License. -->
   const savedTheme = window.localStorage.getItem("theme-is-dark");
   if (savedTheme === "false") {
     theme.value = false;
-  } else if (savedTheme === "") {
+  }
+  if (savedTheme === "") {
     // read the theme preference from system setting if there is no user setting
     theme.value = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   }
