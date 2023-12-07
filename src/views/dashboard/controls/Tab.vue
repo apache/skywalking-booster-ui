@@ -60,6 +60,9 @@ limitations under the License. -->
         </span>
         <template #dropdown>
           <el-dropdown-menu>
+            <el-dropdown-item @click="editConfig">
+              <span>{{ t("edit") }}</span>
+            </el-dropdown-item>
             <el-dropdown-item @click="canEditTabName = true">
               <span class="edit-tab">{{ t("editTab") }}</span>
             </el-dropdown-item>
@@ -224,6 +227,11 @@ limitations under the License. -->
         copy(path);
       }
       document.body.addEventListener("click", handleClick, false);
+
+      function editConfig() {
+        dashboardStore.setConfigPanel(true);
+        dashboardStore.selectWidget(props.data);
+      }
       watch(
         () => dashboardStore.activedGridItem,
         (data) => {
@@ -266,6 +274,7 @@ limitations under the License. -->
         clickTabs,
         copyLink,
         getStringWidth,
+        editConfig,
         ...toRefs(props),
         activeTabWidget,
         dashboardStore,
