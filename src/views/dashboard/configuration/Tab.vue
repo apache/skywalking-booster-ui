@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="item">
-    <span class="label">{{ t("content") }}</span>
+    <span class="label">{{ t("expressions") }}</span>
     <div v-for="(exp, index) in expressions" :key="index" class="mb-10">
       <div class="expression-param" contenteditable="true" @blur="changeExpression($event, index)">
         {{ exp }}
@@ -36,7 +36,7 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
   const expressions = ref<string[]>(originConfig.expressions || []);
-
+  console.log(expressions);
   async function changeExpression(event: any, index: number) {
     const params = (event.target.textContent || "").replace(/\s+/g, "");
 
@@ -48,11 +48,10 @@ limitations under the License. -->
   }
   function changeConfig(param: { [key: string]: unknown }) {
     const { selectedGrid } = dashboardStore;
-    const graph = {
-      ...selectedGrid.graph,
+    dashboardStore.selectWidget({
+      ...selectedGrid,
       ...param,
-    };
-    dashboardStore.selectWidget({ ...selectedGrid, graph });
+    });
   }
   function applyConfig() {
     dashboardStore.setConfigPanel(false);
