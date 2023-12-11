@@ -12,8 +12,11 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="item">
-    <span class="label">{{ t("expressions") }}</span>
-    <el-input class="input" v-model="expressions" size="small" @change="changeConfig" />
+    <span class="label">{{ t("tabExpressions") }}</span>
+    <div class="mt-10" v-for="(child, index) in dashboardStore.selectedGrid.children || []" :key="index">
+      <span class="name">{{ child.name }}</span>
+      <el-input class="input" size="small" v-model="expressions[child.name]" @change="changeExpression(child.name)" />
+    </div>
   </div>
   <div class="footer">
     <el-button size="small" @click="cancelConfig">
@@ -26,23 +29,31 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
-  import { ref } from "vue";
+  import { reactive } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { ElMessage } from "element-plus";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
-  const expressions = ref<string>(originConfig.expressions);
+  const expressions = reactive<{ [key: string]: string }>({});
 
-  function changeConfig() {
-    if (!expressions.value.includes("is_present")) {
+  for (const child of originConfig.children || []) {
+    expressions[child.name] = child.expression || "";
+  }
+  function changeExpression(name: string) {
+    if (!expressions[name].includes("is_present")) {
       ElMessage.error("Only support the is_present function");
       return;
     }
-    const { selectedGrid } = dashboardStore;
+    const children = dashboardStore.selectedGrid.children || [];
 
-    dashboardStore.selectWidget({ ...selectedGrid, expressions: expressions.value });
+    for (const item of children) {
+      if (item.name === name) {
+        item.expression = expressions[name];
+      }
+    }
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, children });
   }
   function applyConfig() {
     dashboardStore.setConfigPanel(false);
@@ -79,5 +90,10 @@ limitations under the License. -->
     text-align: right;
     width: 100%;
     background-color: $theme-background;
+  }
+
+  .name {
+    width: 180px;
+    display: inline-block;
   }
 </style>
