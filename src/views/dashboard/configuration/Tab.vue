@@ -28,12 +28,18 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { ref } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import { ElMessage } from "element-plus";
+
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
   const expressions = ref<string>(originConfig.expressions);
 
   function changeConfig() {
+    if (!expressions.value.includes("is_present")) {
+      ElMessage.error("Only support the is_present function");
+      return;
+    }
     const { selectedGrid } = dashboardStore;
 
     dashboardStore.selectWidget({ ...selectedGrid, expressions: expressions.value });

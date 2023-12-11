@@ -117,6 +117,7 @@ limitations under the License. -->
   import controls from "./tab";
   import { dragIgnoreFrom } from "../data";
   import copy from "@/utils/copy";
+  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
 
   const props = {
     data: {
@@ -124,6 +125,7 @@ limitations under the License. -->
       default: () => ({ children: [] }),
     },
     active: { type: Boolean, default: false },
+    needQuery: { type: Boolean, default: false },
   };
   export default defineComponent({
     name: "Tab",
@@ -147,6 +149,10 @@ limitations under the License. -->
         dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
         dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
       }
+
+      // if (props.needQuery || !dashboardStore.currentDashboard.id) {
+      //   queryExpressions();
+      // }
 
       function clickTabs(e: Event, idx: number) {
         e.stopPropagation();
@@ -232,6 +238,18 @@ limitations under the License. -->
         dashboardStore.setConfigPanel(true);
         dashboardStore.selectWidget(props.data);
       }
+
+      async function queryExpressions() {
+        const params = (await useExpressionsQueryProcessor({ metrics: [props.data.expressions] })) || {};
+        console.log(params);
+      }
+
+      watch(
+        () => props.data.expressions,
+        () => {
+          queryExpressions();
+        },
+      );
       watch(
         () => dashboardStore.activedGridItem,
         (data) => {
