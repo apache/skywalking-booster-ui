@@ -15,30 +15,41 @@ limitations under the License. -->
 <template>
   <div class="flex-h tab-header">
     <div class="tabs scroll_bar_style" @click="handleClick">
-      <span
-        v-for="(child, idx) in data.children || []"
-        :key="idx"
-        :class="{ active: activeTabIndex === idx }"
-        @click="clickTabs($event, idx)"
-        v-show="child.enable !== false"
-      >
-        <input
-          @click="editTabName($event, idx)"
-          v-model="child.name"
-          placeholder="Please input"
-          class="tab-name"
-          :readonly="isNaN(editTabIndex) && !canEditTabName"
-          :class="{ view: !canEditTabName }"
+      <template v-for="(child, idx) in data.children || []">
+        <span
+          :key="idx"
+          :class="{ active: activeTabIndex === idx }"
+          @click="clickTabs($event, idx)"
+          v-if="child.enable !== false"
+        >
+          <input
+            @click="editTabName($event, idx)"
+            v-model="child.name"
+            placeholder="Please input"
+            class="tab-name"
+            :readonly="isNaN(editTabIndex) && !canEditTabName"
+            :class="{ view: !canEditTabName }"
+            :style="{ width: getStringWidth(child.name) + 'px' }"
+          />
+          <Icon
+            v-show="activeTabIndex === idx"
+            size="sm"
+            iconName="cancel"
+            @click="deleteTabItem($event, idx)"
+            v-if="dashboardStore.editMode && canEditTabName"
+          />
+        </span>
+      </template>
+      <template v-for="(child, idx) in data.children || []">
+        <span
+          :key="idx"
           :style="{ width: getStringWidth(child.name) + 'px' }"
-        />
-        <Icon
-          v-show="activeTabIndex === idx"
-          size="sm"
-          iconName="cancel"
-          @click="deleteTabItem($event, idx)"
-          v-if="dashboardStore.editMode && canEditTabName"
-        />
-      </span>
+          v-if="child.enable === false"
+          class="tab-diabled"
+        >
+          {{ child.name }}
+        </span>
+      </template>
       <span class="tab-icons">
         <el-tooltip content="Copy Link" placement="bottom">
           <i @click="copyLink">
@@ -126,7 +137,6 @@ limitations under the License. -->
       default: () => ({ children: [] }),
     },
     active: { type: Boolean, default: false },
-    needQuery: { type: Boolean, default: false },
   };
   export default defineComponent({
     name: "Tab",
@@ -151,9 +161,7 @@ limitations under the License. -->
         dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
       }
 
-      // if (props.needQuery || !dashboardStore.currentDashboard.id) {
-      //   queryExpressions();
-      // }
+      queryExpressions();
 
       function clickTabs(e: Event, idx: number) {
         e.stopPropagation();
@@ -246,16 +254,20 @@ limitations under the License. -->
         for (const child of tabsProps.children || []) {
           child.expression && metrics.push(child.expression);
         }
+        if (!metrics.length) {
+          return;
+        }
         const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
 
         for (const child of tabsProps.children || []) {
           if (params.source[child.expression || ""]) {
             child.enable = !!Number(params.source[child.expression || ""]);
           } else {
-            child.enable = true;
+            child.enable = false;
           }
         }
         dashboardStore.setConfigs(tabsProps);
+        console.log(props.data);
       }
 
       watch(
@@ -332,6 +344,7 @@ limitations under the License. -->
     white-space: nowrap;
     overflow-y: hidden;
     padding: 0 10px;
+    display: inline-flex;
 
     span {
       display: inline-block;
@@ -352,6 +365,18 @@ limitations under the License. -->
       text-overflow: ellipsis;
       margin-right: 20px;
       background-color: $theme-background;
+    }
+
+    .tab-diabled {
+      max-width: 150px;
+      outline: none;
+      color: $disabled-color;
+      font-style: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 20px;
+      background-color: $theme-background;
+      cursor: not-allowed;
     }
 
     .tab-icons {
