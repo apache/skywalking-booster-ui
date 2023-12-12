@@ -20,6 +20,7 @@ limitations under the License. -->
         :key="idx"
         :class="{ active: activeTabIndex === idx }"
         @click="clickTabs($event, idx)"
+        v-show="child.enable !== false"
       >
         <input
           @click="editTabName($event, idx)"
@@ -249,17 +250,20 @@ limitations under the License. -->
 
         for (const child of tabsProps.children || []) {
           if (params.source[child.expression || ""]) {
-            child.enable = !!Number(params.source[child.expression || ""]) || true;
+            child.enable = !!Number(params.source[child.expression || ""]);
           } else {
             child.enable = true;
           }
         }
-        console.log(tabsProps);
+        dashboardStore.setConfigs(tabsProps);
       }
 
       watch(
-        () => (props.data.children || []).map((d: { name: string }) => d.name),
-        () => {
+        () => (props.data.children || []).map((d: any) => d.expression),
+        (old: string[], data: string[]) => {
+          if (JSON.stringify(data) === JSON.stringify(old)) {
+            return;
+          }
           queryExpressions();
         },
       );
