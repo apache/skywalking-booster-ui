@@ -36,7 +36,7 @@ export interface LayoutConfig {
   expressions?: string[];
   metricTypes?: string[];
   typesOfMQE?: string[];
-  children?: { name: string; children: LayoutConfig[]; expression?: string }[];
+  children?: { name: string; children: LayoutConfig[]; expression?: string; enable: boolean }[];
   activedTabIndex?: number;
   metricConfig?: MetricConfigOpt[];
   id?: string;

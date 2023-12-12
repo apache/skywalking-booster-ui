@@ -149,7 +149,6 @@ limitations under the License. -->
         dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
         dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
       }
-      console.log(props.data);
 
       // if (props.needQuery || !dashboardStore.currentDashboard.id) {
       //   queryExpressions();
@@ -241,12 +240,21 @@ limitations under the License. -->
       }
 
       async function queryExpressions() {
+        const tabsProps = props.data;
         const metrics = [];
-        for (const child of props.data.children || []) {
+        for (const child of tabsProps.children || []) {
           child.expression && metrics.push(child.expression);
         }
-        const params = (await useExpressionsQueryProcessor({ metrics })) || {};
-        console.log(params);
+        const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
+
+        for (const child of tabsProps.children || []) {
+          if (params.source[child.expression || ""]) {
+            child.enable = !!Number(params.source[child.expression || ""]) || true;
+          } else {
+            child.enable = true;
+          }
+        }
+        console.log(tabsProps);
       }
 
       watch(
