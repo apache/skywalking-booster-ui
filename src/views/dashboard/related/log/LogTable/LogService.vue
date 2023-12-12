@@ -41,6 +41,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { LayoutConfig } from "@/types/dashboard";
   import { dateFormat } from "@/utils/dateFormat";
+  import { WidgetType } from "@/views/dashboard/data";
 
   /*global defineProps, defineEmits, Recordable */
   const props = defineProps({
@@ -78,7 +79,7 @@ limitations under the License. -->
         traceId: id,
         id: props.data.serviceId || "",
       },
-      "Trace",
+      WidgetType.Trace,
     );
   }
 </script>

@@ -139,6 +139,7 @@ limitations under the License. -->
   import { saveFile, readFile } from "@/utils/file";
   import { EntityType } from "./data";
   import { isEmptyObject } from "@/utils/is";
+  import { WidgetType } from "@/views/dashboard/data";
 
   /*global Nullable*/
   const { t } = useI18n();
@@ -271,12 +272,23 @@ limitations under the License. -->
       if (!(child.metricConfig && child.metricConfig.length)) {
         delete child.metricConfig;
       }
-      if (child.type === "Tab") {
+      if (child.type === WidgetType.Tab) {
         for (const item of child.children || []) {
           optimizeTemplate(item.children);
         }
       }
-      if (["Trace", "Topology", "Tab", "Profile", "Ebpf", "Log"].includes(child.type)) {
+      if (
+        (
+          [
+            WidgetType.Trace,
+            WidgetType.Topology,
+            WidgetType.Tab,
+            WidgetType.Profile,
+            WidgetType.Ebpf,
+            WidgetType.Log,
+          ] as string[]
+        ).includes(child.type)
+      ) {
         delete child.widget;
       }
     }

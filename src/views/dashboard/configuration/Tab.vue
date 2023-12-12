@@ -29,15 +29,21 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
-  import { reactive } from "vue";
+  import { reactive, computed } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { ElMessage } from "element-plus";
+  import { WidgetType } from "@/views/dashboard/data";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
   const expressions = reactive<{ [key: string]: string }>({});
-
+  const widgetTabs = computed(() =>
+    dashboardStore.selectedGrid.children.filter((child: any[]) =>
+      child.find((item: any) => item.type === WidgetType.Widget),
+    ),
+  );
+  console.log(widgetTabs.value);
   for (const child of originConfig.children || []) {
     expressions[child.name] = child.expression || "";
   }

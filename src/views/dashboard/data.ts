@@ -349,3 +349,21 @@ export enum CallTypes {
   Server = "SERVER",
   Client = "CLIENT",
 }
+
+export enum WidgetType {
+  Widget = "Widget",
+  Topology = "Topology",
+  Tab = "Tab",
+  Text = "Text",
+  TimeRange = "TimeRange",
+  Trace = "Trace",
+  Log = "Log",
+  Profile = "Profile",
+  Ebpf = "Ebpf",
+  DemandLog = "DemandLog",
+  Event = "Event",
+  NetworkProfiling = "NetworkProfiling",
+  ContinuousProfiling = "ContinuousProfiling",
+  ThirdPartyApp = "ThirdPartyApp",
+  TaskTimeline = "TaskTimeline",
+}

@@ -29,6 +29,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
   import getLocalTime from "@/utils/localtime";
+  import { WidgetType } from "@/views/dashboard/data";
 
   const eventStore = useEventStore();
   /*global defineProps, Nullable */
@@ -122,7 +123,9 @@ limitations under the License. -->
     }[],
     dashboard: LayoutConfig[],
   ) {
-    const widgets = dashboard.filter((d: { type: string }) => ["Trace", "Log"].includes(d.type));
+    const widgets = dashboard.filter((d: { type: string }) =>
+      ([WidgetType.Trace, WidgetType.Log] as string[]).includes(d.type),
+    );
     const index = items[0];
     const i = events[index - 1 || 0];
     for (const widget of widgets) {

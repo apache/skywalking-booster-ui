@@ -65,6 +65,7 @@ limitations under the License. -->
   import { TextColors } from "@/views/dashboard/data";
   import Trace from "@/views/dashboard/related/trace/Index.vue";
   import { QueryOrders, Status, RefIdTypes, ProtocolTypes, ExpressionResultType } from "../data";
+  import { WidgetType } from "@/views/dashboard/data";
 
   /*global defineProps */
   const props = defineProps({
@@ -90,7 +91,7 @@ limitations under the License. -->
   const { t } = useI18n();
   const showTrace = ref<boolean>(false);
   const traceOptions = ref<{ type: string; filters?: unknown }>({
-    type: "Trace",
+    type: WidgetType.Trace,
   });
   const refIdType = computed(
     () => (props.config.relatedTrace && props.config.relatedTrace.refIdType) || RefIdTypes[0].value,

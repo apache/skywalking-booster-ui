@@ -143,7 +143,8 @@ limitations under the License. -->
     ServiceRelationTools,
     ProcessTools,
     ProcessRelationTools,
-  } from "../data";
+    WidgetType,
+  } from "@/views/dashboard/data";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { ElMessage } from "element-plus";
   import type { Option } from "@/types/app";
@@ -412,46 +413,46 @@ limitations under the License. -->
   function setTabControls(id: string) {
     switch (id) {
       case "addWidget":
-        dashboardStore.addTabControls("Widget");
+        dashboardStore.addTabControls(WidgetType.Widget);
         break;
       case "addTrace":
-        dashboardStore.addTabControls("Trace");
+        dashboardStore.addTabControls(WidgetType.Trace);
         break;
       case "addLog":
-        dashboardStore.addTabControls("Log");
+        dashboardStore.addTabControls(WidgetType.Log);
         break;
       case "addProfile":
-        dashboardStore.addTabControls("Profile");
+        dashboardStore.addTabControls(WidgetType.Profile);
         break;
       case "addEbpf":
-        dashboardStore.addTabControls("Ebpf");
+        dashboardStore.addTabControls(WidgetType.Ebpf);
         break;
       case "addTopology":
-        dashboardStore.addTabControls("Topology");
+        dashboardStore.addTabControls(WidgetType.Topology);
         break;
       case "addText":
-        dashboardStore.addTabControls("Text");
+        dashboardStore.addTabControls(WidgetType.Text);
         break;
       case "addDemandLog":
-        dashboardStore.addTabControls("DemandLog");
+        dashboardStore.addTabControls(WidgetType.DemandLog);
         break;
       case "addEvent":
-        dashboardStore.addTabControls("Event");
+        dashboardStore.addTabControls(WidgetType.Event);
         break;
       case "addNetworkProfiling":
-        dashboardStore.addTabControls("NetworkProfiling");
+        dashboardStore.addTabControls(WidgetType.NetworkProfiling);
         break;
       case "addContinuousProfiling":
-        dashboardStore.addTabControls("ContinuousProfiling");
+        dashboardStore.addTabControls(WidgetType.ContinuousProfiling);
         break;
       case "addTimeRange":
-        dashboardStore.addTabControls("TimeRange");
+        dashboardStore.addTabControls(WidgetType.TimeRange);
         break;
       case "addIframe":
-        dashboardStore.addTabControls("ThirdPartyApp");
+        dashboardStore.addTabControls(WidgetType.ThirdPartyApp);
         break;
       case "addTaskTimeline":
-        dashboardStore.addTabControls("TaskTimeline");
+        dashboardStore.addTabControls(WidgetType.TaskTimeline);
         break;
       default:
         ElMessage.info("Don't support this control");
@@ -462,52 +463,52 @@ limitations under the License. -->
   function setControls(id: string) {
     switch (id) {
       case "addWidget":
-        dashboardStore.addControl("Widget");
+        dashboardStore.addControl(WidgetType.Widget);
         break;
       case "addTab":
-        dashboardStore.addControl("Tab");
+        dashboardStore.addControl(WidgetType.Tab);
         break;
       case "addTrace":
-        dashboardStore.addControl("Trace");
+        dashboardStore.addControl(WidgetType.Trace);
         break;
       case "addProfile":
-        dashboardStore.addControl("Profile");
+        dashboardStore.addControl(WidgetType.Profile);
         break;
       case "addEbpf":
-        dashboardStore.addControl("Ebpf");
+        dashboardStore.addControl(WidgetType.Ebpf);
         break;
       case "addLog":
-        dashboardStore.addControl("Log");
+        dashboardStore.addControl(WidgetType.Log);
         break;
       case "addTopology":
-        dashboardStore.addControl("Topology");
+        dashboardStore.addControl(WidgetType.Topology);
         break;
       case "addText":
-        dashboardStore.addControl("Text");
+        dashboardStore.addControl(WidgetType.Text);
         break;
       case "addDemandLog":
-        dashboardStore.addControl("DemandLog");
+        dashboardStore.addControl(WidgetType.DemandLog);
         break;
       case "addEvent":
-        dashboardStore.addControl("Event");
+        dashboardStore.addControl(WidgetType.Event);
         break;
       case "addNetworkProfiling":
-        dashboardStore.addControl("NetworkProfiling");
+        dashboardStore.addControl(WidgetType.NetworkProfiling);
         break;
       case "addContinuousProfiling":
-        dashboardStore.addControl("ContinuousProfiling");
+        dashboardStore.addControl(WidgetType.ContinuousProfiling);
         break;
       case "addTimeRange":
-        dashboardStore.addControl("TimeRange");
+        dashboardStore.addControl(WidgetType.TimeRange);
         break;
       case "addIframe":
-        dashboardStore.addControl("ThirdPartyApp");
+        dashboardStore.addControl(WidgetType.ThirdPartyApp);
         break;
       case "addTaskTimeline":
-        dashboardStore.addControl("TaskTimeline");
+        dashboardStore.addControl(WidgetType.TaskTimeline);
         break;
       default:
-        dashboardStore.addControl("Widget");
+        dashboardStore.addControl(WidgetType.Widget);
     }
   }
 

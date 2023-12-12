@@ -53,6 +53,7 @@ limitations under the License. -->
   import { addResizeListener, removeResizeListener } from "@/utils/event";
   import Trace from "@/views/dashboard/related/trace/Index.vue";
   import associateProcessor from "@/hooks/useAssociateProcessor";
+  import { WidgetType } from "@/views/dashboard/data";
 
   /*global Nullable, defineProps, defineEmits, Indexable*/
   const emits = defineEmits(["select"]);
@@ -63,7 +64,7 @@ limitations under the License. -->
   const currentParams = ref<Nullable<EventParams>>(null);
   const showTrace = ref<boolean>(false);
   const traceOptions = ref<{ type: string; filters?: unknown }>({
-    type: "Trace",
+    type: WidgetType.Trace,
   });
   const menuPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
   const props = defineProps({

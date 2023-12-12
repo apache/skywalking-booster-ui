@@ -101,6 +101,7 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { WidgetType } from "@/views/dashboard/data";
 
   const props = {
     serviceId: { type: String, default: "" },
@@ -145,7 +146,7 @@ limitations under the License. -->
             traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
             id: props.serviceId || undefined,
           },
-          "Log",
+          WidgetType.Log,
         );
       }
       return {

@@ -263,7 +263,7 @@ limitations under the License. -->
           if (params.source[child.expression || ""]) {
             child.enable = !!Number(params.source[child.expression || ""]);
           } else {
-            child.enable = false;
+            child.enable = true;
           }
         }
         dashboardStore.setConfigs(tabsProps);
