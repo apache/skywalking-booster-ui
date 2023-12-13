@@ -155,7 +155,7 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const appStore = useAppStoreWithOut();
   const params = useRoute().params;
-  const toolIcons = ref<{ name: string; content: string; id: string }[]>(AllTools);
+  const toolIcons = ref<{ name: string; content: string; id: WidgetType }[]>(AllTools);
   const loading = ref<boolean>(false);
   const states = reactive<{
     destService: string;
@@ -398,7 +398,7 @@ limitations under the License. -->
     loading.value = false;
   }
 
-  async function clickIcons(t: { id: string; content: string; name: string }) {
+  async function clickIcons(t: { id: WidgetType; content: string; name: string }) {
     if (dashboardStore.selectedGrid && dashboardStore.selectedGrid.type === "Tab") {
       setTabControls(t.id);
       return;
@@ -410,106 +410,20 @@ limitations under the License. -->
     setControls(t.id);
   }
 
-  function setTabControls(id: string) {
-    switch (id) {
-      case "addWidget":
-        dashboardStore.addTabControls(WidgetType.Widget);
-        break;
-      case "addTrace":
-        dashboardStore.addTabControls(WidgetType.Trace);
-        break;
-      case "addLog":
-        dashboardStore.addTabControls(WidgetType.Log);
-        break;
-      case "addProfile":
-        dashboardStore.addTabControls(WidgetType.Profile);
-        break;
-      case "addEbpf":
-        dashboardStore.addTabControls(WidgetType.Ebpf);
-        break;
-      case "addTopology":
-        dashboardStore.addTabControls(WidgetType.Topology);
-        break;
-      case "addText":
-        dashboardStore.addTabControls(WidgetType.Text);
-        break;
-      case "addDemandLog":
-        dashboardStore.addTabControls(WidgetType.DemandLog);
-        break;
-      case "addEvent":
-        dashboardStore.addTabControls(WidgetType.Event);
-        break;
-      case "addNetworkProfiling":
-        dashboardStore.addTabControls(WidgetType.NetworkProfiling);
-        break;
-      case "addContinuousProfiling":
-        dashboardStore.addTabControls(WidgetType.ContinuousProfiling);
-        break;
-      case "addTimeRange":
-        dashboardStore.addTabControls(WidgetType.TimeRange);
-        break;
-      case "addIframe":
-        dashboardStore.addTabControls(WidgetType.ThirdPartyApp);
-        break;
-      case "addTaskTimeline":
-        dashboardStore.addTabControls(WidgetType.TaskTimeline);
-        break;
-      default:
-        ElMessage.info("Don't support this control");
-        break;
+  function setTabControls(id: WidgetType) {
+    if (!WidgetType[id]) {
+      ElMessage.info("Don't support this control");
+      return;
     }
+    dashboardStore.addTabControls(id);
   }
 
-  function setControls(id: string) {
-    switch (id) {
-      case "addWidget":
-        dashboardStore.addControl(WidgetType.Widget);
-        break;
-      case "addTab":
-        dashboardStore.addControl(WidgetType.Tab);
-        break;
-      case "addTrace":
-        dashboardStore.addControl(WidgetType.Trace);
-        break;
-      case "addProfile":
-        dashboardStore.addControl(WidgetType.Profile);
-        break;
-      case "addEbpf":
-        dashboardStore.addControl(WidgetType.Ebpf);
-        break;
-      case "addLog":
-        dashboardStore.addControl(WidgetType.Log);
-        break;
-      case "addTopology":
-        dashboardStore.addControl(WidgetType.Topology);
-        break;
-      case "addText":
-        dashboardStore.addControl(WidgetType.Text);
-        break;
-      case "addDemandLog":
-        dashboardStore.addControl(WidgetType.DemandLog);
-        break;
-      case "addEvent":
-        dashboardStore.addControl(WidgetType.Event);
-        break;
-      case "addNetworkProfiling":
-        dashboardStore.addControl(WidgetType.NetworkProfiling);
-        break;
-      case "addContinuousProfiling":
-        dashboardStore.addControl(WidgetType.ContinuousProfiling);
-        break;
-      case "addTimeRange":
-        dashboardStore.addControl(WidgetType.TimeRange);
-        break;
-      case "addIframe":
-        dashboardStore.addControl(WidgetType.ThirdPartyApp);
-        break;
-      case "addTaskTimeline":
-        dashboardStore.addControl(WidgetType.TaskTimeline);
-        break;
-      default:
-        dashboardStore.addControl(WidgetType.Widget);
+  function setControls(id: WidgetType) {
+    if (!WidgetType[id]) {
+      ElMessage.info("Don't support this control");
+      return;
     }
+    dashboardStore.addControl(id);
   }
 
   async function fetchPods(type: string, serviceId: string, setPod: boolean, param?: { keyword?: string }) {
