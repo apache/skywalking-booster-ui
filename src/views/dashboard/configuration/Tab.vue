@@ -13,7 +13,7 @@ limitations under the License. -->
 <template>
   <div class="item">
     <span class="label">{{ t("tabExpressions") }}</span>
-    <div class="mt-10" v-for="(child, index) in dashboardStore.selectedGrid.children || []" :key="index">
+    <div class="mt-10" v-for="(child, index) in widgetTabs || []" :key="index">
       <span class="name">{{ child.name }}</span>
       <el-input class="input" size="small" v-model="expressions[child.name]" @change="changeExpression(child.name)" />
     </div>

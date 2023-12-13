@@ -127,7 +127,7 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import controls from "./tab";
-  import { dragIgnoreFrom } from "../data";
+  import { dragIgnoreFrom, WidgetType } from "../data";
   import copy from "@/utils/copy";
   import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
 
@@ -261,13 +261,14 @@ limitations under the License. -->
 
         for (const child of tabsProps.children || []) {
           if (params.source[child.expression || ""]) {
-            child.enable = !!Number(params.source[child.expression || ""]);
+            child.enable =
+              !!Number(params.source[child.expression || ""]) &&
+              !!child.children.find((item: { type: string }) => item.type === WidgetType.Widget);
           } else {
             child.enable = true;
           }
         }
         dashboardStore.setConfigs(tabsProps);
-        console.log(props.data);
       }
 
       watch(
