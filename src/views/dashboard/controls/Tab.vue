@@ -129,7 +129,7 @@ limitations under the License. -->
   import controls from "./tab";
   import { dragIgnoreFrom, WidgetType, ListEntity } from "../data";
   import copy from "@/utils/copy";
-  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useExpressionsQueryProcessor, useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
 
   const props = {
     data: {
@@ -250,9 +250,8 @@ limitations under the License. -->
 
       async function queryExpressions() {
         const tabsProps = props.data;
-        console.log(tabsProps);
         const metrics = [];
-        const listMetrics = [];
+        const listExp = [];
         for (const child of tabsProps.children || []) {
           let isList = false;
           if (child.expression) {
@@ -260,31 +259,40 @@ limitations under the License. -->
             for (const exp of expList) {
               const item = child.children.find((d: any) => d.expressions.includes(exp));
 
-              if (item && item.graph && ListEntity.includes(item.graph.type)) {
+              if (item && item.graph && Object.keys(ListEntity).includes(item.graph.type as string)) {
+                isList = true;
+              }
+              if (child.children.find((d: any) => d.subExpressions && d.subExpressions.includes(exp))) {
                 isList = true;
               }
             }
             if (isList) {
-              listMetrics.push(child.expression);
+              listExp.push(child.expression);
             } else {
               metrics.push(child.expression);
             }
           }
         }
-        if (![...metrics, ...listMetrics].length) {
+        if (![...metrics, ...listExp].length) {
           return;
         }
-        const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
-
-        for (const child of tabsProps.children || []) {
-          if (params.source[child.expression || ""]) {
-            child.enable =
-              !!Number(params.source[child.expression || ""]) &&
-              !!child.children.find((item: { type: string }) => item.type === WidgetType.Widget);
-          } else {
-            child.enable = true;
+        if (metrics.length) {
+          const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
+          for (const child of tabsProps.children || []) {
+            if (params.source[child.expression || ""]) {
+              child.enable =
+                !!Number(params.source[child.expression || ""]) &&
+                !!child.children.find((item: { type: string }) => item.type === WidgetType.Widget);
+            } else {
+              child.enable = true;
+            }
           }
         }
+
+        // if (listExp.length) {
+        //   await useExpressionsQueryPodsMetrics({});
+        // }
+        console.log(tabsProps);
         dashboardStore.setConfigs(tabsProps);
       }
 
