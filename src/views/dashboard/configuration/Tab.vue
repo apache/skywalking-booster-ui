@@ -39,11 +39,11 @@ limitations under the License. -->
   const originConfig = dashboardStore.selectedGrid;
   const expressions = reactive<{ [key: string]: string }>({});
   const widgetTabs = computed(() =>
-    dashboardStore.selectedGrid.children.filter((child: any[]) =>
-      child.find((item: any) => item.type === WidgetType.Widget),
+    (dashboardStore.selectedGrid.children || []).filter((child: any) =>
+      child.children.find((item: any) => item.type === WidgetType.Widget),
     ),
   );
-  console.log(widgetTabs.value);
+
   for (const child of originConfig.children || []) {
     expressions[child.name] = child.expression || "";
   }

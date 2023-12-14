@@ -127,7 +127,7 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import controls from "./tab";
-  import { dragIgnoreFrom, WidgetType } from "../data";
+  import { dragIgnoreFrom, WidgetType, ListEntity } from "../data";
   import copy from "@/utils/copy";
   import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
 
@@ -250,11 +250,28 @@ limitations under the License. -->
 
       async function queryExpressions() {
         const tabsProps = props.data;
+        console.log(tabsProps);
         const metrics = [];
+        const listMetrics = [];
         for (const child of tabsProps.children || []) {
-          child.expression && metrics.push(child.expression);
+          let isList = false;
+          if (child.expression) {
+            const expList = parseTabsExpression(child.expression);
+            for (const exp of expList) {
+              const item = child.children.find((d: any) => d.expressions.includes(exp));
+
+              if (item && item.graph && ListEntity.includes(item.graph.type)) {
+                isList = true;
+              }
+            }
+            if (isList) {
+              listMetrics.push(child.expression);
+            } else {
+              metrics.push(child.expression);
+            }
+          }
         }
-        if (!metrics.length) {
+        if (![...metrics, ...listMetrics].length) {
           return;
         }
         const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
@@ -269,6 +286,15 @@ limitations under the License. -->
           }
         }
         dashboardStore.setConfigs(tabsProps);
+      }
+
+      function parseTabsExpression(inputString: string) {
+        const regex = /is_present\s*\(\s*([^,)\s]+)\s*,\s*([^,)\s]+)\s*\)/;
+        const match = inputString.match(regex);
+
+        const result = match ? [match[1], match[2]] : [];
+
+        return result;
       }
 
       watch(
