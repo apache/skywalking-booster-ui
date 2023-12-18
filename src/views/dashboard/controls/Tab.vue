@@ -126,8 +126,9 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import type { LayoutConfig } from "@/types/dashboard";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useSelectorStore } from "@/store/modules/selectors";
   import controls from "./tab";
-  import { dragIgnoreFrom, WidgetType, ListEntity } from "../data";
+  import { dragIgnoreFrom, WidgetType, ListEntity, ListChartTypes } from "../data";
   import copy from "@/utils/copy";
   import { useExpressionsQueryProcessor, useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
 
@@ -147,6 +148,7 @@ limitations under the License. -->
     setup(props) {
       const { t } = useI18n();
       const dashboardStore = useDashboardStore();
+      const selectorStore = useSelectorStore();
       const route = useRoute();
       const activeTabIndex = ref<number>(Number(route.params.activeTabIndex) || 0);
       const activeTabWidget = ref<string>("");
@@ -252,18 +254,26 @@ limitations under the License. -->
         const tabsProps = props.data;
         const metrics = [];
         const listExp = [];
+        const types: string[] = [];
+        const pods = [];
         for (const child of tabsProps.children || []) {
           let isList = false;
           if (child.expression) {
             const expList = parseTabsExpression(child.expression);
             for (const exp of expList) {
-              const item = child.children.find((d: any) => d.expressions.includes(exp));
-
+              let item = child.children.find((d: any) => d.expressions.join(", ").includes(exp));
               if (item && item.graph && Object.keys(ListEntity).includes(item.graph.type as string)) {
                 isList = true;
               }
-              if (child.children.find((d: any) => d.subExpressions && d.subExpressions.includes(exp))) {
-                isList = true;
+              if (!item) {
+                item = child.children.find((d: any) => d.subExpressions && d.subExpressions.join(", ").includes(exp));
+                if (item) {
+                  isList = true;
+                }
+              }
+              if (item && item.graph && isList && item.graph.type) {
+                types.push(item.graph.type);
+                getPods(item.graph.type) && pods.push(getPods(item.graph.type));
               }
             }
             if (isList) {
@@ -275,6 +285,15 @@ limitations under the License. -->
         }
         if (![...metrics, ...listExp].length) {
           return;
+        }
+        if (listExp.length) {
+          const params: { [key: string]: any } =
+            (await useExpressionsQueryProcessor({
+              metrics: listExp,
+              pods,
+              metricConfig: [],
+              scopes: types.length ? types : undefined,
+            })) || {};
         }
         if (metrics.length) {
           const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
@@ -288,21 +307,27 @@ limitations under the License. -->
             }
           }
         }
-
-        // if (listExp.length) {
-        //   await useExpressionsQueryPodsMetrics({});
-        // }
-        console.log(tabsProps);
         dashboardStore.setConfigs(tabsProps);
       }
 
+      function getPods(type: string) {
+        let pod = null;
+
+        switch (type) {
+          case ListChartTypes[2]:
+            pod = selectorStore.services[0];
+            break;
+          default:
+            pod = selectorStore.pods[0];
+        }
+        return pod;
+      }
+
       function parseTabsExpression(inputString: string) {
-        const regex = /is_present\s*\(\s*([^,)\s]+)\s*,\s*([^,)\s]+)\s*\)/;
-        const match = inputString.match(regex);
+        const resultString = inputString.replace(/is_present\(|\)/g, "");
+        const result = resultString.replace(/\s/g, "").split(",");
 
-        const result = match ? [match[1], match[2]] : [];
-
-        return result;
+        return result || [];
       }
 
       watch(
