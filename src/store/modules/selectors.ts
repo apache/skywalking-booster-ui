@@ -105,7 +105,6 @@ export const selectorStore = defineStore({
           return res.data;
         }
         this.pods = res.data.data.pods || [];
-        console.log(this.pods);
       }
       return res.data;
     },

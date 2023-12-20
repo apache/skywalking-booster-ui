@@ -128,9 +128,9 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
   import controls from "./tab";
-  import { dragIgnoreFrom, WidgetType, ListEntity, ListChartTypes } from "../data";
+  import { dragIgnoreFrom, WidgetType, ListEntity } from "../data";
   import copy from "@/utils/copy";
-  import { useExpressionsQueryProcessor, useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
+  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
 
   const props = {
     data: {
@@ -253,76 +253,37 @@ limitations under the License. -->
       async function queryExpressions() {
         const tabsProps = props.data;
         const metrics = [];
-        const listExp = [];
-        const types: string[] = [];
-        const pods = [];
         for (const child of tabsProps.children || []) {
-          let isList = false;
           if (child.expression) {
             const expList = parseTabsExpression(child.expression);
             for (const exp of expList) {
+              let isList = false;
               let item = child.children.find((d: any) => d.expressions.join(", ").includes(exp));
               if (item && item.graph && Object.keys(ListEntity).includes(item.graph.type as string)) {
                 isList = true;
               }
-              if (!item) {
-                item = child.children.find((d: any) => d.subExpressions && d.subExpressions.join(", ").includes(exp));
-                if (item) {
-                  isList = true;
-                }
+              if (item && !isList) {
+                metrics.push(child.expression);
               }
-              if (item && item.graph && isList && item.graph.type) {
-                types.push(item.graph.type);
-                getPods(item.graph.type) && pods.push(getPods(item.graph.type));
-              }
-            }
-            if (isList) {
-              listExp.push(child.expression);
-            } else {
-              metrics.push(child.expression);
             }
           }
         }
-        if (![...metrics, ...listExp].length) {
+        if (!metrics.length) {
           return;
         }
-        if (listExp.length) {
-          const params: { [key: string]: any } =
-            (await useExpressionsQueryProcessor({
-              metrics: listExp,
-              pods,
-              metricConfig: [],
-              scopes: types.length ? types : undefined,
-            })) || {};
-        }
-        if (metrics.length) {
-          const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
-          for (const child of tabsProps.children || []) {
-            if (params.source[child.expression || ""]) {
-              child.enable =
-                !!Number(params.source[child.expression || ""]) &&
-                !!child.children.find((item: { type: string }) => item.type === WidgetType.Widget);
-            } else {
-              child.enable = true;
-            }
+        const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
+        for (const child of tabsProps.children || []) {
+          if (params.source[child.expression || ""]) {
+            child.enable =
+              !!Number(params.source[child.expression || ""]) &&
+              !!child.children.find((item: { type: string }) => item.type === WidgetType.Widget);
+          } else {
+            child.enable = true;
           }
         }
+
         dashboardStore.setConfigs(tabsProps);
       }
-
-      function getPods(type: string) {
-        let pod = null;
-
-        switch (type) {
-          case ListChartTypes[2]:
-            pod = selectorStore.services[0];
-            break;
-          default:
-            pod = selectorStore.pods[0];
-        }
-        return pod;
-      }
-
       function parseTabsExpression(inputString: string) {
         const resultString = inputString.replace(/is_present\(|\)/g, "");
         const result = resultString.replace(/\s/g, "").split(",");

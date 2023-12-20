@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import { RespFields } from "./data";
-import { EntityType, ExpressionResultType, ListChartTypes } from "@/views/dashboard/data";
+import { EntityType, ExpressionResultType } from "@/views/dashboard/data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -88,40 +88,6 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
     };
   }
 
-  function isPresentGraphqlPods() {
-    if (!(config.metrics && config.metrics[0])) {
-      return;
-    }
-    const appStore = useAppStoreWithOut();
-    const selectorStore = useSelectorStore();
-    const conditions: Recordable = {
-      duration: appStore.durationTime,
-    };
-    const variables: string[] = [`$duration: Duration!`];
-    const fragment = config.metrics.map((name: string, index: number) => {
-      variables.push(`$expression${index}: String!`, `$entity${index}: Entity!`);
-      conditions[`expression${index}`] = name;
-      const entity = {
-        serviceName:
-          config.scopes[index] === ListChartTypes[2] ? config.pods[index].value : selectorStore.currentService.value,
-        normal:
-          config.scopes[index] === ListChartTypes[2] ? config.pods[index].normal : selectorStore.currentService.normal,
-        serviceInstanceName: config.scopes[index] === ListChartTypes[1] ? config.pods[index].value : undefined,
-        endpointName: config.scopes[index] === ListChartTypes[0] ? config.pods[index].value : undefined,
-      };
-      conditions[`entity${index}`] = entity;
-
-      return `expression${index}: execExpression(expression: $expression${index}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
-    });
-
-    const queryStr = `query queryData(${variables}) {${fragment}}`;
-
-    return {
-      queryStr,
-      conditions,
-    };
-  }
-
   function expressionsSource(resp: { errors: string; data: Indexable }) {
     if (resp.errors) {
       ElMessage.error(resp.errors);
@@ -175,8 +141,8 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
 
     return { source, tips, typesOfMQE };
   }
-  console.log(config);
-  const params = await (config.scopes ? isPresentGraphqlPods() : expressionsGraphqlPods());
+
+  const params = await expressionsGraphqlPods();
   if (!params) {
     return { source: {}, tips: [], typesOfMQE: [] };
   }

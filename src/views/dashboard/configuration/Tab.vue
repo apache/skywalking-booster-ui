@@ -32,7 +32,7 @@ limitations under the License. -->
   import { reactive, computed } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { ElMessage } from "element-plus";
-  import { WidgetType } from "@/views/dashboard/data";
+  import { WidgetType, ListEntity } from "@/views/dashboard/data";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
@@ -40,7 +40,11 @@ limitations under the License. -->
   const expressions = reactive<{ [key: string]: string }>({});
   const widgetTabs = computed(() =>
     (dashboardStore.selectedGrid.children || []).filter((child: any) =>
-      child.children.find((item: any) => item.type === WidgetType.Widget),
+      child.children.find(
+        (item: any) =>
+          item.type === WidgetType.Widget &&
+          !(Object.keys(ListEntity).includes(item.graph.type as string) && child.children === 1),
+      ),
     ),
   );
 
