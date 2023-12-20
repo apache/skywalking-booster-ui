@@ -166,7 +166,6 @@ limitations under the License. -->
       queryExpressions();
 
       function clickTabs(e: Event, idx: number) {
-        console.log(idx);
         e.stopPropagation();
         activeTabIndex.value = idx;
         dashboardStore.activeGridItem(props.data.i);
@@ -272,7 +271,7 @@ limitations under the License. -->
         }
 
         dashboardStore.setConfigs(tabsProps);
-        if ((props.data.children || [])[activeTabIndex.value]?.enable === false) {
+        if (((props.data.children || [])[activeTabIndex.value] || {}).enable === false) {
           const index = (props.data.children || []).findIndex((tab: any) => tab.enable !== false) || 0;
           const items = ((props.data.children || [])[index] || {}).children;
           dashboardStore.setCurrentTabItems(items || []);
