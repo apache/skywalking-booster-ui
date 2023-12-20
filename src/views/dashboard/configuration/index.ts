@@ -22,8 +22,10 @@ import Event from "./Event.vue";
 import TimeRange from "./TimeRange.vue";
 import ThirdPartyApp from "./ThirdPartyApp.vue";
 import ContinuousProfiling from "./ContinuousProfiling.vue";
+import Tab from "./Tab.vue";
 
 export default {
+  Tab,
   Text,
   Widget,
   Topology,

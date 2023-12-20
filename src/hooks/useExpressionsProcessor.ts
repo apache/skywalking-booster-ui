@@ -141,6 +141,7 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
 
     return { source, tips, typesOfMQE };
   }
+
   const params = await expressionsGraphqlPods();
   if (!params) {
     return { source: {}, tips: [], typesOfMQE: [] };
@@ -301,6 +302,7 @@ export async function useExpressionsQueryPodsMetrics(
 
     return { data, names, subNames, metricConfigArr, metricTypesArr, expressionsTips, subExpressionsTips };
   }
+
   const dashboardStore = useDashboardStore();
   const params = await expressionsGraphqlPods();
   const json = await dashboardStore.fetchMetricValue(params);

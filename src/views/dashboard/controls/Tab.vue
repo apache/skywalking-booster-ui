@@ -15,29 +15,41 @@ limitations under the License. -->
 <template>
   <div class="flex-h tab-header">
     <div class="tabs scroll_bar_style" @click="handleClick">
-      <span
-        v-for="(child, idx) in data.children || []"
-        :key="idx"
-        :class="{ active: activeTabIndex === idx }"
-        @click="clickTabs($event, idx)"
-      >
-        <input
-          @click="editTabName($event, idx)"
-          v-model="child.name"
-          placeholder="Please input"
-          class="tab-name"
-          :readonly="isNaN(editTabIndex) && !canEditTabName"
-          :class="{ view: !canEditTabName }"
+      <template v-for="(child, idx) in data.children || []">
+        <span
+          :key="idx"
+          :class="{ active: activeTabIndex === idx }"
+          @click="clickTabs($event, idx)"
+          v-if="child.enable !== false"
+        >
+          <input
+            @click="editTabName($event, idx)"
+            v-model="child.name"
+            placeholder="Please input"
+            class="tab-name"
+            :readonly="isNaN(editTabIndex) && !canEditTabName"
+            :class="{ view: !canEditTabName }"
+            :style="{ width: getStringWidth(child.name) + 'px' }"
+          />
+          <Icon
+            v-show="activeTabIndex === idx"
+            size="sm"
+            iconName="cancel"
+            @click="deleteTabItem($event, idx)"
+            v-if="dashboardStore.editMode && canEditTabName"
+          />
+        </span>
+      </template>
+      <template v-for="(child, idx) in data.children || []">
+        <span
+          :key="idx"
           :style="{ width: getStringWidth(child.name) + 'px' }"
-        />
-        <Icon
-          v-show="activeTabIndex === idx"
-          size="sm"
-          iconName="cancel"
-          @click="deleteTabItem($event, idx)"
-          v-if="dashboardStore.editMode && canEditTabName"
-        />
-      </span>
+          v-if="child.enable === false"
+          class="tab-diabled"
+        >
+          {{ child.name }}
+        </span>
+      </template>
       <span class="tab-icons">
         <el-tooltip content="Copy Link" placement="bottom">
           <i @click="copyLink">
@@ -56,10 +68,13 @@ limitations under the License. -->
     <div class="operations" v-if="dashboardStore.editMode">
       <el-dropdown placement="bottom" trigger="click" :width="200">
         <span class="icon-operation">
-          <Icon iconName="ellipsis_v" size="middle" />
+          <Icon class="icon-tool" iconName="ellipsis_v" size="middle" />
         </span>
         <template #dropdown>
           <el-dropdown-menu>
+            <el-dropdown-item @click="editConfig">
+              <span>{{ t("edit") }}</span>
+            </el-dropdown-item>
             <el-dropdown-item @click="canEditTabName = true">
               <span class="edit-tab">{{ t("editTab") }}</span>
             </el-dropdown-item>
@@ -112,8 +127,9 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import controls from "./tab";
-  import { dragIgnoreFrom } from "../data";
+  import { dragIgnoreFrom, WidgetType } from "../data";
   import copy from "@/utils/copy";
+  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
 
   const props = {
     data: {
@@ -137,13 +153,17 @@ limitations under the License. -->
       const editTabIndex = ref<number>(NaN); // edit tab item name
       const canEditTabName = ref<boolean>(false);
       const needQuery = ref<boolean>(false);
-
-      dashboardStore.setActiveTabIndex(activeTabIndex);
       const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
+
+      dashboardStore.setActiveTabIndex(activeTabIndex.value);
       if (dashboardStore.layout[l].children.length) {
-        dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
+        const tab = dashboardStore.layout[l].children[activeTabIndex.value];
+        dashboardStore.setCurrentTabItems(
+          tab.enable === false ? [] : dashboardStore.layout[l].children[activeTabIndex.value].children,
+        );
         dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
       }
+      queryExpressions();
 
       function clickTabs(e: Event, idx: number) {
         e.stopPropagation();
@@ -224,6 +244,53 @@ limitations under the License. -->
         copy(path);
       }
       document.body.addEventListener("click", handleClick, false);
+
+      function editConfig() {
+        dashboardStore.setConfigPanel(true);
+        dashboardStore.selectWidget(props.data);
+      }
+
+      async function queryExpressions() {
+        const tabsProps = props.data;
+        const metrics = [];
+        for (const child of tabsProps.children || []) {
+          child.expression && metrics.push(child.expression);
+        }
+        if (!metrics.length) {
+          return;
+        }
+        const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
+        for (const child of tabsProps.children || []) {
+          if (params.source[child.expression || ""]) {
+            child.enable =
+              !!Number(params.source[child.expression || ""]) &&
+              !!child.children.find((item: { type: string }) => item.type === WidgetType.Widget);
+          } else {
+            child.enable = true;
+          }
+        }
+
+        dashboardStore.setConfigs(tabsProps);
+        if (((props.data.children || [])[activeTabIndex.value] || {}).enable === false) {
+          const index = (props.data.children || []).findIndex((tab: any) => tab.enable !== false) || 0;
+          const items = ((props.data.children || [])[index] || {}).children;
+          dashboardStore.setCurrentTabItems(items || []);
+          dashboardStore.activeGridItem(0);
+          activeTabIndex.value = index;
+          dashboardStore.setActiveTabIndex(activeTabIndex.value);
+          needQuery.value = true;
+        }
+      }
+
+      watch(
+        () => (props.data.children || []).map((d: any) => d.expression),
+        (old: string[], data: string[]) => {
+          if (JSON.stringify(data) === JSON.stringify(old)) {
+            return;
+          }
+          queryExpressions();
+        },
+      );
       watch(
         () => dashboardStore.activedGridItem,
         (data) => {
@@ -266,6 +333,7 @@ limitations under the License. -->
         clickTabs,
         copyLink,
         getStringWidth,
+        editConfig,
         ...toRefs(props),
         activeTabWidget,
         dashboardStore,
@@ -288,6 +356,7 @@ limitations under the License. -->
     white-space: nowrap;
     overflow-y: hidden;
     padding: 0 10px;
+    display: inline-flex;
 
     span {
       display: inline-block;
@@ -308,6 +377,18 @@ limitations under the License. -->
       text-overflow: ellipsis;
       margin-right: 20px;
       background-color: $theme-background;
+    }
+
+    .tab-diabled {
+      max-width: 150px;
+      outline: none;
+      color: $disabled-color;
+      font-style: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 20px;
+      background-color: $theme-background;
+      cursor: not-allowed;
     }
 
     .tab-icons {

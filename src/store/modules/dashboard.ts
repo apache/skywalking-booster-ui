@@ -25,7 +25,7 @@ import { NewControl, TextConfig, TimeRangeConfig, ControlsTypes } from "../data"
 import type { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
-import { EntityType, MetricModes } from "@/views/dashboard/data";
+import { EntityType, MetricModes, WidgetType } from "@/views/dashboard/data";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -78,7 +78,7 @@ export const dashboardStore = defineStore({
     setCurrentDashboard(item: DashboardItem) {
       this.currentDashboard = item;
     },
-    addControl(type: string) {
+    addControl(type: WidgetType) {
       const arr = this.layout.map((d: Recordable) => Number(d.i));
       let index = String(Math.max(...arr) + 1);
       if (!this.layout.length) {
@@ -93,10 +93,10 @@ export const dashboardStore = defineStore({
         metrics: [""],
       };
 
-      if (type === "Widget") {
+      if (type === WidgetType.Widget) {
         newItem.metricMode = MetricModes.Expression;
       }
-      if (type === "Tab") {
+      if (type === WidgetType.Tab) {
         newItem.h = 36;
         newItem.activedTabIndex = 0;
         newItem.children = [
@@ -110,7 +110,7 @@ export const dashboardStore = defineStore({
           },
         ];
       }
-      if (type === "Topology") {
+      if (type === WidgetType.Topology) {
         newItem.h = 36;
         newItem.graph = {
           showDepth: true,
@@ -120,11 +120,11 @@ export const dashboardStore = defineStore({
       if (ControlsTypes.includes(type)) {
         newItem.h = 36;
       }
-      if (type === "Text") {
+      if (type === WidgetType.Text) {
         newItem.h = 6;
         newItem.graph = TextConfig;
       }
-      if (type === "TimeRange") {
+      if (type === WidgetType.TimeRange) {
         newItem.w = 8;
         newItem.h = 6;
         newItem.graph = TimeRangeConfig;
@@ -149,7 +149,7 @@ export const dashboardStore = defineStore({
       };
       this.layout[idx].children?.push(i);
     },
-    addTabControls(type: string) {
+    addTabControls(type: WidgetType) {
       const activedGridItem = this.activedGridItem.split("-")[0];
       const idx = this.layout.findIndex((d: LayoutConfig) => d.i === activedGridItem);
       if (idx < 0) {
@@ -171,10 +171,10 @@ export const dashboardStore = defineStore({
         metricTypes: [""],
         metrics: [""],
       };
-      if (type === "Widget") {
+      if (type === WidgetType.Widget) {
         newItem.metricMode = MetricModes.Expression;
       }
-      if (type === "Topology") {
+      if (type === WidgetType.Topology) {
         newItem.h = 32;
         newItem.graph = {
           showDepth: true,
@@ -184,11 +184,11 @@ export const dashboardStore = defineStore({
       if (ControlsTypes.includes(type)) {
         newItem.h = 32;
       }
-      if (type === "Text") {
+      if (type === WidgetType.Text) {
         newItem.h = 6;
         newItem.graph = TextConfig;
       }
-      if (type === "TimeRange") {
+      if (type === WidgetType.TimeRange) {
         newItem.w = 8;
         newItem.h = 6;
         newItem.graph = TextConfig;
@@ -292,7 +292,7 @@ export const dashboardStore = defineStore({
     },
     setWidget(param: LayoutConfig) {
       for (let i = 0; i < this.layout.length; i++) {
-        if (this.layout[i].type === "Tab") {
+        if (this.layout[i].type === WidgetType.Tab) {
           if ((this.layout[i].children || []).length) {
             for (const child of this.layout[i].children || []) {
               if (child.children && child.children.length) {

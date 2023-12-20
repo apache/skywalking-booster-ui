@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { WidgetType } from "@/views/dashboard/data";
+
 export const NewControl = {
   x: 0,
   y: 0,
   w: 24,
   h: 12,
   i: "0",
-  type: "Widget",
+  type: WidgetType.Widget,
 };
 export const TextConfig = {
   fontColor: "white",
@@ -39,15 +41,15 @@ export const TimeRangeConfig = {
 };
 
 export const ControlsTypes = [
-  "Trace",
-  "Profile",
-  "Log",
-  "DemandLog",
-  "Ebpf",
-  "NetworkProfiling",
-  "ThirdPartyApp",
-  "ContinuousProfiling",
-  "TaskTimeline",
+  WidgetType.Trace,
+  WidgetType.Profile,
+  WidgetType.Log,
+  WidgetType.DemandLog,
+  WidgetType.Ebpf,
+  WidgetType.NetworkProfiling,
+  WidgetType.ThirdPartyApp,
+  WidgetType.ContinuousProfiling,
+  WidgetType.TaskTimeline,
 ];
 export enum EBPFProfilingTriggerType {
   FIXED_TIME = "FIXED_TIME",
