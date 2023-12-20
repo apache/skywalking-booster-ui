@@ -126,9 +126,8 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import type { LayoutConfig } from "@/types/dashboard";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useSelectorStore } from "@/store/modules/selectors";
   import controls from "./tab";
-  import { dragIgnoreFrom, WidgetType, ListEntity } from "../data";
+  import { dragIgnoreFrom, WidgetType } from "../data";
   import copy from "@/utils/copy";
   import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
 
@@ -148,7 +147,6 @@ limitations under the License. -->
     setup(props) {
       const { t } = useI18n();
       const dashboardStore = useDashboardStore();
-      const selectorStore = useSelectorStore();
       const route = useRoute();
       const activeTabIndex = ref<number>(Number(route.params.activeTabIndex) || 0);
       const activeTabWidget = ref<string>("");
@@ -254,19 +252,7 @@ limitations under the License. -->
         const tabsProps = props.data;
         const metrics = [];
         for (const child of tabsProps.children || []) {
-          if (child.expression) {
-            const expList = parseTabsExpression(child.expression);
-            for (const exp of expList) {
-              let isList = false;
-              let item = child.children.find((d: any) => d.expressions.join(", ").includes(exp));
-              if (item && item.graph && Object.keys(ListEntity).includes(item.graph.type as string)) {
-                isList = true;
-              }
-              if (item && !isList) {
-                metrics.push(child.expression);
-              }
-            }
-          }
+          child.expression && metrics.push(child.expression);
         }
         if (!metrics.length) {
           return;
@@ -283,12 +269,6 @@ limitations under the License. -->
         }
 
         dashboardStore.setConfigs(tabsProps);
-      }
-      function parseTabsExpression(inputString: string) {
-        const resultString = inputString.replace(/is_present\(|\)/g, "");
-        const result = resultString.replace(/\s/g, "").split(",");
-
-        return result || [];
       }
 
       watch(

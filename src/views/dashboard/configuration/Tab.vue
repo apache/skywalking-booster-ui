@@ -43,7 +43,7 @@ limitations under the License. -->
       child.children.find(
         (item: any) =>
           item.type === WidgetType.Widget &&
-          !(Object.keys(ListEntity).includes(item.graph.type as string) && child.children === 1),
+          !(Object.keys(ListEntity).includes(item.graph.type as string) && child.children.length === 1),
       ),
     ),
   );
@@ -52,7 +52,7 @@ limitations under the License. -->
     expressions[child.name] = child.expression || "";
   }
   function changeExpression(name: string) {
-    if (!expressions[name].includes("is_present")) {
+    if (expressions[name] && !expressions[name].includes("is_present")) {
       ElMessage.error("Only support the is_present function");
       return;
     }
