@@ -153,15 +153,21 @@ limitations under the License. -->
       const editTabIndex = ref<number>(NaN); // edit tab item name
       const canEditTabName = ref<boolean>(false);
       const needQuery = ref<boolean>(false);
-
-      dashboardStore.setActiveTabIndex(activeTabIndex);
       const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
-      if (dashboardStore.layout[l].children.length) {
-        dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
-        dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
-      }
 
-      queryExpressions();
+      init();
+
+      async function init() {
+        await queryExpressions();
+        dashboardStore.setActiveTabIndex(activeTabIndex);
+        if (dashboardStore.layout[l].children.length) {
+          const tab = dashboardStore.layout[l].children[activeTabIndex.value];
+          dashboardStore.setCurrentTabItems(
+            tab.enable === false ? [] : dashboardStore.layout[l].children[activeTabIndex.value].children,
+          );
+          dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
+        }
+      }
 
       function clickTabs(e: Event, idx: number) {
         e.stopPropagation();
@@ -273,11 +279,17 @@ limitations under the License. -->
 
       watch(
         () => (props.data.children || []).map((d: any) => d.expression),
-        (old: string[], data: string[]) => {
+        async (old: string[], data: string[]) => {
           if (JSON.stringify(data) === JSON.stringify(old)) {
             return;
           }
-          queryExpressions();
+          await queryExpressions();
+          const index = (props.data.children || []).findIndex((tab: any) => tab.enable !== false) || 0;
+          const items = ((props.data.children || [])[index] || {}).children;
+          dashboardStore.setCurrentTabItems(items || []);
+          dashboardStore.activeGridItem(0);
+          activeTabIndex.value = index;
+          needQuery.value = true;
         },
       );
       watch(
