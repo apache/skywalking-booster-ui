@@ -56,13 +56,14 @@ limitations under the License. -->
       ElMessage.error("Only support the is_present function");
       return;
     }
-    const children = dashboardStore.selectedGrid.children || [];
+    const children = JSON.parse(JSON.stringify(dashboardStore.selectedGrid.children || []));
 
     for (const item of children) {
       if (item.name === name) {
         item.expression = expressions[name];
       }
     }
+
     dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, children });
   }
   function applyConfig() {
