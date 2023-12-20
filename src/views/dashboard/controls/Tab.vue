@@ -284,12 +284,14 @@ limitations under the License. -->
             return;
           }
           await queryExpressions();
-          const index = (props.data.children || []).findIndex((tab: any) => tab.enable !== false) || 0;
-          const items = ((props.data.children || [])[index] || {}).children;
-          dashboardStore.setCurrentTabItems(items || []);
-          dashboardStore.activeGridItem(0);
-          activeTabIndex.value = index;
-          needQuery.value = true;
+          if ((props.data.children || [])[activeTabIndex.value]?.enable === false) {
+            const index = (props.data.children || []).findIndex((tab: any) => tab.enable !== false) || 0;
+            const items = ((props.data.children || [])[index] || {}).children;
+            dashboardStore.setCurrentTabItems(items || []);
+            dashboardStore.activeGridItem(0);
+            activeTabIndex.value = index;
+            needQuery.value = true;
+          }
         },
       );
       watch(
