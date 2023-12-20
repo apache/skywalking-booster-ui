@@ -68,7 +68,7 @@ limitations under the License. -->
     <div class="operations" v-if="dashboardStore.editMode">
       <el-dropdown placement="bottom" trigger="click" :width="200">
         <span class="icon-operation">
-          <Icon iconName="ellipsis_v" size="middle" />
+          <Icon class="icon-tool" iconName="ellipsis_v" size="middle" />
         </span>
         <template #dropdown>
           <el-dropdown-menu>
@@ -155,21 +155,18 @@ limitations under the License. -->
       const needQuery = ref<boolean>(false);
       const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
 
-      init();
-
-      async function init() {
-        await queryExpressions();
-        dashboardStore.setActiveTabIndex(activeTabIndex);
-        if (dashboardStore.layout[l].children.length) {
-          const tab = dashboardStore.layout[l].children[activeTabIndex.value];
-          dashboardStore.setCurrentTabItems(
-            tab.enable === false ? [] : dashboardStore.layout[l].children[activeTabIndex.value].children,
-          );
-          dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
-        }
+      dashboardStore.setActiveTabIndex(activeTabIndex.value);
+      if (dashboardStore.layout[l].children.length) {
+        const tab = dashboardStore.layout[l].children[activeTabIndex.value];
+        dashboardStore.setCurrentTabItems(
+          tab.enable === false ? [] : dashboardStore.layout[l].children[activeTabIndex.value].children,
+        );
+        dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
       }
+      queryExpressions();
 
       function clickTabs(e: Event, idx: number) {
+        console.log(idx);
         e.stopPropagation();
         activeTabIndex.value = idx;
         dashboardStore.activeGridItem(props.data.i);
@@ -275,23 +272,24 @@ limitations under the License. -->
         }
 
         dashboardStore.setConfigs(tabsProps);
+        if ((props.data.children || [])[activeTabIndex.value]?.enable === false) {
+          const index = (props.data.children || []).findIndex((tab: any) => tab.enable !== false) || 0;
+          const items = ((props.data.children || [])[index] || {}).children;
+          dashboardStore.setCurrentTabItems(items || []);
+          dashboardStore.activeGridItem(0);
+          activeTabIndex.value = index;
+          dashboardStore.setActiveTabIndex(activeTabIndex.value);
+          needQuery.value = true;
+        }
       }
 
       watch(
         () => (props.data.children || []).map((d: any) => d.expression),
-        async (old: string[], data: string[]) => {
+        (old: string[], data: string[]) => {
           if (JSON.stringify(data) === JSON.stringify(old)) {
             return;
           }
-          await queryExpressions();
-          if ((props.data.children || [])[activeTabIndex.value]?.enable === false) {
-            const index = (props.data.children || []).findIndex((tab: any) => tab.enable !== false) || 0;
-            const items = ((props.data.children || [])[index] || {}).children;
-            dashboardStore.setCurrentTabItems(items || []);
-            dashboardStore.activeGridItem(0);
-            activeTabIndex.value = index;
-            needQuery.value = true;
-          }
+          queryExpressions();
         },
       );
       watch(

@@ -58,7 +58,11 @@ limitations under the License. -->
       function clickGrid(item: LayoutConfig, event: Event) {
         dashboardStore.activeGridItem(item.i);
         dashboardStore.selectWidget(item);
-        if (item.type === "Tab" && (event.target as HTMLDivElement)?.className !== "tab-layout") {
+        if (
+          item.type === "Tab" &&
+          (event.target as HTMLDivElement)?.className !== "tab-layout" &&
+          (event.target as HTMLDivElement)?.classList[2] !== "icon-tool"
+        ) {
           dashboardStore.setActiveTabIndex(0);
         }
       }
