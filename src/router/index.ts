@@ -55,7 +55,7 @@ router.beforeEach((to, from, next) => {
           break;
         }
       }
-      if (defaultPath !== "") {
+      if (defaultPath) {
         break;
       }
     }
