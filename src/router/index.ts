@@ -47,7 +47,23 @@ router.beforeEach((to, from, next) => {
   }
 
   if (to.path === "/") {
-    const defaultPath = (routesLayers[0] && routesLayers[0].children[0].path) || "";
+    let defaultPath = "";
+    for (const route of routesLayers) {
+      for (const child of route.children) {
+        if (child.meta.activate) {
+          defaultPath = child.path;
+          break;
+        }
+      }
+      if (defaultPath !== "") {
+        break;
+      }
+    }
+
+    if (defaultPath === "") {
+      defaultPath = "/marketplace";
+    }
+
     next({ path: defaultPath });
   } else {
     next();
