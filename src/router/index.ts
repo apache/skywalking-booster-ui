@@ -60,7 +60,7 @@ router.beforeEach((to, from, next) => {
       }
     }
 
-    if (defaultPath === "") {
+    if (!defaultPath) {
       defaultPath = "/marketplace";
     }
 
