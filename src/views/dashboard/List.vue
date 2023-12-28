@@ -57,14 +57,34 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column prop="layer" label="Layer" width="160" />
         <el-table-column prop="entity" label="Entity" width="200" />
-        <el-table-column prop="isRoot" label="Root" width="60">
+        <el-table-column prop="isRoot" label="Root" width="150">
           <template #default="scope">
-            <span>
-              {{ scope.row.isRoot ? t("yes") : t("no") }}
-            </span>
+            <el-popconfirm
+              :title="t('rootTitle')"
+              @confirm="setRoot(scope.row)"
+              v-if="[EntityType[0].value, EntityType[1].value].includes(scope.row.entity)"
+            >
+              <template #reference>
+                <el-button size="small" style="width: 110px">
+                  {{ scope.row.isRoot ? t("setNormal") : t("setRoot") }}
+                </el-button>
+              </template>
+            </el-popconfirm>
+            <span v-else> -- </span>
           </template>
         </el-table-column>
-        <el-table-column label="Operations" width="350">
+        <el-table-column prop="topLevel" label="Top Level" width="80">
+          <template #default="scope">
+            <el-switch
+              v-model="scope.row.topLevel"
+              @change="handleTopLevel(scope.row)"
+              size="small"
+              v-if="[EntityType[0].value].includes(scope.row.entity)"
+            />
+            <span v-else> -- </span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Operations" width="300">
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.row)">
               {{ t("edit") }}
@@ -76,17 +96,6 @@ limitations under the License. -->
               <template #reference>
                 <el-button size="small" type="danger">
                   {{ t("delete") }}
-                </el-button>
-              </template>
-            </el-popconfirm>
-            <el-popconfirm
-              :title="t('rootTitle')"
-              @confirm="setRoot(scope.row)"
-              v-if="[EntityType[0].value, EntityType[1].value].includes(scope.row.entity)"
-            >
-              <template #reference>
-                <el-button size="small" style="width: 110px" type="danger">
-                  {{ scope.row.isRoot ? t("setNormal") : t("setRoot") }}
                 </el-button>
               </template>
             </el-popconfirm>
@@ -372,6 +381,9 @@ limitations under the License. -->
     dashboardStore.resetDashboards(items);
     searchDashboards(1);
     loading.value = false;
+  }
+  function handleTopLevel(row: any) {
+    console.log(row);
   }
   function handleRename(row: DashboardItem) {
     ElMessageBox.prompt("Please input dashboard name", "Edit", {
