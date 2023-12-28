@@ -191,6 +191,7 @@ limitations under the License. -->
         layer: layer,
         entity: entity,
         isRoot: false,
+        topLevel: false,
       };
       if (index > -1) {
         p.id = item.id;
@@ -382,8 +383,69 @@ limitations under the License. -->
     searchDashboards(1);
     loading.value = false;
   }
-  function handleTopLevel(row: any) {
-    console.log(row);
+  async function handleTopLevel(row: DashboardItem) {
+    const items: DashboardItem[] = [];
+    loading.value = true;
+    for (const d of dashboardStore.dashboards) {
+      if (d.id === row.id) {
+        d.isRoot = row.topLevel;
+        const key = [d.layer, d.entity, d.name].join("_");
+        const layout = sessionStorage.getItem(key) || "{}";
+        const c = {
+          ...JSON.parse(layout).configuration,
+          ...d,
+        };
+        delete c.id;
+
+        const setting = {
+          id: d.id,
+          configuration: JSON.stringify(c),
+        };
+        const res = await dashboardStore.updateDashboard(setting);
+        if (res.data.changeTemplate.id) {
+          sessionStorage.setItem(
+            key,
+            JSON.stringify({
+              id: d.id,
+              configuration: c,
+            }),
+          );
+        }
+      } else {
+        if (
+          d.layer === row.layer &&
+          [EntityType[0].value].includes(d.entity) &&
+          row.topLevel === false &&
+          d.topLevel === true
+        ) {
+          d.topLevel = false;
+          const key = [d.layer, d.entity, d.name].join("_");
+          const layout = sessionStorage.getItem(key) || "{}";
+          const c = {
+            ...JSON.parse(layout).configuration,
+            ...d,
+          };
+          const setting = {
+            id: d.id,
+            configuration: JSON.stringify(c),
+          };
+          const res = await dashboardStore.updateDashboard(setting);
+          if (res.data.changeTemplate.id) {
+            sessionStorage.setItem(
+              key,
+              JSON.stringify({
+                id: d.id,
+                configuration: c,
+              }),
+            );
+          }
+        }
+      }
+      items.push(d);
+    }
+    dashboardStore.resetDashboards(items);
+    searchDashboards(1);
+    loading.value = false;
   }
   function handleRename(row: DashboardItem) {
     ElMessageBox.prompt("Please input dashboard name", "Edit", {
