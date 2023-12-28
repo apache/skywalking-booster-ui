@@ -87,58 +87,6 @@ limitations under the License. -->
       </g>
     </svg>
     <div id="tooltip"></div>
-    <div class="legend">
-      <div>
-        <img :src="icons.CUBE" />
-        <span>
-          {{ settings.description ? settings.description.healthy || "" : "" }}
-        </span>
-      </div>
-      <div>
-        <img :src="icons.CUBEERROR" />
-        <span>
-          {{ settings.description ? settings.description.unhealthy || "" : "" }}
-        </span>
-      </div>
-    </div>
-    <div class="setting" v-if="showSetting && dashboardStore.editMode">
-      <Settings @update="updateSettings" @updateNodes="freshNodes" />
-    </div>
-    <div class="tool">
-      <span v-show="graphConfig.showDepth">
-        <span class="label">{{ t("currentDepth") }}</span>
-        <Selector class="inputs" :value="depth" :options="DepthList" @change="changeDepth" />
-      </span>
-      <span class="switch-icon ml-5" title="Settings" @click="setConfig" v-if="dashboardStore.editMode">
-        <Icon size="middle" iconName="settings" />
-      </span>
-      <span class="switch-icon ml-5" title="Back to overview topology" @click="backToTopology">
-        <Icon size="middle" iconName="keyboard_backspace" />
-      </span>
-    </div>
-    <div
-      class="operations-list"
-      v-if="topologyStore.node"
-      :style="{
-        top: operationsPos.y + 5 + 'px',
-        left: operationsPos.x + 5 + 'px',
-      }"
-    >
-      <span v-for="(item, index) of items" :key="index" @click="item.func(item.dashboard)">
-        {{ item.title }}
-      </span>
-    </div>
-    <el-dialog
-      v-model="hierarchyRelated"
-      width="1000px"
-      height="600px"
-      :destroy-on-close="true"
-      @closed="hierarchyRelated = false"
-    >
-      <div class="hierarchy-related">
-        <Map :config="config" />
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
@@ -150,11 +98,9 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { EntityType, DepthList, MetricModes, CallTypes } from "../../../data";
+  import { EntityType, MetricModes, CallTypes } from "../../../data";
   import router from "@/router";
   import { ElMessage } from "element-plus";
-  import Settings from "./Settings.vue";
-  import type { Option } from "@/types/app";
   import type { Service } from "@/types/selector";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import getDashboard from "@/hooks/useDashboardsSession";
@@ -165,7 +111,6 @@ limitations under the License. -->
   import { layout, circleIntersection, computeCallPos } from "./utils/layout";
   import zoom from "../../components/utils/zoom";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
-  import Map from "./Map.vue";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -196,7 +141,6 @@ limitations under the License. -->
   const graphWidth = ref<number>(100);
   const currentNode = ref<Nullable<Node>>();
   const diff = computed(() => [(width.value - graphWidth.value - 130) / 2, 100]);
-  const hierarchyRelated = ref<boolean>(false);
   const radius = 8;
 
   onMounted(async () => {
@@ -530,7 +474,6 @@ limitations under the License. -->
       return;
     }
     items.value = [
-      { id: "hierarchyServices", title: "Hierarchy Services", func: handleHierarchyRelatedServices },
       { id: "inspect", title: "Inspect", func: handleInspect },
       { id: "alerting", title: "Alerting", func: handleGoAlerting },
     ];
@@ -561,10 +504,6 @@ limitations under the License. -->
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
-  }
-  async function handleHierarchyRelatedServices() {
-    hierarchyRelated.value = true;
-    handleInspect();
   }
   async function handleInspect() {
     const id = topologyStore.node.id;
@@ -635,7 +574,6 @@ limitations under the License. -->
   }
   function setNodeTools(nodeDashboard: any) {
     items.value = [
-      { id: "hierarchyServices", title: "Hierarchy Services", func: handleHierarchyRelatedServices },
       { id: "inspect", title: "Inspect", func: handleInspect },
       { id: "alerting", title: "Alerting", func: handleGoAlerting },
     ];
@@ -675,10 +613,6 @@ limitations under the License. -->
     dashboardStore.selectWidget(props.config);
   }
 
-  async function changeDepth(opt: Option[] | any) {
-    depth.value = opt[0].value;
-    freshNodes();
-  }
   onBeforeUnmount(() => {
     window.removeEventListener("resize", resize);
   });
@@ -704,15 +638,19 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss">
-  .hierarchy-related {
-    height: 100%;
-    overflow: auto;
-  }
-
   .micro-topo-chart {
     position: relative;
     overflow: auto;
     margin-top: 30px;
+
+    .relation-btn {
+      position: absolute;
+      cursor: pointer;
+      top: 50px;
+      left: 700px;
+      font-size: 12px;
+      color: var(--sw-topology-color);
+    }
 
     .node-text {
       fill: var(--sw-topology-color);
@@ -722,7 +660,7 @@ limitations under the License. -->
 
     .svg-topology {
       cursor: move;
-      background-color: $theme-background;
+      background-color: $layout-background;
     }
 
     .legend {
