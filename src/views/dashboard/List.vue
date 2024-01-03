@@ -57,14 +57,39 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column prop="layer" label="Layer" width="160" />
         <el-table-column prop="entity" label="Entity" width="200" />
-        <el-table-column prop="isRoot" label="Root" width="60">
+        <el-table-column prop="isRoot" label="Root" width="150">
           <template #default="scope">
-            <span>
-              {{ scope.row.isRoot ? t("yes") : t("no") }}
-            </span>
+            <el-popconfirm
+              :title="t('rootTitle')"
+              @confirm="setRoot(scope.row)"
+              v-if="[EntityType[0].value, EntityType[1].value].includes(scope.row.entity)"
+            >
+              <template #reference>
+                <el-button size="small" style="width: 110px">
+                  {{ scope.row.isRoot ? t("setNormal") : t("setRoot") }}
+                </el-button>
+              </template>
+            </el-popconfirm>
+            <span v-else> -- </span>
           </template>
         </el-table-column>
-        <el-table-column label="Operations" width="350">
+        <el-table-column prop="isDefault" label="Default Dashboard" width="140">
+          <template #default="scope">
+            <el-popconfirm
+              :title="t('rootTitle')"
+              @confirm="handleTopLevel(scope.row)"
+              v-if="[EntityType[0].value].includes(scope.row.entity)"
+            >
+              <template #reference>
+                <el-button size="small" style="width: 80px">
+                  {{ scope.row.isDefault ? "Disable" : "Enable" }}
+                </el-button>
+              </template>
+            </el-popconfirm>
+            <span v-else> -- </span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Operations" width="300">
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.row)">
               {{ t("edit") }}
@@ -76,17 +101,6 @@ limitations under the License. -->
               <template #reference>
                 <el-button size="small" type="danger">
                   {{ t("delete") }}
-                </el-button>
-              </template>
-            </el-popconfirm>
-            <el-popconfirm
-              :title="t('rootTitle')"
-              @confirm="setRoot(scope.row)"
-              v-if="[EntityType[0].value, EntityType[1].value].includes(scope.row.entity)"
-            >
-              <template #reference>
-                <el-button size="small" style="width: 110px" type="danger">
-                  {{ scope.row.isRoot ? t("setNormal") : t("setRoot") }}
                 </el-button>
               </template>
             </el-popconfirm>
@@ -175,17 +189,19 @@ limitations under the License. -->
     }
     loading.value = true;
     for (const item of arr) {
-      const { layer, name, entity, isRoot, children } = item.configuration;
+      const { layer, name, entity, isRoot, children, isDefault } = item.configuration;
       const index = dashboardStore.dashboards.findIndex((d: DashboardItem) => d.id === item.id);
       const p: DashboardItem = {
         name: name.split(" ").join("-"),
         layer: layer,
         entity: entity,
         isRoot: false,
+        isDefault: false,
       };
       if (index > -1) {
         p.id = item.id;
         p.isRoot = isRoot;
+        p.isDefault = isDefault;
       }
       dashboardStore.setCurrentDashboard(p);
       dashboardStore.setLayout(children);
@@ -328,7 +344,7 @@ limitations under the License. -->
           configuration: JSON.stringify(c),
         };
         const res = await dashboardStore.updateDashboard(setting);
-        if (res.data.changeTemplate.id) {
+        if (res.data.changeTemplate.status) {
           sessionStorage.setItem(
             key,
             JSON.stringify({
@@ -356,7 +372,66 @@ limitations under the License. -->
             configuration: JSON.stringify(c),
           };
           const res = await dashboardStore.updateDashboard(setting);
-          if (res.data.changeTemplate.id) {
+          if (res.data.changeTemplate.status) {
+            sessionStorage.setItem(
+              key,
+              JSON.stringify({
+                id: d.id,
+                configuration: c,
+              }),
+            );
+          }
+        }
+      }
+      items.push(d);
+    }
+    dashboardStore.resetDashboards(items);
+    searchDashboards(1);
+    loading.value = false;
+  }
+  async function handleTopLevel(row: DashboardItem) {
+    const items: DashboardItem[] = [];
+    loading.value = true;
+    for (const d of dashboardStore.dashboards) {
+      if (d.id === row.id) {
+        d.isDefault = !row.isDefault;
+        const key = [d.layer, d.entity, d.name].join("_");
+        const layout = sessionStorage.getItem(key) || "{}";
+        const c = {
+          ...JSON.parse(layout).configuration,
+          ...d,
+        };
+        delete c.id;
+        const setting = {
+          id: d.id,
+          configuration: JSON.stringify(c),
+        };
+
+        const res = await dashboardStore.updateDashboard(setting);
+        if (res.data.changeTemplate.status) {
+          sessionStorage.setItem(
+            key,
+            JSON.stringify({
+              id: d.id,
+              configuration: c,
+            }),
+          );
+        }
+      } else {
+        if (d.layer === row.layer && [EntityType[0].value].includes(d.entity) && !row.isDefault && d.isDefault) {
+          d.isDefault = false;
+          const key = [d.layer, d.entity, d.name].join("_");
+          const layout = sessionStorage.getItem(key) || "{}";
+          const c = {
+            ...JSON.parse(layout).configuration,
+            ...d,
+          };
+          const setting = {
+            id: d.id,
+            configuration: JSON.stringify(c),
+          };
+          const res = await dashboardStore.updateDashboard(setting);
+          if (res.data.changeTemplate.status) {
             sessionStorage.setItem(
               key,
               JSON.stringify({
