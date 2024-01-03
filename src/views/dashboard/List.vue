@@ -73,7 +73,7 @@ limitations under the License. -->
             <span v-else> -- </span>
           </template>
         </el-table-column>
-        <el-table-column prop="topLevel" label="Top Level" width="80">
+        <el-table-column prop="isDefault" label="Default Dashboard" width="80">
           <template #default="scope">
             <el-popconfirm
               :title="t('rootTitle')"
@@ -82,7 +82,7 @@ limitations under the License. -->
             >
               <template #reference>
                 <el-button size="small" style="width: 50px">
-                  {{ scope.row.topLevel ? "Disable" : "Enable" }}
+                  {{ scope.row.isDefault ? "Disable" : "Enable" }}
                 </el-button>
               </template>
             </el-popconfirm>
@@ -189,19 +189,19 @@ limitations under the License. -->
     }
     loading.value = true;
     for (const item of arr) {
-      const { layer, name, entity, isRoot, children, topLevel } = item.configuration;
+      const { layer, name, entity, isRoot, children, isDefault } = item.configuration;
       const index = dashboardStore.dashboards.findIndex((d: DashboardItem) => d.id === item.id);
       const p: DashboardItem = {
         name: name.split(" ").join("-"),
         layer: layer,
         entity: entity,
         isRoot: false,
-        topLevel: false,
+        isDefault: false,
       };
       if (index > -1) {
         p.id = item.id;
         p.isRoot = isRoot;
-        p.topLevel = topLevel;
+        p.isDefault = isDefault;
       }
       dashboardStore.setCurrentDashboard(p);
       dashboardStore.setLayout(children);
@@ -394,7 +394,7 @@ limitations under the License. -->
     loading.value = true;
     for (const d of dashboardStore.dashboards) {
       if (d.id === row.id) {
-        d.topLevel = !row.topLevel;
+        d.isDefault = !row.isDefault;
         const key = [d.layer, d.entity, d.name].join("_");
         const layout = sessionStorage.getItem(key) || "{}";
         const c = {
@@ -418,8 +418,8 @@ limitations under the License. -->
           );
         }
       } else {
-        if (d.layer === row.layer && [EntityType[0].value].includes(d.entity) && !row.topLevel && d.topLevel) {
-          d.topLevel = false;
+        if (d.layer === row.layer && [EntityType[0].value].includes(d.entity) && !row.isDefault && d.isDefault) {
+          d.isDefault = false;
           const key = [d.layer, d.entity, d.name].join("_");
           const layout = sessionStorage.getItem(key) || "{}";
           const c = {

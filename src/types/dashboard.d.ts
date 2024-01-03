@@ -21,7 +21,7 @@ export type DashboardItem = {
   layer: string;
   isRoot: boolean;
   name: string;
-  topLevel: boolean;
+  isDefault: boolean;
 };
 export interface LayoutConfig {
   x: number;
