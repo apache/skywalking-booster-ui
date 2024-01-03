@@ -73,7 +73,7 @@ limitations under the License. -->
             <span v-else> -- </span>
           </template>
         </el-table-column>
-        <el-table-column prop="isDefault" label="Default Dashboard" width="80">
+        <el-table-column prop="isDefault" label="Default Dashboard" width="140">
           <template #default="scope">
             <el-popconfirm
               :title="t('rootTitle')"
@@ -81,7 +81,7 @@ limitations under the License. -->
               v-if="[EntityType[0].value].includes(scope.row.entity)"
             >
               <template #reference>
-                <el-button size="small" style="width: 50px">
+                <el-button size="small" style="width: 80px">
                   {{ scope.row.isDefault ? "Disable" : "Enable" }}
                 </el-button>
               </template>
