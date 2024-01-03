@@ -75,12 +75,17 @@ limitations under the License. -->
         </el-table-column>
         <el-table-column prop="topLevel" label="Top Level" width="80">
           <template #default="scope">
-            <el-switch
-              v-model="scope.row.topLevel"
-              @change="handleTopLevel(scope.row)"
-              size="small"
+            <el-popconfirm
+              :title="t('rootTitle')"
+              @confirm="handleTopLevel(scope.row)"
               v-if="[EntityType[0].value].includes(scope.row.entity)"
-            />
+            >
+              <template #reference>
+                <el-button size="small" style="width: 50px">
+                  {{ scope.row.topLevel ? "Disable" : "Enable" }}
+                </el-button>
+              </template>
+            </el-popconfirm>
             <span v-else> -- </span>
           </template>
         </el-table-column>
@@ -184,7 +189,7 @@ limitations under the License. -->
     }
     loading.value = true;
     for (const item of arr) {
-      const { layer, name, entity, isRoot, children } = item.configuration;
+      const { layer, name, entity, isRoot, children, topLevel } = item.configuration;
       const index = dashboardStore.dashboards.findIndex((d: DashboardItem) => d.id === item.id);
       const p: DashboardItem = {
         name: name.split(" ").join("-"),
@@ -196,6 +201,7 @@ limitations under the License. -->
       if (index > -1) {
         p.id = item.id;
         p.isRoot = isRoot;
+        p.topLevel = topLevel;
       }
       dashboardStore.setCurrentDashboard(p);
       dashboardStore.setLayout(children);
@@ -338,7 +344,7 @@ limitations under the License. -->
           configuration: JSON.stringify(c),
         };
         const res = await dashboardStore.updateDashboard(setting);
-        if (res.data.changeTemplate.id) {
+        if (res.data.changeTemplate.status) {
           sessionStorage.setItem(
             key,
             JSON.stringify({
@@ -366,7 +372,7 @@ limitations under the License. -->
             configuration: JSON.stringify(c),
           };
           const res = await dashboardStore.updateDashboard(setting);
-          if (res.data.changeTemplate.id) {
+          if (res.data.changeTemplate.status) {
             sessionStorage.setItem(
               key,
               JSON.stringify({
@@ -388,7 +394,7 @@ limitations under the License. -->
     loading.value = true;
     for (const d of dashboardStore.dashboards) {
       if (d.id === row.id) {
-        d.isRoot = row.topLevel;
+        d.topLevel = !row.topLevel;
         const key = [d.layer, d.entity, d.name].join("_");
         const layout = sessionStorage.getItem(key) || "{}";
         const c = {
@@ -396,13 +402,13 @@ limitations under the License. -->
           ...d,
         };
         delete c.id;
-
         const setting = {
           id: d.id,
           configuration: JSON.stringify(c),
         };
+
         const res = await dashboardStore.updateDashboard(setting);
-        if (res.data.changeTemplate.id) {
+        if (res.data.changeTemplate.status) {
           sessionStorage.setItem(
             key,
             JSON.stringify({
@@ -412,12 +418,7 @@ limitations under the License. -->
           );
         }
       } else {
-        if (
-          d.layer === row.layer &&
-          [EntityType[0].value].includes(d.entity) &&
-          row.topLevel === false &&
-          d.topLevel === true
-        ) {
+        if (d.layer === row.layer && [EntityType[0].value].includes(d.entity) && !row.topLevel && d.topLevel) {
           d.topLevel = false;
           const key = [d.layer, d.entity, d.name].join("_");
           const layout = sessionStorage.getItem(key) || "{}";
@@ -430,7 +431,7 @@ limitations under the License. -->
             configuration: JSON.stringify(c),
           };
           const res = await dashboardStore.updateDashboard(setting);
-          if (res.data.changeTemplate.id) {
+          if (res.data.changeTemplate.status) {
             sessionStorage.setItem(
               key,
               JSON.stringify({
