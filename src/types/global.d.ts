@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 import type {
+  ComponentPublicInstance,
   ComponentRenderProxy,
+  FunctionalComponent,
   VNode,
   VNodeChild,
-  ComponentPublicInstance,
-  FunctionalComponent,
   PropType as VuePropType,
 } from "vue";
 
@@ -38,6 +38,11 @@ declare global {
     };
     lastBuildTime: string;
   };
+
+  // Document
+  interface Document {
+    startViewTransition(callback: () => void): any;
+  }
 
   // vue
   declare type PropType<T> = VuePropType<T>;
