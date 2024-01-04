@@ -130,7 +130,7 @@ limitations under the License. -->
     const x = themeSwitchRef.value?.offsetLeft ?? 0;
     const y = themeSwitchRef.value?.offsetTop ?? 0;
     const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-    // 兼容性处理
+    // compatibility handling
     if (!document.startViewTransition) {
       changeTheme();
       return;
