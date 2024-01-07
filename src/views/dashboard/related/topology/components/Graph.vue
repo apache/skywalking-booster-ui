@@ -703,7 +703,7 @@ limitations under the License. -->
     },
   );
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .hierarchy-related {
     height: 100%;
     overflow: auto;

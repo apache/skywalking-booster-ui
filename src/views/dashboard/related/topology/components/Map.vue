@@ -14,14 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div
-    ref="chart"
-    class="micro-topo-chart"
+    class="hierarchy-services-topo"
     v-loading="loading"
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <svg class="svg-topology" :width="width - 100" :height="height" @click="svgEvent">
-      <g class="svg-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
+    <svg class="hierarchy-services-svg" :width="width - 100" :height="height" @click="svgEvent">
+      <g class="hierarchy-services-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
         <g
           class="topo-node"
           v-for="(n, index) in topologyLayout.nodes"
@@ -63,7 +62,6 @@ limitations under the License. -->
             :cy="(l.sourceY + l.targetY) / 2"
             r="4"
             fill="#97B0F8"
-            @click="handleLinkClick($event, l)"
             @mouseover="showLinkTip($event, l)"
             @mouseout="hideTip"
           />
@@ -91,19 +89,19 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
-  import { ref, onMounted, onBeforeUnmount, reactive, watch, computed, nextTick } from "vue";
+  import { ref, onMounted, onBeforeUnmount, watch, computed, nextTick } from "vue";
   import { useI18n } from "vue-i18n";
   import * as d3 from "d3";
   import type { Node, Call } from "@/types/topology";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { EntityType, MetricModes, CallTypes } from "../../../data";
+  import { EntityType, MetricModes } from "../../../data";
   import router from "@/router";
   import { ElMessage } from "element-plus";
   import type { Service } from "@/types/selector";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  import getDashboard from "@/hooks/useDashboardsSession";
+  // import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
@@ -129,11 +127,7 @@ limitations under the License. -->
   const loading = ref<boolean>(false);
   const svg = ref<Nullable<any>>(null);
   const graph = ref<Nullable<any>>(null);
-  const chart = ref<Nullable<HTMLDivElement>>(null);
-  const showSetting = ref<boolean>(false);
   const settings = ref<any>(props.config);
-  const operationsPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
-  const items = ref<{ id: string; title: string; func: any; dashboard?: string }[]>([]);
   const graphConfig = computed(() => props.config.graph || {});
   const depth = ref<number>(graphConfig.value.depth || 2);
   const topologyLayout = ref<any>({});
@@ -156,8 +150,8 @@ limitations under the License. -->
     };
     height.value = dom.height - 40;
     width.value = dom.width;
-    svg.value = d3.select(".svg-topology");
-    graph.value = d3.select(".svg-graph");
+    svg.value = d3.select(".hierarchy-services-svg");
+    graph.value = d3.select(".hierarchy-services-graph");
     loading.value = true;
     const json = await selectorStore.fetchServices(dashboardStore.layerId);
     if (json.errors) {
@@ -180,21 +174,10 @@ limitations under the License. -->
   }
 
   async function update() {
-    if (settings.value.metricMode === MetricModes.Expression) {
-      topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
-      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || [], CallTypes.Client);
-      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || [], CallTypes.Server);
-    } else {
-      topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
-      topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-      topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-    }
-
     window.addEventListener("resize", resize);
     await initLegendMetrics();
     draw();
     tooltip.value = d3.select("#tooltip");
-    setNodeTools(settings.value.nodeDashboard);
   }
 
   function computeLevels(calls: Call[], nodeList: Node[], levels: any[]) {
@@ -416,41 +399,7 @@ limitations under the License. -->
       .html(tipHtml);
   }
   function showLinkTip(event: MouseEvent, data: Call) {
-    const linkClientMetrics: string[] =
-      settings.value.metricMode === MetricModes.Expression
-        ? settings.value.linkClientExpressions
-        : settings.value.linkClientMetrics || [];
-    const linkServerMetricConfig: MetricConfigOpt[] = settings.value.linkServerMetricConfig || [];
-    const linkClientMetricConfig: MetricConfigOpt[] = settings.value.linkClientMetricConfig || [];
-    const linkServerMetrics: string[] =
-      settings.value.metricMode === MetricModes.Expression
-        ? settings.value.linkServerExpressions
-        : settings.value.linkServerMetrics || [];
-    const htmlServer = linkServerMetrics.map((m, index) => {
-      const metric = topologyStore.linkServerMetrics[m].values.find(
-        (val: { id: string; value: unknown }) => val.id === data.id,
-      );
-      if (metric) {
-        const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
-        const v = aggregation(metric.value, opt);
-        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
-      }
-    });
-    const htmlClient = linkClientMetrics.map((m: string, index: number) => {
-      const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
-      const metric = topologyStore.linkClientMetrics[m].values.find(
-        (val: { id: string; value: unknown }) => val.id === data.id,
-      );
-      if (metric) {
-        const v = aggregation(metric.value, opt);
-        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
-      }
-    });
-    const html = [
-      ...htmlServer,
-      ...htmlClient,
-      `<div><span class="grey">${t("detectPoint")}:</span>${data.detectPoints.join(" | ")}</div>`,
-    ].join(" ");
+    const html = `<div><span class="grey">${t("detectPoint")}:</span>${data.detectPoints.join(" | ")}</div>`;
 
     tooltip.value
       .style("top", event.offsetY + "px")
@@ -467,69 +416,7 @@ limitations under the License. -->
     hideTip();
     topologyStore.setNode(d);
     topologyStore.setLink(null);
-    operationsPos.x = event.offsetX;
-    operationsPos.y = event.offsetY;
-    if (d.layer === String(dashboardStore.layerId)) {
-      setNodeTools(settings.value.nodeDashboard);
-      return;
-    }
-    items.value = [
-      { id: "inspect", title: "Inspect", func: handleInspect },
-      { id: "alerting", title: "Alerting", func: handleGoAlerting },
-    ];
-  }
-  function handleLinkClick(event: MouseEvent, d: Call) {
-    event.stopPropagation();
-    if (d.sourceObj.layer !== dashboardStore.layerId || d.targetObj.layer !== dashboardStore.layerId) {
-      return;
-    }
-    topologyStore.setNode(null);
-    topologyStore.setLink(d);
-    if (!settings.value.linkDashboard) {
-      return;
-    }
-    const origin = dashboardStore.entity;
-    const e = dashboardStore.entity === EntityType[1].value ? EntityType[0].value : dashboardStore.entity;
-    const { dashboard } = getDashboard({
-      name: settings.value.linkDashboard,
-      layer: dashboardStore.layerId,
-      entity: `${e}Relation`,
-    });
-    if (!dashboard) {
-      ElMessage.error(`The dashboard named ${settings.value.linkDashboard} doesn't exist`);
-      return;
-    }
-    dashboardStore.setEntity(dashboard.entity);
-    const path = `/dashboard/related/${dashboard.layer}/${e}Relation/${d.sourceObj.id}/${d.targetObj.id}/${dashboard.name}`;
-    const routeUrl = router.resolve({ path });
-    window.open(routeUrl.href, "_blank");
-    dashboardStore.setEntity(origin);
-  }
-  async function handleInspect() {
-    const id = topologyStore.node.id;
-    loading.value = true;
-    const resp = await topologyStore.getDepthServiceTopology([id], Number(depth.value));
-    loading.value = false;
-    if (resp && resp.errors) {
-      ElMessage.error(resp.errors);
-    }
-    await update();
-    topologyStore.setNode(null);
-    topologyStore.setLink(null);
-  }
-  function handleGoEndpoint(name: string) {
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${name}`;
-    const routeUrl = router.resolve({ path });
-
-    window.open(routeUrl.href, "_blank");
-    dashboardStore.setEntity(origin);
-  }
-  function handleGoInstance(name: string) {
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${topologyStore.node.id}/${name}`;
-    const routeUrl = router.resolve({ path });
-
-    window.open(routeUrl.href, "_blank");
-    dashboardStore.setEntity(origin);
+    handleGoDashboard(d.name);
   }
   function handleGoDashboard(name: string) {
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${name}`;
@@ -544,21 +431,11 @@ limitations under the License. -->
 
     window.open(routeUrl.href, "_blank");
   }
-  async function backToTopology() {
-    loading.value = true;
-    await freshNodes();
-    topologyStore.setNode(null);
-    topologyStore.setLink(null);
-  }
   async function getTopology() {
     const ids = selectorStore.services.map((d: Service) => d.id);
     const serviceIds = dashboardStore.entity === EntityType[0].value ? [selectorStore.currentService.id] : ids;
     const resp = await topologyStore.getDepthServiceTopology(serviceIds, Number(depth.value));
     return resp;
-  }
-  function setConfig() {
-    showSetting.value = !showSetting.value;
-    dashboardStore.selectWidget(props.config);
   }
   function resize() {
     const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
@@ -567,45 +444,6 @@ limitations under the License. -->
     };
     height.value = dom.height - 40;
     width.value = dom.width;
-  }
-  function updateSettings(config: any) {
-    settings.value = config;
-    setNodeTools(config.nodeDashboard);
-  }
-  function setNodeTools(nodeDashboard: any) {
-    items.value = [
-      { id: "inspect", title: "Inspect", func: handleInspect },
-      { id: "alerting", title: "Alerting", func: handleGoAlerting },
-    ];
-    if (!(nodeDashboard && nodeDashboard.length)) {
-      return;
-    }
-    for (const item of nodeDashboard) {
-      if (item.scope === EntityType[0].value) {
-        items.value.push({
-          id: "dashboard",
-          title: "Service Dashboard",
-          func: handleGoDashboard,
-          ...item,
-        });
-      }
-      if (item.scope === EntityType[2].value) {
-        items.value.push({
-          id: "endpoint",
-          title: "Endpoint Dashboard",
-          func: handleGoEndpoint,
-          ...item,
-        });
-      }
-      if (item.scope === EntityType[3].value) {
-        items.value.push({
-          id: "instance",
-          title: "Service Instance Dashboard",
-          func: handleGoInstance,
-          ...item,
-        });
-      }
-    }
   }
   function svgEvent() {
     topologyStore.setNode(null);
@@ -637,8 +475,8 @@ limitations under the License. -->
     },
   );
 </script>
-<style lang="scss">
-  .micro-topo-chart {
+<style lang="scss" scoped>
+  .hierarchy-services-topo {
     position: relative;
     overflow: auto;
     margin-top: 30px;
@@ -658,7 +496,7 @@ limitations under the License. -->
       opacity: 0.9;
     }
 
-    .svg-topology {
+    .hierarchy-services-svg {
       cursor: move;
       background-color: $layout-background;
     }
