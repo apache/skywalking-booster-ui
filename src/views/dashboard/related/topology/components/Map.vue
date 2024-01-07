@@ -19,7 +19,7 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <svg class="hierarchy-services-svg" :width="width - 100" :height="height" @click="svgEvent">
+    <svg class="hierarchy-services-svg" :width="width" :height="height" @click="svgEvent">
       <g class="hierarchy-services-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
         <g
           class="topo-node"
@@ -84,7 +84,7 @@ limitations under the License. -->
         </g>
       </g>
     </svg>
-    <div id="tooltip"></div>
+    <div id="popover"></div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -131,10 +131,10 @@ limitations under the License. -->
   const graphConfig = computed(() => props.config.graph || {});
   const depth = ref<number>(graphConfig.value.depth || 2);
   const topologyLayout = ref<any>({});
-  const tooltip = ref<Nullable<any>>(null);
+  const popover = ref<Nullable<any>>(null);
   const graphWidth = ref<number>(100);
   const currentNode = ref<Nullable<Node>>();
-  const diff = computed(() => [(width.value - graphWidth.value - 130) / 2, 100]);
+  const diff = computed(() => [(width.value - graphWidth.value - 100) / 2, 0]);
   const radius = 8;
 
   onMounted(async () => {
@@ -144,11 +144,11 @@ limitations under the License. -->
     }, 10);
   });
   async function init() {
-    const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
-      height: 40,
+    const dom = document.querySelector(".hierarchy-related")?.getBoundingClientRect() || {
+      height: 80,
       width: 0,
     };
-    height.value = dom.height - 40;
+    height.value = dom.height - 80;
     width.value = dom.width;
     svg.value = d3.select(".hierarchy-services-svg");
     graph.value = d3.select(".hierarchy-services-graph");
@@ -177,7 +177,7 @@ limitations under the License. -->
     window.addEventListener("resize", resize);
     await initLegendMetrics();
     draw();
-    tooltip.value = d3.select("#tooltip");
+    popover.value = d3.select("#popover");
   }
 
   function computeLevels(calls: Call[], nodeList: Node[], levels: any[]) {
@@ -392,7 +392,7 @@ limitations under the License. -->
       ...html,
     ].join(" ");
 
-    tooltip.value
+    popover.value
       .style("top", event.offsetY + 10 + "px")
       .style("left", event.offsetX + 10 + "px")
       .style("visibility", "visible")
@@ -401,7 +401,7 @@ limitations under the License. -->
   function showLinkTip(event: MouseEvent, data: Call) {
     const html = `<div><span class="grey">${t("detectPoint")}:</span>${data.detectPoints.join(" | ")}</div>`;
 
-    tooltip.value
+    popover.value
       .style("top", event.offsetY + "px")
       .style("left", event.offsetX + "px")
       .style("visibility", "visible")
@@ -409,7 +409,7 @@ limitations under the License. -->
   }
 
   function hideTip() {
-    tooltip.value.style("visibility", "hidden");
+    popover.value.style("visibility", "hidden");
   }
   function handleNodeClick(event: MouseEvent, d: Node & { x: number; y: number }) {
     event.stopPropagation();
@@ -438,11 +438,11 @@ limitations under the License. -->
     return resp;
   }
   function resize() {
-    const dom = document.querySelector(".topology")?.getBoundingClientRect() || {
+    const dom = document.querySelector(".hierarchy-related")?.getBoundingClientRect() || {
       height: 40,
       width: 0,
     };
-    height.value = dom.height - 40;
+    height.value = dom.height - 80;
     width.value = dom.width;
   }
   function svgEvent() {
@@ -455,18 +455,6 @@ limitations under the License. -->
     window.removeEventListener("resize", resize);
   });
   watch(
-    () => [selectorStore.currentService, selectorStore.currentDestService],
-    (newVal, oldVal) => {
-      if (oldVal[0].id === newVal[0].id && !oldVal[1]) {
-        return;
-      }
-      if (oldVal[0].id === newVal[0].id && oldVal[1].id === newVal[1].id) {
-        return;
-      }
-      freshNodes();
-    },
-  );
-  watch(
     () => appStore.durationTime,
     () => {
       if (dashboardStore.entity === EntityType[1].value) {
@@ -478,8 +466,6 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .hierarchy-services-topo {
     position: relative;
-    overflow: auto;
-    margin-top: 30px;
 
     .relation-btn {
       position: absolute;
@@ -498,7 +484,7 @@ limitations under the License. -->
 
     .hierarchy-services-svg {
       cursor: move;
-      background-color: $layout-background;
+      background-color: var(--el-bg-color);
     }
 
     .legend {
@@ -612,7 +598,7 @@ limitations under the License. -->
     top: 30%;
   }
 
-  #tooltip {
+  #popover {
     position: absolute;
     visibility: hidden;
     padding: 5px;

@@ -130,10 +130,10 @@ limitations under the License. -->
     </div>
     <el-dialog
       v-model="hierarchyRelated"
-      width="1000px"
-      height="600px"
       :destroy-on-close="true"
       @closed="hierarchyRelated = false"
+      width="640px"
+      height="600px"
     >
       <div class="hierarchy-related">
         <Map :config="config" />
@@ -705,7 +705,8 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .hierarchy-related {
-    height: 100%;
+    height: 600px;
+    width: 600px;
     overflow: auto;
   }
 
