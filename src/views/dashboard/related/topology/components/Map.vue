@@ -134,7 +134,7 @@ limitations under the License. -->
   const popover = ref<Nullable<any>>(null);
   const graphWidth = ref<number>(100);
   const currentNode = ref<Nullable<Node>>();
-  const diff = computed(() => [(width.value - graphWidth.value - 100) / 2, 0]);
+  const diff = computed(() => [(width.value - graphWidth.value) / 2, 0]);
   const radius = 8;
 
   onMounted(async () => {
@@ -576,21 +576,12 @@ limitations under the License. -->
       stroke-width: 1px;
       stroke-dasharray: 10 10;
       fill: none;
-      animation: topo-dash 0.3s linear infinite;
+      animation: var(--sw-topo-animation);
     }
 
     .topo-line-anchor,
     .topo-node {
       cursor: pointer;
-    }
-  }
-  @keyframes topo-dash {
-    from {
-      stroke-dashoffset: 10;
-    }
-
-    to {
-      stroke-dashoffset: 0;
     }
   }
 

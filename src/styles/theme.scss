@@ -15,9 +15,19 @@
  * limitations under the License.
  */
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+@keyframes topo-dash {
+  from {
+    stroke-dashoffset: 10;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
 :root {
   --sw-green: #70c877;
   --sw-orange: #e6a23c;
+  --sw-topo-animation: topo-dash 0.3s linear infinite;
 }
 
 html {

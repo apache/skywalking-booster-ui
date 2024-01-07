@@ -815,21 +815,12 @@ limitations under the License. -->
       stroke-width: 1px;
       stroke-dasharray: 10 10;
       fill: none;
-      animation: topo-dash 0.3s linear infinite;
+      animation: var(--sw-topo-animation);
     }
 
     .topo-line-anchor,
     .topo-node {
       cursor: pointer;
-    }
-  }
-  @keyframes topo-dash {
-    from {
-      stroke-dashoffset: 10;
-    }
-
-    to {
-      stroke-dashoffset: 0;
     }
   }
 
