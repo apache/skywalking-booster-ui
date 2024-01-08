@@ -136,7 +136,7 @@ limitations under the License. -->
       height="600px"
     >
       <div class="hierarchy-related">
-        <Map :config="config" />
+        <hierarchy-map :config="config" />
       </div>
     </el-dialog>
   </div>
@@ -162,10 +162,10 @@ limitations under the License. -->
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
-  import { layout, circleIntersection, computeCallPos } from "./utils/layout";
+  import { layout, computeLevels, changeNode } from "./utils/layout";
   import zoom from "../../components/utils/zoom";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
-  import Map from "./Map.vue";
+  import HierarchyMap from "./HierarchyMap.vue";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -194,7 +194,7 @@ limitations under the License. -->
   const topologyLayout = ref<any>({});
   const tooltip = ref<Nullable<any>>(null);
   const graphWidth = ref<number>(100);
-  const currentNode = ref<Nullable<Node>>();
+  const currentNode = ref<Nullable<Node>>(null);
   const diff = computed(() => [(width.value - graphWidth.value - 130) / 2, 100]);
   const hierarchyRelated = ref<boolean>(false);
   const radius = 8;
@@ -253,105 +253,17 @@ limitations under the License. -->
     setNodeTools(settings.value.nodeDashboard);
   }
 
-  function computeLevels(calls: Call[], nodeList: Node[], levels: any[]) {
-    const node = findMostFrequent(calls);
-    const nodes = JSON.parse(JSON.stringify(nodeList)).sort((a: Node, b: Node) => {
-      if (a.name.toLowerCase() < b.name.toLowerCase()) {
-        return -1;
-      }
-      if (a.name.toLowerCase() > b.name.toLowerCase()) {
-        return 1;
-      }
-      return 0;
-    });
-    const index = nodes.findIndex((n: Node) => n.type === "USER");
-    let key = index;
-    if (index < 0) {
-      key = nodes.findIndex((n: Node) => n.id === node.id);
-    }
-    levels.push([nodes[key]]);
-    nodes.splice(key, 1);
-    for (const level of levels) {
-      const a = [];
-      for (const l of level) {
-        for (const n of calls) {
-          if (n.target === l.id) {
-            const i = nodes.findIndex((d: Node) => d.id === n.source);
-            if (i > -1) {
-              a.push(nodes[i]);
-              nodes.splice(i, 1);
-            }
-          }
-          if (n.source === l.id) {
-            const i = nodes.findIndex((d: Node) => d.id === n.target);
-            if (i > -1) {
-              a.push(nodes[i]);
-              nodes.splice(i, 1);
-            }
-          }
-        }
-      }
-      if (a.length) {
-        levels.push(a);
-      }
-    }
-    if (nodes.length) {
-      const ids = nodes.map((d: Node) => d.id);
-      const links = calls.filter((item: Call) => ids.includes(item.source) || ids.includes(item.target));
-      const list = computeLevels(links, nodes, []);
-      levels = list.map((subArrayA, index) => subArrayA.concat(levels[index]));
-    }
-    return levels;
-  }
-
   function draw() {
     const levels = computeLevels(topologyStore.calls, topologyStore.nodes, []);
 
     topologyLayout.value = layout(levels, topologyStore.calls, radius);
     graphWidth.value = topologyLayout.value.layout.width;
     const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {
-      moveNode(d);
+      topologyLayout.value.calls = changeNode(d, currentNode.value, topologyLayout.value, radius);
     });
     setTimeout(() => {
       d3.selectAll(".topo-node").call(drag);
     }, 1000);
-  }
-
-  function moveNode(d: { x: number; y: number }) {
-    if (!currentNode.value) {
-      return;
-    }
-    for (const node of topologyLayout.value.nodes) {
-      if (node.id === currentNode.value.id) {
-        node.x = d.x;
-        node.y = d.y;
-      }
-    }
-    for (const call of topologyLayout.value.calls) {
-      if (call.sourceObj.id === currentNode.value.id) {
-        call.sourceObj.x = d.x;
-        call.sourceObj.y = d.y;
-      }
-      if (call.targetObj.id === currentNode.value.id) {
-        call.targetObj.x = d.x;
-        call.targetObj.y = d.y;
-      }
-      if (call.targetObj.id === currentNode.value.id || call.sourceObj.id === currentNode.value.id) {
-        const pos: any = circleIntersection(
-          call.sourceObj.x,
-          call.sourceObj.y,
-          radius,
-          call.targetObj.x,
-          call.targetObj.y,
-          radius,
-        );
-        call.sourceX = pos[0].x;
-        call.sourceY = pos[0].y;
-        call.targetX = pos[1].x;
-        call.targetY = pos[1].y;
-      }
-    }
-    topologyLayout.value.calls = computeCallPos(topologyLayout.value.calls, radius);
   }
 
   function startMoveNode(event: MouseEvent, d: Node) {
@@ -361,28 +273,6 @@ limitations under the License. -->
   function stopMoveNode(event: MouseEvent) {
     event.stopPropagation();
     currentNode.value = null;
-  }
-
-  function findMostFrequent(arr: Call[]) {
-    let count: any = {};
-    let maxCount = 0;
-    let maxItem = null;
-
-    for (let i = 0; i < arr.length; i++) {
-      let item = arr[i];
-      count[item.sourceObj.id] = (count[item.sourceObj.id] || 0) + 1;
-      if (count[item.sourceObj.id] > maxCount) {
-        maxCount = count[item.sourceObj.id];
-        maxItem = item.sourceObj;
-      }
-      count[item.targetObj.id] = (count[item.targetObj.id] || 0) + 1;
-      if (count[item.targetObj.id] > maxCount) {
-        maxCount = count[item.targetObj.id];
-        maxItem = item.targetObj;
-      }
-    }
-
-    return maxItem;
   }
 
   async function initLegendMetrics() {
