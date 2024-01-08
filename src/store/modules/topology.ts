@@ -544,11 +544,13 @@ export const topologyStore = defineStore({
       this.setLinkClientMetrics(res.data.data);
       return res.data;
     },
-    async getHierarchyServiceTopology(params: { serviceId: string; layer: string }) {
-      if (!(params.serviceId && params.layer)) {
+    async getHierarchyServiceTopology() {
+      if (!(this.node.id && this.node.layer)) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getHierarchyServiceTopology").params(params);
+      const res: AxiosResponse = await graphql
+        .query("getHierarchyServiceTopology")
+        .params({ serviceId: this.node.id, layer: this.node.layer });
       if (res.data.errors) {
         return res.data;
       }

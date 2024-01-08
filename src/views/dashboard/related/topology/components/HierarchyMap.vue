@@ -120,7 +120,6 @@ limitations under the License. -->
   const graph = ref<Nullable<any>>(null);
   const settings = ref<any>(props.config);
   const graphConfig = computed(() => props.config.graph || {});
-  const depth = ref<number>(graphConfig.value.depth || 2);
   const topologyLayout = ref<any>({});
   const popover = ref<Nullable<any>>(null);
   const graphWidth = ref<number>(100);
@@ -154,7 +153,7 @@ limitations under the License. -->
   }
   async function freshNodes() {
     topologyStore.setHierarchyServiceNode(null);
-    const resp = await getTopology();
+    const resp = await topologyStore.getHierarchyServiceTopology();
     loading.value = false;
 
     if (resp && resp.errors) {
@@ -164,7 +163,6 @@ limitations under the License. -->
   }
 
   async function update() {
-    window.addEventListener("resize", resize);
     await initLegendMetrics();
     draw();
     popover.value = d3.select("#popover");
@@ -287,9 +285,10 @@ limitations under the License. -->
     event.stopPropagation();
     hideTip();
     topologyStore.setHierarchyServiceNode(d);
-    // handleGoDashboard(d.name);
+    handleGoDashboard();
   }
-  function handleGoDashboard(name: string) {
+  function handleGoDashboard() {
+    const name = ""; // todo
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${name}`;
     const routeUrl = router.resolve({ path });
 
@@ -297,28 +296,11 @@ limitations under the License. -->
     dashboardStore.setEntity(origin);
   }
 
-  async function getTopology() {
-    const ids = selectorStore.services.map((d: Service) => d.id);
-    const serviceIds = dashboardStore.entity === EntityType[0].value ? [selectorStore.currentService.id] : ids;
-    const resp = await topologyStore.getDepthServiceTopology(serviceIds, Number(depth.value));
-    return resp;
-  }
-  function resize() {
-    const dom = document.querySelector(".hierarchy-related")?.getBoundingClientRect() || {
-      height: 40,
-      width: 0,
-    };
-    height.value = dom.height - 80;
-    width.value = dom.width;
-  }
   function svgEvent() {
     topologyStore.setHierarchyServiceNode(null);
     dashboardStore.selectWidget(props.config);
   }
 
-  onBeforeUnmount(() => {
-    window.removeEventListener("resize", resize);
-  });
   watch(
     () => appStore.durationTime,
     () => {
