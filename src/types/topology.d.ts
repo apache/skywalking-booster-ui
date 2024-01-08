@@ -31,6 +31,12 @@ export interface Call {
   targetY?: number;
   targetX?: number;
 }
+export interface HierarchyNode {
+  id: string;
+  name: string;
+  layer: string;
+  level?: number;
+}
 export interface Node {
   id: string;
   name: string;
@@ -42,4 +48,28 @@ export interface Node {
   x?: number;
   y?: number;
   level?: number;
+}
+
+export interface ServiceHierarchy {
+  relations: HierarchyServiceRelation[];
+}
+
+export interface HierarchyServiceRelation {
+  upperService: HierarchyRelated;
+  lowerService: HierarchyRelated;
+}
+
+type HierarchyRelated = {
+  id: string;
+  name: string;
+  layer: string;
+};
+
+export interface InstanceHierarchy {
+  relations: HierarchyInstanceRelation[];
+}
+
+export interface HierarchyInstanceRelation {
+  upperInstance: HierarchyRelated;
+  lowerInstance: HierarchyRelated;
 }

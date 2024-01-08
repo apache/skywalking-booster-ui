@@ -17,7 +17,7 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import type { Service } from "@/types/selector";
-import type { Node, Call } from "@/types/topology";
+import type { Node, Call, HierarchyNode, ServiceHierarchy, InstanceHierarchy } from "@/types/topology";
 import graphql from "@/graphql";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -35,9 +35,14 @@ interface TopologyState {
   call: Nullable<Call>;
   calls: Call[];
   nodes: Node[];
+  hierarchyServiceCalls: Call[];
+  hierarchyServiceNodes: HierarchyNode[];
+  hierarchyInstanceCalls: Call[];
+  hierarchyInstanceNodes: HierarchyNode[];
   nodeMetricValue: MetricVal;
   linkServerMetrics: MetricVal;
   linkClientMetrics: MetricVal;
+  hierarchyServiceNode: Nullable<Node>;
 }
 
 export const topologyStore = defineStore({
@@ -45,8 +50,13 @@ export const topologyStore = defineStore({
   state: (): TopologyState => ({
     calls: [],
     nodes: [],
+    hierarchyServiceCalls: [],
+    hierarchyServiceNodes: [],
+    hierarchyInstanceCalls: [],
+    hierarchyInstanceNodes: [],
     node: null,
     call: null,
+    hierarchyServiceNode: null,
     nodeMetricValue: {},
     linkServerMetrics: {},
     linkClientMetrics: {},
@@ -57,6 +67,9 @@ export const topologyStore = defineStore({
     },
     setLink(link: Call) {
       this.call = link;
+    },
+    setHierarchyServiceNode(node: HierarchyNode) {
+      this.hierarchyServiceNode = node;
     },
     setInstanceTopology(data: { nodes: Node[]; calls: Call[] }) {
       for (const call of data.calls) {
@@ -105,6 +118,56 @@ export const topologyStore = defineStore({
 
       this.calls = calls;
       this.nodes = nodes;
+    },
+    setHierarchyInstanceTopology(data: InstanceHierarchy) {
+      const relations = data.relations || [];
+      const nodesMap = new Map();
+      const callList = [];
+
+      for (const relation of relations) {
+        const upperId = relation.upperInstance.id;
+        const lowerId = relation.lowerInstance.id;
+        if (!nodesMap.get(upperId)) {
+          nodesMap.set(upperId, relation.upperInstance);
+        }
+        if (!nodesMap.get(lowerId)) {
+          nodesMap.set(lowerId, relation.lowerInstance);
+        }
+        callList.push({
+          source: upperId,
+          target: lowerId,
+          id: `${upperId}->${lowerId}`,
+          sourceObj: relation.upperInstance,
+          targetObj: relation.lowerInstance,
+        });
+      }
+      this.hierarchyInstanceCalls = callList;
+      this.hierarchyInstanceNodes = Array.from(nodesMap).flat();
+    },
+    setHierarchyServiceTopology(data: ServiceHierarchy) {
+      const relations = data.relations || [];
+      const nodesMap = new Map();
+      const callList = [];
+
+      for (const relation of relations) {
+        const upperId = relation.upperService.id;
+        const lowerId = relation.lowerService.id;
+        if (!nodesMap.get(upperId)) {
+          nodesMap.set(upperId, relation.upperService);
+        }
+        if (!nodesMap.get(lowerId)) {
+          nodesMap.set(lowerId, relation.lowerService);
+        }
+        callList.push({
+          source: upperId,
+          target: lowerId,
+          id: `${upperId}->${lowerId}`,
+          sourceObj: relation.upperService,
+          targetObj: relation.lowerService,
+        });
+      }
+      this.hierarchyServiceCalls = callList;
+      this.hierarchyServiceNodes = Array.from(nodesMap).flat();
     },
     setNodeMetricValue(m: MetricVal) {
       this.nodeMetricValue = m;
@@ -482,23 +545,25 @@ export const topologyStore = defineStore({
       return res.data;
     },
     async getHierarchyServiceTopology(params: { serviceId: string; layer: string }) {
-      if (!params.serviceId || !params.layer) {
+      if (!(params.serviceId && params.layer)) {
         return new Promise((resolve) => resolve({}));
       }
       const res: AxiosResponse = await graphql.query("getHierarchyServiceTopology").params(params);
       if (res.data.errors) {
         return res.data;
       }
+      this.setHierarchyServiceTopology(res.data.data.hierarchyServiceTopology || {});
       return res.data;
     },
     async getHierarchyInstanceTopology(params: { instanceId: string; layer: string }) {
-      if (!params.instanceId || !params.layer) {
+      if (!(params.instanceId && params.layer)) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getHierarchyServiceTopology").params(params);
+      const res: AxiosResponse = await graphql.query("getHierarchyInstanceTopology").params(params);
       if (res.data.errors) {
         return res.data;
       }
+      this.setInstanceTopology(res.data.data.hierarchyInstanceTopology || {});
       return res.data;
     },
   },

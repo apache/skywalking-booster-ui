@@ -153,8 +153,7 @@ limitations under the License. -->
     svg.value.call(zoom(d3, graph.value, diff.value));
   }
   async function freshNodes() {
-    topologyStore.setNode(null);
-    topologyStore.setLink(null);
+    topologyStore.setHierarchyServiceNode(null);
     const resp = await getTopology();
     loading.value = false;
 
@@ -287,9 +286,8 @@ limitations under the License. -->
   function handleNodeClick(event: MouseEvent, d: Node & { x: number; y: number }) {
     event.stopPropagation();
     hideTip();
-    topologyStore.setNode(d);
-    topologyStore.setLink(null);
-    handleGoDashboard(d.name);
+    topologyStore.setHierarchyServiceNode(d);
+    // handleGoDashboard(d.name);
   }
   function handleGoDashboard(name: string) {
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${name}`;
@@ -314,8 +312,7 @@ limitations under the License. -->
     width.value = dom.width;
   }
   function svgEvent() {
-    topologyStore.setNode(null);
-    topologyStore.setLink(null);
+    topologyStore.setHierarchyServiceNode(null);
     dashboardStore.selectWidget(props.config);
   }
 

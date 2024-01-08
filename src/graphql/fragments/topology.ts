@@ -120,7 +120,7 @@ export const HierarchyServiceTopology = {
 export const HierarchyInstanceTopology = {
   variable: "$instanceId: ID!, $layer: String!",
   query: `
-  HierarchyInstanceTopology: getInstanceHierarchy(instanceId: $instanceId, layer: $layer) {
+  hierarchyInstanceTopology: getInstanceHierarchy(instanceId: $instanceId, layer: $layer) {
     relations {
       upperInstance {
         id
