@@ -481,6 +481,26 @@ export const topologyStore = defineStore({
       this.setLinkClientMetrics(res.data.data);
       return res.data;
     },
+    async getHierarchyServiceTopology(params: { serviceId: string; layer: string }) {
+      if (!params.serviceId || !params.layer) {
+        return new Promise((resolve) => resolve({}));
+      }
+      const res: AxiosResponse = await graphql.query("getHierarchyServiceTopology").params(params);
+      if (res.data.errors) {
+        return res.data;
+      }
+      return res.data;
+    },
+    async getHierarchyInstanceTopology(params: { instanceId: string; layer: string }) {
+      if (!params.instanceId || !params.layer) {
+        return new Promise((resolve) => resolve({}));
+      }
+      const res: AxiosResponse = await graphql.query("getHierarchyServiceTopology").params(params);
+      if (res.data.errors) {
+        return res.data;
+      }
+      return res.data;
+    },
   },
 });
 

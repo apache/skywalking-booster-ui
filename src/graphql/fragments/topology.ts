@@ -99,3 +99,39 @@ export const ProcessTopology = {
   }
 `,
 };
+export const HierarchyServiceTopology = {
+  variable: "$serviceId: ID!, $layer: String!",
+  query: `
+  hierarchyServiceTopology: getServiceHierarchy(serviceId: $serviceId, layer: $layer) {
+    relations {
+      upperService {
+        id
+        name
+        layer
+      }
+      lowerService {
+        id
+        name
+        layer
+      }
+    }
+  }`,
+};
+export const HierarchyInstanceTopology = {
+  variable: "$instanceId: ID!, $layer: String!",
+  query: `
+  HierarchyInstanceTopology: getInstanceHierarchy(instanceId: $instanceId, layer: $layer) {
+    relations {
+      upperInstance {
+        id
+        name
+        layer
+      }
+      lowerInstance {
+        id
+        name
+        layer
+      }
+    }
+  }`,
+};

@@ -14,9 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { InstanceTopology, EndpointTopology, ServicesTopology, ProcessTopology } from "../fragments/topology";
+import {
+  InstanceTopology,
+  EndpointTopology,
+  ServicesTopology,
+  ProcessTopology,
+  HierarchyServiceTopology,
+  HierarchyInstanceTopology,
+} from "../fragments/topology";
 
 export const getInstanceTopology = `query queryData(${InstanceTopology.variable}) {${InstanceTopology.query}}`;
 export const getEndpointTopology = `query queryData(${EndpointTopology.variable}) {${EndpointTopology.query}}`;
 export const getServicesTopology = `query queryData(${ServicesTopology.variable}) {${ServicesTopology.query}}`;
 export const getProcessTopology = `query queryData(${ProcessTopology.variable}) {${ProcessTopology.query}}`;
+export const getHierarchyInstanceTopology = `query queryData(${HierarchyInstanceTopology.variable}) {${HierarchyInstanceTopology.query}}`;
+export const getHierarchyServiceTopology = `query queryData(${HierarchyServiceTopology.variable}) {${HierarchyServiceTopology.query}}`;
