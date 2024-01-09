@@ -128,13 +128,7 @@ limitations under the License. -->
         {{ item.title }}
       </span>
     </div>
-    <el-dialog
-      v-model="hierarchyRelated"
-      :destroy-on-close="true"
-      @closed="hierarchyRelated = false"
-      width="640px"
-      height="600px"
-    >
+    <el-dialog v-model="hierarchyRelated" :destroy-on-close="true" @closed="hierarchyRelated = false" width="640px">
       <div class="hierarchy-related">
         <hierarchy-map :config="config" />
       </div>

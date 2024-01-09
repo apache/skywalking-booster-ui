@@ -383,5 +383,6 @@ const msg = {
   traceDesc:
     "Trace Segment代表在单一操作系统进程（例如JVM）中执行的追踪部分。它包含了一组跨度（spans），这些跨度通常与单一请求或执行上下文关联。",
   tabExpressions: "Tab表达式",
+  hierarchyServicesSettings: "层次结构服务拓扑设置",
 };
 export default msg;

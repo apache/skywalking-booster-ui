@@ -13,23 +13,26 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <service-map :config="config" v-if="isService" />
-  <pod-map :config="config" v-else />
+  <div class="hierarchy-services-settings">
+    <h5 class="title">{{ t("hierarchyServicesSettings") }}</h5>
+    <div class="label">{{ t("nodeMetrics") }}</div>
+  </div>
 </template>
 <script lang="ts" setup>
-  import type { PropType } from "vue";
-  import ServiceMap from "./components/ServiceMap.vue";
-  import PodMap from "./components/PodMap.vue";
-  import { EntityType } from "../../data";
-  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { reactive, ref } from "vue";
+  import { useI18n } from "vue-i18n";
 
-  /*global defineProps */
-  defineProps({
-    config: {
-      type: Object as PropType<any>,
-      default: () => ({ graph: {} }),
-    },
-  });
-  const dashboardStore = useDashboardStore();
-  const isService = [EntityType[0].value, EntityType[1].value].includes(dashboardStore.entity);
+  const { t } = useI18n();
 </script>
+<style lang="scss" scoped>
+  .title {
+    color: var(--sw-topology-color);
+    margin-bottom: 0;
+  }
+
+  .label {
+    font-size: $font-size-smaller;
+    margin-top: 10px;
+    color: var(--sw-topology-color);
+  }
+</style>

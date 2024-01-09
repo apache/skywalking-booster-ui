@@ -76,11 +76,33 @@ limitations under the License. -->
       </g>
     </svg>
     <div id="popover"></div>
+    <div class="legend">
+      <div>
+        <img :src="icons.CUBE" />
+        <span>
+          {{ settings.description ? settings.description.healthy || "" : "" }}
+        </span>
+      </div>
+      <div>
+        <img :src="icons.CUBEERROR" />
+        <span>
+          {{ settings.description ? settings.description.unhealthy || "" : "" }}
+        </span>
+      </div>
+    </div>
+    <div class="tool">
+      <span class="switch-icon ml-5" title="Settings" @click="showConfig" v-if="dashboardStore.editMode">
+        <Icon size="middle" iconName="settings" />
+      </span>
+    </div>
+    <div class="setting" v-if="showSetting && dashboardStore.editMode">
+      <hierachy-settings />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
-  import { ref, onMounted, onBeforeUnmount, watch, computed, nextTick } from "vue";
+  import { ref, onMounted, watch, computed, nextTick } from "vue";
   import { useI18n } from "vue-i18n";
   import * as d3 from "d3";
   import type { Node, Call } from "@/types/topology";
@@ -100,6 +122,7 @@ limitations under the License. -->
   import { layout, changeNode, computeLevels } from "./utils/layout";
   import zoom from "../../components/utils/zoom";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
+  import HierachySettings from "./HierachySettings.vue";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -119,6 +142,7 @@ limitations under the License. -->
   const svg = ref<Nullable<any>>(null);
   const graph = ref<Nullable<any>>(null);
   const settings = ref<any>(props.config);
+  const showSetting = ref<boolean>(false);
   const graphConfig = computed(() => props.config.graph || {});
   const topologyLayout = ref<any>({});
   const popover = ref<Nullable<any>>(null);
@@ -153,7 +177,8 @@ limitations under the License. -->
   }
   async function freshNodes() {
     topologyStore.setHierarchyServiceNode(null);
-    const resp = await topologyStore.getHierarchyServiceTopology();
+    const resp = await getTopology();
+    // const resp = await topologyStore.getHierarchyServiceTopology();
     loading.value = false;
 
     if (resp && resp.errors) {
@@ -188,6 +213,17 @@ limitations under the License. -->
   function stopMoveNode(event: MouseEvent) {
     event.stopPropagation();
     currentNode.value = null;
+  }
+
+  async function getTopology() {
+    const ids = selectorStore.services.map((d: Service) => d.id);
+    const serviceIds = dashboardStore.entity === EntityType[0].value ? [selectorStore.currentService.id] : ids;
+    const resp = await topologyStore.getDepthServiceTopology(serviceIds, 2);
+    return resp;
+  }
+
+  function showConfig() {
+    showSetting.value = !showSetting.value;
   }
 
   async function initLegendMetrics() {
@@ -336,9 +372,10 @@ limitations under the License. -->
 
     .legend {
       position: absolute;
-      top: 10px;
-      left: 25px;
+      top: 0;
+      left: 0;
       color: var(--sw-topology-color);
+      font-size: 12px;
 
       div {
         margin-bottom: 8px;
@@ -359,10 +396,10 @@ limitations under the License. -->
 
     .setting {
       position: absolute;
-      top: 80px;
+      top: 40px;
       right: 10px;
-      width: 400px;
-      height: 600px;
+      width: 300px;
+      height: 400px;
       overflow: auto;
       padding: 0 15px;
       border-radius: 3px;
@@ -404,7 +441,7 @@ limitations under the License. -->
 
     .tool {
       position: absolute;
-      top: 35px;
+      top: 10px;
       right: 10px;
     }
 
@@ -414,7 +451,7 @@ limitations under the License. -->
       background: var(--sw-topology-switch-icon);
       color: $text-color;
       display: inline-block;
-      padding: 2px 4px;
+      padding: 1px;
       border-radius: 3px;
     }
 
