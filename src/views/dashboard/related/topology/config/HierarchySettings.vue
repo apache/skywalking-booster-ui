@@ -44,7 +44,8 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { computed, ref } from "vue";
   import { useI18n } from "vue-i18n";
-  import type { Node, HierarchyServicesConfig } from "@/types/dashboard";
+  import type { HierarchyServicesConfig } from "@/types/dashboard";
+  import type { Node } from "@/types/topology";
   import type { Option } from "@/types/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useTopologyStore } from "@/store/modules/topology";
@@ -71,7 +72,7 @@ limitations under the License. -->
     const { hierarchyServicesConfig } = dashboardStore.selectedGrid;
     const layer = opt[0].value;
 
-    currentConfig.value = hierarchyServicesConfig.value.find((d) => d.layer === layer.value) || {};
+    currentConfig.value = hierarchyServicesConfig.value.find((d: HierarchyServicesConfig) => d.layer === layer) || {};
   }
 
   function changeNodeExpressions(param: string[]) {

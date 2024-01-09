@@ -147,7 +147,7 @@ limitations under the License. -->
   import { EntityType, DepthList, MetricModes, CallTypes } from "@/views/dashboard/data";
   import router from "@/router";
   import { ElMessage } from "element-plus";
-  import Settings from "..HierarchySettings.vue";
+  import Settings from "../config/HierarchySettings.vue";
   import HierarchyMap from "./HierarchyMap.vue";
   import type { Option } from "@/types/app";
   import type { Service } from "@/types/selector";
