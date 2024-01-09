@@ -69,10 +69,10 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  import { EntityType, DepthList, MetricModes, CallTypes } from "../../../data";
+  import { EntityType, DepthList, MetricModes, CallTypes } from "@/views/dashboard/data";
   import { ElMessage } from "element-plus";
   import Sankey from "./Sankey.vue";
-  import Settings from "./Settings.vue";
+  import Settings from "../config/Settings.vue";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
 

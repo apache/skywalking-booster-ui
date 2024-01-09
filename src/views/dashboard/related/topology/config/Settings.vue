@@ -266,7 +266,7 @@ limitations under the License. -->
     MetricsType,
     MetricModes,
     CallTypes,
-  } from "../../../data";
+  } from "@/views/dashboard/data";
   import type { Option } from "@/types/app";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";

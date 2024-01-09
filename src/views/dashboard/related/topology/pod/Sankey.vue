@@ -23,7 +23,7 @@ limitations under the License. -->
   import type { Node, Call } from "@/types/topology";
   import type { MetricConfigOpt } from "@/types/dashboard";
   import { aggregation } from "@/hooks/useMetricsProcessor";
-  import { MetricModes } from "../../../data";
+  import { MetricModes } from "@/views/dashboard/data";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { Themes } from "@/constants/data";
 

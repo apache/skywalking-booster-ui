@@ -18,9 +18,9 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
-  import ServiceMap from "./components/ServiceMap.vue";
-  import PodMap from "./components/PodMap.vue";
-  import { EntityType } from "../../data";
+  import ServiceMap from "./service/ServiceMap.vue";
+  import PodMap from "./pod/PodMap.vue";
+  import { EntityType } from "@/views/dashboard/data";
   import { useDashboardStore } from "@/store/modules/dashboard";
 
   /*global defineProps */

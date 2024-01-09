@@ -55,7 +55,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, computed, watch } from "vue";
   import { useI18n } from "vue-i18n";
-  import { CalculationOpts, MetricModes } from "../../../data";
+  import { CalculationOpts, MetricModes } from "@/views/dashboard/data";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { Option } from "element-plus/es/components/select-v2/src/select.types";
 
