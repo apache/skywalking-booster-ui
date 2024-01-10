@@ -24,21 +24,25 @@ limitations under the License. -->
       @change="changeLayer"
       class="inputs"
     />
-    <div class="label">{{ t("nodeMetrics") }}</div>
-    <el-popover placement="left" :width="400" trigger="click">
-      <template #reference>
-        <span>
-          <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
-        </span>
-      </template>
-      <Metrics :type="'hierarchyServicesConfig'" :isExpression="true" @update="updateSettings" />
-    </el-popover>
-    <Tags
-      :tags="currentConfig.nodeExpressions"
-      :vertical="true"
-      :text="t('addExpressions')"
-      @change="(param) => changeNodeExpressions(param)"
-    />
+    <div class="label" v-if="currentConfig.layer">
+      <span>{{ t("nodeMetrics") }}</span>
+      <el-popover placement="left" :width="400" trigger="click">
+        <template #reference>
+          <span>
+            <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
+          </span>
+        </template>
+        <Metrics :type="'hierarchyServicesConfig'" :isExpression="true" @update="updateSettings" />
+      </el-popover>
+    </div>
+    <div v-if="currentConfig.layer">
+      <Tags
+        :tags="currentConfig.nodeExpressions"
+        :vertical="true"
+        :text="t('addExpressions')"
+        @change="(param) => changeNodeExpressions(param)"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -59,8 +63,8 @@ limitations under the License. -->
   const topologyStore = useTopologyStore();
   const selectorStore = useSelectorStore();
   const hierarchyServicesConfig = dashboardStore.selectedGrid.hierarchyServicesConfig || [];
-  const layers = ref<Option[]>([]);
   const currentConfig = ref<HierarchyServicesConfig>(hierarchyServicesConfig[0] || {});
+  const layers = ref<Option[]>([]);
 
   onMounted(() => {
     setLayers();
@@ -69,27 +73,34 @@ limitations under the License. -->
     const hierarchyServicesConfig = dashboardStore.selectedGrid.hierarchyServicesConfig || [];
     const layer = opt[0].value;
 
-    currentConfig.value = hierarchyServicesConfig.value.find((d: HierarchyServicesConfig) => d.layer === layer) || {};
+    currentConfig.value = hierarchyServicesConfig.find((d: HierarchyServicesConfig) => d.layer === layer) || { layer };
   }
 
   function changeNodeExpressions(param: string[]) {
     currentConfig.value.nodeExpressions = param;
     updateSettings();
+    if (!param.length) {
+      topologyStore.setHierarchyServiceNode({});
+      return;
+    }
+    topologyStore.queryHierarchyNodeExpressions(param);
   }
 
   function updateSettings() {
-    const { hierarchyServicesConfig } = dashboardStore.selectedGrid;
-    const index = hierarchyServicesConfig.findIndex(
-      (d: HierarchyServicesConfig) => d.layer === currentConfig.value.layer,
-    );
+    const config = dashboardStore.selectedGrid.hierarchyServicesConfig || [];
+    const index = config.findIndex((d: HierarchyServicesConfig) => d.layer === currentConfig.value.layer);
     if (index < 0) {
-      return;
+      config.push(currentConfig.value);
+    } else {
+      config[index] = currentConfig.value;
     }
-    hierarchyServicesConfig[index] = currentConfig.value;
+
+    const hierarchyServicesConfig = config.filter((d: HierarchyServicesConfig) => d.layer && d.nodeExpressions);
     const param = {
       ...dashboardStore.selectedGrid,
       hierarchyServicesConfig,
     };
+
     dashboardStore.selectWidget(param);
     dashboardStore.setConfigs(param);
     emits("update", param);

@@ -72,7 +72,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .input-name {
-    width: 300px;
+    width: 250px;
   }
 
   .vertical {

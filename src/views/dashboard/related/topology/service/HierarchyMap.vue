@@ -215,6 +215,7 @@ limitations under the License. -->
 
   function showConfig() {
     showSetting.value = !showSetting.value;
+    dashboardStore.selectWidget(props.config);
   }
 
   async function initLegendMetrics() {
@@ -261,22 +262,19 @@ limitations under the License. -->
     return Number(d[legendMQE.expression]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
-    const nodeMetrics: string[] =
-      (settings.value.metricMode === MetricModes.Expression
-        ? settings.value.nodeExpressions
-        : settings.value.nodeMetrics) || [];
+    const nodeMetrics: string[] = settings.value.nodeExpressions;
     const nodeMetricConfig = settings.value.nodeMetricConfig || [];
     const html = nodeMetrics.map((m, index) => {
       const metric =
-        topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id) || {};
+        topologyStore.hierarchyNodeMetrics[m].values.find(
+          (val: { id: string; value: unknown }) => val.id === data.id,
+        ) || {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
       const v = aggregation(metric.value, opt);
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || "unknown"}</div>`;
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
     });
     const tipHtml = [
-      `<div class="mb-5"><span class="grey">name: </span>${
-        data.name
-      }</div><div class="mb-5"><span class="grey">type: </span>${data.type || "UNKNOWN"}</div>`,
+      `<div class="mb-5"><span class="grey">name: </span>${data.name}</div><div class="mb-5"><span class="grey">layer: </span>${data.layer}</div>`,
       ...html,
     ].join(" ");
 
