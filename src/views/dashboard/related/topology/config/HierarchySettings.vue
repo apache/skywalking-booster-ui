@@ -42,33 +42,29 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed, ref } from "vue";
+  import { onMounted, ref } from "vue";
   import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
   import type { HierarchyServicesConfig } from "@/types/dashboard";
   import type { Node } from "@/types/topology";
   import type { Option } from "@/types/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useTopologyStore } from "@/store/modules/topology";
+  import { useSelectorStore } from "@/store/modules/selectors";
   import Metrics from "./Metrics.vue";
 
   const emits = defineEmits(["update"]);
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const topologyStore = useTopologyStore();
+  const selectorStore = useSelectorStore();
   const { hierarchyServicesConfig } = dashboardStore.selectedGrid;
-  const layers = computed<Option[]>(() => {
-    const map = new Map();
-    const arr = topologyStore.nodes.reduce((prev: Option[], next: Node) => {
-      if (next.layer && !map.get(next.layer)) {
-        map.set(next.layer, true);
-        prev.push({ value: next.layer, label: next.layer });
-      }
-      return prev;
-    }, []);
-    return arr;
-  });
+  const layers = ref<Option[]>([]);
   const currentConfig = ref<HierarchyServicesConfig>(hierarchyServicesConfig(0) || {});
 
+  onMounted(() => {
+    setLayers();
+  });
   function changeLayer(opt: Option[]) {
     const { hierarchyServicesConfig } = dashboardStore.selectedGrid;
     const layer = opt[0].value;
@@ -97,6 +93,16 @@ limitations under the License. -->
     dashboardStore.selectWidget(param);
     dashboardStore.setConfigs(param);
     emits("update", param);
+  }
+
+  async function setLayers() {
+    const resp = await selectorStore.fetchLayers();
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+    }
+    layers.value = resp.data.layers.map((d: string) => {
+      return { label: d, value: d };
+    });
   }
 </script>
 <style lang="scss" scoped>

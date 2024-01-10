@@ -176,8 +176,8 @@ limitations under the License. -->
   }
   async function freshNodes() {
     topologyStore.setHierarchyServiceNode(null);
-    const resp = await getTopology();
-    // const resp = await topologyStore.getHierarchyServiceTopology();
+    // const resp = await getTopology();
+    const resp = await topologyStore.getHierarchyServiceTopology();
     loading.value = false;
 
     if (resp && resp.errors) {
@@ -198,9 +198,9 @@ limitations under the License. -->
   }
 
   function draw() {
-    const levels = computeLevels(topologyStore.calls, topologyStore.nodes, []);
+    const levels = computeLevels(topologyStore.hierarchyServiceCalls, topologyStore.hierarchyServiceNodes, []);
 
-    topologyLayout.value = layout(levels, topologyStore.calls, radius);
+    topologyLayout.value = layout(levels, topologyStore.hierarchyServiceCalls, radius);
     graphWidth.value = topologyLayout.value.layout.width;
     const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {
       topologyLayout.value.calls = changeNode(d, currentNode.value, topologyLayout.value, radius);
@@ -217,13 +217,6 @@ limitations under the License. -->
   function stopMoveNode(event: MouseEvent) {
     event.stopPropagation();
     currentNode.value = null;
-  }
-
-  async function getTopology() {
-    const ids = selectorStore.services.map((d: Service) => d.id);
-    const serviceIds = dashboardStore.entity === EntityType[0].value ? [selectorStore.currentService.id] : ids;
-    const resp = await topologyStore.getDepthServiceTopology(serviceIds, 2);
-    return resp;
   }
 
   function showConfig() {
