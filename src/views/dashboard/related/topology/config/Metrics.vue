@@ -63,6 +63,7 @@ limitations under the License. -->
   const props = defineProps({
     type: { type: String, default: "" },
     isExpression: { type: Boolean, default: true },
+    layer: { type: String, default: "" },
   });
   const { t } = useI18n();
   const emit = defineEmits(["update"]);
@@ -76,7 +77,12 @@ limitations under the License. -->
       linkClientMetrics,
       nodeExpressions,
       nodeMetrics,
+      hierarchyServicesConfig,
     } = dashboardStore.selectedGrid;
+    let item: any = {};
+    if (hierarchyServicesConfig && props.layer) {
+      item = hierarchyServicesConfig.find((d: any) => d.layer === props.layer) || {};
+    }
     switch (props.type) {
       case "linkServerMetricConfig":
         metrics = props.isExpression ? linkServerExpressions : linkServerMetrics;
@@ -86,6 +92,9 @@ limitations under the License. -->
         break;
       case "nodeMetricConfig":
         metrics = props.isExpression ? nodeExpressions : nodeMetrics;
+        break;
+      case "hierarchyServicesConfig":
+        metrics = item.nodeExpressions || [];
         break;
     }
     return metrics || [];
@@ -105,7 +114,11 @@ limitations under the License. -->
   const currentIndex = ref<number>(0);
   const getMetricConfig = computed(() => {
     let config = [];
-
+    const { hierarchyServicesConfig } = dashboardStore.selectedGrid;
+    let item: any = {};
+    if (hierarchyServicesConfig && props.layer) {
+      item = hierarchyServicesConfig.find((d: any) => d.layer === props.layer) || {};
+    }
     switch (props.type) {
       case "linkServerMetricConfig":
         config = dashboardStore.selectedGrid.linkServerMetricConfig;
@@ -115,6 +128,9 @@ limitations under the License. -->
         break;
       case "nodeMetricConfig":
         config = dashboardStore.selectedGrid.nodeMetricConfig;
+        break;
+      case "hierarchyServicesConfig":
+        config = item.expressionsConfig || [];
         break;
     }
     return config || [];

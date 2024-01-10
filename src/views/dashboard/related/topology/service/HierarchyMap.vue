@@ -123,6 +123,7 @@ limitations under the License. -->
   import zoom from "@/views/dashboard/related/components/utils/zoom";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
   import HierarchySettings from "../config/HierarchySettings.vue";
+  import type { HierarchyServicesConfig } from "@/types/dashboard";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -262,11 +263,13 @@ limitations under the License. -->
     return Number(d[legendMQE.expression]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
-    const nodeMetrics: string[] = settings.value.nodeExpressions;
-    const nodeMetricConfig = settings.value.nodeMetricConfig || [];
-    const html = nodeMetrics.map((m, index) => {
+    const config: HierarchyServicesConfig =
+      (settings.value.hierarchyServicesConfig || []).find((d: HierarchyServicesConfig) => d.layer === data.layer) || {};
+    const exprssions = config.nodeExpressions || [];
+    const nodeMetricConfig = config.expressionsConfig || [];
+    const html = exprssions.map((m, index) => {
       const metric =
-        topologyStore.hierarchyNodeMetrics[m].values.find(
+        topologyStore.hierarchyNodeMetrics[data.layer || ""][m].values.find(
           (val: { id: string; value: unknown }) => val.id === data.id,
         ) || {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};

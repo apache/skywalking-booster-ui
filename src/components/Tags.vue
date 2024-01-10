@@ -31,7 +31,7 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-  import { nextTick, ref } from "vue";
+  import { nextTick, ref, watch } from "vue";
   import type { PropType } from "vue";
   import { ElInput } from "element-plus";
 
@@ -69,6 +69,13 @@ limitations under the License. -->
     inputValue.value = "";
     emits("change", dynamicTags.value);
   };
+
+  watch(
+    () => props.tags,
+    () => {
+      dynamicTags.value = props.tags || [];
+    },
+  );
 </script>
 <style lang="scss" scoped>
   .input-name {

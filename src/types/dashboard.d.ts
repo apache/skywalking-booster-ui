@@ -83,6 +83,10 @@ export type MetricConfigOpt = {
   detailLabel?: string;
 };
 
+export interface HierarchyServicesConfigMap {
+  [key: string]: HierarchyServicesConfig;
+}
+
 export interface HierarchyServicesConfig {
   layer: string;
   nodeExpressions: string[];

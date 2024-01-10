@@ -32,12 +32,12 @@ limitations under the License. -->
             <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
           </span>
         </template>
-        <Metrics :type="'hierarchyServicesConfig'" :isExpression="true" @update="updateSettings" />
+        <Metrics :type="'hierarchyServicesConfig'" :layer="currentConfig.layer" @update="updateSettings" />
       </el-popover>
     </div>
     <div v-if="currentConfig.layer">
       <Tags
-        :tags="currentConfig.nodeExpressions"
+        :tags="currentConfig.nodeExpressions || []"
         :vertical="true"
         :text="t('addExpressions')"
         @change="(param) => changeNodeExpressions(param)"
@@ -46,10 +46,10 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref } from "vue";
+  import { onMounted, ref, reactive } from "vue";
   import { useI18n } from "vue-i18n";
   import { ElMessage } from "element-plus";
-  import type { HierarchyServicesConfig } from "@/types/dashboard";
+  import type { HierarchyServicesConfig, MetricConfigOpt } from "@/types/dashboard";
   import type { Node } from "@/types/topology";
   import type { Option } from "@/types/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
@@ -63,7 +63,7 @@ limitations under the License. -->
   const topologyStore = useTopologyStore();
   const selectorStore = useSelectorStore();
   const hierarchyServicesConfig = dashboardStore.selectedGrid.hierarchyServicesConfig || [];
-  const currentConfig = ref<HierarchyServicesConfig>(hierarchyServicesConfig[0] || {});
+  const currentConfig = reactive<HierarchyServicesConfig>(hierarchyServicesConfig[0] || {});
   const layers = ref<Option[]>([]);
 
   onMounted(() => {
@@ -72,27 +72,31 @@ limitations under the License. -->
   function changeLayer(opt: Option[]) {
     const hierarchyServicesConfig = dashboardStore.selectedGrid.hierarchyServicesConfig || [];
     const layer = opt[0].value;
-
-    currentConfig.value = hierarchyServicesConfig.find((d: HierarchyServicesConfig) => d.layer === layer) || { layer };
+    const config = hierarchyServicesConfig.find((d: HierarchyServicesConfig) => d.layer === layer) || {};
+    currentConfig.layer = layer;
+    currentConfig.nodeExpressions = config.nodeExpressions || [];
   }
 
   function changeNodeExpressions(param: string[]) {
-    currentConfig.value.nodeExpressions = param;
+    currentConfig.nodeExpressions = param;
     updateSettings();
     if (!param.length) {
-      topologyStore.setHierarchyServiceNode({});
+      topologyStore.setHierarchyServiceNode({}, currentConfig.layer);
       return;
     }
-    topologyStore.queryHierarchyNodeExpressions(param);
+    topologyStore.queryHierarchyNodeExpressions(param, currentConfig.layer);
   }
 
-  function updateSettings() {
+  function updateSettings(metricConfig?: { [key: string]: MetricConfigOpt[] }) {
+    if (metricConfig) {
+      currentConfig.expressionsConfig = Object.values(metricConfig)[0];
+    }
     const config = dashboardStore.selectedGrid.hierarchyServicesConfig || [];
-    const index = config.findIndex((d: HierarchyServicesConfig) => d.layer === currentConfig.value.layer);
+    const index = config.findIndex((d: HierarchyServicesConfig) => d.layer === currentConfig.layer);
     if (index < 0) {
-      config.push(currentConfig.value);
+      config.push(JSON.parse(JSON.stringify(currentConfig)));
     } else {
-      config[index] = currentConfig.value;
+      config[index] = JSON.parse(JSON.stringify(currentConfig));
     }
 
     const hierarchyServicesConfig = config.filter((d: HierarchyServicesConfig) => d.layer && d.nodeExpressions);

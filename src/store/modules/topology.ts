@@ -42,7 +42,7 @@ interface TopologyState {
   nodeMetricValue: MetricVal;
   linkServerMetrics: MetricVal;
   linkClientMetrics: MetricVal;
-  hierarchyNodeMetrics: MetricVal;
+  hierarchyNodeMetrics: { [key: string]: MetricVal };
   hierarchyServiceNode: Nullable<Node>;
 }
 
@@ -185,8 +185,8 @@ export const topologyStore = defineStore({
         this.hierarchyServiceNodes.push(d);
       }
     },
-    setHierarchyNodeMetricValue(m: MetricVal) {
-      this.hierarchyNodeMetrics = m;
+    setHierarchyNodeMetricValue(m: MetricVal, layer: string) {
+      this.hierarchyNodeMetrics[layer] = m;
     },
     setLinkServerMetrics(m: MetricVal) {
       this.linkServerMetrics = m;
@@ -590,19 +590,17 @@ export const topologyStore = defineStore({
       this.setInstanceTopology(res.data.data.hierarchyInstanceTopology || {});
       return res.data;
     },
-    async queryHierarchyNodeExpressions(expressions: string[]) {
+    async queryHierarchyNodeExpressions(expressions: string[], layer: string) {
+      const nodes = this.hierarchyServiceNodes.filter((n: Node) => n.layer === layer);
       if (!expressions.length) {
-        this.setHierarchyNodeMetricValue({});
+        this.setHierarchyNodeMetricValue({}, layer);
         return;
       }
       if (!this.hierarchyServiceNodes.length) {
-        this.setHierarchyNodeMetricValue({});
+        this.setHierarchyNodeMetricValue({}, layer);
         return;
       }
-      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
-        expressions,
-        this.hierarchyServiceNodes,
-      );
+      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(expressions, nodes);
       const param = getExpressionQuery();
       const res = await this.getNodeExpressionValue(param);
       if (res.errors) {
@@ -610,7 +608,7 @@ export const topologyStore = defineStore({
         return;
       }
       const metrics = handleExpressionValues(res.data);
-      this.setHierarchyNodeMetricValue(metrics);
+      this.setHierarchyNodeMetricValue(metrics, layer);
     },
   },
 });
