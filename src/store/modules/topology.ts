@@ -144,7 +144,10 @@ export const topologyStore = defineStore({
         });
       }
       this.hierarchyInstanceCalls = callList;
-      this.hierarchyInstanceNodes = Array.from(nodesMap).flat();
+      this.hierarchyInstanceNodes = [];
+      for (const d of nodesMap.values()) {
+        this.hierarchyInstanceNodes.push(d);
+      }
     },
     setHierarchyServiceTopology(data: ServiceHierarchy) {
       const relations = data.relations || [];
@@ -154,22 +157,29 @@ export const topologyStore = defineStore({
       for (const relation of relations) {
         const upperId = relation.upperService.id;
         const lowerId = relation.lowerService.id;
-        if (!nodesMap.get(upperId)) {
-          nodesMap.set(upperId, relation.upperService);
+        const lowerKey = `${lowerId}-${relation.lowerService.layer}`;
+        const upperKey = `${upperId}-${relation.upperService.layer}`;
+        const lowerObj = { ...relation.lowerService, key: lowerId, id: lowerKey };
+        const upperObj = { ...relation.upperService, key: upperId, id: upperKey };
+        if (!nodesMap.get(upperKey)) {
+          nodesMap.set(upperKey, upperObj);
         }
-        if (!nodesMap.get(lowerId)) {
-          nodesMap.set(lowerId, relation.lowerService);
+        if (!nodesMap.get(lowerKey)) {
+          nodesMap.set(lowerKey, lowerObj);
         }
         callList.push({
-          source: upperId,
-          target: lowerId,
-          id: `${upperId}->${lowerId}`,
-          sourceObj: relation.upperService,
-          targetObj: relation.lowerService,
+          source: lowerKey,
+          target: upperKey,
+          id: `${upperKey}->${lowerKey}`,
+          sourceObj: upperObj,
+          targetObj: lowerObj,
         });
       }
       this.hierarchyServiceCalls = callList;
-      this.hierarchyServiceNodes = Array.from(nodesMap).flat();
+      this.hierarchyServiceNodes = [];
+      for (const d of nodesMap.values()) {
+        this.hierarchyServiceNodes.push(d);
+      }
     },
     setHierarchyNodeMetricValue(m: MetricVal) {
       this.hierarchyNodeMetrics = m;
@@ -179,6 +189,9 @@ export const topologyStore = defineStore({
     },
     setLinkClientMetrics(m: MetricVal) {
       this.linkClientMetrics = m;
+    },
+    setNodeMetricValue(m: MetricVal) {
+      this.nodeMetricValue = m;
     },
     setNodeValue(m: MetricVal) {
       this.nodeMetricValue = m;

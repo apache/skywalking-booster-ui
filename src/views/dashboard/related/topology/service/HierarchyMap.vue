@@ -147,7 +147,7 @@ limitations under the License. -->
   const popover = ref<Nullable<any>>(null);
   const graphWidth = ref<number>(100);
   const currentNode = ref<Nullable<Node>>(null);
-  const diff = computed(() => [(width.value - graphWidth.value) / 2, 0]);
+  const diff = computed(() => [(width.value - graphWidth.value - 120) / 2, 0]);
   const radius = 8;
 
   onMounted(async () => {
@@ -166,17 +166,11 @@ limitations under the License. -->
     svg.value = d3.select(".hierarchy-services-svg");
     graph.value = d3.select(".hierarchy-services-graph");
     loading.value = true;
-    const json = await selectorStore.fetchServices(dashboardStore.layerId);
-    if (json.errors) {
-      ElMessage.error(json.errors);
-      return;
-    }
     await freshNodes();
     svg.value.call(zoom(d3, graph.value, diff.value));
   }
   async function freshNodes() {
     topologyStore.setHierarchyServiceNode(null);
-    // const resp = await getTopology();
     const resp = await topologyStore.getHierarchyServiceTopology();
     loading.value = false;
 
@@ -257,31 +251,14 @@ limitations under the License. -->
   }
 
   function getNodeStatus(d: any) {
-    const { legend, legendMQE } = settings.value;
-    if (settings.value.metricMode === MetricModes.Expression) {
-      if (!legendMQE) {
-        return icons.CUBE;
-      }
-      if (!legendMQE.expression) {
-        return icons.CUBE;
-      }
-      return Number(d[legendMQE.expression]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
-    }
-    if (!legend) {
+    const { legendMQE } = settings.value;
+    if (!legendMQE) {
       return icons.CUBE;
     }
-    if (!legend.length) {
+    if (!legendMQE.expression) {
       return icons.CUBE;
     }
-    let c = true;
-    for (const l of legend) {
-      if (l.condition === "<") {
-        c = c && d[l.name] < Number(l.value);
-      } else {
-        c = c && d[l.name] > Number(l.value);
-      }
-    }
-    return c && d.isReal ? icons.CUBEERROR : icons.CUBE;
+    return Number(d[legendMQE.expression]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
     const nodeMetrics: string[] =

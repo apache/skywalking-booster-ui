@@ -447,7 +447,6 @@ limitations under the License. -->
   }
   async function handleHierarchyRelatedServices() {
     hierarchyRelated.value = true;
-    handleInspect();
   }
   async function handleInspect() {
     const id = topologyStore.node.id;
