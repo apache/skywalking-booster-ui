@@ -58,15 +58,15 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const topologyStore = useTopologyStore();
   const selectorStore = useSelectorStore();
-  const { hierarchyServicesConfig } = dashboardStore.selectedGrid;
+  const hierarchyServicesConfig = dashboardStore.selectedGrid.hierarchyServicesConfig || [];
   const layers = ref<Option[]>([]);
-  const currentConfig = ref<HierarchyServicesConfig>(hierarchyServicesConfig(0) || {});
+  const currentConfig = ref<HierarchyServicesConfig>(hierarchyServicesConfig[0] || {});
 
   onMounted(() => {
     setLayers();
   });
   function changeLayer(opt: Option[]) {
-    const { hierarchyServicesConfig } = dashboardStore.selectedGrid;
+    const hierarchyServicesConfig = dashboardStore.selectedGrid.hierarchyServicesConfig || [];
     const layer = opt[0].value;
 
     currentConfig.value = hierarchyServicesConfig.value.find((d: HierarchyServicesConfig) => d.layer === layer) || {};

@@ -129,18 +129,22 @@ export const topologyStore = defineStore({
       for (const relation of relations) {
         const upperId = relation.upperInstance.id;
         const lowerId = relation.lowerInstance.id;
-        if (!nodesMap.get(upperId)) {
-          nodesMap.set(upperId, relation.upperInstance);
+        const lowerKey = `${lowerId}-${relation.lowerInstance.layer}`;
+        const upperKey = `${upperId}-${relation.upperInstance.layer}`;
+        const lowerObj = { ...relation.lowerInstance, key: lowerId, id: lowerKey };
+        const upperObj = { ...relation.upperInstance, key: upperId, id: upperKey };
+        if (!nodesMap.get(upperKey)) {
+          nodesMap.set(upperKey, upperObj);
         }
-        if (!nodesMap.get(lowerId)) {
-          nodesMap.set(lowerId, relation.lowerInstance);
+        if (!nodesMap.get(lowerKey)) {
+          nodesMap.set(lowerKey, lowerObj);
         }
         callList.push({
-          source: upperId,
-          target: lowerId,
-          id: `${upperId}->${lowerId}`,
-          sourceObj: relation.upperInstance,
-          targetObj: relation.lowerInstance,
+          source: lowerKey,
+          target: upperKey,
+          id: `${upperKey}->${lowerKey}`,
+          sourceObj: upperObj,
+          targetObj: lowerObj,
         });
       }
       this.hierarchyInstanceCalls = callList;

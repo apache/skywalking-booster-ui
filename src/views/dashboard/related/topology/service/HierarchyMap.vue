@@ -95,7 +95,7 @@ limitations under the License. -->
         <Icon size="middle" iconName="settings" />
       </span>
     </div>
-    <div class="setting" v-if="showSetting && dashboardStore.editMode">
+    <div class="hierarchy-settings" v-if="showSetting && dashboardStore.editMode">
       <hierarchy-settings @update="updateSettings" />
     </div>
   </div>
@@ -368,7 +368,7 @@ limitations under the License. -->
       }
     }
 
-    .setting {
+    .hierarchy-settings {
       position: absolute;
       top: 40px;
       right: 10px;
