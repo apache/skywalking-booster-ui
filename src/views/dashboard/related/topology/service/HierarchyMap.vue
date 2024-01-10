@@ -96,7 +96,7 @@ limitations under the License. -->
       </span>
     </div>
     <div class="setting" v-if="showSetting && dashboardStore.editMode">
-      <hierarchy-settings />
+      <hierarchy-settings @update="updateSettings" />
     </div>
   </div>
 </template>
@@ -128,7 +128,7 @@ limitations under the License. -->
   const props = defineProps({
     config: {
       type: Object as PropType<any>,
-      default: () => ({ graph: {} }),
+      default: () => ({}),
     },
   });
   const { t } = useI18n();
@@ -143,7 +143,6 @@ limitations under the License. -->
   const graph = ref<Nullable<any>>(null);
   const settings = ref<any>(props.config);
   const showSetting = ref<boolean>(false);
-  const graphConfig = computed(() => props.config.graph || {});
   const topologyLayout = ref<any>({});
   const popover = ref<Nullable<any>>(null);
   const graphWidth = ref<number>(100);
@@ -188,9 +187,14 @@ limitations under the License. -->
   }
 
   async function update() {
+    topologyStore.queryHierarchyNodeExpressions(settings.value.hierarchyServicesConfig || []);
     // await initLegendMetrics();
     draw();
     popover.value = d3.select("#popover");
+  }
+
+  function updateSettings(config: any) {
+    settings.value = config;
   }
 
   function draw() {

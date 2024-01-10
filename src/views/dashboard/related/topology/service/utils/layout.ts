@@ -191,22 +191,17 @@ export function computeLevels(calls: Call[], nodeList: Node[], levels: any[]) {
   }
   return levels;
 }
-export function changeNode(
-  d: { x: number; y: number },
-  currentNode: Nullable<Node>,
-  topologyLayout: any,
-  radius: number,
-) {
+export function changeNode(d: { x: number; y: number }, currentNode: Nullable<Node>, layout: any, radius: number) {
   if (!currentNode) {
     return;
   }
-  for (const node of topologyLayout.nodes) {
+  for (const node of layout.nodes) {
     if (node.id === currentNode.id) {
       node.x = d.x;
       node.y = d.y;
     }
   }
-  for (const call of topologyLayout.calls) {
+  for (const call of layout.calls) {
     if (call.sourceObj.id === currentNode.id) {
       call.sourceObj.x = d.x;
       call.sourceObj.y = d.y;
@@ -230,5 +225,5 @@ export function changeNode(
       call.targetY = pos[1].y;
     }
   }
-  return computeCallPos(topologyLayout.value.calls, radius);
+  return computeCallPos(layout.calls, radius);
 }

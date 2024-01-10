@@ -42,6 +42,7 @@ interface TopologyState {
   nodeMetricValue: MetricVal;
   linkServerMetrics: MetricVal;
   linkClientMetrics: MetricVal;
+  hierarchyNodeMetrics: MetricVal;
   hierarchyServiceNode: Nullable<Node>;
 }
 
@@ -60,6 +61,7 @@ export const topologyStore = defineStore({
     nodeMetricValue: {},
     linkServerMetrics: {},
     linkClientMetrics: {},
+    hierarchyNodeMetrics: {},
   }),
   actions: {
     setNode(node: Node) {
@@ -169,14 +171,17 @@ export const topologyStore = defineStore({
       this.hierarchyServiceCalls = callList;
       this.hierarchyServiceNodes = Array.from(nodesMap).flat();
     },
-    setNodeMetricValue(m: MetricVal) {
-      this.nodeMetricValue = m;
+    setHierarchyNodeMetricValue(m: MetricVal) {
+      this.hierarchyNodeMetrics = m;
     },
     setLinkServerMetrics(m: MetricVal) {
       this.linkServerMetrics = m;
     },
     setLinkClientMetrics(m: MetricVal) {
       this.linkClientMetrics = m;
+    },
+    setNodeValue(m: MetricVal) {
+      this.nodeMetricValue = m;
     },
     setLegendValues(expressions: string, data: { [key: string]: any }) {
       for (let idx = 0; idx < this.nodes.length; idx++) {
@@ -567,6 +572,28 @@ export const topologyStore = defineStore({
       }
       this.setInstanceTopology(res.data.data.hierarchyInstanceTopology || {});
       return res.data;
+    },
+    async queryHierarchyNodeExpressions(expressions: string[]) {
+      if (!expressions.length) {
+        this.setHierarchyNodeMetricValue({});
+        return;
+      }
+      if (!this.hierarchyServiceNodes.length) {
+        this.setHierarchyNodeMetricValue({});
+        return;
+      }
+      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
+        expressions,
+        this.hierarchyServiceNodes,
+      );
+      const param = getExpressionQuery();
+      const res = await this.getNodeExpressionValue(param);
+      if (res.errors) {
+        ElMessage.error(res.errors);
+        return;
+      }
+      const metrics = handleExpressionValues(res.data);
+      this.setHierarchyNodeMetricValue(metrics);
     },
   },
 });

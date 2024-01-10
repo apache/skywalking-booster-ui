@@ -49,6 +49,7 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useTopologyStore } from "@/store/modules/topology";
+  import Metrics from "./Metrics.vue";
 
   const emits = defineEmits(["update"]);
   const { t } = useI18n();
@@ -77,12 +78,21 @@ limitations under the License. -->
 
   function changeNodeExpressions(param: string[]) {
     currentConfig.value.nodeExpressions = param;
+    updateSettings();
   }
 
   function updateSettings() {
+    const { hierarchyServicesConfig } = dashboardStore.selectedGrid;
+    const index = hierarchyServicesConfig.findIndex(
+      (d: HierarchyServicesConfig) => d.layer === currentConfig.value.layer,
+    );
+    if (index < 0) {
+      return;
+    }
+    hierarchyServicesConfig[index] = currentConfig.value;
     const param = {
       ...dashboardStore.selectedGrid,
-      hierarchyServicesConfig: currentConfig.value,
+      hierarchyServicesConfig,
     };
     dashboardStore.selectWidget(param);
     dashboardStore.setConfigs(param);
