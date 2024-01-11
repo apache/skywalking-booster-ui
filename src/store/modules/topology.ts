@@ -43,7 +43,6 @@ interface TopologyState {
   linkServerMetrics: MetricVal;
   linkClientMetrics: MetricVal;
   hierarchyNodeMetrics: { [key: string]: MetricVal };
-  hierarchyServiceNode: Nullable<Node>;
 }
 
 export const topologyStore = defineStore({
@@ -57,7 +56,6 @@ export const topologyStore = defineStore({
     hierarchyInstanceNodes: [],
     node: null,
     call: null,
-    hierarchyServiceNode: null,
     nodeMetricValue: {},
     linkServerMetrics: {},
     linkClientMetrics: {},
@@ -69,9 +67,6 @@ export const topologyStore = defineStore({
     },
     setLink(link: Call) {
       this.call = link;
-    },
-    setHierarchyServiceNode(node: HierarchyNode) {
-      this.hierarchyServiceNode = node;
     },
     setInstanceTopology(data: { nodes: Node[]; calls: Call[] }) {
       for (const call of data.calls) {

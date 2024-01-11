@@ -114,7 +114,7 @@ limitations under the License. -->
   const loading = ref<boolean>(false);
   const svg = ref<Nullable<any>>(null);
   const graph = ref<Nullable<any>>(null);
-  const settings = ref<any>(props.config);
+  // const settings = ref<any>(props.config);
   const showSetting = ref<boolean>(false);
   const topologyLayout = ref<any>({});
   const popover = ref<Nullable<any>>(null);
@@ -143,7 +143,6 @@ limitations under the License. -->
     svg.value.call(zoom(d3, graph.value, diff.value));
   }
   async function freshNodes() {
-    topologyStore.setHierarchyServiceNode(null);
     const resp = await topologyStore.getHierarchyServiceTopology();
     loading.value = false;
 
@@ -183,10 +182,6 @@ limitations under the License. -->
     popover.value = d3.select("#popover");
   }
 
-  function updateSettings(config: any) {
-    settings.value = config;
-  }
-
   function draw() {
     const levels = computeLevels(topologyStore.hierarchyServiceCalls, topologyStore.hierarchyServiceNodes, []);
 
@@ -209,19 +204,8 @@ limitations under the License. -->
     currentNode.value = null;
   }
 
-  function showConfig() {
-    showSetting.value = !showSetting.value;
-    dashboardStore.selectWidget(props.config);
-  }
-
   function getNodeStatus(d: any) {
-    const item =
-      (settings.value.hierarchyServicesConfig || []).find((i: { layer: string }) => d.layer === i.layer) || {};
-
-    if (!item.legendMQE) {
-      return icons.CUBE;
-    }
-    return Number(d[item.legendMQE]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
+    return d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
     const dashboard =
@@ -262,7 +246,6 @@ limitations under the License. -->
   function handleNodeClick(event: MouseEvent, d: Node & { x: number; y: number }) {
     event.stopPropagation();
     hideTip();
-    // topologyStore.setHierarchyServiceNode(d);
     const dashboard =
       getDashboard(
         {
@@ -280,7 +263,6 @@ limitations under the License. -->
   }
 
   function svgEvent() {
-    topologyStore.setHierarchyServiceNode(null);
     dashboardStore.selectWidget(props.config);
   }
 
