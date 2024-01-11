@@ -463,6 +463,7 @@ limitations under the License. -->
     topologyStore.setLink(null);
   }
   function handleGoEndpoint(name: string) {
+    const origin = dashboardStore.entity;
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${name}`;
     const routeUrl = router.resolve({ path });
 
@@ -470,6 +471,7 @@ limitations under the License. -->
     dashboardStore.setEntity(origin);
   }
   function handleGoInstance(name: string) {
+    const origin = dashboardStore.entity;
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${topologyStore.node.id}/${name}`;
     const routeUrl = router.resolve({ path });
 
@@ -477,6 +479,7 @@ limitations under the License. -->
     dashboardStore.setEntity(origin);
   }
   function handleGoDashboard(name: string) {
+    const origin = dashboardStore.entity;
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${name}`;
     const routeUrl = router.resolve({ path });
 
@@ -569,6 +572,9 @@ limitations under the License. -->
   watch(
     () => [selectorStore.currentService, selectorStore.currentDestService],
     (newVal, oldVal) => {
+      if (!(oldVal[0] && newVal[0])) {
+        return;
+      }
       if (oldVal[0].id === newVal[0].id && !oldVal[1]) {
         return;
       }
@@ -576,6 +582,7 @@ limitations under the License. -->
         return;
       }
       freshNodes();
+      hierarchyRelated.value = false;
     },
   );
   watch(
@@ -583,6 +590,7 @@ limitations under the License. -->
     () => {
       if (dashboardStore.entity === EntityType[1].value) {
         freshNodes();
+        hierarchyRelated.value = false;
       }
     },
   );

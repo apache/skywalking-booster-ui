@@ -19,68 +19,21 @@ limitations under the License. -->
     element-loading-background="rgba(0, 0, 0, 0)"
     :style="`height: ${height}px`"
   >
-    <svg class="hierarchy-services-svg" :width="width" :height="height" @click="svgEvent">
-      <g class="hierarchy-services-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
-        <g
-          class="topo-node"
-          v-for="(n, index) in topologyLayout.nodes"
-          :key="index"
-          @mouseout="hideTip"
-          @mouseover="showNodeTip($event, n)"
-          @click="handleNodeClick($event, n)"
-          @mousedown="startMoveNode($event, n)"
-          @mouseup="stopMoveNode($event)"
-        >
-          <image width="36" height="36" :x="n.x - 15" :y="n.y - 18" :href="getNodeStatus(n)" />
-          <image width="28" height="25" :x="n.x - 14" :y="n.y - 43" :href="icons.LOCAL" style="opacity: 0.8" />
-          <image
-            width="12"
-            height="12"
-            :x="n.x - 6"
-            :y="n.y - 38"
-            :href="!n.type || n.type === `N/A` ? icons.UNDEFINED : icons[n.type.toUpperCase().replace('-', '')]"
-          />
-          <text
-            class="node-text"
-            :x="n.x - (Math.min(n.name.length, 20) * 6) / 2 + 6"
-            :y="n.y + n.height + 8"
-            style="pointer-events: none"
-          >
-            {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
-          </text>
-        </g>
-        <g v-for="(l, index) in topologyLayout.calls" :key="index">
-          <path
-            class="topo-line"
-            :d="`M${l.sourceX} ${l.sourceY} L${l.targetX} ${l.targetY}`"
-            stroke="#97B0F8"
-            marker-end="url(#arrow)"
-          />
-        </g>
-        <g class="arrows">
-          <defs v-for="(_, index) in topologyLayout.calls" :key="index">
-            <marker
-              id="arrow"
-              markerUnits="strokeWidth"
-              markerWidth="16"
-              markerHeight="16"
-              viewBox="0 0 12 12"
-              refX="10"
-              refY="6"
-              orient="auto"
-            >
-              <path d="M2,2 L10,6 L2,10 L6,6 L2,2" fill="#97B0F8" />
-            </marker>
-          </defs>
-        </g>
-      </g>
-    </svg>
+    <Graph
+      :config="config"
+      :nodes="topologyStore.hierarchyServiceNodes"
+      :calls="topologyStore.hierarchyServiceCalls"
+      :entity="EntityType[0].value"
+      @showNodeTip="showNodeTip"
+      @handleNodeClick="handleNodeClick"
+      @hideTip="hideTip"
+    />
     <div id="popover"></div>
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
-  import { ref, onMounted, watch, computed, nextTick } from "vue";
+  import { ref, onMounted, watch, nextTick } from "vue";
   import * as d3 from "d3";
   import type { Node } from "@/types/topology";
   import { useTopologyStore } from "@/store/modules/topology";
@@ -91,13 +44,11 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import type { MetricConfigOpt } from "@/types/dashboard";
   import { aggregation } from "@/hooks/useMetricsProcessor";
-  import icons from "@/assets/img/icons";
-  import { layout, changeNode, computeLevels } from "./utils/layout";
-  import zoom from "@/views/dashboard/related/components/utils/zoom";
   import getDashboard from "@/hooks/useDashboardsSession";
+  import Graph from "./Graph.vue";
 
   /*global Nullable, defineProps */
-  const props = defineProps({
+  defineProps({
     config: {
       type: Object as PropType<any>,
       default: () => ({}),
@@ -107,102 +58,42 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const appStore = useAppStoreWithOut();
   const height = ref<number>(100);
-  const width = ref<number>(100);
   const loading = ref<boolean>(false);
-  const svg = ref<Nullable<any>>(null);
-  const graph = ref<Nullable<any>>(null);
-  const topologyLayout = ref<any>({});
   const popover = ref<Nullable<any>>(null);
-  const graphWidth = ref<number>(100);
-  const currentNode = ref<Nullable<Node>>(null);
-  const diff = computed(() => [(width.value - graphWidth.value - 120) / 2, 0]);
-  const radius = 8;
 
   onMounted(async () => {
     await nextTick();
-    setTimeout(() => {
-      init();
-    }, 10);
+    init();
   });
+
+  getTopology();
+
   async function init() {
     const dom = document.querySelector(".hierarchy-related")?.getBoundingClientRect() || {
       height: 80,
       width: 0,
     };
     height.value = dom.height - 80;
-    width.value = dom.width;
-    svg.value = d3.select(".hierarchy-services-svg");
-    graph.value = d3.select(".hierarchy-services-graph");
-    loading.value = true;
-    await freshNodes();
-    svg.value.call(zoom(d3, graph.value, diff.value));
+    popover.value = d3.select("#popover");
   }
-  async function freshNodes() {
+
+  async function getTopology() {
+    loading.value = true;
     const resp = await topologyStore.getHierarchyServiceTopology();
     loading.value = false;
 
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
-    await update();
   }
 
-  async function update() {
-    const layerList = [];
-    const layerMap = new Map();
-    for (const n of topologyStore.hierarchyServiceNodes) {
-      if (layerMap.get(n.layer)) {
-        const arr = layerMap.get(n.layer);
-        arr.push(n);
-        layerMap.set(n.layer, arr);
-      } else {
-        layerMap.set(n.layer, [n]);
-      }
-    }
-    for (const d of layerMap.values()) {
-      layerList.push(d);
-    }
-    for (const list of layerList) {
-      const { dashboard } = getDashboard(
-        {
-          layer: list[0].layer || "",
-          entity: EntityType[0].value,
-        },
-        ConfigFieldTypes.ISDEFAULT,
-      );
-      const exp = (dashboard && dashboard.expressions) || [];
-      await topologyStore.queryHierarchyNodeExpressions(exp, list[0].layer);
-    }
-    draw();
-    popover.value = d3.select("#popover");
-  }
-
-  function draw() {
-    const levels = computeLevels(topologyStore.hierarchyServiceCalls, topologyStore.hierarchyServiceNodes, []);
-
-    topologyLayout.value = layout(levels, topologyStore.hierarchyServiceCalls, radius);
-    graphWidth.value = topologyLayout.value.layout.width;
-    const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {
-      topologyLayout.value.calls = changeNode(d, currentNode.value, topologyLayout.value, radius);
-    });
-    setTimeout(() => {
-      d3.selectAll(".topo-node").call(drag);
-    }, 1000);
-  }
-
-  function startMoveNode(event: MouseEvent, d: Node) {
-    event.stopPropagation();
-    currentNode.value = d;
-  }
-  function stopMoveNode(event: MouseEvent) {
-    event.stopPropagation();
-    currentNode.value = null;
-  }
-
-  function getNodeStatus(d: any) {
-    return d.isReal ? icons.CUBEERROR : icons.CUBE;
-  }
   function showNodeTip(event: MouseEvent, data: Node) {
+    if (!data) {
+      return;
+    }
+    if (!popover.value) {
+      return;
+    }
     const dashboard =
       getDashboard(
         {
@@ -239,6 +130,7 @@ limitations under the License. -->
   }
 
   function handleNodeClick(event: MouseEvent, d: Node & { x: number; y: number }) {
+    const origin = dashboardStore.entity;
     event.stopPropagation();
     hideTip();
     const dashboard =
@@ -256,19 +148,6 @@ limitations under the License. -->
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
   }
-
-  function svgEvent() {
-    dashboardStore.selectWidget(props.config);
-  }
-
-  watch(
-    () => appStore.durationTime,
-    () => {
-      if (dashboardStore.entity === EntityType[1].value) {
-        freshNodes();
-      }
-    },
-  );
 </script>
 <style lang="scss" scoped>
   .hierarchy-services-topo {
