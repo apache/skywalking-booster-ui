@@ -76,20 +76,6 @@ limitations under the License. -->
       </g>
     </svg>
     <div id="popover"></div>
-    <div class="legend">
-      <div>
-        <img :src="icons.CUBE" />
-        <span>
-          {{ (settings.hierarchyServicesDesc && settings.hierarchyServicesDesc.healthy) || "" }}
-        </span>
-      </div>
-      <div>
-        <img :src="icons.CUBEERROR" />
-        <span>
-          {{ (settings.hierarchyServicesDesc && settings.hierarchyServicesDesc.unhealthy) || "" }}
-        </span>
-      </div>
-    </div>
     <div class="tool">
       <span class="switch-icon ml-5" title="Settings" @click="showConfig" v-if="dashboardStore.editMode">
         <Icon size="middle" iconName="settings" />
@@ -112,13 +98,11 @@ limitations under the License. -->
   import router from "@/router";
   import { ElMessage } from "element-plus";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  // import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
   import { layout, changeNode, computeLevels } from "./utils/layout";
   import zoom from "@/views/dashboard/related/components/utils/zoom";
-  import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
   import HierarchySettings from "../config/HierarchySettings.vue";
   import type { HierarchyServicesConfig } from "@/types/dashboard";
 
