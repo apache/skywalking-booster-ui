@@ -20,10 +20,10 @@ limitations under the License. -->
     :style="`height: ${height}px`"
   >
     <Graph
-      :config="config"
-      :nodes="topologyStore.hierarchyServiceNodes"
-      :calls="topologyStore.hierarchyServiceCalls"
-      :entity="EntityType[0].value"
+      :nodes="topologyStore.hierarchyInstanceNodes"
+      :calls="topologyStore.hierarchyInstanceCalls"
+      :entity="EntityType[3].value"
+      @getNodeMetrics="getNodeMetrics"
       @showNodeTip="showNodeTip"
       @handleNodeClick="handleNodeClick"
       @hideTip="hideTip"
@@ -32,7 +32,6 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import type { PropType } from "vue";
   import { ref, onMounted, nextTick } from "vue";
   import * as d3 from "d3";
   import type { Node } from "@/types/topology";
@@ -46,13 +45,7 @@ limitations under the License. -->
   import getDashboard from "@/hooks/useDashboardsSession";
   import Graph from "../components/Graph.vue";
 
-  /*global Nullable, defineProps */
-  defineProps({
-    config: {
-      type: Object as PropType<any>,
-      default: () => ({}),
-    },
-  });
+  /*global Nullable*/
   const topologyStore = useTopologyStore();
   const dashboardStore = useDashboardStore();
   const height = ref<number>(100);
@@ -77,11 +70,39 @@ limitations under the License. -->
 
   async function getTopology() {
     loading.value = true;
-    const resp = await topologyStore.getHierarchyServiceTopology();
+    const resp = await topologyStore.getHierarchyInstanceTopology();
     loading.value = false;
 
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
+    }
+  }
+
+  async function getNodeMetrics() {
+    const layerList = [];
+    const layerMap = new Map();
+    for (const n of topologyStore.hierarchyInstanceNodes) {
+      if (layerMap.get(n.layer)) {
+        const arr = layerMap.get(n.layer);
+        arr.push(n);
+        layerMap.set(n.layer, arr);
+      } else {
+        layerMap.set(n.layer, [n]);
+      }
+    }
+    for (const d of layerMap.values()) {
+      layerList.push(d);
+    }
+    for (const list of layerList) {
+      const { dashboard } = getDashboard(
+        {
+          layer: list[0].layer || "",
+          entity: EntityType[3].value,
+        },
+        ConfigFieldTypes.ISDEFAULT,
+      );
+      const exp = (dashboard && dashboard.expressions) || [];
+      await topologyStore.queryHierarchyInstanceNodeExpressions(exp, list[0].layer);
     }
   }
 
@@ -96,7 +117,7 @@ limitations under the License. -->
       getDashboard(
         {
           layer: data.layer || "",
-          entity: EntityType[0].value,
+          entity: EntityType[3].value,
         },
         ConfigFieldTypes.ISDEFAULT,
       ).dashboard || {};
@@ -104,7 +125,7 @@ limitations under the License. -->
     const nodeMetricConfig = dashboard.expressionsConfig || [];
     const html = exprssions.map((m: string, index: number) => {
       const metric =
-        topologyStore.hierarchyNodeMetrics[data.layer || ""][m].values.find(
+        topologyStore.hierarchyInstanceNodeMetrics[data.layer || ""][m].values.find(
           (val: { id: string; value: unknown }) => val.id === data.id,
         ) || {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
@@ -135,7 +156,7 @@ limitations under the License. -->
       getDashboard(
         {
           layer: d.layer || "",
-          entity: EntityType[0].value,
+          entity: EntityType[3].value,
         },
         ConfigFieldTypes.ISDEFAULT,
       ).dashboard || {};

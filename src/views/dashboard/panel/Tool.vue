@@ -134,12 +134,15 @@ limitations under the License. -->
     </div>
   </div>
   <el-dialog v-model="showHierarchy" :destroy-on-close="true" @closed="showHierarchy = false" width="640px">
-    <div class="hierarchy-related"> hierarchy-related </div>
+    <div class="hierarchy-related">
+      <instance-map />
+    </div>
   </el-dialog>
 </template>
 <script lang="ts" setup>
   import { reactive, ref, computed, watch } from "vue";
   import { useRoute } from "vue-router";
+  import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import {
@@ -158,7 +161,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import { ElMessage } from "element-plus";
   import type { Option } from "@/types/app";
-  import { useI18n } from "vue-i18n";
+  import InstanceMap from "@/views/dashboard/related/topology/pod/InstanceMap.vue";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
@@ -725,5 +728,11 @@ limitations under the License. -->
     border-radius: 5px;
     text-align: center;
     color: #aaa;
+  }
+
+  .hierarchy-related {
+    height: 400px;
+    width: 600px;
+    overflow: auto;
   }
 </style>

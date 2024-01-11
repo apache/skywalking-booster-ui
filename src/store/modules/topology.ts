@@ -1,3 +1,4 @@
+import { dashboardStore } from "./dashboard";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +21,7 @@ import type { Service } from "@/types/selector";
 import type { Node, Call, HierarchyNode, ServiceHierarchy, InstanceHierarchy } from "@/types/topology";
 import graphql from "@/graphql";
 import { useSelectorStore } from "@/store/modules/selectors";
+import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { AxiosResponse } from "axios";
 import query from "@/graphql/fetch";
@@ -43,6 +45,7 @@ interface TopologyState {
   linkServerMetrics: MetricVal;
   linkClientMetrics: MetricVal;
   hierarchyNodeMetrics: { [key: string]: MetricVal };
+  hierarchyInstanceNodeMetrics: { [key: string]: MetricVal };
 }
 
 export const topologyStore = defineStore({
@@ -60,6 +63,7 @@ export const topologyStore = defineStore({
     linkServerMetrics: {},
     linkClientMetrics: {},
     hierarchyNodeMetrics: {},
+    hierarchyInstanceNodeMetrics: {},
   }),
   actions: {
     setNode(node: Node) {
@@ -182,6 +186,9 @@ export const topologyStore = defineStore({
     },
     setHierarchyNodeMetricValue(m: MetricVal, layer: string) {
       this.hierarchyNodeMetrics[layer] = m;
+    },
+    setHierarchyInstanceNodeMetricValue(m: MetricVal, layer: string) {
+      this.hierarchyInstanceNodeMetrics[layer] = m;
     },
     setLinkServerMetrics(m: MetricVal) {
       this.linkServerMetrics = m;
@@ -574,16 +581,32 @@ export const topologyStore = defineStore({
       this.setHierarchyServiceTopology(res.data.data.hierarchyServiceTopology || {});
       return res.data;
     },
-    async getHierarchyInstanceTopology(params: { instanceId: string; layer: string }) {
-      if (!(params.instanceId && params.layer)) {
+    async getHierarchyInstanceTopology() {
+      const { currentPod } = useSelectorStore();
+      const dashboardStore = useDashboardStore();
+
+      if (!(currentPod && dashboardStore.layerId)) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getHierarchyInstanceTopology").params(params);
+      const res: AxiosResponse = await graphql
+        .query("getHierarchyInstanceTopology")
+        .params({ instanceId: currentPod.id, layer: dashboardStore.layerId });
       if (res.data.errors) {
         return res.data;
       }
-      this.setInstanceTopology(res.data.data.hierarchyInstanceTopology || {});
+      this.setHierarchyInstanceTopology(res.data.data.hierarchyInstanceTopology || {});
       return res.data;
+    },
+    async queryHierarchyExpressions(expressions: string[], nodes: Node[]) {
+      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(expressions, nodes);
+      const param = getExpressionQuery();
+      const res = await this.getNodeExpressionValue(param);
+      if (res.errors) {
+        ElMessage.error(res.errors);
+        return;
+      }
+      const metrics = handleExpressionValues(res.data);
+      return metrics;
     },
     async queryHierarchyNodeExpressions(expressions: string[], layer: string) {
       const nodes = this.hierarchyServiceNodes.filter((n: Node) => n.layer === layer);
@@ -598,15 +621,24 @@ export const topologyStore = defineStore({
         this.setHierarchyNodeMetricValue({}, layer);
         return;
       }
-      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(expressions, nodes);
-      const param = getExpressionQuery();
-      const res = await this.getNodeExpressionValue(param);
-      if (res.errors) {
-        ElMessage.error(res.errors);
+      const metrics = await this.queryHierarchyExpressions(expressions, nodes);
+      this.setHierarchyNodeMetricValue(metrics, layer);
+    },
+    async queryHierarchyInstanceNodeExpressions(expressions: string[], layer: string) {
+      const nodes = this.hierarchyInstanceNodes.filter((n: Node) => n.layer === layer);
+      if (!nodes.length) {
         return;
       }
-      const metrics = handleExpressionValues(res.data);
-      this.setHierarchyNodeMetricValue(metrics, layer);
+      if (!expressions.length) {
+        this.setHierarchyInstanceNodeMetricValue({}, layer);
+        return;
+      }
+      if (!this.hierarchyServiceNodes.length) {
+        this.setHierarchyInstanceNodeMetricValue({}, layer);
+        return;
+      }
+      const metrics = await this.queryHierarchyExpressions(expressions, nodes);
+      this.setHierarchyInstanceNodeMetricValue(metrics, layer);
     },
   },
 });

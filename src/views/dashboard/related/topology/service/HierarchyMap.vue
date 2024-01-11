@@ -24,6 +24,7 @@ limitations under the License. -->
       :nodes="topologyStore.hierarchyServiceNodes"
       :calls="topologyStore.hierarchyServiceCalls"
       :entity="EntityType[0].value"
+      @getNodeMetrics="getNodeMetrics"
       @showNodeTip="showNodeTip"
       @handleNodeClick="handleNodeClick"
       @hideTip="hideTip"
@@ -82,6 +83,34 @@ limitations under the License. -->
 
     if (resp && resp.errors) {
       ElMessage.error(resp.errors);
+    }
+  }
+
+  async function getNodeMetrics() {
+    const layerList = [];
+    const layerMap = new Map();
+    for (const n of topologyStore.hierarchyServiceNodes) {
+      if (layerMap.get(n.layer)) {
+        const arr = layerMap.get(n.layer);
+        arr.push(n);
+        layerMap.set(n.layer, arr);
+      } else {
+        layerMap.set(n.layer, [n]);
+      }
+    }
+    for (const d of layerMap.values()) {
+      layerList.push(d);
+    }
+    for (const list of layerList) {
+      const { dashboard } = getDashboard(
+        {
+          layer: list[0].layer || "",
+          entity: EntityType[0].value,
+        },
+        ConfigFieldTypes.ISDEFAULT,
+      );
+      const exp = (dashboard && dashboard.expressions) || [];
+      await topologyStore.queryHierarchyNodeExpressions(exp, list[0].layer);
     }
   }
 

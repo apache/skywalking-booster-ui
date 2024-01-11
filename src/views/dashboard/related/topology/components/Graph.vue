@@ -75,13 +75,10 @@ limitations under the License. -->
   import { ref, computed, watch } from "vue";
   import * as d3 from "d3";
   import type { Node, Call } from "@/types/topology";
-  import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { EntityType, ConfigFieldTypes } from "@/views/dashboard/data";
   import icons from "@/assets/img/icons";
   import { layout, changeNode, computeLevels } from "./utils/layout";
   import zoom from "@/views/dashboard/related/components/utils/zoom";
-  import getDashboard from "@/hooks/useDashboardsSession";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -102,8 +99,7 @@ limitations under the License. -->
       default: () => [],
     },
   });
-  const emits = defineEmits(["showNodeTip", "handleNodeClick", "hideTip"]);
-  const topologyStore = useTopologyStore();
+  const emits = defineEmits(["showNodeTip", "handleNodeClick", "hideTip", "getNodeMetrics"]);
   const dashboardStore = useDashboardStore();
   const height = ref<number>(100);
   const width = ref<number>(100);
@@ -124,37 +120,9 @@ limitations under the License. -->
     width.value = dom.width;
     svg.value = d3.select(".hierarchy-services-svg");
     graph.value = d3.select(".hierarchy-services-graph");
-    await update();
-    svg.value.call(zoom(d3, graph.value, diff.value));
-  }
-
-  async function update() {
-    const layerList = [];
-    const layerMap = new Map();
-    for (const n of props.nodes) {
-      if (layerMap.get(n.layer)) {
-        const arr = layerMap.get(n.layer);
-        arr.push(n);
-        layerMap.set(n.layer, arr);
-      } else {
-        layerMap.set(n.layer, [n]);
-      }
-    }
-    for (const d of layerMap.values()) {
-      layerList.push(d);
-    }
-    for (const list of layerList) {
-      const { dashboard } = getDashboard(
-        {
-          layer: list[0].layer || "",
-          entity: EntityType[0].value,
-        },
-        ConfigFieldTypes.ISDEFAULT,
-      );
-      const exp = (dashboard && dashboard.expressions) || [];
-      await topologyStore.queryHierarchyNodeExpressions(exp, list[0].layer);
-    }
+    emits("getNodeMetrics");
     draw();
+    svg.value.call(zoom(d3, graph.value, diff.value));
   }
 
   function draw() {
