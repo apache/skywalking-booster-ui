@@ -41,6 +41,13 @@ limitations under the License. -->
             class="selectorPod"
             :isRemote="['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)"
           />
+          <span
+            class="ml-10 cp hierarchy-btn"
+            v-if="dashboardStore.entity === 'ServiceInstance'"
+            @click="showHierarchy = true"
+          >
+            <Icon size="middle" iconName="hierarchy_topology" />
+          </span>
         </div>
         <div class="selectors-item" v-if="key === 5 || key === 6">
           <span class="label"> $Process </span>
@@ -126,6 +133,9 @@ limitations under the License. -->
       </div>
     </div>
   </div>
+  <el-dialog v-model="showHierarchy" :destroy-on-close="true" @closed="showHierarchy = false" width="640px">
+    <div class="hierarchy-related"> hierarchy-related </div>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
   import { reactive, ref, computed, watch } from "vue";
@@ -157,6 +167,7 @@ limitations under the License. -->
   const params = useRoute().params;
   const toolIcons = ref<{ name: string; content: string; id: WidgetType }[]>(AllTools);
   const loading = ref<boolean>(false);
+  const showHierarchy = ref<boolean>(false);
   const states = reactive<{
     destService: string;
     destPod: string;
@@ -704,5 +715,15 @@ limitations under the License. -->
 
   .relation {
     margin-top: 5px;
+  }
+
+  .hierarchy-btn {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #666;
+    border-radius: 5px;
+    text-align: center;
+    color: #aaa;
   }
 </style>
