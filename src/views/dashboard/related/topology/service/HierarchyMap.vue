@@ -80,13 +80,13 @@ limitations under the License. -->
       <div>
         <img :src="icons.CUBE" />
         <span>
-          {{ settings.description ? settings.description.healthy || "" : "" }}
+          {{ (settings.hierarchyServicesDesc && settings.hierarchyServicesDesc.healthy) || "" }}
         </span>
       </div>
       <div>
         <img :src="icons.CUBEERROR" />
         <span>
-          {{ settings.description ? settings.description.unhealthy || "" : "" }}
+          {{ (settings.hierarchyServicesDesc && settings.hierarchyServicesDesc.unhealthy) || "" }}
         </span>
       </div>
     </div>
@@ -106,19 +106,16 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import * as d3 from "d3";
   import type { Node } from "@/types/topology";
-  import { useSelectorStore } from "@/store/modules/selectors";
   import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { EntityType, MetricModes } from "@/views/dashboard/data";
+  import { EntityType } from "@/views/dashboard/data";
   import router from "@/router";
   import { ElMessage } from "element-plus";
-  import type { Service } from "@/types/selector";
   import { useAppStoreWithOut } from "@/store/modules/app";
   // import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
-  import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
   import { layout, changeNode, computeLevels } from "./utils/layout";
   import zoom from "@/views/dashboard/related/components/utils/zoom";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
@@ -133,7 +130,6 @@ limitations under the License. -->
     },
   });
   const { t } = useI18n();
-  const selectorStore = useSelectorStore();
   const topologyStore = useTopologyStore();
   const dashboardStore = useDashboardStore();
   const appStore = useAppStoreWithOut();
@@ -183,7 +179,6 @@ limitations under the License. -->
 
   async function update() {
     topologyStore.queryHierarchyNodeExpressions(settings.value.hierarchyServicesConfig || []);
-    // await initLegendMetrics();
     draw();
     popover.value = d3.select("#popover");
   }
@@ -219,48 +214,14 @@ limitations under the License. -->
     dashboardStore.selectWidget(props.config);
   }
 
-  async function initLegendMetrics() {
-    if (!topologyStore.nodes.length) {
-      return;
-    }
-    if (settings.value.metricMode === MetricModes.Expression) {
-      const expression = props.config.legendMQE && props.config.legendMQE.expression;
-      if (!expression) {
-        return;
-      }
-      const { getExpressionQuery } = useQueryTopologyExpressionsProcessor([expression], topologyStore.nodes);
-      const param = getExpressionQuery();
-      const res = await topologyStore.getNodeExpressionValue(param);
-      if (res.errors) {
-        ElMessage.error(res.errors);
-      } else {
-        topologyStore.setLegendValues([expression], res.data);
-      }
-    } else {
-      const names = props.config.legend.map((d: any) => d.name);
-      if (!names.length) {
-        return;
-      }
-      const ids = topologyStore.nodes.map((d: Node) => d.id);
-      if (ids.length) {
-        const param = await useQueryTopologyMetrics(names, ids);
-        const res = await topologyStore.getLegendMetrics(param);
-        if (res.errors) {
-          ElMessage.error(res.errors);
-        }
-      }
-    }
-  }
-
   function getNodeStatus(d: any) {
-    const { legendMQE } = settings.value;
-    if (!legendMQE) {
+    const item =
+      (settings.value.hierarchyServicesConfig || []).find((i: { layer: string }) => d.layer === i.layer) || {};
+
+    if (!item.legendMQE) {
       return icons.CUBE;
     }
-    if (!legendMQE.expression) {
-      return icons.CUBE;
-    }
-    return Number(d[legendMQE.expression]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
+    return Number(d[item.legendMQE]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
     const config: HierarchyServicesConfig =
@@ -373,8 +334,8 @@ limitations under the License. -->
       position: absolute;
       top: 40px;
       right: 10px;
-      width: 300px;
-      height: 400px;
+      width: 280px;
+      height: 420px;
       overflow: auto;
       padding: 0 15px;
       border-radius: 3px;

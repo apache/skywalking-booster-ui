@@ -592,6 +592,9 @@ export const topologyStore = defineStore({
     },
     async queryHierarchyNodeExpressions(expressions: string[], layer: string) {
       const nodes = this.hierarchyServiceNodes.filter((n: Node) => n.layer === layer);
+      if (!nodes.length) {
+        return;
+      }
       if (!expressions.length) {
         this.setHierarchyNodeMetricValue({}, layer);
         return;

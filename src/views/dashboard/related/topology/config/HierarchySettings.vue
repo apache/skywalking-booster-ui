@@ -24,7 +24,7 @@ limitations under the License. -->
       @change="changeLayer"
       class="inputs"
     />
-    <div class="label" v-if="currentConfig.layer">
+    <div class="label mb-5" v-if="currentConfig.layer">
       <span>{{ t("nodeMetrics") }}</span>
       <el-popover placement="left" :width="400" trigger="click">
         <template #reference>
@@ -50,7 +50,6 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { ElMessage } from "element-plus";
   import type { HierarchyServicesConfig, MetricConfigOpt } from "@/types/dashboard";
-  import type { Node } from "@/types/topology";
   import type { Option } from "@/types/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useTopologyStore } from "@/store/modules/topology";
@@ -63,7 +62,9 @@ limitations under the License. -->
   const topologyStore = useTopologyStore();
   const selectorStore = useSelectorStore();
   const hierarchyServicesConfig = dashboardStore.selectedGrid.hierarchyServicesConfig || [];
-  const currentConfig = reactive<HierarchyServicesConfig>(hierarchyServicesConfig[0] || {});
+  const currentConfig = reactive<HierarchyServicesConfig>(
+    hierarchyServicesConfig[0] || { layer: dashboardStore.layerId, nodeExpressions: [] },
+  );
   const layers = ref<Option[]>([]);
 
   onMounted(() => {
@@ -99,7 +100,7 @@ limitations under the License. -->
       config[index] = JSON.parse(JSON.stringify(currentConfig));
     }
 
-    const hierarchyServicesConfig = config.filter((d: HierarchyServicesConfig) => d.layer && d.nodeExpressions);
+    const hierarchyServicesConfig = config.filter((d: HierarchyServicesConfig) => d.layer && d.nodeExpressions.length);
     const param = {
       ...dashboardStore.selectedGrid,
       hierarchyServicesConfig,
@@ -134,6 +135,6 @@ limitations under the License. -->
 
   .inputs {
     margin-top: 8px;
-    width: 270px;
+    width: 250px;
   }
 </style>
