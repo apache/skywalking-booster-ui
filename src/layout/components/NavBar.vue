@@ -48,8 +48,14 @@ limitations under the License. -->
         @input="changeTimeRange"
       />
       <span> UTC{{ appStore.utcHour >= 0 ? "+" : "" }}{{ `${appStore.utcHour}:${appStore.utcMin}` }} </span>
-      <span class="ml-5">
-        <el-switch v-model="theme" :active-icon="Moon" :inactive-icon="Sunny" inline-prompt @change="changeTheme" />
+      <span class="ml-5" ref="themeSwitchRef">
+        <el-switch
+          v-model="theme"
+          :active-icon="Moon"
+          :inactive-icon="Sunny"
+          inline-prompt
+          @change="handleChangeTheme"
+        />
       </span>
       <span title="refresh" class="ghost ml-5 cp" @click="handleReload">
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
@@ -67,18 +73,18 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch } from "vue";
-  import { useRoute } from "vue-router";
-  import { useI18n } from "vue-i18n";
-  import timeFormat from "@/utils/timeFormat";
+  import { Themes } from "@/constants/data";
+  import router from "@/router";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { ElMessage } from "element-plus";
-  import { MetricCatalog } from "@/views/dashboard/data";
   import type { DashboardItem } from "@/types/dashboard";
-  import router from "@/router";
+  import timeFormat from "@/utils/timeFormat";
+  import { MetricCatalog } from "@/views/dashboard/data";
   import { ArrowRight, Moon, Sunny } from "@element-plus/icons-vue";
-  import { Themes } from "@/constants/data";
+  import { ElMessage } from "element-plus";
+  import { ref, watch } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useRoute } from "vue-router";
 
   /*global Indexable */
   const { t, te } = useI18n();
@@ -89,6 +95,7 @@ limitations under the License. -->
   const timeRange = ref<number>(0);
   const pageTitle = ref<string>("");
   const theme = ref<boolean>(true);
+  const themeSwitchRef = ref<HTMLElement>();
 
   const savedTheme = window.localStorage.getItem("theme-is-dark");
   if (savedTheme === "false") {
@@ -117,6 +124,35 @@ limitations under the License. -->
       appStore.setTheme(Themes.Light);
     }
     window.localStorage.setItem("theme-is-dark", String(theme.value));
+  }
+
+  function handleChangeTheme() {
+    const x = themeSwitchRef.value?.offsetLeft ?? 0;
+    const y = themeSwitchRef.value?.offsetTop ?? 0;
+    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    // compatibility handling
+    if (!document.startViewTransition) {
+      changeTheme();
+      return;
+    }
+    // api: https://developer.chrome.com/docs/web-platform/view-transitions
+    const transition = document.startViewTransition(() => {
+      changeTheme();
+    });
+
+    transition.ready.then(() => {
+      const clipPath = [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`];
+      document.documentElement.animate(
+        {
+          clipPath: !theme.value ? clipPath.reverse() : clipPath,
+        },
+        {
+          duration: 500,
+          easing: "ease-in",
+          pseudoElement: !theme.value ? "::view-transition-old(root)" : "::view-transition-new(root)",
+        },
+      );
+    });
   }
 
   function getName(list: any[]) {
