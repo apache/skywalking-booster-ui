@@ -94,7 +94,7 @@ limitations under the License. -->
   import type { Node } from "@/types/topology";
   import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { EntityType } from "@/views/dashboard/data";
+  import { EntityType, ConfigFieldTypes } from "@/views/dashboard/data";
   import router from "@/router";
   import { ElMessage } from "element-plus";
   import { useAppStoreWithOut } from "@/store/modules/app";
@@ -105,6 +105,7 @@ limitations under the License. -->
   import zoom from "@/views/dashboard/related/components/utils/zoom";
   import HierarchySettings from "../config/HierarchySettings.vue";
   import type { HierarchyServicesConfig } from "@/types/dashboard";
+  import getDashboard from "@/hooks/useDashboardsSession";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -208,11 +209,16 @@ limitations under the License. -->
     return Number(d[item.legendMQE]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
-    const config: HierarchyServicesConfig =
-      (settings.value.hierarchyServicesConfig || []).find((d: HierarchyServicesConfig) => d.layer === data.layer) || {};
-    const exprssions = config.nodeExpressions || [];
-    const nodeMetricConfig = config.expressionsConfig || [];
-    const html = exprssions.map((m, index) => {
+    const { dashboard } = getDashboard(
+      {
+        layer: data.layer || "",
+        entity: EntityType[0].value,
+      },
+      ConfigFieldTypes.ISDEFAULT,
+    );
+    const exprssions = dashboard.nodeExpressions || [];
+    const nodeMetricConfig = dashboard.nodeExpressionsConfig || [];
+    const html = exprssions.map((m: string, index: number) => {
       const metric =
         topologyStore.hierarchyNodeMetrics[data.layer || ""][m].values.find(
           (val: { id: string; value: unknown }) => val.id === data.id,
@@ -240,11 +246,15 @@ limitations under the License. -->
   function handleNodeClick(event: MouseEvent, d: Node & { x: number; y: number }) {
     event.stopPropagation();
     hideTip();
-    topologyStore.setHierarchyServiceNode(d);
-    handleGoDashboard();
-  }
-  function handleGoDashboard() {
-    const name = ""; // todo
+    // topologyStore.setHierarchyServiceNode(d);
+    const { dashboard } = getDashboard(
+      {
+        layer: d.layer || "",
+        entity: EntityType[0].value,
+      },
+      ConfigFieldTypes.ISDEFAULT,
+    );
+    const name = dashboard.name;
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${name}`;
     const routeUrl = router.resolve({ path });
 

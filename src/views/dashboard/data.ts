@@ -366,3 +366,7 @@ export enum CallTypes {
   Server = "SERVER",
   Client = "CLIENT",
 }
+export enum ConfigFieldTypes {
+  ISDEFAULT = "ISDEFAULT",
+  NAME = "NAME",
+}
