@@ -42,7 +42,6 @@ export interface LayoutConfig {
   children?: { name: string; children: LayoutConfig[]; expression?: string; enable?: boolean }[];
   activedTabIndex?: number;
   metricConfig?: MetricConfigOpt[];
-  hierarchyServicesConfig?: HierarchyServicesConfig[];
   id?: string;
   associate?: { widgetId: string }[];
   eventAssociate?: boolean;
@@ -85,16 +84,6 @@ export type MetricConfigOpt = {
   index?: number;
   detailLabel?: string;
 };
-
-export interface HierarchyServicesConfigMap {
-  [key: string]: HierarchyServicesConfig;
-}
-
-export interface HierarchyServicesConfig {
-  layer: string;
-  nodeExpressions: string[];
-  expressionsConfig: MetricConfigOpt[];
-}
 
 export interface WidgetConfig {
   name?: string;

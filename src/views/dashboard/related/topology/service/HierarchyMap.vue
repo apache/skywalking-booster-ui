@@ -81,7 +81,6 @@ limitations under the License. -->
 <script lang="ts" setup>
   import type { PropType } from "vue";
   import { ref, onMounted, watch, computed, nextTick } from "vue";
-  import { useI18n } from "vue-i18n";
   import * as d3 from "d3";
   import type { Node } from "@/types/topology";
   import { useTopologyStore } from "@/store/modules/topology";
@@ -95,7 +94,6 @@ limitations under the License. -->
   import icons from "@/assets/img/icons";
   import { layout, changeNode, computeLevels } from "./utils/layout";
   import zoom from "@/views/dashboard/related/components/utils/zoom";
-  import type { HierarchyServicesConfig } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
 
   /*global Nullable, defineProps */
@@ -105,7 +103,6 @@ limitations under the License. -->
       default: () => ({}),
     },
   });
-  const { t } = useI18n();
   const topologyStore = useTopologyStore();
   const dashboardStore = useDashboardStore();
   const appStore = useAppStoreWithOut();
@@ -114,8 +111,6 @@ limitations under the License. -->
   const loading = ref<boolean>(false);
   const svg = ref<Nullable<any>>(null);
   const graph = ref<Nullable<any>>(null);
-  // const settings = ref<any>(props.config);
-  const showSetting = ref<boolean>(false);
   const topologyLayout = ref<any>({});
   const popover = ref<Nullable<any>>(null);
   const graphWidth = ref<number>(100);
