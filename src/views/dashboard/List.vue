@@ -195,7 +195,7 @@ limitations under the License. -->
   import { WidgetType } from "@/views/dashboard/data";
   import Metrics from "@/views/dashboard/related/topology/config/Metrics.vue";
 
-  /*global Nullable*/
+  /*global Nullable, Recordable*/
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const pageSize = 20;
@@ -208,7 +208,7 @@ limitations under the License. -->
   const multipleSelection = ref<DashboardItem[]>([]);
   const dashboardFile = ref<Nullable<HTMLDivElement>>(null);
   const MQEVisible = ref<boolean>(false);
-  const currentRow = ref<any>({});
+  const currentRow = ref<DashboardItem | Recordable>({});
 
   const handleSelectionChange = (val: DashboardItem[]) => {
     multipleSelection.value = val;
@@ -223,7 +223,7 @@ limitations under the License. -->
     currentRow.value.expressions = params;
   }
 
-  function updateSettings(config: any) {
+  function updateSettings(config: Record<string, never>) {
     currentRow.value = {
       ...currentRow.value,
       expressionsConfig: config.hierarchyServicesConfig,
@@ -604,7 +604,7 @@ limitations under the License. -->
       ...d,
       name: value,
     });
-    dashboards.value = dashboardStore.dashboards.map((item: any) => {
+    dashboards.value = dashboardStore.dashboards.map((item: DashboardItem) => {
       if (dashboardStore.currentDashboard.id === item.id) {
         item = dashboardStore.currentDashboard;
       }
@@ -636,7 +636,7 @@ limitations under the License. -->
     sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
     sessionStorage.removeItem(`${row.layer}_${row.entity}_${row.name}`);
   }
-  function searchDashboards(pageIndex?: any) {
+  function searchDashboards(pageIndex: number) {
     const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
     const arr = list.filter((d: { name: string }) => d.name.includes(searchText.value));
 
