@@ -76,14 +76,6 @@ limitations under the License. -->
       </g>
     </svg>
     <div id="popover"></div>
-    <div class="tool">
-      <span class="switch-icon ml-5" title="Settings" @click="showConfig" v-if="dashboardStore.editMode">
-        <Icon size="middle" iconName="settings" />
-      </span>
-    </div>
-    <div class="hierarchy-settings" v-if="showSetting && dashboardStore.editMode">
-      <hierarchy-settings @update="updateSettings" />
-    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -103,7 +95,6 @@ limitations under the License. -->
   import icons from "@/assets/img/icons";
   import { layout, changeNode, computeLevels } from "./utils/layout";
   import zoom from "@/views/dashboard/related/components/utils/zoom";
-  import HierarchySettings from "../config/HierarchySettings.vue";
   import type { HierarchyServicesConfig } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
 
@@ -370,45 +361,6 @@ limitations under the License. -->
       color: var(--sw-topology-color);
       display: inline-block;
       margin-right: 5px;
-    }
-
-    .operations-list {
-      position: absolute;
-      color: $font-color;
-      cursor: pointer;
-      border: var(--sw-topology-border);
-      border-radius: 3px;
-      background-color: $theme-background;
-      padding: 10px 0;
-
-      span {
-        display: block;
-        height: 30px;
-        line-height: 30px;
-        text-align: left;
-        padding: 0 15px;
-      }
-
-      span:hover {
-        color: $active-color;
-        background-color: $popper-hover-bg-color;
-      }
-    }
-
-    .tool {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-    }
-
-    .switch-icon {
-      cursor: pointer;
-      transition: all 0.5ms linear;
-      background: var(--sw-topology-switch-icon);
-      color: $text-color;
-      display: inline-block;
-      padding: 1px;
-      border-radius: 3px;
     }
 
     .topo-line {
