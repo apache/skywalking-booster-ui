@@ -157,7 +157,7 @@ limitations under the License. -->
   import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
-  import { layout, computeLevels, changeNode } from "./utils/layout";
+  import { layout, computeLevels, changeNode } from "../components/utils/layout";
   import zoom from "@/views/dashboard/related/components/utils/zoom";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
   /*global Nullable, defineProps */
