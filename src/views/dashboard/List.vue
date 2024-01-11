@@ -147,7 +147,22 @@ limitations under the License. -->
         />
       </div>
       <el-dialog v-model="MQEVisible" title="Edit MQE" width="400px">
-        <div>{{ t("hierarchyNodeMetrics") }}</div>
+        <div>
+          <span>{{ t("hierarchyNodeMetrics") }}</span>
+          <el-popover placement="left" :width="400" trigger="click">
+            <template #reference>
+              <span>
+                <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
+              </span>
+            </template>
+            <Metrics
+              :type="'hierarchyServicesConfig'"
+              :expressions="currentRow.expressions"
+              :layer="currentRow.layer"
+              @update="updateSettings"
+            />
+          </el-popover>
+        </div>
         <div class="mt-10 expressions">
           <Tags
             :tags="currentRow.expressions || []"
@@ -158,7 +173,7 @@ limitations under the License. -->
         </div>
         <template #footer>
           <span class="dialog-footer">
-            <el-button @click="MQEVisible = false">Cancel</el-button>
+            <el-button @click="MQEVisible = false"> Cancel </el-button>
             <el-button type="primary" @click="saveMQE"> Confirm </el-button>
           </span>
         </template>
@@ -178,6 +193,7 @@ limitations under the License. -->
   import { EntityType } from "./data";
   import { isEmptyObject } from "@/utils/is";
   import { WidgetType } from "@/views/dashboard/data";
+  import Metrics from "@/views/dashboard/related/topology/config/Metrics.vue";
 
   /*global Nullable*/
   const { t } = useI18n();
@@ -207,6 +223,13 @@ limitations under the License. -->
     currentRow.value.expressions = params;
   }
 
+  function updateSettings(config: any) {
+    currentRow.value = {
+      ...currentRow.value,
+      expressionsConfig: config.hierarchyServicesConfig,
+    };
+  }
+
   function handleEditMQE(row: DashboardItem) {
     MQEVisible.value = !MQEVisible.value;
     currentRow.value = row;
@@ -218,6 +241,7 @@ limitations under the License. -->
     for (const d of dashboardStore.dashboards) {
       if (d.id === currentRow.value.id) {
         d.expressions = currentRow.value.expressions;
+        d.expressionsConfig = currentRow.value.expressionsConfig;
         const key = [d.layer, d.entity, d.name].join("_");
         const layout = sessionStorage.getItem(key) || "{}";
         const c = {
@@ -247,8 +271,9 @@ limitations under the License. -->
       items.push(d);
     }
     dashboardStore.resetDashboards(items);
-    searchDashboards(1);
+    searchDashboards(currentPage.value);
     loading.value = false;
+    MQEVisible.value = false;
   }
 
   async function importTemplates(event: any) {
@@ -467,7 +492,7 @@ limitations under the License. -->
       items.push(d);
     }
     dashboardStore.resetDashboards(items);
-    searchDashboards(1);
+    searchDashboards(currentPage.value);
     loading.value = false;
   }
   async function handleTopLevel(row: DashboardItem) {
@@ -532,7 +557,7 @@ limitations under the License. -->
       items.push(d);
     }
     dashboardStore.resetDashboards(items);
-    searchDashboards(1);
+    searchDashboards(currentPage.value);
     loading.value = false;
   }
   function handleRename(row: DashboardItem) {

@@ -163,7 +163,31 @@ limitations under the License. -->
   }
 
   async function update() {
-    topologyStore.queryHierarchyNodeExpressions(settings.value.hierarchyServicesConfig || []);
+    const layerList = [];
+    const layerMap = new Map();
+    for (const n of topologyStore.hierarchyServiceNodes) {
+      if (layerMap.get(n.layer)) {
+        const arr = layerMap.get(n.layer);
+        arr.push(n);
+        layerMap.set(n.layer, arr);
+      } else {
+        layerMap.set(n.layer, [n]);
+      }
+    }
+    for (const d of layerMap.values()) {
+      layerList.push(d);
+    }
+    for (const list of layerList) {
+      const { dashboard } = getDashboard(
+        {
+          layer: list[0].layer || "",
+          entity: EntityType[0].value,
+        },
+        ConfigFieldTypes.ISDEFAULT,
+      );
+      const exp = (dashboard && dashboard.expressions) || [];
+      await topologyStore.queryHierarchyNodeExpressions(exp, list[0].layer);
+    }
     draw();
     popover.value = d3.select("#popover");
   }
@@ -209,15 +233,16 @@ limitations under the License. -->
     return Number(d[item.legendMQE]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
-    const { dashboard } = getDashboard(
-      {
-        layer: data.layer || "",
-        entity: EntityType[0].value,
-      },
-      ConfigFieldTypes.ISDEFAULT,
-    );
-    const exprssions = dashboard.nodeExpressions || [];
-    const nodeMetricConfig = dashboard.nodeExpressionsConfig || [];
+    const dashboard =
+      getDashboard(
+        {
+          layer: data.layer || "",
+          entity: EntityType[0].value,
+        },
+        ConfigFieldTypes.ISDEFAULT,
+      ).dashboard || {};
+    const exprssions = dashboard.expressions || [];
+    const nodeMetricConfig = dashboard.expressionsConfig || [];
     const html = exprssions.map((m: string, index: number) => {
       const metric =
         topologyStore.hierarchyNodeMetrics[data.layer || ""][m].values.find(
@@ -247,13 +272,14 @@ limitations under the License. -->
     event.stopPropagation();
     hideTip();
     // topologyStore.setHierarchyServiceNode(d);
-    const { dashboard } = getDashboard(
-      {
-        layer: d.layer || "",
-        entity: EntityType[0].value,
-      },
-      ConfigFieldTypes.ISDEFAULT,
-    );
+    const dashboard =
+      getDashboard(
+        {
+          layer: d.layer || "",
+          entity: EntityType[0].value,
+        },
+        ConfigFieldTypes.ISDEFAULT,
+      ).dashboard || {};
     const name = dashboard.name;
     const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${name}`;
     const routeUrl = router.resolve({ path });

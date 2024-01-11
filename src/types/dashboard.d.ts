@@ -23,6 +23,7 @@ export type DashboardItem = {
   name: string;
   isDefault: boolean;
   expressions?: string[];
+  expressionsConfig?: MetricConfigOpt[];
 };
 export interface LayoutConfig {
   x: number;

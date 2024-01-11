@@ -336,7 +336,9 @@ limitations under the License. -->
     const nodeMetricConfig = settings.value.nodeMetricConfig || [];
     const html = nodeMetrics.map((m, index) => {
       const metric =
-        topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id) || {};
+        (topologyStore.nodeMetricValue[m] &&
+          topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id)) ||
+        {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
       const v = aggregation(metric.value, opt);
       return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || "unknown"}</div>`;
