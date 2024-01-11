@@ -150,7 +150,7 @@ limitations under the License. -->
         <div>{{ t("hierarchyNodeMetrics") }}</div>
         <div class="mt-10 expressions">
           <Tags
-            :tags="currentRow.expressions"
+            :tags="currentRow.expressions || []"
             :vertical="true"
             :text="t('addExpressions')"
             @change="(param) => changeExpressions(param)"
@@ -205,6 +205,11 @@ limitations under the License. -->
 
   function changeExpressions(params: string[]) {
     currentRow.value.expressions = params;
+  }
+
+  function handleEditMQE(row: DashboardItem) {
+    MQEVisible.value = !MQEVisible.value;
+    currentRow.value = row;
   }
 
   async function saveMQE() {
@@ -529,10 +534,6 @@ limitations under the License. -->
     dashboardStore.resetDashboards(items);
     searchDashboards(1);
     loading.value = false;
-  }
-  function handleEditMQE(row: DashboardItem) {
-    MQEVisible.value = !MQEVisible.value;
-    currentRow.value = row;
   }
   function handleRename(row: DashboardItem) {
     ElMessageBox.prompt("Please input dashboard name", "Edit", {
