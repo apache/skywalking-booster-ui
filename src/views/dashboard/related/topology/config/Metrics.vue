@@ -72,6 +72,7 @@ limitations under the License. -->
     isExpression: { type: Boolean, default: true },
     layer: { type: String, default: "" },
     expressions: { type: Array<string>, default: () => [] },
+    entity: { type: String, default: EntityType[0].value },
   });
   const { t } = useI18n();
   const emit = defineEmits(["update"]);
@@ -120,7 +121,7 @@ limitations under the License. -->
       const { dashboard } = getDashboard(
         {
           layer: props.layer || "",
-          entity: EntityType[0].value,
+          entity: props.entity,
         },
         ConfigFieldTypes.ISDEFAULT,
       );
@@ -165,7 +166,7 @@ limitations under the License. -->
     };
   }
   watch(
-    () => props.type,
+    () => [props.type, ...props.expressions],
     () => {
       currentMetric.value = metricList.value[0].value;
       const config = getMetricConfig.value || [];

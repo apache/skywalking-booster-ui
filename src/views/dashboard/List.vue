@@ -158,8 +158,9 @@ limitations under the License. -->
             </template>
             <Metrics
               :type="'hierarchyServicesConfig'"
-              :expressions="currentRow.expressions"
+              :expressions="currentRow.expressions || []"
               :layer="currentRow.layer"
+              :entity="currentRow.entity"
               @update="updateSettings"
             />
           </el-popover>
