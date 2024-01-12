@@ -600,12 +600,16 @@ export const topologyStore = defineStore({
       return res.data;
     },
     async getHierarchyServiceTopology() {
-      if (!(this.node.id && this.node.layer)) {
+      const dashboardStore = useDashboardStore();
+      const { currentService } = useSelectorStore();
+      const id = this.node ? this.node.id : (currentService || {}).id;
+      const layer = this.node ? this.node.layer : dashboardStore.layerId;
+      if (!(id && layer)) {
         return new Promise((resolve) => resolve({}));
       }
       const res: AxiosResponse = await graphql
         .query("getHierarchyServiceTopology")
-        .params({ serviceId: this.node.id, layer: this.node.layer });
+        .params({ serviceId: id, layer: layer });
       if (res.data.errors) {
         return res.data;
       }
