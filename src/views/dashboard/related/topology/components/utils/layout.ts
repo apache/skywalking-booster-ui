@@ -227,3 +227,46 @@ export function changeNode(d: { x: number; y: number }, currentNode: Nullable<No
   }
   return computeCallPos(layout.calls, radius);
 }
+export function hierarchy(levels: Node[][], calls: Call[], radius: number) {
+  // precompute level depth
+  console.log(levels);
+  levels.forEach((l: Node[], i: number) => l.forEach((n: any) => n && (n.level = i)));
+
+  const nodes: Node[] = levels.reduce((a, x) => a.concat(x), []);
+  // layout
+  const padding = 30;
+  const node_height = 120;
+  const node_width = 100;
+  const bundle_width = 14;
+  const metro_d = 4;
+  for (const n of nodes) {
+    n.width = 5 * metro_d;
+  }
+
+  let y_offset = padding;
+  let x_offset = 0;
+  for (const level of levels) {
+    x_offset = 0;
+    y_offset += 5 * bundle_width;
+    for (const l of level) {
+      const n: any = l;
+      for (const call of calls) {
+        if (call.source === n.id) {
+          call.sourceObj = n;
+        }
+        if (call.target === n.id) {
+          call.targetObj = n;
+        }
+      }
+      n.x = node_width + x_offset + n.width / 2;
+      n.y = n.level * node_height + y_offset;
+      x_offset += node_height + n.width;
+    }
+  }
+  const layout = {
+    width: d3.max(nodes as any, (n: { x: number }) => n.x) || 0 + node_width + 2 * padding,
+    height: d3.max(nodes as any, (n: { y: number }) => n.y) || 0 + node_height / 2 + 2 * padding,
+  };
+
+  return { nodes, layout, calls: computeCallPos(calls, radius) };
+}

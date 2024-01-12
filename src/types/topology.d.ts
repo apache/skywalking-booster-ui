@@ -46,6 +46,7 @@ export interface Node {
   layer?: string;
   serviceName?: string;
   height?: number;
+  width?: number;
   x?: number;
   y?: number;
   level?: number;

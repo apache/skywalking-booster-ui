@@ -37,7 +37,7 @@ limitations under the License. -->
         <text
           class="node-text"
           :x="n.x - (Math.min(n.name.length, 20) * 6) / 2 + 6"
-          :y="n.y + n.height + 8"
+          :y="n.y + n.width + 8"
           style="pointer-events: none"
         >
           {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
@@ -78,7 +78,7 @@ limitations under the License. -->
   import type { Node, Call } from "@/types/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import icons from "@/assets/img/icons";
-  import { layout, changeNode, computeLevels } from "./utils/layout";
+  import { changeNode, computeLevels, hierarchy } from "./utils/layout";
   import zoom from "@/views/dashboard/related/components/utils/zoom";
 
   /*global Nullable, defineProps */
@@ -110,7 +110,7 @@ limitations under the License. -->
   const graphWidth = ref<number>(100);
   const currentNode = ref<Nullable<Node>>(null);
   const diff = computed(() => [(width.value - graphWidth.value - 120) / 2, 0]);
-  const radius = 8;
+  const radius = 4;
 
   async function init() {
     const dom = document.querySelector(".hierarchy-related")?.getBoundingClientRect() || {
@@ -129,7 +129,7 @@ limitations under the License. -->
   function draw() {
     const levels = computeLevels(props.calls, props.nodes, []);
 
-    topologyLayout.value = layout(levels, props.calls, radius);
+    topologyLayout.value = hierarchy(levels, props.calls, radius);
     graphWidth.value = topologyLayout.value.layout.width;
     const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {
       topologyLayout.value.calls = changeNode(d, currentNode.value, topologyLayout.value, radius);
