@@ -113,7 +113,7 @@ limitations under the License. -->
   const topologyLayout = ref<any>({});
   const graphWidth = ref<number>(100);
   const currentNode = ref<Nullable<Node>>(null);
-  const diff = computed(() => [(width.value - graphWidth.value - 120) / 2, 20]);
+  const diff = computed(() => [(width.value - graphWidth.value - 120) / 2, 40]);
   const radius = 10;
 
   async function init() {
@@ -186,8 +186,7 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss" scoped>
-  .hierarchy-services-topo,
-  hierarchy-services {
+  .hierarchy-services-topo {
     .node-text {
       fill: var(--sw-topology-color);
       font-size: 12px;
@@ -217,10 +216,6 @@ limitations under the License. -->
     .topo-node {
       cursor: pointer;
     }
-  }
-
-  .el-loading-spinner {
-    top: 30%;
   }
 
   .hierarchy-services {
