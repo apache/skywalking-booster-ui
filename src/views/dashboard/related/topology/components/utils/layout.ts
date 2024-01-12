@@ -234,8 +234,8 @@ export function hierarchy(levels: Node[][], calls: Call[], radius: number) {
   const nodes: Node[] = levels.reduce((a, x) => a.concat(x), []);
   // layout
   const padding = 30;
-  const node_height = 120;
-  const node_width = 100;
+  const node_height = 100;
+  const node_width = 180;
   const bundle_width = 10;
   const metro_d = 4;
   for (const n of nodes) {
@@ -259,7 +259,7 @@ export function hierarchy(levels: Node[][], calls: Call[], radius: number) {
       }
       n.x = node_width + x_offset + n.width / 2;
       n.y = n.level * node_height + y_offset;
-      x_offset += node_height + n.width;
+      x_offset += node_width + n.width;
     }
   }
   const layout = {

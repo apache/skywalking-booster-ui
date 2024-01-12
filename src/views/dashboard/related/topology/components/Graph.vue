@@ -36,11 +36,11 @@ limitations under the License. -->
         />
         <text
           class="node-text"
-          :x="n.x - (Math.min(n.name.length, 20) * 6) / 2 + 6"
+          :x="n.x - (Math.min(n.name.length, 30) * 6) / 2 + 6"
           :y="n.y + n.width + 8"
           style="pointer-events: none"
         >
-          {{ n.name.length > 20 ? `${n.name.substring(0, 20)}...` : n.name }}
+          {{ n.name.length > 30 ? `${n.name.substring(0, 30)}...` : n.name }}
         </text>
       </g>
       <g v-for="(l, index) in topologyLayout.calls" :key="index">
@@ -113,7 +113,10 @@ limitations under the License. -->
   const topologyLayout = ref<any>({});
   const graphWidth = ref<number>(100);
   const currentNode = ref<Nullable<Node>>(null);
-  const diff = computed(() => [(width.value - graphWidth.value - 120) / 2, 40]);
+  const diff = computed(() => [
+    (width.value - graphWidth.value - 160) / 2,
+    (height.value - topologyLayout.value.layout.height - 60) / 2,
+  ]);
   const radius = 10;
 
   async function init() {
