@@ -229,7 +229,6 @@ export function changeNode(d: { x: number; y: number }, currentNode: Nullable<No
 }
 export function hierarchy(levels: Node[][], calls: Call[], radius: number) {
   // precompute level depth
-  console.log(levels);
   levels.forEach((l: Node[], i: number) => l.forEach((n: any) => n && (n.level = i)));
 
   const nodes: Node[] = levels.reduce((a, x) => a.concat(x), []);
@@ -237,7 +236,7 @@ export function hierarchy(levels: Node[][], calls: Call[], radius: number) {
   const padding = 30;
   const node_height = 120;
   const node_width = 100;
-  const bundle_width = 14;
+  const bundle_width = 10;
   const metro_d = 4;
   for (const n of nodes) {
     n.width = 5 * metro_d;
@@ -247,7 +246,7 @@ export function hierarchy(levels: Node[][], calls: Call[], radius: number) {
   let x_offset = 0;
   for (const level of levels) {
     x_offset = 0;
-    y_offset += 5 * bundle_width;
+    y_offset += 3 * bundle_width;
     for (const l of level) {
       const n: any = l;
       for (const call of calls) {
@@ -269,4 +268,17 @@ export function hierarchy(levels: Node[][], calls: Call[], radius: number) {
   };
 
   return { nodes, layout, calls: computeCallPos(calls, radius) };
+}
+export function computeHierarchyLevels(nodes: Node[]) {
+  const levelsNum: number[] = nodes.map((d: Node) => d.l || 0);
+  const list = [...new Set(levelsNum)];
+  const sortedArr = list.sort((a, b) => a - b);
+  const nodesList = [];
+
+  for (const min of sortedArr) {
+    const arr = nodes.filter((d) => d.l === min);
+    nodesList.push(arr);
+  }
+
+  return nodesList;
 }

@@ -108,11 +108,13 @@ export const HierarchyServiceTopology = {
         id
         name
         layer
+        normal
       }
       lowerService {
         id
         name
         layer
+        normal
       }
     }
   }`,
@@ -126,12 +128,27 @@ export const HierarchyInstanceTopology = {
         id
         name
         layer
+        normal
+        serviceName
+        serviceId
       }
       lowerInstance {
         id
         name
         layer
+        normal
+        serviceName
+        serviceId
       }
     }
   }`,
+};
+
+export const ListLayerLevels = {
+  query: `
+  levels: listLayerLevels {
+    layer
+    level
+  }
+  `,
 };

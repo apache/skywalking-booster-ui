@@ -120,7 +120,7 @@ export const topologyStore = defineStore({
       this.calls = calls;
       this.nodes = nodes;
     },
-    setHierarchyInstanceTopology(data: InstanceHierarchy) {
+    setHierarchyInstanceTopology(data: InstanceHierarchy, levels: { layer: string; level: number }[]) {
       const relations = data.relations || [];
       const nodesMap = new Map();
       const callList = [];
@@ -130,8 +130,12 @@ export const topologyStore = defineStore({
         const lowerId = relation.lowerInstance.id;
         const lowerKey = `${lowerId}-${relation.lowerInstance.layer}`;
         const upperKey = `${upperId}-${relation.upperInstance.layer}`;
-        const lowerObj = { ...relation.lowerInstance, key: lowerId, id: lowerKey };
-        const upperObj = { ...relation.upperInstance, key: upperId, id: upperKey };
+        const lowerLevel: any =
+          levels.find((l: { layer: string; level: number }) => l.layer === relation.lowerInstance.layer) || {};
+        const upperLevel: any =
+          levels.find((l: { layer: string; level: number }) => l.layer === relation.upperInstance.layer) || {};
+        const lowerObj = { ...relation.lowerInstance, key: lowerId, id: lowerKey, l: lowerLevel.level };
+        const upperObj = { ...relation.upperInstance, key: upperId, id: upperKey, l: upperLevel.level };
         if (!nodesMap.get(upperKey)) {
           nodesMap.set(upperKey, upperObj);
         }
@@ -152,7 +156,7 @@ export const topologyStore = defineStore({
         this.hierarchyInstanceNodes.push(d);
       }
     },
-    setHierarchyServiceTopology(data: ServiceHierarchy) {
+    setHierarchyServiceTopology(data: ServiceHierarchy, levels: { layer: string; level: number }[]) {
       const relations = data.relations || [];
       const nodesMap = new Map();
       const callList = [];
@@ -162,8 +166,12 @@ export const topologyStore = defineStore({
         const lowerId = relation.lowerService.id;
         const lowerKey = `${lowerId}-${relation.lowerService.layer}`;
         const upperKey = `${upperId}-${relation.upperService.layer}`;
-        const lowerObj = { ...relation.lowerService, key: lowerId, id: lowerKey };
-        const upperObj = { ...relation.upperService, key: upperId, id: upperKey };
+        const lowerLevel: any =
+          levels.find((l: { layer: string; level: number }) => l.layer === relation.lowerService.layer) || {};
+        const upperLevel: any =
+          levels.find((l: { layer: string; level: number }) => l.layer === relation.upperService.layer) || {};
+        const lowerObj = { ...relation.lowerService, key: lowerId, id: lowerKey, l: lowerLevel.level };
+        const upperObj = { ...relation.upperService, key: upperId, id: upperKey, l: upperLevel.level };
         if (!nodesMap.get(upperKey)) {
           nodesMap.set(upperKey, upperObj);
         }
@@ -578,7 +586,17 @@ export const topologyStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.setHierarchyServiceTopology(res.data.data.hierarchyServiceTopology || {});
+      const resp = await this.getListLayerLevels();
+      if (resp.errors) {
+        return resp;
+      }
+      const levels = resp.data.levels || [];
+      this.setHierarchyServiceTopology(res.data.data.hierarchyServiceTopology || {}, levels);
+      return res.data;
+    },
+    async getListLayerLevels() {
+      const res: AxiosResponse = await graphql.query("queryListLayerLevels").params({});
+
       return res.data;
     },
     async getHierarchyInstanceTopology() {
@@ -594,7 +612,12 @@ export const topologyStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.setHierarchyInstanceTopology(res.data.data.hierarchyInstanceTopology || {});
+      const resp = await this.getListLayerLevels();
+      if (resp.errors) {
+        return resp;
+      }
+      const levels = resp.data.levels || [];
+      this.setHierarchyInstanceTopology(res.data.data.hierarchyInstanceTopology || {}, levels);
       return res.data;
     },
     async queryHierarchyExpressions(expressions: string[], nodes: Node[]) {

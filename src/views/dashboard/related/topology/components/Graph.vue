@@ -78,7 +78,7 @@ limitations under the License. -->
   import type { Node, Call } from "@/types/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import icons from "@/assets/img/icons";
-  import { changeNode, computeLevels, hierarchy } from "./utils/layout";
+  import { changeNode, computeHierarchyLevels, hierarchy } from "./utils/layout";
   import zoom from "@/views/dashboard/related/components/utils/zoom";
 
   /*global Nullable, defineProps */
@@ -99,6 +99,10 @@ limitations under the License. -->
       type: Array as PropType<Call[]>,
       default: () => [],
     },
+    layerLevels: {
+      type: Array as PropType<{ layer: string; level: number }[]>,
+      default: () => [],
+    },
   });
   const emits = defineEmits(["showNodeTip", "handleNodeClick", "hideTip", "getNodeMetrics"]);
   const dashboardStore = useDashboardStore();
@@ -109,8 +113,8 @@ limitations under the License. -->
   const topologyLayout = ref<any>({});
   const graphWidth = ref<number>(100);
   const currentNode = ref<Nullable<Node>>(null);
-  const diff = computed(() => [(width.value - graphWidth.value - 120) / 2, 0]);
-  const radius = 4;
+  const diff = computed(() => [(width.value - graphWidth.value - 120) / 2, 20]);
+  const radius = 10;
 
   async function init() {
     const dom = document.querySelector(".hierarchy-related")?.getBoundingClientRect() || {
@@ -127,8 +131,7 @@ limitations under the License. -->
   }
 
   function draw() {
-    const levels = computeLevels(props.calls, props.nodes, []);
-
+    const levels = computeHierarchyLevels(props.nodes);
     topologyLayout.value = hierarchy(levels, props.calls, radius);
     graphWidth.value = topologyLayout.value.layout.width;
     const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {

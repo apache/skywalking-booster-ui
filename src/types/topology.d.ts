@@ -50,6 +50,7 @@ export interface Node {
   x?: number;
   y?: number;
   level?: number;
+  l?: number;
 }
 
 export interface ServiceHierarchy {

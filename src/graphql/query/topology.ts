@@ -21,6 +21,7 @@ import {
   ProcessTopology,
   HierarchyServiceTopology,
   HierarchyInstanceTopology,
+  ListLayerLevels,
 } from "../fragments/topology";
 
 export const getInstanceTopology = `query queryData(${InstanceTopology.variable}) {${InstanceTopology.query}}`;
@@ -29,3 +30,4 @@ export const getServicesTopology = `query queryData(${ServicesTopology.variable}
 export const getProcessTopology = `query queryData(${ProcessTopology.variable}) {${ProcessTopology.query}}`;
 export const getHierarchyInstanceTopology = `query queryData(${HierarchyInstanceTopology.variable}) {${HierarchyInstanceTopology.query}}`;
 export const getHierarchyServiceTopology = `query queryData(${HierarchyServiceTopology.variable}) {${HierarchyServiceTopology.query}}`;
+export const queryListLayerLevels = `query queryLayerLevels {${ListLayerLevels.query}}`;
