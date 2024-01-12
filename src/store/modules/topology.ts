@@ -154,9 +154,9 @@ export const topologyStore = defineStore({
           nodesMap.set(lowerKey, lowerObj);
         }
         callList.push({
-          source: lowerKey,
-          target: upperKey,
-          id: `${upperKey}->${lowerKey}`,
+          target: lowerKey,
+          source: upperKey,
+          id: `${lowerKey}->${upperKey}`,
           sourceObj: upperObj,
           targetObj: lowerObj,
         });
@@ -202,9 +202,9 @@ export const topologyStore = defineStore({
           nodesMap.set(lowerKey, lowerObj);
         }
         callList.push({
-          source: lowerKey,
-          target: upperKey,
-          id: `${upperKey}->${lowerKey}`,
+          target: lowerKey,
+          source: upperKey,
+          id: `${lowerKey}->${upperKey}`,
           sourceObj: upperObj,
           targetObj: lowerObj,
         });
