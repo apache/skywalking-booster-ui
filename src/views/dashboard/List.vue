@@ -78,7 +78,7 @@ limitations under the License. -->
             <el-popconfirm
               :title="t('rootTitle')"
               @confirm="handleTopLevel(scope.row)"
-              v-if="[EntityType[0].value].includes(scope.row.entity)"
+              v-if="[EntityType[0].value, EntityType[3].value].includes(scope.row.entity)"
             >
               <template #reference>
                 <el-button size="small" style="width: 80px">
@@ -96,6 +96,13 @@ limitations under the License. -->
             </el-button>
             <el-button size="small" @click="handleRename(scope.row)">
               {{ t("rename") }}
+            </el-button>
+            <el-button
+              :disabled="![EntityType[0].value, EntityType[3].value].includes(scope.row.entity)"
+              size="small"
+              @click="handleEditMQE(scope.row)"
+            >
+              MQE
             </el-button>
             <el-popconfirm :title="t('deleteTitle')" @confirm="handleDelete(scope.row)">
               <template #reference>
@@ -139,6 +146,23 @@ limitations under the License. -->
           @next-click="changePage"
         />
       </div>
+      <el-dialog v-model="MQEVisible" title="Edit MQE" width="400px">
+        <div>{{ t("hierarchyNodeMetrics") }}</div>
+        <div class="mt-10 expressions">
+          <Tags
+            :tags="currentRow.expressions || []"
+            :vertical="true"
+            :text="t('addExpressions')"
+            @change="(param) => changeExpressions(param)"
+          />
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="MQEVisible = false">Cancel</el-button>
+            <el-button type="primary" @click="saveMQE"> Confirm </el-button>
+          </span>
+        </template>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -167,6 +191,8 @@ limitations under the License. -->
   const multipleTableRef = ref<InstanceType<typeof ElTable>>();
   const multipleSelection = ref<DashboardItem[]>([]);
   const dashboardFile = ref<Nullable<HTMLDivElement>>(null);
+  const MQEVisible = ref<boolean>(false);
+  const currentRow = ref<any>({});
 
   const handleSelectionChange = (val: DashboardItem[]) => {
     multipleSelection.value = val;
@@ -176,6 +202,55 @@ limitations under the License. -->
     await dashboardStore.setDashboards();
     searchDashboards(1);
   }
+
+  function changeExpressions(params: string[]) {
+    currentRow.value.expressions = params;
+  }
+
+  function handleEditMQE(row: DashboardItem) {
+    MQEVisible.value = !MQEVisible.value;
+    currentRow.value = row;
+  }
+
+  async function saveMQE() {
+    const items: DashboardItem[] = [];
+    loading.value = true;
+    for (const d of dashboardStore.dashboards) {
+      if (d.id === currentRow.value.id) {
+        d.expressions = currentRow.value.expressions;
+        const key = [d.layer, d.entity, d.name].join("_");
+        const layout = sessionStorage.getItem(key) || "{}";
+        const c = {
+          ...JSON.parse(layout).configuration,
+          ...d,
+        };
+        delete c.id;
+        const setting = {
+          id: d.id,
+          configuration: JSON.stringify(c),
+        };
+
+        const res = await dashboardStore.updateDashboard(setting);
+        if (res.data.changeTemplate.status) {
+          sessionStorage.setItem(
+            key,
+            JSON.stringify({
+              id: d.id,
+              configuration: c,
+            }),
+          );
+        } else {
+          loading.value = false;
+          return;
+        }
+      }
+      items.push(d);
+    }
+    dashboardStore.resetDashboards(items);
+    searchDashboards(1);
+    loading.value = false;
+  }
+
   async function importTemplates(event: any) {
     const arr: any = await readFile(event);
     for (const item of arr) {
@@ -352,6 +427,9 @@ limitations under the License. -->
               configuration: c,
             }),
           );
+        } else {
+          loading.value = false;
+          return;
         }
       } else {
         if (
@@ -380,6 +458,9 @@ limitations under the License. -->
                 configuration: c,
               }),
             );
+          } else {
+            loading.value = false;
+            return;
           }
         }
       }
@@ -416,6 +497,9 @@ limitations under the License. -->
               configuration: c,
             }),
           );
+        } else {
+          loading.value = false;
+          return;
         }
       } else {
         if (d.layer === row.layer && [EntityType[0].value].includes(d.entity) && !row.isDefault && d.isDefault) {
@@ -439,6 +523,9 @@ limitations under the License. -->
                 configuration: c,
               }),
             );
+          } else {
+            loading.value = false;
+            return;
           }
         }
       }
@@ -606,5 +693,9 @@ limitations under the License. -->
   .reload-btn {
     display: inline-block;
     margin-left: 10px;
+  }
+
+  .expressions {
+    height: 300px;
   }
 </style>
