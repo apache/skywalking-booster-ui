@@ -57,7 +57,7 @@ limitations under the License. -->
         :tags="states.linkServerExpressions"
         :vertical="true"
         :text="t('addExpressions')"
-        @change="(param) => changeLinkServerExpressions(param)"
+        @change="(param: string[]) => changeLinkServerExpressions(param)"
       />
     </div>
     <Selector
@@ -92,7 +92,7 @@ limitations under the License. -->
           :tags="states.linkClientExpressions"
           :vertical="true"
           :text="t('addExpressions')"
-          @change="(param) => changeLinkClientExpressions(param)"
+          @change="(param: string[]) => changeLinkClientExpressions(param)"
         />
       </div>
       <Selector
@@ -168,7 +168,7 @@ limitations under the License. -->
         :tags="states.nodeExpressions"
         :vertical="true"
         :text="t('addExpressions')"
-        @change="(param) => changeNodeExpressions(param)"
+        @change="(param: string[]) => changeNodeExpressions(param)"
       />
     </div>
     <Selector

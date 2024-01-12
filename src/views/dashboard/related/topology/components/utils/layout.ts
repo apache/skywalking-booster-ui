@@ -272,7 +272,7 @@ export function hierarchy(levels: Node[][], calls: Call[], radius: number) {
 export function computeHierarchyLevels(nodes: Node[]) {
   const levelsNum: number[] = nodes.map((d: Node) => d.l || 0);
   const list = [...new Set(levelsNum)];
-  const sortedArr = list.sort((a, b) => a - b);
+  const sortedArr = list.sort((a, b) => b - a);
   const nodesList = [];
 
   for (const min of sortedArr) {

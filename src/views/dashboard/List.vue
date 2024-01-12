@@ -170,7 +170,7 @@ limitations under the License. -->
             :tags="currentRow.expressions || []"
             :vertical="true"
             :text="t('addExpressions')"
-            @change="(param) => changeExpressions(param)"
+            @change="(param: string[]) => changeExpressions(param)"
           />
         </div>
         <template #footer>
