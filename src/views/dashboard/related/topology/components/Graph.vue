@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <svg class="hierarchy-services-svg" :width="width" :height="height" @click="svgEvent">
+  <svg class="hierarchy-services-svg" :width="width" :height="height" @click="svgEvent" v-if="nodes.length">
     <g class="hierarchy-services-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
       <g
         class="topo-node"
@@ -69,6 +69,7 @@ limitations under the License. -->
       </g>
     </g>
   </svg>
+  <div v-else class="hierarchy-services"> No Data</div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
@@ -181,7 +182,8 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss" scoped>
-  .hierarchy-services-topo {
+  .hierarchy-services-topo,
+  hierarchy-services {
     .node-text {
       fill: var(--sw-topology-color);
       font-size: 12px;
@@ -215,5 +217,12 @@ limitations under the License. -->
 
   .el-loading-spinner {
     top: 30%;
+  }
+
+  .hierarchy-services {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 100%;
   }
 </style>

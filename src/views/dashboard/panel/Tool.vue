@@ -42,11 +42,11 @@ limitations under the License. -->
             :isRemote="['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)"
           />
           <span
-            class="ml-10 cp hierarchy-btn"
+            class="ml-5 cp hierarchy-btn"
             v-if="dashboardStore.entity === 'ServiceInstance'"
             @click="showHierarchy = true"
           >
-            <Icon size="middle" iconName="hierarchy_topology" />
+            <Icon size="small" iconName="hierarchy_topology" />
           </span>
         </div>
         <div class="selectors-item" v-if="key === 5 || key === 6">
@@ -722,10 +722,9 @@ limitations under the License. -->
 
   .hierarchy-btn {
     display: inline-block;
-    width: 24px;
-    height: 24px;
+    padding: 0 2px 2px;
     border: 1px solid #666;
-    border-radius: 5px;
+    border-radius: 4px;
     text-align: center;
     color: #aaa;
   }
