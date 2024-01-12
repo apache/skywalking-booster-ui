@@ -98,12 +98,13 @@ limitations under the License. -->
               {{ t("rename") }}
             </el-button>
             <el-button
-              :disabled="![EntityType[0].value, EntityType[3].value].includes(scope.row.entity)"
+              v-if="[EntityType[0].value, EntityType[3].value].includes(scope.row.entity)"
               size="small"
               @click="handleEditMQE(scope.row)"
             >
               MQE
             </el-button>
+            <span v-else class="placeholder"> -- </span>
             <el-popconfirm :title="t('deleteTitle')" @confirm="handleDelete(scope.row)">
               <template #reference>
                 <el-button size="small" type="danger">
@@ -718,6 +719,11 @@ limitations under the License. -->
   .reload-btn {
     display: inline-block;
     margin-left: 10px;
+  }
+
+  .placeholder {
+    display: inline-block;
+    width: 75px;
   }
 
   .expressions {
