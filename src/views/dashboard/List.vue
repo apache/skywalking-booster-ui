@@ -104,7 +104,7 @@ limitations under the License. -->
             >
               MQE
             </el-button>
-            <span v-else class="placeholder"> -- </span>
+            <span v-else class="placeholder"></span>
             <el-popconfirm :title="t('deleteTitle')" @confirm="handleDelete(scope.row)">
               <template #reference>
                 <el-button size="small" type="danger">

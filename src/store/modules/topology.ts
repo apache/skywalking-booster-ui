@@ -632,7 +632,6 @@ export const topologyStore = defineStore({
         this.setHierarchyInstanceNodeMetricValue({}, layer);
         return;
       }
-      console.log(nodes);
       const metrics = await this.queryHierarchyExpressions(expressions, nodes);
       this.setHierarchyInstanceNodeMetricValue(metrics, layer);
     },
