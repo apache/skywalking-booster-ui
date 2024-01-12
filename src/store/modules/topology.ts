@@ -611,13 +611,10 @@ export const topologyStore = defineStore({
     async queryHierarchyNodeExpressions(expressions: string[], layer: string) {
       const nodes = this.hierarchyServiceNodes.filter((n: Node) => n.layer === layer);
       if (!nodes.length) {
-        return;
-      }
-      if (!expressions.length) {
         this.setHierarchyNodeMetricValue({}, layer);
         return;
       }
-      if (!this.hierarchyServiceNodes.length) {
+      if (!expressions.length) {
         this.setHierarchyNodeMetricValue({}, layer);
         return;
       }
@@ -626,17 +623,16 @@ export const topologyStore = defineStore({
     },
     async queryHierarchyInstanceNodeExpressions(expressions: string[], layer: string) {
       const nodes = this.hierarchyInstanceNodes.filter((n: Node) => n.layer === layer);
-      if (!nodes.length) {
-        return;
-      }
+
       if (!expressions.length) {
         this.setHierarchyInstanceNodeMetricValue({}, layer);
         return;
       }
-      if (!this.hierarchyServiceNodes.length) {
+      if (!nodes.length) {
         this.setHierarchyInstanceNodeMetricValue({}, layer);
         return;
       }
+      console.log(nodes);
       const metrics = await this.queryHierarchyExpressions(expressions, nodes);
       this.setHierarchyInstanceNodeMetricValue(metrics, layer);
     },
