@@ -130,12 +130,24 @@ export const topologyStore = defineStore({
         const lowerId = relation.lowerInstance.id;
         const lowerKey = `${lowerId}-${relation.lowerInstance.layer}`;
         const upperKey = `${upperId}-${relation.upperInstance.layer}`;
-        const lowerLevel: any =
-          levels.find((l: { layer: string; level: number }) => l.layer === relation.lowerInstance.layer) || {};
-        const upperLevel: any =
-          levels.find((l: { layer: string; level: number }) => l.layer === relation.upperInstance.layer) || {};
-        const lowerObj = { ...relation.lowerInstance, key: lowerId, id: lowerKey, l: lowerLevel.level };
-        const upperObj = { ...relation.upperInstance, key: upperId, id: upperKey, l: upperLevel.level };
+        const lowerLevel = levels.find(
+          (l: { layer: string; level: number }) => l.layer === relation.lowerInstance.layer,
+        ) || { level: undefined };
+        const upperLevel = levels.find(
+          (l: { layer: string; level: number }) => l.layer === relation.upperInstance.layer,
+        ) || { level: undefined };
+        const lowerObj = {
+          ...relation.lowerInstance,
+          key: lowerId,
+          id: lowerKey,
+          l: lowerLevel.level,
+        };
+        const upperObj = {
+          ...relation.upperInstance,
+          key: upperId,
+          id: upperKey,
+          l: upperLevel.level,
+        };
         if (!nodesMap.get(upperKey)) {
           nodesMap.set(upperKey, upperObj);
         }
@@ -166,12 +178,24 @@ export const topologyStore = defineStore({
         const lowerId = relation.lowerService.id;
         const lowerKey = `${lowerId}-${relation.lowerService.layer}`;
         const upperKey = `${upperId}-${relation.upperService.layer}`;
-        const lowerLevel: any =
-          levels.find((l: { layer: string; level: number }) => l.layer === relation.lowerService.layer) || {};
-        const upperLevel: any =
-          levels.find((l: { layer: string; level: number }) => l.layer === relation.upperService.layer) || {};
-        const lowerObj = { ...relation.lowerService, key: lowerId, id: lowerKey, l: lowerLevel.level };
-        const upperObj = { ...relation.upperService, key: upperId, id: upperKey, l: upperLevel.level };
+        const lowerLevel = levels.find(
+          (l: { layer: string; level: number }) => l.layer === relation.lowerService.layer,
+        ) || { level: undefined };
+        const upperLevel = levels.find(
+          (l: { layer: string; level: number }) => l.layer === relation.upperService.layer,
+        ) || { level: undefined };
+        const lowerObj = {
+          ...relation.lowerService,
+          key: lowerId,
+          id: lowerKey,
+          l: lowerLevel.level,
+        };
+        const upperObj = {
+          ...relation.upperService,
+          key: upperId,
+          id: upperKey,
+          l: upperLevel.level,
+        };
         if (!nodesMap.get(upperKey)) {
           nodesMap.set(upperKey, upperObj);
         }
