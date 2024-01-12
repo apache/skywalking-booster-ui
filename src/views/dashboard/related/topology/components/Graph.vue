@@ -149,6 +149,7 @@ limitations under the License. -->
   function stopMoveNode(event: MouseEvent) {
     event.stopPropagation();
     currentNode.value = null;
+    hideTip();
   }
 
   function showNodeTip(event: MouseEvent, data: Node) {
@@ -156,7 +157,7 @@ limitations under the License. -->
   }
 
   function hideTip() {
-    emits("showNodeTip");
+    emits("hideTip");
   }
 
   function handleNodeClick(event: MouseEvent, d: Node & { x: number; y: number }) {
