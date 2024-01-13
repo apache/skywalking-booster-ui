@@ -332,10 +332,14 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
       let serviceInstanceName;
       let destServiceInstanceName;
       let destEndpointName;
+      let normal = false;
+      let destNormal;
       if (d.sourceObj && d.targetObj) {
         // instances = Calls
         serviceName = d.sourceObj.serviceName || d.sourceObj.name;
         destServiceName = d.targetObj.serviceName || d.targetObj.name;
+        normal = d.sourceObj.normal || d.sourceObj.isReal || false;
+        destNormal = d.targetObj.normal || d.targetObj.isReal || false;
         if (EntityType[4].value === dashboardStore.entity) {
           serviceInstanceName = d.sourceObj.name;
           destServiceInstanceName = d.targetObj.name;
@@ -347,6 +351,10 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
       } else {
         // instances = Nodes
         serviceName = d.serviceName || d.name;
+        normal = d.normal || d.isReal || false;
+        if (EntityType[3].value === dashboardStore.entity) {
+          serviceInstanceName = d.name;
+        }
         if (EntityType[4].value === dashboardStore.entity) {
           serviceInstanceName = d.name;
         }
@@ -356,11 +364,11 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
       }
       const entity = {
         serviceName,
-        normal: true,
+        normal,
         serviceInstanceName,
         endpointName,
         destServiceName,
-        destNormal: destServiceName ? true : undefined,
+        destNormal: destServiceName ? destNormal : undefined,
         destServiceInstanceName,
         destEndpointName,
       };

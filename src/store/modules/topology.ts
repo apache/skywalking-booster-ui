@@ -17,9 +17,10 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import type { Service } from "@/types/selector";
-import type { Node, Call } from "@/types/topology";
+import type { Node, Call, HierarchyNode, ServiceHierarchy, InstanceHierarchy } from "@/types/topology";
 import graphql from "@/graphql";
 import { useSelectorStore } from "@/store/modules/selectors";
+import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { AxiosResponse } from "axios";
 import query from "@/graphql/fetch";
@@ -35,9 +36,15 @@ interface TopologyState {
   call: Nullable<Call>;
   calls: Call[];
   nodes: Node[];
+  hierarchyServiceCalls: Call[];
+  hierarchyServiceNodes: HierarchyNode[];
+  hierarchyInstanceCalls: Call[];
+  hierarchyInstanceNodes: HierarchyNode[];
   nodeMetricValue: MetricVal;
   linkServerMetrics: MetricVal;
   linkClientMetrics: MetricVal;
+  hierarchyNodeMetrics: { [key: string]: MetricVal };
+  hierarchyInstanceNodeMetrics: { [key: string]: MetricVal };
 }
 
 export const topologyStore = defineStore({
@@ -45,11 +52,17 @@ export const topologyStore = defineStore({
   state: (): TopologyState => ({
     calls: [],
     nodes: [],
+    hierarchyServiceCalls: [],
+    hierarchyServiceNodes: [],
+    hierarchyInstanceCalls: [],
+    hierarchyInstanceNodes: [],
     node: null,
     call: null,
     nodeMetricValue: {},
     linkServerMetrics: {},
     linkClientMetrics: {},
+    hierarchyNodeMetrics: {},
+    hierarchyInstanceNodeMetrics: {},
   }),
   actions: {
     setNode(node: Node) {
@@ -106,14 +119,119 @@ export const topologyStore = defineStore({
       this.calls = calls;
       this.nodes = nodes;
     },
-    setNodeMetricValue(m: MetricVal) {
-      this.nodeMetricValue = m;
+    setHierarchyInstanceTopology(data: InstanceHierarchy, levels: { layer: string; level: number }[]) {
+      const relations = data.relations || [];
+      const nodesMap = new Map();
+      const callList = [];
+
+      for (const relation of relations) {
+        const upperId = relation.upperInstance.id;
+        const lowerId = relation.lowerInstance.id;
+        const lowerKey = `${lowerId}-${relation.lowerInstance.layer}`;
+        const upperKey = `${upperId}-${relation.upperInstance.layer}`;
+        const lowerLevel = levels.find(
+          (l: { layer: string; level: number }) => l.layer === relation.lowerInstance.layer,
+        ) || { level: undefined };
+        const upperLevel = levels.find(
+          (l: { layer: string; level: number }) => l.layer === relation.upperInstance.layer,
+        ) || { level: undefined };
+        const lowerObj = {
+          ...relation.lowerInstance,
+          key: lowerId,
+          id: lowerKey,
+          l: lowerLevel.level,
+        };
+        const upperObj = {
+          ...relation.upperInstance,
+          key: upperId,
+          id: upperKey,
+          l: upperLevel.level,
+        };
+        if (!nodesMap.get(upperKey)) {
+          nodesMap.set(upperKey, upperObj);
+        }
+        if (!nodesMap.get(lowerKey)) {
+          nodesMap.set(lowerKey, lowerObj);
+        }
+        callList.push({
+          target: lowerKey,
+          source: upperKey,
+          id: `${lowerKey}->${upperKey}`,
+          sourceObj: upperObj,
+          targetObj: lowerObj,
+        });
+      }
+      this.hierarchyInstanceCalls = callList;
+      this.hierarchyInstanceNodes = [];
+      for (const d of nodesMap.values()) {
+        this.hierarchyInstanceNodes.push(d);
+      }
+    },
+    setHierarchyServiceTopology(data: ServiceHierarchy, levels: { layer: string; level: number }[]) {
+      const relations = data.relations || [];
+      const nodesMap = new Map();
+      const callList = [];
+
+      for (const relation of relations) {
+        const upperId = relation.upperService.id;
+        const lowerId = relation.lowerService.id;
+        const lowerKey = `${lowerId}-${relation.lowerService.layer}`;
+        const upperKey = `${upperId}-${relation.upperService.layer}`;
+        const lowerLevel = levels.find(
+          (l: { layer: string; level: number }) => l.layer === relation.lowerService.layer,
+        ) || { level: undefined };
+        const upperLevel = levels.find(
+          (l: { layer: string; level: number }) => l.layer === relation.upperService.layer,
+        ) || { level: undefined };
+        const lowerObj = {
+          ...relation.lowerService,
+          key: lowerId,
+          id: lowerKey,
+          l: lowerLevel.level,
+        };
+        const upperObj = {
+          ...relation.upperService,
+          key: upperId,
+          id: upperKey,
+          l: upperLevel.level,
+        };
+        if (!nodesMap.get(upperKey)) {
+          nodesMap.set(upperKey, upperObj);
+        }
+        if (!nodesMap.get(lowerKey)) {
+          nodesMap.set(lowerKey, lowerObj);
+        }
+        callList.push({
+          target: lowerKey,
+          source: upperKey,
+          id: `${lowerKey}->${upperKey}`,
+          sourceObj: upperObj,
+          targetObj: lowerObj,
+        });
+      }
+      this.hierarchyServiceCalls = callList;
+      this.hierarchyServiceNodes = [];
+      for (const d of nodesMap.values()) {
+        this.hierarchyServiceNodes.push(d);
+      }
+    },
+    setHierarchyNodeMetricValue(m: MetricVal, layer: string) {
+      this.hierarchyNodeMetrics[layer] = m;
+    },
+    setHierarchyInstanceNodeMetricValue(m: MetricVal, layer: string) {
+      this.hierarchyInstanceNodeMetrics[layer] = m;
     },
     setLinkServerMetrics(m: MetricVal) {
       this.linkServerMetrics = m;
     },
     setLinkClientMetrics(m: MetricVal) {
       this.linkClientMetrics = m;
+    },
+    setNodeMetricValue(m: MetricVal) {
+      this.nodeMetricValue = m;
+    },
+    setNodeValue(m: MetricVal) {
+      this.nodeMetricValue = m;
     },
     setLegendValues(expressions: string, data: { [key: string]: any }) {
       for (let idx = 0; idx < this.nodes.length; idx++) {
@@ -480,6 +598,92 @@ export const topologyStore = defineStore({
       }
       this.setLinkClientMetrics(res.data.data);
       return res.data;
+    },
+    async getHierarchyServiceTopology() {
+      const dashboardStore = useDashboardStore();
+      const { currentService } = useSelectorStore();
+      const id = this.node ? this.node.id : (currentService || {}).id;
+      const layer = this.node ? this.node.layer : dashboardStore.layerId;
+      if (!(id && layer)) {
+        return new Promise((resolve) => resolve({}));
+      }
+      const res: AxiosResponse = await graphql
+        .query("getHierarchyServiceTopology")
+        .params({ serviceId: id, layer: layer });
+      if (res.data.errors) {
+        return res.data;
+      }
+      const resp = await this.getListLayerLevels();
+      if (resp.errors) {
+        return resp;
+      }
+      const levels = resp.data.levels || [];
+      this.setHierarchyServiceTopology(res.data.data.hierarchyServiceTopology || {}, levels);
+      return res.data;
+    },
+    async getListLayerLevels() {
+      const res: AxiosResponse = await graphql.query("queryListLayerLevels").params({});
+
+      return res.data;
+    },
+    async getHierarchyInstanceTopology() {
+      const { currentPod } = useSelectorStore();
+      const dashboardStore = useDashboardStore();
+
+      if (!(currentPod && dashboardStore.layerId)) {
+        return new Promise((resolve) => resolve({}));
+      }
+      const res: AxiosResponse = await graphql
+        .query("getHierarchyInstanceTopology")
+        .params({ instanceId: currentPod.id, layer: dashboardStore.layerId });
+      if (res.data.errors) {
+        return res.data;
+      }
+      const resp = await this.getListLayerLevels();
+      if (resp.errors) {
+        return resp;
+      }
+      const levels = resp.data.levels || [];
+      this.setHierarchyInstanceTopology(res.data.data.hierarchyInstanceTopology || {}, levels);
+      return res.data;
+    },
+    async queryHierarchyExpressions(expressions: string[], nodes: Node[]) {
+      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(expressions, nodes);
+      const param = getExpressionQuery();
+      const res = await this.getNodeExpressionValue(param);
+      if (res.errors) {
+        ElMessage.error(res.errors);
+        return;
+      }
+      const metrics = handleExpressionValues(res.data);
+      return metrics;
+    },
+    async queryHierarchyNodeExpressions(expressions: string[], layer: string) {
+      const nodes = this.hierarchyServiceNodes.filter((n: Node) => n.layer === layer);
+      if (!nodes.length) {
+        this.setHierarchyNodeMetricValue({}, layer);
+        return;
+      }
+      if (!expressions.length) {
+        this.setHierarchyNodeMetricValue({}, layer);
+        return;
+      }
+      const metrics = await this.queryHierarchyExpressions(expressions, nodes);
+      this.setHierarchyNodeMetricValue(metrics, layer);
+    },
+    async queryHierarchyInstanceNodeExpressions(expressions: string[], layer: string) {
+      const nodes = this.hierarchyInstanceNodes.filter((n: Node) => n.layer === layer);
+
+      if (!expressions.length) {
+        this.setHierarchyInstanceNodeMetricValue({}, layer);
+        return;
+      }
+      if (!nodes.length) {
+        this.setHierarchyInstanceNodeMetricValue({}, layer);
+        return;
+      }
+      const metrics = await this.queryHierarchyExpressions(expressions, nodes);
+      this.setHierarchyInstanceNodeMetricValue(metrics, layer);
     },
   },
 });

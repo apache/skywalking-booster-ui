@@ -98,12 +98,13 @@ limitations under the License. -->
               {{ t("rename") }}
             </el-button>
             <el-button
-              :disabled="![EntityType[0].value, EntityType[3].value].includes(scope.row.entity)"
+              v-if="[EntityType[0].value, EntityType[3].value].includes(scope.row.entity)"
               size="small"
               @click="handleEditMQE(scope.row)"
             >
               MQE
             </el-button>
+            <span v-else class="placeholder"></span>
             <el-popconfirm :title="t('deleteTitle')" @confirm="handleDelete(scope.row)">
               <template #reference>
                 <el-button size="small" type="danger">
@@ -147,18 +148,34 @@ limitations under the License. -->
         />
       </div>
       <el-dialog v-model="MQEVisible" title="Edit MQE" width="400px">
-        <div>{{ t("hierarchyNodeMetrics") }}</div>
+        <div>
+          <span>{{ t("hierarchyNodeMetrics") }}</span>
+          <el-popover placement="left" :width="400" trigger="click">
+            <template #reference>
+              <span>
+                <Icon class="cp ml-5" iconName="mode_edit" size="middle" />
+              </span>
+            </template>
+            <Metrics
+              :type="'hierarchyServicesConfig'"
+              :expressions="currentRow.expressions || []"
+              :layer="currentRow.layer"
+              :entity="currentRow.entity"
+              @update="updateSettings"
+            />
+          </el-popover>
+        </div>
         <div class="mt-10 expressions">
           <Tags
             :tags="currentRow.expressions || []"
             :vertical="true"
             :text="t('addExpressions')"
-            @change="(param) => changeExpressions(param)"
+            @change="(param: string[]) => changeExpressions(param)"
           />
         </div>
         <template #footer>
           <span class="dialog-footer">
-            <el-button @click="MQEVisible = false">Cancel</el-button>
+            <el-button @click="MQEVisible = false"> Cancel </el-button>
             <el-button type="primary" @click="saveMQE"> Confirm </el-button>
           </span>
         </template>
@@ -178,8 +195,9 @@ limitations under the License. -->
   import { EntityType } from "./data";
   import { isEmptyObject } from "@/utils/is";
   import { WidgetType } from "@/views/dashboard/data";
+  import Metrics from "@/views/dashboard/related/topology/config/Metrics.vue";
 
-  /*global Nullable*/
+  /*global Nullable, Recordable*/
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const pageSize = 20;
@@ -192,7 +210,7 @@ limitations under the License. -->
   const multipleSelection = ref<DashboardItem[]>([]);
   const dashboardFile = ref<Nullable<HTMLDivElement>>(null);
   const MQEVisible = ref<boolean>(false);
-  const currentRow = ref<any>({});
+  const currentRow = ref<DashboardItem | Recordable>({});
 
   const handleSelectionChange = (val: DashboardItem[]) => {
     multipleSelection.value = val;
@@ -207,6 +225,13 @@ limitations under the License. -->
     currentRow.value.expressions = params;
   }
 
+  function updateSettings(config: Record<string, never>) {
+    currentRow.value = {
+      ...currentRow.value,
+      expressionsConfig: config.hierarchyServicesConfig,
+    };
+  }
+
   function handleEditMQE(row: DashboardItem) {
     MQEVisible.value = !MQEVisible.value;
     currentRow.value = row;
@@ -218,6 +243,7 @@ limitations under the License. -->
     for (const d of dashboardStore.dashboards) {
       if (d.id === currentRow.value.id) {
         d.expressions = currentRow.value.expressions;
+        d.expressionsConfig = currentRow.value.expressionsConfig;
         const key = [d.layer, d.entity, d.name].join("_");
         const layout = sessionStorage.getItem(key) || "{}";
         const c = {
@@ -247,8 +273,9 @@ limitations under the License. -->
       items.push(d);
     }
     dashboardStore.resetDashboards(items);
-    searchDashboards(1);
+    searchDashboards(currentPage.value);
     loading.value = false;
+    MQEVisible.value = false;
   }
 
   async function importTemplates(event: any) {
@@ -467,7 +494,7 @@ limitations under the License. -->
       items.push(d);
     }
     dashboardStore.resetDashboards(items);
-    searchDashboards(1);
+    searchDashboards(currentPage.value);
     loading.value = false;
   }
   async function handleTopLevel(row: DashboardItem) {
@@ -532,7 +559,7 @@ limitations under the License. -->
       items.push(d);
     }
     dashboardStore.resetDashboards(items);
-    searchDashboards(1);
+    searchDashboards(currentPage.value);
     loading.value = false;
   }
   function handleRename(row: DashboardItem) {
@@ -579,7 +606,7 @@ limitations under the License. -->
       ...d,
       name: value,
     });
-    dashboards.value = dashboardStore.dashboards.map((item: any) => {
+    dashboards.value = dashboardStore.dashboards.map((item: DashboardItem) => {
       if (dashboardStore.currentDashboard.id === item.id) {
         item = dashboardStore.currentDashboard;
       }
@@ -611,7 +638,7 @@ limitations under the License. -->
     sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
     sessionStorage.removeItem(`${row.layer}_${row.entity}_${row.name}`);
   }
-  function searchDashboards(pageIndex?: any) {
+  function searchDashboards(pageIndex: number) {
     const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
     const arr = list.filter((d: { name: string }) => d.name.includes(searchText.value));
 
@@ -693,6 +720,11 @@ limitations under the License. -->
   .reload-btn {
     display: inline-block;
     margin-left: 10px;
+  }
+
+  .placeholder {
+    display: inline-block;
+    width: 75px;
   }
 
   .expressions {

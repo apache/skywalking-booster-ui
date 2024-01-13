@@ -13,14 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Graph :config="config" v-if="isService" />
-  <PodTopology :config="config" v-else />
+  <service-map :config="config" v-if="isService" />
+  <pod-map :config="config" v-else />
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
-  import Graph from "./components/Graph.vue";
-  import PodTopology from "./components/PodTopology.vue";
-  import { EntityType } from "../../data";
+  import ServiceMap from "./service/ServiceMap.vue";
+  import PodMap from "./pod/PodMap.vue";
+  import { EntityType } from "@/views/dashboard/data";
   import { useDashboardStore } from "@/store/modules/dashboard";
 
   /*global defineProps */

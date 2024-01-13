@@ -15,9 +15,12 @@ limitations under the License. -->
 <template>
   <div class="config-panel">
     <div class="item mb-10">
-      <span class="label">{{
-        t(dashboardStore.selectedGrid.metricMode === MetricModes.General ? "metrics" : "expressions")
-      }}</span>
+      <span class="label" v-if="type === 'hierarchyServicesConfig'">
+        {{ t("expressions") }}
+      </span>
+      <span class="label" v-else>
+        {{ t(dashboardStore.selectedGrid.metricMode === MetricModes.General ? "metrics" : "expressions") }}
+      </span>
       <SelectSingle :value="currentMetric" :options="metricList" @change="changeMetric" class="selectors" />
     </div>
     <div class="item mb-10">
@@ -40,7 +43,10 @@ limitations under the License. -->
         @change="changeConfigs({ label: currentConfig.label })"
       />
     </div>
-    <div class="item mb-10" v-if="dashboardStore.selectedGrid.metricMode === MetricModes.General">
+    <div
+      class="item mb-10"
+      v-if="type !== 'hierarchyServicesConfig' && dashboardStore.selectedGrid.metricMode === MetricModes.General"
+    >
       <span class="label">{{ t("aggregation") }}</span>
       <SelectSingle
         :value="currentConfig.calculation"
@@ -55,20 +61,27 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, computed, watch } from "vue";
   import { useI18n } from "vue-i18n";
-  import { CalculationOpts, MetricModes } from "../../../data";
+  import type { Option } from "@/types/app";
+  import { CalculationOpts, MetricModes, EntityType, ConfigFieldTypes } from "@/views/dashboard/data";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import type { Option } from "element-plus/es/components/select-v2/src/select.types";
+  import getDashboard from "@/hooks/useDashboardsSession";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
     type: { type: String, default: "" },
     isExpression: { type: Boolean, default: true },
+    layer: { type: String, default: "" },
+    expressions: { type: Array<string>, default: () => [] },
+    entity: { type: String, default: EntityType[0].value },
   });
   const { t } = useI18n();
   const emit = defineEmits(["update"]);
   const dashboardStore = useDashboardStore();
   const getMetrics = computed(() => {
-    let metrics = [];
+    if (props.type === "hierarchyServicesConfig") {
+      return props.expressions || [];
+    }
+    let metrics: string[] = [];
     const {
       linkServerExpressions,
       linkServerMetrics,
@@ -104,6 +117,16 @@ limitations under the License. -->
   });
   const currentIndex = ref<number>(0);
   const getMetricConfig = computed(() => {
+    if (props.type === "hierarchyServicesConfig") {
+      const { dashboard } = getDashboard(
+        {
+          layer: props.layer || "",
+          entity: props.entity,
+        },
+        ConfigFieldTypes.ISDEFAULT,
+      );
+      return (dashboard && dashboard.expressionsConfig) || [];
+    }
     let config = [];
 
     switch (props.type) {
@@ -143,7 +166,7 @@ limitations under the License. -->
     };
   }
   watch(
-    () => props.type,
+    () => [props.type, ...props.expressions],
     () => {
       currentMetric.value = metricList.value[0].value;
       const config = getMetricConfig.value || [];
