@@ -32,7 +32,7 @@ limitations under the License. -->
           height="12"
           :x="n.x - 6"
           :y="n.y - 38"
-          :href="!n.type || n.type === `N/A` ? icons.UNDEFINED : icons[n.type.toUpperCase().replace('-', '')]"
+          :href="!n.layer || n.layer === `N/A` ? icons.MESH : icons[n.layer.toUpperCase().replace('-', '')]"
         />
         <text
           class="node-text"
@@ -112,10 +112,11 @@ limitations under the License. -->
   const graph = ref<Nullable<any>>(null);
   const topologyLayout = ref<any>({});
   const graphWidth = ref<number>(100);
+  const graphHeight = ref<number>(100);
   const currentNode = ref<Nullable<Node>>(null);
   const diff = computed(() => [
     (width.value - graphWidth.value - 160) / 2,
-    (height.value - topologyLayout.value.layout.height - 60) / 2,
+    (height.value - graphHeight.value - 60) / 2,
   ]);
   const radius = 10;
 
@@ -137,6 +138,7 @@ limitations under the License. -->
     const levels = computeHierarchyLevels(props.nodes);
     topologyLayout.value = hierarchy(levels, props.calls, radius);
     graphWidth.value = topologyLayout.value.layout.width;
+    graphHeight.value = topologyLayout.value.layout.height;
     const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {
       topologyLayout.value.calls = changeNode(d, currentNode.value, topologyLayout.value, radius);
     });
