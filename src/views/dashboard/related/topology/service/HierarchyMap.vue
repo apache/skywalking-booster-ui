@@ -156,7 +156,7 @@ limitations under the License. -->
     popover.value.style("visibility", "hidden");
   }
 
-  function handleNodeClick(event: MouseEvent, d: Node & { x: number; y: number }) {
+  function handleNodeClick(event: MouseEvent, d: Node & { key: string }) {
     const origin = dashboardStore.entity;
     event.stopPropagation();
     hideTip();
@@ -169,7 +169,7 @@ limitations under the License. -->
         ConfigFieldTypes.ISDEFAULT,
       ).dashboard || {};
     const name = dashboard.name;
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${name}`;
+    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${d.key}/${name}`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
