@@ -51,6 +51,7 @@ export interface Node {
   y?: number;
   level?: number;
   l?: number;
+  key?: string;
 }
 
 export interface ServiceHierarchy {

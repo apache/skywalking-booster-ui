@@ -156,7 +156,7 @@ limitations under the License. -->
     popover.value.style("visibility", "hidden");
   }
 
-  function handleNodeClick(event: MouseEvent, d: Node & { key: string }) {
+  function handleNodeClick(event: MouseEvent, d: Node) {
     const origin = dashboardStore.entity;
     event.stopPropagation();
     hideTip();
