@@ -110,11 +110,6 @@ limitations under the License. -->
     return m.length ? m : [{ label: "", value: "" }];
   });
   const currentMetric = ref<string>(metricList.value[0].value);
-  const currentConfig = ref<{ unit: string; calculation: string; label: string }>({
-    unit: "",
-    calculation: "",
-    label: "",
-  });
   const currentIndex = ref<number>(0);
   const getMetricConfig = computed(() => {
     if (props.type === "hierarchyServicesConfig") {
@@ -125,7 +120,12 @@ limitations under the License. -->
         },
         ConfigFieldTypes.ISDEFAULT,
       );
-      return (dashboard && dashboard.expressionsConfig) || [];
+      if (!dashboard) {
+        return [];
+      }
+      const config = dashboard.expressionsConfig || [];
+
+      return config || [];
     }
     let config = [];
 
@@ -142,6 +142,14 @@ limitations under the License. -->
     }
     return config || [];
   });
+
+  const currentConfig = ref<{ unit: string; calculation: string; label: string }>(
+    getMetricConfig.value[0] || {
+      unit: "",
+      calculation: "",
+      label: "",
+    },
+  );
 
   function changeConfigs(param: { [key: string]: string }) {
     const metricConfig = getMetricConfig.value || [];

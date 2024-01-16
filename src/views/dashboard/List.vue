@@ -315,19 +315,19 @@ limitations under the License. -->
     }
     loading.value = true;
     for (const item of arr) {
-      const { layer, name, entity, isRoot, children, isDefault } = item.configuration;
+      const { layer, name, entity, isRoot, children, isDefault, expressions, expressionsConfig } = item.configuration;
       const index = dashboardStore.dashboards.findIndex((d: DashboardItem) => d.id === item.id);
       const p: DashboardItem = {
         name: name.split(" ").join("-"),
         layer: layer,
         entity: entity,
-        isRoot: false,
-        isDefault: false,
+        isRoot: isRoot || false,
+        isDefault: isDefault || false,
+        expressions: expressions,
+        expressionsConfig: expressionsConfig,
       };
       if (index > -1) {
         p.id = item.id;
-        p.isRoot = isRoot;
-        p.isDefault = isDefault;
       }
       dashboardStore.setCurrentDashboard(p);
       dashboardStore.setLayout(children);
@@ -336,6 +336,7 @@ limitations under the License. -->
     dashboards.value = dashboardStore.dashboards;
     loading.value = false;
     dashboardFile.value = null;
+    searchDashboards(currentPage.value);
   }
   function exportTemplates() {
     if (!multipleSelection.value.length) {
@@ -597,6 +598,7 @@ limitations under the License. -->
     loading.value = false;
     sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
     sessionStorage.removeItem(`${row.layer}_${row.entity}_${row.name}`);
+    searchDashboards(currentPage.value);
   }
   function searchDashboards(pageIndex: number) {
     const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
