@@ -429,8 +429,7 @@ export const dashboardStore = defineStore({
             d.layer === this.currentDashboard?.layer,
         );
         if (index > -1) {
-          const { t } = useI18n();
-          ElMessage.error(t("nameError"));
+          ElMessage.error("The dashboard name cannot be duplicate");
           return;
         }
         res = await graphql.query("addNewTemplate").params({ setting: { configuration: JSON.stringify(c) } });
