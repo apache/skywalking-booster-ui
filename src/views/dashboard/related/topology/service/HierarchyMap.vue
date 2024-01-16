@@ -160,16 +160,19 @@ limitations under the License. -->
     const origin = dashboardStore.entity;
     event.stopPropagation();
     hideTip();
-    const dashboard =
-      getDashboard(
-        {
-          layer: d.layer || "",
-          entity: EntityType[0].value,
-        },
-        ConfigFieldTypes.ISDEFAULT,
-      ).dashboard || {};
+    const { dashboard } = getDashboard(
+      {
+        layer: d.layer || "",
+        entity: EntityType[0].value,
+      },
+      ConfigFieldTypes.ISDEFAULT,
+    );
+    if (!dashboard) {
+      return;
+    }
+
     const name = dashboard.name;
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${d.key}/${name}`;
+    const path = `/dashboard/${dashboard.layer}/${EntityType[0].value}/${d.key}/${name}`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");

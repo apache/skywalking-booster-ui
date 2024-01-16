@@ -385,7 +385,7 @@ const msg = {
   traceDesc:
     "The trace segment serves as a representation of a trace portion executed within one single OS process, such as a JVM. It comprises a collection of spans, typically associated with and collected from a single request or execution context.",
   tabExpressions: "Tab Expressions",
-  hierarchyServicesSettings: "Service Hierarchy Topology Settings",
-  hierarchyNodeMetrics: "Metrics related with hierarchy topology nodes",
+  hierarchyNodeMetrics: "Metrics for Hierarchy Graph Node",
+  hierarchyNodeDashboard: "As dashboard for Hierarchy Graph Node",
 };
 export default msg;

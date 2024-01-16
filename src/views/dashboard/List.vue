@@ -73,23 +73,7 @@ limitations under the License. -->
             <span v-else> -- </span>
           </template>
         </el-table-column>
-        <el-table-column prop="isDefault" label="Default Dashboard" width="140">
-          <template #default="scope">
-            <el-popconfirm
-              :title="t('rootTitle')"
-              @confirm="handleTopLevel(scope.row)"
-              v-if="[EntityType[0].value, EntityType[3].value].includes(scope.row.entity)"
-            >
-              <template #reference>
-                <el-button size="small" style="width: 80px">
-                  {{ scope.row.isDefault ? "Disable" : "Enable" }}
-                </el-button>
-              </template>
-            </el-popconfirm>
-            <span v-else> -- </span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Operations" width="300">
+        <el-table-column label="Operations" width="400">
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.row)">
               {{ t("edit") }}
@@ -102,7 +86,7 @@ limitations under the License. -->
               size="small"
               @click="handleEditMQE(scope.row)"
             >
-              MQE
+              Hierarchy Graph
             </el-button>
             <span v-else class="placeholder"></span>
             <el-popconfirm :title="t('deleteTitle')" @confirm="handleDelete(scope.row)">
@@ -147,9 +131,13 @@ limitations under the License. -->
           @next-click="changePage"
         />
       </div>
-      <el-dialog v-model="MQEVisible" title="Edit MQE" width="400px">
+      <el-dialog v-model="MQEVisible" title="Hierarchy Graph" width="400px">
+        <div class="mb-10">
+          <span class="label mr-10">{{ t("hierarchyNodeDashboard") }}</span>
+          <el-switch v-model="currentRow.isDefault" style="height: 25px" />
+        </div>
         <div>
-          <span>{{ t("hierarchyNodeMetrics") }}</span>
+          <span class="label">{{ t("hierarchyNodeMetrics") }}</span>
           <el-popover placement="left" :width="400" trigger="click">
             <template #reference>
               <span>
@@ -238,10 +226,14 @@ limitations under the License. -->
   }
 
   async function saveMQE() {
+    if (!currentRow.value.expressionsConfig) {
+      return;
+    }
     const items: DashboardItem[] = [];
     loading.value = true;
     for (const d of dashboardStore.dashboards) {
       if (d.id === currentRow.value.id) {
+        d.isDefault = currentRow.value.isDefault || false;
         d.expressions = currentRow.value.expressions;
         d.expressionsConfig = currentRow.value.expressionsConfig;
         const key = [d.layer, d.entity, d.name].join("_");
@@ -268,6 +260,38 @@ limitations under the License. -->
         } else {
           loading.value = false;
           return;
+        }
+      } else {
+        if (
+          d.layer === currentRow.value.layer &&
+          [EntityType[0].value].includes(d.entity) &&
+          !currentRow.value.isDefault &&
+          d.isDefault
+        ) {
+          d.isDefault = false;
+          const key = [d.layer, d.entity, d.name].join("_");
+          const layout = sessionStorage.getItem(key) || "{}";
+          const c = {
+            ...JSON.parse(layout).configuration,
+            ...d,
+          };
+          const setting = {
+            id: d.id,
+            configuration: JSON.stringify(c),
+          };
+          const res = await dashboardStore.updateDashboard(setting);
+          if (res.data.changeTemplate.status) {
+            sessionStorage.setItem(
+              key,
+              JSON.stringify({
+                id: d.id,
+                configuration: c,
+              }),
+            );
+          } else {
+            loading.value = false;
+            return;
+          }
         }
       }
       items.push(d);
@@ -497,71 +521,7 @@ limitations under the License. -->
     searchDashboards(currentPage.value);
     loading.value = false;
   }
-  async function handleTopLevel(row: DashboardItem) {
-    const items: DashboardItem[] = [];
-    loading.value = true;
-    for (const d of dashboardStore.dashboards) {
-      if (d.id === row.id) {
-        d.isDefault = !row.isDefault;
-        const key = [d.layer, d.entity, d.name].join("_");
-        const layout = sessionStorage.getItem(key) || "{}";
-        const c = {
-          ...JSON.parse(layout).configuration,
-          ...d,
-        };
-        delete c.id;
-        const setting = {
-          id: d.id,
-          configuration: JSON.stringify(c),
-        };
 
-        const res = await dashboardStore.updateDashboard(setting);
-        if (res.data.changeTemplate.status) {
-          sessionStorage.setItem(
-            key,
-            JSON.stringify({
-              id: d.id,
-              configuration: c,
-            }),
-          );
-        } else {
-          loading.value = false;
-          return;
-        }
-      } else {
-        if (d.layer === row.layer && [EntityType[0].value].includes(d.entity) && !row.isDefault && d.isDefault) {
-          d.isDefault = false;
-          const key = [d.layer, d.entity, d.name].join("_");
-          const layout = sessionStorage.getItem(key) || "{}";
-          const c = {
-            ...JSON.parse(layout).configuration,
-            ...d,
-          };
-          const setting = {
-            id: d.id,
-            configuration: JSON.stringify(c),
-          };
-          const res = await dashboardStore.updateDashboard(setting);
-          if (res.data.changeTemplate.status) {
-            sessionStorage.setItem(
-              key,
-              JSON.stringify({
-                id: d.id,
-                configuration: c,
-              }),
-            );
-          } else {
-            loading.value = false;
-            return;
-          }
-        }
-      }
-      items.push(d);
-    }
-    dashboardStore.resetDashboards(items);
-    searchDashboards(currentPage.value);
-    loading.value = false;
-  }
   function handleRename(row: DashboardItem) {
     ElMessageBox.prompt("Please input dashboard name", "Edit", {
       confirmButtonText: "OK",
@@ -724,10 +684,14 @@ limitations under the License. -->
 
   .placeholder {
     display: inline-block;
-    width: 75px;
+    width: 136px;
   }
 
   .expressions {
     height: 300px;
+  }
+
+  .label {
+    font-size: 12px;
   }
 </style>
