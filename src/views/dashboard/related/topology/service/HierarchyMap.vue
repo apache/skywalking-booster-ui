@@ -169,7 +169,7 @@ limitations under the License. -->
         ConfigFieldTypes.ISDEFAULT,
       ).dashboard || {};
     const name = dashboard.name;
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${d.key}/${name}`;
+    const path = `/dashboard/${dashboard.layer}/${EntityType[0].value}/${d.key}/${name}`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
