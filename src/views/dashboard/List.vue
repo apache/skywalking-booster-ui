@@ -315,19 +315,19 @@ limitations under the License. -->
     }
     loading.value = true;
     for (const item of arr) {
-      const { layer, name, entity, isRoot, children, isDefault } = item.configuration;
+      const { layer, name, entity, isRoot, children, isDefault, expressions, expressionsConfig } = item.configuration;
       const index = dashboardStore.dashboards.findIndex((d: DashboardItem) => d.id === item.id);
       const p: DashboardItem = {
         name: name.split(" ").join("-"),
         layer: layer,
         entity: entity,
-        isRoot: false,
-        isDefault: false,
+        isRoot: isRoot || false,
+        isDefault: isDefault || false,
+        expressions: expressions,
+        expressionsConfig: expressionsConfig,
       };
       if (index > -1) {
         p.id = item.id;
-        p.isRoot = isRoot;
-        p.isDefault = isDefault;
       }
       dashboardStore.setCurrentDashboard(p);
       dashboardStore.setLayout(children);
