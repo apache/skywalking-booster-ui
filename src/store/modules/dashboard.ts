@@ -344,11 +344,9 @@ export const dashboardStore = defineStore({
         const key = [c.layer, c.entity, c.name].join("_");
 
         list.push({
+          ...c,
           id: t.id,
-          layer: c.layer,
-          entity: c.entity,
-          name: c.name,
-          isRoot: c.isRoot,
+          children: undefined,
         });
         sessionStorage.setItem(key, JSON.stringify({ id: t.id, configuration: c }));
       }
