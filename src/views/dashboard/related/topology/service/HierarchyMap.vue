@@ -181,7 +181,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .hierarchy-services-topo {
-    position: relative;
+    position: absolute;
   }
 
   .el-loading-spinner {
@@ -195,5 +195,6 @@ limitations under the License. -->
     border: var(--sw-topology-border);
     border-radius: 3px;
     background-color: $theme-background;
+    z-index: 9999;
   }
 </style>
