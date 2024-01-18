@@ -186,7 +186,9 @@ limitations under the License. -->
       if (!props.calls.length) {
         return;
       }
-      init();
+      setTimeout(() => {
+        init();
+      }, 10);
     },
   );
 </script>
