@@ -173,6 +173,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .hierarchy-services-topo {
     position: absolute;
+    width: 100%;
   }
 
   .el-loading-spinner {
