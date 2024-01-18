@@ -180,22 +180,5 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  .hierarchy-services-topo {
-    position: absolute;
-    width: 100%;
-  }
-
-  .el-loading-spinner {
-    top: 30%;
-  }
-
-  #popover {
-    position: absolute;
-    visibility: hidden;
-    padding: 5px;
-    border: var(--sw-topology-border);
-    border-radius: 3px;
-    background-color: $theme-background;
-    z-index: 9999;
-  }
+  @import url("../style.scss");
 </style>
