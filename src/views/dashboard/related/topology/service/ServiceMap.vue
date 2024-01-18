@@ -599,7 +599,7 @@ limitations under the License. -->
   .hierarchy-related {
     height: 600px;
     width: 600px;
-    overflow: auto;
+    overflow: hidden;
   }
 
   .micro-topo-chart {

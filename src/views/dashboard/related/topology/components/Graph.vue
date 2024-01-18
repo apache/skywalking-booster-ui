@@ -186,7 +186,9 @@ limitations under the License. -->
       if (!props.calls.length) {
         return;
       }
-      init();
+      setTimeout(() => {
+        init();
+      }, 10);
     },
   );
 </script>
@@ -196,6 +198,7 @@ limitations under the License. -->
       fill: var(--sw-topology-color);
       font-size: 12px;
       opacity: 0.9;
+      z-index: 1;
     }
 
     .hierarchy-services-svg {
