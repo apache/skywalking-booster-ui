@@ -60,11 +60,9 @@ limitations under the License. -->
     }
     draw();
     loading.value = false;
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", debounceFunc);
   });
-  function resize() {
-    debounceFunc();
-  }
+
   function draw() {
     if (!traceGraph.value) {
       return;
@@ -282,7 +280,7 @@ limitations under the License. -->
   }
   onBeforeUnmount(() => {
     d3.selectAll(".d3-tip").remove();
-    window.removeEventListener("resize", resize);
+    window.removeEventListener("resize", debounceFunc);
   });
   watch(
     () => props.data,
