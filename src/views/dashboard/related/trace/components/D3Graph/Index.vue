@@ -29,6 +29,7 @@ limitations under the License. -->
   import type { Span, Ref } from "@/types/trace";
   import SpanDetail from "./SpanDetail.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { debounce } from "@/utils/debounce";
 
   /* global defineProps, Nullable, defineExpose,Recordable*/
   const props = defineProps({
@@ -45,6 +46,8 @@ limitations under the License. -->
   const refSpans = ref<Array<Ref>>([]);
   const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
+  const debounceFunc = debounce(draw, 500);
+
   defineExpose({
     tree,
   });
@@ -55,6 +58,15 @@ limitations under the License. -->
       loading.value = false;
       return;
     }
+    draw();
+    loading.value = false;
+    window.addEventListener("resize", debounceFunc);
+  });
+
+  function draw() {
+    if (!traceGraph.value) {
+      return;
+    }
     if (props.type === "List") {
       tree.value = new ListGraph(traceGraph.value, handleSelectSpan);
       tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
@@ -63,11 +75,6 @@ limitations under the License. -->
       tree.value = new TreeGraph(traceGraph.value, handleSelectSpan);
       tree.value.init({ label: `${props.traceId}`, children: segmentId.value }, props.data);
     }
-    loading.value = false;
-    window.addEventListener("resize", resize);
-  });
-  function resize() {
-    tree.value.resize();
   }
   function handleSelectSpan(i: Recordable) {
     currentSpan.value = i.data;
@@ -273,7 +280,7 @@ limitations under the License. -->
   }
   onBeforeUnmount(() => {
     d3.selectAll(".d3-tip").remove();
-    window.removeEventListener("resize", resize);
+    window.removeEventListener("resize", debounceFunc);
   });
   watch(
     () => props.data,
