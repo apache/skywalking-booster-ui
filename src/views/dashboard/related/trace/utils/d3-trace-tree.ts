@@ -82,12 +82,7 @@ export default class TraceMap {
     if (!this.el) {
       return;
     }
-    this.width = this.el.clientWidth;
-    this.height = this.el.clientHeight + 100;
-    this.body.attr("width", this.width).attr("height", this.height);
-    this.body.select("g").attr("transform", () => `translate(160, 0)`);
-    const transform = d3.zoomTransform(this.body).translate(0, 0);
-    d3.zoom().transform(this.body, transform);
+    this.init(this.data, this.row);
   }
   init(data: Recordable, row: Recordable) {
     this.treemap = d3.tree().size([row.length * 35, this.width]);

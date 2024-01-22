@@ -42,6 +42,7 @@ export default class ListGraph {
   private xAxis: any = null;
   private sequentialScale: any = null;
   private root: any = null;
+  private fixSpansSize: number = 0;
   constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
     this.handleSelectSpan = handleSelectSpan;
     this.el = el;
@@ -87,6 +88,7 @@ export default class ListGraph {
     d3.select(".trace-xaxis").remove();
     this.row = row;
     this.data = data;
+    this.fixSpansSize = fixSpansSize;
     this.min = d3.min(this.row.map((i) => i.startTime));
     this.max = d3.max(this.row.map((i) => i.endTime - this.min)) || 0;
     this.list = Array.from(new Set(this.row.map((i) => i.serviceCode)));
@@ -388,11 +390,6 @@ export default class ListGraph {
     if (!this.el) {
       return;
     }
-    this.width = this.el.getBoundingClientRect().width - 20;
-    this.height = this.el.getBoundingClientRect().height - 10;
-    this.svg.attr("width", this.width).attr("height", this.height);
-    this.svg.select("g").attr("transform", () => `translate(160, 0)`);
-    const transform = d3.zoomTransform(this.svg).translate(0, 0);
-    d3.zoom().transform(this.svg, transform);
+    this.init(this.data, this.row, this.fixSpansSize);
   }
 }
