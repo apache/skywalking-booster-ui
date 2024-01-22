@@ -48,6 +48,7 @@ export default class ListGraph {
     this.el = el;
     this.width = el.getBoundingClientRect().width - 10;
     this.height = el.getBoundingClientRect().height - 10;
+    d3.select(".trace-list-dowanload").remove();
     this.svg = d3
       .select(this.el)
       .append("svg")
@@ -385,11 +386,5 @@ export default class ListGraph {
   }
   visDate(date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") {
     return dayjs(date).format(pattern);
-  }
-  resize() {
-    if (!this.el) {
-      return;
-    }
-    this.init(this.data, this.row, this.fixSpansSize);
   }
 }
