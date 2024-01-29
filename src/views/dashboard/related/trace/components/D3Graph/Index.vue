@@ -81,7 +81,6 @@ limitations under the License. -->
     showDetail.value = true;
   }
   function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
-    console.log(data);
     if (!node || node.isBroken) {
       return;
     }

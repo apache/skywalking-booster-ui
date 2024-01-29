@@ -150,7 +150,13 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
       return;
     }
-    state.service = getCurrentNode(traceStore.services) || traceStore.services[0];
+    if (props.data.filters && props.data.filters.id === "0") {
+      state.service = { value: "", label: "" };
+      return;
+    } else {
+      state.service = getCurrentNode(traceStore.services) || traceStore.services[0];
+    }
+
     emits("get", state.service.id);
 
     getEndpoints(state.service.id);

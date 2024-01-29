@@ -45,7 +45,11 @@ limitations under the License. -->
     <h5 class="mb-10" v-if="diffRefs.length"> {{ t("traceID") }}. </h5>
     <div class="mb-10 clear item" v-for="(item, index) in diffRefs" :key="item.traceId">
       <span class="g-sm-4 grey">No.{{ index + 1 }}</span>
-      <span class="g-sm-8 wba link cp" @click="viewRelateTrace(item)">
+      <span
+        class="g-sm-8 wba cp"
+        :class="dashboardStore.entity === EntityType[1].value ? 'link' : ''"
+        @click="viewRelateTrace(item)"
+      >
         {{ item.traceId }}
       </span>
     </div>
@@ -149,6 +153,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { WidgetType } from "@/views/dashboard/data";
   import type { LayoutConfig } from "@/types/dashboard";
+  import { EntityType } from "@/views/dashboard/data";
 
   /*global defineProps, Nullable, Recordable */
   const props = defineProps({
@@ -234,12 +239,16 @@ limitations under the License. -->
   }
 
   function viewRelateTrace(item: Recordable) {
+    if (dashboardStore.entity !== EntityType[1].value) {
+      return;
+    }
     const { associationWidget } = getDashboard(dashboardStore.currentDashboard);
     associationWidget(
       (options.id as any) || "",
       {
         sourceId: options.id || "",
         traceId: item.traceId,
+        id: "0",
       },
       WidgetType.Trace,
     );
@@ -293,7 +302,6 @@ limitations under the License. -->
   }
 
   .link {
-    color: var(--el-color-primary);
     text-decoration: underline;
   }
 </style>
