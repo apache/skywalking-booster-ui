@@ -204,7 +204,7 @@ limitations under the License. -->
     if (props.data.filters && props.data.filters.id) {
       param = {
         ...param,
-        serviceId: props.data.filters.id || undefined,
+        serviceId: props.data.filters.id && props.data.filters.id !== "0" ? props.data.filters.id : undefined,
         endpointId: state.endpoint.id || undefined,
         serviceInstanceId: state.instance.id || undefined,
       };
