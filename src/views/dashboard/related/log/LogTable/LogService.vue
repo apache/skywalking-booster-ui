@@ -71,7 +71,6 @@ limitations under the License. -->
     emit("select", props.data);
   }
   function linkTrace(id: string) {
-    console.log(options);
     const { associationWidget } = getDashboard(dashboardStore.currentDashboard);
     associationWidget(
       (options.id as any) || "",
