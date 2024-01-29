@@ -208,17 +208,6 @@ limitations under the License. -->
       }
     });
     [...fixSpans, ...props.data].forEach((i) => {
-      if (i.refs.length) {
-        const item = i.refs.find((d) => d.traceId === i.traceId);
-        if (item) {
-          i = {
-            ...i,
-            ...item,
-            segmentId: item.parentSegmentId,
-            spanId: -2,
-          };
-        }
-      }
       i.label = i.endpointName || "no operation name";
       i.children = [];
       if (!segmentGroup[i.segmentId]) {
