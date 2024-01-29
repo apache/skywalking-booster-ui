@@ -16,7 +16,7 @@
  */
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import type { LayoutConfig } from "@/types/dashboard";
+import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
 import { ConfigFieldTypes } from "@/views/dashboard/data";
 
 export default function getDashboard(param?: { name?: string; layer: string; entity: string }, t?: string) {
@@ -24,7 +24,7 @@ export default function getDashboard(param?: { name?: string; layer: string; ent
   const dashboardStore = useDashboardStore();
   const opt = param || dashboardStore.currentDashboard;
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-  let dashboard;
+  let dashboard: Nullable<DashboardItem>;
   if (type === ConfigFieldTypes.NAME) {
     dashboard = list.find(
       (d: { name: string; layer: string; entity: string }) =>
@@ -62,6 +62,9 @@ export default function getDashboard(param?: { name?: string; layer: string; ent
       filters,
     };
     dashboardStore.setWidget(item);
+    if (widget.id === sourceId) {
+      return;
+    }
     const targetTabIndex = (widget.id || "").split("-");
     const sourceTabindex = (sourceId || "").split("-") || [];
     let container: Nullable<Element>;
