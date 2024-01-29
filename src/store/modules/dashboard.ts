@@ -24,7 +24,6 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl, TextConfig, TimeRangeConfig, ControlsTypes } from "../data";
 import type { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
-import { useI18n } from "vue-i18n";
 import { EntityType, MetricModes, WidgetType } from "@/views/dashboard/data";
 interface DashboardState {
   showConfig: boolean;

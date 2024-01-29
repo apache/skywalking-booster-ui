@@ -227,7 +227,8 @@ limitations under the License. -->
 
   .no-data {
     padding-top: 50px;
-    width: 100%;
+    width: 280px;
     text-align: center;
+    height: 100px;
   }
 </style>

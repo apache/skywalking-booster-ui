@@ -139,28 +139,61 @@ limitations under the License. -->
     }
     segmentHeaders.forEach((span: Span) => {
       if (span.refs.length) {
+        let exit = 0;
         span.refs.forEach((ref) => {
-          const index = props.data.findIndex(
+          const i = props.data.findIndex(
             (i: Recordable) => ref.parentSegmentId === i.segmentId && ref.parentSpanId === i.spanId,
           );
-          if (index === -1) {
-            // create a known broken node.
-            const i = ref.parentSpanId;
-            const fixSpanKeyContent = {
+          if (i > -1) {
+            exit = 1;
+          }
+        });
+
+        if (!exit) {
+          const ref = span.refs[0];
+          // create a known broken node.
+          const i = ref.parentSpanId;
+          const fixSpanKeyContent = {
+            traceId: ref.traceId,
+            segmentId: ref.parentSegmentId,
+            spanId: i,
+            parentSpanId: i > -1 ? 0 : -1,
+          };
+          if (!_.find(fixSpans, fixSpanKeyContent)) {
+            fixSpans.push({
+              ...fixSpanKeyContent,
+              refs: [],
+              endpointName: `VNode: ${ref.parentSegmentId}`,
+              serviceCode: "VirtualNode",
+              type: `[Broken] ${ref.type}`,
+              peer: "",
+              component: `VirtualNode: #${i}`,
+              isError: true,
+              isBroken: true,
+              layer: "Broken",
+              tags: [],
+              logs: [],
+              startTime: 0,
+              endTime: 0,
+            });
+          }
+          // if root broken node is not exist, create a root broken node.
+          if (fixSpanKeyContent.parentSpanId > -1) {
+            const fixRootSpanKeyContent = {
               traceId: ref.traceId,
               segmentId: ref.parentSegmentId,
-              spanId: i,
-              parentSpanId: i > -1 ? 0 : -1,
+              spanId: 0,
+              parentSpanId: -1,
             };
-            if (!_.find(fixSpans, fixSpanKeyContent)) {
+            if (!_.find(fixSpans, fixRootSpanKeyContent)) {
               fixSpans.push({
-                ...fixSpanKeyContent,
+                ...fixRootSpanKeyContent,
                 refs: [],
                 endpointName: `VNode: ${ref.parentSegmentId}`,
                 serviceCode: "VirtualNode",
                 type: `[Broken] ${ref.type}`,
                 peer: "",
-                component: `VirtualNode: #${i}`,
+                component: `VirtualNode: #0`,
                 isError: true,
                 isBroken: true,
                 layer: "Broken",
@@ -170,44 +203,16 @@ limitations under the License. -->
                 endTime: 0,
               });
             }
-            // if root broken node is not exist, create a root broken node.
-            if (fixSpanKeyContent.parentSpanId > -1) {
-              const fixRootSpanKeyContent = {
-                traceId: ref.traceId,
-                segmentId: ref.parentSegmentId,
-                spanId: 0,
-                parentSpanId: -1,
-              };
-              if (!_.find(fixSpans, fixRootSpanKeyContent)) {
-                fixSpans.push({
-                  ...fixRootSpanKeyContent,
-                  refs: [],
-                  endpointName: `VNode: ${ref.parentSegmentId}`,
-                  serviceCode: "VirtualNode",
-                  type: `[Broken] ${ref.type}`,
-                  peer: "",
-                  component: `VirtualNode: #0`,
-                  isError: true,
-                  isBroken: true,
-                  layer: "Broken",
-                  tags: [],
-                  logs: [],
-                  startTime: 0,
-                  endTime: 0,
-                });
-              }
-            }
           }
-        });
+        }
       }
     });
     [...fixSpans, ...props.data].forEach((i) => {
       i.label = i.endpointName || "no operation name";
       i.children = [];
-      if (segmentGroup[i.segmentId] === undefined) {
+      if (!segmentGroup[i.segmentId]) {
         segmentIdGroup.push(i.segmentId);
-        segmentGroup[i.segmentId] = [];
-        segmentGroup[i.segmentId].push(i);
+        segmentGroup[i.segmentId] = [i];
       } else {
         segmentGroup[i.segmentId].push(i);
       }
