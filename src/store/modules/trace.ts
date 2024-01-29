@@ -167,7 +167,144 @@ export const traceStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      const data = res.data.data.trace.spans;
+      const resp = {
+        data: {
+          trace: {
+            spans: [
+              {
+                traceId: "d013fdb11b56417a9997db9d56722ce2.57.17056716790540001",
+                segmentId: "d013fdb11b56417a9997db9d56722ce2.57.17056716790540000",
+                spanId: 0,
+                parentSpanId: -1,
+                refs: [],
+                serviceCode: "rmq5-grpc-A-scenario",
+                serviceInstanceName: "3d4a5d93c2af47838948691e07c502e6@198.18.0.1",
+                startTime: 1705671679055,
+                endTime: 1705671679135,
+                endpointName: "GET:/case/rocketmq-5-grpc-scenario",
+                type: "Entry",
+                peer: "",
+                component: "SpringMVC",
+                isError: false,
+                layer: "Http",
+                tags: [
+                  {
+                    key: "url",
+                    value: "http://127.0.0.1:8080/rocketmq-5-grpc-scenario/case/rocketmq-5-grpc-scenario",
+                  },
+                  {
+                    key: "http.method",
+                    value: "GET",
+                  },
+                  {
+                    key: "http.status_code",
+                    value: "200",
+                  },
+                ],
+                logs: [],
+                attachedEvents: [],
+              },
+              {
+                traceId: "d013fdb11b56417a9997db9d56722ce2.57.17056716790540001",
+                segmentId: "d013fdb11b56417a9997db9d56722ce2.57.17056716790540000",
+                spanId: 1,
+                parentSpanId: 0,
+                refs: [],
+                serviceCode: "rmq5-grpc-A-scenario",
+                serviceInstanceName: "3d4a5d93c2af47838948691e07c502e6@198.18.0.1",
+                startTime: 1705671679057,
+                endTime: 1705671679133,
+                endpointName: "RocketMQ/ConsumerAsyncTopicTest/Producer",
+                type: "Exit",
+                peer: "123.56.194.74:8081",
+                component: "rocketMQ-producer",
+                isError: false,
+                layer: "MQ",
+                tags: [
+                  {
+                    key: "mq.broker",
+                    value: "123.56.194.74:8081",
+                  },
+                  {
+                    key: "mq.topic",
+                    value: "ConsumerAsyncTopicTest",
+                  },
+                  {
+                    key: "mq.message.keys",
+                    value: "e8029111-fa26-4738-a59f-2d4dab0b2ffe",
+                  },
+                  {
+                    key: "mq.message.tags",
+                    value: "Tag:async:consumer",
+                  },
+                  {
+                    key: "mq.message.id",
+                    value: "01ACDE480011221E0005BC15FF00000003",
+                  },
+                ],
+                logs: [],
+                attachedEvents: [],
+              },
+              {
+                traceId: "d013fdb11b56417a9997db9d56722ce2.57.17056716790540001",
+                segmentId: "1c116740e8dd41f9af3577a03c969a4b.53.17056716950020000",
+                spanId: 0,
+                parentSpanId: -1,
+                refs: [
+                  {
+                    traceId: "d013fdb11b56417a9997db9d56722ce2.57.17056716790540001",
+                    parentSegmentId: "d013fdb11b56417a9997db9d56722ce2.57.17056716790540000",
+                    parentSpanId: 1,
+                    type: "CROSS_PROCESS",
+                  },
+                  {
+                    traceId: "d013fdb11b56417a9997db9d56722ce2.55.17056716721260001",
+                    parentSegmentId: "d013fdb11b56417a9997db9d56722ce2.55.17056716721250000",
+                    parentSpanId: 1,
+                    type: "CROSS_PROCESS",
+                  },
+                ],
+                serviceCode: "rmq5-grpc-B-scenario",
+                serviceInstanceName: "88429d7fb3434b928dc39f41c0b7c4c6@198.18.0.1",
+                startTime: 1705671695004,
+                endTime: 1705671696483,
+                endpointName: "RocketMQ/ConsumerAsyncTopicTest/Consumer",
+                type: "Entry",
+                peer: "123.56.194.74:8081",
+                component: "rocketMQ-consumer",
+                isError: false,
+                layer: "MQ",
+                tags: [
+                  {
+                    key: "mq.topic",
+                    value: "ConsumerAsyncTopicTest",
+                  },
+                  {
+                    key: "mq.broker",
+                    value: "123.56.194.74:8081",
+                  },
+                  {
+                    key: "transmission.latency",
+                    value: "17345",
+                  },
+                  {
+                    key: "transmission.latency",
+                    value: "24263",
+                  },
+                  {
+                    key: "http.status_code",
+                    value: "200",
+                  },
+                ],
+                logs: [],
+                attachedEvents: [],
+              },
+            ],
+          },
+        },
+      };
+      const data = resp.data.trace.spans;
+      // const data = res.data.data.trace.spans;
       this.setTraceSpans(data || []);
       return res.data;
     },

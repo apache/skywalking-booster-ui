@@ -22,7 +22,7 @@ limitations under the License. -->
       </el-button>
     </div>
     <div class="list">
-      <Graph :data="data" :traceId="traceId" type="List" />
+      <Graph :data="data" :traceId="`d013fdb11b56417a9997db9d56722ce2.57.17056716790540001`" type="List" />
     </div>
   </div>
 </template>
