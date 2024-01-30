@@ -87,12 +87,9 @@ export const topologyStore = defineStore({
     },
     setTopology(data: { nodes: Node[]; calls: Call[] }) {
       const obj = {} as Recordable;
-      const services = useSelectorStore().services;
       const nodes = (data.nodes || []).reduce((prev: Node[], next: Node) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
-          const s = services.filter((d: any) => d.id === next.id)[0] || {};
-          next.layer = s.layers ? s.layers[0] : null;
           prev.push(next);
         }
         return prev;
@@ -658,7 +655,7 @@ export const topologyStore = defineStore({
       return metrics;
     },
     async queryHierarchyNodeExpressions(expressions: string[], layer: string) {
-      const nodes = this.hierarchyServiceNodes.filter((n: Node) => n.layer === layer);
+      const nodes = this.hierarchyServiceNodes.filter((n: HierarchyNode) => n.layer === layer);
       if (!nodes.length) {
         this.setHierarchyNodeMetricValue({}, layer);
         return;
@@ -671,7 +668,7 @@ export const topologyStore = defineStore({
       this.setHierarchyNodeMetricValue(metrics, layer);
     },
     async queryHierarchyInstanceNodeExpressions(expressions: string[], layer: string) {
-      const nodes = this.hierarchyInstanceNodes.filter((n: Node) => n.layer === layer);
+      const nodes = this.hierarchyInstanceNodes.filter((n: HierarchyNode) => n.layer === layer);
 
       if (!expressions.length) {
         this.setHierarchyInstanceNodeMetricValue({}, layer);

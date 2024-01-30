@@ -411,7 +411,7 @@ limitations under the License. -->
     topologyStore.setLink(null);
     operationsPos.x = event.offsetX;
     operationsPos.y = event.offsetY;
-    if (d.layer === String(dashboardStore.layerId)) {
+    if (d.layers.includes(dashboardStore.layerId)) {
       setNodeTools(settings.value.nodeDashboard);
       return;
     }
@@ -419,7 +419,7 @@ limitations under the License. -->
   }
   function handleLinkClick(event: MouseEvent, d: Call) {
     event.stopPropagation();
-    if (d.sourceObj.layer !== dashboardStore.layerId || d.targetObj.layer !== dashboardStore.layerId) {
+    if (!d.sourceObj.layers.includes(dashboardStore.layerId) || !d.targetObj.layers.includes(dashboardStore.layerId)) {
       return;
     }
     topologyStore.setNode(null);

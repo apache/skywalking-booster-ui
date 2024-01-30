@@ -43,7 +43,6 @@ export interface Node {
   name: string;
   type: string;
   isReal: boolean;
-  layer?: string;
   layers: string[];
   serviceName?: string;
   height?: number;
