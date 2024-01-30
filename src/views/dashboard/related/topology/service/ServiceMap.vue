@@ -128,7 +128,13 @@ limitations under the License. -->
         {{ item.title }}
       </span>
     </div>
-    <el-dialog v-model="hierarchyRelated" :destroy-on-close="true" @closed="hierarchyRelated = false" width="640px">
+    <el-dialog
+      v-model="hierarchyRelated"
+      :title="getHierarchyTitle()"
+      :destroy-on-close="true"
+      @closed="hierarchyRelated = false"
+      width="640px"
+    >
       <div class="hierarchy-related">
         <hierarchy-map :config="config" />
       </div>
@@ -267,6 +273,20 @@ limitations under the License. -->
   function stopMoveNode(event: MouseEvent) {
     event.stopPropagation();
     currentNode.value = null;
+  }
+
+  function getHierarchyTitle() {
+    if (!currentNode.value) {
+      return;
+    }
+    if (currentNode.value.layers.includes(dashboardStore.layerId)) {
+      return `${dashboardStore.layerId} --> ${currentNode.value.name}`;
+    }
+    const layer = currentNode.value.layers.filter((d: string) => d !== dashboardStore.layerId);
+    if (layer.length) {
+      return `${layer[0]} --> ${currentNode.value.name}`;
+    }
+    return "";
   }
 
   async function initLegendMetrics() {

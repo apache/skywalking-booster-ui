@@ -599,7 +599,12 @@ export const topologyStore = defineStore({
       const dashboardStore = useDashboardStore();
       const { currentService } = useSelectorStore();
       const id = this.node ? this.node.id : (currentService || {}).id;
-      const layer = this.node ? this.node.layer : dashboardStore.layerId;
+      let layer = dashboardStore.layerId;
+      if (this.node) {
+        layer = this.node.layers.includes(dashboardStore.layerId)
+          ? dashboardStore.layerId
+          : this.node.layers.filter((d: string) => d !== dashboardStore.layerId)[0];
+      }
       if (!(id && layer)) {
         return new Promise((resolve) => resolve({}));
       }
