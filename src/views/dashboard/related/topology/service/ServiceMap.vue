@@ -124,7 +124,7 @@ limitations under the License. -->
         left: operationsPos.x + 5 + 'px',
       }"
     >
-      <span v-for="(item, index) of items" :key="index" @click="item.func(item.dashboard)">
+      <span v-for="(item, index) of items" :key="index" @click="item.func(item)">
         {{ item.title }}
       </span>
     </div>
@@ -160,6 +160,7 @@ limitations under the License. -->
   import { layout, computeLevels, changeNode } from "../components/utils/layout";
   import zoom from "@/views/dashboard/related/components/utils/zoom";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
+  import { ConfigFieldTypes } from "@/views/dashboard/data";
   /*global Nullable, defineProps */
   const props = defineProps({
     config: {
@@ -414,11 +415,7 @@ limitations under the License. -->
       setNodeTools(settings.value.nodeDashboard);
       return;
     }
-    items.value = [
-      { id: "hierarchyServices", title: "Hierarchy Services", func: handleHierarchyRelatedServices },
-      { id: "inspect", title: "Inspect", func: handleInspect },
-      { id: "alerting", title: "Alerting", func: handleGoAlerting },
-    ];
+    initNodeMenus();
   }
   function handleLinkClick(event: MouseEvent, d: Call) {
     event.stopPropagation();
@@ -462,25 +459,34 @@ limitations under the License. -->
     topologyStore.setNode(null);
     topologyStore.setLink(null);
   }
-  function handleGoEndpoint(name: string) {
+  function handleGoEndpoint(params: { dashboard: string }) {
+    if (!params.dashboard) {
+      return;
+    }
     const origin = dashboardStore.entity;
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${name}`;
+    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${params.dashboard}`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
   }
-  function handleGoInstance(name: string) {
+  function handleGoInstance(params: { dashboard: string }) {
+    if (!params.dashboard) {
+      return;
+    }
     const origin = dashboardStore.entity;
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${topologyStore.node.id}/${name}`;
+    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${topologyStore.node.id}/${params.dashboard}`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);
   }
-  function handleGoDashboard(name: string) {
+  function handleGoDashboard(params: { dashboard: string }) {
+    if (!params.dashboard) {
+      return;
+    }
     const origin = dashboardStore.entity;
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${name}`;
+    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${params.dashboard}`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
@@ -491,6 +497,28 @@ limitations under the License. -->
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
+  }
+  function handleGoLayerDashboard(param: { id: string }) {
+    if (!(param.id && currentNode.value)) {
+      return;
+    }
+    const origin = dashboardStore.entity;
+    const { dashboard } = getDashboard(
+      {
+        layer: param.id,
+        entity: EntityType[0].value,
+      },
+      ConfigFieldTypes.ISDEFAULT,
+    );
+    if (!dashboard) {
+      return ElMessage.info("No Dashboard");
+    }
+
+    const path = `/dashboard/${param.id}/${EntityType[0].value}/${currentNode.value.id}/${dashboard.name}`;
+    const routeUrl = router.resolve({ path });
+
+    window.open(routeUrl.href, "_blank");
+    dashboardStore.setEntity(origin);
   }
   async function backToTopology() {
     loading.value = true;
@@ -520,12 +548,26 @@ limitations under the License. -->
     settings.value = config;
     setNodeTools(config.nodeDashboard);
   }
-  function setNodeTools(nodeDashboard: any) {
+  function initNodeMenus() {
     items.value = [
       { id: "hierarchyServices", title: "Hierarchy Services", func: handleHierarchyRelatedServices },
       { id: "inspect", title: "Inspect", func: handleInspect },
       { id: "alerting", title: "Alerting", func: handleGoAlerting },
     ];
+    if (!currentNode.value) {
+      return;
+    }
+    const diffLayers = currentNode.value.layers.filter((l: string) => l !== dashboardStore.layerId);
+    for (const l of diffLayers) {
+      items.value.push({
+        id: l,
+        title: `${l} Dashboard`,
+        func: handleGoLayerDashboard,
+      });
+    }
+  }
+  function setNodeTools(nodeDashboard: any) {
+    initNodeMenus();
     if (!(nodeDashboard && nodeDashboard.length)) {
       return;
     }

@@ -16,7 +16,6 @@
  */
 import { defineStore } from "pinia";
 import { store } from "@/store";
-import type { Service } from "@/types/selector";
 import type { Node, Call, HierarchyNode, ServiceHierarchy, InstanceHierarchy } from "@/types/topology";
 import graphql from "@/graphql";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -92,7 +91,7 @@ export const topologyStore = defineStore({
       const nodes = (data.nodes || []).reduce((prev: Node[], next: Node) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
-          const s = services.filter((d: Service) => d.id === next.id)[0] || {};
+          const s = services.filter((d: any) => d.id === next.id)[0] || {};
           next.layer = s.layers ? s.layers[0] : null;
           prev.push(next);
         }
