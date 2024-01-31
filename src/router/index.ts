@@ -21,6 +21,7 @@ import { routesMarketplace } from "./marketplace";
 import { routesAlarm } from "./alarm";
 import routesLayers from "./layer";
 import { routesSettings } from "./settings";
+import { routesNotFound } from "./notFound";
 
 const routes: RouteRecordRaw[] = [
   ...routesMarketplace,
@@ -28,6 +29,7 @@ const routes: RouteRecordRaw[] = [
   ...routesAlarm,
   ...routesDashboard,
   ...routesSettings,
+  ...routesNotFound,
 ];
 
 const router = createRouter({

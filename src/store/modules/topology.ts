@@ -16,7 +16,6 @@
  */
 import { defineStore } from "pinia";
 import { store } from "@/store";
-import type { Service } from "@/types/selector";
 import type { Node, Call, HierarchyNode, ServiceHierarchy, InstanceHierarchy } from "@/types/topology";
 import graphql from "@/graphql";
 import { useSelectorStore } from "@/store/modules/selectors";
@@ -88,12 +87,9 @@ export const topologyStore = defineStore({
     },
     setTopology(data: { nodes: Node[]; calls: Call[] }) {
       const obj = {} as Recordable;
-      const services = useSelectorStore().services;
       const nodes = (data.nodes || []).reduce((prev: Node[], next: Node) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
-          const s = services.filter((d: Service) => d.id === next.id)[0] || {};
-          next.layer = s.layers ? s.layers[0] : null;
           prev.push(next);
         }
         return prev;
@@ -603,7 +599,12 @@ export const topologyStore = defineStore({
       const dashboardStore = useDashboardStore();
       const { currentService } = useSelectorStore();
       const id = this.node ? this.node.id : (currentService || {}).id;
-      const layer = this.node ? this.node.layer : dashboardStore.layerId;
+      let layer = dashboardStore.layerId;
+      if (this.node) {
+        layer = this.node.layers.includes(dashboardStore.layerId)
+          ? dashboardStore.layerId
+          : this.node.layers.filter((d: string) => d !== dashboardStore.layerId)[0];
+      }
       if (!(id && layer)) {
         return new Promise((resolve) => resolve({}));
       }
@@ -659,7 +660,7 @@ export const topologyStore = defineStore({
       return metrics;
     },
     async queryHierarchyNodeExpressions(expressions: string[], layer: string) {
-      const nodes = this.hierarchyServiceNodes.filter((n: Node) => n.layer === layer);
+      const nodes = this.hierarchyServiceNodes.filter((n: HierarchyNode) => n.layer === layer);
       if (!nodes.length) {
         this.setHierarchyNodeMetricValue({}, layer);
         return;
@@ -672,7 +673,7 @@ export const topologyStore = defineStore({
       this.setHierarchyNodeMetricValue(metrics, layer);
     },
     async queryHierarchyInstanceNodeExpressions(expressions: string[], layer: string) {
-      const nodes = this.hierarchyInstanceNodes.filter((n: Node) => n.layer === layer);
+      const nodes = this.hierarchyInstanceNodes.filter((n: HierarchyNode) => n.layer === layer);
 
       if (!expressions.length) {
         this.setHierarchyInstanceNodeMetricValue({}, layer);

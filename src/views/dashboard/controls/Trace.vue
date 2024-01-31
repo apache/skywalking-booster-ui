@@ -81,7 +81,7 @@ limitations under the License. -->
     padding: 10px;
     font-size: $font-size-smaller;
     border-bottom: 1px solid $border-color;
-    min-width: 1200px;
+    min-width: 1000px;
   }
 
   .tools {
@@ -101,6 +101,6 @@ limitations under the License. -->
     min-height: calc(100% - 150px);
     width: 100%;
     overflow: auto;
-    min-width: 1200px;
+    min-width: 1000px;
   }
 </style>

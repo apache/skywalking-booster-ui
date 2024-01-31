@@ -23,6 +23,7 @@ export const ServicesTopology = {
       name
       type
       isReal
+      layers
     }
     calls {
       id
