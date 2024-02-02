@@ -34,7 +34,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, onMounted, nextTick } from "vue";
   import * as d3 from "d3";
-  import type { Node } from "@/types/topology";
+  import type { HierarchyNode } from "@/types/topology";
   import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { EntityType, ConfigFieldTypes } from "@/views/dashboard/data";
@@ -106,7 +106,7 @@ limitations under the License. -->
     }
   }
 
-  function showNodeTip(event: MouseEvent, data: Node) {
+  function showNodeTip(event: MouseEvent, data: HierarchyNode) {
     if (!data) {
       return;
     }
@@ -148,7 +148,7 @@ limitations under the License. -->
     popover.value.style("visibility", "hidden");
   }
 
-  function handleNodeClick(event: MouseEvent, d: Node & { serviceId: string }) {
+  function handleNodeClick(event: MouseEvent, d: HierarchyNode & { serviceId: string }) {
     const origin = dashboardStore.entity;
     event.stopPropagation();
     hideTip();
