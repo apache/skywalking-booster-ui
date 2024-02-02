@@ -37,6 +37,7 @@ export interface HierarchyNode {
   name: string;
   layer: string;
   level?: number;
+  key: string;
 }
 export interface Node {
   id: string;
@@ -51,8 +52,6 @@ export interface Node {
   y?: number;
   level?: number;
   l?: number;
-  key?: string;
-  layer?: string;
 }
 
 export interface ServiceHierarchy {
