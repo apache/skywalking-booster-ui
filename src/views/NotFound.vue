@@ -13,23 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <service-map :config="config" v-if="isService" />
-  <pod-map :config="config" v-else />
+  <div class="not-found flex-h">
+    <Icon size="largest" iconName="logo-light" />
+    <h1 class="ml-20">404 Page Not Found</h1>
+  </div>
 </template>
-<script lang="ts" setup>
-  import type { PropType } from "vue";
-  import ServiceMap from "./service/ServiceMap.vue";
-  import PodMap from "./pod/PodMap.vue";
-  import { EntityType } from "@/views/dashboard/data";
-  import { useDashboardStore } from "@/store/modules/dashboard";
+<style lang="scss" scoped>
+  .not-found {
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
 
-  /*global defineProps */
-  defineProps({
-    config: {
-      type: Object as PropType<any>,
-      default: () => ({ graph: {} }),
-    },
-  });
-  const dashboardStore = useDashboardStore();
-  const isService = [EntityType[0].value, EntityType[1].value].includes(dashboardStore.entity);
-</script>
+  .icon {
+    width: 160px;
+    height: 160px;
+  }
+</style>

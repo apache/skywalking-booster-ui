@@ -42,6 +42,12 @@ limitations under the License. -->
       <span class="g-sm-4 grey">{{ t("isError") }}:</span>
       <span class="g-sm-8 wba">{{ currentSpan.isError }}</span>
     </div>
+    <h5 class="mb-10" v-if="diffRefs.length"> {{ t("traceID") }}. </h5>
+    <div class="mb-10 clear item" v-for="item in diffRefs" :key="item.traceId">
+      <span class="g-sm-12 wba cp link" @click="viewRelateTrace(item)">
+        {{ item.traceId }}
+      </span>
+    </div>
     <h5 class="mb-10" v-if="currentSpan.tags && currentSpan.tags.length"> {{ t("tags") }}. </h5>
     <div class="mb-10 clear item" v-for="i in currentSpan.tags" :key="i.key">
       <span class="g-sm-4 grey">{{ i.key }}:</span>
@@ -127,7 +133,7 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, onMounted } from "vue";
+  import { ref, computed, onMounted, inject } from "vue";
   import { useI18n } from "vue-i18n";
   import type { PropType } from "vue";
   import dayjs from "dayjs";
@@ -138,14 +144,20 @@ limitations under the License. -->
   import { useTraceStore } from "@/store/modules/trace";
   import LogTable from "@/views/dashboard/related/log/LogTable/Index.vue";
   import type { SpanAttachedEvent } from "@/types/trace";
+  import getDashboard from "@/hooks/useDashboardsSession";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import { WidgetType } from "@/views/dashboard/data";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   /*global defineProps, Nullable, Recordable */
   const props = defineProps({
     currentSpan: { type: Object as PropType<Recordable>, default: () => ({}) },
     traceId: { type: String, default: "" },
   });
+  const options: Recordable<LayoutConfig> = inject("options") || {};
   const { t } = useI18n();
   const traceStore = useTraceStore();
+  const dashboardStore = useDashboardStore();
   const pageNum = ref<number>(1);
   const showRelatedLogs = ref<boolean>(false);
   const showEventDetail = ref<boolean>(false);
@@ -153,6 +165,9 @@ limitations under the License. -->
   const pageSize = 10;
   const total = computed(() =>
     traceStore.traceList.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
+  );
+  const diffRefs = computed(() =>
+    props.currentSpan.refs.filter((d: Recordable) => d.traceId !== props.currentSpan.traceId),
   );
   const tree = ref<any>(null);
   const eventGraph = ref<Nullable<HTMLDivElement>>(null);
@@ -217,6 +232,19 @@ limitations under the License. -->
     tree.value.draw();
   }
 
+  function viewRelateTrace(item: Recordable) {
+    const { associationWidget } = getDashboard(dashboardStore.currentDashboard);
+    associationWidget(
+      (options.id as any) || "",
+      {
+        sourceId: options.id || "",
+        traceId: item.traceId || "",
+        id: "0",
+      },
+      WidgetType.Trace,
+    );
+  }
+
   function selectEvent(i: any) {
     currentEvent.value = i.data;
     showEventDetail.value = true;
@@ -259,7 +287,12 @@ limitations under the License. -->
     cursor: pointer;
   }
 
+  .link,
   .link-hover:hover {
-    color: #448dfe;
+    color: var(--el-color-primary);
+  }
+
+  .link {
+    text-decoration: underline;
   }
 </style>

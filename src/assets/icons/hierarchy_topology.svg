@@ -1,0 +1,18 @@
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+
+<svg t="1704964118567" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5167">
+  <path d="M900.032 646.016h-56.064V502.976a16 16 0 0 0-16-16H544v-96h62.976c22.144 0 40-17.92 40-40V161.024a40 40 0 0 0-40-40H417.024a40 40 0 0 0-40 40v189.952c0 22.144 17.92 40 40 40H480v96H195.968a16 16 0 0 0-16 16v143.04h-55.936a38.016 38.016 0 0 0-38.016 38.016v176c0 20.928 17.024 37.952 37.952 37.952h176a38.016 38.016 0 0 0 38.016-38.016v-176a38.016 38.016 0 0 0-37.952-37.952h-56V550.976H480v95.04h-56a38.016 38.016 0 0 0-38.016 38.016v176c0 20.928 17.024 37.952 38.016 37.952h176a38.016 38.016 0 0 0 38.016-38.016v-176a38.016 38.016 0 0 0-38.016-37.952H544V550.976h236.032v95.04h-56.064a38.016 38.016 0 0 0-37.952 38.016v176c0 20.928 17.024 37.952 38.016 37.952h176a38.016 38.016 0 0 0 37.952-38.016v-176a38.016 38.016 0 0 0-38.016-37.952zM440.96 184.96h141.952v141.952H441.024V185.024zM278.016 838.016H145.92V705.92h132.032v132.032z m299.968 0H446.08V705.92H577.92v132.032z m300.032 0h-132.032V705.92h132.032v132.032z" p-id="5168"></path>
+</svg>

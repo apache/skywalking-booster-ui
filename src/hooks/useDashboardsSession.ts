@@ -17,15 +17,25 @@
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import type { LayoutConfig } from "@/types/dashboard";
+import { ConfigFieldTypes } from "@/views/dashboard/data";
 
-export default function getDashboard(param?: { name: string; layer: string; entity: string }) {
+export default function getDashboard(param?: { name?: string; layer: string; entity: string }, t?: string) {
+  const type = t || ConfigFieldTypes.NAME; // "NAME" or "ISDEFAULT"
   const dashboardStore = useDashboardStore();
   const opt = param || dashboardStore.currentDashboard;
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-  const dashboard = list.find(
-    (d: { name: string; layer: string; entity: string }) =>
-      d.name === opt.name && d.entity === opt.entity && d.layer === opt.layer,
-  );
+  let dashboard: Recordable;
+  if (type === ConfigFieldTypes.NAME) {
+    dashboard = list.find(
+      (d: { name: string; layer: string; entity: string }) =>
+        d.name === opt.name && d.entity === opt.entity && d.layer === opt.layer,
+    );
+  } else {
+    dashboard = list.find(
+      (d: { name: string; layer: string; entity: string; isDefault: boolean }) =>
+        d.isDefault && d.entity === opt.entity && d.layer === opt.layer,
+    );
+  }
   const all = dashboardStore.layout;
   const widgets: LayoutConfig[] = [];
   for (const item of all) {
@@ -52,6 +62,9 @@ export default function getDashboard(param?: { name: string; layer: string; enti
       filters,
     };
     dashboardStore.setWidget(item);
+    if (widget.id === sourceId) {
+      return;
+    }
     const targetTabIndex = (widget.id || "").split("-");
     const sourceTabindex = (sourceId || "").split("-") || [];
     let container: Nullable<Element>;

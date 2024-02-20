@@ -159,6 +159,7 @@ limitations under the License. -->
 
   .selectors {
     margin: 2px 2px 0 0;
+    width: 120px;
   }
 
   .trace-t-wrapper {
@@ -182,11 +183,11 @@ limitations under the License. -->
   }
 
   .trace-t {
-    width: 420px;
+    width: 300px;
   }
 
   .list {
-    width: 300px;
+    width: 280px;
   }
 
   .trace-tr {
@@ -226,7 +227,8 @@ limitations under the License. -->
 
   .no-data {
     padding-top: 50px;
-    width: 100%;
+    width: 280px;
     text-align: center;
+    height: 100px;
   }
 </style>

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 export interface Call {
   source: string | any;
   target: string | any;
@@ -31,15 +32,48 @@ export interface Call {
   targetY?: number;
   targetX?: number;
 }
+export interface HierarchyNode {
+  id: string;
+  name: string;
+  layer: string;
+  level?: number;
+  key: string;
+}
 export interface Node {
   id: string;
   name: string;
   type: string;
   isReal: boolean;
-  layer?: string;
+  layers: string[];
   serviceName?: string;
   height?: number;
+  width?: number;
   x?: number;
   y?: number;
   level?: number;
+  l?: number;
+}
+
+export interface ServiceHierarchy {
+  relations: HierarchyServiceRelation[];
+}
+
+export interface HierarchyServiceRelation {
+  upperService: HierarchyRelated;
+  lowerService: HierarchyRelated;
+}
+
+type HierarchyRelated = {
+  id: string;
+  name: string;
+  layer: string;
+};
+
+export interface InstanceHierarchy {
+  relations: HierarchyInstanceRelation[];
+}
+
+export interface HierarchyInstanceRelation {
+  upperInstance: HierarchyRelated;
+  lowerInstance: HierarchyRelated;
 }

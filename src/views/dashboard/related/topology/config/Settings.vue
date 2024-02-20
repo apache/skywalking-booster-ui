@@ -24,7 +24,7 @@ limitations under the License. -->
       @change="changeMetricMode"
     />
   </div>
-  <div class="link-settings">
+  <div class="mb-20">
     <h5 class="title">{{ t("callSettings") }}</h5>
     <div class="label">{{ t("linkDashboard") }}</div>
     <Selector
@@ -57,7 +57,7 @@ limitations under the License. -->
         :tags="states.linkServerExpressions"
         :vertical="true"
         :text="t('addExpressions')"
-        @change="(param) => changeLinkServerExpressions(param)"
+        @change="(param: string[]) => changeLinkServerExpressions(param)"
       />
     </div>
     <Selector
@@ -92,7 +92,7 @@ limitations under the License. -->
           :tags="states.linkClientExpressions"
           :vertical="true"
           :text="t('addExpressions')"
-          @change="(param) => changeLinkClientExpressions(param)"
+          @change="(param: string[]) => changeLinkClientExpressions(param)"
         />
       </div>
       <Selector
@@ -107,7 +107,7 @@ limitations under the License. -->
       />
     </span>
   </div>
-  <div class="node-settings">
+  <div>
     <h5 class="title">{{ t("nodeSettings") }}</h5>
     <div class="label">{{ t("nodeDashboard") }}</div>
     <Selector
@@ -168,7 +168,7 @@ limitations under the License. -->
         :tags="states.nodeExpressions"
         :vertical="true"
         :text="t('addExpressions')"
-        @change="(param) => changeNodeExpressions(param)"
+        @change="(param: string[]) => changeNodeExpressions(param)"
       />
     </div>
     <Selector
@@ -182,7 +182,7 @@ limitations under the License. -->
       @change="updateNodeMetrics"
     />
   </div>
-  <div class="legend-settings" v-show="isService">
+  <div v-show="isService">
     <h5 class="title">{{ t("legendSettings") }}</h5>
     <span v-if="isExpression">
       <div class="label">Healthy Description</div>
@@ -246,7 +246,7 @@ limitations under the License. -->
     </span>
     <div class="label">Unhealthy Description</div>
     <el-input v-model="description.unhealthy" placeholder="Please input description" size="small" class="mt-5" />
-    <el-button @click="setLegend" class="legend-btn" size="small" type="primary">
+    <el-button @click="setLegend" class="mt-20" size="small" type="primary">
       {{ t("setLegend") }}
     </el-button>
   </div>
@@ -266,7 +266,7 @@ limitations under the License. -->
     MetricsType,
     MetricModes,
     CallTypes,
-  } from "../../../data";
+  } from "@/views/dashboard/data";
   import type { Option } from "@/types/app";
   import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
@@ -604,10 +604,6 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  .link-settings {
-    margin-bottom: 20px;
-  }
-
   .inputs {
     margin-top: 8px;
     width: 355px;
@@ -640,7 +636,6 @@ limitations under the License. -->
   }
 
   .legend-btn {
-    margin: 20px 0;
     cursor: pointer;
   }
 

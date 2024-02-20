@@ -24,7 +24,6 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl, TextConfig, TimeRangeConfig, ControlsTypes } from "../data";
 import type { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
-import { useI18n } from "vue-i18n";
 import { EntityType, MetricModes, WidgetType } from "@/views/dashboard/data";
 interface DashboardState {
   showConfig: boolean;
@@ -344,11 +343,9 @@ export const dashboardStore = defineStore({
         const key = [c.layer, c.entity, c.name].join("_");
 
         list.push({
+          ...c,
           id: t.id,
-          layer: c.layer,
-          entity: c.entity,
-          name: c.name,
-          isRoot: c.isRoot,
+          children: undefined,
         });
         sessionStorage.setItem(key, JSON.stringify({ id: t.id, configuration: c }));
       }
@@ -429,8 +426,7 @@ export const dashboardStore = defineStore({
             d.layer === this.currentDashboard?.layer,
         );
         if (index > -1) {
-          const { t } = useI18n();
-          ElMessage.error(t("nameError"));
+          ElMessage.error("The dashboard name cannot be duplicate");
           return;
         }
         res = await graphql.query("addNewTemplate").params({ setting: { configuration: JSON.stringify(c) } });

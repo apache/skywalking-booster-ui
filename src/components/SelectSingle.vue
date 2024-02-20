@@ -85,7 +85,7 @@ limitations under the License. -->
   .bar-select {
     position: relative;
     justify-content: space-between;
-    border: 1px solid #ddd;
+    border: 1px solid var(--el-border-color);
     background: $theme-background;
     border-radius: 3px;
     color: $font-color;
@@ -97,8 +97,8 @@ limitations under the License. -->
       border-radius: 3px;
       margin: 3px;
       color: $active-color;
-      background-color: #fafafa;
-      border: 1px solid #e8e8e8;
+      background-color: var(--theme-background);
+      border: 1px solid var(--el-color-primary);
       text-align: center;
     }
   }
@@ -139,7 +139,7 @@ limitations under the License. -->
     left: 0;
     background-color: $theme-background;
     box-shadow: 0 1px 6px rgb(99 99 99 / 20%);
-    border: 1px solid #ddd;
+    border: 1px solid var(--el-border-color);
     width: 100%;
     border-radius: 0 0 3px 3px;
     border-right-width: 1px !important;
@@ -169,7 +169,7 @@ limitations under the License. -->
     }
 
     &:hover {
-      background-color: #f5f5f5;
+      background-color: var(--layout-background);
     }
   }
 </style>

@@ -26,6 +26,9 @@ limitations under the License. -->
             @change="changeService"
             class="selectors"
           />
+          <span class="ml-5 cp hierarchy-btn" v-if="dashboardStore.entity === 'Service'" @click="viewTopology">
+            <Icon size="small" iconName="hierarchy_topology" />
+          </span>
         </div>
         <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5 || key === 6">
           <span class="label">
@@ -41,6 +44,13 @@ limitations under the License. -->
             class="selectorPod"
             :isRemote="['EndpointRelation', 'Endpoint'].includes(dashboardStore.entity)"
           />
+          <span
+            class="ml-5 cp hierarchy-btn"
+            v-if="dashboardStore.entity === 'ServiceInstance'"
+            @click="showHierarchy = true"
+          >
+            <Icon size="small" iconName="hierarchy_topology" />
+          </span>
         </div>
         <div class="selectors-item" v-if="key === 5 || key === 6">
           <span class="label"> $Process </span>
@@ -126,10 +136,17 @@ limitations under the License. -->
       </div>
     </div>
   </div>
+  <el-dialog v-model="showHierarchy" :destroy-on-close="true" @closed="showHierarchy = false" width="640px">
+    <div class="hierarchy-related">
+      <instance-map v-if="dashboardStore.entity === 'ServiceInstance'" />
+      <hierarchy-map v-else />
+    </div>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
   import { reactive, ref, computed, watch } from "vue";
   import { useRoute } from "vue-router";
+  import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import {
@@ -146,17 +163,21 @@ limitations under the License. -->
     WidgetType,
   } from "@/views/dashboard/data";
   import { useSelectorStore } from "@/store/modules/selectors";
+  import { useTopologyStore } from "@/store/modules/topology";
   import { ElMessage } from "element-plus";
   import type { Option } from "@/types/app";
-  import { useI18n } from "vue-i18n";
+  import InstanceMap from "@/views/dashboard/related/topology/pod/InstanceMap.vue";
+  import HierarchyMap from "@/views/dashboard/related/topology/service/HierarchyMap.vue";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const selectorStore = useSelectorStore();
+  const topologyStore = useTopologyStore();
   const appStore = useAppStoreWithOut();
   const params = useRoute().params;
   const toolIcons = ref<{ name: string; content: string; id: WidgetType }[]>(AllTools);
   const loading = ref<boolean>(false);
+  const showHierarchy = ref<boolean>(false);
   const states = reactive<{
     destService: string;
     destPod: string;
@@ -637,6 +658,10 @@ limitations under the License. -->
     };
     fetchPods(EntityType[6].value, selectorStore.currentDestService.id, false, param);
   }
+  function viewTopology() {
+    showHierarchy.value = true;
+    topologyStore.setNode(null);
+  }
   watch(
     () => dashboardStore.entity,
     (newVal, oldVal) => {
@@ -704,5 +729,20 @@ limitations under the License. -->
 
   .relation {
     margin-top: 5px;
+  }
+
+  .hierarchy-btn {
+    display: inline-block;
+    padding: 0 2px 2px;
+    border: 1px solid #666;
+    border-radius: 4px;
+    text-align: center;
+    color: #aaa;
+  }
+
+  .hierarchy-related {
+    height: 600px;
+    width: 600px;
+    overflow: hidden;
   }
 </style>
