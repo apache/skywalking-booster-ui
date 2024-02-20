@@ -96,6 +96,8 @@ const titles = {
   mq_Kafka_desc: "通过OpenTelemetry的Prometheus接收器提供Kafka监控。",
   mq_pulsar: "Pulsar",
   mq_Pulsar_desc: "通过OpenTelemetry的Prometheus接收器提供Pulsar监控。",
+  mq_rocketmq: "RocketMQ",
+  mq_rocketmq_desc: "通过OpenTelemetry的Prometheus接收器提供RocketMQ监控。",
   // self observability
   self_observability: "自监控",
   self_observability_desc: "自观察性为运行SkyWalking生态系统中的组件和服务器提供了可观察性。",
