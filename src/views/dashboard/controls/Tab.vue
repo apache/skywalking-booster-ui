@@ -120,7 +120,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts">
-  import { ref, watch, defineComponent, toRefs } from "vue";
+  import { ref, watch, defineComponent, toRefs, onUnmounted } from "vue";
   import { useI18n } from "vue-i18n";
   import { useRoute } from "vue-router";
   import type { PropType } from "vue";
@@ -281,6 +281,10 @@ limitations under the License. -->
           needQuery.value = true;
         }
       }
+
+      onUnmounted(() => {
+        document.body.removeEventListener("click", handleClick, false);
+      });
 
       watch(
         () => (props.data.children || []).map((d: any) => d.expression),
