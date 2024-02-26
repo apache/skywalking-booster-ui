@@ -153,9 +153,14 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
     ElMessage.error(json.errors);
     return { source: {}, tips: [], typesOfMQE: [] };
   }
-  const data = expressionsSource(json);
+  try {
+    const data = expressionsSource(json);
 
-  return data;
+    return data;
+  } catch (error) {
+    console.error(error);
+    return { source: {}, tips: [], typesOfMQE: [] };
+  }
 }
 
 export async function useExpressionsQueryPodsMetrics(
