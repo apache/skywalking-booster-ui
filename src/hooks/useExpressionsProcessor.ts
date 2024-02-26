@@ -114,8 +114,7 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
       if (!obj.error) {
         if (type === ExpressionResultType.TIME_SERIES_VALUES) {
           if (results.length === 1) {
-            const label =
-              results[0] && results[0].metric && results[0].metric.labels[0] && results[0].metric.labels[0].value;
+            const label = results[0].metric && results[0].metric.labels[0] && results[0].metric.labels[0].value;
             source[c.label || label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
           } else {
             const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
@@ -132,10 +131,10 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
           }
         }
         if (type === ExpressionResultType.SINGLE_VALUE) {
-          source[c.label || name] = ((results[0] && results[0].values[0]) || {}).value;
+          source[c.label || name] = (results[0].values[0] || {}).value;
         }
         if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
-          source[name] = results[0] && results[0].values;
+          source[name] = results[0].values;
         }
       }
     }
@@ -154,9 +153,13 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
     ElMessage.error(json.errors);
     return { source: {}, tips: [], typesOfMQE: [] };
   }
-  const data = expressionsSource(json);
+  try {
+    const data = expressionsSource(json);
 
-  return data;
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function useExpressionsQueryPodsMetrics(
