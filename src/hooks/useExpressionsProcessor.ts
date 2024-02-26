@@ -159,6 +159,7 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
     return data;
   } catch (error) {
     console.error(error);
+    return { source: {}, tips: [], typesOfMQE: [] };
   }
 }
 
