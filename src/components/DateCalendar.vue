@@ -451,7 +451,7 @@ limitations under the License. -->
   }
 
   .calendar + .calendar {
-    border-left: solid 1px #eaeaea;
+    border-left: solid 1px var(--sw-border-color-light);
     margin-left: 5px;
     padding-left: 5px;
   }
@@ -464,7 +464,7 @@ limitations under the License. -->
   }
 
   .calendar-head a {
-    color: #666;
+    color: var(--sw-topology-color);
     cursor: pointer;
     display: inline-block;
     text-align: center;
@@ -568,7 +568,7 @@ limitations under the License. -->
 
   .calendar-hour {
     display: inline-block;
-    border: 1px solid #e6e5e5;
+    border: 1px solid var(--sw-border-color-light);
     color: #9e9e9e;
   }
 
