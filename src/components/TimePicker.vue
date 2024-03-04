@@ -447,7 +447,7 @@ limitations under the License. -->
       width: 100px;
       height: 100%;
       padding: 5px;
-      border-right: solid 1px #eaeaea;
+      border-right: solid 1px var(--sw-border-color-light);
     }
 
     &__shortcut {
@@ -457,7 +457,7 @@ limitations under the License. -->
       background-color: transparent;
       line-height: 34px;
       font-size: $font-size-smaller;
-      color: #666;
+      color: var(--sw-topology-color);
       text-align: left;
       outline: none;
       cursor: pointer;
@@ -532,6 +532,6 @@ limitations under the License. -->
   }
 
   .datepicker__buttons .datepicker__button-cancel {
-    background: #666;
+    background: var(--sw-topology-color);
   }
 </style>
