@@ -13,13 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div
-    ref="chart"
-    class="micro-topo-chart"
-    v-loading="loading"
-    element-loading-background="rgba(0, 0, 0, 0)"
-    :style="`height: ${height}px`"
-  >
+  <div ref="chart" class="micro-topo-chart" v-loading="loading" :style="`height: ${height}px`">
     <svg class="svg-topology" :width="width - 100" :height="height" @click="svgEvent">
       <g class="svg-graph" :transform="`translate(${diff[0]}, ${diff[1]})`">
         <g
@@ -224,6 +218,7 @@ limitations under the License. -->
     svg.value.call(zoom(d3, graph.value, diff.value));
   }
   async function freshNodes() {
+    loading.value = true;
     topologyStore.setNode(null);
     topologyStore.setLink(null);
     const resp = await getTopology();
