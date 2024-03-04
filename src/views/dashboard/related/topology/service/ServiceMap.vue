@@ -637,12 +637,6 @@ limitations under the License. -->
       if (!(oldVal[0] && newVal[0])) {
         return;
       }
-      if (oldVal[0].id === newVal[0].id && !oldVal[1]) {
-        return;
-      }
-      if (oldVal[0].id === newVal[0].id && oldVal[1].id === newVal[1].id) {
-        return;
-      }
       freshNodes();
       hierarchyRelated.value = false;
     },
