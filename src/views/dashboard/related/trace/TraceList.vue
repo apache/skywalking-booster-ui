@@ -13,7 +13,7 @@ limitations under the License. -->
 <template>
   <div class="trace-t flex-v">
     <div class="trace-t-tool flex-h">
-      <div class="title">
+      <div class="title ell">
         <span class="mr-5">Trace Segments</span>
         <el-popover
           :width="310"
@@ -144,6 +144,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .trace-t-tool {
+    overflow: hidden;
     background-color: rgb(196 200 225 / 20%);
     justify-content: space-between;
     border-bottom: 1px solid #c1c5ca41;
@@ -187,7 +188,7 @@ limitations under the License. -->
   }
 
   .list {
-    width: 280px;
+    width: 100%;
   }
 
   .trace-tr {

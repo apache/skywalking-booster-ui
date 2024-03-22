@@ -88,6 +88,7 @@ limitations under the License. -->
       return;
     }
     drag.onmousedown = (event: MouseEvent) => {
+      event.stopPropagation();
       const diffX = event.clientX;
       const copy = method.value;
       document.onmousemove = (documentEvent) => {

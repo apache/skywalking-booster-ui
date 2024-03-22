@@ -14,63 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.argument {
-  width: 150px;
-}
 
-.start-time {
-  width: 150px;
-}
+import mitt from "mitt";
 
-.exec-ms {
-  width: 80px;
-}
+const emitter = mitt();
 
-.exec-percent {
-  width: 100px;
-}
-
-.self {
-  width: 100px;
-}
-
-.api {
-  width: 120px;
-}
-
-.agent {
-  width: 150px;
-}
-
-.application {
-  width: 150px;
-  text-align: center;
-}
-
-.max-time {
-  width: 13%;
-}
-
-.method {
-  width: 28%;
-}
-
-.avg-time {
-  width: 13%;
-}
-
-.min-time {
-  width: 13%;
-}
-
-.count {
-  width: 12%;
-}
-
-.sum-time {
-  width: 13%;
-}
-
-.type {
-  width: 8%;
-}
+export default emitter;

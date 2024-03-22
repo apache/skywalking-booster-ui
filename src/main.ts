@@ -22,6 +22,7 @@ import i18n from "./locales";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import "./styles/index.ts";
 import "virtual:svg-icons-register";
+import mitt from "mitt";
 
 const app = createApp(App);
 const appStore = useAppStoreWithOut();
@@ -29,6 +30,7 @@ const appStore = useAppStoreWithOut();
 app.use(components);
 app.use(i18n);
 app.use(store);
+app.config.globalProperties.$mybus = mitt();
 mountApp();
 
 async function mountApp() {

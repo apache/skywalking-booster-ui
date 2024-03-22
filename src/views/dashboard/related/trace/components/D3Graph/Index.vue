@@ -30,6 +30,7 @@ limitations under the License. -->
   import SpanDetail from "./SpanDetail.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { debounce } from "@/utils/debounce";
+  import emitter from "@/utils/mitt";
 
   /* global defineProps, Nullable, defineExpose,Recordable*/
   const props = defineProps({
@@ -60,6 +61,9 @@ limitations under the License. -->
     }
     draw();
     loading.value = false;
+    emitter.on("trace_resize", () => {
+      draw();
+    });
     window.addEventListener("resize", debounceFunc);
   });
 
