@@ -188,6 +188,7 @@ limitations under the License. -->
   }
 
   .list {
+    min-width: 120px;
     width: 100%;
   }
 

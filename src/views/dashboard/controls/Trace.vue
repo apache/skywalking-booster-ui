@@ -47,7 +47,6 @@ limitations under the License. -->
   import TraceDetail from "../related/trace/Detail.vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import emitter from "@/utils/mitt";
 
   /* global defineProps */
   const props = defineProps({
@@ -64,7 +63,7 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const isLeft = ref<boolean>(true);
   const showIcon = ref<boolean>(false);
-  const currentWidth = ref<number>(291);
+  const currentWidth = ref<number>(280);
   const isDrag = ref<boolean>(false);
 
   function removeWidget() {
@@ -75,11 +74,8 @@ limitations under the License. -->
   }
   // The width of the trace-list is always determined by the direction of the arrow.
   function triggerArrow() {
-    currentWidth.value = isLeft.value ? 0 : 291;
+    currentWidth.value = isLeft.value ? 0 : 280;
     isLeft.value = !isLeft.value;
-    setTimeout(() => {
-      emitter.emit("trace_resize");
-    });
   }
   const mousedown = () => {
     isDrag.value = true;
@@ -92,7 +88,6 @@ limitations under the License. -->
     let leftWidth = document.querySelector(".trace-list")!.getBoundingClientRect();
     currentWidth.value = diffX - leftWidth.left;
     isLeft.value = currentWidth.value >= 120;
-    emitter.emit("trace_resize");
   };
   const mouseup = () => {
     isDrag.value = false;

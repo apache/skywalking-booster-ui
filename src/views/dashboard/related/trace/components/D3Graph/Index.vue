@@ -30,9 +30,8 @@ limitations under the License. -->
   import SpanDetail from "./SpanDetail.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { debounce } from "@/utils/debounce";
-  import emitter from "@/utils/mitt";
 
-  /* global defineProps, Nullable, defineExpose,Recordable*/
+  /* global defineProps, Nullable, defineExpose, Recordable */
   const props = defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
@@ -48,6 +47,7 @@ limitations under the License. -->
   const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
   const debounceFunc = debounce(draw, 500);
+  let observer: MutationObserver;
 
   defineExpose({
     tree,
@@ -61,9 +61,14 @@ limitations under the License. -->
     }
     draw();
     loading.value = false;
-    emitter.on("trace_resize", () => {
-      draw();
+
+    // monitor segment list width changes.
+    observer = new MutationObserver(() => {
+      d3.selectAll(".d3-tip").remove();
+      debounceFunc();
     });
+    observer.observe(document.querySelector(".trace-list")!, { attributes: true, attributeFilter: ["style"] });
+
     window.addEventListener("resize", debounceFunc);
   });
 
@@ -290,6 +295,7 @@ limitations under the License. -->
   onBeforeUnmount(() => {
     d3.selectAll(".d3-tip").remove();
     window.removeEventListener("resize", debounceFunc);
+    observer.disconnect();
   });
   watch(
     () => props.data,
