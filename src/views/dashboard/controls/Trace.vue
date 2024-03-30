@@ -25,11 +25,17 @@ limitations under the License. -->
       </div>
     </el-popover>
     <div class="header">
-      <Filter :needQuery="needQuery" :data="data" @get="getService" />
+      <Filter :needQuery="needQuery" :data="data" @get="getService" @search="popSegmentList" />
     </div>
     <div class="trace flex-h">
       <TraceList class="trace-list" :style="`width: ${currentWidth}px;`" />
-      <div @mouseover="showIcon = true" @mouseout="showIcon = false" @mouseup="showIcon = false">
+      <div
+        ref="dragger"
+        @mouseover="showIcon = true"
+        @mousedown="mousedown($event)"
+        @mouseout="showIcon = false"
+        @mouseup="mouseup"
+      >
         <div class="trace-line" />
         <span class="trace-icon" v-show="showIcon" @click="triggerArrow">
           <Icon class="trace-arrow" :icon-name="isLeft ? 'chevron-left' : 'chevron-right'" size="lg" />
@@ -47,6 +53,7 @@ limitations under the License. -->
   import TraceDetail from "../related/trace/Detail.vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import emitter from "@/utils/mitt";
 
   /* global defineProps */
   const props = defineProps({
@@ -58,12 +65,14 @@ limitations under the License. -->
     needQuery: { type: Boolean, default: true },
   });
   provide("options", props.data);
+  const defaultWidth = 280,
+    minArrowLeftWidth = 120;
   const serviceId = ref<string>("");
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const isLeft = ref<boolean>(true);
   const showIcon = ref<boolean>(false);
-  const currentWidth = ref<number>(280);
+  const currentWidth = ref<number>(defaultWidth);
   const isDrag = ref<boolean>(false);
 
   function removeWidget() {
@@ -72,14 +81,22 @@ limitations under the License. -->
   function getService(id: string) {
     serviceId.value = id;
   }
-  // The width of the trace-list is always determined by the direction of the arrow.
+  // When click the arrow, the width of the segment list is determined by the direction it points to.
   function triggerArrow() {
-    currentWidth.value = isLeft.value ? 0 : 280;
+    currentWidth.value = isLeft.value ? 0 : defaultWidth;
     isLeft.value = !isLeft.value;
+    setTimeout(() => {
+      emitter.emit("traceResize", "trace-arrow");
+    });
   }
-  const mousedown = () => {
-    isDrag.value = true;
-  };
+  function popSegmentList() {
+    if (currentWidth.value >= defaultWidth) {
+      return;
+    }
+    currentWidth.value = defaultWidth;
+    isLeft.value = true;
+    emitter.emit("traceResize", "trace-search");
+  }
   const mousemove = (event: MouseEvent) => {
     if (!isDrag.value) {
       return;
@@ -87,10 +104,17 @@ limitations under the License. -->
     const diffX = event.clientX;
     let leftWidth = document.querySelector(".trace-list")!.getBoundingClientRect();
     currentWidth.value = diffX - leftWidth.left;
-    isLeft.value = currentWidth.value >= 120;
+    isLeft.value = currentWidth.value >= minArrowLeftWidth;
+    emitter.emit("traceResize", "trace-move");
   };
   const mouseup = () => {
+    showIcon.value = false;
     isDrag.value = false;
+  };
+  const mousedown = (event: MouseEvent) => {
+    if ((event.target as HTMLDivElement)?.className === "trace-line") {
+      isDrag.value = true;
+    }
   };
   onMounted(() => {
     document.addEventListener("mousedown", mousedown);
@@ -101,6 +125,7 @@ limitations under the License. -->
     document.removeEventListener("mousedown", mousedown);
     document.removeEventListener("mousemove", mousemove);
     document.removeEventListener("mouseup", mouseup);
+    emitter.off("traceResize");
   });
 </script>
 <style lang="scss" scoped>

@@ -25,6 +25,7 @@
     "echarts": "^5.2.2",
     "element-plus": "^2.2.5",
     "lodash": "^4.17.21",
+    "mitt": "^3.0.1",
     "monaco-editor": "^0.34.1",
     "pinia": "^2.0.28",
     "vis-timeline": "^7.5.1",

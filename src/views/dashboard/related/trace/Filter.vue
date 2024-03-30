@@ -91,7 +91,7 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
 
   /*global defineProps, defineEmits, Recordable */
-  const emits = defineEmits(["get"]);
+  const emits = defineEmits(["get", "search"]);
   const props = defineProps({
     needQuery: { type: Boolean, default: true },
     data: {
@@ -227,6 +227,7 @@ limitations under the License. -->
     return param;
   }
   function searchTraces() {
+    emits("search");
     traceStore.setTraceCondition(setCondition());
     queryTraces();
   }
