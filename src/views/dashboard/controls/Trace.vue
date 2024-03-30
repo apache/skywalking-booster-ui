@@ -29,13 +29,7 @@ limitations under the License. -->
     </div>
     <div class="trace flex-h">
       <TraceList class="trace-list" :style="`width: ${currentWidth}px;`" />
-      <div
-        ref="dragger"
-        @mouseover="showIcon = true"
-        @mousedown="mousedown($event)"
-        @mouseout="showIcon = false"
-        @mouseup="mouseup"
-      >
+      <div @mouseover="showIcon = true" @mousedown="mousedown($event)" @mouseout="showIcon = false" @mouseup="mouseup">
         <div class="trace-line" />
         <span class="trace-icon" v-show="showIcon" @click="triggerArrow">
           <Icon class="trace-arrow" :icon-name="isLeft ? 'chevron-left' : 'chevron-right'" size="lg" />
