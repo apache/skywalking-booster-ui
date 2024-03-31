@@ -307,12 +307,8 @@ limitations under the License. -->
       }
       loading.value = true;
       changeTree();
-      tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
-      tree.value.draw(() => {
-        setTimeout(() => {
-          loading.value = false;
-        }, 200);
-      });
+      draw();
+      loading.value = false;
     },
   );
   watch(
