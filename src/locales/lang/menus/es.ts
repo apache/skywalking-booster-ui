@@ -30,6 +30,8 @@ const titles = {
   general_service_virtual_mq: "MQ virtual",
   general_service_virtual_mq_desc:
     "Observe the virtual message queue servers which are conjectured by language agents through various plugins.",
+  general_service_airflow: "Airflow",
+  general_service_airflow_desc: "Proporcionar monitoreo de Airflow a través del receptor Otlp de OpenTelemetry.",
   // Service Mesh
   service_mesh: "Malla de Servicios",
   service_mesh_desc:
