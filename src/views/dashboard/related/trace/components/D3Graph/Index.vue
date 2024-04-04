@@ -30,7 +30,7 @@ limitations under the License. -->
   import SpanDetail from "./SpanDetail.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { debounce } from "@/utils/debounce";
-  import emitter from "@/utils/mitt";
+  import { mutationObserver } from "@/utils/mutation";
 
   /* global defineProps, Nullable, defineExpose, Recordable */
   const props = defineProps({
@@ -63,10 +63,7 @@ limitations under the License. -->
     loading.value = false;
 
     // monitor segment list width changes.
-    emitter.on("traceResize", (eventTag: any) => {
-      if (eventTag == "trace-search") {
-        return;
-      }
+    mutationObserver.create("trigger-resize", () => {
       d3.selectAll(".d3-tip").remove();
       debounceFunc();
     });
@@ -297,7 +294,7 @@ limitations under the License. -->
   onBeforeUnmount(() => {
     d3.selectAll(".d3-tip").remove();
     window.removeEventListener("resize", debounceFunc);
-    emitter.off("traceResize");
+    mutationObserver.deleteObserve("trigger-resize");
   });
   watch(
     () => props.data,

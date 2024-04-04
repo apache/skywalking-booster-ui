@@ -29,9 +29,14 @@ limitations under the License. -->
     </div>
     <div class="trace flex-h">
       <TraceList class="trace-list" :style="`width: ${currentWidth}px;`" />
-      <div @mouseover="showIcon = true" @mousedown="mousedown($event)" @mouseout="showIcon = false" @mouseup="mouseup">
+      <div
+        @mouseover="showIcon = true"
+        @mouseout="showIcon = false"
+        @mousedown="mousedown($event)"
+        @mouseup="mouseup($event)"
+      >
         <div class="trace-line" />
-        <span class="trace-icon" v-show="showIcon" @click="triggerArrow">
+        <span class="trace-icon" v-show="showIcon" @mousedown="triggerArrow" @mouseup="stopObserve($event)">
           <Icon class="trace-arrow" :icon-name="isLeft ? 'chevron-left' : 'chevron-right'" size="lg" />
         </span>
       </div>
@@ -47,7 +52,7 @@ limitations under the License. -->
   import TraceDetail from "../related/trace/Detail.vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import emitter from "@/utils/mitt";
+  import { mutationObserver } from "@/utils/mutation";
 
   /* global defineProps */
   const props = defineProps({
@@ -79,9 +84,7 @@ limitations under the License. -->
   function triggerArrow() {
     currentWidth.value = isLeft.value ? 0 : defaultWidth;
     isLeft.value = !isLeft.value;
-    setTimeout(() => {
-      emitter.emit("traceResize", "trace-arrow");
-    });
+    startObserve();
   }
   function popSegmentList() {
     if (currentWidth.value >= defaultWidth) {
@@ -89,7 +92,16 @@ limitations under the License. -->
     }
     currentWidth.value = defaultWidth;
     isLeft.value = true;
-    emitter.emit("traceResize", "trace-search");
+  }
+  function startObserve() {
+    mutationObserver.observe("trigger-resize", document.querySelector(".trace-list")!, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+  }
+  function stopObserve(event: MouseEvent) {
+    mutationObserver.disconnect("trigger-resize");
+    event.stopPropagation();
   }
   const mousemove = (event: MouseEvent) => {
     if (!isDrag.value) {
@@ -99,15 +111,17 @@ limitations under the License. -->
     let leftWidth = document.querySelector(".trace-list")!.getBoundingClientRect();
     currentWidth.value = diffX - leftWidth.left;
     isLeft.value = currentWidth.value >= minArrowLeftWidth;
-    emitter.emit("traceResize", "trace-move");
   };
-  const mouseup = () => {
+  const mouseup = (event: MouseEvent) => {
     showIcon.value = false;
     isDrag.value = false;
+    stopObserve(event);
   };
   const mousedown = (event: MouseEvent) => {
     if ((event.target as HTMLDivElement)?.className === "trace-line") {
       isDrag.value = true;
+      startObserve();
+      event.stopPropagation();
     }
   };
   onMounted(() => {
@@ -119,7 +133,6 @@ limitations under the License. -->
     document.removeEventListener("mousedown", mousedown);
     document.removeEventListener("mousemove", mousemove);
     document.removeEventListener("mouseup", mouseup);
-    emitter.off("traceResize");
   });
 </script>
 <style lang="scss" scoped>
