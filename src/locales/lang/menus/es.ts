@@ -32,6 +32,11 @@ const titles = {
     "Observe the virtual message queue servers which are conjectured by language agents through various plugins.",
   general_service_airflow: "Airflow",
   general_service_airflow_desc: "Proporcionar monitoreo de Airflow a través del receptor Otlp de OpenTelemetry.",
+  // Workflow Scheduler
+  workflow_scheduler: "Flujo de trabajo",
+  workflow_scheduler_desc: "Proporcionar monitoreo para sistemas de programación de flujos de trabajo.",
+  workflow_scheduler_airflow: "Airflow",
+  workflow_scheduler_airflow_desc:  "Observando tareas a través de los datos de telemetría recopilados desde Apache Airflow.",
   // Service Mesh
   service_mesh: "Malla de Servicios",
   service_mesh_desc:
