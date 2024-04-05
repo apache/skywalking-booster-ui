@@ -34,8 +34,7 @@ const titles = {
   workflow_scheduler: "Flujo de trabajo",
   workflow_scheduler_desc: "Proporcionar monitoreo para sistemas de programación de flujos de trabajo.",
   workflow_scheduler_airflow: "Airflow",
-  workflow_scheduler_airflow_desc:
-    "Observando tareas a través de los datos de telemetría recopilados desde Apache Airflow.",
+  workflow_scheduler_airflow_desc: "Observando tareas a través de los datos de telemetría recopilados desde Apache Airflow.",
   // Service Mesh
   service_mesh: "Malla de Servicios",
   service_mesh_desc:
