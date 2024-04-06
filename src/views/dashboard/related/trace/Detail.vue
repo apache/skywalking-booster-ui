@@ -166,8 +166,8 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .trace-detail {
+    flex: 1;
     height: 100%;
-    width: 100%;
     overflow: hidden;
   }
 

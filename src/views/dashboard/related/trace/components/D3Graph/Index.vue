@@ -30,8 +30,9 @@ limitations under the License. -->
   import SpanDetail from "./SpanDetail.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { debounce } from "@/utils/debounce";
+  import { mutationObserver } from "@/utils/mutation";
 
-  /* global defineProps, Nullable, defineExpose,Recordable*/
+  /* global defineProps, Nullable, defineExpose, Recordable */
   const props = defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
@@ -60,6 +61,13 @@ limitations under the License. -->
     }
     draw();
     loading.value = false;
+
+    // monitor segment list width changes.
+    mutationObserver.create("trigger-resize", () => {
+      d3.selectAll(".d3-tip").remove();
+      debounceFunc();
+    });
+
     window.addEventListener("resize", debounceFunc);
   });
 
@@ -286,6 +294,7 @@ limitations under the License. -->
   onBeforeUnmount(() => {
     d3.selectAll(".d3-tip").remove();
     window.removeEventListener("resize", debounceFunc);
+    mutationObserver.deleteObserve("trigger-resize");
   });
   watch(
     () => props.data,
@@ -295,12 +304,8 @@ limitations under the License. -->
       }
       loading.value = true;
       changeTree();
-      tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
-      tree.value.draw(() => {
-        setTimeout(() => {
-          loading.value = false;
-        }, 200);
-      });
+      draw();
+      loading.value = false;
     },
   );
   watch(
