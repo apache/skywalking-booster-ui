@@ -30,6 +30,11 @@ const titles = {
   general_service_virtual_mq: "MQ virtual",
   general_service_virtual_mq_desc:
     "Observe the virtual message queue servers which are conjectured by language agents through various plugins.",
+  // Workflow Scheduler
+  workflow_scheduler: "Flujo de trabajo",
+  workflow_scheduler_desc: "Proporcionar monitoreo para sistemas de programación de flujos de trabajo.",
+  workflow_scheduler_airflow: "Airflow",
+  workflow_scheduler_airflow_desc: "Observando tareas a través de los datos de telemetría recopilados desde Apache Airflow.",
   // Service Mesh
   service_mesh: "Malla de Servicios",
   service_mesh_desc:
