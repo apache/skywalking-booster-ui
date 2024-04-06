@@ -26,6 +26,11 @@ const titles = {
   general_service_virtual_cache_desc: "观察语言代理通过各种插件推测的虚拟缓存服务器。",
   general_service_virtual_mq: "虚拟消息队列",
   general_service_virtual_mq_desc: "观察语言代理通过各种插件推测的虚拟消息队列服务器。",
+  // Workflow Scheduler
+  workflow_scheduler: "工作流调度",
+  workflow_scheduler_desc: "提供工作流调度系统监控。",
+  workflow_scheduler_airflow: "Airflow",
+  workflow_scheduler_airflow_desc: "通过从Apache Airflow收集的遥测数据观察任务。",
   // Service Mesh
   service_mesh: "服务网格",
   service_mesh_desc: "服务网格（Istio）通过分布式或微服务架构解决了开发人员和运营商面临的挑战。",
