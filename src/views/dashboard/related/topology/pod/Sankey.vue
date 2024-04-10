@@ -22,8 +22,6 @@ limitations under the License. -->
   import { useTopologyStore } from "@/store/modules/topology";
   import type { Node, Call } from "@/types/topology";
   import type { MetricConfigOpt } from "@/types/dashboard";
-  import { aggregation } from "@/hooks/useMetricsProcessor";
-  import { MetricModes } from "@/views/dashboard/data";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { Themes } from "@/constants/data";
 
@@ -85,14 +83,8 @@ limitations under the License. -->
     };
   }
   function linkTooltip(data: Call) {
-    const clientMetrics: string[] =
-      props.settings.metricMode === MetricModes.Expression
-        ? props.settings.linkClientExpressions
-        : props.settings.linkClientMetrics;
-    const serverMetrics: string[] =
-      props.settings.metricMode === MetricModes.Expression
-        ? props.settings.linkServerExpressions
-        : props.settings.linkServerMetrics;
+    const clientMetrics: string[] = props.settings.linkClientExpressions;
+    const serverMetrics: string[] = props.settings.linkServerExpressions;
     const linkServerMetricConfig: MetricConfigOpt[] = props.settings.linkServerMetricConfig || [];
     const linkClientMetricConfig: MetricConfigOpt[] = props.settings.linkClientMetricConfig || [];
 
@@ -102,8 +94,10 @@ limitations under the License. -->
         {};
       if (metric) {
         const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
-        const v = aggregation(metric.value, opt);
-        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
+
+        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${
+          opt.unit || ""
+        }</div>`;
       }
     });
     const htmlClient = clientMetrics.map((m, index) => {
@@ -111,8 +105,8 @@ limitations under the License. -->
       const metric =
         topologyStore.linkClientMetrics[m].values.find((val: { id: string; value: unknown }) => val.id === data.id) ||
         {};
-      const v = aggregation(metric.value, opt);
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
+
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${opt.unit || ""}</div>`;
     });
     const html = [
       `<div>${data.sourceObj.serviceName} -> ${data.targetObj.serviceName}</div>`,
@@ -124,17 +118,14 @@ limitations under the License. -->
   }
 
   function nodeTooltip(data: Node) {
-    const nodeMetrics: string[] =
-      props.settings.metricMode === MetricModes.Expression
-        ? props.settings.nodeExpressions
-        : props.settings.nodeMetrics;
+    const nodeMetrics: string[] = props.settings.nodeExpressions;
     const nodeMetricConfig = props.settings.nodeMetricConfig || [];
     const html = nodeMetrics.map((m, index) => {
       const metric =
         topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id) || {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-      const v = aggregation(metric.value, opt);
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
+
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${opt.unit || ""}</div>`;
     });
     return [` <div><span>name: </span>${data.serviceName}</div>`, ...html].join(" ");
   }

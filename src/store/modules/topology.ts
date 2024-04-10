@@ -23,7 +23,6 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { AxiosResponse } from "axios";
 import query from "@/graphql/fetch";
-import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
 import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
 import { ElMessage } from "element-plus";
 
@@ -446,15 +445,6 @@ export const topologyStore = defineStore({
 
       return { calls, nodes };
     },
-    async getNodeMetricValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
-      const res: AxiosResponse = await query(param);
-
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.setNodeMetricValue(res.data.data);
-      return res.data;
-    },
     async getNodeExpressionValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
       const res: AxiosResponse = await query(param);
 
@@ -463,38 +453,6 @@ export const topologyStore = defineStore({
       }
 
       return res.data;
-    },
-    async getLinkClientMetrics(linkClientMetrics: string[]) {
-      if (!linkClientMetrics.length) {
-        this.setLinkClientMetrics({});
-        return;
-      }
-      const idsC = this.calls.filter((i: Call) => i.detectPoints.includes("CLIENT")).map((b: Call) => b.id);
-      if (!idsC.length) {
-        return;
-      }
-      const param = await useQueryTopologyMetrics(linkClientMetrics, idsC);
-      const res = await this.getCallClientMetrics(param);
-
-      if (res.errors) {
-        ElMessage.error(res.errors);
-      }
-    },
-    async getLinkServerMetrics(linkServerMetrics: string[]) {
-      if (!linkServerMetrics.length) {
-        this.setLinkServerMetrics({});
-        return;
-      }
-      const idsS = this.calls.filter((i: Call) => i.detectPoints.includes("SERVER")).map((b: Call) => b.id);
-      if (!idsS.length) {
-        return;
-      }
-      const param = await useQueryTopologyMetrics(linkServerMetrics, idsS);
-      const res = await this.getCallServerMetrics(param);
-
-      if (res.errors) {
-        ElMessage.error(res.errors);
-      }
     },
     async getLinkExpressions(expressions: string[], type: string) {
       if (!expressions.length) {
@@ -519,22 +477,6 @@ export const topologyStore = defineStore({
         this.setLinkClientMetrics(metrics);
       }
     },
-    async queryNodeMetrics(nodeMetrics: string[]) {
-      if (!nodeMetrics.length) {
-        this.setNodeMetricValue({});
-        return;
-      }
-      const ids = this.nodes.map((d: Node) => d.id);
-      if (!ids.length) {
-        return;
-      }
-      const param = await useQueryTopologyMetrics(nodeMetrics, ids);
-      const res = await this.getNodeMetricValue(param);
-
-      if (res.errors) {
-        ElMessage.error(res.errors);
-      }
-    },
     async queryNodeExpressions(expressions: string[]) {
       if (!expressions.length) {
         this.setNodeMetricValue({});
@@ -556,44 +498,6 @@ export const topologyStore = defineStore({
       }
       const metrics = handleExpressionValues(res.data);
       this.setNodeMetricValue(metrics);
-    },
-    async getLegendMetrics(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
-      const res: AxiosResponse = await query(param);
-
-      if (res.data.errors) {
-        return res.data;
-      }
-      const data = res.data.data;
-      const metrics = Object.keys(data);
-      this.nodes = this.nodes.map((d: Node & Recordable) => {
-        for (const m of metrics) {
-          for (const val of data[m].values) {
-            if (d.id === val.id) {
-              d[m] = val.value;
-            }
-          }
-        }
-        return d;
-      });
-      return res.data;
-    },
-    async getCallServerMetrics(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
-      const res: AxiosResponse = await query(param);
-
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.setLinkServerMetrics(res.data.data);
-      return res.data;
-    },
-    async getCallClientMetrics(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
-      const res: AxiosResponse = await query(param);
-
-      if (res.data.errors) {
-        return res.data;
-      }
-      this.setLinkClientMetrics(res.data.data);
-      return res.data;
     },
     async getHierarchyServiceTopology() {
       const dashboardStore = useDashboardStore();

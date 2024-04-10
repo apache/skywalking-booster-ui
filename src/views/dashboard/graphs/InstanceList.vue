@@ -39,8 +39,7 @@ limitations under the License. -->
           :config="{
             ...config,
             metricConfig,
-            metricTypes,
-            metricMode,
+            typesOfMQE,
           }"
           v-if="colMetrics.length"
         />
@@ -85,9 +84,8 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { InstanceListConfig } from "@/types/dashboard";
   import type { Instance } from "@/types/selector";
-  import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
   import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
-  import { EntityType, MetricModes } from "../data";
+  import { EntityType } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
@@ -100,9 +98,7 @@ limitations under the License. -->
         InstanceListConfig & {
           i: string;
           metrics: string[];
-          metricTypes: string[];
           isEdit: boolean;
-          metricMode: string;
           expressions: string[];
           typesOfMQE: string[];
           subExpressions: string[];
@@ -114,7 +110,7 @@ limitations under the License. -->
         fontSize: 12,
         i: "",
         metrics: [],
-        metricTypes: [],
+        typesOfMQE: [],
       }),
     },
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
@@ -131,9 +127,9 @@ limitations under the License. -->
   const colMetrics = ref<string[]>([]);
   const colSubMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
-  const metricTypes = ref<string[]>(props.config.metricTypes || []);
   const pods = ref<Instance[]>([]); // all instances
-  const metricMode = ref<string>(props.config.metricMode);
+  const typesOfMQE = ref<string[]>(props.config.typesOfMQE || []);
+
   if (props.needQuery) {
     queryInstance();
   }
@@ -169,36 +165,7 @@ limitations under the License. -->
         attributes: d.attributes,
       };
     });
-    if (props.config.metricMode === MetricModes.Expression) {
-      queryInstanceExpressions(currentInstances);
-      return;
-    }
-    const metrics = props.config.metrics || [];
-    const types = props.config.metricTypes || [];
-
-    if (metrics.length && metrics[0] && types.length && types[0]) {
-      const params = await useQueryPodsMetrics(currentInstances, props.config, EntityType[3].value);
-      const json = await dashboardStore.fetchMetricValue(params);
-
-      if (json.errors) {
-        ElMessage.error(json.errors);
-        return;
-      }
-      const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(currentInstances, json, {
-        ...props.config,
-        metricConfig: metricConfig.value,
-      });
-      instances.value = data;
-      colMetrics.value = names;
-      metricTypes.value = metricTypesArr;
-      metricConfig.value = metricConfigArr;
-
-      return;
-    }
-    instances.value = currentInstances;
-    colMetrics.value = [];
-    metricTypes.value = [];
-    metricConfig.value = [];
+    queryInstanceExpressions(currentInstances);
   }
 
   async function queryInstanceExpressions(currentInstances: Instance[]) {
@@ -214,7 +181,7 @@ limitations under the License. -->
       instances.value = params.data;
       colMetrics.value = params.names;
       colSubMetrics.value = params.subNames;
-      metricTypes.value = params.metricTypesArr;
+      typesOfMQE.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
       emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
 
@@ -223,7 +190,7 @@ limitations under the License. -->
     instances.value = currentInstances;
     colSubMetrics.value = [];
     colMetrics.value = [];
-    metricTypes.value = [];
+    typesOfMQE.value = [];
     metricConfig.value = [];
     emit("expressionTips", [], []);
   }
@@ -262,19 +229,15 @@ limitations under the License. -->
 
   watch(
     () => [
-      ...(props.config.metricTypes || []),
-      ...(props.config.metrics || []),
       ...(props.config.metricConfig || []),
       ...(props.config.expressions || []),
       ...(props.config.subExpressions || []),
-      props.config.metricMode,
     ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;
       }
       metricConfig.value = props.config.metricConfig;
-      metricMode.value = props.config.metricMode;
       queryInstanceMetrics(instances.value);
     },
   );

@@ -32,7 +32,6 @@ export interface LayoutConfig {
   h: number;
   i: string;
   type: string;
-  metricMode?: string;
   widget?: WidgetConfig;
   graph?: GraphConfig;
   metrics?: string[];

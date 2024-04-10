@@ -34,29 +34,6 @@ export const ChartTypes = [
   { label: "Endpoint List", value: "EndpointList" },
   { label: "Instance List", value: "InstanceList" },
 ];
-export const MetricChartType: any = {
-  readMetricsValue: [{ label: "Card", value: "Card" }],
-  readMetricsValues: [
-    { label: "Bar", value: "Bar" },
-    { label: "Line", value: "Line" },
-    { label: "Area", value: "Area" },
-  ],
-  sortMetrics: [{ label: "Top List", value: "TopList" }],
-  readLabeledMetricsValues: [{ label: "Line", value: "Line" }],
-  readHeatMap: [{ label: "Heat Map", value: "HeatMap" }],
-  readSampledRecords: [{ label: "Top List", value: "TopList" }],
-  readRecords: [{ label: "Top List", value: "TopList" }],
-};
-export enum ProtocolTypes {
-  ReadRecords = "readRecords",
-  ReadSampledRecords = "readSampledRecords",
-  SortMetrics = "sortMetrics",
-  ReadLabeledMetricsValues = "readLabeledMetricsValues",
-  ReadHeatMap = "readHeatMap",
-  ReadMetricsValues = "readMetricsValues",
-  ReadMetricsValue = "readMetricsValue",
-}
-
 export enum ExpressionResultType {
   UNKNOWN = "UNKNOWN",
   SINGLE_VALUE = "SINGLE_VALUE",
@@ -123,34 +100,6 @@ export const DefaultGraphConfig: { [key: string]: any } = {
   HeatMap: {
     type: "HeatMap",
   },
-};
-
-export enum MetricsType {
-  UNKNOWN = "UNKNOWN",
-  REGULAR_VALUE = "REGULAR_VALUE",
-  LABELED_VALUE = "LABELED_VALUE",
-  HEATMAP = "HEATMAP",
-  SAMPLED_RECORD = "SAMPLED_RECORD",
-}
-export const MetricTypes: {
-  [key: string]: Array<{ label: string; value: string }>;
-} = {
-  REGULAR_VALUE: [
-    { label: "read all values in the duration", value: "readMetricsValues" },
-    {
-      label: "read the single value in the duration",
-      value: "readMetricsValue",
-    },
-    { label: "get sorted top N values", value: "sortMetrics" },
-  ],
-  LABELED_VALUE: [
-    {
-      label: "read all values of labels in the duration",
-      value: "readLabeledMetricsValues",
-    },
-  ],
-  HEATMAP: [{ label: "read heatmap values in the duration", value: "readHeatMap" }],
-  SAMPLED_RECORD: [{ label: "get sorted topN values", value: "readRecords" }],
 };
 
 export enum MetricCatalog {
@@ -293,19 +242,6 @@ export const ScopeType = [
   { value: "Endpoint", label: "Endpoint", key: 3 },
   { value: "ServiceInstance", label: "Service Instance", key: 3 },
 ];
-export const LegendConditions = [
-  { label: "&&", value: "and" },
-  { label: "||", value: "or" },
-];
-export const MetricConditions = [
-  { label: ">", value: ">" },
-  { label: "<", value: "<" },
-];
-export enum LegendOpt {
-  NAME = "name",
-  VALUE = "value",
-  CONDITION = "condition",
-}
 export const DepthList = [1, 2, 3, 4, 5].map((item: number) => ({
   value: item,
   label: String(item),
@@ -330,24 +266,6 @@ export const TextColors: { [key: string]: string } = {
   purple: "#bf99f8",
 };
 
-export const CalculationOpts = [
-  { label: "Percentage", value: "percentage" },
-  { label: "Apdex", value: "apdex" },
-  { label: "Avg-preview", value: "average" },
-  { label: "Percentage + Avg-preview", value: "percentageAvg" },
-  { label: "Apdex + Avg-preview", value: "apdexAvg" },
-  { label: "Byte to KB", value: "byteToKB" },
-  { label: "Byte to MB", value: "byteToMB" },
-  { label: "Byte to GB", value: "byteToGB" },
-  {
-    label: "Milliseconds to YYYY-MM-DD HH:mm:ss",
-    value: "convertMilliseconds",
-  },
-  { label: "Seconds to YYYY-MM-DD HH:mm:ss", value: "convertSeconds" },
-  { label: "Milliseconds to seconds", value: "msTos" },
-  { label: "Seconds to days", value: "secondToDay" },
-  { label: "Nanoseconds to milliseconds", value: "nanosecondToMillisecond" },
-];
 export const RefIdTypes = [
   { label: "Trace ID", value: "traceId" },
   { label: "None", value: "none" },
@@ -358,10 +276,6 @@ export const RefreshOptions = [
   { label: "Last 7 days", value: "7", step: "DAY" },
 ];
 
-export enum MetricModes {
-  Expression = "Expression",
-  General = "General",
-}
 export enum CallTypes {
   Server = "SERVER",
   Client = "CLIENT",

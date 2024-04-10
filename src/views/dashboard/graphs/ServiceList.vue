@@ -51,8 +51,7 @@ limitations under the License. -->
           :config="{
             ...config,
             metricConfig,
-            metricTypes,
-            metricMode,
+            typesOfMQE,
           }"
           v-if="colMetrics.length"
         />
@@ -78,9 +77,8 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import type { Service } from "@/types/selector";
-  import { useQueryPodsMetrics, usePodsSource } from "@/hooks/useMetricsProcessor";
   import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
-  import { EntityType, MetricModes } from "../data";
+  import { EntityType } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
@@ -95,12 +93,9 @@ limitations under the License. -->
       type: Object as PropType<
         ServiceListConfig & {
           i: string;
-          metrics: string[];
-          metricTypes: string[];
           isEdit: boolean;
           names: string[];
           metricConfig: MetricConfigOpt[];
-          metricMode: string;
           expressions: string[];
           typesOfMQE: string[];
           subExpressions: string[];
@@ -125,8 +120,7 @@ limitations under the License. -->
   const groups = ref<any>({});
   const sortServices = ref<(Service & { merge: boolean })[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
-  const metricTypes = ref<string[]>(props.config.metricTypes || []);
-  const metricMode = ref<string>(props.config.metricMode);
+  const typesOfMQE = ref<string[]>(props.config.typesOfMQE || []);
 
   queryServices();
 
@@ -211,43 +205,7 @@ limitations under the License. -->
         shortName: d.shortName,
       };
     });
-    if (props.config.metricMode === MetricModes.Expression) {
-      queryServiceExpressions(currentServices);
-      return;
-    }
-    const metrics = props.config.metrics || [];
-    const types = props.config.metricTypes || [];
-
-    if (metrics.length && metrics[0] && types.length && types[0]) {
-      const params = await useQueryPodsMetrics(
-        currentServices,
-        { ...props.config, metricConfig: metricConfig.value || [] },
-        EntityType[0].value,
-      );
-      const json = await dashboardStore.fetchMetricValue(params);
-
-      if (json.errors) {
-        ElMessage.error(json.errors);
-        return;
-      }
-
-      const { data, names, metricConfigArr, metricTypesArr } = usePodsSource(currentServices, json, {
-        ...props.config,
-        metricConfig: metricConfig.value || [],
-      });
-
-      services.value = data;
-      colMetrics.value = names;
-      metricTypes.value = metricTypesArr;
-      metricConfig.value = metricConfigArr;
-
-      return;
-    }
-    services.value = currentServices;
-    colMetrics.value = [];
-    colMetrics.value = [];
-    metricTypes.value = [];
-    metricConfig.value = [];
+    queryServiceExpressions(currentServices);
   }
   async function queryServiceExpressions(currentServices: Service[]) {
     const expressions = props.config.expressions || [];
@@ -262,16 +220,16 @@ limitations under the License. -->
       services.value = params.data;
       colMetrics.value = params.names;
       colSubMetrics.value = params.subNames;
-      metricTypes.value = params.metricTypesArr;
       metricConfig.value = params.metricConfigArr;
+      typesOfMQE.value = params.metricTypesArr;
       emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
       return;
     }
     services.value = currentServices;
     colMetrics.value = [];
     colSubMetrics.value = [];
-    metricTypes.value = [];
     metricConfig.value = [];
+    typesOfMQE.value = [];
     emit("expressionTips", [], []);
   }
   function objectSpanMethod(param: any): any {
@@ -306,19 +264,15 @@ limitations under the License. -->
 
   watch(
     () => [
-      ...(props.config.metricTypes || []),
-      ...(props.config.metrics || []),
       ...(props.config.metricConfig || []),
       ...(props.config.expressions || []),
       ...(props.config.subExpressions || []),
-      props.config.metricMode,
     ],
     (data, old) => {
       if (JSON.stringify(data) === JSON.stringify(old)) {
         return;
       }
       metricConfig.value = props.config.metricConfig;
-      metricMode.value = props.config.metricMode;
       queryServiceMetrics(services.value);
     },
   );

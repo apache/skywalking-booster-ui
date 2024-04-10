@@ -41,7 +41,6 @@ limitations under the License. -->
   import router from "@/router";
   import { ElMessage } from "element-plus";
   import type { MetricConfigOpt } from "@/types/dashboard";
-  import { aggregation } from "@/hooks/useMetricsProcessor";
   import getDashboard from "@/hooks/useDashboardsSession";
   import Graph from "../components/Graph.vue";
 
@@ -129,8 +128,8 @@ limitations under the License. -->
           (val: { id: string; value: unknown }) => val.id === data.id,
         ) || {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-      const v = aggregation(metric.value, opt);
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
+
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${opt.unit || ""}</div>`;
     });
     const tipHtml = [
       `<div class="mb-5"><span class="grey">name: </span>${data.name}</div><div class="mb-5"><span class="grey">layer: </span>${data.layer}</div>`,

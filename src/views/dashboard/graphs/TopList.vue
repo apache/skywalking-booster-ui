@@ -64,8 +64,7 @@ limitations under the License. -->
   import copy from "@/utils/copy";
   import { TextColors } from "@/views/dashboard/data";
   import Trace from "@/views/dashboard/related/trace/Index.vue";
-  import { QueryOrders, Status, RefIdTypes, ProtocolTypes, ExpressionResultType } from "../data";
-  import { WidgetType } from "@/views/dashboard/data";
+  import { WidgetType, QueryOrders, Status, RefIdTypes, ExpressionResultType } from "@/views/dashboard/data";
 
   /*global defineProps */
   const props = defineProps({
@@ -77,10 +76,8 @@ limitations under the License. -->
     },
     config: {
       type: Object as PropType<{
-        metricMode: string;
         color: string;
-        metrics: string[];
-        metricTypes: string[];
+        expressions: string[];
         typesOfMQE: string[];
         relatedTrace: any;
       }>,
@@ -116,11 +113,8 @@ limitations under the License. -->
       queryOrder: QueryOrders[1].value,
       status: Status[2].value,
       id: item.refId,
-      metricValue: [{ label: props.config.metrics[0], data: item.value, value: item.name }],
-      isReadRecords:
-        props.config.typesOfMQE.includes(ExpressionResultType.RECORD_LIST) ||
-        props.config.metricTypes.includes(ProtocolTypes.ReadRecords) ||
-        undefined,
+      metricValue: [{ label: props.config.expressions[0], data: item.value, value: item.name }],
+      isReadRecords: props.config.typesOfMQE.includes(ExpressionResultType.RECORD_LIST) || undefined,
     };
     traceOptions.value = {
       ...traceOptions.value,

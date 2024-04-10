@@ -144,7 +144,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useTopologyStore } from "@/store/modules/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { EntityType, DepthList, MetricModes, CallTypes } from "@/views/dashboard/data";
+  import { EntityType, DepthList, CallTypes } from "@/views/dashboard/data";
   import router from "@/router";
   import { ElMessage } from "element-plus";
   import Settings from "../config/Settings.vue";
@@ -154,9 +154,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
-  import { aggregation } from "@/hooks/useMetricsProcessor";
   import icons from "@/assets/img/icons";
-  import { useQueryTopologyMetrics } from "@/hooks/useMetricsProcessor";
   import { layout, computeLevels, changeNode } from "../components/utils/layout";
   import zoom from "@/views/dashboard/related/components/utils/zoom";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
@@ -231,15 +229,9 @@ limitations under the License. -->
   }
 
   async function update() {
-    if (settings.value.metricMode === MetricModes.Expression) {
-      topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
-      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || [], CallTypes.Client);
-      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || [], CallTypes.Server);
-    } else {
-      topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
-      topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-      topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-    }
+    topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
+    topologyStore.getLinkExpressions(settings.value.linkClientExpressions || [], CallTypes.Client);
+    topologyStore.getLinkExpressions(settings.value.linkServerExpressions || [], CallTypes.Server);
 
     window.addEventListener("resize", resize);
     await initLegendMetrics();
@@ -288,67 +280,33 @@ limitations under the License. -->
     if (!topologyStore.nodes.length) {
       return;
     }
-    if (settings.value.metricMode === MetricModes.Expression) {
-      const expression = props.config.legendMQE && props.config.legendMQE.expression;
-      if (!expression) {
-        return;
-      }
-      const { getExpressionQuery } = useQueryTopologyExpressionsProcessor([expression], topologyStore.nodes);
-      const param = getExpressionQuery();
-      const res = await topologyStore.getNodeExpressionValue(param);
-      if (res.errors) {
-        ElMessage.error(res.errors);
-      } else {
-        topologyStore.setLegendValues([expression], res.data);
-      }
+
+    const expression = props.config.legendMQE && props.config.legendMQE.expression;
+    if (!expression) {
+      return;
+    }
+    const { getExpressionQuery } = useQueryTopologyExpressionsProcessor([expression], topologyStore.nodes);
+    const param = getExpressionQuery();
+    const res = await topologyStore.getNodeExpressionValue(param);
+    if (res.errors) {
+      ElMessage.error(res.errors);
     } else {
-      const names = props.config.legend.map((d: any) => d.name);
-      if (!names.length) {
-        return;
-      }
-      const ids = topologyStore.nodes.map((d: Node) => d.id);
-      if (ids.length) {
-        const param = await useQueryTopologyMetrics(names, ids);
-        const res = await topologyStore.getLegendMetrics(param);
-        if (res.errors) {
-          ElMessage.error(res.errors);
-        }
-      }
+      topologyStore.setLegendValues([expression], res.data);
     }
   }
 
   function getNodeStatus(d: any) {
-    const { legend, legendMQE } = settings.value;
-    if (settings.value.metricMode === MetricModes.Expression) {
-      if (!legendMQE) {
-        return icons.CUBE;
-      }
-      if (!legendMQE.expression) {
-        return icons.CUBE;
-      }
-      return Number(d[legendMQE.expression]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
-    }
-    if (!legend) {
+    const { legendMQE } = settings.value;
+    if (!legendMQE) {
       return icons.CUBE;
     }
-    if (!legend.length) {
+    if (!legendMQE.expression) {
       return icons.CUBE;
     }
-    let c = true;
-    for (const l of legend) {
-      if (l.condition === "<") {
-        c = c && d[l.name] < Number(l.value);
-      } else {
-        c = c && d[l.name] > Number(l.value);
-      }
-    }
-    return c && d.isReal ? icons.CUBEERROR : icons.CUBE;
+    return Number(d[legendMQE.expression]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
   function showNodeTip(event: MouseEvent, data: Node) {
-    const nodeMetrics: string[] =
-      (settings.value.metricMode === MetricModes.Expression
-        ? settings.value.nodeExpressions
-        : settings.value.nodeMetrics) || [];
+    const nodeMetrics: string[] = settings.value.nodeExpressions || [];
     const nodeMetricConfig = settings.value.nodeMetricConfig || [];
     const html = nodeMetrics.map((m, index) => {
       const metric =
@@ -356,8 +314,9 @@ limitations under the License. -->
           topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id)) ||
         {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-      const v = aggregation(metric.value, opt);
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || "unknown"}</div>`;
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${
+        opt.unit || "unknown"
+      }</div>`;
     });
     const tipHtml = [
       `<div class="mb-5"><span class="grey">name: </span>${
@@ -373,24 +332,19 @@ limitations under the License. -->
       .html(tipHtml);
   }
   function showLinkTip(event: MouseEvent, data: Call) {
-    const linkClientMetrics: string[] =
-      settings.value.metricMode === MetricModes.Expression
-        ? settings.value.linkClientExpressions
-        : settings.value.linkClientMetrics || [];
+    const linkClientMetrics: string[] = settings.value.linkClientExpressions || [];
     const linkServerMetricConfig: MetricConfigOpt[] = settings.value.linkServerMetricConfig || [];
     const linkClientMetricConfig: MetricConfigOpt[] = settings.value.linkClientMetricConfig || [];
-    const linkServerMetrics: string[] =
-      settings.value.metricMode === MetricModes.Expression
-        ? settings.value.linkServerExpressions
-        : settings.value.linkServerMetrics || [];
+    const linkServerMetrics: string[] = settings.value.linkServerExpressions || [];
     const htmlServer = linkServerMetrics.map((m, index) => {
       const metric = topologyStore.linkServerMetrics[m].values.find(
         (val: { id: string; value: unknown }) => val.id === data.id,
       );
       if (metric) {
         const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
-        const v = aggregation(metric.value, opt);
-        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
+        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${
+          opt.unit || ""
+        }</div>`;
       }
     });
     const htmlClient = linkClientMetrics.map((m: string, index: number) => {
@@ -399,8 +353,9 @@ limitations under the License. -->
         (val: { id: string; value: unknown }) => val.id === data.id,
       );
       if (metric) {
-        const v = aggregation(metric.value, opt);
-        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${v} ${opt.unit || ""}</div>`;
+        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${
+          opt.unit || ""
+        }</div>`;
       }
     });
     const html = [

@@ -28,7 +28,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-if="hasLabel || isExpression">
+    <div class="item mb-10" v-if="hasLabel">
       <span class="label">{{ t("labels") }}</span>
       <el-input
         class="input"
@@ -42,7 +42,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-if="isList && isExpression">
+    <div class="item mb-10" v-if="isList">
       <span class="label">{{ t("detailLabel") }}</span>
       <el-input
         class="input"
@@ -54,30 +54,6 @@ limitations under the License. -->
             detailLabel: encodeURIComponent(currentMetric.detailLabel || ''),
           })
         "
-      />
-    </div>
-    <div class="item mb-10" v-if="[ProtocolTypes.ReadLabeledMetricsValues].includes(metricType) && !isExpression">
-      <span class="label">{{ t("labelsIndex") }}</span>
-      <el-input
-        class="input"
-        v-model="currentMetric.labelsIndex"
-        size="small"
-        placeholder="auto"
-        @change="
-          updateConfig(index, {
-            labelsIndex: encodeURIComponent(currentMetric.labelsIndex || ''),
-          })
-        "
-      />
-    </div>
-    <div class="item mb-10" v-show="!isExpression">
-      <span class="label">{{ t("aggregation") }}</span>
-      <SelectSingle
-        :value="currentMetric.calculation"
-        :options="CalculationOpts"
-        @change="changeConfigs(index, { calculation: $event })"
-        class="selectors"
-        :clearable="true"
       />
     </div>
     <div class="item mb-10" v-show="isTopn">
@@ -108,10 +84,9 @@ limitations under the License. -->
   import { ref, watch, computed } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import { SortOrder, CalculationOpts, MetricModes } from "../../../data";
+  import { SortOrder, ExpressionResultType, ListChartTypes } from "@/views/dashboard/data";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { MetricConfigOpt } from "@/types/dashboard";
-  import { ListChartTypes, ProtocolTypes } from "../../../data";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
@@ -124,30 +99,21 @@ limitations under the License. -->
   const { t } = useI18n();
   const emit = defineEmits(["update"]);
   const dashboardStore = useDashboardStore();
-  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression);
   const currentMetric = ref<MetricConfigOpt>({
     ...props.currentMetricConfig,
     topN: props.currentMetricConfig.topN || 10,
   });
-  const metricTypes = computed(
-    () => (isExpression.value ? dashboardStore.selectedGrid.typesOfMQE : dashboardStore.selectedGrid.metricTypes) || [],
-  );
-  const metricType = computed(() => metricTypes.value[props.index]);
+  const metricTypes = computed(() => dashboardStore.selectedGrid.typesOfMQE || []);
   const hasLabel = computed(() => {
     const graph = dashboardStore.selectedGrid.graph || {};
-    return (
-      ListChartTypes.includes(graph.type) ||
-      [ProtocolTypes.ReadLabeledMetricsValues, ProtocolTypes.ReadMetricsValues].includes(metricType.value)
-    );
+    return ListChartTypes.includes(graph.type);
   });
   const isList = computed(() => {
     const graph = dashboardStore.selectedGrid.graph || {};
     return ListChartTypes.includes(graph.type);
   });
   const isTopn = computed(() =>
-    [ProtocolTypes.SortMetrics, ProtocolTypes.ReadSampledRecords, ProtocolTypes.ReadRecords].includes(
-      metricTypes.value[props.index],
-    ),
+    [ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST].includes(metricTypes.value[props.index]),
   );
 
   function updateConfig(index: number, param: { [key: string]: string }) {
@@ -170,7 +136,6 @@ limitations under the License. -->
   watch(
     () => props.currentMetricConfig,
     () => {
-      isExpression.value = dashboardStore.selectedGrid.metricMode === MetricModes.Expression;
       currentMetric.value = {
         ...props.currentMetricConfig,
         topN: Number(props.currentMetricConfig.topN) || 10,

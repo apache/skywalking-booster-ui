@@ -19,7 +19,7 @@ limitations under the License. -->
         {{ t("expressions") }}
       </span>
       <span class="label" v-else>
-        {{ t(dashboardStore.selectedGrid.metricMode === MetricModes.General ? "metrics" : "expressions") }}
+        {{ t("expressions") }}
       </span>
       <SelectSingle :value="currentMetric" :options="metricList" @change="changeMetric" class="selectors" />
     </div>
@@ -43,33 +43,19 @@ limitations under the License. -->
         @change="changeConfigs({ label: currentConfig.label })"
       />
     </div>
-    <div
-      class="item mb-10"
-      v-if="type !== 'hierarchyServicesConfig' && dashboardStore.selectedGrid.metricMode === MetricModes.General"
-    >
-      <span class="label">{{ t("aggregation") }}</span>
-      <SelectSingle
-        :value="currentConfig.calculation"
-        :options="CalculationOpts"
-        @change="changeConfigs({ calculation: $event })"
-        class="selectors"
-        :clearable="true"
-      />
-    </div>
   </div>
 </template>
 <script lang="ts" setup>
   import { ref, computed, watch } from "vue";
   import { useI18n } from "vue-i18n";
   import type { Option } from "@/types/app";
-  import { CalculationOpts, MetricModes, EntityType, ConfigFieldTypes } from "@/views/dashboard/data";
+  import { EntityType, ConfigFieldTypes } from "@/views/dashboard/data";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
     type: { type: String, default: "" },
-    isExpression: { type: Boolean, default: true },
     layer: { type: String, default: "" },
     expressions: { type: Array<string>, default: () => [] },
     entity: { type: String, default: EntityType[0].value },
@@ -82,23 +68,16 @@ limitations under the License. -->
       return props.expressions || [];
     }
     let metrics: string[] = [];
-    const {
-      linkServerExpressions,
-      linkServerMetrics,
-      linkClientExpressions,
-      linkClientMetrics,
-      nodeExpressions,
-      nodeMetrics,
-    } = dashboardStore.selectedGrid;
+    const { linkServerExpressions, linkClientExpressions, nodeExpressions } = dashboardStore.selectedGrid;
     switch (props.type) {
       case "linkServerMetricConfig":
-        metrics = props.isExpression ? linkServerExpressions : linkServerMetrics;
+        metrics = linkServerExpressions;
         break;
       case "linkClientMetricConfig":
-        metrics = props.isExpression ? linkClientExpressions : linkClientMetrics;
+        metrics = linkClientExpressions;
         break;
       case "nodeMetricConfig":
-        metrics = props.isExpression ? nodeExpressions : nodeMetrics;
+        metrics = nodeExpressions;
         break;
     }
     return metrics || [];
