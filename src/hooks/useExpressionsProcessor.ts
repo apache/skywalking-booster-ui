@@ -119,7 +119,9 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
           } else {
             for (const item of results) {
               const values = item.values.map((d: { value: unknown }) => d.value) || [];
-              const label = item.metric.labels.map((d: any) => `${d.key}=${d.value}`).join(",");
+              const label = item.metric.labels
+                .map((d: { key: string; value: string }) => `${d.key}=${d.value}`)
+                .join(",");
 
               source[label] = values;
             }
@@ -127,7 +129,9 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
         }
         if (type === ExpressionResultType.SINGLE_VALUE) {
           for (const item of results) {
-            const label = item.metric.labels.map((d: any) => `${d.key}=${d.value}`).join(",");
+            const label = item.metric.labels
+              .map((d: { key: string; value: string }) => `${d.key}=${d.value}`)
+              .join(",");
             const values = item.values.map((d: { value: unknown }) => d.value) || [];
             if (results.length === 1) {
               source[label || c.label || name] = values;
