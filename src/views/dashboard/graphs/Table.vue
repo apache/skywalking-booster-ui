@@ -76,10 +76,6 @@ limitations under the License. -->
       const keys = Object.keys(props.data || {});
       return keys;
     }
-    if (props.config.typesOfMQE && props.config.typesOfMQE[0] === ExpressionResultType.SINGLE_VALUE) {
-      const keys = Object.keys(props.data || {});
-      return keys;
-    }
     const keys = Object.keys(props.data || {}).filter(
       (i: string) => Array.isArray(props.data[i]) && props.data[i].length,
     );

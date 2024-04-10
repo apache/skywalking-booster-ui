@@ -126,7 +126,15 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
           }
         }
         if (type === ExpressionResultType.SINGLE_VALUE) {
-          source[c.label || name] = (results[0].values[0] || {}).value;
+          for (const item of results) {
+            const label = item.metric.labels.map((d: any) => `${d.key}=${d.value}`).join(",");
+            const values = item.values.map((d: { value: unknown }) => d.value) || [];
+            if (results.length === 1) {
+              source[label || c.label || name] = values;
+            } else {
+              source[label] = values;
+            }
+          }
         }
         if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
           source[name] = results[0].values;
