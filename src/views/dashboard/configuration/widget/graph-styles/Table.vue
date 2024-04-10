@@ -23,16 +23,6 @@ limitations under the License. -->
     />
   </div>
   <div class="item">
-    <span class="label">{{ t("tableHeaderCol1") }}</span>
-    <el-input
-      class="input"
-      v-model="tableHeaderCol1"
-      size="small"
-      placeholder="none"
-      @change="updateConfig({ tableHeaderCol1 })"
-    />
-  </div>
-  <div class="item">
     <span class="label">{{ t("tableHeaderCol2") }}</span>
     <el-input
       class="input"
@@ -52,7 +42,6 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const graph = dashboardStore.selectedGrid.graph || {};
   const showTableValues = ref(graph.showTableValues);
-  const tableHeaderCol1 = ref(graph.tableHeaderCol1);
   const tableHeaderCol2 = ref(graph.tableHeaderCol2);
 
   function updateConfig(param: { [key: string]: unknown }) {

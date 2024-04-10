@@ -93,7 +93,6 @@ export const DefaultGraphConfig: { [key: string]: any } = {
   Table: {
     type: "Table",
     showTableValues: true,
-    tableHeaderCol1: "",
     tableHeaderCol2: "",
   },
   TopList: {

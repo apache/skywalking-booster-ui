@@ -16,15 +16,26 @@ limitations under the License. -->
 <template>
   <div class="chart-table">
     <div class="row header flex-h">
-      <div class="name" :style="`width: ${nameWidth}%`">
-        {{ config.tableHeaderCol1 || t("name") }}
+      <div
+        v-for="key in dataKeys[0]"
+        :key="key"
+        class="name"
+        :style="`width: ${dataKeys[0].length > 1 ? (nameWidth as number) / (dataKeys[0].length || 1) : nameWidth}%`"
+      >
+        {{ key.split("=")[0] || t("name") }}
       </div>
       <div class="value-col" v-if="config.showTableValues">
         {{ config.tableHeaderCol2 || t("value") }}
       </div>
     </div>
     <div class="row flex-h" v-for="(keys, index) in dataKeys" :key="index">
-      <div v-for="k in keys" class="name" :style="`width: ${(nameWidth as number) / 2}%`" :key="k">{{ k }}</div>
+      <div
+        v-for="k in keys"
+        class="name"
+        :style="`width: ${keys.length > 1 ? (nameWidth as number) / (keys.length || 1) : nameWidth}%`"
+        :key="k"
+        >{{ k.split("=")[1] }}</div
+      >
       <div class="value-col" v-if="config.showTableValues">
         {{
           (config.metricTypes && config.metricTypes[0] === "readMetricsValue") ||
@@ -51,7 +62,6 @@ limitations under the License. -->
       type: Object as PropType<{
         showTableValues: boolean;
         tableHeaderCol2: string;
-        tableHeaderCol1: string;
         metricTypes: string[];
         typesOfMQE: string[];
       }>,
