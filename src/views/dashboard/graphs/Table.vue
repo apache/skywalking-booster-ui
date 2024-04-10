@@ -37,12 +37,7 @@ limitations under the License. -->
         >{{ k.split("=")[1] }}</div
       >
       <div class="value-col" v-if="config.showTableValues">
-        {{
-          (config.metricTypes && config.metricTypes[0] === "readMetricsValue") ||
-          (props.config.typesOfMQE && props.config.typesOfMQE[0] === ExpressionResultType.SINGLE_VALUE)
-            ? data[keys[0]]
-            : data[(keys as string[]).join(",")][data[(keys as string[]).join(",")].length - 1 || 0]
-        }}
+        {{ data[(keys as string[]).join(",")][data[(keys as string[]).join(",")].length - 1 || 0] }}
       </div>
     </div>
   </div>
@@ -51,7 +46,6 @@ limitations under the License. -->
   import { computed } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import { ExpressionResultType } from "@/views/dashboard/data";
   /*global defineProps */
   const props = defineProps({
     data: {
@@ -73,10 +67,6 @@ limitations under the License. -->
   const nameWidth = computed(() => (props.config.showTableValues ? 80 : 100));
   const dataKeys = computed(() => {
     if (props.config.metricTypes && props.config.metricTypes[0] === "readMetricsValue") {
-      const keys = Object.keys(props.data || {});
-      return keys;
-    }
-    if (props.config.typesOfMQE && props.config.typesOfMQE[0] === ExpressionResultType.SINGLE_VALUE) {
       const keys = Object.keys(props.data || {});
       return keys;
     }
