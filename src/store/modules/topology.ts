@@ -225,9 +225,6 @@ export const topologyStore = defineStore({
     setNodeMetricValue(m: MetricVal) {
       this.nodeMetricValue = m;
     },
-    setNodeValue(m: MetricVal) {
-      this.nodeMetricValue = m;
-    },
     setLegendValues(expressions: string, data: { [key: string]: any }) {
       for (let idx = 0; idx < this.nodes.length; idx++) {
         for (let index = 0; index < expressions.length; index++) {

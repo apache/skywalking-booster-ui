@@ -304,6 +304,7 @@ limitations under the License. -->
 
   async function importTemplates(event: any) {
     const arr: any = await readFile(event);
+
     for (const item of arr) {
       const { layer, name, entity } = item.configuration;
       const index = dashboardStore.dashboards.findIndex(
@@ -390,17 +391,8 @@ limitations under the License. -->
       if (isEmptyObject(child.widget)) {
         delete child.widget;
       }
-      if (!(child.metrics && child.metrics.length && child.metrics[0])) {
-        delete child.metrics;
-      }
-      if (!(child.metricTypes && child.metricTypes.length && child.metricTypes[0])) {
-        delete child.metricTypes;
-      }
       if (child.metricConfig && child.metricConfig.length) {
         child.metricConfig.forEach((c, index) => {
-          if (!c.calculation) {
-            delete c.calculation;
-          }
           if (!c.unit) {
             delete c.unit;
           }
