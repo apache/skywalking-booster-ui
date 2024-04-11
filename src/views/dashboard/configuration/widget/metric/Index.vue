@@ -25,28 +25,20 @@ limitations under the License. -->
       :clearable="true"
     />
   </div>
-  <div>{{ t("metrics") }}</div>
   <div class="flex-h">
-    <el-switch
-      v-model="isExpression"
-      class="mb-5"
-      active-text="Expressions"
-      inactive-text="General"
-      size="small"
-      @change="changeMetricMode"
-    />
-    <div class="ml-5 link">
+    <div>{{ t("metrics") }}</div>
+    <div class="link">
       <a target="_blank" href="https://skywalking.apache.org/docs/main/next/en/api/metrics-query-expression/">
         <Icon iconName="info_outline" size="middle" />
       </a>
     </div>
   </div>
-  <div v-if="isExpression && states.isList">
+  <div v-if="states.isList">
     <span class="title">{{ t("summary") }}</span>
     <span>{{ t("detail") }}</span>
   </div>
   <div v-for="(metric, index) in states.metrics" :key="index" class="mb-10">
-    <span v-if="isExpression">
+    <span>
       <div class="expression-param" contenteditable="true" @blur="changeExpression($event, index)">
         {{ metric }}
       </div>
@@ -59,24 +51,6 @@ limitations under the License. -->
         {{ states.subMetrics[index] }}
       </div>
     </span>
-    <span v-else>
-      <Selector
-        :value="metric"
-        :options="states.metricList"
-        size="small"
-        placeholder="Select a metric"
-        @change="changeMetrics(index, $event)"
-        class="selectors"
-      />
-      <Selector
-        :value="states.metricTypes[index]"
-        :options="states.metricTypeList[index]"
-        size="small"
-        :disabled="graph.type && !states.isList && index !== 0"
-        @change="changeMetricType(index, $event)"
-        class="selectors"
-      />
-    </span>
     <el-popover placement="top" :width="400" trigger="click">
       <template #reference>
         <span @click="setMetricConfig(index)">
@@ -88,7 +62,7 @@ limitations under the License. -->
     <span
       v-show="
         states.isList ||
-        [ProtocolTypes.ReadMetricsValues, ExpressionResultType.TIME_SERIES_VALUES as string].includes(states.metricTypes[0])
+        [ExpressionResultType.TIME_SERIES_VALUES as string].includes(states.metricTypes[0])
       "
     >
       <Icon
@@ -100,13 +74,13 @@ limitations under the License. -->
       />
       <Icon class="cp" iconName="remove_circle_outline" size="middle" @click="deleteMetric(index)" />
     </span>
-    <div v-if="(states.tips || [])[index] && isExpression" class="ml-10 red sm">
+    <div v-if="(states.tips || [])[index]" class="ml-10 red sm">
       {{ states.tips[index] }}
     </div>
-    <div v-if="(errors || [])[index] && isExpression" class="ml-10 red sm">
+    <div v-if="(errors || [])[index]" class="ml-10 red sm">
       {{ (errors || [])[index] }}
     </div>
-    <div v-if="(subErrors || [])[index] && isExpression" class="ml-10 red sm">
+    <div v-if="(subErrors || [])[index]" class="ml-10 red sm">
       {{ (subErrors || [])[index] }}
     </div>
   </div>
@@ -128,20 +102,14 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import {
-    MetricTypes,
     ListChartTypes,
     DefaultGraphConfig,
     EntityType,
     ChartTypes,
     PodsChartTypes,
-    MetricsType,
-    ProtocolTypes,
     ExpressionResultType,
-    MetricModes,
-  } from "../../../data";
-  import { ElMessage } from "element-plus";
+  } from "@/views/dashboard/data";
   import Icon from "@/components/Icon.vue";
-  import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
   import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import { useI18n } from "vue-i18n";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
@@ -160,16 +128,11 @@ limitations under the License. -->
     },
   });
   const dashboardStore = useDashboardStore();
-  const isExpression = ref<boolean>(dashboardStore.selectedGrid.metricMode === MetricModes.Expression);
-  const metrics = computed(
-    () => (isExpression.value ? dashboardStore.selectedGrid.expressions : dashboardStore.selectedGrid.metrics) || [],
-  );
-  const subMetrics = computed(() => (isExpression.value ? dashboardStore.selectedGrid.subExpressions : []) || []);
-  const subMetricTypes = computed(() => (isExpression.value ? dashboardStore.selectedGrid.subTypesOfMQE : []) || []);
+  const metrics = computed(() => dashboardStore.selectedGrid.expressions || []);
+  const subMetrics = computed(() => dashboardStore.selectedGrid.subExpressions || []);
+  const subMetricTypes = computed(() => dashboardStore.selectedGrid.subTypesOfMQE || []);
   const graph = computed(() => dashboardStore.selectedGrid.graph || {});
-  const metricTypes = computed(
-    () => (isExpression.value ? dashboardStore.selectedGrid.typesOfMQE : dashboardStore.selectedGrid.metricTypes) || [],
-  );
+  const typesOfMQE = computed(() => dashboardStore.selectedGrid.typesOfMQE || []);
   const states = reactive<{
     metrics: string[];
     subMetrics: string[];
@@ -177,17 +140,15 @@ limitations under the License. -->
     metricTypes: string[];
     metricTypeList: Option[][];
     isList: boolean;
-    metricList: (Option & { type: string })[];
     dashboardName: string;
     dashboardList: ((DashboardItem & { label: string; value: string }) | any)[];
     tips: string[];
     subTips: string[];
   }>({
     metrics: metrics.value.length ? metrics.value : [""],
-    metricTypes: metricTypes.value.length ? metricTypes.value : [""],
+    metricTypes: typesOfMQE.value.length ? typesOfMQE.value : [""],
     metricTypeList: [],
     isList: false,
-    metricList: [],
     dashboardName: graph.value.dashboardName,
     dashboardList: [{ label: "", value: "" }],
     tips: [],
@@ -199,16 +160,13 @@ limitations under the License. -->
     unit: "",
     label: "",
     labelsIndex: "",
-    calculation: "",
     sortOrder: "DES",
   });
 
   states.isList = ListChartTypes.includes(graph.value.type);
   const defaultLen = ref<number>(states.isList ? 5 : 20);
-  const backupMetricConfig = ref<MetricConfigOpt[]>([]);
 
   setDashboards();
-  setMetricType();
 
   const setVisTypes = computed(() => {
     let graphs = [];
@@ -222,70 +180,6 @@ limitations under the License. -->
 
     return graphs;
   });
-
-  async function setMetricType(chart?: any) {
-    const g = chart || dashboardStore.selectedGrid.graph || {};
-    let arr: any[] = states.metricList;
-    if (!chart) {
-      const json = await dashboardStore.fetchMetricList();
-      if (json.errors) {
-        ElMessage.error(json.errors);
-        return;
-      }
-      arr = json.data.metrics;
-    }
-    states.metricList = (arr || []).filter((d: { type: string }) => {
-      if (states.isList) {
-        if (d.type === MetricsType.REGULAR_VALUE || d.type === MetricsType.LABELED_VALUE) {
-          return d;
-        }
-      } else if (g.type === "Table") {
-        if (d.type === MetricsType.LABELED_VALUE || d.type === MetricsType.REGULAR_VALUE) {
-          return d;
-        }
-      } else {
-        return d;
-      }
-    });
-    if (isExpression.value) {
-      if (states.metrics && states.metrics[0]) {
-        queryMetrics();
-      } else {
-        emit("update", {});
-      }
-      return;
-    }
-    const metrics: any = states.metricList.filter((d: { value: string; type: string }) =>
-      states.metrics.includes(d.value),
-    );
-
-    if (metrics.length) {
-      // keep states.metrics index
-      const m = metrics.map((d: { value: string }) => d.value);
-      states.metrics = states.metrics.filter((d) => m.includes(d));
-    } else {
-      states.metrics = [""];
-      states.metricTypes = [""];
-    }
-    dashboardStore.selectWidget({
-      ...dashboardStore.selectedGrid,
-      metrics: states.metrics,
-      metricTypes: states.metricTypes,
-      graph: g,
-    });
-    states.metricTypeList = [];
-    for (const metric of metrics) {
-      if (states.metrics.includes(metric.value)) {
-        const arr = setMetricTypeList(metric.type);
-        states.metricTypeList.push(arr);
-      }
-    }
-    if (states.metrics && states.metrics[0]) {
-      queryMetrics();
-    } else {
-      emit("update", {});
-    }
-  }
 
   function setDashboards(type?: string) {
     const chart = type || (dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type);
@@ -308,6 +202,11 @@ limitations under the License. -->
     }, []);
 
     states.dashboardList = arr.length ? arr : [{ label: "", value: "" }];
+    if (states.metrics && states.metrics[0]) {
+      queryMetrics();
+    } else {
+      emit("update", {});
+    }
   }
 
   function changeChartType(item: Option) {
@@ -316,8 +215,6 @@ limitations under the License. -->
     if (states.isList) {
       dashboardStore.selectWidget({
         ...dashboardStore.selectedGrid,
-        metrics: [""],
-        metricTypes: [""],
         expressions: [""],
         typesOfMQE: [""],
       });
@@ -326,97 +223,20 @@ limitations under the License. -->
       defaultLen.value = 5;
     }
 
-    if (isExpression.value) {
-      dashboardStore.selectWidget({
-        ...dashboardStore.selectedGrid,
-        graph: chart,
-      });
-    } else {
-      setMetricType(chart);
-    }
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      graph: chart,
+    });
     setDashboards(chart.type);
     states.dashboardName = "";
     defaultLen.value = 10;
   }
 
-  function changeMetrics(index: number, arr: (Option & { type: string })[] | any) {
-    if (!arr.length) {
-      states.metricTypeList = [];
-      states.metricTypes = [];
-      dashboardStore.selectWidget({
-        ...dashboardStore.selectedGrid,
-        ...{ metricTypes: states.metricTypes, metrics: states.metrics },
-      });
-      return;
-    }
-    states.metrics[index] = arr[0].value;
-    const typeOfMetrics = arr[0].type;
-
-    states.metricTypeList[index] = setMetricTypeList(typeOfMetrics);
-    states.metricTypes[index] = MetricTypes[typeOfMetrics][0].value;
-    dashboardStore.selectWidget({
-      ...dashboardStore.selectedGrid,
-      ...{ metricTypes: states.metricTypes, metrics: states.metrics },
-    });
-    if (states.isList) {
-      return;
-    }
-    queryMetrics();
-  }
-
-  function changeMetricType(index: number, opt: Option[] | any) {
-    const metric = states.metricList.filter((d: Option) => states.metrics[index] === d.value)[0] || {};
-    const l = setMetricTypeList(metric.type);
-    if (states.isList) {
-      states.metricTypes[index] = opt[0].value;
-      states.metricTypeList[index] = l;
-    } else {
-      states.metricTypes = states.metricTypes.map((d: string) => {
-        d = opt[0].value;
-        return d;
-      });
-      states.metricTypeList = states.metricTypeList.map((d: Option[]) => {
-        d = l;
-
-        return d;
-      });
-    }
-    dashboardStore.selectWidget({
-      ...dashboardStore.selectedGrid,
-      ...{ metricTypes: states.metricTypes },
-    });
-    if (states.isList) {
-      return;
-    }
-    queryMetrics();
-  }
   async function queryMetrics() {
     if (states.isList) {
       return;
     }
-    if (isExpression.value) {
-      queryMetricsWithExpressions();
-      return;
-    }
-    const { metricConfig, metricTypes, metrics } = dashboardStore.selectedGrid;
-    if (!(metrics && metrics[0] && metricTypes && metricTypes[0])) {
-      return emit("update", {});
-    }
-    const params = useQueryProcessor({ ...states, metricConfig });
-    if (!params) {
-      emit("update", {});
-      return;
-    }
-
-    emit("loading", true);
-    const json = await dashboardStore.fetchMetricValue(params);
-    emit("loading", false);
-    if (json.errors) {
-      ElMessage.error(json.errors);
-      return;
-    }
-    const source = useSourceProcessor(json, { ...states, metricConfig });
-    emit("update", source);
+    queryMetricsWithExpressions();
   }
 
   async function queryMetricsWithExpressions() {
@@ -432,7 +252,6 @@ limitations under the License. -->
       ...dashboardStore.selectedGrid,
       typesOfMQE: states.metricTypes,
     });
-
     emit("update", params.source || {});
   }
 
@@ -454,43 +273,32 @@ limitations under the License. -->
   function addMetric() {
     states.metrics.push("");
     states.tips.push("");
-    if (isExpression.value && states.isList) {
+    if (states.isList) {
       states.subMetrics.push("");
       states.subTips.push("");
     }
 
     if (!states.isList) {
       states.metricTypes.push(states.metricTypes[0]);
-      if (!isExpression.value) {
-        states.metricTypeList.push(states.metricTypeList[0]);
-      }
       return;
     }
     states.metricTypes.push("");
-    if (isExpression.value && states.isList) {
-      states.subMetricTypes.push("");
-    }
   }
   function deleteMetric(index: number) {
     if (states.metrics.length === 1) {
       states.metrics = [""];
       states.metricTypes = [""];
       states.tips = [""];
-      let v = {};
-      if (isExpression.value) {
-        v = { typesOfMQE: states.metricTypes, expressions: states.metrics };
-        if (states.isList) {
-          states.subMetrics = [""];
-          states.subMetricTypes = [""];
-          states.subTips = [""];
-          v = {
-            ...v,
-            subTypesOfMQE: states.subMetricTypes,
-            subExpressions: states.subMetrics,
-          };
-        }
-      } else {
-        v = { metricTypes: states.metricTypes, metrics: states.metrics };
+      let v: any = { typesOfMQE: states.metricTypes, expressions: states.metrics };
+      if (states.isList) {
+        states.subMetrics = [""];
+        states.subMetricTypes = [""];
+        states.subTips = [""];
+        v = {
+          ...v,
+          subTypesOfMQE: states.subMetricTypes,
+          subExpressions: states.subMetrics,
+        };
       }
       dashboardStore.selectWidget({
         ...dashboardStore.selectedGrid,
@@ -505,37 +313,26 @@ limitations under the License. -->
     const config = dashboardStore.selectedGrid.metricConfig || [];
     const metricConfig = config[index] ? config.splice(index, 1) : config;
     let p = {};
-    if (isExpression.value) {
-      if (states.isList) {
-        states.subMetrics.splice(index, 1);
-        states.subMetricTypes.splice(index, 1);
-        states.subTips.splice(index, 1);
-        p = {
-          ...p,
-          typesOfMQE: states.metricTypes,
-          expressions: states.metrics,
-          subTypesOfMQE: states.subMetricTypes,
-          subExpressions: states.subMetrics,
-        };
-      }
-    } else {
-      p = { metricTypes: states.metricTypes, metrics: states.metrics };
+    if (states.isList) {
+      states.subMetrics.splice(index, 1);
+      states.subMetricTypes.splice(index, 1);
+      states.subTips.splice(index, 1);
+      p = {
+        ...p,
+        typesOfMQE: states.metricTypes,
+        expressions: states.metrics,
+        subTypesOfMQE: states.subMetricTypes,
+        subExpressions: states.subMetrics,
+      };
     }
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       ...p,
       metricConfig,
     });
+    queryMetrics();
   }
-  function setMetricTypeList(type: string) {
-    if (type !== MetricsType.REGULAR_VALUE) {
-      return MetricTypes[type];
-    }
-    if (states.isList || graph.value.type === "Table") {
-      return [MetricTypes.REGULAR_VALUE[0], MetricTypes.REGULAR_VALUE[1]];
-    }
-    return MetricTypes[type];
-  }
+
   function setMetricConfig(index: number) {
     const n = {
       unit: "",
@@ -552,20 +349,6 @@ limitations under the License. -->
       ...n,
       ...dashboardStore.selectedGrid.metricConfig[index],
     };
-  }
-  function changeMetricMode() {
-    states.metrics = metrics.value.length ? metrics.value : [""];
-    states.subMetrics = subMetrics.value.length ? subMetrics.value : [""];
-    states.metricTypes = metricTypes.value.length ? metricTypes.value : [""];
-    states.subMetricTypes = subMetricTypes.value.length ? subMetricTypes.value : [""];
-    const config = dashboardStore.selectedGrid.metricConfig;
-    dashboardStore.selectWidget({
-      ...dashboardStore.selectedGrid,
-      metricMode: isExpression.value ? MetricModes.Expression : MetricModes.General,
-      metricConfig: backupMetricConfig.value,
-    });
-    backupMetricConfig.value = config;
-    queryMetrics();
   }
   async function changeExpression(event: any, index: number) {
     const params = (event.target.textContent || "").replace(/\s+/g, "");
@@ -651,5 +434,6 @@ limitations under the License. -->
   .link {
     cursor: pointer;
     color: $active-color;
+    padding-left: 2px;
   }
 </style>

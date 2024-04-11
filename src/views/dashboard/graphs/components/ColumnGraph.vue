@@ -22,23 +22,7 @@ limitations under the License. -->
   >
     <template #default="scope">
       <div class="chart">
-        <Line
-          v-if="useListConfig(config, index).isLinear && config.metricMode !== MetricModes.Expression"
-          :data="{
-            [metric]: scope.row[metric] && scope.row[metric].values,
-          }"
-          :intervalTime="intervalTime"
-          :config="{
-            showXAxis: false,
-            showYAxis: false,
-            smallTips: true,
-            showlabels: false,
-          }"
-        />
-        <span
-          class="item flex-h"
-          v-else-if="useListConfig(config, index).isAvg || config.metricMode === MetricModes.Expression"
-        >
+        <span class="item flex-h">
           <el-popover placement="left" :width="400" trigger="click">
             <template #reference>
               <span class="trend">
@@ -70,7 +54,6 @@ limitations under the License. -->
             />
           </span>
         </span>
-        <Card v-else :data="{ [metric]: scope.row[metric] }" :config="{ textAlign: 'left' }" />
       </div>
     </template>
   </el-table-column>
@@ -79,11 +62,9 @@ limitations under the License. -->
 <script lang="ts" setup>
   import type { PropType } from "vue";
   import type { MetricConfigOpt } from "@/types/dashboard";
-  import { useListConfig } from "@/hooks/useListConfig";
   import Line from "../Line.vue";
   import Card from "../Card.vue";
-  import { MetricQueryTypes } from "@/hooks/data";
-  import { ExpressionResultType, MetricModes } from "@/views/dashboard/data";
+  import { ExpressionResultType } from "@/views/dashboard/data";
 
   /*global defineProps */
   const props = defineProps({
@@ -92,9 +73,8 @@ limitations under the License. -->
     config: {
       type: Object as PropType<{
         i: string;
-        metricTypes: string[];
+        typesOfMQE: string[];
         metricConfig: MetricConfigOpt[];
-        metricMode: string;
       }>,
       default: () => ({}),
     },
@@ -120,13 +100,9 @@ limitations under the License. -->
     }
     if (label) {
       if (
-        (
-          [
-            MetricQueryTypes.ReadLabeledMetricsValues,
-            ExpressionResultType.TIME_SERIES_VALUES,
-            ExpressionResultType.SINGLE_VALUE,
-          ] as string[]
-        ).includes(props.config.metricTypes[i])
+        ([ExpressionResultType.TIME_SERIES_VALUES, ExpressionResultType.SINGLE_VALUE] as string[]).includes(
+          props.config.typesOfMQE[i],
+        )
       ) {
         const name = (label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""))[
           props.config.metricConfig[i].index || 0

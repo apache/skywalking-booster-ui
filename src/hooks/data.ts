@@ -14,32 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export enum MetricQueryTypes {
-  ReadMetricsValue = "readMetricsValue",
-  ReadMetricsValues = "readMetricsValues",
-  SortMetrics = "sortMetrics",
-  ReadLabeledMetricsValues = "readLabeledMetricsValues",
-  READHEATMAP = "readHeatMap",
-  ReadSampledRecords = "readSampledRecords",
-  ReadRecords = "readRecords",
-  ReadNullableMetricsValue = "readNullableMetricsValue",
-}
 
-export enum Calculations {
-  Percentage = "percentage",
-  ByteToKB = "byteToKB",
-  ByteToMB = "byteToMB",
-  ByteToGB = "byteToGB",
-  Apdex = "apdex",
-  ConvertSeconds = "convertSeconds",
-  ConvertMilliseconds = "convertMilliseconds",
-  MsToS = "msTos",
-  Average = "average",
-  PercentageAvg = "percentageAvg",
-  ApdexAvg = "apdexAvg",
-  SecondToDay = "secondToDay",
-  NanosecondToMillisecond = "nanosecondToMillisecond",
-}
 export enum sizeEnum {
   XS = "XS",
   SM = "SM",
@@ -68,50 +43,6 @@ screenMap.set(sizeEnum.XL, screenEnum.XL);
 screenMap.set(sizeEnum.XXL, screenEnum.XXL);
 
 export const RespFields: Indexable = {
-  readMetricsValues: `{
-    label
-    values {
-      values {value isEmptyValue}
-    }
-  }`,
-  readMetricsValue: ``,
-  readNullableMetricsValue: `{
-    value
-    isEmptyValue
-  }`,
-  sortMetrics: `{
-    name
-    id
-    value
-    refId
-  }`,
-  readLabeledMetricsValues: `{
-    label
-    values {
-      values {value isEmptyValue}
-    }
-  }`,
-  readHeatMap: `{
-    values {
-      id
-      values
-    }
-    buckets {
-      min
-      max
-    }
-  }`,
-  readSampledRecords: `{
-    name
-    value
-    refId
-  }`,
-  readRecords: `{
-    id
-    name
-    value
-    refId
-  }`,
   execExpression: `{
     type
     results {

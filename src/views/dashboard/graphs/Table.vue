@@ -56,7 +56,6 @@ limitations under the License. -->
       type: Object as PropType<{
         showTableValues: boolean;
         tableHeaderCol2: string;
-        metricTypes: string[];
         typesOfMQE: string[];
       }>,
       default: () => ({ showTableValues: true }),
@@ -66,10 +65,6 @@ limitations under the License. -->
   const { t } = useI18n();
   const nameWidth = computed(() => (props.config.showTableValues ? 80 : 100));
   const dataKeys = computed(() => {
-    if (props.config.metricTypes && props.config.metricTypes[0] === "readMetricsValue") {
-      const keys = Object.keys(props.data || {});
-      return keys;
-    }
     const keys = Object.keys(props.data || {}).filter(
       (i: string) => Array.isArray(props.data[i]) && props.data[i].length,
     );

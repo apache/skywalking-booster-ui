@@ -69,7 +69,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  import { EntityType, DepthList, MetricModes, CallTypes } from "@/views/dashboard/data";
+  import { EntityType, DepthList, CallTypes } from "@/views/dashboard/data";
   import { ElMessage } from "element-plus";
   import Sankey from "./Sankey.vue";
   import Settings from "../config/Settings.vue";
@@ -119,15 +119,9 @@ limitations under the License. -->
     };
     height.value = dom.height - 70;
     width.value = dom.width - 5;
-    if (settings.value.metricMode === MetricModes.Expression) {
-      topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
-      topologyStore.getLinkExpressions(settings.value.linkClientExpressions || [], CallTypes.Client);
-      topologyStore.getLinkExpressions(settings.value.linkServerExpressions || [], CallTypes.Server);
-    } else {
-      topologyStore.getLinkClientMetrics(settings.value.linkClientMetrics || []);
-      topologyStore.getLinkServerMetrics(settings.value.linkServerMetrics || []);
-      topologyStore.queryNodeMetrics(settings.value.nodeMetrics || []);
-    }
+    topologyStore.queryNodeExpressions(settings.value.nodeExpressions || []);
+    topologyStore.getLinkExpressions(settings.value.linkClientExpressions || [], CallTypes.Client);
+    topologyStore.getLinkExpressions(settings.value.linkServerExpressions || [], CallTypes.Server);
   }
 
   function resize() {

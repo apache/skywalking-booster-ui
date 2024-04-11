@@ -24,7 +24,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl, TextConfig, TimeRangeConfig, ControlsTypes } from "../data";
 import type { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
-import { EntityType, MetricModes, WidgetType } from "@/views/dashboard/data";
+import { EntityType, WidgetType } from "@/views/dashboard/data";
 interface DashboardState {
   showConfig: boolean;
   layout: LayoutConfig[];
@@ -88,13 +88,7 @@ export const dashboardStore = defineStore({
         i: index,
         id: index,
         type,
-        metricTypes: [""],
-        metrics: [""],
       };
-
-      if (type === WidgetType.Widget) {
-        newItem.metricMode = MetricModes.Expression;
-      }
       if (type === WidgetType.Tab) {
         newItem.h = 36;
         newItem.activedTabIndex = 0;
@@ -167,18 +161,12 @@ export const dashboardStore = defineStore({
         i: index,
         id,
         type,
-        metricTypes: [""],
-        metrics: [""],
       };
-      if (type === WidgetType.Widget) {
-        newItem.metricMode = MetricModes.Expression;
-      }
       if (type === WidgetType.Topology) {
         newItem.h = 32;
         newItem.graph = {
           showDepth: true,
         };
-        newItem.metricMode = MetricModes.Expression;
       }
       if (ControlsTypes.includes(type)) {
         newItem.h = 32;

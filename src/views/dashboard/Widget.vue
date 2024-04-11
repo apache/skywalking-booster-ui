@@ -32,10 +32,7 @@ limitations under the License. -->
         :config="{
           i: 0,
           ...graph,
-          metrics: config.metrics,
-          metricTypes: config.metricTypes,
           metricConfig: config.metricConfig,
-          metricMode: config.metricMode,
           expressions: config.expressions || [],
           typesOfMQE: typesOfMQE || [],
           subExpressions: config.subExpressions || [],
@@ -56,12 +53,10 @@ limitations under the License. -->
   import { useRoute } from "vue-router";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useQueryProcessor, useSourceProcessor } from "@/hooks/useMetricsProcessor";
   import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
   import timeFormat from "@/utils/timeFormat";
-  import { MetricModes } from "./data";
 
   export default defineComponent({
     name: "WidgetPage",
@@ -132,37 +127,16 @@ limitations under the License. -->
         }
       }
       async function queryMetrics() {
-        const isExpression = config.value.metricMode === MetricModes.Expression;
-        if (isExpression) {
-          loading.value = true;
-          const params = await useExpressionsQueryProcessor({
-            metrics: config.value.expressions || [],
-            metricConfig: config.value.metricConfig || [],
-            subExpressions: config.value.subExpressions || [],
-          });
-
-          loading.value = false;
-          source.value = params.source || {};
-          typesOfMQE.value = params.typesOfMQE;
-          return;
-        }
-        const params = await useQueryProcessor({ ...config.value });
-        if (!params) {
-          source.value = {};
-          return;
-        }
         loading.value = true;
-        const json = await dashboardStore.fetchMetricValue(params);
-        loading.value = false;
-        if (!json) {
-          return;
-        }
-        const d = {
-          metrics: config.value.metrics || [],
-          metricTypes: config.value.metricTypes || [],
+        const params = await useExpressionsQueryProcessor({
+          metrics: config.value.expressions || [],
           metricConfig: config.value.metricConfig || [],
-        };
-        source.value = await useSourceProcessor(json, d);
+          subExpressions: config.value.subExpressions || [],
+        });
+
+        loading.value = false;
+        source.value = params.source || {};
+        typesOfMQE.value = params.typesOfMQE;
       }
       watch(
         () => appStoreWithOut.durationTime,
@@ -209,7 +183,7 @@ limitations under the License. -->
     height: 25px;
     line-height: 25px;
     text-align: center;
-    background-color: aliceblue;
+    background-color: var(--sw-config-header);
     font-size: $font-size-smaller;
     position: relative;
   }

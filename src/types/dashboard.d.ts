@@ -32,12 +32,9 @@ export interface LayoutConfig {
   h: number;
   i: string;
   type: string;
-  metricMode?: string;
   widget?: WidgetConfig;
   graph?: GraphConfig;
-  metrics?: string[];
   expressions?: string[];
-  metricTypes?: string[];
   typesOfMQE?: string[];
   children?: { name: string; children: LayoutConfig[]; expression?: string; enable?: boolean }[];
   activedTabIndex?: number;
@@ -77,7 +74,6 @@ export type Filters = {
 export type MetricConfigOpt = {
   unit?: string;
   label?: string;
-  calculation?: string;
   labelsIndex?: string;
   sortOrder?: string;
   topN?: number;
