@@ -138,9 +138,6 @@ limitations under the License. -->
 
       function applyConfig() {
         dashboardStore.setConfigPanel(false);
-        dashboardStore.selectWidget({
-          ...dashboardStore.selectedGrid,
-        });
         dashboardStore.setConfigs(dashboardStore.selectedGrid);
       }
 
