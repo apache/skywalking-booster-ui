@@ -360,6 +360,20 @@ limitations under the License. -->
       multipleTableRef.value!.clearSelection();
     }, 2000);
   }
+
+  function removeUnusedConfig(config: any) {
+    // remove `General` metrics config
+    delete config.metrics;
+    delete config.metricTypes;
+    delete config.metricMode;
+    delete config.linkServerMetrics;
+    delete config.linkClientMetrics;
+    delete config.nodeMetric;
+    if (([WidgetType.Topology] as string[]).includes(config.type)) {
+      delete config.legend;
+    }
+  }
+
   function optimizeTemplate(
     children: (LayoutConfig & {
       moved?: boolean;
@@ -407,6 +421,7 @@ limitations under the License. -->
       if (!(child.metricConfig && child.metricConfig.length)) {
         delete child.metricConfig;
       }
+      removeUnusedConfig(child);
       if (child.type === WidgetType.Tab) {
         for (const item of child.children || []) {
           optimizeTemplate(item.children);
