@@ -138,13 +138,8 @@ limitations under the License. -->
 
       function applyConfig() {
         dashboardStore.setConfigPanel(false);
-        let p = {
-          metrics: [],
-          metricTypes: [],
-        };
         dashboardStore.selectWidget({
           ...dashboardStore.selectedGrid,
-          ...p,
         });
         dashboardStore.setConfigs(dashboardStore.selectedGrid);
       }

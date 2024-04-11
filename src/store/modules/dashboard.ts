@@ -88,8 +88,6 @@ export const dashboardStore = defineStore({
         i: index,
         id: index,
         type,
-        metricTypes: [""],
-        metrics: [""],
       };
       if (type === WidgetType.Tab) {
         newItem.h = 36;
@@ -163,8 +161,6 @@ export const dashboardStore = defineStore({
         i: index,
         id,
         type,
-        metricTypes: [""],
-        metrics: [""],
       };
       if (type === WidgetType.Topology) {
         newItem.h = 32;

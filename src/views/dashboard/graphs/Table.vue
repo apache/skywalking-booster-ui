@@ -56,7 +56,6 @@ limitations under the License. -->
       type: Object as PropType<{
         showTableValues: boolean;
         tableHeaderCol2: string;
-        metricTypes: string[];
         typesOfMQE: string[];
       }>,
       default: () => ({ showTableValues: true }),
