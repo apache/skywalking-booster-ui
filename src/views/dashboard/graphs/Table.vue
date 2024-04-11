@@ -16,17 +16,28 @@ limitations under the License. -->
 <template>
   <div class="chart-table">
     <div class="row header flex-h">
-      <div class="name" :style="`width: ${nameWidth}`">
-        {{ config.tableHeaderCol1 || t("name") }}
+      <div
+        v-for="key in dataKeys[0]"
+        :key="key"
+        class="name"
+        :style="`width: ${dataKeys[0].length > 1 ? (nameWidth as number) / (dataKeys[0].length || 1) : nameWidth}%`"
+      >
+        {{ key.split("=")[0] || t("name") }}
       </div>
       <div class="value-col" v-if="config.showTableValues">
         {{ config.tableHeaderCol2 || t("value") }}
       </div>
     </div>
-    <div class="row flex-h" v-for="key in dataKeys" :key="key">
-      <div class="name" :style="`width: ${nameWidth}`">{{ key }}</div>
+    <div class="row flex-h" v-for="(keys, index) in dataKeys" :key="index">
+      <div
+        v-for="k in keys"
+        class="name"
+        :style="`width: ${keys.length > 1 ? (nameWidth as number) / (keys.length || 1) : nameWidth}%`"
+        :key="k"
+        >{{ k.split("=")[1] }}</div
+      >
       <div class="value-col" v-if="config.showTableValues">
-        {{ config.metricTypes[0] === "readMetricsValue" ? data[key] : data[key][data[key].length - 1 || 0] }}
+        {{ data[(keys as string[]).join(",")][data[(keys as string[]).join(",")].length - 1 || 0] }}
       </div>
     </div>
   </div>
@@ -45,24 +56,26 @@ limitations under the License. -->
       type: Object as PropType<{
         showTableValues: boolean;
         tableHeaderCol2: string;
-        tableHeaderCol1: string;
         metricTypes: string[];
+        typesOfMQE: string[];
       }>,
       default: () => ({ showTableValues: true }),
     },
   });
 
   const { t } = useI18n();
-  const nameWidth = computed(() => (props.config.showTableValues ? "80%" : "100%"));
+  const nameWidth = computed(() => (props.config.showTableValues ? 80 : 100));
   const dataKeys = computed(() => {
-    if (props.config.metricTypes[0] === "readMetricsValue") {
+    if (props.config.metricTypes && props.config.metricTypes[0] === "readMetricsValue") {
       const keys = Object.keys(props.data || {});
       return keys;
     }
     const keys = Object.keys(props.data || {}).filter(
       (i: string) => Array.isArray(props.data[i]) && props.data[i].length,
     );
-    return keys;
+    const list = keys.map((d: string) => d.split(","));
+
+    return list;
   });
 </script>
 <style lang="scss" scoped>
@@ -91,6 +104,10 @@ limitations under the License. -->
       }
 
       div:last-child {
+        border-bottom: 1px solid $disabled-color;
+      }
+
+      div:first-child {
         border-bottom: 1px solid $disabled-color;
       }
 

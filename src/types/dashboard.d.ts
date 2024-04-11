@@ -139,7 +139,6 @@ export interface TextConfig {
 export interface TableConfig {
   type?: string;
   showTableValues: boolean;
-  tableHeaderCol1: string;
   tableHeaderCol2: string;
 }
 

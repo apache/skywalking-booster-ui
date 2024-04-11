@@ -117,21 +117,28 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
             const label = results[0].metric && results[0].metric.labels[0] && results[0].metric.labels[0].value;
             source[c.label || label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
           } else {
-            const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
             for (const item of results) {
               const values = item.values.map((d: { value: unknown }) => d.value) || [];
-              const index = item.metric.labels[0].value;
-              const indexNum = labels.findIndex((_, i: number) => i === Number(index));
-              if (labels[indexNum] && indexNum > -1) {
-                source[labels[indexNum]] = values;
-              } else {
-                source[index] = values;
-              }
+              const label = item.metric.labels
+                .map((d: { key: string; value: string }) => `${d.key}=${d.value}`)
+                .join(",");
+
+              source[label] = values;
             }
           }
         }
         if (type === ExpressionResultType.SINGLE_VALUE) {
-          source[c.label || name] = (results[0].values[0] || {}).value;
+          for (const item of results) {
+            const label = item.metric.labels
+              .map((d: { key: string; value: string }) => `${d.key}=${d.value}`)
+              .join(",");
+            const values = item.values.map((d: { value: unknown }) => d.value) || [];
+            if (results.length === 1) {
+              source[label || c.label || name] = values;
+            } else {
+              source[label] = values;
+            }
+          }
         }
         if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
           source[name] = results[0].values;
