@@ -160,7 +160,6 @@ limitations under the License. -->
     unit: "",
     label: "",
     labelsIndex: "",
-    calculation: "",
     sortOrder: "DES",
   });
 
@@ -203,6 +202,11 @@ limitations under the License. -->
     }, []);
 
     states.dashboardList = arr.length ? arr : [{ label: "", value: "" }];
+    if (states.metrics && states.metrics[0]) {
+      queryMetrics();
+    } else {
+      emit("update", {});
+    }
   }
 
   function changeChartType(item: Option) {
@@ -211,8 +215,6 @@ limitations under the License. -->
     if (states.isList) {
       dashboardStore.selectWidget({
         ...dashboardStore.selectedGrid,
-        metrics: [""],
-        metricTypes: [""],
         expressions: [""],
         typesOfMQE: [""],
       });
@@ -250,7 +252,6 @@ limitations under the License. -->
       ...dashboardStore.selectedGrid,
       typesOfMQE: states.metricTypes,
     });
-
     emit("update", params.source || {});
   }
 
