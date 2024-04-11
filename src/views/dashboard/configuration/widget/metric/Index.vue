@@ -25,9 +25,9 @@ limitations under the License. -->
       :clearable="true"
     />
   </div>
-  <div>{{ t("metrics") }}</div>
   <div class="flex-h">
-    <div class="ml-5 link">
+    <div>{{ t("metrics") }}</div>
+    <div class="link">
       <a target="_blank" href="https://skywalking.apache.org/docs/main/next/en/api/metrics-query-expression/">
         <Icon iconName="info_outline" size="middle" />
       </a>
@@ -289,8 +289,7 @@ limitations under the License. -->
       states.metrics = [""];
       states.metricTypes = [""];
       states.tips = [""];
-      let v = {};
-      v = { typesOfMQE: states.metricTypes, expressions: states.metrics };
+      let v: any = { typesOfMQE: states.metricTypes, expressions: states.metrics };
       if (states.isList) {
         states.subMetrics = [""];
         states.subMetricTypes = [""];
@@ -331,6 +330,7 @@ limitations under the License. -->
       ...p,
       metricConfig,
     });
+    queryMetrics();
   }
 
   function setMetricConfig(index: number) {
@@ -434,5 +434,6 @@ limitations under the License. -->
   .link {
     cursor: pointer;
     color: $active-color;
+    padding-left: 2px;
   }
 </style>

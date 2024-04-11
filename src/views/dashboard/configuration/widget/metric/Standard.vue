@@ -28,7 +28,7 @@ limitations under the License. -->
         "
       />
     </div>
-    <div class="item mb-10" v-if="hasLabel">
+    <div class="item mb-10">
       <span class="label">{{ t("labels") }}</span>
       <el-input
         class="input"
@@ -104,10 +104,6 @@ limitations under the License. -->
     topN: props.currentMetricConfig.topN || 10,
   });
   const metricTypes = computed(() => dashboardStore.selectedGrid.typesOfMQE || []);
-  const hasLabel = computed(() => {
-    const graph = dashboardStore.selectedGrid.graph || {};
-    return ListChartTypes.includes(graph.type);
-  });
   const isList = computed(() => {
     const graph = dashboardStore.selectedGrid.graph || {};
     return ListChartTypes.includes(graph.type);

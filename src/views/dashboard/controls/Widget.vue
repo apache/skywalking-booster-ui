@@ -160,7 +160,7 @@ limitations under the License. -->
         dashboardStore.selectWidget(props.data);
       }
       watch(
-        () => [props.data.metricTypes, props.data.metrics, props.data.expressions],
+        () => props.data.expressions,
         () => {
           if (!dashboardStore.selectedGrid) {
             return;
