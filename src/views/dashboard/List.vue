@@ -391,6 +391,8 @@ limitations under the License. -->
       delete child.label;
       delete child.value;
       delete child.filters;
+      delete child.typesOfMQE;
+      delete child.subTypesOfMQE;
       if (isEmptyObject(child.graph)) {
         delete child.graph;
       }
