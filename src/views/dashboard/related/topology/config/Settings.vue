@@ -163,6 +163,7 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
+  import type { Node } from "@/types/topology";
   import Metrics from "./Metrics.vue";
 
   /*global defineEmits */
