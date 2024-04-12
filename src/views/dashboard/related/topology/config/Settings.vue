@@ -163,6 +163,7 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
+  import type { Node } from "@/types/topology";
   import Metrics from "./Metrics.vue";
 
   /*global defineEmits */
@@ -243,7 +244,10 @@ limitations under the License. -->
   async function setLegend() {
     updateSettings();
     const expression = dashboardStore.selectedGrid.legendMQE && dashboardStore.selectedGrid.legendMQE.expression;
-    const { getExpressionQuery } = useQueryTopologyExpressionsProcessor([expression], topologyStore.nodes);
+    const { getExpressionQuery } = useQueryTopologyExpressionsProcessor(
+      [expression],
+      topologyStore.nodes.filter((d: Node) => d.isReal),
+    );
     const param = getExpressionQuery();
     const res = await topologyStore.getNodeExpressionValue(param);
     if (res.errors) {

@@ -285,7 +285,10 @@ limitations under the License. -->
     if (!expression) {
       return;
     }
-    const { getExpressionQuery } = useQueryTopologyExpressionsProcessor([expression], topologyStore.nodes);
+    const { getExpressionQuery } = useQueryTopologyExpressionsProcessor(
+      [expression],
+      topologyStore.nodes.filter((d: Node) => d.isReal),
+    );
     const param = getExpressionQuery();
     const res = await topologyStore.getNodeExpressionValue(param);
     if (res.errors) {
@@ -314,17 +317,16 @@ limitations under the License. -->
           topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id)) ||
         {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value || NaN} ${
         opt.unit || "unknown"
       }</div>`;
     });
-    const tipHtml = [
-      `<div class="mb-5"><span class="grey">name: </span>${
-        data.name
-      }</div><div class="mb-5"><span class="grey">type: </span>${data.type || "UNKNOWN"}</div>`,
-      ...html,
-    ].join(" ");
-
+    let tipHtml = `<div class="mb-5"><span class="grey">name: </span>${
+      data.name
+    }</div><div class="mb-5"><span class="grey">type: </span>${data.type || "UNKNOWN"}</div>`;
+    if (data.isReal) {
+      tipHtml = [tipHtml, ...html].join(" ");
+    }
     tooltip.value
       .style("top", event.offsetY + 10 + "px")
       .style("left", event.offsetX + 10 + "px")
@@ -520,14 +522,21 @@ limitations under the License. -->
   }
   function initNodeMenus() {
     items.value = [
-      { id: "hierarchyServices", title: "Hierarchy Services", func: handleHierarchyRelatedServices },
+      {
+        id: "hierarchyServices",
+        title: "Hierarchy Services",
+        func: handleHierarchyRelatedServices,
+      },
       { id: "inspect", title: "Inspect", func: handleInspect },
       { id: "alerting", title: "Alerting", func: handleGoAlerting },
     ];
     if (!currentNode.value) {
       return;
     }
-    const diffLayers = currentNode.value.layers.filter((l: string) => l !== dashboardStore.layerId);
+    const diffLayers = currentNode.value.layers.filter(
+      (l: string) => l !== dashboardStore.layerId && l !== "UNDEFINED",
+    );
+
     for (const l of diffLayers) {
       items.value.push({
         id: l,
