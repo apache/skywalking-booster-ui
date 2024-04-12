@@ -485,7 +485,7 @@ export const topologyStore = defineStore({
       }
       const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
         expressions,
-        this.nodes,
+        this.nodes.filter((d: Node) => d.isReal),
       );
       const param = getExpressionQuery();
       const res = await this.getNodeExpressionValue(param);

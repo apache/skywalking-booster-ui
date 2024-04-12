@@ -318,13 +318,12 @@ limitations under the License. -->
         opt.unit || "unknown"
       }</div>`;
     });
-    const tipHtml = [
-      `<div class="mb-5"><span class="grey">name: </span>${
-        data.name
-      }</div><div class="mb-5"><span class="grey">type: </span>${data.type || "UNKNOWN"}</div>`,
-      ...html,
-    ].join(" ");
-
+    let tipHtml = `<div class="mb-5"><span class="grey">name: </span>${
+      data.name
+    }</div><div class="mb-5"><span class="grey">type: </span>${data.type || "UNKNOWN"}</div>`;
+    if (data.isReal) {
+      tipHtml = [tipHtml, ...html].join(" ");
+    }
     tooltip.value
       .style("top", event.offsetY + 10 + "px")
       .style("left", event.offsetX + 10 + "px")
@@ -520,7 +519,11 @@ limitations under the License. -->
   }
   function initNodeMenus() {
     items.value = [
-      { id: "hierarchyServices", title: "Hierarchy Services", func: handleHierarchyRelatedServices },
+      {
+        id: "hierarchyServices",
+        title: "Hierarchy Services",
+        func: handleHierarchyRelatedServices,
+      },
       { id: "inspect", title: "Inspect", func: handleInspect },
       { id: "alerting", title: "Alerting", func: handleGoAlerting },
     ];
