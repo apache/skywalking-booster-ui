@@ -314,7 +314,7 @@ limitations under the License. -->
           topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id)) ||
         {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value || NaN} ${
         opt.unit || "unknown"
       }</div>`;
     });
@@ -530,7 +530,10 @@ limitations under the License. -->
     if (!currentNode.value) {
       return;
     }
-    const diffLayers = currentNode.value.layers.filter((l: string) => l !== dashboardStore.layerId);
+    const diffLayers = currentNode.value.layers.filter(
+      (l: string) => l !== dashboardStore.layerId && l !== "UNDEFINED",
+    );
+
     for (const l of diffLayers) {
       items.value.push({
         id: l,

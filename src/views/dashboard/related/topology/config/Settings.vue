@@ -243,7 +243,10 @@ limitations under the License. -->
   async function setLegend() {
     updateSettings();
     const expression = dashboardStore.selectedGrid.legendMQE && dashboardStore.selectedGrid.legendMQE.expression;
-    const { getExpressionQuery } = useQueryTopologyExpressionsProcessor([expression], topologyStore.nodes);
+    const { getExpressionQuery } = useQueryTopologyExpressionsProcessor(
+      [expression],
+      topologyStore.nodes.filter((d: Node) => d.isReal),
+    );
     const param = getExpressionQuery();
     const res = await topologyStore.getNodeExpressionValue(param);
     if (res.errors) {
