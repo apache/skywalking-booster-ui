@@ -118,7 +118,9 @@ limitations under the License. -->
       if (span.parentSpanId === -1) {
         segmentHeaders.push(span);
       } else {
-        const item = props.data.find((i: Span) => i.segmentId === span.segmentId && i.spanId === span.spanId - 1);
+        const item = props.data.find(
+          (i: Span) => i.traceId === span.traceId && i.segmentId === span.segmentId && i.spanId === span.spanId - 1,
+        );
         const fixSpanKeyContent = {
           traceId: span.traceId,
           segmentId: span.segmentId,
@@ -147,16 +149,16 @@ limitations under the License. -->
     }
     segmentHeaders.forEach((span: Span) => {
       if (span.refs.length) {
-        let exit = 0;
-        span.refs.forEach((ref) => {
-          const i = props.data.findIndex(
-            (i: Recordable) => ref.parentSegmentId === i.segmentId && ref.parentSpanId === i.spanId,
+        let exit = null;
+        for (const ref of span.refs) {
+          const e = props.data.find(
+            (i: Recordable) =>
+              ref.traceId === i.traceId && ref.parentSegmentId === i.segmentId && ref.parentSpanId === i.spanId,
           );
-          if (i > -1) {
-            exit = 1;
+          if (e) {
+            exit = e;
           }
-        });
-
+        }
         if (!exit) {
           const ref = span.refs[0];
           // create a known broken node.
@@ -218,11 +220,11 @@ limitations under the License. -->
     [...fixSpans, ...props.data].forEach((i) => {
       i.label = i.endpointName || "no operation name";
       i.children = [];
-      if (!segmentGroup[i.segmentId]) {
+      if (segmentGroup[i.segmentId]) {
+        segmentGroup[i.segmentId].push(i);
+      } else {
         segmentIdGroup.push(i.segmentId);
         segmentGroup[i.segmentId] = [i];
-      } else {
-        segmentGroup[i.segmentId].push(i);
       }
     });
     fixSpansSize.value = fixSpans.length;
@@ -230,7 +232,7 @@ limitations under the License. -->
       const currentSegment = segmentGroup[id].sort((a: Span, b: Span) => b.parentSpanId - a.parentSpanId);
       currentSegment.forEach((s: Recordable) => {
         const index = currentSegment.findIndex((i: Span) => i.spanId === s.parentSpanId);
-        if (index !== -1) {
+        if (index > -1) {
           if (
             (currentSegment[index].isBroken && currentSegment[index].parentSpanId === -1) ||
             !currentSegment[index].isBroken
@@ -262,7 +264,21 @@ limitations under the License. -->
       });
     });
     for (const i in segmentGroup) {
-      if (segmentGroup[i].refs.length === 0) {
+      if (segmentGroup[i].refs.length) {
+        let exit = null;
+        for (const ref of segmentGroup[i].refs) {
+          const e = props.data.find(
+            (i: Recordable) =>
+              ref.traceId === i.traceId && ref.parentSegmentId === i.segmentId && ref.parentSpanId === i.spanId,
+          );
+          if (e) {
+            exit = e;
+          }
+        }
+        if (exit) {
+          segmentId.value.push(segmentGroup[i]);
+        }
+      } else {
         segmentId.value.push(segmentGroup[i]);
       }
     }
