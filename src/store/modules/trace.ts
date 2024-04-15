@@ -24,6 +24,8 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { QueryOrders } from "@/views/dashboard/data";
 
+import { listTrace } from "./test";
+
 interface TraceState {
   services: Service[];
   instances: Instance[];
@@ -62,7 +64,9 @@ export const traceStore = defineStore({
       this.currentTrace = trace;
     },
     setTraceSpans(spans: Span[]) {
-      this.traceSpans = spans;
+      // this.traceSpans = spans;
+      this.traceSpans = listTrace.data.trace.spans;
+      console.log(listTrace.data.trace.spans);
     },
     resetState() {
       this.traceSpans = [];
@@ -168,6 +172,7 @@ export const traceStore = defineStore({
         return res.data;
       }
       const data = res.data.data.trace.spans;
+
       this.setTraceSpans(data || []);
       return res.data;
     },
