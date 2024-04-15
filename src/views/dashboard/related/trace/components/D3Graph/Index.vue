@@ -256,7 +256,7 @@ limitations under the License. -->
     }
     for (const id of segmentIdGroup) {
       for (const ref of segmentGroup[id].refs) {
-        if (ref.traceId === "87d7dec5feb34659a4088de3d6a918a3.72.17131407955580001") {
+        if (ref.traceId === props.traceId) {
           traverseTree(segmentGroup[ref.parentSegmentId], ref.parentSpanId, ref.parentSegmentId, segmentGroup[id]);
         }
       }

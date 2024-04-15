@@ -23,9 +23,6 @@ import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { QueryOrders } from "@/views/dashboard/data";
-
-import { listTrace } from "./test";
-
 interface TraceState {
   services: Service[];
   instances: Instance[];
@@ -64,9 +61,7 @@ export const traceStore = defineStore({
       this.currentTrace = trace;
     },
     setTraceSpans(spans: Span[]) {
-      // this.traceSpans = spans;
-      this.traceSpans = listTrace.data.trace.spans;
-      console.log(listTrace.data.trace.spans);
+      this.traceSpans = spans;
     },
     resetState() {
       this.traceSpans = [];
