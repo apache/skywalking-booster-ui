@@ -96,10 +96,8 @@ limitations under the License. -->
       node.children.push(data);
       return;
     }
-    if (node.children && node.children.length > 0) {
-      node.children.forEach((nodeItem: Recordable) => {
-        traverseTree(nodeItem, spanId, segmentId, data);
-      });
+    for (const nodeItem of node.children || []) {
+      traverseTree(nodeItem, spanId, segmentId, data);
     }
   }
   function changeTree() {
@@ -147,7 +145,7 @@ limitations under the License. -->
         }
       }
     }
-    segmentHeaders.forEach((span: Span) => {
+    for (const span of segmentHeaders) {
       if (span.refs.length) {
         let exit = null;
         for (const ref of span.refs) {
@@ -216,8 +214,8 @@ limitations under the License. -->
           }
         }
       }
-    });
-    [...fixSpans, ...props.data].forEach((i) => {
+    }
+    for (const i of [...fixSpans, ...props.data]) {
       i.label = i.endpointName || "no operation name";
       i.children = [];
       if (segmentGroup[i.segmentId]) {
@@ -226,11 +224,11 @@ limitations under the License. -->
         segmentIdGroup.push(i.segmentId);
         segmentGroup[i.segmentId] = [i];
       }
-    });
+    }
     fixSpansSize.value = fixSpans.length;
-    segmentIdGroup.forEach((id: string) => {
+    for (const id of segmentIdGroup) {
       const currentSegment = segmentGroup[id].sort((a: Span, b: Span) => b.parentSpanId - a.parentSpanId);
-      currentSegment.forEach((s: Recordable) => {
+      for (const s of currentSegment) {
         const index = currentSegment.findIndex((i: Span) => i.spanId === s.parentSpanId);
         if (index > -1) {
           if (
@@ -253,16 +251,16 @@ limitations under the License. -->
             s.children.push(...children);
           }
         }
-      });
+      }
       segmentGroup[id] = currentSegment[currentSegment.length - 1];
-    });
-    segmentIdGroup.forEach((id: string) => {
-      segmentGroup[id].refs.forEach((ref: Recordable) => {
+    }
+    for (const id of segmentIdGroup) {
+      for (const ref of segmentGroup[id].refs) {
         if (ref.traceId === props.traceId) {
           traverseTree(segmentGroup[ref.parentSegmentId], ref.parentSpanId, ref.parentSegmentId, segmentGroup[id]);
         }
-      });
-    });
+      }
+    }
     for (const i in segmentGroup) {
       if (segmentGroup[i].refs.length) {
         let exit = null;
@@ -282,22 +280,24 @@ limitations under the License. -->
         segmentId.value.push(segmentGroup[i]);
       }
     }
-    segmentId.value.forEach((i: Span | Recordable) => {
+    for (const i of segmentId.value) {
       collapse(i);
-    });
+    }
   }
   function collapse(d: Span | Recordable) {
     if (d.children) {
       const item = refSpans.value.find((s: Ref) => s.parentSpanId === d.spanId && s.parentSegmentId === d.segmentId);
       let dur = d.endTime - d.startTime;
-      d.children.forEach((i: Span) => {
+      for (const i of d.children) {
         dur -= i.endTime - i.startTime;
-      });
+      }
       d.dur = dur < 0 ? 0 : dur;
       if (item) {
         d.children = d.children.sort(compare("startTime"));
       }
-      d.children.forEach((i: Span) => collapse(i));
+      for (const i of d.children) {
+        collapse(i);
+      }
     }
   }
   function compare(p: string) {
