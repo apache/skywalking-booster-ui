@@ -314,7 +314,7 @@ limitations under the License. -->
     const html = nodeMetrics.map((m, index) => {
       const metric =
         (topologyStore.nodeMetricValue[m] &&
-          topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id)) ||
+          topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: string }) => val.id === data.id)) ||
         {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
       return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value || NaN} ${
@@ -344,7 +344,7 @@ limitations under the License. -->
       );
       if (metric) {
         const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
-        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${
+        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value || NaN} ${
           opt.unit || ""
         }</div>`;
       }
@@ -355,7 +355,7 @@ limitations under the License. -->
         (val: { id: string; value: unknown }) => val.id === data.id,
       );
       if (metric) {
-        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${
+        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value || NaN} ${
           opt.unit || ""
         }</div>`;
       }

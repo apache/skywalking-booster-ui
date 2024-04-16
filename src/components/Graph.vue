@@ -235,12 +235,10 @@ limitations under the License. -->
   .no-data {
     font-size: $font-size-smaller;
     height: 100%;
-    box-sizing: border-box;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-pack: center;
-    -webkit-box-align: center;
-    color: #666;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    color: var(--text-color-placeholder);
   }
 
   .chart {
