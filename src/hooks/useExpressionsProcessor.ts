@@ -113,16 +113,14 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
       typesOfMQE.push(type);
       if (!obj.error) {
         if (type === ExpressionResultType.TIME_SERIES_VALUES) {
-          if (results.length === 1) {
-            const label = results[0].metric && results[0].metric.labels[0] && results[0].metric.labels[0].value;
-            source[c.label || label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
-          } else {
-            for (const item of results) {
-              const values = item.values.map((d: { value: unknown }) => d.value) || [];
-              const label = item.metric.labels
-                .map((d: { key: string; value: string }) => `${d.key}=${d.value}`)
-                .join(",");
-
+          for (const item of results) {
+            const values = item.values.map((d: { value: unknown }) => d.value) || [];
+            const label = item.metric.labels
+              .map((d: { key: string; value: string }) => `${d.key}=${d.value}`)
+              .join(",");
+            if (results.length === 1) {
+              source[label || c.label || name] = values;
+            } else {
               source[label] = values;
             }
           }
