@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="chart-table">
+  <div class="chart-table" v-if="dataKeys.length">
     <div class="row header flex-h">
       <div
         v-for="key in dataKeys[0]"
@@ -41,6 +41,7 @@ limitations under the License. -->
       </div>
     </div>
   </div>
+  <div class="no-data" v-else>No Data</div>
 </template>
 <script lang="ts" setup>
   import { computed } from "vue";
@@ -130,5 +131,14 @@ limitations under the License. -->
     .value-col {
       width: 50%;
     }
+  }
+
+  .no-data {
+    font-size: $font-size-smaller;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    color: var(--text-color-placeholder);
   }
 </style>

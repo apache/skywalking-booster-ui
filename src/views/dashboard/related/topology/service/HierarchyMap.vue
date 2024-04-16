@@ -133,10 +133,12 @@ limitations under the License. -->
     const html = exprssions.map((m: string, index: number) => {
       const metric =
         topologyStore.hierarchyNodeMetrics[data.layer || ""][m].values.find(
-          (val: { id: string; value: unknown }) => val.id === data.id,
+          (val: { id: string; value: string }) => val.id === data.id,
         ) || {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${opt.unit || ""}</div>`;
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value || NaN} ${
+        opt.unit || ""
+      }</div>`;
     });
     const tipHtml = [
       `<div class="mb-5"><span class="grey">name: </span>${data.name}</div><div class="mb-5"><span class="grey">layer: </span>${data.layer}</div>`,
