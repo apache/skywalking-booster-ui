@@ -25,11 +25,14 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { onMounted, ref, onUnmounted, watch, toRaw } from "vue";
   import { useDemandLogStore } from "@/store/modules/demand-log";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { Themes } from "@/constants/data";
 
   /*global Nullable */
   const demandLogStore = useDemandLogStore();
   const monacoInstance = ref();
   const logContent = ref<Nullable<HTMLDivElement>>(null);
+  const appStore = useAppStoreWithOut();
 
   onMounted(() => {
     init();
@@ -50,6 +53,7 @@ limitations under the License. -->
       wordWrap: true,
       minimap: { enabled: false },
       readonly: true,
+      theme: getTheme(),
     });
     toRaw(monacoInstance.value).updateOptions({ readOnly: true });
     editorLayout();
@@ -64,6 +68,9 @@ limitations under the License. -->
       width: width,
     });
   }
+  function getTheme() {
+    return appStore.theme === Themes.Dark ? "vs-dark" : "vs";
+  }
   onUnmounted(() => {
     if (!toRaw(monacoInstance.value)) {
       return;
@@ -72,6 +79,12 @@ limitations under the License. -->
     monacoInstance.value = null;
     demandLogStore.setLogs("");
   });
+  watch(
+    () => appStore.theme,
+    () => {
+      toRaw(monacoInstance.value).updateOptions({ theme: getTheme() });
+    },
+  );
   watch(
     () => demandLogStore.logs,
     () => {

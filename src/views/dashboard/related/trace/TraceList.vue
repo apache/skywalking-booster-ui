@@ -164,7 +164,8 @@ limitations under the License. -->
   }
 
   .trace-t-wrapper {
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
     border-right: 1px solid var(--sw-trace-list-border);
   }
 

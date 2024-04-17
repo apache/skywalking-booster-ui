@@ -112,22 +112,7 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
       tips.push(obj.error);
       typesOfMQE.push(type);
       if (!obj.error) {
-        if (type === ExpressionResultType.TIME_SERIES_VALUES) {
-          if (results.length === 1) {
-            const label = results[0].metric && results[0].metric.labels[0] && results[0].metric.labels[0].value;
-            source[c.label || label || name] = results[0].values.map((d: { value: unknown }) => d.value) || [];
-          } else {
-            for (const item of results) {
-              const values = item.values.map((d: { value: unknown }) => d.value) || [];
-              const label = item.metric.labels
-                .map((d: { key: string; value: string }) => `${d.key}=${d.value}`)
-                .join(",");
-
-              source[label] = values;
-            }
-          }
-        }
-        if (type === ExpressionResultType.SINGLE_VALUE) {
+        if ([ExpressionResultType.SINGLE_VALUE, ExpressionResultType.TIME_SERIES_VALUES].includes(type)) {
           for (const item of results) {
             const label =
               item.metric &&
