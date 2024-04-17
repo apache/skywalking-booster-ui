@@ -183,7 +183,7 @@ limitations under the License. -->
   .trace-line {
     position: relative;
     width: 2px;
-    height: 900px;
+    height: 100%;
     background-color: #e8e8e8;
     cursor: ew-resize;
 

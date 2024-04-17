@@ -75,6 +75,7 @@ limitations under the License. -->
     if (!traceGraph.value) {
       return;
     }
+    d3.selectAll(".d3-tip").remove();
     if (props.type === "List") {
       tree.value = new ListGraph(traceGraph.value, handleSelectSpan);
       tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
