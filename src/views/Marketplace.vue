@@ -78,6 +78,7 @@ limitations under the License. -->
   function searchMenus() {
     if (!searchText.value) {
       menus.value = appStore.allMenus;
+      currentItems.value = menus.value[0] || {};
       return;
     }
 
@@ -149,6 +150,7 @@ limitations under the License. -->
     border-right: 1px solid var(--sw-marketplace-border);
     align-content: flex-start;
     height: 100%;
+    width: 100%;
     overflow: auto;
   }
 
