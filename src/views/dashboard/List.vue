@@ -352,6 +352,7 @@ limitations under the License. -->
       return layout;
     });
     for (const item of templates) {
+      delete item.configuration.id;
       optimizeTemplate(item.configuration.children);
     }
     const name = `dashboards.json`;
