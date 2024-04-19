@@ -41,7 +41,7 @@ limitations under the License. -->
       </div>
     </div>
   </div>
-  <div class="no-data" v-else>No Data</div>
+  <div class="table-no-data" v-else>No Data</div>
 </template>
 <script lang="ts" setup>
   import { computed } from "vue";
@@ -133,7 +133,7 @@ limitations under the License. -->
     }
   }
 
-  .no-data {
+  .table-no-data {
     font-size: $font-size-smaller;
     height: 100%;
     align-items: center;
