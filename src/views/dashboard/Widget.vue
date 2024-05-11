@@ -15,9 +15,9 @@ limitations under the License. -->
 <template>
   <div class="content">
     <div class="header">
-      <span>{{ decodeURIComponent(title) }}</span>
+      <span>{{ title }}</span>
       <div class="tips" v-show="tips">
-        <el-tooltip :content="decodeURIComponent(tips) || ''">
+        <el-tooltip :content="tips || ''">
           <span>
             <Icon iconName="info_outline" size="sm" />
           </span>
