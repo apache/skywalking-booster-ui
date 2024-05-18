@@ -54,11 +54,11 @@ limitations under the License. -->
     const result: StatisticsSpan[] = [];
     const map = traceTable.changeStatisticsTree(data);
     map.forEach((nodes, nodeKey) => {
-      const nodeKeyData = nodeKey.split(":");
+      const lastColonIndex = nodeKey.lastIndexOf(":");
       result.push(
         getSpanGroupData(nodes, {
-          endpointName: nodeKeyData[0],
-          type: nodeKeyData[1],
+          endpointName: nodeKey.slice(0, lastColonIndex),
+          type: nodeKey.slice(lastColonIndex + 1),
         }),
       );
     });
