@@ -44,13 +44,6 @@ limitations under the License. -->
   const logItem = ref<any>(null);
 
   function showSelectSpan() {
-    const items: NodeListOf<any> = document.querySelectorAll(".log-item");
-
-    for (const item of items) {
-      item.style.background = "#fff";
-    }
-
-    logItem.value.style.background = "rgba(0, 0, 0, 0.1)";
     emit("select", props.data);
   }
 </script>
@@ -62,15 +55,15 @@ limitations under the License. -->
   }
 
   .log-item.selected {
-    background: rgba(0, 0, 0, 0.04);
+    background: rgb(0 0 0 / 4%);
   }
 
   .log-item:not(.level0):hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: rgb(0 0 0 / 4%);
   }
 
   .log-item:hover {
-    background: rgba(0, 0, 0, 0.04) !important;
+    background: rgb(0 0 0 / 4%) !important;
   }
 
   .log-item > div {
