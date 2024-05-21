@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="log-detail">
-    <div class="mb-10 clear rk-flex" v-for="(item, index) in ServiceLogDetail" :key="index">
+    <div class="mb-10 clear rk-flex" v-for="(item, index) in logTemplate" :key="index">
       <span class="g-sm-4 grey">{{ t(item.value) }}:</span>
       <span v-if="['timestamp', 'time'].includes(item.label)" class="g-sm-8 mb-10">
         {{ dateFormat(currentLog[item.label]) }}
@@ -38,11 +38,11 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { dateFormat } from "@/utils/dateFormat";
   import { formatJson } from "@/utils/formatJson";
-  import { ServiceLogDetail } from "./data";
 
   /*global defineProps */
   const props = defineProps({
     currentLog: { type: Object as PropType<any>, default: () => ({}) },
+    logTemplate: { type: Object as PropType<any>, default: () => ({}) },
   });
   const { t } = useI18n();
   const logTags = computed(() => {

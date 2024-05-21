@@ -42,14 +42,14 @@ limitations under the License. -->
       @closed="showDetail = false"
       :title="t('logDetail')"
     >
-      <LogDetail :currentLog="currentLog" />
+      <LogDetail :currentLog="currentLog" :logTemplate="type === 'browser' ? BrowserLogConstants : ServiceLogDetail" />
     </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
-  import { ServiceLogConstants, BrowserLogConstants } from "./data";
+  import { ServiceLogConstants, BrowserLogConstants, ServiceLogDetail } from "./data";
   import LogBrowser from "./LogBrowser.vue";
   import LogService from "./LogService.vue";
   import LogDetail from "./LogDetail.vue";
