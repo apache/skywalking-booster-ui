@@ -141,9 +141,10 @@ function findMostFrequent(arr: Call[]) {
 
   return maxItem;
 }
-export function computeLevels(calls: Call[], nodeList: Node[], levels: any[]) {
+export function computeLevels(calls: Call[], nodeList: Node[], arr: Node[][]) {
+  const levels: Node[][] = [];
   const node = findMostFrequent(calls);
-  const nodes = JSON.parse(JSON.stringify(nodeList)).sort((a: Node, b: Node) => {
+  let nodes = JSON.parse(JSON.stringify(nodeList)).sort((a: Node, b: Node) => {
     if (a.name.toLowerCase() < b.name.toLowerCase()) {
       return -1;
     }
@@ -158,23 +159,23 @@ export function computeLevels(calls: Call[], nodeList: Node[], levels: any[]) {
     key = nodes.findIndex((n: Node) => n.id === node.id);
   }
   levels.push([nodes[key]]);
-  nodes.splice(key, 1);
+  nodes = nodes.filter((_: unknown, index: number) => index !== key);
   for (const level of levels) {
     const a = [];
     for (const l of level) {
       for (const n of calls) {
         if (n.target === l.id) {
           const i = nodes.findIndex((d: Node) => d.id === n.source);
-          if (i > -1) {
+          if (i > -1 && nodes[i]) {
             a.push(nodes[i]);
-            nodes.splice(i, 1);
+            nodes = nodes.filter((_: unknown, index: number) => index !== i);
           }
         }
         if (n.source === l.id) {
           const i = nodes.findIndex((d: Node) => d.id === n.target);
-          if (i > -1) {
+          if (i > -1 && nodes[i]) {
             a.push(nodes[i]);
-            nodes.splice(i, 1);
+            nodes = nodes.filter((_: unknown, index: number) => index !== i);
           }
         }
       }
@@ -183,13 +184,22 @@ export function computeLevels(calls: Call[], nodeList: Node[], levels: any[]) {
       levels.push(a);
     }
   }
+  const list = levels.length > arr.length ? levels : arr;
+  const subList = levels.length > arr.length ? arr : levels;
+  arr = list.map((subArray: Node[], index: number) => {
+    if (subList[index]) {
+      return subArray.concat(subList[index]);
+    } else {
+      return subArray;
+    }
+  });
+
   if (nodes.length) {
     const ids = nodes.map((d: Node) => d.id);
     const links = calls.filter((item: Call) => ids.includes(item.source) || ids.includes(item.target));
-    const list = computeLevels(links, nodes, []);
-    levels = list.map((subArrayA, index) => subArrayA.concat(levels[index]));
+    arr = computeLevels(links, nodes, arr);
   }
-  return levels;
+  return arr;
 }
 export function changeNode(d: { x: number; y: number }, currentNode: Nullable<Node>, layout: any, radius: number) {
   if (!currentNode) {
@@ -229,7 +239,7 @@ export function changeNode(d: { x: number; y: number }, currentNode: Nullable<No
 }
 export function hierarchy(levels: Node[][], calls: Call[], radius: number) {
   // precompute level depth
-  levels.forEach((l: Node[], i: number) => l.forEach((n: any) => n && (n.level = i)));
+  levels.forEach((l: Node[], i: number) => l.forEach((n: Node) => n && (n.level = i)));
 
   const nodes: Node[] = levels.reduce((a, x) => a.concat(x), []);
   // layout
