@@ -299,7 +299,7 @@ const msg = {
   viewLogs: "Ver Registro de Datos",
   logsTagsTip: `Solamente etiquetas definidas en core/default/searchableLogsTags pueden ser buscadas.
   Más información en la página de Vocabulario de Configuración`,
-  keywordsOfContentLogTips: "El almacenamiento actual del servidor SkyWalking OAP no lo soporta.",
+  keywordsOfContentLogTips: "El almacenamiento actual del servidor SkyWalking OAP no lo soporta",
   setEvent: "Establecer Evento",
   viewAttributes: "Ver",
   serviceEvents: "Eventos Servico",
