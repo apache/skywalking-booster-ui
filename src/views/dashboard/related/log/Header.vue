@@ -67,50 +67,54 @@ limitations under the License. -->
     </div>
     <ConditionTags :type="'LOG'" @update="updateTags" />
   </div>
-  <div class="row tips" v-show="!isBrowser">
-    <b>{{ t("conditionNotice") }}</b>
-  </div>
-  <div class="flex-h" v-show="!isBrowser">
-    <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
-      <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
-      <span class="log-tags">
-        <span class="selected" v-for="(item, index) in keywordsOfContent" :key="`keywordsOfContent${index}`">
-          <span>{{ item }}</span>
-          <span class="remove-icon" @click="removeContent(index)">×</span>
-        </span>
-      </span>
-      <el-input
-        size="small"
-        class="inputs-max"
-        :placeholder="t('addKeywordsOfContent')"
-        v-model="contentStr"
-        @change="addLabels('keywordsOfContent')"
-      />
-    </div>
-    <div class="mr-5" v-show="logStore.supportQueryLogsByKeywords">
-      <span class="grey mr-5"> {{ t("excludingKeywordsOfContent") }}: </span>
-      <span class="log-tags">
-        <span
-          class="selected"
-          v-for="(item, index) in excludingKeywordsOfContent"
-          :key="`excludingKeywordsOfContent${index}`"
-        >
-          <span>{{ item }}</span>
-          <span class="remove-icon" @click="removeExcludeContent(index)"> × </span>
-        </span>
-      </span>
-      <el-input
-        class="inputs-max"
-        size="small"
-        :placeholder="t('addExcludingKeywordsOfContent')"
-        v-model="excludingContentStr"
-        @change="addLabels('excludingKeywordsOfContent')"
-      />
+  <div v-show="!isBrowser">
+    <div class="row tips">
+      <b>{{ t("conditionNotice") }}</b>
       <el-tooltip :content="t('keywordsOfContentLogTips')">
         <span v-show="!logStore.supportQueryLogsByKeywords">
-          <Icon iconName="help" class="mr-5" />
+          <Icon iconName="help" />
         </span>
       </el-tooltip>
+    </div>
+    <div v-show="logStore.supportQueryLogsByKeywords">
+      <div class="flex-h">
+        <div class="mr-5">
+          <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
+          <span class="log-tags">
+            <span class="selected" v-for="(item, index) in keywordsOfContent" :key="`keywordsOfContent${index}`">
+              <span>{{ item }}</span>
+              <span class="remove-icon" @click="removeContent(index)">×</span>
+            </span>
+          </span>
+          <el-input
+            size="small"
+            class="inputs-max"
+            :placeholder="t('addKeywordsOfContent')"
+            v-model="contentStr"
+            @change="addLabels('keywordsOfContent')"
+          />
+        </div>
+        <div class="mr-5">
+          <span class="grey mr-5"> {{ t("excludingKeywordsOfContent") }}: </span>
+          <span class="log-tags">
+            <span
+              class="selected"
+              v-for="(item, index) in excludingKeywordsOfContent"
+              :key="`excludingKeywordsOfContent${index}`"
+            >
+              <span>{{ item }}</span>
+              <span class="remove-icon" @click="removeExcludeContent(index)"> × </span>
+            </span>
+          </span>
+          <el-input
+            class="inputs-max"
+            size="small"
+            :placeholder="t('addExcludingKeywordsOfContent')"
+            v-model="excludingContentStr"
+            @change="addLabels('excludingKeywordsOfContent')"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>

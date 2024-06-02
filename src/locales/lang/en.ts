@@ -300,7 +300,7 @@ const msg = {
   viewLogs: "View Logs",
   logsTagsTip: `Only tags defined in the core/default/searchableLogsTags are searchable.
   Check more details on the Configuration Vocabulary page`,
-  keywordsOfContentLogTips: "Current storage of SkyWalking OAP server does not support this.",
+  keywordsOfContentLogTips: "Current storage of SkyWalking OAP server does not support this",
   setEvent: "Set Event",
   viewAttributes: "View",
   attributes: "Attributes",
@@ -355,7 +355,7 @@ const msg = {
   addKeywordsOfContent: "Please input a keyword of content",
   addExcludingKeywordsOfContent: "Please input a keyword of excluding content",
   noticeTag: "Please press Enter after inputting a tag(key=value).",
-  conditionNotice: "Notice: Please press Enter after inputting a key of content, exclude key of content(key=value).",
+  conditionNotice: "Notice: Please press Enter after inputting a key of content, exclude key of content(key=value)",
   language: "Language",
   save: "Save",
   editStrategy: "Edit Policies",

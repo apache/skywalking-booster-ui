@@ -35,7 +35,7 @@ limitations under the License. -->
   import { BrowserLogConstants } from "./data";
   import { dateFormat } from "@/utils/dateFormat";
 
-  /*global defineProps, defineEmits, NodeListOf  */
+  /* global defineProps, defineEmits */
   const props = defineProps({
     data: { type: Object as any, default: () => ({}) },
   });
