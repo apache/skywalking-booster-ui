@@ -78,10 +78,6 @@ export const BrowserLogConstants = [
     value: "pagePath",
   },
   {
-    label: "errorUrl",
-    value: "errorUrl",
-  },
-  {
     label: "time",
     value: "time",
   },
@@ -90,6 +86,10 @@ export const BrowserLogConstants = [
     value: "message",
     // drag: true,
     method: 350,
+  },
+  {
+    label: "errorUrl",
+    value: "errorUrl",
   },
   {
     label: "stack",
