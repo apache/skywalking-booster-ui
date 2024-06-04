@@ -21,7 +21,6 @@ limitations under the License. -->
       :class="['log', ['message', 'stack'].includes(item.label) ? 'max-item' : '']"
     >
       <span v-if="item.label === 'time'">{{ dateFormat(data.time) }}</span>
-      <span v-else-if="item.label === 'errorUrl'">{{ data.pagePath }}</span>
       <el-tooltip v-else :content="data[item.label] || '-'">
         <span>
           {{ data[item.label] || "-" }}

@@ -74,8 +74,12 @@ export const BrowserLogConstants = [
     value: "serviceVersion",
   },
   {
+    label: "pagePath",
+    value: "pagePath",
+  },
+  {
     label: "errorUrl",
-    value: "errorPage",
+    value: "errorUrl",
   },
   {
     label: "time",
