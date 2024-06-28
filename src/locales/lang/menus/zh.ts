@@ -111,6 +111,10 @@ const titles = {
   self_observability_satellite: "Satellite",
   self_observability_satellite_desc:
     "Satellite：为云原生基础设施设计的开源代理，提供了一种低成本、高效、更安全的遥测数据收集方式。它是遥测采集的推荐负载均衡器。",
+  cilium: "Cilium",
+  cilium_desc: "Cilium是Kubernetes上的CNI插件，提供基于eBPF的网络、安全和负载均衡。",
+  cilium_service: "Cilium服务",
+  cilium_service_desc: "通过Cilium Hubble收集的遥测数据观察服务。",
 };
 
 export default titles;
