@@ -218,14 +218,14 @@ export default class ListGraph {
       .append("text")
       .attr("x", 13)
       .attr("y", 5)
-      .attr("fill", appStore.theme === Themes.Dark ? "#666" : "#E54C17")
+      .attr("fill", `#e54c17`)
       .html((d: Recordable) => (d.data.isError ? "◉" : ""));
     nodeEnter
       .append("text")
       .attr("class", "node-text")
       .attr("x", 35)
       .attr("y", -6)
-      .attr("fill", appStore.theme === Themes.Dark ? "#eee" : "#333")
+      .attr("fill", (d: Recordable) => (d.data.isError ? `#e54c17` : appStore.theme === Themes.Dark ? "#eee" : "#333"))
       .html((d: Recordable) => {
         if (d.data.label === "TRACE_ROOT") {
           return "";
