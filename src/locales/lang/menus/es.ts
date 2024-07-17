@@ -127,7 +127,8 @@ const titles = {
   self_observability_satellite_desc:
     "Satellite: an open-source agent designed for the cloud-native infrastructures, which provides a low-cost, high-efficient, and more secure way to collect telemetry data. It is the recommended load balancer for telemetry collecting.",
   cilium: "Cilium",
-  cilium_desc: "Cilium es un complemento CNI para Kubernetes que proporciona redes, seguridad y equilibrio de carga basados en eBPF.",
+  cilium_desc:
+    "Cilium es un complemento CNI para Kubernetes que proporciona redes, seguridad y equilibrio de carga basados en eBPF.",
   cilium_service: "Cilium Service",
   cilium_service_desc: "Observe el estado del servicio y los recursos de Cilium Hubble.",
 };
