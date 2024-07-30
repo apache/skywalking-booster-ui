@@ -196,18 +196,22 @@ export async function useExpressionsQueryPodsMetrics(
       variables.push(`$entity${index}: Entity!`);
       conditions[`entity${index}`] = entity;
       const f = metrics.map((name: string, idx: number) => {
-        variables.push(`$expression${index}${idx}: String!`);
-        conditions[`expression${index}${idx}`] = name;
+        if (index === 0) {
+          variables.push(`$expression${idx}: String!`);
+          conditions[`expression${idx}`] = name;
+        }
         let str = "";
         if (config.subExpressions[idx]) {
-          variables.push(`$subExpression${index}${idx}: String!`);
-          conditions[`subExpression${index}${idx}`] = config.subExpressions[idx];
-          str = `subexpression${index}${idx}: execExpression(expression: $subExpression${index}${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
+          if (index === 0) {
+            variables.push(`$subExpression${idx}: String!`);
+            conditions[`subExpression${idx}`] = config.subExpressions[idx];
+          }
+          str = `subexpression${index}${idx}: execExpression(expression: $subExpression${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
         }
 
         return (
           str +
-          `expression${index}${idx}: execExpression(expression: $expression${index}${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`
+          `expression${index}${idx}: execExpression(expression: $expression${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`
         );
       });
       return f;
