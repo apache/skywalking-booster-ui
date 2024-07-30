@@ -61,7 +61,7 @@ limitations under the License. -->
     return (props.data.tags.find((d: { key: string; value: string }) => d.key === "level") || {}).value || "";
   });
   const highlightKeywords = (data: string) => {
-    const keywords = Object.values(logStore.getLogKeywords());
+    const keywords = Object.values(logStore.conditions.keywordsOfContent || {});
     const regex = new RegExp(keywords.join("|"), "gi");
     return data.replace(regex, (match) => `<span style="color: red">${match}</span>`);
   };
