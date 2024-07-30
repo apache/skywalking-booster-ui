@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RespFields } from "./data";
+import { RespFields, MaximumEntities } from "./data";
 import { EntityType, ExpressionResultType } from "@/views/dashboard/data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -156,7 +156,7 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
 }
 
 export async function useExpressionsQueryPodsMetrics(
-  pods: Array<(Instance | Endpoint | Service) & Indexable>,
+  allPods: Array<(Instance | Endpoint | Service) & Indexable>,
   config: {
     expressions: string[];
     subExpressions: string[];
@@ -164,7 +164,7 @@ export async function useExpressionsQueryPodsMetrics(
   },
   scope: string,
 ) {
-  function expressionsGraphqlPods() {
+  function expressionsGraphqlPods(pods: Array<(Instance | Endpoint | Service) & Indexable>) {
     const metrics: string[] = [];
     const subMetrics: string[] = [];
     config.expressions = config.expressions || [];
@@ -196,18 +196,22 @@ export async function useExpressionsQueryPodsMetrics(
       variables.push(`$entity${index}: Entity!`);
       conditions[`entity${index}`] = entity;
       const f = metrics.map((name: string, idx: number) => {
-        variables.push(`$expression${index}${idx}: String!`);
-        conditions[`expression${index}${idx}`] = name;
+        if (index === 0) {
+          variables.push(`$expression${idx}: String!`);
+          conditions[`expression${idx}`] = name;
+        }
         let str = "";
         if (config.subExpressions[idx]) {
-          variables.push(`$subExpression${index}${idx}: String!`);
-          conditions[`subExpression${index}${idx}`] = config.subExpressions[idx];
-          str = `subexpression${index}${idx}: execExpression(expression: $subExpression${index}${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
+          if (index === 0) {
+            variables.push(`$subExpression${idx}: String!`);
+            conditions[`subExpression${idx}`] = config.subExpressions[idx];
+          }
+          str = `subexpression${index}${idx}: execExpression(expression: $subExpression${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
         }
 
         return (
           str +
-          `expression${index}${idx}: execExpression(expression: $expression${index}${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`
+          `expression${index}${idx}: execExpression(expression: $expression${idx}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`
         );
       });
       return f;
@@ -218,7 +222,10 @@ export async function useExpressionsQueryPodsMetrics(
     return { queryStr, conditions };
   }
 
-  function expressionsPodsSource(resp: { errors: string; data: Indexable }): Indexable {
+  function expressionsPodsSource(
+    resp: { errors: string; data: Indexable },
+    pods: Array<(Instance | Endpoint | Service) & Indexable>,
+  ): Indexable {
     if (resp.errors) {
       ElMessage.error(resp.errors);
       return {};
@@ -300,17 +307,39 @@ export async function useExpressionsQueryPodsMetrics(
     return { data, names, subNames, metricConfigArr, metricTypesArr, expressionsTips, subExpressionsTips };
   }
 
-  const dashboardStore = useDashboardStore();
-  const params = await expressionsGraphqlPods();
-  const json = await dashboardStore.fetchMetricValue(params);
+  async function fetchPodsExpressionValues(pods: Array<(Instance | Endpoint | Service) & Indexable>) {
+    const dashboardStore = useDashboardStore();
+    const params = await expressionsGraphqlPods(pods);
 
-  if (json.errors) {
-    ElMessage.error(json.errors);
-    return {};
+    const json = await dashboardStore.fetchMetricValue(params);
+
+    if (json.errors) {
+      ElMessage.error(json.errors);
+      return {};
+    }
+    const expressionParams = expressionsPodsSource(json, pods);
+
+    return expressionParams;
   }
-  const expressionParams = expressionsPodsSource(json);
 
-  return expressionParams;
+  const result = [];
+  for (let i = 0; i < allPods.length; i += MaximumEntities) {
+    result.push(allPods.slice(i, i + MaximumEntities));
+  }
+  const promiseArr = result.map((d: Array<(Instance | Endpoint | Service) & Indexable>) =>
+    fetchPodsExpressionValues(d),
+  );
+  const responseList = await Promise.all(promiseArr);
+  let resp: Indexable = { data: [], expressionsTips: [], subExpressionsTips: [] };
+  for (const item of responseList) {
+    resp = {
+      ...item,
+      data: [...resp.data, ...item.data],
+      expressionsTips: [...resp.expressionsTips, ...item.expressionsTips],
+      subExpressionsTips: [...resp.subExpressionsTips, ...item.subExpressionsTips],
+    };
+  }
+  return resp;
 }
 
 export function useQueryTopologyExpressionsProcessor(metrics: string[], instances: (Call | Node)[]) {
