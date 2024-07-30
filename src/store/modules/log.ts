@@ -53,9 +53,6 @@ export const logStore = defineStore({
     setLogCondition(data: Recordable) {
       this.conditions = { ...this.conditions, ...data };
     },
-    getLogKeywords() {
-      return this.conditions.keywordsOfContent;
-    },
     resetState() {
       this.logs = [];
       this.conditions = {
