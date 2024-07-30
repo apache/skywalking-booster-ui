@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RespFields } from "./data";
+import { RespFields, MaximumEntities } from "./data";
 import { EntityType, ExpressionResultType } from "@/views/dashboard/data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -323,8 +323,8 @@ export async function useExpressionsQueryPodsMetrics(
   }
 
   const result = [];
-  for (let i = 0; i < allPods.length; i += 20) {
-    result.push(allPods.slice(i, i + 20));
+  for (let i = 0; i < allPods.length; i += MaximumEntities) {
+    result.push(allPods.slice(i, i + MaximumEntities));
   }
   const promiseArr = result.map((d: Array<(Instance | Endpoint | Service) & Indexable>) =>
     fetchPodsExpressionValues(d),
