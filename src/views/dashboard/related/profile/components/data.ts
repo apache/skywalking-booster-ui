@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const ProfileMode: any[] = [
+export const ProfileDataMode: any[] = [
   { label: "Include Children", value: "include" },
   { label: "Exclude Children", value: "exclude" },
+];
+export const ProfileDisplayMode: any[] = [
+  { label: "Tree Graph", value: "tree" },
+  { label: "Flame Graph", value: "flame" },
 ];
 export const NewTaskField = {
   service: { key: "", label: "None" },

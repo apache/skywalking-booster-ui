@@ -19,10 +19,18 @@ limitations under the License. -->
       <el-input class="input mr-10 ml-5" readonly :value="profileStore.currentSegment.traceId" size="small" />
       <Selector
         size="small"
-        :value="mode"
-        :options="ProfileMode"
-        placeholder="Select a mode"
+        :value="dataMode"
+        :options="ProfileDataMode"
+        placeholder="Select whether the data contains Children"
         @change="spanModeChange"
+        class="mr-10"
+      />
+      <Selector
+        size="small"
+        :value="displayMode"
+        :options="ProfileDisplayMode"
+        placeholder="Select how to display the profiling data"
+        @change="selectDisplayMode"
         class="mr-10"
       />
       <el-button type="primary" size="small" :disabled="!profileStore.currentSpan.profiled" @click="analyzeProfile()">
@@ -49,13 +57,14 @@ limitations under the License. -->
   import type { Span } from "@/types/trace";
   import type { Option } from "@/types/app";
   import { ElMessage } from "element-plus";
-  import { ProfileMode } from "./data";
+  import { ProfileDataMode, ProfileDisplayMode } from "./data";
 
   /* global defineEmits*/
-  const emits = defineEmits(["loading"]);
+  const emits = defineEmits(["loading", "displayMode"]);
   const { t } = useI18n();
   const profileStore = useProfileStore();
-  const mode = ref<string>("include");
+  const dataMode = ref<string>("include");
+  const displayMode = ref<string>("tree");
   const message = ref<string>("");
   const timeRange = ref<Array<{ start: number; end: number }>>([]);
 
@@ -64,8 +73,13 @@ limitations under the License. -->
   }
 
   function spanModeChange(item: Option[]) {
-    mode.value = item[0].value;
+    dataMode.value = item[0].value;
     updateTimeRange();
+  }
+
+  function selectDisplayMode(item: Option[]) {
+    displayMode.value = item[0].value;
+    emits("displayMode", displayMode.value);
   }
 
   async function analyzeProfile() {
@@ -92,7 +106,7 @@ limitations under the License. -->
   }
 
   function updateTimeRange() {
-    if (mode.value === "include") {
+    if (dataMode.value === "include") {
       timeRange.value = [
         {
           start: profileStore.currentSpan.startTime,
@@ -158,7 +172,7 @@ limitations under the License. -->
 
   .profile-trace-detail-wrapper {
     padding: 5px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgb(0 0 0 / 10%);
     width: 100%;
   }
 
