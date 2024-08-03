@@ -28,6 +28,7 @@ limitations under the License. -->
   import type { StackElement } from "@/types/ebpf";
   import { AggregateTypes } from "./data";
   import "d3-flame-graph/dist/d3-flamegraph.css";
+  import { treeForeach } from "@/utils/flameGraph";
 
   /*global Nullable, defineProps*/
   const props = defineProps({
@@ -178,14 +179,6 @@ limitations under the License. -->
     });
 
     return res;
-  }
-
-  function treeForeach(tree: StackElement[], func: (node: StackElement) => void) {
-    for (const data of tree) {
-      data.children && treeForeach(data.children, func);
-      func(data);
-    }
-    return tree;
   }
 
   watch(

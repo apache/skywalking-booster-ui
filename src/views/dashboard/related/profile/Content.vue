@@ -21,7 +21,7 @@ limitations under the License. -->
     <div class="item">
       <SpanTree @loading="loadTrees" @displayMode="setDisplayMode" />
       <div class="thread-stack">
-        <div id="graph-stack" ref="graph" />
+        <div id="graph-stack" ref="graph" v-show="displayMode == 'flame'" />
         <StackTable
           v-show="displayMode == 'tree'"
           v-if="profileStore.analyzeTrees.length"
@@ -47,7 +47,7 @@ limitations under the License. -->
   import { flamegraph } from "d3-flame-graph";
   import * as d3 from "d3";
   import d3tip from "d3-tip";
-  import { AggregateTypes } from "@/views/dashboard/related/ebpf/components/data";
+  import { treeForeach } from "@/utils/flameGraph";
   const stackTree = ref<Nullable<TraceProfilingElement>>(null);
   const selectStack = ref<Nullable<TraceProfilingElement>>(null);
   const graph = ref<Nullable<HTMLDivElement>>(null);
@@ -84,6 +84,8 @@ limitations under the License. -->
       stackType: "",
       rateOfRoot: "",
       rateOfParent: "",
+      duration: 0,
+      durationChildExcluded: 0,
     };
     countRange();
     for (const tree of profileStore.analyzeTrees) {
@@ -122,10 +124,9 @@ limitations under the License. -->
       .direction("s")
       .html((d: { data: TraceProfilingElement } & { parent: { data: TraceProfilingElement } }) => {
         const name = d.data.name.replace("<", "&lt;").replace(">", "&gt;");
-        const valStr =
-          profileStore.aggregateType === AggregateTypes[0].value
-            ? `<div class="mb-5">Dump Count: ${d.data.count}</div>`
-            : `<div class="mb-5">Duration: ${d.data.count} ns</div>`;
+        const dumpCount = `<div class="mb-5">Dump Count: ${d.data.count}</div>`;
+        const duration = `<div class="mb-5">Duration: ${d.data.duration} ns</div>`;
+        const durationChildExcluded = `<div class="mb-5">DurationChildExcluded: ${d.data.durationChildExcluded} ns</div>`;
         const rateOfParent =
           (d.parent &&
             `<div class="mb-5">Percentage Of Selected: ${
@@ -135,7 +136,7 @@ limitations under the License. -->
         const rateOfRoot = `<div class="mb-5">Percentage Of Root: ${
           ((d.data.count / root.count) * 100).toFixed(3) + "%"
         }</div>`;
-        return `<div class="mb-5 name">CodeSignature: ${name}</div>${valStr}${rateOfParent}${rateOfRoot}`;
+        return `<div class="mb-5 name">CodeSignature: ${name}</div>${dumpCount}${duration}${durationChildExcluded}${rateOfParent}${rateOfRoot}`;
       })
       .style("max-width", "400px");
     flameChart.value.tooltip(tip);
@@ -196,14 +197,6 @@ limitations under the License. -->
     });
 
     return res;
-  }
-
-  function treeForeach(tree: TraceProfilingElement[], func: (node: TraceProfilingElement) => void) {
-    for (const data of tree) {
-      data.children && treeForeach(data.children, func);
-      func(data);
-    }
-    return tree;
   }
 
   watch(

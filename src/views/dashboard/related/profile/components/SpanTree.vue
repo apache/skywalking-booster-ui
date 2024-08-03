@@ -21,7 +21,7 @@ limitations under the License. -->
         size="small"
         :value="dataMode"
         :options="ProfileDataMode"
-        placeholder="Select whether the data contains Children"
+        placeholder="Please select a profile data mode"
         @change="spanModeChange"
         class="mr-10"
       />
@@ -29,7 +29,7 @@ limitations under the License. -->
         size="small"
         :value="displayMode"
         :options="ProfileDisplayMode"
-        placeholder="Select how to display the profiling data"
+        placeholder="Please select a profile display mode"
         @change="selectDisplayMode"
         class="mr-10"
       />

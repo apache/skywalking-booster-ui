@@ -89,6 +89,8 @@ export type TraceProfilingElement = {
   children?: TraceProfilingElement[];
   rateOfRoot?: string;
   rateOfParent: string;
+  duration: number;
+  durationChildExcluded: number;
 };
 export type AnalyzationTrees = {
   id: string;
