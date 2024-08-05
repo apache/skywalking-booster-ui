@@ -77,6 +77,21 @@ export type StackElement = {
   rateOfRoot?: string;
   rateOfParent: string;
 };
+export type TraceProfilingElement = {
+  id: string;
+  originId: string;
+  name: string;
+  parentId: string;
+  codeSignature: string;
+  count: number;
+  stackType: string;
+  value: number;
+  children?: TraceProfilingElement[];
+  rateOfRoot?: string;
+  rateOfParent: string;
+  duration: number;
+  durationChildExcluded: number;
+};
 export type AnalyzationTrees = {
   id: string;
   parentId: string;
