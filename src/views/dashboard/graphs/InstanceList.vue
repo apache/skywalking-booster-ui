@@ -67,8 +67,9 @@ limitations under the License. -->
     <el-pagination
       class="pagination flex-h"
       layout="prev, pager, next"
+      :current-page="currentPage"
       :page-size="pageSize"
-      :total="pods.length"
+      :total="searchText ? pods.filter((d: any) => d.label.includes(searchText)).length : pods.length"
       @current-change="changePage"
       @prev-click="changePage"
       @next-click="changePage"
@@ -122,6 +123,7 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const chartLoading = ref<boolean>(false);
   const instances = ref<Instance[]>([]); // current instances
+  const currentPage = ref<number>(1);
   const pageSize = 10;
   const searchText = ref<string>("");
   const colMetrics = ref<string[]>([]);
@@ -213,18 +215,22 @@ limitations under the License. -->
   }
 
   function changePage(pageIndex: number) {
-    instances.value = pods.value.filter((d: unknown, index: number) => {
-      if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
-        return d;
-      }
-    });
+    let podList = pods.value;
+    if (searchText.value) {
+      podList = pods.value.filter((d: { label: string }) => d.label.includes(searchText.value));
+    }
+    instances.value = podList.filter(
+      (_, index: number) => index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize,
+    );
     queryInstanceMetrics(instances.value);
+    currentPage.value = pageIndex;
   }
 
   function searchList() {
     const searchInstances = pods.value.filter((d: { label: string }) => d.label.includes(searchText.value));
-    instances.value = searchInstances.filter((d: unknown, index: number) => index < pageSize);
+    instances.value = searchInstances.filter((_, index: number) => index < pageSize);
     queryInstanceMetrics(instances.value);
+    currentPage.value = 1;
   }
 
   watch(
