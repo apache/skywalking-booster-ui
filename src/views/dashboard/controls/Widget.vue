@@ -111,9 +111,9 @@ limitations under the License. -->
       const isList = computed(() => ListChartTypes.includes((props.data.graph && props.data.graph.type) || ""));
       const typesOfMQE = ref<string[]>([]);
 
-      if ((props.needQuery || !dashboardStore.currentDashboard.id) && !isList.value) {
-        queryMetrics();
-      }
+      // if ((props.needQuery || !dashboardStore.currentDashboard.id) && !isList.value) {
+      //   queryMetrics();
+      // }
 
       async function queryMetrics() {
         loading.value = true;

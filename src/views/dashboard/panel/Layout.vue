@@ -46,6 +46,7 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
   import controls from "../controls/index";
   import { dragIgnoreFrom } from "../data";
+  // import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
 
   export default defineComponent({
     name: "Layout",
@@ -67,6 +68,13 @@ limitations under the License. -->
           dashboardStore.setActiveTabIndex(0);
         }
       }
+      // async function queryMetrics() {
+      //   const e = {
+      //     metrics: props.data.expressions || [],
+      //     metricConfig: props.data.metricConfig || [],
+      //   };
+      //   const params = (await useDashboardQueryProcessor(e)) || {};
+      // }
       onBeforeUnmount(() => {
         dashboardStore.setLayout([]);
         selectorStore.setCurrentService(null);
