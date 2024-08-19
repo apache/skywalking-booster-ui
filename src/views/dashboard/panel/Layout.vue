@@ -46,7 +46,7 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
   import controls from "../controls/index";
   import { dragIgnoreFrom } from "../data";
-  // import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
 
   export default defineComponent({
     name: "Layout",
@@ -55,6 +55,7 @@ limitations under the License. -->
       const { t } = useI18n();
       const dashboardStore = useDashboardStore();
       const selectorStore = useSelectorStore();
+      console.log(dashboardStore.layout);
 
       function clickGrid(item: LayoutConfig, event: Event) {
         dashboardStore.activeGridItem(item.i);
@@ -68,13 +69,23 @@ limitations under the License. -->
           dashboardStore.setActiveTabIndex(0);
         }
       }
-      // async function queryMetrics() {
-      //   const e = {
-      //     metrics: props.data.expressions || [],
-      //     metricConfig: props.data.metricConfig || [],
-      //   };
-      //   const params = (await useDashboardQueryProcessor(e)) || {};
-      // }
+      async function queryMetrics() {
+        const widgets = [];
+        for (const item of dashboardStore.layout) {
+          if (item.type === "Widget") {
+            widgets.push(item);
+          }
+          if (item.type === "Tab") {
+            widgets.push(...item.children[item.activedTabIndex].children);
+          }
+        }
+        const configList = widgets.map((d: any) => ({
+          metrics: d.expressions || [],
+          metricConfig: d.data.metricConfig || [],
+        }));
+        const params = (await useDashboardQueryProcessor(configList)) || {};
+        console.log(params);
+      }
       onBeforeUnmount(() => {
         dashboardStore.setLayout([]);
         selectorStore.setCurrentService(null);
