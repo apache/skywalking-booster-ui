@@ -39,7 +39,7 @@ limitations under the License. -->
   <div class="no-data-tips" v-else>{{ t("noWidget") }}</div>
 </template>
 <script lang="ts">
-  import { defineComponent, onBeforeUnmount } from "vue";
+  import { defineComponent, onBeforeUnmount, watch } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
@@ -47,6 +47,7 @@ limitations under the License. -->
   import controls from "../controls/index";
   import { dragIgnoreFrom } from "../data";
   import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { EntityType } from "../data";
 
   export default defineComponent({
     name: "Layout",
@@ -55,7 +56,6 @@ limitations under the License. -->
       const { t } = useI18n();
       const dashboardStore = useDashboardStore();
       const selectorStore = useSelectorStore();
-      console.log(dashboardStore.layout);
 
       function clickGrid(item: LayoutConfig, event: Event) {
         dashboardStore.activeGridItem(item.i);
@@ -76,12 +76,13 @@ limitations under the License. -->
             widgets.push(item);
           }
           if (item.type === "Tab") {
-            widgets.push(...item.children[item.activedTabIndex].children);
+            const index = isNaN(item.activedTabIndex) ? 0 : item.activedTabIndex;
+            widgets.push(...item.children[index].children);
           }
         }
         const configList = widgets.map((d: any) => ({
           metrics: d.expressions || [],
-          metricConfig: d.data.metricConfig || [],
+          metricConfig: d.metricConfig || [],
         }));
         const params = (await useDashboardQueryProcessor(configList)) || {};
         console.log(params);
@@ -93,6 +94,14 @@ limitations under the License. -->
         dashboardStore.setEntity("");
         dashboardStore.setConfigPanel(false);
       });
+      watch(
+        () => [selectorStore.currentService, selectorStore.currentDestService],
+        () => {
+          if ([EntityType[0].value, EntityType[4].value].includes(dashboardStore.entity)) {
+            queryMetrics();
+          }
+        },
+      );
       return {
         dashboardStore,
         clickGrid,

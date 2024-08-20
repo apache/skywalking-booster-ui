@@ -36,19 +36,16 @@ export async function useDashboardQueryProcessor(configArr: Indexable[]) {
     if (!selectorStore.currentService && dashboardStore.entity !== "All") {
       return;
     }
-    const conditions: Recordable = {
-      duration: appStore.durationTime,
-    };
-    const variables: string[] = [`$duration: Duration!`];
+    const conditions: Recordable = {};
+    const variables: string[] = [];
     const isRelation = ["ServiceRelation", "ServiceInstanceRelation", "EndpointRelation", "ProcessRelation"].includes(
       dashboardStore.entity,
     );
     if (isRelation && !selectorStore.currentDestService) {
       return;
     }
-    const fragment = config.metrics.map((name: string, index: number) => {
-      variables.push(`$expression${idx}${index}: String!`, `$entity${idx}${index}: Entity!`);
-      conditions[`expression${idx}${index}`] = name;
+    if (idx === 0) {
+      variables.push(`$entity: Entity!`);
       const entity = {
         serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
         normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
@@ -76,12 +73,14 @@ export async function useDashboardQueryProcessor(configArr: Indexable[]) {
           ? selectorStore.currentDestProcess && selectorStore.currentDestProcess.value
           : undefined,
       };
-      conditions[`entity${idx}${index}`] = entity;
+      conditions[`entity`] = entity;
+    }
+    const fragment = config.metrics.map((name: string, index: number) => {
+      variables.push(`$expression${idx}${index}: String!`);
+      conditions[`expression${idx}${index}`] = name;
 
-      return `expression${idx}${index}: execExpression(expression: $expression${idx}${index}, entity: $entity${idx}${index}, duration: $duration)${RespFields.execExpression}`;
+      return `expression${idx}${index}: execExpression(expression: $expression${idx}${index}, entity: $entity, duration: $duration)${RespFields.execExpression}`;
     });
-    // const queryStr = `query queryData(${variables}) {${fragment}}`;
-
     return {
       variables,
       fragment,
@@ -136,7 +135,7 @@ export async function useDashboardQueryProcessor(configArr: Indexable[]) {
   }
   const appStore = useAppStoreWithOut();
   const variables: string[] = [`$duration: Duration!`];
-  let fragments;
+  let fragments = "";
   let conditions: Recordable = {
     duration: appStore.durationTime,
   };
@@ -151,7 +150,6 @@ export async function useDashboardQueryProcessor(configArr: Indexable[]) {
   if (!fragments) {
     return { 0: { source: {}, tips: [], typesOfMQE: [] } };
   }
-
   const queryStr = `query queryData(${variables}) {${fragments}}`;
   const dashboardStore = useDashboardStore();
   const json = await dashboardStore.fetchMetricValue({
