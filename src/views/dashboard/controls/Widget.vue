@@ -110,7 +110,6 @@ limitations under the License. -->
       const dashboardStore = useDashboardStore();
       const graph = computed(() => props.data.graph || {});
       const widget = computed(() => props.data.widget || {});
-      const isList = computed(() => ListChartTypes.includes((props.data.graph && props.data.graph.type) || ""));
       const typesOfMQE = ref<string[]>([]);
 
       async function queryMetrics() {
@@ -120,8 +119,8 @@ limitations under the License. -->
           metricConfig: props.data.metricConfig || [],
           id: props.data.i,
         };
-        const values = (await useDashboardQueryProcessor([config])) || {};
-        const params = values[data.value.i];
+        const metrics = (await useDashboardQueryProcessor([config])) || {};
+        const params = metrics[data.value.i];
         loading.value = false;
         state.source = params.source || {};
         typesOfMQE.value = params.typesOfMQE;
@@ -160,7 +159,7 @@ limitations under the License. -->
         dashboardStore.selectWidget(props.data);
       }
       watch(
-        () => props.data.expressions,
+        () => props.data,
         () => {
           if (!dashboardStore.selectedGrid) {
             return;
@@ -169,7 +168,7 @@ limitations under the License. -->
             return;
           }
           const chart = dashboardStore.selectedGrid.graph || {};
-          if (ListChartTypes.includes(chart.type) || isList.value) {
+          if (ListChartTypes.includes(chart.type)) {
             return;
           }
           queryMetrics();

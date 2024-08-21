@@ -53,7 +53,7 @@ limitations under the License. -->
   import { useRoute } from "vue-router";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
   import timeFormat from "@/utils/timeFormat";
@@ -128,12 +128,15 @@ limitations under the License. -->
       }
       async function queryMetrics() {
         loading.value = true;
-        const params = await useExpressionsQueryProcessor({
-          metrics: config.value.expressions || [],
-          metricConfig: config.value.metricConfig || [],
-          subExpressions: config.value.subExpressions || [],
-        });
-
+        const metrics = await useDashboardQueryProcessor([
+          {
+            metrics: config.value.expressions || [],
+            metricConfig: config.value.metricConfig || [],
+            subExpressions: config.value.subExpressions || [],
+            id: config.value.i,
+          },
+        ]);
+        const params = metrics[config.value.i];
         loading.value = false;
         source.value = params.source || {};
         typesOfMQE.value = params.typesOfMQE;

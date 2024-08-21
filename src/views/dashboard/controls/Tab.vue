@@ -130,7 +130,7 @@ limitations under the License. -->
   import controls from "./tab";
   import { dragIgnoreFrom, WidgetType } from "../data";
   import copy from "@/utils/copy";
-  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
 
   const props = {
     data: {
@@ -264,8 +264,10 @@ limitations under the License. -->
         if (!metrics.length) {
           return;
         }
-        const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
+        const values: { [key: string]: any } =
+          (await useDashboardQueryProcessor([{ metrics, id: props.data.i }])) || {};
         for (const child of tabsProps.children || []) {
+          const params = values[props.data.i];
           if (params.source[child.expression || ""]) {
             child.enable =
               !!Number(params.source[child.expression || ""]) &&
