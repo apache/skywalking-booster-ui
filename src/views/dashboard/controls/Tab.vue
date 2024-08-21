@@ -113,6 +113,7 @@ limitations under the License. -->
           :data="item"
           :activeIndex="`${data.i}-${activeTabIndex}-${item.i}`"
           :needQuery="needQuery"
+          :metricsValues="metricsValues"
         />
       </grid-item>
     </grid-layout>
@@ -135,6 +136,10 @@ limitations under the License. -->
     data: {
       type: Object as PropType<LayoutConfig>,
       default: () => ({ children: [] }),
+    },
+    metricsValues: {
+      type: Object as PropType<any>,
+      default: () => ({}),
     },
     active: { type: Boolean, default: false },
   };

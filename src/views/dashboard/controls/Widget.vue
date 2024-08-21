@@ -88,6 +88,10 @@ limitations under the License. -->
       type: Object as PropType<LayoutConfig>,
       default: () => ({ widget: {}, graph: {} }),
     },
+    metricsValues: {
+      type: Object as PropType<any>,
+      default: () => ({}),
+    },
     activeIndex: { type: String, default: "" },
     needQuery: { type: Boolean, default: false },
   };
@@ -110,10 +114,6 @@ limitations under the License. -->
       const widget = computed(() => props.data.widget || {});
       const isList = computed(() => ListChartTypes.includes((props.data.graph && props.data.graph.type) || ""));
       const typesOfMQE = ref<string[]>([]);
-
-      // if ((props.needQuery || !dashboardStore.currentDashboard.id) && !isList.value) {
-      //   queryMetrics();
-      // }
 
       async function queryMetrics() {
         loading.value = true;
@@ -176,48 +176,15 @@ limitations under the License. -->
         },
       );
       watch(
-        () => [selectorStore.currentService, selectorStore.currentDestService],
+        () => props.metricsValues,
         () => {
-          if (isList.value) {
-            return;
+          loading.value = true;
+          const params = props.metricsValues[data.value.i];
+          if (params) {
+            state.source = params.source || {};
+            typesOfMQE.value = params.typesOfMQE;
           }
-          if ([EntityType[0].value, EntityType[4].value].includes(dashboardStore.entity)) {
-            queryMetrics();
-          }
-        },
-      );
-      watch(
-        () => [selectorStore.currentPod, selectorStore.currentDestPod],
-        () => {
-          if ([EntityType[0].value, EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
-            return;
-          }
-          if (isList.value) {
-            return;
-          }
-          queryMetrics();
-        },
-      );
-      watch(
-        () => [selectorStore.currentProcess, selectorStore.currentDestProcess],
-        () => {
-          if (isList.value) {
-            return;
-          }
-          if ([EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
-            queryMetrics();
-          }
-        },
-      );
-      watch(
-        () => appStore.durationTime,
-        () => {
-          if (isList.value) {
-            return;
-          }
-          if (dashboardStore.entity === EntityType[1].value) {
-            queryMetrics();
-          }
+          loading.value = false;
         },
       );
 

@@ -33,19 +33,20 @@ limitations under the License. -->
       :class="{ active: dashboardStore.activedGridItem === item.i }"
       :drag-ignore-from="dragIgnoreFrom"
     >
-      <component :is="item.type" :data="item" />
+      <component :is="item.type" :data="item" :metricsValues="metricsValues" />
     </grid-item>
   </grid-layout>
   <div class="no-data-tips" v-else>{{ t("noWidget") }}</div>
 </template>
 <script lang="ts">
-  import { defineComponent, onBeforeUnmount, watch } from "vue";
+  import { defineComponent, onBeforeUnmount, watch, ref } from "vue";
   import { useI18n } from "vue-i18n";
+  import { useAppStoreWithOut } from "@/store/modules/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
   import type { LayoutConfig } from "@/types/dashboard";
   import controls from "../controls/index";
-  import { dragIgnoreFrom } from "../data";
+  import { dragIgnoreFrom, ListChartTypes, WidgetType } from "../data";
   import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import { EntityType } from "../data";
 
@@ -54,14 +55,16 @@ limitations under the License. -->
     components: { ...controls },
     setup() {
       const { t } = useI18n();
+      const appStore = useAppStoreWithOut();
       const dashboardStore = useDashboardStore();
       const selectorStore = useSelectorStore();
+      const metricsValues = ref();
 
       function clickGrid(item: LayoutConfig, event: Event) {
         dashboardStore.activeGridItem(item.i);
         dashboardStore.selectWidget(item);
         if (
-          item.type === "Tab" &&
+          item.type === WidgetType.Tab &&
           !["operations", "tab-layout"].includes((event.target as HTMLDivElement)?.className) &&
           (event.target as HTMLDivElement)?.classList[2] !== "icon-tool" &&
           (event.target as HTMLDivElement)?.nodeName !== "use"
@@ -71,11 +74,13 @@ limitations under the License. -->
       }
       async function queryMetrics() {
         const widgets = [];
+
         for (const item of dashboardStore.layout) {
-          if (item.type === "Widget") {
+          const isList = ListChartTypes.includes(item.type || "");
+          if (item.type === WidgetType.Widget && !isList) {
             widgets.push(item);
           }
-          if (item.type === "Tab") {
+          if (item.type === WidgetType.Tab) {
             const index = isNaN(item.activedTabIndex) ? 0 : item.activedTabIndex;
             widgets.push(...item.children[index].children);
           }
@@ -83,10 +88,14 @@ limitations under the License. -->
         const configList = widgets.map((d: any) => ({
           metrics: d.expressions || [],
           metricConfig: d.metricConfig || [],
+          id: d.i,
         }));
-        const params = (await useDashboardQueryProcessor(configList)) || {};
-        console.log(params);
+        if (!widgets.length) {
+          return {};
+        }
+        metricsValues.value = (await useDashboardQueryProcessor(configList)) || {};
       }
+
       onBeforeUnmount(() => {
         dashboardStore.setLayout([]);
         selectorStore.setCurrentService(null);
@@ -94,10 +103,36 @@ limitations under the License. -->
         dashboardStore.setEntity("");
         dashboardStore.setConfigPanel(false);
       });
+
       watch(
         () => [selectorStore.currentService, selectorStore.currentDestService],
         () => {
           if ([EntityType[0].value, EntityType[4].value].includes(dashboardStore.entity)) {
+            queryMetrics();
+          }
+        },
+      );
+      watch(
+        () => [selectorStore.currentPod, selectorStore.currentDestPod],
+        () => {
+          if ([EntityType[0].value, EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
+            return;
+          }
+          queryMetrics();
+        },
+      );
+      watch(
+        () => [selectorStore.currentProcess, selectorStore.currentDestProcess],
+        () => {
+          if ([EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
+            queryMetrics();
+          }
+        },
+      );
+      watch(
+        () => appStore.durationTime,
+        () => {
+          if (dashboardStore.entity === EntityType[1].value) {
             queryMetrics();
           }
         },
@@ -107,6 +142,7 @@ limitations under the License. -->
         clickGrid,
         t,
         dragIgnoreFrom,
+        metricsValues,
       };
     },
   });

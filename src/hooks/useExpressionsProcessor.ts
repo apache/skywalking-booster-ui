@@ -88,13 +88,17 @@ export async function useDashboardQueryProcessor(configArr: Indexable[]) {
     };
   }
 
-  function expressionsSource(config: Indexable, resp: { errors: string; data: Indexable }) {
+  function expressionsSource(config: Indexable, resp: { errors: string; data: Indexable | any }) {
     if (resp.errors) {
       ElMessage.error(resp.errors);
       return { source: {}, tips: [], typesOfMQE: [] };
     }
     if (!resp.data) {
       ElMessage.error("The query is wrong");
+      return { source: {}, tips: [], typesOfMQE: [] };
+    }
+    if (resp.data.error) {
+      ElMessage.error(resp.data.error);
       return { source: {}, tips: [], typesOfMQE: [] };
     }
     const tips: string[] = [];
@@ -162,12 +166,16 @@ export async function useDashboardQueryProcessor(configArr: Indexable[]) {
   }
   try {
     const pageData: Recordable = {};
+
     for (let i = 0; i < configArr.length; i++) {
-      const data = expressionsSource(configArr[i], json);
-
-      pageData[i] = data;
+      const resp: any = {};
+      for (let m = 0; m < configArr[i].metrics.length; m++) {
+        resp[`expression${i}${m}`] = json.data[`expression${i}${m}`];
+      }
+      const data = expressionsSource(configArr[i], { ...json, data: resp });
+      const id = configArr[i].id;
+      pageData[id] = data;
     }
-
     return pageData;
   } catch (error) {
     console.error(error);
