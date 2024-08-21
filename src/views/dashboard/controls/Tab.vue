@@ -128,7 +128,7 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import controls from "./tab";
-  import { dragIgnoreFrom, WidgetType } from "../data";
+  import { dragIgnoreFrom, ListChartTypes, WidgetType } from "../data";
   import copy from "@/utils/copy";
   import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
 

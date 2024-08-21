@@ -95,6 +95,25 @@ limitations under the License. -->
         }
         metricsValues.value = (await useDashboardQueryProcessor(configList)) || {};
       }
+      async function queryTabsMetrics() {
+        const widgets = [];
+
+        for (const item of dashboardStore.currentTabItems) {
+          const isList = ListChartTypes.includes(item.type || "");
+          if (item.type === WidgetType.Widget && !isList) {
+            widgets.push(item);
+          }
+        }
+        const configList = widgets.map((d: LayoutConfig) => ({
+          metrics: d.expressions || [],
+          metricConfig: d.metricConfig || [],
+          id: d.i,
+        }));
+        if (!widgets.length) {
+          return {};
+        }
+        metricsValues.value = (await useDashboardQueryProcessor(configList)) || {};
+      }
 
       onBeforeUnmount(() => {
         dashboardStore.setLayout([]);
@@ -135,6 +154,12 @@ limitations under the License. -->
           if (dashboardStore.entity === EntityType[1].value) {
             queryMetrics();
           }
+        },
+      );
+      watch(
+        () => dashboardStore.currentTabItems,
+        () => {
+          queryTabsMetrics();
         },
       );
       return {
