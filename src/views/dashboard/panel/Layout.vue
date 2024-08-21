@@ -85,7 +85,7 @@ limitations under the License. -->
             widgets.push(...item.children[index].children);
           }
         }
-        const configList = widgets.map((d: any) => ({
+        const configList = widgets.map((d: LayoutConfig) => ({
           metrics: d.expressions || [],
           metricConfig: d.metricConfig || [],
           id: d.i,

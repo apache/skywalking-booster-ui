@@ -109,7 +109,6 @@ limitations under the License. -->
       const { data } = toRefs(props);
       const appStore = useAppStoreWithOut();
       const dashboardStore = useDashboardStore();
-      const selectorStore = useSelectorStore();
       const graph = computed(() => props.data.graph || {});
       const widget = computed(() => props.data.widget || {});
       const isList = computed(() => ListChartTypes.includes((props.data.graph && props.data.graph.type) || ""));
@@ -178,13 +177,11 @@ limitations under the License. -->
       watch(
         () => props.metricsValues,
         () => {
-          loading.value = true;
           const params = props.metricsValues[data.value.i];
           if (params) {
             state.source = params.source || {};
             typesOfMQE.value = params.typesOfMQE;
           }
-          loading.value = false;
         },
       );
 
