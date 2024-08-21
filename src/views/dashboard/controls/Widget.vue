@@ -75,11 +75,10 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  import { useSelectorStore } from "@/store/modules/selectors";
   import graphs from "../graphs";
   import { useI18n } from "vue-i18n";
-  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
-  import { EntityType, ListChartTypes } from "../data";
+  import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { ListChartTypes } from "../data";
   import type { EventParams } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
 
@@ -89,7 +88,7 @@ limitations under the License. -->
       default: () => ({ widget: {}, graph: {} }),
     },
     metricsValues: {
-      type: Object as PropType<any>,
+      type: Object as PropType<{ [key: string]: { source: { [key: string]: unknown }; typesOfMQE: string[] } }>,
       default: () => ({}),
     },
     activeIndex: { type: String, default: "" },
@@ -116,11 +115,13 @@ limitations under the License. -->
 
       async function queryMetrics() {
         loading.value = true;
-        const e = {
+        const config = {
           metrics: props.data.expressions || [],
           metricConfig: props.data.metricConfig || [],
+          id: props.data.i,
         };
-        const params = (await useExpressionsQueryProcessor(e)) || {};
+        const values = (await useDashboardQueryProcessor([config])) || {};
+        const params = values[data.value.i];
         loading.value = false;
         state.source = params.source || {};
         typesOfMQE.value = params.typesOfMQE;
