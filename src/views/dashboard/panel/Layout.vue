@@ -96,20 +96,14 @@ limitations under the License. -->
         metricsValues.value = (await useDashboardQueryProcessor(configList)) || {};
       }
       async function queryTabsMetrics() {
-        const widgets = [];
-
-        for (const item of dashboardStore.currentTabItems) {
-          const isList = ListChartTypes.includes(item.type || "");
-          if (item.type === WidgetType.Widget && !isList) {
-            widgets.push(item);
-          }
-        }
-        const configList = widgets.map((d: LayoutConfig) => ({
-          metrics: d.expressions || [],
-          metricConfig: d.metricConfig || [],
-          id: d.i,
-        }));
-        if (!widgets.length) {
+        const configList = dashboardStore.currentTabItems
+          .filter((item: LayoutConfig) => item.type === WidgetType.Widget && !ListChartTypes.includes(item.type || ""))
+          .map((d: LayoutConfig) => ({
+            metrics: d.expressions || [],
+            metricConfig: d.metricConfig || [],
+            id: d.i,
+          }));
+        if (!configList.length) {
           return {};
         }
         metricsValues.value = (await useDashboardQueryProcessor(configList)) || {};
