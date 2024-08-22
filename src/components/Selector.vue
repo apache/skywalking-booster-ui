@@ -28,8 +28,8 @@ limitations under the License. -->
     :filterable="filterable"
   >
     <el-option
-      v-for="item in options"
-      :key="item.value || ''"
+      v-for="(item, index) in options"
+      :key="`${item.value}${index}`"
       :label="item.label || ''"
       :value="item.value || ''"
       :disabled="item.disabled || false"

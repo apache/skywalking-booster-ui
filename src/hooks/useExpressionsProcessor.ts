@@ -24,31 +24,27 @@ import type { MetricConfigOpt } from "@/types/dashboard";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { Node, Call } from "@/types/topology";
 
-export async function useExpressionsQueryProcessor(config: Indexable) {
-  function expressionsGraphqlPods() {
+export async function useDashboardQueryProcessor(configList: Indexable[]) {
+  function expressionsGraphql(config: Indexable, idx: number) {
     if (!(config.metrics && config.metrics[0])) {
       return;
     }
-    const appStore = useAppStoreWithOut();
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
     if (!selectorStore.currentService && dashboardStore.entity !== "All") {
       return;
     }
-    const conditions: Recordable = {
-      duration: appStore.durationTime,
-    };
-    const variables: string[] = [`$duration: Duration!`];
+    const conditions: Recordable = {};
+    const variables: string[] = [];
     const isRelation = ["ServiceRelation", "ServiceInstanceRelation", "EndpointRelation", "ProcessRelation"].includes(
       dashboardStore.entity,
     );
     if (isRelation && !selectorStore.currentDestService) {
       return;
     }
-    const fragment = config.metrics.map((name: string, index: number) => {
-      variables.push(`$expression${index}: String!`, `$entity${index}: Entity!`);
-      conditions[`expression${index}`] = name;
+    if (idx === 0) {
+      variables.push(`$entity: Entity!`);
       const entity = {
         serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
         normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
@@ -76,25 +72,31 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
           ? selectorStore.currentDestProcess && selectorStore.currentDestProcess.value
           : undefined,
       };
-      conditions[`entity${index}`] = entity;
+      conditions[`entity`] = entity;
+    }
+    const fragment = config.metrics.map((name: string, index: number) => {
+      variables.push(`$expression${idx}${index}: String!`);
+      conditions[`expression${idx}${index}`] = name;
 
-      return `expression${index}: execExpression(expression: $expression${index}, entity: $entity${index}, duration: $duration)${RespFields.execExpression}`;
+      return `expression${idx}${index}: execExpression(expression: $expression${idx}${index}, entity: $entity, duration: $duration)${RespFields.execExpression}`;
     });
-    const queryStr = `query queryData(${variables}) {${fragment}}`;
-
     return {
-      queryStr,
+      variables,
+      fragment,
       conditions,
     };
   }
-
-  function expressionsSource(resp: { errors: string; data: Indexable }) {
+  function expressionsSource(config: Indexable, resp: { errors: string; data: Indexable | any }) {
     if (resp.errors) {
       ElMessage.error(resp.errors);
       return { source: {}, tips: [], typesOfMQE: [] };
     }
     if (!resp.data) {
       ElMessage.error("The query is wrong");
+      return { source: {}, tips: [], typesOfMQE: [] };
+    }
+    if (resp.data.error) {
+      ElMessage.error(resp.data.error);
       return { source: {}, tips: [], typesOfMQE: [] };
     }
     const tips: string[] = [];
@@ -133,26 +135,72 @@ export async function useExpressionsQueryProcessor(config: Indexable) {
 
     return { source, tips, typesOfMQE };
   }
+  async function fetchMetrics(configArr: any) {
+    const appStore = useAppStoreWithOut();
+    const variables: string[] = [`$duration: Duration!`];
+    let fragments = "";
+    let conditions: Recordable = {
+      duration: appStore.durationTime,
+    };
+    for (let i = 0; i < configArr.length; i++) {
+      const params = await expressionsGraphql(configArr[i], i);
+      if (params) {
+        fragments += params?.fragment;
+        conditions = { ...conditions, ...params.conditions };
+        variables.push(...params.variables);
+      }
+    }
+    if (!fragments) {
+      return { 0: { source: {}, tips: [], typesOfMQE: [] } };
+    }
+    const queryStr = `query queryData(${variables}) {${fragments}}`;
+    const dashboardStore = useDashboardStore();
+    const json = await dashboardStore.fetchMetricValue({
+      queryStr,
+      conditions,
+    });
+    if (json.errors) {
+      ElMessage.error(json.errors);
+      return { 0: { source: {}, tips: [], typesOfMQE: [] } };
+    }
+    try {
+      const pageData: Recordable = {};
 
-  const params = await expressionsGraphqlPods();
-  if (!params) {
-    return { source: {}, tips: [], typesOfMQE: [] };
+      for (let i = 0; i < configArr.length; i++) {
+        const resp: any = {};
+        for (let m = 0; m < configArr[i].metrics.length; m++) {
+          resp[`expression${i}${m}`] = json.data[`expression${i}${m}`];
+        }
+        const data = expressionsSource(configArr[i], { ...json, data: resp });
+        const id = configArr[i].id;
+        pageData[id] = data;
+      }
+      return pageData;
+    } catch (error) {
+      console.error(error);
+      return { 0: { source: {}, tips: [], typesOfMQE: [] } };
+    }
+  }
+  function chunkArray(array: any[], chunkSize: number) {
+    const result = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      result.push(array.slice(i, i + chunkSize));
+    }
+    return result;
   }
 
-  const dashboardStore = useDashboardStore();
-  const json = await dashboardStore.fetchMetricValue(params);
-  if (json.errors) {
-    ElMessage.error(json.errors);
-    return { source: {}, tips: [], typesOfMQE: [] };
+  const partArr = chunkArray(configList, 6);
+  const promiseArr = partArr.map((d: Array<Indexable>) => fetchMetrics(d));
+  const responseList = await Promise.all(promiseArr);
+  let resp = {};
+  for (const item of responseList) {
+    resp = {
+      ...resp,
+      ...item,
+    };
   }
-  try {
-    const data = expressionsSource(json);
 
-    return data;
-  } catch (error) {
-    console.error(error);
-    return { source: {}, tips: [], typesOfMQE: [] };
-  }
+  return resp;
 }
 
 export async function useExpressionsQueryPodsMetrics(

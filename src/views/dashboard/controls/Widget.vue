@@ -75,11 +75,10 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  import { useSelectorStore } from "@/store/modules/selectors";
   import graphs from "../graphs";
   import { useI18n } from "vue-i18n";
-  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
-  import { EntityType, ListChartTypes } from "../data";
+  import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { ListChartTypes } from "../data";
   import type { EventParams } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
 
@@ -87,6 +86,10 @@ limitations under the License. -->
     data: {
       type: Object as PropType<LayoutConfig>,
       default: () => ({ widget: {}, graph: {} }),
+    },
+    metricsValues: {
+      type: Object as PropType<{ [key: string]: { source: { [key: string]: unknown }; typesOfMQE: string[] } }>,
+      default: () => ({}),
     },
     activeIndex: { type: String, default: "" },
     needQuery: { type: Boolean, default: false },
@@ -105,23 +108,20 @@ limitations under the License. -->
       const { data } = toRefs(props);
       const appStore = useAppStoreWithOut();
       const dashboardStore = useDashboardStore();
-      const selectorStore = useSelectorStore();
       const graph = computed(() => props.data.graph || {});
       const widget = computed(() => props.data.widget || {});
-      const isList = computed(() => ListChartTypes.includes((props.data.graph && props.data.graph.type) || ""));
       const typesOfMQE = ref<string[]>([]);
-
-      if ((props.needQuery || !dashboardStore.currentDashboard.id) && !isList.value) {
-        queryMetrics();
-      }
 
       async function queryMetrics() {
         loading.value = true;
-        const e = {
+        const config = {
           metrics: props.data.expressions || [],
           metricConfig: props.data.metricConfig || [],
+          id: props.data.i,
         };
-        const params = (await useExpressionsQueryProcessor(e)) || {};
+        const metrics: { [key: string]: { source: { [key: string]: unknown }; typesOfMQE: string[] } } =
+          (await useDashboardQueryProcessor([config])) || {};
+        const params = metrics[data.value.i];
         loading.value = false;
         state.source = params.source || {};
         typesOfMQE.value = params.typesOfMQE;
@@ -160,7 +160,7 @@ limitations under the License. -->
         dashboardStore.selectWidget(props.data);
       }
       watch(
-        () => props.data.expressions,
+        () => props.data,
         () => {
           if (!dashboardStore.selectedGrid) {
             return;
@@ -169,54 +169,19 @@ limitations under the License. -->
             return;
           }
           const chart = dashboardStore.selectedGrid.graph || {};
-          if (ListChartTypes.includes(chart.type) || isList.value) {
+          if (ListChartTypes.includes(chart.type)) {
             return;
           }
           queryMetrics();
         },
       );
       watch(
-        () => [selectorStore.currentService, selectorStore.currentDestService],
+        () => props.metricsValues,
         () => {
-          if (isList.value) {
-            return;
-          }
-          if ([EntityType[0].value, EntityType[4].value].includes(dashboardStore.entity)) {
-            queryMetrics();
-          }
-        },
-      );
-      watch(
-        () => [selectorStore.currentPod, selectorStore.currentDestPod],
-        () => {
-          if ([EntityType[0].value, EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
-            return;
-          }
-          if (isList.value) {
-            return;
-          }
-          queryMetrics();
-        },
-      );
-      watch(
-        () => [selectorStore.currentProcess, selectorStore.currentDestProcess],
-        () => {
-          if (isList.value) {
-            return;
-          }
-          if ([EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
-            queryMetrics();
-          }
-        },
-      );
-      watch(
-        () => appStore.durationTime,
-        () => {
-          if (isList.value) {
-            return;
-          }
-          if (dashboardStore.entity === EntityType[1].value) {
-            queryMetrics();
+          const params = props.metricsValues[data.value.i];
+          if (params) {
+            state.source = params.source || {};
+            typesOfMQE.value = params.typesOfMQE;
           }
         },
       );

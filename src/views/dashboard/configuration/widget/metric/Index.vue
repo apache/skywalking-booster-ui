@@ -110,7 +110,7 @@ limitations under the License. -->
     ExpressionResultType,
   } from "@/views/dashboard/data";
   import Icon from "@/components/Icon.vue";
-  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import { useI18n } from "vue-i18n";
   import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
   import Standard from "./Standard.vue";
@@ -240,12 +240,13 @@ limitations under the License. -->
   }
 
   async function queryMetricsWithExpressions() {
-    const { expressions, metricConfig } = dashboardStore.selectedGrid;
+    const { expressions, metricConfig, i } = dashboardStore.selectedGrid;
     if (!(expressions && expressions[0])) {
       return emit("update", {});
     }
 
-    const params: Indexable = (await useExpressionsQueryProcessor({ ...states, metricConfig })) || {};
+    const metrics: Indexable = (await useDashboardQueryProcessor([{ ...states, metricConfig, id: i }])) || {};
+    const params = metrics[i];
     states.tips = params.tips || [];
     states.metricTypes = params.typesOfMQE || [];
     dashboardStore.selectWidget({
