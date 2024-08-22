@@ -29,7 +29,6 @@ export async function useDashboardQueryProcessor(configArr: Indexable[]) {
     if (!(config.metrics && config.metrics[0])) {
       return;
     }
-    const appStore = useAppStoreWithOut();
     const dashboardStore = useDashboardStore();
     const selectorStore = useSelectorStore();
 
