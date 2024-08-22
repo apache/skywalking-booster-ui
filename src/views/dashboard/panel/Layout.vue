@@ -14,12 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <grid-layout
+    v-if="dashboardStore.layout.length"
     v-model:layout="dashboardStore.layout"
     :col-num="24"
     :row-height="10"
     :is-draggable="dashboardStore.editMode"
     :is-resizable="dashboardStore.editMode"
-    v-if="dashboardStore.layout.length"
+    v-loading.fullscreen.lock="loading"
+    element-loading-text="Loading..."
+    element-loading-background="rgba(122, 122, 122, 0.8)"
   >
     <grid-item
       v-for="item in dashboardStore.layout"
@@ -59,6 +62,7 @@ limitations under the License. -->
       const dashboardStore = useDashboardStore();
       const selectorStore = useSelectorStore();
       const metricsValues = ref();
+      const loading = ref<boolean>(false);
 
       function clickGrid(item: LayoutConfig, event: Event) {
         dashboardStore.activeGridItem(item.i);
@@ -93,7 +97,9 @@ limitations under the License. -->
         if (!widgets.length) {
           return {};
         }
+        loading.value = true;
         metricsValues.value = (await useDashboardQueryProcessor(configList)) || {};
+        loading.value = false;
       }
       async function queryTabsMetrics() {
         const configList = dashboardStore.currentTabItems
@@ -106,7 +112,9 @@ limitations under the License. -->
         if (!configList.length) {
           return {};
         }
+        loading.value = true;
         metricsValues.value = (await useDashboardQueryProcessor(configList)) || {};
+        loading.value = false;
       }
 
       onBeforeUnmount(() => {
@@ -162,6 +170,7 @@ limitations under the License. -->
         t,
         dragIgnoreFrom,
         metricsValues,
+        loading,
       };
     },
   });
