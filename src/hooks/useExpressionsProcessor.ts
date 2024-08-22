@@ -25,7 +25,7 @@ import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { Node, Call } from "@/types/topology";
 
 export async function useDashboardQueryProcessor(configArr: Indexable[]) {
-  function expressionsGraphqlPods(config: Indexable, idx: number) {
+  function expressionsGraphql(config: Indexable, idx: number) {
     if (!(config.metrics && config.metrics[0])) {
       return;
     }
@@ -87,7 +87,6 @@ export async function useDashboardQueryProcessor(configArr: Indexable[]) {
       conditions,
     };
   }
-
   function expressionsSource(config: Indexable, resp: { errors: string; data: Indexable | any }) {
     if (resp.errors) {
       ElMessage.error(resp.errors);
@@ -144,7 +143,7 @@ export async function useDashboardQueryProcessor(configArr: Indexable[]) {
     duration: appStore.durationTime,
   };
   for (let i = 0; i < configArr.length; i++) {
-    const params = await expressionsGraphqlPods(configArr[i], i);
+    const params = await expressionsGraphql(configArr[i], i);
     if (params) {
       fragments += params?.fragment;
       conditions = { ...conditions, ...params.conditions };
