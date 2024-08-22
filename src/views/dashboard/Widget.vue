@@ -128,14 +128,15 @@ limitations under the License. -->
       }
       async function queryMetrics() {
         loading.value = true;
-        const metrics = await useDashboardQueryProcessor([
-          {
-            metrics: config.value.expressions || [],
-            metricConfig: config.value.metricConfig || [],
-            subExpressions: config.value.subExpressions || [],
-            id: config.value.i,
-          },
-        ]);
+        const metrics: { [key: string]: { source: { [key: string]: unknown }; typesOfMQE: string[] } } =
+          await useDashboardQueryProcessor([
+            {
+              metrics: config.value.expressions || [],
+              metricConfig: config.value.metricConfig || [],
+              subExpressions: config.value.subExpressions || [],
+              id: config.value.i,
+            },
+          ]);
         const params = metrics[config.value.i];
         loading.value = false;
         source.value = params.source || {};
