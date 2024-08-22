@@ -119,7 +119,8 @@ limitations under the License. -->
           metricConfig: props.data.metricConfig || [],
           id: props.data.i,
         };
-        const metrics = (await useDashboardQueryProcessor([config])) || {};
+        const metrics: { [key: string]: { source: { [key: string]: unknown }; typesOfMQE: string[] } } =
+          (await useDashboardQueryProcessor([config])) || {};
         const params = metrics[data.value.i];
         loading.value = false;
         state.source = params.source || {};
