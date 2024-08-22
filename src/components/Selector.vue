@@ -29,7 +29,7 @@ limitations under the License. -->
   >
     <el-option
       v-for="(item, index) in options"
-      :key="item.value + index"
+      :key="`${item.value} + ${index}`"
       :label="item.label || ''"
       :value="item.value || ''"
       :disabled="item.disabled || false"
