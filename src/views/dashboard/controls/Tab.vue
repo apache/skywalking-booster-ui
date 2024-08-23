@@ -113,6 +113,7 @@ limitations under the License. -->
           :data="item"
           :activeIndex="`${data.i}-${activeTabIndex}-${item.i}`"
           :needQuery="needQuery"
+          :metricsValues="metricsValues"
         />
       </grid-item>
     </grid-layout>
@@ -129,12 +130,16 @@ limitations under the License. -->
   import controls from "./tab";
   import { dragIgnoreFrom, WidgetType } from "../data";
   import copy from "@/utils/copy";
-  import { useExpressionsQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
 
   const props = {
     data: {
       type: Object as PropType<LayoutConfig>,
       default: () => ({ children: [] }),
+    },
+    metricsValues: {
+      type: Object as PropType<any>,
+      default: () => ({}),
     },
     active: { type: Boolean, default: false },
   };
@@ -259,8 +264,10 @@ limitations under the License. -->
         if (!metrics.length) {
           return;
         }
-        const params: { [key: string]: any } = (await useExpressionsQueryProcessor({ metrics })) || {};
+        const values: { [key: string]: any } =
+          (await useDashboardQueryProcessor([{ metrics, id: props.data.i }])) || {};
         for (const child of tabsProps.children || []) {
+          const params = values[props.data.i];
           if (params.source[child.expression || ""]) {
             child.enable =
               !!Number(params.source[child.expression || ""]) &&

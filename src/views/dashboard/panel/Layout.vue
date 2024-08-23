@@ -14,12 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <grid-layout
+    v-if="dashboardStore.layout.length"
     v-model:layout="dashboardStore.layout"
     :col-num="24"
     :row-height="10"
     :is-draggable="dashboardStore.editMode"
     :is-resizable="dashboardStore.editMode"
-    v-if="dashboardStore.layout.length"
+    v-loading.fullscreen.lock="loading"
+    element-loading-text="Loading..."
+    element-loading-background="rgba(122, 122, 122, 0.8)"
   >
     <grid-item
       v-for="item in dashboardStore.layout"
@@ -33,33 +36,39 @@ limitations under the License. -->
       :class="{ active: dashboardStore.activedGridItem === item.i }"
       :drag-ignore-from="dragIgnoreFrom"
     >
-      <component :is="item.type" :data="item" />
+      <component :is="item.type" :data="item" :metricsValues="metricsValues" />
     </grid-item>
   </grid-layout>
   <div class="no-data-tips" v-else>{{ t("noWidget") }}</div>
 </template>
 <script lang="ts">
-  import { defineComponent, onBeforeUnmount } from "vue";
+  import { defineComponent, onBeforeUnmount, watch, ref } from "vue";
   import { useI18n } from "vue-i18n";
+  import { useAppStoreWithOut } from "@/store/modules/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useSelectorStore } from "@/store/modules/selectors";
   import type { LayoutConfig } from "@/types/dashboard";
   import controls from "../controls/index";
-  import { dragIgnoreFrom } from "../data";
+  import { dragIgnoreFrom, ListChartTypes, WidgetType } from "../data";
+  import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { EntityType } from "../data";
 
   export default defineComponent({
     name: "Layout",
     components: { ...controls },
     setup() {
       const { t } = useI18n();
+      const appStore = useAppStoreWithOut();
       const dashboardStore = useDashboardStore();
       const selectorStore = useSelectorStore();
+      const metricsValues = ref();
+      const loading = ref<boolean>(false);
 
       function clickGrid(item: LayoutConfig, event: Event) {
         dashboardStore.activeGridItem(item.i);
         dashboardStore.selectWidget(item);
         if (
-          item.type === "Tab" &&
+          item.type === WidgetType.Tab &&
           !["operations", "tab-layout"].includes((event.target as HTMLDivElement)?.className) &&
           (event.target as HTMLDivElement)?.classList[2] !== "icon-tool" &&
           (event.target as HTMLDivElement)?.nodeName !== "use"
@@ -67,6 +76,47 @@ limitations under the License. -->
           dashboardStore.setActiveTabIndex(0);
         }
       }
+      async function queryMetrics() {
+        const widgets = [];
+
+        for (const item of dashboardStore.layout) {
+          const isList = ListChartTypes.includes(item.type || "");
+          if (item.type === WidgetType.Widget && !isList) {
+            widgets.push(item);
+          }
+          if (item.type === WidgetType.Tab) {
+            const index = isNaN(item.activedTabIndex) ? 0 : item.activedTabIndex;
+            widgets.push(...item.children[index].children);
+          }
+        }
+        const configList = widgets.map((d: LayoutConfig) => ({
+          metrics: d.expressions || [],
+          metricConfig: d.metricConfig || [],
+          id: d.i,
+        }));
+        if (!widgets.length) {
+          return {};
+        }
+        loading.value = true;
+        metricsValues.value = (await useDashboardQueryProcessor(configList)) || {};
+        loading.value = false;
+      }
+      async function queryTabsMetrics() {
+        const configList = dashboardStore.currentTabItems
+          .filter((item: LayoutConfig) => item.type === WidgetType.Widget && !ListChartTypes.includes(item.type || ""))
+          .map((d: LayoutConfig) => ({
+            metrics: d.expressions || [],
+            metricConfig: d.metricConfig || [],
+            id: d.i,
+          }));
+        if (!configList.length) {
+          return {};
+        }
+        loading.value = true;
+        metricsValues.value = (await useDashboardQueryProcessor(configList)) || {};
+        loading.value = false;
+      }
+
       onBeforeUnmount(() => {
         dashboardStore.setLayout([]);
         selectorStore.setCurrentService(null);
@@ -74,11 +124,53 @@ limitations under the License. -->
         dashboardStore.setEntity("");
         dashboardStore.setConfigPanel(false);
       });
+
+      watch(
+        () => [selectorStore.currentService, selectorStore.currentDestService],
+        () => {
+          if ([EntityType[0].value, EntityType[4].value].includes(dashboardStore.entity)) {
+            queryMetrics();
+          }
+        },
+      );
+      watch(
+        () => [selectorStore.currentPod, selectorStore.currentDestPod],
+        () => {
+          if ([EntityType[0].value, EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
+            return;
+          }
+          queryMetrics();
+        },
+      );
+      watch(
+        () => [selectorStore.currentProcess, selectorStore.currentDestProcess],
+        () => {
+          if ([EntityType[7].value, EntityType[8].value].includes(dashboardStore.entity)) {
+            queryMetrics();
+          }
+        },
+      );
+      watch(
+        () => appStore.durationTime,
+        () => {
+          if (dashboardStore.entity === EntityType[1].value) {
+            queryMetrics();
+          }
+        },
+      );
+      watch(
+        () => dashboardStore.currentTabItems,
+        () => {
+          queryTabsMetrics();
+        },
+      );
       return {
         dashboardStore,
         clickGrid,
         t,
         dragIgnoreFrom,
+        metricsValues,
+        loading,
       };
     },
   });

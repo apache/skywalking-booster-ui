@@ -60,8 +60,9 @@ limitations under the License. -->
     <el-pagination
       class="pagination flex-h"
       layout="prev, pager, next"
+      :current-page="currentPage"
       :page-size="pageSize"
-      :total="selectorStore.services.length"
+      :total="searchText ? sortServices.filter((d: any) => d.label.includes(searchText)).length : sortServices.length"
       @current-change="changePage"
       @prev-click="changePage"
       @next-click="changePage"
@@ -112,6 +113,7 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const appStore = useAppStoreWithOut();
   const chartLoading = ref<boolean>(false);
+  const currentPage = ref<number>(1);
   const pageSize = 10;
   const services = ref<Service[]>([]);
   const colMetrics = ref<string[]>([]);
@@ -248,18 +250,24 @@ limitations under the License. -->
     return { rowspan: groups.value[param.row.group], colspan: 1 };
   }
   function changePage(pageIndex: number) {
-    const arr = sortServices.value.filter((d: Service, index: number) => {
+    let services = sortServices.value;
+    if (searchText.value) {
+      services = sortServices.value.filter((d: { label: string }) => d.label.includes(searchText.value));
+    }
+    const arr = services.filter((d: Service, index: number) => {
       if (index >= (pageIndex - 1) * pageSize && index < pageSize * pageIndex) {
         return d;
       }
     });
 
     setServices(arr);
+    currentPage.value = pageIndex;
   }
   function searchList() {
     const searchServices = sortServices.value.filter((d: { label: string }) => d.label.includes(searchText.value));
-    const services = searchServices.filter((d: unknown, index: number) => index < pageSize);
+    const services = searchServices.filter((_, index: number) => index < pageSize);
     setServices(services);
+    currentPage.value = 1;
   }
 
   watch(
