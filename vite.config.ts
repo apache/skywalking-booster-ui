@@ -37,7 +37,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       vueJsx(),
       monacoEditorPlugin({}),
       AutoImport({
-        imports: ["vue"],
         resolvers: [ElementPlusResolver()],
         dts: path.resolve(__dirname, "./src/types/auto-imports.d.ts"),
       }),
