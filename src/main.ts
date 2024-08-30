@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import { createApp } from "vue";
+import { ElLoading } from "element-plus";
 import App from "./App.vue";
 import { store } from "./store";
 import components from "@/components";
@@ -23,6 +24,11 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import "./styles/index.ts";
 import "virtual:svg-icons-register";
 
+const loading = ElLoading.service({
+  lock: true,
+  text: "Loading...",
+  background: "rgba(0, 0, 0, 0.8)",
+});
 const app = createApp(App);
 const appStore = useAppStoreWithOut();
 
@@ -34,7 +40,7 @@ mountApp();
 async function mountApp() {
   await appStore.getActivateMenus();
   await appStore.queryOAPTimeInfo();
-
   const router = await import("./router");
   app.use(router.default).mount("#app");
+  loading.close();
 }
