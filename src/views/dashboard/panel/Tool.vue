@@ -520,7 +520,7 @@ limitations under the License. -->
       instanceId: selectorStore.currentPod.id,
     });
     if (setPod) {
-      const process = params.processId || selectorStore.processes[0].id;
+      const process = selectorStore.currentProcess?.id || params.processId || selectorStore.processes[0].id;
       const currentProcess = selectorStore.processes.find((d: { id: string }) => d.id === process);
       if (currentProcess) {
         selectorStore.setCurrentProcess(currentProcess);
@@ -538,7 +538,8 @@ limitations under the License. -->
       isRelation: true,
     });
     if (setPod) {
-      const destProcess = params.destProcessId || selectorStore.destProcesses[0].id;
+      const destProcess =
+        selectorStore.currentDestProcess?.id || params.destProcessId || selectorStore.destProcesses[0].id;
       const currentDestProcess = selectorStore.destProcesses.find((d: { id: string }) => d.id === destProcess);
       if (!currentDestProcess) {
         states.currentDestProcess = "";
@@ -570,7 +571,7 @@ limitations under the License. -->
       states.currentDestPod = "";
       return;
     }
-    const destPod = params.destPodId || selectorStore.destPods[0].id;
+    const destPod = selectorStore.currentDestPod?.id || params.destPodId || selectorStore.destPods[0].id;
     const currentDestPod = selectorStore.destPods.find((d: { id: string }) => d.id === destPod);
     if (!currentDestPod) {
       states.currentDestPod = "";
@@ -602,7 +603,7 @@ limitations under the License. -->
       states.currentPod = "";
       return;
     }
-    const pod = params.podId || selectorStore.pods[0].id;
+    const pod = selectorStore.currentPod?.id || params.podId || selectorStore.pods[0].id;
     const currentPod = selectorStore.pods.find((d: { id: string }) => d.id === pod);
     if (!currentPod) {
       selectorStore.setCurrentPod(null);
