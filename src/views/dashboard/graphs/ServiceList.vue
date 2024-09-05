@@ -63,7 +63,7 @@ limitations under the License. -->
       :current-page="currentPage"
       :page-size="pageSize"
       :total="searchText ? sortServices.filter((d: any) => d.label.includes(searchText)).length : sortServices.length"
-      @current-change="changePage"
+      @current-change="handleCurrentChange"
       @prev-click="changePage"
       @next-click="changePage"
     />
@@ -249,19 +249,22 @@ limitations under the License. -->
     }
     return { rowspan: groups.value[param.row.group], colspan: 1 };
   }
-  function changePage(pageIndex: number) {
+  function changePage() {
     let services = sortServices.value;
     if (searchText.value) {
       services = sortServices.value.filter((d: { label: string }) => d.label.includes(searchText.value));
     }
     const arr = services.filter((d: Service, index: number) => {
-      if (index >= (pageIndex - 1) * pageSize && index < pageSize * pageIndex) {
+      if (index >= (currentPage.value - 1) * pageSize && index < pageSize * currentPage.value) {
         return d;
       }
     });
 
     setServices(arr);
-    currentPage.value = pageIndex;
+  }
+  function handleCurrentChange(val: number) {
+    currentPage.value = val;
+    changePage();
   }
   function searchList() {
     const searchServices = sortServices.value.filter((d: { label: string }) => d.label.includes(searchText.value));

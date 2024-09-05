@@ -70,7 +70,7 @@ limitations under the License. -->
       :current-page="currentPage"
       :page-size="pageSize"
       :total="searchText ? pods.filter((d: any) => d.label.includes(searchText)).length : pods.length"
-      @current-change="changePage"
+      @current-change="handleCurrentChange"
       @prev-click="changePage"
       @next-click="changePage"
     />
@@ -214,16 +214,20 @@ limitations under the License. -->
     );
   }
 
-  function changePage(pageIndex: number) {
+  function changePage() {
     let podList = pods.value;
     if (searchText.value) {
       podList = pods.value.filter((d: { label: string }) => d.label.includes(searchText.value));
     }
     instances.value = podList.filter(
-      (_, index: number) => index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize,
+      (_, index: number) => index >= (currentPage.value - 1) * pageSize && index < currentPage.value * pageSize,
     );
     queryInstanceMetrics(instances.value);
-    currentPage.value = pageIndex;
+  }
+
+  function handleCurrentChange(val: number) {
+    currentPage.value = val;
+    changePage();
   }
 
   function searchList() {
