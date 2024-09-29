@@ -132,7 +132,7 @@ limitations under the License. -->
     currentDetail.value = item;
     currentEvents.value = item.events;
     alarmTags.value = currentDetail.value.tags.map((d: { key: string; value: string }) => {
-      return `${d.key} = ${d.value}`;
+      return `${d.key}=${d.value}`;
     });
   }
 

@@ -68,6 +68,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useTraceStore } from "@/store/modules/trace";
   import { useLogStore } from "@/store/modules/log";
+  import { useAlarmStore } from "@/store/modules/alarm";
   import { ElMessage } from "element-plus";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
@@ -79,6 +80,7 @@ limitations under the License. -->
   const traceStore = useTraceStore();
   const logStore = useLogStore();
   const appStore = useAppStoreWithOut();
+  const alarmStore = useAlarmStore();
   const { t } = useI18n();
   const tags = ref<string>("");
   const tagsList = ref<string[]>([]);
@@ -121,8 +123,13 @@ limitations under the License. -->
     let resp: Recordable = {};
     if (props.type === "TRACE") {
       resp = await traceStore.getTagKeys();
-    } else {
+    }
+    if (props.type === "LOG") {
       resp = await logStore.getLogTagKeys();
+    }
+
+    if (props.type === "ALARM") {
+      resp = await alarmStore.getAlarmTagKeys();
     }
 
     if (resp.errors) {
@@ -140,8 +147,12 @@ limitations under the License. -->
     let resp: Recordable = {};
     if (props.type === "TRACE") {
       resp = await traceStore.getTagValues(param);
-    } else {
+    }
+    if (props.type === "LOG") {
       resp = await logStore.getLogTagValues(param);
+    }
+    if (props.type === "ALARM") {
+      resp = await alarmStore.getAlarmTagValues(param);
     }
 
     if (resp.errors) {

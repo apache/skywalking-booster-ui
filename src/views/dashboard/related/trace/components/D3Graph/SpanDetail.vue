@@ -110,7 +110,7 @@ limitations under the License. -->
       <div>
         <span class="grey title">Tags:</span>
         <div class="mb-5" v-for="(tag, index) in currentEvent.tags || []" :key="index" style="white-space: pre-wrap">
-          {{ tag.key + "=" + tag.value }};
+          {{ `${tag.key}=${tag.value}` }};
         </div>
       </div>
     </div>
