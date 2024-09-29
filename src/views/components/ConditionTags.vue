@@ -21,15 +21,7 @@ limitations under the License. -->
         <span class="remove-icon" @click="removeTags(index)">×</span>
       </span>
     </span>
-    <el-input
-      v-if="type === 'ALARM'"
-      size="small"
-      v-model="tags"
-      class="trace-new-tag"
-      @change="addLabels"
-      :placeholder="t('addTags')"
-    />
-    <el-popover v-else trigger="click" :visible="visible" width="300px">
+    <el-popover trigger="click" :visible="visible" width="300px">
       <template #reference>
         <el-input
           size="small"
@@ -47,7 +39,7 @@ limitations under the License. -->
         </span>
       </div>
     </el-popover>
-    <span class="tags-tip" :class="type !== 'ALARM' && tagArr.length ? 'link-tips' : ''">
+    <span class="tags-tip" :class="tagArr.length ? 'link-tips' : ''">
       <a
         target="blank"
         href="https://github.com/apache/skywalking/blob/master/docs/en/setup/backend/configuration-vocabulary.md"
@@ -68,6 +60,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useTraceStore } from "@/store/modules/trace";
   import { useLogStore } from "@/store/modules/log";
+  import { useAlarmStore } from "@/store/modules/alarm";
   import { ElMessage } from "element-plus";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
@@ -79,6 +72,7 @@ limitations under the License. -->
   const traceStore = useTraceStore();
   const logStore = useLogStore();
   const appStore = useAppStoreWithOut();
+  const alarmStore = useAlarmStore();
   const { t } = useI18n();
   const tags = ref<string>("");
   const tagsList = ref<string[]>([]);
@@ -121,10 +115,18 @@ limitations under the License. -->
     let resp: Recordable = {};
     if (props.type === "TRACE") {
       resp = await traceStore.getTagKeys();
-    } else {
+    }
+    if (props.type === "LOG") {
       resp = await logStore.getLogTagKeys();
     }
 
+    if (props.type === "ALARM") {
+      resp = await alarmStore.getAlarmTagKeys();
+    }
+
+    if (!resp.data) {
+      return;
+    }
     if (resp.errors) {
       ElMessage.error(resp.errors);
       return;
@@ -140,10 +142,17 @@ limitations under the License. -->
     let resp: Recordable = {};
     if (props.type === "TRACE") {
       resp = await traceStore.getTagValues(param);
-    } else {
+    }
+    if (props.type === "LOG") {
       resp = await logStore.getLogTagValues(param);
     }
+    if (props.type === "ALARM") {
+      resp = await alarmStore.getAlarmTagValues(param);
+    }
 
+    if (!resp.data) {
+      return;
+    }
     if (resp.errors) {
       ElMessage.error(resp.errors);
       return;

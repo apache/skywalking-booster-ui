@@ -46,3 +46,14 @@ export const Alarm = {
       }
     }`,
 };
+export const AlarmTagKeys = {
+  variable: "$duration: Duration!",
+  query: `
+  tagKeys: queryAlarmTagAutocompleteKeys(duration: $duration)`,
+};
+
+export const AlarmTagValues = {
+  variable: "$tagKey: String!, $duration: Duration!",
+  query: `
+  tagValues: queryAlarmTagAutocompleteValues(tagKey: $tagKey, duration: $duration)`,
+};

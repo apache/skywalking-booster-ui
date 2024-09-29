@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="timeline-table clear">
+  <div class="timeline-table clear" v-loading="alarmStore.loading">
     <div v-for="(i, index) in alarmStore.alarms" :key="index" class="clear timeline-item">
       <div class="g-sm-3 grey sm hide-xs time-line tr">
         {{ dateFormat(parseInt(i.startTime)) }}
@@ -132,7 +132,7 @@ limitations under the License. -->
     currentDetail.value = item;
     currentEvents.value = item.events;
     alarmTags.value = currentDetail.value.tags.map((d: { key: string; value: string }) => {
-      return `${d.key} = ${d.value}`;
+      return `${d.key}=${d.value}`;
     });
   }
 

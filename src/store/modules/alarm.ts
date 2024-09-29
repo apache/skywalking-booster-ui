@@ -19,6 +19,7 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
 import type { Alarm } from "@/types/alarm";
+import { useAppStoreWithOut } from "@/store/modules/app";
 
 interface AlarmState {
   loading: boolean;
@@ -35,7 +36,9 @@ export const alarmStore = defineStore({
   }),
   actions: {
     async getAlarms(params: Recordable) {
+      this.loading = true;
       const res: AxiosResponse = await graphql.query("queryAlarms").params(params);
+      this.loading = false;
       if (res.data.errors) {
         return res.data;
       }
@@ -43,6 +46,20 @@ export const alarmStore = defineStore({
         this.alarms = res.data.data.getAlarm.items;
         this.total = res.data.data.getAlarm.total;
       }
+      return res.data;
+    },
+    async getAlarmTagKeys() {
+      const res: AxiosResponse = await graphql
+        .query("queryAlarmTagKeys")
+        .params({ duration: useAppStoreWithOut().durationTime });
+
+      return res.data;
+    },
+    async getAlarmTagValues(tagKey: string) {
+      const res: AxiosResponse = await graphql
+        .query("queryAlarmTagValues")
+        .params({ tagKey, duration: useAppStoreWithOut().durationTime });
+
       return res.data;
     },
   },

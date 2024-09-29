@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
-import { Alarm } from "../fragments/alarm";
+import { Alarm, AlarmTagKeys, AlarmTagValues } from "../fragments/alarm";
 
 export const queryAlarms = `query queryAlarms(${Alarm.variable}) {${Alarm.query}}`;
+export const queryAlarmTagValues = `query queryTagValues(${AlarmTagValues.variable}) {${AlarmTagValues.query}}`;
+export const queryAlarmTagKeys = `query queryTagKeys(${AlarmTagKeys.variable}) {${AlarmTagKeys.query}}`;

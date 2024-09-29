@@ -50,7 +50,7 @@ limitations under the License. -->
       return [];
     }
     return props.currentLog.tags.map((d: { key: string; value: string }) => {
-      return `${d.key} = ${d.value}`;
+      return `${d.key}=${d.value}`;
     });
   });
 
