@@ -21,15 +21,7 @@ limitations under the License. -->
         <span class="remove-icon" @click="removeTags(index)">×</span>
       </span>
     </span>
-    <el-input
-      v-if="type === 'ALARM'"
-      size="small"
-      v-model="tags"
-      class="trace-new-tag"
-      @change="addLabels"
-      :placeholder="t('addTags')"
-    />
-    <el-popover v-else trigger="click" :visible="visible" width="300px">
+    <el-popover trigger="click" :visible="visible" width="300px">
       <template #reference>
         <el-input
           size="small"
@@ -47,7 +39,7 @@ limitations under the License. -->
         </span>
       </div>
     </el-popover>
-    <span class="tags-tip" :class="type !== 'ALARM' && tagArr.length ? 'link-tips' : ''">
+    <span class="tags-tip" :class="tagArr.length ? 'link-tips' : ''">
       <a
         target="blank"
         href="https://github.com/apache/skywalking/blob/master/docs/en/setup/backend/configuration-vocabulary.md"
@@ -132,6 +124,9 @@ limitations under the License. -->
       resp = await alarmStore.getAlarmTagKeys();
     }
 
+    if (!resp.data) {
+      return;
+    }
     if (resp.errors) {
       ElMessage.error(resp.errors);
       return;
@@ -155,6 +150,9 @@ limitations under the License. -->
       resp = await alarmStore.getAlarmTagValues(param);
     }
 
+    if (!resp.data) {
+      return;
+    }
     if (resp.errors) {
       ElMessage.error(resp.errors);
       return;
