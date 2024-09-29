@@ -36,7 +36,9 @@ export const alarmStore = defineStore({
   }),
   actions: {
     async getAlarms(params: Recordable) {
+      this.loading = true;
       const res: AxiosResponse = await graphql.query("queryAlarms").params(params);
+      this.loading = false;
       if (res.data.errors) {
         return res.data;
       }
