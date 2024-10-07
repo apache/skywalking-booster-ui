@@ -612,7 +612,7 @@ limitations under the License. -->
   }
   function searchDashboards(pageIndex: number) {
     const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-    const arr = list.filter((d: { name: string }) => d.name.includes(searchText.value));
+    const arr = list.filter((d: { name: string }) => d.name.toLowerCase().includes(searchText.value.toLowerCase()));
 
     total.value = arr.length;
     dashboards.value = arr.filter(
