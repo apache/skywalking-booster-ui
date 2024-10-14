@@ -13,22 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div v-for="(key, index) in Object.keys(decorations)" :key="index" class="mb-10 flex-h">
+  <div v-for="(key, index) in keys" :key="index" class="mb-10 flex-h">
     <div class="content-decoration" contenteditable="true" @blur="changeKeys($event, index)">
       {{ key }}
     </div>
-    <div>: </div>
-    <div class="content-decoration" contenteditable="true" @blur="changeValues($event, index)">
+    <div class="ml-5 mr-10">:</div>
+    <div class="content-decoration" contenteditable="true" @blur="changeValues($event, key)">
       {{ decorations[key] }}
     </div>
-    <div>
-      <Icon
-        class="cp mr-5"
-        v-if="index === Object.keys(decorations).length - 1"
-        iconName="add_circle_outlinecontrol_point"
-        size="middle"
-        @click="addDecoration"
-      />
+    <div v-if="index === keys.length - 1">
+      <Icon class="cp mr-5" iconName="add_circle_outlinecontrol_point" size="middle" @click="addDecoration" />
       <Icon class="cp" iconName="remove_circle_outline" size="middle" @click="deleteDecoration(index)" />
     </div>
   </div>
@@ -40,28 +34,30 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const graph = dashboardStore.selectedGrid.graph || {};
   const decorations = ref<{ [key: string]: string }>(graph.contentDecorations || { value: "content" });
+  const keys = ref<string[]>(graph.contentDecorations ? Object.keys(graph.contentDecorations) : [""]);
 
-  function changeKeys(event: any) {
-    console.log(event);
-    // decorations.value[]
+  function changeKeys(event: any, index: number) {
+    const params = event.target.textContent || "";
+    decorations.value[params] = "";
+  }
+
+  function changeValues(event: any, key: string) {
+    decorations.value[key] = event.target.textContent || "";
   }
 
   function addDecoration() {
-    decorations.value = {
-      ...decorations.value,
-      value: "content",
-    };
+    keys.value.push("");
   }
 
   function deleteDecoration(index: number) {
-    const keys = Object.keys(decorations.value);
-    if (!keys.length) {
+    if (!keys.value.length) {
       return;
     }
-    if (!keys[index]) {
+    if (!keys.value[index]) {
       return;
     }
-    delete decorations.value[keys[index]];
+    delete decorations.value[keys.value[index]];
+    keys.value.splice(index, 1);
   }
 </script>
 <style lang="scss" scoped>
