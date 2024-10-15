@@ -38,16 +38,12 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
 
   const dashboardStore = useDashboardStore();
-  const graph = dashboardStore.selectedGrid.graph || {};
-  const decorations = ref<{ [key: string]: string }>(graph.decorations || {});
-  const keys = ref<string[]>(graph.decorations ? Object.keys(graph.decorations) : [""]);
+  const decorations = ref<{ [key: string]: string }>(dashboardStore.selectedGrid.decorations || {});
+  const keys = ref<string[]>(dashboardStore.selectedGrid.decorations ? Object.keys(decorations.value) : [""]);
 
   function changeKeys(event: any, index: number) {
     const params = event.target.textContent || "";
     const list = Object.keys(decorations.value);
-    if (!list[index]) {
-      return;
-    }
     if (params) {
       decorations.value[params] = decorations.value[list[index]];
     }

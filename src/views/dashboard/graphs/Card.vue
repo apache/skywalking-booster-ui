@@ -22,7 +22,7 @@ limitations under the License. -->
       justifyContent: config.textAlign || 'center',
     }"
   >
-    {{ singleVal }}
+    {{ decorations[singleVal] || singleVal }}
     <span class="unit" v-show="config.showUnit && unit">
       {{ decodeURIComponent(unit) }}
     </span>
@@ -48,11 +48,13 @@ limitations under the License. -->
         showUnit: true,
         textAlign: "center",
         metricConfig: [],
+        decorations: {},
       }),
     },
   });
   const { t } = useI18n();
   const metricConfig = computed(() => props.config.metricConfig || []);
+  const decorations = computed(() => props.config.decorations || {});
   const key = computed(() => Object.keys(props.data)[0]);
   const singleVal = computed(() =>
     Array.isArray(props.data[key.value]) ? props.data[key.value][0] : props.data[key.value],

@@ -32,7 +32,8 @@ limitations under the License. -->
           :data="states.source"
           :config="{
             ...graph,
-            legend: (dashboardStore.selectedGrid.graph || {}).legend,
+            decorations: dashboardStore.selectedGrid.graph?.decorations,
+            legend: dashboardStore.selectedGrid.graph?.legend,
             i: dashboardStore.selectedGrid.i,
             metricConfig: dashboardStore.selectedGrid.metricConfig,
             relatedTrace: dashboardStore.selectedGrid.relatedTrace,
