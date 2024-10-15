@@ -23,7 +23,13 @@ limitations under the License. -->
     </div>
     <div v-if="index === keys.length - 1">
       <Icon class="cp mr-5" iconName="add_circle_outlinecontrol_point" size="middle" @click="addDecoration" />
-      <Icon class="cp" iconName="remove_circle_outline" size="middle" @click="deleteDecoration(index)" />
+      <Icon
+        v-if="index !== 0"
+        class="cp"
+        iconName="remove_circle_outline"
+        size="middle"
+        @click="deleteDecoration(index)"
+      />
     </div>
   </div>
 </template>
@@ -33,16 +39,26 @@ limitations under the License. -->
 
   const dashboardStore = useDashboardStore();
   const graph = dashboardStore.selectedGrid.graph || {};
-  const decorations = ref<{ [key: string]: string }>(graph.contentDecorations || { value: "content" });
-  const keys = ref<string[]>(graph.contentDecorations ? Object.keys(graph.contentDecorations) : [""]);
+  const decorations = ref<{ [key: string]: string }>(graph.decorations || {});
+  const keys = ref<string[]>(graph.decorations ? Object.keys(graph.decorations) : [""]);
 
   function changeKeys(event: any, index: number) {
     const params = event.target.textContent || "";
-    decorations.value[params] = "";
+    const list = Object.keys(decorations.value);
+    if (!list[index]) {
+      return;
+    }
+    if (params) {
+      decorations.value[params] = decorations.value[list[index]];
+    }
+    delete decorations.value[list[index]];
+    keys.value = Object.keys(decorations.value);
+    updateConfig({ decorations: decorations.value });
   }
 
   function changeValues(event: any, key: string) {
     decorations.value[key] = event.target.textContent || "";
+    updateConfig({ decorations: decorations.value });
   }
 
   function addDecoration() {
@@ -58,6 +74,15 @@ limitations under the License. -->
     }
     delete decorations.value[keys.value[index]];
     keys.value.splice(index, 1);
+    updateConfig({ decorations: decorations.value });
+  }
+
+  function updateConfig(param: { [key: string]: unknown }) {
+    const graph = {
+      ...dashboardStore.selectedGrid.graph,
+      ...param,
+    };
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
   }
 </script>
 <style lang="scss" scoped>
