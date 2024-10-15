@@ -37,7 +37,7 @@ limitations under the License. -->
         >{{ k.split("=")[1] }}</div
       >
       <div class="value-col" v-if="config.showTableValues">
-        {{ data[(keys as string[]).join(",")][data[(keys as string[]).join(",")].length - 1 || 0] }}
+        {{ getColValue(keys) }}
       </div>
     </div>
   </div>
@@ -58,12 +58,14 @@ limitations under the License. -->
         showTableValues: boolean;
         tableHeaderCol2: string;
         typesOfMQE: string[];
+        decorations: {};
       }>,
       default: () => ({ showTableValues: true }),
     },
   });
 
   const { t } = useI18n();
+  const decorations = computed<{ [key: number]: string }>(() => props.config.decorations || {});
   const nameWidth = computed(() => (props.config.showTableValues ? 80 : 100));
   const dataKeys = computed(() => {
     const keys = Object.keys(props.data || {}).filter(
@@ -73,6 +75,10 @@ limitations under the License. -->
 
     return list;
   });
+  function getColValue(keys: string[]) {
+    const val = props.data[(keys as string[]).join(",")][props.data[(keys as string[]).join(",")].length - 1 || 0];
+    return decorations.value[val] || val;
+  }
 </script>
 <style lang="scss" scoped>
   .chart-table {

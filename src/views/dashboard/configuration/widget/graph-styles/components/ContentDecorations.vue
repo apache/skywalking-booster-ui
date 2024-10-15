@@ -38,8 +38,9 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
 
   const dashboardStore = useDashboardStore();
-  const decorations = ref<{ [key: string]: string }>(dashboardStore.selectedGrid.decorations || {});
-  const keys = ref<string[]>(dashboardStore.selectedGrid.decorations ? Object.keys(decorations.value) : [""]);
+  const graph = dashboardStore.selectedGrid.graph;
+  const decorations = ref<{ [key: string]: string }>(graph?.decorations || {});
+  const keys = ref<string[]>(graph.decorations ? Object.keys(decorations.value) : [""]);
 
   function changeKeys(event: any, index: number) {
     const params = event.target.textContent || "";

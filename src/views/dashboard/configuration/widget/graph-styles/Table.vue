@@ -14,6 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
+    <span class="label">{{ t("contentDecorations") }}</span>
+    <content-decorations />
+  </div>
+  <div class="item">
     <span class="label">{{ t("showValues") }}</span>
     <el-switch
       v-model="showTableValues"
@@ -37,6 +41,7 @@ limitations under the License. -->
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import ContentDecorations from "./components/ContentDecorations.vue";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
