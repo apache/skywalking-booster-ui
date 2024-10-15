@@ -32,6 +32,7 @@ limitations under the License. -->
         :config="{
           i: 0,
           ...graph,
+          decorations: graph?.decorations,
           metricConfig: config.metricConfig,
           expressions: config.expressions || [],
           typesOfMQE: typesOfMQE || [],
