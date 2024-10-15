@@ -51,7 +51,6 @@ limitations under the License. -->
         :data="state.source"
         :config="{
           ...data.graph,
-          decorations: data.graph?.decorations,
           i: data.i,
           id: data.id,
           metricConfig: data.metricConfig || [],
