@@ -385,5 +385,6 @@ const msg = {
   hierarchyNodeMetrics: "层次图节点的指标",
   hierarchyNodeDashboard: "作为层次图节点的dashboard",
   valueMappings: "值映射",
+  mappingTip: "注意: 映射键如 (-∞, 2] 或者 [4, 10)",
 };
 export default msg;

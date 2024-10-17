@@ -13,6 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <div>
+    <span class="label">{{ t("valueMappings") }}</span>
+    <span class="label red">({{ t("mappingTip") }})</span>
+  </div>
   <div v-for="(key, index) in keys" :key="index" class="mb-10 flex-h">
     <div class="content-decoration" contenteditable="true" @blur="changeKeys($event, index)">
       {{ key }}
@@ -36,7 +40,9 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useI18n } from "vue-i18n";
 
+  const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const graph = dashboardStore.selectedGrid.graph;
   const valueMappings = ref<{ [key: string]: string }>(graph?.valueMappings || {});
@@ -93,5 +99,11 @@ limitations under the License. -->
     &:focus {
       border-color: $active-color;
     }
+  }
+
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    padding-right: 10px;
   }
 </style>

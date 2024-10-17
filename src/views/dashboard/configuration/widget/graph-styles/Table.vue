@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">{{ t("valueMappings") }}</span>
     <value-mappings />
   </div>
   <div class="item">
