@@ -19,7 +19,7 @@ limitations under the License. -->
     </div>
     <div class="ml-5 mr-10">:</div>
     <div class="content-decoration" contenteditable="true" @blur="changeValues($event, key)">
-      {{ decorations[key] }}
+      {{ valueMappings[key] }}
     </div>
     <div v-if="index === keys.length - 1">
       <Icon class="cp mr-5" iconName="add_circle_outlinecontrol_point" size="middle" @click="addDecoration" />
