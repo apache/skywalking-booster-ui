@@ -73,9 +73,9 @@ export const Processes = {
 };
 
 export const Endpoints = {
-  variable: "$serviceId: ID!, $keyword: String!",
+  variable: "$serviceId: ID!, $keyword: String!, $duration: Duration",
   query: `
-  pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 20) {
+  pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: 20, duration: $duration) {
     id
     value: name
      label: name
