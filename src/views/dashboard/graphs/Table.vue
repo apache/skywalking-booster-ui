@@ -65,7 +65,7 @@ limitations under the License. -->
   });
 
   const { t } = useI18n();
-  const decorations = computed<{ [key: number]: string }>(() => props.config.decorations || {});
+  const decorations = computed<{ [key: string]: string }>(() => props.config.decorations || {});
   const nameWidth = computed(() => (props.config.showTableValues ? 80 : 100));
   const dataKeys = computed(() => {
     const keys = Object.keys(props.data || {}).filter(
@@ -75,9 +75,33 @@ limitations under the License. -->
 
     return list;
   });
+
   function getColValue(keys: string[]) {
-    const val = props.data[(keys as string[]).join(",")][props.data[(keys as string[]).join(",")].length - 1 || 0];
-    return decorations.value[val] || val;
+    const source = props.data[(keys as string[]).join(",")][props.data[(keys as string[]).join(",")].length - 1 || 0];
+    if (decorations.value[source]) {
+      return decorations.value[source];
+    }
+    const regex = /-?\d+(\.\d+)?/g;
+    const list = Object.keys(decorations.value);
+    for (const i of list) {
+      const k = i.replace(/\s+/g, "");
+      let withinRange = false;
+      const ranges = k.match(regex)?.map(Number) || [];
+      if (k.startsWith("[")) {
+        withinRange = k.startsWith("[-∞") ? true : Number(source) >= ranges[0];
+      } else {
+        withinRange = k.startsWith("(-∞") ? true : Number(source) > ranges[0];
+      }
+      if (k.endsWith("]")) {
+        withinRange = withinRange && (k.endsWith("+∞]") ? true : Number(source) <= (ranges[1] || ranges[0]));
+      } else {
+        withinRange = withinRange && (k.endsWith("+∞)") ? true : Number(source) < (ranges[1] || ranges[0]));
+      }
+      if (withinRange) {
+        return decorations.value[i];
+      }
+    }
+    return source;
   }
 </script>
 <style lang="scss" scoped>

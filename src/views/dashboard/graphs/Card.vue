@@ -22,7 +22,7 @@ limitations under the License. -->
       justifyContent: config.textAlign || 'center',
     }"
   >
-    {{ decorations[singleVal] || singleVal }}
+    {{ getValue() }}
     <span class="unit" v-show="config.showUnit && unit">
       {{ decodeURIComponent(unit) }}
     </span>
@@ -60,6 +60,34 @@ limitations under the License. -->
     Array.isArray(props.data[key.value]) ? props.data[key.value][0] : props.data[key.value],
   );
   const unit = computed(() => metricConfig.value[0] && encodeURIComponent(metricConfig.value[0].unit || ""));
+
+  function getValue() {
+    if (decorations.value[singleVal.value]) {
+      return decorations.value[singleVal.value];
+    }
+    const regex = /-?\d+(\.\d+)?/g;
+    const list = Object.keys(decorations.value);
+    for (const i of list) {
+      const k = i.replace(/\s+/g, "");
+      let withinRange = false;
+      const ranges = k.match(regex)?.map(Number) || [];
+      if (k.startsWith("[")) {
+        withinRange = k.startsWith("[-∞") ? true : Number(singleVal.value) >= ranges[0];
+      } else {
+        withinRange = k.startsWith("(-∞") ? true : Number(singleVal.value) > ranges[0];
+      }
+      if (k.endsWith("]")) {
+        withinRange = withinRange && (k.endsWith("+∞]") ? true : Number(singleVal.value) <= (ranges[1] || ranges[0]));
+      } else {
+        withinRange = withinRange && (k.endsWith("+∞)") ? true : Number(singleVal.value) < (ranges[1] || ranges[0]));
+      }
+      console.log(withinRange);
+      if (withinRange) {
+        return decorations.value[i] || singleVal.value;
+      }
+    }
+    return singleVal.value;
+  }
 </script>
 <style lang="scss" scoped>
   .chart-card {
