@@ -66,9 +66,6 @@ limitations under the License. -->
     if (!keys.value.length) {
       return;
     }
-    if (!keys.value[index]) {
-      return;
-    }
     delete decorations.value[keys.value[index]];
     keys.value.splice(index, 1);
     updateConfig({ decorations: decorations.value });

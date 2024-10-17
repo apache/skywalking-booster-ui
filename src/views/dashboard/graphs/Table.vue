@@ -88,14 +88,14 @@ limitations under the License. -->
       let withinRange = false;
       const ranges = k.match(regex)?.map(Number) || [];
       if (k.startsWith("[")) {
-        withinRange = k.startsWith("[-∞") ? true : Number(source) >= ranges[0];
+        withinRange = k.startsWith("[-∞") || Number(source) >= ranges[0];
       } else {
-        withinRange = k.startsWith("(-∞") ? true : Number(source) > ranges[0];
+        withinRange = k.startsWith("(-∞") || Number(source) > ranges[0];
       }
       if (k.endsWith("]")) {
-        withinRange = withinRange && (k.endsWith("+∞]") ? true : Number(source) <= (ranges[1] || ranges[0]));
+        withinRange = withinRange && (k.endsWith("+∞]") || Number(source) <= (ranges[1] || ranges[0]));
       } else {
-        withinRange = withinRange && (k.endsWith("+∞)") ? true : Number(source) < (ranges[1] || ranges[0]));
+        withinRange = withinRange && (k.endsWith("+∞)") || Number(source) < (ranges[1] || ranges[0]));
       }
       if (withinRange) {
         return decorations.value[i];

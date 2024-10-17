@@ -72,14 +72,14 @@ limitations under the License. -->
       let withinRange = false;
       const ranges = k.match(regex)?.map(Number) || [];
       if (k.startsWith("[")) {
-        withinRange = k.startsWith("[-∞") ? true : Number(singleVal.value) >= ranges[0];
+        withinRange = k.startsWith("[-∞") || Number(singleVal.value) >= ranges[0];
       } else {
-        withinRange = k.startsWith("(-∞") ? true : Number(singleVal.value) > ranges[0];
+        withinRange = k.startsWith("(-∞") || Number(singleVal.value) > ranges[0];
       }
       if (k.endsWith("]")) {
-        withinRange = withinRange && (k.endsWith("+∞]") ? true : Number(singleVal.value) <= (ranges[1] || ranges[0]));
+        withinRange = withinRange && (k.endsWith("+∞]") || Number(singleVal.value) <= (ranges[1] || ranges[0]));
       } else {
-        withinRange = withinRange && (k.endsWith("+∞)") ? true : Number(singleVal.value) < (ranges[1] || ranges[0]));
+        withinRange = withinRange && (k.endsWith("+∞)") || Number(singleVal.value) < (ranges[1] || ranges[0]));
       }
       console.log(withinRange);
       if (withinRange) {
