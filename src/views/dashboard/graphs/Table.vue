@@ -58,14 +58,14 @@ limitations under the License. -->
         showTableValues: boolean;
         tableHeaderCol2: string;
         typesOfMQE: string[];
-        decorations: {};
+        valueMappings: {};
       }>,
       default: () => ({ showTableValues: true }),
     },
   });
 
   const { t } = useI18n();
-  const decorations = computed<{ [key: string]: string }>(() => props.config.decorations || {});
+  const valueMappings = computed<{ [key: string]: string }>(() => props.config.valueMappings || {});
   const nameWidth = computed(() => (props.config.showTableValues ? 80 : 100));
   const dataKeys = computed(() => {
     const keys = Object.keys(props.data || {}).filter(
@@ -78,11 +78,11 @@ limitations under the License. -->
 
   function getColValue(keys: string[]) {
     const source = props.data[(keys as string[]).join(",")][props.data[(keys as string[]).join(",")].length - 1 || 0];
-    if (decorations.value[source]) {
-      return decorations.value[source];
+    if (valueMappings.value[source]) {
+      return valueMappings.value[source];
     }
     const regex = /-?\d+(\.\d+)?/g;
-    const list = Object.keys(decorations.value);
+    const list = Object.keys(valueMappings.value);
     for (const i of list) {
       const k = i.replace(/\s+/g, "");
       let withinRange = false;
@@ -98,7 +98,7 @@ limitations under the License. -->
         withinRange = withinRange && (k.endsWith("+∞)") || Number(source) < (ranges[1] || ranges[0]));
       }
       if (withinRange) {
-        return decorations.value[i];
+        return valueMappings.value[i];
       }
     }
     return source;

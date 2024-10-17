@@ -39,22 +39,22 @@ limitations under the License. -->
 
   const dashboardStore = useDashboardStore();
   const graph = dashboardStore.selectedGrid.graph;
-  const decorations = ref<{ [key: string]: string }>(graph?.valueMappings || {});
-  const keys = ref<string[]>(graph.valueMappings ? Object.keys(decorations.value) : [""]);
+  const valueMappings = ref<{ [key: string]: string }>(graph?.valueMappings || {});
+  const keys = ref<string[]>(graph.valueMappings ? Object.keys(valueMappings.value) : [""]);
 
   function changeKeys(event: any, index: number) {
     const params = event.target.textContent || "";
-    const list = Object.keys(decorations.value);
+    const list = Object.keys(valueMappings.value);
     if (params) {
-      decorations.value[params] = decorations.value[list[index]];
+      valueMappings.value[params] = valueMappings.value[list[index]];
     }
-    delete decorations.value[list[index]];
-    keys.value = Object.keys(decorations.value);
+    delete valueMappings.value[list[index]];
+    keys.value = Object.keys(valueMappings.value);
     updateConfig();
   }
 
   function changeValues(event: any, key: string) {
-    decorations.value[key] = event.target.textContent || "";
+    valueMappings.value[key] = event.target.textContent || "";
     updateConfig();
   }
 
@@ -66,7 +66,7 @@ limitations under the License. -->
     if (!keys.value.length) {
       return;
     }
-    delete decorations.value[keys.value[index]];
+    delete valueMappings.value[keys.value[index]];
     keys.value.splice(index, 1);
     updateConfig();
   }
@@ -74,7 +74,7 @@ limitations under the License. -->
   function updateConfig() {
     const graph = {
       ...dashboardStore.selectedGrid.graph,
-      valueMappings: decorations.value,
+      valueMappings: valueMappings.value,
     };
     dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
   }

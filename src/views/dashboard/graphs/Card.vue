@@ -48,13 +48,13 @@ limitations under the License. -->
         showUnit: true,
         textAlign: "center",
         metricConfig: [],
-        decorations: {},
+        valueMappings: {},
       }),
     },
   });
   const { t } = useI18n();
   const metricConfig = computed(() => props.config.metricConfig || []);
-  const decorations = computed(() => props.config.decorations || {});
+  const valueMappings = computed(() => props.config.valueMappings || {});
   const key = computed(() => Object.keys(props.data)[0]);
   const singleVal = computed(() =>
     Array.isArray(props.data[key.value]) ? props.data[key.value][0] : props.data[key.value],
@@ -62,11 +62,11 @@ limitations under the License. -->
   const unit = computed(() => metricConfig.value[0] && encodeURIComponent(metricConfig.value[0].unit || ""));
 
   function getValue() {
-    if (decorations.value[singleVal.value]) {
-      return decorations.value[singleVal.value];
+    if (valueMappings.value[singleVal.value]) {
+      return valueMappings.value[singleVal.value];
     }
     const regex = /-?\d+(\.\d+)?/g;
-    const list = Object.keys(decorations.value);
+    const list = Object.keys(valueMappings.value);
     for (const i of list) {
       const k = i.replace(/\s+/g, "");
       let withinRange = false;
@@ -81,9 +81,8 @@ limitations under the License. -->
       } else {
         withinRange = withinRange && (k.endsWith("+∞)") || Number(singleVal.value) < (ranges[1] || ranges[0]));
       }
-      console.log(withinRange);
       if (withinRange) {
-        return decorations.value[i] || singleVal.value;
+        return valueMappings.value[i] || singleVal.value;
       }
     }
     return singleVal.value;
