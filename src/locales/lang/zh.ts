@@ -384,6 +384,6 @@ const msg = {
   tabExpressions: "Tab表达式",
   hierarchyNodeMetrics: "层次图节点的指标",
   hierarchyNodeDashboard: "作为层次图节点的dashboard",
-  contentDecorations: "内容装饰",
+  valueMappings: "值映射",
 };
 export default msg;

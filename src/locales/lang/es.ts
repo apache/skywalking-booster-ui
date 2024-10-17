@@ -386,6 +386,6 @@ const msg = {
   tabExpressions: "Tab Expressions",
   hierarchyNodeMetrics: "Metrics for Hierarchy Graph Node",
   hierarchyNodeDashboard: "As dashboard for Hierarchy Graph Node",
-  contentDecorations: "Content Decorations",
+  valueMappings: "Value Mappings",
 };
 export default msg;

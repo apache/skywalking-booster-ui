@@ -39,8 +39,8 @@ limitations under the License. -->
 
   const dashboardStore = useDashboardStore();
   const graph = dashboardStore.selectedGrid.graph;
-  const decorations = ref<{ [key: string]: string }>(graph?.decorations || {});
-  const keys = ref<string[]>(graph.decorations ? Object.keys(decorations.value) : [""]);
+  const decorations = ref<{ [key: string]: string }>(graph?.valueMappings || {});
+  const keys = ref<string[]>(graph.valueMappings ? Object.keys(decorations.value) : [""]);
 
   function changeKeys(event: any, index: number) {
     const params = event.target.textContent || "";
@@ -50,12 +50,12 @@ limitations under the License. -->
     }
     delete decorations.value[list[index]];
     keys.value = Object.keys(decorations.value);
-    updateConfig({ decorations: decorations.value });
+    updateConfig();
   }
 
   function changeValues(event: any, key: string) {
     decorations.value[key] = event.target.textContent || "";
-    updateConfig({ decorations: decorations.value });
+    updateConfig();
   }
 
   function addDecoration() {
@@ -68,13 +68,13 @@ limitations under the License. -->
     }
     delete decorations.value[keys.value[index]];
     keys.value.splice(index, 1);
-    updateConfig({ decorations: decorations.value });
+    updateConfig();
   }
 
-  function updateConfig(param: { [key: string]: unknown }) {
+  function updateConfig() {
     const graph = {
       ...dashboardStore.selectedGrid.graph,
-      ...param,
+      valueMappings: decorations.value,
     };
     dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
   }
