@@ -87,7 +87,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .content-decoration {
-    width: 200px;
+    width: 350px;
     border: 1px solid $border-color;
     cursor: text;
     padding: 0 5px;
