@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div>
     <span class="label">{{ t("valueMappings") }}</span>
-    <span class="label red">{{ t("mappingTip") }} ^-?(0(\.[0-9]+)?|1(\.0+)?)$</span>
+    <span class="label red">{{ t("mappingTip") }}</span>
   </div>
   <div v-for="(key, index) in keys" :key="index" class="mb-10 flex-h">
     <div class="content-decoration" contenteditable="true" @blur="changeKeys($event, index)">
