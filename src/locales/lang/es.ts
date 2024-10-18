@@ -387,6 +387,6 @@ const msg = {
   hierarchyNodeMetrics: "Metrics for Hierarchy Graph Node",
   hierarchyNodeDashboard: "As dashboard for Hierarchy Graph Node",
   valueMappings: "Value Mappings",
-  mappingTip: "Notice: The mapping key is a Regex string, for instance, ^-?(0|[1-9][0-9]*|2)(\\.0+)?$",
+  mappingTip: "Notice: The mapping key is a Regex string, for instance, ^([0-9])$",
 };
 export default msg;
