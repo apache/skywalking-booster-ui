@@ -56,6 +56,9 @@ limitations under the License. -->
     }
     delete valueMappings.value[list[index]];
     keys.value = Object.keys(valueMappings.value);
+    if (!keys.value.length) {
+      keys.value = [""];
+    }
     updateConfig();
   }
 
