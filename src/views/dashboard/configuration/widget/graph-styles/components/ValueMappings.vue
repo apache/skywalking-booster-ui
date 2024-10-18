@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div>
     <span class="label">{{ t("valueMappings") }}</span>
-    <span class="label red">({{ t("mappingTip") }})</span>
+    <span class="label red">{{ t("mappingTip") }}</span>
   </div>
   <div v-for="(key, index) in keys" :key="index" class="mb-10 flex-h">
     <div class="content-decoration" contenteditable="true" @blur="changeKeys($event, index)">
@@ -56,6 +56,9 @@ limitations under the License. -->
     }
     delete valueMappings.value[list[index]];
     keys.value = Object.keys(valueMappings.value);
+    if (!keys.value.length) {
+      keys.value = [""];
+    }
     updateConfig();
   }
 
@@ -87,7 +90,7 @@ limitations under the License. -->
 </script>
 <style lang="scss" scoped>
   .content-decoration {
-    width: 200px;
+    width: 350px;
     border: 1px solid $border-color;
     cursor: text;
     padding: 0 5px;
