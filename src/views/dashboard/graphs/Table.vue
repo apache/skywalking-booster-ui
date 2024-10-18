@@ -58,14 +58,14 @@ limitations under the License. -->
         showTableValues: boolean;
         tableHeaderCol2: string;
         typesOfMQE: string[];
-        decorations: {};
+        valueMappings: {};
       }>,
       default: () => ({ showTableValues: true }),
     },
   });
 
   const { t } = useI18n();
-  const decorations = computed<{ [key: number]: string }>(() => props.config.decorations || {});
+  const valueMappings = computed<{ [key: string]: string }>(() => props.config.valueMappings || {});
   const nameWidth = computed(() => (props.config.showTableValues ? 80 : 100));
   const dataKeys = computed(() => {
     const keys = Object.keys(props.data || {}).filter(
@@ -75,9 +75,19 @@ limitations under the License. -->
 
     return list;
   });
+
   function getColValue(keys: string[]) {
-    const val = props.data[(keys as string[]).join(",")][props.data[(keys as string[]).join(",")].length - 1 || 0];
-    return decorations.value[val] || val;
+    const source = props.data[(keys as string[]).join(",")][props.data[(keys as string[]).join(",")].length - 1 || 0];
+    if (valueMappings.value[source]) {
+      return valueMappings.value[source];
+    }
+    const list = Object.keys(valueMappings.value);
+    for (const i of list) {
+      if (new RegExp(i).test(String(source))) {
+        return valueMappings.value[i] || source;
+      }
+    }
+    return source;
   }
 </script>
 <style lang="scss" scoped>

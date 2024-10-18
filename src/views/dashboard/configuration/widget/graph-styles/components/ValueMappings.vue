@@ -13,13 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <div>
+    <span class="label">{{ t("valueMappings") }}</span>
+    <span class="label red">({{ t("mappingTip") }})</span>
+  </div>
   <div v-for="(key, index) in keys" :key="index" class="mb-10 flex-h">
     <div class="content-decoration" contenteditable="true" @blur="changeKeys($event, index)">
       {{ key }}
     </div>
     <div class="ml-5 mr-10">:</div>
     <div class="content-decoration" contenteditable="true" @blur="changeValues($event, key)">
-      {{ decorations[key] }}
+      {{ valueMappings[key] }}
     </div>
     <div v-if="index === keys.length - 1">
       <Icon class="cp mr-5" iconName="add_circle_outlinecontrol_point" size="middle" @click="addDecoration" />
@@ -36,26 +40,28 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useI18n } from "vue-i18n";
 
+  const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const graph = dashboardStore.selectedGrid.graph;
-  const decorations = ref<{ [key: string]: string }>(graph?.decorations || {});
-  const keys = ref<string[]>(graph.decorations ? Object.keys(decorations.value) : [""]);
+  const valueMappings = ref<{ [key: string]: string }>(graph?.valueMappings || {});
+  const keys = ref<string[]>(graph.valueMappings ? Object.keys(valueMappings.value) : [""]);
 
   function changeKeys(event: any, index: number) {
     const params = event.target.textContent || "";
-    const list = Object.keys(decorations.value);
+    const list = Object.keys(valueMappings.value);
     if (params) {
-      decorations.value[params] = decorations.value[list[index]];
+      valueMappings.value[params] = valueMappings.value[list[index]];
     }
-    delete decorations.value[list[index]];
-    keys.value = Object.keys(decorations.value);
-    updateConfig({ decorations: decorations.value });
+    delete valueMappings.value[list[index]];
+    keys.value = Object.keys(valueMappings.value);
+    updateConfig();
   }
 
   function changeValues(event: any, key: string) {
-    decorations.value[key] = event.target.textContent || "";
-    updateConfig({ decorations: decorations.value });
+    valueMappings.value[key] = event.target.textContent || "";
+    updateConfig();
   }
 
   function addDecoration() {
@@ -66,18 +72,15 @@ limitations under the License. -->
     if (!keys.value.length) {
       return;
     }
-    if (!keys.value[index]) {
-      return;
-    }
-    delete decorations.value[keys.value[index]];
+    delete valueMappings.value[keys.value[index]];
     keys.value.splice(index, 1);
-    updateConfig({ decorations: decorations.value });
+    updateConfig();
   }
 
-  function updateConfig(param: { [key: string]: unknown }) {
+  function updateConfig() {
     const graph = {
       ...dashboardStore.selectedGrid.graph,
-      ...param,
+      valueMappings: valueMappings.value,
     };
     dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
   }
@@ -96,5 +99,11 @@ limitations under the License. -->
     &:focus {
       border-color: $active-color;
     }
+  }
+
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    padding-right: 10px;
   }
 </style>

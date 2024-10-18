@@ -386,6 +386,7 @@ const msg = {
   tabExpressions: "Tab Expressions",
   hierarchyNodeMetrics: "Metrics for Hierarchy Graph Node",
   hierarchyNodeDashboard: "As dashboard for Hierarchy Graph Node",
-  contentDecorations: "Content Decorations",
+  valueMappings: "Value Mappings",
+  mappingTip: "Notice: The mapping key is a Regex string, for instance, ^-?(0|[1-9][0-9]*|2)(\\.0+)?$",
 };
 export default msg;

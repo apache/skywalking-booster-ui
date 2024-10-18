@@ -384,6 +384,7 @@ const msg = {
   tabExpressions: "Tab表达式",
   hierarchyNodeMetrics: "层次图节点的指标",
   hierarchyNodeDashboard: "作为层次图节点的dashboard",
-  contentDecorations: "内容装饰",
+  valueMappings: "值映射",
+  mappingTip: "注意: 映射键是一个正则表达式字符串，比如 ^-?(0|[1-9][0-9]*|2)(\\.0+)?$",
 };
 export default msg;

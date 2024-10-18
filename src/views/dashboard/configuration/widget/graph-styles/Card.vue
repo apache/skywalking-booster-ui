@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <span class="label">{{ t("contentDecorations") }}</span>
-    <content-decorations />
+    <value-mappings />
   </div>
   <div>
     <span class="label">{{ t("fontSize") }}</span>
@@ -39,7 +38,7 @@ limitations under the License. -->
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import ContentDecorations from "./components/ContentDecorations.vue";
+  import ValueMappings from "./components/ValueMappings.vue";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();

@@ -123,7 +123,7 @@ export interface CardConfig {
   fontSize?: number;
   showUnit?: boolean;
   textAlign?: "center" | "right" | "left";
-  decorations?: { [key: string]: string };
+  valueMappings?: { [key: string]: string };
 }
 
 export interface TextConfig {
