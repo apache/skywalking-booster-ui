@@ -55,7 +55,7 @@ limitations under the License. -->
       valueMappings.value[params] = valueMappings.value[list[index]];
     }
     delete valueMappings.value[list[index]];
-    keys.value = graph.valueMappings ? Object.keys(valueMappings.value) : [""];
+    keys.value = valueMappings.value.length ? Object.keys(valueMappings.value) : [""];
     updateConfig();
   }
 
