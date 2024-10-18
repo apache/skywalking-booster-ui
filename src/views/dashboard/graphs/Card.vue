@@ -65,23 +65,9 @@ limitations under the License. -->
     if (valueMappings.value[singleVal.value]) {
       return valueMappings.value[singleVal.value];
     }
-    const regex = /-?\d+(\.\d+)?/g;
     const list = Object.keys(valueMappings.value);
     for (const i of list) {
-      const k = i.replace(/\s+/g, "");
-      let withinRange = false;
-      const ranges = k.match(regex)?.map(Number) || [];
-      if (k.startsWith("[")) {
-        withinRange = Number(singleVal.value) >= ranges[0];
-      } else {
-        withinRange = k.startsWith("(-∞") || Number(singleVal.value) > ranges[0];
-      }
-      if (k.endsWith("]")) {
-        withinRange = withinRange && Number(singleVal.value) <= (ranges[1] || ranges[0]);
-      } else {
-        withinRange = withinRange && (k.endsWith("∞)") || Number(singleVal.value) < (ranges[1] || ranges[0]));
-      }
-      if (withinRange) {
+      if (new RegExp(i).test(String(singleVal.value))) {
         return valueMappings.value[i] || singleVal.value;
       }
     }
