@@ -47,6 +47,8 @@ limitations under the License. -->
   import { computed } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
+
   /*global defineProps */
   const props = defineProps({
     data: {
@@ -83,8 +85,13 @@ limitations under the License. -->
     }
     const list = Object.keys(valueMappings.value);
     for (const i of list) {
-      if (new RegExp(i).test(String(source))) {
-        return valueMappings.value[i] || source;
+      try {
+        if (new RegExp(i).test(String(source))) {
+          return valueMappings.value[i] || source;
+        }
+      } catch (e) {
+        ElMessage.error("invalid regex string");
+        return source;
       }
     }
     return source;

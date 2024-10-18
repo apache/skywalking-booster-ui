@@ -34,6 +34,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import type { CardConfig, MetricConfigOpt } from "@/types/dashboard";
+  import { ElMessage } from "element-plus";
 
   /*global defineProps */
   const props = defineProps({
@@ -67,8 +68,13 @@ limitations under the License. -->
     }
     const list = Object.keys(valueMappings.value);
     for (const i of list) {
-      if (new RegExp(i).test(String(singleVal.value))) {
-        return valueMappings.value[i] || singleVal.value;
+      try {
+        if (new RegExp(i).test(String(singleVal.value))) {
+          return valueMappings.value[i] || singleVal.value;
+        }
+      } catch (e) {
+        ElMessage.error("invalid regex string");
+        return singleVal.value;
       }
     }
     return singleVal.value;
