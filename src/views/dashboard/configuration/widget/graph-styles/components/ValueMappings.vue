@@ -15,9 +15,7 @@ limitations under the License. -->
 <template>
   <div>
     <span class="label">{{ t("valueMappings") }}</span>
-    <span class="label red"
-      >Notice: The mapping key support a regex string, for instance, ^-?(0|[1-9][0-9]*|2)(\\.0+)?$</span
-    >
+    <span class="label red">{{ t("mappingTip") }} ^-?(0|[1-9][0-9]*|2)(\\.0+)?$</span>
   </div>
   <div v-for="(key, index) in keys" :key="index" class="mb-10 flex-h">
     <div class="content-decoration" contenteditable="true" @blur="changeKeys($event, index)">
@@ -57,7 +55,7 @@ limitations under the License. -->
       valueMappings.value[params] = valueMappings.value[list[index]];
     }
     delete valueMappings.value[list[index]];
-    keys.value = Object.keys(valueMappings.value);
+    keys.value = graph.valueMappings ? Object.keys(valueMappings.value) : [""];
     updateConfig();
   }
 
