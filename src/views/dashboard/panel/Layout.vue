@@ -79,13 +79,19 @@ limitations under the License. -->
       async function queryMetrics() {
         const widgets = [];
         for (const item of dashboardStore.layout) {
-          const isList = ListChartTypes.includes(item.type || "");
-          if (item.type === WidgetType.Widget && !isList) {
-            widgets.push(item);
+          if (item.type === WidgetType.Widget) {
+            const isList = ListChartTypes.includes(item.graph?.type || "");
+            if (!isList) {
+              widgets.push(item);
+            }
           }
           if (item.type === WidgetType.Tab) {
             const index = isNaN(item.activedTabIndex) ? 0 : item.activedTabIndex;
-            widgets.push(...item.children[index].children.filter((d: LayoutConfig) => ListChartTypes.includes(d.type)));
+            widgets.push(
+              ...item.children[index].children.filter(
+                (d: LayoutConfig) => !ListChartTypes.includes(d.graph?.type || ""),
+              ),
+            );
           }
         }
         const configList = widgets.map((d: LayoutConfig) => ({
@@ -102,7 +108,9 @@ limitations under the License. -->
       }
       async function queryTabsMetrics() {
         const configList = dashboardStore.currentTabItems
-          .filter((item: LayoutConfig) => item.type === WidgetType.Widget && !ListChartTypes.includes(item.type || ""))
+          .filter(
+            (item: LayoutConfig) => item.type === WidgetType.Widget && !ListChartTypes.includes(item.graph?.type || ""),
+          )
           .map((d: LayoutConfig) => ({
             metrics: d.expressions || [],
             metricConfig: d.metricConfig || [],
