@@ -80,8 +80,7 @@ limitations under the License. -->
         const widgets = [];
         for (const item of dashboardStore.layout) {
           if (item.type === WidgetType.Widget) {
-            const isList = ListChartTypes.includes(item.graph?.type || "");
-            if (!isList) {
+            if (!ListChartTypes.includes(item.graph?.type || "")) {
               widgets.push(item);
             }
           }
