@@ -78,7 +78,6 @@ limitations under the License. -->
       }
       async function queryMetrics() {
         const widgets = [];
-
         for (const item of dashboardStore.layout) {
           const isList = ListChartTypes.includes(item.type || "");
           if (item.type === WidgetType.Widget && !isList) {
@@ -86,7 +85,7 @@ limitations under the License. -->
           }
           if (item.type === WidgetType.Tab) {
             const index = isNaN(item.activedTabIndex) ? 0 : item.activedTabIndex;
-            widgets.push(...item.children[index].children);
+            widgets.push(...item.children[index].children.filter((d: LayoutConfig) => ListChartTypes.includes(d.type)));
           }
         }
         const configList = widgets.map((d: LayoutConfig) => ({
@@ -151,7 +150,7 @@ limitations under the License. -->
         },
       );
       watch(
-        () => appStore.durationTime,
+        () => [appStore.durationTime, dashboardStore.layout],
         () => {
           if (dashboardStore.entity === EntityType[1].value) {
             queryMetrics();
