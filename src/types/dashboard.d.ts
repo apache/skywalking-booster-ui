@@ -46,6 +46,7 @@ export interface LayoutConfig {
   relatedTrace?: RelatedTrace;
   subExpressions?: string[];
   subTypesOfMQE?: string[];
+  valueRelatedDashboard?: string;
 }
 export type RelatedTrace = {
   duration: DurationTime;
