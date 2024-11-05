@@ -35,6 +35,9 @@ limitations under the License. -->
           <div class="operation" @click="viewTrace(i)" v-show="refIdType === RefIdTypes[0].value">
             <span>{{ t("viewTrace") }}</span>
           </div>
+          <div class="operation" @click="viewDashboard(i)">
+            <span>{{ t("viewValueDashboard") }}</span>
+          </div>
         </el-popover>
       </div>
       <el-progress
@@ -61,12 +64,14 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { computed, ref } from "vue";
+  import router from "@/router";
+  import { useDashboardStore } from "@/store/modules/dashboard";
   import copy from "@/utils/copy";
-  import { TextColors } from "@/views/dashboard/data";
+  import { TextColors, MetricCatalog } from "@/views/dashboard/data";
   import Trace from "@/views/dashboard/related/trace/Index.vue";
   import { WidgetType, QueryOrders, Status, RefIdTypes, ExpressionResultType } from "@/views/dashboard/data";
 
-  /*global defineProps */
+  /*global defineProps, Recordable*/
   const props = defineProps({
     data: {
       type: Object as PropType<{
@@ -80,12 +85,14 @@ limitations under the License. -->
         expressions: string[];
         typesOfMQE: string[];
         relatedTrace: any;
+        valueRelatedDashboard: string;
       }>,
       default: () => ({ color: "purple" }),
     },
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   });
   const { t } = useI18n();
+  const dashboardStore = useDashboardStore();
   const showTrace = ref<boolean>(false);
   const traceOptions = ref<{ type: string; filters?: unknown }>({
     type: WidgetType.Trace,
@@ -121,6 +128,23 @@ limitations under the License. -->
       filters,
     };
     showTrace.value = true;
+  }
+  function viewDashboard(item: Recordable) {
+    const { owner } = item;
+    let path;
+    if (owner.scope === MetricCatalog.SERVICE) {
+      path = `/dashboard/${dashboardStore.layerId}/${owner.scope}/${owner.serviceID}/${props.config.valueRelatedDashboard}`;
+    }
+    if (owner.scope === MetricCatalog.SERVICE_INSTANCE) {
+      path = `/dashboard/${dashboardStore.layerId}/${owner.scope}/${owner.serviceID}/${owner.serviceInstanceID}/${props.config.valueRelatedDashboard}`;
+    }
+    if (owner.scope === MetricCatalog.ENDPOINT) {
+      path = `/dashboard/${dashboardStore.layerId}/${owner.scope}/${owner.serviceID}/${owner.endpointID}/${props.config.valueRelatedDashboard}`;
+    }
+    if (!path) {
+      return;
+    }
+    router.push(path);
   }
 </script>
 <style lang="scss" scoped>
@@ -187,11 +211,10 @@ limitations under the License. -->
   }
 
   .operation {
-    padding: 5px 0;
+    padding: 5px;
     color: $font-color;
     cursor: pointer;
     position: relative;
-    text-align: center;
     font-size: $font-size-smaller;
 
     &:hover {

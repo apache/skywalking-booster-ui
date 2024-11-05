@@ -61,6 +61,7 @@ limitations under the License. -->
           typesOfMQE: typesOfMQE || [],
           subExpressions: data.subExpressions || [],
           subTypesOfMQE: data.subTypesOfMQE || [],
+          valueRelatedDashboard: data.valueRelatedDashboard,
         }"
         :needQuery="needQuery"
         @click="clickHandle"

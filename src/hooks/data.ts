@@ -57,6 +57,16 @@ export const RespFields: Indexable = {
         name: id
         value
         refId: traceID
+        owner {
+          scope
+          serviceID
+          serviceName
+          normal
+          serviceInstanceID
+          serviceInstanceName
+          endpointID
+          endpointName
+        }
       }
     }
     error

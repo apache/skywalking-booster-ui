@@ -95,6 +95,20 @@ limitations under the License. -->
       {{ type.label }}
     </span>
   </div>
+  <div v-if="states.isTopList" class="mt-10">
+    <div>{{ t("valueDashboard") }}</div>
+    <div>
+      <Selector
+        :value="states.valueRelatedDashboard || ''"
+        :options="states.dashboardList"
+        size="small"
+        placeholder="Please select a dashboard name"
+        @change="changeValueDashboard"
+        class="selectors"
+        :clearable="true"
+      />
+    </div>
+  </div>
 </template>
 <script lang="ts" setup>
   import { reactive, ref, computed } from "vue";
@@ -140,21 +154,25 @@ limitations under the License. -->
     metricTypes: string[];
     metricTypeList: Option[][];
     isList: boolean;
+    isTopList: boolean;
     dashboardName: string;
     dashboardList: ((DashboardItem & { label: string; value: string }) | any)[];
     tips: string[];
     subTips: string[];
+    valueRelatedDashboard: string;
   }>({
     metrics: metrics.value.length ? metrics.value : [""],
     metricTypes: typesOfMQE.value.length ? typesOfMQE.value : [""],
     metricTypeList: [],
     isList: false,
+    isTopList: false,
     dashboardName: graph.value.dashboardName,
     dashboardList: [{ label: "", value: "" }],
     tips: [],
     subTips: [],
     subMetrics: subMetrics.value.length ? subMetrics.value : [""],
     subMetricTypes: subMetricTypes.value.length ? subMetricTypes.value : [""],
+    valueRelatedDashboard: dashboardStore.selectedGrid.valueRelatedDashboard,
   });
   const currentMetricConfig = ref<MetricConfigOpt>({
     unit: "",
@@ -163,6 +181,7 @@ limitations under the License. -->
     sortOrder: "DES",
   });
 
+  states.isTopList = graph.value.type === ChartTypes[4].value;
   states.isList = ListChartTypes.includes(graph.value.type);
   const defaultLen = ref<number>(states.isList ? 5 : 20);
 
@@ -187,9 +206,10 @@ limitations under the License. -->
     const arr = list.reduce((prev: (DashboardItem & { label: string; value: string })[], d: DashboardItem) => {
       if (d.layer === dashboardStore.layerId) {
         if (
-          (d.entity === EntityType[0].value && chart === "ServiceList") ||
-          (d.entity === EntityType[2].value && chart === "EndpointList") ||
-          (d.entity === EntityType[3].value && chart === "InstanceList")
+          (d.entity === EntityType[0].value && chart === ChartTypes[8].value) ||
+          (d.entity === EntityType[2].value && chart === ChartTypes[9].value) ||
+          (d.entity === EntityType[3].value && chart === ChartTypes[10].value) ||
+          states.isTopList
         ) {
           prev.push({
             ...d,
@@ -254,9 +274,28 @@ limitations under the License. -->
       typesOfMQE: states.metricTypes,
     });
     emit("update", params.source || {});
+    if (states.isTopList) {
+      const values: any = Object.values(params.source)[0];
+      if (!values) {
+        return;
+      }
+      states.dashboardList = states.dashboardList.filter((d) => d.entity === values[0].owner.scope);
+    }
   }
 
-  function changeDashboard(opt: any) {
+  function changeValueDashboard(opt: { value: string }[]) {
+    if (!opt[0]) {
+      states.valueRelatedDashboard = "";
+    } else {
+      states.valueRelatedDashboard = opt[0].value;
+    }
+    dashboardStore.selectWidget({
+      ...dashboardStore.selectedGrid,
+      valueRelatedDashboard: states.valueRelatedDashboard,
+    });
+  }
+
+  function changeDashboard(opt: { value: string }[]) {
     if (!opt[0]) {
       states.dashboardName = "";
     } else {
