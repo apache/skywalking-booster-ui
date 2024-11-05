@@ -41,6 +41,7 @@ limitations under the License. -->
             typesOfMQE: dashboardStore.selectedGrid.typesOfMQE || [],
             subExpressions: dashboardStore.selectedGrid.subExpressions || [],
             subTypesOfMQE: dashboardStore.selectedGrid.subTypesOfMQE || [],
+            valueRelatedDashboard: dashboardStore.selectedGrid.valueRelatedDashboard,
           }"
           :needQuery="true"
           @expressionTips="getErrors"

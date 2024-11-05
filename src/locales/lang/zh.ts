@@ -386,5 +386,6 @@ const msg = {
   hierarchyNodeDashboard: "作为层次图节点的dashboard",
   valueMappings: "值映射",
   mappingTip: "注意: 映射键是一个正则表达式字符串，比如 ^([0-9])$",
+  valueDashboard: "值相关的仪表板",
 };
 export default msg;
