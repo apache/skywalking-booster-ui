@@ -36,7 +36,7 @@ limitations under the License. -->
             <span>{{ t("viewTrace") }}</span>
           </div>
           <div class="operation" @click="viewDashboard(i)">
-            <span>{{ t("valueDashboard") }}</span>
+            <span>{{ t("viewValueDashboard") }}</span>
           </div>
         </el-popover>
       </div>
@@ -211,11 +211,10 @@ limitations under the License. -->
   }
 
   .operation {
-    padding: 5px 0;
+    padding: 5px;
     color: $font-color;
     cursor: pointer;
     position: relative;
-    text-align: center;
     font-size: $font-size-smaller;
 
     &:hover {

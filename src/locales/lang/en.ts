@@ -389,5 +389,6 @@ const msg = {
   valueMappings: "Value Mappings",
   mappingTip: "Notice: The mapping key is a Regex string, e.g. ^([0-9])$",
   valueDashboard: "Value Related Dashboard",
+  viewValueDashboard: "View Dashboard",
 };
 export default msg;

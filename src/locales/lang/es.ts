@@ -389,5 +389,6 @@ const msg = {
   valueMappings: "Value Mappings",
   mappingTip: "Aviso: La clave de mapeo es una cadena Regex, p. ej. ^([0-9])$",
   valueDashboard: "Value Related Dashboard",
+  viewValueDashboard: "View Dashboard",
 };
 export default msg;

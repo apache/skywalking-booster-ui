@@ -61,7 +61,7 @@ limitations under the License. -->
         <Icon iconName="retry" :loading="appStore.autoRefresh" class="middle" />
       </span>
       <span class="version ml-5 cp">
-        <el-popover trigger="hover" width="250" placement="bottom" :content="appStore.version">
+        <el-popover trigger="hover" :width="250" placement="bottom" :content="appStore.version">
           <template #reference>
             <span>
               <Icon iconName="info_outline" size="middle" />
