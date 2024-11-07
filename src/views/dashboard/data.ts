@@ -266,8 +266,9 @@ export const TextColors: { [key: string]: string } = {
 };
 
 export const RefIdTypes = [
-  { label: "Trace ID", value: "traceId" },
   { label: "None", value: "none" },
+  { label: "Trace ID", value: "traceId" },
+  { label: "Owner", value: "owner" },
 ];
 export const RefreshOptions = [
   { label: "Last 30 minutes", value: "30", step: "MINUTE" },

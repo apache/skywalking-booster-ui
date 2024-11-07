@@ -32,7 +32,7 @@ limitations under the License. -->
           <div class="operation" @click="handleClick(i.name)">
             <span>{{ t("copy") }}</span>
           </div>
-          <div class="operation" @click="viewTrace(i)" v-show="refIdType === RefIdTypes[0].value">
+          <div class="operation" @click="viewTrace(i)" v-show="![RefIdTypes[0].value].includes(refIdType)">
             <span>{{ t("viewTrace") }}</span>
           </div>
           <div class="operation" @click="viewDashboard(i)">
@@ -75,7 +75,7 @@ limitations under the License. -->
   const props = defineProps({
     data: {
       type: Object as PropType<{
-        [key: string]: { name: string; value: number; refId: string }[];
+        [key: string]: { name: string; value: number; refId: string; owner: object }[];
       }>,
       default: () => ({}),
     },
@@ -97,9 +97,7 @@ limitations under the License. -->
   const traceOptions = ref<{ type: string; filters?: unknown }>({
     type: WidgetType.Trace,
   });
-  const refIdType = computed(
-    () => (props.config.relatedTrace && props.config.relatedTrace.refIdType) || RefIdTypes[0].value,
-  );
+  const refIdType = computed(() => props.config.relatedTrace && props.config.relatedTrace.refIdType);
   const key = computed(() => Object.keys(props.data)[0] || "");
   const available = computed(
     () => Array.isArray(props.data[key.value]) && props.data[key.value][0] && props.data[key.value][0].value,
@@ -114,14 +112,15 @@ limitations under the License. -->
   function handleClick(i: string) {
     copy(i);
   }
-  function viewTrace(item: { name: string; refId: string; value: unknown }) {
+  function viewTrace(item: { name: string; refId: string; value: unknown; owner: object }) {
     const filters = {
       ...item,
       queryOrder: QueryOrders[1].value,
       status: Status[2].value,
-      id: item.refId,
+      id: refIdType.value === RefIdTypes[1].value ? item.refId : undefined,
       metricValue: [{ label: props.config.expressions[0], data: item.value, value: item.name }],
       isReadRecords: props.config.typesOfMQE.includes(ExpressionResultType.RECORD_LIST) || undefined,
+      owner: refIdType.value === RefIdTypes[2].value ? item.owner : null,
     };
     traceOptions.value = {
       ...traceOptions.value,

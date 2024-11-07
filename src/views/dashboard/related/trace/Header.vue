@@ -103,6 +103,7 @@ limitations under the License. -->
   });
   const { t } = useI18n();
   const filters = reactive<Recordable>(props.data.filters || {});
+  const owner = reactive<Recordable>(props.data.owner || {});
   const appStore = useAppStoreWithOut();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
@@ -133,14 +134,16 @@ limitations under the License. -->
     }
     conditions.value = (items.value[0] && items.value[0].label) || "";
     if (!filters.id) {
-      state.service = selectorStore.currentService.id;
-      if (dashboardStore.entity === EntityType[2].value) {
-        state.endpoint = selectorStore.currentPod.id;
+      if (owner) {
+        state.service = owner.serviceID;
+        if (owner.scope === EntityType[2].value) {
+          state.endpoint = owner.endpointID;
+        }
+        if (owner.scope === EntityType[3].value) {
+          state.instance = owner.serviceInstanceID;
+        }
+        await queryTraces();
       }
-      if (dashboardStore.entity === EntityType[3].value) {
-        state.instance = selectorStore.currentPod.id;
-      }
-      await queryTraces();
       return;
     }
     if (filters.isReadRecords) {
