@@ -103,7 +103,6 @@ limitations under the License. -->
   });
   const { t } = useI18n();
   const filters = reactive<Recordable>(props.data.filters || {});
-  const owner = reactive<Recordable>(props.data.owner || {});
   const appStore = useAppStoreWithOut();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
@@ -123,6 +122,7 @@ limitations under the License. -->
   init();
 
   async function init() {
+    console.log(props.data);
     for (const d of Object.keys(filters)) {
       if (
         (d === "queryOrder" && filters[d] && filters[d] === QueryOrders[1].value) ||
@@ -134,16 +134,17 @@ limitations under the License. -->
     }
     conditions.value = (items.value[0] && items.value[0].label) || "";
     if (!filters.id) {
-      if (owner) {
-        state.service = owner.serviceID;
-        if (owner.scope === EntityType[2].value) {
-          state.endpoint = owner.endpointID;
-        }
-        if (owner.scope === EntityType[3].value) {
-          state.instance = owner.serviceInstanceID;
-        }
-        await queryTraces();
+      if (!filters.owner) {
+        return;
       }
+      state.service = filters.owner.serviceID;
+      if (filters.owner.scope === EntityType[2].value) {
+        state.endpoint = filters.owner.endpointID;
+      }
+      if (filters.owner?.scope === EntityType[3].value) {
+        state.instance = filters.owner.serviceInstanceID;
+      }
+      await queryTraces();
       return;
     }
     if (filters.isReadRecords) {
@@ -220,6 +221,7 @@ limitations under the License. -->
     if (!isNaN(params.minTraceDuration)) {
       params.queryOrder = QueryOrders[1].value;
     }
+    console.log(params);
     return params;
   }
   async function queryTraces() {
