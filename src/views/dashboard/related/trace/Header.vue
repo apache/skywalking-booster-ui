@@ -122,7 +122,6 @@ limitations under the License. -->
   init();
 
   async function init() {
-    console.log(props.data);
     for (const d of Object.keys(filters)) {
       if (
         (d === "queryOrder" && filters[d] && filters[d] === QueryOrders[1].value) ||
@@ -221,7 +220,6 @@ limitations under the License. -->
     if (!isNaN(params.minTraceDuration)) {
       params.queryOrder = QueryOrders[1].value;
     }
-    console.log(params);
     return params;
   }
   async function queryTraces() {
