@@ -133,15 +133,22 @@ limitations under the License. -->
     }
     conditions.value = (items.value[0] && items.value[0].label) || "";
     if (!filters.id) {
-      if (!filters.owner) {
-        return;
-      }
-      state.service = filters.owner.serviceID;
-      if (filters.owner.scope === EntityType[2].value) {
-        state.endpoint = filters.owner.endpointID;
-      }
-      if (filters.owner?.scope === EntityType[3].value) {
-        state.instance = filters.owner.serviceInstanceID;
+      if (filters.owner) {
+        state.service = filters.owner.serviceID;
+        if (filters.owner.scope === EntityType[2].value) {
+          state.endpoint = filters.owner.endpointID;
+        }
+        if (filters.owner.scope === EntityType[3].value) {
+          state.instance = filters.owner.serviceInstanceID;
+        }
+      } else {
+        state.service = selectorStore.currentService.id;
+        if (dashboardStore.entity === EntityType[2].value) {
+          state.endpoint = selectorStore.currentPod.id;
+        }
+        if (dashboardStore.entity === EntityType[3].value) {
+          state.instance = selectorStore.currentPod.id;
+        }
       }
       await queryTraces();
       return;
