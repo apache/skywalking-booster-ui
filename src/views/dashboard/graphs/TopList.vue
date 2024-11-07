@@ -97,7 +97,9 @@ limitations under the License. -->
   const traceOptions = ref<{ type: string; filters?: unknown }>({
     type: WidgetType.Trace,
   });
-  const refIdType = computed(() => props.config.relatedTrace && props.config.relatedTrace.refIdType);
+  const refIdType = computed(
+    () => (props.config.relatedTrace && props.config.relatedTrace.refIdType) || RefIdTypes[0].value,
+  );
   const key = computed(() => Object.keys(props.data)[0] || "");
   const available = computed(
     () => Array.isArray(props.data[key.value]) && props.data[key.value][0] && props.data[key.value][0].value,
