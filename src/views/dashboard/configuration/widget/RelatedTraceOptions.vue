@@ -81,7 +81,7 @@ limitations under the License. -->
   const latency = ref<boolean>(traceOpt.latency || false);
   const enableRelate = ref<boolean>(traceOpt.enableRelate || false);
   const type = ref<string>((graph && graph.type) || "");
-  const refIdType = ref<string>(traceOpt.refIdType || "traceId");
+  const refIdType = ref<string>(traceOpt.refIdType || "");
 
   function updateConfig(param: { [key: string]: unknown }) {
     const relatedTrace = {

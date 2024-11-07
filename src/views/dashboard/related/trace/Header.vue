@@ -133,12 +133,15 @@ limitations under the License. -->
     }
     conditions.value = (items.value[0] && items.value[0].label) || "";
     if (!filters.id) {
-      state.service = selectorStore.currentService.id;
-      if (dashboardStore.entity === EntityType[2].value) {
-        state.endpoint = selectorStore.currentPod.id;
+      if (!filters.owner) {
+        return;
       }
-      if (dashboardStore.entity === EntityType[3].value) {
-        state.instance = selectorStore.currentPod.id;
+      state.service = filters.owner.serviceID;
+      if (filters.owner.scope === EntityType[2].value) {
+        state.endpoint = filters.owner.endpointID;
+      }
+      if (filters.owner?.scope === EntityType[3].value) {
+        state.instance = filters.owner.serviceInstanceID;
       }
       await queryTraces();
       return;
