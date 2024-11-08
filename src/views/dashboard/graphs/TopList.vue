@@ -35,7 +35,7 @@ limitations under the License. -->
           <div class="operation" @click="viewTrace(i)" v-show="![RefIdTypes[0].value].includes(refIdType)">
             <span>{{ t("viewTrace") }}</span>
           </div>
-          <div class="operation" @click="viewDashboard(i)">
+          <div class="operation" @click="viewDashboard(i)" v-show="props.config.valueRelatedDashboard">
             <span>{{ t("viewValueDashboard") }}</span>
           </div>
         </el-popover>
