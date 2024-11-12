@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RespFields, MaximumEntities } from "./data";
+import { RespFields, MaximumEntities, MaxQueryLength } from "./data";
 import { EntityType, ExpressionResultType } from "@/views/dashboard/data";
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -23,6 +23,14 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MetricConfigOpt } from "@/types/dashboard";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { Node, Call } from "@/types/topology";
+
+function chunkArray(array: any[], chunkSize: number) {
+  const result = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
+}
 
 export async function useDashboardQueryProcessor(configList: Indexable[]) {
   function expressionsGraphql(config: Indexable, idx: number) {
@@ -180,13 +188,6 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
       console.error(error);
       return { 0: { source: {}, tips: [], typesOfMQE: [] } };
     }
-  }
-  function chunkArray(array: any[], chunkSize: number) {
-    const result = [];
-    for (let i = 0; i < array.length; i += chunkSize) {
-      result.push(array.slice(i, i + chunkSize));
-    }
-    return result;
   }
 
   const partArr = chunkArray(configList, 6);
@@ -390,11 +391,11 @@ export async function useExpressionsQueryPodsMetrics(
   return resp;
 }
 
-export function useQueryTopologyExpressionsProcessor(metrics: string[], instances: (Call | Node)[]) {
+export async function useQueryTopologyExpressionsProcessor(metrics: string[], instances: (Call | Node)[]) {
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
 
-  function getExpressionQuery() {
+  function getExpressionQuery(partMetrics: string[]) {
     const conditions: { [key: string]: unknown } = {
       duration: appStore.durationTime,
     };
@@ -448,7 +449,7 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
       };
       variables.push(`$entity${index}: Entity!`);
       conditions[`entity${index}`] = entity;
-      const f = metrics.map((name: string, idx: number) => {
+      const f = partMetrics.map((name: string, idx: number) => {
         if (index === 0) {
           variables.push(`$expression${idx}: String!`);
           conditions[`expression${idx}`] = name;
@@ -481,6 +482,19 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
       }
     }
     return obj;
+  }
+
+  const count = Math.floor(MaxQueryLength / instances.length);
+  const metricsArr = chunkArray(metrics, count);
+  const promiseArr = metricsArr.map((d: Array<string>) => getExpressionQuery(d));
+  const responseList = await Promise.all(promiseArr);
+
+  let resp = {};
+  for (const item of responseList) {
+    resp = {
+      ...resp,
+      ...item,
+    };
   }
 
   return { getExpressionQuery, handleExpressionValues };

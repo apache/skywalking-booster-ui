@@ -112,3 +112,5 @@ export const LightChartColors = [
   "#546570",
   "#c4ccd3",
 ];
+
+export const MaxQueryLength = 3000;
