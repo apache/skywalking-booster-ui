@@ -285,7 +285,7 @@ limitations under the License. -->
     if (!expression) {
       return;
     }
-    const { getExpressionQuery } = await useQueryTopologyExpressionsProcessor(
+    const { getExpressionQuery } = useQueryTopologyExpressionsProcessor(
       [expression],
       topologyStore.nodes.filter((d: Node) => d.isReal),
     );
