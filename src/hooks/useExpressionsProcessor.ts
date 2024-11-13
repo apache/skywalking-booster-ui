@@ -17,6 +17,7 @@
 import { RespFields, MaximumEntities, MaxQueryLength } from "./data";
 import { EntityType, ExpressionResultType } from "@/views/dashboard/data";
 import { ElMessage } from "element-plus";
+import { useTopologyStore } from "@/store/modules/topology";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -391,11 +392,11 @@ export async function useExpressionsQueryPodsMetrics(
   return resp;
 }
 
-export async function useQueryTopologyExpressionsProcessor(metrics: string[], instances: (Call | Node)[]) {
+export function useQueryTopologyExpressionsProcessor(metrics: string[], instances: (Call | Node)[]) {
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
 
-  function getExpressionQuery(partMetrics: string[]) {
+  function getExpressionQuery(partMetrics?: string[]) {
     const conditions: { [key: string]: unknown } = {
       duration: appStore.durationTime,
     };
@@ -449,7 +450,7 @@ export async function useQueryTopologyExpressionsProcessor(metrics: string[], in
       };
       variables.push(`$entity${index}: Entity!`);
       conditions[`entity${index}`] = entity;
-      const f = partMetrics.map((name: string, idx: number) => {
+      const f = (partMetrics || metrics).map((name: string, idx: number) => {
         if (index === 0) {
           variables.push(`$expression${idx}: String!`);
           conditions[`expression${idx}`] = name;
@@ -483,19 +484,31 @@ export async function useQueryTopologyExpressionsProcessor(metrics: string[], in
     }
     return obj;
   }
-
-  const count = Math.floor(MaxQueryLength / instances.length);
-  const metricsArr = chunkArray(metrics, count);
-  const promiseArr = metricsArr.map((d: Array<string>) => getExpressionQuery(d));
-  const responseList = await Promise.all(promiseArr);
-
-  let resp = {};
-  for (const item of responseList) {
-    resp = {
-      ...resp,
-      ...item,
-    };
+  async function fetchMetrics(partMetrics: string[]) {
+    const topologyStore = useTopologyStore();
+    const param = getExpressionQuery(partMetrics);
+    const res = await topologyStore.getTopologyExpressionValue(param);
+    if (res.errors) {
+      ElMessage.error(res.errors);
+      return;
+    }
+    return handleExpressionValues(res.data);
   }
 
-  return { getExpressionQuery, handleExpressionValues };
+  async function getMetrics() {
+    const count = Math.floor(MaxQueryLength / instances.length);
+    const metricsArr = chunkArray(metrics, count);
+    const promiseArr = metricsArr.map((d: string[]) => fetchMetrics(d));
+    const responseList = await Promise.all(promiseArr);
+    let resp = {};
+    for (const item of responseList) {
+      resp = {
+        ...resp,
+        ...item,
+      };
+    }
+    return resp;
+  }
+
+  return { getMetrics, getExpressionQuery };
 }
