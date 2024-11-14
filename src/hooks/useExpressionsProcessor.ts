@@ -464,19 +464,19 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
 
     return { queryStr, conditions };
   }
-  function handleExpressionValues(resp: { [key: string]: any }) {
+  function handleExpressionValues(partMetrics: string[], resp: { [key: string]: any }) {
     const obj: any = {};
     for (let idx = 0; idx < instances.length; idx++) {
-      for (let index = 0; index < metrics.length; index++) {
+      for (let index = 0; index < partMetrics.length; index++) {
         const k = "expression" + idx + index;
-        if (metrics[index]) {
-          if (!obj[metrics[index]]) {
-            obj[metrics[index]] = {
+        if (partMetrics[index]) {
+          if (!obj[partMetrics[index]]) {
+            obj[partMetrics[index]] = {
               values: [],
             };
           }
-          obj[metrics[index]].values.push({
-            value: resp[k].results[0] && resp[k].results[0].values[0].value,
+          obj[partMetrics[index]].values.push({
+            value: resp[k] && resp[k].results[0] && resp[k].results[0].values[0].value,
             id: instances[idx].id,
           });
         }
@@ -492,7 +492,7 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
       ElMessage.error(res.errors);
       return;
     }
-    return handleExpressionValues(res.data);
+    return handleExpressionValues(partMetrics, res.data);
   }
 
   async function getMetrics() {
