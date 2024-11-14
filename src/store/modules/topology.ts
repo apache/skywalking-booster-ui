@@ -24,7 +24,6 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import type { AxiosResponse } from "axios";
 import query from "@/graphql/fetch";
 import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
-import { ElMessage } from "element-plus";
 
 interface MetricVal {
   [key: string]: { values: { id: string; value: unknown }[] };
@@ -443,7 +442,7 @@ export const topologyStore = defineStore({
 
       return { calls, nodes };
     },
-    async getNodeExpressionValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
+    async getTopologyExpressionValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
       const res: AxiosResponse = await query(param);
 
       if (res.data.errors) {
@@ -461,14 +460,8 @@ export const topologyStore = defineStore({
       if (!calls.length) {
         return;
       }
-      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(expressions, calls);
-      const param = getExpressionQuery();
-      const res = await this.getNodeExpressionValue(param);
-      if (res.errors) {
-        ElMessage.error(res.errors);
-        return;
-      }
-      const metrics = handleExpressionValues(res.data);
+      const { getMetrics } = useQueryTopologyExpressionsProcessor(expressions, calls);
+      const metrics = await getMetrics();
       if (type === "SERVER") {
         this.setLinkServerMetrics(metrics);
       } else {
@@ -484,17 +477,11 @@ export const topologyStore = defineStore({
         this.setNodeMetricValue({});
         return;
       }
-      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(
+      const { getMetrics } = useQueryTopologyExpressionsProcessor(
         expressions,
         this.nodes.filter((d: Node) => d.isReal),
       );
-      const param = getExpressionQuery();
-      const res = await this.getNodeExpressionValue(param);
-      if (res.errors) {
-        ElMessage.error(res.errors);
-        return;
-      }
-      const metrics = handleExpressionValues(res.data);
+      const metrics = await getMetrics();
       this.setNodeMetricValue(metrics);
     },
     async getHierarchyServiceTopology() {
@@ -550,17 +537,6 @@ export const topologyStore = defineStore({
       this.setHierarchyInstanceTopology(res.data.data.hierarchyInstanceTopology || {}, levels);
       return res.data;
     },
-    async queryHierarchyExpressions(expressions: string[], nodes: Node[]) {
-      const { getExpressionQuery, handleExpressionValues } = useQueryTopologyExpressionsProcessor(expressions, nodes);
-      const param = getExpressionQuery();
-      const res = await this.getNodeExpressionValue(param);
-      if (res.errors) {
-        ElMessage.error(res.errors);
-        return;
-      }
-      const metrics = handleExpressionValues(res.data);
-      return metrics;
-    },
     async queryHierarchyNodeExpressions(expressions: string[], layer: string) {
       const nodes = this.hierarchyServiceNodes.filter((n: HierarchyNode) => n.layer === layer);
       if (!nodes.length) {
@@ -571,7 +547,8 @@ export const topologyStore = defineStore({
         this.setHierarchyNodeMetricValue({}, layer);
         return;
       }
-      const metrics = await this.queryHierarchyExpressions(expressions, nodes);
+      const { getMetrics } = useQueryTopologyExpressionsProcessor(expressions, nodes);
+      const metrics = await getMetrics();
       this.setHierarchyNodeMetricValue(metrics, layer);
     },
     async queryHierarchyInstanceNodeExpressions(expressions: string[], layer: string) {
@@ -585,7 +562,8 @@ export const topologyStore = defineStore({
         this.setHierarchyInstanceNodeMetricValue({}, layer);
         return;
       }
-      const metrics = await this.queryHierarchyExpressions(expressions, nodes);
+      const { getMetrics } = useQueryTopologyExpressionsProcessor(expressions, nodes);
+      const metrics = await getMetrics();
       this.setHierarchyInstanceNodeMetricValue(metrics, layer);
     },
   },
