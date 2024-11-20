@@ -23,6 +23,8 @@ import {
   GetProfileTaskLogs,
   GetStrategyList,
   EditStrategy,
+  GetAsyncTaskList,
+  GetAsyncProfileTaskProcess,
 } from "../fragments/profile";
 
 export const saveProfileTask = `mutation createProfileTask(${CreateProfileTask.variable}) {${CreateProfileTask.query}}`;
@@ -40,3 +42,7 @@ export const getProfileTaskLogs = `query profileTaskLogs(${GetProfileTaskLogs.va
 export const getStrategyList = `query getStrategyList(${GetStrategyList.variable}) {${GetStrategyList.query}}`;
 
 export const editStrategy = `mutation editStrategy(${EditStrategy.variable}) {${EditStrategy.query}}`;
+
+export const getAsyncTaskList = `query getAsyncTaskList(${GetAsyncTaskList.variable}) {${GetAsyncTaskList.query}}`;
+
+export const getAsyncProfileTaskProcess = `query getAsyncProfileTaskProcess(${GetAsyncProfileTaskProcess.variable}) {${GetAsyncProfileTaskProcess.query}}`;

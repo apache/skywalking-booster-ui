@@ -149,3 +149,38 @@ export const EditStrategy = {
   }
   `,
 };
+
+export const GetAsyncTaskList = {
+  variable: "$request: AsyncProfilerTaskListRequest!",
+  query: `
+  asyncTaskList: queryAsyncProfilerTaskList(request: $request) {
+    errorReason
+    tasks {
+      id
+      serviceId
+      serviceInstanceIds
+      createTime
+      events
+      duration
+      execArgs
+    }
+  }
+  `,
+};
+
+export const GetAsyncProfileTaskProcess = {
+  variable: "$taskID: String",
+  query: `
+  taskLogs: queryAsyncProfilerTaskProgress(taskID: $taskID) {
+    logs {
+      id
+      instanceId
+      instanceName
+      operationType
+      operationTime
+    }
+    errorInstanceIds
+    successInstanceIds
+  }
+  `,
+};
