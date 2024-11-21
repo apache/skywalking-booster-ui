@@ -50,7 +50,7 @@ export const asyncProfilingStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.taskList = res.data.data.asyncTaskList || [];
+      this.taskList = res.data.data.asyncTaskList.tasks || [];
       this.selectedTask = this.taskList[0] || {};
       this.setSelectedTask(this.selectedTask);
       if (!this.taskList.length) {

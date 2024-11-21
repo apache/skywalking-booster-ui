@@ -35,16 +35,16 @@ limitations under the License. -->
             >
               <div class="ell">
                 <span>{{ i.endpointName }}</span>
-                <a class="profile-btn r" @click="viewTask($event, i)">
+                <a class="profile-btn r" @click="viewTaskDetail($event, i)">
                   <Icon iconName="view" size="middle" />
                 </a>
               </div>
               <div class="grey ell sm">
                 <span class="mr-10 sm">
-                  {{ dateFormat(i.startTime) }}
+                  {{ dateFormat(i.createTime) }}
                 </span>
                 <span class="mr-10 sm">
-                  {{ dateFormat(i.startTime + i.duration * 60 * 1000) }}
+                  {{ dateFormat(i.createTime + i.duration * 60 * 1000) }}
                 </span>
               </div>
             </td>
@@ -53,6 +53,57 @@ limitations under the License. -->
       </div>
     </div>
   </div>
+  <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
+    <div class="profile-detail flex-v" v-if="asyncProfilingStore.currentTask">
+      <div>
+        <h5 class="mb-10">{{ t("task") }}.</h5>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("id") }}:</span>
+          <span class="g-sm-8 wba">{{ asyncProfilingStore.currentTask.id }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("service") }}:</span>
+          <span class="g-sm-8 wba">{{ service }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("serviceInstanceIds") }}:</span>
+          <span class="g-sm-8 wba">{{ asyncProfilingStore.currentTask.serviceInstanceIds.join(", ") }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("execArgs") }}:</span>
+          <span class="g-sm-8 wba">{{ asyncProfilingStore.currentTask.execArgs }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("duration") }}:</span>
+          <span class="g-sm-8 wba">{{ asyncProfilingStore.currentTask.duration }}</span>
+        </div>
+        <div class="mb-10 clear item">
+          <span class="g-sm-4 grey">{{ t("events") }}:</span>
+          <span class="g-sm-8 wba"> {{ asyncProfilingStore.currentTask.events.join(", ") }} </span>
+        </div>
+      </div>
+      <div>
+        <h5
+          class="mb-10 mt-10"
+          v-show="asyncProfilingStore.currentTask.logs && asyncProfilingStore.currentTask.logs.length"
+        >
+          {{ t("logs") }}.
+        </h5>
+        <div class="log-item" v-for="(i, index) in Object.keys(instanceLogs)" :key="index">
+          <div class="mb-10 sm">
+            <span class="mr-10 grey">{{ t("instance") }}:</span>
+            <span>{{ i }}</span>
+          </div>
+          <div v-for="(d, index) in instanceLogs[i]" :key="index">
+            <span class="mr-10 grey">{{ t("operationType") }}:</span>
+            <span class="mr-20">{{ d.operationType }}</span>
+            <span class="mr-10 grey">{{ t("time") }}:</span>
+            <span>{{ dateFormat(d.operationTime) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
@@ -66,23 +117,19 @@ limitations under the License. -->
   const { t } = useI18n();
   const asyncProfilingStore = useAsyncProfilingStore();
   const selectorStore = useSelectorStore();
-  const viewDetail = ref<boolean>(false);
+  const showDetail = ref<boolean>(false);
   const service = ref<string>("");
-  // const selectedTask = ref<TaskListItem | Record<string, never>>({});
+  const selectedTask = ref<TaskListItem | Record<string, never>>({});
   const instanceLogs = ref<TaskLog | any>({});
 
   async function changeTask(item: TaskListItem) {
     asyncProfilingStore.setCurrentSegment({});
     asyncProfilingStore.setCurrentTask(item);
-    const res = await asyncProfilingStore.getSegmentList({ taskID: item.id });
-    if (res.errors) {
-      ElMessage.error(res.errors);
-    }
   }
 
-  async function viewTask(e: Event, item: TaskListItem) {
+  async function viewTaskDetail(e: Event, item: TaskListItem) {
     e.stopPropagation();
-    viewDetail.value = true;
+    showDetail.value = true;
     asyncProfilingStore.setCurrentTask(item);
     service.value = (selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}).label;
     const res = await asyncProfilingStore.getTaskLogs({ taskID: item.id });
