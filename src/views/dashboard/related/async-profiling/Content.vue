@@ -19,9 +19,21 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+  import { onMounted } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
 
+  import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
+
+  const asyncProfilingStore = useAsyncProfilingStore();
+
+  onMounted(async () => {
+    const resp = await asyncProfilingStore.getServiceInstances();
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+    }
+  });
   /* global defineProps */
   defineProps({
     config: {

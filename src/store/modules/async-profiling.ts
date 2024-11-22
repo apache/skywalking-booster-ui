@@ -19,13 +19,17 @@ import type { Option } from "@/types/app";
 import type { AsyncProfilingTaskList } from "@/types/async-profiling";
 import { store } from "@/store";
 import graphql from "@/graphql";
+import { useAppStoreWithOut } from "@/store/modules/app";
 import type { AxiosResponse } from "axios";
+import type { Instance } from "@/types/selector";
 
 interface AsyncProfilingState {
   taskList: Array<Recordable<AsyncProfilingTaskList>>;
   labels: Option[];
   asyncProfilingTips: string;
   selectedTask: Recordable<AsyncProfilingTaskList>;
+  taskProgress: Recordable<any>;
+  instances: Instance[];
 }
 
 export const asyncProfilingStore = defineStore({
@@ -35,6 +39,8 @@ export const asyncProfilingStore = defineStore({
     labels: [{ value: "", label: "" }],
     asyncProfilingTips: "",
     selectedTask: {},
+    taskProgress: {},
+    instances: [],
   }),
   actions: {
     setSelectedTask(task: Recordable<AsyncProfilingTaskList>) {
@@ -64,7 +70,21 @@ export const asyncProfilingStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.taskLogs = res.data.data.taskLogs;
+      this.taskProgress = res.data.data.taskProgress;
+      return res.data;
+    },
+    async getServiceInstances(param?: { serviceId: string; isRelation: boolean }): Promise<Nullable<AxiosResponse>> {
+      const serviceId = param ? param.serviceId : this.currentService?.id;
+      if (!serviceId) {
+        return null;
+      }
+      const res: AxiosResponse = await graphql.query("queryInstances").params({
+        serviceId,
+        duration: useAppStoreWithOut().durationTime,
+      });
+      if (!res.data.errors) {
+        this.instances = res.data.data.pods || [];
+      }
       return res.data;
     },
   },

@@ -102,6 +102,19 @@ limitations under the License. -->
           </div>
         </div>
       </div>
+      <div>
+        <h5 class="mb-10 mt-10" v-show="errorInstances.length"> {{ t("errorInstanceIds") }}. </h5>
+        <div class="log-item" v-for="(instance, index) in errorInstances" :key="instance.value || index">
+          <div class="mb-10 sm">
+            <span class="mr-10 grey">{{ t("instance") }}:</span>
+            <span>{{ instance.label }}</span>
+          </div>
+          <div v-for="(d, index) in instance.attributes" :key="d.value + index">
+            <span class="mr-10 grey">{{ d.name }}:</span>
+            <span class="mr-20">{{ d.value }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </el-dialog>
 </template>
@@ -113,6 +126,7 @@ limitations under the License. -->
   import type { TaskLog, TaskListItem } from "@/types/profile";
   import { ElMessage } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
+  import type { Instance } from "@/types/selector";
 
   const { t } = useI18n();
   const asyncProfilingStore = useAsyncProfilingStore();
@@ -121,6 +135,8 @@ limitations under the License. -->
   const service = ref<string>("");
   const selectedTask = ref<TaskListItem | Record<string, never>>({});
   const instanceLogs = ref<TaskLog | any>({});
+  const errorInstances = ref<Instance[]>([]);
+  const successInstances = ref<Instance[]>([]);
 
   async function changeTask(item: TaskListItem) {
     asyncProfilingStore.setCurrentSegment({});
@@ -138,7 +154,16 @@ limitations under the License. -->
       ElMessage.error(res.errors);
       return;
     }
-    item.logs = asyncProfilingStore.taskLogs;
+    item = {
+      ...item,
+      ...asyncProfilingStore.taskProgress,
+    };
+    errorInstances.value = asyncProfilingStore.instances.filter(
+      (d: Instance) => d.id && item.errorInstanceIds.includes(d.id),
+    );
+    successInstances.value = asyncProfilingStore.instances.filter(
+      (d: Instance) => d.id && item.successInstanceIds.includes(d.id),
+    );
     instanceLogs.value = {};
     for (const d of item.logs) {
       if (instanceLogs.value[d.instanceName]) {

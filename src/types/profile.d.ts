@@ -41,6 +41,8 @@ export interface TaskListItem {
   dumpPeriod: number;
   maxSamplingCount: number;
   logs: TaskLog[];
+  errorInstanceIds: string[];
+  successInstanceIds: string[];
 }
 export interface SegmentSpan {
   spanId: string;

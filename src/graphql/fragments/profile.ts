@@ -171,7 +171,7 @@ export const GetAsyncTaskList = {
 export const GetAsyncProfileTaskProcess = {
   variable: "$taskID: String",
   query: `
-  taskLogs: queryAsyncProfilerTaskProgress(taskID: $taskID) {
+  taskProgress: queryAsyncProfilerTaskProgress(taskID: $taskID) {
     logs {
       id
       instanceId
