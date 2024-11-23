@@ -302,37 +302,36 @@ export default class ListGraph {
       )
       .attr("y", -2)
       .style("fill", (d: Recordable) => `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`);
-    nodeEnter
+    const nodeUpdate = nodeEnter.merge(node);
+    nodeUpdate
       .transition()
       .duration(400)
       .attr("transform", (d: Recordable) => `translate(${d.y + 5},${d.x})`)
       .style("opacity", 1);
-    nodeEnter
+    nodeUpdate
       .append("circle")
       .attr("r", appStore.theme === Themes.Dark ? 4 : 3)
       .style("cursor", "pointer")
       .attr("stroke-width", appStore.theme === Themes.Dark ? 3 : 2.5)
-      .attr("fill", (d: Recordable) =>
-        d._children
-          ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`
-          : appStore.theme === Themes.Dark
-          ? "#eee"
-          : "rbga(0,0,0,0)",
+      .style("fill", (d: Recordable) =>
+        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "#eee",
       )
       .style("stroke", (d: Recordable) =>
         d.data.label === "TRACE_ROOT" ? "" : `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`,
       )
-      .on("click", (d: Recordable) => {
+      .on("click", (event: any, d: Recordable) => {
+        event.stopPropagation();
+        if (d.data.children.length == 0) return;
         this.click(d, this);
       });
-    node
+    nodeUpdate
       .transition()
       .duration(400)
       .attr("transform", (d: Recordable) => `translate(${d.y + 3},${d.x})`)
       .style("opacity", 1)
       .select("circle")
-      .attr("fill", (d: Recordable) =>
-        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "",
+      .style("fill", (d: Recordable) =>
+        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "#eee",
       );
 
     // Transition exiting nodes to the parent's new position.
