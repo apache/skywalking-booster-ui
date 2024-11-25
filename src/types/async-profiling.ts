@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-export type AsyncProfilingTaskList = {
+export type AsyncProfilingTask = {
   id: string;
   serviceId: string;
   serviceInstanceIds: string[];

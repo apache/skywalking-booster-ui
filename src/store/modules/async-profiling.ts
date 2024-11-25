@@ -17,7 +17,7 @@
 import { defineStore } from "pinia";
 import type { Option } from "@/types/app";
 import type {
-  AsyncProfilingTaskList,
+  AsyncProfilingTask,
   AsyncProfileTaskCreationRequest,
   AsyncProfilerStackElement,
   AsyncProfilerTaskProgress,
@@ -29,10 +29,10 @@ import type { AxiosResponse } from "axios";
 import type { Instance } from "@/types/selector";
 
 interface AsyncProfilingState {
-  taskList: Array<Recordable<AsyncProfilingTaskList>>;
+  taskList: Array<Recordable<AsyncProfilingTask>>;
   labels: Option[];
   asyncProfilingTips: string;
-  selectedTask: Recordable<AsyncProfilingTaskList>;
+  selectedTask: Recordable<AsyncProfilingTask>;
   taskProgress: Recordable<AsyncProfilerTaskProgress>;
   instances: Instance[];
   analyzeTrees: AsyncProfilerStackElement[];
@@ -50,7 +50,7 @@ export const asyncProfilingStore = defineStore({
     analyzeTrees: [],
   }),
   actions: {
-    setSelectedTask(task: Recordable<AsyncProfilingTaskList>) {
+    setSelectedTask(task: Recordable<AsyncProfilingTask>) {
       this.selectedTask = task || {};
     },
     async getTaskList(params: { serviceId: string; startTime: number; endTime: number }) {
