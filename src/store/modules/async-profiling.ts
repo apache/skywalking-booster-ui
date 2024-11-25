@@ -16,7 +16,12 @@
  */
 import { defineStore } from "pinia";
 import type { Option } from "@/types/app";
-import type { AsyncProfilingTaskList, AsyncProfileTaskCreationRequest } from "@/types/async-profiling";
+import type {
+  AsyncProfilingTaskList,
+  AsyncProfileTaskCreationRequest,
+  AsyncProfilerStackElement,
+  AsyncProfilerTaskProgress,
+} from "@/types/async-profiling";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -28,8 +33,9 @@ interface AsyncProfilingState {
   labels: Option[];
   asyncProfilingTips: string;
   selectedTask: Recordable<AsyncProfilingTaskList>;
-  taskProgress: Recordable<any>;
+  taskProgress: Recordable<AsyncProfilerTaskProgress>;
   instances: Instance[];
+  analyzeTrees: AsyncProfilerStackElement[];
 }
 
 export const asyncProfilingStore = defineStore({
@@ -41,6 +47,7 @@ export const asyncProfilingStore = defineStore({
     selectedTask: {},
     taskProgress: {},
     instances: [],
+    analyzeTrees: [],
   }),
   actions: {
     setSelectedTask(task: Recordable<AsyncProfilingTaskList>) {
@@ -96,6 +103,28 @@ export const asyncProfilingStore = defineStore({
         return res.data;
       }
       this.getTaskList();
+      return res.data;
+    },
+    async getAsyncProfilingAnalyze(params: { taskId: string; instanceIds: Array<string>; eventType: string }) {
+      if (!params.instanceIds.length) {
+        return new Promise((resolve) => resolve({}));
+      }
+      const res: AxiosResponse = await graphql.query("GetAsyncProfileAnalyze").params(params);
+
+      if (res.data.errors) {
+        this.analyzeTrees = [];
+        return res.data;
+      }
+      const { analysisResult } = res.data.data;
+      if (!analysisResult) {
+        this.analyzeTrees = [];
+        return res.data;
+      }
+      if (analysisResult.tip) {
+        this.analyzeTrees = [];
+        return res.data;
+      }
+      this.analyzeTrees = analysisResult.elements;
       return res.data;
     },
   },

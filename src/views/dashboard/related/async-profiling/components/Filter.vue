@@ -23,6 +23,14 @@ limitations under the License. -->
       placeholder="Select instances"
       @change="changeInstances"
     />
+    <Selector
+      class="profile-input"
+      :value="selectedEventType"
+      size="small"
+      :options="eventTypes"
+      placeholder="Select a event"
+      @change="changeEventType"
+    />
     <el-button type="primary" size="small" @click="analyzeProfiling">
       {{ t("analyze") }}
     </el-button>
@@ -31,6 +39,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { computed, ref } from "vue";
   import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
   import type { Instance } from "@/types/selector";
   import type { Option } from "@/types/app";
@@ -38,6 +47,10 @@ limitations under the License. -->
   const { t } = useI18n();
   const asyncProfilingStore = useAsyncProfilingStore();
   const serviceInstanceIds = ref<string[]>([]);
+  const selectedEventType = ref<string>("");
+  const eventTypes = computed(() =>
+    asyncProfilingStore.selectedTask.eventTypes((d: string) => ({ label: d, value: d })),
+  );
   const instances = computed(() =>
     asyncProfilingStore.instances.filter((d: Instance) =>
       asyncProfilingStore.selectedTask.serviceInstanceIds.includes(d.id),
@@ -48,7 +61,21 @@ limitations under the License. -->
     serviceInstanceIds.value = options.map((d: Option) => d.value);
   }
 
-  function analyzeProfiling() {}
+  function changeEventType(options: Option[]) {
+    selectedEventType.value = options[0].value;
+  }
+
+  async function analyzeProfiling() {
+    const res = await asyncProfilingStore.getAsyncProfilingAnalyze({
+      instanceIds: serviceInstanceIds.value,
+      taskId: asyncProfilingStore.selectedTask.id,
+      eventType: selectedEventType.value,
+    });
+    if (res.data && res.data.errors) {
+      ElMessage.error(res.data.errors);
+      return;
+    }
+  }
 </script>
 <style>
   .profile-input {

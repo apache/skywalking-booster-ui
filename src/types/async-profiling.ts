@@ -32,3 +32,25 @@ export type AsyncProfileTaskCreationRequest = {
   events: string[];
   execArgs: string;
 };
+
+export type AsyncProfilerStackElement = {
+  id: string;
+  parentId: string;
+  codeSignature: string;
+  total: number;
+  self: number;
+};
+
+export type AsyncProfilerTaskProgress = {
+  errorInstanceIds: string[];
+  successInstanceIds: string[];
+  logs: AsyncProfilerTaskLog[];
+};
+
+type AsyncProfilerTaskLog = {
+  id: string;
+  instanceId: string;
+  instanceName: string;
+  operationType: string;
+  operationTime: number;
+};
