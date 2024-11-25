@@ -88,7 +88,7 @@ limitations under the License. -->
             const index = isNaN(item.activedTabIndex) ? 0 : item.activedTabIndex;
             widgets.push(
               ...item.children[index].children.filter(
-                (d: LayoutConfig) => !ListChartTypes.includes(d.graph?.type || ""),
+                (d: LayoutConfig) => d.type === WidgetType.Widget && !ListChartTypes.includes(d.graph?.type || ""),
               ),
             );
           }

@@ -16,18 +16,22 @@
  */
 
 import { ElNotification } from "element-plus";
-export default (value: string): void => {
-  const input = document.createElement("input");
-  input.value = value;
-  document.body.appendChild(input);
-  input.select();
-  if (document.execCommand("Copy")) {
-    document.execCommand("Copy");
-  }
-  input.remove();
-  ElNotification({
-    title: "Success",
-    message: "Copied",
-    type: "success",
-  });
+
+export default (text: string): void => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      ElNotification({
+        title: "Success",
+        message: "Copied",
+        type: "success",
+      });
+    })
+    .catch((err) => {
+      ElNotification({
+        title: "Error",
+        message: err,
+        type: "warning",
+      });
+    });
 };

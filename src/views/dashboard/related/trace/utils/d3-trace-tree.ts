@@ -294,7 +294,9 @@ export default class TraceMap {
         d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
       )
       .attr("cursor", "pointer")
-      .on("click", (d: Recordable) => {
+      .on("click", (event: any, d: Recordable) => {
+        event.stopPropagation();
+        if (d.data.children.length == 0) return;
         click(d);
       });
     const nodeExit = node
