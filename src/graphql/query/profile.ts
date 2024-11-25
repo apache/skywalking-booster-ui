@@ -25,6 +25,7 @@ import {
   EditStrategy,
   GetAsyncTaskList,
   GetAsyncProfileTaskProcess,
+  CreateAsyncProfileTask,
 } from "../fragments/profile";
 
 export const saveProfileTask = `mutation createProfileTask(${CreateProfileTask.variable}) {${CreateProfileTask.query}}`;
@@ -46,3 +47,5 @@ export const editStrategy = `mutation editStrategy(${EditStrategy.variable}) {${
 export const getAsyncTaskList = `query getAsyncTaskList(${GetAsyncTaskList.variable}) {${GetAsyncTaskList.query}}`;
 
 export const getAsyncProfileTaskProcess = `query getAsyncProfileTaskProcess(${GetAsyncProfileTaskProcess.variable}) {${GetAsyncProfileTaskProcess.query}}`;
+
+export const saveAsyncProfileTask = `mutation createAsyncProfileTask(${CreateAsyncProfileTask.variable}) {${CreateAsyncProfileTask.query}}`;

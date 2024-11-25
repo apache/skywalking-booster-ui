@@ -25,6 +25,7 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
+    <Header :needQuery="needQuery" />
     <Content :config="props.data" />
   </div>
 </template>
@@ -33,6 +34,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import Content from "../related/async-profiling/Content.vue";
+  import Header from "../related/async-profiling/Header.vue";
 
   /*global defineProps*/
   const props = defineProps({

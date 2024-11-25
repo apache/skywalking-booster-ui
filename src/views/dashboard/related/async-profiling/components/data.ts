@@ -15,20 +15,13 @@
  * limitations under the License.
  */
 
-export type AsyncProfilingTaskList = {
-  id: string;
-  serviceId: string;
-  serviceInstanceIds: string[];
-  createTime: number;
-  events: string;
-  duration: number;
-  execArgs: string;
-};
+export const DurationOptions = [
+  { value: "5", label: "5 min" },
+  { value: "10", label: "10 min" },
+  { value: "15", label: "15 min" },
+];
 
-export type AsyncProfileTaskCreationRequest = {
-  serviceId: string;
-  serviceInstanceIds: string[];
-  duration: number;
-  events: string[];
-  execArgs: string;
-};
+export const ProfilingEvents = [
+  { value: "CPU", label: "CPU" },
+  { value: "ALLOC", label: "ALLOC" },
+];

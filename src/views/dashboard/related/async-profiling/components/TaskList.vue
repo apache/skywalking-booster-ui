@@ -103,8 +103,21 @@ limitations under the License. -->
         </div>
       </div>
       <div>
-        <h5 class="mb-10 mt-10" v-show="errorInstances.length"> {{ t("errorInstanceIds") }}. </h5>
+        <h5 class="mb-10 mt-10" v-show="errorInstances.length"> {{ t("errorInstances") }}. </h5>
         <div class="log-item" v-for="(instance, index) in errorInstances" :key="instance.value || index">
+          <div class="mb-10 sm">
+            <span class="mr-10 grey">{{ t("instance") }}:</span>
+            <span>{{ instance.label }}</span>
+          </div>
+          <div v-for="(d, index) in instance.attributes" :key="d.value + index">
+            <span class="mr-10 grey">{{ d.name }}:</span>
+            <span class="mr-20">{{ d.value }}</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h5 class="mb-10 mt-10" v-show="successInstances.length"> {{ t("successInstances") }}. </h5>
+        <div class="log-item" v-for="(instance, index) in successInstances" :key="instance.value || index">
           <div class="mb-10 sm">
             <span class="mr-10 grey">{{ t("instance") }}:</span>
             <span>{{ instance.label }}</span>
@@ -137,6 +150,17 @@ limitations under the License. -->
   const instanceLogs = ref<TaskLog | any>({});
   const errorInstances = ref<Instance[]>([]);
   const successInstances = ref<Instance[]>([]);
+
+  fetchTasks();
+
+  async function fetchTasks() {
+    const res = await asyncProfilingStore.getTaskList({
+      serviceId: selectorStore.currentService.id,
+    });
+    if (res.errors) {
+      ElMessage.error(res.errors);
+    }
+  }
 
   async function changeTask(item: TaskListItem) {
     asyncProfilingStore.setCurrentSegment({});

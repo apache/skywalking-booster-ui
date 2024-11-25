@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h content">
-    <div>Tasks</div>
+    <TaskList />
     <div class="vis-graph ml-5">Profiling</div>
   </div>
 </template>
@@ -25,6 +25,7 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
 
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
+  import TaskList from "./components/TaskList.vue";
 
   const asyncProfilingStore = useAsyncProfilingStore();
 

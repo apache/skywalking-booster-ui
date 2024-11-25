@@ -16,7 +16,7 @@
  */
 import { defineStore } from "pinia";
 import type { Option } from "@/types/app";
-import type { AsyncProfilingTaskList } from "@/types/async-profiling";
+import type { AsyncProfilingTaskList, AsyncProfileTaskCreationRequest } from "@/types/async-profiling";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -46,11 +46,11 @@ export const asyncProfilingStore = defineStore({
     setSelectedTask(task: Recordable<AsyncProfilingTaskList>) {
       this.selectedTask = task || {};
     },
-    async getTaskList(params: { serviceId: string; targets: string[] }) {
+    async getTaskList(params: { serviceId: string; startTime: number; endTime: number }) {
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getAsyncTaskList").params(params);
+      const res: AxiosResponse = await graphql.query("getAsyncTaskList").params({ ...params, limit: 10000 });
 
       this.asyncProfilingTips = "";
       if (res.data.errors) {
@@ -85,6 +85,17 @@ export const asyncProfilingStore = defineStore({
       if (!res.data.errors) {
         this.instances = res.data.data.pods || [];
       }
+      return res.data;
+    },
+    async createTask(param: AsyncProfileTaskCreationRequest) {
+      const res: AxiosResponse = await graphql
+        .query("saveAsyncProfileTask")
+        .params({ asyncProfilerTaskCreationRequest: param });
+
+      if (res.data.errors) {
+        return res.data;
+      }
+      this.getTaskList();
       return res.data;
     },
   },

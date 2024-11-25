@@ -184,3 +184,14 @@ export const GetAsyncProfileTaskProcess = {
   }
   `,
 };
+
+export const CreateAsyncProfileTask = {
+  variable: "$asyncProfilerTaskCreationRequest: AsyncProfilerTaskCreationRequest!",
+  query: `
+  task: createAsyncProfilerTask(asyncProfilerTaskCreationRequest: $asyncProfilerTaskCreationRequest) {
+    id
+    errorReason
+    code
+  }
+  `,
+};
