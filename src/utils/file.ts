@@ -37,8 +37,10 @@ export const saveFile = (data: any, name: string) => {
   tagA.download = name;
   tagA.style.display = "none";
   const blob = new Blob([newData]);
-  tagA.href = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
+  tagA.href = url;
   document.body.appendChild(tagA);
   tagA.click();
   document.body.removeChild(tagA);
+  URL.revokeObjectURL(url);
 };

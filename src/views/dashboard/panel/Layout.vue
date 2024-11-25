@@ -77,7 +77,7 @@ limitations under the License. -->
         }
       }
       async function queryMetrics() {
-        const widgets = [];
+        const widgets: LayoutConfig[] = [];
         for (const item of dashboardStore.layout) {
           if (item.type === WidgetType.Widget) {
             if (!ListChartTypes.includes(item.graph?.type || "")) {
