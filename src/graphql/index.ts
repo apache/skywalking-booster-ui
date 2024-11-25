@@ -28,6 +28,7 @@ import * as alarm from "./query/alarm";
 import * as event from "./query/event";
 import * as ebpf from "./query/ebpf";
 import * as demandLog from "./query/demand-log";
+import * as asyncProfile from "./query/async-profile";
 
 const query: { [key: string]: string } = {
   ...app,
@@ -41,6 +42,7 @@ const query: { [key: string]: string } = {
   ...event,
   ...ebpf,
   ...demandLog,
+  ...asyncProfile,
 };
 class Graphql {
   private queryData = "";
