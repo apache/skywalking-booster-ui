@@ -15,17 +15,24 @@ limitations under the License. -->
 <template>
   <div class="flex-h content">
     <TaskList />
-    <div class="vis-graph ml-5">Profiling</div>
+    <div class="vis-graph ml-5">
+      <div class="filter">
+        <Filter />
+      </div>
+      <div class="stack">
+        <EBPFStack :type="ComponentType" />
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
   import { onMounted } from "vue";
-  import type { PropType } from "vue";
-  import { useI18n } from "vue-i18n";
   import { ElMessage } from "element-plus";
-
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
   import TaskList from "./components/TaskList.vue";
+  import Filter from "./components/Filter.vue";
+  import EBPFStack from "@/views/dashboard/related/ebpf/components/EBPFStack.vue";
+  import { ComponentType } from "@/views/dashboard/related/ebpf/components/data";
 
   const asyncProfilingStore = useAsyncProfilingStore();
 
@@ -35,14 +42,6 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
     }
   });
-  /* global defineProps */
-  defineProps({
-    config: {
-      type: Object as PropType<any>,
-      default: () => ({}),
-    },
-  });
-  const { t } = useI18n();
 </script>
 <style lang="scss" scoped>
   .content {
@@ -59,9 +58,16 @@ limitations under the License. -->
     width: calc(100% - 330px);
   }
 
-  .text {
+  .stack {
     width: 100%;
-    text-align: center;
-    margin-top: 30px;
+    overflow: auto;
+    height: calc(100% - 100px);
+    padding-bottom: 10px;
+  }
+
+  .filter {
+    height: 90px;
+    border-bottom: 1px solid $disabled-color;
+    padding-right: 10px;
   }
 </style>

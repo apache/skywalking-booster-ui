@@ -29,8 +29,6 @@ export const TargetTypes = [
   { label: "NETWORK", value: "NETWORK" },
 ];
 
-export const ComponentType = "CONTINOUS_PROFILING";
-
 export const HeaderLabels = [
   { value: "triggeredCount", label: "Triggered Count", width: 150 },
   { value: "lastTriggerTime", label: "Last Trigger Time", width: 170 },
