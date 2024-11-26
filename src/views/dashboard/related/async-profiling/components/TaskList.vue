@@ -26,13 +26,11 @@ limitations under the License. -->
             v-for="(i, index) in asyncProfilingStore.taskList"
             @click="changeTask(i)"
             :key="index"
+            :class="{
+              selected: asyncProfilingStore.selectedTask && asyncProfilingStore.selectedTask.id === i.id,
+            }"
           >
-            <td
-              class="profile-td"
-              :class="{
-                selected: asyncProfilingStore.currentTask && asyncProfilingStore.currentTask.id === i.id,
-              }"
-            >
+            <td class="profile-td">
               <div class="ell">
                 <span>{{ i.endpointName }}</span>
                 <a class="profile-btn r" @click="viewTaskDetail($event, i)">
@@ -54,12 +52,12 @@ limitations under the License. -->
     </div>
   </div>
   <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
-    <div class="profile-detail flex-v" v-if="asyncProfilingStore.currentTask">
+    <div class="profile-detail flex-v" v-if="asyncProfilingStore.selectedTask">
       <div>
         <h5 class="mb-10">{{ t("task") }}.</h5>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("id") }}:</span>
-          <span class="g-sm-8 wba">{{ asyncProfilingStore.currentTask.id }}</span>
+          <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask.id }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("service") }}:</span>
@@ -67,25 +65,25 @@ limitations under the License. -->
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("serviceInstanceIds") }}:</span>
-          <span class="g-sm-8 wba">{{ asyncProfilingStore.currentTask.serviceInstanceIds.join(", ") }}</span>
+          <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask.serviceInstanceIds.join(", ") }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("execArgs") }}:</span>
-          <span class="g-sm-8 wba">{{ asyncProfilingStore.currentTask.execArgs }}</span>
+          <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask.execArgs }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("duration") }}:</span>
-          <span class="g-sm-8 wba">{{ asyncProfilingStore.currentTask.duration }}</span>
+          <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask.duration }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("events") }}:</span>
-          <span class="g-sm-8 wba"> {{ asyncProfilingStore.currentTask.events.join(", ") }} </span>
+          <span class="g-sm-8 wba"> {{ asyncProfilingStore.selectedTask.events.join(", ") }} </span>
         </div>
       </div>
       <div>
         <h5
           class="mb-10 mt-10"
-          v-show="asyncProfilingStore.currentTask.logs && asyncProfilingStore.currentTask.logs.length"
+          v-show="asyncProfilingStore.selectedTask.logs && asyncProfilingStore.selectedTask.logs.length"
         >
           {{ t("logs") }}.
         </h5>
@@ -132,7 +130,7 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, onMounted, watch } from "vue";
   import { useI18n } from "vue-i18n";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
@@ -146,12 +144,13 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const showDetail = ref<boolean>(false);
   const service = ref<string>("");
-  const selectedTask = ref<TaskListItem | Record<string, never>>({});
   const instanceLogs = ref<TaskLog | any>({});
   const errorInstances = ref<Instance[]>([]);
   const successInstances = ref<Instance[]>([]);
 
-  fetchTasks();
+  onMounted(() => {
+    fetchTasks();
+  });
 
   async function fetchTasks() {
     const res = await asyncProfilingStore.getTaskList({
@@ -163,14 +162,13 @@ limitations under the License. -->
   }
 
   async function changeTask(item: TaskListItem) {
-    asyncProfilingStore.setCurrentSegment({});
-    asyncProfilingStore.setCurrentTask(item);
+    asyncProfilingStore.setSelectedTask(item);
   }
 
   async function viewTaskDetail(e: Event, item: TaskListItem) {
     e.stopPropagation();
     showDetail.value = true;
-    asyncProfilingStore.setCurrentTask(item);
+    asyncProfilingStore.setSelectedTask(item);
     service.value = (selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}).label;
     const res = await asyncProfilingStore.getTaskLogs({ taskID: item.id });
 
@@ -199,14 +197,22 @@ limitations under the License. -->
         instanceLogs.value[d.instanceName] = [{ operationType: d.operationType, operationTime: d.operationTime }];
       }
     }
-    asyncProfilingStore.setCurrentTask(item);
+    asyncProfilingStore.setSelectedTask(item);
   }
+
+  watch(
+    () => selectorStore.currentService,
+    () => {
+      fetchTasks();
+    },
+  );
 </script>
 <style lang="scss" scoped>
   .profile-task-list {
     width: 300px;
-    height: calc((100% - 60px) / 2);
+    height: 100%;
     overflow: auto;
+    border-right: 1px solid var(--sw-trace-list-border);
   }
 
   .item span {
@@ -216,10 +222,10 @@ limitations under the License. -->
   .profile-td {
     padding: 5px 10px;
     border-bottom: 1px solid var(--sw-trace-list-border);
+  }
 
-    &.selected {
-      background-color: var(--sw-list-selected);
-    }
+  .selected {
+    background-color: var(--sw-list-selected);
   }
 
   .no-data {
@@ -230,7 +236,6 @@ limitations under the License. -->
   .profile-t-wrapper {
     overflow: auto;
     flex-grow: 1;
-    border-right: 1px solid var(--sw-trace-list-border);
   }
 
   .profile-t {

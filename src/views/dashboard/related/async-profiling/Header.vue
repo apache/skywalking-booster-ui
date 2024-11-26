@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="flex-h header">
     <div class="title">Async Profiling</div>
-    <el-button class="new-btn ml-10" size="small" @click="createTask">
+    <el-button class="mr-20" size="small" @click="() => (newTask = true)">
       {{ t("newTask") }}
     </el-button>
   </div>
@@ -24,72 +24,23 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-  import { ref, watch } from "vue";
+  import { ref } from "vue";
   import { useI18n } from "vue-i18n";
-  import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
-  import { useSelectorStore } from "@/store/modules/selectors";
-  import { ElMessage } from "element-plus";
-  import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useAppStoreWithOut } from "@/store/modules/app";
-  import { EntityType } from "../../data";
   import NewTask from "./components/NewTask.vue";
 
-  /*global defineProps */
-  const props = defineProps({
-    needQuery: { type: Boolean, default: true },
-  });
-  const asyncProfilingStore = useAsyncProfilingStore();
-  const appStore = useAppStoreWithOut();
-  const selectorStore = useSelectorStore();
-  const dashboardStore = useDashboardStore();
   const { t } = useI18n();
   const newTask = ref<boolean>(false);
-
-  if (props.needQuery) {
-    searchTasks();
-  }
-
-  async function searchTasks() {
-    const res = await asyncProfilingStore.getTaskList({
-      serviceId: selectorStore.currentService.id,
-    });
-    if (res.errors) {
-      ElMessage.error(res.errors);
-    }
-  }
-
-  function createTask() {
-    newTask.value = true;
-  }
-
-  watch(
-    () => selectorStore.currentService,
-    () => {
-      searchTasks();
-    },
-  );
-  watch(
-    () => appStore.durationTime,
-    () => {
-      if (dashboardStore.entity === EntityType[1].value) {
-        searchTasks();
-      }
-    },
-  );
 </script>
 <style lang="scss" scoped>
   .header {
     padding: 10px;
     font-size: $font-size-smaller;
     border-bottom: 1px solid $border-color;
+    justify-content: space-between;
   }
 
   .name {
     width: 270px;
-  }
-
-  .new-btn {
-    float: right;
   }
 
   .title {

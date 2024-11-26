@@ -393,5 +393,6 @@ const msg = {
   errorInstances: "Error Instances",
   successInstances: "Success Instances",
   profilingEvents: "Async Profiling Events",
+  execArgs: "Exec Args",
 };
 export default msg;

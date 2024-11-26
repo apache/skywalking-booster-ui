@@ -391,5 +391,6 @@ const msg = {
   errorInstances: "错误的实例",
   successInstances: "成功的实例",
   profilingEvents: "异步分析事件",
+  execArgs: "String任务扩展",
 };
 export default msg;
