@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="flex-h">
     <Selector
-      class="profile-input"
+      class="filter-selector"
       :multiple="true"
       :value="serviceInstanceIds"
       size="small"
@@ -24,7 +24,7 @@ limitations under the License. -->
       @change="changeInstances"
     />
     <Selector
-      class="profile-input"
+      class="filter-selector"
       :value="selectedEventType"
       size="small"
       :options="eventTypes"
@@ -49,11 +49,11 @@ limitations under the License. -->
   const serviceInstanceIds = ref<string[]>([]);
   const selectedEventType = ref<string>("");
   const eventTypes = computed(() =>
-    (asyncProfilingStore.selectedTask.eventTypes || []).map((d: string) => ({ label: d, value: d })),
+    (asyncProfilingStore.selectedTask.eventTypes ?? []).map((d: string) => ({ label: d, value: d })),
   );
   const instances = computed(() =>
     asyncProfilingStore.instances.filter((d: Instance) =>
-      asyncProfilingStore.selectedTask.serviceInstanceIds.includes(d.id),
+      (asyncProfilingStore.selectedTask.serviceInstanceIds ?? []).includes(d.id),
     ),
   );
 
@@ -78,7 +78,8 @@ limitations under the License. -->
   }
 </script>
 <style>
-  .profile-input {
+  .filter-selector {
     width: 300px;
+    margin-right: 10px;
   }
 </style>

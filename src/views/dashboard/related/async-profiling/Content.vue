@@ -29,16 +29,18 @@ limitations under the License. -->
   import { onMounted } from "vue";
   import { ElMessage } from "element-plus";
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
+  import { useSelectorStore } from "@/store/modules/selectors";
   import TaskList from "./components/TaskList.vue";
   import Filter from "./components/Filter.vue";
   import EBPFStack from "@/views/dashboard/related/ebpf/components/EBPFStack.vue";
   import { ComponentType } from "@/views/dashboard/related/ebpf/components/data";
 
   const asyncProfilingStore = useAsyncProfilingStore();
+  const selectorStore = useSelectorStore();
 
   onMounted(async () => {
-    const resp = await asyncProfilingStore.getServiceInstances();
-    if (resp.errors) {
+    const resp = await asyncProfilingStore.getServiceInstances({ serviceId: selectorStore.currentService.id });
+    if (resp && resp.errors) {
       ElMessage.error(resp.errors);
     }
   });

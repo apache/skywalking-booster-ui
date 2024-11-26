@@ -82,13 +82,12 @@ export const asyncProfilingStore = defineStore({
       this.taskProgress = res.data.data.taskProgress;
       return res.data;
     },
-    async getServiceInstances(param?: { serviceId: string; isRelation: boolean }): Promise<Nullable<AxiosResponse>> {
-      const serviceId = param ? param.serviceId : this.currentService?.id;
-      if (!serviceId) {
+    async getServiceInstances(param: { serviceId: string; isRelation: boolean }): Promise<Nullable<AxiosResponse>> {
+      if (!param.serviceId) {
         return null;
       }
       const res: AxiosResponse = await graphql.query("queryInstances").params({
-        serviceId,
+        serviceId: param.serviceId,
         duration: useAppStoreWithOut().durationTime,
       });
       if (!res.data.errors) {

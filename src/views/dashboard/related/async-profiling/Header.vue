@@ -19,6 +19,7 @@ limitations under the License. -->
       style="width: 240px"
       placeholder="Please input create time to search"
       @change="searchTasks()"
+      size="small"
     >
       <template #append>
         <el-button size="small">
@@ -26,7 +27,7 @@ limitations under the License. -->
         </el-button>
       </template>
     </el-input>
-    <el-button class="search-btn ml-10" @click="createTask">
+    <el-button class="search-btn ml-10" size="small" @click="createTask">
       {{ t("newTask") }}
     </el-button>
   </div>
