@@ -121,11 +121,7 @@ export const asyncProfilingStore = defineStore({
         this.analyzeTrees = [];
         return res.data;
       }
-      if (analysisResult.tip) {
-        this.analyzeTrees = [];
-        return res.data;
-      }
-      this.analyzeTrees = analysisResult.elements;
+      this.analyzeTrees = [analysisResult.tree];
       return res.data;
     },
   },

@@ -59,7 +59,7 @@ limitations under the License. -->
   );
 
   function changeInstances(options: Option[]) {
-    serviceInstanceIds.value = options.map((d: Option) => d.value);
+    serviceInstanceIds.value = options.map((d: any) => d.id);
   }
 
   function changeEventType(options: Option[]) {
