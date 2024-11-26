@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="profile-wrapper flex-v">
-    <div class="title">Async Profiling</div>
     <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
       <template #reference>
         <span class="operation cp">
@@ -83,12 +82,5 @@ limitations under the License. -->
       color: $active-color;
       background-color: $popper-hover-bg-color;
     }
-  }
-
-  .title {
-    font-weight: bold;
-    line-height: 40px;
-    padding: 0 10px;
-    border-bottom: 1px solid $border-color;
   }
 </style>

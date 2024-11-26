@@ -14,20 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h header">
-    <el-input
-      v-model="keywords"
-      style="width: 240px"
-      placeholder="Please input create time to search"
-      @change="searchTasks()"
-      size="small"
-    >
-      <template #append>
-        <el-button size="small">
-          <Icon size="sm" iconName="search" />
-        </el-button>
-      </template>
-    </el-input>
-    <el-button class="search-btn ml-10" size="small" @click="createTask">
+    <div class="title">Async Profiling</div>
+    <el-button class="new-btn ml-10" size="small" @click="createTask">
       {{ t("newTask") }}
     </el-button>
   </div>
@@ -55,7 +43,6 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
   const { t } = useI18n();
-  const keywords = ref<string>("");
   const newTask = ref<boolean>(false);
 
   if (props.needQuery) {
@@ -99,5 +86,14 @@ limitations under the License. -->
 
   .name {
     width: 270px;
+  }
+
+  .new-btn {
+    float: right;
+  }
+
+  .title {
+    font-weight: bold;
+    line-height: 24px;
   }
 </style>

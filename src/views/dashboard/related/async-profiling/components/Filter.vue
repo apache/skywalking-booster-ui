@@ -43,6 +43,7 @@ limitations under the License. -->
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
   import type { Instance } from "@/types/selector";
   import type { Option } from "@/types/app";
+  import { EventsMap } from "./data";
 
   const { t } = useI18n();
   const asyncProfilingStore = useAsyncProfilingStore();
@@ -69,7 +70,7 @@ limitations under the License. -->
     const res = await asyncProfilingStore.getAsyncProfilingAnalyze({
       instanceIds: serviceInstanceIds.value,
       taskId: asyncProfilingStore.selectedTask.id,
-      eventType: selectedEventType.value,
+      eventType: (EventsMap as any)[selectedEventType.value],
     });
     if (res.data && res.data.errors) {
       ElMessage.error(res.data.errors);

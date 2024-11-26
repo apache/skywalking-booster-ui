@@ -25,3 +25,12 @@ export const ProfilingEvents = [
   { value: "CPU", label: "CPU" },
   { value: "ALLOC", label: "ALLOC" },
 ];
+
+export enum EventsMap {
+  CPU = "EXECUTION_SAMPLE",
+  WALL = "EXECUTION_SAMPLE",
+  CTIMER = "EXECUTION_SAMPLE",
+  ITIMER = "EXECUTION_SAMPLE",
+  LOCK = "JAVA_MONITOR_ENTER",
+  ALLOC = "OBJECT_ALLOCATION_OUTSIDE_TLAB",
+}
