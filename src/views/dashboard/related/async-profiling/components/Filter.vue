@@ -24,7 +24,7 @@ limitations under the License. -->
       @change="changeInstances"
     />
     <Selector
-      class="filter-selector"
+      class="filter-events"
       :value="selectedEventType"
       size="small"
       :options="eventTypes"
@@ -49,7 +49,7 @@ limitations under the License. -->
   const serviceInstanceIds = ref<string[]>([]);
   const selectedEventType = ref<string>("");
   const eventTypes = computed(() =>
-    (asyncProfilingStore.selectedTask.eventTypes ?? []).map((d: string) => ({ label: d, value: d })),
+    (asyncProfilingStore.selectedTask.events ?? []).map((d: string) => ({ label: d, value: d })),
   );
   const instances = computed(() =>
     asyncProfilingStore.instances.filter((d: Instance) =>
@@ -79,7 +79,12 @@ limitations under the License. -->
 </script>
 <style>
   .filter-selector {
-    width: 300px;
+    width: 400px;
+    margin-right: 10px;
+  }
+
+  .filter-events {
+    width: 200px;
     margin-right: 10px;
   }
 </style>

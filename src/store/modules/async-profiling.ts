@@ -110,7 +110,7 @@ export const asyncProfilingStore = defineStore({
       if (!params.instanceIds.length) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("GetAsyncProfileAnalyze").params(params);
+      const res: AxiosResponse = await graphql.query("getAsyncProfileAnalyze").params({ request: params });
 
       if (res.data.errors) {
         this.analyzeTrees = [];

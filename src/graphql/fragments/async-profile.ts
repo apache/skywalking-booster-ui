@@ -65,7 +65,7 @@ export const GetAsyncProfileAnalyze = {
   variable: "$request: AsyncProfilerAnalyzationRequest!",
   query: `
   analysisResult: queryAsyncProfilerAnalyze(request: $request) {
-    trees {
+    tree {
       type
       elements {
         id
