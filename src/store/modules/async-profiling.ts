@@ -57,7 +57,9 @@ export const asyncProfilingStore = defineStore({
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getAsyncTaskList").params({ ...params, limit: 10000 });
+      const res: AxiosResponse = await graphql
+        .query("getAsyncTaskList")
+        .params({ request: { ...params, limit: 10000 } });
 
       this.asyncProfilingTips = "";
       if (res.data.errors) {

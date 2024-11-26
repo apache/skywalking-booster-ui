@@ -26,7 +26,7 @@ limitations under the License. -->
         </el-button>
       </template>
     </el-input>
-    <el-button class="search-btn" size="small" @click="createTask">
+    <el-button class="search-btn ml-10" @click="createTask">
       {{ t("newTask") }}
     </el-button>
   </div>
