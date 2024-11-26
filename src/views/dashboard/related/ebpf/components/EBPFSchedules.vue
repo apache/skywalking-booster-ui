@@ -95,13 +95,12 @@ limitations under the License. -->
   import { ref, watch } from "vue";
   import { useI18n } from "vue-i18n";
   import type { Option } from "@/types/app";
-  import { TableHeader, AggregateTypes } from "./data";
+  import { TableHeader, AggregateTypes, ComponentType } from "./data";
   import { useEbpfStore } from "@/store/modules/ebpf";
   import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import type { EBPFProfilingSchedule, Process } from "@/types/ebpf";
   import { ElMessage, ElTable } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
-  import { ComponentType } from "@/views/dashboard/related/continuous-profiling/data";
 
   const { t } = useI18n();
   /*global defineProps*/

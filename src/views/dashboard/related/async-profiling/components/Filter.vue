@@ -49,7 +49,7 @@ limitations under the License. -->
   const serviceInstanceIds = ref<string[]>([]);
   const selectedEventType = ref<string>("");
   const eventTypes = computed(() =>
-    asyncProfilingStore.selectedTask.eventTypes((d: string) => ({ label: d, value: d })),
+    asyncProfilingStore.selectedTask.eventTypes.map((d: string) => ({ label: d, value: d })),
   );
   const instances = computed(() =>
     asyncProfilingStore.instances.filter((d: Instance) =>
