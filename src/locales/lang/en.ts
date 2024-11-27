@@ -394,5 +394,6 @@ const msg = {
   successInstances: "Success Instances",
   profilingEvents: "Async Profiling Events",
   execArgs: "Exec Args",
+  instances: "Instances",
 };
 export default msg;

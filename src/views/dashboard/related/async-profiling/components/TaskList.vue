@@ -64,7 +64,7 @@ limitations under the License. -->
           <span class="g-sm-8 wba">{{ service }}</span>
         </div>
         <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("serviceInstanceIds") }}:</span>
+          <span class="g-sm-4 grey">{{ t("instances") }}:</span>
           <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask.serviceInstanceIds.join(", ") }}</span>
         </div>
         <div class="mb-10 clear item">

@@ -24,7 +24,7 @@ limitations under the License. -->
         <span>{{ t("delete") }}</span>
       </div>
     </el-popover>
-    <Header :needQuery="needQuery" />
+    <Header />
     <Content :config="props.data" />
   </div>
 </template>
@@ -42,7 +42,6 @@ limitations under the License. -->
       default: () => ({ graph: {} }),
     },
     activeIndex: { type: String, default: "" },
-    needQuery: { type: Boolean, default: true },
   });
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
