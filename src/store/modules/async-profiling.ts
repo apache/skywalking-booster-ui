@@ -49,11 +49,16 @@ export const asyncProfilingStore = defineStore({
     setSelectedTask(task: Recordable<AsyncProfilingTask>) {
       this.selectedTask = task || {};
     },
-    async getTaskList(params?: { startTime: number; endTime: number }) {
+    async getTaskList() {
+      const { duration } = useAppStoreWithOut();
       const selectorStore = useSelectorStore();
-      const res: AxiosResponse = await graphql
-        .query("getAsyncTaskList")
-        .params({ request: { ...params, limit: 10000, serviceId: selectorStore.currentService.id } });
+      const res: AxiosResponse = await graphql.query("getAsyncTaskList").params({
+        request: {
+          startTime: duration.start.getTime(),
+          endTime: duration.end.getTime(),
+          serviceId: selectorStore.currentService.id,
+        },
+      });
       if (res.data.errors) {
         return res.data;
       }
