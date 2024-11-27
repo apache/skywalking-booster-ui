@@ -54,7 +54,7 @@ limitations under the License. -->
   );
   const instances = computed(() =>
     asyncProfilingStore.instances.filter((d: Instance) =>
-      (asyncProfilingStore.selectedTask.serviceInstanceIds ?? []).includes(d.id),
+      (asyncProfilingStore.selectedTask.successInstanceIds ?? []).includes(d.id),
     ),
   );
 

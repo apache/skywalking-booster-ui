@@ -33,7 +33,7 @@ limitations under the License. -->
             <td class="profile-td">
               <div class="ell">
                 <span>{{ i.id }}</span>
-                <a class="profile-btn r" @click="viewTaskDetail($event, i)">
+                <a class="profile-btn r" @click="() => (showDetail = true)">
                   <Icon iconName="view" size="middle" />
                 </a>
               </div>
@@ -62,10 +62,6 @@ limitations under the License. -->
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("service") }}:</span>
           <span class="g-sm-8 wba">{{ service }}</span>
-        </div>
-        <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("instances") }}:</span>
-          <span class="g-sm-8 wba">{{ instances.map((d) => d.label).join(", ") }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("execArgs") }}:</span>
@@ -144,7 +140,6 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const showDetail = ref<boolean>(false);
   const service = ref<string>("");
-  const instances = ref<Instance[]>([]);
   const instanceLogs = ref<TaskLog | any>({});
   const errorInstances = ref<Instance[]>([]);
   const successInstances = ref<Instance[]>([]);
@@ -165,16 +160,7 @@ limitations under the License. -->
 
   async function changeTask(item: TaskListItem) {
     asyncProfilingStore.setSelectedTask(item);
-  }
-
-  async function viewTaskDetail(e: Event, item: TaskListItem) {
-    e.stopPropagation();
-    showDetail.value = true;
-    asyncProfilingStore.setSelectedTask(item);
-    service.value = (selectorStore.services.filter((s: Service) => s.id === item.serviceId)[0] || {}).label;
-    instances.value = asyncProfilingStore.instances.filter((d: Instance) =>
-      item.serviceInstanceIds.includes(d.id || ""),
-    );
+    service.value = (selectorStore.services.filter((s: Service) => s.id === item.serviceId)[0] ?? {}).label;
     const res = await asyncProfilingStore.getTaskLogs({ taskId: item.id });
 
     if (res.errors) {
@@ -185,6 +171,7 @@ limitations under the License. -->
       ...item,
       ...asyncProfilingStore.taskProgress,
     };
+    asyncProfilingStore.setSelectedTask(item);
     errorInstances.value = asyncProfilingStore.instances.filter(
       (d: Instance) => d.id && item.errorInstanceIds.includes(d.id),
     );
