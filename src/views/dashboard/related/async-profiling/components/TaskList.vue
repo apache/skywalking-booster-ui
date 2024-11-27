@@ -153,9 +153,7 @@ limitations under the License. -->
   });
 
   async function fetchTasks() {
-    const res = await asyncProfilingStore.getTaskList({
-      serviceId: selectorStore.currentService.id,
-    });
+    const res = await asyncProfilingStore.getTaskList();
     if (res.errors) {
       ElMessage.error(res.errors);
     }

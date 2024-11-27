@@ -77,12 +77,10 @@ limitations under the License. -->
   }
 
   async function createTask() {
-    emits("close");
     const params = {
       serviceId: selectorStore.currentService.id,
       serviceInstanceIds: serviceInstanceIds.value,
       duration: Number(duration.value),
-      createTime: new Date().getTime(),
       events: asyncEvents.value,
       execArgs: execArgs.value,
     };
@@ -96,6 +94,7 @@ limitations under the License. -->
       ElMessage.error(tip);
       return;
     }
+    emits("close");
     ElMessage.success("Task created successfully");
   }
 </script>
