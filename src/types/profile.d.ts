@@ -43,6 +43,7 @@ export interface TaskListItem {
   logs: TaskLog[];
   errorInstanceIds: string[];
   successInstanceIds: string[];
+  serviceInstanceIds: string[];
 }
 export interface SegmentSpan {
   spanId: string;

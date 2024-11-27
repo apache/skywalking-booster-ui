@@ -54,3 +54,15 @@ type AsyncProfilerTaskLog = {
   operationType: string;
   operationTime: number;
 };
+
+export type StackElement = {
+  id: string;
+  originId: string;
+  name: string;
+  parentId: string;
+  codeSignature: string;
+  total: number;
+  self: number;
+  value: number;
+  children?: StackElement[];
+};

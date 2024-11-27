@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 import { defineStore } from "pinia";
-import type { Option } from "@/types/app";
 import type {
   AsyncProfilingTask,
   AsyncProfileTaskCreationRequest,

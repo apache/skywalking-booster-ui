@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="flex-h header">
     <div class="title">Async Profiling</div>
-    <el-button class="mr-20" size="small" @click="() => (newTask = true)">
+    <el-button class="mr-20" size="small" type="primary" @click="() => (newTask = true)">
       {{ t("newTask") }}
     </el-button>
   </div>

@@ -27,12 +27,12 @@ limitations under the License. -->
             @click="changeTask(i)"
             :key="index"
             :class="{
-              selected: asyncProfilingStore.selectedTask && asyncProfilingStore.selectedTask.id === i.id,
+              selected: asyncProfilingStore.selectedTask.id === i.id,
             }"
           >
             <td class="profile-td">
               <div class="ell">
-                <span>{{ i.endpointName }}</span>
+                <span>{{ i.id }}</span>
                 <a class="profile-btn r" @click="viewTaskDetail($event, i)">
                   <Icon iconName="view" size="middle" />
                 </a>
@@ -52,7 +52,7 @@ limitations under the License. -->
     </div>
   </div>
   <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
-    <div class="profile-detail flex-v" v-if="asyncProfilingStore.selectedTask">
+    <div class="profile-detail flex-v" v-if="asyncProfilingStore.selectedTask.id">
       <div>
         <h5 class="mb-10">{{ t("task") }}.</h5>
         <div class="mb-10 clear item">
@@ -65,7 +65,7 @@ limitations under the License. -->
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("instances") }}:</span>
-          <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask.serviceInstanceIds.join(", ") }}</span>
+          <span class="g-sm-8 wba">{{ instances.map((d) => d.label).join(", ") }}</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("execArgs") }}:</span>
@@ -137,13 +137,14 @@ limitations under the License. -->
   import type { TaskLog, TaskListItem } from "@/types/profile";
   import { ElMessage } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
-  import type { Instance } from "@/types/selector";
+  import type { Instance, Service } from "@/types/selector";
 
   const { t } = useI18n();
   const asyncProfilingStore = useAsyncProfilingStore();
   const selectorStore = useSelectorStore();
   const showDetail = ref<boolean>(false);
   const service = ref<string>("");
+  const instances = ref<Instance[]>([]);
   const instanceLogs = ref<TaskLog | any>({});
   const errorInstances = ref<Instance[]>([]);
   const successInstances = ref<Instance[]>([]);
@@ -155,6 +156,9 @@ limitations under the License. -->
   async function fetchTasks() {
     const res = await asyncProfilingStore.getTaskList();
     if (res.errors) {
+      return ElMessage.error(res.errors);
+    }
+    if (res.data.errorReason) {
       ElMessage.error(res.errors);
     }
   }
@@ -167,7 +171,10 @@ limitations under the License. -->
     e.stopPropagation();
     showDetail.value = true;
     asyncProfilingStore.setSelectedTask(item);
-    service.value = (selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}).label;
+    service.value = (selectorStore.services.filter((s: Service) => s.id === item.serviceId)[0] || {}).label;
+    instances.value = asyncProfilingStore.instances.filter((d: Instance) =>
+      item.serviceInstanceIds.includes(d.id || ""),
+    );
     const res = await asyncProfilingStore.getTaskLogs({ taskId: item.id });
 
     if (res.errors) {

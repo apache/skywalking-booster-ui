@@ -89,9 +89,9 @@ limitations under the License. -->
       ElMessage.error(res.errors);
       return;
     }
-    const { tip } = res.data;
-    if (tip) {
-      ElMessage.error(tip);
+    const { errorReason } = res.data;
+    if (errorReason) {
+      ElMessage.error(errorReason);
       return;
     }
     emits("close");
