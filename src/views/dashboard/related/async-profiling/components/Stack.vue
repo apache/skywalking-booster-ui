@@ -89,11 +89,10 @@ limitations under the License. -->
       .attr("class", "d3-tip")
       .direction("s")
       .html((d: { data: StackElement } & { parent: { data: StackElement } }) => {
-        const name = d.data.name.replace("<", "&lt;").replace(">", "&gt;");
-        const valStr =
-          asyncProfilingStore.aggregateType === asyncProfilingStore[0].value
-            ? `<div class="mb-5">Dump Count: ${d.data.total}</div>`
-            : `<div class="mb-5">Duration: ${d.data.total} ns</div>`;
+        const name = d.data.codeSignature;
+        const valStr = asyncProfilingStore.aggregateType
+          ? `<div class="mb-5">Dump Count: ${d.data.total}</div>`
+          : `<div class="mb-5">Duration: ${d.data.total} ns</div>`;
         const rateOfParent =
           (d.parent &&
             `<div class="mb-5">Percentage Of Selected: ${
@@ -114,7 +113,7 @@ limitations under the License. -->
     const list = [];
     for (const tree of asyncProfilingStore.analyzeTrees) {
       for (const ele of tree.elements) {
-        list.push(ele.dumpCount);
+        list.push(ele.total);
       }
     }
     max.value = Math.max(...list);
@@ -136,13 +135,13 @@ limitations under the License. -->
 
     for (const item of copyArr) {
       if (item.parentId === "1") {
-        const val = Number(scale(item.dumpCount).toFixed(4));
+        const val = Number(scale(item.total).toFixed(4));
         res = item;
         res.value = val;
       }
       for (const key in obj) {
         if (item.originId === obj[key].parentId) {
-          const val = Number(scale(obj[key].dumpCount).toFixed(4));
+          const val = Number(scale(obj[key].total).toFixed(4));
 
           obj[key].value = val;
           if (item.children) {

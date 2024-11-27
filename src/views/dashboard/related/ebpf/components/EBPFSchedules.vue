@@ -95,9 +95,8 @@ limitations under the License. -->
   import { ref, watch } from "vue";
   import { useI18n } from "vue-i18n";
   import type { Option } from "@/types/app";
-  import { TableHeader, AggregateTypes, ComponentType } from "./data";
+  import { TableHeader, AggregateTypes } from "./data";
   import { useEbpfStore } from "@/store/modules/ebpf";
-  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import type { EBPFProfilingSchedule, Process } from "@/types/ebpf";
   import { ElMessage, ElTable } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
@@ -110,7 +109,7 @@ limitations under the License. -->
       default: "",
     },
   });
-  const ebpfStore = props.type === ComponentType ? useContinousProfilingStore() : useEbpfStore();
+  const ebpfStore = useEbpfStore();
   const pageSize = 5;
   const multipleTableRef = ref<InstanceType<typeof ElTable>>();
   const selectedProcesses = ref<string[]>([]);

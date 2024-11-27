@@ -59,7 +59,7 @@ limitations under the License. -->
   );
 
   function changeInstances(options: Option[]) {
-    serviceInstanceIds.value = options.map((d: any) => d.id);
+    serviceInstanceIds.value = options.map((d: Option) => d.value);
   }
 
   function changeEventType(options: Option[]) {
@@ -67,8 +67,11 @@ limitations under the License. -->
   }
 
   async function analyzeProfiling() {
+    const instanceIds = asyncProfilingStore.instances
+      .filter((d: Instance) => (serviceInstanceIds.value ?? []).includes(d.value))
+      .map((d: Instance) => d.id);
     const res = await asyncProfilingStore.getAsyncProfilingAnalyze({
-      instanceIds: serviceInstanceIds.value,
+      instanceIds,
       taskId: asyncProfilingStore.selectedTask.id,
       eventType: (EventsMap as any)[selectedEventType.value],
     });

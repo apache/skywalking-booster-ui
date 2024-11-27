@@ -20,7 +20,7 @@ limitations under the License. -->
         <Filter />
       </div>
       <div class="stack">
-        <EBPFStack :type="ComponentType" />
+        <Stack />
       </div>
     </div>
   </div>
@@ -32,8 +32,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import TaskList from "./components/TaskList.vue";
   import Filter from "./components/Filter.vue";
-  import EBPFStack from "@/views/dashboard/related/ebpf/components/EBPFStack.vue";
-  import { ComponentType } from "@/views/dashboard/related/ebpf/components/data";
+  import Stack from "./components/Stack.vue";
 
   const asyncProfilingStore = useAsyncProfilingStore();
   const selectorStore = useSelectorStore();

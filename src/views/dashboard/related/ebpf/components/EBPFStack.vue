@@ -23,20 +23,13 @@ limitations under the License. -->
   import d3tip from "d3-tip";
   import { flamegraph } from "d3-flame-graph";
   import { useEbpfStore } from "@/store/modules/ebpf";
-  import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
   import type { StackElement } from "@/types/ebpf";
-  import { AggregateTypes, ComponentType } from "./data";
+  import { AggregateTypes } from "./data";
   import "d3-flame-graph/dist/d3-flamegraph.css";
   import { treeForeach } from "@/utils/flameGraph";
 
-  /*global Nullable, defineProps*/
-  const props = defineProps({
-    type: {
-      type: String,
-      default: "",
-    },
-  });
-  const ebpfStore = props.type === ComponentType ? useAsyncProfilingStore() : useEbpfStore();
+  /*global Nullable*/
+  const ebpfStore = useEbpfStore();
   const stackTree = ref<Nullable<StackElement>>(null);
   const selectStack = ref<Nullable<StackElement>>(null);
   const graph = ref<Nullable<HTMLDivElement>>(null);
