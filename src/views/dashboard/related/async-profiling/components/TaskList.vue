@@ -170,7 +170,7 @@ limitations under the License. -->
     showDetail.value = true;
     asyncProfilingStore.setSelectedTask(item);
     service.value = (selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}).label;
-    const res = await asyncProfilingStore.getTaskLogs({ taskID: item.id });
+    const res = await asyncProfilingStore.getTaskLogs({ taskId: item.id });
 
     if (res.errors) {
       ElMessage.error(res.errors);
