@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="profile-task">
+  <div class="async-profile-task">
     <div>
       <div class="label">{{ t("instance") }}</div>
       <Selector
@@ -99,9 +99,9 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  .profile-task {
+  .async-profile-task {
     margin: 0 auto;
-    width: 400px;
+    width: 600px;
   }
 
   .date {
@@ -114,7 +114,7 @@ limitations under the License. -->
   }
 
   .profile-input {
-    width: 300px;
+    width: 600px;
   }
 
   .create-task-btn {

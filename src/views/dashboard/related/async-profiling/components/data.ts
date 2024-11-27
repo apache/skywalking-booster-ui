@@ -24,6 +24,10 @@ export const DurationOptions = [
 export const ProfilingEvents = [
   { value: "CPU", label: "CPU" },
   { value: "ALLOC", label: "ALLOC" },
+  { value: "WALL", label: "WALL" },
+  { value: "LOCK", label: "LOCK" },
+  { value: "CTIMER", label: "CTIMER" },
+  { value: "ITIMER", label: "ITIMER" },
 ];
 
 export enum EventsMap {
