@@ -82,13 +82,13 @@ limitations under the License. -->
       </div>
       <div>
         <h5
-          class="mb-10 mt-10"
+          class="mb-5 mt-10"
           v-show="asyncProfilingStore.selectedTask.logs && asyncProfilingStore.selectedTask.logs.length"
         >
           {{ t("logs") }}.
         </h5>
-        <div class="log-item" v-for="(i, index) in Object.keys(instanceLogs)" :key="index">
-          <div class="mb-10 sm">
+        <div v-for="(i, index) in Object.keys(instanceLogs)" :key="index">
+          <div class="sm">
             <span class="mr-10 grey">{{ t("instance") }}:</span>
             <span>{{ i }}</span>
           </div>
@@ -101,8 +101,8 @@ limitations under the License. -->
         </div>
       </div>
       <div>
-        <h5 class="mb-10 mt-10" v-show="errorInstances.length"> {{ t("errorInstances") }}. </h5>
-        <div class="log-item" v-for="(instance, index) in errorInstances" :key="instance.value || index">
+        <h5 class="mb-10 mt-10" v-show="errorInstances.length"> {{ t("errorInstances") }}</h5>
+        <div v-for="(instance, index) in errorInstances" :key="instance.value || index">
           <div class="mb-10 sm">
             <span class="mr-10 grey">{{ t("instance") }}:</span>
             <span>{{ instance.label }}</span>
@@ -114,8 +114,8 @@ limitations under the License. -->
         </div>
       </div>
       <div>
-        <h5 class="mb-10 mt-10" v-show="successInstances.length"> {{ t("successInstances") }}. </h5>
-        <div class="log-item" v-for="(instance, index) in successInstances" :key="instance.value || index">
+        <h5 class="mb-10 mt-10" v-show="successInstances.length"> {{ t("successInstances") }}</h5>
+        <div v-for="(instance, index) in successInstances" :key="instance.value || index">
           <div class="mb-10 sm">
             <span class="mr-10 grey">{{ t("instance") }}:</span>
             <span>{{ instance.label }}</span>
@@ -262,10 +262,6 @@ limitations under the License. -->
     border-right: 1px solid var(--sw-trace-list-border);
     border-bottom: 1px solid var(--sw-trace-list-border);
     background-color: var(--sw-table-header);
-  }
-
-  .log-item {
-    margin-top: 20px;
   }
 
   .profile-btn {
