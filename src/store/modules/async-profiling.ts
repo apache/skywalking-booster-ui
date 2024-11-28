@@ -49,6 +49,9 @@ export const asyncProfilingStore = defineStore({
     setSelectedTask(task: Recordable<AsyncProfilingTask>) {
       this.selectedTask = task || {};
     },
+    setAnalyzeTrees(tree: AsyncProfilerStackElement[]) {
+      this.analyzeTrees = tree;
+    },
     async getTaskList() {
       const { duration } = useAppStoreWithOut();
       const selectorStore = useSelectorStore();
@@ -64,6 +67,7 @@ export const asyncProfilingStore = defineStore({
       }
       this.taskList = res.data.data.asyncTaskList.tasks || [];
       this.selectedTask = this.taskList[0] || {};
+      this.setAnalyzeTrees([]);
       this.setSelectedTask(this.selectedTask);
       if (!this.taskList.length) {
         return res.data;

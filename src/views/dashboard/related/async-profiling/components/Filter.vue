@@ -37,7 +37,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed, ref } from "vue";
+  import { computed, ref, watch } from "vue";
   import { useI18n } from "vue-i18n";
   import { ElMessage } from "element-plus";
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
@@ -60,10 +60,12 @@ limitations under the License. -->
 
   function changeInstances(options: Option[]) {
     serviceInstanceIds.value = options.map((d: Option) => d.value);
+    asyncProfilingStore.setAnalyzeTrees([]);
   }
 
   function changeEventType(options: Option[]) {
     selectedEventType.value = options[0].value;
+    asyncProfilingStore.setAnalyzeTrees([]);
   }
 
   async function analyzeProfiling() {
@@ -80,6 +82,14 @@ limitations under the License. -->
       return;
     }
   }
+
+  watch(
+    () => asyncProfilingStore.selectedTask.successInstanceIds,
+    () => {
+      serviceInstanceIds.value = [];
+      selectedEventType.value = "";
+    },
+  );
 </script>
 <style>
   .filter-selector {

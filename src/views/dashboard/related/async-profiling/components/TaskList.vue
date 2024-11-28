@@ -160,6 +160,7 @@ limitations under the License. -->
 
   async function changeTask(item: TaskListItem) {
     asyncProfilingStore.setSelectedTask(item);
+    asyncProfilingStore.setAnalyzeTrees([]);
     service.value = (selectorStore.services.filter((s: Service) => s.id === item.serviceId)[0] ?? {}).label;
     const res = await asyncProfilingStore.getTaskLogs({ taskId: item.id });
 
@@ -189,7 +190,6 @@ limitations under the License. -->
         instanceLogs.value[d.instanceName] = [{ operationType: d.operationType, operationTime: d.operationTime }];
       }
     }
-    asyncProfilingStore.setSelectedTask(item);
   }
 
   watch(
