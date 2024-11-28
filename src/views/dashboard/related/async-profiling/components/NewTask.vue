@@ -76,10 +76,6 @@ limitations under the License. -->
               <span class="mr-10">chunktime=N </span>
               <span>- duration of JFR chunk in seconds (default: 1 hour)</span>
             </p>
-            <p class="red"
-              >Check more details via
-              https://github.com/async-profiler/async-profiler/blob/master/src/arguments.cpp#L44</p
-            >
           </div>
         </el-popover>
       </div>
