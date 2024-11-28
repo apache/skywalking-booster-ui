@@ -57,5 +57,3 @@ export const TableHeader = [
   { property: "name", label: "Name" },
   { property: "instanceName", label: "Instance Name" },
 ];
-
-export const ComponentType = "ASYNC_PROFILING";

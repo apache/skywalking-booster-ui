@@ -33,7 +33,7 @@ limitations under the License. -->
   import TaskList from "./components/TaskList.vue";
   import Filter from "./components/Filter.vue";
   import EBPFStack from "@/views/dashboard/related/ebpf/components/EBPFStack.vue";
-  import { ComponentType } from "@/views/dashboard/related/ebpf/components/data";
+  import { ComponentType } from "./components/data";
 
   const asyncProfilingStore = useAsyncProfilingStore();
   const selectorStore = useSelectorStore();
