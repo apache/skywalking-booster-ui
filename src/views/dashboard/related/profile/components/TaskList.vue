@@ -160,6 +160,7 @@ limitations under the License. -->
     width: 300px;
     height: calc((100% - 60px) / 2);
     overflow: auto;
+    border-right: 1px solid var(--sw-trace-list-border);
   }
 
   .item span {
@@ -183,7 +184,6 @@ limitations under the License. -->
   .profile-t-wrapper {
     overflow: auto;
     flex-grow: 1;
-    border-right: 1px solid var(--sw-trace-list-border);
   }
 
   .profile-t {

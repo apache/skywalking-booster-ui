@@ -203,7 +203,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .profile-task-list {
     width: 300px;
-    height: 100%;
+    height: calc(100% - 20px);
     overflow: auto;
     border-right: 1px solid var(--sw-trace-list-border);
   }
