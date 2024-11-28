@@ -102,13 +102,6 @@ limitations under the License. -->
   import { dateFormat } from "@/utils/dateFormat";
 
   const { t } = useI18n();
-  /*global defineProps*/
-  const props = defineProps({
-    type: {
-      type: String,
-      default: "",
-    },
-  });
   const ebpfStore = useEbpfStore();
   const pageSize = 5;
   const multipleTableRef = ref<InstanceType<typeof ElTable>>();
