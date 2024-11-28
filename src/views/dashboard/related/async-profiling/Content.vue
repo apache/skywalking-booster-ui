@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="flex-h content">
     <TaskList />
     <div class="vis-graph ml-5">
-      <div class="filter">
+      <div class="mb-20">
         <Filter />
       </div>
       <div class="stack">
@@ -65,10 +65,5 @@ limitations under the License. -->
     overflow: auto;
     height: calc(100% - 100px);
     padding-bottom: 10px;
-  }
-
-  .filter {
-    height: 90px;
-    padding-right: 10px;
   }
 </style>

@@ -240,7 +240,7 @@ limitations under the License. -->
 
   .profile-tr {
     &:hover {
-      background-color: var(--sw-list-hover);
+      background-color: var(--sw-list-selected);
     }
   }
 
