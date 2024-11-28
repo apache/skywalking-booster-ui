@@ -70,8 +70,8 @@ export const GetAsyncProfileAnalyze = {
       elements {
         id
         parentId
-        codeSignature
-        total
+        symbol: codeSignature
+        dumpCount: total
         self
       }
     }
