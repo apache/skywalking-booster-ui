@@ -388,5 +388,10 @@ const msg = {
   mappingTip: "注意: 映射键是一个正则表达式字符串，比如 ^([0-9])$",
   valueDashboard: "数据值相关的仪表板",
   viewValueDashboard: "查看仪表板",
+  errorInstances: "错误的实例",
+  successInstances: "成功的实例",
+  profilingEvents: "异步分析事件",
+  execArgs: "String任务扩展",
+  instances: "实例",
 };
 export default msg;

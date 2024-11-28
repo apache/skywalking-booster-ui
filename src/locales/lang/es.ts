@@ -390,5 +390,10 @@ const msg = {
   mappingTip: "Aviso: La clave de mapeo es una cadena Regex, p. ej. ^([0-9])$",
   valueDashboard: "Data Value Related Dashboard",
   viewValueDashboard: "View Dashboard",
+  errorInstances: "Error Instances",
+  successInstances: "Success Instances",
+  profilingEvents: "Async Profiling Events",
+  execArgs: "Exec Args",
+  instances: "Instances",
 };
 export default msg;

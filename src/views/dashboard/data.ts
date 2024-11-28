@@ -150,6 +150,7 @@ export enum WidgetType {
   Event = "Event",
   NetworkProfiling = "NetworkProfiling",
   ContinuousProfiling = "ContinuousProfiling",
+  AsyncProfiling = "AsyncProfiling",
   ThirdPartyApp = "ThirdPartyApp",
   TaskTimeline = "TaskTimeline",
 }
@@ -171,6 +172,7 @@ export const ServiceTools = [
   { name: "timeline", content: "Add Trace Profiling", id: WidgetType.Profile },
   { name: "insert_chart", content: "Add eBPF Profiling", id: WidgetType.Ebpf },
   { name: "continuous_profiling", content: "Add Continuous Profiling", id: WidgetType.ContinuousProfiling },
+  { name: "async_profiling", content: "Add Async Profiling", id: WidgetType.AsyncProfiling },
   { name: "assignment", content: "Add Log", id: WidgetType.Log },
   { name: "demand", content: "Add On Demand Log", id: WidgetType.DemandLog },
   { name: "event", content: "Add Event", id: WidgetType.Event },

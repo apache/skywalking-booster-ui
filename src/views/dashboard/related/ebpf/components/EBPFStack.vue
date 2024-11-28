@@ -23,10 +23,10 @@ limitations under the License. -->
   import d3tip from "d3-tip";
   import { flamegraph } from "d3-flame-graph";
   import { useEbpfStore } from "@/store/modules/ebpf";
-  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
-  import { ComponentType } from "@/views/dashboard/related/continuous-profiling/data";
+  import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
   import type { StackElement } from "@/types/ebpf";
   import { AggregateTypes } from "./data";
+  import { JFREventType, ComponentType } from "@/views/dashboard/related/async-profiling/components/data";
   import "d3-flame-graph/dist/d3-flamegraph.css";
   import { treeForeach } from "@/utils/flameGraph";
 
@@ -37,7 +37,7 @@ limitations under the License. -->
       default: "",
     },
   });
-  const ebpfStore = props.type === ComponentType ? useContinousProfilingStore() : useEbpfStore();
+  const ebpfStore = props.type === ComponentType ? useAsyncProfilingStore() : useEbpfStore();
   const stackTree = ref<Nullable<StackElement>>(null);
   const selectStack = ref<Nullable<StackElement>>(null);
   const graph = ref<Nullable<HTMLDivElement>>(null);
@@ -102,10 +102,7 @@ limitations under the License. -->
       .direction("s")
       .html((d: { data: StackElement } & { parent: { data: StackElement } }) => {
         const name = d.data.name.replace("<", "&lt;").replace(">", "&gt;");
-        const valStr =
-          ebpfStore.aggregateType === AggregateTypes[0].value
-            ? `<div class="mb-5">Dump Count: ${d.data.dumpCount}</div>`
-            : `<div class="mb-5">Duration: ${d.data.dumpCount} ns</div>`;
+        const valStr = tooltipContent(d.data);
         const rateOfParent =
           (d.parent &&
             `<div class="mb-5">Percentage Of Selected: ${
@@ -123,6 +120,26 @@ limitations under the License. -->
       .style("max-width", "400px");
     flameChart.value.tooltip(tip);
     d3.select("#graph-stack").datum(stackTree.value).call(flameChart.value);
+  }
+
+  function tooltipContent(item: StackElement) {
+    if (props.type === ComponentType) {
+      if (!ebpfStore.analyzeTrees.length) {
+        return;
+      }
+      const { type } = ebpfStore.analyzeTrees[0];
+      if ([JFREventType.JAVA_MONITOR_ENTER, JFREventType.THREAD_PARK].includes(type)) {
+        return `<div class="mb-5">Duration: ${item.dumpCount} ms</div>`;
+      }
+      if (type === JFREventType.EXECUTION_SAMPLE) {
+        return `<div class="mb-5">Count: ${item.dumpCount}</div>`;
+      }
+      return `<div class="mb-5">Memory: ${item.dumpCount} byte</div>`;
+    }
+
+    ebpfStore.aggregateType === AggregateTypes[0].value
+      ? `<div class="mb-5">Dump Count: ${item.dumpCount}</div>`
+      : `<div class="mb-5">Duration: ${item.dumpCount} ns</div>`;
   }
 
   function countRange() {

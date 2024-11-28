@@ -97,21 +97,12 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import { TableHeader, AggregateTypes } from "./data";
   import { useEbpfStore } from "@/store/modules/ebpf";
-  import { useContinousProfilingStore } from "@/store/modules/continous-profiling";
   import type { EBPFProfilingSchedule, Process } from "@/types/ebpf";
   import { ElMessage, ElTable } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
-  import { ComponentType } from "@/views/dashboard/related/continuous-profiling/data";
 
   const { t } = useI18n();
-  /*global defineProps*/
-  const props = defineProps({
-    type: {
-      type: String,
-      default: "",
-    },
-  });
-  const ebpfStore = props.type === ComponentType ? useContinousProfilingStore() : useEbpfStore();
+  const ebpfStore = useEbpfStore();
   const pageSize = 5;
   const multipleTableRef = ref<InstanceType<typeof ElTable>>();
   const selectedProcesses = ref<string[]>([]);
@@ -126,12 +117,12 @@ limitations under the License. -->
     return attr.map((d: { name: string; value: string }) => `${d.name}=${d.value}`).join("; ");
   };
 
-  function changeLabels(opt: any[]) {
+  function changeLabels(opt: Option[]) {
     const arr = opt.map((d) => d.value);
     selectedLabels.value = arr;
   }
 
-  function changeAggregateType(opt: any[]) {
+  function changeAggregateType(opt: Option[]) {
     aggregateType.value = opt[0].value;
     ebpfStore.setAnalyzeTrees([]);
   }
