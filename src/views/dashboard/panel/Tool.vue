@@ -105,11 +105,11 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h tools" v-loading="loading" v-if="!appStore.isMobile">
-      <div class="tool-icons" v-if="dashboardStore.editMode">
+      <div class="flex-h" v-if="dashboardStore.editMode">
         <el-dropdown content="Controls" placement="bottom" :persistent="false">
-          <i>
-            <Icon class="icon-btn" size="sm" iconName="control" />
-          </i>
+          <div class="icon-btn">
+            <Icon size="sm" iconName="control" />
+          </div>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="clickIcons(t)" v-for="(t, index) in toolIcons" :key="index" :title="t.content">
@@ -120,9 +120,9 @@ limitations under the License. -->
           </template>
         </el-dropdown>
         <el-tooltip content="Apply" placement="bottom">
-          <i @click="applyDashboard">
-            <Icon class="icon-btn" size="sm" iconName="save" />
-          </i>
+          <div class="icon-btn" @click="applyDashboard">
+            <Icon size="sm" iconName="save" />
+          </div>
         </el-tooltip>
       </div>
       <div class="ml-5">
@@ -693,10 +693,6 @@ limitations under the License. -->
     padding: 4px 2px;
   }
 
-  .tool-icons {
-    margin-top: 2px;
-  }
-
   .tools {
     justify-content: space-between;
     align-items: center;
@@ -704,9 +700,10 @@ limitations under the License. -->
   }
 
   .icon-btn {
-    display: inline-block;
-    padding: 3px;
+    width: 22px;
+    height: 22px;
     text-align: center;
+    line-height: 18px;
     border: 1px solid var(--sw-icon-btn-border);
     border-radius: 3px;
     margin-left: 6px;

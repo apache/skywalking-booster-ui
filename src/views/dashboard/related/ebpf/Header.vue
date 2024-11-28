@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="flex-h header">
     <div class="title">eBPF Profiling</div>
-    <el-button type="primary" size="small" @click="createTask">
+    <el-button class="mr-10 mt-10" type="primary" size="small" @click="createTask">
       {{ t("newTask") }}
     </el-button>
   </div>
