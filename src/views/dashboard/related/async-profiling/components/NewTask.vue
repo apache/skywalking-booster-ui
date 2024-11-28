@@ -43,7 +43,7 @@ limitations under the License. -->
       <el-input size="small" class="profile-input" v-model="execArgs" />
     </div>
     <div>
-      <el-button @click="createTask" type="primary" class="create-task-btn">
+      <el-button @click="createTask" type="primary" class="create-task-btn" :loading="loading">
         {{ t("createTask") }}
       </el-button>
     </div>
@@ -67,6 +67,7 @@ limitations under the License. -->
   const asyncEvents = ref<string[]>([ProfilingEvents[0].value]);
   const duration = ref<string>(DurationOptions[0].value);
   const execArgs = ref<string>("");
+  const loading = ref<boolean>(false);
 
   function changeDuration(val: string) {
     duration.value = val;
@@ -84,7 +85,9 @@ limitations under the License. -->
       events: asyncEvents.value,
       execArgs: execArgs.value,
     };
+    loading.value = true;
     const res = await asyncProfilingStore.createTask(params);
+    loading.value = false;
     if (res.errors) {
       ElMessage.error(res.errors);
       return;
@@ -118,7 +121,7 @@ limitations under the License. -->
   }
 
   .create-task-btn {
-    width: 300px;
+    width: 600px;
     margin-top: 50px;
   }
 </style>

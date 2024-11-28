@@ -19,7 +19,7 @@ limitations under the License. -->
       <div class="mb-20">
         <Filter />
       </div>
-      <div class="stack">
+      <div class="stack" v-loading="asyncProfilingStore.loadingTree">
         <EBPFStack :type="ComponentType" />
       </div>
     </div>

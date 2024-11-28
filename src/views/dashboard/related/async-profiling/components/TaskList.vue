@@ -13,42 +13,40 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="profile-task-list flex-v">
-    <div class="profile-task-wrapper flex-v">
-      <div class="profile-t-tool flex-h">{{ t("taskList") }}</div>
-      <div class="profile-t-wrapper">
-        <div class="no-data" v-show="!asyncProfilingStore.taskList.length">
-          {{ t("noData") }}
-        </div>
-        <table class="profile-t">
-          <tr
-            class="profile-tr cp"
-            v-for="(i, index) in asyncProfilingStore.taskList"
-            @click="changeTask(i)"
-            :key="index"
-            :class="{
-              selected: asyncProfilingStore.selectedTask.id === i.id,
-            }"
-          >
-            <td class="profile-td">
-              <div class="ell">
-                <span>{{ i.id }}</span>
-                <a class="profile-btn r" @click="() => (showDetail = true)">
-                  <Icon iconName="view" size="middle" />
-                </a>
-              </div>
-              <div class="grey ell sm">
-                <span class="mr-10 sm">
-                  {{ dateFormat(i.createTime) }}
-                </span>
-                <span class="mr-10 sm">
-                  {{ dateFormat(i.createTime + i.duration * 60 * 1000) }}
-                </span>
-              </div>
-            </td>
-          </tr>
-        </table>
+  <div class="profile-task-list flex-v" v-loading="loading">
+    <div class="profile-t-tool flex-h">{{ t("taskList") }}</div>
+    <div class="profile-t-wrapper">
+      <div class="no-data" v-show="!asyncProfilingStore.taskList.length">
+        {{ t("noData") }}
       </div>
+      <table class="profile-t">
+        <tr
+          class="profile-tr cp"
+          v-for="(i, index) in asyncProfilingStore.taskList"
+          @click="changeTask(i)"
+          :key="index"
+          :class="{
+            selected: asyncProfilingStore.selectedTask.id === i.id,
+          }"
+        >
+          <td class="profile-td">
+            <div class="ell">
+              <span>{{ i.id }}</span>
+              <a class="profile-btn r" @click="() => (showDetail = true)">
+                <Icon iconName="view" size="middle" />
+              </a>
+            </div>
+            <div class="grey ell sm">
+              <span class="mr-10 sm">
+                {{ dateFormat(i.createTime) }}
+              </span>
+              <span class="mr-10 sm">
+                {{ dateFormat(i.createTime + i.duration * 60 * 1000) }}
+              </span>
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
   <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
@@ -143,13 +141,16 @@ limitations under the License. -->
   const instanceLogs = ref<TaskLog | any>({});
   const errorInstances = ref<Instance[]>([]);
   const successInstances = ref<Instance[]>([]);
+  const loading = ref<boolean>(false);
 
   onMounted(() => {
     fetchTasks();
   });
 
   async function fetchTasks() {
+    loading.value = true;
     const res = await asyncProfilingStore.getTaskList();
+    loading.value = false;
     if (res.errors) {
       return ElMessage.error(res.errors);
     }
