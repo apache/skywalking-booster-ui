@@ -39,7 +39,50 @@ limitations under the License. -->
       </el-checkbox-group>
     </div>
     <div>
-      <div class="label">{{ t("execArgs") }}</div>
+      <div class="label">
+        <span class="mr-5 cp">{{ t("execArgs") }}</span>
+        <el-popover placement="right" :width="480" trigger="hover" title="Async profiler extension parameters">
+          <template #reference>
+            <span>
+              <Icon iconName="help" />
+            </span>
+          </template>
+          <div>
+            <p>
+              <span class="mr-10">live </span>
+              <span>- build allocation profile from live objects only</span>
+            </p>
+            <p>
+              <span class="mr-10">lock[=DURATION] </span>
+              <span>- profile contended locks overflowing the DURATION ns bucket (default: 10us)</span>
+            </p>
+            <p>
+              <span class="mr-10">alloc[=BYTES] </span>
+              <span>- profile allocations with BYTES interval</span>
+            </p>
+            <p>
+              <span class="mr-10">interval=N </span>
+              <span>- sampling interval in ns (default: 10'000'000, i.e. 10 ms)</span>
+            </p>
+            <p>
+              <span class="mr-10">jstackdepth=N </span>
+              <span>- maximum Java stack depth (default: 2048)</span>
+            </p>
+            <p>
+              <span class="mr-10">chunksize=N </span>
+              <span>- approximate size of JFR chunk in bytes (default: 100 MB)</span>
+            </p>
+            <p>
+              <span class="mr-10">chunktime=N </span>
+              <span>- duration of JFR chunk in seconds (default: 1 hour)</span>
+            </p>
+            <p class="red"
+              >Check more details via
+              https://github.com/async-profiler/async-profiler/blob/master/src/arguments.cpp#L44</p
+            >
+          </div>
+        </el-popover>
+      </div>
       <el-input size="small" class="profile-input" v-model="execArgs" />
     </div>
     <div>
