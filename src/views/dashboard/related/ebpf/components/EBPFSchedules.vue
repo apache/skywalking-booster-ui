@@ -117,12 +117,12 @@ limitations under the License. -->
     return attr.map((d: { name: string; value: string }) => `${d.name}=${d.value}`).join("; ");
   };
 
-  function changeLabels(opt: any[]) {
+  function changeLabels(opt: Option[]) {
     const arr = opt.map((d) => d.value);
     selectedLabels.value = arr;
   }
 
-  function changeAggregateType(opt: any[]) {
+  function changeAggregateType(opt: Option[]) {
     aggregateType.value = opt[0].value;
     ebpfStore.setAnalyzeTrees([]);
   }
