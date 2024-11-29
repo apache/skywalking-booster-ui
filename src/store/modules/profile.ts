@@ -80,7 +80,7 @@ export const profileStore = defineStore({
       this.analyzeTrees = [];
     },
     setCurrentSegment(segment: Trace) {
-      this.currentSegment = segment;
+      this.currentSegment = segment || {};
       this.segmentSpans = segment.spans || [];
       if (segment.spans) {
         this.currentSpan = segment.spans[0] || {};
@@ -155,10 +155,10 @@ export const profileStore = defineStore({
         return res.data;
       }
       if (segmentList[0]) {
-        this.currentSegment = segmentList[0];
+        this.setCurrentSegment(segmentList[0]);
         this.getSegmentSpans(segmentList[0].segmentId);
       } else {
-        this.currentSegment = {};
+        this.setCurrentSegment({});
       }
       return res.data;
     },

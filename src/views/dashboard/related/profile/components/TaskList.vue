@@ -14,38 +14,36 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="profile-task-list flex-v">
-    <div class="profile-task-wrapper flex-v">
-      <div class="profile-t-tool flex-h">{{ t("taskList") }}</div>
-      <div class="profile-t-wrapper">
-        <div class="no-data" v-show="!profileStore.taskList.length">
-          {{ t("noData") }}
-        </div>
-        <table class="profile-t">
-          <tr class="profile-tr cp" v-for="(i, index) in profileStore.taskList" @click="changeTask(i)" :key="index">
-            <td
-              class="profile-td"
-              :class="{
-                selected: profileStore.currentTask && profileStore.currentTask.id === i.id,
-              }"
-            >
-              <div class="ell">
-                <span>{{ i.endpointName }}</span>
-                <a class="profile-btn r" @click="viewTask($event, i)">
-                  <Icon iconName="view" size="middle" />
-                </a>
-              </div>
-              <div class="grey ell sm">
-                <span class="mr-10 sm">
-                  {{ dateFormat(i.startTime) }}
-                </span>
-                <span class="mr-10 sm">
-                  {{ dateFormat(i.startTime + i.duration * 60 * 1000) }}
-                </span>
-              </div>
-            </td>
-          </tr>
-        </table>
+    <div class="profile-t-tool flex-h">{{ t("taskList") }}</div>
+    <div class="profile-t-wrapper">
+      <div class="no-data" v-show="!profileStore.taskList.length">
+        {{ t("noData") }}
       </div>
+      <table class="profile-t">
+        <tr class="profile-tr cp" v-for="(i, index) in profileStore.taskList" @click="changeTask(i)" :key="index">
+          <td
+            class="profile-td"
+            :class="{
+              selected: profileStore.currentTask && profileStore.currentTask.id === i.id,
+            }"
+          >
+            <div class="ell">
+              <span>{{ i.endpointName }}</span>
+              <a class="profile-btn r" @click="viewTask($event, i)">
+                <Icon iconName="view" size="middle" />
+              </a>
+            </div>
+            <div class="grey ell sm">
+              <span class="mr-10 sm">
+                {{ dateFormat(i.startTime) }}
+              </span>
+              <span class="mr-10 sm">
+                {{ dateFormat(i.startTime + i.duration * 60 * 1000) }}
+              </span>
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
   <el-dialog v-model="viewDetail" :destroy-on-close="true" fullscreen @closed="viewDetail = false">
@@ -117,7 +115,6 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const viewDetail = ref<boolean>(false);
   const service = ref<string>("");
-  // const selectedTask = ref<TaskListItem | Record<string, never>>({});
   const instanceLogs = ref<TaskLog | any>({});
 
   async function changeTask(item: TaskListItem) {
@@ -130,7 +127,7 @@ limitations under the License. -->
   }
 
   async function viewTask(e: Event, item: TaskListItem) {
-    window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
+    e.stopPropagation();
     viewDetail.value = true;
     profileStore.setCurrentTask(item);
     service.value = (selectorStore.services.filter((s: any) => s.id === item.serviceId)[0] || {}).label;
