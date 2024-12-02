@@ -184,7 +184,7 @@ limitations under the License. -->
     position: relative;
     width: 2px;
     height: 100%;
-    background-color: #e8e8e8;
+    background-color: var(--sw-trace-line);
     cursor: ew-resize;
 
     &:hover {
