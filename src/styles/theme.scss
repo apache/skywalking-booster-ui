@@ -69,6 +69,7 @@ html {
   --sw-drawer-header: #72767b;
   --sw-marketplace-border: #dedfe0;
   --sw-grid-item-active: #d4d7de;
+  --sw-trace-line: #999;
 }
 
 html.dark {
@@ -110,6 +111,7 @@ html.dark {
   --sw-drawer-header: #e9e9eb;
   --sw-marketplace-border: #606266;
   --sw-grid-item-active: #73767a;
+  --sw-trace-line: #e8e8e8;
 }
 
 .el-drawer__header {

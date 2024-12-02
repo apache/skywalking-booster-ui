@@ -77,7 +77,7 @@ limitations under the License. -->
       ElMessage.error(res.errors);
       return;
     }
-    endpointName.value = profileStore.endpoints[0].value;
+    endpointName.value = profileStore.endpoints[0]?.value;
   }
 
   function changeEndpoint(opt: any[]) {
