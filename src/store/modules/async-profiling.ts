@@ -55,12 +55,11 @@ export const asyncProfilingStore = defineStore({
       this.analyzeTrees = tree;
     },
     async getTaskList() {
-      const { duration } = useAppStoreWithOut();
+      const { durationTime } = useAppStoreWithOut();
       const selectorStore = useSelectorStore();
       const res: AxiosResponse = await graphql.query("getAsyncTaskList").params({
         request: {
-          startTime: duration.start.getTime(),
-          endTime: duration.end.getTime(),
+          queryDuration: durationTime,
           serviceId: selectorStore.currentService.id,
         },
       });
