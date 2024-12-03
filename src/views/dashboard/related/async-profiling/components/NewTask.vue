@@ -119,8 +119,8 @@ limitations under the License. -->
     duration.value = val;
   }
 
-  function changeInstances(options: Option[]) {
-    serviceInstanceIds.value = options.map((d: Option) => d.value);
+  function changeInstances(options: { id: string }[]) {
+    serviceInstanceIds.value = options.map((d: { id: string }) => d.id);
   }
 
   function disableEvents(item: string) {

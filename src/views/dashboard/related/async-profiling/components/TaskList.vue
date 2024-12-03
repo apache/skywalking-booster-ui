@@ -54,7 +54,7 @@ limitations under the License. -->
       <div>
         <h5 class="mb-10">{{ t("task") }}.</h5>
         <div class="mb-10 clear item">
-          <span class="g-sm-4 grey">{{ t("id") }}:</span>
+          <span class="g-sm-4 grey">ID:</span>
           <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask.id }}</span>
         </div>
         <div class="mb-10 clear item">
