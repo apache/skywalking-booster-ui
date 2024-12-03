@@ -62,6 +62,7 @@ export const asyncProfilingStore = defineStore({
       const res: AxiosResponse = await graphql.query("getAsyncTaskList").params({
         request: {
           serviceId: selectorStore.currentService.id,
+          limit: 10000,
         },
       });
       this.loadingTasks = false;
