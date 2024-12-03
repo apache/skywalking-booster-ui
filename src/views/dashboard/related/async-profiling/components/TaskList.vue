@@ -157,11 +157,10 @@ limitations under the License. -->
   }
 
   async function changeTask(item: TaskListItem) {
-    if (item.id === asyncProfilingStore.selectedTask.id) {
-      return;
+    if (item.id !== asyncProfilingStore.selectedTask.id) {
+      asyncProfilingStore.setAnalyzeTrees([]);
+      asyncProfilingStore.setSelectedTask(item);
     }
-    asyncProfilingStore.setSelectedTask(item);
-    asyncProfilingStore.setAnalyzeTrees([]);
     service.value = (selectorStore.services.filter((s: Service) => s.id === item.serviceId)[0] ?? {}).label;
     const res = await asyncProfilingStore.getTaskLogs({ taskId: item.id });
 
