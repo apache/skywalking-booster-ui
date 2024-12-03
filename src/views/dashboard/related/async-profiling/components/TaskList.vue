@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="profile-task-list flex-v" v-loading="loading">
+  <div class="profile-task-list flex-v" v-loading="asyncProfilingStore.loadingTasks">
     <div class="profile-t-tool flex-h">{{ t("taskList") }}</div>
     <div class="profile-t-wrapper">
       <div class="no-data" v-show="!asyncProfilingStore.taskList.length">
@@ -141,16 +141,13 @@ limitations under the License. -->
   const instanceLogs = ref<TaskLog | any>({});
   const errorInstances = ref<Instance[]>([]);
   const successInstances = ref<Instance[]>([]);
-  const loading = ref<boolean>(false);
 
   onMounted(() => {
     fetchTasks();
   });
 
   async function fetchTasks() {
-    loading.value = true;
     const res = await asyncProfilingStore.getTaskList();
-    loading.value = false;
     if (res.errors) {
       return ElMessage.error(res.errors);
     }
