@@ -66,21 +66,27 @@ limitations under the License. -->
       rateOfParent: "",
     };
     countRange();
-    for (const tree of ebpfStore.analyzeTrees) {
-      const ele = processTree(tree.elements);
-      root.children && root.children.push(ele);
+    if (props.type === ComponentType) {
+      const root = processTree(ebpfStore.analyzeTrees[0].elements);
+      stackTree.value = root;
+    } else {
+      for (const tree of ebpfStore.analyzeTrees) {
+        const ele = processTree(tree.elements);
+        root.children && root.children.push(ele);
+      }
+      const param = (root.children || []).reduce(
+        (prev: number[], curr: StackElement) => {
+          prev[0] += curr.value;
+          prev[1] += curr.dumpCount;
+          return prev;
+        },
+        [0, 0],
+      );
+      root.value = param[0];
+      root.dumpCount = param[1];
+      stackTree.value = root;
     }
-    const param = (root.children || []).reduce(
-      (prev: number[], curr: StackElement) => {
-        prev[0] += curr.value;
-        prev[1] += curr.dumpCount;
-        return prev;
-      },
-      [0, 0],
-    );
-    root.value = param[0];
-    root.dumpCount = param[1];
-    stackTree.value = root;
+
     const width = (graph.value && graph.value.getBoundingClientRect().width) || 0;
     const w = width < 800 ? 802 : width;
     flameChart.value = flamegraph()
@@ -165,9 +171,9 @@ limitations under the License. -->
       obj[item.originId] = item;
     }
     const scale = d3.scaleLinear().domain([min.value, max.value]).range([1, 200]);
-
+    const condition = props.type === ComponentType ? "0" : "1";
     for (const item of copyArr) {
-      if (item.parentId === "1") {
+      if (item.parentId === condition) {
         const val = Number(scale(item.dumpCount).toFixed(4));
         res = item;
         res.value = val;
