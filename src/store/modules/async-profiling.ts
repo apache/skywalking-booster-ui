@@ -35,6 +35,7 @@ interface AsyncProfilingState {
   instances: Instance[];
   analyzeTrees: AsyncProfilerStackElement[];
   loadingTree: boolean;
+  loadingTasks: boolean;
 }
 
 export const asyncProfilingStore = defineStore({
@@ -46,6 +47,7 @@ export const asyncProfilingStore = defineStore({
     instances: [],
     analyzeTrees: [],
     loadingTree: false,
+    loadingTasks: false,
   }),
   actions: {
     setSelectedTask(task: Recordable<AsyncProfilingTask>) {
@@ -55,15 +57,15 @@ export const asyncProfilingStore = defineStore({
       this.analyzeTrees = tree;
     },
     async getTaskList() {
-      const { duration } = useAppStoreWithOut();
       const selectorStore = useSelectorStore();
+      this.loadingTasks = true;
       const res: AxiosResponse = await graphql.query("getAsyncTaskList").params({
         request: {
-          startTime: duration.start.getTime(),
-          endTime: duration.end.getTime(),
           serviceId: selectorStore.currentService.id,
+          limit: 10000,
         },
       });
+      this.loadingTasks = false;
       if (res.data.errors) {
         return res.data;
       }

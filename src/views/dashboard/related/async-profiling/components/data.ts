@@ -21,28 +21,20 @@ export const DurationOptions = [
   { value: "15", label: "15 min" },
 ];
 
-export const ProfilingEvents = [
-  { value: "CPU", label: "CPU" },
-  { value: "ALLOC", label: "ALLOC" },
-  { value: "WALL", label: "WALL" },
-  { value: "LOCK", label: "LOCK" },
-  { value: "CTIMER", label: "CTIMER" },
-  { value: "ITIMER", label: "ITIMER" },
-];
+export const ProfilingEvents = ["CPU", "ALLOC", "LOCK", "WALL", "CTIMER", "ITIMER"];
 
 export enum EventsMap {
   CPU = "EXECUTION_SAMPLE",
   WALL = "EXECUTION_SAMPLE",
   CTIMER = "EXECUTION_SAMPLE",
   ITIMER = "EXECUTION_SAMPLE",
-  LOCK = "JAVA_MONITOR_ENTER",
+  LOCK = "LOCK",
   ALLOC = "OBJECT_ALLOCATION_OUTSIDE_TLAB",
 }
 
 export enum JFREventType {
   EXECUTION_SAMPLE = "EXECUTION_SAMPLE",
-  JAVA_MONITOR_ENTER = "JAVA_MONITOR_ENTER",
-  THREAD_PARK = "THREAD_PARK",
+  LOCK = "LOCK",
   OBJECT_ALLOCATION_IN_NEW_TLAB = "OBJECT_ALLOCATION_IN_NEW_TLAB",
   OBJECT_ALLOCATION_OUTSIDE_TLAB = "OBJECT_ALLOCATION_OUTSIDE_TLAB",
   PROFILER_LIVE_OBJECT = "PROFILER_LIVE_OBJECT",

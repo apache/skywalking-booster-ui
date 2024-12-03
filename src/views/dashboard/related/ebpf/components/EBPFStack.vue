@@ -128,7 +128,7 @@ limitations under the License. -->
         return;
       }
       const { type } = ebpfStore.analyzeTrees[0];
-      if ([JFREventType.JAVA_MONITOR_ENTER, JFREventType.THREAD_PARK].includes(type)) {
+      if ([JFREventType.LOCK].includes(type)) {
         return `<div class="mb-5">Duration: ${item.dumpCount} ms</div>`;
       }
       if (type === JFREventType.EXECUTION_SAMPLE) {
