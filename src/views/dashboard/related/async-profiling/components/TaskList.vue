@@ -124,7 +124,7 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-  import { ref, onMounted, watch } from "vue";
+  import { ref, onMounted } from "vue";
   import { useI18n } from "vue-i18n";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
