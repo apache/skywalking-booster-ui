@@ -67,7 +67,7 @@ limitations under the License. -->
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("duration") }}:</span>
-          <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask.duration }}</span>
+          <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask.duration / 60 }}min</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("events") }}:</span>
@@ -189,13 +189,6 @@ limitations under the License. -->
       }
     }
   }
-
-  watch(
-    () => selectorStore.currentService,
-    () => {
-      fetchTasks();
-    },
-  );
 </script>
 <style lang="scss" scoped>
   .profile-task-list {

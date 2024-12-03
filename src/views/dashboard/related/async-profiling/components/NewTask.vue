@@ -142,7 +142,7 @@ limitations under the License. -->
     const params = {
       serviceId: selectorStore.currentService.id,
       serviceInstanceIds: serviceInstanceIds.value,
-      duration: Number(duration.value),
+      duration: Number(duration.value) * 60,
       events: asyncEvents.value,
       execArgs: execArgs.value,
     };
