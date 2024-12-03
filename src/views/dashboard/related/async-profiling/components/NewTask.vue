@@ -109,7 +109,7 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const { t } = useI18n();
   const serviceInstanceIds = ref<string[]>([]);
-  const asyncEvents = ref<string[]>([ProfilingEvents[0]]);
+  const asyncEvents = ref<string[]>([]);
   const duration = ref<string>(DurationOptions[0].value);
   const execArgs = ref<string>("");
   const loading = ref<boolean>(false);
