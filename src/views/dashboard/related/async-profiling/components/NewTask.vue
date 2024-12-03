@@ -35,7 +35,13 @@ limitations under the License. -->
     <div>
       <div class="label">{{ t("profilingEvents") }}</div>
       <el-checkbox-group v-model="asyncEvents" class="profile-input mb-5">
-        <el-checkbox v-for="event in ProfilingEvents" :label="event.label" :value="event.value" :key="event.value" />
+        <el-checkbox
+          v-for="event in ProfilingEvents"
+          :label="event"
+          :value="event"
+          :key="event"
+          :disabled="disableEvents(event)"
+        />
       </el-checkbox-group>
     </div>
     <div>
@@ -103,10 +109,11 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const { t } = useI18n();
   const serviceInstanceIds = ref<string[]>([]);
-  const asyncEvents = ref<string[]>([ProfilingEvents[0].value]);
+  const asyncEvents = ref<string[]>([ProfilingEvents[0]]);
   const duration = ref<string>(DurationOptions[0].value);
   const execArgs = ref<string>("");
   const loading = ref<boolean>(false);
+  const PartofEvents = [ProfilingEvents[3], ProfilingEvents[4], ProfilingEvents[5]];
 
   function changeDuration(val: string) {
     duration.value = val;
@@ -114,6 +121,21 @@ limitations under the License. -->
 
   function changeInstances(options: Option[]) {
     serviceInstanceIds.value = options.map((d: Option) => d.value);
+  }
+
+  function disableEvents(item: string) {
+    if (asyncEvents.value.includes(ProfilingEvents[0]) && PartofEvents.includes(item)) {
+      return true;
+    }
+    if (item === ProfilingEvents[0]) {
+      for (const event of PartofEvents) {
+        if (asyncEvents.value.includes(event)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   async function createTask() {

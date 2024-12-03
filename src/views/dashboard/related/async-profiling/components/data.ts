@@ -21,14 +21,7 @@ export const DurationOptions = [
   { value: "15", label: "15 min" },
 ];
 
-export const ProfilingEvents = [
-  { value: "CPU", label: "CPU" },
-  { value: "ALLOC", label: "ALLOC" },
-  { value: "WALL", label: "WALL" },
-  { value: "LOCK", label: "LOCK" },
-  { value: "CTIMER", label: "CTIMER" },
-  { value: "ITIMER", label: "ITIMER" },
-];
+export const ProfilingEvents = ["CPU", "ALLOC", "LOCK", "WALL", "CTIMER", "ITIMER"];
 
 export enum EventsMap {
   CPU = "EXECUTION_SAMPLE",
