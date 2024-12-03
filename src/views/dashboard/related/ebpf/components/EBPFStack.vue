@@ -52,7 +52,7 @@ limitations under the License. -->
     if (!ebpfStore.analyzeTrees.length) {
       return (stackTree.value = null);
     }
-    const root: StackElement = {
+    let root: StackElement = {
       parentId: "0",
       originId: "1",
       name: "Virtual Root",
@@ -67,8 +67,9 @@ limitations under the License. -->
     };
     countRange();
     if (props.type === ComponentType) {
-      const root = processTree(ebpfStore.analyzeTrees[0].elements);
-      stackTree.value = root;
+      const elements = processTree(ebpfStore.analyzeTrees[0].elements);
+      stackTree.value = elements;
+      root = { ...root, ...elements };
     } else {
       for (const tree of ebpfStore.analyzeTrees) {
         const ele = processTree(tree.elements);
