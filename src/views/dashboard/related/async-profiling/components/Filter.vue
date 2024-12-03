@@ -43,14 +43,25 @@ limitations under the License. -->
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
   import type { Instance } from "@/types/selector";
   import type { Option } from "@/types/app";
-  import { EventsMap } from "./data";
+  import { EventsMap, ProfilingEvents, JFREventType } from "./data";
 
   const { t } = useI18n();
   const asyncProfilingStore = useAsyncProfilingStore();
   const serviceInstanceIds = ref<string[]>([]);
   const selectedEventType = ref<string>("");
   const eventTypes = computed(() =>
-    (asyncProfilingStore.selectedTask.events ?? []).map((d: string) => ({ label: d, value: d })),
+    (asyncProfilingStore.selectedTask.events ?? [])
+      .map((d: string) => {
+        if (d === ProfilingEvents[1]) {
+          return [
+            { label: JFREventType.OBJECT_ALLOCATION_IN_NEW_TLAB, value: JFREventType.OBJECT_ALLOCATION_IN_NEW_TLAB },
+            { label: JFREventType.OBJECT_ALLOCATION_OUTSIDE_TLAB, value: JFREventType.OBJECT_ALLOCATION_OUTSIDE_TLAB },
+          ];
+        }
+
+        return { label: d, value: d };
+      })
+      .flat(),
   );
   const instances = computed(() =>
     asyncProfilingStore.instances.filter((d: Instance) =>
@@ -98,7 +109,7 @@ limitations under the License. -->
   }
 
   .filter-events {
-    width: 200px;
+    width: 300px;
     margin-right: 10px;
   }
 </style>
