@@ -100,7 +100,6 @@ limitations under the License. -->
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { ElMessage } from "element-plus";
-  import type { Option } from "@/types/app";
   import { DurationOptions, ProfilingEvents } from "./data";
 
   /* global defineEmits */
