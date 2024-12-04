@@ -263,6 +263,10 @@ div:has(> a.menu-title) {
   text-align: left !important;
 }
 
+.el-input--small .el-input__inner {
+  --el-input-inner-height: calc(var(--el-input-height, 24px));
+}
+
 html {
   &::view-transition-old(root),
   &::view-transition-new(root) {
