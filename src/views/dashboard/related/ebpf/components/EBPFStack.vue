@@ -136,7 +136,7 @@ limitations under the License. -->
       }
       const { type } = ebpfStore.analyzeTrees[0];
       if ([JFREventType.LOCK].includes(type)) {
-        return `<div class="mb-5">Duration: ${item.dumpCount} ms</div>`;
+        return `<div class="mb-5">Duration: ${item.dumpCount} ns</div>`;
       }
       if (type === JFREventType.EXECUTION_SAMPLE) {
         return `<div class="mb-5">Count: ${item.dumpCount}</div>`;
