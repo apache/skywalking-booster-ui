@@ -338,7 +338,10 @@ export const topologyStore = defineStore({
       }
       const res = await this.getEndpointTopology(endpointIds);
       if (depth > 1) {
-        const ids = res.nodes.map((item: Node) => item.id).filter((d: string) => !endpointIds.includes(d));
+        const userNodeName = "User";
+        const ids = res.nodes
+          .filter((d: Node) => !endpointIds.includes(d.id) && d.name !== userNodeName)
+          .map((item: Node) => item.id);
         if (!ids.length) {
           this.setTopology(res);
           return;
@@ -346,8 +349,8 @@ export const topologyStore = defineStore({
         const json = await this.getEndpointTopology(ids);
         if (depth > 2) {
           const pods = json.nodes
-            .map((item: Node) => item.id)
-            .filter((d: string) => ![...ids, ...endpointIds].includes(d));
+            .filter((d: Node) => ![...ids, ...endpointIds].includes(d.id) && d.name != userNodeName)
+            .map((item: Node) => item.id);
           if (!pods.length) {
             const nodes = [...res.nodes, ...json.nodes];
             const calls = [...res.calls, ...json.calls];
@@ -357,8 +360,8 @@ export const topologyStore = defineStore({
           const topo = await this.getEndpointTopology(pods);
           if (depth > 3) {
             const endpoints = topo.nodes
-              .map((item: Node) => item.id)
-              .filter((d: string) => ![...ids, ...pods, ...endpointIds].includes(d));
+              .filter((d: Node) => ![...ids, ...pods, ...endpointIds].includes(d.id) && d.name != userNodeName)
+              .map((item: Node) => item.id);
             if (!endpoints.length) {
               const nodes = [...res.nodes, ...json.nodes, ...topo.nodes];
               const calls = [...res.calls, ...json.calls, ...topo.calls];
@@ -368,8 +371,11 @@ export const topologyStore = defineStore({
             const data = await this.getEndpointTopology(endpoints);
             if (depth > 4) {
               const nodeIds = data.nodes
-                .map((item: Node) => item.id)
-                .filter((d: string) => ![...endpoints, ...ids, ...pods, ...endpointIds].includes(d));
+                .filter(
+                  (d: Node) =>
+                    ![...endpoints, ...ids, ...pods, ...endpointIds].includes(d.id) && d.name != userNodeName,
+                )
+                .map((item: Node) => item.id);
               if (!nodeIds.length) {
                 const nodes = [...res.nodes, ...json.nodes, ...topo.nodes, ...data.nodes];
                 const calls = [...res.calls, ...json.calls, ...topo.calls, ...data.calls];
