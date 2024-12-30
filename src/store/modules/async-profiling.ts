@@ -97,7 +97,7 @@ export const asyncProfilingStore = defineStore({
       });
       if (!res.data.errors) {
         this.instances = (res.data.data.pods || []).map((d: Instance) => {
-          d.value = d.id;
+          d.value = d.id || "";
           return d;
         });
       }
