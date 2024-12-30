@@ -41,7 +41,7 @@ limitations under the License. -->
                 {{ dateFormat(i.createTime) }}
               </span>
               <span class="mr-10 sm">
-                {{ dateFormat(i.createTime + i.duration * 60 * 1000) }}
+                {{ dateFormat(i.createTime + i.duration * 1000) }}
               </span>
             </div>
           </td>
