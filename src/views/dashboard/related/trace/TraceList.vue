@@ -46,7 +46,7 @@ limitations under the License. -->
             :class="{
               'trace-success': !i.isError,
               'trace-error': i.isError,
-              selected: selectedKey == i.key,
+              selected: selectedKey === i.key,
             }"
           >
             <div

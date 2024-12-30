@@ -21,9 +21,9 @@ limitations under the License. -->
     <div class="item">
       <SpanTree @loading="loadTrees" @displayMode="setDisplayMode" />
       <div class="thread-stack">
-        <div id="graph-stack" ref="graph" v-show="displayMode == 'flame'" />
+        <div id="graph-stack" ref="graph" v-show="displayMode === 'flame'" />
         <StackTable
-          v-show="displayMode == 'tree'"
+          v-show="displayMode === 'tree'"
           v-if="profileStore.analyzeTrees.length"
           :data="profileStore.analyzeTrees"
           :highlightTop="profileStore.highlightTop"

@@ -296,7 +296,7 @@ export default class TraceMap {
       .attr("cursor", "pointer")
       .on("click", (event: any, d: Recordable) => {
         event.stopPropagation();
-        if (d.data.children.length == 0) return;
+        if (d.data.children.length === 0) return;
         click(d);
       });
     const nodeExit = node
