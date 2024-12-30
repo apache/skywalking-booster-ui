@@ -17,7 +17,7 @@
 class Vec2 extends Float32Array {
   constructor(v?: unknown, y?: unknown) {
     super(2);
-    if (v instanceof Vec2 || v instanceof Float32Array || (v instanceof Array && v.length == 2)) {
+    if (v instanceof Vec2 || v instanceof Float32Array || (v instanceof Array && v.length === 2)) {
       this[0] = v[0];
       this[1] = v[1];
     } else if (typeof v === "number" && typeof y === "number") {
@@ -104,7 +104,7 @@ class Vec2 extends Float32Array {
   }
   norm(out?: number[] | Vec2): number[] | Vec2 | undefined {
     const mag = Math.sqrt(this[0] * this[0] + this[1] * this[1]);
-    if (mag == 0) return this;
+    if (mag === 0) return this;
     out = out || this;
     out[0] = this[0] / mag;
     out[1] = this[1] / mag;

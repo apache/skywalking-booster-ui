@@ -349,7 +349,7 @@ export const topologyStore = defineStore({
         const json = await this.getEndpointTopology(ids);
         if (depth > 2) {
           const pods = json.nodes
-            .filter((d: Node) => ![...ids, ...endpointIds].includes(d.id) && d.name != userNodeName)
+            .filter((d: Node) => ![...ids, ...endpointIds].includes(d.id) && d.name !== userNodeName)
             .map((item: Node) => item.id);
           if (!pods.length) {
             const nodes = [...res.nodes, ...json.nodes];
@@ -360,7 +360,7 @@ export const topologyStore = defineStore({
           const topo = await this.getEndpointTopology(pods);
           if (depth > 3) {
             const endpoints = topo.nodes
-              .filter((d: Node) => ![...ids, ...pods, ...endpointIds].includes(d.id) && d.name != userNodeName)
+              .filter((d: Node) => ![...ids, ...pods, ...endpointIds].includes(d.id) && d.name !== userNodeName)
               .map((item: Node) => item.id);
             if (!endpoints.length) {
               const nodes = [...res.nodes, ...json.nodes, ...topo.nodes];
@@ -373,7 +373,7 @@ export const topologyStore = defineStore({
               const nodeIds = data.nodes
                 .filter(
                   (d: Node) =>
-                    ![...endpoints, ...ids, ...pods, ...endpointIds].includes(d.id) && d.name != userNodeName,
+                    ![...endpoints, ...ids, ...pods, ...endpointIds].includes(d.id) && d.name !== userNodeName,
                 )
                 .map((item: Node) => item.id);
               if (!nodeIds.length) {

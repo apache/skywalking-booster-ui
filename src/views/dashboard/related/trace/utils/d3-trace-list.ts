@@ -321,7 +321,7 @@ export default class ListGraph {
       )
       .on("click", (event: any, d: Recordable) => {
         event.stopPropagation();
-        if (d.data.children.length == 0) return;
+        if (d.data.children.length === 0) return;
         this.click(d, this);
       });
     nodeUpdate

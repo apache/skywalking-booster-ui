@@ -91,7 +91,7 @@ class Hex extends Int16Array {
   }
 
   xyz(x: number, y: number, z: number | null = null): Hex {
-    if (z == null) z = -x - y;
+    if (z === null) z = -x - y;
     if (x + y + z != 0) {
       console.log("Bad Axial Coordinate : : q %d r %d s %d", x, y, z);
     }
