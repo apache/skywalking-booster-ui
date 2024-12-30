@@ -96,7 +96,7 @@ export const asyncProfilingStore = defineStore({
         duration: useAppStoreWithOut().durationTime,
       });
       if (!res.data.errors) {
-        this.instances = (res.data.data.pods || []).map((d) => {
+        this.instances = (res.data.data.pods || []).map((d: Instance) => {
           d.value = d.id;
           return d;
         });
