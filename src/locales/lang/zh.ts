@@ -393,5 +393,6 @@ const msg = {
   profilingEvents: "异步分析事件",
   execArgs: "String任务扩展",
   instances: "实例",
+  snapshot: "快照",
 };
 export default msg;

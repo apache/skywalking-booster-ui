@@ -75,6 +75,9 @@ limitations under the License. -->
           </ul>
         </div>
       </span>
+      <span v-else-if="item.label === 'snapshot'">
+        <Snapshot :snapshot="currentDetail.snapshot" />
+      </span>
       <span v-else>{{ currentDetail[item.label] }}</span>
     </div>
   </el-dialog>
@@ -117,6 +120,7 @@ limitations under the License. -->
   import { useAlarmStore } from "@/store/modules/alarm";
   import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys } from "./data";
   import { dateFormat } from "@/utils/dateFormat";
+  import Snapshot from "./components/Snapshot.vue";
 
   const { t } = useI18n();
   const alarmStore = useAlarmStore();

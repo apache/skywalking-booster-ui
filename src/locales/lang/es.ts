@@ -395,5 +395,6 @@ const msg = {
   profilingEvents: "Async Profiling Events",
   execArgs: "Exec Args",
   instances: "Instances",
+  snapshot: "Snapshot",
 };
 export default msg;
