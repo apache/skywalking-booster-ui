@@ -13,14 +13,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="snapshot flex-v"> Line Charts </div>
+  <div class="snapshot flex-v">
+    <LineChart />
+  </div>
 </template>
 <script lang="ts" setup>
+  import LineChart from "@/views/dashboard/graphs/Line.vue";
+  import { useSnapshot } from "@/hooks/useSnapshot";
+
   /*global defineProps */
   const props = defineProps({
     snapshot: { type: Object, default: () => {} },
   });
 
-  console.log(props.snapshot);
+  const { processResults } = useSnapshot(props.snapshot.metrics);
+  const data = processResults();
 </script>
 <style lang="scss" scoped></style>

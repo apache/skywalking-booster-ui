@@ -141,6 +141,7 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
         }
       }
     }
+    console.log(source);
     return { source, tips, typesOfMQE };
   }
   async function fetchMetrics(configArr: any) {
