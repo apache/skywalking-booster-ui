@@ -19,7 +19,7 @@ export function useSnapshot(metrics: { name: string; results: any[] }[]) {
   function processResults() {
     const sources = metrics.map((metric: { name: string; results: any[] }) => {
       const values = metric.results.map((r: { values: { value: string }[] }) =>
-        r.values.map((v: { value: string }) => v.value),
+        r.values.map((v: { value: string }) => Number(v.value)),
       );
 
       return { [metric.name]: values[0] };

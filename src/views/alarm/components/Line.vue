@@ -37,11 +37,17 @@ limitations under the License. -->
   const appStore = useAppStoreWithOut();
   const option = computed(() => getOption());
   function getOption() {
-    const keys = Object.keys(props.data || {}).filter((i: any) => Array.isArray(props.data[i]) && props.data[i].length);
-    const series = keys.map((i: any) => {
-      const serie: any = {
-        data: props.data[i].map((item: any, itemIndex: number) => [props.intervalTime[itemIndex], item]),
-        name: i,
+    const keys = Object.keys(props.data || {}).filter(
+      (i: string) => Array.isArray(props.data[i]) && props.data[i].length,
+    );
+    const series = [];
+    const grid = [];
+    const xAxis = [];
+    const yAxis = [];
+    for (const key of keys) {
+      series.push({
+        data: props.data[key].map((item: any, itemIndex: number) => [props.intervalTime[itemIndex], item]),
+        name: key,
         type: "line",
         symbol: "circle",
         symbolSize: 4,
@@ -49,9 +55,38 @@ limitations under the License. -->
           width: 2,
           type: "solid",
         },
-      };
-      return serie;
-    });
+      });
+      grid.push({
+        top: 35,
+        left: 0,
+        right: 10,
+        bottom: 5,
+        containLabel: true,
+      });
+      xAxis.push({
+        type: "category",
+        show: true,
+        axisTick: {
+          lineStyle: { color: "#c1c5ca41" },
+          alignWithLabel: true,
+        },
+        splitLine: { show: false },
+        axisLine: { lineStyle: { color: "rgba(0,0,0,0)" } },
+        axisLabel: { color: "#9da5b2", fontSize: "11" },
+      });
+      yAxis.push({
+        show: true,
+        type: "value",
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: { lineStyle: { color: "#c1c5ca41", type: "dashed" } },
+        axisLabel: {
+          color: "#9da5b2",
+          fontSize: "11",
+          show: true,
+        },
+      });
+    }
     const { chartColors } = useLegendProcess();
     const color: string[] = chartColors();
     const tooltip = {
@@ -65,14 +100,19 @@ limitations under the License. -->
       enterable: true,
       confine: true,
       extraCssText: "max-height:85%; overflow: auto;",
+      axisPointer: {
+        animation: false,
+      },
     };
 
     return {
       color,
       tooltip,
+      axisPointer: {
+        link: { xAxisIndex: "all" },
+      },
       legend: {
         type: "scroll",
-        show: true,
         icon: "circle",
         top: 0,
         left: 0,
@@ -81,36 +121,9 @@ limitations under the License. -->
           color: appStore.theme === Themes.Dark ? "#fff" : "#333",
         },
       },
-      grid: {
-        top: 35,
-        left: 0,
-        right: 10,
-        bottom: 5,
-        containLabel: true,
-      },
-      xAxis: {
-        type: "category",
-        show: true,
-        axisTick: {
-          lineStyle: { color: "#c1c5ca41" },
-          alignWithLabel: true,
-        },
-        splitLine: { show: false },
-        axisLine: { lineStyle: { color: "rgba(0,0,0,0)" } },
-        axisLabel: { color: "#9da5b2", fontSize: "11" },
-      },
-      yAxis: {
-        show: true,
-        type: "value",
-        axisLine: { show: false },
-        axisTick: { show: false },
-        splitLine: { lineStyle: { color: "#c1c5ca41", type: "dashed" } },
-        axisLabel: {
-          color: "#9da5b2",
-          fontSize: "11",
-          show: true,
-        },
-      },
+      grid,
+      xAxis,
+      yAxis,
       series,
     };
   }
