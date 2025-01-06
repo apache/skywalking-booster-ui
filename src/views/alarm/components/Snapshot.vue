@@ -13,15 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="snapshot flex-v">
-    <LineChart :intervalTime="appStore.intervalTime" :data="result" />
+  <div style="width: 800px; height: 600px">
+    <LineCharts :intervalTime="appStore.intervalTime" :data="result" />
   </div>
 </template>
 <script lang="ts" setup>
   import { computed } from "vue";
   import { useSnapshot } from "@/hooks/useSnapshot";
   import { useAppStoreWithOut } from "@/store/modules/app";
-  import LineChart from "./Line.vue";
+  import LineCharts from "./Line.vue";
 
   /*global defineProps */
   const props = defineProps({
@@ -33,9 +33,3 @@ limitations under the License. -->
     return processResults().reduce((acc, obj) => ({ ...acc, ...obj }), {});
   });
 </script>
-<style lang="scss" scoped>
-  .snapshot {
-    width: 800px;
-    height: 600px;
-  }
-</style>
