@@ -29,33 +29,21 @@ limitations under the License. -->
   const emits = defineEmits(["click"]);
   const props = defineProps({
     data: {
-      type: Object as PropType<{ [key: string]: number[] }>,
-      default: () => ({}),
+      type: Array as PropType<any>,
+      default: () => [],
     },
     intervalTime: { type: Array as PropType<string[]>, default: () => [] },
   });
   const appStore = useAppStoreWithOut();
   const option = computed(() => getOption());
   function getOption() {
-    const keys = Object.keys(props.data || {}).filter(
-      (i: string) => Array.isArray(props.data[i]) && props.data[i].length,
-    );
+    const { chartColors } = useLegendProcess();
+    const color: string[] = chartColors();
     const series = [];
     const grid = [];
     const xAxis = [];
     const yAxis = [];
-    for (const key of keys) {
-      series.push({
-        data: props.data[key].map((item: any, itemIndex: number) => [props.intervalTime[itemIndex], item]),
-        name: key,
-        type: "line",
-        symbol: "circle",
-        symbolSize: 4,
-        lineStyle: {
-          width: 2,
-          type: "solid",
-        },
-      });
+    for (const metric of props.data) {
       grid.push({
         top: 35,
         left: 0,
@@ -86,9 +74,20 @@ limitations under the License. -->
           show: true,
         },
       });
+      for (const item of metric.values) {
+        series.push({
+          data: item.values.map((item: any, itemIndex: number) => [props.intervalTime[itemIndex], item]),
+          name: metric.name,
+          type: "line",
+          symbol: "circle",
+          symbolSize: 4,
+          lineStyle: {
+            width: 2,
+            type: "solid",
+          },
+        });
+      }
     }
-    const { chartColors } = useLegendProcess();
-    const color: string[] = chartColors();
     const tooltip = {
       trigger: "axis",
       backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",

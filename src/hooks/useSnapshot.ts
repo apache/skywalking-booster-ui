@@ -18,11 +18,18 @@
 export function useSnapshot(metrics: { name: string; results: any[] }[]) {
   function processResults() {
     const sources = metrics.map((metric: { name: string; results: any[] }) => {
-      const values = metric.results.map((r: { values: { value: string }[] }) =>
-        r.values.map((v: { value: string }) => Number(v.value)),
+      const values = metric.results.map(
+        (r: { values: { value: string }[]; metric: { labels: { key: string; value: string }[] } }) => {
+          const arr = r.values.map((v: { value: string }) => Number(v.value));
+          if (!r.metric.labels.length) {
+            return { values: arr };
+          }
+          const label = r.metric.labels[0];
+          return { name: `${label.key}=${label.value}`, values: arr };
+        },
       );
 
-      return { [metric.name]: values[0] };
+      return { name: metric.name, values };
     });
     return sources;
   }
