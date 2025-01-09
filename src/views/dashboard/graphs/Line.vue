@@ -69,10 +69,12 @@ limitations under the License. -->
   function getOption() {
     const { showEchartsLegend, isRight, chartColors } = useLegendProcess(props.config.legend);
     setRight.value = isRight;
-    const keys = Object.keys(props.data || {}).filter((i: any) => Array.isArray(props.data[i]) && props.data[i].length);
-    const temp = keys.map((i: any) => {
+    const keys = Object.keys(props.data || {}).filter(
+      (i: string) => Array.isArray(props.data[i]) && props.data[i].length,
+    );
+    const temp = keys.map((i: string) => {
       const serie: any = {
-        data: props.data[i].map((item: any, itemIndex: number) => [props.intervalTime[itemIndex], item]),
+        data: props.data[i].map((item: number, itemIndex: number) => [props.intervalTime[itemIndex], item]),
         name: i,
         type: "line",
         symbol: "circle",

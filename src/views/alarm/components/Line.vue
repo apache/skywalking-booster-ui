@@ -76,7 +76,7 @@ limitations under the License. -->
       });
       for (const item of metric.values) {
         series.push({
-          data: item.values.map((item: any, itemIndex: number) => [props.intervalTime[itemIndex], item]),
+          data: item.values.map((item: number, itemIndex: number) => [props.intervalTime[itemIndex], item]),
           name: metric.name,
           type: "line",
           symbol: "circle",
