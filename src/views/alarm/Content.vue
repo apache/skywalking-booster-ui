@@ -22,15 +22,30 @@ limitations under the License. -->
         <div class="message mb-5 b">
           {{ i.message }}
         </div>
-        <div
-          class="timeline-table-i-scope mr-10 l sm"
-          :class="{
-            blue: i.scope === 'Service',
-            green: i.scope === 'Endpoint',
-            yellow: i.scope === 'ServiceInstance',
-          }"
-        >
-          {{ t(i.scope.toLowerCase()) }}
+        <div class="flex-h">
+          <div
+            class="timeline-table-i-scope"
+            :class="{
+              blue: i.scope === 'Service',
+              green: i.scope === 'Endpoint',
+              yellow: i.scope === 'ServiceInstance',
+            }"
+          >
+            {{ t(i.scope.toLowerCase()) }}
+          </div>
+          <div class="mini-chart">
+            <Line
+              :data="handleMetrics(i.snapshot)"
+              :intervalTime="appStore.intervalTime"
+              :config="{
+                showXAxis: false,
+                showYAxis: false,
+                smallTips: false,
+                showlabels: false,
+                noTooltips: true,
+              }"
+            />
+          </div>
         </div>
         <div class="grey sm show-xs">
           {{ dateFormat(parseInt(i.startTime)) }}
@@ -118,12 +133,16 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import type { Alarm, Event } from "@/types/alarm";
   import { useAlarmStore } from "@/store/modules/alarm";
+  import { useAppStoreWithOut } from "@/store/modules/app";
   import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys } from "./data";
   import { dateFormat } from "@/utils/dateFormat";
+  import { useSnapshot } from "@/hooks/useSnapshot";
   import Snapshot from "./components/Snapshot.vue";
+  import Line from "@/views/dashboard/graphs/Line.vue";
 
   const { t } = useI18n();
   const alarmStore = useAlarmStore();
+  const appStore = useAppStoreWithOut();
   const isShowDetails = ref<boolean>(false);
   const showEventDetails = ref<boolean>(false);
   const currentDetail = ref<Alarm | any>({});
@@ -143,6 +162,12 @@ limitations under the License. -->
   function viewEventDetail(event: Event) {
     currentEvent.value = event;
     showEventDetails.value = true;
+  }
+
+  function handleMetrics(snapshot: any) {
+    const { getMetricsMap } = useSnapshot(snapshot.metrics);
+
+    return getMetricsMap();
   }
 </script>
 <style lang="scss" scoped>
@@ -190,11 +215,10 @@ limitations under the License. -->
   }
 
   .timeline-table-i-scope {
-    display: inline-block;
-    padding: 0 8px;
+    padding: 0 5px;
     border: 1px solid;
-    margin-top: -1px;
-    border-radius: 4px;
+    border-radius: 3px;
+    display: inline-block;
   }
 
   .timeline-item {
@@ -250,5 +274,10 @@ limitations under the License. -->
         overflow: hidden;
       }
     }
+  }
+
+  .mini-chart {
+    height: 20px;
+    width: 400px;
   }
 </style>

@@ -111,6 +111,7 @@ export interface LineConfig extends AreaConfig {
   showYAxis?: boolean;
   smallTips?: boolean;
   showlabels?: boolean;
+  noTooltips?: boolean;
 }
 
 export interface AreaConfig {

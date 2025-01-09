@@ -34,7 +34,24 @@ export function useSnapshot(metrics: { name: string; results: any[] }[]) {
     return sources;
   }
 
+  function getMetricsMap() {
+    const metricsMap: { [key: string]: number[] } = {};
+    for (const metric of metrics) {
+      for (const item of metric.results) {
+        const arr = item.values.map((v: { value: string }) => Number(v.value));
+        if (!item.metric.labels.length) {
+          metricsMap[metric.name] = arr;
+        } else {
+          const label = item.metric.labels[0];
+          metricsMap[`${label.key}=${label.value}`] = arr;
+        }
+      }
+    }
+    return metricsMap;
+  }
+
   return {
     processResults,
+    getMetricsMap,
   };
 }

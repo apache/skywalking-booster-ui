@@ -60,6 +60,7 @@ limitations under the License. -->
         showYAxis: true,
         smallTips: false,
         showlabels: true,
+        noTooltips: false,
       }),
     },
   });
@@ -97,6 +98,7 @@ limitations under the License. -->
     const color: string[] = chartColors();
     const tooltip = {
       trigger: "axis",
+      show: !props.config.noTooltips,
       backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
       borderColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
       textStyle: {
@@ -108,10 +110,10 @@ limitations under the License. -->
       extraCssText: "max-height:85%; overflow: auto;",
     };
     const tips = {
+      show: !props.config.noTooltips,
       formatter(params: any) {
         return `${params[0].value[1]}`;
       },
-      confine: true,
       extraCssText: `height: 20px; padding:0 2px;`,
       trigger: "axis",
       backgroundColor: appStore.theme === Themes.Dark ? "#666" : "#eee",
