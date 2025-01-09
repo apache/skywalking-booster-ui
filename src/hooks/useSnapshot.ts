@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import type { MetricsResults } from "@/types/dashboard";
 
-export function useSnapshot(metrics: { name: string; results: any[] }[]) {
+export function useSnapshot(metrics: { name: string; results: MetricsResults[] }[]) {
   function processResults() {
-    const sources = metrics.map((metric: { name: string; results: any[] }) => {
+    const sources = metrics.map((metric: { name: string; results: MetricsResults[] }) => {
       const values = metric.results.map(
         (r: { values: { value: string }[]; metric: { labels: { key: string; value: string }[] } }) => {
           const arr = r.values.map((v: { value: string }) => Number(v.value));

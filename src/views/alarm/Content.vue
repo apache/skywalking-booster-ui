@@ -139,6 +139,7 @@ limitations under the License. -->
   import { useSnapshot } from "@/hooks/useSnapshot";
   import Snapshot from "./components/Snapshot.vue";
   import Line from "@/views/dashboard/graphs/Line.vue";
+  import type { MetricsResults } from "@/types/dashboard";
 
   const { t } = useI18n();
   const alarmStore = useAlarmStore();
@@ -164,7 +165,7 @@ limitations under the License. -->
     showEventDetails.value = true;
   }
 
-  function handleMetrics(snapshot: any) {
+  function handleMetrics(snapshot: { metrics: { name: string; results: MetricsResults[] }[] }) {
     const { getMetricsMap } = useSnapshot(snapshot.metrics);
 
     return getMetricsMap();

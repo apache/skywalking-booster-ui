@@ -198,3 +198,17 @@ export type LegendOptions = {
   toTheRight: boolean;
   width: number;
 };
+export type MetricsResults = {
+  metric: { labels: MetricLabel[] };
+  values: MetricValue[];
+};
+type MetricLabel = {
+  key: string;
+  value: string;
+};
+type MetricValue = {
+  name: string;
+  value: string;
+  owner: null | string;
+  refId: null | string;
+};
