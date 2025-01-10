@@ -114,3 +114,169 @@ export const LightChartColors = [
 ];
 
 export const MaxQueryLength = 120;
+
+export const TestJson = {
+  snapshot: {
+    expression: "sum(service_resp_time > 20) >= 1",
+    metrics: [
+      {
+        name: "service_resp_time",
+        results: [
+          {
+            metric: {
+              labels: [{ key: "name", value: "1" }],
+            },
+            values: [
+              {
+                id: "202501090857",
+                owner: null,
+                value: "30",
+                traceID: null,
+              },
+              {
+                id: "202501090858",
+                owner: null,
+                value: "29",
+                traceID: null,
+              },
+              {
+                id: "202501090859",
+                owner: null,
+                value: "29",
+                traceID: null,
+              },
+              {
+                id: "202501090900",
+                owner: null,
+                value: "155",
+                traceID: null,
+              },
+              {
+                id: "202501090901",
+                owner: null,
+                value: "35",
+                traceID: null,
+              },
+            ],
+          },
+          {
+            metric: {
+              labels: [{ key: "name", value: "2" }],
+            },
+            values: [
+              {
+                id: "202501090857",
+                owner: null,
+                value: "20",
+                traceID: null,
+              },
+              {
+                id: "202501090858",
+                owner: null,
+                value: "19",
+                traceID: null,
+              },
+              {
+                id: "202501090859",
+                owner: null,
+                value: "39",
+                traceID: null,
+              },
+              {
+                id: "202501090900",
+                owner: null,
+                value: "135",
+                traceID: null,
+              },
+              {
+                id: "202501090901",
+                owner: null,
+                value: "55",
+                traceID: null,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        name: "service_cpm",
+        results: [
+          {
+            metric: {
+              labels: [{ key: "name", value: "service_cpm1" }],
+            },
+            values: [
+              {
+                id: "202501090857",
+                owner: null,
+                value: "30",
+                traceID: null,
+              },
+              {
+                id: "202501090858",
+                owner: null,
+                value: "29",
+                traceID: null,
+              },
+              {
+                id: "202501090859",
+                owner: null,
+                value: "29",
+                traceID: null,
+              },
+              {
+                id: "202501090900",
+                owner: null,
+                value: "155",
+                traceID: null,
+              },
+              {
+                id: "202501090901",
+                owner: null,
+                value: "35",
+                traceID: null,
+              },
+            ],
+          },
+          {
+            metric: {
+              labels: [{ key: "name", value: "service_cpm2" }],
+            },
+            values: [
+              {
+                id: "202501090857",
+                owner: null,
+                value: "20",
+                traceID: null,
+              },
+              {
+                id: "202501090858",
+                owner: null,
+                value: "19",
+                traceID: null,
+              },
+              {
+                id: "202501090859",
+                owner: null,
+                value: "39",
+                traceID: null,
+              },
+              {
+                id: "202501090900",
+                owner: null,
+                value: "135",
+                traceID: null,
+              },
+              {
+                id: "202501090901",
+                owner: null,
+                value: "55",
+                traceID: null,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};

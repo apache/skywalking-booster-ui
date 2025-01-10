@@ -43,13 +43,14 @@ limitations under the License. -->
     const grid = [];
     const xAxis = [];
     const yAxis = [];
-    for (const metric of props.data) {
+    for (const [index, metric] of props.data.entries()) {
       grid.push({
-        top: 35,
+        top: index ? (600 / props.data.length) * index + 30 : 40,
         left: 0,
         right: 10,
         bottom: 5,
         containLabel: true,
+        height: 600 / props.data.length - 30,
       });
       xAxis.push({
         type: "category",
@@ -61,9 +62,9 @@ limitations under the License. -->
         splitLine: { show: false },
         axisLine: { lineStyle: { color: "rgba(0,0,0,0)" } },
         axisLabel: { color: "#9da5b2", fontSize: "11" },
+        gridIndex: index,
       });
       yAxis.push({
-        show: true,
         type: "value",
         axisLine: { show: false },
         axisTick: { show: false },
@@ -73,6 +74,7 @@ limitations under the License. -->
           fontSize: "11",
           show: true,
         },
+        gridIndex: index,
       });
       for (const item of metric.values) {
         series.push({
@@ -81,6 +83,8 @@ limitations under the License. -->
           type: "line",
           symbol: "circle",
           symbolSize: 4,
+          xAxisIndex: index,
+          yAxisIndex: index,
           lineStyle: {
             width: 2,
             type: "solid",
