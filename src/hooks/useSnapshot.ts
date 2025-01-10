@@ -17,7 +17,7 @@
 import type { MetricsResults } from "@/types/dashboard";
 import { TestJson } from "./data";
 
-export function useSnapshot(params: { name: string; results: MetricsResults[] }[]) {
+export function useSnapshot(p: { name: string; results: MetricsResults[] }[]) {
   const { metrics } = TestJson.snapshot as any;
   function processResults() {
     const sources = metrics.map((metric: { name: string; results: MetricsResults[] }) => {
@@ -48,8 +48,10 @@ export function useSnapshot(params: { name: string; results: MetricsResults[] }[
         if (!item.metric.labels.length) {
           metricsMap[metric.name] = arr;
         } else {
-          const label = item.metric.labels[0];
-          metricsMap[`${label.key}=${label.value}`] = arr;
+          const name = item.metric.labels
+            .map((label: { key: string; value: string }) => `${label.key}=${label.value}`)
+            .join(",");
+          metricsMap[name] = arr;
         }
       }
     }

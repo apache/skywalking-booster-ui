@@ -43,6 +43,7 @@ limitations under the License. -->
                 smallTips: false,
                 showlabels: false,
                 noTooltips: true,
+                showLegend: false,
               }"
             />
           </div>
@@ -167,8 +168,10 @@ limitations under the License. -->
 
   function handleMetrics(snapshot: { metrics: { name: string; results: MetricsResults[] }[] }) {
     const { getMetricsMap } = useSnapshot(snapshot.metrics);
+    const metrics = getMetricsMap();
+    const keys = Object.keys(metrics);
 
-    return getMetricsMap();
+    return { [keys[0]]: metrics[keys[0]] };
   }
 </script>
 <style lang="scss" scoped>
@@ -253,9 +256,6 @@ limitations under the License. -->
   }
 
   .alarm-detail {
-    max-height: 600px;
-    overflow: auto;
-
     ul {
       min-height: 100px;
       overflow: auto;

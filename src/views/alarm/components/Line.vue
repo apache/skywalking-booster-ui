@@ -45,12 +45,12 @@ limitations under the License. -->
     const yAxis = [];
     for (const [index, metric] of props.data.entries()) {
       grid.push({
-        top: index ? (600 / props.data.length) * index + 30 : 40,
+        top: 300 * index + 30,
         left: 0,
         right: 10,
         bottom: 5,
         containLabel: true,
-        height: 600 / props.data.length - 30,
+        height: 260,
       });
       xAxis.push({
         type: "category",

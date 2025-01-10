@@ -112,6 +112,7 @@ export interface LineConfig extends AreaConfig {
   smallTips?: boolean;
   showlabels?: boolean;
   noTooltips?: boolean;
+  showLegend?: boolean;
 }
 
 export interface AreaConfig {

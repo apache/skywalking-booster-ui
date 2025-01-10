@@ -61,6 +61,7 @@ limitations under the License. -->
         smallTips: false,
         showlabels: true,
         noTooltips: false,
+        showLegend: true,
       }),
     },
   });
@@ -129,7 +130,7 @@ limitations under the License. -->
       tooltip: props.config.smallTips ? tips : tooltip,
       legend: {
         type: "scroll",
-        show: showEchartsLegend(keys),
+        show: props.config.showLegend ? showEchartsLegend(keys) : false,
         icon: "circle",
         top: 0,
         left: 0,
