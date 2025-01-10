@@ -124,7 +124,7 @@ export const TestJson = {
         results: [
           {
             metric: {
-              labels: [{ key: "name", value: "1" }],
+              labels: [{ key: "p", value: "75" }],
             },
             values: [
               {
@@ -161,7 +161,7 @@ export const TestJson = {
           },
           {
             metric: {
-              labels: [{ key: "name", value: "2" }],
+              labels: [{ key: "p", value: "50" }],
             },
             values: [
               {
@@ -203,7 +203,7 @@ export const TestJson = {
         results: [
           {
             metric: {
-              labels: [{ key: "name", value: "service_cpm1" }],
+              labels: [{ key: "name", value: "service_resp_time1" }],
             },
             values: [
               {
@@ -215,7 +215,7 @@ export const TestJson = {
               {
                 id: "202501090858",
                 owner: null,
-                value: "29",
+                value: "35",
                 traceID: null,
               },
               {
@@ -227,7 +227,7 @@ export const TestJson = {
               {
                 id: "202501090900",
                 owner: null,
-                value: "155",
+                value: "85",
                 traceID: null,
               },
               {
@@ -240,7 +240,7 @@ export const TestJson = {
           },
           {
             metric: {
-              labels: [{ key: "name", value: "service_cpm2" }],
+              labels: [{ key: "name", value: "service_resp_time2" }],
             },
             values: [
               {
@@ -252,7 +252,7 @@ export const TestJson = {
               {
                 id: "202501090858",
                 owner: null,
-                value: "19",
+                value: "30",
                 traceID: null,
               },
               {
@@ -264,7 +264,7 @@ export const TestJson = {
               {
                 id: "202501090900",
                 owner: null,
-                value: "135",
+                value: "65",
                 traceID: null,
               },
               {

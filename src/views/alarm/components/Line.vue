@@ -79,7 +79,7 @@ limitations under the License. -->
       for (const item of metric.values) {
         series.push({
           data: item.values.map((item: number, itemIndex: number) => [props.intervalTime[itemIndex], item]),
-          name: metric.name,
+          name: item.name,
           type: "line",
           symbol: "circle",
           symbolSize: 4,
@@ -117,7 +117,7 @@ limitations under the License. -->
       legend: {
         type: "scroll",
         icon: "circle",
-        top: 0,
+        top: -5,
         left: 0,
         itemWidth: 12,
         textStyle: {

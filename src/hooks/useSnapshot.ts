@@ -27,13 +27,16 @@ export function useSnapshot(params: { name: string; results: MetricsResults[] }[
           if (!r.metric.labels.length) {
             return { values: arr };
           }
-          const label = r.metric.labels[0];
-          return { name: `${label.key}=${label.value}`, values: arr };
+          const name = r.metric.labels
+            .map((label: { key: string; value: string }) => `${label.key}=${label.value}`)
+            .join(",");
+          return { name, values: arr };
         },
       );
 
       return { name: metric.name, values };
     });
+
     return sources;
   }
 
@@ -50,6 +53,7 @@ export function useSnapshot(params: { name: string; results: MetricsResults[] }[
         }
       }
     }
+
     return metricsMap;
   }
 
