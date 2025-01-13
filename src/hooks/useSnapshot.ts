@@ -15,10 +15,8 @@
  * limitations under the License.
  */
 import type { MetricsResults } from "@/types/dashboard";
-import { TestJson } from "./data";
 
-export function useSnapshot(p: { name: string; results: MetricsResults[] }[]) {
-  const { metrics } = TestJson.snapshot as any;
+export function useSnapshot(metrics: { name: string; results: MetricsResults[] }[]) {
   function processResults() {
     const sources = metrics.map((metric: { name: string; results: MetricsResults[] }) => {
       const values = metric.results.map(
