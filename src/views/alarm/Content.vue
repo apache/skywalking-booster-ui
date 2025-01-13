@@ -120,17 +120,14 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import type { Alarm, Event } from "@/types/alarm";
   import { useAlarmStore } from "@/store/modules/alarm";
-  import { useAppStoreWithOut } from "@/store/modules/app";
   import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys } from "./data";
   import { dateFormat } from "@/utils/dateFormat";
   import { useSnapshot } from "@/hooks/useSnapshot";
   import Snapshot from "./components/Snapshot.vue";
-  import Line from "@/views/dashboard/graphs/Line.vue";
   import type { MetricsResults } from "@/types/dashboard";
 
   const { t } = useI18n();
   const alarmStore = useAlarmStore();
-  const appStore = useAppStoreWithOut();
   const isShowDetails = ref<boolean>(false);
   const showEventDetails = ref<boolean>(false);
   const currentDetail = ref<Alarm | any>({});
