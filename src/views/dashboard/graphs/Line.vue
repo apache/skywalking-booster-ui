@@ -60,6 +60,8 @@ limitations under the License. -->
         showYAxis: true,
         smallTips: false,
         showlabels: true,
+        noTooltips: false,
+        showLegend: true,
       }),
     },
   });
@@ -69,10 +71,12 @@ limitations under the License. -->
   function getOption() {
     const { showEchartsLegend, isRight, chartColors } = useLegendProcess(props.config.legend);
     setRight.value = isRight;
-    const keys = Object.keys(props.data || {}).filter((i: any) => Array.isArray(props.data[i]) && props.data[i].length);
-    const temp = keys.map((i: any) => {
+    const keys = Object.keys(props.data || {}).filter(
+      (i: string) => Array.isArray(props.data[i]) && props.data[i].length,
+    );
+    const temp = keys.map((i: string) => {
       const serie: any = {
-        data: props.data[i].map((item: any, itemIndex: number) => [props.intervalTime[itemIndex], item]),
+        data: props.data[i].map((item: number, itemIndex: number) => [props.intervalTime[itemIndex], item]),
         name: i,
         type: "line",
         symbol: "circle",
@@ -95,6 +99,7 @@ limitations under the License. -->
     const color: string[] = chartColors();
     const tooltip = {
       trigger: "axis",
+      show: !props.config.noTooltips,
       backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
       borderColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
       textStyle: {
@@ -106,10 +111,10 @@ limitations under the License. -->
       extraCssText: "max-height:85%; overflow: auto;",
     };
     const tips = {
+      show: !props.config.noTooltips,
       formatter(params: any) {
         return `${params[0].value[1]}`;
       },
-      confine: true,
       extraCssText: `height: 20px; padding:0 2px;`,
       trigger: "axis",
       backgroundColor: appStore.theme === Themes.Dark ? "#666" : "#eee",
@@ -125,7 +130,7 @@ limitations under the License. -->
       tooltip: props.config.smallTips ? tips : tooltip,
       legend: {
         type: "scroll",
-        show: showEchartsLegend(keys),
+        show: props.config.showLegend ? showEchartsLegend(keys) : false,
         icon: "circle",
         top: 0,
         left: 0,

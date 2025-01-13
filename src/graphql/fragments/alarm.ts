@@ -24,6 +24,7 @@ export const Alarm = {
         message
         startTime
         scope
+        name
         tags {
           key
           value
@@ -42,6 +43,35 @@ export const Alarm = {
           }
           startTime
           endTime
+        }
+        snapshot {
+          expression
+          metrics {
+            name
+            results {
+              metric {
+                labels {
+                  key
+                  value
+                }
+              }
+              values {
+                id
+                owner {
+                  scope
+                  serviceID
+                  serviceName
+                  normal
+                  serviceInstanceID
+                  serviceInstanceName
+                  endpointID
+                  endpointName
+                }
+                value
+                traceID
+              }
+            }
+          }
         }
       }
     }`,

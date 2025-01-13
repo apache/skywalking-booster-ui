@@ -22,15 +22,17 @@ limitations under the License. -->
         <div class="message mb-5 b">
           {{ i.message }}
         </div>
-        <div
-          class="timeline-table-i-scope mr-10 l sm"
-          :class="{
-            blue: i.scope === 'Service',
-            green: i.scope === 'Endpoint',
-            yellow: i.scope === 'ServiceInstance',
-          }"
-        >
-          {{ t(i.scope.toLowerCase()) }}
+        <div class="flex-h">
+          <div
+            class="timeline-table-i-scope"
+            :class="{
+              blue: i.scope === 'Service',
+              green: i.scope === 'Endpoint',
+              yellow: i.scope === 'ServiceInstance',
+            }"
+          >
+            {{ t(i.scope.toLowerCase()) }}
+          </div>
         </div>
         <div class="grey sm show-xs">
           {{ dateFormat(parseInt(i.startTime)) }}
@@ -46,7 +48,7 @@ limitations under the License. -->
     :destroy-on-close="true"
     @closed="isShowDetails = false"
   >
-    <div class="mb-10 clear alarm-detail" v-for="(item, index) in AlarmDetailCol" :key="index">
+    <div class="mb-20 clear alarm-detail" v-for="(item, index) in AlarmDetailCol" :key="index">
       <span class="g-sm-2 grey">{{ t(item.value) }}:</span>
       <span v-if="item.label === 'startTime'">
         {{ dateFormat(currentDetail[item.label]) }}
@@ -54,7 +56,7 @@ limitations under the License. -->
       <span v-else-if="item.label === 'tags'">
         <div v-for="(d, index) in alarmTags" :key="index">{{ d }}</div>
       </span>
-      <span v-else-if="item.label === 'events'" class="event-detail">
+      <span v-else-if="item.label === 'events'">
         <div>
           <ul>
             <li>
@@ -75,6 +77,12 @@ limitations under the License. -->
           </ul>
         </div>
       </span>
+      <span v-else-if="item.label === 'expression'">
+        {{ currentDetail.snapshot.expression }}
+      </span>
+      <span v-else-if="item.label === 'snapshot'">
+        <Snapshot :snapshot="currentDetail.snapshot" />
+      </span>
       <span v-else>{{ currentDetail[item.label] }}</span>
     </div>
   </el-dialog>
@@ -85,7 +93,7 @@ limitations under the License. -->
     :destroy-on-close="true"
     @closed="showEventDetails = false"
   >
-    <div class="event-detail">
+    <div>
       <div class="mb-10" v-for="(eventKey, index) in EventsDetailKeys" :key="index">
         <span class="keys">{{ t(eventKey.text) }}</span>
         <span v-if="eventKey.class === 'parameters'">
@@ -117,6 +125,7 @@ limitations under the License. -->
   import { useAlarmStore } from "@/store/modules/alarm";
   import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys } from "./data";
   import { dateFormat } from "@/utils/dateFormat";
+  import Snapshot from "./components/Snapshot.vue";
 
   const { t } = useI18n();
   const alarmStore = useAlarmStore();
@@ -186,11 +195,10 @@ limitations under the License. -->
   }
 
   .timeline-table-i-scope {
-    display: inline-block;
-    padding: 0 8px;
+    padding: 0 5px;
     border: 1px solid;
-    margin-top: -1px;
-    border-radius: 4px;
+    border-radius: 3px;
+    display: inline-block;
   }
 
   .timeline-item {
@@ -224,9 +232,6 @@ limitations under the License. -->
   }
 
   .alarm-detail {
-    max-height: 600px;
-    overflow: auto;
-
     ul {
       min-height: 100px;
       overflow: auto;
@@ -246,5 +251,10 @@ limitations under the License. -->
         overflow: hidden;
       }
     }
+  }
+
+  .mini-chart {
+    height: 20px;
+    width: 400px;
   }
 </style>

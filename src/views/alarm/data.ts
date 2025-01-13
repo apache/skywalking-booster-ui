@@ -52,6 +52,14 @@ export const AlarmDetailCol = [
     label: "events",
     value: "eventDetail",
   },
+  {
+    label: "expression",
+    value: "expression",
+  },
+  {
+    label: "snapshot",
+    value: "snapshot",
+  },
 ];
 
 export const EventsDetailKeys = [

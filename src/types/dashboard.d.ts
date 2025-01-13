@@ -111,6 +111,8 @@ export interface LineConfig extends AreaConfig {
   showYAxis?: boolean;
   smallTips?: boolean;
   showlabels?: boolean;
+  noTooltips?: boolean;
+  showLegend?: boolean;
 }
 
 export interface AreaConfig {
@@ -196,4 +198,18 @@ export type LegendOptions = {
   asTable: boolean;
   toTheRight: boolean;
   width: number;
+};
+export type MetricsResults = {
+  metric: { labels: MetricLabel[] };
+  values: MetricValue[];
+};
+type MetricLabel = {
+  key: string;
+  value: string;
+};
+type MetricValue = {
+  name: string;
+  value: string;
+  owner: null | string;
+  refId: null | string;
 };

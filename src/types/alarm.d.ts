@@ -27,6 +27,7 @@ export interface Alarm {
   scope: string;
   tags: Array<{ key: string; value: string }>;
   events: Event[];
+  snapshot: Indexable;
 }
 
 export interface Event {
