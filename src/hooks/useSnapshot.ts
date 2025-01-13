@@ -26,7 +26,10 @@ export function useSnapshot(metrics: { name: string; results: MetricsResults[] }
             return { values: arr };
           }
           const name = r.metric.labels
-            .map((label: { key: string; value: string }) => `${label.key}=${label.value}`)
+            .map(
+              (label: { key: string; value: string }) =>
+                `${metric.name}${label ? "{" : ""}${label.key}=${label.value}${label ? "}" : ""}`,
+            )
             .join(",");
           return { name, values: arr };
         },
