@@ -122,9 +122,7 @@ limitations under the License. -->
   import { useAlarmStore } from "@/store/modules/alarm";
   import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys } from "./data";
   import { dateFormat } from "@/utils/dateFormat";
-  import { useSnapshot } from "@/hooks/useSnapshot";
   import Snapshot from "./components/Snapshot.vue";
-  import type { MetricsResults } from "@/types/dashboard";
 
   const { t } = useI18n();
   const alarmStore = useAlarmStore();
@@ -147,14 +145,6 @@ limitations under the License. -->
   function viewEventDetail(event: Event) {
     currentEvent.value = event;
     showEventDetails.value = true;
-  }
-
-  function handleMetrics(snapshot: { metrics: { name: string; results: MetricsResults[] }[] }) {
-    const { getMetricsMap } = useSnapshot(snapshot.metrics);
-    const metrics = getMetricsMap();
-    const keys = Object.keys(metrics);
-
-    return { [keys[0]]: metrics[keys[0]] };
   }
 </script>
 <style lang="scss" scoped>

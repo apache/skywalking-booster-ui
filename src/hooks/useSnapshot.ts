@@ -38,27 +38,7 @@ export function useSnapshot(metrics: { name: string; results: MetricsResults[] }
     return sources;
   }
 
-  function getMetricsMap() {
-    const metricsMap: { [key: string]: number[] } = {};
-    for (const metric of metrics) {
-      for (const item of metric.results) {
-        const arr = item.values.map((v: { value: string }) => Number(v.value));
-        if (!item.metric.labels.length) {
-          metricsMap[metric.name] = arr;
-        } else {
-          const name = item.metric.labels
-            .map((label: { key: string; value: string }) => `${label.key}=${label.value}`)
-            .join(",");
-          metricsMap[name] = arr;
-        }
-      }
-    }
-
-    return metricsMap;
-  }
-
   return {
     processResults,
-    getMetricsMap,
   };
 }
