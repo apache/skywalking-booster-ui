@@ -396,5 +396,6 @@ const msg = {
   execArgs: "Exec Args",
   instances: "Instances",
   snapshot: "Snapshot",
+  expression: "Expression",
 };
 export default msg;

@@ -48,7 +48,7 @@ limitations under the License. -->
     :destroy-on-close="true"
     @closed="isShowDetails = false"
   >
-    <div class="mb-10 clear alarm-detail" v-for="(item, index) in AlarmDetailCol" :key="index">
+    <div class="mb-20 clear alarm-detail" v-for="(item, index) in AlarmDetailCol" :key="index">
       <span class="g-sm-2 grey">{{ t(item.value) }}:</span>
       <span v-if="item.label === 'startTime'">
         {{ dateFormat(currentDetail[item.label]) }}
@@ -56,7 +56,7 @@ limitations under the License. -->
       <span v-else-if="item.label === 'tags'">
         <div v-for="(d, index) in alarmTags" :key="index">{{ d }}</div>
       </span>
-      <span v-else-if="item.label === 'events'" class="event-detail">
+      <span v-else-if="item.label === 'events'">
         <div>
           <ul>
             <li>
@@ -77,6 +77,9 @@ limitations under the License. -->
           </ul>
         </div>
       </span>
+      <span v-else-if="item.label === 'expression'">
+        {{ currentDetail.snapshot.expression }}
+      </span>
       <span v-else-if="item.label === 'snapshot'">
         <Snapshot :snapshot="currentDetail.snapshot" />
       </span>
@@ -90,7 +93,7 @@ limitations under the License. -->
     :destroy-on-close="true"
     @closed="showEventDetails = false"
   >
-    <div class="event-detail">
+    <div>
       <div class="mb-10" v-for="(eventKey, index) in EventsDetailKeys" :key="index">
         <span class="keys">{{ t(eventKey.text) }}</span>
         <span v-if="eventKey.class === 'parameters'">

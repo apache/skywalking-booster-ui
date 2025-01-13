@@ -113,7 +113,6 @@ limitations under the License. -->
         link: { xAxisIndex: "all" },
       },
       legend: {
-        show: grid.length > 1,
         type: "scroll",
         icon: "circle",
         top: -5,

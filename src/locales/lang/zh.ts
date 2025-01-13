@@ -394,5 +394,6 @@ const msg = {
   execArgs: "String任务扩展",
   instances: "实例",
   snapshot: "快照",
+  expression: "表达式",
 };
 export default msg;

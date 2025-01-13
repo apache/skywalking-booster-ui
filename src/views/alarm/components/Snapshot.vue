@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <LineChart
-    class="snapshot flex-v"
     :intervalTime="appStore.intervalTime"
     :data="metrics"
     :style="{ width: `800px`, height: `${metrics.length * 300}px` }"
