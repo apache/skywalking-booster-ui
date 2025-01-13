@@ -33,6 +33,7 @@ limitations under the License. -->
           >
             {{ t(i.scope.toLowerCase()) }}
           </div>
+          <div class="ml-10">{{ i.snapshot.expression }}</div>
           <div class="mini-chart">
             <Line
               :data="handleMetrics(i.snapshot)"

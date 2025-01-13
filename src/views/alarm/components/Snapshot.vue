@@ -13,13 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="snapshot flex-v">
-    <LineChart
-      :intervalTime="appStore.intervalTime"
-      :data="metrics"
-      :style="{ width: `800px`, height: `${metrics.length * 300}px` }"
-    />
-  </div>
+  <LineChart
+    class="snapshot flex-v"
+    :intervalTime="appStore.intervalTime"
+    :data="metrics"
+    :style="{ width: `800px`, height: `${metrics.length * 300}px` }"
+  />
 </template>
 <script lang="ts" setup>
   import { computed } from "vue";
