@@ -50,7 +50,7 @@ limitations under the License. -->
               </el-menu-item>
             </el-menu-item-group>
           </el-sub-menu>
-          <el-menu-item :index="String(menu.name)" @click="changePage(menu)" v-else>
+          <el-menu-item :index="String(menu.name)" v-else>
             <el-icon class="menu-icons" :style="{ marginRight: '12px' }" @mouseover="setCollapse">
               <router-link class="items menu-title" :to="menu.children[0].path">
                 <Icon size="lg" :iconName="menu.meta.icon" />
@@ -83,7 +83,6 @@ limitations under the License. -->
   const appStore = useAppStoreWithOut();
   const router = useRouter();
   const name = ref<string>(String(router.currentRoute.value.name));
-  const theme = ["VirtualMachine", "Kubernetes"].includes(name.value || "") ? ref("light") : ref("black");
   const routes = ref<RouteRecordRaw[] | any>(
     (router.options.routes || []).filter((d: any) => d.meta && d.meta.activate),
   );
@@ -100,9 +99,7 @@ limitations under the License. -->
   if (route.name === "ViewWidget") {
     showMenu.value = false;
   }
-  const changePage = (menu: RouteRecordRaw) => {
-    theme.value = ["VirtualMachine", "Kubernetes"].includes(String(menu.name)) ? "light" : "black";
-  };
+
   const filterMenus = (menus: Recordable[]) => {
     return menus.filter((d) => d.meta && !d.meta.notShow && d.meta.activate);
   };
