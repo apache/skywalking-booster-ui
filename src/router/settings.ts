@@ -33,7 +33,7 @@ export const routesSettings: Array<RouteRecordRaw> = [
     children: [
       {
         path: "/settings",
-        name: "Settings",
+        name: "ViewSettings",
         component: Settings,
       },
     ],

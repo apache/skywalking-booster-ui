@@ -100,7 +100,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         path: "",
         redirect: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
         component: Edit,
-        name: "ViewServiceRelation",
+        name: "ServiceRelations",
         meta: {
           notShow: true,
         },
@@ -121,7 +121,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         path: "",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
         component: Edit,
-        name: "ViewPod",
+        name: "Pods",
         meta: {
           notShow: true,
         },
@@ -142,7 +142,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         path: "",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:name",
         component: Edit,
-        name: "ViewProcess",
+        name: "Processes",
         meta: {
           notShow: true,
         },
@@ -163,7 +163,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         path: "",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
         component: Edit,
-        name: "PodRelation",
+        name: "PodRelations",
         meta: {
           notShow: true,
         },
@@ -185,7 +185,7 @@ export const routesDashboard: Array<RouteRecordRaw> = [
         redirect:
           "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name",
         component: Edit,
-        name: "ProcessRelation",
+        name: "ProcessRelations",
         meta: {
           notShow: true,
         },

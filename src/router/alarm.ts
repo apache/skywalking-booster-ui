@@ -33,7 +33,7 @@ export const routesAlarm: Array<RouteRecordRaw> = [
     children: [
       {
         path: "/alerting",
-        name: "Alarm",
+        name: "ViewAlarm",
         component: Alarm,
       },
     ],
