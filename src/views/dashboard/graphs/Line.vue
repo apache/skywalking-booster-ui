@@ -61,7 +61,6 @@ limitations under the License. -->
         smallTips: false,
         showlabels: true,
         noTooltips: false,
-        showLegend: true,
       }),
     },
   });
@@ -130,7 +129,7 @@ limitations under the License. -->
       tooltip: props.config.smallTips ? tips : tooltip,
       legend: {
         type: "scroll",
-        show: props.config.showLegend ? showEchartsLegend(keys) : false,
+        show: showEchartsLegend(keys),
         icon: "circle",
         top: 0,
         left: 0,
@@ -138,6 +137,16 @@ limitations under the License. -->
         textStyle: {
           color: appStore.theme === Themes.Dark ? "#fff" : "#333",
         },
+        selector: [
+          {
+            type: "all",
+            title: "All",
+          },
+          {
+            type: "inverse",
+            title: "Inverse",
+          },
+        ],
       },
       grid: {
         top: showEchartsLegend(keys) ? 35 : 10,
