@@ -123,7 +123,24 @@ limitations under the License. -->
         color: appStore.theme === Themes.Dark ? "#eee" : "#333",
       },
     };
-
+    const legend =
+      appStore.theme === Themes.Dark
+        ? {
+            pageIconColor: "#ccc",
+            pageIconInactiveColor: "#444",
+            textStyle: {
+              fontSize: 12,
+              color: "#eee",
+            },
+          }
+        : {
+            pageIconColor: "#666",
+            pageIconInactiveColor: "#ccc",
+            textStyle: {
+              fontSize: 12,
+              color: "#333",
+            },
+          };
     return {
       color,
       tooltip: props.config.smallTips ? tips : tooltip,
@@ -134,11 +151,7 @@ limitations under the License. -->
         top: 0,
         left: 0,
         itemWidth: 12,
-        pageIconColor: appStore.theme === Themes.Dark ? "#ccc" : "#666",
-        pageIconInactiveColor: appStore.theme === Themes.Dark ? "#444" : "#ccc",
-        textStyle: {
-          color: appStore.theme === Themes.Dark ? "#fff" : "#333",
-        },
+        ...legend,
         selector: [
           {
             type: "all",
