@@ -134,6 +134,8 @@ limitations under the License. -->
         top: 0,
         left: 0,
         itemWidth: 12,
+        pageIconColor: appStore.theme === Themes.Dark ? "#ccc" : "#666",
+        pageIconInactiveColor: appStore.theme === Themes.Dark ? "#444" : "#ccc",
         textStyle: {
           color: appStore.theme === Themes.Dark ? "#fff" : "#333",
         },
