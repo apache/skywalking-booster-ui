@@ -397,5 +397,6 @@ const msg = {
   instances: "Instances",
   snapshot: "Snapshot",
   expression: "Expression",
+  asSelector: "As Selector",
 };
 export default msg;

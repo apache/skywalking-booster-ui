@@ -197,6 +197,7 @@ export type LegendOptions = {
   asTable: boolean;
   toTheRight: boolean;
   width: number;
+  asSelector: boolean;
 };
 export type MetricsResults = {
   metric: { labels: MetricLabel[] };

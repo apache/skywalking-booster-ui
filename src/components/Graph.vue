@@ -84,6 +84,10 @@ limitations under the License. -->
       type: Array as PropType<{ widgetId: string }[]>,
       default: () => [],
     },
+    legend: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
   });
   const available = computed(
     () =>
@@ -103,6 +107,7 @@ limitations under the License. -->
       if (!instance) {
         return;
       }
+
       instance.on("click", (params: EventParams) => {
         currentParams.value = params;
         if (props.option.series.type === "sankey") {
@@ -224,6 +229,20 @@ limitations under the License. -->
     () => props.filters,
     () => {
       updateOptions();
+    },
+  );
+
+  watch(
+    () => props.legend,
+    () => {
+      const instance = getInstance();
+      console.log(props.legend);
+      for (const l of props.legend) {
+        instance.dispatchAction({
+          type: "legendSelect",
+          name: l,
+        });
+      }
     },
   );
 

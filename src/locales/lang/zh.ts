@@ -152,6 +152,7 @@ const msg = {
   legendOptions: "图例选项",
   showLegend: "显示图例",
   asTable: "作为表格",
+  asSelector: "作为选择器",
   toTheRight: "在右边",
   legendValues: "图例值",
   minDuration: "最小请求持续时间",

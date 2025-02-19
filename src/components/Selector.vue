@@ -26,6 +26,8 @@ limitations under the License. -->
     :reserve-keyword="isRemote"
     :remote-method="remoteMethod"
     :filterable="filterable"
+    :collapse-tags="collapseTags"
+    :collapse-tags-tooltip="collapseTagsTooltip"
   >
     <el-option
       v-for="(item, index) in options"
@@ -40,11 +42,6 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, watch } from "vue";
   import type { PropType } from "vue";
-
-  // interface Option {
-  //   label: string | number;
-  //   value: string | number;
-  // }
 
   /*global  defineProps, defineEmits, Indexable*/
   const emit = defineEmits(["change", "query"]);
@@ -73,6 +70,8 @@ limitations under the License. -->
     clearable: { type: Boolean, default: false },
     isRemote: { type: Boolean, default: false },
     filterable: { type: Boolean, default: true },
+    collapseTags: { type: Boolean, default: false },
+    collapseTagsTooltip: { type: Boolean, default: false },
   });
 
   const selected = ref<string[] | string>(props.value);
