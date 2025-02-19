@@ -157,7 +157,7 @@ limitations under the License. -->
         ...legend,
       },
       grid: {
-        top: showEchartsLegend(keys) || props.config?.legend?.asSelector ? 35 : 10,
+        top: showEchartsLegend(keys) ? 35 : 10,
         left: 0,
         right: 10,
         bottom: 5,

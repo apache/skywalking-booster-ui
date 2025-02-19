@@ -21,6 +21,8 @@ limitations under the License. -->
     :options="Options"
     @change="changeLegend"
     filterable
+    collapseTags
+    collapseTagsTooltip
     v-if="show"
   />
 </template>
