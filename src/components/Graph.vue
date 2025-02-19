@@ -13,7 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <SelectorLegend :data="option.legend.data" :show="legendSelector" @change="changeLegend" />
+  <SelectorLegend
+    :data="option.legend.data"
+    :show="legendSelector.isSelector"
+    :isConfigPage="legendSelector.isConfigPage"
+    @change="changeLegend"
+  />
   <div class="chart" ref="chartRef" :style="`height:${height};width:${width};`">
     <div v-if="!available" class="no-data">No Data</div>
     <div
@@ -87,8 +92,8 @@ limitations under the License. -->
       default: () => [],
     },
     legendSelector: {
-      type: Boolean,
-      default: false,
+      type: Object as PropType<Indexable>,
+      default: () => ({ isConfigPage: false, isSelector: false }),
     },
   });
   const available = computed(

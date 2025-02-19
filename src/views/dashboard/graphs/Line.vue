@@ -19,7 +19,7 @@ limitations under the License. -->
       :filters="config.filters"
       :relatedTrace="config.relatedTrace"
       :associate="config.associate || []"
-      :legendSelector="legendSelector"
+      :legendSelector="{ isSelector: legendSelector, sConfigPage: dashboardStore.showConfig }"
       @select="clickEvent"
     />
     <Legend :config="config.legend" :data="data" :intervalTime="intervalTime" />
@@ -33,6 +33,7 @@ limitations under the License. -->
   import useLegendProcess from "@/hooks/useLegendProcessor";
   import { isDef } from "@/utils/is";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useDashboardStore } from "@/store/modules/dashboard";
   import { Themes } from "@/constants/data";
 
   /*global defineProps, defineEmits */
@@ -66,6 +67,7 @@ limitations under the License. -->
     },
   });
   const appStore = useAppStoreWithOut();
+  const dashboardStore = useDashboardStore();
   const setRight = ref<boolean>(false);
   const legendSelector = computed(() => props.config.legend?.asSelector);
   const option = computed(() => getOption());

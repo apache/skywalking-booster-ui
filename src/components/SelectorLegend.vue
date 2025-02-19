@@ -40,6 +40,10 @@ limitations under the License. -->
       type: Boolean,
       default: false,
     },
+    isConfigPage: {
+      type: Boolean,
+      default: false,
+    },
   });
   const emits = defineEmits(["change"]);
   const Options = computed(() => props.data.map((d: { name: string }) => ({ label: d.name, value: d.name })));
