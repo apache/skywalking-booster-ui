@@ -14,13 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="graph flex-v" :class="setRight ? 'flex-h' : 'flex-v'">
-    <SelectorLegend :config="config.legend" :data="props.data" @change="changeLegend" />
     <Graph
       :option="option"
       :filters="config.filters"
       :relatedTrace="config.relatedTrace"
       :associate="config.associate || []"
-      :legend="legendItems"
+      :legendSelector="legendSelector"
       @select="clickEvent"
     />
     <Legend :config="config.legend" :data="data" :intervalTime="intervalTime" />
@@ -31,7 +30,6 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import type { LineConfig, EventParams, RelatedTrace, Filters } from "@/types/dashboard";
   import Legend from "./components/Legend.vue";
-  import SelectorLegend from "./components/SelectorLegend.vue";
   import useLegendProcess from "@/hooks/useLegendProcessor";
   import { isDef } from "@/utils/is";
   import { useAppStoreWithOut } from "@/store/modules/app";
@@ -69,7 +67,7 @@ limitations under the License. -->
   });
   const appStore = useAppStoreWithOut();
   const setRight = ref<boolean>(false);
-  const legendItems = ref<string[]>([]);
+  const legendSelector = computed(() => props.config.legend?.asSelector);
   const option = computed(() => getOption());
   function getOption() {
     const { showEchartsLegend, isRight, chartColors } = useLegendProcess(props.config.legend);
@@ -77,8 +75,7 @@ limitations under the License. -->
     const keys = Object.keys(props.data || {}).filter(
       (i: string) => Array.isArray(props.data[i]) && props.data[i].length,
     );
-    legendItems.value = keys;
-    const temp = legendItems.value.map((i: string) => {
+    const temp = keys.map((i: string) => {
       const serie: any = {
         data: props.data[i].map((item: number, itemIndex: number) => [props.intervalTime[itemIndex], item]),
         name: i,
@@ -156,7 +153,7 @@ limitations under the License. -->
         top: 0,
         left: 0,
         itemWidth: 12,
-        data: legendItems.value.map((d: string) => ({ name: d })),
+        data: keys.map((d: string) => ({ name: d })),
         ...legend,
       },
       grid: {
@@ -195,11 +192,6 @@ limitations under the License. -->
 
   function clickEvent(params: EventParams) {
     emits("click", params);
-  }
-
-  function changeLegend(params: string[]) {
-    legendItems.value = params;
-    console.log(legendItems.value);
   }
 </script>
 <style lang="scss" scoped>

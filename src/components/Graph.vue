@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <SelectorLegend :data="option.legend.data" :show="legendSelector" @change="changeLegend" />
   <div class="chart" ref="chartRef" :style="`height:${height};width:${width};`">
     <div v-if="!available" class="no-data">No Data</div>
     <div
@@ -54,6 +55,7 @@ limitations under the License. -->
   import Trace from "@/views/dashboard/related/trace/Index.vue";
   import associateProcessor from "@/hooks/useAssociateProcessor";
   import { WidgetType } from "@/views/dashboard/data";
+  import SelectorLegend from "./SelectorLegend.vue";
 
   /*global Nullable, defineProps, defineEmits, Indexable*/
   const emits = defineEmits(["select"]);
@@ -84,9 +86,9 @@ limitations under the License. -->
       type: Array as PropType<{ widgetId: string }[]>,
       default: () => [],
     },
-    legend: {
-      type: Array as PropType<string[]>,
-      default: () => [],
+    legendSelector: {
+      type: Boolean,
+      default: false,
     },
   });
   const available = computed(
@@ -208,6 +210,23 @@ limitations under the License. -->
     });
   }
 
+  function changeLegend(names: string[]) {
+    const instance = getInstance();
+    for (const item of props.option.legend.data) {
+      if (names.includes(item.name)) {
+        instance.dispatchAction({
+          type: "legendSelect",
+          name: item.name,
+        });
+      } else {
+        instance.dispatchAction({
+          type: "legendUnSelect",
+          name: item.name,
+        });
+      }
+    }
+  }
+
   watch(
     () => props.option,
     (newVal, oldVal) => {
@@ -229,20 +248,6 @@ limitations under the License. -->
     () => props.filters,
     () => {
       updateOptions();
-    },
-  );
-
-  watch(
-    () => props.legend,
-    () => {
-      const instance = getInstance();
-      console.log(props.legend);
-      for (const l of props.legend) {
-        instance.dispatchAction({
-          type: "legendSelect",
-          name: l,
-        });
-      }
     },
   );
 

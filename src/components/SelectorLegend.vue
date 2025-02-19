@@ -21,39 +21,37 @@ limitations under the License. -->
     :options="Options"
     @change="changeLegend"
     filterable
-    v-if="config.asSelector"
+    v-if="show"
   />
 </template>
 <script lang="ts" setup>
   import { computed, ref, watch } from "vue";
   import type { PropType } from "vue";
   import type { Option } from "@/types/app";
-  import type { LegendOptions } from "@/types/dashboard";
 
   const props = defineProps({
     data: {
-      type: Object as PropType<{ [key: string]: number[] }>,
-      default: () => ({}),
+      type: Array as PropType<{ name: string }[]>,
+      default: () => [],
     },
-    config: {
-      type: Object as PropType<LegendOptions>,
-      default: () => ({}),
+    show: {
+      type: Boolean,
+      default: false,
     },
   });
   const emits = defineEmits(["change"]);
+  const Options = computed(() => props.data.map((d: { name: string }) => ({ label: d.name, value: d.name })));
   const legend = ref<string[]>([]);
-  const Options = computed(() => Object.keys(props.data || {}).map((d: string) => ({ label: d, value: d })));
 
   function changeLegend(opt: Option[]) {
     legend.value = opt.map((d: Option) => d.value);
     emits("change", legend.value);
   }
+
   watch(
     () => props.data,
     () => {
-      legend.value = Object.keys(props.data || {}).filter(
-        (i: string) => Array.isArray(props.data[i]) && props.data[i].length,
-      );
+      legend.value = props.data.map((d) => d.name);
     },
   );
 </script>

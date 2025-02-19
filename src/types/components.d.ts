@@ -50,6 +50,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Selector: typeof import('./../components/Selector.vue')['default']
+    SelectorLegend: typeof import('./../components/SelectorLegend.vue')['default']
     SelectSingle: typeof import('./../components/SelectSingle.vue')['default']
     Tags: typeof import('./../components/Tags.vue')['default']
     TimePicker: typeof import('./../components/TimePicker.vue')['default']
