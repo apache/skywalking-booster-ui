@@ -21,7 +21,7 @@ limitations under the License. -->
       <el-pagination
         v-model="logStore.conditions.paging.pageNum"
         :page-size="pageSize"
-        :small="true"
+        size="small"
         layout="prev, pager, next"
         :pager-count="5"
         :total="total"

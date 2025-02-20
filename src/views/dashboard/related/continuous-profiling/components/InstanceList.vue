@@ -64,7 +64,7 @@ limitations under the License. -->
   </el-table>
   <el-pagination
     class="mt-10"
-    small
+    size="small"
     layout="prev, pager, next"
     :page-size="pageSize"
     :total="continousProfilingStore.instances.length"

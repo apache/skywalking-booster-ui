@@ -71,7 +71,7 @@ limitations under the License. -->
       <el-pagination
         v-model="traceStore.conditions.paging.pageNum"
         :page-size="pageSize"
-        :small="true"
+        size="small"
         layout="prev, pager, next"
         :total="total"
         @current-change="updatePage"

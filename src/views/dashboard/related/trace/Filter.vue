@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h row">
-    <div class="mr-10" v-if="dashboardStore.entity === EntityType[1].value">
-      <span class="grey mr-5">{{ t("service") }}:</span>
+    <div class="mr-10 flex-h" v-if="dashboardStore.entity === EntityType[1].value">
+      <span class="grey mr-5 label">{{ t("service") }}:</span>
       <Selector
         size="small"
         :value="state.service.value"
@@ -24,8 +24,8 @@ limitations under the License. -->
         @change="changeField('service', $event)"
       />
     </div>
-    <div class="mr-10" v-if="dashboardStore.entity !== EntityType[3].value">
-      <span class="grey mr-5">{{ t("instance") }}:</span>
+    <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[3].value">
+      <span class="grey mr-5 label">{{ t("instance") }}:</span>
       <Selector
         size="small"
         :value="state.instance.value"
@@ -34,8 +34,8 @@ limitations under the License. -->
         @change="changeField('instance', $event)"
       />
     </div>
-    <div class="mr-10" v-if="dashboardStore.entity !== EntityType[2].value">
-      <span class="grey mr-5">{{ t("endpoint") }}:</span>
+    <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[2].value">
+      <span class="grey mr-5 label">{{ t("endpoint") }}:</span>
       <Selector
         size="small"
         :value="state.endpoint.value"
@@ -46,8 +46,8 @@ limitations under the License. -->
         @query="searchEndpoints"
       />
     </div>
-    <div class="mr-10">
-      <span class="grey mr-5">{{ t("status") }}:</span>
+    <div class="mr-10 flex-h">
+      <span class="grey mr-5 label">{{ t("status") }}:</span>
       <Selector
         size="small"
         :value="state.status.value"
@@ -324,5 +324,9 @@ limitations under the License. -->
     position: absolute;
     top: 0;
     right: 10px;
+  }
+
+  .label {
+    line-height: 24px;
   }
 </style>

@@ -80,7 +80,7 @@ export const logStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.instances = [{ value: "0", label: "All" }, ...res.data.data.pods] || [{ value: " 0", label: "All" }];
+      this.instances = [{ value: "0", label: "All" }, ...res.data.data.pods];
       return res.data;
     },
     async getEndpoints(id: string, keyword?: string) {
@@ -93,7 +93,7 @@ export const logStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.endpoints = [{ value: "0", label: "All" }, ...res.data.data.pods] || [{ value: "0", label: "All" }];
+      this.endpoints = [{ value: "0", label: "All" }, ...res.data.data.pods];
       return res.data;
     },
     async getLogsByKeywords() {

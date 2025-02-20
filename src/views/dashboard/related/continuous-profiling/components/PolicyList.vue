@@ -190,7 +190,7 @@ limitations under the License. -->
 
   .profile-t-tool {
     padding: 10px 5px 10px 10px;
-    border-bottom: 1px solid rgb(0 0 0 / 7%);
+    border-right: 1px solid rgb(0 0 0 / 7%);
     background-color: var(--sw-table-header);
     width: 100%;
     font-weight: bold;
