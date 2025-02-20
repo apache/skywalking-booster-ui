@@ -13,9 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h row">
-    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[3].value">
-      <span class="grey mr-5"> {{ t("instance") }}: </span>
+  <div class="flex-h">
+    <div class="mr-5 flex-h" v-if="dashboardStore.entity !== EntityType[3].value">
+      <span class="grey mr-5 label"> {{ t("instance") }}: </span>
       <Selector
         size="small"
         :value="state.instance.value"
@@ -24,8 +24,8 @@ limitations under the License. -->
         @change="changeField('instance', $event)"
       />
     </div>
-    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[2].value">
-      <span class="grey mr-5"> {{ t("endpoint") }}: </span>
+    <div class="mr-5 flex-h" v-if="dashboardStore.entity !== EntityType[2].value">
+      <span class="grey mr-5 label"> {{ t("endpoint") }}: </span>
       <Selector
         size="small"
         :value="state.endpoint.value"
@@ -36,8 +36,8 @@ limitations under the License. -->
         @query="searchEndpoints"
       />
     </div>
-    <div class="mr-5">
-      <span class="grey">{{ t("eventsType") }}: </span>
+    <div class="mr-5 flex-h">
+      <span class="grey label" style="width: 95px">{{ t("eventsType") }}: </span>
       <Selector
         v-model="state.eventType"
         :options="EventTypes"
@@ -47,15 +47,17 @@ limitations under the License. -->
         size="small"
       />
     </div>
-    <el-pagination
-      v-model="pageNum"
-      :page-size="pageSize"
-      layout="prev, pager, next"
-      :total="total"
-      @current-change="updatePage"
-      :pager-count="5"
-      size="small"
-    />
+    <div>
+      <el-pagination
+        v-model="pageNum"
+        :page-size="pageSize"
+        layout="prev, pager, next"
+        :total="total"
+        @current-change="updatePage"
+        :pager-count="5"
+        size="small"
+      />
+    </div>
     <el-button class="search-btn" size="small" type="primary" @click="queryEvents">
       {{ t("search") }}
     </el-button>
@@ -230,5 +232,9 @@ limitations under the License. -->
     border: 1px dashed #aaa;
     font-size: $font-size-smaller;
     margin: 0 2px;
+  }
+
+  .label {
+    line-height: 24px;
   }
 </style>
