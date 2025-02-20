@@ -54,7 +54,7 @@ export const eventStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.instances = [{ value: "", label: "All" }, ...res.data.data.pods] || [{ value: "", label: "All" }];
+      this.instances = [{ value: "", label: "All" }, ...res.data.data.pods];
       return res.data;
     },
     async getEndpoints(keyword: string) {
@@ -70,7 +70,7 @@ export const eventStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
-      this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods] || [{ value: "", label: "All" }];
+      this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods];
       return res.data;
     },
     async getEvents() {
