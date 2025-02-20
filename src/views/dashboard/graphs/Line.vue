@@ -136,12 +136,18 @@ limitations under the License. -->
               fontSize: 12,
               color: "#eee",
             },
+            pageTextStyle: {
+              color: "#eee",
+            },
           }
         : {
             pageIconColor: "#666",
             pageIconInactiveColor: "#ccc",
             textStyle: {
               fontSize: 12,
+              color: "#333",
+            },
+            pageTextStyle: {
               color: "#333",
             },
           };

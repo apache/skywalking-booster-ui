@@ -86,6 +86,9 @@ limitations under the License. -->
               fontSize: 12,
               color: "#eee",
             },
+            pageTextStyle: {
+              color: "#eee",
+            },
           }
         : {
             pageIconColor: "#666",
@@ -94,6 +97,9 @@ limitations under the License. -->
             borderColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
             textStyle: {
               fontSize: 12,
+              color: "#333",
+            },
+            pageTextStyle: {
               color: "#333",
             },
           };
