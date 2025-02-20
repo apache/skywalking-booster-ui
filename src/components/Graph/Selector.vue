@@ -36,6 +36,10 @@ limitations under the License. -->
       :value="item.value || ''"
       :disabled="item.disabled || false"
     >
+      <div class="flex items-center">
+        <el-tag :color="item.color" class="mr-5" size="small" />
+        <span :style="{ color: item.color }">{{ item.label }}</span>
+      </div>
     </el-option>
   </el-select>
 </template>
@@ -51,6 +55,7 @@ limitations under the License. -->
         ({
           label: string | number;
           value: string | number;
+          color: string;
         } & { disabled?: boolean })[]
       >,
       default: () => [],

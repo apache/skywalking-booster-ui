@@ -75,6 +75,34 @@ limitations under the License. -->
       };
     });
     const color: string[] = chartColors();
+    const legend =
+      appStore.theme === Themes.Dark
+        ? {
+            pageIconColor: "#ccc",
+            pageIconInactiveColor: "#444",
+            backgroundColor: "#333",
+            borderColor: "#fff",
+            textStyle: {
+              fontSize: 12,
+              color: "#eee",
+            },
+            pageTextStyle: {
+              color: "#eee",
+            },
+          }
+        : {
+            pageIconColor: "#666",
+            pageIconInactiveColor: "#ccc",
+            backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
+            borderColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
+            textStyle: {
+              fontSize: 12,
+              color: "#333",
+            },
+            pageTextStyle: {
+              color: "#333",
+            },
+          };
     return {
       color,
       tooltip: {
@@ -94,15 +122,10 @@ limitations under the License. -->
         top: 0,
         left: 0,
         itemWidth: 12,
-        backgroundColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
-        borderColor: appStore.theme === Themes.Dark ? "#333" : "#fff",
-        textStyle: {
-          fontSize: 12,
-          color: appStore.theme === Themes.Dark ? "#eee" : "#333",
-        },
+        ...legend,
       },
       grid: {
-        top: keys.length === 1 ? 15 : 40,
+        top: showEchartsLegend(keys) ? 35 : 10,
         left: 0,
         right: 10,
         bottom: 5,

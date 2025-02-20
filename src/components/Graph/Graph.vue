@@ -13,6 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <SelectorLegend
+    :data="option.legend.data"
+    :show="legendSelector.isSelector"
+    :isConfigPage="legendSelector.isConfigPage"
+    :colors="option.color"
+    @change="changeLegend"
+  />
   <div class="chart" ref="chartRef" :style="`height:${height};width:${width};`">
     <div v-if="!available" class="no-data">No Data</div>
     <div
@@ -54,6 +61,7 @@ limitations under the License. -->
   import Trace from "@/views/dashboard/related/trace/Index.vue";
   import associateProcessor from "@/hooks/useAssociateProcessor";
   import { WidgetType } from "@/views/dashboard/data";
+  import SelectorLegend from "./Legend.vue";
 
   /*global Nullable, defineProps, defineEmits, Indexable*/
   const emits = defineEmits(["select"]);
@@ -84,6 +92,10 @@ limitations under the License. -->
       type: Array as PropType<{ widgetId: string }[]>,
       default: () => [],
     },
+    legendSelector: {
+      type: Object as PropType<Indexable>,
+      default: () => ({ isConfigPage: false, isSelector: false }),
+    },
   });
   const available = computed(
     () =>
@@ -103,6 +115,7 @@ limitations under the License. -->
       if (!instance) {
         return;
       }
+
       instance.on("click", (params: EventParams) => {
         currentParams.value = params;
         if (props.option.series.type === "sankey") {
@@ -201,6 +214,23 @@ limitations under the License. -->
     instance.dispatchAction({
       type: "hideTip",
     });
+  }
+
+  function changeLegend(names: string[]) {
+    const instance = getInstance();
+    for (const item of props.option.legend.data) {
+      if (names.includes(item.name)) {
+        instance.dispatchAction({
+          type: "legendSelect",
+          name: item.name,
+        });
+      } else {
+        instance.dispatchAction({
+          type: "legendUnSelect",
+          name: item.name,
+        });
+      }
+    }
   }
 
   watch(

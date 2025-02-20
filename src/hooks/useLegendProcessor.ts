@@ -35,7 +35,7 @@ export default function useLegendProcess(legend?: LegendOptions) {
     if (keys.length === 1) {
       return false;
     }
-    if (legend && legend.asTable) {
+    if (legend && (legend.asTable || legend.asSelector)) {
       return false;
     }
     return true;

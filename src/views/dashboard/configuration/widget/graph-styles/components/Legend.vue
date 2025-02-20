@@ -23,6 +23,15 @@ limitations under the License. -->
     />
   </div>
   <div>
+    <span class="label mr-5">{{ t("asSelector") }}</span>
+    <el-switch
+      v-model="legend.asSelector"
+      active-text="Yes"
+      inactive-text="No"
+      @change="updateLegendConfig({ asSelector: legend.asSelector })"
+    />
+  </div>
+  <div>
     <span class="label">{{ t("asTable") }}</span>
     <el-switch
       v-model="legend.asTable"
@@ -97,6 +106,7 @@ limitations under the License. -->
     max: false,
     mean: false,
     asTable: false,
+    asSelector: false,
     toTheRight: false,
     width: 130,
     ...graph.value.legend,

@@ -16,10 +16,11 @@ limitations under the License. -->
   <div class="graph flex-v" :class="setRight ? 'flex-h' : 'flex-v'">
     <Graph
       :option="option"
-      @select="clickEvent"
       :filters="config.filters"
       :relatedTrace="config.relatedTrace"
       :associate="config.associate || []"
+      :legendSelector="{ isSelector: legendSelector, sConfigPage: dashboardStore.showConfig }"
+      @select="clickEvent"
     />
     <Legend :config="config.legend" :data="data" :intervalTime="intervalTime" />
   </div>
@@ -32,6 +33,7 @@ limitations under the License. -->
   import useLegendProcess from "@/hooks/useLegendProcessor";
   import { isDef } from "@/utils/is";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useDashboardStore } from "@/store/modules/dashboard";
   import { Themes } from "@/constants/data";
 
   /*global defineProps, defineEmits */
@@ -61,12 +63,13 @@ limitations under the License. -->
         smallTips: false,
         showlabels: true,
         noTooltips: false,
-        showLegend: true,
       }),
     },
   });
   const appStore = useAppStoreWithOut();
+  const dashboardStore = useDashboardStore();
   const setRight = ref<boolean>(false);
+  const legendSelector = computed(() => props.config.legend?.asSelector);
   const option = computed(() => getOption());
   function getOption() {
     const { showEchartsLegend, isRight, chartColors } = useLegendProcess(props.config.legend);
@@ -124,27 +127,49 @@ limitations under the License. -->
         color: appStore.theme === Themes.Dark ? "#eee" : "#333",
       },
     };
-
+    const legend =
+      appStore.theme === Themes.Dark
+        ? {
+            pageIconColor: "#ccc",
+            pageIconInactiveColor: "#444",
+            textStyle: {
+              fontSize: 12,
+              color: "#eee",
+            },
+            pageTextStyle: {
+              color: "#eee",
+            },
+          }
+        : {
+            pageIconColor: "#666",
+            pageIconInactiveColor: "#ccc",
+            textStyle: {
+              fontSize: 12,
+              color: "#333",
+            },
+            pageTextStyle: {
+              color: "#333",
+            },
+          };
     return {
       color,
       tooltip: props.config.smallTips ? tips : tooltip,
       legend: {
         type: "scroll",
-        show: props.config.showLegend ? showEchartsLegend(keys) : false,
+        show: showEchartsLegend(keys),
         icon: "circle",
         top: 0,
         left: 0,
         itemWidth: 12,
-        textStyle: {
-          color: appStore.theme === Themes.Dark ? "#fff" : "#333",
-        },
+        data: keys.map((d: string) => ({ name: d })),
+        ...legend,
       },
       grid: {
         top: showEchartsLegend(keys) ? 35 : 10,
         left: 0,
         right: 10,
         bottom: 5,
-        containLabel: props.config.showlabels === undefined ? true : props.config.showlabels,
+        containLabel: isDef(props.config.showlabels) ? props.config.showlabels : true,
       },
       xAxis: {
         type: "category",

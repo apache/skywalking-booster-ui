@@ -154,6 +154,7 @@ const msg = {
   legendOptions: "Legend Options",
   showLegend: "Show Legend",
   asTable: "As Table",
+  asSelector: "As Selector",
   toTheRight: "To The Right",
   legendValues: "Legend Values",
   minDuration: "Minimal Request Duration",
