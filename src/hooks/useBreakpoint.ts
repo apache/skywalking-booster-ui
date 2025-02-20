@@ -47,11 +47,11 @@ export function createBreakpointListen(fn?: (opt: CreateCallbackParams) => void)
 
   function getWindowWidth() {
     const width = document.body.clientWidth;
-    const xs = screenMap.get(sizeEnum.XS) || "";
-    const sm = screenMap.get(sizeEnum.SM) || "";
-    const md = screenMap.get(sizeEnum.MD) || "";
-    const lg = screenMap.get(sizeEnum.LG) || "";
-    const xl = screenMap.get(sizeEnum.XL) || "";
+    const xs = screenMap.get(sizeEnum.XS) || 0;
+    const sm = screenMap.get(sizeEnum.SM) || 0;
+    const md = screenMap.get(sizeEnum.MD) || 0;
+    const lg = screenMap.get(sizeEnum.LG) || 0;
+    const xl = screenMap.get(sizeEnum.XL) || 0;
     if (width < xs) {
       screenRef.value = sizeEnum.XS;
     } else if (width < sm) {

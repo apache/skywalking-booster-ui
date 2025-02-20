@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h row">
-    <div class="mr-5 mb-5" v-if="dashboardStore.entity !== EntityType[3].value">
+    <div class="mr-10 mb-5" v-if="dashboardStore.entity !== EntityType[3].value">
       <span class="grey mr-5"> {{ t("instance") }}: </span>
       <Selector
         size="small"
@@ -25,7 +25,7 @@ limitations under the License. -->
         class="selectors"
       />
     </div>
-    <div class="mr-5 mb-5" v-if="state.container">
+    <div class="mr-10 mb-5" v-if="state.container">
       <span class="grey mr-5">{{ t("container") }}:</span>
       <Selector
         size="small"
@@ -36,18 +36,7 @@ limitations under the License. -->
         class="selectors"
       />
     </div>
-    <!-- <div class="mr-5">
-      <span class="grey mr-5">{{ t("limit") }}:</span>
-      <el-input-number
-        v-model="limit"
-        :min="1"
-        :max="1000"
-        size="small"
-        controls-position="right"
-        @change="changeField('limit', $event)"
-      />
-    </div> -->
-    <div class="mr-5">
+    <div class="mr-10">
       <span class="grey mr-5">{{ t("duration") }}:</span>
       <Selector
         size="small"
@@ -58,18 +47,19 @@ limitations under the License. -->
         class="duration-range"
       />
     </div>
-    <div class="mr-5">
+    <div class="mr-10">
       <span class="grey mr-5">{{ t("interval") }}:</span>
       <Selector
         size="small"
         :value="state.interval.value"
         :options="IntervalOpts"
         @change="changeField('interval', $event)"
+        class="selectors"
       />
     </div>
   </div>
   <div class="flex-h row">
-    <div class="mr-5">
+    <div class="mr-10">
       <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
       <span class="log-tags">
         <span class="selected" v-for="(item, index) in keywordsOfContent" :key="`keywordsOfContent${index}`">
@@ -85,7 +75,7 @@ limitations under the License. -->
         @change="addLabels('keywordsOfContent')"
       />
     </div>
-    <div class="mr-5">
+    <div class="mr-10">
       <span class="grey mr-5"> {{ t("excludingKeywordsOfContent") }}: </span>
       <span class="log-tags">
         <span

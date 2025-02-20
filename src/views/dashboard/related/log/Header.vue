@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h row">
-    <div class="mr-5" v-if="dashboardStore.entity === EntityType[1].value">
-      <span class="grey mr-5">{{ t("service") }}:</span>
+    <div class="mr-10 flex-h" v-if="dashboardStore.entity === EntityType[1].value">
+      <span class="grey mr-5 label">{{ t("service") }}:</span>
       <Selector
         size="small"
         :value="state.service.value"
@@ -24,8 +24,8 @@ limitations under the License. -->
         @change="changeField('service', $event)"
       />
     </div>
-    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[3].value">
-      <span class="grey mr-5"> {{ isBrowser ? t("version") : t("instance") }}: </span>
+    <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[3].value">
+      <span class="grey mr-5 label"> {{ isBrowser ? t("version") : t("instance") }}: </span>
       <Selector
         size="small"
         :value="state.instance.value"
@@ -34,8 +34,8 @@ limitations under the License. -->
         @change="changeField('instance', $event)"
       />
     </div>
-    <div class="mr-5" v-if="dashboardStore.entity !== EntityType[2].value">
-      <span class="grey mr-5"> {{ isBrowser ? t("page") : t("endpoint") }}: </span>
+    <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[2].value">
+      <span class="grey mr-5 label"> {{ isBrowser ? t("page") : t("endpoint") }}: </span>
       <Selector
         size="small"
         :value="state.endpoint.value"
@@ -46,8 +46,8 @@ limitations under the License. -->
         @query="searchEndpoints"
       />
     </div>
-    <div class="mr-5" v-if="isBrowser">
-      <span class="grey mr-5"> {{ t("category") }}: </span>
+    <div class="mr-10 flex-h" v-if="isBrowser">
+      <span class="grey mr-5 label"> {{ t("category") }}: </span>
       <Selector
         size="small"
         :value="state.category.value"
@@ -61,8 +61,8 @@ limitations under the License. -->
     </el-button>
   </div>
   <div class="flex-h row" v-show="!isBrowser">
-    <div class="mr-5 traceId">
-      <span class="grey mr-5">{{ t("traceID") }}:</span>
+    <div class="mr-10 traceId">
+      <span class="grey mr-5 label">{{ t("traceID") }}:</span>
       <el-input v-model="traceId" class="inputs-max" size="small" />
     </div>
     <ConditionTags :type="'LOG'" @update="updateTags" />
@@ -78,8 +78,8 @@ limitations under the License. -->
     </div>
     <div v-show="logStore.supportQueryLogsByKeywords">
       <div class="flex-h">
-        <div class="mr-5">
-          <span class="mr-5 grey">{{ t("keywordsOfContent") }}:</span>
+        <div class="mr-10">
+          <span class="mr-5 grey label">{{ t("keywordsOfContent") }}:</span>
           <span class="log-tags">
             <span class="selected" v-for="(item, index) in keywordsOfContent" :key="`keywordsOfContent${index}`">
               <span>{{ item }}</span>
@@ -94,8 +94,8 @@ limitations under the License. -->
             @change="addLabels('keywordsOfContent')"
           />
         </div>
-        <div class="mr-5">
-          <span class="grey mr-5"> {{ t("excludingKeywordsOfContent") }}: </span>
+        <div class="mr-10">
+          <span class="grey mr-5 label"> {{ t("excludingKeywordsOfContent") }}: </span>
           <span class="log-tags">
             <span
               class="selected"
@@ -436,5 +436,9 @@ limitations under the License. -->
     display: inline-block;
     margin-left: 3px;
     cursor: pointer;
+  }
+
+  .label {
+    line-height: 24px;
   }
 </style>

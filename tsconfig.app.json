@@ -23,6 +23,10 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "noImplicitThis": false
+    "noImplicitThis": false,
+    "preserveValueImports": false,
+    "importsNotUsedAsValues": "remove",
+    "target": "esnext",
+    "lib": ["es2019", "dom"]
   }
 }
