@@ -25,6 +25,8 @@
     },
     "noImplicitThis": false,
     "preserveValueImports": false,
-    "importsNotUsedAsValues": "remove"
+    "importsNotUsedAsValues": "remove",
+    "target": "esnext",
+    "lib": ["es2019", "dom"]
   }
 }

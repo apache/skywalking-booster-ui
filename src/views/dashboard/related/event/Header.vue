@@ -54,7 +54,7 @@ limitations under the License. -->
       :total="total"
       @current-change="updatePage"
       :pager-count="5"
-      small
+      size="small"
     />
     <el-button class="search-btn" size="small" type="primary" @click="queryEvents">
       {{ t("search") }}

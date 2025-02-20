@@ -98,7 +98,7 @@ limitations under the License. -->
     <div class="setting" v-if="showSetting && dashboardStore.editMode">
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
-    <div class="tool">
+    <div class="tool flex-h">
       <span v-show="graphConfig.showDepth">
         <span class="label">{{ t("currentDepth") }}</span>
         <Selector class="inputs" :value="depth" :options="DepthList" @change="changeDepth" />

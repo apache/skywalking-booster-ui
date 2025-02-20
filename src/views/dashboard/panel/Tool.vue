@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="dashboard-tool flex-h">
     <div :class="isRelation ? 'flex-v' : 'flex-h'" class="tool-selectors">
       <div class="flex-h">
-        <div class="selectors-item" v-if="key !== 10">
+        <div class="flex-h selectors-item" v-if="key !== 10">
           <span class="label">$Service</span>
           <Selector
             v-model="states.currentService"
@@ -30,7 +30,7 @@ limitations under the License. -->
             <Icon size="small" iconName="hierarchy_topology" />
           </span>
         </div>
-        <div class="selectors-item" v-if="key === 3 || key === 4 || key === 5 || key === 6">
+        <div class="flex-h selectors-item" v-if="key === 3 || key === 4 || key === 5 || key === 6">
           <span class="label">
             {{ ["EndpointRelation", "Endpoint"].includes(dashboardStore.entity) ? "$Endpoint" : "$ServiceInstance" }}
           </span>
@@ -52,7 +52,7 @@ limitations under the License. -->
             <Icon size="small" iconName="hierarchy_topology" />
           </span>
         </div>
-        <div class="selectors-item" v-if="key === 5 || key === 6">
+        <div class="flex-h selectors-item" v-if="key === 5 || key === 6">
           <span class="label"> $Process </span>
           <Selector
             v-model="states.currentProcess"
@@ -65,7 +65,7 @@ limitations under the License. -->
         </div>
       </div>
       <div class="flex-h" :class="isRelation ? 'relation' : ''">
-        <div class="selectors-item" v-if="key === 2 || key === 4 || key === 5">
+        <div class="flex-h selectors-item" v-if="key === 2 || key === 4 || key === 5">
           <span class="label">$DestinationService</span>
           <Selector
             v-model="states.currentDestService"
@@ -76,7 +76,7 @@ limitations under the License. -->
             class="selectors"
           />
         </div>
-        <div class="selectors-item" v-if="key === 4 || key === 5">
+        <div class="flex-h selectors-item" v-if="key === 4 || key === 5">
           <span class="label">
             {{ dashboardStore.entity === "EndpointRelation" ? "$DestinationEndpoint" : "$DestinationServiceInstance" }}
           </span>
@@ -91,7 +91,7 @@ limitations under the License. -->
             :isRemote="dashboardStore.entity === 'EndpointRelation'"
           />
         </div>
-        <div class="selectors-item" v-if="key === 5">
+        <div class="flex-h selectors-item" v-if="key === 5">
           <span class="label"> $DestinationProcess </span>
           <Selector
             v-model="states.currentDestProcess"

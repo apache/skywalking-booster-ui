@@ -38,7 +38,7 @@ limitations under the License. -->
           :total="total"
           @current-change="changePage"
           :pager-count="5"
-          small
+          size="small"
           :style="
             appStore.theme === Themes.Light
               ? `--el-pagination-bg-color: #f0f2f5; --el-pagination-button-disabled-bg-color: #f0f2f5;`
