@@ -14,16 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="profile-trace-dashboard" v-if="profileStore.currentSegment">
-    <div class="profile-trace-detail-wrapper">
-      <label>Trace ID</label>
-      <el-input class="input mr-10 ml-5" readonly :value="profileStore.currentSegment.traceId" size="small" />
+    <div class="flex-h profile-trace-detail-wrapper">
+      <div>
+        <label>Trace ID</label>
+        <el-input class="input mr-10 ml-5" readonly :value="profileStore.currentSegment.traceId" size="small" />
+      </div>
       <Selector
         size="small"
         :value="dataMode"
         :options="ProfileDataMode"
         placeholder="Please select a profile data mode"
         @change="spanModeChange"
-        class="mr-10"
+        class="mr-10 fliter"
       />
       <Selector
         size="small"
@@ -31,7 +33,7 @@ limitations under the License. -->
         :options="ProfileDisplayMode"
         placeholder="Please select a profile display mode"
         @change="selectDisplayMode"
-        class="mr-10"
+        class="mr-10 fliter"
       />
       <el-button type="primary" size="small" :disabled="!profileStore.currentSpan.profiled" @click="analyzeProfile()">
         {{ t("analyze") }}
@@ -182,5 +184,9 @@ limitations under the License. -->
 
   .input {
     width: 250px;
+  }
+
+  .fliter {
+    width: 140px;
   }
 </style>

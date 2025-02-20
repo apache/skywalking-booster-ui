@@ -731,7 +731,7 @@ limitations under the License. -->
 
   .hierarchy-btn {
     display: inline-block;
-    padding: 0 2px 2px;
+    padding: 0 3px;
     border: 1px solid #666;
     border-radius: 4px;
     text-align: center;

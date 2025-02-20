@@ -22,7 +22,7 @@ limitations under the License. -->
         placeholder="Select a language"
         @change="setLang"
         size="small"
-        style="font-size: 14px"
+        style="font-size: 14px; width: 180px"
       />
     </div>
     <div class="flex-h item">
