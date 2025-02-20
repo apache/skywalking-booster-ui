@@ -51,14 +51,14 @@ limitations under the License. -->
     },
   });
   const emits = defineEmits(["change"]);
+  const legend = ref<string[]>([]);
   const Options = computed(() =>
     props.data.map((d: { name: string }, index: number) => ({
       label: d.name,
       value: d.name,
-      color: props.colors[index],
+      color: props.colors[index % props.colors.length],
     })),
   );
-  const legend = ref<string[]>([]);
 
   function changeLegend(opt: Option[]) {
     legend.value = opt.map((d: Option) => d.value);

@@ -61,7 +61,7 @@ limitations under the License. -->
   import Trace from "@/views/dashboard/related/trace/Index.vue";
   import associateProcessor from "@/hooks/useAssociateProcessor";
   import { WidgetType } from "@/views/dashboard/data";
-  import SelectorLegend from "./SelectorLegend.vue";
+  import SelectorLegend from "./Legend.vue";
 
   /*global Nullable, defineProps, defineEmits, Indexable*/
   const emits = defineEmits(["select"]);
