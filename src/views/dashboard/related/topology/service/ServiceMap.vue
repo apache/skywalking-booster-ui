@@ -99,16 +99,16 @@ limitations under the License. -->
       <Settings @update="updateSettings" @updateNodes="freshNodes" />
     </div>
     <div class="tool flex-h">
-      <span v-show="graphConfig.showDepth">
+      <div class="flex-h" v-show="graphConfig.showDepth">
         <span class="label">{{ t("currentDepth") }}</span>
         <Selector class="inputs" :value="depth" :options="DepthList" @change="changeDepth" />
-      </span>
-      <span class="switch-icon ml-5" title="Settings" @click="setConfig" v-if="dashboardStore.editMode">
+      </div>
+      <div class="switch-icon ml-5" title="Settings" @click="setConfig" v-if="dashboardStore.editMode">
         <Icon size="middle" iconName="settings" />
-      </span>
-      <span class="switch-icon ml-5" title="Back to overview topology" @click="backToTopology">
+      </div>
+      <div class="switch-icon ml-5" title="Back to overview topology" @click="backToTopology">
         <Icon size="middle" iconName="keyboard_backspace" />
-      </span>
+      </div>
     </div>
     <div
       class="operations-list"
@@ -674,8 +674,8 @@ limitations under the License. -->
 
     .label {
       color: var(--sw-topology-color);
-      display: inline-block;
-      margin-right: 5px;
+      line-height: 32px;
+      width: 120px;
     }
 
     .operations-list {
@@ -713,8 +713,8 @@ limitations under the License. -->
       background: var(--sw-topology-switch-icon);
       color: $text-color;
       display: inline-block;
-      padding: 2px 4px;
-      border-radius: 3px;
+      padding: 5px 4px;
+      border-radius: 2px;
     }
 
     .topo-line {
