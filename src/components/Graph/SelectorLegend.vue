@@ -30,10 +30,15 @@ limitations under the License. -->
   import { computed, ref, watch } from "vue";
   import type { PropType } from "vue";
   import type { Option } from "@/types/app";
+  import Selector from "./Selector.vue";
 
   const props = defineProps({
     data: {
       type: Array as PropType<{ name: string }[]>,
+      default: () => [],
+    },
+    colors: {
+      type: Array as PropType<string[]>,
       default: () => [],
     },
     show: {
@@ -46,7 +51,13 @@ limitations under the License. -->
     },
   });
   const emits = defineEmits(["change"]);
-  const Options = computed(() => props.data.map((d: { name: string }) => ({ label: d.name, value: d.name })));
+  const Options = computed(() =>
+    props.data.map((d: { name: string }, index: number) => ({
+      label: d.name,
+      value: d.name,
+      color: props.colors[index],
+    })),
+  );
   const legend = ref<string[]>([]);
 
   function changeLegend(opt: Option[]) {

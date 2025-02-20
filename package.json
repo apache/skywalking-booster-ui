@@ -1,6 +1,6 @@
 {
   "name": "skywalking-booster-ui",
-  "version": "9.4.0",
+  "version": "10.2.0",
   "private": true,
   "scripts": {
     "dev": "vite",

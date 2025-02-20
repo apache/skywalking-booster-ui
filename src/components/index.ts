@@ -18,7 +18,7 @@ import type { App } from "vue";
 import Icon from "./Icon.vue";
 import TimePicker from "./TimePicker.vue";
 import Selector from "./Selector.vue";
-import Graph from "./Graph.vue";
+import Graph from "./Graph/Graph.vue";
 import Radio from "./Radio.vue";
 import SelectSingle from "./SelectSingle.vue";
 import Tags from "./Tags.vue";

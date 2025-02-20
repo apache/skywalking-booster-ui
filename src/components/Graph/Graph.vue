@@ -17,6 +17,7 @@ limitations under the License. -->
     :data="option.legend.data"
     :show="legendSelector.isSelector"
     :isConfigPage="legendSelector.isConfigPage"
+    :colors="option.color"
     @change="changeLegend"
   />
   <div class="chart" ref="chartRef" :style="`height:${height};width:${width};`">
