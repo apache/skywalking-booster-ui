@@ -113,7 +113,7 @@ limitations under the License. -->
         },
         enterable: true,
         confine: true,
-        extraCssText: "max-height:85%; overflow: auto;",
+        extraCssText: "max-width: 100%; max-height: 75%; white-space: normal; overflow: auto;",
       },
       legend: {
         type: "scroll",
