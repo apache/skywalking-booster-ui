@@ -22,6 +22,7 @@ import type { Event, QueryEventCondition } from "@/types/events";
 import type { Instance, Endpoint } from "@/types/selector";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
+import { EndpointsTopNDefault } from "../data";
 
 interface eventState {
   loading: boolean;
@@ -66,6 +67,7 @@ export const eventStore = defineStore({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
+        limit: EndpointsTopNDefault,
       });
       if (res.data.errors) {
         return res.data;

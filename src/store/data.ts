@@ -1,3 +1,4 @@
+import { Endpoint } from "@/types/selector";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -56,3 +57,5 @@ export enum EBPFProfilingTriggerType {
   FIXED_TIME = "FIXED_TIME",
   CONTINUOUS_PROFILING = "CONTINUOUS_PROFILING",
 }
+
+export const EndpointsTopNDefault = 20;

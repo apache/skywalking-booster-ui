@@ -22,6 +22,7 @@ import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { EndpointsTopNDefault } from "../data";
 
 interface LogState {
   services: Service[];
@@ -89,6 +90,7 @@ export const logStore = defineStore({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
+        limit: EndpointsTopNDefault,
       });
       if (res.data.errors) {
         return res.data;

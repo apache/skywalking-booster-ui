@@ -138,7 +138,6 @@ const msg = {
     "El nombre sólo admite chino e inglés, líneas horizontales y subrayado, y la longitud del nombre no excederá de 300 caracteres",
   enableAssociate: "Activar asociación",
   query: "Consulta",
-  endpointTips: "Aquí, la tabla muestra hasta 20 punto final.",
   queryOrder: "Consulta por duración",
   setOrder: "Orden de consulta",
   latency: "Retraso",
