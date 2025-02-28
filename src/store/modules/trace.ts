@@ -23,6 +23,7 @@ import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { QueryOrders } from "@/views/dashboard/data";
+import { EndpointsTopNDefault } from "../data";
 interface TraceState {
   services: Service[];
   instances: Instance[];
@@ -133,6 +134,7 @@ export const traceStore = defineStore({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
+        limit: EndpointsTopNDefault,
       });
       if (res.data.errors) {
         return res.data;

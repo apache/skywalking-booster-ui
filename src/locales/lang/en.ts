@@ -139,7 +139,6 @@ const msg = {
   enableAssociate: "Enable association",
   text: "Text",
   query: "Query",
-  endpointTips: "The table shows up to 20 pieces of endpoints.",
   viewTrace: "View Related Traces",
   relatedTraceOptions: "Related Trace Options",
   setLatencyDuration: "Latency Related Metrics",

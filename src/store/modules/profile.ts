@@ -28,6 +28,7 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { EndpointsTopNDefault } from "../data";
 
 interface ProfileState {
   endpoints: Endpoint[];
@@ -97,6 +98,7 @@ export const profileStore = defineStore({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
+        limit: EndpointsTopNDefault,
       });
       if (res.data.errors) {
         return res.data;
@@ -109,6 +111,7 @@ export const profileStore = defineStore({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
+        limit: EndpointsTopNDefault,
       });
       if (res.data.errors) {
         return res.data;

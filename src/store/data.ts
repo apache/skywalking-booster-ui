@@ -56,3 +56,5 @@ export enum EBPFProfilingTriggerType {
   FIXED_TIME = "FIXED_TIME",
   CONTINUOUS_PROFILING = "CONTINUOUS_PROFILING",
 }
+
+export const EndpointsTopNDefault = 20;

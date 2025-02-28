@@ -16,13 +16,15 @@ limitations under the License. -->
   <div class="table">
     <div class="search">
       <el-input v-model="searchText" placeholder="Search for more endpoints" @change="searchList" class="inputs">
+        <template #prepend>
+          <Selector style="width: 120px" v-model="topN" :options="topNList" placeholder="Select" />
+        </template>
         <template #append>
           <el-button @click="searchList">
             <Icon size="middle" iconName="search" />
           </el-button>
         </template>
       </el-input>
-      <span class="ml-5 tips">{{ t("endpointTips") }}</span>
     </div>
     <div class="list">
       <el-table v-loading="chartLoading" :data="endpoints" style="width: 100%">
@@ -52,7 +54,6 @@ limitations under the License. -->
   import { ref, watch } from "vue";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { ElMessage } from "element-plus";
-  import { useI18n } from "vue-i18n";
   import type { PropType } from "vue";
   import type { EndpointListConfig } from "@/types/dashboard";
   import type { Endpoint } from "@/types/selector";
@@ -90,7 +91,6 @@ limitations under the License. -->
   });
 
   const emit = defineEmits(["expressionTips"]);
-  const { t } = useI18n();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
   const chartLoading = ref<boolean>(false);
@@ -100,6 +100,14 @@ limitations under the License. -->
   const colSubMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const typesOfMQE = ref<string[]>(props.config.typesOfMQE || []);
+  const topN = ref<number>(20);
+  const topNList = [
+    { label: "TopN20", value: 20 },
+    { label: "TopN50", value: 50 },
+    { label: "TopN100", value: 100 },
+    { label: "TopN150", value: 150 },
+    { label: "TopN200", value: 200 },
+  ];
 
   if (props.needQuery) {
     queryEndpoints();
@@ -108,6 +116,7 @@ limitations under the License. -->
     chartLoading.value = true;
     const resp = await selectorStore.getEndpoints({
       keyword: searchText.value,
+      limit: topN.value,
     });
 
     chartLoading.value = false;

@@ -137,7 +137,6 @@ const msg = {
   duplicateName: "重复的名称",
   text: "文本",
   query: "查询",
-  endpointTips: "这里最多展示20条endpoints。",
   viewTrace: "查看相关Trace",
   relatedTraceOptions: "相关的Trace选项",
   setLatencyDuration: "延迟相关指标",

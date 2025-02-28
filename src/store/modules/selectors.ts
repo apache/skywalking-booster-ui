@@ -20,6 +20,7 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { EndpointsTopNDefault } from "../data";
 interface SelectorState {
   services: Service[];
   destServices: Service[];
@@ -143,7 +144,7 @@ export const selectorStore = defineStore({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: params.keyword || "",
-        limit: params.limit,
+        limit: params.limit || EndpointsTopNDefault,
       });
       if (!res.data.errors) {
         if (params.isRelation) {
