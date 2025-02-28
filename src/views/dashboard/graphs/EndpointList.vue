@@ -27,7 +27,7 @@ limitations under the License. -->
       </el-input>
     </div>
     <div class="list">
-      <el-table v-loading="chartLoading" :data="endpoints" style="width: 100%">
+      <el-table v-loading="chartLoading" :data="currentEndpoints" style="width: 100%">
         <el-table-column label="Endpoints" fixed min-width="220">
           <template #default="scope">
             <span class="link" @click="clickEndpoint(scope)" :style="{ fontSize: `${config.fontSize}px` }">
@@ -48,6 +48,16 @@ limitations under the License. -->
         />
       </el-table>
     </div>
+    <el-pagination
+      class="pagination flex-h"
+      layout="prev, pager, next"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      :total="endpoints.length"
+      @current-change="handleCurrentChange"
+      @prev-click="changePage"
+      @next-click="changePage"
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -94,13 +104,16 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
   const chartLoading = ref<boolean>(false);
-  const endpoints = ref<Endpoint[]>([]);
+  const endpoints = ref<Endpoint[]>([]); // all of endpoints
+  const currentEndpoints = ref<Endpoint[]>([]); // current page of endpoints
   const searchText = ref<string>("");
   const colMetrics = ref<string[]>([]);
   const colSubMetrics = ref<string[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const typesOfMQE = ref<string[]>(props.config.typesOfMQE || []);
   const topN = ref<number>(20);
+  const currentPage = ref<number>(1);
+  const pageSize = 10;
   const topNList = [
     { label: "TopN20", value: 20 },
     { label: "TopN50", value: 50 },
@@ -125,7 +138,8 @@ limitations under the License. -->
       return;
     }
     endpoints.value = resp.data.pods || [];
-    queryEndpointMetrics(endpoints.value);
+    currentEndpoints.value = endpoints.value.filter((d: unknown, index: number) => index < pageSize);
+    queryEndpointMetrics(currentEndpoints.value);
   }
   async function queryEndpointMetrics(arr: Endpoint[]) {
     if (!arr.length) {
@@ -151,7 +165,7 @@ limitations under the License. -->
         { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[2].value,
       );
-      endpoints.value = params.data;
+      currentEndpoints.value = params.data;
       colMetrics.value = params.names;
       colSubMetrics.value = params.subNames;
       metricConfig.value = params.metricConfigArr;
@@ -160,7 +174,7 @@ limitations under the License. -->
 
       return;
     }
-    endpoints.value = currentPods;
+    currentEndpoints.value = currentPods;
     colMetrics.value = [];
     colSubMetrics.value = [];
     metricConfig.value = [];
@@ -183,6 +197,16 @@ limitations under the License. -->
   }
   async function searchList() {
     await queryEndpoints();
+  }
+  function changePage() {
+    currentEndpoints.value = endpoints.value.filter(
+      (_, index: number) => index >= (currentPage.value - 1) * pageSize && index < currentPage.value * pageSize,
+    );
+    queryEndpointMetrics(currentEndpoints.value);
+  }
+  function handleCurrentChange(val: number) {
+    currentPage.value = val;
+    changePage();
   }
   watch(
     () => [
