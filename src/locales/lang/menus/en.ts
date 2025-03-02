@@ -128,6 +128,9 @@ const titles = {
   self_observability_java_agent: "SkyWalking Java Agent",
   self_observability_java_agent_desc:
     "The self observability of SkyWalking Java Agent, which provides the abilities to measure the tracing performance and error statistics of plugins.",
+  self_observability_go_agent: "SkyWalking Go Agent",
+  self_observability_go_agent_desc:
+    "The self observability of SkyWalking Go Agent, which provides the abilities to measure the tracing performance and error statistics of plugins.",
   cilium: "Cilium",
   cilium_desc:
     "Cilium is a CNI plugin for Kubernetes that provides eBPF-based networking, security, and load balancing.",
