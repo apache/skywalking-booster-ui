@@ -113,6 +113,8 @@ const titles = {
     "Satellite：为云原生基础设施设计的开源代理，提供了一种低成本、高效、更安全的遥测数据收集方式。它是遥测采集的推荐负载均衡器。",
   self_observability_java_agent: "SkyWalking Java Agent",
   self_observability_java_agent_desc: "SkyWalking Java Agent 自监控提供了对 agent 插件的性能追踪和错误统计。",
+  self_observability_go_agent: "SkyWalking Go Agent",
+  self_observability_go_agent_desc: "SkyWalking Go Agent 自监控提供了对 agent 插件的性能追踪和错误统计。",
   cilium: "Cilium",
   cilium_desc: "Cilium是Kubernetes上的CNI插件，提供基于eBPF的网络、安全和负载均衡。",
   cilium_service: "Cilium服务",

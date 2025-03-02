@@ -128,7 +128,10 @@ const titles = {
     "Satellite: an open-source agent designed for the cloud-native infrastructures, which provides a low-cost, high-efficient, and more secure way to collect telemetry data. It is the recommended load balancer for telemetry collecting.",
   self_observability_java_agent: "SkyWalking Java Agent",
   self_observability_java_agent_desc:
-    "The self observability of SkyWalking Java Agent, which provides the abilities to measure the tracing performance and error statistics of plugins.",
+    "La auto-observabilidad de SkyWalking Java Agent, que proporciona la capacidad de medir el rendimiento del trazado y las estadísticas de errores de los plugins.",
+  self_observability_go_agent: "SkyWalking Go Agent",
+  self_observability_go_agent_desc:
+    "La auto-observabilidad de SkyWalking Go Agent, que proporciona la capacidad de medir el rendimiento del trazado y las estadísticas de errores de los plugins.",
   cilium: "Cilium",
   cilium_desc:
     "Cilium es un complemento CNI para Kubernetes que proporciona redes, seguridad y equilibrio de carga basados en eBPF.",
