@@ -22,7 +22,6 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, watch, onBeforeUnmount, onMounted } from "vue";
   import type { PropType } from "vue";
-  import _ from "lodash";
   import * as d3 from "d3";
   import ListGraph from "../../utils/d3-trace-list";
   import TreeGraph from "../../utils/d3-trace-tree";
@@ -120,15 +119,19 @@ limitations under the License. -->
         const item = props.data.find(
           (i: Span) => i.traceId === span.traceId && i.segmentId === span.segmentId && i.spanId === span.spanId - 1,
         );
-        const fixSpanKeyContent = {
-          traceId: span.traceId,
-          segmentId: span.segmentId,
-          spanId: span.spanId - 1,
-          parentSpanId: span.spanId - 2,
-        };
-        if (!item && !_.find(fixSpans, fixSpanKeyContent)) {
+        const content = fixSpans.find(
+          (i: Span) =>
+            i.traceId === span.traceId &&
+            i.segmentId === span.segmentId &&
+            i.spanId === span.spanId - 1 &&
+            i.parentSpanId === span.spanId - 2,
+        );
+        if (!item && !content) {
           fixSpans.push({
-            ...fixSpanKeyContent,
+            traceId: span.traceId,
+            segmentId: span.segmentId,
+            spanId: span.spanId - 1,
+            parentSpanId: span.spanId - 2,
             refs: [],
             endpointName: `VNode: ${span.segmentId}`,
             serviceCode: "VirtualNode",
@@ -161,22 +164,26 @@ limitations under the License. -->
         if (!exit) {
           const ref = span.refs[0];
           // create a known broken node.
-          const i = ref.parentSpanId;
-          const fixSpanKeyContent = {
-            traceId: ref.traceId,
-            segmentId: ref.parentSegmentId,
-            spanId: i,
-            parentSpanId: i > -1 ? 0 : -1,
-          };
-          if (!_.find(fixSpans, fixSpanKeyContent)) {
+          const parentSpanId = ref.parentSpanId > -1 ? 0 : -1;
+          const content = fixSpans.find(
+            (i: Span) =>
+              i.traceId === ref.traceId &&
+              i.segmentId === ref.parentSegmentId &&
+              i.spanId === ref.parentSpanId &&
+              i.parentSpanId === parentSpanId,
+          );
+          if (!content) {
             fixSpans.push({
-              ...fixSpanKeyContent,
+              traceId: ref.traceId,
+              segmentId: ref.parentSegmentId,
+              spanId: ref.parentSpanId,
+              parentSpanId,
               refs: [],
               endpointName: `VNode: ${ref.parentSegmentId}`,
               serviceCode: "VirtualNode",
               type: `[Broken] ${ref.type}`,
               peer: "",
-              component: `VirtualNode: #${i}`,
+              component: `VirtualNode: #${ref.parentSpanId}`,
               isError: true,
               isBroken: true,
               layer: "Broken",
@@ -187,16 +194,20 @@ limitations under the License. -->
             });
           }
           // if root broken node is not exist, create a root broken node.
-          if (fixSpanKeyContent.parentSpanId > -1) {
-            const fixRootSpanKeyContent = {
-              traceId: ref.traceId,
-              segmentId: ref.parentSegmentId,
-              spanId: 0,
-              parentSpanId: -1,
-            };
-            if (!_.find(fixSpans, fixRootSpanKeyContent)) {
+          if (parentSpanId > -1) {
+            const content = fixSpans.find(
+              (i: Span) =>
+                i.traceId === ref.traceId &&
+                i.segmentId === ref.parentSegmentId &&
+                i.spanId === 0 &&
+                i.parentSpanId === -1,
+            );
+            if (!content) {
               fixSpans.push({
-                ...fixRootSpanKeyContent,
+                traceId: ref.traceId,
+                segmentId: ref.parentSegmentId,
+                spanId: 0,
+                parentSpanId: -1,
                 refs: [],
                 endpointName: `VNode: ${ref.parentSegmentId}`,
                 serviceCode: "VirtualNode",
@@ -241,14 +252,12 @@ limitations under the License. -->
           }
         }
         if (s.isBroken) {
-          const children = _.filter(props.data, (span: Span) => {
-            return _.find(span.refs, {
-              traceId: s.traceId,
-              parentSegmentId: s.segmentId,
-              parentSpanId: s.spanId,
-            });
-          });
-          if (children.length > 0) {
+          const children = props.data.filter((span: Span) =>
+            span.refs.find(
+              (d) => d.traceId === s.traceId && d.parentSegmentId === s.segmentId && d.parentSpanId === s.spanId,
+            ),
+          );
+          if (children.length) {
             s.children.push(...children);
           }
         }

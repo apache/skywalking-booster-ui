@@ -90,9 +90,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
           assetFileNames: "static/[ext]/[name]-[hash].[ext]",
           manualChunks(id) {
             if (id.includes("node_modules")) {
-              if (id.includes("lodash")) {
-                return "lodash";
-              }
               if (id.includes("echarts")) {
                 return "echarts";
               }

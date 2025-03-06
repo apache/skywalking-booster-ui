@@ -16,7 +16,6 @@
  */
 
 import type { Ref, Span, StatisticsSpan, StatisticsGroupRef, TraceTreeRef } from "@/types/trace";
-import lodash from "lodash";
 
 export default class TraceUtil {
   public static buildTraceDataList(data: Span[]): string[] {
@@ -91,15 +90,19 @@ export default class TraceUtil {
         const index = data.findIndex((patchSpan: Span) => {
           return patchSpan.segmentId === span.segmentId && patchSpan.spanId === span.spanId - 1;
         });
-        const fixSpanKeyContent = {
-          traceId: span.traceId,
-          segmentId: span.segmentId,
-          spanId: span.spanId - 1,
-          parentSpanId: span.spanId - 2,
-        };
-        if (index === -1 && !lodash.find(fixSpans, fixSpanKeyContent)) {
+        const content = fixSpans.find(
+          (i: Span) =>
+            i.traceId === span.traceId &&
+            i.segmentId === span.segmentId &&
+            i.spanId === span.spanId - 1 &&
+            i.parentSpanId === span.spanId - 2,
+        );
+        if (index === -1 && !content) {
           fixSpans.push({
-            ...fixSpanKeyContent,
+            traceId: span.traceId,
+            segmentId: span.segmentId,
+            spanId: span.spanId - 1,
+            parentSpanId: span.spanId - 2,
             refs: [],
             endpointName: `VNode: ${span.segmentId}`,
             serviceCode: "VirtualNode",
@@ -125,16 +128,20 @@ export default class TraceUtil {
           });
           if (index === -1) {
             // create a known broken node.
-            const parentSpanId: number = ref.parentSpanId;
-            const fixSpanKeyContent = {
-              traceId: ref.traceId,
-              segmentId: ref.parentSegmentId,
-              spanId: parentSpanId,
-              parentSpanId: parentSpanId > -1 ? 0 : -1,
-            };
-            if (!lodash.find(fixSpans, fixSpanKeyContent)) {
+            const parentSpanId = ref.parentSpanId > -1 ? 0 : -1;
+            const item = fixSpans.find(
+              (i: Span) =>
+                i.traceId === ref.traceId &&
+                i.segmentId === ref.parentSegmentId &&
+                i.spanId === ref.parentSpanId &&
+                i.parentSpanId === parentSpanId,
+            );
+            if (!item) {
               fixSpans.push({
-                ...fixSpanKeyContent,
+                traceId: ref.traceId,
+                segmentId: ref.parentSegmentId,
+                spanId: ref.parentSpanId,
+                parentSpanId: parentSpanId,
                 refs: [],
                 endpointName: `VNode: ${ref.parentSegmentId}`,
                 serviceCode: "VirtualNode",
@@ -151,16 +158,20 @@ export default class TraceUtil {
               });
             }
             // if root broken node is not exist, create a root broken node.
-            if (fixSpanKeyContent.parentSpanId > -1) {
-              const fixRootSpanKeyContent = {
-                traceId: ref.traceId,
-                segmentId: ref.parentSegmentId,
-                spanId: 0,
-                parentSpanId: -1,
-              };
-              if (!lodash.find(fixSpans, fixRootSpanKeyContent)) {
+            if (parentSpanId > -1) {
+              const item = fixSpans.find(
+                (i: Span) =>
+                  i.traceId === ref.traceId &&
+                  i.segmentId === ref.parentSegmentId &&
+                  i.spanId === 0 &&
+                  i.parentSpanId === -1,
+              );
+              if (!item) {
                 fixSpans.push({
-                  ...fixRootSpanKeyContent,
+                  traceId: ref.traceId,
+                  segmentId: ref.parentSegmentId,
+                  spanId: 0,
+                  parentSpanId: -1,
                   refs: [],
                   endpointName: `VNode: ${ref.parentSegmentId}`,
                   serviceCode: "VirtualNode",
@@ -210,13 +221,14 @@ export default class TraceUtil {
           }
         }
         if (curSegment.isBroken) {
-          const children = lodash.filter(data, (span: Span) => {
-            return lodash.find(span.refs, {
-              traceId: curSegment.traceId,
-              parentSegmentId: curSegment.segmentId,
-              parentSpanId: curSegment.spanId,
-            });
-          }) as Span[];
+          const children = data.filter((span: Span) =>
+            span.refs.find(
+              (d) =>
+                d.traceId === curSegment.traceId &&
+                d.parentSegmentId === curSegment.segmentId &&
+                d.parentSpanId === curSegment.spanId,
+            ),
+          );
           if (children.length) {
             curSegment.children = curSegment.children || [];
             curSegment.children.push(...children);
