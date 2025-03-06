@@ -126,7 +126,7 @@ limitations under the License. -->
         opt.auto = Number(f.value) * 60 * 60 * 1000;
       }
       if (f.step === TimeType.DAY_TIME) {
-        opt.auto = Number(f.value) * 60 * 60 * 60 * 1000;
+        opt.auto = Number(f.value) * 24 * 60 * 60 * 1000;
       }
     }
     const config = JSON.stringify(opt);
