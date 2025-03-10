@@ -15,7 +15,7 @@ limitations under the License. -->
     <Icon iconName="spinner" size="sm" />
   </div>
   <div ref="traceGraph" class="d3-graph"></div>
-  <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
+  <el-dialog v-model="showDetail" :destroy-on-close="true" @closed="showDetail = false">
     <SpanDetail :currentSpan="currentSpan" />
   </el-dialog>
 </template>
