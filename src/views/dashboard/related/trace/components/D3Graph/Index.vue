@@ -93,7 +93,7 @@ limitations under the License. -->
       return;
     }
     if (node.spanId === spanId && node.segmentId === segmentId) {
-      node.children.push(data);
+      node.refChildren.push(data);
       return;
     }
     for (const nodeItem of node.children || []) {
@@ -239,6 +239,7 @@ limitations under the License. -->
     for (const id of Object.keys(segmentGroup)) {
       const currentSegment = segmentGroup[id].sort((a: Span, b: Span) => b.parentSpanId - a.parentSpanId);
       for (const span of currentSegment) {
+        span.refChildren = [];
         const index = currentSegment.findIndex((i: Span) => i.spanId === span.parentSpanId);
         if (index > -1) {
           if (
@@ -257,7 +258,7 @@ limitations under the License. -->
             ),
           );
           if (children.length) {
-            span.children.push(...children);
+            span.refChildren.push(...children);
           }
         }
       }
