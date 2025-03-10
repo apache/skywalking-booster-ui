@@ -238,25 +238,26 @@ limitations under the License. -->
     fixSpansSize.value = fixSpans.length;
     for (const id of Object.keys(segmentGroup)) {
       const currentSegment = segmentGroup[id].sort((a: Span, b: Span) => b.parentSpanId - a.parentSpanId);
-      for (const s of currentSegment) {
-        const index = currentSegment.findIndex((i: Span) => i.spanId === s.parentSpanId);
+      for (const span of currentSegment) {
+        const index = currentSegment.findIndex((i: Span) => i.spanId === span.parentSpanId);
         if (index > -1) {
           if (
             (currentSegment[index].isBroken && currentSegment[index].parentSpanId === -1) ||
             !currentSegment[index].isBroken
           ) {
-            currentSegment[index].children.push(s);
+            currentSegment[index].children.push(span);
             currentSegment[index].children.sort((a: Span, b: Span) => a.spanId - b.spanId);
           }
         }
-        if (s.isBroken) {
+        if (span.isBroken) {
           const children = props.data.filter((span: Span) =>
             span.refs.find(
-              (d) => d.traceId === s.traceId && d.parentSegmentId === s.segmentId && d.parentSpanId === s.spanId,
+              (d) =>
+                d.traceId === span.traceId && d.parentSegmentId === span.segmentId && d.parentSpanId === span.spanId,
             ),
           );
           if (children.length) {
-            s.children.push(...children);
+            span.children.push(...children);
           }
         }
       }
