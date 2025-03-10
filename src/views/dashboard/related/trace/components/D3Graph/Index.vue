@@ -106,7 +106,6 @@ limitations under the License. -->
     }
     segmentId.value = [];
     const segmentGroup: Recordable = {};
-    const segmentIdGroup: string[] = [];
     const fixSpans: Span[] = [];
     const segmentHeaders: Span[] = [];
     for (const span of props.data) {
@@ -233,12 +232,11 @@ limitations under the License. -->
       if (segmentGroup[i.segmentId]) {
         segmentGroup[i.segmentId].push(i);
       } else {
-        segmentIdGroup.push(i.segmentId);
         segmentGroup[i.segmentId] = [i];
       }
     }
     fixSpansSize.value = fixSpans.length;
-    for (const id of segmentIdGroup) {
+    for (const id of Object.keys(segmentGroup)) {
       const currentSegment = segmentGroup[id].sort((a: Span, b: Span) => b.parentSpanId - a.parentSpanId);
       for (const s of currentSegment) {
         const index = currentSegment.findIndex((i: Span) => i.spanId === s.parentSpanId);
@@ -264,7 +262,7 @@ limitations under the License. -->
       }
       segmentGroup[id] = currentSegment[currentSegment.length - 1];
     }
-    for (const id of segmentIdGroup) {
+    for (const id of Object.keys(segmentGroup)) {
       for (const ref of segmentGroup[id].refs) {
         if (ref.traceId === props.traceId) {
           traverseTree(segmentGroup[ref.parentSegmentId], ref.parentSpanId, ref.parentSegmentId, segmentGroup[id]);
