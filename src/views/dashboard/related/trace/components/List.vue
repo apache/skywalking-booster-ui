@@ -27,7 +27,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed } from "vue";
+  import { computed, ref } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import * as d3 from "d3";

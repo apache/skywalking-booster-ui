@@ -48,6 +48,7 @@ export interface Span {
   logs?: log[];
   parentSegmentId?: string;
   refs?: Ref[];
+  refChildren?: Recordable;
 }
 export type Ref = {
   type: string;

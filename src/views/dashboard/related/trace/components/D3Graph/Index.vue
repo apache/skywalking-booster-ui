@@ -18,6 +18,9 @@ limitations under the License. -->
   <el-dialog v-model="showDetail" :destroy-on-close="true" @closed="showDetail = false">
     <SpanDetail :currentSpan="currentSpan" />
   </el-dialog>
+  <el-dialog v-model="showRefsChildren" :destroy-on-close="true" @closed="showRefsChildren = false" width="850">
+    <div ref="refsChildrenTree" class="refs-children-tree"></div>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
   import { ref, watch, onBeforeUnmount, onMounted } from "vue";
@@ -30,6 +33,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { debounce } from "@/utils/debounce";
   import { mutationObserver } from "@/utils/mutation";
+  import { ViewSpanType } from "../data";
 
   /* global defineProps, Nullable, defineExpose, Recordable */
   const props = defineProps({
@@ -42,10 +46,12 @@ limitations under the License. -->
   const showDetail = ref<boolean>(false);
   const fixSpansSize = ref<number>(0);
   const segmentId = ref<Recordable[]>([]);
-  const currentSpan = ref<Array<Span>>([]);
+  const currentSpan = ref<Span | Recordable>({});
   const refSpans = ref<Array<Ref>>([]);
   const tree = ref<Nullable<any>>(null);
+  const showRefsChildren = ref<boolean>(false);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
+  const refsChildrenTree = ref<Nullable<HTMLDivElement>>(null);
   const debounceFunc = debounce(draw, 500);
 
   defineExpose({
@@ -84,20 +90,30 @@ limitations under the License. -->
       tree.value.init({ label: `${props.traceId}`, children: segmentId.value }, props.data);
     }
   }
-  function handleSelectSpan(i: Recordable) {
-    currentSpan.value = i.data;
-    showDetail.value = true;
+
+  function drawRefsChildren() {
+    if (!refsChildrenTree.value) {
+      return;
+    }
+    d3.selectAll(".d3-tip").remove();
+    if (props.type === "List") {
+      tree.value = new ListGraph(refsChildrenTree.value, handleSelectSpan);
+      tree.value.init({ label: "", children: currentSpan.value.refChildren }, props.data, fixSpansSize.value);
+      tree.value.draw();
+    } else {
+      tree.value = new TreeGraph(refsChildrenTree.value, handleSelectSpan);
+      tree.value.init({ label: `${props.traceId}`, children: currentSpan.value.refChildren }, props.data);
+    }
   }
-  function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
-    if (!node || node.isBroken) {
-      return;
-    }
-    if (node.spanId === spanId && node.segmentId === segmentId) {
-      node.refChildren.push(data);
-      return;
-    }
-    for (const nodeItem of node.children || []) {
-      traverseTree(nodeItem, spanId, segmentId, data);
+  function handleSelectSpan(i: Recordable, type?: ViewSpanType) {
+    currentSpan.value = i.data;
+    if (type === ViewSpanType.REFS) {
+      showRefsChildren.value = true;
+      setTimeout(() => {
+        drawRefsChildren();
+      }, 300);
+    } else {
+      showDetail.value = true;
     }
   }
   function changeTree() {
@@ -317,6 +333,18 @@ limitations under the License. -->
       return a - b;
     };
   }
+  function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
+    if (!node || node.isBroken) {
+      return;
+    }
+    if (node.spanId === spanId && node.segmentId === segmentId) {
+      node.refChildren.push(data);
+      return;
+    }
+    for (const nodeItem of node.children || []) {
+      traverseTree(nodeItem, spanId, segmentId, data);
+    }
+  }
   onBeforeUnmount(() => {
     d3.selectAll(".d3-tip").remove();
     window.removeEventListener("resize", debounceFunc);
@@ -387,5 +415,10 @@ limitations under the License. -->
     white-space: pre;
     overflow: auto;
     font-family: monospace;
+  }
+
+  .refs-children-tree {
+    height: 500px;
+    width: 800px;
   }
 </style>

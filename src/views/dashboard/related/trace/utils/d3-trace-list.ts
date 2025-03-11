@@ -22,10 +22,11 @@ import dayjs from "dayjs";
 import icons from "@/assets/img/icons";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Themes } from "@/constants/data";
+import { ViewSpanType } from "../components/data";
 
 export default class ListGraph {
   private barHeight = 48;
-  private handleSelectSpan: Nullable<(i: Trace) => void> = null;
+  private handleSelectSpan: Nullable<(i: Trace, type?: ViewSpanType) => void> = null;
   private el: Nullable<HTMLDivElement> = null;
   private i = 0;
   private width = 0;
@@ -223,7 +224,7 @@ export default class ListGraph {
     nodeEnter
       .append("text")
       .attr("class", "node-text")
-      .attr("x", 35)
+      .attr("x", 48)
       .attr("y", -6)
       .attr("fill", (d: Recordable) => (d.data.isError ? `#e54c17` : appStore.theme === Themes.Dark ? "#eee" : "#333"))
       .html((d: Recordable) => {
@@ -232,6 +233,17 @@ export default class ListGraph {
         }
         const label = d.data.label.length > 30 ? `${d.data.label.slice(0, 30)}...` : `${d.data.label}`;
         return label;
+      });
+    nodeEnter
+      .append("image")
+      .attr("width", 16)
+      .attr("height", 16)
+      .attr("x", 23)
+      .attr("y", -8)
+      .attr("xlink:href", (d: any) => (d.data.refChildren?.length ? icons.REFER : ``))
+      .on("click", (event: any, d: Trace) => {
+        event.stopPropagation();
+        this.handleSelectSpan && this.handleSelectSpan(d, ViewSpanType.REFS);
       });
     nodeEnter
       .append("circle")
@@ -272,7 +284,7 @@ export default class ListGraph {
     nodeEnter
       .append("text")
       .attr("class", "node-text")
-      .attr("x", 35)
+      .attr("x", 48)
       .attr("y", 12)
       .attr("fill", appStore.theme === Themes.Dark ? "#777" : "#ccc")
       .style("font-size", "11px")
