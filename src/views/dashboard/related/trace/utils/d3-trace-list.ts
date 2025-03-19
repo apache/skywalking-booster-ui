@@ -48,7 +48,7 @@ export default class ListGraph {
     this.el = el;
     this.width = el.getBoundingClientRect().width - 10;
     this.height = el.getBoundingClientRect().height - 10;
-    d3.select(".trace-list-dowanload").remove();
+    d3.select(`.${this.el.className} .trace-list-dowanload`).remove();
     this.svg = d3
       .select(this.el)
       .append("svg")
@@ -86,7 +86,7 @@ export default class ListGraph {
     L${d.target.y} ${d.target.x - 5}`;
   }
   init(data: Recordable, row: Recordable[], fixSpansSize: number) {
-    d3.select(".trace-xaxis").remove();
+    d3.select(`.${this.el?.className} .trace-xaxis`).remove();
     this.row = row;
     this.data = data;
     this.min = d3.min(this.row.map((i) => i.startTime));
@@ -251,14 +251,14 @@ export default class ListGraph {
       .attr("cx", (d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length > 9) {
-          return 272;
+          return 273;
         } else {
-          return 270;
+          return 271;
         }
       })
       .attr("cy", -5)
-      .attr("fill", "none")
-      .attr("stroke", appStore.theme === Themes.Dark ? "#666" : "#e66")
+      .attr("fill", appStore.theme === Themes.Dark ? "#fff" : "#ccc")
+      .attr("stroke", "#e66")
       .style("opacity", (d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
@@ -271,7 +271,7 @@ export default class ListGraph {
       .append("text")
       .attr("x", 267)
       .attr("y", -1)
-      .attr("fill", appStore.theme === Themes.Dark ? "#666" : "#e66")
+      .attr("fill", "#e66")
       .style("font-size", "10px")
       .text((d: Recordable) => {
         const events = d.data.attachedEvents;
