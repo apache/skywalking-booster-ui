@@ -257,7 +257,7 @@ export default class ListGraph {
         }
       })
       .attr("cy", -5)
-      .attr("fill", appStore.theme === Themes.Dark ? "#fff" : "#ccc")
+      .attr("fill", "none")
       .attr("stroke", "#e66")
       .style("opacity", (d: Recordable) => {
         const events = d.data.attachedEvents;

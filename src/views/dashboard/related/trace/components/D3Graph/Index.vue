@@ -101,8 +101,9 @@ limitations under the License. -->
       tree.value.init({ label: "", children: currentSpan.value.refChildren }, props.data, fixSpansSize.value);
       tree.value.draw();
     } else {
+      const nodes = getRefsAllNodes({ label: `${props.traceId}`, children: currentSpan.value.refChildren });
       tree.value = new TreeGraph(refsChildrenTree.value, handleSelectSpan);
-      tree.value.init({ label: `${props.traceId}`, children: currentSpan.value.refChildren }, props.data);
+      tree.value.init({ label: `${props.traceId}`, children: currentSpan.value.refChildren }, nodes);
     }
   }
   function handleSelectSpan(i: Recordable, type?: ViewSpanType) {
@@ -344,6 +345,24 @@ limitations under the License. -->
     for (const nodeItem of node.children || []) {
       traverseTree(nodeItem, spanId, segmentId, data);
     }
+  }
+
+  function getRefsAllNodes(tree: Recordable) {
+    let nodes = [];
+    let stack = [tree];
+
+    while (stack.length > 0) {
+      const node = stack.pop();
+      nodes.push(node);
+
+      if (node?.children && node.children.length > 0) {
+        for (let i = node.children.length - 1; i >= 0; i--) {
+          stack.push(node.children[i]);
+        }
+      }
+    }
+
+    return nodes;
   }
   onBeforeUnmount(() => {
     d3.selectAll(".d3-tip").remove();

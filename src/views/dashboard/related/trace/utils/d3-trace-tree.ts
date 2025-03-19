@@ -20,11 +20,13 @@ import d3tip from "d3-tip";
 import type { Trace, Span } from "@/types/trace";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Themes } from "@/constants/data";
+import icons from "@/assets/img/icons";
+import { ViewSpanType } from "../components/data";
 
 export default class TraceMap {
   private i = 0;
   private el: Nullable<HTMLDivElement> = null;
-  private handleSelectSpan: Nullable<(i: Trace) => void> = null;
+  private handleSelectSpan: Nullable<(i: Trace, type?: ViewSpanType) => void> = null;
   private topSlow: Nullable<any> = [];
   private height = 0;
   private width = 0;
@@ -55,7 +57,7 @@ export default class TraceMap {
     this.topChild = [];
     this.width = el.clientWidth - 20;
     this.height = el.clientHeight - 30;
-    d3.select(".d3-trace-tree").remove();
+    d3.select(`.${this.el.className} .d3-trace-tree`).remove();
     this.body = d3
       .select(this.el)
       .append("svg")
@@ -80,7 +82,7 @@ export default class TraceMap {
     this.svg.call(this.tip);
   }
   init(data: Recordable, row: Recordable) {
-    this.treemap = d3.tree().size([row.length * 35, this.width]);
+    this.treemap = d3.tree().size([row.length * 32, this.height]);
     this.row = row;
     this.data = data;
     this.min = Number(d3.min(this.row.map((i: Span) => i.startTime)));
@@ -214,6 +216,18 @@ export default class TraceMap {
       )
       .attr("stroke", (d: Recordable) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)))
       .attr("stroke-width", 2.5);
+
+    nodeEnter
+      .append("image")
+      .attr("width", 16)
+      .attr("height", 16)
+      .attr("x", -8)
+      .attr("y", -23)
+      .attr("xlink:href", (d: any) => (d.data.refChildren?.length ? icons.REFER : ``))
+      .on("click", (event: any, d: Trace) => {
+        event.stopPropagation();
+        this.handleSelectSpan && this.handleSelectSpan(d, ViewSpanType.REFS);
+      });
 
     nodeEnter
       .append("text")
