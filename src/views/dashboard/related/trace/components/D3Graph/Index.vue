@@ -77,11 +77,18 @@ limitations under the License. -->
     d3.selectAll(".d3-tip").remove();
     if (props.type === "List") {
       tree.value = new ListGraph(traceGraph.value, handleSelectSpan);
-      tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
+      tree.value.init(
+        { label: "TRACE_ROOT", children: segmentId.value },
+        getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+        fixSpansSize.value,
+      );
       tree.value.draw();
     } else {
       tree.value = new TreeGraph(traceGraph.value, handleSelectSpan);
-      tree.value.init({ label: `${props.traceId}`, children: segmentId.value }, props.data);
+      tree.value.init(
+        { label: `${props.traceId}`, children: segmentId.value },
+        getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+      );
     }
   }
   function handleSelectSpan(i: Recordable) {
@@ -272,24 +279,23 @@ limitations under the License. -->
       }
     }
     for (const i in segmentGroup) {
-      if (segmentGroup[i].refs.length) {
-        let exit = null;
-        for (const ref of segmentGroup[i].refs) {
-          const e = props.data.find(
-            (i: Recordable) =>
-              ref.traceId === i.traceId && ref.parentSegmentId === i.segmentId && ref.parentSpanId === i.spanId,
-          );
-          if (e) {
-            exit = e;
-          }
+      for (const ref of segmentGroup[i].refs) {
+        if (segmentGroup[ref.parentSegmentId]) {
+          segmentGroup[ref.parentSegmentId].children.push(segmentGroup[i]);
         }
-        if (exit) {
+      }
+    }
+    for (const i in segmentGroup) {
+      for (const ref of segmentGroup[i].refs) {
+        if (!segmentGroup[ref.parentSegmentId]) {
           segmentId.value.push(segmentGroup[i]);
         }
-      } else {
+      }
+      if (!segmentGroup[i].refs.length && segmentGroup[i].parentSpanId === -1) {
         segmentId.value.push(segmentGroup[i]);
       }
     }
+    console.log(segmentId.value);
     for (const i of segmentId.value) {
       collapse(i);
     }
@@ -309,6 +315,23 @@ limitations under the License. -->
         collapse(i);
       }
     }
+  }
+  function getRefsAllNodes(tree: Recordable) {
+    let nodes = [];
+    let stack = [tree];
+
+    while (stack.length > 0) {
+      const node = stack.pop();
+      nodes.push(node);
+
+      if (node?.children && node.children.length > 0) {
+        for (let i = node.children.length - 1; i >= 0; i--) {
+          stack.push(node.children[i]);
+        }
+      }
+    }
+
+    return nodes;
   }
   function compare(p: string) {
     return (m: Recordable, n: Recordable) => {

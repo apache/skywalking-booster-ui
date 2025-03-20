@@ -47,7 +47,7 @@ export default class ListGraph {
     this.el = el;
     this.width = el.getBoundingClientRect().width - 10;
     this.height = el.getBoundingClientRect().height - 10;
-    d3.select(".trace-list-dowanload").remove();
+    d3.select(`.${this.el?.className} .trace-list-dowanload`).remove();
     this.svg = d3
       .select(this.el)
       .append("svg")
@@ -85,7 +85,7 @@ export default class ListGraph {
     L${d.target.y} ${d.target.x - 5}`;
   }
   init(data: Recordable, row: Recordable[], fixSpansSize: number) {
-    d3.select(".trace-xaxis").remove();
+    d3.select(`.${this.el?.className} .trace-xaxis`).remove();
     this.row = row;
     this.data = data;
     this.min = d3.min(this.row.map((i) => i.startTime));
