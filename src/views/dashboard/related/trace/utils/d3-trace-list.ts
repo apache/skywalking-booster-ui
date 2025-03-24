@@ -246,7 +246,7 @@ export default class ListGraph {
       })
       .attr("cy", -5)
       .attr("fill", "none")
-      .attr("stroke", appStore.theme === Themes.Dark ? "#666" : "#e66")
+      .attr("stroke", "#e66")
       .style("opacity", (d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
@@ -259,7 +259,7 @@ export default class ListGraph {
       .append("text")
       .attr("x", 267)
       .attr("y", -1)
-      .attr("fill", appStore.theme === Themes.Dark ? "#666" : "#e66")
+      .attr("fill", "#e66")
       .style("font-size", "10px")
       .text((d: Recordable) => {
         const events = d.data.attachedEvents;
