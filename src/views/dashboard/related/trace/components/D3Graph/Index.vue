@@ -280,13 +280,6 @@ limitations under the License. -->
     }
     for (const i in segmentGroup) {
       for (const ref of segmentGroup[i].refs) {
-        if (segmentGroup[ref.parentSegmentId]) {
-          segmentGroup[ref.parentSegmentId].children.push(segmentGroup[i]);
-        }
-      }
-    }
-    for (const i in segmentGroup) {
-      for (const ref of segmentGroup[i].refs) {
         if (!segmentGroup[ref.parentSegmentId]) {
           segmentId.value.push(segmentGroup[i]);
         }
@@ -295,7 +288,6 @@ limitations under the License. -->
         segmentId.value.push(segmentGroup[i]);
       }
     }
-    console.log(segmentId.value);
     for (const i of segmentId.value) {
       collapse(i);
     }
