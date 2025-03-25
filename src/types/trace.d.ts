@@ -50,7 +50,7 @@ export interface Span {
   refs?: Ref[];
 }
 export type Ref = {
-  type: string;
+  type?: string;
   parentSegmentId: string;
   parentSpanId: number;
   traceId: string;
@@ -58,13 +58,6 @@ export type Ref = {
 export interface log {
   time: number;
   data: Map<string, string>;
-}
-
-export interface Ref {
-  traceId: string;
-  parentSegmentId: string;
-  parentSpanId: number;
-  type: string;
 }
 
 export interface StatisticsSpan {

@@ -117,6 +117,10 @@ export default class ListGraph {
   }
   draw(callback: Function) {
     this.update(this.root, callback);
+    d3.select("body").on("click", function (event) {
+      if (event.target.closest("#action-box")) return;
+      d3.select("#action-box").style("display", "none");
+    });
   }
   click(d: Recordable, scope: Recordable) {
     if (!d.data.type) return;
@@ -155,9 +159,14 @@ export default class ListGraph {
         event.stopPropagation();
         if (t.selectedNode) {
           t.selectedNode.classed("highlighted", false);
+          d3.select("#action-box").style("display", "none");
         }
         if (t.selectedNode?.datum().id !== d.id) {
           d3.select(this).classed("highlighted", true);
+          d3.select("#action-box")
+            .style("display", "block")
+            .style("left", `${event.pageX - 70}px`)
+            .style("top", `${event.pageY - 100}px`);
         }
         t.selectedNode = d3.select(this);
         if (t.handleSelectSpan) {

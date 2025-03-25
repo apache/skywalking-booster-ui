@@ -15,6 +15,10 @@ limitations under the License. -->
     <Icon iconName="spinner" size="sm" />
   </div>
   <div ref="traceGraph" class="d3-graph"></div>
+  <div id="action-box">
+    <div @click="showDetail = true">Span Details</div>
+    <div v-for="span in parentSpans" :key="span.parentSegmentId">{{ `Parent Span: ${span.parentSegmentId}` }}</div>
+  </div>
   <el-dialog v-model="showDetail" :destroy-on-close="true" @closed="showDetail = false" v-if="currentSpan?.segmentId">
     <SpanDetail :currentSpan="currentSpan" />
   </el-dialog>
@@ -46,6 +50,7 @@ limitations under the License. -->
   const refSpans = ref<Array<Ref>>([]);
   const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
+  const parentSpans = ref<Array<Ref>>([]);
   const debounceFunc = debounce(draw, 500);
 
   defineExpose({
@@ -93,7 +98,15 @@ limitations under the License. -->
   }
   function handleSelectSpan(i: Recordable) {
     currentSpan.value = i.data;
-    showDetail.value = true;
+    parentSpans.value = currentSpan.value?.refs?.filter((d) => d) || [];
+    if (currentSpan.value?.parentSpanId !== -1) {
+      parentSpans.value.push({
+        parentSegmentId: currentSpan.value?.segmentId || "",
+        parentSpanId: currentSpan.value?.parentSpanId || NaN,
+        traceId: currentSpan.value?.traceId || "",
+      });
+    }
+    // showDetail.value = true;
   }
   function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
     if (!node || node.isBroken) {
@@ -395,5 +408,28 @@ limitations under the License. -->
   .trace-node.highlighted .node-text {
     font-weight: bold;
     fill: #409eff;
+  }
+
+  #action-box {
+    position: absolute;
+    color: $font-color;
+    cursor: pointer;
+    border: var(--sw-topology-border);
+    border-radius: 3px;
+    background-color: $theme-background;
+    padding: 10px 0;
+    display: none;
+
+    div {
+      height: 30px;
+      line-height: 30px;
+      text-align: left;
+      padding: 0 15px;
+    }
+
+    div:hover {
+      color: $active-color;
+      background-color: $popper-hover-bg-color;
+    }
   }
 </style>
