@@ -15,7 +15,7 @@ limitations under the License. -->
     <Icon iconName="spinner" size="sm" />
   </div>
   <div ref="traceGraph" class="d3-graph"></div>
-  <el-dialog v-model="showDetail" :destroy-on-close="true" @closed="showDetail = false">
+  <el-dialog v-model="showDetail" :destroy-on-close="true" @closed="showDetail = false" v-if="currentSpan?.segmentId">
     <SpanDetail :currentSpan="currentSpan" />
   </el-dialog>
 </template>
@@ -42,7 +42,7 @@ limitations under the License. -->
   const showDetail = ref<boolean>(false);
   const fixSpansSize = ref<number>(0);
   const segmentId = ref<Recordable[]>([]);
-  const currentSpan = ref<Array<Span>>([]);
+  const currentSpan = ref<Nullable<Span>>(null);
   const refSpans = ref<Array<Ref>>([]);
   const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
@@ -361,7 +361,7 @@ limitations under the License. -->
     },
   );
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
   .d3-graph {
     height: 100%;
   }
@@ -382,25 +382,18 @@ limitations under the License. -->
   }
 
   .trace-node .node-text {
-    font: 12.5px sans-serif;
+    font: 12px sans-serif;
     pointer-events: none;
-  }
-
-  .domain {
-    display: none;
-  }
-
-  .time-charts-item {
-    display: inline-block;
-    padding: 2px 8px;
-    border: 1px solid;
-    font-size: 11px;
-    border-radius: 4px;
   }
 
   .dialog-c-text {
     white-space: pre;
     overflow: auto;
     font-family: monospace;
+  }
+
+  .trace-node.highlighted .node-text {
+    font-weight: bold;
+    fill: #409eff;
   }
 </style>

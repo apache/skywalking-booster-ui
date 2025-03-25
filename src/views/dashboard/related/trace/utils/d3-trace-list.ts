@@ -42,6 +42,7 @@ export default class ListGraph {
   private xAxis: any = null;
   private sequentialScale: any = null;
   private root: any = null;
+  private selectedNode: any = null;
   constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
     this.handleSelectSpan = handleSelectSpan;
     this.el = el;
@@ -144,16 +145,23 @@ export default class ListGraph {
       .attr("transform", `translate(${source.y0},${source.x0})`)
       .attr("class", "trace-node")
       .attr("style", "cursor: pointer")
-      .style("opacity", 0)
       .on("mouseover", function (event: MouseEvent, d: Trace) {
         t.tip.show(d, this);
       })
       .on("mouseout", function (event: MouseEvent, d: Trace) {
         t.tip.hide(d, this);
       })
-      .on("click", (event: MouseEvent, d: Trace) => {
-        if (this.handleSelectSpan) {
-          this.handleSelectSpan(d);
+      .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
+        event.stopPropagation();
+        if (t.selectedNode) {
+          t.selectedNode.classed("highlighted", false);
+        }
+        if (t.selectedNode?.datum().id !== d.id) {
+          d3.select(this).classed("highlighted", true);
+        }
+        t.selectedNode = d3.select(this);
+        if (t.handleSelectSpan) {
+          t.handleSelectSpan(d);
         }
       });
     nodeEnter
