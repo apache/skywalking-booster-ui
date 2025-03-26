@@ -295,4 +295,10 @@ limitations under the License. -->
   .link {
     text-decoration: underline;
   }
+
+  .log-tips {
+    width: 100%;
+    text-align: center;
+    margin: 50px 0;
+  }
 </style>
