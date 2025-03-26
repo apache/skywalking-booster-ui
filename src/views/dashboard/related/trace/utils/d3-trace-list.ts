@@ -162,13 +162,15 @@ export default class ListGraph {
           t.selectedNode.classed("highlighted", false);
           d3.select("#action-box").style("display", "none");
         }
-        if (!hasClass) {
-          d3.select(this).classed("highlighted", true);
-          d3.select("#action-box")
-            .style("display", "block")
-            .style("left", `${event.pageX - 70}px`)
-            .style("top", `${event.pageY - 100}px`);
+        if (hasClass) {
+          t.selectedNode = null;
+          return;
         }
+        d3.select(this).classed("highlighted", true);
+        d3.select("#action-box")
+          .style("display", "block")
+          .style("left", `${event.pageX - 70}px`)
+          .style("top", `${event.pageY - 100}px`);
         t.selectedNode = d3.select(this);
         if (t.handleSelectSpan) {
           t.handleSelectSpan(d);
