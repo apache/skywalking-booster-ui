@@ -106,7 +106,6 @@ limitations under the License. -->
         traceId: currentSpan.value?.traceId || "",
       });
     }
-    // showDetail.value = true;
   }
   function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
     if (!node || node.isBroken) {

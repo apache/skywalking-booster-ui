@@ -157,11 +157,12 @@ export default class ListGraph {
       })
       .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
         event.stopPropagation();
+        const hasClass = d3.select(this).classed("highlighted");
         if (t.selectedNode) {
           t.selectedNode.classed("highlighted", false);
           d3.select("#action-box").style("display", "none");
         }
-        if (t.selectedNode?.datum().id !== d.id) {
+        if (!hasClass) {
           d3.select(this).classed("highlighted", true);
           d3.select("#action-box")
             .style("display", "block")
