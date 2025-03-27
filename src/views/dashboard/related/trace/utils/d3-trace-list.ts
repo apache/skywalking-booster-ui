@@ -87,7 +87,7 @@ export default class ListGraph {
   }
   init(data: Recordable, row: Recordable[], fixSpansSize: number) {
     d3.select(`.${this.el?.className} .trace-xaxis`).remove();
-    d3.select("#action-box").style("display", "none");
+    d3.select("#trace-action-box").style("display", "none");
     this.row = row;
     this.data = data;
     this.min = d3.min(this.row.map((i) => i.startTime));
@@ -158,14 +158,14 @@ export default class ListGraph {
         const hasClass = d3.select(this).classed("highlighted");
         if (t.selectedNode) {
           t.selectedNode.classed("highlighted", false);
-          d3.select("#action-box").style("display", "none");
+          d3.select("#trace-action-box").style("display", "none");
         }
         if (hasClass) {
           t.selectedNode = null;
           return;
         }
         d3.select(this).classed("highlighted", true);
-        d3.select("#action-box")
+        d3.select("#trace-action-box")
           .style("display", "block")
           .style("left", `${event.pageX - 70}px`)
           .style("top", `${event.pageY + 30}px`);
@@ -420,7 +420,7 @@ export default class ListGraph {
     if (parentSpan) {
       d3.select(`#list-node-${parentSpan.id}`).classed("highlightedParent", true);
     }
-    d3.select("#action-box").style("display", "none");
+    d3.select("#trace-action-box").style("display", "none");
     this.selectedNode.classed("highlighted", false);
     if (!parentSpan) return;
     const container = document.querySelector(".trace-chart .charts");

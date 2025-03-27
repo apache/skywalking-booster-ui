@@ -15,7 +15,7 @@ limitations under the License. -->
     <Icon iconName="spinner" size="sm" />
   </div>
   <div ref="traceGraph" class="d3-graph"></div>
-  <div id="action-box">
+  <div id="trace-action-box">
     <div @click="showDetail = true">Span Details</div>
     <div v-for="span in parentSpans" :key="span.parentSegmentId" @click="viewParentSpan(span)">{{
       `Parent Span: ${span.parentSegmentId}`
@@ -426,7 +426,7 @@ limitations under the License. -->
     fill: #4caf50;
   }
 
-  #action-box {
+  #trace-action-box {
     position: absolute;
     color: $font-color;
     cursor: pointer;
