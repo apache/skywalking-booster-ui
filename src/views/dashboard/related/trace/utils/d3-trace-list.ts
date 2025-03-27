@@ -48,11 +48,11 @@ export default class ListGraph {
     this.el = el;
     this.width = el.getBoundingClientRect().width - 10;
     this.height = el.getBoundingClientRect().height - 10;
-    d3.select(`.${this.el?.className} .trace-list-dowanload`).remove();
+    d3.select(`.${this.el?.className} .trace-list`).remove();
     this.svg = d3
       .select(this.el)
       .append("svg")
-      .attr("class", "trace-list-dowanload")
+      .attr("class", "trace-list")
       .attr("width", this.width > 0 ? this.width : 10)
       .attr("height", this.height > 0 ? this.height : 10)
       .attr("transform", `translate(-5, 0)`);
@@ -118,10 +118,6 @@ export default class ListGraph {
   }
   draw(callback: Function) {
     this.update(this.root, callback);
-    // d3.select("body").on("click", function (event) {
-    //   if (event.target.closest("#action-box")) return;
-    //   d3.select("#action-box").style("display", "none");
-    // });
   }
   click(d: Recordable, scope: Recordable) {
     if (!d.data.type) return;
@@ -172,7 +168,7 @@ export default class ListGraph {
         d3.select("#action-box")
           .style("display", "block")
           .style("left", `${event.pageX - 70}px`)
-          .style("top", `${event.pageY - 100}px`);
+          .style("top", `${event.pageY + 30}px`);
         t.selectedNode = d3.select(this);
         if (t.handleSelectSpan) {
           t.handleSelectSpan(d);
@@ -407,38 +403,37 @@ export default class ListGraph {
       callback();
     }
   }
-  highlightParents() {
-    if (!this.selectedNode) {
+  highlightParents(span: Recordable) {
+    if (!span) {
       return;
     }
     const nodes = this.root.descendants().map((node: { id: number }) => {
       d3.select(`#list-node-${node.id}`).classed("highlightedParent", false);
       return node;
     });
-    const selectedNode = this.selectedNode.datum();
-    const parentSpans = selectedNode.data.refs.map((d: Recordable) => d);
-    if (selectedNode.data?.parentSpanId !== -1) {
-      parentSpans.push({
-        parentSegmentId: selectedNode.data.segmentId,
-        parentSpanId: selectedNode.data.parentSpanId,
-        traceId: selectedNode.data.traceId,
-      });
-    }
-    const parents = parentSpans.map((d: Recordable) => {
-      return nodes.find(
-        (node: Recordable) =>
-          d.parentSpanId === node.data.spanId &&
-          d.parentSegmentId === node.data.segmentId &&
-          d.traceId === node.data.traceId,
-      );
-    });
-    for (const node of parents) {
-      if (node) {
-        d3.select(`#list-node-${node.id}`).classed("highlightedParent", true);
-      }
+    const parentSpan = nodes.find(
+      (node: Recordable) =>
+        span.parentSpanId === node.data.spanId &&
+        span.parentSegmentId === node.data.segmentId &&
+        span.traceId === node.data.traceId,
+    );
+    if (parentSpan) {
+      d3.select(`#list-node-${parentSpan.id}`).classed("highlightedParent", true);
     }
     d3.select("#action-box").style("display", "none");
     this.selectedNode.classed("highlighted", false);
+    if (!parentSpan) return;
+    const container = document.querySelector(".trace-chart .charts");
+    const containerRect = container?.getBoundingClientRect();
+    if (!containerRect) return;
+    const targetElement = document.querySelector(`#list-node-${parentSpan.id}`);
+    if (!targetElement) return;
+    const targetRect = targetElement.getBoundingClientRect();
+    container?.scrollTo({
+      left: targetRect.left - containerRect.left + container?.scrollLeft,
+      top: targetRect.top - containerRect.top + container?.scrollTop - 100,
+      behavior: "smooth",
+    });
   }
   visDate(date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") {
     return dayjs(date).format(pattern);

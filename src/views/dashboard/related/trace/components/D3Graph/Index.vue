@@ -17,7 +17,7 @@ limitations under the License. -->
   <div ref="traceGraph" class="d3-graph"></div>
   <div id="action-box">
     <div @click="showDetail = true">Span Details</div>
-    <div v-for="span in parentSpans" :key="span.parentSegmentId" @click="viewParentSpan">{{
+    <div v-for="span in parentSpans" :key="span.parentSegmentId" @click="viewParentSpan(span)">{{
       `Parent Span: ${span.parentSegmentId}`
     }}</div>
   </div>
@@ -116,8 +116,8 @@ limitations under the License. -->
       });
     }
   }
-  function viewParentSpan() {
-    tree.value.highlightParents();
+  function viewParentSpan(span: Recordable) {
+    tree.value.highlightParents(span);
   }
   function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
     if (!node || node.isBroken) {

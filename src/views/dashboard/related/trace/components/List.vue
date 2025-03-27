@@ -55,12 +55,12 @@ limitations under the License. -->
 
   function downloadTrace() {
     const serializer = new XMLSerializer();
-    const svgNode: any = d3.select(".trace-list-dowanload").node();
+    const svgNode: any = d3.select(".trace-list").node();
     const source = `<?xml version="1.0" standalone="no"?>\r\n${serializer.serializeToString(svgNode)}`;
     const canvas = document.createElement("canvas");
     const context: any = canvas.getContext("2d");
-    canvas.width = (d3.select(".trace-list-dowanload") as Recordable)._groups[0][0].clientWidth;
-    canvas.height = (d3.select(".trace-list-dowanload") as Recordable)._groups[0][0].clientHeight;
+    canvas.width = (d3.select(".trace-list") as Recordable)._groups[0][0].clientWidth;
+    canvas.height = (d3.select(".trace-list") as Recordable)._groups[0][0].clientHeight;
     context.fillStyle = appStore.theme === Themes.Dark ? "#212224" : `#fff`;
     context.fillRect(0, 0, canvas.width, canvas.height);
     const image = new Image();
