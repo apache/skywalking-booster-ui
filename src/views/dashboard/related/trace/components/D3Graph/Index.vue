@@ -18,10 +18,18 @@ limitations under the License. -->
   <div id="trace-action-box">
     <div @click="showDetail = true">Span Details</div>
     <div v-for="span in parentSpans" :key="span.parentSegmentId" @click="viewParentSpan(span)">{{
-      `Parent Span: ${span.parentSegmentId}`
+      `Parent Span: ${span.endpointName} -> Start Time: ${visDate(span.startTime)}`
     }}</div>
   </div>
-  <el-dialog v-model="showDetail" :destroy-on-close="true" @closed="showDetail = false" v-if="currentSpan?.segmentId">
+  <el-dialog
+    v-model="showDetail"
+    width="60%"
+    center
+    align-center
+    :destroy-on-close="true"
+    @closed="showDetail = false"
+    v-if="currentSpan?.segmentId"
+  >
     <SpanDetail :currentSpan="currentSpan" />
   </el-dialog>
 </template>
@@ -29,6 +37,7 @@ limitations under the License. -->
   import { ref, watch, onBeforeUnmount, onMounted } from "vue";
   import type { PropType } from "vue";
   import * as d3 from "d3";
+  import dayjs from "dayjs";
   import ListGraph from "../../utils/d3-trace-list";
   import TreeGraph from "../../utils/d3-trace-tree";
   import type { Span, Ref } from "@/types/trace";
@@ -52,8 +61,9 @@ limitations under the License. -->
   const refSpans = ref<Array<Ref>>([]);
   const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
-  const parentSpans = ref<Array<Ref>>([]);
+  const parentSpans = ref<Array<Span>>([]);
   const debounceFunc = debounce(draw, 500);
+  const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
 
   defineExpose({
     tree,
@@ -99,21 +109,27 @@ limitations under the License. -->
     }
   }
   function handleSelectSpan(i: Recordable) {
+    const spans = [];
     parentSpans.value = [];
     currentSpan.value = i.data;
-    parentSpans.value = [];
     if (!currentSpan.value) {
       return;
     }
     for (const ref of currentSpan.value.refs || []) {
-      parentSpans.value.push(ref);
+      spans.push(ref);
     }
-    if ((currentSpan.value.parentSpanId ?? -1) > -1) {
-      parentSpans.value.push({
+    if (currentSpan.value.parentSpanId > -1) {
+      spans.push({
         parentSegmentId: currentSpan.value.segmentId,
         parentSpanId: currentSpan.value.parentSpanId,
         traceId: currentSpan.value.traceId,
       });
+    }
+    for (const span of spans) {
+      const item = props.data.find(
+        (d) => d.segmentId === span.parentSegmentId && d.spanId === span.parentSpanId && d.traceId === span.traceId,
+      );
+      item && parentSpans.value.push(item);
     }
   }
   function viewParentSpan(span: Recordable) {
@@ -423,7 +439,7 @@ limitations under the License. -->
 
   .trace-node.highlightedParent .node-text {
     font-weight: bold;
-    fill: #4caf50;
+    fill: #409eff;
   }
 
   #trace-action-box {

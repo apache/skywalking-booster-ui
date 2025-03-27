@@ -413,16 +413,14 @@ export default class ListGraph {
     });
     const parentSpan = nodes.find(
       (node: Recordable) =>
-        span.parentSpanId === node.data.spanId &&
-        span.parentSegmentId === node.data.segmentId &&
+        span.spanId === node.data.spanId &&
+        span.segmentId === node.data.segmentId &&
         span.traceId === node.data.traceId,
     );
-    if (parentSpan) {
-      d3.select(`#list-node-${parentSpan.id}`).classed("highlightedParent", true);
-    }
+    if (!parentSpan) return;
+    d3.select(`#list-node-${parentSpan.id}`).classed("highlightedParent", true);
     d3.select("#trace-action-box").style("display", "none");
     this.selectedNode.classed("highlighted", false);
-    if (!parentSpan) return;
     const container = document.querySelector(".trace-chart .charts");
     const containerRect = container?.getBoundingClientRect();
     if (!containerRect) return;
