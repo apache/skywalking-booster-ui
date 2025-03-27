@@ -87,6 +87,7 @@ export default class ListGraph {
   }
   init(data: Recordable, row: Recordable[], fixSpansSize: number) {
     d3.select(`.${this.el?.className} .trace-xaxis`).remove();
+    d3.select("#action-box").style("display", "none");
     this.row = row;
     this.data = data;
     this.min = d3.min(this.row.map((i) => i.startTime));
@@ -117,10 +118,10 @@ export default class ListGraph {
   }
   draw(callback: Function) {
     this.update(this.root, callback);
-    d3.select("body").on("click", function (event) {
-      if (event.target.closest("#action-box")) return;
-      d3.select("#action-box").style("display", "none");
-    });
+    // d3.select("body").on("click", function (event) {
+    //   if (event.target.closest("#action-box")) return;
+    //   d3.select("#action-box").style("display", "none");
+    // });
   }
   click(d: Recordable, scope: Recordable) {
     if (!d.data.type) return;
@@ -147,6 +148,7 @@ export default class ListGraph {
       .enter()
       .append("g")
       .attr("transform", `translate(${source.y0},${source.x0})`)
+      .attr("id", (d: Recordable) => `list-node-${d.id}`)
       .attr("class", "trace-node")
       .attr("style", "cursor: pointer")
       .on("mouseover", function (event: MouseEvent, d: Trace) {
@@ -175,6 +177,10 @@ export default class ListGraph {
         if (t.handleSelectSpan) {
           t.handleSelectSpan(d);
         }
+        t.root.descendants().map((node: { id: number }) => {
+          d3.select(`#list-node-${node.id}`).classed("highlightedParent", false);
+          return node;
+        });
       });
     nodeEnter
       .append("rect")
@@ -400,6 +406,39 @@ export default class ListGraph {
     if (callback) {
       callback();
     }
+  }
+  highlightParents() {
+    if (!this.selectedNode) {
+      return;
+    }
+    const nodes = this.root.descendants().map((node: { id: number }) => {
+      d3.select(`#list-node-${node.id}`).classed("highlightedParent", false);
+      return node;
+    });
+    const selectedNode = this.selectedNode.datum();
+    const parentSpans = selectedNode.data.refs.map((d: Recordable) => d);
+    if (selectedNode.data?.parentSpanId !== -1) {
+      parentSpans.push({
+        parentSegmentId: selectedNode.data.segmentId,
+        parentSpanId: selectedNode.data.parentSpanId,
+        traceId: selectedNode.data.traceId,
+      });
+    }
+    const parents = parentSpans.map((d: Recordable) => {
+      return nodes.find(
+        (node: Recordable) =>
+          d.parentSpanId === node.data.spanId &&
+          d.parentSegmentId === node.data.segmentId &&
+          d.traceId === node.data.traceId,
+      );
+    });
+    for (const node of parents) {
+      if (node) {
+        d3.select(`#list-node-${node.id}`).classed("highlightedParent", true);
+      }
+    }
+    d3.select("#action-box").style("display", "none");
+    this.selectedNode.classed("highlighted", false);
   }
   visDate(date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") {
     return dayjs(date).format(pattern);

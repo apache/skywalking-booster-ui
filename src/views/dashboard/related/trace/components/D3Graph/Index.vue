@@ -17,7 +17,9 @@ limitations under the License. -->
   <div ref="traceGraph" class="d3-graph"></div>
   <div id="action-box">
     <div @click="showDetail = true">Span Details</div>
-    <div v-for="span in parentSpans" :key="span.parentSegmentId">{{ `Parent Span: ${span.parentSegmentId}` }}</div>
+    <div v-for="span in parentSpans" :key="span.parentSegmentId" @click="viewParentSpan">{{
+      `Parent Span: ${span.parentSegmentId}`
+    }}</div>
   </div>
   <el-dialog v-model="showDetail" :destroy-on-close="true" @closed="showDetail = false" v-if="currentSpan?.segmentId">
     <SpanDetail :currentSpan="currentSpan" />
@@ -97,15 +99,25 @@ limitations under the License. -->
     }
   }
   function handleSelectSpan(i: Recordable) {
+    parentSpans.value = [];
     currentSpan.value = i.data;
-    parentSpans.value = currentSpan.value?.refs?.filter((d) => d) || [];
-    if (currentSpan.value?.parentSpanId !== -1) {
+    parentSpans.value = [];
+    if (!currentSpan.value) {
+      return;
+    }
+    for (const ref of currentSpan.value.refs || []) {
+      parentSpans.value.push(ref);
+    }
+    if ((currentSpan.value.parentSpanId ?? -1) > -1) {
       parentSpans.value.push({
-        parentSegmentId: currentSpan.value?.segmentId || "",
-        parentSpanId: currentSpan.value?.parentSpanId || NaN,
-        traceId: currentSpan.value?.traceId || "",
+        parentSegmentId: currentSpan.value.segmentId,
+        parentSpanId: currentSpan.value.parentSpanId,
+        traceId: currentSpan.value.traceId,
       });
     }
+  }
+  function viewParentSpan() {
+    tree.value.highlightParents();
   }
   function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
     if (!node || node.isBroken) {
@@ -407,6 +419,11 @@ limitations under the License. -->
   .trace-node.highlighted .node-text {
     font-weight: bold;
     fill: #409eff;
+  }
+
+  .trace-node.highlightedParent .node-text {
+    font-weight: bold;
+    fill: #4caf50;
   }
 
   #action-box {
