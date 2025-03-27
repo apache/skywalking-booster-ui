@@ -89,12 +89,6 @@ limitations under the License. -->
   );
 </script>
 <style lang="scss" scoped>
-  .dialog-c-text {
-    white-space: pre;
-    overflow: auto;
-    font-family: monospace;
-  }
-
   .trace-tips {
     width: 100%;
     text-align: center;

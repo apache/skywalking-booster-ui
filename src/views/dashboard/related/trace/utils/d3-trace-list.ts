@@ -165,10 +165,14 @@ export default class ListGraph {
           return;
         }
         d3.select(this).classed("highlighted", true);
+        const nodeBox = this.getBoundingClientRect();
+        const svgBox = (d3.select(`.${t.el?.className} .trace-list`) as any).node().getBoundingClientRect();
+        const offsetX = nodeBox.x - svgBox.x;
+        const offsetY = nodeBox.y - svgBox.y;
         d3.select("#trace-action-box")
           .style("display", "block")
-          .style("left", `${event.pageX}px`)
-          .style("top", `${event.pageY}px`);
+          .style("left", `${offsetX + 30}px`)
+          .style("top", `${offsetY + 30}px`);
         t.selectedNode = d3.select(this);
         if (t.handleSelectSpan) {
           t.handleSelectSpan(d);

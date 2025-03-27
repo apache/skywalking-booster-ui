@@ -96,6 +96,7 @@ limitations under the License. -->
 
   .list {
     height: calc(100% - 150px);
+    position: relative;
   }
 
   .event-tag {

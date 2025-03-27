@@ -411,25 +411,9 @@ limitations under the License. -->
     fill-opacity: 0;
   }
 
-  .trace-node-container {
-    fill: rgb(0 0 0 / 0%);
-    stroke-width: 5px;
-    cursor: pointer;
-
-    &:hover {
-      fill: rgb(0 0 0 / 5%);
-    }
-  }
-
   .trace-node .node-text {
     font: 12px sans-serif;
     pointer-events: none;
-  }
-
-  .dialog-c-text {
-    white-space: pre;
-    overflow: auto;
-    font-family: monospace;
   }
 
   .trace-node.highlighted .node-text {
