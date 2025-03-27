@@ -167,8 +167,8 @@ export default class ListGraph {
         d3.select(this).classed("highlighted", true);
         d3.select("#trace-action-box")
           .style("display", "block")
-          .style("left", `${event.pageX - 70}px`)
-          .style("top", `${event.pageY + 30}px`);
+          .style("left", `${event.pageX}px`)
+          .style("top", `${event.pageY}px`);
         t.selectedNode = d3.select(this);
         if (t.handleSelectSpan) {
           t.handleSelectSpan(d);
