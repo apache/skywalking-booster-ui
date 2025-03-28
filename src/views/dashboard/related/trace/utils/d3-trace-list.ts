@@ -172,7 +172,7 @@ export default class ListGraph {
         d3.select("#trace-action-box")
           .style("display", "block")
           .style("left", `${offsetX + 30}px`)
-          .style("top", `${offsetY + 30}px`);
+          .style("top", `${offsetY + 40}px`);
         t.selectedNode = d3.select(this);
         if (t.handleSelectSpan) {
           t.handleSelectSpan(d);

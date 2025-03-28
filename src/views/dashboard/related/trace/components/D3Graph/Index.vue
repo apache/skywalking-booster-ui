@@ -16,10 +16,13 @@ limitations under the License. -->
   </div>
   <div ref="traceGraph" class="d3-graph"></div>
   <div id="trace-action-box">
-    <div @click="showDetail = true">Span Details</div>
-    <div v-for="span in parentSpans" :key="span.parentSegmentId" @click="viewParentSpan(span)">{{
-      `Parent Span: ${span.endpointName} -> Start Time: ${visDate(span.startTime)}`
-    }}</div>
+    <div @click="showDetail = true">Span details</div>
+    <div v-for="span in parentSpans" :key="span.segmentId" @click="viewParentSpan(span)">
+      {{ `Parent span: ${span.endpointName} -> Start time: ${visDate(span.startTime)}` }}
+    </div>
+    <div v-for="span in refParentSpans" :key="span.segmentId" @click="viewParentSpan(span)">
+      {{ `Ref to span: ${span.endpointName} -> Start time: ${visDate(span.startTime)}` }}
+    </div>
   </div>
   <el-dialog
     v-model="showDetail"
@@ -62,6 +65,7 @@ limitations under the License. -->
   const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
   const parentSpans = ref<Array<Span>>([]);
+  const refParentSpans = ref<Array<Span>>([]);
   const debounceFunc = debounce(draw, 500);
   const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
 
@@ -110,13 +114,15 @@ limitations under the License. -->
   }
   function handleSelectSpan(i: Recordable) {
     const spans = [];
+    const refSpans = [];
     parentSpans.value = [];
+    refParentSpans.value = [];
     currentSpan.value = i.data;
     if (!currentSpan.value) {
       return;
     }
     for (const ref of currentSpan.value.refs || []) {
-      spans.push(ref);
+      refSpans.push(ref);
     }
     if (currentSpan.value.parentSpanId > -1) {
       spans.push({
@@ -124,6 +130,12 @@ limitations under the License. -->
         parentSpanId: currentSpan.value.parentSpanId,
         traceId: currentSpan.value.traceId,
       });
+    }
+    for (const span of refSpans) {
+      const item = props.data.find(
+        (d) => d.segmentId === span.parentSegmentId && d.spanId === span.parentSpanId && d.traceId === span.traceId,
+      );
+      item && refParentSpans.value.push(item);
     }
     for (const span of spans) {
       const item = props.data.find(
