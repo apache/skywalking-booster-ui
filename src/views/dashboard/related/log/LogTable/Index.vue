@@ -77,6 +77,7 @@ limitations under the License. -->
     border-bottom: 1px solid $border-color-primary;
     width: 100%;
     overflow: auto;
+    min-height: 350px;
   }
 
   .log-header {

@@ -31,8 +31,10 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import * as d3 from "d3";
+  import { useAppStoreWithOut } from "@/store/modules/app";
   import type { Span } from "@/types/trace";
   import Graph from "./D3Graph/Index.vue";
+  import { Themes } from "@/constants/data";
 
   /* global defineProps, Recordable*/
   const props = defineProps({
@@ -40,6 +42,7 @@ limitations under the License. -->
     traceId: { type: String, default: "" },
   });
   const { t } = useI18n();
+  const appStore = useAppStoreWithOut();
   const list = computed(() => Array.from(new Set(props.data.map((i: Span) => i.serviceCode))));
 
   function computedScale(i: number) {
@@ -52,13 +55,13 @@ limitations under the License. -->
 
   function downloadTrace() {
     const serializer = new XMLSerializer();
-    const svgNode: any = d3.select(".trace-list-dowanload").node();
+    const svgNode: any = d3.select(".trace-list").node();
     const source = `<?xml version="1.0" standalone="no"?>\r\n${serializer.serializeToString(svgNode)}`;
     const canvas = document.createElement("canvas");
     const context: any = canvas.getContext("2d");
-    canvas.width = (d3.select(".trace-list-dowanload") as Recordable)._groups[0][0].clientWidth;
-    canvas.height = (d3.select(".trace-list-dowanload") as Recordable)._groups[0][0].clientHeight;
-    context.fillStyle = "#fff";
+    canvas.width = (d3.select(".trace-list") as Recordable)._groups[0][0].clientWidth;
+    canvas.height = (d3.select(".trace-list") as Recordable)._groups[0][0].clientHeight;
+    context.fillStyle = appStore.theme === Themes.Dark ? "#212224" : `#fff`;
     context.fillRect(0, 0, canvas.width, canvas.height);
     const image = new Image();
     image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(source)}`;
@@ -93,6 +96,7 @@ limitations under the License. -->
 
   .list {
     height: calc(100% - 150px);
+    position: relative;
   }
 
   .event-tag {

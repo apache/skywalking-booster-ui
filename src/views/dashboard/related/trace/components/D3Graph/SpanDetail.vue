@@ -87,7 +87,14 @@ limitations under the License. -->
       {{ t("relatedTraceLogs") }}
     </el-button>
   </div>
-  <el-dialog v-model="showEventDetail" :destroy-on-close="true" fullscreen @closed="showEventDetail = false">
+  <el-dialog
+    v-model="showEventDetail"
+    width="60%"
+    center
+    align-center
+    :destroy-on-close="true"
+    @closed="showEventDetail = false"
+  >
     <div>
       <div class="mb-10">
         <span class="grey title">Name:</span>
@@ -115,7 +122,14 @@ limitations under the License. -->
       </div>
     </div>
   </el-dialog>
-  <el-dialog v-model="showRelatedLogs" :destroy-on-close="true" fullscreen @closed="showRelatedLogs = false">
+  <el-dialog
+    v-model="showRelatedLogs"
+    width="60%"
+    center
+    align-center
+    :destroy-on-close="true"
+    @closed="showRelatedLogs = false"
+  >
     <el-pagination
       v-model="pageNum"
       :page-size="pageSize"
@@ -294,5 +308,11 @@ limitations under the License. -->
 
   .link {
     text-decoration: underline;
+  }
+
+  .log-tips {
+    width: 100%;
+    text-align: center;
+    margin: 50px 0;
   }
 </style>

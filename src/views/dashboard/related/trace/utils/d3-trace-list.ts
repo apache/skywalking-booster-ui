@@ -42,16 +42,17 @@ export default class ListGraph {
   private xAxis: any = null;
   private sequentialScale: any = null;
   private root: any = null;
+  private selectedNode: any = null;
   constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
     this.handleSelectSpan = handleSelectSpan;
     this.el = el;
     this.width = el.getBoundingClientRect().width - 10;
     this.height = el.getBoundingClientRect().height - 10;
-    d3.select(".trace-list-dowanload").remove();
+    d3.select(`.${this.el?.className} .trace-list`).remove();
     this.svg = d3
       .select(this.el)
       .append("svg")
-      .attr("class", "trace-list-dowanload")
+      .attr("class", "trace-list")
       .attr("width", this.width > 0 ? this.width : 10)
       .attr("height", this.height > 0 ? this.height : 10)
       .attr("transform", `translate(-5, 0)`);
@@ -85,7 +86,8 @@ export default class ListGraph {
     L${d.target.y} ${d.target.x - 5}`;
   }
   init(data: Recordable, row: Recordable[], fixSpansSize: number) {
-    d3.select(".trace-xaxis").remove();
+    d3.select(`.${this.el?.className} .trace-xaxis`).remove();
+    d3.select("#trace-action-box").style("display", "none");
     this.row = row;
     this.data = data;
     this.min = d3.min(this.row.map((i) => i.startTime));
@@ -142,19 +144,43 @@ export default class ListGraph {
       .enter()
       .append("g")
       .attr("transform", `translate(${source.y0},${source.x0})`)
+      .attr("id", (d: Recordable) => `list-node-${d.id}`)
       .attr("class", "trace-node")
       .attr("style", "cursor: pointer")
-      .style("opacity", 0)
       .on("mouseover", function (event: MouseEvent, d: Trace) {
         t.tip.show(d, this);
       })
       .on("mouseout", function (event: MouseEvent, d: Trace) {
         t.tip.hide(d, this);
       })
-      .on("click", (event: MouseEvent, d: Trace) => {
-        if (this.handleSelectSpan) {
-          this.handleSelectSpan(d);
+      .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
+        event.stopPropagation();
+        const hasClass = d3.select(this).classed("highlighted");
+        if (t.selectedNode) {
+          t.selectedNode.classed("highlighted", false);
+          d3.select("#trace-action-box").style("display", "none");
         }
+        if (hasClass) {
+          t.selectedNode = null;
+          return;
+        }
+        d3.select(this).classed("highlighted", true);
+        const nodeBox = this.getBoundingClientRect();
+        const svgBox = (d3.select(`.${t.el?.className} .trace-list`) as any).node().getBoundingClientRect();
+        const offsetX = nodeBox.x - svgBox.x;
+        const offsetY = nodeBox.y - svgBox.y;
+        d3.select("#trace-action-box")
+          .style("display", "block")
+          .style("left", `${offsetX + 30}px`)
+          .style("top", `${offsetY + 40}px`);
+        t.selectedNode = d3.select(this);
+        if (t.handleSelectSpan) {
+          t.handleSelectSpan(d);
+        }
+        t.root.descendants().map((node: { id: number }) => {
+          d3.select(`#list-node-${node.id}`).classed("highlightedParent", false);
+          return node;
+        });
       });
     nodeEnter
       .append("rect")
@@ -246,7 +272,7 @@ export default class ListGraph {
       })
       .attr("cy", -5)
       .attr("fill", "none")
-      .attr("stroke", appStore.theme === Themes.Dark ? "#666" : "#e66")
+      .attr("stroke", "#e66")
       .style("opacity", (d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
@@ -259,7 +285,7 @@ export default class ListGraph {
       .append("text")
       .attr("x", 267)
       .attr("y", -1)
-      .attr("fill", appStore.theme === Themes.Dark ? "#666" : "#e66")
+      .attr("fill", "#e66")
       .style("font-size", "10px")
       .text((d: Recordable) => {
         const events = d.data.attachedEvents;
@@ -380,6 +406,36 @@ export default class ListGraph {
     if (callback) {
       callback();
     }
+  }
+  highlightParents(span: Recordable) {
+    if (!span) {
+      return;
+    }
+    const nodes = this.root.descendants().map((node: { id: number }) => {
+      d3.select(`#list-node-${node.id}`).classed("highlightedParent", false);
+      return node;
+    });
+    const parentSpan = nodes.find(
+      (node: Recordable) =>
+        span.spanId === node.data.spanId &&
+        span.segmentId === node.data.segmentId &&
+        span.traceId === node.data.traceId,
+    );
+    if (!parentSpan) return;
+    d3.select(`#list-node-${parentSpan.id}`).classed("highlightedParent", true);
+    d3.select("#trace-action-box").style("display", "none");
+    this.selectedNode.classed("highlighted", false);
+    const container = document.querySelector(".trace-chart .charts");
+    const containerRect = container?.getBoundingClientRect();
+    if (!containerRect) return;
+    const targetElement = document.querySelector(`#list-node-${parentSpan.id}`);
+    if (!targetElement) return;
+    const targetRect = targetElement.getBoundingClientRect();
+    container?.scrollTo({
+      left: targetRect.left - containerRect.left + container?.scrollLeft,
+      top: targetRect.top - containerRect.top + container?.scrollTop - 100,
+      behavior: "smooth",
+    });
   }
   visDate(date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") {
     return dayjs(date).format(pattern);

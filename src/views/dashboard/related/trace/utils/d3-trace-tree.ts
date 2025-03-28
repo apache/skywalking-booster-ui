@@ -55,7 +55,7 @@ export default class TraceMap {
     this.topChild = [];
     this.width = el.clientWidth - 20;
     this.height = el.clientHeight - 30;
-    d3.select(".d3-trace-tree").remove();
+    d3.select(`.${this.el?.className} .d3-trace-tree`).remove();
     this.body = d3
       .select(this.el)
       .append("svg")

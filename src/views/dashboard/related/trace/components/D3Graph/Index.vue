@@ -15,7 +15,24 @@ limitations under the License. -->
     <Icon iconName="spinner" size="sm" />
   </div>
   <div ref="traceGraph" class="d3-graph"></div>
-  <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
+  <div id="trace-action-box">
+    <div @click="showDetail = true">Span details</div>
+    <div v-for="span in parentSpans" :key="span.segmentId" @click="viewParentSpan(span)">
+      {{ `Parent span: ${span.endpointName} -> Start time: ${visDate(span.startTime)}` }}
+    </div>
+    <div v-for="span in refParentSpans" :key="span.segmentId" @click="viewParentSpan(span)">
+      {{ `Ref to span: ${span.endpointName} -> Start time: ${visDate(span.startTime)}` }}
+    </div>
+  </div>
+  <el-dialog
+    v-model="showDetail"
+    width="60%"
+    center
+    align-center
+    :destroy-on-close="true"
+    @closed="showDetail = false"
+    v-if="currentSpan?.segmentId"
+  >
     <SpanDetail :currentSpan="currentSpan" />
   </el-dialog>
 </template>
@@ -23,6 +40,7 @@ limitations under the License. -->
   import { ref, watch, onBeforeUnmount, onMounted } from "vue";
   import type { PropType } from "vue";
   import * as d3 from "d3";
+  import dayjs from "dayjs";
   import ListGraph from "../../utils/d3-trace-list";
   import TreeGraph from "../../utils/d3-trace-tree";
   import type { Span, Ref } from "@/types/trace";
@@ -42,11 +60,14 @@ limitations under the License. -->
   const showDetail = ref<boolean>(false);
   const fixSpansSize = ref<number>(0);
   const segmentId = ref<Recordable[]>([]);
-  const currentSpan = ref<Array<Span>>([]);
+  const currentSpan = ref<Nullable<Span>>(null);
   const refSpans = ref<Array<Ref>>([]);
   const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
+  const parentSpans = ref<Array<Span>>([]);
+  const refParentSpans = ref<Array<Span>>([]);
   const debounceFunc = debounce(draw, 500);
+  const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
 
   defineExpose({
     tree,
@@ -77,16 +98,54 @@ limitations under the License. -->
     d3.selectAll(".d3-tip").remove();
     if (props.type === "List") {
       tree.value = new ListGraph(traceGraph.value, handleSelectSpan);
-      tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
+      tree.value.init(
+        { label: "TRACE_ROOT", children: segmentId.value },
+        getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+        fixSpansSize.value,
+      );
       tree.value.draw();
     } else {
       tree.value = new TreeGraph(traceGraph.value, handleSelectSpan);
-      tree.value.init({ label: `${props.traceId}`, children: segmentId.value }, props.data);
+      tree.value.init(
+        { label: `${props.traceId}`, children: segmentId.value },
+        getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+      );
     }
   }
   function handleSelectSpan(i: Recordable) {
+    const spans = [];
+    const refSpans = [];
+    parentSpans.value = [];
+    refParentSpans.value = [];
     currentSpan.value = i.data;
-    showDetail.value = true;
+    if (!currentSpan.value) {
+      return;
+    }
+    for (const ref of currentSpan.value.refs || []) {
+      refSpans.push(ref);
+    }
+    if (currentSpan.value.parentSpanId > -1) {
+      spans.push({
+        parentSegmentId: currentSpan.value.segmentId,
+        parentSpanId: currentSpan.value.parentSpanId,
+        traceId: currentSpan.value.traceId,
+      });
+    }
+    for (const span of refSpans) {
+      const item = props.data.find(
+        (d) => d.segmentId === span.parentSegmentId && d.spanId === span.parentSpanId && d.traceId === span.traceId,
+      );
+      item && refParentSpans.value.push(item);
+    }
+    for (const span of spans) {
+      const item = props.data.find(
+        (d) => d.segmentId === span.parentSegmentId && d.spanId === span.parentSpanId && d.traceId === span.traceId,
+      );
+      item && parentSpans.value.push(item);
+    }
+  }
+  function viewParentSpan(span: Recordable) {
+    tree.value.highlightParents(span);
   }
   function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
     if (!node || node.isBroken) {
@@ -272,21 +331,12 @@ limitations under the License. -->
       }
     }
     for (const i in segmentGroup) {
-      if (segmentGroup[i].refs.length) {
-        let exit = null;
-        for (const ref of segmentGroup[i].refs) {
-          const e = props.data.find(
-            (i: Recordable) =>
-              ref.traceId === i.traceId && ref.parentSegmentId === i.segmentId && ref.parentSpanId === i.spanId,
-          );
-          if (e) {
-            exit = e;
-          }
-        }
-        if (exit) {
+      for (const ref of segmentGroup[i].refs) {
+        if (!segmentGroup[ref.parentSegmentId]) {
           segmentId.value.push(segmentGroup[i]);
         }
-      } else {
+      }
+      if (!segmentGroup[i].refs.length && segmentGroup[i].parentSpanId === -1) {
         segmentId.value.push(segmentGroup[i]);
       }
     }
@@ -309,6 +359,23 @@ limitations under the License. -->
         collapse(i);
       }
     }
+  }
+  function getRefsAllNodes(tree: Recordable) {
+    let nodes = [];
+    let stack = [tree];
+
+    while (stack.length > 0) {
+      const node = stack.pop();
+      nodes.push(node);
+
+      if (node?.children && node.children.length > 0) {
+        for (let i = node.children.length - 1; i >= 0; i--) {
+          stack.push(node.children[i]);
+        }
+      }
+    }
+
+    return nodes;
   }
   function compare(p: string) {
     return (m: Recordable, n: Recordable) => {
@@ -346,7 +413,7 @@ limitations under the License. -->
     },
   );
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
   .d3-graph {
     height: 100%;
   }
@@ -356,36 +423,41 @@ limitations under the License. -->
     fill-opacity: 0;
   }
 
-  .trace-node-container {
-    fill: rgb(0 0 0 / 0%);
-    stroke-width: 5px;
-    cursor: pointer;
-
-    &:hover {
-      fill: rgb(0 0 0 / 5%);
-    }
-  }
-
   .trace-node .node-text {
-    font: 12.5px sans-serif;
+    font: 12px sans-serif;
     pointer-events: none;
   }
 
-  .domain {
+  .trace-node.highlighted .node-text {
+    font-weight: bold;
+    fill: #409eff;
+  }
+
+  .trace-node.highlightedParent .node-text {
+    font-weight: bold;
+    fill: #409eff;
+  }
+
+  #trace-action-box {
+    position: absolute;
+    color: $font-color;
+    cursor: pointer;
+    border: var(--sw-topology-border);
+    border-radius: 3px;
+    background-color: $theme-background;
+    padding: 10px 0;
     display: none;
-  }
 
-  .time-charts-item {
-    display: inline-block;
-    padding: 2px 8px;
-    border: 1px solid;
-    font-size: 11px;
-    border-radius: 4px;
-  }
+    div {
+      height: 30px;
+      line-height: 30px;
+      text-align: left;
+      padding: 0 15px;
+    }
 
-  .dialog-c-text {
-    white-space: pre;
-    overflow: auto;
-    font-family: monospace;
+    div:hover {
+      color: $active-color;
+      background-color: $popper-hover-bg-color;
+    }
   }
 </style>
