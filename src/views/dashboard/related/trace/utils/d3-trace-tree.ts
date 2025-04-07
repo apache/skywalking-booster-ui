@@ -46,6 +46,7 @@ export default class TraceMap {
   private topChildMax: number[] = [];
   private topChildMin: number[] = [];
   private nodeUpdate: Nullable<any> = null;
+  private selectedNode: any = null;
 
   constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
     this.el = el;
@@ -80,6 +81,7 @@ export default class TraceMap {
     this.svg.call(this.tip);
   }
   init(data: Recordable, row: Recordable) {
+    d3.select("#trace-action-box").style("display", "none");
     this.treemap = d3.tree().size([row.length * 35, this.width]);
     this.row = row;
     this.data = data;
@@ -124,6 +126,7 @@ export default class TraceMap {
     this.update(this.root);
   }
   update(source: Recordable) {
+    const t = this;
     const appStore = useAppStoreWithOut();
     const that: any = this;
     const treeData = this.treemap(this.root);
@@ -134,14 +137,15 @@ export default class TraceMap {
       d.y = d.depth * 140;
     });
 
-    const node = this.svg.selectAll("g.node").data(nodes, (d: Recordable) => {
+    const node = this.svg.selectAll("g.trace-node").data(nodes, (d: Recordable) => {
       return d.id || (d.id = ++this.i);
     });
 
     const nodeEnter = node
       .enter()
       .append("g")
-      .attr("class", "node")
+      .attr("class", "trace-node")
+      .attr("id", (d: Recordable) => `trace-node-${d.id}`)
       .attr("cursor", "pointer")
       .attr("transform", function () {
         return "translate(" + source.y0 + "," + source.x0 + ")";
@@ -166,8 +170,34 @@ export default class TraceMap {
           that.timeTip.hide(d, _node[0].children[1]);
         }
       })
-      .on("click", function (event: MouseEvent, d: Recordable) {
-        that.handleSelectSpan(d);
+      .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
+        event.stopPropagation();
+        const hasClass = d3.select(this).classed("highlighted");
+        if (t.selectedNode) {
+          t.selectedNode.classed("highlighted", false);
+          d3.select("#trace-action-box").style("display", "none");
+        }
+        if (hasClass) {
+          t.selectedNode = null;
+          return;
+        }
+        d3.select(this).classed("highlighted", true);
+        const nodeBox = this.getBoundingClientRect();
+        const svgBox = (d3.select(`.${t.el?.className} .trace-list`) as any).node().getBoundingClientRect();
+        const offsetX = nodeBox.x - svgBox.x;
+        const offsetY = nodeBox.y - svgBox.y;
+        d3.select("#trace-action-box")
+          .style("display", "block")
+          .style("left", `${offsetX + 30}px`)
+          .style("top", `${offsetY + 40}px`);
+        t.selectedNode = d3.select(this);
+        if (t.handleSelectSpan) {
+          t.handleSelectSpan(d);
+        }
+        t.root.descendants().map((node: { id: number }) => {
+          d3.select(`#trace-node-${node.id}`).classed("highlightedParent", false);
+          return node;
+        });
       });
     nodeEnter
       .append("circle")
@@ -207,7 +237,7 @@ export default class TraceMap {
       });
     nodeEnter
       .append("circle")
-      .attr("class", "node")
+      .attr("class", "trace-node")
       .attr("r", 1e-6)
       .style("fill", (d: Recordable) =>
         d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
@@ -288,7 +318,7 @@ export default class TraceMap {
         return "translate(" + d.y + "," + d.x + ")";
       });
     nodeUpdate
-      .select("circle.node")
+      .select(".trace-node")
       .attr("r", 5)
       .style("fill", (d: Recordable) =>
         d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
@@ -368,6 +398,36 @@ export default class TraceMap {
       }
       that.update(d);
     }
+  }
+  highlightParents(span: Recordable) {
+    if (!span) {
+      return;
+    }
+    const nodes = this.root.descendants().map((node: { id: number }) => {
+      d3.select(`#trace-node-${node.id}`).classed("highlightedParent", false);
+      return node;
+    });
+    const parentSpan = nodes.find(
+      (node: Recordable) =>
+        span.spanId === node.data.spanId &&
+        span.segmentId === node.data.segmentId &&
+        span.traceId === node.data.traceId,
+    );
+    if (!parentSpan) return;
+    d3.select(`#trace-node-${parentSpan.id}`).classed("highlightedParent", true);
+    d3.select("#trace-action-box").style("display", "none");
+    this.selectedNode.classed("highlighted", false);
+    const container = document.querySelector(".trace-chart .charts");
+    const containerRect = container?.getBoundingClientRect();
+    if (!containerRect) return;
+    const targetElement = document.querySelector(`#trace-node-${parentSpan.id}`);
+    if (!targetElement) return;
+    const targetRect = targetElement.getBoundingClientRect();
+    container?.scrollTo({
+      left: targetRect.left - containerRect.left + container?.scrollLeft,
+      top: targetRect.top - containerRect.top + container?.scrollTop - 100,
+      behavior: "smooth",
+    });
   }
   setDefault() {
     d3.selectAll(".time-inner").style("opacity", 1);
