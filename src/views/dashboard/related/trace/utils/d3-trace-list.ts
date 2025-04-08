@@ -115,6 +115,13 @@ export default class ListGraph {
     this.root = d3.hierarchy(this.data, (d) => d.children);
     this.root.x0 = 0;
     this.root.y0 = 0;
+    const t = this;
+    d3.select("svg.trace-list").on("click", function (event: MouseEvent) {
+      if (event.target === this) {
+        d3.select("#trace-action-box").style("display", "none");
+        t.selectedNode.classed("highlighted", false);
+      }
+    });
   }
   draw(callback: Function) {
     this.update(this.root, callback);
@@ -156,15 +163,6 @@ export default class ListGraph {
       .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
         event.stopPropagation();
         t.tip.hide(d, this);
-        const hasClass = d3.select(this).classed("highlighted");
-        if (t.selectedNode) {
-          t.selectedNode.classed("highlighted", false);
-          d3.select("#trace-action-box").style("display", "none");
-        }
-        if (hasClass) {
-          t.selectedNode = null;
-          return;
-        }
         d3.select(this).classed("highlighted", true);
         const nodeBox = this.getBoundingClientRect();
         const svgBox = (d3.select(`.${t.el?.className} .trace-list`) as any).node().getBoundingClientRect();

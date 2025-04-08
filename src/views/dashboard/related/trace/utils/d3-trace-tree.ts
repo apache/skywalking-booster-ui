@@ -130,8 +130,8 @@ export default class TraceMap {
     const appStore = useAppStoreWithOut();
     const that: any = this;
     const treeData = this.treemap(this.root);
-    const nodes = treeData.descendants(),
-      links = treeData.descendants().slice(1);
+    const nodes = treeData.descendants();
+    const links = treeData.descendants().slice(1);
 
     nodes.forEach(function (d: Recordable) {
       d.y = d.depth * 140;
@@ -139,6 +139,12 @@ export default class TraceMap {
 
     const node = this.svg.selectAll("g.trace-node").data(nodes, (d: Recordable) => {
       return d.id || (d.id = ++this.i);
+    });
+    d3.select("svg.d3-trace-tree").on("click", function (event: MouseEvent) {
+      if (event.target === this) {
+        d3.select("#trace-action-box").style("display", "none");
+        t.selectedNode.classed("highlighted", false);
+      }
     });
 
     const nodeEnter = node
@@ -248,9 +254,7 @@ export default class TraceMap {
       .style("font-size", "10px")
       .text((d: Recordable) => {
         const label = d.data.component
-          ? "-" + (d.data.component.length > 10)
-            ? d.data.label.slice(0, 10) + "..."
-            : d.data.component
+          ? " - " + (d.data.component.length > 10 ? d.data.label.slice(0, 10) + "..." : d.data.component)
           : "";
         return `${d.data.layer || ""}${label}`;
       });
@@ -300,15 +304,6 @@ export default class TraceMap {
       .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
         event.stopPropagation();
         t.tip.hide(d, this);
-        const hasClass = d3.select(this).classed("highlighted");
-        if (t.selectedNode) {
-          t.selectedNode.classed("highlighted", false);
-          d3.select("#trace-action-box").style("display", "none");
-        }
-        if (hasClass) {
-          t.selectedNode = null;
-          return;
-        }
         d3.select(this).classed("highlighted", true);
         const nodeBox = this.getBoundingClientRect();
         const svgBox = (d3.select(`.${t.el?.className} .d3-trace-tree`) as any).node().getBoundingClientRect();
