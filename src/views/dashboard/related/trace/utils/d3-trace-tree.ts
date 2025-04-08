@@ -169,35 +169,6 @@ export default class TraceMap {
         if (_node.length) {
           that.timeTip.hide(d, _node[0].children[1]);
         }
-      })
-      .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
-        event.stopPropagation();
-        const hasClass = d3.select(this).classed("highlighted");
-        if (t.selectedNode) {
-          t.selectedNode.classed("highlighted", false);
-          d3.select("#trace-action-box").style("display", "none");
-        }
-        if (hasClass) {
-          t.selectedNode = null;
-          return;
-        }
-        d3.select(this).classed("highlighted", true);
-        const nodeBox = this.getBoundingClientRect();
-        const svgBox = (d3.select(`.${t.el?.className} .trace-list`) as any).node().getBoundingClientRect();
-        const offsetX = nodeBox.x - svgBox.x;
-        const offsetY = nodeBox.y - svgBox.y;
-        d3.select("#trace-action-box")
-          .style("display", "block")
-          .style("left", `${offsetX + 30}px`)
-          .style("top", `${offsetY + 40}px`);
-        t.selectedNode = d3.select(this);
-        if (t.handleSelectSpan) {
-          t.handleSelectSpan(d);
-        }
-        t.root.descendants().map((node: { id: number }) => {
-          d3.select(`#trace-node-${node.id}`).classed("highlightedParent", false);
-          return node;
-        });
       });
     nodeEnter
       .append("circle")
@@ -237,16 +208,15 @@ export default class TraceMap {
       });
     nodeEnter
       .append("circle")
-      .attr("class", "trace-node")
-      .attr("r", 1e-6)
-      .style("fill", (d: Recordable) =>
-        d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
-      )
+      .attr("class", "node")
+      .attr("r", 2)
       .attr("stroke", (d: Recordable) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)))
-      .attr("stroke-width", 2.5);
+      .attr("stroke-width", 2.5)
+      .attr("fill", (d: Recordable) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)));
 
     nodeEnter
       .append("text")
+      .attr("class", "trace-node-text")
       .attr("font-size", 11)
       .attr("dy", "-0.5em")
       .attr("x", function (d: Recordable) {
@@ -260,7 +230,7 @@ export default class TraceMap {
           ? (d.data.isError ? "◉ " : "") + d.data.label.slice(0, 10) + "..."
           : (d.data.isError ? "◉ " : "") + d.data.label,
       )
-      .style("fill", (d: Recordable) =>
+      .attr("fill", (d: Recordable) =>
         !d.data.isError ? (appStore.theme === Themes.Dark ? "#eee" : "#3d444f") : "#E54C17",
       );
     nodeEnter
@@ -269,15 +239,20 @@ export default class TraceMap {
       .attr("x", function (d: Recordable) {
         return d.children || d._children ? -45 : 15;
       })
-      .attr("dy", "1em")
+      .attr("dy", "1.5em")
       .attr("fill", appStore.theme === Themes.Dark ? "#888" : "#bbb")
       .attr("text-anchor", function (d: Recordable) {
         return d.children || d._children ? "end" : "start";
       })
       .style("font-size", "10px")
-      .text(
-        (d: Recordable) => `${d.data.layer || ""}${d.data.component ? "-" + d.data.component : d.data.component || ""}`,
-      );
+      .text((d: Recordable) => {
+        const label = d.data.component
+          ? "-" + (d.data.component.length > 10)
+            ? d.data.label.slice(0, 10) + "..."
+            : d.data.component
+          : "";
+        return `${d.data.layer || ""}${label}`;
+      });
     nodeEnter
       .append("rect")
       .attr("rx", 1)
@@ -318,16 +293,38 @@ export default class TraceMap {
         return "translate(" + d.y + "," + d.x + ")";
       });
     nodeUpdate
-      .select(".trace-node")
+      .select("circle.node")
       .attr("r", 5)
-      .style("fill", (d: Recordable) =>
-        d._children ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
-      )
       .attr("cursor", "pointer")
-      .on("click", (event: any, d: Recordable) => {
+      .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
         event.stopPropagation();
-        if (d.data.children.length === 0) return;
-        click(d);
+        t.tip.hide(d, this);
+        const hasClass = d3.select(this).classed("highlighted");
+        if (t.selectedNode) {
+          t.selectedNode.classed("highlighted", false);
+          d3.select("#trace-action-box").style("display", "none");
+        }
+        if (hasClass) {
+          t.selectedNode = null;
+          return;
+        }
+        d3.select(this).classed("highlighted", true);
+        const nodeBox = this.getBoundingClientRect();
+        const svgBox = (d3.select(`.${t.el?.className} .d3-trace-tree`) as any).node().getBoundingClientRect();
+        const offsetX = nodeBox.x - svgBox.x;
+        const offsetY = nodeBox.y - svgBox.y;
+        d3.select("#trace-action-box")
+          .style("display", "block")
+          .style("left", `${offsetX + 30}px`)
+          .style("top", `${offsetY + 40}px`);
+        t.selectedNode = d3.select(this);
+        if (t.handleSelectSpan) {
+          t.handleSelectSpan(d);
+        }
+        t.root.descendants().map((node: { id: number }) => {
+          d3.select(`#trace-node-${node.id}`).classed("highlightedParent", false);
+          return node;
+        });
       });
     const nodeExit = node
       .exit()

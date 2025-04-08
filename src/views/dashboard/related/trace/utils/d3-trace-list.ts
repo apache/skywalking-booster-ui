@@ -155,6 +155,7 @@ export default class ListGraph {
       })
       .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
         event.stopPropagation();
+        t.tip.hide(d, this);
         const hasClass = d3.select(this).classed("highlighted");
         if (t.selectedNode) {
           t.selectedNode.classed("highlighted", false);

@@ -428,12 +428,20 @@ limitations under the License. -->
     pointer-events: none;
   }
 
-  .trace-node.highlighted .node-text {
+  .trace-node.highlighted .node-text,
+  .trace-node.highlightedParent .node-text {
     font-weight: bold;
     fill: #409eff;
   }
 
-  .trace-node.highlightedParent .node-text {
+  .highlightedParent .node {
+    stroke-width: 4;
+    fill: var(--font-color);
+    stroke: var(--font-color);
+  }
+
+  .trace-node.highlighted .trace-node-text,
+  .trace-node.highlightedParent .trace-node-text {
     font-weight: bold;
     fill: #409eff;
   }
