@@ -120,6 +120,7 @@ export default class ListGraph {
       if (event.target === this) {
         d3.select("#trace-action-box").style("display", "none");
         t.selectedNode && t.selectedNode.classed("highlighted", false);
+        t.clearParentHighlight();
       }
     });
   }
@@ -406,14 +407,17 @@ export default class ListGraph {
       callback();
     }
   }
+  clearParentHighlight() {
+    return this.root.descendants().map((node: { id: number }) => {
+      d3.select(`#list-node-${node.id}`).classed("highlightedParent", false);
+      return node;
+    });
+  }
   highlightParents(span: Recordable) {
     if (!span) {
       return;
     }
-    const nodes = this.root.descendants().map((node: { id: number }) => {
-      d3.select(`#list-node-${node.id}`).classed("highlightedParent", false);
-      return node;
-    });
+    const nodes = this.clearParentHighlight();
     const parentSpan = nodes.find(
       (node: Recordable) =>
         span.spanId === node.data.spanId &&
