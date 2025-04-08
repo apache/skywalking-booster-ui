@@ -212,8 +212,9 @@ export default class TraceMap {
       .attr("r", 2)
       .attr("stroke", (d: Recordable) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)))
       .attr("stroke-width", 2.5)
-      .attr("fill", (d: Recordable) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)));
-
+      .attr("fill", (d: Recordable) =>
+        d.data.children.length ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
+      );
     nodeEnter
       .append("text")
       .attr("class", "trace-node-text")
@@ -325,6 +326,18 @@ export default class TraceMap {
           d3.select(`#trace-node-${node.id}`).classed("highlightedParent", false);
           return node;
         });
+      })
+      .on("dblclick", function (event: MouseEvent, d: Recordable) {
+        event.stopPropagation();
+        t.tip.hide(d, this);
+        if (d.data.children.length === 0) return;
+        click(d);
+      })
+      .on("contextmenu", function (event: MouseEvent, d: Recordable) {
+        event.stopPropagation();
+        t.tip.hide(d, this);
+        if (d.data.children.length === 0) return;
+        click(d);
       });
     const nodeExit = node
       .exit()
