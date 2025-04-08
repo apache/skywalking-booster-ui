@@ -115,6 +115,14 @@ export default class ListGraph {
     this.root = d3.hierarchy(this.data, (d) => d.children);
     this.root.x0 = 0;
     this.root.y0 = 0;
+    const t = this;
+    d3.select("svg.trace-list").on("click", function (event: MouseEvent) {
+      if (event.target === this) {
+        d3.select("#trace-action-box").style("display", "none");
+        t.selectedNode && t.selectedNode.classed("highlighted", false);
+        t.clearParentHighlight();
+      }
+    });
   }
   draw(callback: Function) {
     this.update(this.root, callback);
@@ -155,15 +163,7 @@ export default class ListGraph {
       })
       .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
         event.stopPropagation();
-        const hasClass = d3.select(this).classed("highlighted");
-        if (t.selectedNode) {
-          t.selectedNode.classed("highlighted", false);
-          d3.select("#trace-action-box").style("display", "none");
-        }
-        if (hasClass) {
-          t.selectedNode = null;
-          return;
-        }
+        t.tip.hide(d, this);
         d3.select(this).classed("highlighted", true);
         const nodeBox = this.getBoundingClientRect();
         const svgBox = (d3.select(`.${t.el?.className} .trace-list`) as any).node().getBoundingClientRect();
@@ -407,14 +407,17 @@ export default class ListGraph {
       callback();
     }
   }
+  clearParentHighlight() {
+    return this.root.descendants().map((node: { id: number }) => {
+      d3.select(`#list-node-${node.id}`).classed("highlightedParent", false);
+      return node;
+    });
+  }
   highlightParents(span: Recordable) {
     if (!span) {
       return;
     }
-    const nodes = this.root.descendants().map((node: { id: number }) => {
-      d3.select(`#list-node-${node.id}`).classed("highlightedParent", false);
-      return node;
-    });
+    const nodes = this.clearParentHighlight();
     const parentSpan = nodes.find(
       (node: Recordable) =>
         span.spanId === node.data.spanId &&
