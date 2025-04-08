@@ -119,7 +119,7 @@ export default class ListGraph {
     d3.select("svg.trace-list").on("click", function (event: MouseEvent) {
       if (event.target === this) {
         d3.select("#trace-action-box").style("display", "none");
-        t.selectedNode.classed("highlighted", false);
+        t.selectedNode && t.selectedNode.classed("highlighted", false);
       }
     });
   }

@@ -434,7 +434,8 @@ limitations under the License. -->
     fill: #409eff;
   }
 
-  .highlightedParent .node {
+  .highlightedParent .node,
+  .highlighted .node {
     stroke-width: 4;
     fill: var(--font-color);
     stroke: var(--font-color);

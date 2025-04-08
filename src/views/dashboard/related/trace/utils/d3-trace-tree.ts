@@ -143,7 +143,7 @@ export default class TraceMap {
     d3.select("svg.d3-trace-tree").on("click", function (event: MouseEvent) {
       if (event.target === this) {
         d3.select("#trace-action-box").style("display", "none");
-        t.selectedNode.classed("highlighted", false);
+        t.selectedNode && t.selectedNode.classed("highlighted", false);
       }
     });
 
@@ -244,7 +244,7 @@ export default class TraceMap {
       .append("text")
       .attr("class", "node-text")
       .attr("x", function (d: Recordable) {
-        return d.children || d._children ? -45 : 15;
+        return d.children || d._children ? -30 : 15;
       })
       .attr("dy", "1.5em")
       .attr("fill", appStore.theme === Themes.Dark ? "#888" : "#bbb")
@@ -304,7 +304,7 @@ export default class TraceMap {
       .on("click", function (event: MouseEvent, d: Trace & { id: string }) {
         event.stopPropagation();
         t.tip.hide(d, this);
-        d3.select(this).classed("highlighted", true);
+        d3.select(this.parentNode).classed("highlighted", true);
         const nodeBox = this.getBoundingClientRect();
         const svgBox = (d3.select(`.${t.el?.className} .d3-trace-tree`) as any).node().getBoundingClientRect();
         const offsetX = nodeBox.x - svgBox.x;
@@ -313,7 +313,7 @@ export default class TraceMap {
           .style("display", "block")
           .style("left", `${offsetX + 30}px`)
           .style("top", `${offsetY + 40}px`);
-        t.selectedNode = d3.select(this);
+        t.selectedNode = d3.select(this.parentNode);
         if (t.handleSelectSpan) {
           t.handleSelectSpan(d);
         }
