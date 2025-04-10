@@ -48,12 +48,13 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { debounce } from "@/utils/debounce";
   import { mutationObserver } from "@/utils/mutation";
+  import { TraceGraphType } from "../constant";
 
   /* global defineProps, Nullable, defineExpose, Recordable */
   const props = defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
-    type: { type: String, default: "List" },
+    type: { type: String, default: TraceGraphType.LIST },
   });
   const appStore = useAppStoreWithOut();
   const loading = ref<boolean>(false);
@@ -79,7 +80,9 @@ limitations under the License. -->
       loading.value = false;
       return;
     }
-    draw();
+    if (props.type !== TraceGraphType.TABLE) {
+      draw();
+    }
     loading.value = false;
 
     // monitor segment list width changes.
@@ -96,7 +99,7 @@ limitations under the License. -->
       return;
     }
     d3.selectAll(".d3-tip").remove();
-    if (props.type === "List") {
+    if (props.type === TraceGraphType.LIST) {
       tree.value = new ListGraph(traceGraph.value, handleSelectSpan);
       tree.value.init(
         { label: "TRACE_ROOT", children: segmentId.value },
@@ -104,7 +107,8 @@ limitations under the License. -->
         fixSpansSize.value,
       );
       tree.value.draw();
-    } else {
+    }
+    if (props.type === TraceGraphType.TREE) {
       tree.value = new TreeGraph(traceGraph.value, handleSelectSpan);
       tree.value.init(
         { label: `${props.traceId}`, children: segmentId.value },

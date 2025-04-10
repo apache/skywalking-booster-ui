@@ -22,7 +22,7 @@ limitations under the License. -->
       </el-button>
     </div>
     <div class="list">
-      <Graph :data="data" :traceId="traceId" type="List" />
+      <Graph :data="data" :traceId="traceId" :type="TraceGraphType.LIST" />
     </div>
   </div>
 </template>
@@ -35,6 +35,7 @@ limitations under the License. -->
   import type { Span } from "@/types/trace";
   import Graph from "./D3Graph/Index.vue";
   import { Themes } from "@/constants/data";
+  import { TraceGraphType } from "./constant";
 
   /* global defineProps, Recordable*/
   const props = defineProps({
