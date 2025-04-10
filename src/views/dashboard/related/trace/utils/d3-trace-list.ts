@@ -265,7 +265,7 @@ export default class ListGraph {
       .attr("cx", (d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length > 9) {
-          return 272;
+          return 273;
         } else {
           return 270;
         }
@@ -350,16 +350,6 @@ export default class ListGraph {
         if (d.data.children.length === 0) return;
         this.click(d, this);
       });
-    nodeUpdate
-      .transition()
-      .duration(400)
-      .attr("transform", (d: Recordable) => `translate(${d.y + 3},${d.x})`)
-      .style("opacity", 1)
-      .select("circle")
-      .style("fill", (d: Recordable) =>
-        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "#eee",
-      );
-
     // Transition exiting nodes to the parent's new position.
     node
       .exit()

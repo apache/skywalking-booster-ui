@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import type { Ref, Span, StatisticsSpan, StatisticsGroupRef, TraceTreeRef } from "@/types/trace";
+import type { Ref, Span, TraceTreeRef } from "@/types/trace";
 
 export default class TraceUtil {
   public static buildTraceDataList(data: Span[]): string[] {
@@ -268,32 +268,6 @@ export default class TraceUtil {
         this.traverseTree(grandchild, spanId, segmentId, childNode);
       }
     }
-  }
-
-  private static getSpanGroupData(groupspans: Span[], groupRef: StatisticsGroupRef): StatisticsSpan {
-    let maxTime = 0;
-    let minTime = 0;
-    let sumTime = 0;
-    const count = groupspans.length;
-    groupspans.forEach((groupspan: Span) => {
-      const duration = groupspan.dur || 0;
-      if (duration > maxTime) {
-        maxTime = duration;
-      }
-      if (duration < minTime) {
-        minTime = duration;
-      }
-      sumTime = sumTime + duration;
-    });
-    const avgTime = count === 0 ? 0 : sumTime / count;
-    return {
-      groupRef,
-      maxTime,
-      minTime,
-      sumTime,
-      avgTime,
-      count,
-    };
   }
 
   private static calculationChildren(nodes: Span[], result: Map<string, Span[]>): void {
