@@ -84,7 +84,7 @@ limitations under the License. -->
         :data="traceStore.traceSpans"
         :traceId="traceStore.currentTrace.traceIds[0].value"
         :showBtnDetail="false"
-        HeaderType="trace"
+        :headerType="WidgetType.Trace"
       />
     </div>
   </div>
@@ -160,6 +160,7 @@ limitations under the License. -->
         appStore,
         loading,
         traceId,
+        WidgetType,
       };
     },
   });

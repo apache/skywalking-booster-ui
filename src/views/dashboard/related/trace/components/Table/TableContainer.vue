@@ -59,6 +59,7 @@ limitations under the License. -->
   import TableItem from "./TableItem.vue";
   import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
   import { TraceGraphType } from "../constant";
+  import { WidgetType } from "@/views/dashboard/data";
 
   /* global defineProps, Nullable, defineEmits, Recordable*/
   const props = defineProps({
@@ -74,7 +75,7 @@ limitations under the License. -->
   const dragger = ref<Nullable<HTMLSpanElement>>(null);
   let headerData: Recordable[] = TraceConstant;
 
-  if (props.headerType === "profile") {
+  if (props.headerType === WidgetType.Profile) {
     headerData = ProfileConstant;
   }
   if (props.type === TraceGraphType.STATISTICS) {

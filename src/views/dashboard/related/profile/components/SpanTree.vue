@@ -43,7 +43,7 @@ limitations under the License. -->
       <Table
         :data="profileStore.segmentSpans"
         :traceId="profileStore.currentSegment.traceId"
-        headerType="profile"
+        :headerType="WidgetType.Profile"
         @select="selectSpan"
       />
     </div>
@@ -59,6 +59,7 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import { ElMessage } from "element-plus";
   import { ProfileDataMode, ProfileDisplayMode } from "./data";
+  import { WidgetType } from "@/views/dashboard/data";
 
   /* global defineEmits*/
   const emits = defineEmits(["loading", "displayMode"]);

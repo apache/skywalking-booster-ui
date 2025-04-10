@@ -118,10 +118,10 @@ limitations under the License. -->
           <span>{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
-      <div class="application" v-show="headerType === 'profile'" @click="viewSpan($event)">
+      <div class="application" v-show="headerType === WidgetType.Profile" @click="viewSpan($event)">
         <span>{{ t("view") }}</span>
       </div>
-      <div class="application" v-show="headerType !== 'profile'">
+      <div class="application" v-show="headerType !== WidgetType.Profile">
         <span>{{ data.attachedEvents && data.attachedEvents.length }}</span>
       </div>
     </div>
@@ -150,6 +150,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { Themes } from "@/constants/data";
   import { TraceGraphType } from "../constant";
+  import { WidgetType } from "@/views/dashboard/data";
 
   /*global Recordable*/
   const props = {
@@ -215,7 +216,7 @@ limitations under the License. -->
       function selectSpan(event: Recordable) {
         const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
         selectedItem(props.data);
-        if (props.headerType === "profile") {
+        if (props.headerType === WidgetType.Profile) {
           showSelectSpan(dom);
           return;
         }
@@ -264,6 +265,7 @@ limitations under the License. -->
         t,
         appStore,
         TraceGraphType,
+        WidgetType,
       };
     },
   });
