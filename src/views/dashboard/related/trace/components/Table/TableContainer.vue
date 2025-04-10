@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div class="trace">
-    <div class="trace-header" v-if="type === 'statistics'">
+  <div class="trace-table">
+    <div class="trace-table-header" v-if="type === TraceGraphType.STATISTICS">
       <div :class="item.label" v-for="(item, index) in headerData" :key="index">
         {{ item.value }}
         <span
@@ -28,7 +28,7 @@ limitations under the License. -->
         </span>
       </div>
     </div>
-    <div class="trace-header" v-else>
+    <div class="trace-table-header" v-else>
       <div class="method" :style="`width: ${method}px`">
         <span class="cp dragger" ref="dragger">
           <Icon iconName="settings_ethernet" size="sm" />
@@ -44,7 +44,7 @@ limitations under the License. -->
       :traceId="traceId"
       v-for="(item, index) in tableData"
       :data="item"
-      :key="'key' + index"
+      :key="`key${index}`"
       :type="type"
       :headerType="headerType"
       @select="selectItem"
@@ -58,6 +58,7 @@ limitations under the License. -->
   import type { Span } from "@/types/trace";
   import TableItem from "./TableItem.vue";
   import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
+  import { TraceGraphType } from "../constant";
 
   /* global defineProps, Nullable, defineEmits, Recordable*/
   const props = defineProps({
@@ -76,11 +77,11 @@ limitations under the License. -->
   if (props.headerType === "profile") {
     headerData = ProfileConstant;
   }
-  if (props.type === "statistics") {
+  if (props.type === TraceGraphType.STATISTICS) {
     headerData = StatisticsConstant;
   }
   onMounted(() => {
-    if (props.type === "statistics") {
+    if (props.type === TraceGraphType.STATISTICS) {
       return;
     }
     const drag: Nullable<HTMLSpanElement> = dragger.value;
@@ -102,6 +103,7 @@ limitations under the License. -->
     };
   });
   function selectItem(span: Span) {
+    console.log(span);
     emits("select", span);
   }
   function sortStatistics(key: string) {
@@ -152,7 +154,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   @import url("./table.scss");
 
-  .trace {
+  .trace-table {
     font-size: $font-size-smaller;
     height: 100%;
     overflow: auto;
@@ -163,7 +165,7 @@ limitations under the License. -->
     float: right;
   }
 
-  .trace-header {
+  .trace-table-header {
     white-space: nowrap;
     user-select: none;
     border-left: 0;
@@ -171,7 +173,7 @@ limitations under the License. -->
     border-bottom: 1px solid var(--sw-trace-list-border);
   }
 
-  .trace-header div {
+  .trace-table-header div {
     display: inline-block;
     background-color: var(--sw-table-header);
     padding: 0 4px;

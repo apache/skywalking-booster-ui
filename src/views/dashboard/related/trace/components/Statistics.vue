@@ -17,7 +17,7 @@ limitations under the License. -->
     <div class="trace-t-loading" v-show="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
-    <TableContainer :tableData="tableData" type="statistics" :HeaderType="HeaderType">
+    <TableContainer :tableData="tableData" :type="TraceGraphType.STATISTICS" :HeaderType="HeaderType">
       <div class="trace-tips" v-if="!tableData.length">{{ $t("noData") }}</div>
     </TableContainer>
   </div>
@@ -28,6 +28,7 @@ limitations under the License. -->
   import TableContainer from "./Table/TableContainer.vue";
   import traceTable from "../utils/trace-table";
   import type { StatisticsSpan, Span, StatisticsGroupRef } from "@/types/trace";
+  import { TraceGraphType } from "./constant";
 
   /* global defineProps, defineEmits, Recordable*/
   const props = defineProps({

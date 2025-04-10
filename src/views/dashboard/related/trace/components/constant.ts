@@ -19,4 +19,5 @@ export enum TraceGraphType {
   TREE = "Tree",
   LIST = "List",
   TABLE = "Table",
+  STATISTICS = "Statistics",
 }

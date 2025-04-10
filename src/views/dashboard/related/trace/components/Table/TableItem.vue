@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div v-if="type === 'statistics'">
+  <div v-if="type === TraceGraphType.STATISTICS">
     <div class="trace-item">
       <div :class="['method']">
         <el-tooltip :content="data.groupRef.endpointName" placement="bottom" :show-after="300">
@@ -149,6 +149,7 @@ limitations under the License. -->
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { Themes } from "@/constants/data";
+  import { TraceGraphType } from "../constant";
 
   /*global Recordable*/
   const props = {
@@ -213,8 +214,7 @@ limitations under the License. -->
       }
       function selectSpan(event: Recordable) {
         const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
-
-        emit("select", props.data);
+        selectedItem(props.data);
         if (props.headerType === "profile") {
           showSelectSpan(dom);
           return;
@@ -226,13 +226,14 @@ limitations under the License. -->
         emit("select", props.data);
         viewSpanDetail(dom);
       }
-
-      function selectedItem(data: HTMLSpanElement) {
+      function selectedItem(data: Recordable) {
         emit("select", data);
       }
       function viewSpanDetail(dom: HTMLSpanElement) {
         showSelectSpan(dom);
-        showDetail.value = true;
+        if (props.type === TraceGraphType.STATISTICS) {
+          showDetail.value = true;
+        }
       }
       watch(
         () => appStore.theme,
@@ -262,6 +263,7 @@ limitations under the License. -->
         viewSpan,
         t,
         appStore,
+        TraceGraphType,
       };
     },
   });

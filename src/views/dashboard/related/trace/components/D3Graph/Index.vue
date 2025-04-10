@@ -14,7 +14,17 @@ limitations under the License. -->
   <div class="trace-t-loading" v-show="loading">
     <Icon iconName="spinner" size="sm" />
   </div>
-  <div ref="traceGraph" class="d3-graph"></div>
+  <TableContainer
+    v-if="type === TraceGraphType.TABLE"
+    :tableData="segmentId"
+    :type="type"
+    :headerType="headerType"
+    :traceId="traceId"
+    @select="handleSelectSpan"
+  >
+    <div class="trace-tips" v-if="!segmentId.length">{{ $t("noData") }}</div>
+  </TableContainer>
+  <div v-else ref="traceGraph" class="d3-graph"></div>
   <div id="trace-action-box">
     <div @click="showDetail = true">Span details</div>
     <div v-for="span in parentSpans" :key="span.segmentId" @click="viewParentSpan(span)">
@@ -45,6 +55,7 @@ limitations under the License. -->
   import TreeGraph from "../../utils/d3-trace-tree";
   import type { Span, Ref } from "@/types/trace";
   import SpanDetail from "./SpanDetail.vue";
+  import TableContainer from "../Table/TableContainer.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { debounce } from "@/utils/debounce";
   import { mutationObserver } from "@/utils/mutation";
@@ -55,6 +66,7 @@ limitations under the License. -->
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
     type: { type: String, default: TraceGraphType.LIST },
+    headerType: { type: String, default: "" },
   });
   const appStore = useAppStoreWithOut();
   const loading = ref<boolean>(false);
@@ -76,25 +88,21 @@ limitations under the License. -->
   onMounted(() => {
     loading.value = true;
     changeTree();
-    if (!traceGraph.value) {
-      loading.value = false;
-      return;
-    }
-    if (props.type !== TraceGraphType.TABLE) {
-      draw();
-    }
+    draw();
     loading.value = false;
-
     // monitor segment list width changes.
     mutationObserver.create("trigger-resize", () => {
       d3.selectAll(".d3-tip").remove();
       debounceFunc();
     });
-
     window.addEventListener("resize", debounceFunc);
   });
 
   function draw() {
+    if (props.type === TraceGraphType.TABLE) {
+      segmentId.value = setLevel(segmentId.value);
+      return;
+    }
     if (!traceGraph.value) {
       return;
     }
@@ -107,6 +115,7 @@ limitations under the License. -->
         fixSpansSize.value,
       );
       tree.value.draw();
+      return;
     }
     if (props.type === TraceGraphType.TREE) {
       tree.value = new TreeGraph(traceGraph.value, handleSelectSpan);
@@ -117,6 +126,7 @@ limitations under the License. -->
     }
   }
   function handleSelectSpan(i: Recordable) {
+    console.log(i);
     const spans = [];
     const refSpans = [];
     parentSpans.value = [];
@@ -363,6 +373,17 @@ limitations under the License. -->
         collapse(i);
       }
     }
+  }
+  function setLevel(arr: Recordable[], level = 1, totalExec?: number) {
+    for (const item of arr) {
+      item.level = level;
+      totalExec = totalExec || item.endTime - item.startTime;
+      item.totalExec = totalExec;
+      if (item.children && item.children.length > 0) {
+        setLevel(item.children, level + 1, totalExec);
+      }
+    }
+    return arr;
   }
   function getRefsAllNodes(tree: Recordable) {
     let nodes = [];

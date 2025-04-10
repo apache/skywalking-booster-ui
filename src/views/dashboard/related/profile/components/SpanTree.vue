@@ -43,7 +43,6 @@ limitations under the License. -->
       <Table
         :data="profileStore.segmentSpans"
         :traceId="profileStore.currentSegment.traceId"
-        :showBtnDetail="true"
         headerType="profile"
         @select="selectSpan"
       />
@@ -53,7 +52,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
-  import Table from "../../trace/components/Table/Index.vue";
+  import Table from "../../trace/components/Table.vue";
   import { useProfileStore } from "@/store/modules/profile";
   import Selector from "@/components/Selector.vue";
   import type { Span } from "@/types/trace";
