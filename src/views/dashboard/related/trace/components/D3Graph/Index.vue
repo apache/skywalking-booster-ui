@@ -126,7 +126,6 @@ limitations under the License. -->
     }
   }
   function handleSelectSpan(i: Recordable) {
-    console.log(i);
     const spans = [];
     const refSpans = [];
     parentSpans.value = [];

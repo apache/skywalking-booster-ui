@@ -34,6 +34,7 @@ interface TraceState {
   conditions: Recordable;
   traceSpanLogs: Recordable[];
   selectorStore: Recordable;
+  selectedSpan: Recordable<Span>;
 }
 
 export const traceStore = defineStore({
@@ -45,6 +46,7 @@ export const traceStore = defineStore({
     traceList: [],
     traceSpans: [],
     currentTrace: {},
+    selectedSpan: {},
     conditions: {
       queryDuration: useAppStoreWithOut().durationTime,
       traceState: "ALL",
@@ -63,6 +65,9 @@ export const traceStore = defineStore({
     },
     setTraceSpans(spans: Span[]) {
       this.traceSpans = spans;
+    },
+    setSelectedSpan(span: Span) {
+      this.selectedSpan = span;
     },
     resetState() {
       this.traceSpans = [];

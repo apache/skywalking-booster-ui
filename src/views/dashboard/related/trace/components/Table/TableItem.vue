@@ -133,7 +133,6 @@ limitations under the License. -->
         :data="child"
         :type="type"
         :headerType="headerType"
-        @select="selectedItem(child)"
       />
     </div>
     <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
@@ -148,6 +147,7 @@ limitations under the License. -->
   import SpanDetail from "../D3Graph/SpanDetail.vue";
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useTraceStore } from "@/store/modules/trace";
   import { Themes } from "@/constants/data";
   import { TraceGraphType } from "../constant";
   import { WidgetType } from "@/views/dashboard/data";
@@ -163,10 +163,10 @@ limitations under the License. -->
   export default defineComponent({
     name: "TableItem",
     props,
-    emits: ["select"],
     components: { SpanDetail },
-    setup(props, { emit }) {
+    setup(props) {
       const appStore = useAppStoreWithOut();
+      const traceStore = useTraceStore();
       const displayChildren = ref<boolean>(true);
       const showDetail = ref<boolean>(false);
       const { t } = useI18n();
@@ -223,12 +223,13 @@ limitations under the License. -->
         viewSpanDetail(dom);
       }
       function viewSpan(event: Recordable) {
+        showDetail.value = true;
         const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
-        emit("select", props.data);
+        selectedItem(props.data);
         viewSpanDetail(dom);
       }
-      function selectedItem(data: Recordable) {
-        emit("select", data);
+      function selectedItem(span: Recordable) {
+        traceStore.setSelectedSpan(span);
       }
       function viewSpanDetail(dom: HTMLSpanElement) {
         showSelectSpan(dom);

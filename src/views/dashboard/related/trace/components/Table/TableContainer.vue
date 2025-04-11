@@ -47,7 +47,7 @@ limitations under the License. -->
       :key="`key${index}`"
       :type="type"
       :headerType="headerType"
-      @select="selectItem"
+      @click="selectItem()"
     />
     <slot></slot>
   </div>
@@ -55,6 +55,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, onMounted } from "vue";
   import type { PropType } from "vue";
+  import { useTraceStore } from "@/store/modules/trace";
   import type { Span } from "@/types/trace";
   import TableItem from "./TableItem.vue";
   import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
@@ -69,6 +70,7 @@ limitations under the License. -->
     traceId: { type: String, default: "" },
   });
   const emits = defineEmits(["select"]);
+  const traceStore = useTraceStore();
   const method = ref<number>(300);
   const componentKey = ref<number>(300);
   const flag = ref<boolean>(true);
@@ -103,9 +105,8 @@ limitations under the License. -->
       };
     };
   });
-  function selectItem(span: Span) {
-    console.log(span);
-    emits("select", span);
+  function selectItem() {
+    emits("select", traceStore.selectedSpan);
   }
   function sortStatistics(key: string) {
     const element = props.tableData;
