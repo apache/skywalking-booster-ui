@@ -125,12 +125,16 @@ limitations under the License. -->
       );
     }
   }
-  function handleSelectSpan(i: Recordable) {
+  function handleSelectSpan(i: any) {
     const spans = [];
     const refSpans = [];
     parentSpans.value = [];
     refParentSpans.value = [];
-    currentSpan.value = i.data;
+    if (props.type === TraceGraphType.TABLE) {
+      currentSpan.value = i;
+    } else {
+      currentSpan.value = i.data;
+    }
     if (!currentSpan.value) {
       return;
     }

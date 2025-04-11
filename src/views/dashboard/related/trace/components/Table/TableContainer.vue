@@ -56,7 +56,6 @@ limitations under the License. -->
   import { ref, onMounted } from "vue";
   import type { PropType } from "vue";
   import { useTraceStore } from "@/store/modules/trace";
-  import type { Span } from "@/types/trace";
   import TableItem from "./TableItem.vue";
   import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
   import { TraceGraphType } from "../constant";
