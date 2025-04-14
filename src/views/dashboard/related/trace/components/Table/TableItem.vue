@@ -55,6 +55,7 @@ limitations under the License. -->
         'level' + (data.level - 1),
         { 'trace-item-error': data.isError },
         { profiled: data.profiled === false },
+        `trace-item-${data.key}`,
       ]"
       :data-text="data.profiled === false ? 'No Thread Dump' : ''"
     >

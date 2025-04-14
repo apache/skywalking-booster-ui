@@ -60,8 +60,9 @@ limitations under the License. -->
   import { debounce } from "@/utils/debounce";
   import { mutationObserver } from "@/utils/mutation";
   import { TraceGraphType } from "../constant";
+  import { Themes } from "@/constants/data";
 
-  /* global defineProps, Nullable, defineExpose, Recordable */
+  /* global Recordable, Nullable */
   const props = defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
@@ -82,9 +83,6 @@ limitations under the License. -->
   const debounceFunc = debounce(draw, 500);
   const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
 
-  defineExpose({
-    tree,
-  });
   onMounted(() => {
     loading.value = true;
     changeTree();
@@ -163,9 +161,20 @@ limitations under the License. -->
   }
   function viewParentSpan(span: Recordable) {
     if (props.type === TraceGraphType.TABLE) {
+      setTableSpanStyle(span);
       return;
     }
     tree.value.highlightParents(span);
+  }
+  function setTableSpanStyle(span: Recordable) {
+    const itemDom: any = document.querySelector(`.trace-item-${span.key}`);
+    const items: any = document.querySelectorAll(".trace-item");
+    for (const item of items) {
+      item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
+    }
+    itemDom.style.background = appStore.theme === Themes.Dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+    const box: any = document.querySelector("#trace-action-box");
+    box.style.display = "none";
   }
   function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
     if (!node || node.isBroken) {
@@ -308,6 +317,7 @@ limitations under the License. -->
     }
     for (const i of [...fixSpans, ...props.data]) {
       i.label = i.endpointName || "no operation name";
+      i.key = Math.random().toString(36).substring(2, 36);
       i.children = [];
       if (segmentGroup[i.segmentId]) {
         segmentGroup[i.segmentId].push(i);

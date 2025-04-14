@@ -21,7 +21,6 @@ limitations under the License. -->
   import Graph from "./D3Graph/Index.vue";
   import { TraceGraphType } from "./constant";
 
-  /* global defineProps, Recordable*/
   defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
