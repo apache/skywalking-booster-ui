@@ -14,17 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 
 <template>
-  <div v-if="type === 'statistics'">
+  <div v-if="type === TraceGraphType.STATISTICS">
     <div class="trace-item">
       <div :class="['method']">
-        <el-tooltip :content="data.groupRef.endpointName" placement="bottom" :show-after="300">
+        <el-tooltip :content="data.groupRef.endpointName" placement="top" :show-after="300">
           <span>
             {{ data.groupRef.endpointName }}
           </span>
         </el-tooltip>
       </div>
       <div :class="['type']">
-        <el-tooltip :content="data.groupRef.type" placement="bottom" :show-after="300">
+        <el-tooltip :content="data.groupRef.type" placement="top" :show-after="300">
           <span>
             {{ data.groupRef.type }}
           </span>
@@ -55,6 +55,7 @@ limitations under the License. -->
         'level' + (data.level - 1),
         { 'trace-item-error': data.isError },
         { profiled: data.profiled === false },
+        `trace-item-${data.key}`,
       ]"
       :data-text="data.profiled === false ? 'No Thread Dump' : ''"
     >
@@ -75,7 +76,7 @@ limitations under the License. -->
         />
         <el-tooltip
           :content="data.type === 'Entry' ? 'Entry' : 'Exit'"
-          placement="bottom"
+          placement="top"
           :show-after="300"
           v-if="['Entry', 'Exit'].includes(data.type)"
         >
@@ -83,12 +84,12 @@ limitations under the License. -->
             <Icon :iconName="data.type === 'Entry' ? 'entry' : 'exit'" size="sm" class="mr-5" />
           </span>
         </el-tooltip>
-        <el-tooltip v-if="isCrossThread" content="CROSS_THREAD" placement="bottom" :show-after="300">
+        <el-tooltip v-if="isCrossThread" content="CROSS_THREAD" placement="top" :show-after="300">
           <span>
             <Icon iconName="cross" size="sm" class="mr-5" />
           </span>
         </el-tooltip>
-        <el-tooltip :content="data.endpointName" placement="bottom" :show-after="300">
+        <el-tooltip :content="data.endpointName" placement="top" :show-after="300">
           <span>
             {{ data.endpointName }}
           </span>
@@ -109,19 +110,19 @@ limitations under the License. -->
         {{ data.dur ? data.dur + "" : "0" }}
       </div>
       <div class="api">
-        <el-tooltip :show-after="300" :content="data.component || '-'" placement="bottom">
+        <el-tooltip :show-after="300" :content="data.component || '-'" placement="top">
           <span>{{ data.component || "-" }}</span>
         </el-tooltip>
       </div>
       <div class="application">
-        <el-tooltip :show-after="300" :content="data.serviceCode || '-'" placement="bottom">
+        <el-tooltip :show-after="300" :content="data.serviceCode || '-'" placement="top">
           <span>{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
-      <div class="application" v-show="headerType === 'profile'" @click="viewSpan($event)">
+      <div class="application" v-show="headerType === WidgetType.Profile" @click="viewSpan($event)">
         <span>{{ t("view") }}</span>
       </div>
-      <div class="application" v-show="headerType !== 'profile'">
+      <div class="application" v-show="headerType !== WidgetType.Profile">
         <span>{{ data.attachedEvents && data.attachedEvents.length }}</span>
       </div>
     </div>
@@ -133,7 +134,6 @@ limitations under the License. -->
         :data="child"
         :type="type"
         :headerType="headerType"
-        @select="selectedItem(child)"
       />
     </div>
     <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
@@ -148,7 +148,10 @@ limitations under the License. -->
   import SpanDetail from "../D3Graph/SpanDetail.vue";
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useTraceStore } from "@/store/modules/trace";
   import { Themes } from "@/constants/data";
+  import { TraceGraphType } from "../constant";
+  import { WidgetType } from "@/views/dashboard/data";
 
   /*global Recordable*/
   const props = {
@@ -161,10 +164,10 @@ limitations under the License. -->
   export default defineComponent({
     name: "TableItem",
     props,
-    emits: ["select"],
     components: { SpanDetail },
-    setup(props, { emit }) {
+    setup(props) {
       const appStore = useAppStoreWithOut();
+      const traceStore = useTraceStore();
       const displayChildren = ref<boolean>(true);
       const showDetail = ref<boolean>(false);
       const { t } = useI18n();
@@ -193,7 +196,6 @@ limitations under the License. -->
         const key = props.data.refs.findIndex((d: { type: string }) => d.type === "CROSS_THREAD");
         return key > -1 ? true : false;
       });
-
       function toggle() {
         displayChildren.value = !displayChildren.value;
       }
@@ -213,26 +215,27 @@ limitations under the License. -->
       }
       function selectSpan(event: Recordable) {
         const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
-
-        emit("select", props.data);
-        if (props.headerType === "profile") {
+        selectedItem(props.data);
+        if (props.headerType === WidgetType.Profile) {
           showSelectSpan(dom);
           return;
         }
         viewSpanDetail(dom);
       }
       function viewSpan(event: Recordable) {
+        showDetail.value = true;
         const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
-        emit("select", props.data);
+        selectedItem(props.data);
         viewSpanDetail(dom);
       }
-
-      function selectedItem(data: HTMLSpanElement) {
-        emit("select", data);
+      function selectedItem(span: Recordable) {
+        traceStore.setSelectedSpan(span);
       }
       function viewSpanDetail(dom: HTMLSpanElement) {
         showSelectSpan(dom);
-        showDetail.value = true;
+        if (props.type === TraceGraphType.STATISTICS) {
+          showDetail.value = true;
+        }
       }
       watch(
         () => appStore.theme,
@@ -262,6 +265,8 @@ limitations under the License. -->
         viewSpan,
         t,
         appStore,
+        TraceGraphType,
+        WidgetType,
       };
     },
   });
@@ -279,8 +284,6 @@ limitations under the License. -->
   }
 
   .trace-item.level0 {
-    color: #448dfe;
-
     &:hover {
       background: rgb(0 0 0 / 4%);
     }

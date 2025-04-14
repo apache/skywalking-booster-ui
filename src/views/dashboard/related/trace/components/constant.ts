@@ -15,14 +15,9 @@
  * limitations under the License.
  */
 
-import List from "./List.vue";
-import Tree from "./Tree.vue";
-import Table from "./Table.vue";
-import Statistics from "./Statistics.vue";
-
-export default {
-  List,
-  Tree,
-  Table,
-  Statistics,
-};
+export enum TraceGraphType {
+  TREE = "Tree",
+  LIST = "List",
+  TABLE = "Table",
+  STATISTICS = "Statistics",
+}

@@ -35,7 +35,7 @@ limitations under the License. -->
       </a>
     </div>
     <div class="trace-tree">
-      <Graph ref="charts" :data="data" :traceId="traceId" type="Tree" />
+      <Graph ref="charts" :data="data" :traceId="traceId" :type="TraceGraphType.TREE" />
     </div>
   </div>
 </template>
@@ -46,6 +46,7 @@ limitations under the License. -->
   import type { Span } from "@/types/trace";
   import { useI18n } from "vue-i18n";
   import { ref, computed } from "vue";
+  import { TraceGraphType } from "./constant";
 
   /* global defineProps */
   const props = defineProps({

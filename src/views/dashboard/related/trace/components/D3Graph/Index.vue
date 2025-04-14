@@ -14,9 +14,19 @@ limitations under the License. -->
   <div class="trace-t-loading" v-show="loading">
     <Icon iconName="spinner" size="sm" />
   </div>
-  <div ref="traceGraph" class="d3-graph"></div>
+  <TableContainer
+    v-if="type === TraceGraphType.TABLE"
+    :tableData="segmentId"
+    :type="type"
+    :headerType="headerType"
+    :traceId="traceId"
+    @select="handleSelectSpan"
+  >
+    <div class="trace-tips" v-if="!segmentId.length">{{ $t("noData") }}</div>
+  </TableContainer>
+  <div v-else ref="traceGraph" class="d3-graph"></div>
   <div id="trace-action-box">
-    <div @click="showDetail = true">Span details</div>
+    <div @click="viewSpanDetails">Span details</div>
     <div v-for="span in parentSpans" :key="span.segmentId" @click="viewParentSpan(span)">
       {{ `Parent span: ${span.endpointName} -> Start time: ${visDate(span.startTime)}` }}
     </div>
@@ -45,15 +55,19 @@ limitations under the License. -->
   import TreeGraph from "../../utils/d3-trace-tree";
   import type { Span, Ref } from "@/types/trace";
   import SpanDetail from "./SpanDetail.vue";
+  import TableContainer from "../Table/TableContainer.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { debounce } from "@/utils/debounce";
   import { mutationObserver } from "@/utils/mutation";
+  import { TraceGraphType } from "../constant";
+  import { Themes } from "@/constants/data";
 
-  /* global defineProps, Nullable, defineExpose, Recordable */
+  /* global Recordable, Nullable */
   const props = defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
-    type: { type: String, default: "List" },
+    type: { type: String, default: TraceGraphType.LIST },
+    headerType: { type: String, default: "" },
   });
   const appStore = useAppStoreWithOut();
   const loading = ref<boolean>(false);
@@ -69,34 +83,29 @@ limitations under the License. -->
   const debounceFunc = debounce(draw, 500);
   const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
 
-  defineExpose({
-    tree,
-  });
   onMounted(() => {
     loading.value = true;
     changeTree();
-    if (!traceGraph.value) {
-      loading.value = false;
-      return;
-    }
     draw();
     loading.value = false;
-
     // monitor segment list width changes.
     mutationObserver.create("trigger-resize", () => {
       d3.selectAll(".d3-tip").remove();
       debounceFunc();
     });
-
     window.addEventListener("resize", debounceFunc);
   });
 
   function draw() {
+    if (props.type === TraceGraphType.TABLE) {
+      segmentId.value = setLevel(segmentId.value);
+      return;
+    }
     if (!traceGraph.value) {
       return;
     }
     d3.selectAll(".d3-tip").remove();
-    if (props.type === "List") {
+    if (props.type === TraceGraphType.LIST) {
       tree.value = new ListGraph(traceGraph.value, handleSelectSpan);
       tree.value.init(
         { label: "TRACE_ROOT", children: segmentId.value },
@@ -104,7 +113,9 @@ limitations under the License. -->
         fixSpansSize.value,
       );
       tree.value.draw();
-    } else {
+      return;
+    }
+    if (props.type === TraceGraphType.TREE) {
       tree.value = new TreeGraph(traceGraph.value, handleSelectSpan);
       tree.value.init(
         { label: `${props.traceId}`, children: segmentId.value },
@@ -112,12 +123,16 @@ limitations under the License. -->
       );
     }
   }
-  function handleSelectSpan(i: Recordable) {
+  function handleSelectSpan(i: any) {
     const spans = [];
     const refSpans = [];
     parentSpans.value = [];
     refParentSpans.value = [];
-    currentSpan.value = i.data;
+    if (props.type === TraceGraphType.TABLE) {
+      currentSpan.value = i;
+    } else {
+      currentSpan.value = i.data;
+    }
     if (!currentSpan.value) {
       return;
     }
@@ -145,7 +160,28 @@ limitations under the License. -->
     }
   }
   function viewParentSpan(span: Recordable) {
+    if (props.type === TraceGraphType.TABLE) {
+      setTableSpanStyle(span);
+      return;
+    }
     tree.value.highlightParents(span);
+  }
+  function viewSpanDetails() {
+    showDetail.value = true;
+    hideActionBox();
+  }
+  function setTableSpanStyle(span: Recordable) {
+    const itemDom: any = document.querySelector(`.trace-item-${span.key}`);
+    const items: any = document.querySelectorAll(".trace-item");
+    for (const item of items) {
+      item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
+    }
+    itemDom.style.background = appStore.theme === Themes.Dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+    hideActionBox();
+  }
+  function hideActionBox() {
+    const box: any = document.querySelector("#trace-action-box");
+    box.style.display = "none";
   }
   function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
     if (!node || node.isBroken) {
@@ -288,6 +324,7 @@ limitations under the License. -->
     }
     for (const i of [...fixSpans, ...props.data]) {
       i.label = i.endpointName || "no operation name";
+      i.key = Math.random().toString(36).substring(2, 36);
       i.children = [];
       if (segmentGroup[i.segmentId]) {
         segmentGroup[i.segmentId].push(i);
@@ -359,6 +396,17 @@ limitations under the License. -->
         collapse(i);
       }
     }
+  }
+  function setLevel(arr: Recordable[], level = 1, totalExec?: number) {
+    for (const item of arr) {
+      item.level = level;
+      totalExec = totalExec || item.endTime - item.startTime;
+      item.totalExec = totalExec;
+      if (item.children && item.children.length > 0) {
+        setLevel(item.children, level + 1, totalExec);
+      }
+    }
+    return arr;
   }
   function getRefsAllNodes(tree: Recordable) {
     let nodes = [];
