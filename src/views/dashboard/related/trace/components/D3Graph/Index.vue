@@ -26,7 +26,7 @@ limitations under the License. -->
   </TableContainer>
   <div v-else ref="traceGraph" class="d3-graph"></div>
   <div id="trace-action-box">
-    <div @click="showDetail = true">Span details</div>
+    <div @click="viewSpanDetails">Span details</div>
     <div v-for="span in parentSpans" :key="span.segmentId" @click="viewParentSpan(span)">
       {{ `Parent span: ${span.endpointName} -> Start time: ${visDate(span.startTime)}` }}
     </div>
@@ -166,6 +166,10 @@ limitations under the License. -->
     }
     tree.value.highlightParents(span);
   }
+  function viewSpanDetails() {
+    showDetail.value = true;
+    hideActionBox();
+  }
   function setTableSpanStyle(span: Recordable) {
     const itemDom: any = document.querySelector(`.trace-item-${span.key}`);
     const items: any = document.querySelectorAll(".trace-item");
@@ -173,6 +177,9 @@ limitations under the License. -->
       item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
     }
     itemDom.style.background = appStore.theme === Themes.Dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+    hideActionBox();
+  }
+  function hideActionBox() {
     const box: any = document.querySelector("#trace-action-box");
     box.style.display = "none";
   }
