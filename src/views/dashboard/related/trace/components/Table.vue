@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="charts">
+  <div class="trace-table-charts">
     <Graph :data="data" :traceId="traceId" :type="TraceGraphType.TABLE" :headerType="headerType" />
   </div>
 </template>
@@ -29,10 +29,11 @@ limitations under the License. -->
   });
 </script>
 <style lang="scss" scoped>
-  .charts {
+  .trace-table-charts {
     overflow: auto;
     padding: 10px;
     height: 100%;
     width: 100%;
+    position: relative;
   }
 </style>

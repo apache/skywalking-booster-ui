@@ -17,14 +17,14 @@ limitations under the License. -->
   <div v-if="type === TraceGraphType.STATISTICS">
     <div class="trace-item">
       <div :class="['method']">
-        <el-tooltip :content="data.groupRef.endpointName" placement="bottom" :show-after="300">
+        <el-tooltip :content="data.groupRef.endpointName" placement="top" :show-after="300">
           <span>
             {{ data.groupRef.endpointName }}
           </span>
         </el-tooltip>
       </div>
       <div :class="['type']">
-        <el-tooltip :content="data.groupRef.type" placement="bottom" :show-after="300">
+        <el-tooltip :content="data.groupRef.type" placement="top" :show-after="300">
           <span>
             {{ data.groupRef.type }}
           </span>
@@ -75,7 +75,7 @@ limitations under the License. -->
         />
         <el-tooltip
           :content="data.type === 'Entry' ? 'Entry' : 'Exit'"
-          placement="bottom"
+          placement="top"
           :show-after="300"
           v-if="['Entry', 'Exit'].includes(data.type)"
         >
@@ -83,12 +83,12 @@ limitations under the License. -->
             <Icon :iconName="data.type === 'Entry' ? 'entry' : 'exit'" size="sm" class="mr-5" />
           </span>
         </el-tooltip>
-        <el-tooltip v-if="isCrossThread" content="CROSS_THREAD" placement="bottom" :show-after="300">
+        <el-tooltip v-if="isCrossThread" content="CROSS_THREAD" placement="top" :show-after="300">
           <span>
             <Icon iconName="cross" size="sm" class="mr-5" />
           </span>
         </el-tooltip>
-        <el-tooltip :content="data.endpointName" placement="bottom" :show-after="300">
+        <el-tooltip :content="data.endpointName" placement="top" :show-after="300">
           <span>
             {{ data.endpointName }}
           </span>
@@ -109,12 +109,12 @@ limitations under the License. -->
         {{ data.dur ? data.dur + "" : "0" }}
       </div>
       <div class="api">
-        <el-tooltip :show-after="300" :content="data.component || '-'" placement="bottom">
+        <el-tooltip :show-after="300" :content="data.component || '-'" placement="top">
           <span>{{ data.component || "-" }}</span>
         </el-tooltip>
       </div>
       <div class="application">
-        <el-tooltip :show-after="300" :content="data.serviceCode || '-'" placement="bottom">
+        <el-tooltip :show-after="300" :content="data.serviceCode || '-'" placement="top">
           <span>{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
@@ -284,8 +284,6 @@ limitations under the License. -->
   }
 
   .trace-item.level0 {
-    color: #448dfe;
-
     &:hover {
       background: rgb(0 0 0 / 4%);
     }

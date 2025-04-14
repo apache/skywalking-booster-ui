@@ -162,6 +162,9 @@ limitations under the License. -->
     }
   }
   function viewParentSpan(span: Recordable) {
+    if (props.type === TraceGraphType.TABLE) {
+      return;
+    }
     tree.value.highlightParents(span);
   }
   function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {

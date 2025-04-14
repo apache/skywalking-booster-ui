@@ -47,7 +47,7 @@ limitations under the License. -->
       :key="`key${index}`"
       :type="type"
       :headerType="headerType"
-      @click="selectItem()"
+      @click="selectItem"
     />
     <slot></slot>
   </div>
@@ -104,8 +104,24 @@ limitations under the License. -->
       };
     };
   });
-  function selectItem() {
+  function selectItem(event: MouseEvent) {
     emits("select", traceStore.selectedSpan);
+    if (props.headerType === WidgetType.Profile) {
+      return;
+    }
+    if (props.type === TraceGraphType.STATISTICS) {
+      return;
+    }
+    const item: any = document.querySelector("#trace-action-box");
+    const tableBox = document.querySelector(".trace-table-charts")?.getBoundingClientRect();
+    if (!tableBox) {
+      return;
+    }
+    const offsetX = event.x - tableBox.x;
+    const offsetY = event.y - tableBox.y;
+    item.style.display = "block";
+    item.style.top = `${offsetY + 20}px`;
+    item.style.left = `${offsetX + 10}px`;
   }
   function sortStatistics(key: string) {
     const element = props.tableData;
