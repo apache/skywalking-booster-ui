@@ -15,40 +15,11 @@
  * limitations under the License.
  */
 
-import type { Ref, Span, TraceTreeRef } from "@/types/trace";
+import type { Span, TraceTreeRef } from "@/types/trace";
 
 export default class TraceUtil {
   public static buildTraceDataList(data: Span[]): string[] {
     return Array.from(new Set(data.map((span: Span) => span.serviceCode)));
-  }
-
-  public static changeTree(data: Span[], currentTraceId: string) {
-    const segmentIdList: Span[] = [];
-    const traceTreeRef: Recordable = this.changeTreeCore(data);
-    traceTreeRef.segmentIdGroup.forEach((segmentId: string) => {
-      if (traceTreeRef.segmentMap.get(segmentId).refs) {
-        traceTreeRef.segmentMap.get(segmentId).refs.forEach((ref: Ref) => {
-          if (ref.traceId === currentTraceId) {
-            this.traverseTree(
-              traceTreeRef.segmentMap.get(ref.parentSegmentId) as Span,
-              ref.parentSpanId,
-              ref.parentSegmentId,
-              traceTreeRef.segmentMap.get(segmentId) as Span,
-            );
-          }
-        });
-      }
-    });
-    // set a breakpoint at this line
-    traceTreeRef.segmentMap.forEach((value: Span) => {
-      if ((value.refs && value.refs.length === 0) || !value.refs) {
-        segmentIdList.push(value as Span);
-      }
-    });
-    segmentIdList.forEach((segmentId: Span) => {
-      this.collapse(segmentId);
-    });
-    return segmentIdList;
   }
 
   public static changeStatisticsTree(data: Span[]): Map<string, Span[]> {
@@ -252,21 +223,6 @@ export default class TraceUtil {
       });
       span.dur = dur < 0 ? 0 : dur;
       span.children.forEach((child) => this.collapse(child));
-    }
-  }
-
-  private static traverseTree(node: Span, spanId: number, segmentId: string, childNode: Span) {
-    if (!node || node.isBroken) {
-      return;
-    }
-    if (node.spanId === spanId && node.segmentId === segmentId) {
-      node.children!.push(childNode);
-      return;
-    }
-    if (node.children && node.children.length > 0) {
-      for (const grandchild of node.children) {
-        this.traverseTree(grandchild, spanId, segmentId, childNode);
-      }
     }
   }
 

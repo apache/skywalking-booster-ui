@@ -195,7 +195,6 @@ limitations under the License. -->
         const key = props.data.refs.findIndex((d: { type: string }) => d.type === "CROSS_THREAD");
         return key > -1 ? true : false;
       });
-
       function toggle() {
         displayChildren.value = !displayChildren.value;
       }
