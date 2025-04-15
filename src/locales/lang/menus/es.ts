@@ -137,6 +137,12 @@ const titles = {
     "Cilium es un complemento CNI para Kubernetes que proporciona redes, seguridad y equilibrio de carga basados en eBPF.",
   cilium_service: "Cilium Service",
   cilium_service_desc: "Observe el estado del servicio y los recursos de Cilium Hubble.",
+  data_processing_engine: "Data Processing Engine",
+  data_processing_engine_desc:
+    "A data processing engine is a system designed to efficiently process, transform, and analyze large-scale data in real time or batch mode.",
+  data_processing_engine_flink: "Flink",
+  data_processing_engine_flink_desc:
+    "Apache Flink is a framework and distributed processing engine for stateful computations over unbounded and bounded data streams. Flink has been designed to run in all common cluster environments, perform computations at in-memory speed and at any scale.",
 };
 
 export default titles;
