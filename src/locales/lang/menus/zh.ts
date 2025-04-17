@@ -119,6 +119,11 @@ const titles = {
   cilium_desc: "Cilium是Kubernetes上的CNI插件，提供基于eBPF的网络、安全和负载均衡。",
   cilium_service: "Cilium服务",
   cilium_service_desc: "通过Cilium Hubble收集的遥测数据观察服务。",
+  data_processing_engine: "数据处理引擎",
+  data_processing_engine_desc: "数据处理引擎是一个用于高效地在实时或批处理模式下处理、转换和分析大规模数据的系统。",
+  data_processing_engine_flink: "Flink",
+  data_processing_engine_flink_desc:
+    "Apache Flink 是一个框架和分布式处理引擎，用于在无边界和有边界数据流上进行有状态的计算。Flink 能在所有常见集群环境中运行，并能以内存速度和任意规模进行计算。",
 };
 
 export default titles;
