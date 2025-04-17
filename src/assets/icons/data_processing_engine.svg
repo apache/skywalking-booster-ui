@@ -1,1 +1,38 @@
-<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1744441494121" class="icon" viewBox="0 0 1198 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5280" xmlns:xlink="http://www.w3.org/1999/xlink" width="233.984375" height="200"><path d="M1168.248051 0H205.354279a30.123849 30.123849 0 0 0-30.123849 30.123849v431.494014a30.123849 30.123849 0 0 0 60.247698 0V60.247698h902.646074v903.504604H235.478128v-296.719913H332.868532a30.123849 30.123849 0 0 0 28.708028-20.996323l47.50531-149.56491 159.053923 343.155826A30.123849 30.123849 0 0 0 595.458124 857.023505h1.114582a30.123849 30.123849 0 0 0 27.111464-19.49013l142.892478-379.364693L822.230459 647.060277a30.123849 30.123849 0 0 0 28.858648 21.689171h192.310652a30.123849 30.123849 0 0 0 0-60.247698H873.591622l-74.66196-253.537375a30.123849 30.123849 0 0 0-57.084694-2.093607l-149.24861 396.24911-161.448769-348.367252a30.123849 30.123849 0 0 0-56.105669 3.554614l-64.239108 202.402141h-75.309622v-17.170594a30.123849 30.123849 0 0 0-60.247698 0v17.170594H30.123849a30.123849 30.123849 0 0 0 0 60.247698h145.106581v326.919072a30.123849 30.123849 0 0 0 30.123849 30.123849h962.893772a30.123849 30.123849 0 0 0 30.123849-30.123849V30.123849a30.123849 30.123849 0 0 0-30.123849-30.123849z" p-id="5281"></path></svg>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+
+<svg width="2400" height="2400" viewBox="0 0 200 100"  version="1.1"  xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+        <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="2" refY="2.5" orient="auto">
+            <polygon points="0 0, 3 2.5, 0 5" fill="white" />
+        </marker>
+    </defs>
+
+    <line x1="0" y1="20" x2="42" y2="20" stroke="white" stroke-width="7" marker-end="url(#arrowhead)" />
+    <line x1="0" y1="50" x2="42" y2="50" stroke="white" stroke-width="7" marker-end="url(#arrowhead)" />
+    <line x1="0" y1="80" x2="42" y2="80" stroke="white" stroke-width="7" marker-end="url(#arrowhead)" />
+
+
+    <line x1="49" y1="10" x2="139" y2="10" stroke="white" stroke-width="7" />
+    <line x1="49" y1="90" x2="139" y2="90" stroke="white" stroke-width="7" />
+    <line x1="49" y1="10" x2="50" y2="90" stroke="white" stroke-width="7" />
+
+    <ellipse cx="140" cy="50" rx="10" ry="40" fill="none" stroke="white" stroke-width="7" />
+
+    <line x1="147" y1="20" x2="190" y2="20" stroke="white" stroke-width="7" marker-end="url(#arrowhead)" />
+    <line x1="149" y1="50" x2="190" y2="50" stroke="white" stroke-width="7" marker-end="url(#arrowhead)" />
+    <line x1="147" y1="80" x2="190" y2="80" stroke="white" stroke-width="7" marker-end="url(#arrowhead)" />
+</svg>
