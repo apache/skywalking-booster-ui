@@ -208,11 +208,6 @@ limitations under the License. -->
   getDashboardList();
   async function getDashboardList() {
     const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-    const json = await dashboardStore.fetchMetricList();
-    if (json.errors) {
-      ElMessage.error(json.errors);
-      return;
-    }
     const entity =
       dashboardStore.entity === EntityType[1].value
         ? EntityType[0].value

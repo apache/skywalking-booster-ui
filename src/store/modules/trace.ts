@@ -19,7 +19,6 @@ import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { Trace, Span } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { QueryOrders } from "@/views/dashboard/data";
@@ -81,125 +80,115 @@ export const traceStore = defineStore({
       };
     },
     async getServices(layer: string) {
-      const res: AxiosResponse = await graphql.query("queryServices").params({
+      const response = await graphql.query("queryServices").params({
         layer,
       });
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.services = res.data.data.services;
-      return res.data;
+      this.services = response.data.services;
+      return response;
     },
     async getService(serviceId: string) {
       if (!serviceId) {
         return;
       }
-      const res: AxiosResponse = await graphql.query("queryService").params({
+      const response = await graphql.query("queryService").params({
         serviceId,
       });
 
-      return res.data;
+      return response;
     },
     async getInstance(instanceId: string) {
       if (!instanceId) {
         return;
       }
-      const res: AxiosResponse = await graphql.query("queryInstance").params({
+      const response = await graphql.query("queryInstance").params({
         instanceId,
       });
 
-      return res.data;
+      return response;
     },
     async getEndpoint(endpointId: string) {
       if (!endpointId) {
         return;
       }
-      const res: AxiosResponse = await graphql.query("queryEndpoint").params({
+      return await graphql.query("queryEndpoint").params({
         endpointId,
       });
-
-      return res.data;
     },
     async getInstances(id: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
-      const res: AxiosResponse = await graphql.query("queryInstances").params({
+      const response = await graphql.query("queryInstances").params({
         serviceId: serviceId,
         duration: useAppStoreWithOut().durationTime,
       });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.instances = [{ value: "0", label: "All" }, ...res.data.data.pods];
-      return res.data;
+      this.instances = [{ value: "0", label: "All" }, ...response.data.pods];
+      return response;
     },
     async getEndpoints(id: string, keyword?: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
-      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
+      const response = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
         limit: EndpointsTopNDefault,
       });
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.endpoints = [{ value: "0", label: "All" }, ...res.data.data.pods];
-      return res.data;
+      this.endpoints = [{ value: "0", label: "All" }, ...response.data.pods];
+      return response;
     },
     async getTraces() {
-      const res: AxiosResponse = await graphql.query("queryTraces").params({ condition: this.conditions });
-      if (res.data.errors) {
-        return res.data;
+      const response = await graphql.query("queryTraces").params({ condition: this.conditions });
+      if (response.errors) {
+        return response;
       }
-      if (!res.data.data.data.traces.length) {
+      if (!response.data.data.traces.length) {
         this.traceList = [];
         this.setCurrentTrace({});
         this.setTraceSpans([]);
-        return res.data;
+        return response;
       }
-      this.getTraceSpans({ traceId: res.data.data.data.traces[0].traceIds[0] });
-      this.traceList = res.data.data.data.traces.map((d: Trace) => {
+      this.getTraceSpans({ traceId: response.data.data.traces[0].traceIds[0] });
+      this.traceList = response.data.data.traces.map((d: Trace) => {
         d.traceIds = d.traceIds.map((id: string) => {
           return { value: id, label: id };
         });
         return d;
       });
-      this.setCurrentTrace(res.data.data.data.traces[0] || {});
-      return res.data;
+      this.setCurrentTrace(response.data.data.traces[0] || {});
+      return response;
     },
     async getTraceSpans(params: { traceId: string }) {
-      const res: AxiosResponse = await graphql.query("queryTrace").params(params);
-      if (res.data.errors) {
-        return res.data;
+      const response = await graphql.query("queryTrace").params(params);
+      if (response.errors) {
+        return response;
       }
-      const data = res.data.data.trace.spans;
+      const data = response.data.trace.spans;
 
       this.setTraceSpans(data || []);
-      return res.data;
+      return response;
     },
     async getSpanLogs(params: Recordable) {
-      const res: AxiosResponse = await graphql.query("queryServiceLogs").params(params);
-      if (res.data.errors) {
+      const response = await graphql.query("queryServiceLogs").params(params);
+      if (response.errors) {
         this.traceSpanLogs = [];
-        return res.data;
+        return response;
       }
-      this.traceSpanLogs = res.data.data.queryLogs.logs || [];
-      return res.data;
+      this.traceSpanLogs = response.data.queryLogs.logs || [];
+      return response;
     },
     async getTagKeys() {
-      const res: AxiosResponse = await graphql
-        .query("queryTraceTagKeys")
-        .params({ duration: useAppStoreWithOut().durationTime });
-
-      return res.data;
+      return await graphql.query("queryTraceTagKeys").params({ duration: useAppStoreWithOut().durationTime });
     },
     async getTagValues(tagKey: string) {
-      const res: AxiosResponse = await graphql
-        .query("queryTraceTagValues")
-        .params({ tagKey, duration: useAppStoreWithOut().durationTime });
-
-      return res.data;
+      return await graphql.query("queryTraceTagValues").params({ tagKey, duration: useAppStoreWithOut().durationTime });
     },
   },
 });

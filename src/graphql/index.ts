@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { AxiosPromise, AxiosResponse } from "axios";
-import axios from "axios";
+import { httpQuery } from "./base";
 import { cancelToken } from "@/utils/cancelToken";
 import * as app from "./query/app";
 import * as selector from "./query/selector";
@@ -50,21 +49,20 @@ class Graphql {
     this.queryData = queryData;
     return this;
   }
-  public params(variablesData: unknown): AxiosPromise<void> {
-    return axios
-      .post(
-        "/graphql",
-        {
-          query: query[this.queryData],
-          variables: variablesData,
-        },
-        { cancelToken: cancelToken() },
-      )
-      .then((res: AxiosResponse) => {
-        if (res.data.errors) {
-          res.data.errors = res.data.errors.map((e: { message: string }) => e.message).join(" ");
+  public params(variables: unknown) {
+    return httpQuery({
+      method: "post",
+      headers: { cancelToken: cancelToken() },
+      json: {
+        query: query[this.queryData],
+        variables,
+      },
+    })
+      .then((response) => {
+        if (response.errors) {
+          response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
         }
-        return res;
+        return response;
       })
       .catch((err: Error) => {
         throw err;

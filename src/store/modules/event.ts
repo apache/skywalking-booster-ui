@@ -17,7 +17,6 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import type { AxiosResponse } from "axios";
 import type { Event, QueryEventCondition } from "@/types/events";
 import type { Instance, Endpoint } from "@/types/selector";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -47,48 +46,48 @@ export const eventStore = defineStore({
     },
     async getInstances() {
       const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
-      const res: AxiosResponse = await graphql.query("queryInstances").params({
+      const response = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
       });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.instances = [{ value: "", label: "All" }, ...res.data.data.pods];
-      return res.data;
+      this.instances = [{ value: "", label: "All" }, ...response.data.pods];
+      return response;
     },
     async getEndpoints(keyword: string) {
       const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
       if (!serviceId) {
         return;
       }
-      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
+      const response = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
         limit: EndpointsTopNDefault,
       });
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.endpoints = [{ value: "", label: "All" }, ...res.data.data.pods];
-      return res.data;
+      this.endpoints = [{ value: "", label: "All" }, ...response.data.pods];
+      return response;
     },
     async getEvents() {
       this.loading = true;
-      const res: AxiosResponse = await graphql.query("queryEvents").params({
+      const response = await graphql.query("queryEvents").params({
         condition: {
           ...this.condition,
           time: useAppStoreWithOut().durationTime,
         },
       });
       this.loading = false;
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      if (res.data.data.fetchEvents) {
-        this.events = (res.data.data.fetchEvents.events || []).map((item: Event) => {
+      if (response.data.fetchEvents) {
+        this.events = (response.data.fetchEvents.events || []).map((item: Event) => {
           let scope = "Service";
           if (item.source.serviceInstance) {
             scope = "ServiceInstance";
@@ -103,7 +102,7 @@ export const eventStore = defineStore({
           return item;
         });
       }
-      return res.data;
+      return response;
     },
   },
 });

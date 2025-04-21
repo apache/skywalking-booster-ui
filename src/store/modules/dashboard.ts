@@ -18,11 +18,10 @@ import { defineStore } from "pinia";
 import { store } from "@/store";
 import type { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
-import query from "@/graphql/fetch";
+import fetchQuery from "@/graphql/fetch";
 import type { DashboardItem } from "@/types/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl, TextConfig, TimeRangeConfig, ControlsTypes } from "../data";
-import type { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { EntityType, WidgetType } from "@/views/dashboard/data";
 interface DashboardState {
@@ -299,37 +298,20 @@ export const dashboardStore = defineStore({
         }
       }
     },
-    async fetchMetricType(item: string) {
-      const res: AxiosResponse = await graphql.query("queryTypeOfMetrics").params({ name: item });
-
-      return res.data;
-    },
-    async getTypeOfMQE(expression: string) {
-      const res: AxiosResponse = await graphql.query("getTypeOfMQE").params({ expression });
-
-      return res.data;
-    },
-    async fetchMetricList(regex: string) {
-      const res: AxiosResponse = await graphql.query("queryMetrics").params({ regex });
-
-      return res.data;
-    },
     async fetchMetricValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
-      const res: AxiosResponse = await query(param);
-      return res.data;
+      return await fetchQuery(param);
     },
     async fetchTemplates() {
-      const res: AxiosResponse = await graphql.query("getTemplates").params({});
+      const res = await graphql.query("getTemplates").params({});
 
-      if (res.data.errors) {
-        return res.data;
+      if (res.errors) {
+        return res;
       }
-      const data = res.data.data.getAllTemplates;
+      const data = res.data.getAllTemplates;
       let list = [];
       for (const t of data) {
         const c = JSON.parse(t.configuration);
         const key = [c.layer, c.entity, c.name].join("_");
-
         list.push({
           ...c,
           id: t.id,
@@ -372,20 +354,20 @@ export const dashboardStore = defineStore({
       this.dashboards = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
     },
     async updateDashboard(setting: { id: string; configuration: string }) {
-      const res: AxiosResponse = await graphql.query("updateTemplate").params({
+      const resp = await graphql.query("updateTemplate").params({
         setting,
       });
-      if (res.data.errors) {
-        ElMessage.error(res.data.errors);
-        return res.data;
+      if (resp.errors) {
+        ElMessage.error(resp.errors);
+        return resp;
       }
-      const json = res.data.data.changeTemplate;
+      const json = resp.data.changeTemplate;
       if (!json.status) {
         ElMessage.error(json.message);
-        return res.data;
+        return resp;
       }
       ElMessage.success("Saved successfully");
-      return res.data;
+      return resp;
     },
     async saveDashboard() {
       if (!this.currentDashboard?.name) {
@@ -419,14 +401,14 @@ export const dashboardStore = defineStore({
         }
         res = await graphql.query("addNewTemplate").params({ setting: { configuration: JSON.stringify(c) } });
 
-        json = res.data.data.addTemplate;
+        json = res.data.addTemplate;
         if (!json.status) {
           ElMessage.error(json.message);
         }
       }
-      if (res.data.errors || res.errors) {
-        ElMessage.error(res.data.errors);
-        return res.data;
+      if (res.errors) {
+        ElMessage.error(res.errors);
+        return res;
       }
       if (!json.status) {
         return json;
@@ -448,16 +430,16 @@ export const dashboardStore = defineStore({
       return json;
     },
     async deleteDashboard() {
-      const res: AxiosResponse = await graphql.query("removeTemplate").params({ id: this.currentDashboard?.id });
+      const res = await graphql.query("removeTemplate").params({ id: this.currentDashboard?.id });
 
-      if (res.data.errors) {
-        ElMessage.error(res.data.errors);
-        return res.data;
+      if (res.errors) {
+        ElMessage.error(res.errors);
+        return res;
       }
-      const json = res.data.data.disableTemplate;
+      const json = res.data.disableTemplate;
       if (!json.status) {
         ElMessage.error(json.message);
-        return res.data;
+        return res;
       }
       this.dashboards = this.dashboards.filter((d: Recordable) => d.id !== this.currentDashboard?.id);
       const key = [this.currentDashboard?.layer, this.currentDashboard?.entity, this.currentDashboard?.name].join("_");

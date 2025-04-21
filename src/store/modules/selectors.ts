@@ -18,7 +18,6 @@ import { defineStore } from "pinia";
 import type { Service, Instance, Endpoint, Process } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { EndpointsTopNDefault } from "../data";
 interface SelectorState {
@@ -77,62 +76,55 @@ export const selectorStore = defineStore({
     setDestProcesses(processes: Array<Process>) {
       this.destProcesses = processes;
     },
-    async fetchLayers(): Promise<AxiosResponse> {
-      const res: AxiosResponse = await graphql.query("queryLayers").params({});
-
-      return res.data || {};
+    async fetchLayers() {
+      return await graphql.query("queryLayers").params({});
     },
-    async fetchServices(layer: string): Promise<AxiosResponse> {
-      const res: AxiosResponse = await graphql.query("queryServices").params({ layer });
+    async fetchServices(layer: string) {
+      const res = await graphql.query("queryServices").params({ layer });
 
-      if (!res.data.errors) {
-        this.services = res.data.data.services || [];
-        this.destServices = res.data.data.services || [];
+      if (!res.errors) {
+        this.services = res.data.services || [];
+        this.destServices = res.data.services || [];
       }
       return res.data;
     },
-    async getServiceInstances(param?: { serviceId: string; isRelation: boolean }): Promise<Nullable<AxiosResponse>> {
+    async getServiceInstances(param?: { serviceId: string; isRelation: boolean }) {
       const serviceId = param ? param.serviceId : this.currentService?.id;
       if (!serviceId) {
         return null;
       }
-      const res: AxiosResponse = await graphql.query("queryInstances").params({
+      const resp = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
       });
-      if (!res.data.errors) {
+      if (!resp.errors) {
         if (param && param.isRelation) {
-          this.destPods = res.data.data.pods || [];
-          return res.data;
+          this.destPods = resp.data.pods || [];
+          return resp;
         }
-        this.pods = res.data.data.pods || [];
+        this.pods = resp.data.pods || [];
       }
-      return res.data;
+      return resp;
     },
-    async getProcesses(param?: { instanceId: string; isRelation: boolean }): Promise<Nullable<AxiosResponse>> {
+    async getProcesses(param?: { instanceId: string; isRelation: boolean }) {
       const instanceId = param ? param.instanceId : this.currentPod?.id;
       if (!instanceId) {
         return null;
       }
-      const res: AxiosResponse = await graphql.query("queryProcesses").params({
+      const res = await graphql.query("queryProcesses").params({
         instanceId,
         duration: useAppStoreWithOut().durationTime,
       });
-      if (!res.data.errors) {
+      if (!res.errors) {
         if (param && param.isRelation) {
-          this.destProcesses = res.data.data.processes || [];
-          return res.data;
+          this.destProcesses = res.data.processes || [];
+          return res;
         }
-        this.processes = res.data.data.processes || [];
+        this.processes = res.data.processes || [];
       }
-      return res.data;
+      return res;
     },
-    async getEndpoints(params: {
-      keyword?: string;
-      serviceId?: string;
-      isRelation?: boolean;
-      limit?: number;
-    }): Promise<Nullable<AxiosResponse>> {
+    async getEndpoints(params: { keyword?: string; serviceId?: string; isRelation?: boolean; limit?: number }) {
       if (!params) {
         params = {};
       }
@@ -140,96 +132,96 @@ export const selectorStore = defineStore({
       if (!serviceId) {
         return null;
       }
-      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
+      const res = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: params.keyword || "",
         limit: params.limit || EndpointsTopNDefault,
       });
-      if (!res.data.errors) {
+      if (!res.errors) {
         if (params.isRelation) {
-          this.destPods = res.data.data.pods || [];
-          return res.data;
+          this.destPods = res.data.pods || [];
+          return res;
         }
-        this.pods = res.data.data.pods || [];
+        this.pods = res.data.pods || [];
       }
-      return res.data;
+      return res;
     },
     async getService(serviceId: string, isRelation: boolean) {
       if (!serviceId) {
         return;
       }
-      const res: AxiosResponse = await graphql.query("queryService").params({
+      const res = await graphql.query("queryService").params({
         serviceId,
       });
-      if (!res.data.errors) {
+      if (!res.errors) {
         if (isRelation) {
-          this.setCurrentDestService(res.data.data.service);
-          this.destServices = [res.data.data.service];
-          return res.data;
+          this.setCurrentDestService(res.data.service);
+          this.destServices = [res.data.service];
+          return res;
         }
-        this.setCurrentService(res.data.data.service);
-        this.services = [res.data.data.service];
+        this.setCurrentService(res.data.service);
+        this.services = [res.data.service];
       }
 
-      return res.data;
+      return res;
     },
     async getInstance(instanceId: string, isRelation?: boolean) {
       if (!instanceId) {
         return;
       }
-      const res: AxiosResponse = await graphql.query("queryInstance").params({
+      const res = await graphql.query("queryInstance").params({
         instanceId,
       });
-      if (!res.data.errors) {
+      if (!res.errors) {
         if (isRelation) {
-          this.currentDestPod = res.data.data.instance || null;
-          this.destPods = [res.data.data.instance];
-          return res.data;
+          this.currentDestPod = res.data.instance || null;
+          this.destPods = [res.data.instance];
+          return res;
         }
-        this.currentPod = res.data.data.instance || null;
-        this.pods = [res.data.data.instance];
+        this.currentPod = res.data.instance || null;
+        this.pods = [res.data.instance];
       }
 
-      return res.data;
+      return res;
     },
     async getEndpoint(endpointId: string, isRelation?: string) {
       if (!endpointId) {
         return;
       }
-      const res: AxiosResponse = await graphql.query("queryEndpoint").params({
+      const res = await graphql.query("queryEndpoint").params({
         endpointId,
       });
-      if (res.data.errors) {
-        return res.data;
+      if (res.errors) {
+        return res;
       }
       if (isRelation) {
-        this.currentDestPod = res.data.data.endpoint || null;
-        this.destPods = [res.data.data.endpoint];
-        return res.data;
+        this.currentDestPod = res.data.endpoint || null;
+        this.destPods = [res.data.endpoint];
+        return res;
       }
-      this.currentPod = res.data.data.endpoint || null;
-      this.pods = [res.data.data.endpoint];
-      return res.data;
+      this.currentPod = res.data.endpoint || null;
+      this.pods = [res.data.endpoint];
+      return res;
     },
     async getProcess(processId: string, isRelation?: boolean) {
       if (!processId) {
         return;
       }
-      const res: AxiosResponse = await graphql.query("queryProcess").params({
+      const res = await graphql.query("queryProcess").params({
         processId,
       });
-      if (!res.data.errors) {
+      if (!res.errors) {
         if (isRelation) {
-          this.currentDestProcess = res.data.data.process || null;
-          this.destProcesses = [res.data.data.process];
+          this.currentDestProcess = res.data.process || null;
+          this.destProcesses = [res.data.process];
           return res.data;
         }
-        this.currentProcess = res.data.data.process || null;
-        this.processes = [res.data.data.process];
+        this.currentProcess = res.data.process || null;
+        this.processes = [res.data.process];
       }
 
-      return res.data;
+      return res;
     },
   },
 });

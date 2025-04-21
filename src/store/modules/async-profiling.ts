@@ -25,7 +25,6 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
-import type { AxiosResponse } from "axios";
 import type { Instance } from "@/types/selector";
 
 interface AsyncProfilingState {
@@ -59,79 +58,77 @@ export const asyncProfilingStore = defineStore({
     async getTaskList() {
       const selectorStore = useSelectorStore();
       this.loadingTasks = true;
-      const res: AxiosResponse = await graphql.query("getAsyncTaskList").params({
+      const response = await graphql.query("getAsyncTaskList").params({
         request: {
           serviceId: selectorStore.currentService.id,
           limit: 10000,
         },
       });
       this.loadingTasks = false;
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.taskList = res.data.data.asyncTaskList.tasks || [];
+      this.taskList = response.data.asyncTaskList.tasks || [];
       this.selectedTask = this.taskList[0] || {};
       this.setAnalyzeTrees([]);
       this.setSelectedTask(this.selectedTask);
       if (!this.taskList.length) {
-        return res.data;
+        return response;
       }
-      return res.data;
+      return response;
     },
     async getTaskLogs(param: { taskID: string }) {
-      const res: AxiosResponse = await graphql.query("getAsyncProfileTaskProcess").params(param);
+      const response = await graphql.query("getAsyncProfileTaskProcess").params(param);
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.taskProgress = res.data.data.taskProgress;
-      return res.data;
+      this.taskProgress = response.data.taskProgress;
+      return response;
     },
-    async getServiceInstances(param: { serviceId: string; isRelation: boolean }): Promise<Nullable<AxiosResponse>> {
+    async getServiceInstances(param: { serviceId: string; isRelation: boolean }) {
       if (!param.serviceId) {
         return null;
       }
-      const res: AxiosResponse = await graphql.query("queryInstances").params({
+      const response = await graphql.query("queryInstances").params({
         serviceId: param.serviceId,
         duration: useAppStoreWithOut().durationTime,
       });
-      if (!res.data.errors) {
-        this.instances = (res.data.data.pods || []).map((d: Instance) => {
+      if (!response.errors) {
+        this.instances = (response.data.pods || []).map((d: Instance) => {
           d.value = d.id || "";
           return d;
         });
       }
-      return res.data;
+      return response;
     },
     async createTask(param: AsyncProfileTaskCreationRequest) {
-      const res: AxiosResponse = await graphql
-        .query("saveAsyncProfileTask")
-        .params({ asyncProfilerTaskCreationRequest: param });
+      const response = await graphql.query("saveAsyncProfileTask").params({ asyncProfilerTaskCreationRequest: param });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
       this.getTaskList();
-      return res.data;
+      return response;
     },
     async getAsyncProfilingAnalyze(params: { taskId: string; instanceIds: Array<string>; eventType: string }) {
       if (!params.instanceIds.length) {
         return new Promise((resolve) => resolve({}));
       }
       this.loadingTree = true;
-      const res: AxiosResponse = await graphql.query("getAsyncProfileAnalyze").params({ request: params });
+      const response = await graphql.query("getAsyncProfileAnalyze").params({ request: params });
       this.loadingTree = false;
-      if (res.data.errors) {
+      if (response.errors) {
         this.analyzeTrees = [];
-        return res.data;
+        return response;
       }
-      const { analysisResult } = res.data.data;
+      const { analysisResult } = response.data;
       if (!analysisResult) {
         this.analyzeTrees = [];
-        return res.data;
+        return response;
       }
       this.analyzeTrees = [analysisResult.tree];
-      return res.data;
+      return response;
     },
   },
 });

@@ -17,7 +17,6 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import type { AxiosResponse } from "axios";
 import type { Alarm } from "@/types/alarm";
 import { useAppStoreWithOut } from "@/store/modules/app";
 
@@ -37,30 +36,22 @@ export const alarmStore = defineStore({
   actions: {
     async getAlarms(params: Recordable) {
       this.loading = true;
-      const res: AxiosResponse = await graphql.query("queryAlarms").params(params);
+      const res = await graphql.query("queryAlarms").params(params);
       this.loading = false;
-      if (res.data.errors) {
-        return res.data;
+      if (res.errors) {
+        return res;
       }
-      if (res.data.data.getAlarm.items) {
-        this.alarms = res.data.data.getAlarm.items;
-        this.total = res.data.data.getAlarm.total;
+      if (res.data.getAlarm.items) {
+        this.alarms = res.data.getAlarm.items;
+        this.total = res.data.getAlarm.total;
       }
       return res.data;
     },
     async getAlarmTagKeys() {
-      const res: AxiosResponse = await graphql
-        .query("queryAlarmTagKeys")
-        .params({ duration: useAppStoreWithOut().durationTime });
-
-      return res.data;
+      return await graphql.query("queryAlarmTagKeys").params({ duration: useAppStoreWithOut().durationTime });
     },
     async getAlarmTagValues(tagKey: string) {
-      const res: AxiosResponse = await graphql
-        .query("queryAlarmTagValues")
-        .params({ tagKey, duration: useAppStoreWithOut().durationTime });
-
-      return res.data;
+      return await graphql.query("queryAlarmTagValues").params({ tagKey, duration: useAppStoreWithOut().durationTime });
     },
   },
 });
