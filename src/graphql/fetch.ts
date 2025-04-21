@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { cancelToken } from "@/utils/cancelToken";
 import { httpQuery } from "./base";
 
 async function fetchQuery(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
   const response = await httpQuery({
     method: "post",
     json: { query: param.queryStr, variables: { ...param.conditions } },
-    headers: { cancelToken: cancelToken() },
+    headers: {},
   });
   if (response.errors) {
     response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");

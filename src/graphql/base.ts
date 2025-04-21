@@ -17,6 +17,12 @@
  * under the License.
  */
 
+type GraphQLErrors = Array<{ message: string }>;
+type GraphQLResponse<T> = {
+  data?: T;
+  errors?: GraphQLErrors;
+};
+
 export let globalAbortController = new AbortController();
 export function abortRequestsAndUpdate() {
   globalAbortController.abort();

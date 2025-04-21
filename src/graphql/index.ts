@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 import { httpQuery } from "./base";
-import { cancelToken } from "@/utils/cancelToken";
 import * as app from "./query/app";
 import * as selector from "./query/selector";
 import * as dashboard from "./query/dashboard";
@@ -52,7 +51,7 @@ class Graphql {
   public params(variables: unknown) {
     return httpQuery({
       method: "post",
-      headers: { cancelToken: cancelToken() },
+      headers: {},
       json: {
         query: query[this.queryData],
         variables,
