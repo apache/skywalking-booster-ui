@@ -44,8 +44,8 @@ export async function httpQuery({
 }: {
   path?: string;
   method: string;
-  json: any;
-  headers: any;
+  json: unknown;
+  headers: Recordable;
 }) {
   const timeoutId = setTimeout(() => {
     abortRequestsAndUpdate();
