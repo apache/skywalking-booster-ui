@@ -43,29 +43,24 @@ const query: { [key: string]: string } = {
   ...asyncProfile,
 };
 class Graphql {
-  private queryData = "";
-  public query(queryData: string) {
+  queryData = "";
+  query(queryData: string) {
     this.queryData = queryData;
     return this;
   }
-  public params(variables: unknown) {
-    return httpQuery({
+  async params(variables: unknown) {
+    const response = await httpQuery({
       method: "post",
       headers: {},
       json: {
         query: query[this.queryData],
         variables,
       },
-    })
-      .then((response) => {
-        if (response.errors) {
-          response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
-        }
-        return response;
-      })
-      .catch((err: Error) => {
-        throw err;
-      });
+    });
+    if (response.errors) {
+      response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
+    }
+    return response;
   }
 }
 
