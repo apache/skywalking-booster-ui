@@ -148,7 +148,7 @@ limitations under the License. -->
     </div>
     <div class="label">Unhealthy Description</div>
     <el-input v-model="description.unhealthy" placeholder="Please input description" size="small" class="mt-5" />
-    <el-button @click="setLegend" class="mt-20" size="small" type="primary">
+    <el-button @click="setLegend" class="mt-20 mb-20" size="small" type="primary">
       {{ t("setLegend") }}
     </el-button>
   </div>
