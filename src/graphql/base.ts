@@ -17,12 +17,6 @@
  * under the License.
  */
 
-type GraphQLErrors = Array<{ message: string }>;
-type GraphQLResponse<T> = {
-  data?: T;
-  errors?: GraphQLErrors;
-};
-
 const Timeout = 2 * 60 * 1000;
 export let globalAbortController = new AbortController();
 export function abortRequestsAndUpdate() {

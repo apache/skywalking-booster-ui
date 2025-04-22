@@ -37,7 +37,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
   // const token = window.localStorage.getItem("skywalking-authority");
 
   if (to.path === "/") {
