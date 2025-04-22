@@ -23,12 +23,12 @@ type GraphQLResponse<T> = {
   errors?: GraphQLErrors;
 };
 
+const Timeout = 2 * 60 * 1000;
 export let globalAbortController = new AbortController();
 export function abortRequestsAndUpdate() {
-  globalAbortController.abort();
+  globalAbortController.abort(`Request timeout ${Timeout}ms`);
   globalAbortController = new AbortController();
 }
-
 class HTTPError extends Error {
   response;
 
@@ -53,8 +53,11 @@ export async function httpQuery({
   json: any;
   headers: any;
 }) {
+  const timeoutId = setTimeout(() => {
+    abortRequestsAndUpdate();
+  }, Timeout);
   const url = `${BasePath}${path}`;
-  const response = await fetch(url, {
+  const response: Response = await fetch(url, {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -63,7 +66,13 @@ export async function httpQuery({
     },
     body: JSON.stringify(json),
     signal: globalAbortController.signal,
-  });
+  })
+    .catch((error) => {
+      throw new HTTPError(error);
+    })
+    .finally(() => {
+      clearTimeout(timeoutId);
+    });
   if (response.ok) {
     return response.json();
   } else {

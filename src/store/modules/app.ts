@@ -117,12 +117,6 @@ export const appStore = defineStore({
   actions: {
     setDuration(data: Duration): void {
       this.durationRow = data;
-      if ((window as any).axiosCancel.length !== 0) {
-        for (const event of (window as any).axiosCancel) {
-          setTimeout(event(), 0);
-        }
-        (window as any).axiosCancel = [];
-      }
       this.runEventStack();
     },
     updateDurationRow(data: Duration) {
