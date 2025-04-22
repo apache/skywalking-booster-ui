@@ -44,8 +44,8 @@ const query: { [key: string]: string } = {
 };
 class Graphql {
   queryData = "";
-  query(queryData: string) {
-    this.queryData = queryData;
+  query(data: string) {
+    this.queryData = data;
     return this;
   }
   async params(variables: unknown) {
