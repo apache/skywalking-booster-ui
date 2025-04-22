@@ -18,7 +18,6 @@ import { defineStore } from "pinia";
 import type { Instance } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import type { Conditions, Log } from "@/types/demand-log";
@@ -60,16 +59,16 @@ export const demandLogStore = defineStore({
     },
     async getInstances(id: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
-      const res: AxiosResponse = await graphql.query("queryInstances").params({
+      const response = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
       });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.instances = res.data.data.pods || [];
-      return res.data;
+      this.instances = response.data.pods || [];
+      return response;
     },
     async getContainers(serviceInstanceId: string) {
       if (!serviceInstanceId) {
@@ -78,35 +77,35 @@ export const demandLogStore = defineStore({
       const condition = {
         serviceInstanceId,
       };
-      const res: AxiosResponse = await graphql.query("fetchContainers").params({ condition });
+      const response = await graphql.query("fetchContainers").params({ condition });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      if (res.data.data.containers.errorReason) {
+      if (response.data.containers.errorReason) {
         this.containers = [{ label: "", value: "" }];
-        return res.data;
+        return response;
       }
-      this.containers = res.data.data.containers.containers.map((d: string) => {
+      this.containers = response.data.containers.containers.map((d: string) => {
         return { label: d, value: d };
       });
-      return res.data;
+      return response;
     },
     async getDemandLogs() {
       this.loadLogs = true;
-      const res: AxiosResponse = await graphql.query("fetchDemandPodLogs").params({ condition: this.conditions });
+      const response = await graphql.query("fetchDemandPodLogs").params({ condition: this.conditions });
       this.loadLogs = false;
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      if (res.data.data.logs.errorReason) {
-        this.setLogs([], res.data.data.logs.errorReason);
-        return res.data;
+      if (response.data.logs.errorReason) {
+        this.setLogs([], response.data.logs.errorReason);
+        return response;
       }
-      this.total = res.data.data.logs.logs.length;
-      const logs = res.data.data.logs.logs.map((d: Log) => d.content).join("\n");
+      this.total = response.data.logs.logs.length;
+      const logs = response.data.logs.logs.map((d: Log) => d.content).join("\n");
       this.setLogs(logs);
-      return res.data;
+      return response;
     },
   },
 });

@@ -21,8 +21,7 @@ import graphql from "@/graphql";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import type { AxiosResponse } from "axios";
-import query from "@/graphql/fetch";
+import fetchQuery from "@/graphql/fetch";
 import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
 
 interface MetricVal {
@@ -305,14 +304,14 @@ export const topologyStore = defineStore({
         return new Promise((resolve) => resolve({}));
       }
       const duration = useAppStoreWithOut().durationTime;
-      const res: AxiosResponse = await graphql.query("getServicesTopology").params({
+      const res = await graphql.query("getServicesTopology").params({
         serviceIds,
         duration,
       });
-      if (res.data.errors) {
-        return res.data;
+      if (res.errors) {
+        return res;
       }
-      return res.data.data.topology;
+      return res.data.topology;
     },
     async getInstanceTopology() {
       const { currentService, currentDestService } = useSelectorStore();
@@ -322,15 +321,15 @@ export const topologyStore = defineStore({
       if (!(serverServiceId && clientServiceId)) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getInstanceTopology").params({
+      const res = await graphql.query("getInstanceTopology").params({
         clientServiceId,
         serverServiceId,
         duration,
       });
-      if (!res.data.errors) {
-        this.setInstanceTopology(res.data.data.topology);
+      if (!res.errors) {
+        this.setInstanceTopology(res.data.topology);
       }
-      return res.data;
+      return res;
     },
     async updateEndpointTopology(endpointIds: string[], depth: number) {
       if (!endpointIds.length) {
@@ -432,12 +431,12 @@ export const topologyStore = defineStore({
       });
       const queryStr = `query queryData(${variables}) {${fragment}}`;
       const conditions = { duration };
-      const res: AxiosResponse = await query({ queryStr, conditions });
+      const res = await fetchQuery({ queryStr, conditions });
 
-      if (res.data.errors) {
-        return res.data;
+      if (res.errors) {
+        return res;
       }
-      const topo = res.data.data;
+      const topo = res.data;
       const calls = [] as Call[];
       const nodes = [] as Node[];
       for (const key of Object.keys(topo)) {
@@ -449,13 +448,13 @@ export const topologyStore = defineStore({
       return { calls, nodes };
     },
     async getTopologyExpressionValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
-      const res: AxiosResponse = await query(param);
+      const res = await fetchQuery(param);
 
-      if (res.data.errors) {
-        return res.data;
+      if (res.errors) {
+        return res;
       }
 
-      return res.data;
+      return res;
     },
     async getLinkExpressions(expressions: string[], type: string) {
       if (!expressions.length) {
@@ -503,22 +502,20 @@ export const topologyStore = defineStore({
       if (!(id && layer)) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql
-        .query("getHierarchyServiceTopology")
-        .params({ serviceId: id, layer: layer });
-      if (res.data.errors) {
-        return res.data;
+      const res = await graphql.query("getHierarchyServiceTopology").params({ serviceId: id, layer: layer });
+      if (res.errors) {
+        return res;
       }
       const resp = await this.getListLayerLevels();
       if (resp.errors) {
         return resp;
       }
-      const levels = resp.data.levels || [];
-      this.setHierarchyServiceTopology(res.data.data.hierarchyServiceTopology || {}, levels);
-      return res.data;
+      const levels = resp.levels || [];
+      this.setHierarchyServiceTopology(res.data.hierarchyServiceTopology || {}, levels);
+      return res;
     },
     async getListLayerLevels() {
-      const res: AxiosResponse = await graphql.query("queryListLayerLevels").params({});
+      const res = await graphql.query("queryListLayerLevels").params({});
 
       return res.data;
     },
@@ -529,19 +526,19 @@ export const topologyStore = defineStore({
       if (!(currentPod && dashboardStore.layerId)) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql
+      const res = await graphql
         .query("getHierarchyInstanceTopology")
         .params({ instanceId: currentPod.id, layer: dashboardStore.layerId });
-      if (res.data.errors) {
-        return res.data;
+      if (res.errors) {
+        return res;
       }
       const resp = await this.getListLayerLevels();
       if (resp.errors) {
         return resp;
       }
-      const levels = resp.data.levels || [];
-      this.setHierarchyInstanceTopology(res.data.data.hierarchyInstanceTopology || {}, levels);
-      return res.data;
+      const levels = resp.levels || [];
+      this.setHierarchyInstanceTopology(res.data.hierarchyInstanceTopology || {}, levels);
+      return res;
     },
     async queryHierarchyNodeExpressions(expressions: string[], layer: string) {
       const nodes = this.hierarchyServiceNodes.filter((n: HierarchyNode) => n.layer === layer);

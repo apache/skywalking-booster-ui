@@ -26,6 +26,5 @@ declare global {
   interface Window {
     Promise: any;
     moment: any;
-    axiosCancel: any;
   }
 }

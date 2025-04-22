@@ -21,7 +21,6 @@ import type { Instance } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import type { MonitorInstance, MonitorProcess } from "@/types/continous-profiling";
-import type { AxiosResponse } from "axios";
 import { dateFormat } from "@/utils/dateFormat";
 
 interface ContinousProfilingState {
@@ -84,37 +83,37 @@ export const continousProfilingStore = defineStore({
         checkItems: CheckItems[];
       }[],
     ) {
-      const res: AxiosResponse = await graphql.query("editStrategy").params({
+      const response = await graphql.query("editStrategy").params({
         request: {
           serviceId,
           targets,
         },
       });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
 
-      return res.data;
+      return response;
     },
     async getStrategyList(params: { serviceId: string }) {
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
       this.policyLoading = true;
-      const res: AxiosResponse = await graphql.query("getStrategyList").params(params);
+      const response = await graphql.query("getStrategyList").params(params);
 
       this.policyLoading = false;
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      const list = res.data.data.strategyList || [];
+      const list = response.data.strategyList || [];
       if (!list.length) {
         this.taskList = [];
         this.instances = [];
         this.instance = null;
       }
-      const arr = list.length ? res.data.data.strategyList : [{ type: "", checkItems: [{ type: "" }] }];
+      const arr = list.length ? response.data.strategyList : [{ type: "", checkItems: [{ type: "" }] }];
       this.strategyList = arr.map((d: StrategyItem, index: number) => {
         return {
           ...d,
@@ -123,25 +122,25 @@ export const continousProfilingStore = defineStore({
       });
       this.setSelectedStrategy(this.strategyList[0]);
       if (!this.selectedStrategy.type) {
-        return res.data;
+        return response;
       }
       this.getMonitoringInstances(params.serviceId);
-      return res.data;
+      return response;
     },
-    async getMonitoringInstances(serviceId: string): Promise<Nullable<AxiosResponse>> {
+    async getMonitoringInstances(serviceId: string) {
       this.instancesLoading = true;
       if (!serviceId) {
         return null;
       }
-      const res: AxiosResponse = await graphql.query("getMonitoringInstances").params({
+      const response = await graphql.query("getMonitoringInstances").params({
         serviceId,
         target: this.selectedStrategy.type,
       });
       this.instancesLoading = false;
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.instances = (res.data.data.instances || [])
+      this.instances = (response.data.instances || [])
         .map((d: MonitorInstance) => {
           const processes = (d.processes || [])
             .sort((c: MonitorProcess, d: MonitorProcess) => d.lastTriggerTimestamp - c.lastTriggerTimestamp)
@@ -161,7 +160,7 @@ export const continousProfilingStore = defineStore({
         })
         .sort((a: MonitorInstance, b: MonitorInstance) => b.lastTriggerTimestamp - a.lastTriggerTimestamp);
       this.instance = this.instances[0] || null;
-      return res.data;
+      return response;
     },
   },
 });

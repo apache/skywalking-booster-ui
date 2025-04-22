@@ -26,7 +26,6 @@ import type {
 import type { Trace } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { EndpointsTopNDefault } from "../data";
 
@@ -94,38 +93,38 @@ export const profileStore = defineStore({
       this.highlightTop = !this.highlightTop;
     },
     async getEndpoints(serviceId: string, keyword?: string) {
-      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
+      const response = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
         limit: EndpointsTopNDefault,
       });
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.endpoints = res.data.data.pods || [];
-      return res.data;
+      this.endpoints = response.data.pods || [];
+      return response.data;
     },
     async getTaskEndpoints(serviceId: string, keyword?: string) {
-      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
+      const response = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
         limit: EndpointsTopNDefault,
       });
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.taskEndpoints = [{ value: "", label: "All" }, ...res.data.data.pods];
-      return res.data;
+      this.taskEndpoints = [{ value: "", label: "All" }, ...response.data.pods];
+      return response;
     },
     async getTaskList() {
-      const res: AxiosResponse = await graphql.query("getProfileTaskList").params(this.condition);
+      const response = await graphql.query("getProfileTaskList").params(this.condition);
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      const list = res.data.data.taskList || [];
+      const list = response.data.taskList || [];
       this.taskList = list;
       this.currentTask = list[0] || {};
       if (!list.length) {
@@ -133,29 +132,29 @@ export const profileStore = defineStore({
         this.segmentSpans = [];
         this.analyzeTrees = [];
 
-        return res.data;
+        return response;
       }
       this.getSegmentList({ taskID: list[0].id });
-      return res.data;
+      return response;
     },
     async getSegmentList(params: { taskID: string }) {
       if (!params.taskID) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getProfileTaskSegmentList").params(params);
+      const response = await graphql.query("getProfileTaskSegmentList").params(params);
 
-      if (res.data.errors) {
+      if (response.errors) {
         this.segmentList = [];
-        return res.data;
+        return response;
       }
-      const { segmentList } = res.data.data;
+      const { segmentList } = response.data;
 
       this.segmentList = segmentList || [];
       if (!segmentList.length) {
         this.segmentSpans = [];
         this.analyzeTrees = [];
 
-        return res.data;
+        return response;
       }
       if (segmentList[0]) {
         this.setCurrentSegment(segmentList[0]);
@@ -163,22 +162,22 @@ export const profileStore = defineStore({
       } else {
         this.setCurrentSegment({});
       }
-      return res.data;
+      return response;
     },
     async getSegmentSpans(params: { segmentId: string }) {
       if (!(params && params.segmentId)) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("queryProfileSegment").params(params);
-      if (res.data.errors) {
+      const response = await graphql.query("queryProfileSegment").params(params);
+      if (response.errors) {
         this.segmentSpans = [];
-        return res.data;
+        return response;
       }
-      const { segment } = res.data.data;
+      const { segment } = response.data;
       if (!segment) {
         this.segmentSpans = [];
         this.analyzeTrees = [];
-        return res.data;
+        return response;
       }
       this.segmentSpans = segment.spans.map((d: SegmentSpan) => {
         return {
@@ -189,52 +188,52 @@ export const profileStore = defineStore({
       });
       if (!(segment.spans && segment.spans.length)) {
         this.analyzeTrees = [];
-        return res.data;
+        return response;
       }
       const index = segment.spans.length - 1 || 0;
       this.currentSpan = segment.spans[index];
-      return res.data;
+      return response;
     },
     async getProfileAnalyze(params: Array<{ segmentId: string; timeRange: { start: number; end: number } }>) {
       if (!params.length) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getProfileAnalyze").params({ queries: params });
+      const response = await graphql.query("getProfileAnalyze").params({ queries: params });
 
-      if (res.data.errors) {
+      if (response.errors) {
         this.analyzeTrees = [];
-        return res.data;
+        return response;
       }
-      const { analyze, tip } = res.data.data;
+      const { analyze, tip } = response.data;
       if (tip) {
         this.analyzeTrees = [];
-        return res.data;
+        return response;
       }
 
       if (!analyze) {
         this.analyzeTrees = [];
-        return res.data;
+        return response;
       }
       this.analyzeTrees = analyze.trees;
-      return res.data;
+      return response;
     },
     async createTask(param: ProfileTaskCreationRequest) {
-      const res: AxiosResponse = await graphql.query("saveProfileTask").params({ creationRequest: param });
+      const response = await graphql.query("saveProfileTask").params({ creationRequest: param });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
       this.getTaskList();
-      return res.data;
+      return response;
     },
     async getTaskLogs(param: { taskID: string }) {
-      const res: AxiosResponse = await graphql.query("getProfileTaskLogs").params(param);
+      const response = await graphql.query("getProfileTaskLogs").params(param);
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.taskLogs = res.data.data.taskLogs;
-      return res.data;
+      this.taskLogs = response.data.taskLogs;
+      return response;
     },
   },
 });

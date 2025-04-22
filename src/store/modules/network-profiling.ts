@@ -18,7 +18,6 @@ import { defineStore } from "pinia";
 import type { EBPFTaskList, ProcessNode } from "@/types/ebpf";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import type { AxiosResponse } from "axios";
 import type { Call } from "@/types/topology";
 import type { LayoutConfig } from "@/types/dashboard";
 import { ElMessage } from "element-plus";
@@ -126,65 +125,65 @@ export const networkProfilingStore = defineStore({
         minDuration: number;
       }[],
     ) {
-      const res: AxiosResponse = await graphql.query("newNetworkProfiling").params({
+      const response = await graphql.query("newNetworkProfiling").params({
         request: {
           instanceId,
           samplings: params,
         },
       });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      return res.data;
+      return response;
     },
     async getTaskList(params: { serviceId: string; serviceInstanceId: string; targets: string[] }) {
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getEBPFTasks").params(params);
+      const response = await graphql.query("getEBPFTasks").params(params);
 
       this.networkTip = "";
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.networkTasks = res.data.data.queryEBPFTasks || [];
+      this.networkTasks = response.data.queryEBPFTasks || [];
       this.selectedNetworkTask = this.networkTasks[0] || {};
       this.setSelectedNetworkTask(this.selectedNetworkTask);
       if (!this.networkTasks.length) {
         this.nodes = [];
         this.calls = [];
       }
-      return res.data;
+      return response;
     },
     async keepNetworkProfiling(taskId: string) {
       if (!taskId) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("aliveNetworkProfiling").params({ taskId });
+      const response = await graphql.query("aliveNetworkProfiling").params({ taskId });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.aliveNetwork = res.data.data.keepEBPFNetworkProfiling.status;
+      this.aliveNetwork = response.data.keepEBPFNetworkProfiling.status;
       if (!this.aliveNetwork) {
-        ElMessage.warning(res.data.data.keepEBPFNetworkProfiling.errorReason);
+        ElMessage.warning(response.data.keepEBPFNetworkProfiling.errorReason);
       }
-      return res.data;
+      return response;
     },
     async getProcessTopology(params: { duration: DurationTime; serviceInstanceId: string }) {
       this.loadNodes = true;
-      const res: AxiosResponse = await graphql.query("getProcessTopology").params(params);
+      const response = await graphql.query("getProcessTopology").params(params);
       this.loadNodes = false;
-      if (res.data.errors) {
+      if (response.errors) {
         this.nodes = [];
         this.calls = [];
-        return res.data;
+        return response;
       }
-      const { topology } = res.data.data;
+      const { topology } = response.data;
 
       this.setTopology(topology);
-      return res.data;
+      return response;
     },
   },
 });

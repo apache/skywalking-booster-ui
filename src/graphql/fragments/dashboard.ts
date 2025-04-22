@@ -14,22 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const TypeOfMetrics = {
-  variable: "$name: String!",
-  query: `typeOfMetrics(name: $name)`,
-};
-
-export const listMetrics = {
-  variable: "$regex: String",
-  query: `
-  metrics: listMetrics(regex: $regex) {
-    value: name
-    label: name
-    type
-    catalog
-  }
-  `,
-};
 
 export const getAllTemplates = {
   query: `

@@ -148,7 +148,7 @@ limitations under the License. -->
     </div>
     <div class="label">Unhealthy Description</div>
     <el-input v-model="description.unhealthy" placeholder="Please input description" size="small" class="mt-5" />
-    <el-button @click="setLegend" class="mt-20" size="small" type="primary">
+    <el-button @click="setLegend" class="mt-20 mb-20" size="small" type="primary">
       {{ t("setLegend") }}
     </el-button>
   </div>
@@ -208,11 +208,6 @@ limitations under the License. -->
   getDashboardList();
   async function getDashboardList() {
     const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
-    const json = await dashboardStore.fetchMetricList();
-    if (json.errors) {
-      ElMessage.error(json.errors);
-      return;
-    }
     const entity =
       dashboardStore.entity === EntityType[1].value
         ? EntityType[0].value

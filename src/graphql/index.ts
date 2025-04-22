@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { AxiosPromise, AxiosResponse } from "axios";
-import axios from "axios";
-import { cancelToken } from "@/utils/cancelToken";
+import { httpQuery } from "./base";
 import * as app from "./query/app";
 import * as selector from "./query/selector";
 import * as dashboard from "./query/dashboard";
@@ -45,30 +43,24 @@ const query: { [key: string]: string } = {
   ...asyncProfile,
 };
 class Graphql {
-  private queryData = "";
-  public query(queryData: string) {
-    this.queryData = queryData;
+  queryData = "";
+  query(data: string) {
+    this.queryData = data;
     return this;
   }
-  public params(variablesData: unknown): AxiosPromise<void> {
-    return axios
-      .post(
-        "/graphql",
-        {
-          query: query[this.queryData],
-          variables: variablesData,
-        },
-        { cancelToken: cancelToken() },
-      )
-      .then((res: AxiosResponse) => {
-        if (res.data.errors) {
-          res.data.errors = res.data.errors.map((e: { message: string }) => e.message).join(" ");
-        }
-        return res;
-      })
-      .catch((err: Error) => {
-        throw err;
-      });
+  async params(variables: unknown) {
+    const response = await httpQuery({
+      method: "post",
+      headers: {},
+      json: {
+        query: query[this.queryData],
+        variables,
+      },
+    });
+    if (response.errors) {
+      response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
+    }
+    return response;
   }
 }
 

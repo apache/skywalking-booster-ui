@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { AxiosResponse } from "axios";
-import axios from "axios";
-import { cancelToken } from "@/utils/cancelToken";
+import { httpQuery } from "./base";
 
-async function query(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
-  const res: AxiosResponse = await axios.post(
-    "/graphql",
-    { query: param.queryStr, variables: { ...param.conditions } },
-    { cancelToken: cancelToken() },
-  );
-  if (res.data.errors) {
-    res.data.errors = res.data.errors.map((e: { message: string }) => e.message).join(" ");
+async function fetchQuery(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
+  const response = await httpQuery({
+    method: "post",
+    json: { query: param.queryStr, variables: { ...param.conditions } },
+    headers: {},
+  });
+  if (response.errors) {
+    response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
   }
-  return res;
+  return response;
 }
 
-export default query;
+export default fetchQuery;

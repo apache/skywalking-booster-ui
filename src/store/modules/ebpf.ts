@@ -19,7 +19,6 @@ import type { Option } from "@/types/app";
 import type { EBPFTaskCreationRequest, EBPFProfilingSchedule, EBPFTaskList, AnalyzationTrees } from "@/types/ebpf";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import type { AxiosResponse } from "axios";
 import { EBPFProfilingTriggerType } from "../data";
 interface EbpfState {
   taskList: Array<Recordable<EBPFTaskList>>;
@@ -57,70 +56,70 @@ export const ebpfStore = defineStore({
       this.analyzeTrees = tree;
     },
     async getCreateTaskData(serviceId: string) {
-      const res: AxiosResponse = await graphql.query("getCreateTaskData").params({ serviceId });
+      const response = await graphql.query("getCreateTaskData").params({ serviceId });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      const json = res.data.data.createTaskData;
+      const json = response.data.createTaskData;
       this.couldProfiling = json.couldProfiling || false;
       this.labels = json.processLabels.map((d: string) => {
         return { label: d, value: d };
       });
-      return res.data;
+      return response;
     },
     async createTask(param: EBPFTaskCreationRequest) {
-      const res: AxiosResponse = await graphql.query("saveEBPFTask").params({ request: param });
+      const response = await graphql.query("saveEBPFTask").params({ request: param });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
       this.getTaskList({
         serviceId: param.serviceId,
         targets: ["ON_CPU", "OFF_CPU"],
         triggerType: EBPFProfilingTriggerType.FIXED_TIME,
       });
-      return res.data;
+      return response;
     },
     async getTaskList(params: { serviceId: string; targets: string[] }) {
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getEBPFTasks").params(params);
+      const response = await graphql.query("getEBPFTasks").params(params);
 
       this.ebpfTips = "";
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.taskList = res.data.data.queryEBPFTasks || [];
+      this.taskList = response.data.queryEBPFTasks || [];
       this.selectedTask = this.taskList[0] || {};
       this.setSelectedTask(this.selectedTask);
       if (!this.taskList.length) {
-        return res.data;
+        return response;
       }
       this.getEBPFSchedules({ taskId: String(this.taskList[0].taskId) });
-      return res.data;
+      return response;
     },
     async getEBPFSchedules(params: { taskId: string }) {
       if (!params.taskId) {
         return new Promise((resolve) => resolve({}));
       }
 
-      const res: AxiosResponse = await graphql.query("getEBPFSchedules").params({ ...params });
+      const response = await graphql.query("getEBPFSchedules").params({ ...params });
 
-      if (res.data.errors) {
+      if (response.errors) {
         this.eBPFSchedules = [];
-        return res.data;
+        return response;
       }
       this.ebpfTips = "";
-      const { eBPFSchedules } = res.data.data;
+      const { eBPFSchedules } = response.data;
 
       this.eBPFSchedules = eBPFSchedules;
       if (!eBPFSchedules.length) {
         this.eBPFSchedules = [];
         this.analyzeTrees = [];
       }
-      return res.data;
+      return response;
     },
     async getEBPFAnalyze(params: {
       scheduleIdList: string[];
@@ -134,24 +133,24 @@ export const ebpfStore = defineStore({
       if (!params.timeRanges.length) {
         return new Promise((resolve) => resolve({}));
       }
-      const res: AxiosResponse = await graphql.query("getEBPFResult").params(params);
+      const response = await graphql.query("getEBPFResult").params(params);
 
-      if (res.data.errors) {
+      if (response.errors) {
         this.analyzeTrees = [];
-        return res.data;
+        return response;
       }
-      const { analysisEBPFResult } = res.data.data;
+      const { analysisEBPFResult } = response.data;
       this.ebpfTips = analysisEBPFResult.tip;
       if (!analysisEBPFResult) {
         this.analyzeTrees = [];
-        return res.data;
+        return response;
       }
       if (analysisEBPFResult.tip) {
         this.analyzeTrees = [];
-        return res.data;
+        return response;
       }
       this.analyzeTrees = analysisEBPFResult.trees;
-      return res.data;
+      return response;
     },
   },
 });

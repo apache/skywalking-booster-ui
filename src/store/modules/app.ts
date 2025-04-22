@@ -19,7 +19,6 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import type { Duration, DurationTime } from "@/types/app";
 import getLocalTime from "@/utils/localtime";
-import type { AxiosResponse } from "axios";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
 import type { MenuOptions, SubItem } from "@/types/app";
@@ -118,12 +117,6 @@ export const appStore = defineStore({
   actions: {
     setDuration(data: Duration): void {
       this.durationRow = data;
-      if ((window as any).axiosCancel.length !== 0) {
-        for (const event of (window as any).axiosCancel) {
-          setTimeout(event(), 0);
-        }
-        (window as any).axiosCancel = [];
-      }
       this.runEventStack();
     },
     updateDurationRow(data: Duration) {
@@ -185,11 +178,11 @@ export const appStore = defineStore({
       });
     },
     async queryOAPTimeInfo() {
-      const res: AxiosResponse = await graphql.query("queryOAPTimeInfo").params({});
-      if (res.data.errors) {
+      const res = await graphql.query("queryOAPTimeInfo").params({});
+      if (res.errors) {
         this.utc = -(new Date().getTimezoneOffset() / 60) + ":0";
       } else {
-        this.utc = res.data.data.getTimeInfo.timezone / 100 + ":0";
+        this.utc = res.data.getTimeInfo.timezone / 100 + ":0";
       }
       const utcArr = this.utc.split(":");
       this.utcHour = isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]);
@@ -197,21 +190,21 @@ export const appStore = defineStore({
 
       return res.data;
     },
-    async fetchVersion(): Promise<void> {
-      const res: AxiosResponse = await graphql.query("queryOAPVersion").params({});
-      if (res.data.errors) {
-        return res.data;
+    async fetchVersion() {
+      const res = await graphql.query("queryOAPVersion").params({});
+      if (res.errors) {
+        return res;
       }
-      this.version = res.data.data.version;
+      this.version = res.data.version;
       return res.data;
     },
     async queryMenuItems() {
-      const res: AxiosResponse = await graphql.query("queryMenuItems").params({});
-      if (res.data.errors) {
-        return res.data;
+      const res = await graphql.query("queryMenuItems").params({});
+      if (res.errors) {
+        return res;
       }
 
-      return res.data.data;
+      return res.data;
     },
     setReloadTimer(timer: IntervalHandle) {
       this.reloadTimer = timer;

@@ -37,16 +37,8 @@ const router = createRouter({
   routes,
 });
 
-(window as any).axiosCancel = [];
-
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
   // const token = window.localStorage.getItem("skywalking-authority");
-  if ((window as any).axiosCancel.length !== 0) {
-    for (const func of (window as any).axiosCancel) {
-      setTimeout(func(), 0);
-    }
-    (window as any).axiosCancel = [];
-  }
 
   if (to.path === "/") {
     let defaultPath = "";

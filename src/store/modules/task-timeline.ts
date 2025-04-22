@@ -18,7 +18,6 @@ import { defineStore } from "pinia";
 import { ElMessage } from "element-plus";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import type { EBPFTaskList } from "@/types/ebpf";
 import { useNetworkProfilingStore } from "@/store/modules/network-profiling";
@@ -57,20 +56,18 @@ export const taskTimelineStore = defineStore({
         return new Promise((resolve) => resolve({}));
       }
       this.loading = true;
-      const res: AxiosResponse = await graphql.query("getEBPFTasks").params(params);
+      const response = await graphql.query("getEBPFTasks").params(params);
 
       this.loading = false;
       this.errorTip = "";
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
       const selectorStore = useSelectorStore();
-      this.taskList = (res.data.data.queryEBPFTasks || []).filter(
+      this.taskList = (response.data.queryEBPFTasks || []).filter(
         (d: EBPFTaskList) => selectorStore.currentProcess && d.processId === selectorStore.currentProcess.id,
       );
-      // this.selectedTask = this.taskList[0] || {};
-      // await this.getGraphData();
-      return res.data;
+      return response;
     },
     async getGraphData() {
       let res: any = {};

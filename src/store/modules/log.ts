@@ -18,7 +18,6 @@ import { defineStore } from "pinia";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import { store } from "@/store";
 import graphql from "@/graphql";
-import type { AxiosResponse } from "axios";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
@@ -62,51 +61,51 @@ export const logStore = defineStore({
       };
     },
     async getServices(layer: string) {
-      const res: AxiosResponse = await graphql.query("queryServices").params({
+      const response = await graphql.query("queryServices").params({
         layer,
       });
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.services = res.data.data.services;
-      return res.data;
+      this.services = response.data.services;
+      return response;
     },
     async getInstances(id: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
-      const res: AxiosResponse = await graphql.query("queryInstances").params({
+      const response = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
       });
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.instances = [{ value: "0", label: "All" }, ...res.data.data.pods];
-      return res.data;
+      this.instances = [{ value: "0", label: "All" }, ...response.data.pods];
+      return response;
     },
     async getEndpoints(id: string, keyword?: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
-      const res: AxiosResponse = await graphql.query("queryEndpoints").params({
+      const response = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
         keyword: keyword || "",
         limit: EndpointsTopNDefault,
       });
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.endpoints = [{ value: "0", label: "All" }, ...res.data.data.pods];
-      return res.data;
+      this.endpoints = [{ value: "0", label: "All" }, ...response.data.pods];
+      return response;
     },
     async getLogsByKeywords() {
-      const res: AxiosResponse = await graphql.query("queryLogsByKeywords").params({});
+      const response = await graphql.query("queryLogsByKeywords").params({});
 
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
 
-      this.supportQueryLogsByKeywords = res.data.data.support;
-      return res.data;
+      this.supportQueryLogsByKeywords = response.data.support;
+      return response;
     },
     async getLogs() {
       const dashboardStore = useDashboardStore();
@@ -117,39 +116,31 @@ export const logStore = defineStore({
     },
     async getServiceLogs() {
       this.loadLogs = true;
-      const res: AxiosResponse = await graphql.query("queryServiceLogs").params({ condition: this.conditions });
+      const response = await graphql.query("queryServiceLogs").params({ condition: this.conditions });
       this.loadLogs = false;
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
 
-      this.logs = res.data.data.queryLogs.logs;
-      return res.data;
+      this.logs = response.data.queryLogs.logs;
+      return response;
     },
     async getBrowserLogs() {
       this.loadLogs = true;
-      const res: AxiosResponse = await graphql.query("queryBrowserErrorLogs").params({ condition: this.conditions });
+      const response = await graphql.query("queryBrowserErrorLogs").params({ condition: this.conditions });
 
       this.loadLogs = false;
-      if (res.data.errors) {
-        return res.data;
+      if (response.errors) {
+        return response;
       }
-      this.logs = res.data.data.queryBrowserErrorLogs.logs;
-      return res.data;
+      this.logs = response.data.queryBrowserErrorLogs.logs;
+      return response;
     },
     async getLogTagKeys() {
-      const res: AxiosResponse = await graphql
-        .query("queryLogTagKeys")
-        .params({ duration: useAppStoreWithOut().durationTime });
-
-      return res.data;
+      return await graphql.query("queryLogTagKeys").params({ duration: useAppStoreWithOut().durationTime });
     },
     async getLogTagValues(tagKey: string) {
-      const res: AxiosResponse = await graphql
-        .query("queryLogTagValues")
-        .params({ tagKey, duration: useAppStoreWithOut().durationTime });
-
-      return res.data;
+      return await graphql.query("queryLogTagValues").params({ tagKey, duration: useAppStoreWithOut().durationTime });
     },
   },
 });
