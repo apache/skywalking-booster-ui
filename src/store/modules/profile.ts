@@ -103,7 +103,7 @@ export const profileStore = defineStore({
         return response;
       }
       this.endpoints = response.data.pods || [];
-      return response;
+      return response.data;
     },
     async getTaskEndpoints(serviceId: string, keyword?: string) {
       const response = await graphql.query("queryEndpoints").params({
