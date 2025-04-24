@@ -129,10 +129,12 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
               item.metric &&
               item.metric.labels.map((d: { key: string; value: string }) => `${d.key}=${d.value}`).join(",");
             const values = item.values.map((d: { value: unknown }) => d.value) || [];
-            if (label) {
-              label = `${c.label || name}, ${label}`;
-            } else {
-              label = c.label || name;
+            if (results.length === 1) {
+              if (label) {
+                label = `${c.label || name}, ${label}`;
+              } else {
+                label = c.label || name;
+              }
             }
             source[label] = values;
           }
