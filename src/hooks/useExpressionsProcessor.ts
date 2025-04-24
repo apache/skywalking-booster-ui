@@ -109,7 +109,7 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
       return { source: {}, tips: [], typesOfMQE: [] };
     }
     const tips: string[] = [];
-    const source: { [key: string]: unknown } = {};
+    const source: Indexable<unknown> = {};
     const keys = Object.keys(resp.data);
     const typesOfMQE: string[] = [];
 
@@ -125,15 +125,16 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
       if (!obj.error) {
         if ([ExpressionResultType.SINGLE_VALUE, ExpressionResultType.TIME_SERIES_VALUES].includes(type)) {
           for (const item of results) {
-            const label =
+            let label =
               item.metric &&
               item.metric.labels.map((d: { key: string; value: string }) => `${d.key}=${d.value}`).join(",");
             const values = item.values.map((d: { value: unknown }) => d.value) || [];
-            if (results.length === 1) {
-              source[label || c.label || name] = values;
+            if (label) {
+              label = `${c.label || name}, ${label}`;
             } else {
-              source[label] = values;
+              label = c.label || name;
             }
+            source[label] = values;
           }
         }
         if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
@@ -148,7 +149,7 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
     const appStore = useAppStoreWithOut();
     const variables: string[] = [`$duration: Duration!`];
     let fragments = "";
-    let conditions: Recordable = {
+    let conditions: Recordable<unknown> = {
       duration: appStore.durationTime,
     };
     for (let i = 0; i < configArr.length; i++) {
@@ -465,7 +466,7 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
     return { queryStr, conditions };
   }
   function handleExpressionValues(partMetrics: string[], resp: { [key: string]: any }) {
-    const obj: any = {};
+    const obj: Indexable = {};
     for (let idx = 0; idx < instances.length; idx++) {
       for (let index = 0; index < partMetrics.length; index++) {
         const k = "expression" + idx + index;
