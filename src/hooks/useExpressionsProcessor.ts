@@ -114,7 +114,7 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
     const typesOfMQE: string[] = [];
 
     for (let i = 0; i < config.metrics.length; i++) {
-      const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[i]) || {};
+      const metricConfig: MetricConfigOpt = (config.metricConfig && config.metricConfig[i]) || {};
       const obj = resp.data[keys[i]] || {};
       const results = obj.results || [];
       const name = config.metrics[i];
@@ -130,7 +130,8 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
               item.metric.labels.map((d: { key: string; value: string }) => `${d.key}=${d.value}`).join(",");
             const values = item.values.map((d: { value: unknown }) => d.value) || [];
             if (results.length === 1) {
-              label = label ? `${c.label || name}, ${label}` : c.label || name;
+              // If the label does not exist use the configuration label or expression
+              label = label ? `${metricConfig.label || name}, ${label}` : metricConfig.label || name;
             }
             source[label] = values;
           }
