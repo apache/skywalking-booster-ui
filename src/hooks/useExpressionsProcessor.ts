@@ -130,7 +130,7 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
               item.metric.labels.map((d: { key: string; value: string }) => `${d.key}=${d.value}`).join(",");
             const values = item.values.map((d: { value: unknown }) => d.value) || [];
             if (results.length === 1) {
-              // If the label does not exist use the configuration label or expression
+              // If the metrics label does not exist, use the configuration label or expression
               label = label ? `${metricConfig.label || name}, ${label}` : metricConfig.label || name;
             }
             source[label] = values;
