@@ -206,6 +206,22 @@ export const appStore = defineStore({
 
       return res.data;
     },
+    async queryMetricsTTL() {
+      const res = await graphql.query("queryMetricsTTL").params({});
+      if (res.errors) {
+        return res;
+      }
+
+      return res.data;
+    },
+    async queryRecordsTTL() {
+      const res = await graphql.query("queryRecordsTTL").params({});
+      if (res.errors) {
+        return res;
+      }
+
+      return res.data;
+    },
     setReloadTimer(timer: IntervalHandle) {
       this.reloadTimer = timer;
     },
