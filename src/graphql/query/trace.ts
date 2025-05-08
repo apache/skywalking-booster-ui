@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Traces, TraceSpans, TraceTagKeys, TraceTagValues } from "../fragments/trace";
+import { Traces, TraceSpans, TraceTagKeys, TraceTagValues, TraceSpansFromColdStage } from "../fragments/trace";
 
 export const queryTraces = `query queryTraces(${Traces.variable}) {${Traces.query}}`;
 
@@ -24,3 +24,5 @@ export const queryTrace = `query queryTrace(${TraceSpans.variable}) {${TraceSpan
 export const queryTraceTagKeys = `query queryTraceTagKeys(${TraceTagKeys.variable}) {${TraceTagKeys.query}}`;
 
 export const queryTraceTagValues = `query queryTraceTagValues(${TraceTagValues.variable}) {${TraceTagValues.query}}`;
+
+export const queryTraceSpansFromColdStage = `query queryTraceSpansFromColdStage(${TraceSpansFromColdStage.variable}) {${TraceSpansFromColdStage.query}}`;
