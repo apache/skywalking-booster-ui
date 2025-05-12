@@ -50,7 +50,7 @@ limitations under the License. -->
       <span> UTC{{ appStore.utcHour >= 0 ? "+" : "" }}{{ `${appStore.utcHour}:${appStore.utcMin}` }} </span>
       <span class="ml-5">
         <el-switch
-          v-model="dataMode"
+          v-model="coldStage"
           inline-prompt
           active-text="Set data to cold"
           inactive-text="Set data to warm"
@@ -105,7 +105,7 @@ limitations under the License. -->
   const pageTitle = ref<string>("");
   const theme = ref<boolean>(true);
   const themeSwitchRef = ref<HTMLElement>();
-  const dataMode = ref<boolean>(false);
+  const coldStage = ref<boolean>(false);
 
   const savedTheme = window.localStorage.getItem("theme-is-dark");
   if (savedTheme === "false") {
@@ -138,7 +138,8 @@ limitations under the License. -->
   }
 
   function changeDataMode() {
-    if (dataMode.value) {
+    appStore.setColdStageMode(coldStage.value);
+    if (coldStage.value) {
       // const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
       // const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
       // appStore.setDuration(timeFormat(dates));

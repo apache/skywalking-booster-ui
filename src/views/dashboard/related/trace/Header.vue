@@ -31,6 +31,12 @@ limitations under the License. -->
       @change="changeLatency"
       class="ml-10"
     />
+    <TimePicker
+      :value="[appStore.durationRow.start, appStore.durationRow.end]"
+      position="bottom"
+      format="YYYY-MM-DD HH:mm"
+      @input="changeTimeRange"
+    />
     <el-popover trigger="hover" width="250" placement="bottom">
       <template #reference>
         <div class="cp conditions-popup">
@@ -82,6 +88,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useSelectorStore } from "@/store/modules/selectors";
+  import timeFormat from "@/utils/timeFormat";
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { ElMessage } from "element-plus";
   import { EntityType, QueryOrders, Status } from "../../data";
@@ -107,6 +114,7 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
   const traceStore = useTraceStore();
+  const timeRange = ref<number>(NaN);
   const tagsList = ref<string[]>([]);
   const tagsMap = ref<Option[]>([]);
   const traceId = ref<string>(filters.refId || "");
@@ -169,6 +177,15 @@ limitations under the License. -->
     }
     await queryTraces();
   }
+
+  function changeTimeRange(val: Date[]) {
+    timeRange.value = val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
+    if (timeRange.value) {
+      return;
+    }
+    appStore.setDuration(timeFormat(val));
+  }
+
   function changeCondition() {
     if (conditions.value === "latency") {
       currentLatency.value = filters.latency ? filters.latency[0].data : [];

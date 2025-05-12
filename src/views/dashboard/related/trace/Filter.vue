@@ -65,6 +65,15 @@ limitations under the License. -->
       <span class="grey mr-5">{{ t("traceID") }}:</span>
       <el-input size="small" v-model="traceId" class="traceId" />
     </div>
+    <div>
+      <span class="sm b grey mr-5">{{ t("duration") }}:</span>
+      <TimePicker
+        :value="[appStore.durationRow.start, appStore.durationRow.end]"
+        position="bottom"
+        format="YYYY-MM-DD HH:mm"
+        @input="changeTimeRange"
+      />
+    </div>
     <div class="mr-10">
       <span class="sm b grey mr-5">{{ t("duration") }}:</span>
       <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" type="number" />
@@ -85,6 +94,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useSelectorStore } from "@/store/modules/selectors";
+  import timeFormat from "@/utils/timeFormat";
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { ElMessage } from "element-plus";
   import { EntityType, QueryOrders, Status } from "../../data";
@@ -254,6 +264,9 @@ limitations under the License. -->
     if (resp.errors) {
       ElMessage.error(resp.errors);
     }
+  }
+  function changeTimeRange(val: Date[]) {
+    // duration.value = timeFormat(val);
   }
   onUnmounted(() => {
     traceStore.resetState();

@@ -37,6 +37,7 @@ interface AppState {
   reloadTimer: Nullable<IntervalHandle>;
   allMenus: MenuOptions[];
   theme: string;
+  coldStageMode: boolean;
 }
 
 export const appStore = defineStore({
@@ -58,6 +59,7 @@ export const appStore = defineStore({
     reloadTimer: null,
     allMenus: [],
     theme: Themes.Dark,
+    coldStageMode: false,
   }),
   getters: {
     duration(): Duration {
@@ -142,6 +144,9 @@ export const appStore = defineStore({
     },
     setAutoRefresh(auto: boolean) {
       this.autoRefresh = auto;
+    },
+    setColdStageMode(mode: boolean) {
+      this.coldStageMode = mode;
     },
     runEventStack() {
       if (this.timer) {
