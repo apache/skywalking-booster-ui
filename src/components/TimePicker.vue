@@ -149,7 +149,6 @@ limitations under the License. -->
       type: Boolean,
       default: false,
     },
-    dateRangeSelect: [Function],
   });
   const emit = defineEmits(["clear", "input", "confirm", "cancel"]);
   const local = computed(() => {
