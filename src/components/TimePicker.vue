@@ -116,7 +116,7 @@ limitations under the License. -->
   const datepicker = ref(null);
   const { t } = useI18n();
   const show = ref<boolean>(false);
-  const dates = ref<Date | string[] | any>([]);
+  const dates = ref<Date[]>([]);
   const props = defineProps({
     position: { type: String, default: "bottom" },
     name: [String],

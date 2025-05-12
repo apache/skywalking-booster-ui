@@ -169,7 +169,7 @@ limitations under the License. -->
     value: { type: Date },
     left: { type: Boolean, default: false },
     right: { type: Boolean, default: false },
-    dates: { type: Array as PropType<number[] | string[]>, default: () => [] },
+    dates: { type: Array as PropType<Date[]>, default: () => [] },
     disabledDate: { type: Function, default: () => false },
     format: {
       type: String,
