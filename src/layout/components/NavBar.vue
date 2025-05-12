@@ -120,6 +120,7 @@ limitations under the License. -->
   resetDuration();
   getVersion();
   getNavPaths();
+  getMetricsTTL();
 
   function changeTheme() {
     const root = document.documentElement;
@@ -207,6 +208,13 @@ limitations under the License. -->
       return;
     }
     appStore.setDuration(timeFormat(val));
+  }
+
+  async function getMetricsTTL() {
+    const resp = await appStore.queryMetricsTTL();
+    // const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
+    // const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
+    // appStore.setDuration(timeFormat(dates));
   }
 
   function getNavPaths() {
