@@ -379,6 +379,7 @@ limitations under the License. -->
     classObj[`${state.pre}-date-disabled`] =
       (props.right && (t < start.value || t > maxEnd.value)) ||
       (props.left && t < minStart.value) ||
+      t > maxEnd.value ||
       props.disabledDate(time, format);
     classObj[`${state.pre}-date-on`] = (props.left && t > start.value) || (props.right && t < end.value);
     classObj[`${state.pre}-date-selected`] = flag;

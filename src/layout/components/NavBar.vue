@@ -141,9 +141,17 @@ limitations under the License. -->
   function changeDataMode() {
     appStore.setColdStageMode(coldStage.value);
     if (coldStage.value) {
-      // const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
-      // const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
-      // appStore.setDuration(timeFormat(dates));
+      handleMetricsTTL({
+        minute: appStore.metricsTTL.coldMinute,
+        hour: appStore.metricsTTL.coldHour,
+        day: appStore.metricsTTL.coldDay,
+      });
+    } else {
+      handleMetricsTTL({
+        minute: appStore.metricsTTL.minute,
+        hour: appStore.metricsTTL.hour,
+        day: appStore.metricsTTL.day,
+      });
     }
   }
 
@@ -223,19 +231,8 @@ limitations under the License. -->
       coldHour: 10,
       coldDay: 9,
     };
-    if (coldStage.value) {
-      handleMetricsTTL({
-        minute: data.coldMinute,
-        hour: data.coldHour,
-        day: data.coldDay,
-      });
-    } else {
-      handleMetricsTTL({
-        minute: data.minute,
-        hour: data.hour,
-        day: data.day,
-      });
-    }
+    appStore.setMetricsTTL(data);
+    changeDataMode();
   }
 
   function handleMetricsTTL(params: { minute: number; hour: number; day: number }) {
