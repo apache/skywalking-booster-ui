@@ -94,7 +94,6 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useSelectorStore } from "@/store/modules/selectors";
-  import timeFormat from "@/utils/timeFormat";
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { ElMessage } from "element-plus";
   import { EntityType, QueryOrders, Status } from "../../data";
@@ -265,7 +264,7 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
     }
   }
-  function changeTimeRange(val: Date[]) {
+  function changeTimeRange() {
     // duration.value = timeFormat(val);
   }
   onUnmounted(() => {

@@ -175,6 +175,7 @@ limitations under the License. -->
       type: String,
       default: "YYYY-MM-DD",
     },
+    maxRange: { type: Array as PropType<Date[]>, default: () => [] },
   });
   const state = reactive({
     pre: "",
@@ -240,6 +241,12 @@ limitations under the License. -->
   });
   const end = computed(() => {
     return parse(Number(props.dates[1]));
+  });
+  const minStart = computed(() => {
+    return parse(Number(props.maxRange[0]));
+  });
+  const maxEnd = computed(() => {
+    return parse(Number(props.maxRange[1]));
   });
   const ys = computed(() => {
     return Math.floor(state.year / 10) * 10;
@@ -369,7 +376,10 @@ limitations under the License. -->
       flag = tf(props.value, format) === tf(time, format);
     }
     classObj[`${state.pre}-date`] = true;
-    classObj[`${state.pre}-date-disabled`] = (props.right && t < start.value) || props.disabledDate(time, format);
+    classObj[`${state.pre}-date-disabled`] =
+      (props.right && (t < start.value || t > maxEnd.value)) ||
+      (props.left && t < minStart.value) ||
+      props.disabledDate(time, format);
     classObj[`${state.pre}-date-on`] = (props.left && t > start.value) || (props.right && t < end.value);
     classObj[`${state.pre}-date-selected`] = flag;
     return classObj;

@@ -43,6 +43,7 @@ limitations under the License. -->
       <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
       <TimePicker
         :value="[appStore.durationRow.start, appStore.durationRow.end]"
+        :maxRange="appStore.maxRange"
         position="bottom"
         format="YYYY-MM-DD HH:mm"
         @input="changeTimeRange"
@@ -212,10 +213,35 @@ limitations under the License. -->
   }
 
   async function getMetricsTTL() {
-    const resp = await appStore.queryMetricsTTL();
-    // const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
-    // const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
-    // appStore.setDuration(timeFormat(dates));
+    // const resp = await appStore.queryMetricsTTL();
+    // mock data
+    const data = {
+      minute: 20,
+      hour: 2,
+      day: 3,
+      coldMinute: 10,
+      coldHour: 10,
+      coldDay: 9,
+    };
+    if (coldStage.value) {
+      handleMetricsTTL({
+        minute: data.coldMinute,
+        hour: data.coldHour,
+        day: data.coldDay,
+      });
+    } else {
+      handleMetricsTTL({
+        minute: data.minute,
+        hour: data.hour,
+        day: data.day,
+      });
+    }
+  }
+
+  function handleMetricsTTL(params: { minute: number; hour: number; day: number }) {
+    const gap = (params.day + 1) * 24 * 60 * 60 * 1000 + params.hour * 60 * 60 * 1000 + params.minute * 60 * 1000;
+    const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
+    appStore.setMaxRange(dates);
   }
 
   function getNavPaths() {

@@ -38,6 +38,7 @@ interface AppState {
   allMenus: MenuOptions[];
   theme: string;
   coldStageMode: boolean;
+  maxRange: Date[];
 }
 
 export const appStore = defineStore({
@@ -60,6 +61,7 @@ export const appStore = defineStore({
     allMenus: [],
     theme: Themes.Dark,
     coldStageMode: false,
+    maxRange: [],
   }),
   getters: {
     duration(): Duration {
@@ -123,6 +125,9 @@ export const appStore = defineStore({
     },
     updateDurationRow(data: Duration) {
       this.durationRow = data;
+    },
+    setMaxRange(times: Date[]) {
+      this.maxRange = times;
     },
     setTheme(data: string) {
       this.theme = data;
