@@ -53,9 +53,10 @@ limitations under the License. -->
         <el-switch
           v-model="coldStage"
           inline-prompt
-          active-text="Set data to cold"
-          inactive-text="Set data to warm"
+          active-text="Set data to warm"
+          inactive-text="Set data to cold"
           @change="changeDataMode"
+          width="120px"
         />
       </span>
       <span class="ml-5" ref="themeSwitchRef">
@@ -121,7 +122,7 @@ limitations under the License. -->
   resetDuration();
   getVersion();
   getNavPaths();
-  getMetricsTTL();
+  setTTL();
 
   function changeTheme() {
     const root = document.documentElement;
@@ -220,6 +221,23 @@ limitations under the License. -->
     appStore.setDuration(timeFormat(val));
   }
 
+  function setTTL() {
+    getMetricsTTL();
+    getRecordsTTL();
+    changeDataMode();
+  }
+  async function getRecordsTTL() {
+    // const resp = await appStore.queryRecordsTTL();
+    // mock data
+    const recordsData = {
+      value: 6,
+      superDataset: 2,
+      coldValue: 3,
+      coldSuperDataset: 5,
+    };
+    appStore.setRecordsTTL(recordsData.value);
+  }
+
   async function getMetricsTTL() {
     // const resp = await appStore.queryMetricsTTL();
     // mock data
@@ -232,13 +250,29 @@ limitations under the License. -->
       coldDay: 9,
     };
     appStore.setMetricsTTL(data);
-    changeDataMode();
   }
 
   function handleMetricsTTL(params: { minute: number; hour: number; day: number }) {
-    const gap = (params.day + 1) * 24 * 60 * 60 * 1000 + params.hour * 60 * 60 * 1000 + params.minute * 60 * 1000;
+    const gap = dayToMS(params.day) + params.hour * 60 * 60 * 1000 + params.minute * 60 * 1000;
     const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
     appStore.setMaxRange(dates);
+  }
+
+  function handleRecordsTTL(params: {
+    value: number;
+    superDataset: number;
+    coldValue: number;
+    coldSuperDataset: number;
+  }) {
+    const gap = dayToMS(params.value);
+    const superDatasetGap = dayToMS(params.superDataset);
+    const coldValueGap = dayToMS(params.coldValue);
+    const coldSuperDatasetGap = dayToMS(params.coldSuperDataset);
+    // const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
+  }
+
+  function dayToMS(day: number) {
+    return (day + 1) * 24 * 60 * 60 * 1000;
   }
 
   function getNavPaths() {

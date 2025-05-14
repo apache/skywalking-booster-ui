@@ -65,20 +65,20 @@ limitations under the License. -->
       <span class="grey mr-5">{{ t("traceID") }}:</span>
       <el-input size="small" v-model="traceId" class="traceId" />
     </div>
-    <div>
+    <div class="mr-10">
       <span class="sm b grey mr-5">{{ t("duration") }}:</span>
+      <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" type="number" />
+      <span class="grey mr-5">-</span>
+      <el-input size="small" class="inputs" v-model="maxTraceDuration" type="number" />
+    </div>
+    <div>
+      <span class="sm b grey mr-5">{{ t("timeRange") }}:</span>
       <TimePicker
         :value="[appStore.durationRow.start, appStore.durationRow.end]"
         position="bottom"
         format="YYYY-MM-DD HH:mm"
         @input="changeTimeRange"
       />
-    </div>
-    <div class="mr-10">
-      <span class="sm b grey mr-5">{{ t("duration") }}:</span>
-      <el-input size="small" class="inputs mr-5" v-model="minTraceDuration" type="number" />
-      <span class="grey mr-5">-</span>
-      <el-input size="small" class="inputs" v-model="maxTraceDuration" type="number" />
     </div>
   </div>
   <div class="flex-h">

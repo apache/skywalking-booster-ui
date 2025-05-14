@@ -21,7 +21,7 @@ import type { Duration, DurationTime } from "@/types/app";
 import getLocalTime from "@/utils/localtime";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
-import type { MenuOptions, SubItem, MetricsTTL } from "@/types/app";
+import type { MenuOptions, SubItem, MetricsTTL, RecordsTTL } from "@/types/app";
 import { Themes } from "@/constants/data";
 /*global Nullable*/
 interface AppState {
@@ -40,6 +40,7 @@ interface AppState {
   coldStageMode: boolean;
   maxRange: Date[];
   metricsTTL: Recordable<MetricsTTL>;
+  recordsTTL: Recordable<RecordsTTL>;
 }
 
 export const appStore = defineStore({
@@ -64,6 +65,7 @@ export const appStore = defineStore({
     coldStageMode: false,
     maxRange: [],
     metricsTTL: {},
+    recordsTTL: {},
   }),
   getters: {
     duration(): Duration {
@@ -133,6 +135,9 @@ export const appStore = defineStore({
     },
     setMetricsTTL(data: MetricsTTL) {
       this.metricsTTL = data;
+    },
+    setRecordsTTL(data: RecordsTTL) {
+      this.recordsTTL = data;
     },
     setTheme(data: string) {
       this.theme = data;

@@ -77,3 +77,10 @@ export interface MetricsTTL {
   coldHour: number;
   coldDay: number;
 }
+
+export interface RecordsTTL {
+  value: number;
+  superDataset: number;
+  coldValue: number;
+  coldSuperDataset: number;
+}
