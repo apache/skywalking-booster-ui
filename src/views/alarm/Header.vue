@@ -61,7 +61,7 @@ limitations under the License. -->
   </nav>
 </template>
 <script lang="ts" setup>
-  import { ref, computed } from "vue";
+  import { ref, computed, watch } from "vue";
   import { useI18n } from "vue-i18n";
   import { ElMessage } from "element-plus";
   import ConditionTags from "@/views/components/ConditionTags.vue";
@@ -125,6 +125,16 @@ limitations under the License. -->
     pageNum.value = p;
     refreshAlarms({ pageNum: p });
   }
+
+  watch(
+    () => appStore.coldStageMode,
+    () => {
+      durationRow.value = InitializationDurationRow;
+      setDurationRow(durationRow.value);
+      duration.value = getDurationTime();
+      refreshAlarms({ pageNum: 1 });
+    },
+  );
 </script>
 <style lang="scss" scoped>
   .alarm-tool {
