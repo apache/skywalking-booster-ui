@@ -302,12 +302,12 @@ limitations under the License. -->
     },
   );
   watch(
-    () => appStore.durationTime,
+    () => appStore.coldStageMode,
     () => {
-      duration.value = appStore.durationTime;
-      if (dashboardStore.entity === EntityType[1].value) {
-        init();
-      }
+      durationRow.value = InitializationDurationRow;
+      setDurationRow(durationRow.value);
+      duration.value = getDurationTime();
+      init();
     },
   );
   // Event widget associate with trace widget

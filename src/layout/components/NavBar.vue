@@ -259,19 +259,6 @@ limitations under the License. -->
     appStore.setMaxRange(dates);
   }
 
-  function handleRecordsTTL(params: {
-    value: number;
-    superDataset: number;
-    coldValue: number;
-    coldSuperDataset: number;
-  }) {
-    const gap = dayToMS(params.value);
-    const superDatasetGap = dayToMS(params.superDataset);
-    const coldValueGap = dayToMS(params.coldValue);
-    const coldSuperDatasetGap = dayToMS(params.coldSuperDataset);
-    // const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
-  }
-
   function dayToMS(day: number) {
     return (day + 1) * 24 * 60 * 60 * 1000;
   }
