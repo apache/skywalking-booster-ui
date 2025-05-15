@@ -53,10 +53,10 @@ limitations under the License. -->
         <el-switch
           v-model="coldStage"
           inline-prompt
-          active-text="Set data to warm"
+          active-text="Set data to default"
           inactive-text="Set data to cold"
           @change="changeDataMode"
-          width="120px"
+          width="130px"
         />
       </span>
       <span class="ml-5" ref="themeSwitchRef">

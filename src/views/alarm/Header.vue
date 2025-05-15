@@ -114,6 +114,7 @@ limitations under the License. -->
     durationRow.value = timeFormat(val);
     setDurationRow(durationRow.value);
     duration.value = getDurationTime();
+    refreshAlarms({ pageNum: 1 });
   }
 
   function changeEntity(param: { value: string }[]) {
