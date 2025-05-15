@@ -119,7 +119,7 @@ limitations under the License. -->
   const { setDurationRow, getDurationTime, getMaxRange } = useDuration();
   const filters = reactive<Recordable>(props.data.filters || {});
   const traceId = ref<string>(filters.traceId || "");
-  const duration = ref<DurationTime>(filters.duration || appStore.durationTime);
+  const duration = ref<DurationTime>(filters.duration || getDurationTime());
   const minTraceDuration = ref<number>();
   const maxTraceDuration = ref<number>();
   const tagsList = ref<string[]>([]);
@@ -321,7 +321,7 @@ limitations under the License. -->
         return;
       }
       traceId.value = props.data.filters.traceId || "";
-      duration.value = props.data.filters.duration || appStore.durationTime;
+      duration.value = props.data.filters.duration || getDurationTime();
       init();
     },
   );
