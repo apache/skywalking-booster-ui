@@ -21,10 +21,10 @@ import getLocalTime from "@/utils/localtime";
 import dateFormatStep from "@/utils/dateFormat";
 
 export function useDuration() {
-  const appStore = useAppStoreWithOut();
   let durationRow: Duration = InitializationDurationRow;
 
   function getDuration() {
+    const appStore = useAppStoreWithOut();
     return {
       start: getLocalTime(appStore.utc, durationRow.start),
       end: getLocalTime(appStore.utc, durationRow.end),

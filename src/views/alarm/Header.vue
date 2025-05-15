@@ -30,6 +30,16 @@ limitations under the License. -->
         <span class="grey">{{ t("searchKeyword") }}: </span>
         <el-input size="small" v-model="keyword" class="alarm-tool-input" @change="refreshAlarms({ pageNum: 1 })" />
       </div>
+      <div>
+        <span class="sm b grey mr-5">{{ t("timeRange") }}:</span>
+        <TimePicker
+          :value="[durationRow.start, durationRow.end]"
+          :maxRange="maxRange"
+          position="bottom"
+          format="YYYY-MM-DD HH:mm"
+          @input="changeDuration"
+        />
+      </div>
       <div class="pagination">
         <el-pagination
           v-model="pageNum"
@@ -53,29 +63,38 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { AlarmOptions } from "./data";
-  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useAlarmStore } from "@/store/modules/alarm";
-  import { ElMessage } from "element-plus";
+  import { useDuration } from "@/hooks/useDuration";
+  import timeFormat from "@/utils/timeFormat";
+  import type { DurationTime, Duration } from "@/types/app";
   import { Themes } from "@/constants/data";
-
+  /*global Recordable */
   const appStore = useAppStoreWithOut();
   const alarmStore = useAlarmStore();
   const { t } = useI18n();
+  const { setDurationRow, getDurationTime, getMaxRange } = useDuration();
   const pageSize = 20;
   const entity = ref<string>("");
   const keyword = ref<string>("");
   const pageNum = ref<number>(1);
+  const duration = ref<DurationTime>(getDurationTime());
+  const durationRow = ref<Duration>(InitializationDurationRow);
   const total = computed(() =>
     alarmStore.alarms.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
+  );
+  const maxRange = computed(() =>
+    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL.coldValue : appStore.recordsTTL.value),
   );
 
   refreshAlarms({ pageNum: 1 });
 
-  async function refreshAlarms(param: { pageNum: number; tagsMap?: any }) {
-    const params: any = {
-      duration: appStore.durationTime,
+  async function refreshAlarms(param: { pageNum: number; tagsMap?: Recordable }) {
+    const params: Recordable = {
+      duration: duration.value,
       paging: {
         pageNum: param.pageNum,
         pageSize,
@@ -91,7 +110,13 @@ limitations under the License. -->
     }
   }
 
-  function changeEntity(param: any) {
+  function changeDuration(val: Date[]) {
+    durationRow.value = timeFormat(val);
+    setDurationRow(durationRow.value);
+    duration.value = getDurationTime();
+  }
+
+  function changeEntity(param: { value: string }[]) {
     entity.value = param[0].value;
     refreshAlarms({ pageNum: 1 });
   }
