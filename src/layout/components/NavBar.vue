@@ -86,7 +86,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { Themes } from "@/constants/data";
   import router from "@/router";
-  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { DashboardItem } from "@/types/dashboard";
   import timeFormat from "@/utils/timeFormat";
@@ -154,6 +154,7 @@ limitations under the License. -->
         day: appStore.metricsTTL.day,
       });
     }
+    appStore.setDuration(InitializationDurationRow);
   }
 
   function handleChangeTheme() {

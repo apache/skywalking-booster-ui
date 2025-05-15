@@ -43,14 +43,16 @@ interface AppState {
   recordsTTL: Recordable<RecordsTTL>;
 }
 
+export const InitializationDurationRow = {
+  start: new Date(new Date().getTime() - 1800000),
+  end: new Date(),
+  step: TimeType.MINUTE_TIME,
+};
+
 export const appStore = defineStore({
   id: "app",
   state: (): AppState => ({
-    durationRow: {
-      start: new Date(new Date().getTime() - 1800000),
-      end: new Date(),
-      step: TimeType.MINUTE_TIME,
-    },
+    durationRow: InitializationDurationRow,
     utc: "",
     utcHour: 0,
     utcMin: 0,
