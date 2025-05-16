@@ -56,7 +56,7 @@ limitations under the License. -->
           active-text="Active Data"
           inactive-text="Cold Data"
           @change="changeDataMode"
-          width="130px"
+          width="90px"
         />
       </span>
       <span class="ml-5" ref="themeSwitchRef">
