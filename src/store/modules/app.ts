@@ -25,7 +25,7 @@ import type { MenuOptions, SubItem, MetricsTTL, RecordsTTL } from "@/types/app";
 import { Themes } from "@/constants/data";
 /*global Nullable*/
 interface AppState {
-  durationRow: Recordable;
+  durationRow: Duration;
   utc: string;
   utcHour: number;
   utcMin: number;

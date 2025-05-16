@@ -40,7 +40,7 @@ limitations under the License. -->
     </el-breadcrumb>
     <div class="title" v-else>{{ pageTitle }}</div>
     <div class="app-config">
-      <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
+      <span class="red" v-show="showTimeRangeTips">{{ t("timeTips") }}</span>
       <TimePicker
         :value="[appStore.durationRow.start, appStore.durationRow.end]"
         :maxRange="appStore.maxRange"
@@ -103,7 +103,7 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const route = useRoute();
   const pathNames = ref<{ path?: string; name: string; selected: boolean }[][]>([]);
-  const timeRange = ref<number>(0);
+  const showTimeRangeTips = ref<boolean>(false);
   const pageTitle = ref<string>("");
   const theme = ref<boolean>(true);
   const themeSwitchRef = ref<HTMLElement>();
@@ -215,8 +215,8 @@ limitations under the License. -->
   }
 
   function changeTimeRange(val: Date[]) {
-    timeRange.value = val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
-    if (timeRange.value) {
+    showTimeRangeTips.value = val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000;
+    if (showTimeRangeTips.value) {
       return;
     }
     appStore.setDuration(timeFormat(val));

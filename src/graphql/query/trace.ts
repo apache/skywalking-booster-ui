@@ -19,7 +19,7 @@ import { Traces, TraceSpans, TraceTagKeys, TraceTagValues, TraceSpansFromColdSta
 
 export const queryTraces = `query queryTraces(${Traces.variable}) {${Traces.query}}`;
 
-export const querySpans = `query queryTrace(${TraceSpans.variable}) {${TraceSpans.query}}`;
+export const querySpans = `query querySpans(${TraceSpans.variable}) {${TraceSpans.query}}`;
 
 export const queryTraceTagKeys = `query queryTraceTagKeys(${TraceTagKeys.variable}) {${TraceTagKeys.query}}`;
 
