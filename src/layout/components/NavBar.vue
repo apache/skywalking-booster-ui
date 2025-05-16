@@ -53,8 +53,8 @@ limitations under the License. -->
         <el-switch
           v-model="coldStage"
           inline-prompt
-          active-text="Set data to default"
-          inactive-text="Set data to cold"
+          active-text="Active Data"
+          inactive-text="Cold Data"
           @change="changeDataMode"
           width="130px"
         />
@@ -248,7 +248,7 @@ limitations under the License. -->
     if (!day) {
       return appStore.setMaxRange([]);
     }
-    const gap = dayToMS(day) + hour * 60 * 60 * 1000 + minute * 60 * 1000;
+    const gap = dayToMS(day + 1) + hour * 60 * 60 * 1000 + minute * 60 * 1000;
     const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
     appStore.setMaxRange(dates);
   }
