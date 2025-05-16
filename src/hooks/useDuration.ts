@@ -42,6 +42,9 @@ export function useDuration() {
     durationRow = data;
   }
   function getMaxRange(day: number) {
+    if (day === -1) {
+      return [];
+    }
     const gap = (day + 1) * 24 * 60 * 60 * 1000;
     const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
 

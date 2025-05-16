@@ -246,15 +246,18 @@ limitations under the License. -->
       minute: 20,
       hour: 2,
       day: 3,
-      coldMinute: 10,
+      coldMinute: 19,
       coldHour: 10,
       coldDay: 9,
     };
     appStore.setMetricsTTL(data);
   }
 
-  function handleMetricsTTL(params: { minute: number; hour: number; day: number }) {
-    const gap = dayToMS(params.day) + params.hour * 60 * 60 * 1000 + params.minute * 60 * 1000;
+  function handleMetricsTTL({ minute, hour, day }: { minute: number; hour: number; day: number }) {
+    if (minute === -1 || hour === -1 || day === -1) {
+      return appStore.setMaxRange([]);
+    }
+    const gap = dayToMS(day) + hour * 60 * 60 * 1000 + minute * 60 * 1000;
     const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
     appStore.setMaxRange(dates);
   }
