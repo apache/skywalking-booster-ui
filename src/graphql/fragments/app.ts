@@ -59,7 +59,7 @@ export const RecordsTTL = {
   }`,
 };
 export const MetricsTTL = {
-  query: `MetricsTTL {
+  query: `getMetricsTTL {
     minute
     hour
     day

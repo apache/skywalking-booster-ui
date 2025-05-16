@@ -135,12 +135,6 @@ export const appStore = defineStore({
     setMaxRange(times: Date[]) {
       this.maxRange = times;
     },
-    setMetricsTTL(data: MetricsTTL) {
-      this.metricsTTL = data;
-    },
-    setRecordsTTL(data: RecordsTTL) {
-      this.recordsTTL = data;
-    },
     setTheme(data: string) {
       this.theme = data;
     },
@@ -233,7 +227,16 @@ export const appStore = defineStore({
       if (res.errors) {
         return res;
       }
-
+      // mock data
+      // const data = {
+      //   minute: 20,
+      //   hour: 2,
+      //   day: 3,
+      //   coldMinute: 19,
+      //   coldHour: 10,
+      //   coldDay: 9,
+      // };
+      this.metricsTTL = res.data.getMetricsTTL;
       return res.data;
     },
     async queryRecordsTTL() {
@@ -241,7 +244,14 @@ export const appStore = defineStore({
       if (res.errors) {
         return res;
       }
-
+      // mock data
+      // const recordsData = {
+      //   value: 6,
+      //   superDataset: 2,
+      //   coldValue: 3,
+      //   coldSuperDataset: 5,
+      // };
+      this.recordsTTL = res.data.getRecordsTTL;
       return res.data;
     },
     setReloadTimer(timer: IntervalHandle) {

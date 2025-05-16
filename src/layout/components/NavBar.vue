@@ -228,29 +228,17 @@ limitations under the License. -->
     changeDataMode();
   }
   async function getRecordsTTL() {
-    // const resp = await appStore.queryRecordsTTL();
-    // mock data
-    const recordsData = {
-      value: 6,
-      superDataset: 2,
-      coldValue: 3,
-      coldSuperDataset: 5,
-    };
-    appStore.setRecordsTTL(recordsData.value);
+    const resp = await appStore.queryRecordsTTL();
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+    }
   }
 
   async function getMetricsTTL() {
-    // const resp = await appStore.queryMetricsTTL();
-    // mock data
-    const data = {
-      minute: 20,
-      hour: 2,
-      day: 3,
-      coldMinute: 19,
-      coldHour: 10,
-      coldDay: 9,
-    };
-    appStore.setMetricsTTL(data);
+    const resp = await appStore.queryMetricsTTL();
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+    }
   }
 
   function handleMetricsTTL({ minute, hour, day }: { minute: number; hour: number; day: number }) {
