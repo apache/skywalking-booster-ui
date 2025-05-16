@@ -245,13 +245,16 @@ limitations under the License. -->
     if (minute === -1 || hour === -1 || day === -1) {
       return appStore.setMaxRange([]);
     }
+    if (!day) {
+      return appStore.setMaxRange([]);
+    }
     const gap = dayToMS(day) + hour * 60 * 60 * 1000 + minute * 60 * 1000;
     const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
     appStore.setMaxRange(dates);
   }
 
   function dayToMS(day: number) {
-    return (day + 1) * 24 * 60 * 60 * 1000;
+    return day * 24 * 60 * 60 * 1000;
   }
 
   function getNavPaths() {
