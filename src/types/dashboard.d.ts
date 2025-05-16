@@ -60,10 +60,7 @@ export type Filters = {
   dataIndex: number;
   sourceId: string;
   isRange?: boolean;
-  duration?: {
-    startTime: string;
-    endTime: string;
-  };
+  duration?: DurationTime;
   traceId?: string;
   spanId?: string;
   segmentId?: string;

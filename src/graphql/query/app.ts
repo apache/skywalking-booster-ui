@@ -14,10 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OAPTimeInfo, OAPVersion, MenuItems } from "../fragments/app";
+import { OAPTimeInfo, OAPVersion, MenuItems, MetricsTTL, RecordsTTL } from "../fragments/app";
 
 export const queryOAPTimeInfo = `query queryOAPTimeInfo {${OAPTimeInfo.query}}`;
 
 export const queryOAPVersion = `query ${OAPVersion.query}`;
 
 export const queryMenuItems = `query menuItems {${MenuItems.query}}`;
+
+export const queryMetricsTTL = `query MetricsTTL {${MetricsTTL.query}}`;
+
+export const queryRecordsTTL = `query RecordsTTL {${RecordsTTL.query}}`;

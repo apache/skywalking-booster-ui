@@ -56,6 +56,16 @@ limitations under the License. -->
         @change="changeField('category', $event)"
       />
     </div>
+    <div>
+      <span class="sm b grey mr-5">{{ t("timeRange") }}:</span>
+      <TimePicker
+        :value="[durationRow.start, durationRow.end]"
+        :maxRange="maxRange"
+        position="bottom"
+        format="YYYY-MM-DD HH:mm"
+        @input="changeDuration"
+      />
+    </div>
     <el-button class="search-btn" size="small" type="primary" @click="searchLogs">
       {{ t("search") }}
     </el-button>
@@ -119,20 +129,21 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, reactive, watch, onUnmounted } from "vue";
+  import { ref, reactive, watch, onUnmounted, computed } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import type { Option } from "@/types/app";
+  import { ElMessage } from "element-plus";
   import { useLogStore } from "@/store/modules/log";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useSelectorStore } from "@/store/modules/selectors";
+  import { useDuration } from "@/hooks/useDuration";
   import ConditionTags from "@/views/components/ConditionTags.vue";
-  import { ElMessage } from "element-plus";
+  import timeFormat from "@/utils/timeFormat";
   import { EntityType } from "../../data";
   import { ErrorCategory } from "./data";
   import type { LayoutConfig } from "@/types/dashboard";
-  import type { DurationTime } from "@/types/app";
+  import type { Option, DurationTime, Duration } from "@/types/app";
 
   /*global defineProps, Recordable */
   const props = defineProps({
@@ -147,8 +158,9 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
   const logStore = useLogStore();
+  const { setDurationRow, getDurationTime, getMaxRange } = useDuration();
   const traceId = ref<string>((props.data.filters && props.data.filters.traceId) || "");
-  const duration = ref<DurationTime>((props.data.filters && props.data.filters.duration) || appStore.durationTime);
+  const duration = ref<DurationTime>((props.data.filters && props.data.filters.duration) || getDurationTime());
   const keywordsOfContent = ref<string[]>([]);
   const excludingKeywordsOfContent = ref<string[]>([]);
   const tagsList = ref<string[]>([]);
@@ -156,12 +168,16 @@ limitations under the License. -->
   const contentStr = ref<string>("");
   const excludingContentStr = ref<string>("");
   const isBrowser = ref<boolean>(dashboardStore.layerId === "BROWSER");
+  const durationRow = ref<Duration>(InitializationDurationRow);
   const state = reactive<Recordable>({
     instance: { value: "0", label: "All" },
     endpoint: { value: "0", label: "All" },
     service: { value: "", label: "" },
     category: { value: "ALL", label: "All" },
   });
+  const maxRange = computed(() =>
+    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL.coldSuperDataset : appStore.recordsTTL.superDataset),
+  );
   if (props.needQuery) {
     init();
   }
@@ -275,6 +291,11 @@ limitations under the License. -->
       ElMessage.error(res.errors);
     }
   }
+  function changeDuration(val: Date[]) {
+    durationRow.value = timeFormat(val);
+    setDurationRow(durationRow.value);
+    duration.value = getDurationTime();
+  }
   function changeField(type: string, opt: any) {
     state[type] = opt[0];
     if (type === "service") {
@@ -352,12 +373,12 @@ limitations under the License. -->
     },
   );
   watch(
-    () => appStore.durationTime,
+    () => appStore.coldStageMode,
     () => {
-      duration.value = appStore.durationTime;
-      if (dashboardStore.entity === EntityType[1].value) {
-        init();
-      }
+      durationRow.value = InitializationDurationRow;
+      setDurationRow(durationRow.value);
+      duration.value = getDurationTime();
+      init();
     },
   );
   watch(
@@ -368,7 +389,7 @@ limitations under the License. -->
           return;
         }
         traceId.value = props.data.filters.traceId || "";
-        duration.value = props.data.filters.duration || appStore.durationTime;
+        duration.value = props.data.filters.duration || getDurationTime();
         init();
       }
     },

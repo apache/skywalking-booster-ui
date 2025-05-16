@@ -68,3 +68,19 @@ export interface SubItem {
   descKey: string;
   i18nKey: string;
 }
+
+export interface MetricsTTL {
+  minute: number;
+  hour: number;
+  day: number;
+  coldMinute: number;
+  coldHour: number;
+  coldDay: number;
+}
+
+export interface RecordsTTL {
+  value: number;
+  superDataset: number;
+  coldValue: number;
+  coldSuperDataset: number;
+}

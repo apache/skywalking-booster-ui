@@ -21,6 +21,7 @@ import graphql from "@/graphql";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
+import { useDuration } from "@/hooks/useDuration";
 import { EndpointsTopNDefault } from "../data";
 
 interface LogState {
@@ -33,6 +34,7 @@ interface LogState {
   logs: Recordable[];
   loadLogs: boolean;
 }
+const { getDurationTime } = useDuration();
 
 export const logStore = defineStore({
   id: "log",
@@ -41,7 +43,7 @@ export const logStore = defineStore({
     instances: [{ value: "0", label: "All" }],
     endpoints: [{ value: "0", label: "All" }],
     conditions: {
-      queryDuration: useAppStoreWithOut().durationTime,
+      queryDuration: getDurationTime(),
       paging: { pageNum: 1, pageSize: 15 },
     },
     supportQueryLogsByKeywords: true,
@@ -56,7 +58,7 @@ export const logStore = defineStore({
     resetState() {
       this.logs = [];
       this.conditions = {
-        queryDuration: useAppStoreWithOut().durationTime,
+        queryDuration: getDurationTime(),
         paging: { pageNum: 1, pageSize: 15 },
       };
     },

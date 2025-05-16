@@ -68,6 +68,7 @@ limitations under the License. -->
               :left="true"
               :disabledDate="disabledDate"
               :format="format"
+              :maxRange="maxRange"
               @ok="ok"
               @setDates="setDates"
             />
@@ -78,6 +79,7 @@ limitations under the License. -->
               :right="true"
               :disabledDate="disabledDate"
               :format="format"
+              :maxRange="maxRange"
               @ok="ok"
               @setDates="setDates"
             />
@@ -112,11 +114,11 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import DateCalendar from "./DateCalendar.vue";
   import { useTimeoutFn } from "@/hooks/useTimeout";
-  /*global defineProps, defineEmits*/
+  /*global PropType, defineProps, defineEmits*/
   const datepicker = ref(null);
   const { t } = useI18n();
   const show = ref<boolean>(false);
-  const dates = ref<Date | string[] | any>([]);
+  const dates = ref<Date[]>([]);
   const props = defineProps({
     position: { type: String, default: "bottom" },
     name: [String],
@@ -149,7 +151,7 @@ limitations under the License. -->
       type: Boolean,
       default: false,
     },
-    dateRangeSelect: [Function],
+    maxRange: { type: Array as PropType<Date[]>, default: () => [] },
   });
   const emit = defineEmits(["clear", "input", "confirm", "cancel"]);
   const local = computed(() => {
