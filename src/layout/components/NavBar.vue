@@ -248,8 +248,8 @@ limitations under the License. -->
     if (!day) {
       return appStore.setMaxRange([]);
     }
-    const gap = dayToMS(day + 1) + hour * 60 * 60 * 1000 + minute * 60 * 1000;
-    const dates: Date[] = [new Date(new Date().getTime() - gap), new Date()];
+    const gap = Math.max(dayToMS(day), hour * 60 * 60 * 1000, minute * 60 * 1000);
+    const dates: Date[] = [new Date(new Date().getTime() - gap - dayToMS(1)), new Date()];
     appStore.setMaxRange(dates);
   }
 
