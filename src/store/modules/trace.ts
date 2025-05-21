@@ -23,6 +23,7 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { QueryOrders } from "@/views/dashboard/data";
 import { EndpointsTopNDefault } from "../data";
+import { useDuration } from "@/hooks/useDuration";
 interface TraceState {
   services: Service[];
   instances: Instance[];
@@ -35,6 +36,7 @@ interface TraceState {
   selectorStore: Recordable;
   selectedSpan: Recordable<Span>;
 }
+const { getDurationTime } = useDuration();
 
 export const traceStore = defineStore({
   id: "trace",
@@ -47,7 +49,7 @@ export const traceStore = defineStore({
     currentTrace: {},
     selectedSpan: {},
     conditions: {
-      queryDuration: useAppStoreWithOut().durationTime,
+      queryDuration: getDurationTime(),
       traceState: "ALL",
       queryOrder: QueryOrders[0].value,
       paging: { pageNum: 1, pageSize: 20 },
@@ -73,7 +75,7 @@ export const traceStore = defineStore({
       this.traceList = [];
       this.currentTrace = {};
       this.conditions = {
-        queryDuration: useAppStoreWithOut().durationTime,
+        queryDuration: getDurationTime(),
         paging: { pageNum: 1, pageSize: 20 },
         traceState: "ALL",
         queryOrder: QueryOrders[0].value,
@@ -166,7 +168,15 @@ export const traceStore = defineStore({
       return response;
     },
     async getTraceSpans(params: { traceId: string }) {
-      const response = await graphql.query("queryTrace").params(params);
+      const appStore = useAppStoreWithOut();
+      let response;
+      if (appStore.coldStageMode) {
+        response = await graphql
+          .query("queryTraceSpansFromColdStage")
+          .params({ ...params, duration: this.conditions.queryDuration });
+      } else {
+        response = await graphql.query("querySpans").params(params);
+      }
       if (response.errors) {
         return response;
       }

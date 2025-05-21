@@ -49,3 +49,22 @@ export const MenuItems = {
       }
     `,
 };
+
+export const RecordsTTL = {
+  query: `getRecordsTTL {
+    value
+    superDataset
+    coldValue
+    coldSuperDataset
+  }`,
+};
+export const MetricsTTL = {
+  query: `getMetricsTTL {
+    minute
+    hour
+    day
+    coldMinute
+    coldHour
+    coldDay
+  }`,
+};

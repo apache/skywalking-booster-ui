@@ -103,3 +103,63 @@ export const TraceTagValues = {
   query: `
   tagValues: queryTraceTagAutocompleteValues(tagKey: $tagKey, duration: $duration)`,
 };
+
+export const TraceSpansFromColdStage = {
+  variable: "$traceId: ID!, $duration: Duration!, $debug: Boolean",
+  query: `
+  trace: queryTrace(traceId: $traceId, duration: $duration, debug: $debug) {
+    spans {
+      traceId
+      segmentId
+      spanId
+      parentSpanId
+      refs {
+        traceId
+        parentSegmentId
+        parentSpanId
+        type
+      }
+      serviceCode
+      serviceInstanceName
+      startTime
+      endTime
+      endpointName
+      type
+      peer
+      component
+      isError
+      layer
+      tags {
+        key
+        value
+      }
+      logs {
+        time
+        data {
+          key
+          value
+        }
+      }
+      attachedEvents {
+        startTime {
+          seconds
+          nanos
+        }
+        event
+        endTime {
+          seconds
+          nanos
+        }
+        tags {
+          key
+          value
+        }
+        summary {
+          key
+          value
+        }
+      }
+    }
+  }
+  `,
+};

@@ -40,14 +40,25 @@ limitations under the License. -->
     </el-breadcrumb>
     <div class="title" v-else>{{ pageTitle }}</div>
     <div class="app-config">
-      <span class="red" v-show="timeRange">{{ t("timeTips") }}</span>
+      <span class="red" v-show="showTimeRangeTips">{{ t("timeTips") }}</span>
       <TimePicker
         :value="[appStore.durationRow.start, appStore.durationRow.end]"
+        :maxRange="appStore.maxRange"
         position="bottom"
         format="YYYY-MM-DD HH:mm"
         @input="changeTimeRange"
       />
       <span> UTC{{ appStore.utcHour >= 0 ? "+" : "" }}{{ `${appStore.utcHour}:${appStore.utcMin}` }} </span>
+      <span class="ml-5">
+        <el-switch
+          v-model="coldStage"
+          inline-prompt
+          active-text="Active Data"
+          inactive-text="Cold Data"
+          @change="changeDataMode"
+          width="90px"
+        />
+      </span>
       <span class="ml-5" ref="themeSwitchRef">
         <el-switch
           v-model="theme"
@@ -75,7 +86,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { Themes } from "@/constants/data";
   import router from "@/router";
-  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { DashboardItem } from "@/types/dashboard";
   import timeFormat from "@/utils/timeFormat";
@@ -92,10 +103,11 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const route = useRoute();
   const pathNames = ref<{ path?: string; name: string; selected: boolean }[][]>([]);
-  const timeRange = ref<number>(0);
+  const showTimeRangeTips = ref<boolean>(false);
   const pageTitle = ref<string>("");
   const theme = ref<boolean>(true);
   const themeSwitchRef = ref<HTMLElement>();
+  const coldStage = ref<boolean>(false);
 
   const savedTheme = window.localStorage.getItem("theme-is-dark");
   if (savedTheme === "false") {
@@ -110,6 +122,7 @@ limitations under the License. -->
   resetDuration();
   getVersion();
   getNavPaths();
+  setTTL();
 
   function changeTheme() {
     const root = document.documentElement;
@@ -124,6 +137,24 @@ limitations under the License. -->
       appStore.setTheme(Themes.Light);
     }
     window.localStorage.setItem("theme-is-dark", String(theme.value));
+  }
+
+  function changeDataMode() {
+    appStore.setColdStageMode(coldStage.value);
+    if (coldStage.value) {
+      handleMetricsTTL({
+        minute: appStore.metricsTTL.coldMinute,
+        hour: appStore.metricsTTL.coldHour,
+        day: appStore.metricsTTL.coldDay,
+      });
+    } else {
+      handleMetricsTTL({
+        minute: appStore.metricsTTL.minute,
+        hour: appStore.metricsTTL.hour,
+        day: appStore.metricsTTL.day,
+      });
+    }
+    appStore.setDuration(InitializationDurationRow);
   }
 
   function handleChangeTheme() {
@@ -184,11 +215,46 @@ limitations under the License. -->
   }
 
   function changeTimeRange(val: Date[]) {
-    timeRange.value = val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000 ? 1 : 0;
-    if (timeRange.value) {
+    showTimeRangeTips.value = val[1].getTime() - val[0].getTime() > 60 * 24 * 60 * 60 * 1000;
+    if (showTimeRangeTips.value) {
       return;
     }
     appStore.setDuration(timeFormat(val));
+  }
+
+  function setTTL() {
+    getMetricsTTL();
+    getRecordsTTL();
+    changeDataMode();
+  }
+  async function getRecordsTTL() {
+    const resp = await appStore.queryRecordsTTL();
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+    }
+  }
+
+  async function getMetricsTTL() {
+    const resp = await appStore.queryMetricsTTL();
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+    }
+  }
+
+  function handleMetricsTTL({ minute, hour, day }: { minute: number; hour: number; day: number }) {
+    if (minute === -1 || hour === -1 || day === -1) {
+      return appStore.setMaxRange([]);
+    }
+    if (!day) {
+      return appStore.setMaxRange([]);
+    }
+    const gap = Math.max(day, hour, minute);
+    const dates: Date[] = [new Date(new Date().getTime() - dayToMS(gap + 1)), new Date()];
+    appStore.setMaxRange(dates);
+  }
+
+  function dayToMS(day: number) {
+    return day * 24 * 60 * 60 * 1000;
   }
 
   function getNavPaths() {

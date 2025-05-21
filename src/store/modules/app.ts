@@ -21,11 +21,11 @@ import type { Duration, DurationTime } from "@/types/app";
 import getLocalTime from "@/utils/localtime";
 import dateFormatStep, { dateFormatTime } from "@/utils/dateFormat";
 import { TimeType } from "@/constants/data";
-import type { MenuOptions, SubItem } from "@/types/app";
+import type { MenuOptions, SubItem, MetricsTTL, RecordsTTL } from "@/types/app";
 import { Themes } from "@/constants/data";
 /*global Nullable*/
 interface AppState {
-  durationRow: Recordable;
+  durationRow: Duration;
   utc: string;
   utcHour: number;
   utcMin: number;
@@ -37,16 +37,22 @@ interface AppState {
   reloadTimer: Nullable<IntervalHandle>;
   allMenus: MenuOptions[];
   theme: string;
+  coldStageMode: boolean;
+  maxRange: Date[];
+  metricsTTL: Recordable<MetricsTTL>;
+  recordsTTL: Recordable<RecordsTTL>;
 }
+
+export const InitializationDurationRow = {
+  start: new Date(new Date().getTime() - 1800000),
+  end: new Date(),
+  step: TimeType.MINUTE_TIME,
+};
 
 export const appStore = defineStore({
   id: "app",
   state: (): AppState => ({
-    durationRow: {
-      start: new Date(new Date().getTime() - 1800000),
-      end: new Date(),
-      step: TimeType.MINUTE_TIME,
-    },
+    durationRow: InitializationDurationRow,
     utc: "",
     utcHour: 0,
     utcMin: 0,
@@ -58,6 +64,10 @@ export const appStore = defineStore({
     reloadTimer: null,
     allMenus: [],
     theme: Themes.Dark,
+    coldStageMode: false,
+    maxRange: [],
+    metricsTTL: {},
+    recordsTTL: {},
   }),
   getters: {
     duration(): Duration {
@@ -122,6 +132,9 @@ export const appStore = defineStore({
     updateDurationRow(data: Duration) {
       this.durationRow = data;
     },
+    setMaxRange(times: Date[]) {
+      this.maxRange = times;
+    },
     setTheme(data: string) {
       this.theme = data;
     },
@@ -142,6 +155,9 @@ export const appStore = defineStore({
     },
     setAutoRefresh(auto: boolean) {
       this.autoRefresh = auto;
+    },
+    setColdStageMode(mode: boolean) {
+      this.coldStageMode = mode;
     },
     runEventStack() {
       if (this.timer) {
@@ -204,6 +220,22 @@ export const appStore = defineStore({
         return res;
       }
 
+      return res.data;
+    },
+    async queryMetricsTTL() {
+      const res = await graphql.query("queryMetricsTTL").params({});
+      if (res.errors) {
+        return res;
+      }
+      this.metricsTTL = res.data.getMetricsTTL;
+      return res.data;
+    },
+    async queryRecordsTTL() {
+      const res = await graphql.query("queryRecordsTTL").params({});
+      if (res.errors) {
+        return res;
+      }
+      this.recordsTTL = res.data.getRecordsTTL;
       return res.data;
     },
     setReloadTimer(timer: IntervalHandle) {

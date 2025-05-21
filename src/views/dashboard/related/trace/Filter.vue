@@ -71,24 +71,36 @@ limitations under the License. -->
       <span class="grey mr-5">-</span>
       <el-input size="small" class="inputs" v-model="maxTraceDuration" type="number" />
     </div>
+    <div>
+      <span class="sm b grey mr-5">{{ t("timeRange") }}:</span>
+      <TimePicker
+        :value="[durationRow.start, durationRow.end]"
+        :maxRange="maxRange"
+        position="bottom"
+        format="YYYY-MM-DD HH:mm"
+        @input="changeDuration"
+      />
+    </div>
   </div>
   <div class="flex-h">
     <ConditionTags :type="'TRACE'" @update="updateTags" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, reactive, watch, onUnmounted } from "vue";
+  import { ref, reactive, watch, onUnmounted, computed } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import type { Option, DurationTime } from "@/types/app";
+  import type { Option, DurationTime, Duration } from "@/types/app";
   import { useTraceStore } from "@/store/modules/trace";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useSelectorStore } from "@/store/modules/selectors";
+  import timeFormat from "@/utils/timeFormat";
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { ElMessage } from "element-plus";
   import { EntityType, QueryOrders, Status } from "../../data";
   import type { LayoutConfig } from "@/types/dashboard";
+  import { useDuration } from "@/hooks/useDuration";
 
   /*global defineProps, defineEmits, Recordable */
   const emits = defineEmits(["get", "search"]);
@@ -99,14 +111,15 @@ limitations under the License. -->
       default: () => ({ graph: {} }),
     },
   });
-  const filters = reactive<Recordable>(props.data.filters || {});
-  const traceId = ref<string>(filters.traceId || "");
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
   const traceStore = useTraceStore();
-  const duration = ref<DurationTime>(filters.duration || appStore.durationTime);
+  const { setDurationRow, getDurationTime, getMaxRange } = useDuration();
+  const filters = reactive<Recordable>(props.data.filters || {});
+  const traceId = ref<string>(filters.traceId || "");
+  const duration = ref<DurationTime>(filters.duration || getDurationTime());
   const minTraceDuration = ref<number>();
   const maxTraceDuration = ref<number>();
   const tagsList = ref<string[]>([]);
@@ -117,6 +130,10 @@ limitations under the License. -->
     endpoint: { value: "0", label: "All" },
     service: { value: "", label: "" },
   });
+  const durationRow = ref<Duration>(InitializationDurationRow);
+  const maxRange = computed(() =>
+    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL.coldSuperDataset : appStore.recordsTTL.superDataset),
+  );
   if (filters.queryOrder) {
     traceStore.setTraceCondition({
       queryOrder: filters.queryOrder,
@@ -255,6 +272,11 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
     }
   }
+  function changeDuration(val: Date[]) {
+    durationRow.value = timeFormat(val);
+    setDurationRow(durationRow.value);
+    duration.value = getDurationTime();
+  }
   onUnmounted(() => {
     traceStore.resetState();
     const config = props.data;
@@ -280,12 +302,12 @@ limitations under the License. -->
     },
   );
   watch(
-    () => appStore.durationTime,
+    () => appStore.coldStageMode,
     () => {
-      duration.value = appStore.durationTime;
-      if (dashboardStore.entity === EntityType[1].value) {
-        init();
-      }
+      durationRow.value = InitializationDurationRow;
+      setDurationRow(durationRow.value);
+      duration.value = getDurationTime();
+      init();
     },
   );
   // Event widget associate with trace widget
@@ -299,7 +321,7 @@ limitations under the License. -->
         return;
       }
       traceId.value = props.data.filters.traceId || "";
-      duration.value = props.data.filters.duration || appStore.durationTime;
+      duration.value = props.data.filters.duration || getDurationTime();
       init();
     },
   );

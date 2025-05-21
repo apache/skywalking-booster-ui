@@ -169,12 +169,13 @@ limitations under the License. -->
     value: { type: Date },
     left: { type: Boolean, default: false },
     right: { type: Boolean, default: false },
-    dates: { type: Array as PropType<number[] | string[]>, default: () => [] },
+    dates: { type: Array as PropType<Date[]>, default: () => [] },
     disabledDate: { type: Function, default: () => false },
     format: {
       type: String,
       default: "YYYY-MM-DD",
     },
+    maxRange: { type: Array as PropType<Date[]>, default: () => [] },
   });
   const state = reactive({
     pre: "",
@@ -240,6 +241,12 @@ limitations under the License. -->
   });
   const end = computed(() => {
     return parse(Number(props.dates[1]));
+  });
+  const minStart = computed(() => {
+    return parse(Number(props.maxRange[0]));
+  });
+  const maxEnd = computed(() => {
+    return parse(Number(props.maxRange[1]));
   });
   const ys = computed(() => {
     return Math.floor(state.year / 10) * 10;
@@ -369,7 +376,10 @@ limitations under the License. -->
       flag = tf(props.value, format) === tf(time, format);
     }
     classObj[`${state.pre}-date`] = true;
-    classObj[`${state.pre}-date-disabled`] = (props.right && t < start.value) || props.disabledDate(time, format);
+    const rightDisabled = props.right && (t < start.value || t > maxEnd.value || !props.maxRange?.length);
+    const leftDisabled =
+      props.left && (t < minStart.value || t > end.value || !props.maxRange?.length || t > maxEnd.value);
+    classObj[`${state.pre}-date-disabled`] = rightDisabled || leftDisabled || props.disabledDate(time, format);
     classObj[`${state.pre}-date-on`] = (props.left && t > start.value) || (props.right && t < end.value);
     classObj[`${state.pre}-date-selected`] = flag;
     return classObj;
