@@ -21,7 +21,7 @@ import graphql from "@/graphql";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import fetchQuery from "@/graphql/fetch";
+import customQuery from "@/graphql/custom-query";
 import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
 
 interface MetricVal {
@@ -431,7 +431,7 @@ export const topologyStore = defineStore({
       });
       const queryStr = `query queryData(${variables}) {${fragment}}`;
       const conditions = { duration };
-      const res = await fetchQuery({ queryStr, conditions });
+      const res = await customQuery({ queryStr, conditions });
 
       if (res.errors) {
         return res;
@@ -448,7 +448,7 @@ export const topologyStore = defineStore({
       return { calls, nodes };
     },
     async getTopologyExpressionValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
-      const res = await fetchQuery(param);
+      const res = await customQuery(param);
 
       if (res.errors) {
         return res;

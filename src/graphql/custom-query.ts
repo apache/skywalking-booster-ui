@@ -16,7 +16,7 @@
  */
 import { httpQuery } from "./base";
 
-async function fetchQuery(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
+async function customQuery(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
   const response = await httpQuery({
     method: "post",
     json: { query: param.queryStr, variables: { ...param.conditions } },
@@ -28,4 +28,4 @@ async function fetchQuery(param: { queryStr: string; conditions: { [key: string]
   return response;
 }
 
-export default fetchQuery;
+export default customQuery;
