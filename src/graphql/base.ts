@@ -41,16 +41,18 @@ export async function httpQuery({
   method = "GET",
   json,
   headers = {},
+  basePath = `/graphql`,
 }: {
   path?: string;
   method: string;
   json: unknown;
   headers: Recordable;
+  basePath?: string;
 }) {
   const timeoutId = setTimeout(() => {
     abortRequestsAndUpdate();
   }, Timeout);
-  const url = `${BasePath}${path}`;
+  const url = `${basePath || BasePath}${path}`;
   const response: Response = await fetch(url, {
     method,
     headers: {
