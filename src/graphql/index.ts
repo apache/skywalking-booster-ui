@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { httpQuery } from "./base";
+import { httpQuery, BasePath } from "./base";
 import * as app from "./query/app";
 import * as selector from "./query/selector";
 import * as dashboard from "./query/dashboard";
@@ -50,8 +50,8 @@ class Graphql {
   }
   async params(variables: unknown) {
     const response = await httpQuery({
+      url: BasePath,
       method: "post",
-      headers: {},
       json: {
         query: query[this.queryData],
         variables,

@@ -14,24 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { httpQuery } from "./base";
+export const ClusterNodes = `/status/cluster/nodes`;
 
-export default async function fetchQuery({
-  headers,
-  method,
-  json,
-}: {
-  method: string;
-  json: unknown;
-  headers: Recordable;
-}) {
-  const response = await httpQuery({
-    method,
-    json,
-    headers,
-  });
-  if (response.errors) {
-    response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
-  }
-  return response;
-}
+export const ConfigTTL = `/status/config/ttl`;
+
+export const DebuggingConfigDump = `/debugging/config/dump`;

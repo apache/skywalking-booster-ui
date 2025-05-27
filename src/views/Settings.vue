@@ -47,6 +47,10 @@ limitations under the License. -->
         <i class="ml-10">{{ t("timeReload") }}</i>
       </div>
     </div>
+    <div class="flex-h item">
+      <span class="label">{{ t("TTL") }}</span>
+      <div> TTL </div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>

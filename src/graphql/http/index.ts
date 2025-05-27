@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { httpQuery, BasePath } from "./base";
+import { httpQuery } from "../base";
 
-async function customQuery(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
+export default async function fetchQuery({ method, json, url }: { method: string; json: unknown; url: string }) {
   const response = await httpQuery({
-    url: BasePath,
-    method: "post",
-    json: { query: param.queryStr, variables: { ...param.conditions } },
+    method,
+    json,
+    url,
   });
   if (response.errors) {
     response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
   }
   return response;
 }
-
-export default customQuery;
