@@ -39,14 +39,12 @@ export type EventParams = {
   seriesIndex: number;
   seriesName: string;
   name: string;
-  dataIndex: number;
   data: unknown;
   dataType: string;
   value: number | any[];
   color: string;
-  event: Record<string, T>;
+  event: Recordable;
   dataIndex: number;
-  event: any;
 };
 
 export interface MenuOptions extends SubItem {

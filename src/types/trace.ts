@@ -47,7 +47,6 @@ export interface Span {
   tags?: Array<Map<string, string>>;
   logs?: log[];
   parentSegmentId?: string;
-  refs?: Ref[];
   key?: string;
 }
 export type Ref = {
@@ -75,7 +74,7 @@ export interface StatisticsGroupRef {
   type: string;
 }
 
-export class TraceTreeRef {
+export interface TraceTreeRef {
   segmentMap: Map<string, Span>;
   segmentIdGroup: string[];
 }

@@ -14,18 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface HexagonCreateParams {
-  hexagonParam: number[];
-  count: number;
-  radius: number;
-  origin?: number[];
-  getShader?: any;
-}
-
-export interface HexagonGeo {
-  vertices: number[];
-  normals: number[];
-  insCenters: number[];
-  indices: number[];
-  origins: number[];
-}
+export type Cluster = {
+  host: string;
+  port: number;
+  isSelf: boolean;
+};

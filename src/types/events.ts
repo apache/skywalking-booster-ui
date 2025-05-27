@@ -14,16 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { httpQuery } from "../base";
+import type { Duration } from "./app";
 
-export default async function fetchQuery({ method, json, url }: { method: string; json?: unknown; url: string }) {
-  const response = await httpQuery({
-    method,
-    json,
-    url,
-  });
-  if (response.errors) {
-    response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
-  }
-  return response;
+export type Event = {
+  uuid: string;
+  source: SourceInput;
+  name: string;
+  type: string;
+  message: string;
+  parameters: { key: string; value: string }[];
+  startTime: number | string;
+  endTime: number | string;
+  entityType?: string;
+  checked?: boolean;
+  scope?: string;
+};
+
+export interface QueryEventCondition {
+  uuid: string;
+  source: SourceInput;
+  name: string;
+  type: string;
+  time: Duration;
+  order: string;
+  paging: { pageNum: number; pageSize: number; needTotal: boolean };
 }
+
+type SourceInput = {
+  service: string;
+  serviceInstance: string;
+  endpoint: string;
+};

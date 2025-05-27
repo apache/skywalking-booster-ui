@@ -14,32 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export type Event = {
-  uuid: string;
-  source: SourceInput;
-  name: string;
-  type: string;
-  message: string;
-  parameters: { key: string; value: string }[];
-  startTime: number | string;
-  endTime: number | string;
-  entityType?: string;
-  checked?: boolean;
-  scope?: string;
-};
+import { defineStore } from "pinia";
+import { store } from "@/store";
+import fetchQuery from "@/graphql/http";
+import type { Cluster } from "@/types/settings";
 
-export interface QueryEventCondition {
-  uuid: string;
-  source: SourceInput;
-  name: string;
-  type: EventType;
-  time: Duration;
-  order: string;
-  paging: { pageNum: number; pageSize: number; needTotal: boolean };
+interface SettingsState {
+  loading: boolean;
+  nodes: Cluster[];
 }
 
-type SourceInput = {
-  service: string;
-  serviceInstance: string;
-  endpoint: string;
-};
+export const settingsStore = defineStore({
+  id: "settings",
+  state: (): SettingsState => ({
+    nodes: [],
+    loading: false,
+  }),
+  actions: {
+    async getNodes() {
+      this.loading = true;
+      const res = await fetchQuery({
+        method: "get",
+        url: "",
+      });
+      this.loading = false;
+      if (res.errors) {
+        return res;
+      }
+
+      return res.data;
+    },
+  },
+});
+
+export function useSettingsStore(): Recordable {
+  return settingsStore(store);
+}
