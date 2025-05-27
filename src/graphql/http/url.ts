@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const ClusterNodes = `/status/cluster/nodes`;
 
-export const ConfigTTL = `/status/config/ttl`;
-
-export const DebuggingConfigDump = `/debugging/config/dump`;
+export const HttpURL = {
+  ClusterNodes: `/status/cluster/nodes`,
+  ConfigTTL: `/status/config/ttl`,
+  DebuggingConfigDump: `/debugging/config/dump`,
+};

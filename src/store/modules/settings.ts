@@ -21,28 +21,42 @@ import type { Cluster } from "@/types/settings";
 
 interface SettingsState {
   loading: boolean;
-  nodes: Cluster[];
+  clusterNodes: Cluster[];
 }
 
 export const settingsStore = defineStore({
   id: "settings",
   state: (): SettingsState => ({
-    nodes: [],
+    clusterNodes: [],
     loading: false,
   }),
   actions: {
-    async getNodes() {
+    async getClusterNodes() {
       this.loading = true;
       const res = await fetchQuery({
         method: "get",
-        url: "",
+        path: "ClusterNodes",
       });
       this.loading = false;
-      if (res.errors) {
-        return res;
-      }
-
-      return res.data;
+      return res.nodes;
+    },
+    async getConfigTTL() {
+      this.loading = true;
+      const res = await fetchQuery({
+        method: "get",
+        path: "ConfigTTL",
+      });
+      this.loading = false;
+      return res;
+    },
+    async getDebuggingConfigDump() {
+      this.loading = true;
+      const res = await fetchQuery({
+        method: "get",
+        path: "DebuggingConfigDump",
+      });
+      this.loading = false;
+      return res;
     },
   },
 });

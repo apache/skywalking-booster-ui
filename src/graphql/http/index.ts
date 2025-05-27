@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 import { httpQuery } from "../base";
+import { HttpURL } from "./url";
 
-export default async function fetchQuery({ method, json, url }: { method: string; json?: unknown; url: string }) {
+export default async function fetchQuery({ method, json, path }: { method: string; json?: unknown; path: string }) {
   const response = await httpQuery({
     method,
     json,
-    url,
+    url: (HttpURL as { [key: string]: string })[path],
   });
   if (response.errors) {
     response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
