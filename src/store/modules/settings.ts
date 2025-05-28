@@ -17,11 +17,13 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import fetchQuery from "@/graphql/http";
-import type { Cluster } from "@/types/settings";
+import type { Cluster, ConfigTTL } from "@/types/settings";
 
 interface SettingsState {
   loading: boolean;
   clusterNodes: Cluster[];
+  debuggingConfig: Indexable<string>;
+  configTTL: Recordable<ConfigTTL>;
 }
 
 export const settingsStore = defineStore({
@@ -29,6 +31,8 @@ export const settingsStore = defineStore({
   state: (): SettingsState => ({
     clusterNodes: [],
     loading: false,
+    debuggingConfig: {},
+    configTTL: {},
   }),
   actions: {
     async getClusterNodes() {
@@ -47,6 +51,7 @@ export const settingsStore = defineStore({
         path: "ConfigTTL",
       });
       this.loading = false;
+      this.configTTL = res;
       return res;
     },
     async getDebuggingConfigDump() {
@@ -56,6 +61,7 @@ export const settingsStore = defineStore({
         path: "DebuggingConfigDump",
       });
       this.loading = false;
+      this.debuggingConfig = res;
       return res;
     },
   },

@@ -14,8 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import type { MetricsTTL, RecordsTTL } from "@/types/app";
+
 export type Cluster = {
   host: string;
   port: number;
   isSelf: boolean;
+};
+
+export type ConfigTTL = {
+  metrics: MetricsTTL;
+  records: RecordsTTL;
 };
