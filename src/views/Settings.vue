@@ -48,15 +48,58 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h item">
-      <span class="label">{{ t("TTL") }}</span>
-      <div> TTL </div>
+      <span class="label">{{ t("metricsTTL") }}</span>
+      <div>
+        <span>Day: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.metrics?.day ?? -1 }}</span>
+        <span>Hour: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.metrics?.hour ?? -1 }}</span>
+        <span>Minute: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.metrics?.minute ?? -1 }}</span>
+      </div>
+      <div>
+        <span>Cold Day: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.metrics?.coldDay ?? -1 }}</span>
+        <span>Cold Hour: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.metrics?.coldHour ?? -1 }}</span>
+        <span>Cold Minute: </span>
+        <span>{{ settingsStore.configTTL.metrics?.coldMinute ?? -1 }}</span>
+      </div>
+    </div>
+    <div class="flex-h item">
+      <span class="label">{{ t("clusterNodes") }}</span>
+      <div style="width: 80%">
+        <el-table :data="settingsStore.clusterNodes" class="mb-5" style="width: 100%">
+          <el-table-column prop="host" label="Host" />
+          <el-table-column prop="port" label="Port" />
+          <el-table-column prop="isSelf" label="Self" />
+        </el-table>
+        <el-pagination
+          class="pagination"
+          layout="prev, pager, next"
+          :page-size="pageSize"
+          :total="Object.keys(settingsStore.debuggingConfig).length"
+          v-model="currentPage"
+          @current-change="changePage"
+          @prev-click="changePage"
+          @next-click="changePage"
+        />
+      </div>
+    </div>
+    <div class="flex-h item">
+      <span class="label">{{ t("debuggingConfigDump") }}</span>
+      <div class="dump" v-for="(item, index) of Object.keys(settingsStore.debuggingConfig)" :key="`${item}${index}`">
+        {{ `${item}: ${settingsStore.debuggingConfig[item]}` }}
+      </div>
+      <div v-if="!Object.keys(settingsStore.debuggingConfig).length" class="dump tips">No Data</div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, onMounted } from "vue";
   import { useI18n } from "vue-i18n";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useSettingsStore } from "@/store/modules/settings";
   import timeFormat from "@/utils/timeFormat";
   import { Languages } from "@/constants/data";
   import Selector from "@/components/Selector.vue";
@@ -64,11 +107,24 @@ limitations under the License. -->
 
   const { t, locale } = useI18n();
   const appStore = useAppStoreWithOut();
+  const settingsStore = useSettingsStore();
   const lang = ref<string>(locale.value || "en");
   const autoTime = ref<number>(6);
   const auto = ref<boolean>(appStore.autoRefresh || false);
   const utcHour = ref<number>(appStore.utcHour);
   const utcMin = ref<number>(appStore.utcMin);
+  const pageSize = 20;
+  const currentPage = ref<number>(1);
+
+  onMounted(() => {
+    settingsStore.getClusterNodes();
+    settingsStore.getConfigTTL();
+    settingsStore.getDebuggingConfigDump();
+  });
+
+  const changePage = (pageIndex: number) => {
+    currentPage.value = pageIndex;
+  };
 
   const handleReload = () => {
     const gap = appStore.duration.end.getTime() - appStore.duration.start.getTime();
@@ -134,6 +190,16 @@ limitations under the License. -->
   };
 </script>
 <style lang="scss" scoped>
+  .dump {
+    line-height: 25px;
+  }
+
+  .tips {
+    text-align: center;
+    width: 80%;
+    color: var(--el-text-color-secondary);
+  }
+
   .utc-input {
     color: inherit;
     background: 0;
@@ -165,7 +231,7 @@ limitations under the License. -->
     padding: 20px;
 
     .item {
-      margin-top: 10px;
+      margin-top: 15px;
     }
 
     input {
@@ -178,7 +244,7 @@ limitations under the License. -->
     }
 
     .label {
-      width: 180px;
+      width: 200px;
       display: inline-block;
       font-weight: 500;
       color: $font-color;

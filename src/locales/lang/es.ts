@@ -397,5 +397,8 @@ const msg = {
   snapshot: "Snapshot",
   expression: "Expression",
   asSelector: "As Selector",
+  metricsTTL: "Metrics TTL",
+  clusterNodes: "Cluster Nodes",
+  debuggingConfigDump: "Dump Effective Configurations",
 };
 export default msg;

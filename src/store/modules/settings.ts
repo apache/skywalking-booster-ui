@@ -20,7 +20,6 @@ import fetchQuery from "@/graphql/http";
 import type { Cluster, ConfigTTL } from "@/types/settings";
 
 interface SettingsState {
-  loading: boolean;
   clusterNodes: Cluster[];
   debuggingConfig: Indexable<string>;
   configTTL: Recordable<ConfigTTL>;
@@ -30,37 +29,30 @@ export const settingsStore = defineStore({
   id: "settings",
   state: (): SettingsState => ({
     clusterNodes: [],
-    loading: false,
     debuggingConfig: {},
     configTTL: {},
   }),
   actions: {
     async getClusterNodes() {
-      this.loading = true;
       const res = await fetchQuery({
         method: "get",
         path: "ClusterNodes",
       });
-      this.loading = false;
       return res.nodes;
     },
     async getConfigTTL() {
-      this.loading = true;
       const res = await fetchQuery({
         method: "get",
         path: "ConfigTTL",
       });
-      this.loading = false;
       this.configTTL = res;
       return res;
     },
     async getDebuggingConfigDump() {
-      this.loading = true;
       const res = await fetchQuery({
         method: "get",
         path: "DebuggingConfigDump",
       });
-      this.loading = false;
       this.debuggingConfig = res;
       return res;
     },
