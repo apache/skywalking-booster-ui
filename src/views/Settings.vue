@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="settings">
     <div class="flex-h item">
-      <span class="label">{{ t("language") }}</span>
+      <div class="label">{{ t("language") }}</div>
       <Selector
         v-model="lang"
         :options="Languages"
@@ -26,7 +26,7 @@ limitations under the License. -->
       />
     </div>
     <div class="flex-h item">
-      <span class="label">{{ t("serverZone") }}</span>
+      <div class="label">{{ t("serverZone") }}</div>
       <div>
         <span>UTC</span>
         <span class="ml-5 mr-5">{{ utcHour >= 0 ? "+" : "" }}</span>
@@ -37,7 +37,7 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h item">
-      <span class="label">{{ t("auto") }}</span>
+      <div class="label">{{ t("auto") }}</div>
       <el-switch v-model="auto" @change="handleAuto" style="height: 25px" />
       <div class="auto-time ml-5">
         <span class="auto-select">
@@ -48,7 +48,7 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h item">
-      <span class="label">{{ t("metricsTTL") }}</span>
+      <div class="label">{{ t("metricsTTL") }}</div>
       <div>
         <span>Day: </span>
         <span class="mr-10">{{ settingsStore.configTTL.metrics?.day ?? -1 }}</span>
@@ -67,7 +67,7 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h item">
-      <span class="label">{{ t("recordsTTL") }}</span>
+      <div class="label">{{ t("recordsTTL") }}</div>
       <div>
         <span>Normal: </span>
         <span class="mr-10">{{ settingsStore.configTTL.records?.normal ?? -1 }}</span>
@@ -94,7 +94,7 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h item">
-      <span class="label">{{ t("clusterNodes") }}</span>
+      <div class="label">{{ t("clusterNodes") }}</div>
       <div>
         <el-table
           :data="settingsStore.clusterNodes"
@@ -118,7 +118,7 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h item">
-      <span class="label">{{ t("debuggingConfigDump") }}</span>
+      <div class="label">{{ t("debuggingConfigDump") }}</div>
       <div class="config-dump-content">
         <div class="mb-10" v-for="(item, index) of Object.keys(settingsStore.debuggingConfig)" :key="`${item}${index}`">
           {{ `${item}: ${settingsStore.debuggingConfig[item]}` }}
@@ -234,7 +234,6 @@ limitations under the License. -->
   .tips {
     text-align: center;
     width: 80%;
-    line-height: 25px;
     color: var(--el-text-color-secondary);
   }
 
@@ -286,7 +285,6 @@ limitations under the License. -->
       display: inline-block;
       font-weight: 500;
       color: $font-color;
-      line-height: 25px;
     }
   }
 </style>
