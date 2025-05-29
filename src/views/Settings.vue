@@ -103,7 +103,7 @@ limitations under the License. -->
         >
           <el-table-column prop="host" label="Host" width="280" />
           <el-table-column prop="port" label="Port" width="180" />
-          <el-table-column prop="isSelf" label="Self" width="180" />
+          <el-table-column prop="self" label="Self" width="180" />
         </el-table>
         <el-pagination
           class="pagination"

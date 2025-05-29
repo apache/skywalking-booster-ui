@@ -20,7 +20,7 @@ import type { MetricsTTL, RecordsTTL } from "@/types/app";
 export type ClusterNode = {
   host: string;
   port: number;
-  isSelf: boolean;
+  self: boolean;
 };
 
 export type ConfigTTL = {
