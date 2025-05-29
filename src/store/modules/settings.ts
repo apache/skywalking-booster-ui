@@ -34,27 +34,28 @@ export const settingsStore = defineStore({
   }),
   actions: {
     async getClusterNodes() {
-      const res = await fetchQuery({
+      const response = await fetchQuery({
         method: "get",
         path: "ClusterNodes",
       });
-      return res.nodes;
+      this.clusterNodes = response.nodes;
+      return response;
     },
     async getConfigTTL() {
-      const res = await fetchQuery({
+      const response = await fetchQuery({
         method: "get",
         path: "ConfigTTL",
       });
-      this.configTTL = res;
-      return res;
+      this.configTTL = response;
+      return response;
     },
     async getDebuggingConfigDump() {
-      const res = await fetchQuery({
+      const response = await fetchQuery({
         method: "get",
         path: "DebuggingConfigDump",
       });
-      this.debuggingConfig = res;
-      return res;
+      this.debuggingConfig = response;
+      return response;
     },
   },
 });

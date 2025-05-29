@@ -16,11 +16,17 @@
  */
 import type { Duration } from "./app";
 
+const enum EventType {
+  ALL = "",
+  NORMAL = "Normal",
+  ERROR = "Error",
+}
+
 export type Event = {
   uuid: string;
   source: SourceInput;
   name: string;
-  type: string;
+  type: EventType;
   message: string;
   parameters: { key: string; value: string }[];
   startTime: number | string;

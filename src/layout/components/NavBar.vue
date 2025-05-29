@@ -224,7 +224,7 @@ limitations under the License. -->
 
   async function setTTL() {
     await getMetricsTTL();
-    getRecordsTTL();
+    await getRecordsTTL();
     changeDataMode();
   }
   async function getRecordsTTL() {
