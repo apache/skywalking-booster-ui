@@ -176,7 +176,15 @@ limitations under the License. -->
     category: { value: "ALL", label: "All" },
   });
   const maxRange = computed(() =>
-    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL.coldLog : appStore.recordsTTL.log),
+    getMaxRange(
+      appStore.coldStageMode
+        ? isBrowser.value
+          ? appStore.recordsTTL.coldBrowserErrorLog
+          : appStore.recordsTTL.coldLog
+        : isBrowser.value
+        ? appStore.recordsTTL.browserErrorLog
+        : appStore.recordsTTL.log,
+    ),
   );
   if (props.needQuery) {
     init();
