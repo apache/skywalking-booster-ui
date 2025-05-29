@@ -77,8 +77,14 @@ export interface MetricsTTL {
 }
 
 export interface RecordsTTL {
-  value: number;
-  superDataset: number;
-  coldValue: number;
-  coldSuperDataset: number;
+  normal: number;
+  trace: number;
+  zipkinTrace: number;
+  log: number;
+  browserErrorLog: number;
+  coldNormal: number;
+  coldTrace: number;
+  coldZipkinTrace: number;
+  coldLog: number;
+  coldBrowserErrorLog: number;
 }

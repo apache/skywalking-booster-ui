@@ -398,6 +398,7 @@ const msg = {
   expression: "Expression",
   asSelector: "As Selector",
   metricsTTL: "Metrics TTL",
+  recordsTTL: "Records TTL",
   clusterNodes: "Cluster Nodes",
   debuggingConfigDump: "Dump Effective Configurations",
 };

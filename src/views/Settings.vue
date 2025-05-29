@@ -67,6 +67,33 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h item">
+      <span class="label">{{ t("recordsTTL") }}</span>
+      <div>
+        <span>Normal: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.records?.normal ?? -1 }}</span>
+        <span>Hour: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.records?.trace ?? -1 }}</span>
+        <span>Minute: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.records?.zipkinTrace ?? -1 }}</span>
+        <span>Log: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.records?.log ?? -1 }}</span>
+        <span>Browser Error Log: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.records?.browserErrorLog ?? -1 }}</span>
+      </div>
+      <div>
+        <span>Cold Normal: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.metrics?.coldNormal ?? -1 }}</span>
+        <span>Cold Trace: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.metrics?.coldTrace ?? -1 }}</span>
+        <span>Cold Zipkin Trace: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.metrics?.coldZipkinTrace ?? -1 }}</span>
+        <span>Cold Log: </span>
+        <span class="mr-10">{{ settingsStore.configTTL.metrics?.coldLog ?? -1 }}</span>
+        <span>Cold Browser Error Log: </span>
+        <span>{{ settingsStore.configTTL.metrics?.coldBrowserErrorLog ?? -1 }}</span>
+      </div>
+    </div>
+    <div class="flex-h item">
       <span class="label">{{ t("clusterNodes") }}</span>
       <div style="width: 80%">
         <el-table :data="settingsStore.clusterNodes" class="mb-5" style="width: 100%">
