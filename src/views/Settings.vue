@@ -95,17 +95,21 @@ limitations under the License. -->
     </div>
     <div class="flex-h item">
       <span class="label">{{ t("clusterNodes") }}</span>
-      <div style="width: 80%">
-        <el-table :data="settingsStore.clusterNodes" class="mb-5" style="width: 100%">
-          <el-table-column prop="host" label="Host" />
-          <el-table-column prop="port" label="Port" />
-          <el-table-column prop="isSelf" label="Self" />
+      <div>
+        <el-table
+          :data="settingsStore.clusterNodes"
+          class="mb-5"
+          :row-style="{ backgroundColor: 'var(--layout-background)' }"
+        >
+          <el-table-column prop="host" label="Host" width="280" />
+          <el-table-column prop="port" label="Port" width="180" />
+          <el-table-column prop="isSelf" label="Self" width="180" />
         </el-table>
         <el-pagination
           class="pagination"
           layout="prev, pager, next"
           :page-size="pageSize"
-          :total="Object.keys(settingsStore.debuggingConfig).length"
+          :total="settingsStore.clusterNodes.length"
           v-model="currentPage"
           @current-change="changePage"
           @prev-click="changePage"
@@ -115,15 +119,17 @@ limitations under the License. -->
     </div>
     <div class="flex-h item">
       <span class="label">{{ t("debuggingConfigDump") }}</span>
-      <div class="dump" v-for="(item, index) of Object.keys(settingsStore.debuggingConfig)" :key="`${item}${index}`">
-        {{ `${item}: ${settingsStore.debuggingConfig[item]}` }}
+      <div class="config-dump-content">
+        <div class="mb-10" v-for="(item, index) of Object.keys(settingsStore.debuggingConfig)" :key="`${item}${index}`">
+          {{ `${item}: ${settingsStore.debuggingConfig[item]}` }}
+        </div>
+        <div v-if="!Object.keys(settingsStore.debuggingConfig).length" class="tips">No Data</div>
       </div>
-      <div v-if="!Object.keys(settingsStore.debuggingConfig).length" class="dump tips">No Data</div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, onMounted } from "vue";
+  import { ref, computed, onMounted } from "vue";
   import { useI18n } from "vue-i18n";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useSettingsStore } from "@/store/modules/settings";
@@ -217,13 +223,18 @@ limitations under the License. -->
   };
 </script>
 <style lang="scss" scoped>
-  .dump {
-    line-height: 25px;
+  .config-dump-content {
+    border: 1px solid var(--el-color-info-light-8);
+    height: 400px;
+    overflow: auto;
+    padding: 5px;
+    border-radius: 5px 3px;
   }
 
   .tips {
     text-align: center;
     width: 80%;
+    line-height: 25px;
     color: var(--el-text-color-secondary);
   }
 

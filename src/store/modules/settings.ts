@@ -17,10 +17,10 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
 import fetchQuery from "@/graphql/http";
-import type { Cluster, ConfigTTL } from "@/types/settings";
+import type { ClusterNode, ConfigTTL } from "@/types/settings";
 
 interface SettingsState {
-  clusterNodes: Cluster[];
+  clusterNodes: ClusterNode[];
   debuggingConfig: Indexable<string>;
   configTTL: Recordable<ConfigTTL>;
 }

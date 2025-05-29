@@ -77,6 +77,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         },
         "/api": {
           target: `${VITE_SW_PROXY_TARGET || "http://127.0.0.1:12800"}`,
+          changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },
       },
