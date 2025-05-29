@@ -132,7 +132,7 @@ limitations under the License. -->
   });
   const durationRow = ref<Duration>(InitializationDurationRow);
   const maxRange = computed(() =>
-    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL.coldSuperDataset : appStore.recordsTTL.superDataset),
+    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL.coldTrace : appStore.recordsTTL.trace),
   );
   if (filters.queryOrder) {
     traceStore.setTraceCondition({

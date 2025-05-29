@@ -87,7 +87,7 @@ limitations under the License. -->
     alarmStore.alarms.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
   );
   const maxRange = computed(() =>
-    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL.coldValue : appStore.recordsTTL.value),
+    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL.coldNormal : appStore.recordsTTL.normal),
   );
 
   refreshAlarms({ pageNum: 1 });
