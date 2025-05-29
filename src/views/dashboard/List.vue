@@ -188,7 +188,7 @@ limitations under the License. -->
   /*global Nullable, Recordable*/
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const pageSize = 20;
+  const pageSize = 12;
   const dashboards = ref<DashboardItem[]>([]);
   const searchText = ref<string>("");
   const loading = ref<boolean>(false);

@@ -16,7 +16,7 @@
  */
 
 export const HttpURL = {
-  ClusterNodes: `/status/cluster/nodes`,
-  ConfigTTL: `/status/config/ttl`,
-  DebuggingConfigDump: `/debugging/config/dump`,
+  ClusterNodes: `/api/status/cluster/nodes`,
+  ConfigTTL: `/api/status/config/ttl`,
+  DebuggingConfigDump: `/api/debugging/config/dump`,
 };
