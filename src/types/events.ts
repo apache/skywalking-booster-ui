@@ -40,7 +40,7 @@ export interface QueryEventCondition {
   uuid: string;
   source: SourceInput;
   name: string;
-  type: string;
+  type: EventType;
   time: Duration;
   order: string;
   paging: { pageNum: number; pageSize: number; needTotal: boolean };
