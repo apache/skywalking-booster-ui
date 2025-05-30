@@ -45,7 +45,7 @@ limitations under the License. -->
   import { ClusterNodeRow } from "../data";
 
   const settingsStore = useSettingsStore();
-  const pageSize = 20;
+  const pageSize = 16;
   const currentPage = ref<number>(1);
 
   onMounted(() => {
