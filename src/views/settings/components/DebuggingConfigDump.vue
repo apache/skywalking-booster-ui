@@ -24,10 +24,8 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { onMounted } from "vue";
-  import { useI18n } from "vue-i18n";
   import { useSettingsStore } from "@/store/modules/settings";
 
-  const { t, locale } = useI18n();
   const settingsStore = useSettingsStore();
 
   onMounted(() => {

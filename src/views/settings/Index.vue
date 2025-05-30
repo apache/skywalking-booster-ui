@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-tabs v-model="activeName" class="settings-tabs" @tab-click="handleClick">
+  <el-tabs v-model="activeName" class="settings-tabs">
     <el-tab-pane v-for="tab in SettingsTabs" :label="tab.label" :name="tab.value" :key="tab.value">
       <component :is="TabPanes[tab.value]" />
     </el-tab-pane>
@@ -21,24 +21,19 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
-  import type { TabsPaneContext } from "element-plus";
   import { SettingsTabs } from "./data";
   import ClusterNodes from "./components/ClusterNodes.vue";
   import General from "./components/General.vue";
   import TTL from "./components/TTL.vue";
   import DebuggingConfigDump from "./components/DebuggingConfigDump.vue";
-
-  const enum TabPanes {
-    general = General,
-    ttl = TTL,
-    clusterNodes = ClusterNodes,
-    dumpEffectiveConfigurations = DebuggingConfigDump,
-  }
+  /*global Indexable*/
+  const TabPanes: Indexable = {
+    general: General,
+    ttl: TTL,
+    clusterNodes: ClusterNodes,
+    dumpEffectiveConfigurations: DebuggingConfigDump,
+  };
   const activeName = ref(SettingsTabs[0].value);
-
-  function handleClick(tab: TabsPaneContext, event: Event) {
-    console.log(tab, event);
-  }
 </script>
 <style lang="scss" scoped>
   .settings-tabs {

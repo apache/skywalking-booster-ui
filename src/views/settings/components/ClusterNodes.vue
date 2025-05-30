@@ -41,11 +41,9 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { ref, onMounted } from "vue";
-  import { useI18n } from "vue-i18n";
   import { useSettingsStore } from "@/store/modules/settings";
   import { ClusterNodeRow } from "../data";
 
-  const { t, locale } = useI18n();
   const settingsStore = useSettingsStore();
   const pageSize = 20;
   const currentPage = ref<number>(1);

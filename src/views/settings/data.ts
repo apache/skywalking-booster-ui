@@ -50,3 +50,72 @@ export const SettingsTabs = [
     value: "dumpEffectiveConfigurations",
   },
 ];
+export const MetricsTTLRow = [
+  {
+    label: "Day",
+    value: "day",
+  },
+  {
+    label: "Hour",
+    value: "hour",
+  },
+  {
+    label: "Minute",
+    value: "minute",
+  },
+  {
+    label: "Cold Day",
+    value: "coldDay",
+  },
+  {
+    label: "Cold Hour",
+    value: "coldHour",
+  },
+  {
+    label: "Cold Minute",
+    value: "coldMinute",
+  },
+];
+
+export const RecordsTTLRow = [
+  {
+    label: "Normal",
+    value: "normal",
+  },
+  {
+    label: "Trace",
+    value: "trace",
+  },
+  {
+    label: "Log",
+    value: "log",
+  },
+  {
+    label: "Zipkin Trace",
+    value: "zipkinTrace",
+  },
+  {
+    label: "Browser Error Log",
+    value: "browserErrorLog",
+  },
+  {
+    label: "Cold Normal",
+    value: "coldNormal",
+  },
+  {
+    label: "Cold Trace",
+    value: "coldTrace",
+  },
+  {
+    label: "Cold Zipkin Trace",
+    value: "coldZipkinTrace",
+  },
+  {
+    label: "Cold Log",
+    value: "coldLog",
+  },
+  {
+    label: "Cold Browser Error Log",
+    value: "coldBrowserErrorLog",
+  },
+];
