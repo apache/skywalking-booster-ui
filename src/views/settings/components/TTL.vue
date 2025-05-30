@@ -57,7 +57,7 @@ limitations under the License. -->
     .label {
       margin: 15px 0;
       display: inline-block;
-      font-weight: 500;
+      font-weight: 600;
       color: $font-color;
     }
   }
