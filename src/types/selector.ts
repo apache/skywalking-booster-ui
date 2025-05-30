@@ -42,16 +42,6 @@ export type Endpoint = {
   merge?: string;
 };
 
-export type Service = {
-  id: string;
-  value: string;
-  label: string;
-  group: string;
-  normal: boolean;
-  layers: string[];
-  shortName: string;
-};
-
 export type Process = {
   id: string;
   name: string;

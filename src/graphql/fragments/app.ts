@@ -52,10 +52,16 @@ export const MenuItems = {
 
 export const RecordsTTL = {
   query: `getRecordsTTL {
-    value
-    superDataset
-    coldValue
-    coldSuperDataset
+    normal
+    trace
+    zipkinTrace
+    log
+    browserErrorLog
+    coldNormal
+    coldTrace
+    coldZipkinTrace
+    coldLog
+    coldBrowserErrorLog
   }`,
 };
 export const MetricsTTL = {

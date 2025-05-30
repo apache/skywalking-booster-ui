@@ -14,18 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { httpQuery } from "./base";
+import type { Duration } from "./app";
 
-async function fetchQuery(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
-  const response = await httpQuery({
-    method: "post",
-    json: { query: param.queryStr, variables: { ...param.conditions } },
-    headers: {},
-  });
-  if (response.errors) {
-    response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
-  }
-  return response;
+const enum EventType {
+  ALL = "",
+  NORMAL = "Normal",
+  ERROR = "Error",
 }
 
-export default fetchQuery;
+export type Event = {
+  uuid: string;
+  source: SourceInput;
+  name: string;
+  type: EventType;
+  message: string;
+  parameters: { key: string; value: string }[];
+  startTime: number | string;
+  endTime: number | string;
+  entityType?: string;
+  checked?: boolean;
+  scope?: string;
+};
+
+export interface QueryEventCondition {
+  uuid: string;
+  source: SourceInput;
+  name: string;
+  type: EventType;
+  time: Duration;
+  order: string;
+  paging: { pageNum: number; pageSize: number; needTotal: boolean };
+}
+
+type SourceInput = {
+  service: string;
+  serviceInstance: string;
+  endpoint: string;
+};

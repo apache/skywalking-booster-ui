@@ -14,32 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export type Event = {
-  uuid: string;
-  source: SourceInput;
-  name: string;
-  type: string;
-  message: string;
-  parameters: { key: string; value: string }[];
-  startTime: number | string;
-  endTime: number | string;
-  entityType?: string;
-  checked?: boolean;
-  scope?: string;
+
+import type { MetricsTTL, RecordsTTL } from "@/types/app";
+
+export type ClusterNode = {
+  host: string;
+  port: number;
+  self: boolean;
 };
 
-export interface QueryEventCondition {
-  uuid: string;
-  source: SourceInput;
-  name: string;
-  type: EventType;
-  time: Duration;
-  order: string;
-  paging: { pageNum: number; pageSize: number; needTotal: boolean };
-}
-
-type SourceInput = {
-  service: string;
-  serviceInstance: string;
-  endpoint: string;
+export type ConfigTTL = {
+  metrics: MetricsTTL;
+  records: RecordsTTL;
 };

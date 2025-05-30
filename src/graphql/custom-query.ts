@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface HexagonCreateParams {
-  hexagonParam: number[];
-  count: number;
-  radius: number;
-  origin?: number[];
-  getShader?: any;
+import { httpQuery, BasePath } from "./base";
+
+async function customQuery(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
+  const response = await httpQuery({
+    url: BasePath,
+    method: "post",
+    json: { query: param.queryStr, variables: { ...param.conditions } },
+  });
+  if (response.errors) {
+    response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");
+  }
+  return response;
 }
 
-export interface HexagonGeo {
-  vertices: number[];
-  normals: number[];
-  insCenters: number[];
-  indices: number[];
-  origins: number[];
-}
+export default customQuery;

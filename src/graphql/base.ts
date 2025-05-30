@@ -34,23 +34,23 @@ class HTTPError extends Error {
   }
 }
 
-const BasePath = `/graphql`;
+export const BasePath = `/graphql`;
 
 export async function httpQuery({
-  path = "",
+  url = "",
   method = "GET",
   json,
   headers = {},
 }: {
-  path?: string;
   method: string;
   json: unknown;
-  headers: Recordable;
+  headers?: Recordable;
+  url: string;
 }) {
   const timeoutId = setTimeout(() => {
     abortRequestsAndUpdate();
   }, Timeout);
-  const url = `${BasePath}${path}`;
+
   const response: Response = await fetch(url, {
     method,
     headers: {

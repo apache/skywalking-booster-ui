@@ -35,7 +35,7 @@ export interface MonitorInstance {
   lastTriggerTimestamp: number;
   processes: MonitorProcess[];
 }
-interface MonitorProcess {
+export interface MonitorProcess {
   id: string;
   name: string;
   detectType: string;

@@ -395,5 +395,9 @@ const msg = {
   instances: "实例",
   snapshot: "快照",
   expression: "表达式",
+  metricsTTL: "Metrics TTL",
+  recordsTTL: "Records TTL",
+  clusterNodes: "集群节点",
+  debuggingConfigDump: "转储有效配置",
 };
 export default msg;

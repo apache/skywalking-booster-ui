@@ -222,9 +222,9 @@ limitations under the License. -->
     appStore.setDuration(timeFormat(val));
   }
 
-  function setTTL() {
-    getMetricsTTL();
-    getRecordsTTL();
+  async function setTTL() {
+    await getMetricsTTL();
+    await getRecordsTTL();
     changeDataMode();
   }
   async function getRecordsTTL() {
@@ -250,6 +250,7 @@ limitations under the License. -->
     }
     const gap = Math.max(day, hour, minute);
     const dates: Date[] = [new Date(new Date().getTime() - dayToMS(gap + 1)), new Date()];
+
     appStore.setMaxRange(dates);
   }
 

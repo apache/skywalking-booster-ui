@@ -18,7 +18,7 @@ import { defineStore } from "pinia";
 import { store } from "@/store";
 import type { LayoutConfig } from "@/types/dashboard";
 import graphql from "@/graphql";
-import fetchQuery from "@/graphql/fetch";
+import customQuery from "@/graphql/custom-query";
 import type { DashboardItem } from "@/types/dashboard";
 import { useSelectorStore } from "@/store/modules/selectors";
 import { NewControl, TextConfig, TimeRangeConfig, ControlsTypes } from "../data";
@@ -299,7 +299,7 @@ export const dashboardStore = defineStore({
       }
     },
     async fetchMetricValue(param: { queryStr: string; conditions: { [key: string]: unknown } }) {
-      return await fetchQuery(param);
+      return await customQuery(param);
     },
     async fetchTemplates() {
       const res = await graphql.query("getTemplates").params({});

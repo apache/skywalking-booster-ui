@@ -397,5 +397,9 @@ const msg = {
   instances: "Instances",
   snapshot: "Snapshot",
   expression: "Expression",
+  metricsTTL: "Metrics TTL",
+  recordsTTL: "Records TTL",
+  clusterNodes: "Cluster Nodes",
+  debuggingConfigDump: "Dump Effective Configurations",
 };
 export default msg;

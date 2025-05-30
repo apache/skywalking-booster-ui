@@ -223,12 +223,12 @@ export const appStore = defineStore({
       return res.data;
     },
     async queryMetricsTTL() {
-      const res = await graphql.query("queryMetricsTTL").params({});
-      if (res.errors) {
-        return res;
+      const response = await graphql.query("queryMetricsTTL").params({});
+      if (response.errors) {
+        return response;
       }
-      this.metricsTTL = res.data.getMetricsTTL;
-      return res.data;
+      this.metricsTTL = response.data.getMetricsTTL;
+      return response.data;
     },
     async queryRecordsTTL() {
       const res = await graphql.query("queryRecordsTTL").params({});

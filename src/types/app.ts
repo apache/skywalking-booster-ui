@@ -39,14 +39,12 @@ export type EventParams = {
   seriesIndex: number;
   seriesName: string;
   name: string;
-  dataIndex: number;
   data: unknown;
   dataType: string;
   value: number | any[];
   color: string;
-  event: Record<string, T>;
+  event: Recordable;
   dataIndex: number;
-  event: any;
 };
 
 export interface MenuOptions extends SubItem {
@@ -79,8 +77,14 @@ export interface MetricsTTL {
 }
 
 export interface RecordsTTL {
-  value: number;
-  superDataset: number;
-  coldValue: number;
-  coldSuperDataset: number;
+  normal: number;
+  trace: number;
+  zipkinTrace: number;
+  log: number;
+  browserErrorLog: number;
+  coldNormal: number;
+  coldTrace: number;
+  coldZipkinTrace: number;
+  coldLog: number;
+  coldBrowserErrorLog: number;
 }
