@@ -159,7 +159,7 @@ limitations under the License. -->
     font-size: 13px;
 
     .item {
-      margin-top: 10px;
+      margin-top: 15px;
     }
 
     input {
