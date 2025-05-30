@@ -22,9 +22,11 @@ limitations under the License. -->
     >
       <el-table-column v-for="item in MetricsTTLRow" :prop="item.value" :label="item.label" :key="item.value">
         {{
-          (settingsStore.configTTL?.metrics || {})[item.value] < 0
-            ? "N/A"
-            : (settingsStore.configTTL?.metrics || {})[item.value]
+          settingsStore.configTTL?.metrics
+            ? settingsStore.configTTL.metrics[item.value] < 0
+              ? "N/A"
+              : (settingsStore.configTTL?.metrics ?? {})[item.value]
+            : "N/A"
         }}
       </el-table-column>
     </el-table>
@@ -36,9 +38,11 @@ limitations under the License. -->
     >
       <el-table-column v-for="item in RecordsTTLRow" :prop="item.value" :label="item.label" :key="item.value">
         {{
-          (settingsStore.configTTL?.records || {})[item.value] < 0
-            ? "N/A"
-            : (settingsStore.configTTL?.records || {})[item.value]
+          settingsStore.configTTL?.records
+            ? settingsStore.configTTL?.records[item.value] < 0
+              ? "N/A"
+              : (settingsStore.configTTL?.records || {})[item.value]
+            : "N/A"
         }}
       </el-table-column>
     </el-table>
