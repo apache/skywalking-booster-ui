@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+const PREFIX = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test" ? "/api" : "";
 export const HttpURL = {
-  ClusterNodes: `/api/status/cluster/nodes`,
-  ConfigTTL: `/api/status/config/ttl`,
-  DebuggingConfigDump: `/api/debugging/config/dump`,
+  ClusterNodes: `${PREFIX}/status/cluster/nodes`,
+  ConfigTTL: `${PREFIX}/status/config/ttl`,
+  DebuggingConfigDump: `${PREFIX}/debugging/config/dump`,
 };

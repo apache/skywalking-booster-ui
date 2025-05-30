@@ -21,7 +21,13 @@ limitations under the License. -->
       :row-style="{ backgroundColor: 'var(--layout-background)' }"
     >
       <el-table-column v-for="item in MetricsTTLRow" :prop="item.value" :label="item.label" :key="item.value">
-        <template #default="scope">{{ scope.row[item.value] < 0 ? "N/A" : scope.row[item.value] }}</template>
+        {{
+          settingsStore.configTTL?.metrics
+            ? settingsStore.configTTL.metrics[item.value] < 0
+              ? "N/A"
+              : (settingsStore.configTTL?.metrics ?? {})[item.value]
+            : "N/A"
+        }}
       </el-table-column>
     </el-table>
     <div class="label">{{ t("recordsTTL") }}</div>
@@ -31,7 +37,13 @@ limitations under the License. -->
       :row-style="{ backgroundColor: 'var(--layout-background)' }"
     >
       <el-table-column v-for="item in RecordsTTLRow" :prop="item.value" :label="item.label" :key="item.value">
-        <template #default="scope">{{ scope.row[item.value] < 0 ? "N/A" : scope.row[item.value] }}</template>
+        {{
+          settingsStore.configTTL?.records
+            ? settingsStore.configTTL?.records[item.value] < 0
+              ? "N/A"
+              : (settingsStore.configTTL?.records || {})[item.value]
+            : "N/A"
+        }}
       </el-table-column>
     </el-table>
   </div>
