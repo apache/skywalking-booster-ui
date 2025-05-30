@@ -20,7 +20,9 @@ limitations under the License. -->
       class="mb-5"
       :row-style="{ backgroundColor: 'var(--layout-background)' }"
     >
-      <el-table-column v-for="item in MetricsTTLRow" :prop="item.value" :label="item.label" :key="item.value" />
+      <el-table-column v-for="item in MetricsTTLRow" :prop="item.value" :label="item.label" :key="item.value">
+        <template #default="scope">{{ scope.row[item.value] < 0 ? "N/A" : scope.row[item.value] }}</template>
+      </el-table-column>
     </el-table>
     <div class="label">{{ t("recordsTTL") }}</div>
     <el-table
@@ -28,7 +30,9 @@ limitations under the License. -->
       class="mb-5"
       :row-style="{ backgroundColor: 'var(--layout-background)' }"
     >
-      <el-table-column v-for="item in RecordsTTLRow" :prop="item.value" :label="item.label" :key="item.value" />
+      <el-table-column v-for="item in RecordsTTLRow" :prop="item.value" :label="item.label" :key="item.value">
+        <template #default="scope">{{ scope.row[item.value] < 0 ? "N/A" : scope.row[item.value] }}</template>
+      </el-table-column>
     </el-table>
   </div>
 </template>

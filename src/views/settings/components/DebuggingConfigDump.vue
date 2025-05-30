@@ -15,8 +15,13 @@ limitations under the License. -->
 <template>
   <div class="debugging-config-dump">
     <div class="config-dump-content">
-      <div class="mb-10" v-for="(item, index) of Object.keys(settingsStore.debuggingConfig)" :key="`${item}${index}`">
-        {{ `${item}: ${settingsStore.debuggingConfig[item]}` }}
+      <div
+        class="mb-10 flex-h"
+        v-for="(item, index) of Object.keys(settingsStore.debuggingConfig)"
+        :key="`${item}${index}`"
+      >
+        <div class="config-key">{{ item }}: </div>
+        <div>{{ settingsStore.debuggingConfig[item] }}</div>
       </div>
       <div v-if="!Object.keys(settingsStore.debuggingConfig).length" class="tips">No Data</div>
     </div>
@@ -45,6 +50,10 @@ limitations under the License. -->
     text-align: center;
     width: 100%;
     color: var(--el-text-color-secondary);
+  }
+
+  .config-key {
+    width: 30%;
   }
 
   .debugging-config-dump {
