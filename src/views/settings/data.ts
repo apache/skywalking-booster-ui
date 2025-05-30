@@ -19,7 +19,6 @@ export const ClusterNodeRow = [
   {
     label: "Host",
     value: "host",
-    width: 280,
   },
   {
     label: "Port",
