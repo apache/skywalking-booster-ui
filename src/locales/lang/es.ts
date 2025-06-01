@@ -401,5 +401,8 @@ const msg = {
   recordsTTL: "Records TTL",
   clusterNodes: "Cluster Nodes",
   debuggingConfigDump: "Dump Effective Configurations",
+  customDuration: "Duración Personalizada",
+  maxDuration: "Duración Máxima",
+  minutes: "Minutos",
 };
 export default msg;
