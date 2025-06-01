@@ -31,6 +31,19 @@ limitations under the License. -->
     <div>
       <div class="label">{{ t("duration") }}</div>
       <Radio class="mb-5" :value="duration" :options="DurationOptions" @change="changeDuration" />
+      <div v-if="duration === 'custom'" class="custom-duration">
+        <div class="label">{{ t("customDuration") }} ({{ t("seconds") }})</div>
+        <el-input
+          size="small"
+          class="profile-input"
+          v-model="customDurationSeconds"
+          type="number"
+          :min="1"
+          :max="900"
+          placeholder="Enter duration in seconds (1-900)"
+        />
+        <div class="hint">{{ t("maxDuration") }}: 900 {{ t("seconds") }} (15 {{ t("minutes") }})</div>
+      </div>
     </div>
     <div>
       <div class="label">{{ t("profilingEvents") }}</div>
@@ -113,6 +126,7 @@ limitations under the License. -->
   const execArgs = ref<string>("");
   const loading = ref<boolean>(false);
   const PartofEvents = [ProfilingEvents[3], ProfilingEvents[4], ProfilingEvents[5]];
+  const customDurationSeconds = ref<number>(60);
 
   function changeDuration(val: string) {
     duration.value = val;
@@ -138,10 +152,22 @@ limitations under the License. -->
   }
 
   async function createTask() {
+    let finalDuration: number;
+
+    if (duration.value === "custom") {
+      if (!customDurationSeconds.value || customDurationSeconds.value < 1 || customDurationSeconds.value > 900) {
+        ElMessage.error("Please enter a valid duration between 1 and 900 seconds");
+        return;
+      }
+      finalDuration = customDurationSeconds.value;
+    } else {
+      finalDuration = Number(duration.value) * 60;
+    }
+
     const params = {
       serviceId: selectorStore.currentService.id,
       serviceInstanceIds: serviceInstanceIds.value,
-      duration: Number(duration.value) * 60,
+      duration: finalDuration,
       events: asyncEvents.value,
       execArgs: execArgs.value,
     };
@@ -183,5 +209,14 @@ limitations under the License. -->
   .create-task-btn {
     width: 600px;
     margin-top: 50px;
+  }
+
+  .custom-duration {
+    margin-top: 10px;
+  }
+
+  .hint {
+    font-size: $font-size-smaller;
+    color: var(--text-color-placeholder);
   }
 </style>

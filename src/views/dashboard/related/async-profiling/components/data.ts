@@ -16,9 +16,12 @@
  */
 
 export const DurationOptions = [
+  { value: "0.5", label: "30 sec" },
+  { value: "1", label: "1 min" },
   { value: "5", label: "5 min" },
   { value: "10", label: "10 min" },
   { value: "15", label: "15 min" },
+  { value: "custom", label: "Custom" },
 ];
 
 export const ProfilingEvents = ["CPU", "ALLOC", "LOCK", "WALL", "CTIMER", "ITIMER"];
