@@ -399,5 +399,10 @@ const msg = {
   recordsTTL: "Records TTL",
   clusterNodes: "集群节点",
   debuggingConfigDump: "转储有效配置",
+  customDuration: "自定义时长",
+  maxDuration: "最大时长",
+  minutes: "分钟",
+  invalidProfilingDurationRange: "请输入1到900秒之间的有效时长",
+  taskCreatedSuccessfully: "任务创建成功",
 };
 export default msg;
