@@ -25,7 +25,7 @@ limitations under the License. -->
         :options="asyncProfilingStore.instances"
         placeholder="Select instances"
         @change="changeInstances"
-        :filterable="false"
+        :filterable="true"
       />
     </div>
     <div>
