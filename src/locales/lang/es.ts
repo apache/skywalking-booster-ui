@@ -404,5 +404,7 @@ const msg = {
   customDuration: "Duración Personalizada",
   maxDuration: "Duración Máxima",
   minutes: "Minutos",
+  invalidProfilingDurationRange: "Por favor ingrese una duración válida entre 1 y 900 segundos",
+  taskCreatedSuccessfully: "Tarea creada exitosamente",
 };
 export default msg;

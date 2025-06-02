@@ -156,12 +156,12 @@ limitations under the License. -->
 
     if (duration.value === DurationOptions[5].value) {
       if (!customDurationSeconds.value || customDurationSeconds.value < 1 || customDurationSeconds.value > 900) {
-        ElMessage.error("Please enter a valid duration between 1 and 900 seconds");
+        ElMessage.error(t("invalidProfilingDurationRange"));
         return;
       }
       finalDuration = customDurationSeconds.value;
     } else {
-      finalDuration = Number(duration.value) * 60;
+      finalDuration = Number(duration.value);
     }
 
     const params = {
@@ -184,7 +184,7 @@ limitations under the License. -->
       return;
     }
     emits("close");
-    ElMessage.success("Task created successfully");
+    ElMessage.success(t("taskCreatedSuccessfully"));
   }
 </script>
 <style lang="scss" scoped>
