@@ -31,7 +31,7 @@ limitations under the License. -->
     <div>
       <div class="label">{{ t("duration") }}</div>
       <Radio class="mb-5" :value="duration" :options="DurationOptions" @change="changeDuration" />
-      <div v-if="duration === 'custom'" class="custom-duration">
+      <div v-if="duration === DurationOptions[5].value" class="custom-duration">
         <div class="label">{{ t("customDuration") }} ({{ t("seconds") }})</div>
         <el-input
           size="small"
@@ -154,7 +154,7 @@ limitations under the License. -->
   async function createTask() {
     let finalDuration: number;
 
-    if (duration.value === "custom") {
+    if (duration.value === DurationOptions[5].value) {
       if (!customDurationSeconds.value || customDurationSeconds.value < 1 || customDurationSeconds.value > 900) {
         ElMessage.error("Please enter a valid duration between 1 and 900 seconds");
         return;
