@@ -13,10 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <el-table :data="[data]" class="mb-5" :row-style="{ backgroundColor: 'var(--layout-background)' }">
+  <el-table :data="data" class="mb-5" :row-style="{ backgroundColor: 'var(--layout-background)' }">
     <el-table-column v-for="column in metricsRows" :prop="column.value" :label="column.label" :key="column.value">
       <el-table-column v-for="item in column.children" :prop="item.value" :label="item.label" :key="item.value">
-        {{ data ? (data[item.value] < 0 ? "N/A" : data[item.value]) : "N/A" }}
+        <template #default="scope">
+          {{ scope.row && scope.row[item.value] ? (scope.row[item.value] < 0 ? "N/A" : scope.row[item.value]) : "N/A" }}
+        </template>
       </el-table-column>
     </el-table-column>
   </el-table>
@@ -29,6 +31,6 @@ limitations under the License. -->
       type: Array as PropType<{ label: string; value: string; children: Option[] }[]>,
       default: () => [],
     },
-    data: { type: Object as PropType<Indexable>, default: () => {} },
+    data: { type: Array as PropType<Indexable[]>, default: () => [] },
   });
 </script>

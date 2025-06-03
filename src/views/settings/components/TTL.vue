@@ -15,9 +15,9 @@ limitations under the License. -->
 <template>
   <div class="ttl">
     <div class="label">{{ t("metricsTTL") }}</div>
-    <DoubleHeaderTable :data="settingsStore.configTTL.metrics" :metricsRows="MetricsTTLRow" />
+    <DoubleHeaderTable :data="[settingsStore.configTTL.metrics]" :metricsRows="MetricsTTLRow" />
     <div class="label">{{ t("recordsTTL") }}</div>
-    <DoubleHeaderTable :data="settingsStore.configTTL.records" :metricsRows="RecordsTTLRow" />
+    <DoubleHeaderTable :data="[settingsStore.configTTL.records]" :metricsRows="RecordsTTLRow" />
   </div>
 </template>
 <script lang="ts" setup>
