@@ -56,6 +56,7 @@ export const MetricsTTLRow = [
   {
     label: "Type",
     value: "type",
+    width: 260,
   },
   {
     label: "Day",
@@ -75,6 +76,7 @@ export const RecordsTTLRow = [
   {
     label: "Type",
     value: "type",
+    width: 260,
   },
   {
     label: "Normal",
