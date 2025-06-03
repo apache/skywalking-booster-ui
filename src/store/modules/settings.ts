@@ -18,6 +18,8 @@ import { defineStore } from "pinia";
 import { store } from "@/store";
 import fetchQuery from "@/graphql/http";
 import type { ClusterNode, ConfigTTL } from "@/types/settings";
+import { HotAndWarmOpt } from "@/views/settings/data";
+import { TTLTypes, TTLColdMap } from "../data";
 
 interface SettingsState {
   clusterNodes: ClusterNode[];
@@ -46,7 +48,20 @@ export const settingsStore = defineStore({
         method: "get",
         path: "ConfigTTL",
       });
-      this.configTTL = response;
+      for (const item of Object.keys(response)) {
+        const rows = [];
+        const row: Indexable<string> = { type: TTLTypes.HotAndWarm };
+        const rowCold: Indexable<string> = { type: TTLTypes.Cold };
+        for (const key of Object.keys(response[item])) {
+          if (HotAndWarmOpt.includes(key)) {
+            row[key] = response[item][key];
+          } else {
+            rowCold[TTLColdMap[key] as string] = response[item][key];
+          }
+        }
+        rows.push(row, rowCold);
+        this.configTTL[item] = rows;
+      }
       return response;
     },
     async getDebuggingConfigDump() {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import { WidgetType } from "@/views/dashboard/data";
+import { HotAndWarmOpt } from "@/views/settings/data";
 
 export const NewControl = {
   x: 0,
@@ -58,3 +59,18 @@ export enum EBPFProfilingTriggerType {
 }
 
 export const EndpointsTopNDefault = 20;
+
+export const TTLTypes = {
+  HotAndWarm: "Hot / Warm",
+  Cold: "Cold",
+};
+export const TTLColdMap: Indexable<string> = {
+  coldDay: HotAndWarmOpt[0],
+  coldHour: HotAndWarmOpt[1],
+  coldMinute: HotAndWarmOpt[2],
+  coldNormal: HotAndWarmOpt[3],
+  coldTrace: HotAndWarmOpt[4],
+  coldZipkinTrace: HotAndWarmOpt[5],
+  coldLog: HotAndWarmOpt[6],
+  coldBrowserErrorLog: HotAndWarmOpt[7],
+};

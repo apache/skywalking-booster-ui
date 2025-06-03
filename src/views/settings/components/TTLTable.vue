@@ -14,12 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <el-table :data="data" class="mb-5" :row-style="{ backgroundColor: 'var(--layout-background)' }">
-    <el-table-column v-for="column in metricsRows" :prop="column.value" :label="column.label" :key="column.value">
-      <el-table-column v-for="item in column.children" :prop="item.value" :label="item.label" :key="item.value">
-        <template #default="scope">
-          {{ scope.row && scope.row[item.value] ? (scope.row[item.value] < 0 ? "N/A" : scope.row[item.value]) : "N/A" }}
-        </template>
-      </el-table-column>
+    <el-table-column v-for="item in metricsRows" :prop="item.value" :label="item.label" :key="item.value">
+      <template #default="scope">
+        {{ scope.row && scope.row[item.value] ? (scope.row[item.value] < 0 ? "N/A" : scope.row[item.value]) : "N/A" }}
+      </template>
     </el-table-column>
   </el-table>
 </template>
@@ -28,7 +26,7 @@ limitations under the License. -->
   /*global PropType, Indexable */
   defineProps({
     metricsRows: {
-      type: Array as PropType<{ label: string; value: string; children: Option[] }[]>,
+      type: Array as PropType<Option[]>,
       default: () => [],
     },
     data: { type: Array as PropType<Indexable[]>, default: () => [] },

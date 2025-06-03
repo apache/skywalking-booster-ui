@@ -15,16 +15,16 @@ limitations under the License. -->
 <template>
   <div class="ttl">
     <div class="label">{{ t("metricsTTL") }}</div>
-    <DoubleHeaderTable :data="[settingsStore.configTTL.metrics]" :metricsRows="MetricsTTLRow" />
+    <TTLTable :data="settingsStore.configTTL.metrics" :metricsRows="MetricsTTLRow" />
     <div class="label">{{ t("recordsTTL") }}</div>
-    <DoubleHeaderTable :data="[settingsStore.configTTL.records]" :metricsRows="RecordsTTLRow" />
+    <TTLTable :data="settingsStore.configTTL.records" :metricsRows="RecordsTTLRow" />
   </div>
 </template>
 <script lang="ts" setup>
   import { onMounted } from "vue";
   import { useI18n } from "vue-i18n";
   import { useSettingsStore } from "@/store/modules/settings";
-  import DoubleHeaderTable from "./DoubleHeaderTable.vue";
+  import TTLTable from "./TTLTable.vue";
   import { MetricsTTLRow, RecordsTTLRow } from "../data";
 
   const { t } = useI18n();

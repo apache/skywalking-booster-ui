@@ -49,96 +49,51 @@ export const SettingsTabs = [
     value: "dumpEffectiveConfigurations",
   },
 ];
+
+export const HotAndWarmOpt = ["day", "hour", "minute", "normal", "trace", "zipkinTrace", "log", "browserErrorLog"];
+
 export const MetricsTTLRow = [
   {
-    label: "Hot / Warm",
-    value: "hotAndWarm",
-    children: [
-      {
-        label: "Day",
-        value: "day",
-      },
-      {
-        label: "Hour",
-        value: "hour",
-      },
-      {
-        label: "Minute",
-        value: "minute",
-      },
-    ],
+    label: "Type",
+    value: "type",
   },
   {
-    label: "Cold",
-    value: "cold",
-    children: [
-      {
-        label: "Day",
-        value: "coldDay",
-      },
-      {
-        label: "Hour",
-        value: "coldHour",
-      },
-      {
-        label: "Minute",
-        value: "coldMinute",
-      },
-    ],
+    label: "Day",
+    value: HotAndWarmOpt[0],
+  },
+  {
+    label: "Hour",
+    value: HotAndWarmOpt[1],
+  },
+  {
+    label: "Minute",
+    value: HotAndWarmOpt[2],
   },
 ];
 
 export const RecordsTTLRow = [
   {
-    label: "Hot / Warm",
-    value: "hotAndWarm",
-    children: [
-      {
-        label: "Normal",
-        value: "normal",
-      },
-      {
-        label: "Trace",
-        value: "trace",
-      },
-      {
-        label: "Zipkin Trace",
-        value: "zipkinTrace",
-      },
-      {
-        label: "Log",
-        value: "log",
-      },
-      {
-        label: "Browser Error Log",
-        value: "browserErrorLog",
-      },
-    ],
+    label: "Type",
+    value: "type",
   },
   {
-    label: "Cold",
-    value: "cold",
-    children: [
-      {
-        label: "Normal",
-        value: "coldNormal",
-      },
-      {
-        label: "Trace",
-        value: "coldTrace",
-      },
-      {
-        label: "Zipkin Trace",
-        value: "coldZipkinTrace",
-      },
-      {
-        label: "Log",
-        value: "coldLog",
-      },
-      {
-        label: "Browser Error Log",
-        value: "coldBrowserErrorLog",
-      },
-    ],
+    label: "Normal",
+    value: HotAndWarmOpt[3],
+  },
+  {
+    label: "Trace",
+    value: HotAndWarmOpt[4],
+  },
+  {
+    label: "Zipkin Trace",
+    value: HotAndWarmOpt[5],
+  },
+  {
+    label: "Log",
+    value: HotAndWarmOpt[6],
+  },
+  {
+    label: "Browser Error Log",
+    value: HotAndWarmOpt[7],
   },
 ];
