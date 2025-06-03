@@ -17,7 +17,7 @@ limitations under the License. -->
     :data="data"
     class="mb-5"
     :row-style="{ backgroundColor: 'var(--layout-background)' }"
-    :cell-style="(data) => (data.columnIndex === 0 ? { backgroundColor: 'var(--el-table-header-bg-color)' } : {})"
+    :cell-style="(data: Indexable) => (data.columnIndex === 0 ? { backgroundColor: 'var(--el-table-header-bg-color)' } : {})"
   >
     <el-table-column
       v-for="item in metricsRows"
