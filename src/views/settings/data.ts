@@ -49,72 +49,53 @@ export const SettingsTabs = [
     value: "dumpEffectiveConfigurations",
   },
 ];
+
+export const HotAndWarmOpt = ["day", "hour", "minute", "normal", "trace", "zipkinTrace", "log", "browserErrorLog"];
+
 export const MetricsTTLRow = [
   {
+    label: "Type",
+    value: "type",
+    width: 260,
+  },
+  {
     label: "Day",
-    value: "day",
+    value: HotAndWarmOpt[0],
   },
   {
     label: "Hour",
-    value: "hour",
+    value: HotAndWarmOpt[1],
   },
   {
     label: "Minute",
-    value: "minute",
-  },
-  {
-    label: "Cold Day",
-    value: "coldDay",
-  },
-  {
-    label: "Cold Hour",
-    value: "coldHour",
-  },
-  {
-    label: "Cold Minute",
-    value: "coldMinute",
+    value: HotAndWarmOpt[2],
   },
 ];
 
 export const RecordsTTLRow = [
   {
+    label: "Type",
+    value: "type",
+    width: 260,
+  },
+  {
     label: "Normal",
-    value: "normal",
+    value: HotAndWarmOpt[3],
   },
   {
     label: "Trace",
-    value: "trace",
-  },
-  {
-    label: "Log",
-    value: "log",
+    value: HotAndWarmOpt[4],
   },
   {
     label: "Zipkin Trace",
-    value: "zipkinTrace",
+    value: HotAndWarmOpt[5],
+  },
+  {
+    label: "Log",
+    value: HotAndWarmOpt[6],
   },
   {
     label: "Browser Error Log",
-    value: "browserErrorLog",
-  },
-  {
-    label: "Cold Normal",
-    value: "coldNormal",
-  },
-  {
-    label: "Cold Trace",
-    value: "coldTrace",
-  },
-  {
-    label: "Cold Zipkin Trace",
-    value: "coldZipkinTrace",
-  },
-  {
-    label: "Cold Log",
-    value: "coldLog",
-  },
-  {
-    label: "Cold Browser Error Log",
-    value: "coldBrowserErrorLog",
+    value: HotAndWarmOpt[7],
   },
 ];

@@ -15,43 +15,16 @@ limitations under the License. -->
 <template>
   <div class="ttl">
     <div class="label">{{ t("metricsTTL") }}</div>
-    <el-table
-      :data="[settingsStore.configTTL.metrics]"
-      class="mb-5"
-      :row-style="{ backgroundColor: 'var(--layout-background)' }"
-    >
-      <el-table-column v-for="item in MetricsTTLRow" :prop="item.value" :label="item.label" :key="item.value">
-        {{
-          settingsStore.configTTL?.metrics
-            ? settingsStore.configTTL.metrics[item.value] < 0
-              ? "N/A"
-              : (settingsStore.configTTL?.metrics ?? {})[item.value]
-            : "N/A"
-        }}
-      </el-table-column>
-    </el-table>
+    <TTLTable :data="settingsStore.configTTL.metrics" :metricsRows="MetricsTTLRow" />
     <div class="label">{{ t("recordsTTL") }}</div>
-    <el-table
-      :data="[settingsStore.configTTL.records]"
-      class="mb-5"
-      :row-style="{ backgroundColor: 'var(--layout-background)' }"
-    >
-      <el-table-column v-for="item in RecordsTTLRow" :prop="item.value" :label="item.label" :key="item.value">
-        {{
-          settingsStore.configTTL?.records
-            ? settingsStore.configTTL?.records[item.value] < 0
-              ? "N/A"
-              : (settingsStore.configTTL?.records || {})[item.value]
-            : "N/A"
-        }}
-      </el-table-column>
-    </el-table>
+    <TTLTable :data="settingsStore.configTTL.records" :metricsRows="RecordsTTLRow" />
   </div>
 </template>
 <script lang="ts" setup>
   import { onMounted } from "vue";
   import { useI18n } from "vue-i18n";
   import { useSettingsStore } from "@/store/modules/settings";
+  import TTLTable from "./TTLTable.vue";
   import { MetricsTTLRow, RecordsTTLRow } from "../data";
 
   const { t } = useI18n();
