@@ -13,11 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <LineChart
-    :intervalTime="appStore.intervalTime"
-    :data="metrics"
-    :style="{ width: `800px`, height: `${metrics.length * 300}px` }"
-  />
+  <div :style="{ width: `800px`, height: `${metrics.length * 300}px` }">
+    <LineChart :intervalTime="appStore.intervalTime" :data="metrics" />
+  </div>
 </template>
 <script lang="ts" setup>
   import { computed } from "vue";
