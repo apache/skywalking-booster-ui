@@ -122,21 +122,22 @@ Utility functions should be tested for:
 - **Performance**: Large inputs and multiple calls
 
 Example:
+
 ```typescript
-import { describe, it, expect } from 'vitest'
-import { isString } from '../is'
+import { describe, it, expect } from "vitest";
+import { isString } from "../is";
 
-describe('isString utility', () => {
-  it('should return true for strings', () => {
-    expect(isString('hello')).toBe(true)
-    expect(isString('')).toBe(true)
-  })
+describe("isString utility", () => {
+  it("should return true for strings", () => {
+    expect(isString("hello")).toBe(true);
+    expect(isString("")).toBe(true);
+  });
 
-  it('should return false for non-strings', () => {
-    expect(isString(123)).toBe(false)
-    expect(isString(null)).toBe(false)
-  })
-})
+  it("should return false for non-strings", () => {
+    expect(isString(123)).toBe(false);
+    expect(isString(null)).toBe(false);
+  });
+});
 ```
 
 ### Component Tests
@@ -150,22 +151,23 @@ Component tests should verify:
 - **Styling**: CSS class application
 
 Example:
+
 ```typescript
-import { describe, it, expect } from 'vitest'
-import { mount } from '@vue/test-utils'
-import Icon from '../Icon.vue'
+import { describe, it, expect } from "vitest";
+import { mount } from "@vue/test-utils";
+import Icon from "../Icon.vue";
 
-describe('Icon Component', () => {
-  it('should render with default props', () => {
-    const wrapper = mount(Icon)
-    expect(wrapper.find('svg').exists()).toBe(true)
-  })
+describe("Icon Component", () => {
+  it("should render with default props", () => {
+    const wrapper = mount(Icon);
+    expect(wrapper.find("svg").exists()).toBe(true);
+  });
 
-  it('should apply size classes', () => {
-    const wrapper = mount(Icon, { props: { size: 'lg' } })
-    expect(wrapper.classes()).toContain('lg')
-  })
-})
+  it("should apply size classes", () => {
+    const wrapper = mount(Icon, { props: { size: "lg" } });
+    expect(wrapper.classes()).toContain("lg");
+  });
+});
 ```
 
 ### Hook Tests
@@ -178,17 +180,18 @@ Hook tests should cover:
 - **Dependencies**: External dependency interactions
 
 Example:
-```typescript
-import { describe, it, expect, vi } from 'vitest'
-import { useDuration } from '../useDuration'
 
-describe('useDuration hook', () => {
-  it('should return duration functions', () => {
-    const { getDurationTime, setDurationRow } = useDuration()
-    expect(typeof getDurationTime).toBe('function')
-    expect(typeof setDurationRow).toBe('function')
-  })
-})
+```typescript
+import { describe, it, expect, vi } from "vitest";
+import { useDuration } from "../useDuration";
+
+describe("useDuration hook", () => {
+  it("should return duration functions", () => {
+    const { getDurationTime, setDurationRow } = useDuration();
+    expect(typeof getDurationTime).toBe("function");
+    expect(typeof setDurationRow).toBe("function");
+  });
+});
 ```
 
 ### Store Tests
@@ -201,21 +204,22 @@ Store tests should verify:
 - **Integration**: Store interactions
 
 Example:
+
 ```typescript
-import { describe, it, expect } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
-import { appStore } from '../app'
+import { describe, it, expect } from "vitest";
+import { setActivePinia, createPinia } from "pinia";
+import { appStore } from "../app";
 
-describe('App Store', () => {
+describe("App Store", () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
-  })
+    setActivePinia(createPinia());
+  });
 
-  it('should initialize with default state', () => {
-    const store = appStore()
-    expect(store.utc).toBe('')
-  })
-})
+  it("should initialize with default state", () => {
+    const store = appStore();
+    expect(store.utc).toBe("");
+  });
+});
 ```
 
 ## Mocking
@@ -233,23 +237,23 @@ The project includes comprehensive mocking for:
 
 ```typescript
 // Mock Element Plus
-vi.mock('element-plus', () => ({
-  ElNotification: vi.fn()
-}))
+vi.mock("element-plus", () => ({
+  ElNotification: vi.fn(),
+}));
 
 // Mock Vue Router
-vi.mock('vue-router', () => ({
-  useRoute: vi.fn(() => ({ name: 'Home' }))
-}))
+vi.mock("vue-router", () => ({
+  useRoute: vi.fn(() => ({ name: "Home" })),
+}));
 
 // Mock GraphQL
-vi.mock('@/graphql', () => ({
+vi.mock("@/graphql", () => ({
   default: {
     query: vi.fn(() => ({
-      params: vi.fn(() => Promise.resolve({ data: {} }))
-    }))
-  }
-}))
+      params: vi.fn(() => Promise.resolve({ data: {} })),
+    })),
+  },
+}));
 ```
 
 ## Coverage
@@ -340,4 +344,4 @@ When adding new tests:
 4. **Maintain coverage**: Ensure new code is well-tested
 5. **Review existing tests**: Follow established patterns
 
-For more information, see the [Vitest documentation](https://vitest.dev/) and [Vue Test Utils guide](https://test-utils.vuejs.org/). 
+For more information, see the [Vitest documentation](https://vitest.dev/) and [Vue Test Utils guide](https://test-utils.vuejs.org/).
