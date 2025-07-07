@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <SelectorLegend
-    :data="option.legend.data"
+    :data="option.legend?.data"
     :show="legendSelector.isSelector"
     :isConfigPage="legendSelector.isConfigPage"
     :colors="option.color"

@@ -22,7 +22,7 @@ limitations under the License. -->
         :options="DepthList"
         placeholder="Select a option"
         @change="changeDepth"
-        size="small"
+        style="width: 240px"
       />
     </span>
     <span class="switch-icon ml-5" title="Settings" @click="setConfig" v-if="dashboardStore.editMode">
