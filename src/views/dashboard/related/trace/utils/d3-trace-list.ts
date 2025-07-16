@@ -93,7 +93,7 @@ export default class ListGraph {
     this.data = data;
     this.min = d3.min(this.row.map((i) => i.startTime));
     this.max = d3.max(this.row.map((i) => i.endTime - this.min)) || 0;
-    this.list = useTraceStore().serviceList;
+    this.list = useTraceStore().serviceList || [];
     this.xScale = d3
       .scaleLinear()
       .range([0, this.width * 0.387])

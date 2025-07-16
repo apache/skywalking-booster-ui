@@ -88,7 +88,7 @@ export default class TraceMap {
     this.data = data;
     this.min = Number(d3.min(this.row.map((i: Span) => i.startTime)));
     this.max = Number(d3.max(this.row.map((i: Span) => i.endTime - this.min)));
-    this.list = useTraceStore().serviceList;
+    this.list = useTraceStore().serviceList || [];
     this.xScale = d3.scaleLinear().range([0, 100]).domain([0, this.max]);
     this.sequentialScale = d3
       .scaleSequential()
