@@ -19,6 +19,7 @@ import * as d3 from "d3";
 import d3tip from "d3-tip";
 import type { Trace, Span } from "@/types/trace";
 import { useAppStoreWithOut } from "@/store/modules/app";
+import { useTraceStore } from "@/store/modules/trace";
 import { Themes } from "@/constants/data";
 
 export default class TraceMap {
@@ -87,7 +88,7 @@ export default class TraceMap {
     this.data = data;
     this.min = Number(d3.min(this.row.map((i: Span) => i.startTime)));
     this.max = Number(d3.max(this.row.map((i: Span) => i.endTime - this.min)));
-    this.list = Array.from(new Set(this.row.map((i: Span) => i.serviceCode)));
+    this.list = useTraceStore().serviceList;
     this.xScale = d3.scaleLinear().range([0, 100]).domain([0, this.max]);
     this.sequentialScale = d3
       .scaleSequential()
