@@ -12,7 +12,13 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-table-charts">
-    <Graph :data="data" :traceId="traceId" :type="TraceGraphType.TABLE" :headerType="headerType" />
+    <Graph
+      :data="data"
+      :traceId="traceId"
+      :type="TraceGraphType.TABLE"
+      :headerType="headerType"
+      @select="getSelectedSpan"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -26,6 +32,11 @@ limitations under the License. -->
     traceId: { type: String, default: "" },
     headerType: { type: String, default: "" },
   });
+  const emits = defineEmits(["select"]);
+
+  function getSelectedSpan(span: Span) {
+    emits("select", span);
+  }
 </script>
 <style lang="scss" scoped>
   .trace-table-charts {
