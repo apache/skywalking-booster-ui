@@ -69,6 +69,7 @@ limitations under the License. -->
     type: { type: String, default: TraceGraphType.LIST },
     headerType: { type: String, default: "" },
   });
+  const emits = defineEmits(["select"]);
   const appStore = useAppStoreWithOut();
   const loading = ref<boolean>(false);
   const showDetail = ref<boolean>(false);
@@ -130,6 +131,7 @@ limitations under the License. -->
     refParentSpans.value = [];
     if (props.type === TraceGraphType.TABLE) {
       currentSpan.value = i;
+      emits("select", i);
     } else {
       currentSpan.value = i.data;
     }
