@@ -43,7 +43,7 @@ limitations under the License. -->
   import { TraceGraphType } from "./constant";
 
   /* global defineProps, Recordable*/
-  const props = defineProps({
+  defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
   });
