@@ -150,6 +150,7 @@ $theme-background: var(--theme-background);
 $active-background: var(--el-color-primary);
 $font-size-smaller: 12px;
 $font-size-normal: 14px;
+$error-color: #e66;
 
 .opt:hover {
   background-color: var(--sw-list-hover) !important;
@@ -208,9 +209,9 @@ div.vis-tooltip {
 }
 
 .vis-item.Error {
-  background-color: #e66;
+  background-color: $error-color;
   opacity: 0.8;
-  border-color: #e66;
+  border-color: $error-color;
   color: var(--sw-event-vis-selected) !important;
 }
 
