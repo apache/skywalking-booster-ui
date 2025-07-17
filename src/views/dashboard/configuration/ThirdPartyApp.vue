@@ -29,6 +29,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { ref } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import { validateAndSanitizeUrl } from "@/utils/validateAndSanitizeUrl";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
@@ -36,54 +37,6 @@ limitations under the License. -->
   const widget = originConfig.widget || {};
   const url = ref(widget.url || "");
   const urlError = ref("");
-
-  // URL validation function to prevent XSS
-  function validateAndSanitizeUrl(inputUrl: string): { isValid: boolean; sanitizedUrl: string; error: string } {
-    if (!inputUrl.trim()) {
-      return { isValid: true, sanitizedUrl: "", error: "" };
-    }
-
-    try {
-      // Create URL object to validate the URL format
-      const urlObj = new URL(inputUrl);
-
-      // Only allow HTTP and HTTPS protocols to prevent XSS
-      if (!["http:", "https:"].includes(urlObj.protocol)) {
-        return {
-          isValid: false,
-          sanitizedUrl: "",
-          error: "Only HTTP and HTTPS URLs are allowed",
-        };
-      }
-
-      // Additional security checks
-      const dangerousProtocols = ["javascript:", "data:", "vbscript:", "le:"];
-      const lowerUrl = inputUrl.toLowerCase();
-
-      for (const protocol of dangerousProtocols) {
-        if (lowerUrl.includes(protocol)) {
-          return {
-            isValid: false,
-            sanitizedUrl: "",
-            error: "Dangerous protocols are not allowed",
-          };
-        }
-      }
-
-      // Return the sanitized URL (using the URL object to normalize it)
-      return {
-        isValid: true,
-        sanitizedUrl: urlObj.href,
-        error: "",
-      };
-    } catch (error) {
-      return {
-        isValid: false,
-        sanitizedUrl: "",
-        error: "Please enter a valid URL",
-      };
-    }
-  }
 
   function handleUrlChange() {
     const validation = validateAndSanitizeUrl(url.value);
