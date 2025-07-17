@@ -37,7 +37,7 @@ limitations under the License. -->
         height="100%"
         scrolling="no"
         style="border: none"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        sandbox="allow-scripts allow-same-origin"
         referrerpolicy="no-referrer"
       ></iframe>
       <div v-else class="tips">{{ t("iframeWidgetTip") }}</div>
