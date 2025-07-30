@@ -159,7 +159,7 @@ limitations under the License. -->
   import zoom from "@/views/dashboard/related/components/utils/zoom";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
   import { ConfigFieldTypes } from "@/views/dashboard/data";
-  /*global Nullable, defineProps */
+  /*global Nullable, defineProps, Indexable */
   const props = defineProps({
     config: {
       type: Object as PropType<any>,
@@ -294,7 +294,7 @@ limitations under the License. -->
     topologyStore.setLegendValues(expression, metrics);
   }
 
-  function getNodeStatus(d: any) {
+  function getNodeStatus(d: Indexable) {
     const { legendMQE } = settings.value;
     if (!legendMQE) {
       return icons.CUBE;

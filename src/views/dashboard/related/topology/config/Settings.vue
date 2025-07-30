@@ -158,7 +158,6 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useTopologyStore } from "@/store/modules/topology";
-  import { ElMessage } from "element-plus";
   import { ScopeType, EntityType, CallTypes } from "@/views/dashboard/data";
   import type { Option } from "@/types/app";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
