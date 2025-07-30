@@ -23,7 +23,6 @@ import { useDashboardStore } from "@/store/modules/dashboard";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import customQuery from "@/graphql/custom-query";
 import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
-import { topoJson } from "./topo";
 
 interface MetricVal {
   [key: string]: { values: { id: string; value: unknown }[] };
@@ -83,9 +82,8 @@ export const topologyStore = defineStore({
       this.calls = data.calls;
       this.nodes = data.nodes;
     },
-    setTopology(d: { nodes: Node[]; calls: Call[] }) {
+    setTopology(data: { nodes: Node[]; calls: Call[] }) {
       const obj = {} as Recordable;
-      const data = topoJson.data.topology as any;
       const nodes = (data.nodes || []).reduce((prev: Node[], next: Node) => {
         if (!obj[next.id]) {
           obj[next.id] = true;
