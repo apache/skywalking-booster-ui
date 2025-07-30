@@ -510,7 +510,6 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
   }
 
   async function getMetrics() {
-    console.log(instances);
     const metricsArr = chunkArray(metrics, TopologyMaxQueryExpressions);
     const entities = chunkArray(instances, TopologyMaxQueryEntities);
 
