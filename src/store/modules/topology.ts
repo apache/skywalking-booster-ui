@@ -229,7 +229,7 @@ export const topologyStore = defineStore({
       for (let idx = 0; idx < nodeArr.length; idx++) {
         if (expression) {
           nodeArr[idx][expression] = Number(
-            data[expression].values.find((d: { id: string; value: string }) => d.id === nodeArr[idx].id)?.value,
+            data[expression]?.values?.find((d: { id: string; value: string }) => d.id === nodeArr[idx].id)?.value,
           );
         }
       }
