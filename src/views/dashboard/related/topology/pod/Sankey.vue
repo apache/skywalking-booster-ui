@@ -90,7 +90,7 @@ limitations under the License. -->
 
     const htmlServer = serverMetrics.map((m, index) => {
       const metric =
-        topologyStore.linkServerMetrics[m].values.find((val: { id: string; value: unknown }) => val.id === data.id) ||
+        topologyStore.linkServerMetrics[m]?.values?.find((val: { id: string; value: unknown }) => val.id === data.id) ||
         {};
       if (metric) {
         const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
@@ -103,7 +103,7 @@ limitations under the License. -->
     const htmlClient = clientMetrics.map((m, index) => {
       const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
       const metric =
-        topologyStore.linkClientMetrics[m].values.find((val: { id: string; value: unknown }) => val.id === data.id) ||
+        topologyStore.linkClientMetrics[m]?.values?.find((val: { id: string; value: unknown }) => val.id === data.id) ||
         {};
 
       return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${opt.unit || ""}</div>`;
@@ -122,7 +122,8 @@ limitations under the License. -->
     const nodeMetricConfig = props.settings.nodeMetricConfig || [];
     const html = nodeMetrics.map((m, index) => {
       const metric =
-        topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: unknown }) => val.id === data.id) || {};
+        topologyStore.nodeMetricValue[m]?.values?.find((val: { id: string; value: unknown }) => val.id === data.id) ||
+        {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
 
       return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${opt.unit || ""}</div>`;

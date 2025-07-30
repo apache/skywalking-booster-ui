@@ -1,3 +1,4 @@
+import { DashboardItem } from "./../types/dashboard";
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -113,4 +114,6 @@ export const LightChartColors = [
   "#c4ccd3",
 ];
 
-export const MaxQueryLength = 120;
+export const TopologyMaxQueryEntities = 20;
+export const TopologyMaxQueryExpressions = 10;
+export const DashboardMaxQueryWidgets = 6;
