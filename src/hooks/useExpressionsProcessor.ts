@@ -32,7 +32,7 @@ import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { Node, Call } from "@/types/topology";
 
 function chunkArray(array: any[], chunkSize: number) {
-  if (chunkSize === 0) {
+  if (chunkSize <= 0) {
     return [array];
   }
   if (chunkSize > array.length) {
