@@ -223,14 +223,14 @@ export const topologyStore = defineStore({
     setNodeMetricValue(m: MetricVal) {
       this.nodeMetricValue = m;
     },
-    setLegendValues(expressions: string, data: { [key: string]: any }) {
+    setLegendValues(expression: string, data: Indexable) {
       const nodeArr = this.nodes.filter((d: Node) => d.isReal);
+
       for (let idx = 0; idx < nodeArr.length; idx++) {
-        for (let index = 0; index < expressions.length; index++) {
-          const k = "expression" + idx + index;
-          if (expressions[index]) {
-            nodeArr[idx][expressions[index]] = Number(data[k].results[0].values[0].value);
-          }
+        if (expression) {
+          nodeArr[idx][expression] = Number(
+            data[expression]?.values?.find((d: { id: string; value: string }) => d.id === nodeArr[idx].id)?.value,
+          );
         }
       }
     },

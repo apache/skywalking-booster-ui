@@ -159,7 +159,7 @@ limitations under the License. -->
   import zoom from "@/views/dashboard/related/components/utils/zoom";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
   import { ConfigFieldTypes } from "@/views/dashboard/data";
-  /*global Nullable, defineProps */
+  /*global Nullable, defineProps, Indexable */
   const props = defineProps({
     config: {
       type: Object as PropType<any>,
@@ -285,20 +285,16 @@ limitations under the License. -->
     if (!expression) {
       return;
     }
-    const { getExpressionQuery } = useQueryTopologyExpressionsProcessor(
+    const { getMetrics } = useQueryTopologyExpressionsProcessor(
       [expression],
       topologyStore.nodes.filter((d: Node) => d.isReal),
     );
-    const param = getExpressionQuery();
-    const res = await topologyStore.getTopologyExpressionValue(param);
-    if (res.errors) {
-      ElMessage.error(res.errors);
-    } else {
-      topologyStore.setLegendValues([expression], res.data);
-    }
+    const metrics = await getMetrics();
+
+    topologyStore.setLegendValues(expression, metrics);
   }
 
-  function getNodeStatus(d: any) {
+  function getNodeStatus(d: Indexable) {
     const { legendMQE } = settings.value;
     if (!legendMQE) {
       return icons.CUBE;
@@ -313,8 +309,7 @@ limitations under the License. -->
     const nodeMetricConfig = settings.value.nodeMetricConfig || [];
     const html = nodeMetrics.map((m, index) => {
       const metric =
-        (topologyStore.nodeMetricValue[m] &&
-          topologyStore.nodeMetricValue[m].values.find((val: { id: string; value: string }) => val.id === data.id)) ||
+        topologyStore.nodeMetricValue[m]?.values?.find((val: { id: string; value: string }) => val.id === data.id) ||
         {};
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
       return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value || NaN} ${
@@ -339,7 +334,7 @@ limitations under the License. -->
     const linkClientMetricConfig: MetricConfigOpt[] = settings.value.linkClientMetricConfig || [];
     const linkServerMetrics: string[] = settings.value.linkServerExpressions || [];
     const htmlServer = linkServerMetrics.map((m, index) => {
-      const metric = topologyStore.linkServerMetrics[m].values.find(
+      const metric = topologyStore.linkServerMetrics[m]?.values?.find(
         (val: { id: string; value: unknown }) => val.id === data.id,
       );
       if (metric) {
@@ -351,7 +346,7 @@ limitations under the License. -->
     });
     const htmlClient = linkClientMetrics.map((m: string, index: number) => {
       const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
-      const metric = topologyStore.linkClientMetrics[m].values.find(
+      const metric = topologyStore.linkClientMetrics[m]?.values?.find(
         (val: { id: string; value: unknown }) => val.id === data.id,
       );
       if (metric) {

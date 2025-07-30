@@ -113,4 +113,6 @@ export const LightChartColors = [
   "#c4ccd3",
 ];
 
-export const MaxQueryLength = 120;
+export const TopologyMaxQueryEntities = 20;
+export const TopologyMaxQueryExpressions = 10;
+export const DashboardMaxQueryWidgets = 6;
