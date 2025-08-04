@@ -15,7 +15,7 @@ limitations under the License. -->
     <div>
       <span
         class="time-charts-item mr-5"
-        v-for="(i, index) in list"
+        v-for="(i, index) in traceStore.serviceList"
         :key="index"
         :style="`color:${computedScale(index)}`"
       >
@@ -45,22 +45,23 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import type { Span } from "@/types/trace";
   import { useI18n } from "vue-i18n";
-  import { ref, computed } from "vue";
+  import { ref } from "vue";
   import { TraceGraphType } from "./constant";
+  import { useTraceStore } from "@/store/modules/trace";
 
   /* global defineProps */
-  const props = defineProps({
+  defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
   });
   const { t } = useI18n();
-  const list = computed(() => Array.from(new Set(props.data.map((i: Span) => i.serviceCode))));
+  const traceStore = useTraceStore();
   const charts = ref<any>(null);
 
   function computedScale(i: number) {
     const sequentialScale = d3
       .scaleSequential()
-      .domain([0, list.value.length + 1])
+      .domain([0, traceStore.serviceList.length + 1])
       .interpolator(d3.interpolateCool);
     return sequentialScale(i);
   }

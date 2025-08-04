@@ -13,7 +13,12 @@ limitations under the License. -->
 <template>
   <div class="charts">
     <div>
-      <span class="charts-item mr-5" v-for="(i, index) in list" :key="index" :style="`color:${computedScale(index)}`">
+      <span
+        class="charts-item mr-5"
+        v-for="(i, index) in traceStore.serviceList"
+        :key="index"
+        :style="`color:${computedScale(index)}`"
+      >
         <Icon iconName="issue-open-m" class="mr-5" size="sm" />
         <span>{{ i }}</span>
       </span>
@@ -27,29 +32,29 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import * as d3 from "d3";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useTraceStore } from "@/store/modules/trace";
   import type { Span } from "@/types/trace";
   import Graph from "./D3Graph/Index.vue";
   import { Themes } from "@/constants/data";
   import { TraceGraphType } from "./constant";
 
   /* global defineProps, Recordable*/
-  const props = defineProps({
+  defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
   });
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
-  const list = computed(() => Array.from(new Set(props.data.map((i: Span) => i.serviceCode))));
+  const traceStore = useTraceStore();
 
   function computedScale(i: number) {
     const sequentialScale = d3
       .scaleSequential()
-      .domain([0, list.value.length + 1])
+      .domain([0, traceStore.serviceList.length + 1])
       .interpolator(d3.interpolateCool);
     return sequentialScale(i);
   }

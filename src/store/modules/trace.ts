@@ -35,6 +35,7 @@ interface TraceState {
   traceSpanLogs: Recordable[];
   selectorStore: Recordable;
   selectedSpan: Recordable<Span>;
+  serviceList: string[];
 }
 const { getDurationTime } = useDuration();
 
@@ -56,6 +57,7 @@ export const traceStore = defineStore({
     },
     traceSpanLogs: [],
     selectorStore: useSelectorStore(),
+    serviceList: [],
   }),
   actions: {
     setTraceCondition(data: Recordable) {
@@ -180,9 +182,9 @@ export const traceStore = defineStore({
       if (response.errors) {
         return response;
       }
-      const data = response.data.trace.spans;
-
-      this.setTraceSpans(data || []);
+      const data = response.data.trace.spans || [];
+      this.serviceList = Array.from(new Set(data.map((i: Span) => i.serviceCode)));
+      this.setTraceSpans(data);
       return response;
     },
     async getSpanLogs(params: Recordable) {

@@ -31,14 +31,16 @@ limitations under the License. -->
     </div>
     <div class="body">
       <iframe
-        v-if="widget.url"
-        :src="widget.url"
+        v-if="widgetUrl.isValid"
+        :src="widgetUrl.sanitizedUrl"
         width="100%"
         height="100%"
         scrolling="no"
         style="border: none"
+        sandbox="allow-scripts allow-same-origin"
+        referrerpolicy="no-referrer"
       ></iframe>
-      <div v-else class="tips">{{ t("iframeWidgetTip") }}</div>
+      <div v-else class="tips">{{ widgetUrl.error || t("iframeWidgetTip") }}</div>
     </div>
   </div>
 </template>
@@ -47,6 +49,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import { validateAndSanitizeUrl } from "@/utils/validateAndSanitizeUrl";
 
   /*global defineProps */
   const props = defineProps({
@@ -59,6 +62,7 @@ limitations under the License. -->
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const widget = computed(() => props.data.widget || {});
+  const widgetUrl = computed(() => validateAndSanitizeUrl(widget.value.url || ""));
 
   function removeTopo() {
     dashboardStore.removeControls(props.data);

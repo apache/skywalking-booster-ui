@@ -13,13 +13,14 @@ limitations under the License. -->
 <template>
   <div class="item">
     <span class="label">{{ t("iframeSrc") }}</span>
-    <el-input class="input" v-model="url" size="small" @change="changeConfig({ url: encodeURIComponent(url) })" />
+    <el-input class="input" v-model="url" size="small" @change="handleUrlChange" :class="{ error: urlError }" />
+    <div v-if="urlError" class="error-message">{{ urlError }}</div>
   </div>
   <div class="footer">
     <el-button size="small" @click="cancelConfig">
       {{ t("cancel") }}
     </el-button>
-    <el-button size="small" type="primary" @click="applyConfig">
+    <el-button size="small" type="primary" @click="applyConfig" :disabled="!!urlError">
       {{ t("apply") }}
     </el-button>
   </div>
@@ -28,24 +29,42 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { ref } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import { validateAndSanitizeUrl } from "@/utils/validateAndSanitizeUrl";
+
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
   const widget = originConfig.widget || {};
   const url = ref(widget.url || "");
+  const urlError = ref("");
+
+  function handleUrlChange() {
+    const validation = validateAndSanitizeUrl(url.value);
+    urlError.value = validation.error;
+
+    if (validation.isValid) {
+      changeConfig({ url: validation.sanitizedUrl });
+    }
+  }
+
   function changeConfig(param: { [key: string]: string }) {
     const key = Object.keys(param)[0];
     if (!key) {
       return;
     }
+
     const { selectedGrid } = dashboardStore;
     const widget = {
       ...dashboardStore.selectedGrid.widget,
-      [key]: decodeURIComponent(param[key]),
+      [key]: param[key], // Use the sanitized URL directly, no need for decodeURIComponent
     };
     dashboardStore.selectWidget({ ...selectedGrid, widget });
   }
+
   function applyConfig() {
+    if (urlError.value) {
+      return; // Don't apply if there's a validation error
+    }
     dashboardStore.setConfigPanel(false);
     dashboardStore.setConfigs(dashboardStore.selectedGrid);
   }
@@ -74,6 +93,18 @@ limitations under the License. -->
 
   .item {
     margin-bottom: 10px;
+  }
+
+  .url-input.error {
+    :deep(.el-input__inner) {
+      border-color: $error-color;
+    }
+  }
+
+  .error-message {
+    color: $error-color;
+    font-size: 12px;
+    margin-top: 4px;
   }
 
   .footer {

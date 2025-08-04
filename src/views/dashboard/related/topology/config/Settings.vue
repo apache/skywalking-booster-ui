@@ -158,7 +158,6 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useTopologyStore } from "@/store/modules/topology";
-  import { ElMessage } from "element-plus";
   import { ScopeType, EntityType, CallTypes } from "@/views/dashboard/data";
   import type { Option } from "@/types/app";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
@@ -239,17 +238,12 @@ limitations under the License. -->
   async function setLegend() {
     updateSettings();
     const expression = dashboardStore.selectedGrid.legendMQE && dashboardStore.selectedGrid.legendMQE.expression;
-    const { getExpressionQuery } = useQueryTopologyExpressionsProcessor(
+    const { getMetrics } = useQueryTopologyExpressionsProcessor(
       [expression],
       topologyStore.nodes.filter((d: Node) => d.isReal),
     );
-    const param = getExpressionQuery();
-    const res = await topologyStore.getTopologyExpressionValue(param);
-    if (res.errors) {
-      ElMessage.error(res.errors);
-    } else {
-      topologyStore.setLegendValues([expression], res.data);
-    }
+    const metrics = await getMetrics();
+    topologyStore.setLegendValues(expression, metrics);
   }
   function changeNodeDashboard(opt: any) {
     states.nodeDashboard = opt[0].value;

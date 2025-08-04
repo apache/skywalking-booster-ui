@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RespFields, MaximumEntities, MaxQueryLength } from "./data";
+import {
+  RespFields,
+  MaximumEntities,
+  TopologyMaxQueryEntities,
+  TopologyMaxQueryExpressions,
+  DashboardMaxQueryWidgets,
+} from "./data";
 import { EntityType, ExpressionResultType } from "@/views/dashboard/data";
 import { ElMessage } from "element-plus";
 import { useTopologyStore } from "@/store/modules/topology";
@@ -26,10 +32,17 @@ import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { Node, Call } from "@/types/topology";
 
 function chunkArray(array: any[], chunkSize: number) {
+  if (chunkSize <= 0) {
+    return [array];
+  }
+  if (chunkSize > array.length) {
+    return [array];
+  }
   const result = [];
   for (let i = 0; i < array.length; i += chunkSize) {
     result.push(array.slice(i, i + chunkSize));
   }
+
   return result;
 }
 
@@ -191,7 +204,7 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
     }
   }
 
-  const partArr = chunkArray(configList, 6);
+  const partArr = chunkArray(configList, DashboardMaxQueryWidgets);
   const promiseArr = partArr.map((d: Array<Indexable>) => fetchMetrics(d));
   const responseList = await Promise.all(promiseArr);
   let resp = {};
@@ -201,7 +214,6 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
       ...item,
     };
   }
-
   return resp;
 }
 
@@ -395,13 +407,14 @@ export async function useExpressionsQueryPodsMetrics(
 export function useQueryTopologyExpressionsProcessor(metrics: string[], instances: (Call | Node)[]) {
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
+  const topologyStore = useTopologyStore();
 
-  function getExpressionQuery(partMetrics?: string[]) {
+  function getExpressionQuery(partMetrics: string[] = [], entities: (Call | Node)[] = []) {
     const conditions: { [key: string]: unknown } = {
       duration: appStore.durationTime,
     };
     const variables: string[] = [`$duration: Duration!`];
-    const fragmentList = instances.map((d: any, index: number) => {
+    const fragmentList = entities.map((d: Indexable, index: number) => {
       let serviceName;
       let destServiceName;
       let endpointName;
@@ -482,23 +495,27 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
         }
       }
     }
+
     return obj;
   }
-  async function fetchMetrics(partMetrics: string[]) {
-    const topologyStore = useTopologyStore();
-    const param = getExpressionQuery(partMetrics);
+  async function fetchMetrics(partMetrics: string[], entities: (Call | Node)[]) {
+    const param = getExpressionQuery(partMetrics, entities);
     const res = await topologyStore.getTopologyExpressionValue(param);
     if (res.errors) {
       ElMessage.error(res.errors);
       return;
     }
+
     return handleExpressionValues(partMetrics, res.data);
   }
 
   async function getMetrics() {
-    const count = Math.floor(MaxQueryLength / instances.length);
-    const metricsArr = chunkArray(metrics, count);
-    const promiseArr = metricsArr.map((d: string[]) => fetchMetrics(d));
+    const metricsArr = chunkArray(metrics, TopologyMaxQueryExpressions);
+    const entities = chunkArray(instances, TopologyMaxQueryEntities);
+
+    const promiseArr = metricsArr
+      .map((d: string[]) => entities.map((e: (Call | Node)[]) => fetchMetrics(d, e)))
+      .flat(1);
     const responseList = await Promise.all(promiseArr);
     let resp = {};
     for (const item of responseList) {
@@ -507,8 +524,9 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
         ...item,
       };
     }
+
     return resp;
   }
 
-  return { getMetrics, getExpressionQuery };
+  return { getMetrics };
 }
