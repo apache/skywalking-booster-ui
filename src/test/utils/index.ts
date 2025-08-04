@@ -30,7 +30,7 @@ export function createTestApp() {
 }
 
 export function mountComponent<T>(component: T, options: any = {}): VueWrapper<ComponentPublicInstance> {
-  const { app, pinia } = createTestApp();
+  const { pinia } = createTestApp();
 
   return mount(component as any, {
     global: {
