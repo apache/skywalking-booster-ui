@@ -17,7 +17,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { createRouter, createWebHistory, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import App from "../App.vue";
 
 // Mock Vue Router

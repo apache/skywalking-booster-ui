@@ -115,7 +115,6 @@ describe("useDuration hook", () => {
     it("should calculate correct time gap", () => {
       const { getMaxRange } = useDuration();
 
-      const now = new Date();
       const result = getMaxRange(2);
 
       // Should be approximately 3 days (2 + 1) * 24 * 60 * 60 * 1000 milliseconds
