@@ -18,6 +18,10 @@
 import { ElNotification } from "element-plus";
 
 export default (text: string): void => {
+  if (!navigator.clipboard) {
+    console.error("Clipboard is not supported");
+    return;
+  }
   navigator.clipboard
     .writeText(text)
     .then(() => {

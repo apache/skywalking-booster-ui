@@ -218,7 +218,7 @@ describe("App Store", () => {
 
     it("should set event stack correctly", () => {
       const store = appStore();
-      const eventStack = [() => console.log("test")];
+      const eventStack = [vi.fn()];
 
       store.setEventStack(eventStack);
 
@@ -255,11 +255,13 @@ describe("App Store", () => {
 
     it("should set reload timer correctly", () => {
       const store = appStore();
-      const mockTimer = setInterval(() => {}, 1000);
+      const mockTimer = setInterval(() => {
+        // Mock callback for timer
+      }, 1000);
 
       store.setReloadTimer(mockTimer);
 
-      expect(store.reloadTimer).toBe(mockTimer);
+      expect(store.reloadTimer).toStrictEqual(mockTimer);
     });
   });
 

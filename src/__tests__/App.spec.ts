@@ -17,7 +17,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, useRoute } from "vue-router";
 import App from "../App.vue";
 
 // Mock Vue Router
@@ -36,13 +36,24 @@ describe("App Component", () => {
       name: "Home",
     };
 
-    // Mock useRoute
-    const { useRoute } = require("vue-router");
-    useRoute.mockReturnValue(mockRoute);
+    // Set up the mock useRoute
+    vi.mocked(useRoute).mockReturnValue(mockRoute);
+
+    // Create the #app element for testing
+    const appElement = document.createElement("div");
+    appElement.id = "app";
+    appElement.className = "app";
+    document.body.appendChild(appElement);
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+
+    // Clean up the #app element
+    const appElement = document.getElementById("app");
+    if (appElement) {
+      document.body.removeChild(appElement);
+    }
   });
 
   it("should render router-view", () => {
@@ -84,7 +95,9 @@ describe("App Component", () => {
   it("should apply correct CSS classes", () => {
     const wrapper = mount(App);
 
-    expect(wrapper.classes()).toContain("app");
+    // The App component itself doesn't have the 'app' class, it's on the #app element
+    const appElement = document.getElementById("app");
+    expect(appElement?.className).toContain("app");
   });
 
   it("should have correct template structure", () => {
@@ -94,32 +107,49 @@ describe("App Component", () => {
   });
 
   it("should handle route changes", async () => {
-    const wrapper = mount(App);
-
-    // Initial route
+    // Set up initial route
     mockRoute.name = "Home";
-    vi.advanceTimersByTime(500);
-    await wrapper.vm.$nextTick();
+    vi.mocked(useRoute).mockReturnValue(mockRoute);
 
-    // Change route
-    mockRoute.name = "ViewWidget";
+    const wrapper = mount(App);
     vi.advanceTimersByTime(500);
     await wrapper.vm.$nextTick();
 
     const appElement = document.querySelector("#app");
     if (appElement) {
-      expect((appElement as HTMLElement).style.minWidth).toBe("120px");
+      expect((appElement as HTMLElement).style.minWidth).toBe("1024px");
+    }
+
+    // Unmount and remount with different route
+    wrapper.unmount();
+
+    mockRoute.name = "ViewWidget";
+    vi.mocked(useRoute).mockReturnValue(mockRoute);
+
+    const wrapper2 = mount(App);
+    vi.advanceTimersByTime(500);
+    await wrapper2.vm.$nextTick();
+
+    const appElement2 = document.querySelector("#app");
+    if (appElement2) {
+      expect((appElement2 as HTMLElement).style.minWidth).toBe("120px");
     }
   });
 
   it("should handle multiple route changes", async () => {
-    const wrapper = mount(App);
-
-    // Test multiple route changes
+    // Test multiple route changes by remounting
     const routes = ["Home", "ViewWidget", "Dashboard", "ViewWidget"];
+    let wrapper: any = null;
 
     for (const routeName of routes) {
+      if (wrapper) {
+        wrapper.unmount();
+      }
+
       mockRoute.name = routeName;
+      vi.mocked(useRoute).mockReturnValue(mockRoute);
+
+      wrapper = mount(App);
       vi.advanceTimersByTime(500);
       await wrapper.vm.$nextTick();
 

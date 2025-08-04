@@ -19,13 +19,24 @@ import { defineConfig } from "vitest/config";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import path from "path";
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 export default defineConfig({
-  plugins: [vue(), vueJsx()],
+  plugins: [
+    vue(),
+    vueJsx(),
+    createSvgIconsPlugin({
+      iconDirs: [path.resolve(__dirname, "./src/assets/icons")],
+      symbolId: "[name]",
+    }),
+  ],
   test: {
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
+    deps: {
+      inline: ["vite-plugin-svg-icons"],
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

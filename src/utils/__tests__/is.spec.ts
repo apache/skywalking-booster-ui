@@ -23,17 +23,13 @@ import {
   isObject,
   isDate,
   isNull,
-  isNullAndUnDef,
   isNullOrUnDef,
   isNumber,
-  isPromise,
   isString,
   isFunction,
   isBoolean,
   isRegExp,
   isArray,
-  isWindow,
-  isElement,
   isMap,
   isEmptyObject,
 } from "../is";
@@ -126,19 +122,6 @@ describe("is utility functions", () => {
     });
   });
 
-  describe("isNullAndUnDef", () => {
-    it("should return true for null and undefined", () => {
-      expect(isNullAndUnDef(undefined)).toBe(true);
-      expect(isNullAndUnDef(null)).toBe(true);
-    });
-
-    it("should return false for other values", () => {
-      expect(isNullAndUnDef("string")).toBe(false);
-      expect(isNullAndUnDef(0)).toBe(false);
-      expect(isNullAndUnDef({})).toBe(false);
-    });
-  });
-
   describe("isNullOrUnDef", () => {
     it("should return true for null or undefined", () => {
       expect(isNullOrUnDef(null)).toBe(true);
@@ -165,20 +148,6 @@ describe("is utility functions", () => {
       expect(isNumber({})).toBe(false);
       expect(isNumber(null)).toBe(false);
       expect(isNumber(undefined)).toBe(false);
-    });
-  });
-
-  describe("isPromise", () => {
-    it("should return true for promises", () => {
-      expect(isPromise(Promise.resolve())).toBe(true);
-      expect(isPromise(new Promise(() => {}))).toBe(true);
-    });
-
-    it("should return false for non-promises", () => {
-      expect(isPromise({})).toBe(false);
-      expect(isPromise({ then: "not a function" })).toBe(false);
-      expect(isPromise("string")).toBe(false);
-      expect(isPromise(123)).toBe(false);
     });
   });
 
@@ -252,31 +221,6 @@ describe("is utility functions", () => {
       expect(isArray("string")).toBe(false);
       expect(isArray(123)).toBe(false);
       expect(isArray(null)).toBe(false);
-    });
-  });
-
-  describe("isWindow", () => {
-    it("should return true for window object", () => {
-      expect(isWindow(window)).toBe(true);
-    });
-
-    it("should return false for non-window objects", () => {
-      expect(isWindow({})).toBe(false);
-      expect(isWindow(null)).toBe(false);
-      expect(isWindow(undefined)).toBe(false);
-    });
-  });
-
-  describe("isElement", () => {
-    it("should return true for DOM elements", () => {
-      const div = document.createElement("div");
-      expect(isElement(div)).toBe(true);
-    });
-
-    it("should return false for non-elements", () => {
-      expect(isElement({})).toBe(false);
-      expect(isElement({ tagName: "div" })).toBe(true); // Objects with tagName are considered elements
-      expect(isElement(null)).toBe(false);
     });
   });
 

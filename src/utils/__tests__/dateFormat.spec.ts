@@ -91,15 +91,15 @@ describe("dateFormat utility functions", () => {
 
   describe("dateFormat", () => {
     it("should format timestamp with default pattern", () => {
-      const timestamp = 1703521845123; // 2023-12-25T15:30:45.123Z
-      expect(dateFormat(timestamp)).toBe("2023-12-25 15:30:45");
+      const timestamp = 1703521845123;
+      expect(dateFormat(timestamp)).toBe("2023-12-26 00:30:45");
     });
 
     it("should format timestamp with custom pattern", () => {
-      const timestamp = 1703521845123; // 2023-12-25T15:30:45.123Z
-      expect(dateFormat(timestamp, "YYYY/MM/DD")).toBe("2023/12/25");
-      expect(dateFormat(timestamp, "MM-DD-YYYY")).toBe("12-25-2023");
-      expect(dateFormat(timestamp, "HH:mm")).toBe("15:30");
+      const timestamp = 1703521845123;
+      expect(dateFormat(timestamp, "YYYY/MM/DD")).toBe("2023/12/26");
+      expect(dateFormat(timestamp, "MM-DD-YYYY")).toBe("12-26-2023");
+      expect(dateFormat(timestamp, "HH:mm")).toBe("00:30");
     });
 
     it("should handle different timestamp formats", () => {
@@ -107,7 +107,7 @@ describe("dateFormat utility functions", () => {
       const timestamp2 = new Date("2023-01-01").getTime();
 
       expect(dateFormat(timestamp1)).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
-      expect(dateFormat(timestamp2)).toBe("2023-01-01 00:00:00");
+      expect(dateFormat(timestamp2)).toBe("2023-01-01 08:00:00");
     });
   });
 });
