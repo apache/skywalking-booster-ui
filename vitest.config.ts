@@ -35,6 +35,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
     deps: {
+      // vite-plugin-svg-icons uses non-standard exports and needs to be inlined
+      // to ensure correct module resolution during testing with Vitest.
       inline: ["vite-plugin-svg-icons"],
     },
     coverage: {
