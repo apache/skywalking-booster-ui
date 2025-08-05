@@ -163,13 +163,25 @@ export const appStore = defineStore({
       if (this.timer) {
         clearTimeout(this.timer);
       }
-      this.timer = setTimeout(
-        () =>
-          this.eventStack.forEach((event: Function) => {
-            setTimeout(event(), 0);
-          }),
-        500,
-      );
+      this.timer = setTimeout(() => {
+        // Use requestIdleCallback if available for better performance, otherwise use setTimeout
+        const executeEvents = async () => {
+          for (const event of this.eventStack) {
+            try {
+              await Promise.resolve(event());
+            } catch (error) {
+              console.error("Error executing event in eventStack:", error);
+            }
+          }
+        };
+
+        if (typeof requestIdleCallback !== "undefined") {
+          // Execute during idle time to avoid blocking the main thread
+          requestIdleCallback(() => executeEvents(), { timeout: 1000 });
+        } else {
+          executeEvents();
+        }
+      }, 500);
     },
     async getActivateMenus() {
       const resp = (await this.queryMenuItems()) || {};
@@ -198,7 +210,7 @@ export const appStore = defineStore({
       if (res.errors) {
         this.utc = -(new Date().getTimezoneOffset() / 60) + ":0";
       } else {
-        this.utc = res.data.getTimeInfo.timezone / 100 + ":0";
+        this.utc = res.data.getTimeInfo?.timezone / 100 + ":0";
       }
       const utcArr = this.utc.split(":");
       this.utcHour = isNaN(Number(utcArr[0])) ? 0 : Number(utcArr[0]);
@@ -211,7 +223,7 @@ export const appStore = defineStore({
       if (res.errors) {
         return res;
       }
-      this.version = res.data.version;
+      this.version = res.data.version || "";
       return res.data;
     },
     async queryMenuItems() {
@@ -227,7 +239,7 @@ export const appStore = defineStore({
       if (response.errors) {
         return response;
       }
-      this.metricsTTL = response.data.getMetricsTTL;
+      this.metricsTTL = response.data.getMetricsTTL || {};
       return response.data;
     },
     async queryRecordsTTL() {
@@ -235,7 +247,7 @@ export const appStore = defineStore({
       if (res.errors) {
         return res;
       }
-      this.recordsTTL = res.data.getRecordsTTL;
+      this.recordsTTL = res.data.getRecordsTTL || {};
       return res.data;
     },
     setReloadTimer(timer: IntervalHandle) {
