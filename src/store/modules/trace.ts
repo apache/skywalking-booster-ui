@@ -123,6 +123,9 @@ export const traceStore = defineStore({
     },
     async getInstances(id: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      if (!serviceId) {
+        return new Promise((resolve) => resolve({ errors: "No service" }));
+      }
       const response = await graphql.query("queryInstances").params({
         serviceId: serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -136,6 +139,9 @@ export const traceStore = defineStore({
     },
     async getEndpoints(id: string, keyword?: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      if (!serviceId) {
+        return new Promise((resolve) => resolve({ errors: "No service" }));
+      }
       const response = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,

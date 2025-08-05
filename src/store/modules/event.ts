@@ -46,6 +46,10 @@ export const eventStore = defineStore({
     },
     async getInstances() {
       const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
+
+      if (!serviceId) {
+        return new Promise((resolve) => resolve({ errors: "No service" }));
+      }
       const response = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -60,7 +64,7 @@ export const eventStore = defineStore({
     async getEndpoints(keyword: string) {
       const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
       if (!serviceId) {
-        return;
+        return new Promise((resolve) => resolve({ errors: "No service" }));
       }
       const response = await graphql.query("queryEndpoints").params({
         serviceId,

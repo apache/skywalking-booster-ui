@@ -91,7 +91,7 @@ export const selectorStore = defineStore({
     async getServiceInstances(param?: { serviceId: string; isRelation: boolean }) {
       const serviceId = param ? param.serviceId : this.currentService?.id;
       if (!serviceId) {
-        return null;
+        return new Promise((resolve) => resolve({ errors: "No service" }));
       }
       const resp = await graphql.query("queryInstances").params({
         serviceId,
@@ -130,7 +130,7 @@ export const selectorStore = defineStore({
       }
       const serviceId = params.serviceId || this.currentService?.id;
       if (!serviceId) {
-        return null;
+        return new Promise((resolve) => resolve({ errors: "No service" }));
       }
       const res = await graphql.query("queryEndpoints").params({
         serviceId,
