@@ -163,13 +163,25 @@ export const appStore = defineStore({
       if (this.timer) {
         clearTimeout(this.timer);
       }
-      this.timer = setTimeout(
-        () =>
-          this.eventStack.forEach((event: Function) => {
-            event();
-          }),
-        500,
-      );
+      this.timer = setTimeout(() => {
+        // Use requestIdleCallback if available for better performance, otherwise use setTimeout
+        const executeEvents = async () => {
+          for (const event of this.eventStack) {
+            try {
+              await Promise.resolve(event());
+            } catch (error) {
+              console.error("Error executing event in eventStack:", error);
+            }
+          }
+        };
+
+        if (typeof requestIdleCallback !== "undefined") {
+          // Execute during idle time to avoid blocking the main thread
+          requestIdleCallback(() => executeEvents(), { timeout: 1000 });
+        } else {
+          executeEvents();
+        }
+      }, 500);
     },
     async getActivateMenus() {
       const resp = (await this.queryMenuItems()) || {};
