@@ -47,7 +47,7 @@ vi.mock("vue-i18n", () => ({
 }));
 
 describe("DateCalendar Component", () => {
-  let wrapper: any;
+  let wrapper: Recordable;
 
   const mockDate = new Date(2024, 0, 15, 10, 30, 45); // January 15, 2024, 10:30:45
 
@@ -204,7 +204,7 @@ describe("DateCalendar Component", () => {
       expect(days).toHaveLength(42); // 6 weeks * 7 days
 
       // Check that we have the correct number of days for January 2024
-      const currentMonthDays = days.filter((day: any) => !day.p && !day.n);
+      const currentMonthDays = days.filter((day: Recordable) => !day.p && !day.n);
       expect(currentMonthDays).toHaveLength(31);
     });
 
@@ -581,7 +581,7 @@ describe("DateCalendar Component", () => {
       });
 
       const days = wrapper.vm.days;
-      const februaryDays = days.filter((day: any) => day.y === 2024 && day.m === 1 && !day.p && !day.n);
+      const februaryDays = days.filter((day: Recordable) => day.y === 2024 && day.m === 1 && !day.p && !day.n);
       expect(februaryDays).toHaveLength(29);
     });
 
@@ -593,7 +593,7 @@ describe("DateCalendar Component", () => {
       });
 
       const days = wrapper.vm.days;
-      const februaryDays = days.filter((day: any) => day.y === 2023 && day.m === 1 && !day.p && !day.n);
+      const februaryDays = days.filter((day: Recordable) => day.y === 2023 && day.m === 1 && !day.p && !day.n);
       expect(februaryDays).toHaveLength(28);
     });
 

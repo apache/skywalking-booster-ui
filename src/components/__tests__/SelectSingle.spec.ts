@@ -21,7 +21,7 @@ import { nextTick } from "vue";
 import SelectSingle from "../SelectSingle.vue";
 
 describe("SelectSingle Component", () => {
-  let wrapper: any;
+  let wrapper: Recordable;
 
   const mockOptions = [
     { label: "Option 1", value: "option1" },
@@ -41,7 +41,7 @@ describe("SelectSingle Component", () => {
 
   describe("Props", () => {
     it("should render with default props", () => {
-      wrapper = mount(SelectSingle as any);
+      wrapper = mount(SelectSingle);
 
       expect(wrapper.exists()).toBe(true);
       expect(wrapper.find(".bar-select").exists()).toBe(true);
@@ -49,7 +49,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should render with custom options", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
         },
@@ -59,7 +59,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should render with selected value", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -71,7 +71,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should render with clearable option", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -84,7 +84,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should not show remove icon when clearable is false", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -98,7 +98,7 @@ describe("SelectSingle Component", () => {
 
   describe("Component Structure", () => {
     it("should have correct template structure", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
         },
@@ -110,7 +110,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should render options correctly", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
         },
@@ -124,7 +124,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should show selected option text", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -135,7 +135,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should show placeholder when no option is selected", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "",
@@ -148,7 +148,7 @@ describe("SelectSingle Component", () => {
 
   describe("Event Handling", () => {
     it("should emit change event when option is selected", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
         },
@@ -166,7 +166,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should emit change event with empty string when remove is clicked", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -181,7 +181,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should toggle dropdown visibility when bar-i is clicked", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
         },
@@ -197,7 +197,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should not select disabled option", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -217,7 +217,7 @@ describe("SelectSingle Component", () => {
 
   describe("Watchers", () => {
     it("should update selected value when props.value changes", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -236,7 +236,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should handle value change to empty string", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -255,7 +255,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should handle value change to non-existent option", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -276,7 +276,7 @@ describe("SelectSingle Component", () => {
 
   describe("Methods", () => {
     it("should handle select option correctly", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
         },
@@ -290,7 +290,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should handle remove selected correctly", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -305,7 +305,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should handle setPopper correctly", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
         },
@@ -319,7 +319,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should handle click outside correctly", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
         },
@@ -337,7 +337,7 @@ describe("SelectSingle Component", () => {
 
   describe("Edge Cases", () => {
     it("should handle empty options array", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: [],
         },
@@ -348,7 +348,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should handle undefined value", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: undefined,
@@ -360,10 +360,10 @@ describe("SelectSingle Component", () => {
     });
 
     it("should handle null value", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
-          value: null,
+          value: null as any,
         },
       });
 
@@ -377,7 +377,7 @@ describe("SelectSingle Component", () => {
         { label: "Option 2", value: "option2" },
       ];
 
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: optionsWithEmptyValues,
           value: "",
@@ -391,7 +391,7 @@ describe("SelectSingle Component", () => {
 
   describe("Integration", () => {
     it("should work with all props combined", () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -407,7 +407,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should handle complete selection workflow", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           clearable: true,
@@ -434,7 +434,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should handle dropdown toggle and option selection", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
         },
@@ -456,7 +456,7 @@ describe("SelectSingle Component", () => {
 
   describe("CSS Classes", () => {
     it("should apply active class when dropdown is visible", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
         },
@@ -469,7 +469,7 @@ describe("SelectSingle Component", () => {
     });
 
     it("should apply select-disabled class to selected option", async () => {
-      wrapper = mount(SelectSingle as any, {
+      wrapper = mount(SelectSingle, {
         props: {
           options: mockOptions,
           value: "option1",

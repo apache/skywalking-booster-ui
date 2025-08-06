@@ -21,7 +21,7 @@ import { nextTick } from "vue";
 import Selector from "../Selector.vue";
 
 describe("Selector Component", () => {
-  let wrapper: any;
+  let wrapper: Recordable;
 
   const mockOptions = [
     { label: "Option 1", value: "option1" },
@@ -35,14 +35,14 @@ describe("Selector Component", () => {
 
   describe("Props", () => {
     it("should render with default props", () => {
-      wrapper = mount(Selector as any);
+      wrapper = mount(Selector);
 
       expect(wrapper.exists()).toBe(true);
       expect(wrapper.vm.selected).toEqual([]);
     });
 
     it("should render with custom value", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -53,7 +53,7 @@ describe("Selector Component", () => {
     });
 
     it("should render in multiple mode", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           multiple: true,
@@ -65,7 +65,7 @@ describe("Selector Component", () => {
     });
 
     it("should render with custom placeholder", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           placeholder: "Custom placeholder",
         },
@@ -75,7 +75,7 @@ describe("Selector Component", () => {
     });
 
     it("should render with custom size", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           size: "small",
         },
@@ -85,7 +85,7 @@ describe("Selector Component", () => {
     });
 
     it("should render with custom border radius", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           borderRadius: 8,
         },
@@ -95,7 +95,7 @@ describe("Selector Component", () => {
     });
 
     it("should render in disabled mode", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           disabled: true,
         },
@@ -105,7 +105,7 @@ describe("Selector Component", () => {
     });
 
     it("should render with clearable option", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           clearable: true,
         },
@@ -115,7 +115,7 @@ describe("Selector Component", () => {
     });
 
     it("should render in remote mode", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           isRemote: true,
         },
@@ -125,7 +125,7 @@ describe("Selector Component", () => {
     });
 
     it("should render with filterable option", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           filterable: true,
         },
@@ -135,7 +135,7 @@ describe("Selector Component", () => {
     });
 
     it("should render with collapse tags", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           multiple: true,
           collapseTags: true,
@@ -146,7 +146,7 @@ describe("Selector Component", () => {
     });
 
     it("should render with collapse tags tooltip", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           multiple: true,
           collapseTagsTooltip: true,
@@ -159,7 +159,7 @@ describe("Selector Component", () => {
 
   describe("Component Structure", () => {
     it("should have correct template structure", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
         },
@@ -170,7 +170,7 @@ describe("Selector Component", () => {
     });
 
     it("should render options correctly", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
         },
@@ -183,7 +183,7 @@ describe("Selector Component", () => {
 
   describe("Event Handling", () => {
     it("should emit change event when selection changes", async () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
         },
@@ -196,7 +196,7 @@ describe("Selector Component", () => {
     });
 
     it("should emit change event with correct data for single selection", async () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -211,7 +211,7 @@ describe("Selector Component", () => {
     });
 
     it("should emit change event with correct data for multiple selection", async () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           multiple: true,
@@ -230,7 +230,7 @@ describe("Selector Component", () => {
     });
 
     it("should emit query event in remote mode", async () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           isRemote: true,
         },
@@ -244,7 +244,7 @@ describe("Selector Component", () => {
     });
 
     it("should not emit query event when not in remote mode", async () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           isRemote: false,
         },
@@ -258,7 +258,7 @@ describe("Selector Component", () => {
 
   describe("Watchers", () => {
     it("should update selected value when props.value changes", async () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -276,7 +276,7 @@ describe("Selector Component", () => {
     });
 
     it("should update selected value for multiple selection", async () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           multiple: true,
@@ -297,7 +297,7 @@ describe("Selector Component", () => {
 
   describe("Edge Cases", () => {
     it("should handle empty options array", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: [],
         },
@@ -307,7 +307,7 @@ describe("Selector Component", () => {
     });
 
     it("should handle undefined value", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           value: undefined,
@@ -319,7 +319,7 @@ describe("Selector Component", () => {
     });
 
     it("should handle null value", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           value: null,
@@ -330,7 +330,7 @@ describe("Selector Component", () => {
     });
 
     it("should handle changeSelected with no matching options", async () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           value: "nonexistent",
@@ -347,7 +347,7 @@ describe("Selector Component", () => {
 
   describe("Integration", () => {
     it("should work with all props combined", () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           value: "option1",
@@ -370,7 +370,7 @@ describe("Selector Component", () => {
     });
 
     it("should handle complex multiple selection scenario", async () => {
-      wrapper = mount(Selector as any, {
+      wrapper = mount(Selector, {
         props: {
           options: mockOptions,
           multiple: true,

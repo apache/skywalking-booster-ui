@@ -16,12 +16,12 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { mount } from "@vue/test-utils";
+import { mount, type VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import Radio from "../Radio.vue";
 
 describe("Radio Component", () => {
-  let wrapper: any;
+  let wrapper: Recordable;
 
   const mockOptions = [
     { label: "Option 1", value: "option1" },
@@ -476,7 +476,7 @@ describe("Radio Component", () => {
       });
 
       const radioElements = wrapper.findAll(".el-radio");
-      radioElements.forEach((radio) => {
+      radioElements.forEach((radio: VueWrapper) => {
         expect(radio.exists()).toBe(true);
         expect(radio.text()).toBeTruthy();
       });
