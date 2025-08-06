@@ -64,6 +64,18 @@ limitations under the License. -->
     selected.value = { label: "", value: "" };
     emit("change", "");
   }
+
+  document.body.addEventListener("click", handleClick, false);
+
+  function handleClick() {
+    visible.value = false;
+  }
+
+  function setPopper(event: MouseEvent) {
+    event.stopPropagation();
+    visible.value = !visible.value;
+  }
+
   watch(
     () => props.value,
     (data) => {
@@ -71,15 +83,6 @@ limitations under the License. -->
       selected.value = opt || { label: "", value: "" };
     },
   );
-  document.body.addEventListener("click", handleClick, false);
-
-  function handleClick() {
-    visible.value = false;
-  }
-  function setPopper(event: MouseEvent) {
-    event.stopPropagation();
-    visible.value = !visible.value;
-  }
 </script>
 <style lang="scss" scoped>
   .bar-select {

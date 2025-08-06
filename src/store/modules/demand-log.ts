@@ -59,6 +59,9 @@ export const demandLogStore = defineStore({
     },
     async getInstances(id: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      if (!serviceId) {
+        return new Promise((resolve) => resolve({ errors: "Service ID is required" }));
+      }
       const response = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,

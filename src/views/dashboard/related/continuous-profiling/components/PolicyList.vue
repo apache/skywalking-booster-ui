@@ -105,7 +105,7 @@ limitations under the License. -->
   ) {
     const serviceId = (selectorStore.currentService && selectorStore.currentService.id) || "";
     if (!serviceId) {
-      return ElMessage.error("No Service ID");
+      return ElMessage.error("Service ID is required");
     }
     const res = await continousProfilingStore.setContinuousProfilingPolicy(serviceId, targets);
     if (res.errors) {

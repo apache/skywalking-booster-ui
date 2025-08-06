@@ -93,8 +93,6 @@ describe("App Component", () => {
   });
 
   it("should apply correct CSS classes", () => {
-    const wrapper = mount(App);
-
     // The App component itself doesn't have the 'app' class, it's on the #app element
     const appElement = document.getElementById("app");
     expect(appElement?.className).toContain("app");
@@ -163,9 +161,6 @@ describe("App Component", () => {
 
   it("should not throw errors for undefined route names", async () => {
     mockRoute.name = undefined;
-
-    const wrapper = mount(App);
-
     // Should not throw error
     expect(() => {
       vi.advanceTimersByTime(500);
@@ -174,9 +169,6 @@ describe("App Component", () => {
 
   it("should handle null route names", async () => {
     mockRoute.name = null;
-
-    const wrapper = mount(App);
-
     // Should not throw error
     expect(() => {
       vi.advanceTimersByTime(500);

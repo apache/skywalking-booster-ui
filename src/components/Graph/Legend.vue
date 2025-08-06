@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <Selector
+  <GraphSelector
     class="mb-10"
     multiple
     :value="legend"
@@ -30,7 +30,7 @@ limitations under the License. -->
   import { computed, ref, watch } from "vue";
   import type { PropType } from "vue";
   import type { Option } from "@/types/app";
-  import Selector from "./Selector.vue";
+  import GraphSelector from "./GraphSelector.vue";
 
   const props = defineProps({
     data: {

@@ -174,6 +174,7 @@ export default class ListGraph {
           .style("display", "block")
           .style("left", `${offsetX + 30}px`)
           .style("top", `${offsetY + 40}px`);
+        t.selectedNode?.classed("highlighted", false);
         t.selectedNode = d3.select(this);
         if (t.handleSelectSpan) {
           t.handleSelectSpan(d);

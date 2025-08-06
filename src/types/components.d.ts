@@ -47,6 +47,7 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     Graph: typeof import('./../components/Graph/Graph.vue')['default']
+    GraphSelector: typeof import('./../components/Graph/GraphSelector.vue')['default']
     Icon: typeof import('./../components/Icon.vue')['default']
     Legend: typeof import('./../components/Graph/Legend.vue')['default']
     Radio: typeof import('./../components/Radio.vue')['default']
