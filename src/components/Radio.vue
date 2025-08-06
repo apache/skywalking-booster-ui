@@ -20,7 +20,7 @@ limitations under the License. -->
   </el-radio-group>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, watch } from "vue";
   import type { PropType } from "vue";
 
   /*global  defineProps, defineEmits */
@@ -47,4 +47,11 @@ limitations under the License. -->
   function checked(opt: unknown) {
     emit("change", opt);
   }
+
+  watch(
+    () => props.value,
+    (newValue) => {
+      selected.value = newValue;
+    },
+  );
 </script>
