@@ -174,7 +174,8 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const topologyStore = useTopologyStore();
   const appStore = useAppStoreWithOut();
-  const params = useRoute().params;
+  const route = useRoute();
+  const params = route?.params || {};
   const toolIcons = ref<{ name: string; content: string; id: WidgetType }[]>(AllTools);
   const loading = ref<boolean>(false);
   const showHierarchy = ref<boolean>(false);
@@ -209,7 +210,6 @@ limitations under the License. -->
   });
 
   setCurrentDashboard();
-  appStore.setEventStack([initSelector]);
   initSelector();
 
   function initSelector() {
@@ -671,6 +671,16 @@ limitations under the License. -->
       }
       getServices();
     },
+  );
+
+  // Watch for duration and utc changes and reinitialize selectors
+  watch(
+    () => [appStore.utc, appStore.duration],
+    () => {
+      setCurrentDashboard();
+      initSelector();
+    },
+    { deep: true },
   );
 </script>
 <style lang="scss" scoped>

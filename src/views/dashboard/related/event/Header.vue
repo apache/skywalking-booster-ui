@@ -118,21 +118,19 @@ limitations under the License. -->
     }
   }
 
-  async function getEndpoints(id?: string) {
-    const resp = await eventStore.getEndpoints(id);
+  async function getEndpoints() {
+    const resp = await eventStore.getEndpoints();
     if (!resp) {
       return;
     }
     if (resp.errors) {
-      ElMessage.error(resp.errors);
       return;
     }
     state.endpoint = eventStore.endpoints[0];
   }
-  async function getInstances(id?: string) {
-    const resp = await eventStore.getInstances(id);
+  async function getInstances() {
+    const resp = await eventStore.getInstances();
     if (resp.errors) {
-      ElMessage.error(resp.errors);
       return;
     }
     state.instance = eventStore.instances[0];
