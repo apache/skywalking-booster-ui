@@ -29,7 +29,6 @@ interface AppState {
   utc: string;
   utcHour: number;
   utcMin: number;
-  eventStack: (() => unknown)[];
   timer: Nullable<TimeoutHandle>;
   autoRefresh: boolean;
   version: string;
@@ -56,7 +55,6 @@ export const appStore = defineStore({
     utc: "",
     utcHour: 0,
     utcMin: 0,
-    eventStack: [],
     timer: null,
     autoRefresh: false,
     version: "",
@@ -127,7 +125,6 @@ export const appStore = defineStore({
   actions: {
     setDuration(data: Duration): void {
       this.durationRow = data;
-      this.runEventStack();
     },
     updateDurationRow(data: Duration) {
       this.durationRow = data;
@@ -139,7 +136,6 @@ export const appStore = defineStore({
       this.theme = data;
     },
     setUTC(utcHour: number, utcMin: number): void {
-      this.runEventStack();
       this.utcMin = utcMin;
       this.utcHour = utcHour;
       this.utc = `${utcHour}:${utcMin}`;
@@ -150,38 +146,11 @@ export const appStore = defineStore({
     setIsMobile(mode: boolean) {
       this.isMobile = mode;
     },
-    setEventStack(funcs: (() => void)[]): void {
-      this.eventStack = funcs;
-    },
     setAutoRefresh(auto: boolean) {
       this.autoRefresh = auto;
     },
     setColdStageMode(mode: boolean) {
       this.coldStageMode = mode;
-    },
-    runEventStack() {
-      if (this.timer) {
-        clearTimeout(this.timer);
-      }
-      this.timer = setTimeout(() => {
-        // Use requestIdleCallback if available for better performance, otherwise use setTimeout
-        const executeEvents = async () => {
-          for (const event of this.eventStack) {
-            try {
-              await Promise.resolve(event());
-            } catch (error) {
-              console.error("Error executing event in eventStack:", error);
-            }
-          }
-        };
-
-        if (typeof requestIdleCallback !== "undefined") {
-          // Execute during idle time to avoid blocking the main thread
-          requestIdleCallback(() => executeEvents(), { timeout: 1000 });
-        } else {
-          executeEvents();
-        }
-      }, 500);
     },
     async getActivateMenus() {
       const resp = (await this.queryMenuItems()) || {};

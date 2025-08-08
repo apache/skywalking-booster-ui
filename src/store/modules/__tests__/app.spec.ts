@@ -63,7 +63,6 @@ describe("App Store", () => {
       expect(store.utc).toBe("");
       expect(store.utcHour).toBe(0);
       expect(store.utcMin).toBe(0);
-      expect(store.eventStack).toEqual([]);
       expect(store.timer).toBeNull();
       expect(store.autoRefresh).toBe(false);
       expect(store.version).toBe("");
@@ -216,15 +215,6 @@ describe("App Store", () => {
       expect(store.isMobile).toBe(true);
     });
 
-    it("should set event stack correctly", () => {
-      const store = appStore();
-      const eventStack = [vi.fn()];
-
-      store.setEventStack(eventStack);
-
-      expect(store.eventStack).toEqual(eventStack);
-    });
-
     it("should set auto refresh correctly", () => {
       const store = appStore();
 
@@ -239,18 +229,6 @@ describe("App Store", () => {
       store.setColdStageMode(true);
 
       expect(store.coldStageMode).toBe(true);
-    });
-
-    it("should run event stack with timer", () => {
-      const store = appStore();
-      const mockEvent = vi.fn();
-      store.eventStack = [mockEvent];
-
-      store.runEventStack();
-
-      vi.advanceTimersByTime(500);
-
-      expect(mockEvent).toHaveBeenCalled();
     });
 
     it("should set reload timer correctly", () => {

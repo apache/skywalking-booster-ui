@@ -48,7 +48,7 @@ export const eventStore = defineStore({
       const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
 
       if (!serviceId) {
-        return new Promise((resolve) => resolve({ errors: "Service ID is required" }));
+        return new Promise((resolve) => resolve({ errors: "" }));
       }
       const response = await graphql.query("queryInstances").params({
         serviceId,
@@ -61,10 +61,10 @@ export const eventStore = defineStore({
       this.instances = [{ value: "", label: "All" }, ...response.data.pods];
       return response;
     },
-    async getEndpoints(keyword: string) {
+    async getEndpoints(keyword?: string) {
       const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
       if (!serviceId) {
-        return new Promise((resolve) => resolve({ errors: "Service ID is required" }));
+        return new Promise((resolve) => resolve({ errors: "" }));
       }
       const response = await graphql.query("queryEndpoints").params({
         serviceId,
