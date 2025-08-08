@@ -125,7 +125,6 @@ export const appStore = defineStore({
   actions: {
     setDuration(data: Duration): void {
       this.durationRow = data;
-      this.runEventStack();
     },
     updateDurationRow(data: Duration) {
       this.durationRow = data;
@@ -137,7 +136,6 @@ export const appStore = defineStore({
       this.theme = data;
     },
     setUTC(utcHour: number, utcMin: number): void {
-      this.runEventStack();
       this.utcMin = utcMin;
       this.utcHour = utcHour;
       this.utc = `${utcHour}:${utcMin}`;
