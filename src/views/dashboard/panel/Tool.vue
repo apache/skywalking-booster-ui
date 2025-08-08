@@ -677,7 +677,6 @@ limitations under the License. -->
   watch(
     () => [appStore.utc, appStore.duration],
     () => {
-      setCurrentDashboard();
       initSelector();
     },
     { deep: true },
