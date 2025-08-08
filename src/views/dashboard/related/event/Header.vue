@@ -124,6 +124,7 @@ limitations under the License. -->
       return;
     }
     if (resp.errors) {
+      ElMessage.error(resp.errors);
       return;
     }
     state.endpoint = eventStore.endpoints[0];
@@ -131,6 +132,7 @@ limitations under the License. -->
   async function getInstances() {
     const resp = await eventStore.getInstances();
     if (resp.errors) {
+      ElMessage.error(resp.errors);
       return;
     }
     state.instance = eventStore.instances[0];
