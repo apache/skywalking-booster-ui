@@ -54,19 +54,43 @@ export type RelatedTrace = {
   queryOrder: string;
   latency: boolean;
   enableRelate: boolean;
+  refIdType: string;
+};
+
+export type FilterDuration = {
+  startTime: number;
+  endTime: number;
+  step: string;
 };
 
 export type Filters = {
   dataIndex: number;
   sourceId: string;
   isRange?: boolean;
-  duration?: DurationTime;
+  duration?: FilterDuration;
   traceId?: string;
   spanId?: string;
   segmentId?: string;
   id?: string;
   queryOrder?: string;
   status?: string;
+};
+
+export type Series = {
+  data: (number | string)[][];
+  name: string;
+};
+
+export type FilterOption = {
+  series: Series[];
+  type: string;
+  legend: LegendOptions;
+};
+
+export type AssociateProcessorProps = {
+  filters: Filters;
+  option: FilterOption;
+  relatedTrace: RelatedTrace;
 };
 
 export type MetricConfigOpt = {

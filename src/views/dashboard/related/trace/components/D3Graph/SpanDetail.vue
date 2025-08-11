@@ -161,7 +161,8 @@ limitations under the License. -->
   import getDashboard from "@/hooks/useDashboardsSession";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { WidgetType } from "@/views/dashboard/data";
-  import type { LayoutConfig } from "@/types/dashboard";
+  import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
+  import { ay } from "vitest/dist/chunks/reporters.DTtkbAtP";
 
   /*global defineProps, Nullable, Recordable */
   const props = defineProps({
@@ -247,7 +248,7 @@ limitations under the License. -->
   }
 
   function viewRelateTrace(item: Recordable) {
-    const { associationWidget } = getDashboard(dashboardStore.currentDashboard);
+    const { associationWidget } = getDashboard(dashboardStore.currentDashboard as DashboardItem);
     associationWidget(
       (options.id as any) || "",
       {

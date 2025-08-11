@@ -259,10 +259,10 @@ limitations under the License. -->
     let endpoint = "",
       instance = "";
     if (dashboardStore.entity === EntityType[2].value) {
-      endpoint = selectorStore.currentPod.id;
+      endpoint = selectorStore.currentPod?.id || "";
     }
     if (dashboardStore.entity === EntityType[3].value) {
-      instance = selectorStore.currentPod.id;
+      instance = selectorStore.currentPod?.id || "";
     }
     if (dashboardStore.layerId === "BROWSER") {
       logStore.setLogCondition({
