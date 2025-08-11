@@ -188,6 +188,6 @@ export const networkProfilingStore = defineStore({
   },
 });
 
-export function useNetworkProfilingStore(): Recordable {
+export function useNetworkProfilingStore() {
   return networkProfilingStore(store);
 }

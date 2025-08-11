@@ -165,6 +165,6 @@ export const continousProfilingStore = defineStore({
   },
 });
 
-export function useContinousProfilingStore(): Recordable {
+export function useContinousProfilingStore() {
   return continousProfilingStore(store);
 }

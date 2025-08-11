@@ -572,6 +572,6 @@ export const topologyStore = defineStore({
   },
 });
 
-export function useTopologyStore(): Recordable {
+export function useTopologyStore() {
   return topologyStore(store);
 }

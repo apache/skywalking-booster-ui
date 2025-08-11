@@ -238,6 +238,6 @@ export const profileStore = defineStore({
   },
 });
 
-export function useProfileStore(): Recordable {
+export function useProfileStore() {
   return profileStore(store);
 }

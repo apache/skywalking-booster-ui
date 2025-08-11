@@ -31,7 +31,7 @@ interface DashboardState {
   entity: string;
   layerId: string;
   activedGridItem: string;
-  selectorStore: Recordable;
+  selectorStore: ReturnType<typeof useSelectorStore>;
   showTopology: boolean;
   currentTabItems: LayoutConfig[];
   dashboards: DashboardItem[];
@@ -448,6 +448,6 @@ export const dashboardStore = defineStore({
   },
 });
 
-export function useDashboardStore(): Recordable {
+export function useDashboardStore() {
   return dashboardStore(store);
 }

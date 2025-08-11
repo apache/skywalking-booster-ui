@@ -126,6 +126,6 @@ export const taskTimelineStore = defineStore({
   },
 });
 
-export function useTaskTimelineStore(): Recordable {
+export function useTaskTimelineStore() {
   return taskTimelineStore(store);
 }

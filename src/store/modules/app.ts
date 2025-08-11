@@ -224,6 +224,6 @@ export const appStore = defineStore({
     },
   },
 });
-export function useAppStoreWithOut(): Recordable {
+export function useAppStoreWithOut() {
   return appStore(store);
 }

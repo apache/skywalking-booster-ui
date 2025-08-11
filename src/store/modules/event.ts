@@ -45,7 +45,7 @@ export const eventStore = defineStore({
       this.condition = data;
     },
     async getInstances() {
-      const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
+      const serviceId = useSelectorStore().currentService?.id || "";
 
       if (!serviceId) {
         return new Promise((resolve) => resolve({ errors: "" }));
@@ -62,7 +62,7 @@ export const eventStore = defineStore({
       return response;
     },
     async getEndpoints(keyword?: string) {
-      const serviceId = useSelectorStore().currentService ? useSelectorStore().currentService.id : "";
+      const serviceId = useSelectorStore().currentService?.id || "";
       if (!serviceId) {
         return new Promise((resolve) => resolve({ errors: "" }));
       }
@@ -111,6 +111,6 @@ export const eventStore = defineStore({
   },
 });
 
-export function useEventStore(): Recordable {
+export function useEventStore() {
   return eventStore(store);
 }

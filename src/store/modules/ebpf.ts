@@ -155,6 +155,6 @@ export const ebpfStore = defineStore({
   },
 });
 
-export function useEbpfStore(): Recordable {
+export function useEbpfStore() {
   return ebpfStore(store);
 }

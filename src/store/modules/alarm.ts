@@ -56,6 +56,6 @@ export const alarmStore = defineStore({
   },
 });
 
-export function useAlarmStore(): Recordable {
+export function useAlarmStore() {
   return alarmStore(store);
 }

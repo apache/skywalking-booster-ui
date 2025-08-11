@@ -75,6 +75,6 @@ export const settingsStore = defineStore({
   },
 });
 
-export function useSettingsStore(): Recordable {
+export function useSettingsStore() {
   return settingsStore(store);
 }

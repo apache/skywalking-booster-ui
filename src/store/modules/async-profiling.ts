@@ -57,10 +57,13 @@ export const asyncProfilingStore = defineStore({
     },
     async getTaskList() {
       const selectorStore = useSelectorStore();
+      if (!selectorStore.currentService?.id) {
+        return;
+      }
       this.loadingTasks = true;
       const response = await graphql.query("getAsyncTaskList").params({
         request: {
-          serviceId: selectorStore.currentService.id,
+          serviceId: selectorStore.currentService?.id,
           limit: 10000,
         },
       });
@@ -133,6 +136,6 @@ export const asyncProfilingStore = defineStore({
   },
 });
 
-export function useAsyncProfilingStore(): Recordable {
+export function useAsyncProfilingStore() {
   return asyncProfilingStore(store);
 }
