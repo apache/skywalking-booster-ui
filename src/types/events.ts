@@ -37,13 +37,13 @@ export type Event = {
 };
 
 export interface QueryEventCondition {
-  uuid: string;
+  uuid?: string;
   source: SourceInput;
-  name: string;
+  name?: string;
   type: EventType;
-  time: Duration;
-  order: string;
-  paging: { pageNum: number; pageSize: number; needTotal: boolean };
+  time?: Duration;
+  order?: string;
+  paging: { pageNum: number; pageSize: number; needTotal?: boolean };
 }
 
 type SourceInput = {

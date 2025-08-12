@@ -190,7 +190,7 @@ describe("useTimeout", () => {
 
     it("should handle handle function that returns a value", async () => {
       const mockHandle = vi.fn(() => "test result");
-      const { readyRef } = useTimeoutFn(mockHandle, 1000, false);
+      useTimeoutFn(mockHandle, 1000, false);
 
       vi.advanceTimersByTime(1000);
       await nextTick();
@@ -206,7 +206,7 @@ describe("useTimeout", () => {
 
       // Use try-catch to handle the error that will be thrown by the watch
       try {
-        const { readyRef } = useTimeoutFn(mockHandle, 1000, false);
+        useTimeoutFn(mockHandle, 1000, false);
 
         vi.advanceTimersByTime(1000);
         await nextTick();
@@ -225,7 +225,7 @@ describe("useTimeout", () => {
         return "async result";
       });
 
-      const { readyRef } = useTimeoutFn(mockHandle, 1000, false);
+      useTimeoutFn(mockHandle, 1000, false);
 
       vi.advanceTimersByTime(1000);
       await nextTick();

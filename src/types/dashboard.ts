@@ -58,13 +58,13 @@ export type RelatedTrace = {
 };
 
 export type FilterDuration = {
-  startTime: number;
-  endTime: number;
-  step: string;
+  startTime: string;
+  endTime: string;
+  step?: string;
 };
 
 export type Filters = {
-  dataIndex: number;
+  dataIndex?: number;
   sourceId: string;
   isRange?: boolean;
   duration?: FilterDuration;

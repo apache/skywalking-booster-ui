@@ -157,19 +157,17 @@ limitations under the License. -->
   import { dateFormat } from "@/utils/dateFormat";
   import { useTraceStore } from "@/store/modules/trace";
   import LogTable from "@/views/dashboard/related/log/LogTable/Index.vue";
-  import type { SpanAttachedEvent } from "@/types/trace";
+  import type { SpanAttachedEvent, Ref, Span } from "@/types/trace";
   import getDashboard from "@/hooks/useDashboardsSession";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { WidgetType } from "@/views/dashboard/data";
   import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
-  import { ay } from "vitest/dist/chunks/reporters.DTtkbAtP";
-
   /*global defineProps, Nullable, Recordable */
   const props = defineProps({
-    currentSpan: { type: Object as PropType<Recordable>, default: () => ({}) },
+    currentSpan: { type: Object as PropType<Span>, default: () => ({}) },
     traceId: { type: String, default: "" },
   });
-  const options: Recordable<LayoutConfig> = inject("options") || {};
+  const options: LayoutConfig | null = inject("options") || null;
   const { t } = useI18n();
   const traceStore = useTraceStore();
   const dashboardStore = useDashboardStore();
@@ -247,12 +245,12 @@ limitations under the License. -->
     tree.value.draw();
   }
 
-  function viewRelateTrace(item: Recordable) {
+  function viewRelateTrace(item: Ref) {
     const { associationWidget } = getDashboard(dashboardStore.currentDashboard as DashboardItem);
     associationWidget(
-      (options.id as any) || "",
+      (options?.id as string) || "",
       {
-        sourceId: options.id || "",
+        sourceId: (options?.id as string) || "",
         traceId: item.traceId || "",
         id: "0",
       },

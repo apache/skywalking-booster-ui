@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <el-radio-group v-model="selected" @change="checked">
-    <el-radio v-for="item in options" :key="item.value" :label="item.value">
+    <el-radio v-for="item in options" :key="item.value" :value="item.value">
       {{ item.label }}
     </el-radio>
   </el-radio-group>

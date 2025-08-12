@@ -23,6 +23,7 @@ export interface Trace {
   traceIds: Array<string | any>;
   segmentId: string;
   spans: Span[];
+  endpointNames: string[];
 }
 
 export interface Span {
@@ -44,10 +45,21 @@ export interface Span {
   endTime: number;
   dur?: number;
   children?: Span[];
-  tags?: Array<Map<string, string>>;
-  logs?: log[];
+  tags?: { value: string; key: string }[];
+  logs?: LogRef[];
   parentSegmentId?: string;
   key?: string;
+  serviceInstanceName?: string;
+  attachedEvents?: SpanAttachedEvent[];
+  level?: number;
+  totalExec?: number;
+  groupRef?: StatisticsGroupRef;
+  maxTime?: number;
+  minTime?: number;
+  sumTime?: number;
+  avgTime?: number;
+  count?: number;
+  profiled?: boolean;
 }
 export type Ref = {
   type?: string;
@@ -55,9 +67,9 @@ export type Ref = {
   parentSpanId: number;
   traceId: string;
 };
-export interface log {
+export interface LogRef {
   time: number;
-  data: Map<string, string>;
+  data: { key: string; value: string }[];
 }
 
 export interface StatisticsSpan {

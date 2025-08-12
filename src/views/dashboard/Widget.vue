@@ -81,8 +81,8 @@ limitations under the License. -->
 
       init();
       async function init() {
-        dashboardStore.setLayer(route.params.layer);
-        dashboardStore.setEntity(route.params.entity);
+        dashboardStore.setLayer(route.params.layer as string);
+        dashboardStore.setEntity(route.params.entity as string);
         const { auto, autoPeriod } = config.value;
         if (auto) {
           await setDuration();
@@ -102,30 +102,30 @@ limitations under the License. -->
       async function setSelector() {
         const { serviceId, podId, processId, destServiceId, destPodId, destProcessId, entity } = route.params;
         if (serviceId) {
-          await selectorStore.getService(serviceId);
+          await selectorStore.getService(serviceId as string);
         }
         if (
           [EntityType[4].value, EntityType[5].value, EntityType[6].value, EntityType[7].value].includes(
             entity as string,
           )
         ) {
-          await selectorStore.getService(destServiceId, true);
+          await selectorStore.getService(destServiceId as string, true);
         }
         if ([EntityType[3].value, EntityType[5].value, EntityType[7].value].includes(entity as string)) {
-          await selectorStore.getInstance(podId);
+          await selectorStore.getInstance(podId as string);
         }
         if ([EntityType[2].value, EntityType[6].value].includes(entity as string)) {
-          await selectorStore.getEndpoint(podId);
+          await selectorStore.getEndpoint(podId as string);
         }
         if (EntityType[6].value === entity) {
-          await selectorStore.getEndpoint(destPodId, true);
+          await selectorStore.getEndpoint(destPodId as string, true);
         }
         if ([EntityType[5].value, EntityType[7].value].includes(entity as string)) {
-          await selectorStore.getInstance(destPodId, true);
+          await selectorStore.getInstance(destPodId as string, true);
         }
         if (EntityType[7].value === entity) {
-          selectorStore.getProcess(processId);
-          selectorStore.getProcess(destProcessId, true);
+          selectorStore.getProcess(processId as string);
+          selectorStore.getProcess(destProcessId as string, true);
         }
       }
       async function queryMetrics() {

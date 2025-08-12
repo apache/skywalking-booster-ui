@@ -30,7 +30,7 @@ interface TraceState {
   endpoints: Endpoint[];
   traceList: Trace[];
   traceSpans: Span[];
-  currentTrace: Recordable<Trace>;
+  currentTrace: Nullable<Trace>;
   conditions: Recordable;
   traceSpanLogs: Recordable[];
   selectorStore: Recordable;
@@ -47,7 +47,7 @@ export const traceStore = defineStore({
     endpoints: [{ value: "0", label: "All" }],
     traceList: [],
     traceSpans: [],
-    currentTrace: {},
+    currentTrace: null,
     selectedSpan: {},
     conditions: {
       queryDuration: getDurationTime(),
@@ -63,7 +63,7 @@ export const traceStore = defineStore({
     setTraceCondition(data: Recordable) {
       this.conditions = { ...this.conditions, ...data };
     },
-    setCurrentTrace(trace: Recordable<Trace>) {
+    setCurrentTrace(trace: Trace) {
       this.currentTrace = trace;
     },
     setTraceSpans(spans: Span[]) {
@@ -121,7 +121,7 @@ export const traceStore = defineStore({
         endpointId,
       });
     },
-    async getInstances(id: string) {
+    async getInstances(id?: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       if (!serviceId) {
         return new Promise((resolve) => resolve({ errors: "Service ID is required" }));
@@ -137,7 +137,7 @@ export const traceStore = defineStore({
       this.instances = [{ value: "0", label: "All" }, ...response.data.pods];
       return response;
     },
-    async getEndpoints(id: string, keyword?: string) {
+    async getEndpoints(id?: string, keyword?: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       if (!serviceId) {
         return new Promise((resolve) => resolve({ errors: "Service ID is required" }));

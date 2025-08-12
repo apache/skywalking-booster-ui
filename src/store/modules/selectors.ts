@@ -147,7 +147,7 @@ export const selectorStore = defineStore({
       }
       return res;
     },
-    async getService(serviceId: string, isRelation: boolean) {
+    async getService(serviceId: string, isRelation?: boolean) {
       if (!serviceId) {
         return;
       }
@@ -185,7 +185,7 @@ export const selectorStore = defineStore({
 
       return res;
     },
-    async getEndpoint(endpointId: string, isRelation?: string) {
+    async getEndpoint(endpointId: string, isRelation?: boolean) {
       if (!endpointId) {
         return;
       }
