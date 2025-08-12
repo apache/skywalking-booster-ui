@@ -578,14 +578,17 @@ limitations under the License. -->
       name: value,
     });
     dashboards.value = dashboardStore.dashboards.map((item: DashboardItem) => {
-      if (dashboardStore.currentDashboard.id === item.id) {
-        item = dashboardStore.currentDashboard;
+      if (dashboardStore.currentDashboard?.id === item.id) {
+        item = dashboardStore.currentDashboard as DashboardItem;
       }
       return item;
     });
     dashboardStore.resetDashboards(dashboards.value);
     sessionStorage.setItem("dashboards", JSON.stringify(dashboards.value));
     sessionStorage.removeItem(key);
+    if (!dashboardStore.currentDashboard) {
+      return;
+    }
     const str = [
       dashboardStore.currentDashboard.layer,
       dashboardStore.currentDashboard.entity,

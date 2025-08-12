@@ -77,7 +77,7 @@ limitations under the License. -->
     }
     toRaw(monacoInstance.value).dispose();
     monacoInstance.value = null;
-    demandLogStore.setLogs("");
+    demandLogStore.setLogs([]);
   });
   watch(
     () => appStore.theme,

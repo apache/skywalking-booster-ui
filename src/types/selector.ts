@@ -31,7 +31,7 @@ export type Instance = {
   language?: string;
   instanceUUID?: string;
   attributes?: { name: string; value: string }[];
-  id?: string;
+  id: string;
   merge?: boolean;
 };
 
@@ -52,5 +52,7 @@ export type Process = {
   agentId: string;
   detectType: string;
   attributes: { name: string; value: string }[];
+  label: string;
+  value: string;
   labels: string[];
 };

@@ -35,14 +35,14 @@ limitations under the License. -->
         @change="selectDisplayMode"
         class="mr-10 fliter"
       />
-      <el-button type="primary" size="small" :disabled="!profileStore.currentSpan.profiled" @click="analyzeProfile()">
+      <el-button type="primary" size="small" :disabled="!profileStore.currentSpan?.profiled" @click="analyzeProfile()">
         {{ t("analyze") }}
       </el-button>
     </div>
     <div class="profile-table">
       <Table
-        :data="profileStore.segmentSpans"
-        :traceId="profileStore.currentSegment.traceId"
+        :data="(profileStore.segmentSpans as SegmentSpan[])"
+        :traceId="profileStore.currentSegment?.traceId"
         :headerType="WidgetType.Profile"
         @select="selectSpan"
       />
@@ -55,7 +55,7 @@ limitations under the License. -->
   import Table from "../../trace/components/Table.vue";
   import { useProfileStore } from "@/store/modules/profile";
   import Selector from "@/components/Selector.vue";
-  import type { Span } from "@/types/trace";
+  import type { SegmentSpan, ProfileTimeRange, ProfileAnalyzeParams } from "@/types/profile";
   import type { Option } from "@/types/app";
   import { ElMessage } from "element-plus";
   import { ProfileDataMode, ProfileDisplayMode } from "./data";
@@ -68,9 +68,9 @@ limitations under the License. -->
   const dataMode = ref<string>("include");
   const displayMode = ref<string>("tree");
   const message = ref<string>("");
-  const timeRange = ref<Array<{ start: number; end: number }>>([]);
+  const timeRange = ref<ProfileTimeRange[]>([]);
 
-  function selectSpan(span: Span) {
+  function selectSpan(span: SegmentSpan) {
     profileStore.setCurrentSpan(span);
   }
 
@@ -85,15 +85,15 @@ limitations under the License. -->
   }
 
   async function analyzeProfile() {
-    if (!profileStore.currentSpan.profiled) {
+    if (!profileStore.currentSpan?.profiled) {
       ElMessage.info("It's a un-profiled span");
       return;
     }
     emits("loading", true);
     updateTimeRange();
-    const params = timeRange.value.map((t: { start: number; end: number }) => {
+    const params: ProfileAnalyzeParams[] = timeRange.value.map((t: ProfileTimeRange) => {
       return {
-        segmentId: profileStore.currentSpan.segmentId,
+        segmentId: profileStore.currentSpan?.segmentId || "",
         timeRange: t,
       };
     });
@@ -111,19 +111,19 @@ limitations under the License. -->
     if (dataMode.value === "include") {
       timeRange.value = [
         {
-          start: profileStore.currentSpan.startTime,
-          end: profileStore.currentSpan.endTime,
+          start: profileStore.currentSpan?.startTime || 0,
+          end: profileStore.currentSpan?.endTime || 0,
         },
       ];
     } else {
-      const { children, startTime, endTime } = profileStore.currentSpan;
-      let dateRange = [];
+      const { children, startTime, endTime } = profileStore.currentSpan || {};
+      let dateRange: ProfileTimeRange[] = [];
 
-      if (!children || !children.length) {
+      if (!children?.length) {
         timeRange.value = [
           {
-            start: startTime,
-            end: endTime,
+            start: startTime || 0,
+            end: endTime || 0,
           },
         ];
         return;
@@ -131,16 +131,16 @@ limitations under the License. -->
       for (const item of children) {
         dateRange.push(
           {
-            start: startTime,
-            end: item.startTime,
+            start: startTime || 0,
+            end: item.startTime || 0,
           },
           {
-            start: item.endTime,
-            end: endTime,
+            start: item.endTime || 0,
+            end: endTime || 0,
           },
         );
       }
-      dateRange = dateRange.reduce((prev: any[], cur) => {
+      dateRange = dateRange.reduce((prev: ProfileTimeRange[], cur: ProfileTimeRange) => {
         let isUpdate = false;
         for (const item of prev) {
           if (cur.start <= item.end && item.start <= cur.start) {

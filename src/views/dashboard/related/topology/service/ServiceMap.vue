@@ -219,10 +219,10 @@ limitations under the License. -->
     loading.value = true;
     topologyStore.setNode(null);
     topologyStore.setLink(null);
-    const resp = await getTopology();
+    const resp: any = await getTopology();
     loading.value = false;
 
-    if (resp && resp.errors) {
+    if (resp.errors) {
       ElMessage.error(resp.errors);
     }
     await update();
@@ -309,10 +309,10 @@ limitations under the License. -->
     const nodeMetricConfig = settings.value.nodeMetricConfig || [];
     const html = nodeMetrics.map((m, index) => {
       const metric =
-        topologyStore.nodeMetricValue[m]?.values?.find((val: { id: string; value: string }) => val.id === data.id) ||
-        {};
+        topologyStore.nodeMetricValue[m]?.values?.find((val: { id: string; value: unknown }) => val.id === data.id) ||
+        null;
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value || NaN} ${
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric?.value || NaN} ${
         opt.unit || "unknown"
       }</div>`;
     });
@@ -415,11 +415,11 @@ limitations under the License. -->
     hierarchyRelated.value = true;
   }
   async function handleInspect() {
-    const id = topologyStore.node.id;
+    const id = topologyStore.node?.id || "";
     loading.value = true;
-    const resp = await topologyStore.getDepthServiceTopology([id], Number(depth.value));
+    const resp: any = await topologyStore.getDepthServiceTopology([id], Number(depth.value));
     loading.value = false;
-    if (resp && resp.errors) {
+    if (resp?.errors) {
       ElMessage.error(resp.errors);
     }
     await update();
@@ -431,7 +431,7 @@ limitations under the License. -->
       return;
     }
     const origin = dashboardStore.entity;
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node.id}/${params.dashboard}`;
+    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[2].value}/${topologyStore.node?.id}/${params.dashboard}`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
@@ -442,7 +442,7 @@ limitations under the License. -->
       return;
     }
     const origin = dashboardStore.entity;
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${topologyStore.node.id}/${params.dashboard}`;
+    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${topologyStore.node?.id}/${params.dashboard}`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
@@ -453,7 +453,7 @@ limitations under the License. -->
       return;
     }
     const origin = dashboardStore.entity;
-    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node.id}/${params.dashboard}`;
+    const path = `/dashboard/${dashboardStore.layerId}/${EntityType[0].value}/${topologyStore.node?.id}/${params.dashboard}`;
     const routeUrl = router.resolve({ path });
 
     window.open(routeUrl.href, "_blank");
@@ -495,8 +495,8 @@ limitations under the License. -->
   }
   async function getTopology() {
     const ids = selectorStore.services.map((d: Service) => d.id);
-    const serviceIds = dashboardStore.entity === EntityType[0].value ? [selectorStore.currentService.id] : ids;
-    const resp = await topologyStore.getDepthServiceTopology(serviceIds, Number(depth.value));
+    const serviceIds = dashboardStore.entity === EntityType[0].value ? [selectorStore.currentService?.id] : ids;
+    const resp = await topologyStore.getDepthServiceTopology(serviceIds as string[], Number(depth.value));
     return resp;
   }
   function setConfig() {

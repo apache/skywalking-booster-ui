@@ -24,6 +24,7 @@ export interface Trace {
   segmentId: string;
   spans: Span[];
   endpointNames: string[];
+  traceId: string;
 }
 
 export interface Span {

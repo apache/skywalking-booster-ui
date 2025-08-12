@@ -70,7 +70,7 @@ limitations under the License. -->
     if (!selectorStore.currentService) {
       return;
     }
-    const service = selectorStore.currentService.id;
+    const service = selectorStore.currentService.id || "";
     const res = await profileStore.getEndpoints(service, keyword);
 
     if (res.errors) {

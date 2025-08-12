@@ -21,14 +21,14 @@ import { store } from "@/store";
 import graphql from "@/graphql";
 import { EBPFProfilingTriggerType } from "../data";
 interface EbpfState {
-  taskList: Array<Recordable<EBPFTaskList>>;
+  taskList: Array<EBPFTaskList>;
   eBPFSchedules: EBPFProfilingSchedule[];
-  currentSchedule: EBPFProfilingSchedule | Record<string, never>;
+  currentSchedule: Nullable<EBPFProfilingSchedule>;
   analyzeTrees: AnalyzationTrees[];
   labels: Option[];
   couldProfiling: boolean;
   ebpfTips: string;
-  selectedTask: Recordable<EBPFTaskList>;
+  selectedTask: Nullable<EBPFTaskList>;
   aggregateType: string;
 }
 
@@ -37,16 +37,16 @@ export const ebpfStore = defineStore({
   state: (): EbpfState => ({
     taskList: [],
     eBPFSchedules: [],
-    currentSchedule: {},
+    currentSchedule: null,
     analyzeTrees: [],
     labels: [{ value: "", label: "" }],
     couldProfiling: false,
     ebpfTips: "",
-    selectedTask: {},
+    selectedTask: null,
     aggregateType: "COUNT",
   }),
   actions: {
-    setSelectedTask(task: Recordable<EBPFTaskList>) {
+    setSelectedTask(task: Nullable<EBPFTaskList>) {
       this.selectedTask = task || {};
     },
     setCurrentSchedule(s: EBPFProfilingSchedule) {
@@ -81,7 +81,7 @@ export const ebpfStore = defineStore({
       });
       return response;
     },
-    async getTaskList(params: { serviceId: string; targets: string[] }) {
+    async getTaskList(params: { serviceId: string; targets: string[]; triggerType: string }) {
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }

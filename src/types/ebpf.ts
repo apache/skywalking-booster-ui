@@ -99,6 +99,8 @@ export type AnalyzationTrees = {
   symbol: string;
   dumpCount: number;
   stackType: string;
+  aggregateType: string;
+  elements?: StackElement[];
 };
 export type ProcessNode = {
   id: string;

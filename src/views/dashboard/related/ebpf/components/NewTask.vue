@@ -77,6 +77,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { ElMessage } from "element-plus";
   import { InitTaskField, TargetTypes } from "./data";
+  import type { EBPFTaskCreationRequest } from "@/types/ebpf";
 
   /* global defineEmits */
   const emits = defineEmits(["close"]);
@@ -109,13 +110,16 @@ limitations under the License. -->
     }
     disabled.value = true;
     const date = monitorTime.value === "0" ? new Date() : time.value;
+    if (!selectorStore.currentService?.id) {
+      return;
+    }
     const params = {
-      serviceId: selectorStore.currentService.id,
+      serviceId: selectorStore.currentService?.id,
       processLabels: labels.value,
       startTime: date.getTime(),
       duration: monitorDuration.value * 60,
       targetType: type.value,
-    };
+    } as EBPFTaskCreationRequest;
     const res = await eBPFStore.createTask(params);
     if (res.errors) {
       ElMessage.error(res.errors);

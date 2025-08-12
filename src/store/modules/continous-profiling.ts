@@ -24,16 +24,16 @@ import type { MonitorInstance, MonitorProcess } from "@/types/continous-profilin
 import { dateFormat } from "@/utils/dateFormat";
 
 interface ContinousProfilingState {
-  strategyList: Array<Recordable<StrategyItem>>;
-  selectedStrategy: Recordable<StrategyItem>;
-  taskList: Array<Recordable<EBPFTaskList>>;
-  selectedTask: Recordable<EBPFTaskList>;
+  strategyList: Array<StrategyItem>;
+  selectedStrategy: Nullable<StrategyItem>;
+  taskList: Array<EBPFTaskList>;
+  selectedTask: Nullable<EBPFTaskList>;
   errorTip: string;
   errorReason: string;
   instances: Instance[];
   instance: Nullable<Instance>;
   eBPFSchedules: EBPFProfilingSchedule[];
-  currentSchedule: EBPFProfilingSchedule | Record<string, never>;
+  currentSchedule: Nullable<EBPFProfilingSchedule>;
   analyzeTrees: AnalyzationTrees[];
   ebpfTips: string;
   aggregateType: string;
@@ -45,15 +45,15 @@ export const continousProfilingStore = defineStore({
   id: "continousProfiling",
   state: (): ContinousProfilingState => ({
     strategyList: [],
-    selectedStrategy: {},
+    selectedStrategy: null,
     taskList: [],
-    selectedTask: {},
+    selectedTask: null,
     errorReason: "",
     errorTip: "",
     ebpfTips: "",
     instances: [],
     eBPFSchedules: [],
-    currentSchedule: {},
+    currentSchedule: null,
     analyzeTrees: [],
     aggregateType: "COUNT",
     instance: null,
@@ -61,7 +61,7 @@ export const continousProfilingStore = defineStore({
     policyLoading: false,
   }),
   actions: {
-    setSelectedStrategy(task: Recordable<StrategyItem>) {
+    setSelectedStrategy(task: Nullable<StrategyItem>) {
       this.selectedStrategy = task || {};
     },
     setselectedTask(task: Recordable<EBPFTaskList>) {

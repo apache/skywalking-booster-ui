@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div id="graph-stack" ref="graph">
-    <span class="tip" v-show="ebpfStore.ebpfTips">{{ ebpfStore.ebpfTips }}</span>
+    <span class="tip" v-show="(ebpfStore as any).ebpfTips">{{ (ebpfStore as any).ebpfTips }}</span>
   </div>
 </template>
 <script lang="ts" setup>
@@ -25,6 +25,7 @@ limitations under the License. -->
   import { useEbpfStore } from "@/store/modules/ebpf";
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
   import type { StackElement } from "@/types/ebpf";
+  import type { StackElement as AsyncProfilingStackElement } from "@/types/async-profiling";
   import { AggregateTypes } from "./data";
   import { JFREventType, ComponentType } from "@/views/dashboard/related/async-profiling/components/data";
   import "d3-flame-graph/dist/d3-flamegraph.css";
@@ -37,7 +38,8 @@ limitations under the License. -->
       default: "",
     },
   });
-  const ebpfStore = props.type === ComponentType ? useAsyncProfilingStore() : useEbpfStore();
+  const ebpfStore: ReturnType<typeof useAsyncProfilingStore | typeof useEbpfStore> =
+    props.type === ComponentType ? useAsyncProfilingStore() : useEbpfStore();
   const stackTree = ref<Nullable<StackElement>>(null);
   const selectStack = ref<Nullable<StackElement>>(null);
   const graph = ref<Nullable<HTMLDivElement>>(null);
@@ -67,12 +69,15 @@ limitations under the License. -->
     };
     countRange();
     if (props.type === ComponentType) {
-      const elements = processTree(ebpfStore.analyzeTrees[0].elements);
+      const elements = processTree(
+        ((ebpfStore as ReturnType<typeof useAsyncProfilingStore>).analyzeTrees[0].elements ||
+          []) as AsyncProfilingStackElement[],
+      );
       stackTree.value = elements;
       root = { ...root, ...elements };
     } else {
-      for (const tree of ebpfStore.analyzeTrees) {
-        const ele = processTree(tree.elements);
+      for (const tree of (ebpfStore as ReturnType<typeof useEbpfStore>).analyzeTrees) {
+        const ele = processTree(tree.elements as StackElement[]);
         root.children && root.children.push(ele);
       }
       const param = (root.children || []).reduce(
@@ -134,7 +139,7 @@ limitations under the License. -->
       if (!ebpfStore.analyzeTrees.length) {
         return;
       }
-      const { type } = ebpfStore.analyzeTrees[0];
+      const { type } = ebpfStore.analyzeTrees[0] as any;
       if ([JFREventType.LOCK].includes(type)) {
         return `<div class="mb-5">Duration: ${item.dumpCount} ns</div>`;
       }
@@ -144,15 +149,15 @@ limitations under the License. -->
       return `<div class="mb-5">Memory: ${item.dumpCount} byte</div>`;
     }
 
-    ebpfStore.aggregateType === AggregateTypes[0].value
+    (ebpfStore as ReturnType<typeof useEbpfStore>).aggregateType === AggregateTypes[0].value
       ? `<div class="mb-5">Dump Count: ${item.dumpCount}</div>`
       : `<div class="mb-5">Duration: ${item.dumpCount} ns</div>`;
   }
 
   function countRange() {
     const list = [];
-    for (const tree of ebpfStore.analyzeTrees) {
-      for (const ele of tree.elements) {
+    for (const tree of (ebpfStore as ReturnType<typeof useEbpfStore>).analyzeTrees) {
+      for (const ele of tree.elements || []) {
         list.push(ele.dumpCount);
       }
     }
@@ -160,7 +165,7 @@ limitations under the License. -->
     min.value = Math.min(...list);
   }
 
-  function processTree(arr: StackElement[]) {
+  function processTree(arr: StackElement[] | AsyncProfilingStackElement[]) {
     const copyArr = JSON.parse(JSON.stringify(arr));
     const obj: any = {};
     let res = null;

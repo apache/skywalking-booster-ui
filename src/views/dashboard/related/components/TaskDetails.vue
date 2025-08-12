@@ -19,38 +19,38 @@ limitations under the License. -->
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("taskId") }}:</span>
         <span class="g-sm-8 wba">
-          {{ details.taskId }}
+          {{ details?.taskId || "" }}
         </span>
       </div>
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("service") }}:</span>
         <span class="g-sm-8 wba">
-          {{ details.serviceName }}
+          {{ details?.serviceName || "" }}
         </span>
       </div>
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("labels") }}:</span>
         <span class="g-sm-8 wba">
-          {{ details.processLabels.join(";") }}
+          {{ details?.processLabels?.join(";") }}
         </span>
       </div>
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("monitorTime") }}:</span>
         <span class="g-sm-8 wba">
-          {{ dateFormat(details.taskStartTime) }}
+          {{ dateFormat(details?.taskStartTime || NaN) }}
         </span>
       </div>
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span>
-        <span class="g-sm-8 wba"> {{ details.fixedTriggerDuration / 60 }} min </span>
+        <span class="g-sm-8 wba"> {{ details?.fixedTriggerDuration || NaN / 60 }} min </span>
       </div>
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("triggerType") }}:</span>
-        <span class="g-sm-8 wba">{{ details.triggerType }}</span>
+        <span class="g-sm-8 wba">{{ details?.triggerType }}</span>
       </div>
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("targetType") }}:</span>
-        <span class="g-sm-8 wba">{{ details.targetType }}</span>
+        <span class="g-sm-8 wba">{{ details?.targetType }}</span>
       </div>
     </div>
   </div>
@@ -61,10 +61,10 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import type { EBPFTaskList } from "@/types/ebpf";
 
-  /*global defineProps */
+  /*global defineProps, Nullable */
   defineProps({
     details: {
-      type: Object as PropType<EBPFTaskList>,
+      type: Object as PropType<Nullable<EBPFTaskList>>,
       default: () => ({}),
     },
   });

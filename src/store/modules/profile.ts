@@ -22,6 +22,7 @@ import type {
   ProfileAnalyzationTrees,
   TaskLog,
   ProfileTaskCreationRequest,
+  ProfileAnalyzeParams,
 } from "@/types/profile";
 import type { Trace } from "@/types/trace";
 import { store } from "@/store";
@@ -34,11 +35,11 @@ interface ProfileState {
   taskEndpoints: Endpoint[];
   condition: { serviceId: string; endpointName: string };
   taskList: TaskListItem[];
-  currentTask: Recordable<TaskListItem>;
+  currentTask: Nullable<TaskListItem>;
   segmentList: Trace[];
-  currentSegment: Recordable<Trace>;
-  segmentSpans: Array<Recordable<SegmentSpan>>;
-  currentSpan: Recordable<SegmentSpan>;
+  currentSegment: Nullable<Trace>;
+  segmentSpans: SegmentSpan[];
+  currentSpan: Nullable<SegmentSpan>;
   analyzeTrees: ProfileAnalyzationTrees;
   taskLogs: TaskLog[];
   highlightTop: boolean;
@@ -52,10 +53,10 @@ export const profileStore = defineStore({
     condition: { serviceId: "", endpointName: "" },
     taskList: [],
     segmentList: [],
-    currentTask: {},
-    currentSegment: {},
+    currentTask: null,
+    currentSegment: null,
     segmentSpans: [],
-    currentSpan: {},
+    currentSpan: null,
     analyzeTrees: [],
     taskLogs: [],
     highlightTop: true,
@@ -71,19 +72,19 @@ export const profileStore = defineStore({
       this.currentTask = task || {};
       this.analyzeTrees = [];
     },
-    setSegmentSpans(spans: Recordable<SegmentSpan>[]) {
+    setSegmentSpans(spans: Nullable<SegmentSpan>[]) {
       this.currentSpan = spans[0] || {};
       this.segmentSpans = spans;
     },
-    setCurrentSpan(span: Recordable<SegmentSpan>) {
-      this.currentSpan = span;
+    setCurrentSpan(span: Nullable<SegmentSpan>) {
+      this.currentSpan = span || {};
       this.analyzeTrees = [];
     },
-    setCurrentSegment(segment: Trace) {
+    setCurrentSegment(segment: Nullable<Trace>) {
       this.currentSegment = segment || {};
-      this.segmentSpans = segment.spans || [];
-      if (segment.spans) {
-        this.currentSpan = segment.spans[0] || {};
+      this.segmentSpans = segment?.spans || [];
+      if (segment?.spans) {
+        this.currentSpan = segment?.spans[0] || {};
       } else {
         this.currentSpan = {};
       }
@@ -194,7 +195,7 @@ export const profileStore = defineStore({
       this.currentSpan = segment.spans[index];
       return response;
     },
-    async getProfileAnalyze(params: Array<{ segmentId: string; timeRange: { start: number; end: number } }>) {
+    async getProfileAnalyze(params: ProfileAnalyzeParams[]) {
       if (!params.length) {
         return new Promise((resolve) => resolve({}));
       }

@@ -161,7 +161,7 @@ limitations under the License. -->
   import { ScopeType, EntityType, CallTypes } from "@/views/dashboard/data";
   import type { Option } from "@/types/app";
   import { useQueryTopologyExpressionsProcessor } from "@/hooks/useExpressionsProcessor";
-  import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
+  import type { DashboardItem, MetricConfigOpt, LayoutConfig, NodeDashboard } from "@/types/dashboard";
   import type { Node } from "@/types/topology";
   import Metrics from "./Metrics.vue";
 
@@ -171,38 +171,28 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const topologyStore = useTopologyStore();
   const { selectedGrid } = dashboardStore;
-  const nodeDashboard =
-    selectedGrid.nodeDashboard && selectedGrid.nodeDashboard.length ? selectedGrid.nodeDashboard : "";
-  const isService = [EntityType[0].value, EntityType[1].value].includes(dashboardStore.entity);
-  const items = reactive<
-    {
-      scope: string;
-      dashboard: string;
-    }[]
-  >(isService && nodeDashboard ? nodeDashboard : [{ scope: "", dashboard: "" }]);
+  const isService: boolean = [EntityType[0].value, EntityType[1].value].includes(dashboardStore.entity);
+  const items = reactive<NodeDashboard[]>((isService && selectedGrid?.nodeDashboard) || [{ scope: "", dashboard: "" }]);
   const states = reactive<{
     linkDashboard: string;
-    nodeDashboard: {
-      scope: string;
-      dashboard: string;
-    }[];
+    nodeDashboard: NodeDashboard[];
     linkDashboards: (DashboardItem & { label: string; value: string })[];
     nodeDashboards: (DashboardItem & { label: string; value: string })[];
     linkServerExpressions: string[];
     linkClientExpressions: string[];
     nodeExpressions: string[];
   }>({
-    linkDashboard: selectedGrid.linkDashboard || "",
-    nodeDashboard: selectedGrid.nodeDashboard || [],
+    linkDashboard: selectedGrid?.linkDashboard || "",
+    nodeDashboard: selectedGrid?.nodeDashboard || [],
     linkDashboards: [],
     nodeDashboards: [],
-    linkServerExpressions: selectedGrid.linkServerExpressions || [],
-    linkClientExpressions: selectedGrid.linkClientExpressions || [],
-    nodeExpressions: selectedGrid.nodeExpressions || [],
+    linkServerExpressions: selectedGrid?.linkServerExpressions || [],
+    linkClientExpressions: selectedGrid?.linkClientExpressions || [],
+    nodeExpressions: selectedGrid?.nodeExpressions || [],
   });
-  const legendMQE = ref<{ expression: string }>(selectedGrid.legendMQE || { expression: "" });
+  const legendMQE = ref<{ expression: string }>(selectedGrid?.legendMQE || { expression: "" });
   const configType = ref<string>("");
-  const description = reactive<any>(selectedGrid.description || {});
+  const description = reactive<any>(selectedGrid?.description || {});
 
   getDashboardList();
   async function getDashboardList() {
@@ -237,7 +227,7 @@ limitations under the License. -->
   }
   async function setLegend() {
     updateSettings();
-    const expression = dashboardStore.selectedGrid.legendMQE && dashboardStore.selectedGrid.legendMQE.expression;
+    const expression: string = dashboardStore.selectedGrid?.legendMQE?.expression || "";
     const { getMetrics } = useQueryTopologyExpressionsProcessor(
       [expression],
       topologyStore.nodes.filter((d: Node) => d.isReal),
@@ -295,7 +285,7 @@ limitations under the License. -->
       legendMQE: legendMQE.value,
       ...metricConfig,
       description,
-    };
+    } as LayoutConfig;
     dashboardStore.selectWidget(param);
     dashboardStore.setConfigs(param);
     emit("update", param);
@@ -314,7 +304,7 @@ limitations under the License. -->
     states.linkClientExpressions = param;
     updateSettings();
     if (!states.linkClientExpressions.length) {
-      topologyStore.changeLinkClientMetrics({});
+      topologyStore.setLinkClientMetrics({});
       return;
     }
     topologyStore.getLinkExpressions(states.linkClientExpressions, CallTypes.Client);

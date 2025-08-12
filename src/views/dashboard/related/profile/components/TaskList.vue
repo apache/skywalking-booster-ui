@@ -118,7 +118,7 @@ limitations under the License. -->
   const instanceLogs = ref<TaskLog | any>({});
 
   async function changeTask(item: TaskListItem) {
-    profileStore.setCurrentSegment({});
+    profileStore.setCurrentSegment(null);
     profileStore.setCurrentTask(item);
     const res = await profileStore.getSegmentList({ taskID: item.id });
     if (res.errors) {

@@ -19,11 +19,16 @@ export type DashboardItem = {
   id?: string;
   entity: string;
   layer: string;
-  isRoot: boolean;
+  isRoot?: boolean;
   name: string;
-  isDefault: boolean;
+  isDefault?: boolean;
   expressions?: string[];
   expressionsConfig?: MetricConfigOpt[];
+};
+
+export type NodeDashboard = {
+  scope: string;
+  dashboard: string;
 };
 export interface LayoutConfig {
   x: number;
@@ -47,7 +52,20 @@ export interface LayoutConfig {
   subExpressions?: string[];
   subTypesOfMQE?: string[];
   valueRelatedDashboard?: string;
+  legendMQE?: LegendMQE;
+  linkDashboard?: string;
+  nodeDashboard?: NodeDashboard[];
+  linkServerExpressions?: string[];
+  linkClientExpressions?: string[];
+  nodeExpressions?: string[];
+  description?: any;
+  linkServerMetricConfig?: MetricConfigOpt[];
+  linkClientMetricConfig?: MetricConfigOpt[];
+  nodeMetricConfig?: MetricConfigOpt[];
 }
+type LegendMQE = {
+  expression: string;
+};
 export type RelatedTrace = {
   duration: DurationTime;
   status: string;

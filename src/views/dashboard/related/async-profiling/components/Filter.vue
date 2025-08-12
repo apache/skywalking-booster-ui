@@ -50,7 +50,7 @@ limitations under the License. -->
   const serviceInstanceIds = ref<string[]>([]);
   const selectedEventType = ref<string>("");
   const eventTypes = computed(() =>
-    (asyncProfilingStore.selectedTask.events ?? [])
+    (asyncProfilingStore.selectedTask?.events || [])
       .map((d: string) => {
         if (d === ProfilingEvents[1]) {
           return [
@@ -65,7 +65,7 @@ limitations under the License. -->
   );
   const instances = computed(() =>
     asyncProfilingStore.instances.filter((d: Instance) =>
-      (asyncProfilingStore.selectedTask.successInstanceIds ?? []).includes(d.id),
+      (asyncProfilingStore.selectedTask?.successInstanceIds || []).includes(d.id),
     ),
   );
 
@@ -80,12 +80,12 @@ limitations under the License. -->
   }
 
   async function analyzeProfiling() {
-    const instanceIds = asyncProfilingStore.instances
+    const instanceIds: string[] = asyncProfilingStore.instances
       .filter((d: Instance) => (serviceInstanceIds.value ?? []).includes(d.value))
       .map((d: Instance) => d.id);
     const res = await asyncProfilingStore.getAsyncProfilingAnalyze({
       instanceIds,
-      taskId: asyncProfilingStore.selectedTask.id,
+      taskId: asyncProfilingStore.selectedTask?.id || "",
       eventType: (EventsMap as any)[selectedEventType.value],
     });
     if (res.data && res.data.errors) {
@@ -95,7 +95,7 @@ limitations under the License. -->
   }
 
   watch(
-    () => asyncProfilingStore.selectedTask.successInstanceIds,
+    () => asyncProfilingStore.selectedTask?.successInstanceIds,
     () => {
       serviceInstanceIds.value = [];
       selectedEventType.value = "";

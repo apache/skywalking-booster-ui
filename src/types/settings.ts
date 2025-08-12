@@ -24,6 +24,6 @@ export type ClusterNode = {
 };
 
 export type ConfigTTL = {
-  metrics: MetricsTTL;
-  records: RecordsTTL;
+  metrics: MetricsTTL[];
+  records: RecordsTTL[];
 };

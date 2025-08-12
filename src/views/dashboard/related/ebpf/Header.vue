@@ -68,7 +68,7 @@ limitations under the License. -->
       return;
     }
     newTask.value = true;
-    ebpfStore.getCreateTaskData(selectorStore.currentService.id);
+    ebpfStore.getCreateTaskData(selectorStore.currentService.id || "");
   }
 
   watch(

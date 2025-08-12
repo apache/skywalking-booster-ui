@@ -39,7 +39,7 @@ limitations under the License. -->
             <td
               class="profile-td"
               :class="{
-                selected: networkProfilingStore.selectedNetworkTask.taskId === i.taskId,
+                selected: networkProfilingStore.selectedNetworkTask?.taskId === i.taskId,
               }"
             >
               <div class="ell">
@@ -103,7 +103,8 @@ limitations under the License. -->
     getTopology();
   }
   async function getTopology() {
-    const { taskStartTime, fixedTriggerDuration, taskId } = networkProfilingStore.selectedNetworkTask;
+    const { taskStartTime, fixedTriggerDuration, taskId } =
+      (networkProfilingStore.selectedNetworkTask as EBPFTaskList) || {};
     const serviceInstanceId = (selectorStore.currentPod && selectorStore.currentPod.id) || "";
     const startTime =
       fixedTriggerDuration > 1800 ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000 : taskStartTime;
@@ -171,7 +172,9 @@ limitations under the License. -->
   }
 
   async function keepAliveNetwork() {
-    const res = await networkProfilingStore.keepNetworkProfiling(networkProfilingStore.selectedNetworkTask.taskId);
+    const res = await networkProfilingStore.keepNetworkProfiling(
+      networkProfilingStore.selectedNetworkTask?.taskId || "",
+    );
     if (res.errors) {
       intervalKeepAlive.value && clearInterval(intervalKeepAlive.value);
       return ElMessage.error(res.errors);

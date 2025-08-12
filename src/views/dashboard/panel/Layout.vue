@@ -85,12 +85,13 @@ limitations under the License. -->
             }
           }
           if (item.type === WidgetType.Tab) {
-            const index = isNaN(item.activedTabIndex) ? 0 : item.activedTabIndex;
-            widgets.push(
-              ...item.children[index].children.filter(
+            const index = isNaN(item.activedTabIndex as number) ? 0 : (item.activedTabIndex as number);
+            if (item.children && item.children[index]) {
+              const list = item.children[index]?.children.filter(
                 (d: LayoutConfig) => d.type === WidgetType.Widget && !ListChartTypes.includes(d.graph?.type || ""),
-              ),
-            );
+              );
+              widgets.push(...list);
+            }
           }
         }
         const configList = widgets.map((d: LayoutConfig) => ({

@@ -73,7 +73,7 @@ export const dashboardStore = defineStore({
       this.dashboards = list;
       sessionStorage.setItem("dashboards", JSON.stringify(list));
     },
-    setCurrentDashboard(item: DashboardItem) {
+    setCurrentDashboard(item: Nullable<DashboardItem>) {
       this.currentDashboard = item;
     },
     addControl(type: WidgetType) {
@@ -253,7 +253,7 @@ export const dashboardStore = defineStore({
     setTopology(show: boolean) {
       this.showTopology = show;
     },
-    setConfigs(param: { [key: string]: unknown }) {
+    setConfigs(param: LayoutConfig) {
       const actived = this.activedGridItem.split("-");
       const index = this.layout.findIndex((d: LayoutConfig) => actived[0] === d.i);
       if (actived.length === 3) {

@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import type { Span } from "./trace";
+
 type ProfileStackElement = {
   id: string;
   parentId: string;
@@ -45,22 +47,7 @@ export interface TaskListItem {
   successInstanceIds: string[];
   serviceInstanceIds: string[];
 }
-export interface SegmentSpan {
-  spanId: string;
-  parentSpanId: string;
-  serviceCode: string;
-  serviceInstanceName: string;
-  startTime: number;
-  endTime: number;
-  endpointName: string;
-  type: string;
-  peer: string;
-  component: string;
-  isError: boolean;
-  layer: string;
-  tags: Recordable[];
-  logs: Recordable[];
-}
+export type SegmentSpan = Span;
 
 export interface ProfileTaskCreationRequest {
   serviceId: string;
@@ -71,3 +58,6 @@ export interface ProfileTaskCreationRequest {
   dumpPeriod: number;
   maxSamplingCount: number;
 }
+export type ProfileTimeRange = { start: number; end: number };
+
+export type ProfileAnalyzeParams = { segmentId: string; timeRange: ProfileTimeRange };

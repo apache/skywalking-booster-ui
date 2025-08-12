@@ -88,7 +88,7 @@ export const selectorStore = defineStore({
       }
       return res.data;
     },
-    async getServiceInstances(param?: { serviceId: string; isRelation: boolean }) {
+    async getServiceInstances(param?: { serviceId: string; isRelation?: boolean }) {
       const serviceId = param ? param.serviceId : this.currentService?.id;
       if (!serviceId) {
         return new Promise((resolve) => resolve({ errors: "Service ID is required" }));
@@ -106,7 +106,7 @@ export const selectorStore = defineStore({
       }
       return resp;
     },
-    async getProcesses(param?: { instanceId: string; isRelation: boolean }) {
+    async getProcesses(param?: { instanceId: string | undefined; isRelation?: boolean }) {
       const instanceId = param ? param.instanceId : this.currentPod?.id;
       if (!instanceId) {
         return null;

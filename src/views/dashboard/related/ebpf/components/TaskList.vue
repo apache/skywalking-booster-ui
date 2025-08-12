@@ -25,7 +25,7 @@ limitations under the License. -->
             <td
               class="profile-td"
               :class="{
-                selected: ebpfStore.selectedTask.taskId === i.taskId,
+                selected: ebpfStore.selectedTask?.taskId === i.taskId,
               }"
             >
               <div class="ell">
@@ -37,9 +37,9 @@ limitations under the License. -->
                 </a>
               </div>
               <div class="grey ell sm">
-                <span class="mr-10 sm">{{ dateFormat(i.taskStartTime) }}</span>
+                <span class="mr-10 sm">{{ dateFormat(i.taskStartTime || NaN) }}</span>
                 <span class="mr-10 sm">
-                  {{ dateFormat(i.taskStartTime + i.fixedTriggerDuration * 1000) }}
+                  {{ dateFormat(i.taskStartTime + (i.fixedTriggerDuration || 0) * 1000) }}
                 </span>
               </div>
             </td>
@@ -61,14 +61,15 @@ limitations under the License. -->
   import TaskDetails from "../../components/TaskDetails.vue";
   import { dateFormat } from "@/utils/dateFormat";
 
+  /* global Nullable */
   const { t } = useI18n();
   const ebpfStore = useEbpfStore();
   const viewDetail = ref<boolean>(false);
 
-  async function changeTask(item: EBPFTaskList) {
+  async function changeTask(item: Nullable<EBPFTaskList>) {
     ebpfStore.setSelectedTask(item);
     const res = await ebpfStore.getEBPFSchedules({
-      taskId: item.taskId,
+      taskId: item?.taskId || "",
     });
     if (res.errors) {
       ElMessage.error(res.errors);

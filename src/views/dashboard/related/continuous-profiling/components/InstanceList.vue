@@ -84,6 +84,7 @@ limitations under the License. -->
   import router from "@/router";
   import { HeaderLabels, HeaderChildLabels } from "../data";
   import { EntityType } from "../../../data";
+  import type { Instance } from "@/types/selector";
 
   /*global defineProps */
   const props = defineProps({
@@ -97,14 +98,14 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const continousProfilingStore = useContinousProfilingStore();
   const pageSize = 10;
-  const currentInstances = ref<MonitorInstance[]>([]);
+  const currentInstances = ref<Instance[]>([]);
 
   function viewProcessDashboard(process: MonitorProcess, instance: MonitorInstance) {
     if (!props.config.processDashboardName) {
       return;
     }
     router.push(
-      `/dashboard/${dashboardStore.layerId}/${EntityType[8].value}/${selectorStore.currentService.id}/${instance.id}/${process.id}/${props.config.processDashboardName}`,
+      `/dashboard/${dashboardStore.layerId}/${EntityType[8].value}/${selectorStore.currentService?.id}/${instance.id}/${process.id}/${props.config.processDashboardName}`,
     );
   }
 
@@ -113,12 +114,12 @@ limitations under the License. -->
       return;
     }
     router.push(
-      `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${selectorStore.currentService.id}/${instance.id}/${props.config.instanceDashboardName}`,
+      `/dashboard/${dashboardStore.layerId}/${EntityType[3].value}/${selectorStore.currentService?.id}/${instance.id}/${props.config.instanceDashboardName}`,
     );
   }
 
   async function changePage(pageIndex: number) {
-    currentInstances.value = continousProfilingStore.instances.filter((d: unknown, index: number) => {
+    currentInstances.value = continousProfilingStore.instances.filter((d: Instance, index: number) => {
       if (index >= (pageIndex - 1) * pageSize && index < pageIndex * pageSize) {
         return d;
       }
@@ -129,7 +130,7 @@ limitations under the License. -->
     () => continousProfilingStore.instances,
     () => {
       currentInstances.value = continousProfilingStore.instances.filter(
-        (_: unknown, index: number) => index < pageSize,
+        (_: Instance, index: number) => index < pageSize,
       );
     },
   );

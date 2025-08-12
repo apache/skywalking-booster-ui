@@ -128,6 +128,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import icons from "@/assets/img/icons";
   import { Themes } from "@/constants/data";
+  import type { EBPFTaskList } from "@/types/ebpf";
 
   /*global Nullable, defineProps */
   const props = defineProps({
@@ -361,7 +362,7 @@ limitations under the License. -->
     if (dates.value) {
       times = dates.value;
     } else {
-      const { taskStartTime, fixedTriggerDuration } = networkProfilingStore.selectedNetworkTask;
+      const { taskStartTime, fixedTriggerDuration } = (networkProfilingStore.selectedNetworkTask as EBPFTaskList) || {};
       const startTime =
         fixedTriggerDuration > 1800 ? taskStartTime + fixedTriggerDuration * 1000 - 30 * 60 * 1000 : taskStartTime;
       times = {

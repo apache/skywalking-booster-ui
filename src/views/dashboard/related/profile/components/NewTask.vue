@@ -98,7 +98,7 @@ limitations under the License. -->
     if (!selectorStore.currentService) {
       return;
     }
-    const service = selectorStore.currentService.id;
+    const service = selectorStore.currentService.id || "";
     const res = await profileStore.getEndpoints(service, keyword);
 
     if (res.errors) {
@@ -129,10 +129,14 @@ limitations under the License. -->
   }
 
   async function createTask() {
+    if (!selectorStore.currentService?.id) {
+      ElMessage.error("Please select a service");
+      return;
+    }
     emits("close");
     const date = monitorTime.value === "0" ? new Date() : time.value;
     const params = {
-      serviceId: selectorStore.currentService.id,
+      serviceId: selectorStore.currentService?.id || "",
       endpointName: endpointName.value,
       startTime: date.getTime(),
       duration: Number(monitorDuration.value),

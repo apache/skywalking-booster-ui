@@ -20,9 +20,12 @@ export type AsyncProfilingTask = {
   serviceId: string;
   serviceInstanceIds: string[];
   createTime: number;
-  events: string;
+  events: string[];
   duration: number;
   execArgs: string;
+  errorInstanceIds: string[];
+  successInstanceIds: string[];
+  logs: AsyncProfilerTaskLog[];
 };
 
 export type AsyncProfileTaskCreationRequest = {
@@ -39,6 +42,7 @@ export type AsyncProfilerStackElement = {
   codeSignature: string;
   total: number;
   self: number;
+  elements?: StackElement[];
 };
 
 export type AsyncProfilerTaskProgress = {
