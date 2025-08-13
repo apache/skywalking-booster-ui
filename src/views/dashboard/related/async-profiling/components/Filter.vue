@@ -65,7 +65,7 @@ limitations under the License. -->
   );
   const instances = computed(() =>
     asyncProfilingStore.instances.filter((d: Instance) =>
-      (asyncProfilingStore.selectedTask?.successInstanceIds || []).includes(d.id),
+      (asyncProfilingStore.selectedTask?.successInstanceIds || []).includes(d.id || ""),
     ),
   );
 
@@ -80,9 +80,9 @@ limitations under the License. -->
   }
 
   async function analyzeProfiling() {
-    const instanceIds: string[] = asyncProfilingStore.instances
+    const instanceIds = (asyncProfilingStore.instances || [])
       .filter((d: Instance) => (serviceInstanceIds.value ?? []).includes(d.value))
-      .map((d: Instance) => d.id);
+      .map((d: Instance) => d.id || "") as string[];
     const res = await asyncProfilingStore.getAsyncProfilingAnalyze({
       instanceIds,
       taskId: asyncProfilingStore.selectedTask?.id || "",

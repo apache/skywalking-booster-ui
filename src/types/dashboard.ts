@@ -24,6 +24,7 @@ export type DashboardItem = {
   isDefault?: boolean;
   expressions?: string[];
   expressionsConfig?: MetricConfigOpt[];
+  path?: string;
 };
 
 export type NodeDashboard = {
@@ -37,8 +38,8 @@ export interface LayoutConfig {
   h: number;
   i: string;
   type: string;
-  widget: WidgetConfig;
-  graph: GraphConfig;
+  widget?: WidgetConfig;
+  graph?: GraphConfig;
   expressions?: string[];
   typesOfMQE?: string[];
   children?: { name: string; children: LayoutConfig[]; expression?: string; enable?: boolean }[];
@@ -113,7 +114,7 @@ export type Filters = {
   queryOrder?: string;
   status?: string;
   metricValue?: { label: string; data: string; value: string }[];
-  owner: Nullable<Owner>;
+  owner?: Nullable<Owner>;
   isReadRecords?: boolean | undefined;
 };
 
@@ -284,6 +285,6 @@ type MetricLabel = {
 type MetricValue = {
   name: string;
   value: string;
-  owner: null | string;
+  owner: Nullable<Owner>;
   refId: null | string;
 };

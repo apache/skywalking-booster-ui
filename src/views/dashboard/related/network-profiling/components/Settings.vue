@@ -30,6 +30,7 @@ limitations under the License. -->
   import type { DashboardItem } from "@/types/dashboard";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { EntityType } from "@/views/dashboard/data";
+  import type { LayoutConfig } from "@/types/dashboard";
   /*global defineEmits */
   const emits = defineEmits(["update"]);
   const { t } = useI18n();
@@ -65,8 +66,8 @@ limitations under the License. -->
       ...dashboardStore.selectedGrid,
       linkDashboard,
     };
-    dashboardStore.selectWidget(item);
-    dashboardStore.setConfigs(item);
+    dashboardStore.selectWidget(item as LayoutConfig);
+    dashboardStore.setConfigs(item as LayoutConfig);
     emits("update", item);
   }
 </script>

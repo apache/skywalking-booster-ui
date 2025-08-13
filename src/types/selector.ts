@@ -30,7 +30,7 @@ export type Instance = {
   language?: string;
   instanceUUID?: string;
   attributes?: { name: string; value: string }[];
-  id: string;
+  id?: string;
   merge?: boolean;
 };
 

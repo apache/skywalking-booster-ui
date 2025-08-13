@@ -128,7 +128,11 @@ describe("useDashboardsSession", () => {
 
     const { associationWidget } = getDashboard({ name: "A", layer: "L1", entity: "Service" }, ConfigFieldTypes.NAME);
 
-    associationWidget("src", { k: 1 }, "Line");
+    associationWidget(
+      "src",
+      { dataIndex: 0, sourceId: "test", duration: { startTime: "1000", endTime: "2000", step: "HOUR" } },
+      "Line",
+    );
 
     expect(setWidget).toHaveBeenCalledTimes(1);
     const arg = setWidget.mock.calls[0][0];
@@ -161,7 +165,11 @@ describe("useDashboardsSession", () => {
 
     const { associationWidget } = getDashboard({ name: "A", layer: "L1", entity: "Service" }, ConfigFieldTypes.NAME);
 
-    associationWidget("tab0-0-9", { f: true }, "Card");
+    associationWidget(
+      "tab0-0-9",
+      { dataIndex: 0, sourceId: "test", duration: { startTime: "1000", endTime: "2000", step: "HOUR" } },
+      "Card",
+    );
 
     // set widget called with merged filters
     expect(setWidget).toHaveBeenCalledTimes(1);
@@ -196,7 +204,11 @@ describe("useDashboardsSession", () => {
 
     const { associationWidget } = getDashboard({ name: "A", layer: "L1", entity: "Service" }, ConfigFieldTypes.NAME);
 
-    associationWidget("wid1", { a: 1 }, "Line");
+    associationWidget(
+      "wid1",
+      { dataIndex: 0, sourceId: "test", duration: { startTime: "1000", endTime: "2000", step: "HOUR" } },
+      "Line",
+    );
 
     expect(setWidget).toHaveBeenCalledTimes(1);
     expect(setActiveTabIndex).not.toHaveBeenCalled();
