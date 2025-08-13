@@ -25,15 +25,15 @@ limitations under the License. -->
     <div v-else>
       <label>{{ t("auto") }}</label>
       <el-switch class="mr-5" v-model="auto" style="height: 25px" />
-      <Selector v-model="freshOpt" :options="RefreshOptions" size="small" />
+      <Selector style="width: 200px" v-model="freshOpt" :options="RefreshOptions" />
       <div class="mt-5">
         <label>{{ t("period") }}</label>
-        <el-input class="auto-period" size="small" type="number" v-model="period" min="1" />
+        <el-input class="auto-period" type="number" v-model="period" min="1" />
         <span class="ml-5">{{ t("second") }}</span>
         <i class="ml-10">{{ t("timeReload") }}</i>
       </div>
     </div>
-    <el-button size="small" type="primary" class="mt-20" @click="getLink">{{ t("generateLink") }}</el-button>
+    <el-button type="primary" class="mt-20" @click="getLink">{{ t("generateLink") }}</el-button>
     <div v-show="widgetLink" class="mt-10">
       <span @click="viewPage" class="link">
         {{ host + widgetLink }}
