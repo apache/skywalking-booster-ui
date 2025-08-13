@@ -39,14 +39,15 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
-  import { useDashboardStore } from "@/store/modules/dashboard";
   import { useI18n } from "vue-i18n";
+  import { useDashboardStore } from "@/store/modules/dashboard";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const graph = dashboardStore.selectedGrid.graph;
+  const graph = dashboardStore.selectedGrid?.graph || {};
   const valueMappings = ref<{ [key: string]: string }>(graph?.valueMappings || {});
-  const keys = ref<string[]>(graph.valueMappings ? Object.keys(valueMappings.value) : [""]);
+  const keys = ref<string[]>(graph?.valueMappings ? Object.keys(valueMappings.value) : [""]);
 
   function changeKeys(event: any, index: number) {
     const params = event.target.textContent || "";
@@ -82,10 +83,10 @@ limitations under the License. -->
 
   function updateConfig() {
     const graph = {
-      ...dashboardStore.selectedGrid.graph,
+      ...dashboardStore.selectedGrid?.graph,
       valueMappings: valueMappings.value,
     };
-    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph } as LayoutConfig);
   }
 </script>
 <style lang="scss" scoped>

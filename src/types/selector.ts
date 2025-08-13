@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export type Service = {
+export interface Service {
   id?: string;
   label: string;
   value: string;
   layers?: string[];
   normal?: boolean;
   group?: string;
-  merge?: string;
   shortName?: string;
-};
+}
 
 export type Instance = {
   value: string;

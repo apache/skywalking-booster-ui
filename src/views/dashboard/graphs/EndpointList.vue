@@ -192,7 +192,7 @@ limitations under the License. -->
       return;
     }
     router.push(
-      `/dashboard/${dashboard.layer}/${dashboard.entity}/${selectorStore.currentService.id}/${scope.row.id}/${dashboard.name}`,
+      `/dashboard/${dashboard.layer}/${dashboard.entity}/${selectorStore.currentService?.id}/${scope.row.id}/${dashboard.name}`,
     );
   }
   async function searchList() {

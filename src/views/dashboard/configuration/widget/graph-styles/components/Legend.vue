@@ -94,11 +94,11 @@ limitations under the License. -->
   import { computed, reactive } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import type { LegendOptions } from "@/types/dashboard";
+  import type { LegendOptions, LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+  const graph = computed(() => dashboardStore.selectedGrid?.graph || {});
   const legend = reactive<LegendOptions>({
     show: true,
     total: false,
@@ -113,17 +113,17 @@ limitations under the License. -->
   });
 
   function updateLegendConfig(param: { [key: string]: unknown }) {
-    const g = {
-      ...dashboardStore.selectedGrid.graph,
+    const graph = {
+      ...dashboardStore.selectedGrid?.graph,
       legend: {
-        ...dashboardStore.selectedGrid.graph.legend,
+        ...dashboardStore.selectedGrid?.graph?.legend,
         ...param,
       },
     };
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
-      graph: g,
-    });
+      graph,
+    } as LayoutConfig);
   }
 </script>
 <style lang="scss" scoped>

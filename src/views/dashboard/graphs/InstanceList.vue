@@ -208,7 +208,7 @@ limitations under the License. -->
       return;
     }
     router.push(
-      `/dashboard/${dashboard.layer}/${dashboard.entity}/${selectorStore.currentService.id}/${
+      `/dashboard/${dashboard.layer}/${dashboard.entity}/${selectorStore.currentService?.id}/${
         scope.row.id
       }/${dashboard.name.split(" ").join("-")}`,
     );

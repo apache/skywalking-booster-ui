@@ -33,11 +33,11 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import Content from "../related/network-profiling/Content.vue";
-
+  import type { LayoutConfig } from "@/types/dashboard";
   /*global defineProps */
   const props = defineProps({
     data: {
-      type: Object as PropType<any>,
+      type: Object as PropType<LayoutConfig>,
       default: () => ({ graph: {} }),
     },
     activeIndex: { type: String, default: "" },

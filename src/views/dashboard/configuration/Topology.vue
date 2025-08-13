@@ -34,24 +34,25 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { DepthList } from "../data";
   import type { Option } from "@/types/app";
+  import type { TopologyConfig, LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const graph = dashboardStore.selectedGrid.graph || {};
-  const showDepth = ref<boolean>(graph.showDepth);
-  const depth = ref<number>(graph.depth || 2);
+  const graph = (dashboardStore.selectedGrid?.graph as TopologyConfig) || {};
+  const showDepth = ref<boolean>(graph?.showDepth || false);
+  const depth = ref<number>(graph?.depth || 2);
 
   function applyConfig() {
-    dashboardStore.setConfigs(dashboardStore.selectedGrid);
+    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
     dashboardStore.setConfigPanel(false);
   }
   function changeConfig(param: { [key: string]: unknown }) {
     const { selectedGrid } = dashboardStore;
     const graph = {
-      ...selectedGrid.graph,
+      ...selectedGrid?.graph,
       ...param,
     };
-    dashboardStore.selectWidget({ ...selectedGrid, graph });
+    dashboardStore.selectWidget({ ...selectedGrid, graph } as LayoutConfig);
   }
   function changeDepth(opt: Option[] | any) {
     const val = opt[0].value;

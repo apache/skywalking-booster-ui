@@ -70,13 +70,12 @@ limitations under the License. -->
   import { TextColors, MetricCatalog } from "@/views/dashboard/data";
   import Trace from "@/views/dashboard/related/trace/Index.vue";
   import { WidgetType, QueryOrders, Status, RefIdTypes, ExpressionResultType } from "@/views/dashboard/data";
+  import type { Filters, RelatedTrace, TopListData, TopListItem } from "@/types/dashboard";
 
-  /*global defineProps, Recordable*/
+  /*global defineProps */
   const props = defineProps({
     data: {
-      type: Object as PropType<{
-        [key: string]: { name: string; value: number; refId: string; owner: object }[];
-      }>,
+      type: Object as PropType<TopListData>,
       default: () => ({}),
     },
     config: {
@@ -84,7 +83,7 @@ limitations under the License. -->
         color: string;
         expressions: string[];
         typesOfMQE: string[];
-        relatedTrace: any;
+        relatedTrace: RelatedTrace;
         valueRelatedDashboard: string;
       }>,
       default: () => ({ color: "purple" }),
@@ -94,28 +93,29 @@ limitations under the License. -->
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const showTrace = ref<boolean>(false);
-  const traceOptions = ref<{ type: string; filters?: unknown }>({
+  const traceOptions = ref<{ type: string; filters?: Filters } | any>({
+    ...props.data,
     type: WidgetType.Trace,
   });
   const refIdType = computed(
     () => (props.config.relatedTrace && props.config.relatedTrace.refIdType) || RefIdTypes[0].value,
   );
-  const key = computed(() => Object.keys(props.data)[0] || "");
+  const key = computed<string>(() => Object.keys(props.data)[0] || "");
   const available = computed(
     () => Array.isArray(props.data[key.value]) && props.data[key.value][0] && props.data[key.value][0].value,
   );
   const maxValue = computed(() => {
-    if (!(props.data[key.value] && props.data[key.value].length)) {
+    if (!props.data[key.value].length) {
       return 0;
     }
-    const temp: number[] = props.data[key.value].map((i: any) => i.value);
+    const temp: number[] = props.data?.[key.value].map((i: any) => i.value);
     return Math.max.apply(null, temp);
   });
   function handleClick(i: string) {
     copy(i);
   }
-  function viewTrace(item: { name: string; refId: string; value: unknown; owner: object }) {
-    const filters = {
+  function viewTrace(item: TopListItem) {
+    const filters: Filters = {
       ...item,
       queryOrder: QueryOrders[1].value,
       status: Status[2].value,
@@ -130,7 +130,7 @@ limitations under the License. -->
     };
     showTrace.value = true;
   }
-  function viewDashboard(item: Recordable) {
+  function viewDashboard(item: TopListItem) {
     const { owner } = item;
     let path;
     if (owner.scope === MetricCatalog.SERVICE) {

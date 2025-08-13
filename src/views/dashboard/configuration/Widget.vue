@@ -27,21 +27,21 @@ limitations under the License. -->
       </div>
       <div class="render-chart">
         <component
-          :is="graph.type"
+          :is="graph.type || 'Line'"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
           :config="{
             ...graph,
-            decorations: dashboardStore.selectedGrid.graph?.decorations,
-            legend: dashboardStore.selectedGrid.graph?.legend,
-            i: dashboardStore.selectedGrid.i,
-            metricConfig: dashboardStore.selectedGrid.metricConfig,
-            relatedTrace: dashboardStore.selectedGrid.relatedTrace,
-            expressions: dashboardStore.selectedGrid.expressions || [],
-            typesOfMQE: dashboardStore.selectedGrid.typesOfMQE || [],
-            subExpressions: dashboardStore.selectedGrid.subExpressions || [],
-            subTypesOfMQE: dashboardStore.selectedGrid.subTypesOfMQE || [],
-            valueRelatedDashboard: dashboardStore.selectedGrid.valueRelatedDashboard,
+            valueMappings: dashboardStore.selectedGrid?.graph?.valueMappings,
+            legend: dashboardStore.selectedGrid?.graph?.legend,
+            i: dashboardStore.selectedGrid?.i,
+            metricConfig: dashboardStore.selectedGrid?.metricConfig,
+            relatedTrace: dashboardStore.selectedGrid?.relatedTrace,
+            expressions: dashboardStore.selectedGrid?.expressions || [],
+            typesOfMQE: dashboardStore.selectedGrid?.typesOfMQE || [],
+            subExpressions: dashboardStore.selectedGrid?.subExpressions || [],
+            subTypesOfMQE: dashboardStore.selectedGrid?.subTypesOfMQE || [],
+            valueRelatedDashboard: dashboardStore.selectedGrid?.valueRelatedDashboard,
           }"
           :needQuery="true"
           @expressionTips="getErrors"
@@ -88,6 +88,7 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import graphs from "../graphs";
   import CustomOptions from "./widget/index";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   export default defineComponent({
     name: "WidgetEdit",
@@ -106,23 +107,21 @@ limitations under the License. -->
       const states = reactive<{
         activeNames: string;
         source: unknown;
-        index: string;
+        index: string | undefined;
         visType: Option[];
       }>({
         activeNames: "1",
         source: {},
-        index: dashboardStore.selectedGrid.i,
+        index: dashboardStore.selectedGrid?.i,
         visType: [],
       });
       const originConfig = dashboardStore.selectedGrid;
-      const widget = computed(() => dashboardStore.selectedGrid.widget || {});
-      const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+      const widget = computed(() => dashboardStore.selectedGrid?.widget || {});
+      const graph = computed(() => dashboardStore.selectedGrid?.graph || {});
       const title = computed(() => encodeURIComponent(widget.value.title || ""));
       const tips = computed(() => encodeURIComponent(widget.value.tips || ""));
       const hasAssociate = computed(() =>
-        ["Bar", "Line", "Area", "TopList"].includes(
-          dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type,
-        ),
+        ["Bar", "Line", "Area", "TopList"].includes(dashboardStore.selectedGrid?.graph?.type || ""),
       );
 
       function getSource(source: unknown) {
@@ -140,7 +139,7 @@ limitations under the License. -->
 
       function applyConfig() {
         dashboardStore.setConfigPanel(false);
-        dashboardStore.setConfigs(dashboardStore.selectedGrid);
+        dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
       }
 
       function cancelConfig() {

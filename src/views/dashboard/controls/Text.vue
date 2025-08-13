@@ -58,18 +58,19 @@ limitations under the License. -->
   import { TextColors } from "@/views/dashboard/data";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { Themes } from "@/constants/data";
+  import type { LayoutConfig, TextConfig } from "@/types/dashboard";
 
   /*global defineProps */
   const props = defineProps({
     data: {
-      type: Object as PropType<any>,
+      type: Object as PropType<LayoutConfig>,
       default: () => ({ graph: {} }),
     },
     activeIndex: { type: String, default: "" },
   });
   const { t } = useI18n();
   const appStore = useAppStoreWithOut();
-  const graph = computed(() => props.data.graph || {});
+  const graph = computed(() => (props.data.graph as TextConfig) || {});
   const dashboardStore = useDashboardStore();
 
   const backgroundColor = computed(

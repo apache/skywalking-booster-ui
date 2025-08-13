@@ -16,7 +16,7 @@ limitations under the License. -->
   <div ref="timeline" class="task-timeline"></div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, onMounted, onUnmounted } from "vue";
+  import { ref, watch, onMounted, onUnmounted, PropType } from "vue";
   import dayjs from "dayjs";
   import { useThrottleFn } from "@vueuse/core";
   import { ElMessage } from "element-plus";
@@ -34,7 +34,7 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const continousProfilingStore = useContinousProfilingStore();
   const dashboardStore = useDashboardStore();
-  /* global defineProps, Nullable, PropType */
+  /* global defineProps, Nullable */
   const props = defineProps({
     data: {
       type: Object as PropType<LayoutConfig>,

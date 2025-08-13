@@ -24,6 +24,8 @@ export const NewControl = {
   h: 12,
   i: "0",
   type: WidgetType.Widget,
+  widget: {},
+  graph: {},
 };
 export const TextConfig = {
   fontColor: "white",

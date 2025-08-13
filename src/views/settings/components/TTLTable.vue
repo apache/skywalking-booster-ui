@@ -33,7 +33,7 @@ limitations under the License. -->
   </el-table>
 </template>
 <script lang="ts" setup>
-  /*global PropType */
+  import type { PropType } from "vue";
   defineProps({
     metricsRows: {
       type: Array as PropType<{ width?: number; value: string; label: string }[]>,

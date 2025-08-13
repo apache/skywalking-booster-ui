@@ -29,18 +29,19 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useI18n } from "vue-i18n";
   import Legend from "./components/Legend.vue";
+  import type { BarConfig, LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const graph = dashboardStore.selectedGrid.graph;
+  const graph = (dashboardStore.selectedGrid?.graph as BarConfig) || {};
   const showBackground = ref(graph.showBackground || false);
 
   function changeConfig(param: { [key: string]: unknown }) {
     const graph = {
-      ...dashboardStore.selectedGrid.graph,
+      ...dashboardStore.selectedGrid?.graph,
       ...param,
     };
-    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph } as LayoutConfig);
   }
 </script>
 <style lang="scss" scoped>

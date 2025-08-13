@@ -28,23 +28,22 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { ref } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
-  const eventAssociate = ref(dashboardStore.selectedGrid.eventAssociate || false);
+  const eventAssociate = ref(dashboardStore.selectedGrid?.eventAssociate || false);
 
   function updateConfig() {
-    dashboardStore.selectedGrid = {
-      ...dashboardStore.selectedGrid,
-      eventAssociate,
-    };
-    dashboardStore.selectWidget(dashboardStore.selectedGrid);
+    const { selectedGrid } = dashboardStore;
+
+    dashboardStore.selectWidget({ ...selectedGrid, eventAssociate: eventAssociate.value } as LayoutConfig);
   }
 
   function applyConfig() {
     dashboardStore.setConfigPanel(false);
-    dashboardStore.setConfigs(dashboardStore.selectedGrid);
+    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
   }
 
   function cancelConfig() {

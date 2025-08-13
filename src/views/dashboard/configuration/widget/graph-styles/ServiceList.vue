@@ -40,19 +40,20 @@ limitations under the License. -->
   import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import type { ServiceListConfig, LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+  const graph = computed(() => (dashboardStore.selectedGrid?.graph as ServiceListConfig) || {});
   const fontSize = ref(graph.value.fontSize);
 
   function updateConfig(param: { [key: string]: unknown }) {
     const { selectedGrid } = dashboardStore;
     const graph = {
-      ...selectedGrid.graph,
+      ...selectedGrid?.graph,
       ...param,
     };
-    dashboardStore.selectWidget({ ...selectedGrid, graph });
+    dashboardStore.selectWidget({ ...selectedGrid, graph } as LayoutConfig);
   }
 </script>
 <style lang="scss" scoped>

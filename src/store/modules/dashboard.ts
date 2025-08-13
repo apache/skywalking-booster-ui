@@ -353,7 +353,7 @@ export const dashboardStore = defineStore({
       }
       this.dashboards = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
     },
-    async updateDashboard(setting: { id: string; configuration: string }) {
+    async updateDashboard(setting: { id?: string; configuration: string }) {
       const resp = await graphql.query("updateTemplate").params({
         setting,
       });
