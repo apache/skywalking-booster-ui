@@ -72,8 +72,8 @@ describe("App Store", () => {
       expect(store.theme).toBe(Themes.Dark);
       expect(store.coldStageMode).toBe(false);
       expect(store.maxRange).toEqual([]);
-      expect(store.metricsTTL).toEqual({});
-      expect(store.recordsTTL).toEqual({});
+      expect(store.metricsTTL).toEqual(null);
+      expect(store.recordsTTL).toEqual(null);
     });
 
     it("should have correct duration row initialization", () => {
