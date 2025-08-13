@@ -24,7 +24,7 @@ import { TTLTypes, TTLColdMap } from "../data";
 interface SettingsState {
   clusterNodes: ClusterNode[];
   debuggingConfig: Indexable<string>;
-  configTTL: Nullable<ConfigTTL>;
+  configTTL: ConfigTTL | {};
 }
 
 export const settingsStore = defineStore({
@@ -32,7 +32,7 @@ export const settingsStore = defineStore({
   state: (): SettingsState => ({
     clusterNodes: [],
     debuggingConfig: {},
-    configTTL: null,
+    configTTL: {},
   }),
   actions: {
     async getClusterNodes() {
