@@ -41,7 +41,7 @@ export type Endpoint = {
   merge?: string;
 };
 
-export type Process = {
+export interface Process {
   id: string;
   name: string;
   serviceId: string;
@@ -51,7 +51,6 @@ export type Process = {
   agentId: string;
   detectType: string;
   attributes: { name: string; value: string }[];
-  label: string;
   value: string;
-  labels: string[];
-};
+  label: string;
+}
