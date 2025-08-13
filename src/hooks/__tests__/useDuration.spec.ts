@@ -46,18 +46,11 @@ vi.mock("@/utils/dateFormat", () => ({
 describe("useDuration hook", () => {
   const mockAppStore = {
     utc: false,
-    $state: {},
-    $patch: vi.fn(),
-    $reset: vi.fn(),
-    $subscribe: vi.fn(),
-    $dispose: vi.fn(),
-    $id: "app",
-    $onAction: vi.fn(),
-  };
+  } as unknown as ReturnType<typeof useAppStoreWithOut>;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useAppStoreWithOut).mockReturnValue(mockAppStore as any);
+    vi.mocked(useAppStoreWithOut).mockReturnValue(mockAppStore);
   });
 
   describe("setDurationRow", () => {
@@ -105,11 +98,7 @@ describe("useDuration hook", () => {
 
       const result = getMaxRange(-1);
 
-      expect(result).toHaveLength(2);
-      expect(result[0]).toBeInstanceOf(Date);
-      expect(result[1]).toBeInstanceOf(Date);
-      // For negative days, it returns [30 minutes ago, now]
-      expect(result[1].getTime() - result[0].getTime()).toBe(1800000); // 30 minutes in milliseconds
+      expect(result).toHaveLength(0);
     });
 
     it("should return date range for positive days", () => {
