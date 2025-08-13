@@ -161,7 +161,7 @@ export const profileStore = defineStore({
         this.setCurrentSegment(segmentList[0]);
         this.getSegmentSpans(segmentList[0].segmentId);
       } else {
-        this.setCurrentSegment({});
+        this.setCurrentSegment(null);
       }
       return response;
     },
