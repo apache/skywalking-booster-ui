@@ -27,7 +27,7 @@ limitations under the License. -->
       </div>
       <div class="render-chart">
         <component
-          :is="graph.type || 'Line'"
+          :is="graph.type"
           :intervalTime="appStoreWithOut.intervalTime"
           :data="states.source"
           :config="{
