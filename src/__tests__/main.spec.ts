@@ -166,8 +166,8 @@ describe("Main Application", () => {
     const mockStore = useAppStoreWithOut();
 
     // Mock async operations to take time
-    (mockStore.getActivateMenus as any).mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
-    (mockStore.queryOAPTimeInfo as any).mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
+    vi.mocked(mockStore.getActivateMenus).mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
+    vi.mocked(mockStore.queryOAPTimeInfo).mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
 
     // Test async operations
     const promises = [mockStore.getActivateMenus(), mockStore.queryOAPTimeInfo()];
