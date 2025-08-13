@@ -42,7 +42,7 @@ limitations under the License. -->
       </div>
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("monitorDuration") }}:</span>
-        <span class="g-sm-8 wba"> {{ details?.fixedTriggerDuration || NaN / 60 }} min </span>
+        <span class="g-sm-8 wba"> {{ (details?.fixedTriggerDuration || 0) / 60 }} min </span>
       </div>
       <div class="mb-10 clear item">
         <span class="g-sm-4 grey">{{ t("triggerType") }}:</span>
