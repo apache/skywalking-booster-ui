@@ -34,11 +34,12 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import Header from "../related/ebpf/Header.vue";
   import Content from "../related/ebpf/Content.vue";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   /*global defineProps */
   const props = defineProps({
     data: {
-      type: Object as PropType<any>,
+      type: Object as PropType<LayoutConfig>,
       default: () => ({ graph: {} }),
     },
     activeIndex: { type: String, default: "" },

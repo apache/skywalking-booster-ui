@@ -34,11 +34,12 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import Content from "../related/async-profiling/Content.vue";
   import Header from "../related/async-profiling/Header.vue";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   /*global defineProps*/
   const props = defineProps({
     data: {
-      type: Object as PropType<any>,
+      type: Object as PropType<LayoutConfig>,
       default: () => ({ graph: {} }),
     },
     activeIndex: { type: String, default: "" },

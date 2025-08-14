@@ -24,6 +24,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import Dashboard from "./dashboard/Edit.vue";
   import { useI18n } from "vue-i18n";
+  import { DashboardItem } from "@/types/dashboard";
 
   const route = useRoute();
   const { t } = useI18n();
@@ -38,7 +39,7 @@ limitations under the License. -->
     dashboardStore.setMode(false);
     await dashboardStore.setDashboards();
     const item = dashboardStore.dashboards.find(
-      (d: { name: string; isRoot: boolean; layer: string; entity: string }) =>
+      (d: DashboardItem) =>
         d.layer === dashboardStore.layerId && [EntityType[0].value, EntityType[1].value].includes(d.entity) && d.isRoot,
     );
     if (!item) {

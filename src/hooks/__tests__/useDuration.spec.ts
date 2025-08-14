@@ -23,8 +23,8 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 vi.mock("@/store/modules/app", () => ({
   useAppStoreWithOut: vi.fn(),
   InitializationDurationRow: {
-    start: "2023-01-01 00:00:00",
-    end: "2023-01-02 00:00:00",
+    start: new Date("2023-01-01 00:00:00"),
+    end: new Date("2023-01-02 00:00:00"),
     step: "HOUR",
   },
 }));
@@ -46,11 +46,11 @@ vi.mock("@/utils/dateFormat", () => ({
 describe("useDuration hook", () => {
   const mockAppStore = {
     utc: false,
-  };
+  } as unknown as ReturnType<typeof useAppStoreWithOut>;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAppStoreWithOut as any).mockReturnValue(mockAppStore);
+    vi.mocked(useAppStoreWithOut).mockReturnValue(mockAppStore);
   });
 
   describe("setDurationRow", () => {
@@ -93,12 +93,12 @@ describe("useDuration hook", () => {
   });
 
   describe("getMaxRange", () => {
-    it("should return empty array for day -1", () => {
+    it("should return date range for negative days", () => {
       const { getMaxRange } = useDuration();
 
       const result = getMaxRange(-1);
 
-      expect(result).toEqual([]);
+      expect(result).toHaveLength(0);
     });
 
     it("should return date range for positive days", () => {

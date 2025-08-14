@@ -68,8 +68,8 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
     if (idx === 0) {
       variables.push(`$entity: Entity!`);
       const entity = {
-        serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.value,
-        normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService.normal,
+        serviceName: dashboardStore.entity === "All" ? undefined : selectorStore.currentService?.value,
+        normal: dashboardStore.entity === "All" ? undefined : selectorStore.currentService?.normal,
         serviceInstanceName: ["ServiceInstance", "ServiceInstanceRelation", "ProcessRelation", "Process"].includes(
           dashboardStore.entity,
         )
@@ -81,8 +81,8 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
         processName: dashboardStore.entity.includes("Process")
           ? selectorStore.currentProcess && selectorStore.currentProcess.value
           : undefined,
-        destNormal: isRelation ? selectorStore.currentDestService.normal : undefined,
-        destServiceName: isRelation ? selectorStore.currentDestService.value : undefined,
+        destNormal: isRelation ? selectorStore.currentDestService?.normal : undefined,
+        destServiceName: isRelation ? selectorStore.currentDestService?.value : undefined,
         destServiceInstanceName: ["ServiceInstanceRelation", "ProcessRelation"].includes(dashboardStore.entity)
           ? selectorStore.currentDestPod && selectorStore.currentDestPod.value
           : undefined,
@@ -247,7 +247,7 @@ export async function useExpressionsQueryPodsMetrics(
       duration: appStore.durationTime,
     };
     const variables: string[] = [`$duration: Duration!`];
-    const currentService = selectorStore.currentService || {};
+    const currentService = selectorStore.currentService || ({} as Service);
     const fragmentList = pods.map((d: (Instance | Endpoint | Service) & Indexable, index: number) => {
       const entity = {
         serviceName: scope === "Service" ? d.label : currentService.label,
@@ -373,7 +373,9 @@ export async function useExpressionsQueryPodsMetrics(
     const dashboardStore = useDashboardStore();
     const params = await expressionsGraphqlPods(pods);
 
-    const json = await dashboardStore.fetchMetricValue(params);
+    const json = await dashboardStore.fetchMetricValue(
+      params as { queryStr: string; conditions: { [key: string]: unknown } },
+    );
 
     if (json.errors) {
       ElMessage.error(json.errors);

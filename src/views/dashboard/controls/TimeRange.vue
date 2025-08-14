@@ -63,17 +63,18 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { TextColors } from "@/views/dashboard/data";
+  import type { LayoutConfig, TimeRangeConfig } from "@/types/dashboard";
 
   /*global defineProps */
   const props = defineProps({
     data: {
-      type: Object as PropType<any>,
+      type: Object as PropType<LayoutConfig>,
       default: () => ({ graph: {} }),
     },
     activeIndex: { type: String, default: "" },
   });
   const { t } = useI18n();
-  const graph = computed(() => props.data.graph || {});
+  const graph = computed(() => (props.data.graph as TimeRangeConfig) || {});
   const dashboardStore = useDashboardStore();
   const appStore = useAppStoreWithOut();
   const content = computed(() => {

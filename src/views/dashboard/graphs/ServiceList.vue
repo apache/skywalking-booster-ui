@@ -85,6 +85,10 @@ limitations under the License. -->
   import type { MetricConfigOpt } from "@/types/dashboard";
   import ColumnGraph from "./components/ColumnGraph.vue";
 
+  interface ServiceWithGroup extends Service {
+    merge: boolean;
+    group: string;
+  }
   /*global defineProps */
   const props = defineProps({
     data: {
@@ -115,12 +119,12 @@ limitations under the License. -->
   const chartLoading = ref<boolean>(false);
   const currentPage = ref<number>(1);
   const pageSize = 10;
-  const services = ref<Service[]>([]);
+  const services = ref<ServiceWithGroup[]>([]);
   const colMetrics = ref<string[]>([]);
   const colSubMetrics = ref<string[]>([]);
   const searchText = ref<string>("");
   const groups = ref<any>({});
-  const sortServices = ref<(Service & { merge: boolean })[]>([]);
+  const sortServices = ref<ServiceWithGroup[]>([]);
   const metricConfig = ref<MetricConfigOpt[]>(props.config.metricConfig || []);
   const typesOfMQE = ref<string[]>(props.config.typesOfMQE || []);
 
@@ -144,12 +148,12 @@ limitations under the License. -->
         return 1;
       }
       return 0;
-    });
-    const s = sortServices.value.filter((d: Service, index: number) => index < pageSize);
+    }) as ServiceWithGroup[];
+    const s = sortServices.value.filter((d: ServiceWithGroup, index: number) => index < pageSize);
     setServices(s);
   }
 
-  function setServices(arr: (Service & { merge: boolean })[]) {
+  function setServices(arr: ServiceWithGroup[]) {
     groups.value = {};
     const map: { [key: string]: any[] } = arr.reduce((result: { [key: string]: any[] }, item: any) => {
       item.group = item.group || "";
@@ -191,11 +195,11 @@ limitations under the License. -->
 
     router.push(path);
   }
-  async function queryServiceMetrics(arr: Service[]) {
+  async function queryServiceMetrics(arr: ServiceWithGroup[]) {
     if (!arr.length) {
       return;
     }
-    const currentServices = arr.map((d: Service) => {
+    const currentServices = arr.map((d: ServiceWithGroup) => {
       return {
         id: d.id,
         value: d.value,
@@ -203,13 +207,13 @@ limitations under the License. -->
         layers: d.layers,
         group: d.group,
         normal: d.normal,
-        merge: d.merge,
+        merge: d.merge || false,
         shortName: d.shortName,
       };
     });
     queryServiceExpressions(currentServices);
   }
-  async function queryServiceExpressions(currentServices: Service[]) {
+  async function queryServiceExpressions(currentServices: ServiceWithGroup[]) {
     const expressions = props.config.expressions || [];
     const subExpressions = props.config.subExpressions || [];
 
@@ -254,7 +258,7 @@ limitations under the License. -->
     if (searchText.value) {
       services = sortServices.value.filter((d: { label: string }) => d.label.includes(searchText.value));
     }
-    const arr = services.filter((d: Service, index: number) => {
+    const arr = services.filter((d: ServiceWithGroup, index: number) => {
       if (index >= (currentPage.value - 1) * pageSize && index < pageSize * currentPage.value) {
         return d;
       }

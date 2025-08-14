@@ -46,7 +46,7 @@ export function useDuration() {
       return [];
     }
     if (isNaN(day) || day < 0) {
-      return [new Date(new Date().getTime() - 1800000), new Date()];
+      return [];
     }
 
     const gap = (day + 1) * 24 * 60 * 60 * 1000;

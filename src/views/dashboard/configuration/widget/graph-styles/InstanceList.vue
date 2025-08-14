@@ -31,18 +31,19 @@ limitations under the License. -->
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import type { InstanceListConfig, LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const graph = dashboardStore.selectedGrid.graph;
+  const graph = (dashboardStore.selectedGrid?.graph as InstanceListConfig) || {};
   const fontSize = ref(graph.fontSize);
 
   function updateConfig(param: { [key: string]: unknown }) {
     const graph = {
-      ...dashboardStore.selectedGrid.graph,
+      ...dashboardStore.selectedGrid?.graph,
       ...param,
     };
-    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph } as LayoutConfig);
   }
 </script>
 <style lang="scss" scoped>

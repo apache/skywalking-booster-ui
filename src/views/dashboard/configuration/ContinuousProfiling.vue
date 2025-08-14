@@ -49,12 +49,12 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { EntityType } from "../data";
-  import type { DashboardItem } from "@/types/dashboard";
+  import type { DashboardItem, LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const instanceDashboardName = ref<boolean>(dashboardStore.selectedGrid.instanceDashboardName);
-  const processDashboardName = ref<number>(dashboardStore.selectedGrid.processDashboardName);
+  const instanceDashboardName = ref<string>(dashboardStore.selectedGrid?.instanceDashboardName || "");
+  const processDashboardName = ref<string>(dashboardStore.selectedGrid?.processDashboardName || "");
   const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
   const instanceDashboards: Array<DashboardItem & { label: string; value: string }> = [];
   const processDashboards: Array<DashboardItem & { label: string; value: string }> = [];
@@ -76,14 +76,14 @@ limitations under the License. -->
   }
 
   function applyConfig() {
-    dashboardStore.setConfigs(dashboardStore.selectedGrid);
+    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
     dashboardStore.setConfigPanel(false);
   }
   function changeDashboard(param: { [key: string]: unknown }) {
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       ...param,
-    });
+    } as LayoutConfig);
   }
 </script>
 <style lang="scss" scoped>

@@ -42,9 +42,9 @@ const { getDurationTime } = useDuration();
 export const traceStore = defineStore({
   id: "trace",
   state: (): TraceState => ({
-    services: [{ value: "0", label: "All" }],
-    instances: [{ value: "0", label: "All" }],
-    endpoints: [{ value: "0", label: "All" }],
+    services: [{ value: "0", label: "All", id: "" }],
+    instances: [{ value: "0", label: "All", id: "" }],
+    endpoints: [{ value: "0", label: "All", id: "" }],
     traceList: [],
     traceSpans: [],
     currentTrace: null,

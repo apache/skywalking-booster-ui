@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import type { Process as selectorProcess } from "./selector";
+import type { Process as SelectorProcess } from "./selector";
 
 export interface EBPFTaskCreationRequest {
   serviceId: string;
@@ -55,16 +55,17 @@ interface ProfilingCause {
     current: number;
   };
 }
-
+export interface Process extends SelectorProcess {
+  labels: string[];
+}
 export interface EBPFProfilingSchedule {
   scheduleId: string;
   taskId: string;
-  process: selectorProcess;
+  process: Process;
   endTime: number;
   startTime: number;
 }
 
-export type Process = selectorProcess;
 export type StackElement = {
   id: string;
   originId: string;

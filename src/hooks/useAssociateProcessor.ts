@@ -76,8 +76,8 @@ export default function useAssociateProcessor(props: AssociateProcessorProps) {
     if (start) {
       const end = start;
       duration = {
-        start: dateFormatStep(getLocalTime(appStore.utc, new Date(start)), step, true),
-        end: dateFormatStep(getLocalTime(appStore.utc, new Date(end)), step, true),
+        startTime: dateFormatStep(getLocalTime(appStore.utc, new Date(start)), step, true),
+        endTime: dateFormatStep(getLocalTime(appStore.utc, new Date(end)), step, true),
         step,
       };
     }

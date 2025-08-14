@@ -143,15 +143,15 @@ limitations under the License. -->
     appStore.setColdStageMode(coldStage.value);
     if (coldStage.value) {
       handleMetricsTTL({
-        minute: appStore.metricsTTL.coldMinute,
-        hour: appStore.metricsTTL.coldHour,
-        day: appStore.metricsTTL.coldDay,
+        minute: appStore.metricsTTL?.coldMinute || NaN,
+        hour: appStore.metricsTTL?.coldHour || NaN,
+        day: appStore.metricsTTL?.coldDay || NaN,
       });
     } else {
       handleMetricsTTL({
-        minute: appStore.metricsTTL.minute,
-        hour: appStore.metricsTTL.hour,
-        day: appStore.metricsTTL.day,
+        minute: appStore.metricsTTL?.minute || NaN,
+        hour: appStore.metricsTTL?.hour || NaN,
+        day: appStore.metricsTTL?.day || NaN,
       });
     }
     appStore.setDuration(InitializationDurationRow);
@@ -303,7 +303,7 @@ limitations under the License. -->
     }
 
     const serviceId = route.params.serviceId;
-    const list = serviceDashboards.map((d: { path: string } & DashboardItem, index: number) => {
+    const list = serviceDashboards.map((d: DashboardItem, index: number) => {
       let path = `/dashboard/${d.layer}/${d.entity}/${d.name}`;
       if (serviceId) {
         path = `/dashboard/${d.layer}/${d.entity}/${serviceId}/${d.name}`;
@@ -321,7 +321,7 @@ limitations under the License. -->
       const endpointDashboards = dashboardStore.dashboards.filter(
         (d: DashboardItem) => MetricCatalog.ENDPOINT === d.entity && dashboard.layer === d.layer,
       );
-      const list = endpointDashboards.map((d: { path: string } & DashboardItem, index: number) => {
+      const list = endpointDashboards.map((d: DashboardItem, index: number) => {
         let path = `/dashboard/${d.layer}/${d.entity}/${d.name}`;
         if (podId) {
           path = `/dashboard/${d.layer}/${d.entity}/${serviceId}/${podId}/${d.name}`;
@@ -341,7 +341,7 @@ limitations under the License. -->
       const serviceRelationDashboards = dashboardStore.dashboards.filter(
         (d: DashboardItem) => MetricCatalog.SERVICE_RELATION === d.entity && dashboard.layer === d.layer,
       );
-      const list = serviceRelationDashboards.map((d: { path: string } & DashboardItem, index: number) => {
+      const list = serviceRelationDashboards.map((d: DashboardItem, index: number) => {
         let path = `/dashboard/${d.layer}/${d.entity}/${d.name}`;
         if (destServiceId) {
           path = `/dashboard/related/${d.layer}/${d.entity}/${serviceId}/${destServiceId}/${d.name}`;
@@ -355,11 +355,11 @@ limitations under the License. -->
       });
       pathNames.value.push(list);
     }
-    if ([MetricCatalog.Process, MetricCatalog.PROCESS_RELATION].includes(dashboard.entity)) {
+    if ([MetricCatalog.Process, MetricCatalog.PROCESS_RELATION].includes(dashboard.entity as MetricCatalog)) {
       const InstanceDashboards = dashboardStore.dashboards.filter(
         (d: DashboardItem) => MetricCatalog.SERVICE_INSTANCE === d.entity && dashboard.layer === d.layer,
       );
-      const list = InstanceDashboards.map((d: { path: string } & DashboardItem, index: number) => {
+      const list = InstanceDashboards.map((d: DashboardItem, index: number) => {
         let path = `/dashboard/${d.layer}/${d.entity}/${d.name}`;
         if (podId) {
           path = `/dashboard/${d.layer}/${d.entity}/${serviceId}/${podId}/${d.name}`;

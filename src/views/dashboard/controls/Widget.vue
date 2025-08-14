@@ -80,7 +80,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import { ListChartTypes } from "../data";
-  import type { EventParams } from "@/types/dashboard";
+  import type { EventParams, DashboardItem } from "@/types/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
 
   const props = {
@@ -141,7 +141,7 @@ limitations under the License. -->
         }
       }
       function clickHandle(params: EventParams | any) {
-        const { widgets } = getDashboard(dashboardStore.currentDashboard);
+        const { widgets } = getDashboard(dashboardStore.currentDashboard as DashboardItem);
         const associate = (props.data.associate && props.data.associate) || [];
 
         for (const item of associate) {
@@ -170,7 +170,7 @@ limitations under the License. -->
             return;
           }
           const chart = dashboardStore.selectedGrid.graph || {};
-          if (ListChartTypes.includes(chart.type)) {
+          if (ListChartTypes.includes(chart.type || "")) {
             return;
           }
           queryMetrics();

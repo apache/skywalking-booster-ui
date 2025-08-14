@@ -33,13 +33,14 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { ElMessage } from "element-plus";
   import { WidgetType, ListEntity } from "@/views/dashboard/data";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
   const expressions = reactive<{ [key: string]: string }>({});
   const widgetTabs = computed(() =>
-    (dashboardStore.selectedGrid.children || []).filter((child: any) =>
+    (dashboardStore.selectedGrid?.children || []).filter((child: any) =>
       child.children.find(
         (item: any) =>
           item.type === WidgetType.Widget &&
@@ -48,7 +49,7 @@ limitations under the License. -->
     ),
   );
 
-  for (const child of originConfig.children || []) {
+  for (const child of originConfig?.children || []) {
     expressions[child.name] = child.expression || "";
   }
   function changeExpression(name: string) {
@@ -56,7 +57,7 @@ limitations under the License. -->
       ElMessage.error("Only support the is_present function");
       return;
     }
-    const children = JSON.parse(JSON.stringify(dashboardStore.selectedGrid.children || []));
+    const children = JSON.parse(JSON.stringify(dashboardStore.selectedGrid?.children || []));
 
     for (const item of children) {
       if (item.name === name) {
@@ -64,11 +65,11 @@ limitations under the License. -->
       }
     }
 
-    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, children });
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, children } as LayoutConfig);
   }
   function applyConfig() {
     dashboardStore.setConfigPanel(false);
-    dashboardStore.setConfigs(dashboardStore.selectedGrid);
+    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
   }
 
   function cancelConfig() {

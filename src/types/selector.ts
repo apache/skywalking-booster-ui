@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export type Service = {
+export interface Service {
   id?: string;
   label: string;
   value: string;
   layers?: string[];
   normal?: boolean;
   group?: string;
-  merge?: string;
   shortName?: string;
-};
+}
 
 export type Instance = {
   value: string;
@@ -42,7 +41,7 @@ export type Endpoint = {
   merge?: string;
 };
 
-export type Process = {
+export interface Process {
   id: string;
   name: string;
   serviceId: string;
@@ -52,7 +51,6 @@ export type Process = {
   agentId: string;
   detectType: string;
   attributes: { name: string; value: string }[];
-  label: string;
   value: string;
-  labels: string[];
-};
+  label: string;
+}

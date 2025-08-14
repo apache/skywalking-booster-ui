@@ -30,11 +30,12 @@ limitations under the License. -->
   import { ref } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { validateAndSanitizeUrl } from "@/utils/validateAndSanitizeUrl";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
-  const widget = originConfig.widget || {};
+  const widget = originConfig?.widget || {};
   const url = ref(widget.url || "");
   const urlError = ref("");
 
@@ -55,10 +56,10 @@ limitations under the License. -->
 
     const { selectedGrid } = dashboardStore;
     const widget = {
-      ...dashboardStore.selectedGrid.widget,
+      ...dashboardStore.selectedGrid?.widget,
       [key]: param[key], // Use the sanitized URL directly, no need for decodeURIComponent
     };
-    dashboardStore.selectWidget({ ...selectedGrid, widget });
+    dashboardStore.selectWidget({ ...selectedGrid, widget } as LayoutConfig);
   }
 
   function applyConfig() {
@@ -66,7 +67,7 @@ limitations under the License. -->
       return; // Don't apply if there's a validation error
     }
     dashboardStore.setConfigPanel(false);
-    dashboardStore.setConfigs(dashboardStore.selectedGrid);
+    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
   }
 
   function cancelConfig() {

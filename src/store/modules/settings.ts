@@ -48,11 +48,14 @@ export const settingsStore = defineStore({
         method: "get",
         path: "ConfigTTL",
       });
-      for (const item of Object.keys(response)) {
+      this.configTTL = {};
+      const keys = Object.keys(response).filter((k: string) => k);
+      for (const item of keys) {
         const rows = [];
         const row: Indexable<string> = { type: TTLTypes.HotAndWarm };
         const rowCold: Indexable<string> = { type: TTLTypes.Cold };
-        for (const key of Object.keys(response[item])) {
+        const itemKeys = Object.keys(response[item]).filter((k: string) => k);
+        for (const key of itemKeys) {
           if (HotAndWarmOpt.includes(key)) {
             row[key] = response[item][key];
           } else {

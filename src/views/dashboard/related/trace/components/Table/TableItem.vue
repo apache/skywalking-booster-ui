@@ -194,7 +194,7 @@ limitations under the License. -->
         return resultStr === "0.0000%" ? "0.9%" : resultStr;
       });
       const isCrossThread = computed(() => {
-        const key = props.data.refs.findIndex((d: Ref) => d.type === "CROSS_THREAD");
+        const key = props.data.refs?.findIndex((d: Ref) => d.type === "CROSS_THREAD") ?? -1;
         return key > -1 ? true : false;
       });
       function toggle() {

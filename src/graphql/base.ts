@@ -71,5 +71,8 @@ export async function httpQuery({
     return response.json();
   } else {
     console.error(new HTTPError(response));
+    return {
+      errors: [new HTTPError(response)],
+    };
   }
 }

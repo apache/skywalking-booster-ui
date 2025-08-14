@@ -222,7 +222,7 @@ limitations under the License. -->
     const resp: any = await getTopology();
     loading.value = false;
 
-    if (resp.errors) {
+    if (resp?.errors) {
       ElMessage.error(resp.errors);
     }
     await update();

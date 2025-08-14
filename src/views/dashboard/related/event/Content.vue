@@ -16,7 +16,7 @@ limitations under the License. -->
   <div ref="timeline" class="events"></div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, onMounted } from "vue";
+  import { ref, watch, onMounted, PropType } from "vue";
   import dayjs from "dayjs";
   import { useThrottleFn } from "@vueuse/core";
   import type { Event } from "@/types/events";
@@ -32,7 +32,7 @@ limitations under the License. -->
   import { WidgetType } from "@/views/dashboard/data";
 
   const eventStore = useEventStore();
-  /*global Nullable, PropType */
+  /*global Nullable */
   const props = defineProps({
     data: {
       type: Object as PropType<LayoutConfig>,

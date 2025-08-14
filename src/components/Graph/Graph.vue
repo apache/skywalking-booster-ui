@@ -71,7 +71,7 @@ limitations under the License. -->
   const { setOptions, resize, getInstance } = useECharts(chartRef as Ref<HTMLDivElement>);
   const currentParams = ref<Nullable<EventParams>>(null);
   const showTrace = ref<boolean>(false);
-  const traceOptions = ref<{ type: string; filters?: unknown }>({
+  const traceOptions = ref<{ type: string; filters?: unknown } | any>({
     type: WidgetType.Trace,
   });
   const menuPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });

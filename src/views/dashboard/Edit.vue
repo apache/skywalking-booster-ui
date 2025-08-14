@@ -28,7 +28,7 @@ limitations under the License. -->
       :destroy-on-close="true"
       @closed="dashboardStore.setConfigPanel(false)"
     >
-      <component :is="dashboardStore.selectedGrid.type" />
+      <component :is="dashboardStore.selectedGrid?.type" />
     </el-dialog>
     <el-dialog
       v-model="dashboardStore.showLinkConfig"
@@ -77,9 +77,9 @@ limitations under the License. -->
         dashboardStore.setLayout(setWidgetsID(layout.children || []));
         if (p.entity) {
           dashboardStore.setCurrentDashboard({
-            layer: p.layerId,
-            entity: p.entity,
-            name: p.name,
+            layer: p.layerId as string,
+            entity: p.entity as string,
+            name: p.name as string,
             id: c.id,
             isRoot: layout.isRoot,
           });
@@ -112,7 +112,7 @@ limitations under the License. -->
       }
 
       onUnmounted(() => {
-        dashboardStore.setCurrentDashboard({});
+        dashboardStore.setCurrentDashboard(null);
       });
 
       return {
