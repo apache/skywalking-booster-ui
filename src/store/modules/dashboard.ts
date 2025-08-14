@@ -35,7 +35,7 @@ interface DashboardState {
   showTopology: boolean;
   currentTabItems: LayoutConfig[];
   dashboards: DashboardItem[];
-  currentDashboard: Nullable<DashboardItem>;
+  currentDashboard: DashboardItem;
   editMode: boolean;
   currentTabIndex: number;
   showLinkConfig: boolean;
@@ -54,7 +54,7 @@ export const dashboardStore = defineStore({
     showTopology: false,
     currentTabItems: [],
     dashboards: [],
-    currentDashboard: null,
+    currentDashboard: {} as DashboardItem,
     editMode: false,
     currentTabIndex: 0,
     showLinkConfig: false,
@@ -74,7 +74,7 @@ export const dashboardStore = defineStore({
       sessionStorage.setItem("dashboards", JSON.stringify(list));
     },
     setCurrentDashboard(item: Nullable<DashboardItem>) {
-      this.currentDashboard = item;
+      this.currentDashboard = item || {};
     },
     addControl(type: WidgetType) {
       const arr = this.layout.map((d: Recordable) => Number(d.i));
