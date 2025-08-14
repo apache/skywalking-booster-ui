@@ -16,7 +16,7 @@
  */
 import { ElMessage } from "element-plus";
 import { useDashboardStore } from "@/store/modules/dashboard";
-import type { LayoutConfig } from "@/types/dashboard";
+import type { LayoutConfig, Filters } from "@/types/dashboard";
 import { ConfigFieldTypes } from "@/views/dashboard/data";
 
 export default function getDashboard(param?: { name?: string; layer: string; entity: string }, t?: string) {
@@ -28,12 +28,12 @@ export default function getDashboard(param?: { name?: string; layer: string; ent
   if (type === ConfigFieldTypes.NAME) {
     dashboard = list.find(
       (d: { name: string; layer: string; entity: string }) =>
-        d.name === opt.name && d.entity === opt.entity && d.layer === opt.layer,
+        d.name === opt?.name && d.entity === opt?.entity && d.layer === opt?.layer,
     );
   } else {
     dashboard = list.find(
       (d: { name: string; layer: string; entity: string; isDefault: boolean }) =>
-        d.isDefault && d.entity === opt.entity && d.layer === opt.layer,
+        d.isDefault && d.entity === opt?.entity && d.layer === opt?.layer,
     );
   }
   const all = dashboardStore.layout;
@@ -52,7 +52,7 @@ export default function getDashboard(param?: { name?: string; layer: string; ent
       widgets.push(item);
     }
   }
-  function associationWidget(sourceId: string, filters: unknown, type: string) {
+  function associationWidget(sourceId: string, filters: Filters, type: string) {
     const widget = widgets.find((d: { type: string }) => d.type === type);
     if (!widget) {
       return ElMessage.info(`There has no a ${type} widget in the dashboard`);

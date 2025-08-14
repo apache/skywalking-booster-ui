@@ -102,7 +102,7 @@ limitations under the License. -->
   ];
 
   onMounted(() => {
-    loadTopology(selectorStore.currentPod && selectorStore.currentPod.id);
+    loadTopology(selectorStore.currentPod?.id);
     window.addEventListener("resize", resize);
   });
 
@@ -134,7 +134,7 @@ limitations under the License. -->
   }
 
   function inspect() {
-    const id = topologyStore.node.id;
+    const id = topologyStore.node?.id;
     topologyStore.setNode(null);
     topologyStore.setLink(null);
     loadTopology(id);
@@ -158,7 +158,7 @@ limitations under the License. -->
       ElMessage.error(`The dashboard named ${settings.value.nodeDashboard} doesn't exist`);
       return;
     }
-    const path = `/dashboard/${dashboard.layer}/${entity}/${topologyStore.node.serviceId}/${topologyStore.node.id}/${dashboard.name}`;
+    const path = `/dashboard/${dashboard.layer}/${entity}/${topologyStore.node?.serviceId}/${topologyStore.node?.id}/${dashboard.name}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
     topologyStore.setNode(null);
@@ -175,7 +175,7 @@ limitations under the License. -->
   }
 
   function backToTopology() {
-    loadTopology(selectorStore.currentPod.id);
+    loadTopology(selectorStore.currentPod?.id);
     topologyStore.setNode(null);
   }
 
@@ -210,14 +210,14 @@ limitations under the License. -->
 
   async function changeDepth(opt: Option[] | any) {
     depth.value = opt[0].value;
-    loadTopology(selectorStore.currentPod.id);
+    loadTopology(selectorStore.currentPod?.id);
   }
 
   async function getTopology(id?: string) {
     let resp;
     switch (dashboardStore.entity) {
       case EntityType[2].value:
-        resp = await topologyStore.updateEndpointTopology([id], Number(depth.value));
+        resp = await topologyStore.updateEndpointTopology([id as string], Number(depth.value));
         break;
       case EntityType[5].value:
         resp = await topologyStore.getInstanceTopology();
@@ -238,7 +238,7 @@ limitations under the License. -->
   watch(
     () => [selectorStore.currentPod],
     () => {
-      loadTopology(selectorStore.currentPod.id);
+      loadTopology(selectorStore.currentPod?.id);
       topologyStore.setNode(null);
       topologyStore.setLink(null);
     },
@@ -257,7 +257,7 @@ limitations under the License. -->
   watch(
     () => appStore.durationTime,
     () => {
-      loadTopology(selectorStore.currentPod.id);
+      loadTopology(selectorStore.currentPod?.id);
       topologyStore.setNode(null);
       topologyStore.setLink(null);
     },

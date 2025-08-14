@@ -126,7 +126,7 @@ limitations under the License. -->
   import Icon from "@/components/Icon.vue";
   import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
   import { useI18n } from "vue-i18n";
-  import type { DashboardItem, MetricConfigOpt } from "@/types/dashboard";
+  import type { DashboardItem, MetricConfigOpt, LayoutConfig } from "@/types/dashboard";
   import Standard from "./Standard.vue";
 
   /*global defineEmits, Indexable */
@@ -142,11 +142,11 @@ limitations under the License. -->
     },
   });
   const dashboardStore = useDashboardStore();
-  const metrics = computed(() => dashboardStore.selectedGrid.expressions || []);
-  const subMetrics = computed(() => dashboardStore.selectedGrid.subExpressions || []);
-  const subMetricTypes = computed(() => dashboardStore.selectedGrid.subTypesOfMQE || []);
-  const graph = computed(() => dashboardStore.selectedGrid.graph || {});
-  const typesOfMQE = computed(() => dashboardStore.selectedGrid.typesOfMQE || []);
+  const metrics = computed(() => dashboardStore.selectedGrid?.expressions || []);
+  const subMetrics = computed(() => dashboardStore.selectedGrid?.subExpressions || []);
+  const subMetricTypes = computed(() => dashboardStore.selectedGrid?.subTypesOfMQE || []);
+  const graph = computed(() => dashboardStore.selectedGrid?.graph || {});
+  const typesOfMQE = computed(() => dashboardStore.selectedGrid?.typesOfMQE || []);
   const states = reactive<{
     metrics: string[];
     subMetrics: string[];
@@ -166,13 +166,13 @@ limitations under the License. -->
     metricTypeList: [],
     isList: false,
     isTopList: false,
-    dashboardName: graph.value.dashboardName,
+    dashboardName: graph.value.dashboardName || "",
     dashboardList: [{ label: "", value: "" }],
     tips: [],
     subTips: [],
     subMetrics: subMetrics.value.length ? subMetrics.value : [""],
     subMetricTypes: subMetricTypes.value.length ? subMetricTypes.value : [""],
-    valueRelatedDashboard: dashboardStore.selectedGrid.valueRelatedDashboard,
+    valueRelatedDashboard: dashboardStore.selectedGrid?.valueRelatedDashboard || "",
   });
   const currentMetricConfig = ref<MetricConfigOpt>({
     unit: "",
@@ -182,7 +182,7 @@ limitations under the License. -->
   });
 
   states.isTopList = graph.value.type === ChartTypes[4].value;
-  states.isList = ListChartTypes.includes(graph.value.type);
+  states.isList = ListChartTypes.includes(graph.value.type || "");
   const defaultLen = ref<number>(states.isList ? 5 : 20);
 
   setDashboards();
@@ -201,7 +201,7 @@ limitations under the License. -->
   });
 
   function setDashboards(type?: string) {
-    const chart = type || (dashboardStore.selectedGrid.graph && dashboardStore.selectedGrid.graph.type);
+    const chart = type || dashboardStore.selectedGrid?.graph?.type || "";
     const list = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
     const arr = list.reduce((prev: (DashboardItem & { label: string; value: string })[], d: DashboardItem) => {
       if (d.layer === dashboardStore.layerId) {
@@ -237,7 +237,7 @@ limitations under the License. -->
         ...dashboardStore.selectedGrid,
         expressions: [""],
         typesOfMQE: [""],
-      });
+      } as LayoutConfig);
       states.metrics = [""];
       states.metricTypes = [""];
       defaultLen.value = 5;
@@ -246,7 +246,7 @@ limitations under the License. -->
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       graph: chart,
-    });
+    } as LayoutConfig);
     setDashboards(chart.type);
     states.dashboardName = "";
     defaultLen.value = 10;
@@ -260,7 +260,7 @@ limitations under the License. -->
   }
 
   async function queryMetricsWithExpressions() {
-    const { expressions, metricConfig, i } = dashboardStore.selectedGrid;
+    const { expressions, metricConfig, i } = dashboardStore.selectedGrid as LayoutConfig;
     if (!(expressions && expressions[0])) {
       return emit("update", {});
     }
@@ -272,7 +272,7 @@ limitations under the License. -->
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       typesOfMQE: states.metricTypes,
-    });
+    } as LayoutConfig);
     emit("update", params.source || {});
     if (states.isTopList) {
       const values: any = Object.values(params.source)[0];
@@ -292,7 +292,7 @@ limitations under the License. -->
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       valueRelatedDashboard: states.valueRelatedDashboard,
-    });
+    } as LayoutConfig);
   }
 
   function changeDashboard(opt: { value: string }[]) {
@@ -302,13 +302,13 @@ limitations under the License. -->
       states.dashboardName = opt[0].value;
     }
     const graph = {
-      ...dashboardStore.selectedGrid.graph,
+      ...dashboardStore.selectedGrid?.graph,
       dashboardName: states.dashboardName,
     };
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       graph,
-    });
+    } as LayoutConfig);
   }
   function addMetric() {
     states.metrics.push("");
@@ -350,7 +350,7 @@ limitations under the License. -->
     states.metrics.splice(index, 1);
     states.metricTypes.splice(index, 1);
     states.tips.splice(index, 1);
-    const config = dashboardStore.selectedGrid.metricConfig || [];
+    const config = dashboardStore.selectedGrid?.metricConfig || [];
     const metricConfig = config[index] ? config.splice(index, 1) : config;
     let p = {};
     if (states.isList) {
@@ -369,7 +369,7 @@ limitations under the License. -->
       ...dashboardStore.selectedGrid,
       ...p,
       metricConfig,
-    });
+    } as LayoutConfig);
     queryMetrics();
   }
 
@@ -381,7 +381,7 @@ limitations under the License. -->
       labelsIndex: "",
       sortOrder: "DES",
     };
-    if (!dashboardStore.selectedGrid.metricConfig || !dashboardStore.selectedGrid.metricConfig[index]) {
+    if (!dashboardStore.selectedGrid?.metricConfig || !dashboardStore.selectedGrid?.metricConfig[index]) {
       currentMetricConfig.value = n;
       return;
     }
@@ -397,7 +397,7 @@ limitations under the License. -->
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       expressions: states.metrics,
-    });
+    } as LayoutConfig);
     if (params) {
       await queryMetrics();
     }
@@ -410,7 +410,7 @@ limitations under the License. -->
       ...dashboardStore.selectedGrid,
       subExpressions: states.subMetrics,
       subTypesOfMQE: states.subMetricTypes,
-    });
+    } as LayoutConfig);
     if (params) {
       await queryMetrics();
     }

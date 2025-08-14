@@ -19,7 +19,7 @@ limitations under the License. -->
   </div>
   <div class="conditions flex-h" v-else>
     <el-radio-group v-model="conditions" @change="changeCondition" size="small">
-      <el-radio-button v-for="(item, index) in items" :label="item.label" :key="item.label + index" border>
+      <el-radio-button v-for="(item, index) in items" :value="item.label" :key="item.label + index" border>
         {{ t(item.label) }}
       </el-radio-button>
     </el-radio-group>
@@ -92,6 +92,7 @@ limitations under the License. -->
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { ElMessage } from "element-plus";
   import { EntityType, QueryOrders, Status } from "../../data";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   const FiltersKeys: { [key: string]: string } = {
     status: "traceState",
@@ -104,8 +105,8 @@ limitations under the License. -->
   const props = defineProps({
     needQuery: { type: Boolean, default: true },
     data: {
-      type: Object as PropType<Recordable>,
-      default: () => ({ graph: {} }),
+      type: Object as PropType<LayoutConfig>,
+      default: () => ({}),
     },
   });
   const { t } = useI18n();
@@ -118,7 +119,12 @@ limitations under the License. -->
   const tagsList = ref<string[]>([]);
   const tagsMap = ref<Option[]>([]);
   const traceId = ref<string>(filters.refId || "");
-  const duration = ref<DurationTime>(filters.duration || appStore.durationTime);
+  const { duration: filtersDuration } = props.data.filters || {};
+  const duration = ref<DurationTime>(
+    filtersDuration
+      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: filtersDuration.step || "" }
+      : appStore.durationTime,
+  );
   const state = reactive<Recordable>({
     instance: "",
     endpoint: "",
@@ -150,12 +156,12 @@ limitations under the License. -->
           state.instance = filters.owner.serviceInstanceID;
         }
       } else {
-        state.service = selectorStore.currentService.id;
+        state.service = selectorStore.currentService?.id || "";
         if (dashboardStore.entity === EntityType[2].value) {
-          state.endpoint = selectorStore.currentPod.id;
+          state.endpoint = selectorStore.currentPod?.id || "";
         }
         if (dashboardStore.entity === EntityType[3].value) {
-          state.instance = selectorStore.currentPod.id;
+          state.instance = selectorStore.currentPod?.id || "";
         }
       }
       await queryTraces();
@@ -169,7 +175,7 @@ limitations under the License. -->
       await getService();
     }
     if (dashboardStore.entity === EntityType[0].value) {
-      state.service = selectorStore.currentService.id;
+      state.service = selectorStore.currentService?.id || "";
       await getInstance();
       if (!state.instance) {
         await getEndpoint();

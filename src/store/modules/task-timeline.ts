@@ -29,7 +29,7 @@ import { TargetTypes } from "@/views/dashboard/related/continuous-profiling/data
 interface taskTimelineState {
   loading: boolean;
   taskList: EBPFTaskList[];
-  selectedTask: Recordable<EBPFTaskList>;
+  selectedTask: Nullable<EBPFTaskList>;
 }
 
 export const taskTimelineStore = defineStore({
@@ -37,11 +37,11 @@ export const taskTimelineStore = defineStore({
   state: (): taskTimelineState => ({
     loading: false,
     taskList: [],
-    selectedTask: {},
+    selectedTask: null,
   }),
   actions: {
-    setSelectedTask(task: Recordable<EBPFTaskList>) {
-      this.selectedTask = task || {};
+    setSelectedTask(task: Nullable<EBPFTaskList>) {
+      this.selectedTask = task;
     },
     setTaskList(list: EBPFTaskList[]) {
       this.taskList = list;
@@ -126,6 +126,6 @@ export const taskTimelineStore = defineStore({
   },
 });
 
-export function useTaskTimelineStore(): Recordable {
+export function useTaskTimelineStore() {
   return taskTimelineStore(store);
 }

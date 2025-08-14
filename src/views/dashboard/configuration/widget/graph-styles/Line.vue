@@ -51,20 +51,21 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import Legend from "./components/Legend.vue";
   import { isDef } from "@/utils/is";
+  import type { LineConfig, LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const graph = computed(() => dashboardStore.selectedGrid.graph || {});
+  const graph = computed(() => (dashboardStore.selectedGrid?.graph as LineConfig) || {});
   const smooth = ref(graph.value.smooth);
   const showSymbol = ref(isDef(graph.value.showSymbol) ? graph.value.showSymbol : true);
   const step = ref(graph.value.step);
 
   function updateConfig(param: { [key: string]: unknown }) {
     const graph = {
-      ...dashboardStore.selectedGrid.graph,
+      ...dashboardStore.selectedGrid?.graph,
       ...param,
     };
-    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph });
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, graph } as LayoutConfig);
   }
 </script>
 <style lang="scss" scoped>

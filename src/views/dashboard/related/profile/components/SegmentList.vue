@@ -56,7 +56,7 @@ limitations under the License. -->
   const { t } = useI18n();
   const profileStore = useProfileStore();
   const key = computed(
-    () => (profileStore.currentSegment.spans?.length && profileStore.currentSegment.spans[0].segmentId) || "",
+    () => (profileStore.currentSegment?.spans?.length && profileStore.currentSegment?.spans[0]?.segmentId) || "",
   );
 
   async function selectSegment(item: Trace) {

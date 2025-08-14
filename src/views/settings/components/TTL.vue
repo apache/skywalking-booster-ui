@@ -15,9 +15,9 @@ limitations under the License. -->
 <template>
   <div class="ttl">
     <div class="label">{{ t("metricsTTL") }}</div>
-    <TTLTable :data="settingsStore.configTTL.metrics" :metricsRows="MetricsTTLRow" />
+    <TTLTable :data="settingsStore.configTTL?.metrics || []" :metricsRows="MetricsTTLRow" />
     <div class="label">{{ t("recordsTTL") }}</div>
-    <TTLTable :data="settingsStore.configTTL.records" :metricsRows="RecordsTTLRow" />
+    <TTLTable :data="settingsStore.configTTL?.records || []" :metricsRows="RecordsTTLRow" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -28,7 +28,7 @@ limitations under the License. -->
   import { MetricsTTLRow, RecordsTTLRow } from "../data";
 
   const { t } = useI18n();
-  const settingsStore = useSettingsStore();
+  const settingsStore: ReturnType<typeof useSettingsStore> = useSettingsStore();
 
   onMounted(() => {
     settingsStore.getConfigTTL();

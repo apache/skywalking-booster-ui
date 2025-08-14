@@ -33,24 +33,25 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { Option } from "@/types/app";
+  import type { DashboardItem, LayoutConfig } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const associate = dashboardStore.selectedGrid.associate || [];
+  const associate = dashboardStore.selectedGrid?.associate || [];
   const widgetIds = ref<string[]>(associate.map((d: { widgetId: string }) => d.widgetId));
   const widgets: any = computed(() => {
-    const widgetList = getDashboard(dashboardStore.currentDashboard).widgets;
+    const widgetList = getDashboard(dashboardStore.currentDashboard as DashboardItem).widgets;
     const items = [];
     for (const d of widgetList) {
       const isLinear = ["Bar", "Line", "Area"].includes((d.graph && d.graph.type) || "");
-      if (isLinear && d.id && dashboardStore.selectedGrid.id !== d.id) {
+      if (isLinear && d.id && dashboardStore.selectedGrid?.id !== d.id) {
         items.push({ value: d.id, label: (d.widget && d.widget.name) || d.id });
       }
     }
     return items;
   });
   function updateWidgetConfig(options: Option[]) {
-    const arr: any = getDashboard(dashboardStore.currentDashboard).widgets;
+    const arr: any = getDashboard(dashboardStore.currentDashboard as DashboardItem).widgets;
     const opt = options.map((d: Option) => {
       return { widgetId: d.value };
     });
@@ -60,7 +61,7 @@ limitations under the License. -->
       ...dashboardStore.selectedGrid,
       associate: opt,
     };
-    dashboardStore.selectWidget({ ...widget });
+    dashboardStore.selectWidget({ ...widget } as LayoutConfig);
 
     // remove unuse association widget option
     for (const id of widgetIds.value) {
@@ -76,7 +77,7 @@ limitations under the License. -->
     // add association options in target widgets
     for (let i = 0; i < opt.length; i++) {
       const item = JSON.parse(JSON.stringify(opt));
-      item[i] = { widgetId: dashboardStore.selectedGrid.id };
+      item[i] = { widgetId: dashboardStore.selectedGrid?.id };
       const w = arr.find((d: { id: string }) => d.id === opt[i].widgetId);
       const config = {
         ...w,

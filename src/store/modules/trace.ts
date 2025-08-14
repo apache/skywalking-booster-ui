@@ -30,7 +30,7 @@ interface TraceState {
   endpoints: Endpoint[];
   traceList: Trace[];
   traceSpans: Span[];
-  currentTrace: Recordable<Trace>;
+  currentTrace: Nullable<Trace>;
   conditions: Recordable;
   traceSpanLogs: Recordable[];
   selectorStore: Recordable;
@@ -42,12 +42,12 @@ const { getDurationTime } = useDuration();
 export const traceStore = defineStore({
   id: "trace",
   state: (): TraceState => ({
-    services: [{ value: "0", label: "All" }],
-    instances: [{ value: "0", label: "All" }],
-    endpoints: [{ value: "0", label: "All" }],
+    services: [{ value: "0", label: "All", id: "" }],
+    instances: [{ value: "0", label: "All", id: "" }],
+    endpoints: [{ value: "0", label: "All", id: "" }],
     traceList: [],
     traceSpans: [],
-    currentTrace: {},
+    currentTrace: null,
     selectedSpan: {},
     conditions: {
       queryDuration: getDurationTime(),
@@ -63,7 +63,7 @@ export const traceStore = defineStore({
     setTraceCondition(data: Recordable) {
       this.conditions = { ...this.conditions, ...data };
     },
-    setCurrentTrace(trace: Recordable<Trace>) {
+    setCurrentTrace(trace: Trace) {
       this.currentTrace = trace;
     },
     setTraceSpans(spans: Span[]) {
@@ -121,7 +121,7 @@ export const traceStore = defineStore({
         endpointId,
       });
     },
-    async getInstances(id: string) {
+    async getInstances(id?: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       if (!serviceId) {
         return new Promise((resolve) => resolve({ errors: "Service ID is required" }));
@@ -137,7 +137,7 @@ export const traceStore = defineStore({
       this.instances = [{ value: "0", label: "All" }, ...response.data.pods];
       return response;
     },
-    async getEndpoints(id: string, keyword?: string) {
+    async getEndpoints(id?: string, keyword?: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       if (!serviceId) {
         return new Promise((resolve) => resolve({ errors: "Service ID is required" }));
@@ -211,6 +211,6 @@ export const traceStore = defineStore({
   },
 });
 
-export function useTraceStore(): Recordable {
+export function useTraceStore() {
   return traceStore(store);
 }

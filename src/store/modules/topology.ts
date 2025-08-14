@@ -61,10 +61,10 @@ export const topologyStore = defineStore({
     hierarchyInstanceNodeMetrics: {},
   }),
   actions: {
-    setNode(node: Node) {
+    setNode(node: Nullable<Node>) {
       this.node = node;
     },
-    setLink(link: Call) {
+    setLink(link: Nullable<Call>) {
       this.call = link;
     },
     setInstanceTopology(data: { nodes: Node[]; calls: Call[] }) {
@@ -572,6 +572,6 @@ export const topologyStore = defineStore({
   },
 });
 
-export function useTopologyStore(): Recordable {
+export function useTopologyStore() {
   return topologyStore(store);
 }

@@ -91,11 +91,11 @@ limitations under the License. -->
     const htmlServer = serverMetrics.map((m, index) => {
       const metric =
         topologyStore.linkServerMetrics[m]?.values?.find((val: { id: string; value: unknown }) => val.id === data.id) ||
-        {};
+        null;
       if (metric) {
         const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
 
-        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${
+        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric?.value} ${
           opt.unit || ""
         }</div>`;
       }
@@ -104,9 +104,9 @@ limitations under the License. -->
       const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
       const metric =
         topologyStore.linkClientMetrics[m]?.values?.find((val: { id: string; value: unknown }) => val.id === data.id) ||
-        {};
+        null;
 
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${opt.unit || ""}</div>`;
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric?.value} ${opt.unit || ""}</div>`;
     });
     const html = [
       `<div>${data.sourceObj.serviceName} -> ${data.targetObj.serviceName}</div>`,
@@ -123,10 +123,10 @@ limitations under the License. -->
     const html = nodeMetrics.map((m, index) => {
       const metric =
         topologyStore.nodeMetricValue[m]?.values?.find((val: { id: string; value: unknown }) => val.id === data.id) ||
-        {};
+        null;
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
 
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value} ${opt.unit || ""}</div>`;
+      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric?.value} ${opt.unit || ""}</div>`;
     });
     return [` <div><span>name: </span>${data.serviceName}</div>`, ...html].join(" ");
   }

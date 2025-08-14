@@ -39,19 +39,19 @@ limitations under the License. -->
   import { ServiceLogConstants } from "./data";
   import getDashboard from "@/hooks/useDashboardsSession";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import type { LayoutConfig } from "@/types/dashboard";
+  import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
   import { dateFormat } from "@/utils/dateFormat";
   import { WidgetType } from "@/views/dashboard/data";
   import { useLogStore } from "@/store/modules/log";
   const logStore = useLogStore();
 
-  /*global defineProps, defineEmits, Recordable */
+  /*global defineProps, defineEmits */
   const props = defineProps({
     data: { type: Object as any, default: () => ({}) },
     noLink: { type: Boolean, default: true },
   });
   const dashboardStore = useDashboardStore();
-  const options: Recordable<LayoutConfig> = inject("options") || {};
+  const options: LayoutConfig | null = inject("options") || null;
   const emit = defineEmits(["select"]);
   const columns = ServiceLogConstants;
   const level = computed(() => {
@@ -78,11 +78,11 @@ limitations under the License. -->
     emit("select", props.data);
   }
   function linkTrace(id: string) {
-    const { associationWidget } = getDashboard(dashboardStore.currentDashboard);
+    const { associationWidget } = getDashboard(dashboardStore.currentDashboard as DashboardItem);
     associationWidget(
-      (options.id as any) || "",
+      (options?.id || "") as string,
       {
-        sourceId: options.id || "",
+        sourceId: (options?.id || "") as string,
         traceId: id,
         id: props.data.serviceId || "",
       },

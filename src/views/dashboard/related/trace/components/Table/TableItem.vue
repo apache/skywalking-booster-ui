@@ -17,16 +17,16 @@ limitations under the License. -->
   <div v-if="type === TraceGraphType.STATISTICS">
     <div class="trace-item">
       <div :class="['method']">
-        <el-tooltip :content="data.groupRef.endpointName" placement="top" :show-after="300">
+        <el-tooltip :content="data.groupRef?.endpointName" placement="top" :show-after="300">
           <span>
-            {{ data.groupRef.endpointName }}
+            {{ data.groupRef?.endpointName }}
           </span>
         </el-tooltip>
       </div>
       <div :class="['type']">
-        <el-tooltip :content="data.groupRef.type" placement="top" :show-after="300">
+        <el-tooltip :content="data.groupRef?.type" placement="top" :show-after="300">
           <span>
-            {{ data.groupRef.type }}
+            {{ data.groupRef?.type }}
           </span>
         </el-tooltip>
       </div>
@@ -40,7 +40,7 @@ limitations under the License. -->
         {{ data.sumTime }}
       </div>
       <div class="avg-time">
-        {{ parseInt(data.avgTime) }}
+        {{ parseInt(data.avgTime || "0") }}
       </div>
       <div class="count">
         {{ data.count }}
@@ -52,7 +52,7 @@ limitations under the License. -->
       @click="selectSpan"
       :class="[
         'trace-item',
-        'level' + (data.level - 1),
+        'level' + ((data.level || 0) - 1),
         { 'trace-item-error': data.isError },
         { profiled: data.profiled === false },
         `trace-item-${data.key}`,
@@ -60,9 +60,9 @@ limitations under the License. -->
       :data-text="data.profiled === false ? 'No Thread Dump' : ''"
     >
       <div
-        :class="['method', 'level' + (data.level - 1)]"
+        :class="['method', 'level' + ((data.level || 0) - 1)]"
         :style="{
-          'text-indent': (data.level - 1) * 10 + 'px',
+          'text-indent': ((data.level || 0) - 1) * 10 + 'px',
           width: `${method}px`,
         }"
       >
@@ -152,10 +152,11 @@ limitations under the License. -->
   import { Themes } from "@/constants/data";
   import { TraceGraphType } from "../constant";
   import { WidgetType } from "@/views/dashboard/data";
+  import type { Span, Ref } from "@/types/trace";
 
   /*global Recordable*/
   const props = {
-    data: { type: Object as PropType<Recordable>, default: () => ({}) },
+    data: { type: Object as PropType<Span>, default: () => ({}) },
     method: { type: Number, default: 0 },
     type: { type: String, default: "" },
     headerType: { type: String, default: "" },
@@ -181,7 +182,7 @@ limitations under the License. -->
         } else {
           const data = props.data;
           const exec = data.endTime - data.startTime ? data.endTime - data.startTime : 0;
-          let result = (exec / data.totalExec) * 100;
+          let result = (exec / (data.totalExec || 0)) * 100;
           result = result > 100 ? 100 : result;
           const resultStr = result.toFixed(4) + "%";
           return resultStr === "0.0000%" ? "0.9%" : resultStr;
@@ -193,7 +194,7 @@ limitations under the License. -->
         return resultStr === "0.0000%" ? "0.9%" : resultStr;
       });
       const isCrossThread = computed(() => {
-        const key = props.data.refs.findIndex((d: { type: string }) => d.type === "CROSS_THREAD");
+        const key = props.data.refs?.findIndex((d: Ref) => d.type === "CROSS_THREAD") ?? -1;
         return key > -1 ? true : false;
       });
       function toggle() {
@@ -228,7 +229,7 @@ limitations under the License. -->
         selectedItem(props.data);
         viewSpanDetail(dom);
       }
-      function selectedItem(span: Recordable) {
+      function selectedItem(span: Span) {
         traceStore.setSelectedSpan(span);
       }
       function viewSpanDetail(dom: HTMLSpanElement) {

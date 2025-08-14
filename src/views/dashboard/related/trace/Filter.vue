@@ -115,11 +115,16 @@ limitations under the License. -->
   const appStore = useAppStoreWithOut();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
-  const traceStore = useTraceStore();
+  const traceStore: ReturnType<typeof useTraceStore> = useTraceStore();
   const { setDurationRow, getDurationTime, getMaxRange } = useDuration();
   const filters = reactive<Recordable>(props.data.filters || {});
   const traceId = ref<string>(filters.traceId || "");
-  const duration = ref<DurationTime>(filters.duration || getDurationTime());
+  const { duration: filtersDuration } = filters;
+  const duration = ref<DurationTime>(
+    filtersDuration
+      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: filtersDuration.step || "" }
+      : getDurationTime(),
+  );
   const minTraceDuration = ref<number>();
   const maxTraceDuration = ref<number>();
   const tagsList = ref<string[]>([]);
@@ -132,7 +137,7 @@ limitations under the License. -->
   });
   const durationRow = ref<Duration>(InitializationDurationRow);
   const maxRange = computed(() =>
-    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL.coldTrace : appStore.recordsTTL.trace),
+    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL?.coldTrace || 0 : appStore.recordsTTL?.trace || 0),
   );
   if (filters.queryOrder) {
     traceStore.setTraceCondition({
@@ -171,7 +176,7 @@ limitations under the License. -->
       state.service = { value: "", label: "" };
       return;
     } else {
-      state.service = getCurrentNode(traceStore.services) || traceStore.services[0];
+      state.service = getCurrentNode(traceStore.services as { id: string }[]) || traceStore.services[0];
     }
 
     emits("get", state.service.id);
@@ -186,7 +191,7 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
       return;
     }
-    state.endpoint = getCurrentNode(traceStore.endpoints) || traceStore.endpoints[0];
+    state.endpoint = getCurrentNode(traceStore.endpoints as { id: string }[]) || traceStore.endpoints[0];
   }
   async function getInstances(id?: string) {
     const resp = await traceStore.getInstances(id);
@@ -194,7 +199,7 @@ limitations under the License. -->
       ElMessage.error(resp.errors);
       return;
     }
-    state.instance = getCurrentNode(traceStore.instances) || traceStore.instances[0];
+    state.instance = getCurrentNode(traceStore.instances as { id: string }[]) || traceStore.instances[0];
   }
   function getCurrentNode(arr: { id: string }[]) {
     let item;
@@ -230,10 +235,10 @@ limitations under the License. -->
     let endpoint = "",
       instance = "";
     if (dashboardStore.entity === EntityType[2].value) {
-      endpoint = selectorStore.currentPod.id;
+      endpoint = selectorStore.currentPod?.id || "";
     }
     if (dashboardStore.entity === EntityType[3].value) {
-      instance = selectorStore.currentPod.id;
+      instance = selectorStore.currentPod?.id || "";
     }
     param = {
       ...param,
@@ -320,8 +325,15 @@ limitations under the License. -->
       if (JSON.stringify(newJson) === JSON.stringify(oldJson)) {
         return;
       }
-      traceId.value = props.data.filters.traceId || "";
-      duration.value = props.data.filters.duration || getDurationTime();
+      const { traceId: filtersTraceId, duration: filtersDuration } = props.data.filters || {};
+      traceId.value = filtersTraceId || "";
+      duration.value = filtersDuration
+        ? {
+            start: filtersDuration.startTime || "",
+            end: filtersDuration.endTime || "",
+            step: filtersDuration.step || "",
+          }
+        : getDurationTime();
       init();
     },
   );

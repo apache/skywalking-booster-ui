@@ -35,12 +35,12 @@ limitations under the License. -->
   import EBPFStack from "@/views/dashboard/related/ebpf/components/EBPFStack.vue";
   import { ComponentType } from "./components/data";
 
-  const asyncProfilingStore = useAsyncProfilingStore();
+  const asyncProfilingStore: ReturnType<typeof useAsyncProfilingStore> = useAsyncProfilingStore();
   const selectorStore = useSelectorStore();
 
   onMounted(async () => {
-    const resp = await asyncProfilingStore.getServiceInstances({ serviceId: selectorStore.currentService.id });
-    if (resp && resp.errors) {
+    const resp = await asyncProfilingStore.getServiceInstances({ serviceId: selectorStore.currentService?.id || "" });
+    if (resp?.errors) {
       ElMessage.error(resp.errors);
     }
   });

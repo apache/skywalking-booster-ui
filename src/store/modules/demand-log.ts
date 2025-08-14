@@ -57,7 +57,7 @@ export const demandLogStore = defineStore({
       this.logs = logs;
       this.message = message || "";
     },
-    async getInstances(id: string) {
+    async getInstances(id?: string) {
       const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
       if (!serviceId) {
         return new Promise((resolve) => resolve({ errors: "Service ID is required" }));
@@ -113,6 +113,6 @@ export const demandLogStore = defineStore({
   },
 });
 
-export function useDemandLogStore(): Recordable {
+export function useDemandLogStore() {
   return demandLogStore(store);
 }

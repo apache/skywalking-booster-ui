@@ -62,6 +62,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { RefIdTypes } from "../../data";
+  import type { LayoutConfig, RelatedTrace } from "@/types/dashboard";
 
   const QueryOrders = [
     { label: "None", value: "BY_START_TIME" },
@@ -74,21 +75,20 @@ limitations under the License. -->
   ];
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const { graph, relatedTrace } = dashboardStore.selectedGrid;
-  const traceOpt = relatedTrace || {};
-  const status = ref<string>(traceOpt.status || Status[0].value);
-  const queryOrder = ref<string>(traceOpt.queryOrder || QueryOrders[0].value);
-  const latency = ref<boolean>(traceOpt.latency || false);
-  const enableRelate = ref<boolean>(traceOpt.enableRelate || false);
-  const type = ref<string>((graph && graph.type) || "");
-  const refIdType = ref<string>(traceOpt.refIdType || "");
+  const traceOpt = dashboardStore.selectedGrid?.relatedTrace as RelatedTrace;
+  const status = ref<string>(traceOpt?.status || Status[0].value);
+  const queryOrder = ref<string>(traceOpt?.queryOrder || QueryOrders[0].value);
+  const latency = ref<boolean>(traceOpt?.latency || false);
+  const enableRelate = ref<boolean>(traceOpt?.enableRelate || false);
+  const type = ref<string>(dashboardStore.selectedGrid?.graph?.type || "");
+  const refIdType = ref<string>(traceOpt?.refIdType || "");
 
   function updateConfig(param: { [key: string]: unknown }) {
     const relatedTrace = {
-      ...dashboardStore.selectedGrid.relatedTrace,
+      ...dashboardStore.selectedGrid?.relatedTrace,
       ...param,
     };
-    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, relatedTrace });
+    dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, relatedTrace } as LayoutConfig);
   }
 </script>
 <style lang="scss" scoped>

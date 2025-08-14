@@ -12,9 +12,9 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-detail" v-loading="loading">
-    <div class="trace-detail-wrapper clear" v-if="traceStore.currentTrace.endpointNames">
+    <div class="trace-detail-wrapper clear" v-if="traceStore.currentTrace?.endpointNames">
       <h5 class="mb-5 mt-0">
-        <span class="vm">{{ traceStore.currentTrace.endpointNames[0] }}</span>
+        <span class="vm">{{ traceStore.currentTrace?.endpointNames?.[0] }}</span>
         <div class="trace-log-btn">
           <el-button size="small" class="mr-10" type="primary" @click="searchTraceLogs">
             {{ t("viewLogs") }}
@@ -79,10 +79,10 @@ limitations under the License. -->
     <div class="no-data" v-else>{{ t("noData") }}</div>
     <div class="trace-chart">
       <component
-        v-if="traceStore.currentTrace.endpointNames"
+        v-if="traceStore.currentTrace?.endpointNames"
         :is="displayMode"
         :data="traceStore.traceSpans"
-        :traceId="traceStore.currentTrace.traceIds[0].value"
+        :traceId="traceStore.currentTrace?.traceIds?.[0]?.value"
         :showBtnDetail="false"
         :headerType="WidgetType.Trace"
       />
@@ -115,8 +115,7 @@ limitations under the License. -->
     props,
     setup(props) {
       const appStore = useAppStoreWithOut();
-      /*global Recordable */
-      const options: Recordable<LayoutConfig> = inject("options") || {};
+      const options: LayoutConfig | null = inject("options") || null;
       const { t } = useI18n();
       const traceStore = useTraceStore();
       const loading = ref<boolean>(false);
@@ -124,7 +123,7 @@ limitations under the License. -->
       const displayMode = ref<string>("List");
 
       function handleClick() {
-        copy(traceId.value || traceStore.currentTrace.traceIds[0].value);
+        copy(traceId.value || traceStore.currentTrace?.traceIds?.[0]?.value);
       }
 
       async function changeTraceId(opt: Option[]) {
@@ -140,10 +139,10 @@ limitations under the License. -->
       async function searchTraceLogs() {
         const { associationWidget } = getDashboard();
         associationWidget(
-          (options.id as any) || "",
+          options?.id || "",
           {
             sourceId: options?.id || "",
-            traceId: traceId.value || traceStore.currentTrace.traceIds[0].value,
+            traceId: traceId.value || traceStore.currentTrace?.traceIds?.[0]?.value,
             id: props.serviceId || undefined,
           },
           WidgetType.Log,

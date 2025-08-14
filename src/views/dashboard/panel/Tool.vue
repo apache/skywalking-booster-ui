@@ -168,6 +168,7 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import InstanceMap from "@/views/dashboard/related/topology/pod/InstanceMap.vue";
   import HierarchyMap from "@/views/dashboard/related/topology/service/HierarchyMap.vue";
+  import { Process, Instance, Endpoint } from "@/types/selector";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
@@ -175,7 +176,7 @@ limitations under the License. -->
   const topologyStore = useTopologyStore();
   const appStore = useAppStoreWithOut();
   const route = useRoute();
-  const params = route?.params || {};
+  const params: any = route?.params || {};
   const toolIcons = ref<{ name: string; content: string; id: WidgetType }[]>(AllTools);
   const loading = ref<boolean>(false);
   const showHierarchy = ref<boolean>(false);
@@ -252,7 +253,8 @@ limitations under the License. -->
       ElMessage.error(json.errors);
       return;
     }
-    let currentService, currentDestService;
+    let currentService = null,
+      currentDestService = null;
     if (states.currentService) {
       for (const d of selectorStore.services) {
         if (d.value === states.currentService) {
@@ -274,22 +276,22 @@ limitations under the License. -->
     }
     selectorStore.setCurrentService(currentService);
     selectorStore.setCurrentDestService(currentDestService);
-    states.currentService = selectorStore.currentService && selectorStore.currentService.value;
-    states.currentDestService = selectorStore.currentDestService && selectorStore.currentDestService.value;
+    states.currentService = selectorStore.currentService?.value || "";
+    states.currentDestService = selectorStore.currentDestService?.value || "";
   }
 
   async function setSourceSelector() {
     await selectorStore.getService(String(params.serviceId));
-    states.currentService = selectorStore.currentService.value;
+    states.currentService = selectorStore.currentService?.value || "";
     const e = String(params.entity).split("Relation")[0];
 
-    await fetchPods(e, selectorStore.currentService.id, true);
+    await fetchPods(e, selectorStore.currentService?.id, true);
   }
 
   async function setDestSelector() {
     await selectorStore.getService(String(params.destServiceId), true);
-    states.currentDestService = selectorStore.currentDestService.value;
-    await fetchPods(String(params.entity), selectorStore.currentDestService.id, true);
+    states.currentDestService = selectorStore.currentDestService?.value || "";
+    await fetchPods(String(params.entity), selectorStore.currentDestService?.id || "", true);
   }
 
   async function getServices() {
@@ -341,14 +343,14 @@ limitations under the License. -->
         EntityType[8].value,
       ].includes(dashboardStore.entity)
     ) {
-      await fetchPods(e, selectorStore.currentService.id, true);
+      await fetchPods(e, selectorStore.currentService?.id || "", true);
     }
     if (!selectorStore.currentDestService) {
       return;
     }
     states.currentDestService = selectorStore.currentDestService.value;
     if ([EntityType[5].value, EntityType[6].value, EntityType[7].value].includes(dashboardStore.entity)) {
-      await fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
+      await fetchPods(dashboardStore.entity, selectorStore.currentDestService?.id || "", true);
     }
   }
 
@@ -360,7 +362,7 @@ limitations under the License. -->
       states.currentPod = "";
       states.currentProcess = "";
       const e = dashboardStore.entity.split("Relation")[0];
-      fetchPods(e, selectorStore.currentService.id, true);
+      fetchPods(e, selectorStore.currentService?.id, true);
     } else {
       selectorStore.setCurrentService(null);
     }
@@ -373,7 +375,7 @@ limitations under the License. -->
       selectorStore.setCurrentDestPod(null);
       states.currentDestPod = "";
       states.currentDestProcess = "";
-      fetchPods(dashboardStore.entity, selectorStore.currentDestService.id, true);
+      fetchPods(dashboardStore.entity, selectorStore.currentDestService?.id || "", true);
     } else {
       selectorStore.setCurrentDestService(null);
     }
@@ -395,12 +397,12 @@ limitations under the License. -->
     }
   }
 
-  function changeDestProcess(pod: Option[]) {
-    selectorStore.setCurrentDestProcess(pod[0] || null);
+  function changeDestProcess(pod: Process[]) {
+    selectorStore.setCurrentDestProcess(pod[0]);
     states.currentDestProcess = pod[0].label || "";
   }
 
-  function changeProcess(pod: Option[]) {
+  function changeProcess(pod: Process[]) {
     selectorStore.setCurrentProcess(pod[0] || null);
     states.currentProcess = pod[0].label || "";
   }
@@ -447,7 +449,10 @@ limitations under the License. -->
     dashboardStore.addControl(id);
   }
 
-  async function fetchPods(type: string, serviceId: string, setPod: boolean, param?: { keyword?: string }) {
+  async function fetchPods(type: string, serviceId: string | undefined, setPod: boolean, param?: { keyword?: string }) {
+    if (!serviceId) {
+      return;
+    }
     let resp;
     switch (type) {
       case EntityType[2].value:
@@ -517,11 +522,11 @@ limitations under the License. -->
 
   async function fetchProcess(setPod: boolean) {
     const resp = await selectorStore.getProcesses({
-      instanceId: selectorStore.currentPod.id,
+      instanceId: selectorStore.currentPod?.id || "",
     });
     if (setPod) {
       const process = selectorStore.currentProcess?.id || params.processId || selectorStore.processes[0].id;
-      const currentProcess = selectorStore.processes.find((d: { id: string }) => d.id === process);
+      const currentProcess = selectorStore.processes.find((d: Process) => d.id === process);
       if (currentProcess) {
         selectorStore.setCurrentProcess(currentProcess);
         states.currentProcess = currentProcess.label;
@@ -534,7 +539,7 @@ limitations under the License. -->
   }
   async function fetchDestProcess(setPod: boolean) {
     const resp = await selectorStore.getProcesses({
-      instanceId: selectorStore.currentDestPod.id,
+      instanceId: selectorStore.currentDestPod?.id,
       isRelation: true,
     });
     if (setPod) {
@@ -572,7 +577,7 @@ limitations under the License. -->
       return;
     }
     const destPod = selectorStore.currentDestPod?.id || params.destPodId || selectorStore.destPods[0].id;
-    const currentDestPod = selectorStore.destPods.find((d: { id: string }) => d.id === destPod);
+    const currentDestPod = selectorStore.destPods.find((d: Instance | Endpoint) => d.id === destPod);
     if (!currentDestPod) {
       states.currentDestPod = "";
       selectorStore.setCurrentDestPod(null);
@@ -604,7 +609,7 @@ limitations under the License. -->
       return;
     }
     const pod = selectorStore.currentPod?.id || params.podId || selectorStore.pods[0].id;
-    const currentPod = selectorStore.pods.find((d: { id: string }) => d.id === pod);
+    const currentPod = selectorStore.pods.find((d: Endpoint | Instance) => d.id === pod);
     if (!currentPod) {
       selectorStore.setCurrentPod(null);
       states.currentPod = "";
@@ -651,13 +656,13 @@ limitations under the License. -->
     const param = {
       keyword: query,
     };
-    fetchPods(EntityType[2].value, selectorStore.currentService.id, false, param);
+    fetchPods(EntityType[2].value, selectorStore.currentService?.id, false, param);
   }
   function searchDestPods(query: string) {
     const param = {
       keyword: query,
     };
-    fetchPods(EntityType[6].value, selectorStore.currentDestService.id, false, param);
+    fetchPods(EntityType[6].value, selectorStore.currentDestService?.id, false, param);
   }
   function viewTopology() {
     showHierarchy.value = true;

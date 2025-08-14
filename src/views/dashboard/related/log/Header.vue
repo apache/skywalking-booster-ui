@@ -150,17 +150,22 @@ limitations under the License. -->
     needQuery: { type: Boolean, default: true },
     data: {
       type: Object as PropType<LayoutConfig>,
-      default: () => ({ graph: {} }),
+      default: () => ({}),
     },
   });
   const { t } = useI18n();
-  const appStore = useAppStoreWithOut();
+  const appStore: ReturnType<typeof useAppStoreWithOut> = useAppStoreWithOut();
   const selectorStore = useSelectorStore();
   const dashboardStore = useDashboardStore();
   const logStore = useLogStore();
   const { setDurationRow, getDurationTime, getMaxRange } = useDuration();
-  const traceId = ref<string>((props.data.filters && props.data.filters.traceId) || "");
-  const duration = ref<DurationTime>((props.data.filters && props.data.filters.duration) || getDurationTime());
+  const traceId = ref<string>(props.data.filters?.traceId || "");
+  const { duration: filtersDuration } = props.data.filters || {};
+  const duration = ref<DurationTime>(
+    filtersDuration
+      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: filtersDuration.step || "" }
+      : getDurationTime(),
+  );
   const keywordsOfContent = ref<string[]>([]);
   const excludingKeywordsOfContent = ref<string[]>([]);
   const tagsList = ref<string[]>([]);
@@ -175,17 +180,17 @@ limitations under the License. -->
     service: { value: "", label: "" },
     category: { value: "ALL", label: "All" },
   });
-  const maxRange = computed(() =>
-    getMaxRange(
-      appStore.coldStageMode
-        ? isBrowser.value
-          ? appStore.recordsTTL.coldBrowserErrorLog
-          : appStore.recordsTTL.coldLog
-        : isBrowser.value
-        ? appStore.recordsTTL.browserErrorLog
-        : appStore.recordsTTL.log,
-    ),
-  );
+  const maxRange = computed(() => {
+    const ttl = appStore.coldStageMode
+      ? isBrowser.value
+        ? appStore.recordsTTL?.coldBrowserErrorLog
+        : appStore.recordsTTL?.coldLog
+      : isBrowser.value
+      ? appStore.recordsTTL?.browserErrorLog
+      : appStore.recordsTTL?.log;
+
+    return getMaxRange(ttl as number);
+  });
   if (props.needQuery) {
     init();
   }
@@ -259,10 +264,10 @@ limitations under the License. -->
     let endpoint = "",
       instance = "";
     if (dashboardStore.entity === EntityType[2].value) {
-      endpoint = selectorStore.currentPod.id;
+      endpoint = selectorStore.currentPod?.id || "";
     }
     if (dashboardStore.entity === EntityType[3].value) {
-      instance = selectorStore.currentPod.id;
+      instance = selectorStore.currentPod?.id || "";
     }
     if (dashboardStore.layerId === "BROWSER") {
       logStore.setLogCondition({
@@ -396,8 +401,15 @@ limitations under the License. -->
         if (JSON.stringify(newJson) === JSON.stringify(oldJson)) {
           return;
         }
-        traceId.value = props.data.filters.traceId || "";
-        duration.value = props.data.filters.duration || getDurationTime();
+        const { traceId: filtersTraceId, duration: filtersDuration } = props.data.filters || {};
+        traceId.value = filtersTraceId || "";
+        duration.value = filtersDuration
+          ? {
+              start: filtersDuration.startTime || "",
+              end: filtersDuration.endTime || "",
+              step: filtersDuration.step || "",
+            }
+          : getDurationTime();
         init();
       }
     },

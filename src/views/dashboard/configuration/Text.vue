@@ -78,10 +78,12 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { ref } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import type { LayoutConfig, TextConfig } from "@/types/dashboard";
+
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const originConfig = dashboardStore.selectedGrid;
-  const graph = originConfig.graph || {};
+  const graph = (originConfig?.graph as TextConfig) || {};
   const url = ref(graph.url || "");
   const backgroundColor = ref(graph.backgroundColor || "green");
   const fontColor = ref(graph.fontColor || "white");
@@ -112,14 +114,14 @@ limitations under the License. -->
   function changeConfig(param: { [key: string]: unknown }) {
     const { selectedGrid } = dashboardStore;
     const graph = {
-      ...selectedGrid.graph,
+      ...selectedGrid?.graph,
       ...param,
     };
-    dashboardStore.selectWidget({ ...selectedGrid, graph });
+    dashboardStore.selectWidget({ ...selectedGrid, graph } as LayoutConfig);
   }
   function applyConfig() {
     dashboardStore.setConfigPanel(false);
-    dashboardStore.setConfigs(dashboardStore.selectedGrid);
+    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
   }
 
   function cancelConfig() {

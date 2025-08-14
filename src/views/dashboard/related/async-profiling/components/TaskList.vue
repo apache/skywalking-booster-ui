@@ -26,7 +26,7 @@ limitations under the License. -->
           @click="changeTask(i)"
           :key="index"
           :class="{
-            selected: asyncProfilingStore.selectedTask.id === i.id,
+            selected: asyncProfilingStore.selectedTask?.id === i.id,
           }"
         >
           <td class="profile-td">
@@ -50,7 +50,7 @@ limitations under the License. -->
     </div>
   </div>
   <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
-    <div class="profile-detail flex-v" v-if="asyncProfilingStore.selectedTask.id">
+    <div class="profile-detail flex-v" v-if="asyncProfilingStore.selectedTask?.id">
       <div>
         <h5 class="mb-10">{{ t("task") }}.</h5>
         <div class="mb-10 clear item">
@@ -67,20 +67,15 @@ limitations under the License. -->
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("duration") }}:</span>
-          <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask.duration / 60 }}min</span>
+          <span class="g-sm-8 wba">{{ asyncProfilingStore.selectedTask?.duration / 60 }}min</span>
         </div>
         <div class="mb-10 clear item">
           <span class="g-sm-4 grey">{{ t("events") }}:</span>
-          <span class="g-sm-8 wba"> {{ asyncProfilingStore.selectedTask.events.join(", ") }} </span>
+          <span class="g-sm-8 wba"> {{ (asyncProfilingStore.selectedTask?.events || []).join(", ") }} </span>
         </div>
       </div>
       <div>
-        <h5
-          class="mb-5 mt-10"
-          v-show="asyncProfilingStore.selectedTask.logs && asyncProfilingStore.selectedTask.logs.length"
-        >
-          {{ t("logs") }}.
-        </h5>
+        <h5 class="mb-5 mt-10" v-show="asyncProfilingStore.selectedTask?.logs?.length"> {{ t("logs") }}. </h5>
         <div v-for="(i, index) in Object.keys(instanceLogs)" :key="index">
           <div class="sm">
             <span class="mr-10 grey">{{ t("instance") }}:</span>
@@ -128,7 +123,8 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useAsyncProfilingStore } from "@/store/modules/async-profiling";
-  import type { TaskLog, TaskListItem } from "@/types/profile";
+  import type { TaskLog } from "@/types/profile";
+  import type { AsyncProfilingTask } from "@/types/async-profiling";
   import { ElMessage } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
   import type { Instance, Service } from "@/types/selector";
@@ -156,13 +152,13 @@ limitations under the License. -->
     }
   }
 
-  async function changeTask(item: TaskListItem) {
-    if (item.id !== asyncProfilingStore.selectedTask.id) {
+  async function changeTask(item: AsyncProfilingTask) {
+    if (item.id !== asyncProfilingStore.selectedTask?.id) {
       asyncProfilingStore.setAnalyzeTrees([]);
       asyncProfilingStore.setSelectedTask(item);
     }
     service.value = (selectorStore.services.filter((s: Service) => s.id === item.serviceId)[0] ?? {}).label;
-    const res = await asyncProfilingStore.getTaskLogs({ taskId: item.id });
+    const res = await asyncProfilingStore.getTaskLogs({ taskID: item.id });
 
     if (res.errors) {
       ElMessage.error(res.errors);

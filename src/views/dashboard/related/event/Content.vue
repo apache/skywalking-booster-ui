@@ -16,11 +16,11 @@ limitations under the License. -->
   <div ref="timeline" class="events"></div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, onMounted } from "vue";
+  import { ref, watch, onMounted, PropType } from "vue";
   import dayjs from "dayjs";
   import { useThrottleFn } from "@vueuse/core";
   import type { Event } from "@/types/events";
-  import type { LayoutConfig } from "@/types/dashboard";
+  import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
   import { useEventStore } from "@/store/modules/event";
   import { DataSet, Timeline } from "vis-timeline/standalone";
   import "vis-timeline/styles/vis-timeline-graph2d.css";
@@ -32,10 +32,10 @@ limitations under the License. -->
   import { WidgetType } from "@/views/dashboard/data";
 
   const eventStore = useEventStore();
-  /*global defineProps, Nullable */
+  /*global Nullable */
   const props = defineProps({
     data: {
-      type: Object,
+      type: Object as PropType<LayoutConfig>,
       default: () => ({}),
     },
   });
@@ -106,7 +106,7 @@ limitations under the License. -->
         return;
       }
       dashboardStore.selectWidget(props.data);
-      const dashboard = getDashboard(dashboardStore.currentDashboard).widgets;
+      const dashboard = getDashboard(dashboardStore.currentDashboard as DashboardItem).widgets;
       associateMetrics(properties.items, events, dashboard);
       associateTraceLog(properties.items, events, dashboard);
     });
@@ -130,11 +130,10 @@ limitations under the License. -->
     const i = events[index - 1 || 0];
     for (const widget of widgets) {
       if (isNaN(index)) {
-        const item = {
+        const item: LayoutConfig = {
           ...widget,
           filters: {
             sourceId: props.data.id || "",
-            duration: null,
           },
         };
         dashboardStore.setWidget(item);
@@ -154,8 +153,8 @@ limitations under the License. -->
           filters: {
             sourceId: props.data.id || "",
             duration: {
-              start: dateFormatStep(getLocalTime(appStore.utc, start), step, true),
-              end: dateFormatStep(getLocalTime(appStore.utc, end), step, true),
+              startTime: dateFormatStep(getLocalTime(appStore.utc, start), step, true),
+              endTime: dateFormatStep(getLocalTime(appStore.utc, end), step, true),
               step,
             },
           },
@@ -187,14 +186,14 @@ limitations under the License. -->
 
     for (const widget of widgets) {
       if (isNaN(index)) {
-        const item = {
+        const item: LayoutConfig = {
           ...widget,
           filters: {
-            sourceId: dashboardStore.selectedGrid.id || "",
+            sourceId: dashboardStore.selectedGrid?.id || "",
             isRange: true,
             duration: {
-              startTime: null,
-              endTime: null,
+              startTime: "",
+              endTime: "",
             },
           },
         };
@@ -203,10 +202,10 @@ limitations under the License. -->
         const { start, end } = setEndTime(i.start, i.end);
         const startTime = dateFormatTime(start, appStore.duration.step);
         const endTime = dateFormatTime(end, appStore.duration.step);
-        const item = {
+        const item: LayoutConfig = {
           ...widget,
           filters: {
-            sourceId: dashboardStore.selectedGrid.id || "",
+            sourceId: dashboardStore.selectedGrid?.id || "",
             isRange: true,
             duration: {
               startTime,

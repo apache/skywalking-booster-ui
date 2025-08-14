@@ -16,7 +16,7 @@ limitations under the License. -->
   <div ref="timeline" class="task-timeline"></div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, onMounted, onUnmounted } from "vue";
+  import { ref, watch, onMounted, onUnmounted, PropType } from "vue";
   import dayjs from "dayjs";
   import { useThrottleFn } from "@vueuse/core";
   import { ElMessage } from "element-plus";
@@ -28,6 +28,7 @@ limitations under the License. -->
   import { DataSet, Timeline } from "vis-timeline/standalone";
   import "vis-timeline/styles/vis-timeline-graph2d.css";
   import { EBPFProfilingTriggerType } from "@/store/data";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   const taskTimelineStore = useTaskTimelineStore();
   const selectorStore = useSelectorStore();
@@ -36,7 +37,7 @@ limitations under the License. -->
   /* global defineProps, Nullable */
   const props = defineProps({
     data: {
-      type: Object,
+      type: Object as PropType<LayoutConfig>,
       default: () => ({}),
     },
   });
@@ -57,11 +58,11 @@ limitations under the License. -->
   async function init() {
     const serviceId = (selectorStore.currentService && selectorStore.currentService.id) || "";
     const serviceInstanceId = (selectorStore.currentPod && selectorStore.currentPod.id) || "";
-    const type = continousProfilingStore.selectedStrategy.type;
+    const type = continousProfilingStore.selectedStrategy?.type || "";
     const res = await taskTimelineStore.getContinousTaskList({
       serviceId,
       serviceInstanceId,
-      targets: type ? [type] : null,
+      targets: type ? [type] : [],
       triggerType: EBPFProfilingTriggerType.CONTINUOUS_PROFILING,
     });
     if (res.errors) {
@@ -121,7 +122,7 @@ limitations under the License. -->
     visGraph.value.on("select", async (properties: { items: number[] }) => {
       dashboardStore.selectWidget(props.data);
       const index = properties.items[0];
-      const task = taskTimelineStore.taskList[index];
+      const task = taskTimelineStore.taskList[index] as EBPFTaskList;
 
       await taskTimelineStore.setSelectedTask(task);
       await taskTimelineStore.getGraphData();

@@ -21,7 +21,7 @@ export interface Conditions {
   serviceInstanceId: string;
   duration: DurationTime;
   keywordsOfContent?: string[];
-  excludingKeywordsOfContent?: string;
+  excludingKeywordsOfContent?: string[];
 }
 
 export interface Log {

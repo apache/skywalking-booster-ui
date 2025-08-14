@@ -33,12 +33,12 @@ limitations under the License. -->
   </el-table>
 </template>
 <script lang="ts" setup>
-  /*global PropType, Indexable */
+  import type { PropType } from "vue";
   defineProps({
     metricsRows: {
       type: Array as PropType<{ width?: number; value: string; label: string }[]>,
       default: () => [],
     },
-    data: { type: Array as PropType<Indexable[]>, default: () => [] },
+    data: { type: Array as PropType<any[]>, default: () => [] },
   });
 </script>

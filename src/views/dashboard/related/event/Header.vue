@@ -150,7 +150,6 @@ limitations under the License. -->
       return;
     }
     eventStore.setEventCondition({
-      // layer: dashboardStore.layerId,
       paging: {
         pageNum: pageNum.value,
         pageSize: pageSize,

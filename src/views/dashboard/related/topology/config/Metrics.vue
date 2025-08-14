@@ -52,6 +52,7 @@ limitations under the License. -->
   import { EntityType, ConfigFieldTypes } from "@/views/dashboard/data";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
+  import type { MetricConfigOpt } from "@/types/dashboard";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
@@ -68,16 +69,16 @@ limitations under the License. -->
       return props.expressions || [];
     }
     let metrics: string[] = [];
-    const { linkServerExpressions, linkClientExpressions, nodeExpressions } = dashboardStore.selectedGrid;
+    const { linkServerExpressions, linkClientExpressions, nodeExpressions } = dashboardStore.selectedGrid || {};
     switch (props.type) {
       case "linkServerMetricConfig":
-        metrics = linkServerExpressions;
+        metrics = linkServerExpressions || [];
         break;
       case "linkClientMetricConfig":
-        metrics = linkClientExpressions;
+        metrics = linkClientExpressions || [];
         break;
       case "nodeMetricConfig":
-        metrics = nodeExpressions;
+        metrics = nodeExpressions || [];
         break;
     }
     return metrics || [];
@@ -106,17 +107,17 @@ limitations under the License. -->
 
       return config || [];
     }
-    let config = [];
+    let config: MetricConfigOpt[] = [];
 
     switch (props.type) {
       case "linkServerMetricConfig":
-        config = dashboardStore.selectedGrid.linkServerMetricConfig;
+        config = dashboardStore.selectedGrid?.linkServerMetricConfig || [];
         break;
       case "linkClientMetricConfig":
-        config = dashboardStore.selectedGrid.linkClientMetricConfig;
+        config = dashboardStore.selectedGrid?.linkClientMetricConfig || [];
         break;
       case "nodeMetricConfig":
-        config = dashboardStore.selectedGrid.nodeMetricConfig;
+        config = dashboardStore.selectedGrid?.nodeMetricConfig || [];
         break;
     }
     return config || [];

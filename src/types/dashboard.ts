@@ -19,11 +19,17 @@ export type DashboardItem = {
   id?: string;
   entity: string;
   layer: string;
-  isRoot: boolean;
+  isRoot?: boolean;
   name: string;
-  isDefault: boolean;
+  isDefault?: boolean;
   expressions?: string[];
   expressionsConfig?: MetricConfigOpt[];
+  path?: string;
+};
+
+export type NodeDashboard = {
+  scope: string;
+  dashboard: string;
 };
 export interface LayoutConfig {
   x: number;
@@ -47,26 +53,86 @@ export interface LayoutConfig {
   subExpressions?: string[];
   subTypesOfMQE?: string[];
   valueRelatedDashboard?: string;
+  legendMQE?: LegendMQE;
+  linkDashboard?: string;
+  nodeDashboard?: NodeDashboard[];
+  linkServerExpressions?: string[];
+  linkClientExpressions?: string[];
+  nodeExpressions?: string[];
+  description?: any;
+  linkServerMetricConfig?: MetricConfigOpt[];
+  linkClientMetricConfig?: MetricConfigOpt[];
+  nodeMetricConfig?: MetricConfigOpt[];
+  instanceDashboardName?: string;
+  processDashboardName?: string;
 }
+
+type LegendMQE = {
+  expression: string;
+};
+
 export type RelatedTrace = {
   duration: DurationTime;
   status: string;
   queryOrder: string;
   latency: boolean;
   enableRelate: boolean;
+  refIdType: string;
+};
+
+export type FilterDuration = {
+  startTime: string;
+  endTime: string;
+  step?: string;
+};
+
+export type Owner = {
+  scope: string;
+  serviceID: string;
+  serviceInstanceID: string;
+  endpointID: string;
+};
+export type TopListItem = {
+  name: string;
+  value: string;
+  refId: string;
+  owner: Owner;
+};
+export type TopListData = {
+  [key: string]: TopListItem[];
 };
 
 export type Filters = {
-  dataIndex: number;
-  sourceId: string;
+  dataIndex?: number;
+  sourceId?: string;
   isRange?: boolean;
-  duration?: DurationTime;
+  duration?: FilterDuration;
   traceId?: string;
   spanId?: string;
   segmentId?: string;
   id?: string;
   queryOrder?: string;
   status?: string;
+  metricValue?: { label: string; data: string; value: string }[];
+  owner?: Nullable<Owner>;
+  isReadRecords?: boolean | undefined;
+};
+
+export type Series = {
+  data: (number | string)[][];
+  name: string;
+};
+
+export type FilterOption = {
+  series: Series[];
+  type: string;
+  legend: LegendOptions;
+};
+
+export type AssociateProcessorProps = {
+  filters: Filters;
+  option: FilterOption;
+  relatedTrace: RelatedTrace;
 };
 
 export type MetricConfigOpt = {
@@ -83,6 +149,8 @@ export interface WidgetConfig {
   name?: string;
   title?: string;
   tips?: string;
+  url?: string;
+  type?: string;
 }
 
 export type GraphConfig =
@@ -93,14 +161,29 @@ export type GraphConfig =
   | EndpointListConfig
   | ServiceListConfig
   | InstanceListConfig
-  | TopologyConfig;
-export interface BarConfig {
+  | TopologyConfig
+  | TextConfig
+  | TimeRangeConfig
+  | TopListConfig;
+
+export interface BaseConfig {
   type?: string;
+  valueMappings?: { [key: string]: string };
+  legend?: LegendOptions;
+  dashboardName?: string;
+}
+export interface TimeRangeConfig extends BaseConfig {
+  fontSize: number;
+  backgroundColor: string;
+  textAlign: string;
+  fontColor: string;
+  text: string;
+}
+export interface BarConfig extends BaseConfig {
   showBackground?: boolean;
   legend?: LegendOptions;
 }
 export interface LineConfig extends AreaConfig {
-  type?: string;
   smooth?: boolean;
   showSymbol?: boolean;
   step?: boolean;
@@ -111,60 +194,54 @@ export interface LineConfig extends AreaConfig {
   noTooltips?: boolean;
 }
 
-export interface AreaConfig {
-  type?: string;
+export interface AreaConfig extends BaseConfig {
   opacity?: number;
   legend?: LegendOptions;
 }
 
-export interface CardConfig {
-  type?: string;
+export interface CardConfig extends BaseConfig {
   fontSize?: number;
   showUnit?: boolean;
   textAlign?: "center" | "right" | "left";
   valueMappings?: { [key: string]: string };
 }
 
-export interface TextConfig {
+export interface TextConfig extends BaseConfig {
   fontSize: number;
   backgroundColor: string;
   textAlign: string;
   fontColor: string;
   content: string;
+  url: string;
 }
 
-export interface TableConfig {
-  type?: string;
+export interface TableConfig extends BaseConfig {
   showTableValues: boolean;
   tableHeaderCol2: string;
 }
 
-export interface TopListConfig {
-  type?: string;
+export interface TopListConfig extends BaseConfig {
   topN: number;
+  color: string;
 }
 
-export interface ServiceListConfig {
-  type?: string;
+export interface ServiceListConfig extends BaseConfig {
   dashboardName: string;
   fontSize: number;
   showGroup: boolean;
 }
 
-export interface InstanceListConfig {
-  type?: string;
+export interface InstanceListConfig extends BaseConfig {
   dashboardName: string;
   fontSize: number;
 }
 
-export interface EndpointListConfig {
-  type?: string;
+export interface EndpointListConfig extends BaseConfig {
   dashboardName: string;
   fontSize: number;
 }
 
-export interface TopologyConfig {
-  type?: string;
+export interface TopologyConfig extends BaseConfig {
   backgroundColor?: string;
   fontColor?: string;
   iconTheme?: boolean;
@@ -172,6 +249,7 @@ export interface TopologyConfig {
   fontSize?: number;
   depth?: number;
   showDepth?: boolean;
+  showBackground?: boolean;
 }
 export type EventParams = {
   componentType: string;
@@ -207,6 +285,6 @@ type MetricLabel = {
 type MetricValue = {
   name: string;
   value: string;
-  owner: null | string;
+  owner: Nullable<Owner>;
   refId: null | string;
 };

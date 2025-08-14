@@ -152,7 +152,7 @@ limitations under the License. -->
     if (!(state.instance.id || (selectorStore.currentPod && selectorStore.currentPod.id))) {
       return;
     }
-    const resp = await demandLogStore.getContainers(state.instance.id || selectorStore.currentPod.id);
+    const resp = await demandLogStore.getContainers(state.instance.id || selectorStore.currentPod?.id || "");
     if (resp.errors) {
       disabled.value = true;
       ElMessage.error(resp.errors);
@@ -193,7 +193,7 @@ limitations under the License. -->
   function searchLogs() {
     let instance = "";
     if (dashboardStore.entity === EntityType[3].value) {
-      instance = selectorStore.currentPod.id;
+      instance = selectorStore.currentPod?.id || "";
     }
     const serviceInstanceId = instance || (state.instance && state.instance.id) || "";
     demandLogStore.setLogCondition({
@@ -247,6 +247,7 @@ limitations under the License. -->
     const keywordsOfContentList = keywordsOfContent.value || [];
     keywordsOfContentList.splice(index, 1);
     demandLogStore.setLogCondition({
+      ...demandLogStore.conditions,
       keywordsOfContent: keywordsOfContentList,
     });
     contentStr.value = "";
@@ -262,12 +263,14 @@ limitations under the License. -->
     if (type === "keywordsOfContent") {
       keywordsOfContent.value.push(contentStr.value);
       demandLogStore.setLogCondition({
+        ...demandLogStore.conditions,
         [type]: keywordsOfContent.value,
       });
       contentStr.value = "";
     } else if (type === "excludingKeywordsOfContent") {
       excludingKeywordsOfContent.value.push(excludingContentStr.value);
       demandLogStore.setLogCondition({
+        ...demandLogStore.conditions,
         [type]: excludingKeywordsOfContent.value,
       });
       excludingContentStr.value = "";
@@ -277,6 +280,7 @@ limitations under the License. -->
   function removeExcludeContent(index: number) {
     excludingKeywordsOfContent.value.splice(index, 1);
     demandLogStore.setLogCondition({
+      ...demandLogStore.conditions,
       excludingKeywordsOfContent: excludingKeywordsOfContent.value,
     });
     excludingContentStr.value = "";
@@ -297,7 +301,7 @@ limitations under the License. -->
     () => {
       if (dashboardStore.entity === EntityType[0].value) {
         fetchSelectors();
-        demandLogStore.setLogs("");
+        demandLogStore.setLogs([]);
       }
     },
   );
@@ -306,7 +310,7 @@ limitations under the License. -->
     () => {
       if (dashboardStore.entity === EntityType[3].value) {
         fetchSelectors();
-        demandLogStore.setLogs("");
+        demandLogStore.setLogs([]);
       }
     },
   );

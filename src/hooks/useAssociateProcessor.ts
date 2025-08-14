@@ -18,8 +18,9 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import dateFormatStep from "@/utils/dateFormat";
 import getLocalTime from "@/utils/localtime";
 import type { EventParams } from "@/types/app";
+import type { AssociateProcessorProps, Series } from "@/types/dashboard";
 
-export default function associateProcessor(props: Indexable) {
+export default function useAssociateProcessor(props: AssociateProcessorProps) {
   function eventAssociate() {
     if (!props.filters) {
       return;
@@ -75,8 +76,8 @@ export default function associateProcessor(props: Indexable) {
     if (start) {
       const end = start;
       duration = {
-        start: dateFormatStep(getLocalTime(appStore.utc, new Date(start)), step, true),
-        end: dateFormatStep(getLocalTime(appStore.utc, new Date(end)), step, true),
+        startTime: dateFormatStep(getLocalTime(appStore.utc, new Date(start)), step, true),
+        endTime: dateFormatStep(getLocalTime(appStore.utc, new Date(end)), step, true),
         step,
       };
     }
@@ -84,14 +85,14 @@ export default function associateProcessor(props: Indexable) {
     const status = relatedTrace.status;
     const queryOrder = relatedTrace.queryOrder;
     const latency = relatedTrace.latency;
-    const series = props.option.series || [];
+    const series = (props.option.series || []) as Series[];
     const item: Indexable = {
       duration,
       queryOrder,
       status,
     };
     if (latency) {
-      const latencyList = series.map((d: { name: string; data: number[][] }, index: number) => {
+      const latencyList = series.map((d: Series, index: number) => {
         const data = [
           d.data[currentParams.dataIndex][1],
           series[index + 1] ? series[index + 1].data[currentParams.dataIndex][1] : Infinity,
@@ -104,7 +105,7 @@ export default function associateProcessor(props: Indexable) {
       });
       item.latency = latencyList;
     }
-    const value = series.map((d: { name: string; data: number[][] }, index: number) => {
+    const value = series.map((d: Series, index: number) => {
       return {
         label: d.name,
         value: String(index),

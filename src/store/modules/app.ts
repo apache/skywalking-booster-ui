@@ -38,8 +38,8 @@ interface AppState {
   theme: string;
   coldStageMode: boolean;
   maxRange: Date[];
-  metricsTTL: Recordable<MetricsTTL>;
-  recordsTTL: Recordable<RecordsTTL>;
+  metricsTTL: Nullable<MetricsTTL>;
+  recordsTTL: Nullable<RecordsTTL>;
 }
 
 export const InitializationDurationRow = {
@@ -64,8 +64,8 @@ export const appStore = defineStore({
     theme: Themes.Dark,
     coldStageMode: false,
     maxRange: [],
-    metricsTTL: {},
-    recordsTTL: {},
+    metricsTTL: null,
+    recordsTTL: null,
   }),
   getters: {
     duration(): Duration {
@@ -224,6 +224,6 @@ export const appStore = defineStore({
     },
   },
 });
-export function useAppStoreWithOut(): Recordable {
+export function useAppStoreWithOut() {
   return appStore(store);
 }

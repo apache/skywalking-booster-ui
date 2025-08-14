@@ -35,7 +35,7 @@ limitations under the License. -->
             <td
               class="profile-td"
               :class="{
-                selected: continousProfilingStore.selectedStrategy.id === i.id,
+                selected: continousProfilingStore.selectedStrategy?.id === i.id,
               }"
               v-if="i.type"
             >
@@ -81,7 +81,7 @@ limitations under the License. -->
 
   const { t } = useI18n();
   const selectorStore = useSelectorStore();
-  const continousProfilingStore = useContinousProfilingStore();
+  const continousProfilingStore: ReturnType<typeof useContinousProfilingStore> = useContinousProfilingStore();
   const updateStrategies = ref<boolean>(false);
   const inProcess = ref<boolean>(false);
 

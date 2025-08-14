@@ -86,7 +86,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { SortOrder, ExpressionResultType, ListChartTypes } from "@/views/dashboard/data";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import type { MetricConfigOpt } from "@/types/dashboard";
+  import type { MetricConfigOpt, LayoutConfig } from "@/types/dashboard";
 
   /*global defineEmits, defineProps */
   const props = defineProps({
@@ -103,13 +103,15 @@ limitations under the License. -->
     ...props.currentMetricConfig,
     topN: props.currentMetricConfig.topN || 10,
   });
-  const metricTypes = computed(() => dashboardStore.selectedGrid.typesOfMQE || []);
+  const metricTypes = computed(() => dashboardStore.selectedGrid?.typesOfMQE || []);
   const isList = computed(() => {
-    const graph = dashboardStore.selectedGrid.graph || {};
-    return ListChartTypes.includes(graph.type);
+    const graph = dashboardStore.selectedGrid?.graph || {};
+    return ListChartTypes.includes(graph.type || "");
   });
   const isTopn = computed(() =>
-    [ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST].includes(metricTypes.value[props.index]),
+    [ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST].includes(
+      metricTypes.value[props.index] as ExpressionResultType,
+    ),
   );
 
   function updateConfig(index: number, param: { [key: string]: string }) {
@@ -120,13 +122,13 @@ limitations under the License. -->
     changeConfigs(index, { [key]: decodeURIComponent(param[key]) });
   }
   function changeConfigs(index: number, param: { [key: string]: string | number }) {
-    const metricConfig = dashboardStore.selectedGrid.metricConfig || [];
+    const metricConfig = dashboardStore.selectedGrid?.metricConfig || [];
 
     metricConfig[index] = { ...metricConfig[index], ...param };
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
       metricConfig,
-    });
+    } as LayoutConfig);
     emit("update");
   }
   watch(

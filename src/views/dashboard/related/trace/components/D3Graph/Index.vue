@@ -61,10 +61,11 @@ limitations under the License. -->
   import { mutationObserver } from "@/utils/mutation";
   import { TraceGraphType } from "../constant";
   import { Themes } from "@/constants/data";
+  import type { SegmentSpan } from "@/types/profile";
 
   /* global Recordable, Nullable */
   const props = defineProps({
-    data: { type: Array as PropType<Span[]>, default: () => [] },
+    data: { type: Array as PropType<(Span | SegmentSpan)[]>, default: () => [] },
     traceId: { type: String, default: "" },
     type: { type: String, default: TraceGraphType.LIST },
     headerType: { type: String, default: "" },
@@ -79,8 +80,8 @@ limitations under the License. -->
   const refSpans = ref<Array<Ref>>([]);
   const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
-  const parentSpans = ref<Array<Span>>([]);
-  const refParentSpans = ref<Array<Span>>([]);
+  const parentSpans = ref<Array<Span | SegmentSpan>>([]);
+  const refParentSpans = ref<Array<Span | SegmentSpan>>([]);
   const debounceFunc = debounce(draw, 500);
   const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
 

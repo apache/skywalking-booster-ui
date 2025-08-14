@@ -32,7 +32,7 @@ limitations under the License. -->
     </div>
     <div class="flex-h">
       <Selector
-        v-if="ebpfStore.selectedTask.targetType === 'OFF_CPU'"
+        v-if="ebpfStore.selectedTask?.targetType === 'OFF_CPU'"
         :value="aggregateType"
         :options="AggregateTypes"
         size="small"
@@ -102,7 +102,7 @@ limitations under the License. -->
   import { dateFormat } from "@/utils/dateFormat";
 
   const { t } = useI18n();
-  const ebpfStore = useEbpfStore();
+  const ebpfStore: ReturnType<typeof useEbpfStore> = useEbpfStore();
   const pageSize = 5;
   const multipleTableRef = ref<InstanceType<typeof ElTable>>();
   const selectedProcesses = ref<string[]>([]);
@@ -163,7 +163,7 @@ limitations under the License. -->
       }
     }
     const res = await ebpfStore.getEBPFAnalyze({
-      scheduleIdList,
+      scheduleIdList: scheduleIdList as string[],
       timeRanges,
       aggregateType: aggregateType.value,
     });

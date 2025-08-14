@@ -55,11 +55,11 @@ limitations under the License. -->
   import type { PropType, Ref } from "vue";
   import { useI18n } from "vue-i18n";
   import type { EventParams } from "@/types/app";
-  import type { Filters, RelatedTrace } from "@/types/dashboard";
+  import type { Filters, RelatedTrace, AssociateProcessorProps } from "@/types/dashboard";
   import { useECharts } from "@/hooks/useEcharts";
   import { addResizeListener, removeResizeListener } from "@/utils/event";
   import Trace from "@/views/dashboard/related/trace/Index.vue";
-  import associateProcessor from "@/hooks/useAssociateProcessor";
+  import useAssociateProcessor from "@/hooks/useAssociateProcessor";
   import { WidgetType } from "@/views/dashboard/data";
   import SelectorLegend from "./Legend.vue";
 
@@ -71,7 +71,7 @@ limitations under the License. -->
   const { setOptions, resize, getInstance } = useECharts(chartRef as Ref<HTMLDivElement>);
   const currentParams = ref<Nullable<EventParams>>(null);
   const showTrace = ref<boolean>(false);
-  const traceOptions = ref<{ type: string; filters?: unknown }>({
+  const traceOptions = ref<{ type: string; filters?: unknown } | any>({
     type: WidgetType.Trace,
   });
   const menuPos = reactive<{ x: number; y: number }>({ x: NaN, y: NaN });
@@ -187,7 +187,11 @@ limitations under the License. -->
       return;
     }
     if (props.filters.isRange) {
-      const { eventAssociate } = associateProcessor(props);
+      const { eventAssociate } = useAssociateProcessor({
+        filters: props.filters,
+        option: props.option,
+        relatedTrace: props.relatedTrace,
+      } as AssociateProcessorProps);
       const options = eventAssociate();
       setOptions(options || props.option);
     } else {
@@ -200,7 +204,12 @@ limitations under the License. -->
   }
 
   function viewTrace() {
-    const item = associateProcessor(props).traceFilters(currentParams.value);
+    const item = useAssociateProcessor({
+      filters: props.filters,
+      option: props.option,
+      relatedTrace: props.relatedTrace,
+    } as AssociateProcessorProps).traceFilters(currentParams.value);
+
     traceOptions.value = {
       ...traceOptions.value,
       filters: item,
@@ -243,8 +252,12 @@ limitations under the License. -->
         return;
       }
       let options;
-      if (props.filters && props.filters.isRange) {
-        const { eventAssociate } = associateProcessor(props);
+      if (props.filters?.isRange) {
+        const { eventAssociate } = useAssociateProcessor({
+          filters: props.filters,
+          option: props.option,
+          relatedTrace: props.relatedTrace,
+        } as AssociateProcessorProps);
         options = eventAssociate();
       }
       setOptions(options || props.option);

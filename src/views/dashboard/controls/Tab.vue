@@ -161,12 +161,12 @@ limitations under the License. -->
       const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
 
       dashboardStore.setActiveTabIndex(activeTabIndex.value);
-      if (dashboardStore.layout[l].children.length) {
+      if (dashboardStore.layout[l]?.children?.length) {
         const tab = dashboardStore.layout[l].children[activeTabIndex.value];
         dashboardStore.setCurrentTabItems(
           tab.enable === false ? [] : dashboardStore.layout[l].children[activeTabIndex.value].children,
         );
-        dashboardStore.setActiveTabIndex(activeTabIndex.value, props.data.i);
+        dashboardStore.setActiveTabIndex(activeTabIndex.value, Number(props.data.i));
       }
       queryExpressions();
 
@@ -177,7 +177,7 @@ limitations under the License. -->
         dashboardStore.selectWidget(props.data);
         dashboardStore.setActiveTabIndex(idx);
         const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
-        dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
+        dashboardStore.setCurrentTabItems(dashboardStore.layout[l]?.children?.[activeTabIndex.value]?.children || []);
         needQuery.value = true;
         if (route.params.activeTabIndex) {
           let p = location.href.split("/tab/")[0];
@@ -192,10 +192,10 @@ limitations under the License. -->
       function deleteTabItem(e: Event, idx: number) {
         e.stopPropagation();
         dashboardStore.removeTabItem(props.data, idx);
-        const kids = dashboardStore.layout[l].children[0];
+        const kids = dashboardStore.layout[l]?.children?.[0];
         const arr = (kids && kids.children) || [];
         dashboardStore.setCurrentTabItems(arr);
-        dashboardStore.activeGridItem(0);
+        dashboardStore.activeGridItem("0");
         activeTabIndex.value = 0;
         needQuery.value = true;
       }
@@ -226,7 +226,7 @@ limitations under the License. -->
       }
       function layoutUpdatedEvent() {
         const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
-        dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
+        dashboardStore.setCurrentTabItems(dashboardStore.layout[l]?.children?.[activeTabIndex.value]?.children || []);
       }
       function getStringWidth(s: string) {
         const dom = document.createElement("span");
@@ -282,7 +282,7 @@ limitations under the License. -->
           const index = (props.data.children || []).findIndex((tab: any) => tab.enable !== false) || 0;
           const items = ((props.data.children || [])[index] || {}).children;
           dashboardStore.setCurrentTabItems(items || []);
-          dashboardStore.activeGridItem(0);
+          dashboardStore.activeGridItem("0");
           activeTabIndex.value = index;
           dashboardStore.setActiveTabIndex(activeTabIndex.value);
           needQuery.value = true;
@@ -324,7 +324,7 @@ limitations under the License. -->
           dashboardStore.activeGridItem(props.data.i);
           dashboardStore.selectWidget(props.data);
           const l = dashboardStore.layout.findIndex((d: LayoutConfig) => d.i === props.data.i);
-          dashboardStore.setCurrentTabItems(dashboardStore.layout[l].children[activeTabIndex.value].children);
+          dashboardStore.setCurrentTabItems(dashboardStore.layout[l]?.children?.[activeTabIndex.value]?.children || []);
           needQuery.value = true;
           if (route.params.activeTabIndex) {
             let p = location.href.split("/tab/")[0];

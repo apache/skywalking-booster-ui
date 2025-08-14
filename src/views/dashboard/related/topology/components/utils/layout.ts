@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import * as d3 from "d3";
-import type { Node, Call } from "@/types/topology";
+import type { Node, Call, HierarchyNode } from "@/types/topology";
 
 export function layout(levels: Node[][], calls: Call[], radius: number) {
   // precompute level depth
@@ -279,14 +279,14 @@ export function hierarchy(levels: Node[][], calls: Call[], radius: number) {
 
   return { nodes, layout, calls: computeCallPos(calls, radius) };
 }
-export function computeHierarchyLevels(nodes: Node[]) {
-  const levelsNum: number[] = nodes.map((d: Node) => d.l || 0);
+export function computeHierarchyLevels(nodes: (Node | HierarchyNode)[]) {
+  const levelsNum: number[] = nodes.map((d: Node | HierarchyNode) => (d as Node).l || 0);
   const list = [...new Set(levelsNum)];
   const sortedArr = list.sort((a, b) => b - a);
   const nodesList = [];
 
   for (const min of sortedArr) {
-    const arr = nodes.filter((d) => d.l === min);
+    const arr = nodes.filter((d) => (d as Node).l === min);
     nodesList.push(arr);
   }
 

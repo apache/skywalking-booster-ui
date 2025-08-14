@@ -73,7 +73,7 @@ export const logStore = defineStore({
       return response;
     },
     async getInstances(id: string) {
-      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      const serviceId = this.selectorStore.currentService?.id || id;
       if (!serviceId) {
         return new Promise((resolve) => resolve({ errors: "Service ID is required" }));
       }
@@ -89,7 +89,10 @@ export const logStore = defineStore({
       return response;
     },
     async getEndpoints(id: string, keyword?: string) {
-      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      const serviceId = this.selectorStore.currentService?.id || id;
+      if (!serviceId) {
+        return new Promise((resolve) => resolve({ errors: "Service ID is required" }));
+      }
       const response = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,

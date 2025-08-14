@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="label">{{ t("linkDashboard") }}</div>
   <Selector
-    :value="(dashboardStore.selectedGrid && dashboardStore.selectedGrid.linkDashboard) || ''"
+    :value="dashboardStore.selectedGrid?.linkDashboard || ''"
     :options="linkDashboards"
     size="small"
     placeholder="Please input a dashboard name for calls"
@@ -30,6 +30,7 @@ limitations under the License. -->
   import type { DashboardItem } from "@/types/dashboard";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { EntityType } from "@/views/dashboard/data";
+  import type { LayoutConfig } from "@/types/dashboard";
   /*global defineEmits */
   const emits = defineEmits(["update"]);
   const { t } = useI18n();
@@ -55,13 +56,19 @@ limitations under the License. -->
 
   function changeLinkDashboard(opt: { value: string }[]) {
     const linkDashboard = opt.length ? opt[0].value : "";
-    const p = {
+    const item = {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+      i: "",
+      type: "",
       ...dashboardStore.selectedGrid,
       linkDashboard,
     };
-    dashboardStore.selectWidget(p);
-    dashboardStore.setConfigs(p);
-    emits("update", p);
+    dashboardStore.selectWidget(item as LayoutConfig);
+    dashboardStore.setConfigs(item as LayoutConfig);
+    emits("update", item);
   }
 </script>
 <style lang="scss" scoped>

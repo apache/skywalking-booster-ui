@@ -24,11 +24,12 @@ limitations under the License. -->
 <script lang="ts" setup>
   import type { PropType } from "vue";
   import type { Span } from "@/types/trace";
+  import type { SegmentSpan } from "@/types/profile";
   import Graph from "./D3Graph/Index.vue";
   import { TraceGraphType } from "./constant";
 
   defineProps({
-    data: { type: Array as PropType<Span[]>, default: () => [] },
+    data: { type: Array as PropType<(Span | SegmentSpan)[]>, default: () => [] },
     traceId: { type: String, default: "" },
     headerType: { type: String, default: "" },
   });

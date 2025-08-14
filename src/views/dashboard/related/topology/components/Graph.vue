@@ -75,7 +75,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { ref, computed, watch } from "vue";
   import * as d3 from "d3";
-  import type { Node, Call } from "@/types/topology";
+  import type { Node, Call, HierarchyNode } from "@/types/topology";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import icons from "@/assets/img/icons";
   import { changeNode, computeHierarchyLevels, hierarchy } from "./utils/layout";
@@ -92,7 +92,7 @@ limitations under the License. -->
       default: "",
     },
     nodes: {
-      type: Array as PropType<Node[]>,
+      type: Array as PropType<(Node | HierarchyNode)[]>,
       default: () => [],
     },
     calls: {
@@ -136,7 +136,7 @@ limitations under the License. -->
 
   function draw() {
     const levels = computeHierarchyLevels(props.nodes);
-    topologyLayout.value = hierarchy(levels, props.calls, radius);
+    topologyLayout.value = hierarchy(levels as Node[][], props.calls, radius);
     graphWidth.value = topologyLayout.value.layout.width;
     graphHeight.value = topologyLayout.value.layout.height;
     const drag: any = d3.drag().on("drag", (d: { x: number; y: number }) => {

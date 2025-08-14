@@ -31,15 +31,17 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+  import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import Header from "../related/demand-log/Header.vue";
   import Content from "../related/demand-log/Content.vue";
+  import type { LayoutConfig } from "@/types/dashboard";
 
   /*global defineProps */
   const props = defineProps({
     data: {
-      type: Object,
+      type: Object as PropType<LayoutConfig>,
       default: () => ({}),
     },
     activeIndex: { type: String, default: "" },

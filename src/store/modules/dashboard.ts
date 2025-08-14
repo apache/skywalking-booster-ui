@@ -31,11 +31,11 @@ interface DashboardState {
   entity: string;
   layerId: string;
   activedGridItem: string;
-  selectorStore: Recordable;
+  selectorStore: ReturnType<typeof useSelectorStore>;
   showTopology: boolean;
   currentTabItems: LayoutConfig[];
   dashboards: DashboardItem[];
-  currentDashboard: Nullable<DashboardItem>;
+  currentDashboard: DashboardItem;
   editMode: boolean;
   currentTabIndex: number;
   showLinkConfig: boolean;
@@ -54,7 +54,7 @@ export const dashboardStore = defineStore({
     showTopology: false,
     currentTabItems: [],
     dashboards: [],
-    currentDashboard: null,
+    currentDashboard: {} as DashboardItem,
     editMode: false,
     currentTabIndex: 0,
     showLinkConfig: false,
@@ -73,8 +73,8 @@ export const dashboardStore = defineStore({
       this.dashboards = list;
       sessionStorage.setItem("dashboards", JSON.stringify(list));
     },
-    setCurrentDashboard(item: DashboardItem) {
-      this.currentDashboard = item;
+    setCurrentDashboard(item: Nullable<DashboardItem>) {
+      this.currentDashboard = item || {};
     },
     addControl(type: WidgetType) {
       const arr = this.layout.map((d: Recordable) => Number(d.i));
@@ -253,7 +253,7 @@ export const dashboardStore = defineStore({
     setTopology(show: boolean) {
       this.showTopology = show;
     },
-    setConfigs(param: { [key: string]: unknown }) {
+    setConfigs(param: LayoutConfig) {
       const actived = this.activedGridItem.split("-");
       const index = this.layout.findIndex((d: LayoutConfig) => actived[0] === d.i);
       if (actived.length === 3) {
@@ -353,7 +353,7 @@ export const dashboardStore = defineStore({
       }
       this.dashboards = JSON.parse(sessionStorage.getItem("dashboards") || "[]");
     },
-    async updateDashboard(setting: { id: string; configuration: string }) {
+    async updateDashboard(setting: { id?: string; configuration: string }) {
       const resp = await graphql.query("updateTemplate").params({
         setting,
       });
@@ -448,6 +448,6 @@ export const dashboardStore = defineStore({
   },
 });
 
-export function useDashboardStore(): Recordable {
+export function useDashboardStore() {
   return dashboardStore(store);
 }

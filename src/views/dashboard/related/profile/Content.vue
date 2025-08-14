@@ -89,7 +89,7 @@ limitations under the License. -->
     };
     countRange();
     for (const tree of profileStore.analyzeTrees) {
-      const ele = processTree(tree.elements);
+      const ele = processTree(tree.elements as TraceProfilingElement[]);
       root.children && root.children.push(ele);
     }
     const param = (root.children || []).reduce(

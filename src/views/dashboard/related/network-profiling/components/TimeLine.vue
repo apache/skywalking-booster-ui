@@ -36,6 +36,7 @@ limitations under the License. -->
   import dateFormatStep from "@/utils/dateFormat";
   import getLocalTime from "@/utils/localtime";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import type { EBPFTaskList } from "@/types/ebpf";
 
   /*global Nullable, defineEmits */
   const emits = defineEmits(["get"]);
@@ -55,10 +56,11 @@ limitations under the License. -->
     if (!timeRange.value) {
       return;
     }
-    if (!networkProfilingStore.selectedNetworkTask.taskId) {
+    if (!networkProfilingStore.selectedNetworkTask?.taskId) {
       return;
     }
-    const { taskStartTime, fixedTriggerDuration, targetType, taskId } = networkProfilingStore.selectedNetworkTask;
+    const { taskStartTime, fixedTriggerDuration, targetType, taskId } =
+      (networkProfilingStore.selectedNetworkTask as EBPFTaskList) || {};
     if (task.value[0] && task.value[0].data.taskId === taskId) {
       if (isUpdate.value) {
         return;

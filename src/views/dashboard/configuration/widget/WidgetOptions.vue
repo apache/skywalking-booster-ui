@@ -50,11 +50,11 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import getDashboard from "@/hooks/useDashboardsSession";
-  import type { LayoutConfig } from "@/types/dashboard";
+  import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const widget = dashboardStore.selectedGrid.widget || {};
+  const widget = dashboardStore.selectedGrid?.widget || {};
   const title = ref<string>(widget.title || "");
   const tips = ref<string>(widget.tips || "");
   const name = ref<string>(widget.name || "");
@@ -66,10 +66,10 @@ limitations under the License. -->
     }
     const { selectedGrid } = dashboardStore;
     const widget = {
-      ...dashboardStore.selectedGrid.widget,
+      ...dashboardStore.selectedGrid?.widget,
       [key]: decodeURIComponent(param[key]),
     };
-    dashboardStore.selectWidget({ ...selectedGrid, widget });
+    dashboardStore.selectWidget({ ...selectedGrid, widget } as LayoutConfig);
   }
   function updateWidgetName(param: { [key: string]: string }) {
     const key = Object.keys(param)[0];
@@ -79,7 +79,7 @@ limitations under the License. -->
       ElMessage.error(t("nameTip"));
       return;
     }
-    const { widgets } = getDashboard(dashboardStore.currentDashboard);
+    const { widgets } = getDashboard(dashboardStore.currentDashboard as DashboardItem);
     const item = widgets.find((d: LayoutConfig) => d.widget && d.widget.name === n);
     if (item) {
       ElMessage.error(t("duplicateName"));

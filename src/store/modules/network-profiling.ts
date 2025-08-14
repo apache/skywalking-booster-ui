@@ -24,9 +24,9 @@ import { ElMessage } from "element-plus";
 import type { DurationTime } from "@/types/app";
 
 interface NetworkProfilingState {
-  networkTasks: Array<Recordable<EBPFTaskList>>;
+  networkTasks: EBPFTaskList[];
   networkTip: string;
-  selectedNetworkTask: Recordable<EBPFTaskList>;
+  selectedNetworkTask: Nullable<EBPFTaskList>;
   nodes: ProcessNode[];
   calls: Call[];
   node: Nullable<ProcessNode>;
@@ -43,7 +43,7 @@ export const networkProfilingStore = defineStore({
   state: (): NetworkProfilingState => ({
     networkTasks: [],
     networkTip: "",
-    selectedNetworkTask: {},
+    selectedNetworkTask: null,
     nodes: [],
     calls: [],
     node: null,
@@ -55,13 +55,13 @@ export const networkProfilingStore = defineStore({
     loadNodes: false,
   }),
   actions: {
-    setSelectedNetworkTask(task: Recordable<EBPFTaskList>) {
+    setSelectedNetworkTask(task: Nullable<EBPFTaskList>) {
       this.selectedNetworkTask = task || {};
     },
     setNode(node: Nullable<ProcessNode>) {
       this.node = node;
     },
-    setLink(link: Call) {
+    setLink(link: Nullable<Call>) {
       this.call = link;
     },
     seNodes(nodes: Node[]) {
@@ -137,7 +137,12 @@ export const networkProfilingStore = defineStore({
       }
       return response;
     },
-    async getTaskList(params: { serviceId: string; serviceInstanceId: string; targets: string[] }) {
+    async getTaskList(params: {
+      serviceId: string;
+      serviceInstanceId: string;
+      targets: string[];
+      triggerType: string;
+    }) {
       if (!params.serviceId) {
         return new Promise((resolve) => resolve({}));
       }
@@ -188,6 +193,6 @@ export const networkProfilingStore = defineStore({
   },
 });
 
-export function useNetworkProfilingStore(): Recordable {
+export function useNetworkProfilingStore() {
   return networkProfilingStore(store);
 }

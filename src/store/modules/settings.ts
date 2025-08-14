@@ -24,7 +24,7 @@ import { TTLTypes, TTLColdMap } from "../data";
 interface SettingsState {
   clusterNodes: ClusterNode[];
   debuggingConfig: Indexable<string>;
-  configTTL: Recordable<ConfigTTL>;
+  configTTL: Nullable<ConfigTTL>;
 }
 
 export const settingsStore = defineStore({
@@ -32,7 +32,7 @@ export const settingsStore = defineStore({
   state: (): SettingsState => ({
     clusterNodes: [],
     debuggingConfig: {},
-    configTTL: {},
+    configTTL: null,
   }),
   actions: {
     async getClusterNodes() {
@@ -48,11 +48,14 @@ export const settingsStore = defineStore({
         method: "get",
         path: "ConfigTTL",
       });
-      for (const item of Object.keys(response)) {
+      this.configTTL = {};
+      const keys = Object.keys(response).filter((k: string) => k);
+      for (const item of keys) {
         const rows = [];
         const row: Indexable<string> = { type: TTLTypes.HotAndWarm };
         const rowCold: Indexable<string> = { type: TTLTypes.Cold };
-        for (const key of Object.keys(response[item])) {
+        const itemKeys = Object.keys(response[item]).filter((k: string) => k);
+        for (const key of itemKeys) {
           if (HotAndWarmOpt.includes(key)) {
             row[key] = response[item][key];
           } else {
@@ -75,6 +78,6 @@ export const settingsStore = defineStore({
   },
 });
 
-export function useSettingsStore(): Recordable {
+export function useSettingsStore() {
   return settingsStore(store);
 }

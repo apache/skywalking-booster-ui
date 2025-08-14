@@ -114,6 +114,7 @@ limitations under the License. -->
   import { useSelectorStore } from "@/store/modules/selectors";
   import { ElMessage } from "element-plus";
   import { DurationOptions, ProfilingEvents } from "./data";
+  import type { AsyncProfileTaskCreationRequest } from "@/types/async-profiling";
 
   /* global defineEmits */
   const emits = defineEmits(["close"]);
@@ -165,12 +166,12 @@ limitations under the License. -->
     }
 
     const params = {
-      serviceId: selectorStore.currentService.id,
+      serviceId: selectorStore.currentService?.id,
       serviceInstanceIds: serviceInstanceIds.value,
       duration: finalDuration,
       events: asyncEvents.value,
       execArgs: execArgs.value,
-    };
+    } as AsyncProfileTaskCreationRequest;
     loading.value = true;
     const res = await asyncProfilingStore.createTask(params);
     loading.value = false;
