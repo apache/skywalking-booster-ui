@@ -34,7 +34,7 @@ limitations under the License. -->
   const selectorStore = useSelectorStore();
   const continousProfilingStore = useContinousProfilingStore();
   const dashboardStore = useDashboardStore();
-  /* global defineProps, Nullable, PropType */
+  /* global defineProps, Nullable */
   const props = defineProps({
     data: {
       type: Object as PropType<LayoutConfig>,

@@ -128,11 +128,11 @@ describe("useDashboardsSession", () => {
 
     const { associationWidget } = getDashboard({ name: "A", layer: "L1", entity: "Service" }, ConfigFieldTypes.NAME);
 
-    associationWidget("src", { k: 1 }, "Line");
+    associationWidget("src", { dataIndex: 1 }, "Line");
 
     expect(setWidget).toHaveBeenCalledTimes(1);
     const arg = setWidget.mock.calls[0][0];
-    expect(arg.filters).toEqual({ k: 1 });
+    expect(arg.filters).toEqual({ dataIndex: 1 });
     expect(arg.id).toBe("wid1");
 
     // No tab index change for non-tab widget
@@ -161,12 +161,12 @@ describe("useDashboardsSession", () => {
 
     const { associationWidget } = getDashboard({ name: "A", layer: "L1", entity: "Service" }, ConfigFieldTypes.NAME);
 
-    associationWidget("tab0-0-9", { f: true }, "Card");
+    associationWidget("tab0-0-9", { isRange: true }, "Card");
 
     // set widget called with merged filters
     expect(setWidget).toHaveBeenCalledTimes(1);
     expect(setWidget.mock.calls[0][0].id).toBe("tab0-1-0");
-    expect(setWidget.mock.calls[0][0].filters).toEqual({ f: true });
+    expect(setWidget.mock.calls[0][0].filters).toEqual({ isRange: true });
 
     // active tab index set to 1 (from target id tab0-1-0)
     expect(setActiveTabIndex).toHaveBeenCalledWith(1);
@@ -196,7 +196,7 @@ describe("useDashboardsSession", () => {
 
     const { associationWidget } = getDashboard({ name: "A", layer: "L1", entity: "Service" }, ConfigFieldTypes.NAME);
 
-    associationWidget("wid1", { a: 1 }, "Line");
+    associationWidget("wid1", { sourceId: "test" }, "Line");
 
     expect(setWidget).toHaveBeenCalledTimes(1);
     expect(setActiveTabIndex).not.toHaveBeenCalled();

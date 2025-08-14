@@ -123,7 +123,7 @@ describe("useAssociateProcessor", () => {
         filters: {
           dataIndex: 0,
           sourceId: "test",
-          duration: { startTime: 1000, endTime: 2000, step: "HOUR" },
+          duration: { startTime: "1000", endTime: "2000", step: "HOUR" },
         },
         option,
         relatedTrace: {
@@ -158,7 +158,7 @@ describe("useAssociateProcessor", () => {
         filters: {
           dataIndex: 0,
           sourceId: "test",
-          duration: { startTime: 1000, endTime: 3000, step: "HOUR" },
+          duration: { startTime: "1000", endTime: "3000", step: "HOUR" },
         },
         option,
         relatedTrace: {
@@ -194,7 +194,7 @@ describe("useAssociateProcessor", () => {
         filters: {
           dataIndex: 0,
           sourceId: "test",
-          duration: { startTime: 1000, endTime: 2000, step: "HOUR" },
+          duration: { startTime: "1000", endTime: "2000", step: "HOUR" },
         },
         option,
         relatedTrace: {
@@ -243,7 +243,7 @@ describe("useAssociateProcessor", () => {
         filters: {
           dataIndex: 0,
           sourceId: "test",
-          duration: { startTime: 1000, endTime: 2000, step: "HOUR" },
+          duration: { startTime: "1000", endTime: "2000", step: "HOUR" },
         },
         option,
         relatedTrace: {
@@ -350,8 +350,8 @@ describe("useAssociateProcessor", () => {
 
       expect(result).toBeDefined();
       expect(result?.duration).toEqual({
-        start: "2023-01-01 12",
-        end: "2023-01-01 12",
+        startTime: "2023-01-01 12",
+        endTime: "2023-01-01 12",
         step: "HOUR",
       });
       expect(result?.queryOrder).toBe("");

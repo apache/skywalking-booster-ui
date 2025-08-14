@@ -31,11 +31,6 @@ export type NodeDashboard = {
   scope: string;
   dashboard: string;
 };
-
-export type NodeDashboard = {
-  scope: string;
-  dashboard: string;
-};
 export interface LayoutConfig {
   x: number;
   y: number;
@@ -121,23 +116,6 @@ export type Filters = {
   metricValue?: { label: string; data: string; value: string }[];
   owner?: Nullable<Owner>;
   isReadRecords?: boolean | undefined;
-};
-
-export type Series = {
-  data: (number | string)[][];
-  name: string;
-};
-
-export type FilterOption = {
-  series: Series[];
-  type: string;
-  legend: LegendOptions;
-};
-
-export type AssociateProcessorProps = {
-  filters: Filters;
-  option: FilterOption;
-  relatedTrace: RelatedTrace;
 };
 
 export type Series = {

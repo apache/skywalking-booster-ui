@@ -32,7 +32,10 @@ export default function useAssociateProcessor(props: AssociateProcessorProps) {
       return;
     }
     const list = props.option.series[0].data.map((d: (number | string)[]) => d[0]);
-    if (!list.includes(props.filters.duration.endTime)) {
+    // Convert string times to numbers for comparison
+    const startTime = Number(props.filters.duration.startTime);
+    const endTime = Number(props.filters.duration.endTime);
+    if (!list.includes(endTime)) {
       return;
     }
     const markArea = {
@@ -43,10 +46,10 @@ export default function useAssociateProcessor(props: AssociateProcessorProps) {
       data: [
         [
           {
-            xAxis: props.filters.duration.startTime,
+            xAxis: startTime,
           },
           {
-            xAxis: props.filters.duration.endTime,
+            xAxis: endTime,
           },
         ],
       ],
