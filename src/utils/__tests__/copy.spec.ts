@@ -84,7 +84,7 @@ describe("copy utility function", () => {
     copy(testText);
 
     expect(ElNotification).toHaveBeenCalledWith({
-      title: "Error",
+      title: "Warning",
       message: "Clipboard is not supported in HTTP environments",
       type: "warning",
     });
@@ -103,7 +103,7 @@ describe("copy utility function", () => {
     copy(testText);
 
     expect(ElNotification).toHaveBeenCalledWith({
-      title: "Error",
+      title: "Warning",
       message: "Clipboard is not supported",
       type: "warning",
     });
@@ -121,7 +121,7 @@ describe("copy utility function", () => {
 
     expect(mockClipboard.writeText).toHaveBeenCalledWith(testText);
     expect(ElNotification).toHaveBeenCalledWith({
-      title: "Error",
+      title: "Warning",
       message: errorMessage,
       type: "warning",
     });
@@ -218,7 +218,7 @@ describe("copy utility function", () => {
 
     // Should show HTTP error, not clipboard error
     expect(ElNotification).toHaveBeenCalledWith({
-      title: "Error",
+      title: "Warning",
       message: "Clipboard is not supported in HTTP environments",
       type: "warning",
     });
@@ -243,7 +243,7 @@ describe("copy utility function", () => {
 
     // Should show clipboard not supported error
     expect(ElNotification).toHaveBeenCalledWith({
-      title: "Error",
+      title: "Warning",
       message: "Clipboard is not supported",
       type: "warning",
     });
