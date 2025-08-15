@@ -29,6 +29,11 @@ const mockClipboard = {
   writeText: vi.fn(),
 };
 
+// Mock location
+const mockLocation = {
+  protocol: "https:",
+};
+
 describe("copy utility function", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -38,13 +43,19 @@ describe("copy utility function", () => {
       value: mockClipboard,
       writable: true,
     });
+
+    // Mock location
+    Object.defineProperty(window, "location", {
+      value: mockLocation,
+      writable: true,
+    });
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it("should copy text successfully and show success notification", async () => {
+  it("should copy text successfully and show success notification in HTTPS", async () => {
     const testText = "test text to copy";
     mockClipboard.writeText.mockResolvedValue(undefined);
 
@@ -61,6 +72,43 @@ describe("copy utility function", () => {
     });
   });
 
+  it("should show error notification for HTTP protocol", () => {
+    const testText = "test text to copy";
+
+    // Set protocol to HTTP
+    Object.defineProperty(window, "location", {
+      value: { protocol: "http:" },
+      writable: true,
+    });
+
+    copy(testText);
+
+    expect(ElNotification).toHaveBeenCalledWith({
+      title: "Warning",
+      message: "Clipboard is not supported in HTTP environments",
+      type: "warning",
+    });
+    expect(mockClipboard.writeText).not.toHaveBeenCalled();
+  });
+
+  it("should show error notification when clipboard is not available", () => {
+    const testText = "test text to copy";
+
+    // Remove clipboard from navigator
+    Object.defineProperty(navigator, "clipboard", {
+      value: undefined,
+      writable: true,
+    });
+
+    copy(testText);
+
+    expect(ElNotification).toHaveBeenCalledWith({
+      title: "Warning",
+      message: "Clipboard is not supported",
+      type: "warning",
+    });
+  });
+
   it("should handle clipboard error and show error notification", async () => {
     const testText = "test text to copy";
     const errorMessage = "Clipboard permission denied";
@@ -73,7 +121,7 @@ describe("copy utility function", () => {
 
     expect(mockClipboard.writeText).toHaveBeenCalledWith(testText);
     expect(ElNotification).toHaveBeenCalledWith({
-      title: "Error",
+      title: "Warning",
       message: errorMessage,
       type: "warning",
     });
@@ -157,18 +205,47 @@ describe("copy utility function", () => {
     expect(ElNotification).toHaveBeenCalledTimes(3);
   });
 
-  it("should handle clipboard not available", async () => {
+  it("should handle HTTP protocol and clipboard not available", () => {
     const testText = "test text";
 
-    // Remove clipboard from navigator
+    // Set protocol to HTTP
+    Object.defineProperty(window, "location", {
+      value: { protocol: "http:" },
+      writable: true,
+    });
+
+    copy(testText);
+
+    // Should show HTTP error, not clipboard error
+    expect(ElNotification).toHaveBeenCalledWith({
+      title: "Warning",
+      message: "Clipboard is not supported in HTTP environments",
+      type: "warning",
+    });
+  });
+
+  it("should handle file protocol", () => {
+    const testText = "test text";
+
+    // Set protocol to file and ensure clipboard is not available
+    Object.defineProperty(window, "location", {
+      value: { protocol: "file:" },
+      writable: true,
+    });
+
+    // Remove clipboard from navigator for this test
     Object.defineProperty(navigator, "clipboard", {
       value: undefined,
       writable: true,
     });
 
-    // Should not throw error
-    expect(() => {
-      copy(testText);
-    }).not.toThrow();
+    copy(testText);
+
+    // Should show clipboard not supported error
+    expect(ElNotification).toHaveBeenCalledWith({
+      title: "Warning",
+      message: "Clipboard is not supported",
+      type: "warning",
+    });
   });
 });
