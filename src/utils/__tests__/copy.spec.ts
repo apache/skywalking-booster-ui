@@ -218,7 +218,7 @@ describe("copy utility function", () => {
 
     // Should show HTTP error, not clipboard error
     expect(ElNotification).toHaveBeenCalledWith({
-      title: "Error",
+      title: "Warning",
       message: "Clipboard is not supported in HTTP environments",
       type: "warning",
     });
