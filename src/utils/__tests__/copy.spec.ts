@@ -103,7 +103,7 @@ describe("copy utility function", () => {
     copy(testText);
 
     expect(ElNotification).toHaveBeenCalledWith({
-      title: "Error",
+      title: "Warning",
       message: "Clipboard is not supported",
       type: "warning",
     });
