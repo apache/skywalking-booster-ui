@@ -18,8 +18,20 @@
 import { ElNotification } from "element-plus";
 
 export default (text: string): void => {
+  if (location.protocol === "http:") {
+    ElNotification({
+      title: "Error",
+      message: "Clipboard is not supported in HTTP environments",
+      type: "warning",
+    });
+    return;
+  }
   if (!navigator.clipboard) {
-    console.error("Clipboard is not supported");
+    ElNotification({
+      title: "Error",
+      message: "Clipboard is not supported",
+      type: "warning",
+    });
     return;
   }
   navigator.clipboard
