@@ -181,9 +181,9 @@ describe("useAssociateProcessor", () => {
           {
             name: "test",
             data: [
-              [1000, 1],
-              [2000, 2],
-              [3000, 3],
+              ["1000", 1],
+              ["2000", 2],
+              ["3000", 3],
             ] as (number | string)[][],
           },
         ],
@@ -213,7 +213,7 @@ describe("useAssociateProcessor", () => {
       expect(result?.series[0].markArea).toEqual({
         silent: true,
         itemStyle: { opacity: 0.3 },
-        data: [[{ xAxis: 1000 }, { xAxis: 2000 }]],
+        data: [[{ xAxis: "1000" }, { xAxis: "2000" }]],
       });
       expect(structuredCloneMock).toHaveBeenCalledWith(option.series);
     });
@@ -224,15 +224,15 @@ describe("useAssociateProcessor", () => {
           {
             name: "Series1",
             data: [
-              [1000, 1],
-              [2000, 2],
+              ["1000", 1],
+              ["2000", 2],
             ] as (number | string)[][],
           },
           {
             name: "Series2",
             data: [
-              [1000, 3],
-              [2000, 4],
+              ["1000", 3],
+              ["2000", 4],
             ] as (number | string)[][],
           },
         ],

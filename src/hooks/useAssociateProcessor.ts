@@ -32,9 +32,7 @@ export default function useAssociateProcessor(props: AssociateProcessorProps) {
       return;
     }
     const list = props.option.series[0].data.map((d: (number | string)[]) => d[0]);
-    // Convert string times to numbers for comparison
-    const startTime = Number(props.filters.duration.startTime);
-    const endTime = Number(props.filters.duration.endTime);
+    const { startTime, endTime } = props.filters.duration || {};
     if (!list.includes(endTime)) {
       return;
     }
