@@ -65,8 +65,8 @@ limitations under the License. -->
     const config = props.config.graph as LogConfig;
     const keywords = Object.values(logStore.conditions.keywordsOfContent || {});
     const regex = new RegExp(keywords.join("|"), "gi");
-    const timestamp = config?.showTimeStamp ? props.data.timestamp : "";
-    return `${dateFormat(timestamp)} ${content}`.replace(regex, (match) => `<span style="color: red">${match}</span>`);
+    const timestamp = config?.showTimeStamp ? dateFormat(props.data.timestamp) : "";
+    return `${timestamp} ${content}`.replace(regex, (match) => `<span style="color: red">${match}</span>`);
   };
 
   function selectLog(label: string, value: string) {
