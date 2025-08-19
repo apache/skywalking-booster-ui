@@ -97,4 +97,5 @@ export const dateFormatTime = (date: Date, step: string): string => {
   return "";
 };
 
-export const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") => dayjs(new Date(date)).format(pattern);
+export const dateFormat = (date: number | string, pattern = "YYYY-MM-DD HH:mm:ss") =>
+  dayjs(new Date(date)).format(pattern);

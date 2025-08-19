@@ -24,6 +24,7 @@ import { useSelectorStore } from "@/store/modules/selectors";
 import { QueryOrders } from "@/views/dashboard/data";
 import { EndpointsTopNDefault } from "../data";
 import { useDuration } from "@/hooks/useDuration";
+import type { LogItem } from "@/types/log";
 interface TraceState {
   services: Service[];
   instances: Instance[];
@@ -32,7 +33,7 @@ interface TraceState {
   traceSpans: Span[];
   currentTrace: Nullable<Trace>;
   conditions: Recordable;
-  traceSpanLogs: Recordable[];
+  traceSpanLogs: LogItem[];
   selectorStore: Recordable;
   selectedSpan: Recordable<Span>;
   serviceList: string[];

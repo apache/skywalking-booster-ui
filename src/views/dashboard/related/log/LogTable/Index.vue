@@ -49,6 +49,8 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
+  import type { PropType } from "vue";
+  import type { LogItem } from "@/types/log";
   import { ServiceLogConstants, BrowserLogConstants, ServiceLogDetail } from "./data";
   import LogBrowser from "./LogBrowser.vue";
   import LogService from "./LogService.vue";
@@ -57,7 +59,7 @@ limitations under the License. -->
   /*global defineProps */
   const props = defineProps({
     type: { type: String, default: "service" },
-    tableData: { type: Array, default: () => [] },
+    tableData: { type: Array as PropType<LogItem[]>, default: () => [] },
     noLink: { type: Boolean, default: true },
   });
   const { t } = useI18n();
