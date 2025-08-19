@@ -30,9 +30,6 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MetricConfigOpt } from "@/types/dashboard";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { Node, Call } from "@/types/topology";
-import type { ServiceWithGroup } from "@/views/dashboard/graphs/ServiceList.vue";
-
-type AllPods = Instance | Endpoint | ServiceWithGroup;
 /**
  * Shape of a single execExpression GraphQL response entry.
  */

@@ -89,6 +89,34 @@ limitations under the License. -->
     merge: boolean;
     group: string;
   }
+
+  // Helper function to safely map PodWithMetrics back to ServiceWithGroup
+  function mapToServiceWithGroup(data: PodWithMetrics[]): ServiceWithGroup[] {
+    return data.map((item) => {
+      // Cast to any first to access the extended properties, then extract safely
+      const extendedItem = item as any;
+
+      // Extract the base service properties, handling the index signature conflict
+      const baseService: Service = {
+        id: item.id,
+        value: item.value,
+        label: item.label,
+        layers: extendedItem.layers,
+        normal: extendedItem.normal,
+        shortName: extendedItem.shortName,
+      };
+
+      // Create ServiceWithGroup with required properties
+      const serviceWithGroup: ServiceWithGroup = {
+        ...baseService,
+        group: extendedItem.group || "",
+        merge: extendedItem.merge || false,
+      };
+
+      return serviceWithGroup;
+    });
+  }
+
   /*global defineProps */
   const props = defineProps({
     data: {
@@ -213,17 +241,17 @@ limitations under the License. -->
     });
     queryServiceExpressions(currentServices);
   }
-  async function queryServiceExpressions(currentServices: ServiceWithGroup[]) {
+  async function queryServiceExpressions(currentServices: any[]) {
     const expressions = props.config.expressions || [];
     const subExpressions = props.config.subExpressions || [];
 
     if (expressions.length && expressions[0]) {
       const params = await useExpressionsQueryPodsMetrics(
-        currentServices as unknown as PodWithMetrics[],
+        currentServices as PodWithMetrics[],
         { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[0].value,
       );
-      services.value = params.data as unknown as ServiceWithGroup[];
+      services.value = mapToServiceWithGroup(params.data);
       colMetrics.value = params.names;
       colSubMetrics.value = params.subNames;
       metricConfig.value = params.metricConfigArr;
@@ -231,7 +259,7 @@ limitations under the License. -->
       emit("expressionTips", { tips: params.expressionsTips, subTips: params.subExpressionsTips });
       return;
     }
-    services.value = currentServices;
+    services.value = currentServices as ServiceWithGroup[];
     colMetrics.value = [];
     colSubMetrics.value = [];
     metricConfig.value = [];
