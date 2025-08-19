@@ -215,6 +215,10 @@ export interface TextConfig extends BaseConfig {
   url: string;
 }
 
+export interface LogConfig extends BaseConfig {
+  showTimeStamp: boolean;
+}
+
 export interface TableConfig extends BaseConfig {
   showTableValues: boolean;
   tableHeaderCol2: string;

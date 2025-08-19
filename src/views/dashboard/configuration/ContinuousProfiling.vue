@@ -11,8 +11,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="item">
-    <div>{{ t("instanceDashboards") }}</div>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("instanceDashboards") }}</div>
     <Selector
       :value="instanceDashboardName || ''"
       :options="instanceDashboards"
@@ -23,8 +23,8 @@ limitations under the License. -->
       :clearable="true"
     />
   </div>
-  <div class="item">
-    <div>{{ t("processDashboards") }}</div>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("processDashboards") }}</div>
     <Selector
       :value="processDashboardName || ''"
       :options="processDashboards"
@@ -35,14 +35,7 @@ limitations under the License. -->
       :clearable="true"
     />
   </div>
-  <div class="footer">
-    <el-button size="small">
-      {{ t("cancel") }}
-    </el-button>
-    <el-button size="small" type="primary" @click="applyConfig">
-      {{ t("apply") }}
-    </el-button>
-  </div>
+  <ConfigurationFooter />
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
@@ -50,6 +43,8 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { EntityType } from "../data";
   import type { DashboardItem, LayoutConfig } from "@/types/dashboard";
+  import ConfigurationFooter from "./components/ConfigurationFooter.vue";
+  import "./style.scss";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
@@ -74,11 +69,6 @@ limitations under the License. -->
       }
     }
   }
-
-  function applyConfig() {
-    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
-    dashboardStore.setConfigPanel(false);
-  }
   function changeDashboard(param: { [key: string]: unknown }) {
     dashboardStore.selectWidget({
       ...dashboardStore.selectedGrid,
@@ -87,21 +77,6 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  .footer {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    border-top: 1px solid $border-color;
-    padding: 10px;
-    text-align: right;
-    width: 100%;
-    background-color: $theme-background;
-  }
-
-  .item {
-    margin: 10px 0;
-  }
-
   .selectors {
     width: 500px;
   }

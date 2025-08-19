@@ -14,25 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+.config-item {
+  margin: 10px 0;
+}
 
-import Text from "./Text.vue";
-import Widget from "./Widget.vue";
-import Topology from "./Topology.vue";
-import Event from "./Event.vue";
-import TimeRange from "./TimeRange.vue";
-import ThirdPartyApp from "./ThirdPartyApp.vue";
-import ContinuousProfiling from "./ContinuousProfiling.vue";
-import Tab from "./Tab.vue";
-import Log from "./Log.vue";
-
-export default {
-  Tab,
-  Text,
-  Widget,
-  Topology,
-  Event,
-  TimeRange,
-  ThirdPartyApp,
-  ContinuousProfiling,
-  Log,
-};
+.config-label {
+  font-size: 13px;
+  font-weight: 500;
+  align-items: center;
+  width: 200px;
+}

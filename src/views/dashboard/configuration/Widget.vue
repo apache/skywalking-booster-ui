@@ -70,14 +70,7 @@ limitations under the License. -->
         </el-collapse-item>
       </el-collapse>
     </div>
-    <div class="footer">
-      <el-button size="small" @click="cancelConfig">
-        {{ t("cancel") }}
-      </el-button>
-      <el-button size="small" type="primary" @click="applyConfig">
-        {{ t("apply") }}
-      </el-button>
-    </div>
+    <ConfigurationFooter />
   </div>
 </template>
 <script lang="ts">
@@ -88,7 +81,8 @@ limitations under the License. -->
   import type { Option } from "@/types/app";
   import graphs from "../graphs";
   import CustomOptions from "./widget/index";
-  import type { LayoutConfig } from "@/types/dashboard";
+  import ConfigurationFooter from "./components/ConfigurationFooter.vue";
+  import "./style.scss";
 
   export default defineComponent({
     name: "WidgetEdit",
@@ -115,7 +109,6 @@ limitations under the License. -->
         index: dashboardStore.selectedGrid?.i,
         visType: [],
       });
-      const originConfig = dashboardStore.selectedGrid;
       const widget = computed(() => dashboardStore.selectedGrid?.widget || {});
       const graph = computed(() => dashboardStore.selectedGrid?.graph || {});
       const title = computed(() => encodeURIComponent(widget.value.title || ""));
@@ -137,16 +130,6 @@ limitations under the License. -->
         loading.value = load;
       }
 
-      function applyConfig() {
-        dashboardStore.setConfigPanel(false);
-        dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
-      }
-
-      function cancelConfig() {
-        dashboardStore.selectWidget(originConfig);
-        dashboardStore.setConfigPanel(false);
-      }
-
       return {
         states,
         loading,
@@ -154,8 +137,6 @@ limitations under the License. -->
         appStoreWithOut,
         configHeight,
         dashboardStore,
-        applyConfig,
-        cancelConfig,
         getSource,
         getErrors,
         setLoading,
@@ -223,17 +204,6 @@ limitations under the License. -->
     font-size: $font-size-normal;
     text-align: center;
     line-height: 400px;
-  }
-
-  .footer {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    border-top: 1px solid $border-color-primary;
-    padding: 10px;
-    text-align: right;
-    width: 100%;
-    background-color: $theme-background;
   }
 
   .collapse {
