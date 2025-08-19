@@ -32,6 +32,7 @@ limitations under the License. -->
         :key="'service' + index"
         :noLink="noLink"
         @select="setCurrentLog"
+        :config="data"
       />
     </div>
     <slot></slot>
@@ -49,6 +50,8 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
+  import type { PropType } from "vue";
+  import type { LayoutConfig } from "@/types/dashboard";
   import { ServiceLogConstants, BrowserLogConstants, ServiceLogDetail } from "./data";
   import LogBrowser from "./LogBrowser.vue";
   import LogService from "./LogService.vue";
@@ -59,6 +62,10 @@ limitations under the License. -->
     type: { type: String, default: "service" },
     tableData: { type: Array, default: () => [] },
     noLink: { type: Boolean, default: true },
+    data: {
+      type: Object as PropType<LayoutConfig>,
+      default: () => ({}),
+    },
   });
   const { t } = useI18n();
   const currentLog = ref<any>({});

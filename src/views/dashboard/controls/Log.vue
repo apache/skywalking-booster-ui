@@ -31,7 +31,7 @@ limitations under the License. -->
       <Header :needQuery="needQuery" :data="data" />
     </div>
     <div class="log">
-      <List />
+      <List :data="data" />
     </div>
   </div>
 </template>
