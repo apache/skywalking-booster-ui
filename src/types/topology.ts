@@ -21,8 +21,26 @@ export interface Call {
   id: string;
   detectPoints: string[];
   type?: string;
-  sourceObj?: any;
-  targetObj?: any;
+  sourceObj?: {
+    serviceName?: string;
+    name?: string;
+    normal?: boolean;
+    isReal?: boolean;
+    id?: string;
+    layers?: string[];
+    x?: number;
+    y?: number;
+  };
+  targetObj?: {
+    serviceName?: string;
+    name?: string;
+    normal?: boolean;
+    isReal?: boolean;
+    id?: string;
+    layers?: string[];
+    x?: number;
+    y?: number;
+  };
   value?: number;
   lowerArc?: boolean;
   sourceComponents: string[];

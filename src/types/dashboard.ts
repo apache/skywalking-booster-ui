@@ -65,6 +65,10 @@ export interface LayoutConfig {
   nodeMetricConfig?: MetricConfigOpt[];
   instanceDashboardName?: string;
   processDashboardName?: string;
+  autoPeriod?: number;
+  auto?: number;
+  height?: number;
+  width?: number;
 }
 
 type LegendMQE = {

@@ -78,14 +78,14 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import type { Service } from "@/types/selector";
-  import { useExpressionsQueryPodsMetrics } from "@/hooks/useExpressionsProcessor";
+  import { useExpressionsQueryPodsMetrics, PodWithMetrics } from "@/hooks/useExpressionsProcessor";
   import { EntityType } from "../data";
   import router from "@/router";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
   import ColumnGraph from "./components/ColumnGraph.vue";
 
-  interface ServiceWithGroup extends Service {
+  export interface ServiceWithGroup extends Service {
     merge: boolean;
     group: string;
   }
@@ -219,11 +219,11 @@ limitations under the License. -->
 
     if (expressions.length && expressions[0]) {
       const params = await useExpressionsQueryPodsMetrics(
-        currentServices,
+        currentServices as unknown as PodWithMetrics[],
         { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[0].value,
       );
-      services.value = params.data;
+      services.value = params.data as unknown as ServiceWithGroup[];
       colMetrics.value = params.names;
       colSubMetrics.value = params.subNames;
       metricConfig.value = params.metricConfigArr;

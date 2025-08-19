@@ -62,20 +62,25 @@ export function layout(levels: Node[][], calls: Call[], radius: number) {
 
 export function computeCallPos(calls: Call[], radius: number) {
   for (const [index, call] of calls.entries()) {
-    const centrePoints = [call.sourceObj.x, call.sourceObj.y, call.targetObj.x, call.targetObj.y];
+    const centrePoints = [
+      call.sourceObj?.x || 0,
+      call.sourceObj?.y || 0,
+      call.targetObj?.x || 0,
+      call.targetObj?.y || 0,
+    ];
     for (const [idx, link] of calls.entries()) {
       if (
         index < idx &&
         call.id !== link.id &&
-        call.sourceObj.x === link.targetObj.x &&
-        call.sourceObj.y === link.targetObj.y &&
-        call.targetObj.x === link.sourceObj.x &&
-        call.targetObj.y === link.sourceObj.y
+        call.sourceObj?.x === link.targetObj?.x &&
+        call.sourceObj?.y === link.targetObj?.y &&
+        call.targetObj?.x === link.sourceObj?.x &&
+        call.targetObj?.y === link.sourceObj?.y
       ) {
-        if (call.targetObj.y === call.sourceObj.y) {
+        if (call.targetObj?.y === call.sourceObj?.y) {
           centrePoints[1] = centrePoints[1] - 8;
           centrePoints[3] = centrePoints[3] - 8;
-        } else if (call.targetObj.x === call.sourceObj.x) {
+        } else if (call.targetObj?.x === call.sourceObj?.x) {
           centrePoints[0] = centrePoints[0] - 8;
           centrePoints[2] = centrePoints[2] - 8;
         } else {
@@ -127,14 +132,14 @@ function findMostFrequent(arr: Call[]) {
 
   for (let i = 0; i < arr.length; i++) {
     const item = arr[i];
-    count[item.sourceObj.id] = (count[item.sourceObj.id] || 0) + 1;
-    if (count[item.sourceObj.id] > maxCount) {
-      maxCount = count[item.sourceObj.id];
+    count[item.sourceObj?.id || ""] = (count[item.sourceObj?.id || ""] || 0) + 1;
+    if (count[item.sourceObj?.id || ""] > maxCount) {
+      maxCount = count[item.sourceObj?.id || ""];
       maxItem = item.sourceObj;
     }
-    count[item.targetObj.id] = (count[item.targetObj.id] || 0) + 1;
-    if (count[item.targetObj.id] > maxCount) {
-      maxCount = count[item.targetObj.id];
+    count[item.targetObj?.id || ""] = (count[item.targetObj?.id || ""] || 0) + 1;
+    if (count[item.targetObj?.id || ""] > maxCount) {
+      maxCount = count[item.targetObj?.id || ""];
       maxItem = item.targetObj;
     }
   }
@@ -156,7 +161,7 @@ export function computeLevels(calls: Call[], nodeList: Node[], arr: Node[][]) {
   const index = nodes.findIndex((n: Node) => n.type === "USER");
   let key = index;
   if (index < 0) {
-    key = nodes.findIndex((n: Node) => n.id === node.id);
+    key = nodes.findIndex((n: Node) => n.id === node?.id);
   }
   levels.push([nodes[key]]);
   nodes = nodes.filter((_: unknown, index: number) => index !== key);

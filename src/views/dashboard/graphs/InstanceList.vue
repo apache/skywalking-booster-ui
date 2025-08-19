@@ -91,6 +91,7 @@ limitations under the License. -->
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { MetricConfigOpt } from "@/types/dashboard";
   import ColumnGraph from "./components/ColumnGraph.vue";
+  import type { PodWithMetrics } from "@/hooks/useExpressionsProcessor";
 
   /*global defineProps */
   const props = defineProps({
@@ -176,11 +177,11 @@ limitations under the License. -->
 
     if (expressions.length && expressions[0]) {
       const params = await useExpressionsQueryPodsMetrics(
-        currentInstances,
+        currentInstances as PodWithMetrics[],
         { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[3].value,
       );
-      instances.value = params.data;
+      instances.value = params.data as Instance[];
       colMetrics.value = params.names;
       colSubMetrics.value = params.subNames;
       typesOfMQE.value = params.metricTypesArr;

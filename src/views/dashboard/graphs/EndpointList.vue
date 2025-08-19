@@ -165,7 +165,14 @@ limitations under the License. -->
         { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[2].value,
       );
-      currentEndpoints.value = params.data;
+      currentEndpoints.value = params.data
+        .filter((item): item is Endpoint => "merge" in item && typeof item.merge === "string")
+        .map((item) => ({
+          id: item.id,
+          value: item.value,
+          label: item.label,
+          merge: item.merge,
+        }));
       colMetrics.value = params.names;
       colSubMetrics.value = params.subNames;
       metricConfig.value = params.metricConfigArr;
