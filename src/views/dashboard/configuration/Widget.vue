@@ -89,6 +89,7 @@ limitations under the License. -->
     components: {
       ...graphs,
       ...CustomOptions,
+      ConfigurationFooter,
     },
     setup() {
       const configHeight = document.documentElement.clientHeight - 540;
