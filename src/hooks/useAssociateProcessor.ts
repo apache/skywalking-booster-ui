@@ -33,7 +33,7 @@ export default function useAssociateProcessor(props: AssociateProcessorProps) {
     }
     const list = props.option.series[0].data.map((d: (number | string)[]) => d[0]);
     const { startTime, endTime } = props.filters.duration || {};
-    if (!list.includes(endTime)) {
+    if (typeof endTime === "undefined" || !list.includes(endTime)) {
       return;
     }
     const markArea = {
