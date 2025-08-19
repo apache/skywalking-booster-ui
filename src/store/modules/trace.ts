@@ -16,7 +16,7 @@
  */
 import { defineStore } from "pinia";
 import type { Instance, Endpoint, Service } from "@/types/selector";
-import type { Trace, Span } from "@/types/trace";
+import type { Trace, Span, TraceCondition } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -32,10 +32,10 @@ interface TraceState {
   traceList: Trace[];
   traceSpans: Span[];
   currentTrace: Nullable<Trace>;
-  conditions: Recordable;
+  conditions: TraceCondition;
   traceSpanLogs: LogItem[];
-  selectorStore: Recordable;
-  selectedSpan: Recordable<Span>;
+  selectorStore: ReturnType<typeof useSelectorStore>;
+  selectedSpan: Nullable<Span>;
   serviceList: string[];
 }
 const { getDurationTime } = useDuration();
@@ -49,7 +49,7 @@ export const traceStore = defineStore({
     traceList: [],
     traceSpans: [],
     currentTrace: null,
-    selectedSpan: {},
+    selectedSpan: null,
     conditions: {
       queryDuration: getDurationTime(),
       traceState: "ALL",
