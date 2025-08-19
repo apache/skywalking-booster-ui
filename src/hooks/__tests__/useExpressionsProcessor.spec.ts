@@ -124,7 +124,7 @@ describe("useExpressionsProcessor", () => {
       expect(result).toEqual({
         "1": {
           source: { "metric1, service=test": ["100"] },
-          tips: [null],
+          tips: [""],
           typesOfMQE: [ExpressionResultType.SINGLE_VALUE],
         },
       });
