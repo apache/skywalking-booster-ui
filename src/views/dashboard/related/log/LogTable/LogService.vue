@@ -38,12 +38,8 @@ limitations under the License. -->
   import getDashboard from "@/hooks/useDashboardsSession";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
-  import { dateFormat } from "@/utils/dateFormat";
   import { WidgetType } from "@/views/dashboard/data";
   import { useLogStore } from "@/store/modules/log";
-  import type { LogConfig } from "@/types/dashboard";
-
-  const logStore = useLogStore();
 
   /*global defineProps, defineEmits */
   const props = defineProps({
@@ -51,6 +47,7 @@ limitations under the License. -->
     noLink: { type: Boolean, default: true },
     config: { type: Object as PropType<LayoutConfig>, default: () => ({}) },
   });
+  const logStore = useLogStore();
   const dashboardStore = useDashboardStore();
   const options: LayoutConfig | null = inject("options") || null;
   const emit = defineEmits(["select"]);
@@ -62,11 +59,9 @@ limitations under the License. -->
     return (props.data.tags.find((d: { key: string; value: string }) => d.key === "level") || {}).value || "";
   });
   const highlightKeywords = (content: string) => {
-    const config = props.config.graph as LogConfig;
     const keywords = Object.values(logStore.conditions.keywordsOfContent || {});
     const regex = new RegExp(keywords.join("|"), "gi");
-    const timestamp = config?.showTimeStamp ? dateFormat(props.data.timestamp) : "";
-    return `${timestamp} ${content}`.replace(regex, (match) => `<span style="color: red">${match}</span>`);
+    return `${content}`.replace(regex, (match) => `<span style="color: red">${match}</span>`);
   };
 
   function selectLog(label: string, value: string) {

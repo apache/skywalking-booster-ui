@@ -405,6 +405,5 @@ const msg = {
   minutes: "分钟",
   invalidProfilingDurationRange: "请输入1到900秒之间的有效时长",
   taskCreatedSuccessfully: "任务创建成功",
-  showTimestamp: "显示时间戳",
 };
 export default msg;

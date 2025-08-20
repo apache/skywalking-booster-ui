@@ -20,9 +20,6 @@ limitations under the License. -->
           <Icon iconName="ellipsis_v" size="middle" class="operation" />
         </span>
       </template>
-      <div class="tools" @click="editConfig">
-        <span>{{ t("edit") }}</span>
-      </div>
       <div class="tools" @click="removeWidget">
         <span>{{ t("delete") }}</span>
       </div>
@@ -56,11 +53,6 @@ limitations under the License. -->
   provide("options", props.data);
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-
-  function editConfig() {
-    dashboardStore.setConfigPanel(true);
-    dashboardStore.setConfigs(props.data);
-  }
 
   function removeWidget() {
     dashboardStore.removeControls(props.data);

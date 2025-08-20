@@ -33,6 +33,7 @@ interface LogState {
   supportQueryLogsByKeywords: boolean;
   logs: Recordable[];
   loadLogs: boolean;
+  logHeaderType: string;
 }
 const { getDurationTime } = useDuration();
 
@@ -50,6 +51,7 @@ export const logStore = defineStore({
     selectorStore: useSelectorStore(),
     logs: [],
     loadLogs: false,
+    logHeaderType: localStorage.getItem("log-header-type") || "content",
   }),
   actions: {
     setLogCondition(data: Recordable) {
@@ -61,6 +63,9 @@ export const logStore = defineStore({
         queryDuration: getDurationTime(),
         paging: { pageNum: 1, pageSize: 15 },
       };
+    },
+    setLogHeaderType(type: string) {
+      this.logHeaderType = type;
     },
     async getServices(layer: string) {
       const response = await graphql.query("queryServices").params({

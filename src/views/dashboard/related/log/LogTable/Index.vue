@@ -17,7 +17,19 @@ limitations under the License. -->
   <div class="log">
     <div class="log-header flex-h" :class="type === 'browser' ? ['browser-header', 'flex-h'] : 'service-header'">
       <template v-for="(item, index) in columns" :key="`col${index}`">
-        <div :class="[item.label, ['message', 'stack'].includes(item.label) ? 'max-item' : '']">
+        <div v-if="item.label === 'content'" class="content">
+          <Selector
+            :options="[
+              { label: 'Content', value: 'content' },
+              { label: 'Timestamp - Content', value: 'contentTimestamp' },
+            ]"
+            v-model="headerType"
+            size="small"
+            @change="handleHeaderType"
+            class="content-selector"
+          />
+        </div>
+        <div v-else :class="[item.label, ['message', 'stack'].includes(item.label) ? 'max-item' : '']">
           {{ item.value && t(item.value) }}
         </div>
       </template>
@@ -27,7 +39,7 @@ limitations under the License. -->
     </div>
     <div v-else>
       <LogService
-        v-for="(item, index) in tableData"
+        v-for="(item, index) in logTableData"
         :data="item"
         :key="'service' + index"
         :noLink="noLink"
@@ -48,7 +60,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
   import type { PropType } from "vue";
   import type { LayoutConfig } from "@/types/dashboard";
@@ -56,11 +68,14 @@ limitations under the License. -->
   import LogBrowser from "./LogBrowser.vue";
   import LogService from "./LogService.vue";
   import LogDetail from "./LogDetail.vue";
+  import { useLogStore } from "@/store/modules/log";
+  import { dateFormat } from "@/utils/dateFormat";
+  import type { LogItem } from "@/types/log";
 
   /*global defineProps */
   const props = defineProps({
     type: { type: String, default: "service" },
-    tableData: { type: Array, default: () => [] },
+    tableData: { type: Array as PropType<LogItem[]>, default: () => [] },
     noLink: { type: Boolean, default: true },
     data: {
       type: Object as PropType<LayoutConfig>,
@@ -68,13 +83,28 @@ limitations under the License. -->
     },
   });
   const { t } = useI18n();
-  const currentLog = ref<any>({});
+  const logStore = useLogStore();
+  const currentLog = ref<LogItem>({} as LogItem);
   const showDetail = ref<boolean>(false);
-  const columns: any[] = props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
+  const columns: Record<string, string>[] = props.type === "browser" ? BrowserLogConstants : ServiceLogConstants;
+  const headerType = ref<string>(localStorage.getItem("log-header-type") || "content");
+  const logTableData = computed(() => {
+    const logs = props.tableData.map((item: LogItem) => ({ ...item }));
+    return logs.map((item: LogItem) => {
+      item.content =
+        logStore.logHeaderType === "contentTimestamp" ? `${dateFormat(item.timestamp)} ${item.content}` : item.content;
+      return item;
+    });
+  });
 
-  function setCurrentLog(log: any) {
+  function setCurrentLog(log: LogItem) {
     showDetail.value = true;
     currentLog.value = log;
+  }
+
+  function handleHeaderType(param: { value: string }[]) {
+    localStorage.setItem("log-header-type", param[0].value);
+    logStore.setLogHeaderType(param[0].value);
   }
 </script>
 <style lang="scss" scoped>
@@ -134,6 +164,11 @@ limitations under the License. -->
   }
 
   .service-header div {
-    width: 140px;
+    width: 200px;
+    padding: 0;
+  }
+
+  .content-selector {
+    width: 200px;
   }
 </style>

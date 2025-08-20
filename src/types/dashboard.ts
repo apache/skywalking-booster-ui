@@ -164,8 +164,7 @@ export type GraphConfig =
   | TopologyConfig
   | TextConfig
   | TimeRangeConfig
-  | TopListConfig
-  | LogConfig;
+  | TopListConfig;
 
 export interface BaseConfig {
   type?: string;
@@ -214,10 +213,6 @@ export interface TextConfig extends BaseConfig {
   fontColor: string;
   content: string;
   url: string;
-}
-
-export interface LogConfig extends BaseConfig {
-  showTimeStamp?: boolean;
 }
 
 export interface TableConfig extends BaseConfig {

@@ -14,23 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import Text from "./Text.vue";
-import Widget from "./Widget.vue";
-import Topology from "./Topology.vue";
-import Event from "./Event.vue";
-import TimeRange from "./TimeRange.vue";
-import ThirdPartyApp from "./ThirdPartyApp.vue";
-import ContinuousProfiling from "./ContinuousProfiling.vue";
-import Tab from "./Tab.vue";
-
-export default {
-  Tab,
-  Text,
-  Widget,
-  Topology,
-  Event,
-  TimeRange,
-  ThirdPartyApp,
-  ContinuousProfiling,
-};
+export interface LogItem {
+  timestamp: number;
+  content: string;
+  tags: { key: string; value: string }[];
+  serviceId: string;
+  traceId: string;
+  spanId: string;
+  parentSpanId: string;
+  processId: string;
+  processName: string;
+  processTags: { key: string; value: string }[];
+  processStartTime: string;
+  processEndTime: string;
+}

@@ -407,6 +407,5 @@ const msg = {
   minutes: "Minutes",
   invalidProfilingDurationRange: "Please enter a valid duration between 1 and 900 seconds",
   taskCreatedSuccessfully: "Task created successfully",
-  showTimestamp: "Show Timestamp",
 };
 export default msg;
