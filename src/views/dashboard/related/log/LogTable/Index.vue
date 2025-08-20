@@ -92,7 +92,9 @@ limitations under the License. -->
     const logs = props.tableData.map((item: LogItem) => ({ ...item }));
     return logs.map((item: LogItem) => {
       item.content =
-        logStore.logHeaderType === "contentTimestamp" ? `${dateFormat(item.timestamp)} ${item.content}` : item.content;
+        logStore.logHeaderType === "contentTimestamp"
+          ? `${dateFormat(item.timestamp, "YYYY-MM-DD HH:mm:ss", "UTC")} ${item.content}`
+          : item.content;
       return item;
     });
   });

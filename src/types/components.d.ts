@@ -7,8 +7,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ButtonSelector: typeof import('./../components/ButtonSelector.vue')['default']
-    ButtonSelectorDemo: typeof import('./../components/ButtonSelectorDemo.vue')['default']
     DateCalendar: typeof import('./../components/DateCalendar.vue')['default']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']

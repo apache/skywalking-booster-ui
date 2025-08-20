@@ -15,6 +15,11 @@
  * limitations under the License.
  */
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 export default function dateFormatStep(date: Date, step: string, monthDayDiff?: boolean): string {
   const year = date.getFullYear();
   const monthTemp = date.getMonth() + 1;
@@ -97,4 +102,10 @@ export const dateFormatTime = (date: Date, step: string): string => {
   return "";
 };
 
-export const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss") => dayjs(new Date(date)).format(pattern);
+export const dateFormat = (date: number, pattern = "YYYY-MM-DD HH:mm:ss", timezone?: string) => {
+  const dayjsInstance = dayjs(new Date(date));
+  if (timezone) {
+    return dayjsInstance.tz(timezone).format(pattern);
+  }
+  return dayjsInstance.format(pattern);
+};
