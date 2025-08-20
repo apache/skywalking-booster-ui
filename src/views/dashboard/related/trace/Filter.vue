@@ -354,7 +354,7 @@ limitations under the License. -->
 
   .search-btn {
     cursor: pointer;
-    width: 120px;
+    width: 80px;
     position: absolute;
     top: 0;
     right: 10px;

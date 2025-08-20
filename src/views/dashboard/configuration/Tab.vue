@@ -11,21 +11,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="item">
-    <span class="label">{{ t("tabExpressions") }}</span>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("tabExpressions") }}</div>
     <div class="mt-10" v-for="(child, index) in widgetTabs || []" :key="index">
       <span class="name">{{ child.name }}</span>
       <el-input class="input" size="small" v-model="expressions[child.name]" @change="changeExpression(child.name)" />
     </div>
   </div>
-  <div class="footer">
-    <el-button size="small" @click="cancelConfig">
-      {{ t("cancel") }}
-    </el-button>
-    <el-button size="small" type="primary" @click="applyConfig">
-      {{ t("apply") }}
-    </el-button>
-  </div>
+  <ConfigurationFooter />
 </template>
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
@@ -34,6 +27,8 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import { WidgetType, ListEntity } from "@/views/dashboard/data";
   import type { LayoutConfig } from "@/types/dashboard";
+  import ConfigurationFooter from "./components/ConfigurationFooter.vue";
+  import "./style.scss";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
@@ -67,41 +62,10 @@ limitations under the License. -->
 
     dashboardStore.selectWidget({ ...dashboardStore.selectedGrid, children } as LayoutConfig);
   }
-  function applyConfig() {
-    dashboardStore.setConfigPanel(false);
-    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
-  }
-
-  function cancelConfig() {
-    dashboardStore.selectWidget(originConfig);
-    dashboardStore.setConfigPanel(false);
-  }
 </script>
 <style lang="scss" scoped>
-  .label {
-    font-size: 13px;
-    font-weight: 500;
-    display: block;
-    margin-bottom: 5px;
-  }
-
-  .item {
-    margin-bottom: 10px;
-  }
-
   .input {
     width: 500px;
-  }
-
-  .footer {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    border-top: 1px solid $border-color-primary;
-    padding: 10px;
-    text-align: right;
-    width: 100%;
-    background-color: $theme-background;
   }
 
   .name {

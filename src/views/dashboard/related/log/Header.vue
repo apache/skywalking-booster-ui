@@ -438,7 +438,7 @@ limitations under the License. -->
     top: 0;
     right: 10px;
     cursor: pointer;
-    width: 120px;
+    width: 80px;
   }
 
   .tips {

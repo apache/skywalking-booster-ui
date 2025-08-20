@@ -21,10 +21,7 @@ limitations under the License. -->
       :class="item.label"
       @click="selectLog(item.label, data[item.label])"
     >
-      <span v-if="item.label === 'timestamp'">
-        {{ dateFormat(data.timestamp) }}
-      </span>
-      <span v-else-if="item.label === 'tags'" :class="level.toLowerCase()"> > </span>
+      <span v-if="item.label === 'tags'" :class="level.toLowerCase()"> > </span>
       <span class="blue" v-else-if="item.label === 'traceId'">
         <el-tooltip content="Trace Link" v-if="!noLink && data[item.label]">
           <Icon iconName="merge" />
@@ -36,20 +33,21 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { computed, inject } from "vue";
+  import type { PropType } from "vue";
   import { ServiceLogConstants } from "./data";
   import getDashboard from "@/hooks/useDashboardsSession";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
-  import { dateFormat } from "@/utils/dateFormat";
   import { WidgetType } from "@/views/dashboard/data";
   import { useLogStore } from "@/store/modules/log";
-  const logStore = useLogStore();
 
   /*global defineProps, defineEmits */
   const props = defineProps({
     data: { type: Object as any, default: () => ({}) },
     noLink: { type: Boolean, default: true },
+    config: { type: Object as PropType<LayoutConfig>, default: () => ({}) },
   });
+  const logStore = useLogStore();
   const dashboardStore = useDashboardStore();
   const options: LayoutConfig | null = inject("options") || null;
   const emit = defineEmits(["select"]);
@@ -60,10 +58,10 @@ limitations under the License. -->
     }
     return (props.data.tags.find((d: { key: string; value: string }) => d.key === "level") || {}).value || "";
   });
-  const highlightKeywords = (data: string) => {
+  const highlightKeywords = (content: string) => {
     const keywords = Object.values(logStore.conditions.keywordsOfContent || {});
     const regex = new RegExp(keywords.join("|"), "gi");
-    return data.replace(regex, (match) => `<span style="color: red">${match}</span>`);
+    return `${content}`.replace(regex, (match) => `<span style="color: red">${match}</span>`);
   };
 
   function selectLog(label: string, value: string) {

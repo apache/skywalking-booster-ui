@@ -43,7 +43,7 @@ limitations under the License. -->
   import { ref, watch } from "vue";
   import type { PropType } from "vue";
 
-  /*global  defineProps, defineEmits, Indexable*/
+  /*global defineProps, defineEmits, Indexable*/
   const emit = defineEmits(["change", "query"]);
   const props = defineProps({
     options: {

@@ -11,27 +11,43 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="config-item flex-h">
-    <div class="config-label flex-h mr-20">{{ t("enableAssociate") }}</div>
-    <el-switch v-model="eventAssociate" active-text="Yes" inactive-text="No" @change="updateConfig" />
+  <div class="config-page-footer">
+    <el-button size="small" @click="cancelConfig">
+      {{ t("cancel") }}
+    </el-button>
+    <el-button size="small" type="primary" @click="applyConfig">
+      {{ t("apply") }}
+    </el-button>
   </div>
-  <ConfigurationFooter />
 </template>
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
-  import { ref } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { LayoutConfig } from "@/types/dashboard";
-  import ConfigurationFooter from "./components/ConfigurationFooter.vue";
-  import "./style.scss";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const eventAssociate = ref(dashboardStore.selectedGrid?.eventAssociate || false);
+  const originConfig = dashboardStore.selectedGrid;
 
-  function updateConfig() {
-    const { selectedGrid } = dashboardStore;
+  function applyConfig() {
+    dashboardStore.setConfigPanel(false);
+    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
+  }
 
-    dashboardStore.selectWidget({ ...selectedGrid, eventAssociate: eventAssociate.value } as LayoutConfig);
+  function cancelConfig() {
+    dashboardStore.selectWidget(originConfig);
+    dashboardStore.setConfigPanel(false);
   }
 </script>
+<style lang="scss" scoped>
+  .config-page-footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    border-top: 1px solid $border-color-primary;
+    padding: 10px;
+    text-align: right;
+    width: 100%;
+    background-color: $theme-background;
+  }
+</style>
