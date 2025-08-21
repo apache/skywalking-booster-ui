@@ -65,6 +65,10 @@ limitations under the License. -->
     return `${content}`.replace(regex, (match) => `<span style="color: red">${match}</span>`);
   };
 
+  function getDataValue(label: string) {
+    return props.data[label as keyof LogItem] as string;
+  }
+
   function selectLog(label: string, value: string) {
     if (label === "traceId") {
       if (!value) {
