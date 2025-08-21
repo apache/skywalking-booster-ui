@@ -450,7 +450,7 @@ export async function useExpressionsQueryPodsMetrics(
       params as { queryStr: string; conditions: { [key: string]: unknown } },
     );
 
-    if ((json as { errors?: string }).errors) {
+    if (json.errors) {
       ElMessage.error(json.errors);
       return {
         data: [],
