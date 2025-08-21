@@ -219,11 +219,11 @@ limitations under the License. -->
 
     if (expressions.length && expressions[0]) {
       const params = await useExpressionsQueryPodsMetrics(
-        currentServices as unknown as PodWithMetrics[],
+        currentServices as PodWithMetrics[],
         { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[0].value,
       );
-      services.value = params.data as unknown as ServiceWithGroup[];
+      services.value = params.data as ServiceWithGroup[];
       colMetrics.value = params.names;
       colSubMetrics.value = params.subNames;
       metricConfig.value = params.metricConfigArr;

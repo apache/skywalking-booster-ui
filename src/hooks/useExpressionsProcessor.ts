@@ -71,7 +71,7 @@ interface MetricEntry {
   values?: unknown[];
   avg?: unknown | unknown[];
 }
-export type PodWithMetrics = (Instance | Endpoint | Service) & { [metricName: string]: MetricEntry };
+export type PodWithMetrics = (Instance | Endpoint | ServiceWithGroup) & { [metricName: string]: MetricEntry };
 
 type ExpressionsPodsSourceResult = {
   data: PodWithMetrics[];
