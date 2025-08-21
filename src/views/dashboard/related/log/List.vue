@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <LogTable v-loading="logStore.loadLogs" :tableData="logStore.logs || []" :type="type" :noLink="false">
+    <LogTable v-loading="logStore.loadLogs" :tableData="logStore.logs || []" :type="type" :noLink="false" :data="data">
       <div class="log-tips" v-if="!logStore.logs.length">{{ t("noData") }}</div>
     </LogTable>
     <div class="mt-5 mb-5">
@@ -34,10 +34,21 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
+  import type { PropType } from "vue";
+  import type { LayoutConfig } from "@/types/dashboard";
   import LogTable from "./LogTable/Index.vue";
   import { useLogStore } from "@/store/modules/log";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { ElMessage } from "element-plus";
+
+  /*global defineProps*/
+  defineProps({
+    needQuery: { type: Boolean, default: false },
+    data: {
+      type: Object as PropType<LayoutConfig>,
+      default: () => ({}),
+    },
+  });
 
   const { t } = useI18n();
   const logStore = useLogStore();

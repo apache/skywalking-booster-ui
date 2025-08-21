@@ -14,17 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface LogItem {
-  timestamp: number;
-  content: string;
-  tags: { key: string; value: string }[];
-  serviceId: string;
-  traceId: string;
-  spanId: string;
-  parentSpanId: string;
-  processId: string;
-  processName: string;
-  processTags: { key: string; value: string }[];
-  processStartTime: string;
-  processEndTime: string;
+.config-item {
+  margin: 10px 0;
+}
+
+.config-label {
+  font-size: 13px;
+  font-weight: 500;
+  align-items: center;
+  width: 200px;
 }

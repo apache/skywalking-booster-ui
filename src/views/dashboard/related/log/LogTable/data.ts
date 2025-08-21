@@ -26,7 +26,7 @@ export const ServiceLogConstants = [
   },
   {
     label: "content",
-    value: "content",
+    value: "contentTimestamp",
   },
 ];
 export const ServiceLogDetail = [

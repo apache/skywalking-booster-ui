@@ -296,7 +296,7 @@ const msg = {
   return: "Return",
   isError: "Error",
   contentType: "Content Type",
-  content: "Timestamp - Content",
+  content: "Content",
   level: "Level",
   viewLogs: "View Logs",
   logsTagsTip: `Only tags defined in the core/default/searchableLogsTags are searchable.

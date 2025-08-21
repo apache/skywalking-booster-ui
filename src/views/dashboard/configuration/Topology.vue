@@ -11,22 +11,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="item">
-    <span class="label">{{ t("showDepth") }}</span>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("showDepth") }}</div>
     <el-switch v-model="showDepth" active-text="Yes" inactive-text="No" @change="changeConfig({ showDepth })" />
   </div>
-  <div class="item" v-show="showDepth">
-    <span class="label">{{ t("defaultDepth") }}</span>
+  <div class="config-item flex-h" v-show="showDepth">
+    <div class="config-label flex-h mr-20">{{ t("defaultDepth") }}</div>
     <Selector class="input" size="small" :value="depth" :options="DepthList" @change="changeDepth($event)" />
   </div>
-  <div class="footer">
-    <el-button size="small">
-      {{ t("cancel") }}
-    </el-button>
-    <el-button size="small" type="primary" @click="applyConfig">
-      {{ t("apply") }}
-    </el-button>
-  </div>
+  <ConfigurationFooter />
 </template>
 <script lang="ts" setup>
   import { ref } from "vue";
@@ -35,6 +28,7 @@ limitations under the License. -->
   import { DepthList } from "../data";
   import type { Option } from "@/types/app";
   import type { TopologyConfig, LayoutConfig } from "@/types/dashboard";
+  import ConfigurationFooter from "./components/ConfigurationFooter.vue";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
@@ -42,10 +36,6 @@ limitations under the License. -->
   const showDepth = ref<boolean>(graph?.showDepth || false);
   const depth = ref<number>(graph?.depth || 2);
 
-  function applyConfig() {
-    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
-    dashboardStore.setConfigPanel(false);
-  }
   function changeConfig(param: { [key: string]: unknown }) {
     const { selectedGrid } = dashboardStore;
     const graph = {
@@ -60,25 +50,7 @@ limitations under the License. -->
   }
 </script>
 <style lang="scss" scoped>
-  .footer {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    border-top: 1px solid $border-color-primary;
-    padding: 10px;
-    text-align: right;
-    width: 100%;
-    background-color: $theme-background;
-  }
-
-  .label {
-    font-size: 13px;
-    font-weight: 500;
-    display: block;
-    margin-bottom: 5px;
-  }
-
-  .item {
-    margin: 10px 0;
+  .input {
+    width: 300px;
   }
 </style>

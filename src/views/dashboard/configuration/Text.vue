@@ -11,16 +11,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="item">
-    <span class="label">{{ t("textUrl") }}</span>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("textUrl") }}</div>
     <el-input class="input" v-model="url" size="small" @change="changeConfig({ url })" />
   </div>
-  <div class="item">
-    <span class="label">{{ t("content") }}</span>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("content") }}</div>
     <el-input class="input" v-model="content" size="small" @change="changeConfig({ content })" />
   </div>
-  <div class="item">
-    <span class="label">{{ t("textAlign") }}</span>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("textAlign") }}</div>
     <Selector
       :value="textAlign"
       :options="AlignStyle"
@@ -30,8 +30,8 @@ limitations under the License. -->
       @change="changeConfig({ textAlign: $event[0].value })"
     />
   </div>
-  <div class="item">
-    <span class="label">{{ t("backgroundColors") }}</span>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("backgroundColors") }}</div>
     <Selector
       :value="backgroundColor"
       :options="Colors"
@@ -41,8 +41,8 @@ limitations under the License. -->
       @change="changeConfig({ backgroundColor: $event[0].value })"
     />
   </div>
-  <div class="item">
-    <span class="label">{{ t("fontSize") }}</span>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("fontSize") }}</div>
     <el-slider
       class="slider"
       v-model="fontSize"
@@ -54,8 +54,8 @@ limitations under the License. -->
       @change="changeConfig({ fontSize })"
     />
   </div>
-  <div class="item">
-    <span class="label">{{ t("fontColors") }}</span>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("fontColors") }}</div>
     <Selector
       :value="fontColor"
       :options="Colors"
@@ -65,20 +65,15 @@ limitations under the License. -->
       @change="changeConfig({ fontColor: $event[0].value })"
     />
   </div>
-  <div class="footer">
-    <el-button size="small" @click="cancelConfig">
-      {{ t("cancel") }}
-    </el-button>
-    <el-button size="small" type="primary" @click="applyConfig">
-      {{ t("apply") }}
-    </el-button>
-  </div>
+  <ConfigurationFooter />
 </template>
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
   import { ref } from "vue";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { LayoutConfig, TextConfig } from "@/types/dashboard";
+  import ConfigurationFooter from "./components/ConfigurationFooter.vue";
+  import "./style.scss";
 
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
@@ -119,15 +114,6 @@ limitations under the License. -->
     };
     dashboardStore.selectWidget({ ...selectedGrid, graph } as LayoutConfig);
   }
-  function applyConfig() {
-    dashboardStore.setConfigPanel(false);
-    dashboardStore.setConfigs(dashboardStore.selectedGrid as LayoutConfig);
-  }
-
-  function cancelConfig() {
-    dashboardStore.selectWidget(originConfig);
-    dashboardStore.setConfigPanel(false);
-  }
 </script>
 <style lang="scss" scoped>
   .slider {
@@ -135,29 +121,7 @@ limitations under the License. -->
     margin-top: -3px;
   }
 
-  .label {
-    font-size: 13px;
-    font-weight: 500;
-    display: block;
-    margin-bottom: 5px;
-  }
-
   .input {
     width: 500px;
-  }
-
-  .item {
-    margin-bottom: 10px;
-  }
-
-  .footer {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    border-top: 1px solid $border-color-primary;
-    padding: 10px;
-    text-align: right;
-    width: 100%;
-    background-color: $theme-background;
   }
 </style>

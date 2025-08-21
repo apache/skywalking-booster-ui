@@ -21,10 +21,7 @@ limitations under the License. -->
       :class="item.label"
       @click="selectLog(item.label, getDataValue(item.label))"
     >
-      <span v-if="item.label === 'timestamp'">
-        {{ dateFormat(data.timestamp) }}
-      </span>
-      <span v-else-if="item.label === 'tags'" :class="level.toLowerCase()"> > </span>
+      <span v-if="item.label === 'tags'" :class="level.toLowerCase()"> > </span>
       <span class="blue" v-else-if="item.label === 'traceId'">
         <el-tooltip content="Trace Link" v-if="!noLink && getDataValue(item.label)">
           <Icon iconName="merge" />
@@ -41,7 +38,6 @@ limitations under the License. -->
   import getDashboard from "@/hooks/useDashboardsSession";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
-  import { dateFormat } from "@/utils/dateFormat";
   import { WidgetType } from "@/views/dashboard/data";
   import { useLogStore } from "@/store/modules/log";
   import type { LogItem } from "@/types/log";
@@ -50,6 +46,7 @@ limitations under the License. -->
   const props = defineProps({
     data: { type: Object as PropType<LogItem>, default: () => ({}) },
     noLink: { type: Boolean, default: true },
+    config: { type: Object as PropType<LayoutConfig>, default: () => ({}) },
   });
   const logStore = useLogStore();
   const dashboardStore = useDashboardStore();
@@ -62,27 +59,10 @@ limitations under the License. -->
     }
     return (props.data.tags.find((d: { key: string; value: string }) => d.key === "level") || {}).value || "";
   });
-
-  // Type-safe function to get data value based on column label
-  const getDataValue = (label: string): string => {
-    switch (label) {
-      case "timestamp":
-        return props.data.timestamp || "";
-      case "content":
-        return props.data.content || "";
-      case "traceId":
-        return props.data.traceId || "";
-      case "tags":
-        return ""; // tags are handled separately in the template
-      default:
-        return "";
-    }
-  };
-
-  const highlightKeywords = (data: string) => {
+  const highlightKeywords = (content: string) => {
     const keywords = Object.values(logStore.conditions.keywordsOfContent || {});
     const regex = new RegExp(keywords.join("|"), "gi");
-    return data.replace(regex, (match) => `<span style="color: red">${match}</span>`);
+    return `${content}`.replace(regex, (match) => `<span style="color: red">${match}</span>`);
   };
 
   function selectLog(label: string, value: string) {
