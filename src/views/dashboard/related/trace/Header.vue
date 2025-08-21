@@ -49,12 +49,12 @@ limitations under the License. -->
           <span
             v-if="
               [FiltersKeys.minTraceDuration, FiltersKeys.maxTraceDuration].includes(key) &&
-              !isNaN(traceStore.conditions[FiltersKeys[key]])
+              !isNaN(getConditionValue(key) as number)
             "
           >
-            {{ t(key) }}: {{ traceStore.conditions[FiltersKeys[key]] }}
+            {{ t(key) }}: {{ getConditionValue(key) }}
           </span>
-          <span v-else-if="key !== 'duration'"> {{ t(key) }}: {{ traceStore.conditions[FiltersKeys[key]] }} </span>
+          <span v-else-if="key !== 'duration'"> {{ t(key) }}: {{ getConditionValue(key) }} </span>
         </div>
       </div>
     </el-popover>
@@ -101,6 +101,16 @@ limitations under the License. -->
     minTraceDuration: "minTraceDuration",
     maxTraceDuration: "maxTraceDuration",
   };
+
+  // Type-safe function to get condition value
+  const getConditionValue = (key: string): string | number | undefined => {
+    const conditionKey = FiltersKeys[key];
+    if (!conditionKey) return undefined;
+
+    // Type assertion for dynamic properties that are added at runtime
+    return (traceStore.conditions as Recordable)[conditionKey];
+  };
+
   /*global defineProps, Recordable */
   const props = defineProps({
     needQuery: { type: Boolean, default: true },

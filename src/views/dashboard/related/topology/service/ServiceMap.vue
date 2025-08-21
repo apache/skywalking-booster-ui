@@ -386,7 +386,10 @@ limitations under the License. -->
   }
   function handleLinkClick(event: MouseEvent, d: Call) {
     event.stopPropagation();
-    if (!d.sourceObj.layers.includes(dashboardStore.layerId) || !d.targetObj.layers.includes(dashboardStore.layerId)) {
+    if (
+      !d.sourceObj?.layers?.includes(dashboardStore.layerId) ||
+      !d.targetObj?.layers?.includes(dashboardStore.layerId)
+    ) {
       return;
     }
     topologyStore.setNode(null);
@@ -406,7 +409,10 @@ limitations under the License. -->
       return;
     }
     dashboardStore.setEntity(dashboard.entity);
-    const path = `/dashboard/related/${dashboard.layer}/${e}Relation/${d.sourceObj.id}/${d.targetObj.id}/${dashboard.name}`;
+    if (!d.sourceObj || !d.targetObj) {
+      return;
+    }
+    const path = `/dashboard/related/${dashboard.layer}/${e}Relation/${d.sourceObj?.id}/${d.targetObj?.id}/${dashboard.name}`;
     const routeUrl = router.resolve({ path });
     window.open(routeUrl.href, "_blank");
     dashboardStore.setEntity(origin);

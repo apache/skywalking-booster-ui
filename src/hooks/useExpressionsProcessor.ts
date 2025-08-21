@@ -30,15 +30,67 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import type { MetricConfigOpt } from "@/types/dashboard";
 import type { Instance, Endpoint, Service } from "@/types/selector";
 import type { Node, Call } from "@/types/topology";
+import type { ServiceWithGroup } from "@/views/dashboard/graphs/ServiceList.vue";
 
-function chunkArray(array: any[], chunkSize: number) {
+type AllPods = Instance | Endpoint | ServiceWithGroup;
+/**
+ * Shape of a single execExpression GraphQL response entry.
+ */
+interface ExecExpressionResponse {
+  type?: ExpressionResultType | string;
+  error?: string;
+  results?: Array<{
+    metric?: { labels: Array<{ key: string; value: string }> };
+    values: Array<{ value: unknown }>;
+  }>;
+}
+
+/**
+ * Dashboard widget config used for expression queries.
+ */
+export interface DashboardWidgetConfig {
+  id: string | number;
+  metrics: string[];
+  metricConfig?: MetricConfigOpt[];
+  subExpressions?: string[];
+}
+
+/**
+ * Result shape of expressionsSource for a widget.
+ */
+export interface ExpressionsSourceResult {
+  source: Record<string, unknown>;
+  tips: string[];
+  typesOfMQE: string[];
+}
+
+/**
+ * Extend pod entities with dynamic metric buckets that get attached during processing.
+ */
+interface MetricEntry {
+  values?: unknown[];
+  avg?: unknown | unknown[];
+}
+export type PodWithMetrics = (Instance | Endpoint | ServiceWithGroup) & { [metricName: string]: MetricEntry };
+
+type ExpressionsPodsSourceResult = {
+  data: PodWithMetrics[];
+  names: string[];
+  subNames: string[];
+  metricConfigArr: MetricConfigOpt[];
+  metricTypesArr: string[];
+  expressionsTips: string[];
+  subExpressionsTips: string[];
+};
+
+function chunkArray<T>(array: T[], chunkSize: number): T[][] {
   if (chunkSize <= 0) {
     return [array];
   }
   if (chunkSize > array.length) {
     return [array];
   }
-  const result = [];
+  const result: T[][] = [];
   for (let i = 0; i < array.length; i += chunkSize) {
     result.push(array.slice(i, i + chunkSize));
   }
@@ -46,8 +98,8 @@ function chunkArray(array: any[], chunkSize: number) {
   return result;
 }
 
-export async function useDashboardQueryProcessor(configList: Indexable[]) {
-  function expressionsGraphql(config: Indexable, idx: number) {
+export async function useDashboardQueryProcessor(configList: DashboardWidgetConfig[]) {
+  function expressionsGraphql(config: DashboardWidgetConfig, idx: number) {
     if (!(config.metrics && config.metrics[0])) {
       return;
     }
@@ -108,7 +160,10 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
       conditions,
     };
   }
-  function expressionsSource(config: Indexable, resp: { errors: string; data: Indexable | any }) {
+  function expressionsSource(
+    config: DashboardWidgetConfig,
+    resp: { errors: string; data: Record<string, ExecExpressionResponse> },
+  ) {
     if (resp.errors) {
       ElMessage.error(resp.errors);
       return { source: {}, tips: [], typesOfMQE: [] };
@@ -117,12 +172,8 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
       ElMessage.error("The query is wrong");
       return { source: {}, tips: [], typesOfMQE: [] };
     }
-    if (resp.data.error) {
-      ElMessage.error(resp.data.error);
-      return { source: {}, tips: [], typesOfMQE: [] };
-    }
     const tips: string[] = [];
-    const source: Indexable<unknown> = {};
+    const source: Record<string, unknown> = {};
     const keys = Object.keys(resp.data);
     const typesOfMQE: string[] = [];
 
@@ -133,14 +184,24 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
       const name = config.metrics[i];
       const type = obj.type;
 
-      tips.push(obj.error);
-      typesOfMQE.push(type);
+      tips.push(obj.error || "");
+      typesOfMQE.push(String(type ?? ""));
       if (!obj.error) {
-        if ([ExpressionResultType.SINGLE_VALUE, ExpressionResultType.TIME_SERIES_VALUES].includes(type)) {
+        if (
+          [ExpressionResultType.SINGLE_VALUE, ExpressionResultType.TIME_SERIES_VALUES].includes(
+            type as ExpressionResultType,
+          )
+        ) {
           for (const item of results) {
-            let label =
-              item.metric &&
-              item.metric.labels.map((d: { key: string; value: string }) => `${d.key}=${d.value}`).join(",");
+            let label: string = name;
+            if (item.metric) {
+              const joined = item.metric.labels
+                .map((d: { key: string; value: string }) => `${d.key}=${d.value}`)
+                .join(",");
+              if (joined) {
+                label = joined;
+              }
+            }
             const values = item.values.map((d: { value: unknown }) => d.value) || [];
             if (results.length === 1) {
               // If the metrics label does not exist, use the configuration label or expression
@@ -149,7 +210,11 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
             source[label] = values;
           }
         }
-        if (([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(type)) {
+        if (
+          ([ExpressionResultType.RECORD_LIST, ExpressionResultType.SORTED_LIST] as string[]).includes(
+            String(type ?? ""),
+          )
+        ) {
           source[name] = results[0].values;
         }
       }
@@ -157,7 +222,7 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
 
     return { source, tips, typesOfMQE };
   }
-  async function fetchMetrics(configArr: any) {
+  async function fetchMetrics(configArr: DashboardWidgetConfig[]) {
     const appStore = useAppStoreWithOut();
     const variables: string[] = [`$duration: Duration!`];
     let fragments = "";
@@ -186,12 +251,12 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
       return { 0: { source: {}, tips: [], typesOfMQE: [] } };
     }
     try {
-      const pageData: Recordable = {};
+      const pageData: Record<string | number, ExpressionsSourceResult> = {};
 
       for (let i = 0; i < configArr.length; i++) {
-        const resp: any = {};
+        const resp: Record<string, ExecExpressionResponse> = {};
         for (let m = 0; m < configArr[i].metrics.length; m++) {
-          resp[`expression${i}${m}`] = json.data[`expression${i}${m}`];
+          resp[`expression${i}${m}`] = json.data[`expression${i}${m}`] as ExecExpressionResponse;
         }
         const data = expressionsSource(configArr[i], { ...json, data: resp });
         const id = configArr[i].id;
@@ -205,7 +270,7 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
   }
 
   const partArr = chunkArray(configList, DashboardMaxQueryWidgets);
-  const promiseArr = partArr.map((d: Array<Indexable>) => fetchMetrics(d));
+  const promiseArr = partArr.map((d: DashboardWidgetConfig[]) => fetchMetrics(d));
   const responseList = await Promise.all(promiseArr);
   let resp = {};
   for (const item of responseList) {
@@ -218,7 +283,7 @@ export async function useDashboardQueryProcessor(configList: Indexable[]) {
 }
 
 export async function useExpressionsQueryPodsMetrics(
-  allPods: Array<(Instance | Endpoint | Service) & Indexable>,
+  allPods: Array<PodWithMetrics>,
   config: {
     expressions: string[];
     subExpressions: string[];
@@ -226,7 +291,7 @@ export async function useExpressionsQueryPodsMetrics(
   },
   scope: string,
 ) {
-  function expressionsGraphqlPods(pods: Array<(Instance | Endpoint | Service) & Indexable>) {
+  function expressionsGraphqlPods(pods: Array<PodWithMetrics>) {
     const metrics: string[] = [];
     const subMetrics: string[] = [];
     config.expressions = config.expressions || [];
@@ -248,7 +313,7 @@ export async function useExpressionsQueryPodsMetrics(
     };
     const variables: string[] = [`$duration: Duration!`];
     const currentService = selectorStore.currentService || ({} as Service);
-    const fragmentList = pods.map((d: (Instance | Endpoint | Service) & Indexable, index: number) => {
+    const fragmentList = pods.map((d: PodWithMetrics, index: number) => {
       const entity = {
         serviceName: scope === "Service" ? d.label : currentService.label,
         serviceInstanceName: scope === "ServiceInstance" ? d.label : undefined,
@@ -285,12 +350,20 @@ export async function useExpressionsQueryPodsMetrics(
   }
 
   function expressionsPodsSource(
-    resp: { errors: string; data: Indexable },
-    pods: Array<(Instance | Endpoint | Service) & Indexable>,
-  ): Indexable {
+    resp: { errors: string; data: Record<string, ExecExpressionResponse> },
+    pods: PodWithMetrics[],
+  ): ExpressionsPodsSourceResult {
     if (resp.errors) {
       ElMessage.error(resp.errors);
-      return {};
+      return {
+        data: [],
+        names: [],
+        subNames: [],
+        metricConfigArr: [],
+        metricTypesArr: [],
+        expressionsTips: [],
+        subExpressionsTips: [],
+      };
     }
     const names: string[] = [];
     const subNames: string[] = [];
@@ -298,37 +371,37 @@ export async function useExpressionsQueryPodsMetrics(
     const metricTypesArr: string[] = [];
     const expressionsTips: string[] = [];
     const subExpressionsTips: string[] = [];
-    const data = pods.map((d: any, idx: number) => {
+    const data = pods.map((d: PodWithMetrics, idx: number) => {
       for (let index = 0; index < config.expressions.length; index++) {
         const c: MetricConfigOpt = (config.metricConfig && config.metricConfig[index]) || {};
         const k = "expression" + idx + index;
         const sub = "subexpression" + idx + index;
         const obj = resp.data[k] || {};
         const results = obj.results || [];
-        const typesOfMQE = obj.type || "";
+        const typesOfMQE = String(obj.type ?? "");
         const subObj = resp.data[sub] || {};
         const subResults = subObj.results || [];
 
-        expressionsTips.push(obj.error);
-        subExpressionsTips.push(subObj.error);
+        expressionsTips.push(obj.error || "");
+        subExpressionsTips.push(subObj.error || "");
         if (results.length > 1) {
           const labels = (c.label || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
           const labelsIdx = (c.labelsIndex || "").split(",").map((item: string) => item.replace(/^\s*|\s*$/g, ""));
           for (let i = 0; i < results.length; i++) {
-            let name = results[i].metric.labels[0].value || "";
+            let name: string = results[i].metric?.labels?.[0]?.value ?? "";
             const subValues = subResults[i] && subResults[i].values.map((d: { value: unknown }) => d.value);
-            const num = labelsIdx.findIndex((d: string) => d === results[i].metric.labels[0].value);
+            const num = labelsIdx.findIndex((d: string) => d === (results[i].metric?.labels?.[0]?.value ?? ""));
 
             if (labels[num]) {
               name = labels[num];
             }
             if (!d[name]) {
-              d[name] = {};
+              d[name] = {} as MetricEntry;
             }
             if (subValues) {
               d[name]["values"] = subValues;
             }
-            d[name]["avg"] = (results[i].values[0] || {}).value;
+            d[name]["avg"] = (results[i].values?.[0] || {}).value;
 
             const j = names.find((d: string) => d === name);
 
@@ -342,17 +415,17 @@ export async function useExpressionsQueryPodsMetrics(
           if (!results[0]) {
             return d;
           }
-          const name = config.expressions[index] || "";
-          const subName = config.subExpressions[index] || "";
+          const name: string = config.expressions[index] || "";
+          const subName: string = config.subExpressions[index] || "";
           if (!d[name]) {
-            d[name] = {};
+            d[name] = {} as MetricEntry;
           }
-          d[name]["avg"] = [(results[0].values[0] || {}).value];
+          d[name]["avg"] = [(results[0].values?.[0] || {}).value];
           if (subResults[0]) {
             if (!d[subName]) {
-              d[subName] = {};
+              d[subName] = {} as MetricEntry;
             }
-            d[subName]["values"] = subResults[0].values.map((d: { value: number }) => d.value);
+            d[subName]["values"] = subResults[0].values.map((d: { value: unknown }) => d.value as number);
           }
           const j = names.find((d: string) => d === name);
           if (!j) {
@@ -369,7 +442,7 @@ export async function useExpressionsQueryPodsMetrics(
     return { data, names, subNames, metricConfigArr, metricTypesArr, expressionsTips, subExpressionsTips };
   }
 
-  async function fetchPodsExpressionValues(pods: Array<(Instance | Endpoint | Service) & Indexable>) {
+  async function fetchPodsExpressionValues(pods: Array<PodWithMetrics>): Promise<ExpressionsPodsSourceResult> {
     const dashboardStore = useDashboardStore();
     const params = await expressionsGraphqlPods(pods);
 
@@ -379,9 +452,20 @@ export async function useExpressionsQueryPodsMetrics(
 
     if (json.errors) {
       ElMessage.error(json.errors);
-      return {};
+      return {
+        data: [],
+        names: [],
+        subNames: [],
+        metricConfigArr: [],
+        metricTypesArr: [],
+        expressionsTips: [],
+        subExpressionsTips: [],
+      };
     }
-    const expressionParams = expressionsPodsSource(json, pods);
+    const expressionParams = expressionsPodsSource(
+      json as { errors: string; data: Record<string, ExecExpressionResponse> },
+      pods,
+    );
 
     return expressionParams;
   }
@@ -390,11 +474,19 @@ export async function useExpressionsQueryPodsMetrics(
   for (let i = 0; i < allPods.length; i += MaximumEntities) {
     result.push(allPods.slice(i, i + MaximumEntities));
   }
-  const promiseArr = result.map((d: Array<(Instance | Endpoint | Service) & Indexable>) =>
+  const promiseArr: Array<Promise<ExpressionsPodsSourceResult>> = result.map((d: Array<PodWithMetrics>) =>
     fetchPodsExpressionValues(d),
   );
-  const responseList = await Promise.all(promiseArr);
-  let resp: Indexable = { data: [], expressionsTips: [], subExpressionsTips: [] };
+  const responseList: ExpressionsPodsSourceResult[] = await Promise.all(promiseArr);
+  let resp: ExpressionsPodsSourceResult = {
+    data: [],
+    expressionsTips: [],
+    subExpressionsTips: [],
+    names: [],
+    subNames: [],
+    metricConfigArr: [],
+    metricTypesArr: [],
+  };
   for (const item of responseList) {
     resp = {
       ...item,
@@ -416,7 +508,7 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
       duration: appStore.durationTime,
     };
     const variables: string[] = [`$duration: Duration!`];
-    const fragmentList = entities.map((d: Indexable, index: number) => {
+    const fragmentList = entities.map((d: Call | Node, index: number) => {
       let serviceName;
       let destServiceName;
       let endpointName;
@@ -425,7 +517,7 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
       let destEndpointName;
       let normal = false;
       let destNormal;
-      if (d.sourceObj && d.targetObj) {
+      if ("sourceObj" in d && "targetObj" in d && d.sourceObj && d.targetObj) {
         // instances = Calls
         serviceName = d.sourceObj.serviceName || d.sourceObj.name;
         destServiceName = d.targetObj.serviceName || d.targetObj.name;
@@ -441,16 +533,17 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
         }
       } else {
         // instances = Nodes
-        serviceName = d.serviceName || d.name;
-        normal = d.normal || d.isReal || false;
+        const node = d as Node;
+        serviceName = node.serviceName || node.name;
+        normal = Boolean((node as unknown as { normal?: boolean }).normal) || node.isReal || false;
         if (EntityType[3].value === dashboardStore.entity) {
-          serviceInstanceName = d.name;
+          serviceInstanceName = node.name;
         }
         if (EntityType[4].value === dashboardStore.entity) {
-          serviceInstanceName = d.name;
+          serviceInstanceName = node.name;
         }
         if (EntityType[2].value === dashboardStore.entity) {
-          endpointName = d.name;
+          endpointName = node.name;
         }
       }
       const entity = {
@@ -479,8 +572,8 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
 
     return { queryStr, conditions };
   }
-  function handleExpressionValues(partMetrics: string[], resp: { [key: string]: any }) {
-    const obj: Indexable = {};
+  function handleExpressionValues(partMetrics: string[], resp: Record<string, ExecExpressionResponse>) {
+    const obj: Record<string, { values: Array<{ value: unknown; id: string }> }> = {};
     for (let idx = 0; idx < instances.length; idx++) {
       for (let index = 0; index < partMetrics.length; index++) {
         const k = "expression" + idx + index;
@@ -491,7 +584,7 @@ export function useQueryTopologyExpressionsProcessor(metrics: string[], instance
             };
           }
           obj[partMetrics[index]].values.push({
-            value: resp[k] && resp[k].results[0] && resp[k].results[0].values[0].value,
+            value: resp[k]?.results?.[0]?.values?.[0]?.value,
             id: instances[idx].id,
           });
         }

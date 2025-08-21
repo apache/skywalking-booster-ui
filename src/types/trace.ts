@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import type { DurationTime } from "./app";
 export interface Trace {
   duration: number;
   isError: boolean;
@@ -106,4 +108,11 @@ export interface SpanAttachedEvent {
   event: string;
   tags: KeyValue[];
   summary: KeyValue[];
+}
+
+export interface TraceCondition {
+  queryDuration: DurationTime;
+  traceState: string;
+  queryOrder: string;
+  paging: { pageNum: number; pageSize: number };
 }

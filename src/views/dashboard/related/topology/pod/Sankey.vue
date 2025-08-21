@@ -109,7 +109,7 @@ limitations under the License. -->
       return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric?.value} ${opt.unit || ""}</div>`;
     });
     const html = [
-      `<div>${data.sourceObj.serviceName} -> ${data.targetObj.serviceName}</div>`,
+      `<div>${data.sourceObj?.serviceName} -> ${data.targetObj?.serviceName}</div>`,
       ...htmlServer,
       ...htmlClient,
     ].join(" ");

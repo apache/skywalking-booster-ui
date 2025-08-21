@@ -165,7 +165,7 @@ limitations under the License. -->
         { metricConfig: metricConfig.value || [], expressions, subExpressions },
         EntityType[2].value,
       );
-      currentEndpoints.value = params.data;
+      currentEndpoints.value = params.data as Endpoint[];
       colMetrics.value = params.names;
       colSubMetrics.value = params.subNames;
       metricConfig.value = params.metricConfigArr;

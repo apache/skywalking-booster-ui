@@ -24,7 +24,7 @@ limitations under the License. -->
         </el-tooltip>
       </div>
     </div>
-    <div class="widget-chart" :style="{ height: config.height - 60 + 'px' }">
+    <div class="widget-chart" :style="{ height: (config.height || 0) - 60 + 'px' }">
       <component
         :is="graph.type"
         :intervalTime="appStoreWithOut.intervalTime"
@@ -55,10 +55,12 @@ limitations under the License. -->
   import { useRoute } from "vue-router";
   import { useSelectorStore } from "@/store/modules/selectors";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useDashboardQueryProcessor } from "@/hooks/useExpressionsProcessor";
+  import { useDashboardQueryProcessor, DashboardWidgetConfig } from "@/hooks/useExpressionsProcessor";
   import graphs from "./graphs";
   import { EntityType } from "./data";
   import timeFormat from "@/utils/timeFormat";
+  import { LayoutConfig } from "@/types/dashboard";
+  import { ExpressionsSourceResult } from "@/hooks/useExpressionsProcessor";
 
   export default defineComponent({
     name: "WidgetPage",
@@ -70,9 +72,11 @@ limitations under the License. -->
       const appStoreWithOut = useAppStoreWithOut();
       const selectorStore = useSelectorStore();
       const route = useRoute();
-      const config = computed<any>(() => JSON.parse(decodeURIComponent(route.params.config as string) as string));
+      const config = computed<LayoutConfig>(() =>
+        JSON.parse(decodeURIComponent(route.params.config as string) as string),
+      );
       const graph = computed(() => config.value.graph || {});
-      const source = ref<unknown>({});
+      const source = ref<ExpressionsSourceResult | {}>({});
       const loading = ref<boolean>(false);
       const dashboardStore = useDashboardStore();
       const title = computed(() => (config.value.widget && config.value.widget.title) || "");
@@ -86,7 +90,7 @@ limitations under the License. -->
         const { auto, autoPeriod } = config.value;
         if (auto) {
           await setDuration();
-          appStoreWithOut.setReloadTimer(setInterval(setDuration, autoPeriod * 1000));
+          appStoreWithOut.setReloadTimer(setInterval(setDuration, (autoPeriod ?? 0) * 1000));
         } else {
           const duration = JSON.parse(route.params.duration as string);
           appStoreWithOut.setDuration(duration);
@@ -95,7 +99,7 @@ limitations under the License. -->
         await queryMetrics();
       }
       async function setDuration() {
-        const dates: Date[] = [new Date(new Date().getTime() - config.value.auto), new Date()];
+        const dates: Date[] = [new Date(new Date().getTime() - (config.value.auto ?? 0)), new Date()];
 
         appStoreWithOut.setDuration(timeFormat(dates));
       }
@@ -130,17 +134,17 @@ limitations under the License. -->
       }
       async function queryMetrics() {
         loading.value = true;
-        const metrics: { [key: string]: { source: { [key: string]: unknown }; typesOfMQE: string[] } } =
-          await useDashboardQueryProcessor([
-            {
-              metrics: config.value.expressions || [],
-              metricConfig: config.value.metricConfig || [],
-              subExpressions: config.value.subExpressions || [],
-              id: config.value.i,
-            },
-          ]);
-        const params = metrics[config.value.i];
-        loading.value = false;
+        const metrics = await useDashboardQueryProcessor([
+          {
+            metrics: config.value.expressions || [],
+            metricConfig: config.value.metricConfig || [],
+            subExpressions: (config.value.subExpressions || []) as string[],
+            id: config.value.i,
+          },
+        ] as DashboardWidgetConfig[]);
+        const params: ExpressionsSourceResult = (metrics as Record<string, ExpressionsSourceResult>)[
+          config.value.i as string
+        ];
         source.value = params.source || {};
         typesOfMQE.value = params.typesOfMQE;
       }

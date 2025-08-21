@@ -19,15 +19,15 @@ limitations under the License. -->
       v-for="(item, index) in columns"
       :key="index"
       :class="item.label"
-      @click="selectLog(item.label, data[item.label])"
+      @click="selectLog(item.label, getDataValue(item.label))"
     >
       <span v-if="item.label === 'tags'" :class="level.toLowerCase()"> > </span>
       <span class="blue" v-else-if="item.label === 'traceId'">
-        <el-tooltip content="Trace Link" v-if="!noLink && data[item.label]">
+        <el-tooltip content="Trace Link" v-if="!noLink && getDataValue(item.label)">
           <Icon iconName="merge" />
         </el-tooltip>
       </span>
-      <span v-else v-html="highlightKeywords(data[item.label])"></span>
+      <span v-else v-html="highlightKeywords(getDataValue(item.label))"></span>
     </div>
   </div>
 </template>
@@ -40,10 +40,11 @@ limitations under the License. -->
   import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
   import { WidgetType } from "@/views/dashboard/data";
   import { useLogStore } from "@/store/modules/log";
+  import type { LogItem } from "@/types/log";
 
   /*global defineProps, defineEmits */
   const props = defineProps({
-    data: { type: Object as any, default: () => ({}) },
+    data: { type: Object as PropType<LogItem>, default: () => ({}) },
     noLink: { type: Boolean, default: true },
     config: { type: Object as PropType<LayoutConfig>, default: () => ({}) },
   });
@@ -63,6 +64,10 @@ limitations under the License. -->
     const regex = new RegExp(keywords.join("|"), "gi");
     return `${content}`.replace(regex, (match) => `<span style="color: red">${match}</span>`);
   };
+
+  function getDataValue(label: string) {
+    return props.data[label as keyof LogItem] as string;
+  }
 
   function selectLog(label: string, value: string) {
     if (label === "traceId") {
