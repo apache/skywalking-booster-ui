@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { RouteRecordRaw } from "vue-router";
+import type { AppRouteRecordRaw } from "./types";
 import { createRouter, createWebHistory } from "vue-router";
+import { applyGuards } from "./guards";
 import { routesDashboard } from "./dashboard";
 import { routesMarketplace } from "./marketplace";
 import { routesAlarm } from "./alarm";
@@ -23,7 +24,10 @@ import routesLayers from "./layer";
 import { routesSettings } from "./settings";
 import { routesNotFound } from "./notFound";
 
-const routes: RouteRecordRaw[] = [
+/**
+ * Combine all route configurations
+ */
+const routes: AppRouteRecordRaw[] = [
   ...routesMarketplace,
   ...routesLayers,
   ...routesAlarm,
@@ -32,36 +36,17 @@ const routes: RouteRecordRaw[] = [
   ...routesNotFound,
 ];
 
+/**
+ * Create router instance
+ */
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 
-router.beforeEach((to, _, next) => {
-  // const token = window.localStorage.getItem("skywalking-authority");
-
-  if (to.path === "/") {
-    let defaultPath = "";
-    for (const route of routesLayers) {
-      for (const child of route.children) {
-        if (child.meta.activate) {
-          defaultPath = child.path;
-          break;
-        }
-      }
-      if (defaultPath) {
-        break;
-      }
-    }
-
-    if (!defaultPath) {
-      defaultPath = "/marketplace";
-    }
-
-    next({ path: defaultPath });
-  } else {
-    next();
-  }
-});
+/**
+ * Apply navigation guards
+ */
+applyGuards(router, routes);
 
 export default router;

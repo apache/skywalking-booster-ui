@@ -14,13 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { RouteRecordRaw } from "vue-router";
+import type { AppRouteRecordRaw } from "./types";
+import { ROUTE_NAMES, ROUTE_PATHS } from "./constants";
 import NotFound from "@/views/NotFound.vue";
 
-export const routesNotFound: Array<RouteRecordRaw> = [
+export const routesNotFound: AppRouteRecordRaw[] = [
   {
-    path: "/:pathMatch(.*)*",
-    name: "NotFound",
+    path: ROUTE_PATHS.NOT_FOUND,
+    name: ROUTE_NAMES.NOT_FOUND,
     component: NotFound,
+    meta: {
+      title: "Page Not Found",
+      notShow: true,
+    },
   },
 ];

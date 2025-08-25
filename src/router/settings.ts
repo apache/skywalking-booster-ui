@@ -14,27 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { RouteRecordRaw } from "vue-router";
+import type { AppRouteRecordRaw } from "./types";
+import { ROUTE_NAMES, ROUTE_PATHS, META_KEYS } from "./constants";
 import Layout from "@/layout/Index.vue";
 import Settings from "@/views/Settings.vue";
 
-export const routesSettings: Array<RouteRecordRaw> = [
+export const routesSettings: AppRouteRecordRaw[] = [
   {
     path: "",
-    name: "Settings",
+    name: ROUTE_NAMES.SETTINGS,
     meta: {
-      i18nKey: "settings",
-      icon: "settings",
-      hasGroup: false,
-      activate: true,
-      title: "Settings",
+      [META_KEYS.I18N_KEY]: "settings",
+      [META_KEYS.ICON]: "settings",
+      [META_KEYS.HAS_GROUP]: false,
+      [META_KEYS.ACTIVATE]: true,
+      [META_KEYS.TITLE]: "Settings",
+      [META_KEYS.BREADCRUMB]: true,
     },
     component: Layout,
     children: [
       {
-        path: "/settings",
+        path: ROUTE_PATHS.SETTINGS,
         name: "ViewSettings",
         component: Settings,
+        meta: {
+          [META_KEYS.TITLE]: "Settings",
+          [META_KEYS.BREADCRUMB]: true,
+        },
       },
     ],
   },

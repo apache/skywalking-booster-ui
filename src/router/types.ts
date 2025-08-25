@@ -14,34 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { AppRouteRecordRaw } from "./types";
-import { ROUTE_NAMES, ROUTE_PATHS, META_KEYS } from "./constants";
-import Layout from "@/layout/Index.vue";
-import Alarm from "@/views/Alarm.vue";
 
-export const routesAlarm: AppRouteRecordRaw[] = [
-  {
-    path: "",
-    name: ROUTE_NAMES.ALARM,
-    meta: {
-      [META_KEYS.I18N_KEY]: "alarm",
-      [META_KEYS.ICON]: "spam",
-      [META_KEYS.HAS_GROUP]: false,
-      [META_KEYS.ACTIVATE]: true,
-      [META_KEYS.TITLE]: "Alerting",
-      [META_KEYS.BREADCRUMB]: true,
-    },
-    component: Layout,
-    children: [
-      {
-        path: ROUTE_PATHS.ALARM,
-        name: "ViewAlarm",
-        component: Alarm,
-        meta: {
-          [META_KEYS.TITLE]: "Alerting",
-          [META_KEYS.BREADCRUMB]: true,
-        },
-      },
-    ],
-  },
-];
+import type { RouteRecordRaw } from "vue-router";
+
+export interface RouteMeta {
+  title?: string;
+  i18nKey?: string;
+  icon?: string;
+  hasGroup?: boolean;
+  activate?: boolean;
+  descKey?: string;
+  layer?: string;
+  notShow?: boolean;
+  requiresAuth?: boolean;
+  breadcrumb?: boolean;
+}
+
+export interface AppRouteRecordRaw extends Omit<RouteRecordRaw, "meta"> {
+  meta: RouteMeta;
+  children?: AppRouteRecordRaw[];
+}
+
+export interface RouteConfig {
+  path: string;
+  name: string;
+  component: any;
+  meta: RouteMeta;
+  children?: RouteConfig[];
+}
+
+export interface NavigationGuard {
+  to: any;
+  from: any;
+  next: any;
+}
