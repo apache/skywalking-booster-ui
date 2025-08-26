@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import type { NavigationGuard } from "./types";
 import { getDefaultRoute } from "./utils";
 import { ROUTE_PATHS } from "./constants";
 
