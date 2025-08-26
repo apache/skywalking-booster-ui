@@ -509,16 +509,15 @@ limitations under the License. -->
       color: var(--sw-topology-color);
       text-align: left;
       outline: none;
-      cursor: pointer;
       white-space: nowrap;
+      cursor: pointer;
 
       &:hover {
-        color: #3f97e3;
+        color: var(--el-color-primary);
       }
 
       &--selected {
-        color: #3f97e3;
-        font-weight: bold;
+        color: var(--el-color-primary);
       }
     }
 
