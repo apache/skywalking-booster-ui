@@ -144,7 +144,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import DateCalendar from "./DateCalendar.vue";
   import { useTimeoutFn } from "@/hooks/useTimeout";
-  /*global, defineProps, defineEmits*/
+  /* global defineProps, defineEmits */
 
   const QUICK_PICK_TYPES = {
     QUARTER: "quarter",
