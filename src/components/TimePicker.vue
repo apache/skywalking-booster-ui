@@ -290,8 +290,8 @@ limitations under the License. -->
     show.value = (datepicker.value as any).contains(e.target) && !props.disabled;
   };
   const quickPick = (type: QuickPickType) => {
-    const end = new Date();
-    const start = new Date();
+    const end = new Date(props.maxRange[1]);
+    const start = new Date(props.maxRange[1]);
     selectedShortcut.value = type;
     switch (type) {
       case QUICK_PICK_TYPES.QUARTER:
@@ -316,7 +316,6 @@ limitations under the License. -->
         break;
     }
     dates.value = [start, end];
-    // emit("input", get());
   };
   const submit = () => {
     inputDates.value = dates.value;
@@ -510,10 +509,10 @@ limitations under the License. -->
       text-align: left;
       outline: none;
       white-space: nowrap;
-      cursor: pointer;
 
       &:hover {
         color: var(--el-color-primary);
+        cursor: pointer;
       }
 
       &--selected {
