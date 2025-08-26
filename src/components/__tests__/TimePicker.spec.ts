@@ -918,4 +918,40 @@ describe("TimePicker Component", () => {
       expect(wrapper.vm.local.weeks).toHaveLength(7);
     });
   });
+
+  describe("Quick Pick Functionality", () => {
+    beforeEach(() => {
+      wrapper = mount(TimePicker);
+    });
+
+    it("should apply selected style to active shortcut button", async () => {
+      wrapper = mount(TimePicker, {
+        props: {
+          value: mockDateRange,
+          type: "inline",
+          maxRange: [new Date(2024, 0, 1), new Date(2024, 0, 31)],
+        },
+      });
+
+      // Force range mode by setting dates directly and wait for reactivity
+      wrapper.vm.dates = [new Date(), new Date()];
+      await nextTick();
+
+      // Initially, half should be selected (default)
+      const halfButton = wrapper.find('.datepicker-popup__shortcut:contains("Half Hour")');
+      expect(halfButton.classes()).toContain("datepicker-popup__shortcut--selected");
+
+      // Click quarter button
+      const quarterButton = wrapper.find('.datepicker-popup__shortcut:contains("Quarter Hour")');
+      await quarterButton.trigger("click");
+      await nextTick();
+
+      // Quarter should now be selected
+      const updatedQuarterButton = wrapper.find('.datepicker-popup__shortcut:contains("Quarter Hour")');
+      const updatedHalfButton = wrapper.find('.datepicker-popup__shortcut:contains("Half Hour")');
+
+      expect(updatedQuarterButton.classes()).toContain("datepicker-popup__shortcut--selected");
+      expect(updatedHalfButton.classes()).not.toContain("datepicker-popup__shortcut--selected");
+    });
+  });
 });

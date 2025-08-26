@@ -457,6 +457,65 @@ describe("DateCalendar Component", () => {
       // The calendar-date-on property might not exist in all cases
       expect("calendar-date-on" in status || status["calendar-date-on"] === undefined).toBe(true);
     });
+
+    it("should not disable dates when maxRange is not provided", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          right: true,
+          dates: [new Date(2024, 0, 10), new Date(2024, 0, 20)],
+          // No maxRange prop
+        },
+      });
+
+      const status = wrapper.vm.status(2024, 0, 15, 10, 30, 45, "YYYYMMDD");
+
+      // When no maxRange is provided, dates should not be disabled due to range constraints
+      // The status function might not return calendar-date-disabled if no constraints apply
+      expect(status["calendar-date-disabled"]).toBeFalsy();
+    });
+
+    it("should not disable dates when maxRange is empty array", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          right: true,
+          dates: [new Date(2024, 0, 10), new Date(2024, 0, 20)],
+          maxRange: [],
+        },
+      });
+
+      const status = wrapper.vm.status(2024, 0, 15, 10, 30, 45, "YYYYMMDD");
+
+      // When maxRange is empty, dates should not be disabled due to range constraints
+      // The status function might not return calendar-date-disabled if no constraints apply
+      expect(status["calendar-date-disabled"]).toBeFalsy();
+    });
+
+    it("should apply range constraints only when maxRange is provided", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          left: true,
+          dates: [new Date(2024, 0, 10), new Date(2024, 0, 20)],
+          maxRange: [new Date(2024, 0, 1), new Date(2024, 0, 31)],
+        },
+      });
+
+      // Test a date that would be disabled with maxRange
+      const statusWithMaxRange = wrapper.vm.status(2024, 0, 5, 10, 30, 45, "YYYYMMDD");
+
+      // Test the same date without maxRange
+      wrapper = mount(DateCalendar, {
+        props: {
+          left: true,
+          dates: [new Date(2024, 0, 10), new Date(2024, 0, 20)],
+        },
+      });
+      const statusWithoutMaxRange = wrapper.vm.status(2024, 0, 5, 10, 30, 45, "YYYYMMDD");
+
+      // The date should be disabled with maxRange but not without it
+      // Check if the property exists and has the expected value
+      expect(statusWithMaxRange["calendar-date-disabled"]).toBeTruthy();
+      expect(statusWithoutMaxRange["calendar-date-disabled"]).toBeFalsy();
+    });
   });
 
   describe("Click Handlers", () => {
