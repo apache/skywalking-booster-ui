@@ -61,11 +61,11 @@ Centralized route constants for consistency:
 
 ```typescript
 export const ROUTE_PATHS = {
-  ROOT: '/',
-  MARKETPLACE: '/marketplace',
+  ROOT: "/",
+  MARKETPLACE: "/marketplace",
   DASHBOARD: {
-    LIST: '/dashboard/list',
-    NEW: '/dashboard/new',
+    LIST: "/dashboard/list",
+    NEW: "/dashboard/new",
     // ... more paths
   },
 } as const;
@@ -86,16 +86,16 @@ Centralized guard management:
 
 ```typescript
 // Root path redirect
-createRootGuard(routes)
+createRootGuard(routes);
 
 // Authentication (placeholder)
-createAuthGuard()
+createAuthGuard();
 
 // Route validation
-createValidationGuard()
+createValidationGuard();
 
 // Error handling
-createErrorGuard()
+createErrorGuard();
 ```
 
 ### 5. Route Factory
@@ -104,13 +104,13 @@ Factory pattern for creating standardized routes:
 
 ```typescript
 // Create a basic route
-RouteFactory.createRoute(path, name, component, meta)
+RouteFactory.createRoute(path, name, component, meta);
 
 // Create a layout route
-RouteFactory.createLayoutRoute(name, component, children, meta)
+RouteFactory.createLayoutRoute(name, component, children, meta);
 
 // Create a lazy route
-RouteFactory.createLazyRoute(path, name, importFn, meta)
+RouteFactory.createLazyRoute(path, name, importFn, meta);
 ```
 
 ### 6. Validation
@@ -128,24 +128,19 @@ const summary = validator.getValidationSummary(routes);
 ### Creating a New Route
 
 ```typescript
-import { RouteFactory, META_KEYS } from '@/router';
+import { RouteFactory, META_KEYS } from "@/router";
 
-const newRoute = RouteFactory.createRoute(
-  '/new-feature',
-  'NewFeature',
-  () => import('@/views/NewFeature.vue'),
-  {
-    [META_KEYS.TITLE]: 'New Feature',
-    [META_KEYS.ICON]: 'star',
-    [META_KEYS.REQUIRES_AUTH]: true,
-  }
-);
+const newRoute = RouteFactory.createRoute("/new-feature", "NewFeature", () => import("@/views/NewFeature.vue"), {
+  [META_KEYS.TITLE]: "New Feature",
+  [META_KEYS.ICON]: "star",
+  [META_KEYS.REQUIRES_AUTH]: true,
+});
 ```
 
 ### Adding Navigation Guards
 
 ```typescript
-import { createAuthGuard } from '@/router';
+import { createAuthGuard } from "@/router";
 
 // In your router configuration
 router.beforeEach(createAuthGuard());
@@ -154,13 +149,13 @@ router.beforeEach(createAuthGuard());
 ### Validating Routes
 
 ```typescript
-import { RouteValidator } from '@/router';
+import { RouteValidator } from "@/router";
 
 const validator = new RouteValidator();
 const errors = validator.validateRoutes(routes);
 
 if (!validator.isValid(routes)) {
-  console.error('Route validation failed:', errors);
+  console.error("Route validation failed:", errors);
 }
 ```
 
@@ -176,6 +171,7 @@ if (!validator.isValid(routes)) {
 ### Example Migration
 
 **Before:**
+
 ```typescript
 {
   path: "/dashboard/list",
@@ -190,6 +186,7 @@ if (!validator.isValid(routes)) {
 ```
 
 **After:**
+
 ```typescript
 {
   path: ROUTE_PATHS.DASHBOARD.LIST,
@@ -218,7 +215,7 @@ if (!validator.isValid(routes)) {
 The router system includes comprehensive testing utilities:
 
 ```typescript
-import { RouteValidator, RouteAnalyzer } from '@/router';
+import { RouteValidator, RouteAnalyzer } from "@/router";
 
 // Validate routes
 const validator = new RouteValidator();
