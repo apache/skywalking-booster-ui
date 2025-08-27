@@ -246,7 +246,7 @@ limitations under the License. -->
     return parse(Number(props.maxRange[0]));
   });
   const maxEnd = computed(() => {
-    return parse(Number(props.maxRange[1]));
+    return parse(Number(props.maxRange[1]) + 23 * 60 * 60 * 1000);
   });
   const ys = computed(() => {
     return Math.floor(state.year / 10) * 10;

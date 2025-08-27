@@ -290,8 +290,8 @@ limitations under the License. -->
     show.value = (datepicker.value as any).contains(e.target) && !props.disabled;
   };
   const quickPick = (type: QuickPickType) => {
-    const end = new Date(props.maxRange[1]);
-    const start = new Date(props.maxRange[1]);
+    const end = new Date();
+    const start = new Date();
     selectedShortcut.value = type;
     switch (type) {
       case QUICK_PICK_TYPES.QUARTER:
