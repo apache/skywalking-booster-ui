@@ -252,7 +252,8 @@ limitations under the License. -->
     return props.value ? txt : "";
   });
   const get = () => {
-    return Array.isArray(props.value) ? inputDates.value : inputDates.value[0];
+    const currentDates = props.showButtons ? inputDates.value : dates.value;
+    return Array.isArray(props.value) ? currentDates : currentDates[0];
   };
   const cls = () => {
     emit("clear");
