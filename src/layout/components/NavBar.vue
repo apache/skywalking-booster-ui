@@ -46,7 +46,8 @@ limitations under the License. -->
         :maxRange="appStore.maxRange"
         position="bottom"
         format="YYYY-MM-DD HH:mm"
-        @input="changeTimeRange"
+        :showButtons="true"
+        @confirm="changeTimeRange"
       />
       <span> UTC{{ appStore.utcHour >= 0 ? "+" : "" }}{{ `${appStore.utcHour}:${appStore.utcMin}` }} </span>
       <span class="ml-5">
