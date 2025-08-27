@@ -96,7 +96,6 @@ limitations under the License. -->
               :value="dates[0]"
               :dates="dates"
               :left="true"
-              :disabledDate="disabledDate"
               :format="format"
               :maxRange="maxRange"
               @ok="ok"
@@ -107,7 +106,6 @@ limitations under the License. -->
               :value="dates[1]"
               :dates="dates"
               :right="true"
-              :disabledDate="disabledDate"
               :format="format"
               :maxRange="maxRange"
               @ok="ok"
@@ -119,7 +117,6 @@ limitations under the License. -->
           <DateCalendar
             v-model="dates[0]"
             :value="dates[0]"
-            :disabledDate="disabledDate"
             :dates="dates"
             :format="format"
             @ok="ok"
@@ -183,10 +180,6 @@ limitations under the License. -->
       default: false,
     },
     placeholder: [String],
-    disabledDate: {
-      type: Function,
-      default: () => false,
-    },
     format: {
       type: String,
       default: "YYYY-MM-DD",
@@ -267,7 +260,7 @@ limitations under the License. -->
   };
   const vi = (val: any) => {
     if (Array.isArray(val)) {
-      return val.length > 1 ? val.map((item) => new Date(item)) : [new Date(), new Date()];
+      return val.length >= 1 ? val.map((item) => new Date(item)) : [new Date(), new Date()];
     }
     return val ? [new Date(val)] : [new Date()];
   };
@@ -339,6 +332,7 @@ limitations under the License. -->
     () => props.value,
     (val: unknown) => {
       dates.value = vi(val);
+      inputDates.value = [...dates.value];
     },
   );
 </script>

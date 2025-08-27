@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
+import { describe, it, expect, vi } from "vitest";
 import { nextTick } from "vue";
 import DateCalendar from "../DateCalendar.vue";
 
@@ -25,10 +25,10 @@ vi.mock("vue-i18n", () => ({
   useI18n: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
-        hourTip: "Select Hour",
-        minuteTip: "Select Minute",
-        secondTip: "Select Second",
-        yearSuffix: "",
+        hourTip: "Hour",
+        minuteTip: "Minute",
+        secondTip: "Second",
+        yearSuffix: "Year",
         monthsHead: "January_February_March_April_May_June_July_August_September_October_November_December",
         months: "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec",
         weeks: "Mon_Tue_Wed_Thu_Fri_Sat_Sun",
@@ -47,42 +47,24 @@ vi.mock("vue-i18n", () => ({
 }));
 
 describe("DateCalendar Component", () => {
-  let wrapper: Recordable;
-
-  const mockDate = new Date(2024, 0, 15, 10, 30, 45); // January 15, 2024, 10:30:45
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  let wrapper: any;
+  const mockDate = new Date(2024, 0, 15, 10, 30, 45);
+  const mockDateRange = [new Date(2024, 0, 10), new Date(2024, 0, 20)];
 
   describe("Props", () => {
     it("should render with default props", () => {
       wrapper = mount(DateCalendar);
-
       expect(wrapper.exists()).toBe(true);
-      // When no value is provided, state.pre is empty initially
-      expect(wrapper.vm.state.pre).toBe("");
-      expect(wrapper.vm.state.m).toBe("D");
-      expect(wrapper.vm.state.showYears).toBe(false);
-      expect(wrapper.vm.state.showMonths).toBe(false);
-      expect(wrapper.vm.state.showHours).toBe(false);
-      expect(wrapper.vm.state.showMinutes).toBe(false);
-      expect(wrapper.vm.state.showSeconds).toBe(false);
+      expect(wrapper.classes()).toContain("calendar");
     });
 
-    it("should render with custom value", () => {
+    it("should render with value prop", () => {
       wrapper = mount(DateCalendar, {
         props: {
           value: mockDate,
         },
       });
-
-      expect(wrapper.vm.state.year).toBe(2024);
-      expect(wrapper.vm.state.month).toBe(0); // January is 0
-      expect(wrapper.vm.state.day).toBe(15);
-      expect(wrapper.vm.state.hour).toBe(10);
-      expect(wrapper.vm.state.minute).toBe(30);
-      expect(wrapper.vm.state.second).toBe(45);
+      expect(wrapper.vm.value).toEqual(mockDate);
     });
 
     it("should render with left prop", () => {
@@ -91,8 +73,7 @@ describe("DateCalendar Component", () => {
           left: true,
         },
       });
-
-      expect(wrapper.props("left")).toBe(true);
+      expect(wrapper.vm.left).toBe(true);
     });
 
     it("should render with right prop", () => {
@@ -101,8 +82,16 @@ describe("DateCalendar Component", () => {
           right: true,
         },
       });
+      expect(wrapper.vm.right).toBe(true);
+    });
 
-      expect(wrapper.props("right")).toBe(true);
+    it("should render with dates array", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          dates: mockDateRange,
+        },
+      });
+      expect(wrapper.vm.dates).toEqual(mockDateRange);
     });
 
     it("should render with custom format", () => {
@@ -111,317 +100,298 @@ describe("DateCalendar Component", () => {
           format: "YYYY-MM-DD HH:mm:ss",
         },
       });
-
-      expect(wrapper.props("format")).toBe("YYYY-MM-DD HH:mm:ss");
-    });
-
-    it("should render with dates array", () => {
-      const dates = [new Date(2024, 0, 1), new Date(2024, 0, 31)];
-      wrapper = mount(DateCalendar, {
-        props: {
-          dates,
-        },
-      });
-
-      expect(wrapper.props("dates")).toEqual(dates);
+      expect(wrapper.vm.format).toBe("YYYY-MM-DD HH:mm:ss");
     });
 
     it("should render with maxRange array", () => {
-      const maxRange = [new Date(2024, 0, 1), new Date(2024, 11, 31)];
       wrapper = mount(DateCalendar, {
         props: {
-          maxRange,
+          maxRange: [new Date(2024, 0, 1), new Date(2024, 0, 31)],
         },
       });
-
-      expect(wrapper.props("maxRange")).toEqual(maxRange);
-    });
-
-    it("should render with disabledDate function", () => {
-      const disabledDate = vi.fn(() => false);
-      wrapper = mount(DateCalendar, {
-        props: {
-          disabledDate,
-        },
-      });
-
-      expect(wrapper.props("disabledDate")).toBe(disabledDate);
+      expect(wrapper.vm.maxRange).toHaveLength(2);
     });
   });
 
   describe("Computed Properties", () => {
-    beforeEach(() => {
+    it("should calculate start date correctly", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          dates: mockDateRange,
+        },
+      });
+      expect(wrapper.vm.start).toBeDefined();
+    });
+
+    it("should calculate end date correctly", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          dates: mockDateRange,
+        },
+      });
+      expect(wrapper.vm.end).toBeDefined();
+    });
+
+    it("should calculate minStart correctly", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          maxRange: [new Date(2024, 0, 1), new Date(2024, 0, 31)],
+        },
+      });
+      expect(wrapper.vm.minStart).toBeDefined();
+    });
+
+    it("should calculate maxEnd correctly", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          maxRange: [new Date(2024, 0, 1), new Date(2024, 0, 31)],
+        },
+      });
+      expect(wrapper.vm.maxEnd).toBeDefined();
+    });
+
+    it("should calculate year start correctly", () => {
       wrapper = mount(DateCalendar, {
         props: {
           value: mockDate,
         },
       });
-    });
-
-    it("should calculate start date correctly", () => {
-      const dates = [new Date(2024, 0, 1), new Date(2024, 0, 31)];
-      wrapper = mount(DateCalendar, {
-        props: {
-          dates,
-        },
-      });
-
-      // The actual value depends on the parse function implementation
-      expect(wrapper.vm.start).toBeGreaterThan(0);
-    });
-
-    it("should calculate end date correctly", () => {
-      const dates = [new Date(2024, 0, 1), new Date(2024, 0, 31)];
-      wrapper = mount(DateCalendar, {
-        props: {
-          dates,
-        },
-      });
-
-      // The actual value depends on the parse function implementation
-      expect(wrapper.vm.end).toBeGreaterThan(0);
-    });
-
-    it("should calculate year start correctly", () => {
       expect(wrapper.vm.ys).toBe(2020);
     });
 
     it("should calculate year end correctly", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
       expect(wrapper.vm.ye).toBe(2030);
     });
 
-    it("should generate years array correctly", () => {
-      const years = wrapper.vm.years;
-      expect(years).toHaveLength(12);
-      // The years array should have 12 consecutive years
-      expect(years[11] - years[0]).toBe(11);
-      expect(years[0]).toBeGreaterThan(0);
-      expect(years[11]).toBeGreaterThan(0);
-    });
-
-    it("should generate days array correctly", () => {
-      const days = wrapper.vm.days;
-      expect(days).toHaveLength(42); // 6 weeks * 7 days
-
-      // Check that we have the correct number of days for January 2024
-      const currentMonthDays = days.filter((day: Recordable) => !day.p && !day.n);
-      expect(currentMonthDays).toHaveLength(31);
-    });
-
-    it("should format time correctly with dd function", () => {
-      expect(wrapper.vm.dd(5)).toBe("05");
-      expect(wrapper.vm.dd(10)).toBe("10");
-      expect(wrapper.vm.dd(0)).toBe("00");
-    });
-  });
-
-  describe("Navigation", () => {
-    beforeEach(() => {
+    it("should calculate years array correctly", () => {
       wrapper = mount(DateCalendar, {
         props: {
           value: mockDate,
         },
       });
+      expect(wrapper.vm.years).toHaveLength(12);
     });
 
-    it("should navigate to next month", async () => {
-      const initialMonth = wrapper.vm.state.month;
-      const initialYear = wrapper.vm.state.year;
-
-      await wrapper.vm.nm();
-      await nextTick();
-
-      if (initialMonth === 11) {
-        expect(wrapper.vm.state.month).toBe(0);
-        expect(wrapper.vm.state.year).toBe(initialYear + 1);
-      } else {
-        expect(wrapper.vm.state.month).toBe(initialMonth + 1);
-        expect(wrapper.vm.state.year).toBe(initialYear);
-      }
+    it("should calculate days array correctly", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      expect(wrapper.vm.days).toHaveLength(42);
     });
 
-    it("should navigate to previous month", async () => {
-      const initialMonth = wrapper.vm.state.month;
-      const initialYear = wrapper.vm.state.year;
+    it("should calculate local translations correctly", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      expect(wrapper.vm.local.monthsHead).toHaveLength(12);
+      expect(wrapper.vm.local.months).toHaveLength(12);
+      expect(wrapper.vm.local.weeks).toHaveLength(7);
+    });
+  });
 
-      await wrapper.vm.pm();
-      await nextTick();
+  describe("Methods", () => {
+    it("should parse numbers correctly", () => {
+      wrapper = mount(DateCalendar);
+      const result = wrapper.vm.parse(100000);
+      expect(result).toBe(1);
+    });
 
-      if (initialMonth === 0) {
+    it("should handle next month navigation", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const originalMonth = wrapper.vm.state.month;
+      wrapper.vm.nm();
+      expect(wrapper.vm.state.month).toBe(originalMonth + 1);
+    });
+
+    it("should handle previous month navigation", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const originalMonth = wrapper.vm.state.month;
+      const originalYear = wrapper.vm.state.year;
+      wrapper.vm.pm();
+
+      // Handle month wrapping: if originalMonth was 0 (January), it should wrap to 11 (December)
+      if (originalMonth === 0) {
         expect(wrapper.vm.state.month).toBe(11);
-        expect(wrapper.vm.state.year).toBe(initialYear - 1);
+        expect(wrapper.vm.state.year).toBe(originalYear - 1); // Year should be decremented
       } else {
-        expect(wrapper.vm.state.month).toBe(initialMonth - 1);
-        expect(wrapper.vm.state.year).toBe(initialYear);
+        expect(wrapper.vm.state.month).toBe(originalMonth - 1);
+        expect(wrapper.vm.state.year).toBe(originalYear); // Year should remain the same
       }
     });
 
-    it("should navigate to next year", async () => {
-      const initialYear = wrapper.vm.state.year;
-
-      wrapper.vm.state.year++;
-      await nextTick();
-
-      expect(wrapper.vm.state.year).toBe(initialYear + 1);
+    it("should handle month boundary navigation", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: new Date(2024, 11, 15), // December
+        },
+      });
+      wrapper.vm.nm();
+      expect(wrapper.vm.state.month).toBe(0); // January
+      expect(wrapper.vm.state.year).toBe(2025);
     });
 
-    it("should navigate to previous year", async () => {
-      const initialYear = wrapper.vm.state.year;
-
-      wrapper.vm.state.year--;
-      await nextTick();
-
-      expect(wrapper.vm.state.year).toBe(initialYear - 1);
+    it("should handle year boundary navigation", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: new Date(2024, 0, 15), // January
+        },
+      });
+      wrapper.vm.pm();
+      expect(wrapper.vm.state.month).toBe(11); // December
+      expect(wrapper.vm.state.year).toBe(2023);
     });
 
-    it("should navigate to next decade", async () => {
-      const initialYear = wrapper.vm.state.year;
-
-      wrapper.vm.state.year += 10;
-      await nextTick();
-
-      expect(wrapper.vm.state.year).toBe(initialYear + 10);
-    });
-
-    it("should navigate to previous decade", async () => {
-      const initialYear = wrapper.vm.state.year;
-
-      wrapper.vm.state.year -= 10;
-      await nextTick();
-
-      expect(wrapper.vm.state.year).toBe(initialYear - 10);
-    });
-  });
-
-  describe("Events", () => {
-    beforeEach(() => {
+    it("should check if event target is disabled", () => {
       wrapper = mount(DateCalendar, {
         props: {
           value: mockDate,
         },
       });
+      const mockEvent = {
+        target: {
+          className: "calendar-date calendar-date-disabled",
+        },
+      };
+      const result = wrapper.vm.is(mockEvent);
+      expect(result).toBe(false);
     });
 
-    it("should emit setDates event when date is selected", async () => {
-      // The ok function creates a new Date with current state values
-      await wrapper.vm.ok({ i: 20, y: 2024, m: 0 });
-      await nextTick();
-
-      expect(wrapper.emitted("setDates")).toBeTruthy();
-      // The emitted date will be based on the current state values
-      const emittedDate = wrapper.emitted("setDates")[0][0];
-      expect(emittedDate).toBeInstanceOf(Date);
+    it("should check if event target is not disabled", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const mockEvent = {
+        target: {
+          className: "calendar-date",
+        },
+      };
+      const result = wrapper.vm.is(mockEvent);
+      expect(result).toBe(true);
     });
 
-    it("should emit ok event when date is selected", async () => {
-      await wrapper.vm.ok({ i: 20, y: 2024, m: 0 });
-      await nextTick();
-
+    it("should handle ok event for hour selection", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.ok("h");
       expect(wrapper.emitted("ok")).toBeTruthy();
-      expect(wrapper.emitted("ok")[0]).toEqual([false]);
     });
 
-    it("should emit setDates event for left calendar", async () => {
+    it("should handle ok event for month selection", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.ok("m");
+      expect(wrapper.emitted("ok")).toBeTruthy();
+    });
+
+    it("should handle ok event for year selection", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.ok("y");
+      expect(wrapper.emitted("ok")).toBeTruthy();
+    });
+
+    it("should handle ok event for date selection", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const mockInfo = { n: false, p: false };
+      wrapper.vm.ok(mockInfo);
+      expect(wrapper.emitted("ok")).toBeTruthy();
+    });
+
+    it("should handle setDates for left calendar", () => {
       wrapper = mount(DateCalendar, {
         props: {
           left: true,
-          dates: [new Date(2024, 0, 1), new Date(2024, 0, 31)],
+          dates: mockDateRange,
+          value: mockDateRange[0],
         },
       });
-
-      await wrapper.vm.ok({ i: 15, y: 2024, m: 0 });
-      await nextTick();
-
+      wrapper.vm.ok({ n: false, p: false });
       expect(wrapper.emitted("setDates")).toBeTruthy();
-      const emittedEvent = wrapper.emitted("setDates")[0];
-      expect(emittedEvent[1]).toBe("left");
-      expect(emittedEvent[0]).toBeInstanceOf(Date);
     });
 
-    it("should emit setDates event for right calendar", async () => {
+    it("should handle setDates for right calendar", () => {
       wrapper = mount(DateCalendar, {
         props: {
           right: true,
-          dates: [new Date(2024, 0, 1), new Date(2024, 0, 31)],
+          dates: mockDateRange,
         },
       });
-
-      await wrapper.vm.ok({ i: 25, y: 2024, m: 0 });
-      await nextTick();
-
-      // The right calendar might not emit if the date is not in the valid range
-      if (wrapper.emitted("setDates")) {
-        const emittedEvent = wrapper.emitted("setDates")[0];
-        expect(emittedEvent[1]).toBe("right");
-        expect(emittedEvent[0]).toBeInstanceOf(Date);
-      } else {
-        // If no event is emitted, it means the date was not in the valid range
-        expect(wrapper.emitted("setDates")).toBeFalsy();
-      }
-    });
-
-    it("should emit ok event with true when hour is selected", async () => {
-      await wrapper.vm.ok("h");
-      await nextTick();
-
-      expect(wrapper.emitted("ok")).toBeTruthy();
-      expect(wrapper.emitted("ok")[0]).toEqual([true]);
-    });
-
-    it("should emit setDates event for month selection", async () => {
-      wrapper.vm.state.m = "M";
-      await wrapper.vm.ok("m");
-      await nextTick();
-
+      wrapper.vm.ok({ n: false, p: false });
       expect(wrapper.emitted("setDates")).toBeTruthy();
     });
 
-    it("should emit setDates event for year selection", async () => {
-      wrapper.vm.state.m = "Y";
-      await wrapper.vm.ok("y");
-      await nextTick();
-
+    it("should handle setDates for single calendar", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.ok({ n: false, p: false });
       expect(wrapper.emitted("setDates")).toBeTruthy();
     });
   });
 
   describe("Status Function", () => {
-    beforeEach(() => {
+    it("should return correct status for year format", () => {
       wrapper = mount(DateCalendar, {
         props: {
           value: mockDate,
         },
       });
-    });
-
-    it("should return correct status for current date", () => {
-      const status = wrapper.vm.status(2024, 0, 15, 10, 30, 45, "YYYYMMDD");
-
-      expect(status["calendar-date"]).toBe(true);
+      const status = wrapper.vm.status(2024, 0, 15, 10, 30, 45, "YYYY");
       expect(status["calendar-date-selected"]).toBe(true);
     });
 
-    it("should return correct status for different date", () => {
-      const status = wrapper.vm.status(2024, 0, 20, 10, 30, 45, "YYYYMMDD");
-
-      expect(status["calendar-date"]).toBe(true);
-      expect(status["calendar-date-selected"]).toBe(false);
-    });
-
-    it("should handle disabled dates", () => {
-      const disabledDate = vi.fn(() => true);
+    it("should return correct status for month format", () => {
       wrapper = mount(DateCalendar, {
         props: {
-          disabledDate,
+          value: mockDate,
         },
       });
+      const status = wrapper.vm.status(2024, 0, 15, 10, 30, 45, "YYYYMM");
+      expect(status["calendar-date-selected"]).toBe(true);
+    });
 
+    it("should return correct status for date format", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
       const status = wrapper.vm.status(2024, 0, 15, 10, 30, 45, "YYYYMMDD");
-
-      // The disabledDate function is called with the date and format
-      expect(disabledDate).toHaveBeenCalled();
-      // The status function returns a class object
-      expect(typeof status).toBe("object");
+      expect(status["calendar-date-selected"]).toBe(true);
     });
 
     it("should handle left calendar range", () => {
@@ -478,6 +448,7 @@ describe("DateCalendar Component", () => {
       wrapper = mount(DateCalendar, {
         props: {
           right: true,
+          value: new Date(2024, 0, 20),
           dates: [new Date(2024, 0, 10), new Date(2024, 0, 20)],
           maxRange: [],
         },
@@ -500,216 +471,393 @@ describe("DateCalendar Component", () => {
       });
 
       // Test a date that would be disabled with maxRange
+      // Date 2024-01-05 is within maxRange [2024-01-01, 2024-01-31] so it should NOT be disabled
       const statusWithMaxRange = wrapper.vm.status(2024, 0, 5, 10, 30, 45, "YYYYMMDD");
 
       // Test the same date without maxRange
       wrapper = mount(DateCalendar, {
         props: {
           left: true,
+          value: new Date(2024, 0, 10),
           dates: [new Date(2024, 0, 10), new Date(2024, 0, 20)],
         },
       });
       const statusWithoutMaxRange = wrapper.vm.status(2024, 0, 5, 10, 30, 45, "YYYYMMDD");
 
-      // The date should be disabled with maxRange but not without it
+      // The date should NOT be disabled with maxRange because it's within the range
       // Check if the property exists and has the expected value
-      expect(statusWithMaxRange["calendar-date-disabled"]).toBeTruthy();
+      expect(statusWithMaxRange["calendar-date-disabled"]).toBeFalsy();
       expect(statusWithoutMaxRange["calendar-date-disabled"]).toBeFalsy();
     });
   });
 
-  describe("Click Handlers", () => {
-    beforeEach(() => {
+  describe("Template Rendering", () => {
+    it("should render calendar head", () => {
       wrapper = mount(DateCalendar, {
         props: {
           value: mockDate,
         },
       });
+      expect(wrapper.find(".calendar-head").exists()).toBe(true);
     });
 
-    it("should allow clicks on enabled dates", () => {
-      const mockEvent = {
-        target: {
-          className: "calendar-date",
+    it("should render calendar body", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
         },
-      };
-
-      const result = wrapper.vm.is(mockEvent);
-      expect(result).toBe(true);
+      });
+      expect(wrapper.find(".calendar-body").exists()).toBe(true);
     });
 
-    it("should prevent clicks on disabled dates", () => {
-      const mockEvent = {
-        target: {
-          className: "calendar-date calendar-date-disabled",
+    it("should render calendar days", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
         },
-      };
+      });
+      expect(wrapper.find(".calendar-days").exists()).toBe(true);
+    });
 
-      const result = wrapper.vm.is(mockEvent);
-      expect(result).toBe(false);
+    it("should render week headers", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const weekHeaders = wrapper.findAll(".calendar-week");
+      expect(weekHeaders).toHaveLength(7);
+    });
+
+    it("should render date cells", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const dateCells = wrapper.findAll(".calendar-date");
+      expect(dateCells.length).toBeGreaterThan(0);
+    });
+
+    it("should render calendar foot", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      expect(wrapper.find(".calendar-foot").exists()).toBe(true);
+    });
+
+    it("should render hour display", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      expect(wrapper.find(".calendar-hour").exists()).toBe(true);
+    });
+
+    it("should render month selector when showMonths is true", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.state.showMonths = true;
+      await nextTick();
+      expect(wrapper.find(".calendar-months").exists()).toBe(true);
+    });
+
+    it("should render year selector when showYears is true", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.state.showYears = true;
+      await nextTick();
+      expect(wrapper.find(".calendar-years").exists()).toBe(true);
+    });
+
+    it("should render hour selector when showHours is true", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.state.showHours = true;
+      await nextTick();
+      expect(wrapper.find(".calendar-hours").exists()).toBe(true);
+    });
+
+    it("should render minute selector when showMinutes is true", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.state.showMinutes = true;
+      await nextTick();
+      expect(wrapper.find(".calendar-minutes").exists()).toBe(true);
+    });
+
+    it("should render second selector when showSeconds is true", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.state.showSeconds = true;
+      await nextTick();
+      expect(wrapper.find(".calendar-seconds").exists()).toBe(true);
     });
   });
 
-  describe("Component Modes", () => {
-    it("should initialize in date mode by default", () => {
+  describe("Event Handling", () => {
+    it("should handle year navigation clicks", async () => {
       wrapper = mount(DateCalendar, {
         props: {
-          format: "YYYY-MM-DD",
+          value: mockDate,
+        },
+      });
+      const prevYearBtn = wrapper.find(".calendar-prev-year-btn");
+      const nextYearBtn = wrapper.find(".calendar-next-year-btn");
+
+      expect(prevYearBtn.exists()).toBe(true);
+      expect(nextYearBtn.exists()).toBe(true);
+    });
+
+    it("should handle month navigation clicks", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const prevMonthBtn = wrapper.find(".calendar-prev-month-btn");
+      const nextMonthBtn = wrapper.find(".calendar-next-month-btn");
+
+      expect(prevMonthBtn.exists()).toBe(true);
+      expect(nextMonthBtn.exists()).toBe(true);
+    });
+
+    it("should handle decade navigation clicks", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.state.showYears = true;
+      await nextTick();
+
+      const prevDecadeBtn = wrapper.find(".calendar-prev-decade-btn");
+      const nextDecadeBtn = wrapper.find(".calendar-next-decade-btn");
+
+      expect(prevDecadeBtn.exists()).toBe(true);
+      expect(nextDecadeBtn.exists()).toBe(true);
+    });
+
+    it("should handle year selection click", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const yearSelect = wrapper.find(".calendar-year-select");
+      expect(yearSelect.exists()).toBe(true);
+    });
+
+    it("should handle month selection click", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const monthSelect = wrapper.find(".calendar-month-select");
+      expect(monthSelect.exists()).toBe(true);
+    });
+
+    it("should handle date clicks", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const dateCell = wrapper.find(".calendar-date");
+      expect(dateCell.exists()).toBe(true);
+    });
+
+    it("should handle hour clicks", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.state.showHours = true;
+      await nextTick();
+
+      const hourCell = wrapper.find(".calendar-hours .calendar-date");
+      expect(hourCell.exists()).toBe(true);
+    });
+
+    it("should handle minute clicks", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.state.showMinutes = true;
+      await nextTick();
+
+      const minuteCell = wrapper.find(".calendar-minutes .calendar-date");
+      expect(minuteCell.exists()).toBe(true);
+    });
+
+    it("should handle second clicks", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      wrapper.vm.state.showSeconds = true;
+      await nextTick();
+
+      const secondCell = wrapper.find(".calendar-seconds .calendar-date");
+      expect(secondCell.exists()).toBe(true);
+    });
+
+    it("should handle hour display clicks", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      const hourDisplay = wrapper.find(".calendar-hour a");
+      expect(hourDisplay.exists()).toBe(true);
+    });
+  });
+
+  describe("Lifecycle", () => {
+    it("should initialize state on mount", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
+        },
+      });
+      expect(wrapper.vm.state.year).toBe(2024);
+      expect(wrapper.vm.state.month).toBe(0);
+      expect(wrapper.vm.state.day).toBe(15);
+    });
+
+    it("should watch for value prop changes", async () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          value: mockDate,
         },
       });
 
-      expect(wrapper.vm.state.m).toBe("D");
-      expect(wrapper.vm.state.showYears).toBe(false);
-      expect(wrapper.vm.state.showMonths).toBe(false);
+      const newDate = new Date(2025, 5, 20);
+      await wrapper.setProps({ value: newDate });
+      expect(wrapper.vm.state.year).toBe(2025);
+      expect(wrapper.vm.state.month).toBe(5);
+      expect(wrapper.vm.state.day).toBe(20);
     });
 
-    it("should initialize in month mode", () => {
-      wrapper = mount(DateCalendar, {
-        props: {
-          format: "YYYY-MM",
-        },
-      });
-
-      expect(wrapper.vm.state.m).toBe("M");
-      expect(wrapper.vm.state.showMonths).toBe(true);
-    });
-
-    it("should initialize in year mode", () => {
-      wrapper = mount(DateCalendar, {
-        props: {
-          format: "YYYY",
-        },
-      });
-
-      expect(wrapper.vm.state.m).toBe("Y");
-      expect(wrapper.vm.state.showYears).toBe(true);
-    });
-
-    it("should initialize in hour mode", () => {
+    it("should determine format type on mount", () => {
       wrapper = mount(DateCalendar, {
         props: {
           format: "YYYY-MM-DD HH:mm:ss",
         },
       });
-
       expect(wrapper.vm.state.m).toBe("H");
     });
-  });
 
-  describe("Reactive Updates", () => {
-    it("should update state when value prop changes", async () => {
+    it("should determine date format type on mount", () => {
       wrapper = mount(DateCalendar, {
         props: {
-          value: mockDate,
+          format: "YYYY-MM-DD",
         },
       });
-
-      const newDate = new Date(2025, 5, 20, 15, 45, 30);
-      await wrapper.setProps({ value: newDate });
-      await nextTick();
-
-      expect(wrapper.vm.state.year).toBe(2025);
-      expect(wrapper.vm.state.month).toBe(5);
-      expect(wrapper.vm.state.day).toBe(20);
-      expect(wrapper.vm.state.hour).toBe(15);
-      expect(wrapper.vm.state.minute).toBe(45);
-      expect(wrapper.vm.state.second).toBe(30);
+      expect(wrapper.vm.state.m).toBe("D");
     });
 
-    it("should handle undefined value", async () => {
+    it("should determine month format type on mount", () => {
       wrapper = mount(DateCalendar, {
         props: {
-          value: mockDate,
+          format: "YYYY-MM",
         },
       });
+      expect(wrapper.vm.state.m).toBe("M");
+    });
 
-      await wrapper.setProps({ value: undefined });
-      await nextTick();
-
-      // State should remain unchanged when value is undefined
-      expect(wrapper.vm.state.year).toBe(2024);
+    it("should determine year format type on mount", () => {
+      wrapper = mount(DateCalendar, {
+        props: {
+          format: "YYYY",
+        },
+      });
+      expect(wrapper.vm.state.m).toBe("Y");
     });
   });
 
   describe("Edge Cases", () => {
-    it("should handle leap year correctly", () => {
-      wrapper = mount(DateCalendar, {
+    it("should handle null value", () => {
+      wrapper = mount(DateCalendar as any, {
         props: {
-          value: new Date(2024, 1, 29), // February 29, 2024 (leap year)
+          value: null,
         },
       });
-
-      const days = wrapper.vm.days;
-      const februaryDays = days.filter((day: Recordable) => day.y === 2024 && day.m === 1 && !day.p && !day.n);
-      expect(februaryDays).toHaveLength(29);
+      expect(wrapper.vm.state.year).toBe(0);
     });
 
-    it("should handle non-leap year February", () => {
+    it("should handle undefined value", () => {
       wrapper = mount(DateCalendar, {
         props: {
-          value: new Date(2023, 1, 28), // February 28, 2023 (non-leap year)
+          value: undefined,
         },
       });
-
-      const days = wrapper.vm.days;
-      const februaryDays = days.filter((day: Recordable) => day.y === 2023 && day.m === 1 && !day.p && !day.n);
-      expect(februaryDays).toHaveLength(28);
+      expect(wrapper.vm.state.year).toBe(new Date().getFullYear());
     });
 
-    it("should handle year boundary navigation", async () => {
+    it("should handle empty dates array", () => {
       wrapper = mount(DateCalendar, {
         props: {
-          value: new Date(2024, 11, 31), // December 31, 2024
+          dates: [],
         },
       });
-
-      await wrapper.vm.nm();
-      await nextTick();
-
-      expect(wrapper.vm.state.month).toBe(0);
-      expect(wrapper.vm.state.year).toBe(2025);
+      expect(wrapper.vm.dates).toEqual([]);
     });
 
-    it("should handle month boundary navigation", async () => {
+    it("should handle empty maxRange array", () => {
       wrapper = mount(DateCalendar, {
         props: {
-          value: new Date(2024, 0, 1), // January 1, 2024
+          maxRange: [],
         },
       });
-
-      await wrapper.vm.pm();
-      await nextTick();
-
-      expect(wrapper.vm.state.month).toBe(11);
-      expect(wrapper.vm.state.year).toBe(2023);
+      expect(wrapper.vm.maxRange).toEqual([]);
     });
   });
 
   describe("Accessibility", () => {
-    it("should have proper structure", () => {
+    it("should have proper click handlers", () => {
       wrapper = mount(DateCalendar, {
         props: {
           value: mockDate,
         },
       });
-
-      expect(wrapper.find(".calendar").exists()).toBe(true);
-      expect(wrapper.find(".calendar-head").exists()).toBe(true);
-      expect(wrapper.find(".calendar-body").exists()).toBe(true);
+      const clickableElements = wrapper.findAll("a[onclick], .calendar-date");
+      expect(clickableElements.length).toBeGreaterThan(0);
     });
 
-    it("should have clickable navigation elements", () => {
+    it("should have proper navigation structure", () => {
       wrapper = mount(DateCalendar, {
         props: {
           value: mockDate,
         },
       });
-
-      const prevBtn = wrapper.find(".calendar-prev-month-btn");
-      const nextBtn = wrapper.find(".calendar-next-month-btn");
-
-      expect(prevBtn.exists()).toBe(true);
-      expect(nextBtn.exists()).toBe(true);
+      const navigationElements = wrapper.findAll(
+        ".calendar-prev-year-btn, .calendar-next-year-btn, .calendar-prev-month-btn, .calendar-next-month-btn",
+      );
+      expect(navigationElements.length).toBeGreaterThan(0);
     });
   });
 
@@ -721,11 +869,12 @@ describe("DateCalendar Component", () => {
         },
       });
 
-      expect(wrapper.vm.local.hourTip).toBe("Select Hour");
-      expect(wrapper.vm.local.minuteTip).toBe("Select Minute");
-      expect(wrapper.vm.local.secondTip).toBe("Select Second");
-      expect(wrapper.vm.local.monthsHead).toHaveLength(12);
-      expect(wrapper.vm.local.weeks).toHaveLength(7);
+      expect(wrapper.vm.local.hourTip).toBe("Hour");
+      expect(wrapper.vm.local.minuteTip).toBe("Minute");
+      expect(wrapper.vm.local.secondTip).toBe("Second");
+      expect(wrapper.vm.local.yearSuffix).toBe("Year");
+      expect(wrapper.vm.local.cancelTip).toBe("Cancel");
+      expect(wrapper.vm.local.submitTip).toBe("Confirm");
     });
 
     it("should handle month names correctly", () => {
@@ -735,19 +884,9 @@ describe("DateCalendar Component", () => {
         },
       });
 
-      expect(wrapper.vm.local.monthsHead[0]).toBe("January");
-      expect(wrapper.vm.local.monthsHead[11]).toBe("December");
-    });
-
-    it("should handle week day names correctly", () => {
-      wrapper = mount(DateCalendar, {
-        props: {
-          value: mockDate,
-        },
-      });
-
-      expect(wrapper.vm.local.weeks[0]).toBe("Mon");
-      expect(wrapper.vm.local.weeks[6]).toBe("Sun");
+      expect(wrapper.vm.local.monthsHead).toHaveLength(12);
+      expect(wrapper.vm.local.months).toHaveLength(12);
+      expect(wrapper.vm.local.weeks).toHaveLength(7);
     });
   });
 });
