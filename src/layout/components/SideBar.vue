@@ -96,7 +96,7 @@ limitations under the License. -->
   } else {
     appStore.setIsMobile(false);
   }
-  if (route.name === "ViewWidget") {
+  if (route.name === "DashboardViewWidget") {
     showMenu.value = false;
   }
 

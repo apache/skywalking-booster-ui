@@ -62,8 +62,8 @@ describe("App Component", () => {
     expect(wrapper.find("router-view").exists()).toBe(true);
   });
 
-  it("should set minWidth to 120px for ViewWidget route", async () => {
-    mockRoute.name = "ViewWidget";
+  it("should set minWidth to 120px for DashboardViewWidget route", async () => {
+    mockRoute.name = "DashboardViewWidget";
 
     const wrapper = mount(App);
 
@@ -77,7 +77,7 @@ describe("App Component", () => {
     }
   });
 
-  it("should set minWidth to 1024px for non-ViewWidget routes", async () => {
+  it("should set minWidth to 1024px for non-DashboardViewWidget routes", async () => {
     mockRoute.name = "Dashboard";
 
     const wrapper = mount(App);
@@ -121,7 +121,7 @@ describe("App Component", () => {
     // Unmount and remount with different route
     wrapper.unmount();
 
-    mockRoute.name = "ViewWidget";
+    mockRoute.name = "DashboardViewWidget";
     vi.mocked(useRoute).mockReturnValue(mockRoute);
 
     const wrapper2 = mount(App);
@@ -136,7 +136,7 @@ describe("App Component", () => {
 
   it("should handle multiple route changes", async () => {
     // Test multiple route changes by remounting
-    const routes = ["Home", "ViewWidget", "Dashboard", "ViewWidget"];
+    const routes = ["Home", "DashboardViewWidget", "Dashboard", "DashboardViewWidget"];
     let wrapper: any = null;
 
     for (const routeName of routes) {
@@ -153,7 +153,7 @@ describe("App Component", () => {
 
       const appElement = document.querySelector("#app");
       if (appElement) {
-        const expectedWidth = routeName === "ViewWidget" ? "120px" : "1024px";
+        const expectedWidth = routeName === "DashboardViewWidget" ? "120px" : "1024px";
         expect((appElement as HTMLElement).style.minWidth).toBe(expectedWidth);
       }
     }
