@@ -14,18 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { AppRouteRecordRaw } from "@/types/router";
-import { ROUTE_NAMES, ROUTE_PATHS } from "./constants";
-import NotFound from "@/views/NotFound.vue";
 
-export const routesNotFound: AppRouteRecordRaw[] = [
-  {
-    path: ROUTE_PATHS.NOT_FOUND,
-    name: ROUTE_NAMES.NOT_FOUND,
-    component: NotFound,
-    meta: {
-      title: "Page Not Found",
-      notShow: true,
-    },
-  },
-];
+import type { RouteRecordRaw } from "vue-router";
+
+export interface RouteMeta {
+  title?: string;
+  i18nKey?: string;
+  icon?: string;
+  hasGroup?: boolean;
+  activate?: boolean;
+  descKey?: string;
+  layer?: string;
+  notShow?: boolean;
+  requiresAuth?: boolean;
+  breadcrumb?: boolean;
+}
+
+export interface AppRouteRecordRaw extends Omit<RouteRecordRaw, "meta" | "children"> {
+  meta: RouteMeta;
+  children?: AppRouteRecordRaw[];
+}
+
+export interface RouteConfig {
+  path: string;
+  name: string;
+  component: any;
+  meta: RouteMeta;
+  children?: RouteConfig[];
+}
+
+export interface NavigationGuard {
+  to: any;
+  from: any;
+  next: any;
+}

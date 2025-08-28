@@ -22,6 +22,7 @@
     "test:hooks": "vitest --environment jsdom src/hooks/**/*.spec.ts",
     "test:stores": "vitest --environment jsdom src/store/**/*.spec.ts",
     "test:views": "vitest --environment jsdom src/views/**/*.spec.ts",
+    "test:router": "vitest --environment jsdom src/router/**/*.spec.ts",
     "test:all": "vitest --environment jsdom --root src/ --coverage --reporter=verbose",
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' :4173 'cypress open --e2e'"
   },

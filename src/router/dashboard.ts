@@ -14,211 +14,300 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { RouteRecordRaw } from "vue-router";
+import type { AppRouteRecordRaw } from "@/types/router";
+import { ROUTE_NAMES, ROUTE_PATHS, META_KEYS } from "./constants";
 import Layout from "@/layout/Index.vue";
-import List from "@/views/dashboard/List.vue";
-import New from "@/views/dashboard/New.vue";
-import Edit from "@/views/dashboard/Edit.vue";
-import Widget from "@/views/dashboard/Widget.vue";
 
-export const routesDashboard: Array<RouteRecordRaw> = [
+// Lazy load components for better performance
+const List = () => import("@/views/dashboard/List.vue");
+const New = () => import("@/views/dashboard/New.vue");
+const Edit = () => import("@/views/dashboard/Edit.vue");
+const Widget = () => import("@/views/dashboard/Widget.vue");
+
+export const routesDashboard: AppRouteRecordRaw[] = [
   {
     path: "",
     component: Layout,
-    name: "Dashboard",
+    name: ROUTE_NAMES.DASHBOARD,
     meta: {
-      i18nKey: "dashboards",
-      icon: "dashboard_customize",
-      hasGroup: true,
-      activate: true,
-      title: "Dashboards",
+      [META_KEYS.I18N_KEY]: "dashboards",
+      [META_KEYS.ICON]: "dashboard_customize",
+      [META_KEYS.HAS_GROUP]: true,
+      [META_KEYS.ACTIVATE]: true,
+      [META_KEYS.TITLE]: "Dashboards",
+      [META_KEYS.BREADCRUMB]: true,
     },
     children: [
+      // Dashboard List
       {
-        path: "/dashboard/list",
+        path: ROUTE_PATHS.DASHBOARD.LIST,
         component: List,
-        name: "List",
+        name: "DashboardList",
         meta: {
-          i18nKey: "dashboardList",
-          activate: true,
-          title: "Dashboard List",
+          [META_KEYS.I18N_KEY]: "dashboardList",
+          [META_KEYS.ACTIVATE]: true,
+          [META_KEYS.TITLE]: "Dashboard List",
+          [META_KEYS.BREADCRUMB]: true,
         },
       },
+
+      // New Dashboard
       {
-        path: "/dashboard/new",
+        path: ROUTE_PATHS.DASHBOARD.NEW,
         component: New,
-        name: "New",
+        name: "DashboardNew",
         meta: {
-          i18nKey: "dashboardNew",
-          activate: true,
-          title: "New Dashboard",
+          [META_KEYS.I18N_KEY]: "dashboardNew",
+          [META_KEYS.ACTIVATE]: true,
+          [META_KEYS.TITLE]: "New Dashboard",
+          [META_KEYS.BREADCRUMB]: true,
         },
       },
+
+      // Dashboard Edit/Create Routes
       {
         path: "",
-        redirect: "/dashboard/:layerId/:entity/:name",
-        name: "Create",
+        redirect: ROUTE_PATHS.DASHBOARD.EDIT,
+        name: "DashboardCreate",
         component: Edit,
         meta: {
-          notShow: true,
+          [META_KEYS.NOT_SHOW]: true,
         },
         children: [
           {
-            path: "/dashboard/:layerId/:entity/:name",
+            path: ROUTE_PATHS.DASHBOARD.EDIT,
             component: Edit,
-            name: "CreateChild",
+            name: "DashboardCreateChild",
+            meta: {
+              [META_KEYS.TITLE]: "Create Dashboard",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
           {
             path: "/dashboard/:layerId/:entity/:name/tab/:activeTabIndex",
             component: Edit,
-            name: "CreateActiveTabIndex",
+            name: "DashboardCreateActiveTabIndex",
+            meta: {
+              [META_KEYS.TITLE]: "Create Dashboard",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
         ],
       },
+
+      // Dashboard View Routes
       {
         path: "",
         component: Edit,
-        name: "View",
+        name: "DashboardView",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:name",
         meta: {
-          notShow: true,
+          [META_KEYS.NOT_SHOW]: true,
         },
         children: [
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:name",
             component: Edit,
-            name: "ViewChild",
+            name: "DashboardViewChild",
+            meta: {
+              [META_KEYS.TITLE]: "View Dashboard",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:name/tab/:activeTabIndex",
             component: Edit,
-            name: "ViewActiveTabIndex",
+            name: "DashboardViewActiveTabIndex",
+            meta: {
+              [META_KEYS.TITLE]: "View Dashboard",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
         ],
       },
+
+      // Service Relations Routes
       {
         path: "",
         redirect: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
         component: Edit,
-        name: "ServiceRelations",
+        name: "DashboardServiceRelations",
         meta: {
-          notShow: true,
+          [META_KEYS.NOT_SHOW]: true,
         },
         children: [
           {
             path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name",
             component: Edit,
-            name: "ViewServiceRelation",
+            name: "DashboardViewServiceRelation",
+            meta: {
+              [META_KEYS.TITLE]: "Service Relations",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
           {
             path: "/dashboard/related/:layerId/:entity/:serviceId/:destServiceId/:name/tab/:activeTabIndex",
             component: Edit,
-            name: "ViewServiceRelationActiveTabIndex",
+            name: "DashboardViewServiceRelationActiveTabIndex",
+            meta: {
+              [META_KEYS.TITLE]: "Service Relations",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
         ],
       },
+
+      // Pod Routes
       {
         path: "",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
         component: Edit,
-        name: "Pods",
+        name: "DashboardPods",
         meta: {
-          notShow: true,
+          [META_KEYS.NOT_SHOW]: true,
         },
         children: [
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name",
             component: Edit,
-            name: "ViewPod",
+            name: "DashboardViewPod",
+            meta: {
+              [META_KEYS.TITLE]: "Pod Dashboard",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:name/tab/:activeTabIndex",
             component: Edit,
-            name: "ViewPodActiveTabIndex",
+            name: "DashboardViewPodActiveTabIndex",
+            meta: {
+              [META_KEYS.TITLE]: "Pod Dashboard",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
         ],
       },
+
+      // Process Routes
       {
         path: "",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:name",
         component: Edit,
-        name: "Processes",
+        name: "DashboardProcesses",
         meta: {
-          notShow: true,
+          [META_KEYS.NOT_SHOW]: true,
         },
         children: [
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:name",
             component: Edit,
-            name: "ViewProcess",
+            name: "DashboardViewProcess",
+            meta: {
+              [META_KEYS.TITLE]: "Process Dashboard",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:name/tab/:activeTabIndex",
             component: Edit,
-            name: "ViewProcessActiveTabIndex",
+            name: "DashboardViewProcessActiveTabIndex",
+            meta: {
+              [META_KEYS.TITLE]: "Process Dashboard",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
         ],
       },
+
+      // Pod Relations Routes
       {
         path: "",
         redirect: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
         component: Edit,
-        name: "PodRelations",
+        name: "DashboardPodRelations",
         meta: {
-          notShow: true,
+          [META_KEYS.NOT_SHOW]: true,
         },
         children: [
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name",
             component: Edit,
-            name: "ViewPodRelation",
+            name: "DashboardViewPodRelation",
+            meta: {
+              [META_KEYS.TITLE]: "Pod Relations",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:destServiceId/:destPodId/:name/tab/:activeTabIndex",
             component: Edit,
-            name: "ViewPodRelationActiveTabIndex",
+            name: "DashboardViewPodRelationActiveTabIndex",
+            meta: {
+              [META_KEYS.TITLE]: "Pod Relations",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
         ],
       },
+
+      // Process Relations Routes
       {
         path: "",
         redirect:
           "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name",
         component: Edit,
-        name: "ProcessRelations",
+        name: "DashboardProcessRelations",
         meta: {
-          notShow: true,
+          [META_KEYS.NOT_SHOW]: true,
         },
         children: [
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name",
             component: Edit,
-            name: "ViewProcessRelation",
+            name: "DashboardViewProcessRelation",
+            meta: {
+              [META_KEYS.TITLE]: "Process Relations",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name/tab/:activeTabIndex",
             component: Edit,
-            name: "ViewProcessRelationActiveTabIndex",
+            name: "DashboardViewProcessRelationActiveTabIndex",
+            meta: {
+              [META_KEYS.TITLE]: "Process Relations",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
           {
             path: "/dashboard/:layerId/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:name/duration/:duration",
             component: Edit,
-            name: "ViewProcessRelationDuration",
+            name: "DashboardViewProcessRelationDuration",
+            meta: {
+              [META_KEYS.TITLE]: "Process Relations",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
         ],
       },
+
+      // Widget Routes
       {
         path: "",
-        name: "Widget",
+        name: "DashboardWidget",
         component: Widget,
         meta: {
-          notShow: true,
+          [META_KEYS.NOT_SHOW]: true,
         },
         children: [
           {
-            path: "/page/:layer/:entity/:serviceId/:podId/:processId/:destServiceId/:destPodId/:destProcessId/:config/:duration?",
+            path: ROUTE_PATHS.DASHBOARD.WIDGET,
             component: Widget,
-            name: "ViewWidget",
+            name: "DashboardViewWidget",
+            meta: {
+              [META_KEYS.TITLE]: "Dashboard Widget",
+              [META_KEYS.BREADCRUMB]: true,
+            },
           },
         ],
       },

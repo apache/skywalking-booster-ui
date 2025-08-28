@@ -14,27 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { RouteRecordRaw } from "vue-router";
+import type { AppRouteRecordRaw } from "@/types/router";
+import { ROUTE_NAMES, ROUTE_PATHS, META_KEYS } from "./constants";
 import Layout from "@/layout/Index.vue";
 import Alarm from "@/views/Alarm.vue";
 
-export const routesAlarm: Array<RouteRecordRaw> = [
+export const routesAlarm: AppRouteRecordRaw[] = [
   {
     path: "",
-    name: "Alarm",
+    name: ROUTE_NAMES.ALARM,
     meta: {
-      i18nKey: "alarm",
-      icon: "spam",
-      hasGroup: false,
-      activate: true,
-      title: "Alerting",
+      [META_KEYS.I18N_KEY]: "alarm",
+      [META_KEYS.ICON]: "spam",
+      [META_KEYS.HAS_GROUP]: false,
+      [META_KEYS.ACTIVATE]: true,
+      [META_KEYS.TITLE]: "Alerting",
+      [META_KEYS.BREADCRUMB]: true,
     },
     component: Layout,
     children: [
       {
-        path: "/alerting",
+        path: ROUTE_PATHS.ALARM,
         name: "ViewAlarm",
         component: Alarm,
+        meta: {
+          [META_KEYS.TITLE]: "Alerting",
+          [META_KEYS.BREADCRUMB]: true,
+        },
       },
     ],
   },

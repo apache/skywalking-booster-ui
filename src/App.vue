@@ -20,7 +20,7 @@ limitations under the License. -->
   const route = useRoute();
 
   setTimeout(() => {
-    if (route.name === "ViewWidget") {
+    if (route.name === "DashboardViewWidget") {
       (document.querySelector("#app") as any).style.minWidth = "120px";
     } else {
       (document.querySelector("#app") as any).style.minWidth = "1024px";
