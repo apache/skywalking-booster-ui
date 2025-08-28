@@ -17,7 +17,7 @@
 
 import { describe, it, expect, vi } from "vitest";
 import { ROUTE_NAMES, META_KEYS } from "../constants";
-import type { AppRouteRecordRaw } from "../types";
+import type { AppRouteRecordRaw } from "@/types/router";
 
 // Mock route modules to avoid Vue component import issues
 vi.mock("../dashboard", () => ({

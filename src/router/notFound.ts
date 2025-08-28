@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { AppRouteRecordRaw } from "./types";
+import type { AppRouteRecordRaw } from "@/types/router";
 import { ROUTE_NAMES, ROUTE_PATHS } from "./constants";
 import NotFound from "@/views/NotFound.vue";
 

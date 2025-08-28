@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { AppRouteRecordRaw } from "./types";
+import type { AppRouteRecordRaw } from "@/types/router";
 import { createRouter, createWebHistory } from "vue-router";
 import { applyGuards } from "./guards";
 import { routesDashboard } from "./dashboard";

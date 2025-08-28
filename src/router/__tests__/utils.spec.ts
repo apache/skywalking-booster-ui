@@ -25,7 +25,7 @@ import {
   flattenRoutes,
 } from "../utils";
 import { DEFAULT_ROUTE } from "../constants";
-import type { AppRouteRecordRaw } from "../types";
+import type { AppRouteRecordRaw } from "@/types/router";
 
 describe("Router Utils", () => {
   const mockRoutes: AppRouteRecordRaw[] = [

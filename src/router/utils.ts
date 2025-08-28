@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import type { AppRouteRecordRaw } from "./types";
+import type { AppRouteRecordRaw } from "@/types/router";
 import { DEFAULT_ROUTE } from "./constants";
 
 /**
