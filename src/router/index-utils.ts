@@ -20,8 +20,6 @@ export * from "./types";
 export * from "./constants";
 export * from "./utils";
 export * from "./guards";
-export * from "./factory";
-export * from "./validator";
 
 // Export route configurations
 export { routesDashboard } from "./dashboard";
