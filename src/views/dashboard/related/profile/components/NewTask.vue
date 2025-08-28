@@ -89,7 +89,7 @@ limitations under the License. -->
   const endpointName = ref<string>("");
   const monitorTime = ref<string>(InitTaskField.monitorTimeEn[0].value);
   const monitorDuration = ref<string>(InitTaskField.monitorDuration[0].value);
-  const time = ref<Date>(appStore.durationRow.start);
+  const time = ref<Date>(appStore.durationRow.end);
   const minThreshold = ref<number>(0);
   const dumpPeriod = ref<string>(InitTaskField.dumpPeriod[0].value);
   const maxSamplingCount = ref<string>(InitTaskField.maxSamplingCount[0].value);

@@ -166,11 +166,10 @@ limitations under the License. -->
   const emit = defineEmits(["input", "setDates", "ok"]);
   const { t } = useI18n();
   const props = defineProps({
-    value: { type: Date },
+    value: { type: Object as PropType<Date>, default: () => new Date() },
     left: { type: Boolean, default: false },
     right: { type: Boolean, default: false },
     dates: { type: Array as PropType<Date[]>, default: () => [] },
-    disabledDate: { type: Function, default: () => false },
     format: {
       type: String,
       default: "YYYY-MM-DD",
@@ -246,7 +245,7 @@ limitations under the License. -->
     return parse(Number(props.maxRange[0]));
   });
   const maxEnd = computed(() => {
-    return parse(Number(props.maxRange[1]));
+    return parse(Number(props.maxRange[1]) + 23 * 60 * 60 * 1000);
   });
   const ys = computed(() => {
     return Math.floor(state.year / 10) * 10;
@@ -376,10 +375,13 @@ limitations under the License. -->
       flag = tf(props.value, format) === tf(time, format);
     }
     classObj[`${state.pre}-date`] = true;
-    const rightDisabled = props.right && (t < start.value || t > maxEnd.value || !props.maxRange?.length);
-    const leftDisabled =
-      props.left && (t < minStart.value || t > end.value || !props.maxRange?.length || t > maxEnd.value);
-    classObj[`${state.pre}-date-disabled`] = rightDisabled || leftDisabled || props.disabledDate(time, format);
+
+    // Only apply range constraints when maxRange is provided and has valid dates
+    const hasMaxRange = props.maxRange && props.maxRange.length === 2;
+    const rightDisabled = props.right && hasMaxRange && (t < start.value || t > maxEnd.value);
+    const leftDisabled = props.left && hasMaxRange && (t < minStart.value || t > end.value || t > maxEnd.value);
+
+    classObj[`${state.pre}-date-disabled`] = rightDisabled || leftDisabled;
     classObj[`${state.pre}-date-on`] = (props.left && t > start.value) || (props.right && t < end.value);
     classObj[`${state.pre}-date-selected`] = flag;
     return classObj;

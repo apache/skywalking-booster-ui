@@ -41,22 +41,52 @@ limitations under the License. -->
       >
         <template v-if="range">
           <div class="datepicker-popup__sidebar">
-            <button type="button" class="datepicker-popup__shortcut" @click="quickPick('quarter')">
+            <button
+              type="button"
+              class="datepicker-popup__shortcut"
+              :class="{ 'datepicker-popup__shortcut--selected': selectedShortcut === QUICK_PICK_TYPES.QUARTER }"
+              @click="quickPick(QUICK_PICK_TYPES.QUARTER)"
+            >
               {{ local.quarterHourCutTip }}
             </button>
-            <button type="button" class="datepicker-popup__shortcut" @click="quickPick('half')">
+            <button
+              type="button"
+              class="datepicker-popup__shortcut"
+              :class="{ 'datepicker-popup__shortcut--selected': selectedShortcut === QUICK_PICK_TYPES.HALF }"
+              @click="quickPick(QUICK_PICK_TYPES.HALF)"
+            >
               {{ local.halfHourCutTip }}
             </button>
-            <button type="button" class="datepicker-popup__shortcut" @click="quickPick('hour')">
+            <button
+              type="button"
+              class="datepicker-popup__shortcut"
+              :class="{ 'datepicker-popup__shortcut--selected': selectedShortcut === QUICK_PICK_TYPES.HOUR }"
+              @click="quickPick(QUICK_PICK_TYPES.HOUR)"
+            >
               {{ local.hourCutTip }}
             </button>
-            <button type="button" class="datepicker-popup__shortcut" @click="quickPick('day')">
+            <button
+              type="button"
+              class="datepicker-popup__shortcut"
+              :class="{ 'datepicker-popup__shortcut--selected': selectedShortcut === QUICK_PICK_TYPES.DAY }"
+              @click="quickPick(QUICK_PICK_TYPES.DAY)"
+            >
               {{ local.dayCutTip }}
             </button>
-            <button type="button" class="datepicker-popup__shortcut" @click="quickPick('week')">
+            <button
+              type="button"
+              class="datepicker-popup__shortcut"
+              :class="{ 'datepicker-popup__shortcut--selected': selectedShortcut === QUICK_PICK_TYPES.WEEK }"
+              @click="quickPick(QUICK_PICK_TYPES.WEEK)"
+            >
               {{ local.weekCutTip }}
             </button>
-            <button type="button" class="datepicker-popup__shortcut" @click="quickPick('month')">
+            <button
+              type="button"
+              class="datepicker-popup__shortcut"
+              :class="{ 'datepicker-popup__shortcut--selected': selectedShortcut === QUICK_PICK_TYPES.MONTH }"
+              @click="quickPick(QUICK_PICK_TYPES.MONTH)"
+            >
               {{ local.monthCutTip }}
             </button>
           </div>
@@ -66,7 +96,6 @@ limitations under the License. -->
               :value="dates[0]"
               :dates="dates"
               :left="true"
-              :disabledDate="disabledDate"
               :format="format"
               :maxRange="maxRange"
               @ok="ok"
@@ -77,7 +106,6 @@ limitations under the License. -->
               :value="dates[1]"
               :dates="dates"
               :right="true"
-              :disabledDate="disabledDate"
               :format="format"
               :maxRange="maxRange"
               @ok="ok"
@@ -89,7 +117,6 @@ limitations under the License. -->
           <DateCalendar
             v-model="dates[0]"
             :value="dates[0]"
-            :disabledDate="disabledDate"
             :dates="dates"
             :format="format"
             @ok="ok"
@@ -110,15 +137,29 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-  import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
+  import { ref, computed, onMounted, onBeforeUnmount, watch, PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import DateCalendar from "./DateCalendar.vue";
   import { useTimeoutFn } from "@/hooks/useTimeout";
-  /*global PropType, defineProps, defineEmits*/
+  /* global defineProps, defineEmits */
+
+  const QUICK_PICK_TYPES = {
+    QUARTER: "quarter",
+    HALF: "half",
+    HOUR: "hour",
+    DAY: "day",
+    WEEK: "week",
+    MONTH: "month",
+  } as const;
+
+  type QuickPickType = typeof QUICK_PICK_TYPES[keyof typeof QUICK_PICK_TYPES];
+
   const datepicker = ref(null);
   const { t } = useI18n();
   const show = ref<boolean>(false);
   const dates = ref<Date[]>([]);
+  const inputDates = ref<Date[]>([]);
+  const selectedShortcut = ref<string>(QUICK_PICK_TYPES.HALF);
   const props = defineProps({
     position: { type: String, default: "bottom" },
     name: [String],
@@ -139,10 +180,6 @@ limitations under the License. -->
       default: false,
     },
     placeholder: [String],
-    disabledDate: {
-      type: Function,
-      default: () => false,
-    },
     format: {
       type: String,
       default: "YYYY-MM-DD",
@@ -208,15 +245,15 @@ limitations under the License. -->
     return dates.value.length === 2;
   });
   const text = computed(() => {
-    const val = props.value;
-    const txt = dates.value.map((date: Date) => tf(date)).join(` ${props.rangeSeparator} `);
-    if (Array.isArray(val)) {
-      return val.length > 1 ? txt : "";
+    const txt = inputDates.value.map((date: Date) => tf(date)).join(` ${props.rangeSeparator} `);
+    if (Array.isArray(props.value)) {
+      return props.value.length > 1 ? txt : "";
     }
-    return val ? txt : "";
+    return props.value ? txt : "";
   });
   const get = () => {
-    return Array.isArray(props.value) ? dates.value : dates.value[0];
+    const currentDates = props.showButtons ? inputDates.value : dates.value;
+    return Array.isArray(props.value) ? currentDates : currentDates[0];
   };
   const cls = () => {
     emit("clear");
@@ -224,7 +261,7 @@ limitations under the License. -->
   };
   const vi = (val: any) => {
     if (Array.isArray(val)) {
-      return val.length > 1 ? val.map((item) => new Date(item)) : [new Date(), new Date()];
+      return val.length >= 1 ? val.map((item) => new Date(item)) : [new Date(), new Date()];
     }
     return val ? [new Date(val)] : [new Date()];
   };
@@ -246,44 +283,47 @@ limitations under the License. -->
   const dc = (e: MouseEvent) => {
     show.value = (datepicker.value as any).contains(e.target) && !props.disabled;
   };
-  const quickPick = (type: string) => {
+  const quickPick = (type: QuickPickType) => {
     const end = new Date();
     const start = new Date();
+    selectedShortcut.value = type;
     switch (type) {
-      case "quarter":
+      case QUICK_PICK_TYPES.QUARTER:
         start.setTime(start.getTime() - 60 * 15 * 1000); //15 mins
         break;
-      case "half":
+      case QUICK_PICK_TYPES.HALF:
         start.setTime(start.getTime() - 60 * 30 * 1000); //30 mins
         break;
-      case "hour":
+      case QUICK_PICK_TYPES.HOUR:
         start.setTime(start.getTime() - 3600 * 1000); //1 hour
         break;
-      case "day":
+      case QUICK_PICK_TYPES.DAY:
         start.setTime(start.getTime() - 3600 * 1000 * 24); //1 day
         break;
-      case "week":
+      case QUICK_PICK_TYPES.WEEK:
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 7); //1 week
         break;
-      case "month":
+      case QUICK_PICK_TYPES.MONTH:
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30); //1 month
         break;
       default:
         break;
     }
     dates.value = [start, end];
-    emit("input", get());
   };
   const submit = () => {
+    inputDates.value = dates.value;
     emit("confirm", get());
     show.value = false;
   };
   const cancel = () => {
     emit("cancel");
     show.value = false;
+    dates.value = vi(props.value);
   };
   onMounted(() => {
     dates.value = vi(props.value);
+    inputDates.value = dates.value;
     document.addEventListener("click", dc, true);
   });
   onBeforeUnmount(() => {
@@ -293,6 +333,7 @@ limitations under the License. -->
     () => props.value,
     (val: unknown) => {
       dates.value = vi(val);
+      inputDates.value = [...dates.value];
     },
   );
 </script>
@@ -462,11 +503,15 @@ limitations under the License. -->
       color: var(--sw-topology-color);
       text-align: left;
       outline: none;
-      cursor: pointer;
       white-space: nowrap;
 
       &:hover {
-        color: #3f97e3;
+        color: var(--el-color-primary);
+        cursor: pointer;
+      }
+
+      &--selected {
+        color: var(--el-color-primary);
       }
     }
 
@@ -520,20 +565,21 @@ limitations under the License. -->
   }
 
   .datepicker__buttons button {
-    display: inline-block;
-    font-size: 13px;
     border: none;
     cursor: pointer;
-    margin: 10px 0 0 5px;
-    padding: 5px 15px;
     color: $text-color;
+    margin-left: 5px;
+    padding: 2px 5px;
   }
 
   .datepicker__buttons .datepicker__button-select {
-    background: #3f97e3;
+    background: var(--el-color-primary);
+    border-radius: 2px;
+    color: #fff;
   }
 
   .datepicker__buttons .datepicker__button-cancel {
     background: var(--sw-topology-color);
+    border-radius: 2px;
   }
 </style>
