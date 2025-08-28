@@ -81,6 +81,11 @@ export class RouteValidator {
     if (route.path === undefined || route.path === null) {
       this.addError(route, fullPath, "Route path is required", "error");
     }
+
+    // Allow empty paths for layout routes (routes with children)
+    if (route.path === "" && !route.children) {
+      this.addError(route, fullPath, "Route path cannot be empty unless it has children", "error");
+    }
   }
 
   /**

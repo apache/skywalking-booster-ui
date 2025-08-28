@@ -30,7 +30,7 @@ export interface RouteMeta {
   breadcrumb?: boolean;
 }
 
-export interface AppRouteRecordRaw extends Omit<RouteRecordRaw, "meta"> {
+export interface AppRouteRecordRaw extends Omit<RouteRecordRaw, "meta" | "children"> {
   meta: RouteMeta;
   children?: AppRouteRecordRaw[];
 }

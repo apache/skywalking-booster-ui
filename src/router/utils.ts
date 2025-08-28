@@ -74,7 +74,7 @@ export function generateBreadcrumb(route: AppRouteRecordRaw): string[] {
  * Validate route configuration
  */
 export function validateRoute(route: AppRouteRecordRaw): boolean {
-  if (!route.path || !route.name) {
+  if (!route.path || !route.name || !route.component) {
     return false;
   }
 

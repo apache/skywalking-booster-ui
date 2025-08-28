@@ -27,7 +27,7 @@ import { routesNotFound } from "./notFound";
 /**
  * Combine all route configurations
  */
-const routes: AppRouteRecordRaw[] = [
+export const routes: AppRouteRecordRaw[] = [
   ...routesMarketplace,
   ...routesLayers,
   ...routesAlarm,
