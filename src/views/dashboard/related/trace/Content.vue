@@ -4,47 +4,51 @@ this work for additional information regarding copyright ownership.
 The ASF licenses this file to You under the Apache License, Version 2.0
 (the "License"); you may not use this file except in compliance with
 the License.  You may obtain a copy of the License at
+
   http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-table-charts">
-    <Graph
-      :data="data"
-      :traceId="traceId"
-      :type="TraceGraphType.TABLE"
-      :headerType="headerType"
-      @select="getSelectedSpan"
-    />
+  <div class="header">
+    <Header :data="data" />
+  </div>
+  <div class="trace flex-h">
+    <TraceList />
+    <TraceDetail />
   </div>
 </template>
 <script lang="ts" setup>
+  import { provide } from "vue";
   import type { PropType } from "vue";
-  import type { Span } from "@/types/trace";
-  import type { SegmentSpan } from "@/types/profile";
-  import Graph from "./D3Graph/Index.vue";
-  import { TraceGraphType } from "./constant";
-
-  defineProps({
-    data: { type: Array as PropType<(Span | SegmentSpan)[]>, default: () => [] },
-    traceId: { type: String, default: "" },
-    headerType: { type: String, default: "" },
+  import Header from "./components/Header.vue";
+  import TraceList from "./components/TraceList.vue";
+  import TraceDetail from "./components/Detail.vue";
+  import type { LayoutConfig } from "@/types/dashboard";
+  /*global defineProps */
+  const props = defineProps({
+    data: {
+      type: Object as PropType<LayoutConfig>,
+      default: () => ({}),
+    },
   });
-  const emits = defineEmits(["select"]);
-
-  function getSelectedSpan(span: Span) {
-    emits("select", span);
-  }
+  provide("options", props.data);
 </script>
 <style lang="scss" scoped>
-  .trace-table-charts {
-    overflow: auto;
+  .header {
     padding: 10px;
-    height: 100%;
+    font-size: $font-size-smaller;
+    border-bottom: 1px solid $border-color;
+    min-width: 1200px;
+  }
+
+  .trace {
     width: 100%;
-    position: relative;
+    overflow: auto;
+    min-width: 1200px;
+    height: calc(100% - 100px);
   }
 </style>

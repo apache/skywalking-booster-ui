@@ -25,8 +25,8 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, watch, onMounted } from "vue";
   import type { PropType } from "vue";
-  import TableContainer from "./Table/TableContainer.vue";
-  import traceTable from "../utils/trace-table";
+  import TableContainer from "../Table/TableContainer.vue";
+  import traceTable from "../D3Graph/utils/trace-table";
   import type { StatisticsSpan, Span, StatisticsGroupRef } from "@/types/trace";
   import { TraceGraphType } from "./constant";
 

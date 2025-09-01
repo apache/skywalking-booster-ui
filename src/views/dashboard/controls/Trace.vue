@@ -47,9 +47,9 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { provide, ref, onMounted, onUnmounted } from "vue";
   import type { PropType } from "vue";
-  import Filter from "../related/trace/Filter.vue";
-  import TraceList from "../related/trace/TraceList.vue";
-  import TraceDetail from "../related/trace/Detail.vue";
+  import Filter from "@/views/dashboard/related/trace/components/Filter.vue";
+  import TraceList from "@/views/dashboard/related/trace/components/TraceList.vue";
+  import TraceDetail from "@/views/dashboard/related/trace/components/Detail.vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { mutationObserver } from "@/utils/mutation";

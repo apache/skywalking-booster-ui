@@ -51,15 +51,15 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import * as d3 from "d3";
   import dayjs from "dayjs";
-  import ListGraph from "../../utils/d3-trace-list";
-  import TreeGraph from "../../utils/d3-trace-tree";
+  import ListGraph from "./utils/d3-trace-list";
+  import TreeGraph from "./utils/d3-trace-tree";
   import type { Span, Ref } from "@/types/trace";
   import SpanDetail from "./SpanDetail.vue";
   import TableContainer from "../Table/TableContainer.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { debounce } from "@/utils/debounce";
   import { mutationObserver } from "@/utils/mutation";
-  import { TraceGraphType } from "../constant";
+  import { TraceGraphType } from "../VisGraph/constant";
   import { Themes } from "@/constants/data";
   import type { SegmentSpan } from "@/types/profile";
 

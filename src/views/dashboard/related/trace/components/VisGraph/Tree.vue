@@ -11,10 +11,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="charts">
+  <div class="trace-tree-charts flex-v">
     <div>
       <span
-        class="charts-item mr-5"
+        class="time-charts-item mr-5"
         v-for="(i, index) in traceStore.serviceList"
         :key="index"
         :style="`color:${computedScale(index)}`"
@@ -22,34 +22,41 @@ limitations under the License. -->
         <Icon iconName="issue-open-m" class="mr-5" size="sm" />
         <span>{{ i }}</span>
       </span>
-      <el-button class="btn" size="small" type="primary" @click="downloadTrace">
-        {{ t("exportImage") }}
-      </el-button>
     </div>
-    <div class="list">
-      <Graph :data="data" :traceId="traceId" :type="TraceGraphType.LIST" />
+    <div style="padding: 10px 0">
+      <a class="trace-tree-btn mr-10" @click="charts.tree.setDefault()">
+        {{ t("default") }}
+      </a>
+      <a class="trace-tree-btn mr-10" @click="charts.tree.getTopSlow()">
+        {{ t("topSlow") }}
+      </a>
+      <a class="trace-tree-btn mr-10" @click="charts.tree.getTopChild()">
+        {{ t("topChildren") }}
+      </a>
+    </div>
+    <div class="trace-tree">
+      <Graph ref="charts" :data="data" :traceId="traceId" :type="TraceGraphType.TREE" />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import type { PropType } from "vue";
-  import { useI18n } from "vue-i18n";
   import * as d3 from "d3";
-  import { useAppStoreWithOut } from "@/store/modules/app";
-  import { useTraceStore } from "@/store/modules/trace";
+  import Graph from "../D3Graph/Index.vue";
+  import type { PropType } from "vue";
   import type { Span } from "@/types/trace";
-  import Graph from "./D3Graph/Index.vue";
-  import { Themes } from "@/constants/data";
+  import { useI18n } from "vue-i18n";
+  import { ref } from "vue";
   import { TraceGraphType } from "./constant";
+  import { useTraceStore } from "@/store/modules/trace";
 
-  /* global defineProps, Recordable*/
+  /* global defineProps */
   defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
   });
   const { t } = useI18n();
-  const appStore = useAppStoreWithOut();
   const traceStore = useTraceStore();
+  const charts = ref<any>(null);
 
   function computedScale(i: number) {
     const sequentialScale = d3
@@ -58,54 +65,35 @@ limitations under the License. -->
       .interpolator(d3.interpolateCool);
     return sequentialScale(i);
   }
-
-  function downloadTrace() {
-    const serializer = new XMLSerializer();
-    const svgNode: any = d3.select(".trace-list").node();
-    const source = `<?xml version="1.0" standalone="no"?>\r\n${serializer.serializeToString(svgNode)}`;
-    const canvas = document.createElement("canvas");
-    const context: any = canvas.getContext("2d");
-    canvas.width = (d3.select(".trace-list") as Recordable)._groups[0][0].clientWidth;
-    canvas.height = (d3.select(".trace-list") as Recordable)._groups[0][0].clientHeight;
-    context.fillStyle = appStore.theme === Themes.Dark ? "#212224" : `#fff`;
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    const image = new Image();
-    image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(source)}`;
-    image.onload = () => {
-      context.drawImage(image, 0, 0);
-      const tagA = document.createElement("a");
-      tagA.download = "trace-list.png";
-      tagA.href = canvas.toDataURL("image/png");
-      tagA.click();
-    };
-  }
 </script>
 <style lang="scss" scoped>
-  .charts {
+  .trace-tree {
+    height: 100%;
+    overflow: auto;
+  }
+
+  .trace-tree-btn {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 0 7px;
+    background-color: #40454e;
+    color: #eee;
+    font-size: 11px;
+  }
+
+  .trace-tree-charts {
     overflow: auto;
     padding: 10px;
+    position: relative;
     height: 100%;
     width: 100%;
   }
 
-  .charts-item {
+  .time-charts-item {
     display: inline-block;
     padding: 2px 8px;
     border: 1px solid;
     font-size: 11px;
     border-radius: 4px;
-  }
-
-  .btn {
-    float: right;
-  }
-
-  .list {
-    height: calc(100% - 150px);
-    position: relative;
-  }
-
-  .event-tag {
-    color: red;
   }
 </style>

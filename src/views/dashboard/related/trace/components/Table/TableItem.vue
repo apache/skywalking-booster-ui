@@ -150,7 +150,7 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useTraceStore } from "@/store/modules/trace";
   import { Themes } from "@/constants/data";
-  import { TraceGraphType } from "../constant";
+  import { TraceGraphType } from "../VisGraph/constant";
   import { WidgetType } from "@/views/dashboard/data";
   import type { Span, Ref } from "@/types/trace";
 

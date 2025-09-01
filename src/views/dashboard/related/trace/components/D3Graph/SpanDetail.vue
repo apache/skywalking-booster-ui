@@ -151,7 +151,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import type { PropType } from "vue";
   import dayjs from "dayjs";
-  import ListGraph from "../../utils/d3-trace-list";
+  import ListGraph from "./utils/d3-trace-list";
   import copy from "@/utils/copy";
   import { ElMessage } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";

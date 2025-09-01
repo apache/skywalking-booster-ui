@@ -85,7 +85,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useTraceStore } from "@/store/modules/trace";
   import { ElMessage } from "element-plus";
-  import { QueryOrders } from "../../data";
+  import { QueryOrders } from "@/views/dashboard/data";
   import type { Option } from "@/types/app";
   import type { Trace } from "@/types/trace";
   import { dateFormat } from "@/utils/dateFormat";

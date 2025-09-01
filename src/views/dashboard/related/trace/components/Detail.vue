@@ -95,7 +95,7 @@ limitations under the License. -->
   import { useTraceStore } from "@/store/modules/trace";
   import type { Option } from "@/types/app";
   import copy from "@/utils/copy";
-  import graphs from "./components/index";
+  import graphs from "./VisGraph/index";
   import { ElMessage } from "element-plus";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { LayoutConfig } from "@/types/dashboard";

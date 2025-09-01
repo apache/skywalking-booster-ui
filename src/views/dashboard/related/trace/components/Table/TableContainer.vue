@@ -58,7 +58,7 @@ limitations under the License. -->
   import { useTraceStore } from "@/store/modules/trace";
   import TableItem from "./TableItem.vue";
   import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
-  import { TraceGraphType } from "../constant";
+  import { TraceGraphType } from "../VisGraph/constant";
   import { WidgetType } from "@/views/dashboard/data";
 
   /* global defineProps, Nullable, defineEmits, Recordable*/
