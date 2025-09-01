@@ -15,21 +15,9 @@ limitations under the License. -->
 <template>
   <div class="flex-h trace-type">
     <el-radio-group v-model="spansGraphType" size="small">
-      <el-radio-button value="List">
-        <Icon class="mr-5" size="sm" iconName="list-bulleted" />
-        {{ t("list") }}
-      </el-radio-button>
-      <el-radio-button value="Tree">
-        <Icon class="mr-5" size="sm" iconName="issue-child" />
-        {{ t("tree") }}
-      </el-radio-button>
-      <el-radio-button value="Table">
-        <Icon class="mr-5" size="sm" iconName="table" />
-        {{ t("table") }}
-      </el-radio-button>
-      <el-radio-button value="Statistics">
-        <Icon class="mr-5" size="sm" iconName="statistics-bulleted" />
-        {{ t("statistics") }}
+      <el-radio-button v-for="option in GraphTypeOptions" :key="option.value" :value="option.value">
+        <Icon class="mr-5" size="sm" :iconName="option.icon" />
+        {{ t(option.label) }}
       </el-radio-button>
     </el-radio-group>
   </div>
@@ -78,7 +66,14 @@ limitations under the License. -->
   const isDrag = ref<boolean>(false);
   const defaultWidth = 280;
   const minArrowLeftWidth = 120;
-  const spansGraphType = ref<"List" | "Tree" | "Table" | "Statistics">("List");
+  const GraphTypeOptions = [
+    { value: "List", icon: "list-bulleted", label: "list" },
+    { value: "Tree", icon: "issue-child", label: "tree" },
+    { value: "Table", icon: "table", label: "table" },
+    { value: "Statistics", icon: "statistics-bulleted", label: "statistics" },
+  ] as const;
+  type SpansGraphType = typeof GraphTypeOptions[number]["value"];
+  const spansGraphType = ref<SpansGraphType>(GraphTypeOptions[0].value);
 
   function getService(id: string) {
     serviceId.value = id;
