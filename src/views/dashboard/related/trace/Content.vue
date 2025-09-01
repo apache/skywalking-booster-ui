@@ -13,6 +13,26 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <div class="flex-h trace-type">
+    <el-radio-group v-model="spansGraphType" size="small">
+      <el-radio-button value="List">
+        <Icon class="mr-5" size="sm" iconName="list-bulleted" />
+        {{ t("list") }}
+      </el-radio-button>
+      <el-radio-button value="Tree">
+        <Icon class="mr-5" size="sm" iconName="issue-child" />
+        {{ t("tree") }}
+      </el-radio-button>
+      <el-radio-button value="Table">
+        <Icon class="mr-5" size="sm" iconName="table" />
+        {{ t("table") }}
+      </el-radio-button>
+      <el-radio-button value="Statistics">
+        <Icon class="mr-5" size="sm" iconName="statistics-bulleted" />
+        {{ t("statistics") }}
+      </el-radio-button>
+    </el-radio-group>
+  </div>
   <div class="search-bar">
     <Filter :needQuery="needQuery" :data="data" @get="getService" @search="popSegmentList" />
   </div>
@@ -29,12 +49,13 @@ limitations under the License. -->
         <Icon class="trace-arrow" :icon-name="isLeft ? 'chevron-left' : 'chevron-right'" size="lg" />
       </span>
     </div>
-    <SpanList :serviceId="serviceId" />
+    <SpanList :serviceId="serviceId" :spansGraphType="spansGraphType" />
   </div>
 </template>
 <script lang="ts" setup>
   import { provide, ref, onMounted, onUnmounted } from "vue";
   import type { PropType } from "vue";
+  import { useI18n } from "vue-i18n";
   import Filter from "./components/Filter.vue";
   import TraceList from "./components/TraceList.vue";
   import SpanList from "./components/SpanList.vue";
@@ -47,6 +68,7 @@ limitations under the License. -->
       default: () => ({}),
     },
   });
+  const { t } = useI18n();
   provide("options", props.data);
   const serviceId = ref<string>("");
   const showIcon = ref<boolean>(false);
@@ -56,6 +78,7 @@ limitations under the License. -->
   const isDrag = ref<boolean>(false);
   const defaultWidth = 280;
   const minArrowLeftWidth = 120;
+  const spansGraphType = ref<"List" | "Tree" | "Table" | "Statistics">("List");
 
   function getService(id: string) {
     serviceId.value = id;
@@ -119,6 +142,18 @@ limitations under the License. -->
   });
 </script>
 <style lang="scss" scoped>
+  .trace-type {
+    padding: 10px 0 10px 10px;
+    border-bottom: 1px solid $border-color-primary;
+
+    /* Make radio buttons content align nicely with icons */
+    :deep(.el-radio-button__inner) {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+  }
+
   .search-bar {
     padding: 10px;
     font-size: $font-size-smaller;

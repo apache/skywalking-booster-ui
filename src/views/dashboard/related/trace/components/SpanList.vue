@@ -15,11 +15,6 @@ limitations under the License. -->
     <div class="trace-detail-wrapper clear" v-if="traceStore.currentTrace?.endpointNames">
       <h5 class="mb-5 mt-0">
         <span class="vm">{{ traceStore.currentTrace?.endpointNames?.[0] }}</span>
-        <div class="trace-log-btn">
-          <el-button size="small" class="mr-10" type="primary" @click="searchTraceLogs">
-            {{ t("viewLogs") }}
-          </el-button>
-        </div>
       </h5>
       <div class="mb-5 blue">
         <Selector
@@ -47,31 +42,8 @@ limitations under the License. -->
           <span class="sm">{{ traceStore.traceSpans.length }}</span>
         </div>
         <div>
-          <el-button class="grey" size="small" :class="{ ghost: displayMode !== 'List' }" @click="displayMode = 'List'">
-            <Icon class="mr-5" size="sm" iconName="list-bulleted" />
-            {{ t("list") }}
-          </el-button>
-          <el-button class="grey" size="small" :class="{ ghost: displayMode !== 'Tree' }" @click="displayMode = 'Tree'">
-            <Icon class="mr-5" size="sm" iconName="issue-child" />
-            {{ t("tree") }}
-          </el-button>
-          <el-button
-            class="grey"
-            size="small"
-            :class="{ ghost: displayMode !== 'Table' }"
-            @click="displayMode = 'Table'"
-          >
-            <Icon class="mr-5" size="sm" iconName="table" />
-            {{ t("table") }}
-          </el-button>
-          <el-button
-            class="grey"
-            size="small"
-            :class="{ ghost: displayMode !== 'Statistics' }"
-            @click="displayMode = 'Statistics'"
-          >
-            <Icon class="mr-5" size="sm" iconName="statistics-bulleted" />
-            {{ t("statistics") }}
+          <el-button size="small" class="mr-10" @click="searchTraceLogs">
+            {{ t("viewLogs") }}
           </el-button>
         </div>
       </div>
@@ -80,7 +52,7 @@ limitations under the License. -->
     <div class="trace-chart">
       <component
         v-if="traceStore.currentTrace?.endpointNames"
-        :is="displayMode"
+        :is="spansGraphType"
         :data="traceStore.traceSpans"
         :traceId="traceStore.currentTrace?.traceIds?.[0]?.value"
         :showBtnDetail="false"
@@ -105,6 +77,7 @@ limitations under the License. -->
 
   const props = {
     serviceId: { type: String, default: "" },
+    spansGraphType: { type: String, default: "List" },
   };
 
   export default defineComponent({
@@ -120,7 +93,6 @@ limitations under the License. -->
       const traceStore = useTraceStore();
       const loading = ref<boolean>(false);
       const traceId = ref<string>("");
-      const displayMode = ref<string>("List");
 
       function handleClick() {
         copy(traceId.value || traceStore.currentTrace?.traceIds?.[0]?.value);
@@ -150,7 +122,6 @@ limitations under the License. -->
       }
       return {
         traceStore,
-        displayMode,
         dateFormat,
         changeTraceId,
         handleClick,
@@ -196,6 +167,7 @@ limitations under the License. -->
 
   .item {
     justify-content: space-between;
+    align-items: center;
   }
 
   .trace-detail-ids {
@@ -206,10 +178,6 @@ limitations under the License. -->
     border: 1px solid;
     border-radius: 4px;
     width: 300px;
-  }
-
-  .trace-log-btn {
-    float: right;
   }
 
   .tag {
