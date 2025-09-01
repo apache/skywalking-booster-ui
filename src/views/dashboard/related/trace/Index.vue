@@ -14,13 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-wrapper flex-v">
-    <Content :data="data" />
+    <div class="search-bar">
+      <SearchBar :data="data" />
+    </div>
+    <div class="trace flex-h">
+      <TraceList />
+      <SpanList />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
   import { provide } from "vue";
   import type { PropType } from "vue";
-  import Content from "./Content.vue";
   import type { LayoutConfig } from "@/types/dashboard";
   /*global defineProps */
   const props = defineProps({
