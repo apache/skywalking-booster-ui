@@ -13,23 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-wrapper flex-v">
-    <div class="search-bar">
-      <SearchBar :data="data" />
-    </div>
-    <div class="trace flex-h">
-      <SegmentList />
-      <SpanList />
-    </div>
+  <div class="trace-query flex-v">
+    <div class="search-bar"> SearchBar </div>
+    <div class="trace flex-h"> traces query </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import { provide } from "vue";
+  import { ref } from "vue";
   import type { PropType } from "vue";
   import type { LayoutConfig } from "@/types/dashboard";
-  import SearchBar from "./components/TraceList/SearchBar.vue";
-  import SegmentList from "./components/TraceList/SegmentList.vue";
-  import SpanList from "./components/TraceList/SpanList.vue";
+
   /*global defineProps */
   const props = defineProps({
     data: {
@@ -37,14 +30,12 @@ limitations under the License. -->
       default: () => ({}),
     },
   });
-  provide("options", props.data);
 </script>
 <style lang="scss" scoped>
-  .trace-wrapper {
+  .trace-query {
     width: 100%;
     height: 100%;
     font-size: $font-size-smaller;
-    position: relative;
     overflow: auto;
   }
 </style>

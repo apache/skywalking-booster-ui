@@ -16,16 +16,19 @@ limitations under the License. -->
   <div class="flex-h trace-type">
     <el-radio-group v-model="spansGraphType" size="small">
       <el-radio-button v-for="option in GraphTypeOptions" :key="option.value" :value="option.value">
-        <Icon class="mr-5" size="sm" :iconName="option.icon" />
+        <Icon :iconName="option.icon" />
         {{ t(option.label) }}
       </el-radio-button>
     </el-radio-group>
   </div>
-  <div class="search-bar">
+  <div v-if="spansGraphType === GraphTypeOptions[4].value">
+    <TraceQuery />
+  </div>
+  <div v-if="spansGraphType !== GraphTypeOptions[4].value" class="search-bar">
     <Filter :needQuery="needQuery" :data="data" @get="getService" @search="popSegmentList" />
   </div>
-  <div class="trace flex-h">
-    <TraceList class="trace-list" :style="`width: ${currentWidth}px;`" />
+  <div v-if="spansGraphType !== GraphTypeOptions[4].value" class="trace flex-h">
+    <SegmentList class="trace-list" :style="`width: ${currentWidth}px;`" />
     <div
       @mouseover="showIcon = true"
       @mouseout="showIcon = false"
@@ -44,11 +47,12 @@ limitations under the License. -->
   import { provide, ref, onMounted, onUnmounted } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import Filter from "./components/Filter.vue";
-  import TraceList from "./components/TraceList.vue";
-  import SpanList from "./components/SpanList.vue";
+  import Filter from "./components/TraceList/Filter.vue";
+  import SegmentList from "./components/TraceList/SegmentList.vue";
+  import SpanList from "./components/TraceList/SpanList.vue";
   import type { LayoutConfig } from "@/types/dashboard";
   import { mutationObserver } from "@/utils/mutation";
+  import TraceQuery from "./components/TraceQuery/Index.vue";
   /*global defineProps */
   const props = defineProps({
     data: {
@@ -71,6 +75,7 @@ limitations under the License. -->
     { value: "Tree", icon: "issue-child", label: "tree" },
     { value: "Table", icon: "table", label: "table" },
     { value: "Statistics", icon: "statistics-bulleted", label: "statistics" },
+    { value: "Query", icon: "search", label: "query" },
   ] as const;
   type SpansGraphType = typeof GraphTypeOptions[number]["value"];
   const spansGraphType = ref<SpansGraphType>(GraphTypeOptions[0].value);
@@ -157,7 +162,7 @@ limitations under the License. -->
   }
 
   .trace {
-    min-height: calc(100% - 150px);
+    min-height: calc(100% - 160px);
     width: 100%;
     overflow: auto;
     min-width: 1000px;
