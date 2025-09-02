@@ -404,5 +404,6 @@ const msg = {
   minutes: "分钟",
   invalidProfilingDurationRange: "请输入1到900秒之间的有效时长",
   taskCreatedSuccessfully: "任务创建成功",
+  runQuery: "运行查询",
 };
 export default msg;

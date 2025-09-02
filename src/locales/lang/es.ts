@@ -406,5 +406,6 @@ const msg = {
   minutes: "Minutos",
   invalidProfilingDurationRange: "Por favor ingrese una duración válida entre 1 y 900 segundos",
   taskCreatedSuccessfully: "Tarea creada exitosamente",
+  runQuery: "Ejecutar Consulta",
 };
 export default msg;

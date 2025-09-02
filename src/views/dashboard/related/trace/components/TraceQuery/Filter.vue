@@ -13,5 +13,37 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div>Search Bar</div>
+  <div class="flex-h trace-query-filter">
+    <ConditionTags :type="'TRACE'" @update="updateTags" />
+    <div class="flex-h">
+      <div class="mr-10">
+        <span class="grey mr-5">{{ t("limit") }}</span>
+        <el-input-number size="small" v-model="limit" :min="10" @change="handleChangeLimit" />
+      </div>
+      <el-button size="small" @click="queryTraces"> {{ t("runQuery") }} </el-button>
+    </div>
+  </div>
 </template>
+<script lang="ts" setup>
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import ConditionTags from "@/views/components/ConditionTags.vue";
+
+  const { t } = useI18n();
+  const limit = ref(10);
+
+  function updateTags(tags: string[]) {
+    console.log(tags);
+  }
+  function queryTraces() {
+    console.log("queryTraces");
+  }
+  function handleChangeLimit(value: number | undefined) {
+    console.log("handleChangeLimit", value);
+  }
+</script>
+<style lang="scss" scoped>
+  .trace-query-filter {
+    justify-content: space-between;
+  }
+</style>

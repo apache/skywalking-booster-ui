@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-query flex-v">
-    <div class="search-bar"> SearchBar </div>
+    <Filter />
     <div class="trace flex-h"> traces query </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
   import type { PropType } from "vue";
   import type { LayoutConfig } from "@/types/dashboard";
+  import Filter from "./Filter.vue";
 
   /*global defineProps */
   const props = defineProps({
@@ -37,5 +37,6 @@ limitations under the License. -->
     height: 100%;
     font-size: $font-size-smaller;
     overflow: auto;
+    padding: 10px;
   }
 </style>
