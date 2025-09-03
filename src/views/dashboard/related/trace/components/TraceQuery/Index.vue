@@ -15,13 +15,14 @@ limitations under the License. -->
 <template>
   <div class="trace-query flex-v">
     <Filter />
-    <div class="trace flex-h mt-10"> traces query </div>
+    <TracesTable />
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
   import type { LayoutConfig } from "@/types/dashboard";
   import Filter from "./Filter.vue";
+  import TracesTable from "./TracesTable.vue";
 
   /*global defineProps */
   const props = defineProps({

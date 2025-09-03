@@ -16,7 +16,7 @@
  */
 import { defineStore } from "pinia";
 import type { Instance, Endpoint, Service } from "@/types/selector";
-import type { Trace, Span, TraceCondition } from "@/types/trace";
+import type { Trace, Span, TraceCondition, ZipkinTrace } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -38,6 +38,7 @@ interface TraceState {
   selectorStore: ReturnType<typeof useSelectorStore>;
   selectedSpan: Nullable<Span>;
   serviceList: string[];
+  zipkinTraces: ZipkinTrace[][];
 }
 const { getDurationTime } = useDuration();
 
@@ -60,6 +61,7 @@ export const traceStore = defineStore({
     traceSpanLogs: [],
     selectorStore: useSelectorStore(),
     serviceList: [],
+    zipkinTraces: [],
   }),
   actions: {
     setTraceCondition(data: Recordable) {
@@ -210,12 +212,31 @@ export const traceStore = defineStore({
     async getTagValues(tagKey: string) {
       return await graphql.query("queryTraceTagValues").params({ tagKey, duration: useAppStoreWithOut().durationTime });
     },
-    async getZipkinTraces(params: any) {
+    async getZipkinTraces(params: Record<string, unknown>) {
       const response = await fetchQuery({
         method: "get",
         path: "ZipkinTraces",
         json: params,
       });
+
+      this.zipkinTraces = response
+        .map((list: ZipkinTrace[]) => {
+          const p = list.find((d: ZipkinTrace) => !d.parentId) || list[0];
+          if (!p) {
+            return {
+              name: "Unknown",
+              duration: 0,
+              spans: [],
+            };
+          }
+          return {
+            ...p,
+            label: `${p.localEndpoint.serviceName}: ${p.name}`,
+            duration: p.duration / 1000,
+            spans: list,
+          };
+        })
+        .sort((a: ZipkinTrace, b: ZipkinTrace) => b.duration - a.duration);
 
       return response;
     },

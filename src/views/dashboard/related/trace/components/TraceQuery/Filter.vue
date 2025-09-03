@@ -73,10 +73,6 @@ limitations under the License. -->
       params[tag.key] = tag.value;
     }
     const resp = await traceStore.getZipkinTraces(params);
-    if (resp.errors) {
-      ElMessage.error(resp.errors);
-      return;
-    }
   }
   function changeDuration(val: Date[]) {
     durationRow.value = timeFormat(val);

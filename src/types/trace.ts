@@ -29,6 +29,29 @@ export interface Trace {
   traceId: string;
 }
 
+export interface ZipkinTrace {
+  duration: number;
+  kind: string;
+  localEndpoint: LocalEndpoint;
+  timestamp: number;
+  traceId: string;
+  parentId?: string;
+  annotations: Annotation[];
+  tags: Record<string, string>;
+  name: string;
+  spans: ZipkinTrace[];
+}
+
+export interface LocalEndpoint {
+  serviceName: string;
+  ipv4: string;
+}
+
+export interface Annotation {
+  timestamp: number;
+  value: string;
+}
+
 export interface Span {
   endpointName: string;
   serviceCode: string;
