@@ -19,4 +19,5 @@ export const HttpURL = {
   ClusterNodes: `${PREFIX}/status/cluster/nodes`,
   ConfigTTL: `${PREFIX}/status/config/ttl`,
   DebuggingConfigDump: `${PREFIX}/debugging/config/dump`,
+  ZipkinTraces: `${PREFIX}/zipkin/api/v2/traces`,
 };

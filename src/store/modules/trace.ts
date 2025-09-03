@@ -25,6 +25,7 @@ import { QueryOrders } from "@/views/dashboard/data";
 import { EndpointsTopNDefault } from "../data";
 import { useDuration } from "@/hooks/useDuration";
 import { LogItem } from "@/types/log";
+import fetchQuery from "@/graphql/http";
 interface TraceState {
   services: Service[];
   instances: Instance[];
@@ -208,6 +209,15 @@ export const traceStore = defineStore({
     },
     async getTagValues(tagKey: string) {
       return await graphql.query("queryTraceTagValues").params({ tagKey, duration: useAppStoreWithOut().durationTime });
+    },
+    async getZipkinTraces(params: any) {
+      const response = await fetchQuery({
+        method: "get",
+        path: "ZipkinTraces",
+        json: params,
+      });
+
+      return response;
     },
   },
 });

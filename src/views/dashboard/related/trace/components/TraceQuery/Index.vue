@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="trace-query flex-v">
     <Filter />
-    <div class="trace flex-h"> traces query </div>
+    <div class="trace flex-h mt-10"> traces query </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -34,9 +34,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .trace-query {
     width: 100%;
-    height: 100%;
     font-size: $font-size-smaller;
     overflow: auto;
-    padding: 10px;
   }
 </style>

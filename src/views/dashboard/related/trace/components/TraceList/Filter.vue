@@ -72,7 +72,7 @@ limitations under the License. -->
       <el-input size="small" class="inputs" v-model="maxTraceDuration" type="number" />
     </div>
     <div>
-      <span class="sm b grey mr-5">{{ t("timeRange") }}:</span>
+      <span class="sm b grey mr-5">{{ t("timeRange") }}</span>
       <TimePicker
         :value="[durationRow.start, durationRow.end]"
         :maxRange="maxRange"

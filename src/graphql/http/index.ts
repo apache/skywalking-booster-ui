@@ -17,11 +17,45 @@
 import { httpQuery } from "../base";
 import { HttpURL } from "./url";
 
-export default async function fetchQuery({ method, json, path }: { method: string; json?: unknown; path: string }) {
+export default async function fetchQuery({
+  method,
+  json,
+  path,
+}: {
+  method: string;
+  json?: Record<string, unknown>;
+  path: string;
+}) {
+  const upperMethod = method.toUpperCase();
+  let url = (HttpURL as Record<string, string>)[path];
+  let body: unknown | undefined = json;
+
+  if (upperMethod === "GET" && json && typeof json === "object") {
+    const params = new URLSearchParams();
+    const stringifyValue = (val: unknown): string => {
+      if (val instanceof Date) return val.toISOString();
+      if (typeof val === "object") return JSON.stringify(val);
+      return String(val);
+    };
+    for (const [key, value] of Object.entries(json)) {
+      if (value === undefined || value === null) continue;
+      if (Array.isArray(value)) {
+        for (const v of value as unknown[]) params.append(key, stringifyValue(v));
+        continue;
+      }
+      params.append(key, stringifyValue(value));
+    }
+    const queryString = params.toString();
+    if (queryString) {
+      url += (url.includes("?") ? "&" : "?") + queryString;
+    }
+    body = undefined;
+  }
+
   const response = await httpQuery({
-    method,
-    json,
-    url: (HttpURL as { [key: string]: string })[path],
+    method: upperMethod,
+    json: body,
+    url,
   });
   if (response.errors) {
     response.errors = response.errors.map((e: { message: string }) => e.message).join(" ");

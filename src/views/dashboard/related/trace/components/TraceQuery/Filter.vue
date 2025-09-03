@@ -15,35 +15,86 @@ limitations under the License. -->
 <template>
   <div class="flex-h trace-query-filter">
     <ConditionTags :type="'TRACE'" @update="updateTags" />
-    <div class="flex-h">
-      <div class="mr-10">
-        <span class="grey mr-5">{{ t("limit") }}</span>
-        <el-input-number size="small" v-model="limit" :min="10" @change="handleChangeLimit" />
-      </div>
-      <el-button size="small" @click="queryTraces"> {{ t("runQuery") }} </el-button>
+    <el-button type="primary" @click="queryTraces"> {{ t("runQuery") }} </el-button>
+  </div>
+  <div class="flex-h mt-10 filter-row">
+    <div class="mr-10 flex-h">
+      <div class="grey mr-10 label">{{ t("limit") }}</div>
+      <el-input-number size="small" v-model="limit" :min="10" />
+    </div>
+    <div class="mr-10 flex-h">
+      <div class="sm b grey mr-5 label">{{ t("timeRange") }}</div>
+      <TimePicker
+        :value="[durationRow.start, durationRow.end]"
+        :maxRange="maxRange"
+        position="bottom"
+        format="YYYY-MM-DD HH:mm"
+        @input="changeDuration"
+      />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
   import ConditionTags from "@/views/components/ConditionTags.vue";
+  import { useTraceStore } from "@/store/modules/trace";
+  import { InitializationDurationRow } from "@/store/modules/app";
+  import { Duration } from "@/types/app";
+  import { useDuration } from "@/hooks/useDuration";
+  import { useAppStoreWithOut } from "@/store/modules/app";
+  import TimePicker from "@/components/TimePicker.vue";
+  import timeFormat from "@/utils/timeFormat";
 
   const { t } = useI18n();
+  const traceStore = useTraceStore();
+  const appStore = useAppStoreWithOut();
+  const { getMaxRange } = useDuration();
   const limit = ref(10);
+  const tags = ref<{ key: string; value: string }[]>([]);
+  const durationRow = ref<Duration>(InitializationDurationRow);
+  const maxRange = computed(() =>
+    getMaxRange(appStore.coldStageMode ? appStore.recordsTTL?.coldTrace || 0 : appStore.recordsTTL?.trace || 0),
+  );
 
-  function updateTags(tags: string[]) {
-    console.log(tags);
+  function updateTags(params: { tagsMap: { key: string; value: string }[]; tagsList: string[] }) {
+    tags.value = params.tagsMap;
   }
-  function queryTraces() {
-    console.log("queryTraces");
+  async function queryTraces() {
+    const endTs = durationRow.value.end.getTime();
+    const lookback = durationRow.value.end.getTime() - durationRow.value.start.getTime();
+    const params: Record<string, unknown> = {
+      limit: limit.value,
+      endTs,
+      lookback,
+    };
+    for (const tag of tags.value) {
+      params[tag.key] = tag.value;
+    }
+    const resp = await traceStore.getZipkinTraces(params);
+    if (resp.errors) {
+      ElMessage.error(resp.errors);
+      return;
+    }
   }
-  function handleChangeLimit(value: number | undefined) {
-    console.log("handleChangeLimit", value);
+  function changeDuration(val: Date[]) {
+    durationRow.value = timeFormat(val);
   }
 </script>
 <style lang="scss" scoped>
   .trace-query-filter {
     justify-content: space-between;
+    padding: 10px 10px 0;
+  }
+
+  .filter-row {
+    padding: 0 10px 10px;
+    border-bottom: 1px solid $border-color;
+
+    .label {
+      height: 28px;
+      line-height: 28px;
+    }
   }
 </style>
