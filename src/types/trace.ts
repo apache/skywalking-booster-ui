@@ -40,6 +40,7 @@ export interface ZipkinTrace {
   tags: Record<string, string>;
   name: string;
   spans: ZipkinTrace[];
+  id: string;
 }
 
 export interface LocalEndpoint {

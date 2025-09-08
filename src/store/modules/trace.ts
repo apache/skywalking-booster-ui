@@ -221,7 +221,7 @@ export const traceStore = defineStore({
 
       this.zipkinTraces = response
         .map((list: ZipkinTrace[]) => {
-          const p = list.find((d: ZipkinTrace) => !d.parentId) || list[0];
+          const p = list.find((d: ZipkinTrace) => !d.parentId || list.find((p: ZipkinTrace) => p.id === d.parentId));
           if (!p) {
             return {
               name: "Unknown",
