@@ -37,7 +37,6 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
-  import { ElMessage } from "element-plus";
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { useTraceStore } from "@/store/modules/trace";
   import { InitializationDurationRow } from "@/store/modules/app";
@@ -72,7 +71,7 @@ limitations under the License. -->
     for (const tag of tags.value) {
       params[tag.key] = tag.value;
     }
-    const resp = await traceStore.getZipkinTraces(params);
+    await traceStore.getZipkinTraces(params);
   }
   function changeDuration(val: Date[]) {
     durationRow.value = timeFormat(val);

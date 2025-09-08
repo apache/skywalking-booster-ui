@@ -13,9 +13,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
+  <div class="flex-h result-header">
+    <div style="align-items: center"> {{ filteredTraces.length }} Results </div>
+    <div class="flex-h" style="align-items: center">
+      <el-switch v-model="expandAll" size="large" active-text="Expand All" inactive-text="Collapse All" class="mr-20" />
+      <Selector
+        placeholder="Service filters"
+        @change="changeServiceFilters"
+        :options="serviceNames"
+        :multiple="true"
+        style="width: 500px"
+      />
+    </div>
+  </div>
   <div class="trace-query-table flex-v">
     <el-table
-      :data="traceStore.zipkinTraces"
+      :data="filteredTraces"
       :border="false"
       :preserve-expanded-content="true"
       :default-sort="{ prop: 'duration', order: 'descending' }"
@@ -30,7 +43,7 @@ limitations under the License. -->
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="Name" prop="label" />
+      <el-table-column label="Root" prop="label" />
       <el-table-column label="Start Time" prop="timestamp" width="220">
         <template #default="props">
           {{ dateFormat(props.row.timestamp / 1000) }}
@@ -55,18 +68,14 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed } from "vue";
+  import { computed, ref } from "vue";
   import { dateFormat } from "@/utils/dateFormat";
   import { useTraceStore } from "@/store/modules/trace";
   import type { ZipkinTrace } from "@/types/trace";
-
-  // Type for the transformed trace data
-  interface TransformedZipkinTrace extends ZipkinTrace {
-    label: string;
-    duration: number;
-  }
+  import type { Option } from "@/types/app";
 
   const traceStore = useTraceStore();
+  const expandAll = ref(false);
 
   function getEndpoints(spans: ZipkinTrace[]) {
     const endpoints = new Map<string, number>();
@@ -79,13 +88,7 @@ limitations under the License. -->
   // Calculate max duration for progress bar scaling
   const maxDuration = computed(() => {
     if (!traceStore.zipkinTraces.length) return 1;
-    const durations = traceStore.zipkinTraces.map((trace) => {
-      // Handle both the original ZipkinTrace[][] structure and the transformed flat array
-      if (Array.isArray(trace)) {
-        return trace[0]?.duration || 0;
-      }
-      return (trace as TransformedZipkinTrace).duration || 0;
-    });
+    const durations = traceStore.zipkinTraces.map((trace: ZipkinTrace) => trace.duration || 0);
     return Math.max(...durations);
   });
 
@@ -93,6 +96,47 @@ limitations under the License. -->
   function getDurationProgress(duration: number): number {
     if (maxDuration.value === 0) return 0;
     return Math.round((duration / maxDuration.value) * 100);
+  }
+
+  // Service names options for the header Selector
+  const serviceNames = computed<Option[]>(() => {
+    const names = new Set<string>();
+    const rows = traceStore.zipkinTraces as ZipkinTrace[];
+    for (const row of rows) {
+      if (row?.localEndpoint?.serviceName) {
+        names.add(row.localEndpoint.serviceName);
+      }
+      for (const s of row.spans || []) {
+        if (s?.localEndpoint?.serviceName) {
+          names.add(s.localEndpoint.serviceName);
+        }
+      }
+    }
+    return Array.from(names)
+      .sort((a, b) => a.localeCompare(b))
+      .map((n) => ({ label: n, value: n }));
+  });
+
+  // Selected service names and filtered table rows
+  const selectedServiceNames = ref<string[]>([]);
+
+  const filteredTraces = computed<ZipkinTrace[]>(() => {
+    const rows = traceStore.zipkinTraces as ZipkinTrace[];
+    if (!selectedServiceNames.value.length) return rows;
+    const selected = new Set(selectedServiceNames.value);
+    return rows.filter((row) => {
+      const rowService = row?.localEndpoint?.serviceName;
+      if (rowService && selected.has(rowService)) return true;
+      for (const s of row.spans || []) {
+        const name = s?.localEndpoint?.serviceName;
+        if (name && selected.has(name)) return true;
+      }
+      return false;
+    });
+  });
+
+  function changeServiceFilters(selected: Option[]) {
+    selectedServiceNames.value = selected.map((o) => String(o.value));
   }
 </script>
 <style lang="scss" scoped>
@@ -118,5 +162,11 @@ limitations under the License. -->
     font-size: $font-size-smaller;
     font-weight: 500;
     color: var(--el-text-color-primary);
+  }
+
+  .result-header {
+    justify-content: space-between;
+    padding: 20px 10px;
+    font-size: 14px;
   }
 </style>

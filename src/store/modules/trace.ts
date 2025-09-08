@@ -38,7 +38,7 @@ interface TraceState {
   selectorStore: ReturnType<typeof useSelectorStore>;
   selectedSpan: Nullable<Span>;
   serviceList: string[];
-  zipkinTraces: ZipkinTrace[][];
+  zipkinTraces: ZipkinTrace[];
 }
 const { getDurationTime } = useDuration();
 
