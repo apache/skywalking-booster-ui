@@ -16,7 +16,14 @@ limitations under the License. -->
   <div class="flex-h result-header">
     <div style="align-items: center"> {{ filteredTraces.length }} Results </div>
     <div class="flex-h" style="align-items: center">
-      <el-switch v-model="expandAll" size="large" active-text="Expand All" inactive-text="Collapse All" class="mr-20" />
+      <el-switch
+        v-model="expandAll"
+        size="large"
+        active-text="Expand All"
+        inactive-text="Collapse All"
+        class="mr-20"
+        @change="toggleAllExpansion"
+      />
       <Selector
         placeholder="Service filters"
         @change="changeServiceFilters"
@@ -28,6 +35,7 @@ limitations under the License. -->
   </div>
   <div class="trace-query-table flex-v">
     <el-table
+      ref="tableRef"
       :data="filteredTraces"
       :border="false"
       :preserve-expanded-content="true"
@@ -68,14 +76,17 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed, ref } from "vue";
+  import { computed, ref, nextTick } from "vue";
+  import { ElTable } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
   import { useTraceStore } from "@/store/modules/trace";
   import type { ZipkinTrace } from "@/types/trace";
   import type { Option } from "@/types/app";
 
   const traceStore = useTraceStore();
-  const expandAll = ref(false);
+  const expandAll = ref<boolean>(false);
+  const tableRef = ref<InstanceType<typeof ElTable>>();
+  const selectedServiceNames = ref<string[]>([]);
 
   function getEndpoints(spans: ZipkinTrace[]) {
     const endpoints = new Map<string, number>();
@@ -117,9 +128,6 @@ limitations under the License. -->
       .map((n) => ({ label: n, value: n }));
   });
 
-  // Selected service names and filtered table rows
-  const selectedServiceNames = ref<string[]>([]);
-
   const filteredTraces = computed<ZipkinTrace[]>(() => {
     const rows = traceStore.zipkinTraces as ZipkinTrace[];
     if (!selectedServiceNames.value.length) return rows;
@@ -137,6 +145,26 @@ limitations under the License. -->
 
   function changeServiceFilters(selected: Option[]) {
     selectedServiceNames.value = selected.map((o) => String(o.value));
+  }
+
+  // Toggle all table row expansions
+  function toggleAllExpansion() {
+    nextTick(() => {
+      if (tableRef.value) {
+        const rows = filteredTraces.value;
+        if (expandAll.value) {
+          // Expand all rows
+          for (const row of rows) {
+            tableRef.value.toggleRowExpansion(row, true);
+          }
+        } else {
+          // Collapse all rows
+          for (const row of rows) {
+            tableRef.value.toggleRowExpansion(row, false);
+          }
+        }
+      }
+    });
   }
 </script>
 <style lang="scss" scoped>
