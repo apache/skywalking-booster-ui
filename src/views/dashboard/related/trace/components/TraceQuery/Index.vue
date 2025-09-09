@@ -19,17 +19,23 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+  import { onUnmounted } from "vue";
   import type { PropType } from "vue";
   import type { LayoutConfig } from "@/types/dashboard";
+  import { useTraceStore } from "@/store/modules/trace";
   import Filter from "./Filter.vue";
   import TracesTable from "./TracesTable.vue";
 
   /*global defineProps */
-  const props = defineProps({
+  defineProps({
     data: {
       type: Object as PropType<LayoutConfig>,
       default: () => ({}),
     },
+  });
+  const traceStore = useTraceStore();
+  onUnmounted(() => {
+    traceStore.setZipkinTraces([]);
   });
 </script>
 <style lang="scss" scoped>

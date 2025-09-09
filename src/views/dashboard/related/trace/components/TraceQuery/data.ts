@@ -14,24 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+// Service color palette for consistent coloring across trace visualizations
 export const ServicePalette = [
-  "#f44336",
-  "#e91e63",
-  "#9c27b0",
-  "#673ab7",
-  "#3f51b5",
-  "#2196f3",
-  "#03a9f4",
-  "#00bcd4",
-  "#009688",
-  "#4caf50",
-  "#8bc34a",
-  "#cddc39",
-  "#ffeb3b",
-  "#ffc107",
-  "#ff9800",
-  "#ff5722",
-  "#795548",
-  "#9e9e9e",
-  "#607d8b",
+  "#3b82f6", // blue-500
+  "#ef4444", // red-500
+  "#10b981", // emerald-500
+  "#f59e0b", // amber-500
+  "#8b5cf6", // violet-500
+  "#06b6d4", // cyan-500
+  "#84cc16", // lime-500
+  "#f97316", // orange-500
+  "#ec4899", // pink-500
+  "#6366f1", // indigo-500
+  "#14b8a6", // teal-500
+  "#a855f7", // purple-500
+  "#22c55e", // green-500
+  "#eab308", // yellow-500
+  "#f43f5e", // rose-500
+  "#0ea5e9", // sky-500
+  "#8b5a2b", // brown-500
+  "#64748b", // slate-500
+  "#dc2626", // red-600
+  "#059669", // emerald-600
+  "#d97706", // amber-600
+  "#7c3aed", // violet-600
+  "#0891b2", // cyan-600
+  "#65a30d", // lime-600
+  "#ea580c", // orange-600
+  "#db2777", // pink-600
+  "#4f46e5", // indigo-600
+  "#0d9488", // teal-600
+  "#9333ea", // purple-600
+  "#16a34a", // green-600
+  "#ca8a04", // yellow-600
+  "#e11d48", // rose-600
+  "#0284c7", // sky-600
+  "#92400e", // brown-600
+  "#475569", // slate-600
 ];

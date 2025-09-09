@@ -102,7 +102,7 @@ export default class TraceMap {
     this.topSlow = [];
     this.topChild = [];
     const that = this;
-    this.root.children.forEach(collapse);
+    this.root.children?.forEach(collapse);
     this.topSlowMax = this.topSlow.sort((a: number, b: number) => b - a)[0];
     this.topSlowMin = this.topSlow.sort((a: number, b: number) => b - a)[4];
     this.topChildMax = this.topChild.sort((a: number, b: number) => b - a)[0];

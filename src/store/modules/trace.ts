@@ -76,6 +76,9 @@ export const traceStore = defineStore({
     setSelectedSpan(span: Span) {
       this.selectedSpan = span;
     },
+    setZipkinTraces(traces: ZipkinTrace[]) {
+      this.zipkinTraces = traces;
+    },
     resetState() {
       this.traceSpans = [];
       this.traceList = [];

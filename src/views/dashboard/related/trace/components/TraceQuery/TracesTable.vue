@@ -80,6 +80,11 @@ limitations under the License. -->
           </div>
         </template>
       </el-table-column>
+      <el-table-column fixed="right" label="Operations" width="120">
+        <template #default="props">
+          <el-button size="small" @click="(e) => handleShowTrace(e, props.row)"> Show </el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -147,14 +152,17 @@ limitations under the License. -->
     return endpoints;
   }
 
+  function handleShowTrace(e: MouseEvent, row: ZipkinTrace) {
+    console.log(row);
+  }
+
   // Calculate progress percentage for a given duration
   function getDurationProgress(duration: number): number {
     if (maxDuration.value === 0) return 0;
     return Math.round((duration / maxDuration.value) * 100);
   }
 
-  /* eslint no-bitwise: ["error", { "allow": ["<<", "|="] }] */
-  const generateHash = (str: string) => {
+  function generateHash(str: string) {
     let hash = 0;
     if (str.length === 0) return hash;
     for (let i = 0; i < str.length; i += 1) {
@@ -163,7 +171,7 @@ limitations under the License. -->
       hash |= 0; // Convert to 32bit integer
     }
     return Math.abs(hash); // Only positive number.
-  };
+  }
 
   // Get consistent color for service name using ServicePalette
   function getServiceColor(serviceName: string): string {
