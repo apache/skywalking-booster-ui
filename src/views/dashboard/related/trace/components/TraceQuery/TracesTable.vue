@@ -27,6 +27,7 @@ limitations under the License. -->
       <Selector
         placeholder="Service filters"
         @change="changeServiceFilters"
+        :value="selectedServiceNames"
         :options="serviceNames"
         :multiple="true"
         style="width: 500px"
@@ -45,7 +46,13 @@ limitations under the License. -->
       <el-table-column type="expand">
         <template #default="props">
           <div class="flex-h service-tags">
-            <el-tag v-for="(value, key) in getEndpoints(props.row.spans)" :key="key" class="mr-10" type="primary">
+            <el-tag
+              v-for="(value, key) in getEndpoints(props.row.spans)"
+              :key="key"
+              class="mr-10 cp"
+              type="primary"
+              @click="toggleServiceTags(value[0], props.row)"
+            >
               {{ value[0] }}: {{ value[1] }}
             </el-tag>
           </div>
@@ -88,14 +95,6 @@ limitations under the License. -->
   const tableRef = ref<InstanceType<typeof ElTable>>();
   const selectedServiceNames = ref<string[]>([]);
 
-  function getEndpoints(spans: ZipkinTrace[]) {
-    const endpoints = new Map<string, number>();
-    for (const d of spans) {
-      endpoints.set(d.localEndpoint.serviceName, (endpoints.get(d.localEndpoint.serviceName) || 0) + 1);
-    }
-    return endpoints;
-  }
-
   // Calculate max duration for progress bar scaling
   const maxDuration = computed(() => {
     if (!traceStore.zipkinTraces.length) return 1;
@@ -103,11 +102,21 @@ limitations under the License. -->
     return Math.max(...durations);
   });
 
-  // Calculate progress percentage for a given duration
-  function getDurationProgress(duration: number): number {
-    if (maxDuration.value === 0) return 0;
-    return Math.round((duration / maxDuration.value) * 100);
-  }
+  // Filtered traces based on selected service names
+  const filteredTraces = computed<ZipkinTrace[]>(() => {
+    const rows = traceStore.zipkinTraces as ZipkinTrace[];
+    if (!selectedServiceNames.value.length) return rows;
+    const selected = new Set(selectedServiceNames.value);
+    return rows.filter((row) => {
+      const rowService = row?.localEndpoint?.serviceName;
+      if (rowService && selected.has(rowService)) return true;
+      for (const s of row.spans || []) {
+        const name = s?.localEndpoint?.serviceName;
+        if (name && selected.has(name)) return true;
+      }
+      return false;
+    });
+  });
 
   // Service names options for the header Selector
   const serviceNames = computed<Option[]>(() => {
@@ -128,20 +137,33 @@ limitations under the License. -->
       .map((n) => ({ label: n, value: n }));
   });
 
-  const filteredTraces = computed<ZipkinTrace[]>(() => {
-    const rows = traceStore.zipkinTraces as ZipkinTrace[];
-    if (!selectedServiceNames.value.length) return rows;
-    const selected = new Set(selectedServiceNames.value);
-    return rows.filter((row) => {
-      const rowService = row?.localEndpoint?.serviceName;
-      if (rowService && selected.has(rowService)) return true;
-      for (const s of row.spans || []) {
-        const name = s?.localEndpoint?.serviceName;
-        if (name && selected.has(name)) return true;
+  function getEndpoints(spans: ZipkinTrace[]) {
+    const endpoints = new Map<string, number>();
+    for (const d of spans) {
+      endpoints.set(d.localEndpoint.serviceName, (endpoints.get(d.localEndpoint.serviceName) || 0) + 1);
+    }
+    return endpoints;
+  }
+
+  // Calculate progress percentage for a given duration
+  function getDurationProgress(duration: number): number {
+    if (maxDuration.value === 0) return 0;
+    return Math.round((duration / maxDuration.value) * 100);
+  }
+
+  function toggleServiceTags(serviceName: string, row: ZipkinTrace) {
+    // Toggle service selection
+    selectedServiceNames.value = selectedServiceNames.value.includes(serviceName)
+      ? selectedServiceNames.value.filter((name) => name !== serviceName)
+      : [...selectedServiceNames.value, serviceName];
+
+    // Expand the row to show the service tags
+    nextTick(() => {
+      if (tableRef.value) {
+        tableRef.value.toggleRowExpansion(row, true);
       }
-      return false;
     });
-  });
+  }
 
   function changeServiceFilters(selected: Option[]) {
     selectedServiceNames.value = selected.map((o) => String(o.value));
