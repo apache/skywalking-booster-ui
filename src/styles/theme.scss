@@ -71,6 +71,8 @@ html {
   --sw-marketplace-border: #dedfe0;
   --sw-grid-item-active: #d4d7de;
   --sw-trace-line: #999;
+  --sw-scrollbar-track: #eee;
+  --sw-scrollbar-thumb: #aaa;
 }
 
 html.dark {
@@ -114,6 +116,8 @@ html.dark {
   --sw-marketplace-border: #606266;
   --sw-grid-item-active: #73767a;
   --sw-trace-line: #e8e8e8;
+  --sw-scrollbar-track: #252a2f;
+  --sw-scrollbar-thumb: #888;
 }
 
 .el-drawer__header {

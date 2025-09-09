@@ -87,20 +87,35 @@ limitations under the License. -->
       </el-table-column>
     </el-table>
   </div>
+  <!-- Trace Details Dialog -->
+  <el-dialog
+    v-model="dialogVisible"
+    fullscreen
+    :close-on-click-modal="false"
+    :close-on-press-escape="true"
+    destroy-on-close
+  >
+    <div v-if="selectedTrace" class="trace-dialog-content scroll_bar_style">
+      <TraceContent :trace="selectedTrace" />
+    </div>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
   import { computed, ref, nextTick } from "vue";
-  import { ElTable } from "element-plus";
+  import { ElTable, ElDialog } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
   import { useTraceStore } from "@/store/modules/trace";
   import type { ZipkinTrace } from "@/types/trace";
   import type { Option } from "@/types/app";
   import { ServicePalette } from "./data";
+  import TraceContent from "./TraceContent.vue";
 
   const traceStore = useTraceStore();
   const expandAll = ref<boolean>(false);
   const tableRef = ref<InstanceType<typeof ElTable>>();
   const selectedServiceNames = ref<string[]>([]);
+  const dialogVisible = ref<boolean>(false);
+  const selectedTrace = ref<ZipkinTrace | null>(null);
 
   // Calculate max duration for progress bar scaling
   const maxDuration = computed(() => {
@@ -153,7 +168,8 @@ limitations under the License. -->
   }
 
   function handleShowTrace(e: MouseEvent, row: ZipkinTrace) {
-    console.log(row);
+    selectedTrace.value = row;
+    dialogVisible.value = true;
   }
 
   // Calculate progress percentage for a given duration
@@ -246,5 +262,10 @@ limitations under the License. -->
     justify-content: space-between;
     padding: 20px 10px;
     font-size: 14px;
+  }
+
+  .trace-dialog-content {
+    max-height: 99vh;
+    overflow: hidden;
   }
 </style>

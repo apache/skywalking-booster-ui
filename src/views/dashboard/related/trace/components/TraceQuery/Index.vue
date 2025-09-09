@@ -25,6 +25,7 @@ limitations under the License. -->
   import { useTraceStore } from "@/store/modules/trace";
   import Filter from "./Filter.vue";
   import TracesTable from "./TracesTable.vue";
+  import type { Span } from "@/types/trace";
 
   /*global defineProps */
   defineProps({
@@ -36,6 +37,7 @@ limitations under the License. -->
   const traceStore = useTraceStore();
   onUnmounted(() => {
     traceStore.setZipkinTraces([]);
+    traceStore.setSelectedSpan(null);
   });
 </script>
 <style lang="scss" scoped>
