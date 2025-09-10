@@ -15,11 +15,17 @@ limitations under the License. -->
 <template>
   <div class="trace-content flex-v">
     <div class="trace-info">
-      <h3>{{ trace.label }}</h3>
+      <div class="flex-h" style="justify-content: space-between">
+        <h3>{{ trace.label }}</h3>
+        <div>
+          <el-button size="small" @click="showSpansTable">Spans Table</el-button>
+          <el-button size="small">Download</el-button>
+        </div>
+      </div>
       <div class="trace-meta flex-h">
         <div>
           <span class="grey mr-5">Duration</span>
-          <span class="value">{{ trace.duration.toFixed(2) }}ms</span>
+          <span class="value">{{ trace.duration }}ms</span>
         </div>
         <div>
           <span class="grey mr-5">Services</span>
@@ -66,17 +72,38 @@ limitations under the License. -->
         <div v-else class="no-data">No tags available</div>
       </div>
     </div>
+
+    <!-- Spans Table Drawer -->
+    <SpansTableDrawer
+      v-model:visible="spansTableVisible"
+      :spans="trace.spans || []"
+      :trace-id="trace.traceId"
+      @view-span="handleViewSpan"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
+  import { ref } from "vue";
   import type { ZipkinTrace } from "@/types/trace";
+  import SpansTableDrawer from "./SpansTableDrawer.vue";
 
   interface Props {
     trace: ZipkinTrace;
   }
 
   defineProps<Props>();
+
+  const spansTableVisible = ref<boolean>(false);
+
+  function showSpansTable() {
+    spansTableVisible.value = true;
+  }
+
+  function handleViewSpan(span: ZipkinTrace) {
+    // TODO: Implement span detail view
+    console.log("View span details:", span);
+  }
 </script>
 
 <style lang="scss" scoped>

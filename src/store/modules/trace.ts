@@ -224,8 +224,16 @@ export const traceStore = defineStore({
 
       this.zipkinTraces = response
         .map((list: ZipkinTrace[]) => {
+          const newList = list.map((d: ZipkinTrace) => {
+            return {
+              ...d,
+              label: `${d.localEndpoint.serviceName}: ${d.name}`,
+              duration: d.duration ? Number((d.duration / 1000).toFixed(3)) : 0,
+            };
+          });
           const p =
-            list.find((d: ZipkinTrace) => !d.parentId || list.find((p: ZipkinTrace) => p.id === d.parentId)) || list[0];
+            newList.find((d: ZipkinTrace) => !d.parentId || newList.find((p: ZipkinTrace) => p.id === d.parentId)) ||
+            newList[0];
           if (!p) {
             return {
               name: "Unknown",
@@ -235,9 +243,7 @@ export const traceStore = defineStore({
           }
           return {
             ...p,
-            label: `${p.localEndpoint.serviceName}: ${p.name}`,
-            duration: p.duration / 1000,
-            spans: list,
+            spans: newList,
           };
         })
         .sort((a: ZipkinTrace, b: ZipkinTrace) => b.duration - a.duration);

@@ -75,14 +75,14 @@ limitations under the License. -->
               :text-inside="true"
               color="rgba(64, 158, 255, 0.4)"
             >
-              <div class="duration-value">{{ props.row.duration.toFixed(2) }}ms</div>
+              <div class="duration-value">{{ props.row.duration }}ms</div>
             </el-progress>
           </div>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="Operations" width="120">
         <template #default="props">
-          <el-button size="small" @click="(e) => handleShowTrace(e, props.row)"> Show </el-button>
+          <el-button size="small" @click="(e: MouseEvent) => handleShowTrace(e, props.row)"> Show </el-button>
         </template>
       </el-table-column>
     </el-table>
