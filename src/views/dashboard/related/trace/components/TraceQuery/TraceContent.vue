@@ -13,12 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-content flex-v">
+  <div>
     <div class="trace-info">
       <div class="flex-h" style="justify-content: space-between">
         <h3>{{ trace.label }}</h3>
         <div>
-          <el-button size="small" @click="showSpansTable">{{ t("spansTable") }}</el-button>
+          <el-button class="mr-10" size="small" @click="showSpansTable">{{ t("spansTable") }}</el-button>
           <el-dropdown @command="handleDownload" trigger="click">
             <el-button size="small">
               {{ t("download") }}
@@ -73,7 +73,7 @@ limitations under the License. -->
           </div>
         </div>
         <h4>{{ t("tags") }}</h4>
-        <div class="tags-section flex-v" v-if="trace.tags && Object.keys(trace.tags).length > 0">
+        <div class="tags-section flex-v scroll_bar_style" v-if="trace.tags && Object.keys(trace.tags).length > 0">
           <div v-for="(value, key) in trace.tags" :key="key" class="tag-item">
             <span class="grey" style="width: 200px">{{ key }}</span>
             <span class="value">{{ value }}</span>
@@ -132,11 +132,6 @@ limitations under the License. -->
 </script>
 
 <style lang="scss" scoped>
-  .trace-content {
-    flex-grow: 1;
-    height: 100%;
-  }
-
   .trace-info {
     margin-bottom: 20px;
     padding-bottom: 15px;
@@ -178,7 +173,7 @@ limitations under the License. -->
 
   .detail-item {
     display: inline-flex;
-    align-items: center;
+    flex-direction: column;
     padding-top: 5px;
   }
 
@@ -187,7 +182,8 @@ limitations under the License. -->
   }
 
   .tags-section {
-    max-height: calc(100% - 200px);
+    max-height: calc(100vh - 330px);
+    min-height: 200px;
     overflow: auto;
   }
 
@@ -207,6 +203,7 @@ limitations under the License. -->
 
   .detail-section-span {
     width: 35%;
+    overflow: auto;
   }
 
   .tag-item {

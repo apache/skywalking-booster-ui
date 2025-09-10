@@ -95,9 +95,7 @@ limitations under the License. -->
     :close-on-press-escape="true"
     destroy-on-close
   >
-    <div v-if="selectedTrace" class="trace-dialog-content scroll_bar_style">
-      <TraceContent :trace="selectedTrace" />
-    </div>
+    <TraceContent v-if="selectedTrace" :trace="selectedTrace" />
   </el-dialog>
 </template>
 <script lang="ts" setup>
@@ -262,10 +260,5 @@ limitations under the License. -->
     justify-content: space-between;
     padding: 20px 10px;
     font-size: 14px;
-  }
-
-  .trace-dialog-content {
-    max-height: 99vh;
-    overflow: hidden;
   }
 </style>
