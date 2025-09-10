@@ -31,16 +31,15 @@ export const readFile = (event: any) => {
     };
   });
 };
-export const saveFile = (data: any, name: string) => {
-  const newData = JSON.stringify(data);
-  const tagA = document.createElement("a");
-  tagA.download = name;
-  tagA.style.display = "none";
-  const blob = new Blob([newData]);
-  const url = URL.createObjectURL(blob);
-  tagA.href = url;
-  document.body.appendChild(tagA);
-  tagA.click();
-  document.body.removeChild(tagA);
-  URL.revokeObjectURL(url);
+export const saveFileAsJSON = (data: unknown, filename: string) => {
+  const jsonContent = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonContent], { type: "application/json;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.style.display = "none";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
 };

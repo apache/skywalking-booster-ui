@@ -41,7 +41,8 @@ export interface ZipkinTrace {
   name: string;
   spans: ZipkinTrace[];
   id: string;
-  label: string;
+  label?: string;
+  originalDuration?: number;
 }
 
 export interface LocalEndpoint {

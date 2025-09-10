@@ -405,5 +405,10 @@ const msg = {
   invalidProfilingDurationRange: "请输入1到900秒之间的有效时长",
   taskCreatedSuccessfully: "任务创建成功",
   runQuery: "运行查询",
+  spansTable: "Spans表格",
+  download: "下载",
+  totalSpans: "总跨度",
+  spanName: "跨度名称",
+  parentId: "父ID",
 };
 export default msg;

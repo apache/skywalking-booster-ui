@@ -179,7 +179,7 @@ limitations under the License. -->
   import { useDashboardStore } from "@/store/modules/dashboard";
   import router from "@/router";
   import type { DashboardItem, LayoutConfig } from "@/types/dashboard";
-  import { saveFile, readFile } from "@/utils/file";
+  import { saveFileAsJSON, readFile } from "@/utils/file";
   import { EntityType } from "./data";
   import { isEmptyObject } from "@/utils/is";
   import { WidgetType } from "@/views/dashboard/data";
@@ -356,7 +356,7 @@ limitations under the License. -->
       optimizeTemplate(item.configuration.children);
     }
     const name = `dashboards.json`;
-    saveFile(templates, name);
+    saveFileAsJSON(templates, name);
     setTimeout(() => {
       multipleTableRef.value!.clearSelection();
     }, 2000);

@@ -18,25 +18,35 @@ limitations under the License. -->
       <div class="flex-h" style="justify-content: space-between">
         <h3>{{ trace.label }}</h3>
         <div>
-          <el-button size="small" @click="showSpansTable">Spans Table</el-button>
-          <el-button size="small">Download</el-button>
+          <el-button size="small" @click="showSpansTable">{{ t("spansTable") }}</el-button>
+          <el-dropdown @command="handleDownload" trigger="click">
+            <el-button size="small">
+              {{ t("download") }}
+              <el-icon class="el-icon--right"><arrow-down /></el-icon>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="json">Download JSON</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
       </div>
       <div class="trace-meta flex-h">
         <div>
-          <span class="grey mr-5">Duration</span>
+          <span class="grey mr-5">{{ t("duration") }}</span>
           <span class="value">{{ trace.duration }}ms</span>
         </div>
         <div>
-          <span class="grey mr-5">Services</span>
+          <span class="grey mr-5">{{ t("services") }}</span>
           <span class="value">{{ trace.localEndpoint?.serviceName || "Unknown" }}</span>
         </div>
         <div>
-          <span class="grey mr-5">Total Spans</span>
+          <span class="grey mr-5">{{ t("totalSpans") }}</span>
           <span class="value">{{ trace.spans?.length || 0 }}</span>
         </div>
         <div>
-          <span class="grey mr-5">Trace ID</span>
+          <span class="grey mr-5">{{ t("traceID") }}</span>
           <span class="value">{{ trace.traceId }}</span>
         </div>
       </div>
@@ -46,23 +56,23 @@ limitations under the License. -->
       <div class="detail-section-span">
         <div class="detail-section">
           <div class="detail-item">
-            <span class="grey mr-10">Service name</span>
+            <span class="grey mr-10">{{ t("serviceName") }}</span>
             <span class="value">{{ trace.localEndpoint?.serviceName || "Unknown" }}</span>
           </div>
           <div class="detail-item">
-            <span class="grey mr-10">Span name</span>
+            <span class="grey mr-10">{{ t("spanName") }}</span>
             <span class="value">{{ trace.localEndpoint?.serviceName || "Unknown" }}</span>
           </div>
           <div class="detail-item">
-            <span class="grey mr-10">Span ID</span>
+            <span class="grey mr-10">{{ t("spanId") }}</span>
             <span class="value">{{ trace.id }}</span>
           </div>
           <div class="detail-item">
-            <span class="grey mr-10">Parent ID</span>
+            <span class="grey mr-10">{{ t("parentId") }}</span>
             <span class="value">{{ trace.parentId || "none" }}</span>
           </div>
         </div>
-        <h4>Tags</h4>
+        <h4>{{ t("tags") }}</h4>
         <div class="tags-section flex-v" v-if="trace.tags && Object.keys(trace.tags).length > 0">
           <div v-for="(value, key) in trace.tags" :key="key" class="tag-item">
             <span class="grey" style="width: 200px">{{ key }}</span>
@@ -72,37 +82,52 @@ limitations under the License. -->
         <div v-else class="no-data">No tags available</div>
       </div>
     </div>
-
     <!-- Spans Table Drawer -->
-    <SpansTableDrawer
-      v-model:visible="spansTableVisible"
-      :spans="trace.spans || []"
-      :trace-id="trace.traceId"
-      @view-span="handleViewSpan"
-    />
+    <SpansTableDrawer v-model:visible="spansTableVisible" :spans="trace.spans || []" :trace-id="trace.traceId" />
   </div>
 </template>
 
 <script lang="ts" setup>
   import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
+  import { ArrowDown } from "@element-plus/icons-vue";
   import type { ZipkinTrace } from "@/types/trace";
   import SpansTableDrawer from "./SpansTableDrawer.vue";
+  import { saveFileAsJSON } from "@/utils/file";
 
   interface Props {
     trace: ZipkinTrace;
   }
 
-  defineProps<Props>();
-
+  const { t } = useI18n();
+  const props = defineProps<Props>();
   const spansTableVisible = ref<boolean>(false);
 
   function showSpansTable() {
     spansTableVisible.value = true;
   }
 
-  function handleViewSpan(span: ZipkinTrace) {
-    // TODO: Implement span detail view
-    console.log("View span details:", span);
+  function handleDownload() {
+    const trace = props.trace;
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const baseFilename = `trace-${trace.traceId}-${timestamp}`;
+    const spans = trace.spans.map((span) => {
+      const newSpan = {
+        ...span,
+        duration: span.originalDuration,
+      };
+      delete newSpan.originalDuration;
+      delete newSpan.label;
+      return newSpan;
+    });
+    try {
+      saveFileAsJSON(spans, `${baseFilename}.json`);
+      ElMessage.success("Trace data downloaded as JSON");
+    } catch (error) {
+      console.error("Download error:", error);
+      ElMessage.error("Failed to download file");
+    }
   }
 </script>
 

@@ -31,7 +31,7 @@ const msg = {
   profiles: "Profiles",
   database: "Database",
   mySQL: "MySQL/MariaDB",
-  serviceName: "Service Name",
+  serviceName: "Service name",
   technologies: "Technologies",
   health: "Health",
   groupName: "Group Name",
@@ -407,5 +407,10 @@ const msg = {
   invalidProfilingDurationRange: "Please enter a valid duration between 1 and 900 seconds",
   taskCreatedSuccessfully: "Task created successfully",
   runQuery: "Run Query",
+  spansTable: "Spans Table",
+  download: "Download",
+  totalSpans: "Total Spans",
+  spanName: "Span name",
+  parentId: "Parent ID",
 };
 export default msg;

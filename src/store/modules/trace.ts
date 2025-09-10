@@ -228,6 +228,7 @@ export const traceStore = defineStore({
             return {
               ...d,
               label: `${d.localEndpoint.serviceName}: ${d.name}`,
+              originalDuration: d.duration,
               duration: d.duration ? Number((d.duration / 1000).toFixed(3)) : 0,
             };
           });

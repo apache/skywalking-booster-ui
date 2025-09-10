@@ -407,5 +407,10 @@ const msg = {
   invalidProfilingDurationRange: "Por favor ingrese una duración válida entre 1 y 900 segundos",
   taskCreatedSuccessfully: "Tarea creada exitosamente",
   runQuery: "Ejecutar Consulta",
+  spansTable: "Tabla de Lapso",
+  download: "Descargar",
+  totalSpans: "Total Lapso",
+  spanName: "Nombre de Lapso",
+  parentId: "ID Padre",
 };
 export default msg;
