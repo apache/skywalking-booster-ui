@@ -15,8 +15,15 @@ limitations under the License. -->
 <template>
   <div class="trace-timeline flex-v">
     <div class="trace-timeline-item flex-v" v-for="span in sortedSpans" :key="span.id">
-      <div class="span-label grey" :style="{ marginLeft: depthPx(span) }">{{ span.label }}</div>
-      <div class="span-bar" :style="barStyle(span)"></div>
+      <div class="span-label grey">
+        <span>{{ span.label }}</span>
+        <span>{{ span.duration }}ms</span>
+      </div>
+      <div class="flex-h" style="align-items: center">
+        <div class="span-line" :style="lineStyle(span)"></div>
+        <div class="span-bar" :style="barStyle(span)"></div>
+        <div class="span-line"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -82,20 +89,26 @@ limitations under the License. -->
     };
   });
 
-  const barStyle = (span: ZipkinTrace) => {
+  function lineStyle(span: ZipkinTrace) {
     const start = ((span.timestamp || 0) - minTimestamp.value) / 1000;
-    const dur = span.duration || 0;
-    const widthPct = widthScale.value(dur);
-    const serviceName = span.localEndpoint?.serviceName || "";
     const startLeft = widthScale.value(start);
 
     return {
-      width: `${Math.max(0, widthPct)}%`,
       marginLeft: `${Math.max(0, startLeft)}%`,
       paddingRight: depthPx(span),
+    } as const;
+  }
+
+  function barStyle(span: ZipkinTrace) {
+    const dur = span.duration || 0;
+    const widthPct = widthScale.value(dur);
+    const serviceName = span.localEndpoint?.serviceName || "";
+
+    return {
+      width: `${Math.max(0, widthPct)}%`,
       backgroundColor: getServiceColor(serviceName),
     } as const;
-  };
+  }
 </script>
 <style lang="scss" scoped>
   .trace-timeline {
@@ -111,15 +124,23 @@ limitations under the License. -->
   }
 
   .span-label {
-    flex: 0 0 61.3%;
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: $font-size-smaller;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .span-bar {
     height: 4px;
     border-radius: 2px;
     width: 100%;
+  }
+
+  .span-line {
+    height: 12px;
+    width: 1px;
+    border-right: 1px solid var(--sw-trace-line);
   }
 </style>

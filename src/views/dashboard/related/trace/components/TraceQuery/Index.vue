@@ -45,5 +45,6 @@ limitations under the License. -->
     width: 100%;
     font-size: $font-size-smaller;
     overflow: auto;
+    height: 100%;
   }
 </style>

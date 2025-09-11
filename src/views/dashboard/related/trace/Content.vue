@@ -21,9 +21,7 @@ limitations under the License. -->
       </el-radio-button>
     </el-radio-group>
   </div>
-  <div v-if="spansGraphType === GraphTypeOptions[4].value">
-    <TraceQuery />
-  </div>
+  <TraceQuery v-if="spansGraphType === GraphTypeOptions[4].value" style="height: calc(100% - 70px)" />
   <div v-if="spansGraphType !== GraphTypeOptions[4].value" class="search-bar">
     <Filter :needQuery="needQuery" :data="data" @get="getService" @search="popSegmentList" />
   </div>

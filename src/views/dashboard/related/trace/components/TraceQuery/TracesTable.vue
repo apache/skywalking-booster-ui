@@ -34,7 +34,7 @@ limitations under the License. -->
       />
     </div>
   </div>
-  <div class="trace-query-table flex-v">
+  <div class="trace-query-table scroll_bar_style">
     <el-table
       ref="tableRef"
       :data="filteredTraces"
@@ -219,6 +219,7 @@ limitations under the License. -->
     width: 100%;
     font-size: $font-size-smaller;
     overflow: auto;
+    height: calc(100% - 100px);
   }
 
   .service-tags {
