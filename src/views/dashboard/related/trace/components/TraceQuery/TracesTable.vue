@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="flex-h result-header">
-    <div style="align-items: center"> {{ filteredTraces.length }} Results </div>
+    <div style="align-items: center"> {{ filteredTraces.length }} of {{ totalTraces }} Results </div>
     <div class="flex-h" style="align-items: center">
       <el-switch
         v-model="expandAll"
@@ -86,6 +86,21 @@ limitations under the License. -->
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- Loading indicator -->
+    <div v-if="loading" class="loading-container">
+      <el-icon class="is-loading">
+        <Loading />
+      </el-icon>
+      <span>Loading more traces...</span>
+    </div>
+
+    <!-- Load more button (fallback) -->
+    <div v-else-if="hasMoreItems" class="load-more-container">
+      <el-button @click="loadMoreItems" :loading="loading">
+        Load More ({{ totalTraces - filteredTraces.length }} remaining)
+      </el-button>
+    </div>
   </div>
   <!-- Trace Details Dialog -->
   <el-dialog
@@ -99,8 +114,9 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-  import { computed, ref, nextTick } from "vue";
-  import { ElTable, ElDialog } from "element-plus";
+  import { computed, ref, nextTick, watch, onMounted, onUnmounted } from "vue";
+  import { ElTable, ElDialog, ElIcon } from "element-plus";
+  import { Loading } from "@element-plus/icons-vue";
   import { dateFormat } from "@/utils/dateFormat";
   import { useTraceStore } from "@/store/modules/trace";
   import type { ZipkinTrace } from "@/types/trace";
@@ -108,12 +124,17 @@ limitations under the License. -->
   import { getServiceColor } from "./color";
   import TraceContent from "./TraceContent.vue";
 
+  const PageSize = 10;
   const traceStore = useTraceStore();
   const expandAll = ref<boolean>(false);
   const tableRef = ref<InstanceType<typeof ElTable>>();
   const selectedServiceNames = ref<string[]>([]);
   const dialogVisible = ref<boolean>(false);
   const selectedTrace = ref<ZipkinTrace | null>(null);
+  // Infinite scroll state
+  const loadedItemsCount = ref<number>(PageSize);
+  const loading = ref<boolean>(false);
+  const loadMoreThreshold = 100; // pixels from bottom to trigger load
 
   // Calculate max duration for progress bar scaling
   const maxDuration = computed(() => {
@@ -122,8 +143,8 @@ limitations under the License. -->
     return Math.max(...durations);
   });
 
-  // Filtered traces based on selected service names
-  const filteredTraces = computed<ZipkinTrace[]>(() => {
+  // All filtered traces based on selected service names
+  const allFilteredTraces = computed<ZipkinTrace[]>(() => {
     const rows = traceStore.zipkinTraces as ZipkinTrace[];
     if (!selectedServiceNames.value.length) return rows;
     const selected = new Set(selectedServiceNames.value);
@@ -136,6 +157,19 @@ limitations under the License. -->
       }
       return false;
     });
+  });
+
+  // Progressively loaded traces for infinite scroll
+  const filteredTraces = computed<ZipkinTrace[]>(() => {
+    return allFilteredTraces.value.slice(0, loadedItemsCount.value);
+  });
+
+  // Total count for display
+  const totalTraces = computed<number>(() => allFilteredTraces.value.length);
+
+  // Check if there are more items to load
+  const hasMoreItems = computed<boolean>(() => {
+    return loadedItemsCount.value < allFilteredTraces.value.length;
   });
 
   // Service names options for the header Selector
@@ -194,7 +228,51 @@ limitations under the License. -->
     selectedServiceNames.value = selected.map((o) => String(o.value));
   }
 
-  // Toggle all table row expansions
+  // Infinite scroll handlers
+  function loadMoreItems() {
+    if (loading.value || !hasMoreItems.value) return;
+
+    loading.value = true;
+
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+      const nextBatch = Math.min(PageSize, allFilteredTraces.value.length - loadedItemsCount.value);
+      loadedItemsCount.value += nextBatch;
+      loading.value = false;
+    }, 300);
+  }
+
+  function handleScroll(event: Event) {
+    const target = event.target as HTMLElement;
+    const { scrollTop, scrollHeight, clientHeight } = target;
+
+    // Check if user is near the bottom
+    if (scrollHeight - scrollTop - clientHeight < loadMoreThreshold && hasMoreItems.value && !loading.value) {
+      loadMoreItems();
+    }
+  }
+
+  // Reset loaded items when filters change
+  watch(selectedServiceNames, () => {
+    loadedItemsCount.value = PageSize;
+  });
+
+  // Setup scroll listener
+  onMounted(() => {
+    const tableContainer = document.querySelector(".trace-query-table");
+    if (tableContainer) {
+      tableContainer.addEventListener("scroll", handleScroll);
+    }
+  });
+
+  onUnmounted(() => {
+    const tableContainer = document.querySelector(".trace-query-table");
+    if (tableContainer) {
+      tableContainer.removeEventListener("scroll", handleScroll);
+    }
+  });
+
+  // Toggle all table row expansions (only for loaded items)
   function toggleAllExpansion() {
     nextTick(() => {
       if (tableRef.value) {
@@ -244,5 +322,23 @@ limitations under the License. -->
     justify-content: space-between;
     padding: 20px 10px;
     font-size: 14px;
+  }
+
+  .loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 0;
+    color: var(--el-text-color-secondary);
+    font-size: $font-size-smaller;
+  }
+
+  .load-more-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    border-top: 1px solid var(--el-border-color-light);
+    margin-top: 10px;
   }
 </style>
