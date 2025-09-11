@@ -52,7 +52,9 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h">
-      <div class="detail-section-timeline"> Timeline </div>
+      <div class="detail-section-timeline">
+        <Timeline :trace="trace" />
+      </div>
       <div class="detail-section-span">
         <div class="detail-section">
           <div class="detail-item">
@@ -94,6 +96,7 @@ limitations under the License. -->
   import { ArrowDown } from "@element-plus/icons-vue";
   import type { ZipkinTrace } from "@/types/trace";
   import SpansTableDrawer from "./SpansTableDrawer.vue";
+  import Timeline from "./Timeline.vue";
   import { saveFileAsJSON } from "@/utils/file";
 
   interface Props {
@@ -133,7 +136,6 @@ limitations under the License. -->
 
 <style lang="scss" scoped>
   .trace-info {
-    margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 1px solid var(--el-border-color-light);
   }
@@ -204,6 +206,8 @@ limitations under the License. -->
   .detail-section-span {
     width: 35%;
     overflow: auto;
+    border-left: 1px solid var(--el-border-color-light);
+    padding: 10px 0 0 10px;
   }
 
   .tag-item {

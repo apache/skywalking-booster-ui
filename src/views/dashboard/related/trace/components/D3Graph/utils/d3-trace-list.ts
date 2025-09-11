@@ -323,11 +323,10 @@ export default class ListGraph {
         if (!d.data.endTime || !d.data.startTime) return 0;
         return this.xScale(d.data.endTime - d.data.startTime) + 1 || 0;
       })
-      .attr("x", (d: Recordable) =>
-        !d.data.endTime || !d.data.startTime
-          ? 0
-          : this.width * 0.618 - 20 - d.y + this.xScale(d.data.startTime - this.min) || 0,
-      )
+      .attr("x", (d: Recordable) => {
+        if (!d.data.endTime || !d.data.startTime) return 0;
+        return this.width * 0.613 - d.y - 20 + this.xScale(d.data.startTime - this.min) || 0;
+      })
       .attr("y", -2)
       .style("fill", (d: Recordable) => `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`);
     const nodeUpdate = nodeEnter.merge(node);

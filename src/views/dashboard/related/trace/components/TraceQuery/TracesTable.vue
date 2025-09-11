@@ -105,7 +105,7 @@ limitations under the License. -->
   import { useTraceStore } from "@/store/modules/trace";
   import type { ZipkinTrace } from "@/types/trace";
   import type { Option } from "@/types/app";
-  import { ServicePalette } from "./data";
+  import { getServiceColor } from "./color";
   import TraceContent from "./TraceContent.vue";
 
   const traceStore = useTraceStore();
@@ -174,23 +174,6 @@ limitations under the License. -->
   function getDurationProgress(duration: number): number {
     if (maxDuration.value === 0) return 0;
     return Math.round((duration / maxDuration.value) * 100);
-  }
-
-  function generateHash(str: string) {
-    let hash = 0;
-    if (str.length === 0) return hash;
-    for (let i = 0; i < str.length; i += 1) {
-      const c = str.charCodeAt(i);
-      hash = (hash << 5) - hash + c;
-      hash |= 0; // Convert to 32bit integer
-    }
-    return Math.abs(hash); // Only positive number.
-  }
-
-  // Get consistent color for service name using ServicePalette
-  function getServiceColor(serviceName: string): string {
-    const hash = generateHash(serviceName);
-    return ServicePalette[hash % ServicePalette.length];
   }
 
   function toggleServiceTags(serviceName: string, row: ZipkinTrace) {

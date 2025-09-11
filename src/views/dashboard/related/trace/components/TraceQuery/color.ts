@@ -53,3 +53,19 @@ export const ServicePalette = [
   "#92400e", // brown-600
   "#475569", // slate-600
 ];
+// Reuse the same service color function from TracesTable
+function generateHash(str: string) {
+  let hash = 0;
+  if (str.length === 0) return hash;
+  for (let i = 0; i < str.length; i += 1) {
+    const c = str.charCodeAt(i);
+    hash = (hash << 5) - hash + c;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return Math.abs(hash); // Only positive number.
+}
+
+export function getServiceColor(serviceName: string): string {
+  const hash = generateHash(serviceName);
+  return ServicePalette[hash % ServicePalette.length];
+}
