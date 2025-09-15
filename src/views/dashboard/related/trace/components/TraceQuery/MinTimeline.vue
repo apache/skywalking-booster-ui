@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-timeline flex-v">
+  <div class="trace-min-timeline flex-v">
     <svg width="100%" height="100%">
       <g>
         <SpanTreeNode
@@ -91,11 +91,12 @@ limitations under the License. -->
   });
 </script>
 <style lang="scss" scoped>
-  .trace-timeline {
+  .trace-min-timeline {
     width: 100%;
-    height: calc(100% - 210px);
+    height: 190px;
     overflow: auto;
     padding-right: 20px;
-    margin-top: 20px;
+    padding-top: 10px;
+    border-bottom: 1px solid var(--el-border-color-light);
   }
 </style>

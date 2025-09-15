@@ -52,7 +52,8 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h">
-      <div class="detail-section-timeline">
+      <div class="detail-section-timeline flex-v">
+        <MinTimeline :trace="trace" />
         <Timeline :trace="trace" />
       </div>
       <div class="detail-section-span">
@@ -97,6 +98,7 @@ limitations under the License. -->
   import type { ZipkinTrace } from "@/types/trace";
   import SpansTableDrawer from "./SpansTableDrawer.vue";
   import Timeline from "./Timeline.vue";
+  import MinTimeline from "./MinTimeline.vue";
   import { saveFileAsJSON } from "@/utils/file";
 
   interface Props {
