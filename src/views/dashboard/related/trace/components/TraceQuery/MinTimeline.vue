@@ -14,15 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-min-timeline flex-v">
-    <svg width="100%" height="100%">
-      <g>
-        <SpanTreeNode
-          v-for="(span, i) in treeSpans"
-          :key="span.id"
-          :transform="`translate(0, ${i * rowHeight})`"
-          :span="span"
-          :trace="trace"
-        />
+    <svg width="100%" :height="`${totalHeight}px`">
+      <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + 12})`">
+        <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" />
       </g>
     </svg>
   </div>
@@ -37,7 +31,21 @@ limitations under the License. -->
   }
 
   const props = defineProps<Props>();
-  const rowHeight = 12;
+  const rowHeight = 20;
+
+  // Calculate total height needed for all spans
+  const totalHeight = computed(() => {
+    const countSpans = (spans: ZipkinTrace[]): number => {
+      let count = spans.length;
+      for (const span of spans) {
+        if (span.spans && span.spans.length > 0) {
+          count += countSpans(span.spans);
+        }
+      }
+      return count;
+    };
+    return countSpans(treeSpans.value) * rowHeight;
+  });
 
   // Build tree structure based on parent-child relationships
   const treeSpans = computed(() => {
@@ -88,6 +96,25 @@ limitations under the License. -->
     treeRoots.sort((a, b) => (b.duration || 0) - (a.duration || 0));
 
     return treeRoots;
+  });
+  // Flatten tree structure for rendering
+  const flattenedSpans = computed(() => {
+    const result: Array<{ span: ZipkinTrace; depth: number; y: number }> = [];
+    let currentY = 0;
+
+    const flatten = (spans: ZipkinTrace[], depth: number = 0) => {
+      for (const span of spans) {
+        result.push({ span, depth, y: currentY });
+        currentY += rowHeight;
+
+        if (span.spans && span.spans.length > 0) {
+          flatten(span.spans, depth + 1);
+        }
+      }
+    };
+
+    flatten(treeSpans.value);
+    return result;
   });
 </script>
 <style lang="scss" scoped>

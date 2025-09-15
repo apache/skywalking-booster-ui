@@ -14,15 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-timeline flex-v">
-    <svg width="100%" height="100%">
-      <g>
-        <SpanTreeNode
-          v-for="(span, i) in treeSpans"
-          :key="span.id"
-          :transform="`translate(0, ${i * rowHeight})`"
-          :span="span"
-          :trace="trace"
-        />
+    <svg width="100%" :height="`${totalHeight}px`">
+      <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + 12})`">
+        <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" />
       </g>
     </svg>
   </div>
@@ -37,18 +31,63 @@ limitations under the License. -->
   }
 
   const props = defineProps<Props>();
-  const rowHeight = 12;
+  const rowHeight = 20; // must match child component vertical spacing
+
+  // Calculate total height needed for all spans
+  const totalHeight = computed(() => {
+    const countSpans = (spans: ZipkinTrace[]): number => {
+      let count = spans.length;
+      for (const span of spans) {
+        if (span.spans && span.spans.length > 0) {
+          count += countSpans(span.spans);
+        }
+      }
+      return count;
+    };
+    return countSpans(treeSpans.value) * rowHeight;
+  });
+
+  // Flatten tree structure for rendering
+  const flattenedSpans = computed(() => {
+    const result: Array<{ span: ZipkinTrace; depth: number; y: number }> = [];
+    let currentY = 0;
+
+    const flatten = (spans: ZipkinTrace[], depth: number = 0) => {
+      for (const span of spans) {
+        result.push({ span, depth, y: currentY });
+        currentY += rowHeight;
+
+        if (span.spans && span.spans.length > 0) {
+          flatten(span.spans, depth + 1);
+        }
+      }
+    };
+
+    flatten(treeSpans.value);
+    return result;
+  });
 
   // Build tree structure based on parent-child relationships
   const treeSpans = computed(() => {
     const spans = props.trace.spans;
     if (!spans.length) return [];
 
+    // Check if spans already have nested structure
+    const hasNestedSpans = spans.some((span) => span.spans && span.spans.length > 0);
+
+    if (hasNestedSpans) {
+      // Data is already in tree structure, just sort by duration
+      const sortedSpans = [...spans].sort((a, b) => (b.duration || 0) - (a.duration || 0));
+      return sortedSpans;
+    }
+
+    // Build tree from flat structure
     // Create a map for quick span lookup
     const spanMap = new Map<string, ZipkinTrace>();
     for (const span of spans) {
       spanMap.set(span.id, span);
     }
+
     // Find root spans (spans without parentId or parentId not in current trace)
     const rootSpans: ZipkinTrace[] = [];
     const processedSpans = new Set<string>();

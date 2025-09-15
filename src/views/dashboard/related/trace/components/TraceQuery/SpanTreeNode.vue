@@ -13,19 +13,37 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <g :transform="`translate(${indentX}, 0)`">
-    <rect :x="`${startPct}%`" :y="0" :width="`${widthPct}%`" :height="barHeight" :fill="barColor" rx="2" ry="2" />
-    <!-- Children -->
-    <g v-if="span.spans && span.spans.length > 0">
-      <SpanTreeNode
-        v-for="(child, idx) in span.spans"
-        :key="child.id"
-        :transform="`translate(0, ${(idx + 1) * rowHeight})`"
-        :span="child"
-        :trace="trace"
-      />
-    </g>
-  </g>
+  <rect
+    :transform="`translate(${indentX}, 0)`"
+    :x="`${startPct}%`"
+    :y="0"
+    :width="`${widthPct}%`"
+    :height="barHeight"
+    :fill="barColor"
+    rx="2"
+    ry="2"
+  />
+  <!-- Label and Duration Text -->
+  <text
+    :x="0"
+    :y="barHeight - 6"
+    font-size="10"
+    fill="var(--sw-font-grey-color)"
+    text-anchor="start"
+    class="span-label"
+  >
+    {{ span.label || "Unknown" }}
+  </text>
+  <text
+    :x="`${100}%`"
+    :y="barHeight - 6"
+    font-size="10"
+    fill="var(--sw-font-grey-color)"
+    text-anchor="end"
+    class="span-duration"
+  >
+    {{ span.duration }}ms
+  </text>
 </template>
 
 <script lang="ts" setup>
@@ -36,10 +54,10 @@ limitations under the License. -->
   interface Props {
     span: ZipkinTrace;
     trace: ZipkinTrace;
+    depth?: number;
   }
 
   const props = defineProps<Props>();
-  const rowHeight = 16; // px per row
   const barHeight = 3; // px bar height
 
   // Calculate max duration for timeline
@@ -49,31 +67,8 @@ limitations under the License. -->
     return Math.max(...durations);
   });
 
-  // Build lookup for parent relationships to compute depth (like d.y derived from depth)
-  const idToSpan = computed(() => {
-    const map = new Map<string, ZipkinTrace>();
-    for (const s of props.trace.spans) {
-      map.set(s.id, s);
-    }
-    return map;
-  });
-
-  const getDepth = (span: ZipkinTrace): number => {
-    let depth = 0;
-    let current = span;
-    const visited = new Set<string>();
-    while (current.parentId) {
-      if (visited.has(current.parentId)) break;
-      visited.add(current.parentId);
-      const parent = idToSpan.value.get(current.parentId);
-      if (!parent) break;
-      depth += 1;
-      current = parent;
-    }
-    return depth;
-  };
-
-  const indentX = computed(() => getDepth(props.span) * 12);
+  // Use depth from props, default to 0 if not provided
+  const indentX = computed(() => (props.depth || 0) * 12);
 
   // Time range like xScale domain [0, max]
   const minTimestamp = computed(() => {
@@ -106,36 +101,13 @@ limitations under the License. -->
 </script>
 
 <style lang="scss" scoped>
-  .trace-timeline-item {
-    justify-content: space-between;
-    padding: 4px 0;
-  }
-
   .span-label {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-size: $font-size-smaller;
-    display: inline-flex;
-    justify-content: space-between;
-    align-items: center;
-    // border-bottom: 1px solid var(--sw-trace-line);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-weight: 500;
   }
 
-  .span-bar {
-    height: 3px;
-    border-radius: 2px;
-    width: 100%;
-  }
-
-  .span-line {
-    height: 12px;
-    width: 1px;
-    // border-right: 1px solid var(--sw-trace-line);
-  }
-
-  .trace-timeline-children {
-    margin-left: 20px;
-    // border-left: 1px solid var(--sw-trace-line);
-    padding-left: 10px;
+  .span-duration {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-weight: 400;
   }
 </style>
