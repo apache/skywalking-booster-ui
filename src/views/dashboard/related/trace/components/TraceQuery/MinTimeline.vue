@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-min-timeline flex-v">
-    <svg width="100%" :height="`${totalHeight}px`">
+    <svg width="100%" :height="`${totalHeight + rowHeight}px`">
       <MinTimelineMarker :trace="trace" />
       <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + 12})`">
         <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" />
@@ -33,7 +33,7 @@ limitations under the License. -->
   }
 
   const props = defineProps<Props>();
-  const rowHeight = 20;
+  const rowHeight = 15;
 
   // Calculate total height needed for all spans
   const totalHeight = computed(() => {

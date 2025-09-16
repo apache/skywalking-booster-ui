@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-timeline flex-v">
-    <svg width="100%" :height="`${totalHeight}px`">
+    <svg width="100%" :height="`${totalHeight + rowHeight}px`">
       <g
         v-for="item in flattenedSpans"
         :key="item.span.id"
