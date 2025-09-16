@@ -18,10 +18,18 @@ limitations under the License. -->
       <g
         v-for="item in flattenedSpans"
         :key="item.span.id"
-        :transform="`translate(0, ${item.y + 12})`"
+        :transform="`translate(0, ${item.y + 15})`"
         :style="{ cursor: 'pointer' }"
         @click="selectSpan(item.span)"
+        class="trace-timeline-span"
       >
+        <rect
+          x="0"
+          y="-16"
+          width="100%"
+          :height="rowHeight"
+          :fill="isSelected(item.span) ? 'var(--el-color-primary-light-9)' : 'transparent'"
+        />
         <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" :showDuration="true" :showLabel="true" />
       </g>
     </svg>
@@ -39,7 +47,7 @@ limitations under the License. -->
 
   const props = defineProps<Props>();
   const traceStore = useTraceStore();
-  const rowHeight = 20; // must match child component vertical spacing
+  const rowHeight = 25; // must match child component vertical spacing
 
   // Build tree structure based on parent-child relationships
   const treeSpans = computed(() => {
@@ -160,6 +168,9 @@ limitations under the License. -->
   function selectSpan(span: ZipkinTrace) {
     traceStore.setCurrentSpan(span);
   }
+  function isSelected(span: ZipkinTrace) {
+    return !!traceStore.currentSpan && traceStore.currentSpan.id === span.id;
+  }
 </script>
 <style lang="scss" scoped>
   .trace-timeline {
@@ -167,6 +178,11 @@ limitations under the License. -->
     height: calc(100% - 210px);
     overflow: auto;
     padding-right: 20px;
-    margin-top: 20px;
+    margin-top: 10px;
+  }
+
+  .trace-timeline-span.selected {
+    outline: 1px solid var(--el-color-primary);
+    outline-offset: -1px;
   }
 </style>
