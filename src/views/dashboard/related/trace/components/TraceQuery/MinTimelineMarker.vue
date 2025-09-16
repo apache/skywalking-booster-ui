@@ -26,12 +26,12 @@ limitations under the License. -->
     <text
       v-for="(marker, index) in markers"
       :key="`label-${marker.duration}`"
-      :transform="`translate(${index === markers.length - 1 ? -20 : 20}, -5)`"
       :x="`${marker.position}%`"
       :y="12"
       font-size="10"
       fill="var(--sw-font-grey-color)"
-      text-anchor="middle"
+      text-anchor="right"
+      :transform="`translate(${index === markers.length - 1 ? -50 : 5}, 0)`"
     >
       {{ marker.duration }}ms
     </text>
@@ -57,7 +57,7 @@ limitations under the License. -->
     const markerDurations = [0, (maxDuration * 1) / 3, (maxDuration * 2) / 3, maxDuration];
 
     return markerDurations.map((duration) => ({
-      duration: Math.round(duration),
+      duration: duration.toFixed(3),
       position: maxDuration > 0 ? (duration / maxDuration) * 100 : 0,
     }));
   });

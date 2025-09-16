@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="trace-min-timeline flex-v">
     <svg width="100%" :height="`${totalHeight + rowHeight}px`">
       <MinTimelineMarker :trace="trace" />
-      <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + 12})`">
+      <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + rowHeight})`">
         <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" />
       </g>
     </svg>

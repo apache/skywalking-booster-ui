@@ -18,7 +18,7 @@ limitations under the License. -->
       <g
         v-for="item in flattenedSpans"
         :key="item.span.id"
-        :transform="`translate(0, ${item.y + 15})`"
+        :transform="`translate(0, ${item.y + rowHeight})`"
         :style="{ cursor: 'pointer' }"
         @click="selectSpan(item.span)"
         class="trace-timeline-span"
@@ -178,7 +178,6 @@ limitations under the License. -->
     height: calc(100% - 210px);
     overflow: auto;
     padding-right: 20px;
-    margin-top: 10px;
   }
 
   .trace-timeline-span.selected {
