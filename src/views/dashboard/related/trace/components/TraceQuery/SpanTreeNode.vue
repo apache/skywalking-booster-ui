@@ -28,7 +28,7 @@ limitations under the License. -->
     v-if="showLabel"
     :transform="`translate(${indentX}, 0)`"
     :x="0"
-    :y="barHeight - 6"
+    :y="barHeight - 7"
     font-size="10"
     fill="var(--sw-font-grey-color)"
     text-anchor="start"
@@ -39,7 +39,7 @@ limitations under the License. -->
   <text
     v-if="showDuration"
     :x="`${100}%`"
-    :y="barHeight - 6"
+    :y="barHeight - 7"
     font-size="10"
     fill="var(--sw-font-grey-color)"
     text-anchor="end"

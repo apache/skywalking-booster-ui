@@ -60,24 +60,27 @@ limitations under the License. -->
         <div class="detail-section">
           <div class="detail-item">
             <span class="grey mr-10">{{ t("serviceName") }}</span>
-            <span class="value">{{ trace.localEndpoint?.serviceName || "Unknown" }}</span>
+            <span class="value">{{ currentSpan?.localEndpoint?.serviceName || "Unknown" }}</span>
           </div>
           <div class="detail-item">
             <span class="grey mr-10">{{ t("spanName") }}</span>
-            <span class="value">{{ trace.localEndpoint?.serviceName || "Unknown" }}</span>
+            <span class="value">{{ currentSpan?.name || "Unknown" }}</span>
           </div>
           <div class="detail-item">
             <span class="grey mr-10">{{ t("spanId") }}</span>
-            <span class="value">{{ trace.id }}</span>
+            <span class="value">{{ currentSpan?.id || "-" }}</span>
           </div>
           <div class="detail-item">
             <span class="grey mr-10">{{ t("parentId") }}</span>
-            <span class="value">{{ trace.parentId || "none" }}</span>
+            <span class="value">{{ currentSpan?.parentId || "none" }}</span>
           </div>
         </div>
         <h4>{{ t("tags") }}</h4>
-        <div class="tags-section flex-v scroll_bar_style" v-if="trace.tags && Object.keys(trace.tags).length > 0">
-          <div v-for="(value, key) in trace.tags" :key="key" class="tag-item">
+        <div
+          class="tags-section flex-v scroll_bar_style"
+          v-if="currentSpan?.tags && Object.keys(currentSpan.tags).length > 0"
+        >
+          <div v-for="(value, key) in currentSpan.tags" :key="key" class="tag-item">
             <span class="grey" style="width: 200px">{{ key }}</span>
             <span class="value">{{ value }}</span>
           </div>
@@ -91,7 +94,7 @@ limitations under the License. -->
 </template>
 
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
   import { ElMessage } from "element-plus";
   import { ArrowDown } from "@element-plus/icons-vue";
@@ -100,6 +103,7 @@ limitations under the License. -->
   import Timeline from "./Timeline.vue";
   import MinTimeline from "./MinTimeline.vue";
   import { saveFileAsJSON } from "@/utils/file";
+  import { useTraceStore } from "@/store/modules/trace";
 
   interface Props {
     trace: ZipkinTrace;
@@ -108,6 +112,8 @@ limitations under the License. -->
   const { t } = useI18n();
   const props = defineProps<Props>();
   const spansTableVisible = ref<boolean>(false);
+  const traceStore = useTraceStore();
+  const currentSpan = computed(() => traceStore.currentSpan);
 
   function showSpansTable() {
     spansTableVisible.value = true;

@@ -15,57 +15,31 @@ limitations under the License. -->
 <template>
   <div class="trace-timeline flex-v">
     <svg width="100%" :height="`${totalHeight}px`">
-      <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + 12})`">
+      <g
+        v-for="item in flattenedSpans"
+        :key="item.span.id"
+        :transform="`translate(0, ${item.y + 12})`"
+        :style="{ cursor: 'pointer' }"
+        @click="selectSpan(item.span)"
+      >
         <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" :showDuration="true" :showLabel="true" />
       </g>
     </svg>
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed } from "vue";
+  import { computed, ref, watch, onMounted, nextTick } from "vue";
   import type { ZipkinTrace } from "@/types/trace";
   import SpanTreeNode from "./SpanTreeNode.vue";
+  import { useTraceStore } from "@/store/modules/trace";
 
   interface Props {
     trace: ZipkinTrace;
   }
 
   const props = defineProps<Props>();
+  const traceStore = useTraceStore();
   const rowHeight = 20; // must match child component vertical spacing
-
-  // Calculate total height needed for all spans
-  const totalHeight = computed(() => {
-    const countSpans = (spans: ZipkinTrace[]): number => {
-      let count = spans.length;
-      for (const span of spans) {
-        if (span.spans && span.spans.length > 0) {
-          count += countSpans(span.spans);
-        }
-      }
-      return count;
-    };
-    return countSpans(treeSpans.value) * rowHeight;
-  });
-
-  // Flatten tree structure for rendering
-  const flattenedSpans = computed(() => {
-    const result: Array<{ span: ZipkinTrace; depth: number; y: number }> = [];
-    let currentY = 0;
-
-    const flatten = (spans: ZipkinTrace[], depth: number = 0) => {
-      for (const span of spans) {
-        result.push({ span, depth, y: currentY });
-        currentY += rowHeight;
-
-        if (span.spans && span.spans.length > 0) {
-          flatten(span.spans, depth + 1);
-        }
-      }
-    };
-
-    flatten(treeSpans.value);
-    return result;
-  });
 
   // Build tree structure based on parent-child relationships
   const treeSpans = computed(() => {
@@ -128,6 +102,64 @@ limitations under the License. -->
 
     return treeRoots;
   });
+
+  // Calculate total height needed for all spans
+  const totalHeight = computed(() => {
+    const countSpans = (spans: ZipkinTrace[]): number => {
+      let count = spans.length;
+      for (const span of spans) {
+        if (span.spans && span.spans.length > 0) {
+          count += countSpans(span.spans);
+        }
+      }
+      return count;
+    };
+    return countSpans(treeSpans.value) * rowHeight;
+  });
+
+  // Flatten tree structure for rendering
+  const flattenedSpans = computed(() => {
+    const result: Array<{ span: ZipkinTrace; depth: number; y: number }> = [];
+    let currentY = 0;
+
+    const flatten = (spans: ZipkinTrace[], depth: number = 0) => {
+      for (const span of spans) {
+        result.push({ span, depth, y: currentY });
+        currentY += rowHeight;
+
+        if (span.spans && span.spans.length > 0) {
+          flatten(span.spans, depth + 1);
+        }
+      }
+    };
+
+    flatten(treeSpans.value);
+    return result;
+  });
+  // Auto-select the first span after initialization
+  const initialized = ref(false);
+  watch(
+    () => flattenedSpans.value,
+    (spans) => {
+      if (initialized.value) return;
+      if (spans && spans.length > 0) {
+        traceStore.setCurrentSpan(spans[0].span);
+        initialized.value = true;
+      }
+    },
+    { immediate: false, deep: false },
+  );
+
+  onMounted(async () => {
+    await nextTick();
+    if (!initialized.value && flattenedSpans.value && flattenedSpans.value.length > 0) {
+      traceStore.setCurrentSpan(flattenedSpans.value[0].span);
+      initialized.value = true;
+    }
+  });
+  function selectSpan(span: ZipkinTrace) {
+    traceStore.setCurrentSpan(span);
+  }
 </script>
 <style lang="scss" scoped>
   .trace-timeline {

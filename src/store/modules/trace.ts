@@ -39,6 +39,7 @@ interface TraceState {
   selectedSpan: Nullable<Span>;
   serviceList: string[];
   zipkinTraces: ZipkinTrace[];
+  currentSpan: Nullable<ZipkinTrace>;
 }
 const { getDurationTime } = useDuration();
 
@@ -62,6 +63,7 @@ export const traceStore = defineStore({
     selectorStore: useSelectorStore(),
     serviceList: [],
     zipkinTraces: [],
+    currentSpan: null,
   }),
   actions: {
     setTraceCondition(data: Recordable) {
@@ -78,6 +80,9 @@ export const traceStore = defineStore({
     },
     setZipkinTraces(traces: ZipkinTrace[]) {
       this.zipkinTraces = traces;
+    },
+    setCurrentSpan(span: Nullable<ZipkinTrace>) {
+      this.currentSpan = span || {};
     },
     resetState() {
       this.traceSpans = [];
