@@ -25,6 +25,8 @@ limitations under the License. -->
   />
   <!-- Label and Duration Text -->
   <text
+    v-if="showLabel"
+    :transform="`translate(${indentX}, 0)`"
     :x="0"
     :y="barHeight - 6"
     font-size="10"
@@ -35,6 +37,7 @@ limitations under the License. -->
     {{ span.label || "Unknown" }}
   </text>
   <text
+    v-if="showDuration"
     :x="`${100}%`"
     :y="barHeight - 6"
     font-size="10"
@@ -55,6 +58,8 @@ limitations under the License. -->
     span: ZipkinTrace;
     trace: ZipkinTrace;
     depth?: number;
+    showDuration?: boolean;
+    showLabel?: boolean;
   }
 
   const props = defineProps<Props>();

@@ -15,6 +15,7 @@ limitations under the License. -->
 <template>
   <div class="trace-min-timeline flex-v">
     <svg width="100%" :height="`${totalHeight}px`">
+      <TimelineMarker :trace="trace" />
       <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + 12})`">
         <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" />
       </g>
@@ -25,6 +26,7 @@ limitations under the License. -->
   import { computed } from "vue";
   import type { ZipkinTrace } from "@/types/trace";
   import SpanTreeNode from "./SpanTreeNode.vue";
+  import TimelineMarker from "./TimelineMarker.vue";
 
   interface Props {
     trace: ZipkinTrace;
@@ -123,7 +125,7 @@ limitations under the License. -->
     height: 190px;
     overflow: auto;
     padding-right: 20px;
-    padding-top: 10px;
+    padding-top: 5px;
     border-bottom: 1px solid var(--el-border-color-light);
   }
 </style>

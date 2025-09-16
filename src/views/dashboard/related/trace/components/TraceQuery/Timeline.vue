@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="trace-timeline flex-v">
     <svg width="100%" :height="`${totalHeight}px`">
       <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + 12})`">
-        <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" />
+        <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" :showDuration="true" :showLabel="true" />
       </g>
     </svg>
   </div>
