@@ -21,21 +21,21 @@ limitations under the License. -->
       :y1="0"
       :x2="`${marker.position}%`"
       y2="100%"
-      stroke="#999"
+      stroke="var(--el-border-color-light)"
     />
     <text
-      v-for="marker in markers"
+      v-for="(marker, index) in markers"
       :key="`label-${marker.duration}`"
-      :transform="`translate(20, -5)`"
+      :transform="`translate(${index === markers.length - 1 ? -20 : 20}, -5)`"
       :x="`${marker.position}%`"
       :y="12"
       font-size="10"
-      fill="#999"
+      fill="var(--sw-font-grey-color)"
       text-anchor="middle"
     >
       {{ marker.duration }}ms
     </text>
-    <line x1="0" y1="100%" x2="100%" y2="100%" stroke="#999" />
+    <line x1="0" y1="100%" x2="100%" y2="100%" stroke="var(--el-border-color-light)" />
   </g>
 </template>
 <script lang="ts" setup>
