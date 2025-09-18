@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div>
+  <div class="trace-query-content">
     <div class="trace-info">
       <div class="flex-h" style="justify-content: space-between">
         <h3>{{ trace.label }}</h3>

@@ -17,8 +17,6 @@
 
 // Service color palette for consistent coloring across trace visualizations
 export const ServicePalette = [
-  "#3b82f6", // blue-500
-  "#ef4444", // red-500
   "#10b981", // emerald-500
   "#f59e0b", // amber-500
   "#8b5cf6", // violet-500
@@ -52,6 +50,7 @@ export const ServicePalette = [
   "#0284c7", // sky-600
   "#92400e", // brown-600
   "#475569", // slate-600
+  "#ef4444", // red-500
 ];
 // Reuse the same service color function from TracesTable
 function generateHash(str: string) {

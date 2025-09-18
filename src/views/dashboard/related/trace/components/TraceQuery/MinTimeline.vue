@@ -14,8 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-min-timeline flex-v">
-    <svg width="100%" :height="`${totalHeight + rowHeight}px`">
+    <svg ref="svgEle" width="100%" :height="`${totalHeight + rowHeight}px`">
       <MinTimelineMarker :trace="trace" />
+      <MinTimelineOverlay
+        :minTimestamp="minTimestamp"
+        :maxTimestamp="maxTimestamp"
+        @setSelectedMinTimestamp="setSelectedMinTimestamp"
+        @setSelectedMaxTimestamp="setSelectedMaxTimestamp"
+      />
+      <MinTimelineSelector
+        :minTimestamp="minTimestamp"
+        :maxTimestamp="maxTimestamp"
+        :selectedMinTimestamp="selectedMinTimestamp"
+        :selectedMaxTimestamp="selectedMaxTimestamp"
+        @setSelectedMinTimestamp="setSelectedMinTimestamp"
+        @setSelectedMaxTimestamp="setSelectedMaxTimestamp"
+      />
       <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + rowHeight})`">
         <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" />
       </g>
@@ -23,17 +37,34 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed } from "vue";
+  import { computed, ref } from "vue";
   import type { ZipkinTrace } from "@/types/trace";
   import SpanTreeNode from "./SpanTreeNode.vue";
   import MinTimelineMarker from "./MinTimelineMarker.vue";
+  import MinTimelineOverlay from "./MinTimelineOverlay.vue";
+  import MinTimelineSelector from "./MinTimelineSelector.vue";
 
   interface Props {
     trace: ZipkinTrace;
   }
 
   const props = defineProps<Props>();
+  const svgEle = ref<SVGSVGElement | null>(null);
   const rowHeight = 15;
+
+  const minTimestamp = computed(() => {
+    const list = props.trace.spans.map((span) => span.timestamp);
+    if (list.length === 0) return 0;
+    return Math.min(...list);
+  });
+  const maxTimestamp = computed(() => {
+    const timestamps = props.trace.spans.map((span) => span.timestamp + (span.originalDuration || 0));
+    if (timestamps.length === 0) return 0;
+
+    return Math.max(...timestamps);
+  });
+  const selectedMinTimestamp = ref<number>(minTimestamp.value);
+  const selectedMaxTimestamp = ref<number>(maxTimestamp.value);
 
   // Calculate total height needed for all spans
   const totalHeight = computed(() => {
@@ -118,6 +149,12 @@ limitations under the License. -->
     flatten(treeSpans.value);
     return result;
   });
+  const setSelectedMinTimestamp = (value: number) => {
+    selectedMinTimestamp.value = value;
+  };
+  const setSelectedMaxTimestamp = (value: number) => {
+    selectedMaxTimestamp.value = value;
+  };
 </script>
 <style lang="scss" scoped>
   .trace-min-timeline {

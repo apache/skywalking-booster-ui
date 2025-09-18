@@ -175,7 +175,7 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .trace-timeline {
     width: 100%;
-    height: calc(100% - 210px);
+    height: calc(100% - 200px);
     overflow: auto;
     padding-right: 20px;
   }
