@@ -35,7 +35,7 @@ limitations under the License. -->
     >
       {{ marker.duration }}ms
     </text>
-    <line x1="0" y1="100%" x2="100%" y2="100%" stroke="var(--el-border-color-light)" />
+    <line v-if="showLine" x1="0" y1="100%" x2="100%" y2="100%" stroke="var(--el-border-color-light)" />
   </g>
 </template>
 <script lang="ts" setup>
@@ -44,11 +44,15 @@ limitations under the License. -->
   interface Props {
     minTimestamp: number;
     maxTimestamp: number;
+    showLine?: boolean;
   }
 
   const props = defineProps<Props>();
   // Calculate markers duration for timeline
   const markers = computed(() => {
+    if (!props.showLine) {
+      return [];
+    }
     const maxDuration = props.maxTimestamp - props.minTimestamp;
     // Create markers with duration values and their corresponding percentage positions
     const markerDurations = [0, (maxDuration * 1) / 3, (maxDuration * 2) / 3, maxDuration];

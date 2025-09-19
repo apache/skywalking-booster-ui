@@ -19,7 +19,7 @@ limitations under the License. -->
       <g
         v-for="item in flattenedSpans"
         :key="item.span.id"
-        :transform="`translate(0, ${item.y + rowHeight + 20})`"
+        :transform="`translate(0, ${item.y + rowHeight + 12})`"
         :style="{ cursor: 'pointer' }"
         @click="selectSpan(item.span)"
         class="trace-timeline-span"
@@ -31,6 +31,7 @@ limitations under the License. -->
           :height="rowHeight"
           :fill="isSelected(item.span) ? 'var(--el-color-primary-light-9)' : 'transparent'"
         />
+        <line x1="0" y1="2" x2="100%" y2="2" stroke="var(--el-border-color-light)" />
         <SpanTreeNode
           :span="item.span"
           :minTimestamp="minTimestamp"

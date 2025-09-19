@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="trace-min-timeline flex-v">
     <svg ref="svgEle" width="100%" :height="`${totalHeight + rowHeight}px`">
-      <MinTimelineMarker :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" />
+      <MinTimelineMarker :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" :showLine="true" />
       <MinTimelineOverlay
         :minTimestamp="minTimestamp"
         :maxTimestamp="maxTimestamp"
