@@ -26,7 +26,17 @@ export const adjustPercentValue = (value: number) => {
   return value;
 };
 
-const calculateX = (parentRect: DOMRect, x: number, opositeX: number, isSmallerThanOpositeX: boolean) => {
+const calculateX = ({
+  parentRect,
+  x,
+  opositeX,
+  isSmallerThanOpositeX,
+}: {
+  parentRect: DOMRect;
+  x: number;
+  opositeX: number;
+  isSmallerThanOpositeX: boolean;
+}) => {
   let value = ((x - parentRect.left) / (parentRect.right - parentRect.left)) * 100;
   if (isSmallerThanOpositeX) {
     if (value >= opositeX) {
@@ -61,7 +71,7 @@ export const useRangeTimestampHandler = ({
     if (!rootEl) {
       return;
     }
-    const x = calculateX(rootEl.getBoundingClientRect(), e.pageX, opositeX, isSmallerThanOpositeX);
+    const x = calculateX({ parentRect: rootEl.getBoundingClientRect(), x: e.pageX, opositeX, isSmallerThanOpositeX });
     currentX.value = x;
   };
 
@@ -69,7 +79,7 @@ export const useRangeTimestampHandler = ({
     if (!rootEl) {
       return;
     }
-    const x = calculateX(rootEl.getBoundingClientRect(), e.pageX, opositeX, isSmallerThanOpositeX);
+    const x = calculateX({ parentRect: rootEl.getBoundingClientRect(), x: e.pageX, opositeX, isSmallerThanOpositeX });
     setTimestamp((x / 100) * (maxTimestamp - minTimestamp) + minTimestamp);
     currentX.value = undefined;
     mouseDownX.value = undefined;
@@ -83,12 +93,13 @@ export const useRangeTimestampHandler = ({
     if (!rootEl) {
       return;
     }
-    const x = calculateX(
-      rootEl.getBoundingClientRect(),
-      (e.currentTarget as SVGRectElement).getBoundingClientRect().x + 3,
+    const x = calculateX({
+      parentRect: rootEl.getBoundingClientRect(),
+      x: (e.currentTarget as SVGRectElement).getBoundingClientRect().x + 3,
       opositeX,
       isSmallerThanOpositeX,
-    );
+    });
+
     currentX.value = x;
     mouseDownX.value = x;
     isDragging.value = true;
