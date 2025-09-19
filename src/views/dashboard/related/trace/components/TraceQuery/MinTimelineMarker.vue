@@ -40,19 +40,16 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { computed } from "vue";
-  import type { ZipkinTrace } from "@/types/trace";
 
   interface Props {
-    trace: ZipkinTrace;
+    minTimestamp: number;
+    maxTimestamp: number;
   }
 
   const props = defineProps<Props>();
   // Calculate markers duration for timeline
   const markers = computed(() => {
-    if (!props.trace.spans.length) return [{ duration: 0, position: 0 }];
-    const durations = props.trace.spans.map((trace: ZipkinTrace) => trace.duration || 0);
-    const maxDuration = Math.max(...durations);
-
+    const maxDuration = props.maxTimestamp - props.minTimestamp;
     // Create markers with duration values and their corresponding percentage positions
     const markerDurations = [0, (maxDuration * 1) / 3, (maxDuration * 2) / 3, maxDuration];
 

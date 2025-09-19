@@ -85,13 +85,13 @@ limitations under the License. -->
   });
   const startPct = computed(() => {
     const { span, selectedMinTimestamp, minTimestamp } = props;
-    console.log(props);
+    const end = span.timestamp + (span.originalDuration || 0);
     let start = span.timestamp || 0;
     if (selectedMinTimestamp !== undefined) {
-      start = selectedMinTimestamp > start ? selectedMinTimestamp : start;
+      start = selectedMinTimestamp > start ? (end < selectedMinTimestamp ? 0 : selectedMinTimestamp) : start;
     }
-    const dur = (start - minTimestamp) / 1000;
-    return Math.max(0, widthScale.value(dur));
+    const dur = start - (selectedMinTimestamp || minTimestamp);
+    return Math.max(0, widthScale.value(dur / 1000));
   });
 
   const widthPct = computed(() => {
@@ -99,12 +99,17 @@ limitations under the License. -->
     const { timestamp, originalDuration } = span;
     let start = timestamp;
     let end = timestamp + (originalDuration || 0);
-
-    if (selectedMaxTimestamp !== undefined) {
-      end = selectedMaxTimestamp < end ? selectedMaxTimestamp : end;
-    }
     if (selectedMinTimestamp !== undefined) {
       start = selectedMinTimestamp > start ? selectedMinTimestamp : start;
+      if (end < selectedMinTimestamp) {
+        return 0;
+      }
+    }
+    if (selectedMaxTimestamp !== undefined) {
+      end = selectedMaxTimestamp < end ? selectedMaxTimestamp : end;
+      if (timestamp > selectedMaxTimestamp) {
+        return 0;
+      }
     }
     const dur = end - start;
     return Math.max(0, widthScale.value(dur));

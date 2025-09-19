@@ -15,10 +15,11 @@ limitations under the License. -->
 <template>
   <div class="trace-timeline flex-v">
     <svg width="100%" :height="`${totalHeight + rowHeight}px`">
+      <MinTimelineMarker :minTimestamp="selectedMinTimestamp" :maxTimestamp="selectedMaxTimestamp" />
       <g
         v-for="item in flattenedSpans"
         :key="item.span.id"
-        :transform="`translate(0, ${item.y + rowHeight})`"
+        :transform="`translate(0, ${item.y + rowHeight + 20})`"
         :style="{ cursor: 'pointer' }"
         @click="selectSpan(item.span)"
         class="trace-timeline-span"
@@ -49,6 +50,7 @@ limitations under the License. -->
   import type { ZipkinTrace } from "@/types/trace";
   import SpanTreeNode from "./SpanTreeNode.vue";
   import { useTraceStore } from "@/store/modules/trace";
+  import MinTimelineMarker from "./MinTimelineMarker.vue";
 
   interface Props {
     trace: ZipkinTrace;
