@@ -13,18 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <g>
+  <g v-for="(marker, index) in markers" :key="marker.duration">
     <line
-      v-for="marker in markers"
-      :key="marker.duration"
       :x1="`${marker.position}%`"
       :y1="0"
       :x2="`${marker.position}%`"
       y2="100%"
       stroke="var(--el-border-color-light)"
+      v-if="showLine"
     />
     <text
-      v-for="(marker, index) in markers"
       :key="`label-${marker.duration}`"
       :x="`${marker.position}%`"
       :y="12"
@@ -35,7 +33,6 @@ limitations under the License. -->
     >
       {{ marker.duration }}ms
     </text>
-    <line v-if="showLine" x1="0" y1="100%" x2="100%" y2="100%" stroke="var(--el-border-color-light)" />
   </g>
 </template>
 <script lang="ts" setup>
@@ -50,9 +47,6 @@ limitations under the License. -->
   const props = defineProps<Props>();
   // Calculate markers duration for timeline
   const markers = computed(() => {
-    if (!props.showLine) {
-      return [];
-    }
     const maxDuration = props.maxTimestamp - props.minTimestamp;
     // Create markers with duration values and their corresponding percentage positions
     const markerDurations = [0, (maxDuration * 1) / 3, (maxDuration * 2) / 3, maxDuration];
