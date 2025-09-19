@@ -38,7 +38,7 @@ const calculateX = (parentRect: DOMRect, x: number, opositeX: number, isSmallerT
   return adjustPercentValue(value);
 };
 
-export const useRangeHandler = ({
+export const useRangeTimestampHandler = ({
   rootEl,
   minTimestamp,
   maxTimestamp,

@@ -56,46 +56,57 @@ limitations under the License. -->
 
   interface Props {
     span: ZipkinTrace;
-    trace: ZipkinTrace;
+    minTimestamp: number;
+    maxTimestamp: number;
     depth?: number;
     showDuration?: boolean;
     showLabel?: boolean;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
   }
 
   const props = defineProps<Props>();
   const barHeight = 3; // px bar height
 
-  // Calculate max duration for timeline
-  const maxDuration = computed(() => {
-    if (!props.trace.spans.length) return 1;
-    const durations = props.trace.spans.map((trace: ZipkinTrace) => trace.duration || 0);
-    return Math.max(...durations);
-  });
-
   // Use depth from props, default to 0 if not provided
   const indentX = computed(() => (props.depth || 0) * 12);
 
-  // Time range like xScale domain [0, max]
-  const minTimestamp = computed(() => {
-    if (!props.trace.spans.length) return 0;
-    return Math.min(...props.trace.spans.map((s) => s.timestamp || 0));
-  });
-
   // Map duration to width percentage, with max duration = 100%
   const widthScale = computed(() => {
-    const max = maxDuration.value || 1;
+    const { selectedMinTimestamp, selectedMaxTimestamp, minTimestamp, maxTimestamp } = props;
+    let max = maxTimestamp - minTimestamp || 1;
+    if (selectedMaxTimestamp !== undefined && selectedMinTimestamp !== undefined) {
+      max = selectedMaxTimestamp - selectedMinTimestamp;
+    }
     return (duration: number | undefined | null) => {
       const d = Math.max(0, duration || 0);
       return (d / max) * 100;
     };
   });
   const startPct = computed(() => {
-    const start = ((props.span.timestamp || 0) - minTimestamp.value) / 1000;
-    return Math.max(0, widthScale.value(start));
+    const { span, selectedMinTimestamp, minTimestamp } = props;
+    console.log(props);
+    let start = span.timestamp || 0;
+    if (selectedMinTimestamp !== undefined) {
+      start = selectedMinTimestamp > start ? selectedMinTimestamp : start;
+    }
+    const dur = (start - minTimestamp) / 1000;
+    return Math.max(0, widthScale.value(dur));
   });
 
   const widthPct = computed(() => {
-    const dur = props.span.duration || 0;
+    const { span, selectedMinTimestamp, selectedMaxTimestamp } = props;
+    const { timestamp, originalDuration } = span;
+    let start = timestamp;
+    let end = timestamp + (originalDuration || 0);
+
+    if (selectedMaxTimestamp !== undefined) {
+      end = selectedMaxTimestamp < end ? selectedMaxTimestamp : end;
+    }
+    if (selectedMinTimestamp !== undefined) {
+      start = selectedMinTimestamp > start ? selectedMinTimestamp : start;
+    }
+    const dur = end - start;
     return Math.max(0, widthScale.value(dur));
   });
 

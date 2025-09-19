@@ -95,7 +95,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { computed, ref, onMounted } from "vue";
-  import { useRangeHandler, adjustPercentValue } from "./useHooks";
+  import { useRangeTimestampHandler, adjustPercentValue } from "./useHooks";
 
   interface Props {
     minTimestamp: number;
@@ -122,7 +122,7 @@ limitations under the License. -->
     () => ((props.selectedMaxTimestamp - props.minTimestamp) / (props.maxTimestamp - props.minTimestamp)) * 100,
   );
   const minRangeHandler = computed(() => {
-    return useRangeHandler({
+    return useRangeTimestampHandler({
       rootEl: svgEle.value,
       minTimestamp: props.minTimestamp,
       maxTimestamp: props.maxTimestamp,
@@ -132,7 +132,7 @@ limitations under the License. -->
     });
   });
   const maxRangeHandler = computed(() =>
-    useRangeHandler({
+    useRangeTimestampHandler({
       rootEl: svgEle.value,
       minTimestamp: props.minTimestamp,
       maxTimestamp: props.maxTimestamp,

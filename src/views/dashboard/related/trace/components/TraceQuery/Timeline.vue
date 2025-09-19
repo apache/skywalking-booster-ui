@@ -30,7 +30,16 @@ limitations under the License. -->
           :height="rowHeight"
           :fill="isSelected(item.span) ? 'var(--el-color-primary-light-9)' : 'transparent'"
         />
-        <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" :showDuration="true" :showLabel="true" />
+        <SpanTreeNode
+          :span="item.span"
+          :minTimestamp="minTimestamp"
+          :maxTimestamp="maxTimestamp"
+          :depth="item.depth"
+          :selectedMaxTimestamp="selectedMaxTimestamp"
+          :selectedMinTimestamp="selectedMinTimestamp"
+          :showDuration="true"
+          :showLabel="true"
+        />
       </g>
     </svg>
   </div>
@@ -43,6 +52,10 @@ limitations under the License. -->
 
   interface Props {
     trace: ZipkinTrace;
+    selectedMaxTimestamp: number;
+    selectedMinTimestamp: number;
+    minTimestamp: number;
+    maxTimestamp: number;
   }
 
   const props = defineProps<Props>();
@@ -165,6 +178,7 @@ limitations under the License. -->
       initialized.value = true;
     }
   });
+
   function selectSpan(span: ZipkinTrace) {
     traceStore.setCurrentSpan(span);
   }

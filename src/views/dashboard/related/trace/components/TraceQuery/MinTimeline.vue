@@ -31,7 +31,7 @@ limitations under the License. -->
         @setSelectedMaxTimestamp="setSelectedMaxTimestamp"
       />
       <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + rowHeight})`">
-        <SpanTreeNode :span="item.span" :trace="trace" :depth="item.depth" />
+        <SpanTreeNode :span="item.span" :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" :depth="item.depth" />
       </g>
     </svg>
   </div>
@@ -46,6 +46,8 @@ limitations under the License. -->
 
   interface Props {
     trace: ZipkinTrace;
+    minTimestamp: number;
+    maxTimestamp: number;
   }
 
   const props = defineProps<Props>();
@@ -149,11 +151,15 @@ limitations under the License. -->
     flatten(treeSpans.value);
     return result;
   });
+  const emit = defineEmits(["updateSelectedMaxTimestamp", "updateSelectedMinTimestamp"]);
+
   const setSelectedMinTimestamp = (value: number) => {
     selectedMinTimestamp.value = value;
+    emit("updateSelectedMinTimestamp", value);
   };
   const setSelectedMaxTimestamp = (value: number) => {
     selectedMaxTimestamp.value = value;
+    emit("updateSelectedMaxTimestamp", value);
   };
 </script>
 <style lang="scss" scoped>

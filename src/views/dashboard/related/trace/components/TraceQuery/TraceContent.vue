@@ -53,8 +53,20 @@ limitations under the License. -->
     </div>
     <div class="flex-h">
       <div class="detail-section-timeline flex-v">
-        <MinTimeline :trace="trace" />
-        <Timeline :trace="trace" />
+        <MinTimeline
+          :trace="trace"
+          :minTimestamp="minTimestamp"
+          :maxTimestamp="maxTimestamp"
+          @updateSelectedMaxTimestamp="handleSelectedMaxTimestamp"
+          @updateSelectedMinTimestamp="handleSelectedMinTimestamp"
+        />
+        <Timeline
+          :trace="trace"
+          :minTimestamp="minTimestamp"
+          :maxTimestamp="maxTimestamp"
+          :selectedMaxTimestamp="selectedMaxTimestamp"
+          :selectedMinTimestamp="selectedMinTimestamp"
+        />
       </div>
       <div class="detail-section-span">
         <div class="detail-section">
@@ -114,9 +126,31 @@ limitations under the License. -->
   const spansTableVisible = ref<boolean>(false);
   const traceStore = useTraceStore();
   const currentSpan = computed(() => traceStore.currentSpan);
+  // Time range like xScale domain [0, max]
+  const minTimestamp = computed(() => {
+    if (!props.trace.spans.length) return 0;
+    return Math.min(...props.trace.spans.map((s) => s.timestamp || 0));
+  });
+
+  const maxTimestamp = computed(() => {
+    const timestamps = props.trace.spans.map((span) => span.timestamp + (span.originalDuration || 0));
+    if (timestamps.length === 0) return 0;
+
+    return Math.max(...timestamps);
+  });
+  const selectedMaxTimestamp = ref<number>(maxTimestamp.value);
+  const selectedMinTimestamp = ref<number>(minTimestamp.value);
 
   function showSpansTable() {
     spansTableVisible.value = true;
+  }
+
+  function handleSelectedMaxTimestamp(value: number) {
+    selectedMaxTimestamp.value = value;
+  }
+
+  function handleSelectedMinTimestamp(value: number) {
+    selectedMinTimestamp.value = value;
   }
 
   function handleDownload() {
