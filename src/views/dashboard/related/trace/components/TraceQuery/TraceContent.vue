@@ -104,7 +104,12 @@ limitations under the License. -->
       </div>
     </div>
     <!-- Spans Table Drawer -->
-    <SpansTableDrawer v-model:visible="spansTableVisible" :spans="trace.spans || []" :trace-id="trace.traceId" />
+    <SpansTableDrawer
+      v-model:visible="spansTableVisible"
+      :spans="trace.spans || []"
+      :trace-id="trace.traceId"
+      @viewSpan="handleViewSpan"
+    />
   </div>
 </template>
 
@@ -187,6 +192,11 @@ limitations under the License. -->
       console.error("Download error:", error);
       ElMessage.error("Failed to download file");
     }
+  }
+
+  function handleViewSpan(span: ZipkinTrace) {
+    traceStore.setCurrentSpan(span);
+    spansTableVisible.value = false;
   }
 </script>
 

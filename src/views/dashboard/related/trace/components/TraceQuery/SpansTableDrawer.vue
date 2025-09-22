@@ -29,7 +29,11 @@ limitations under the License. -->
         style="width: 100%"
         max-height="calc(100vh - 200px)"
       >
-        <el-table-column label="Span ID" prop="id" />
+        <el-table-column label="Span ID" prop="id">
+          <template #default="props">
+            <el-link type="primary" @click="emit('viewSpan', props.row)">{{ props.row.id }}</el-link>
+          </template>
+        </el-table-column>
 
         <el-table-column label="Service Name" prop="localEndpoint.serviceName" />
         <el-table-column label="Span Name" prop="name" />
