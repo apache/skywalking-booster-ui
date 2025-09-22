@@ -121,6 +121,10 @@ limitations under the License. -->
   const maxOpositeX = computed(
     () => ((props.selectedMaxTimestamp - props.minTimestamp) / (props.maxTimestamp - props.minTimestamp)) * 100,
   );
+  const minOpositeX = computed(
+    () => ((props.selectedMinTimestamp - props.minTimestamp) / (props.maxTimestamp - props.minTimestamp)) * 100,
+  );
+
   const minRangeHandler = computed(() => {
     return useRangeTimestampHandler({
       rootEl: svgEle.value,
@@ -136,13 +140,10 @@ limitations under the License. -->
       rootEl: svgEle.value,
       minTimestamp: props.minTimestamp,
       maxTimestamp: props.maxTimestamp,
-      opositeX: maxOpositeX.value,
+      opositeX: minOpositeX.value,
       isSmallerThanOpositeX: false,
       setTimestamp: (value) => emit("setSelectedMaxTimestamp", value),
     }),
-  );
-  const minOpositeX = computed(
-    () => ((props.selectedMinTimestamp - props.minTimestamp) / (props.maxTimestamp - props.minTimestamp)) * 100,
   );
 
   const boundaryLeft = computed(() => {
