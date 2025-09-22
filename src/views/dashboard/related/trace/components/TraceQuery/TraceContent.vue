@@ -52,14 +52,16 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h">
-      <div class="detail-section-timeline flex-v">
+      <div class="detail-section-timeline flex-v" :style="{ width: spanPanelVisible ? '65%' : '100%' }">
         <MinTimeline
+          v-show="minTimelineVisible"
           :trace="trace"
           :minTimestamp="minTimestamp"
           :maxTimestamp="maxTimestamp"
           @updateSelectedMaxTimestamp="handleSelectedMaxTimestamp"
           @updateSelectedMinTimestamp="handleSelectedMinTimestamp"
         />
+        <TimelineTool @toggleSpanPanel="toggleSpanPanel" @toggleMinTimeline="toggleMinTimeline" />
         <Timeline
           :trace="trace"
           :minTimestamp="minTimestamp"
@@ -68,7 +70,7 @@ limitations under the License. -->
           :selectedMinTimestamp="selectedMinTimestamp"
         />
       </div>
-      <div class="detail-section-span">
+      <div class="detail-section-span" v-show="spanPanelVisible">
         <div class="detail-section">
           <div class="detail-item">
             <span class="grey mr-10">{{ t("serviceName") }}</span>
@@ -116,6 +118,7 @@ limitations under the License. -->
   import MinTimeline from "./MinTimeline.vue";
   import { saveFileAsJSON } from "@/utils/file";
   import { useTraceStore } from "@/store/modules/trace";
+  import TimelineTool from "./TimelineTool.vue";
 
   interface Props {
     trace: ZipkinTrace;
@@ -140,6 +143,8 @@ limitations under the License. -->
   });
   const selectedMaxTimestamp = ref<number>(maxTimestamp.value);
   const selectedMinTimestamp = ref<number>(minTimestamp.value);
+  const spanPanelVisible = ref<boolean>(true);
+  const minTimelineVisible = ref<boolean>(true);
 
   function showSpansTable() {
     spansTableVisible.value = true;
@@ -151,6 +156,14 @@ limitations under the License. -->
 
   function handleSelectedMinTimestamp(value: number) {
     selectedMinTimestamp.value = value;
+  }
+
+  function toggleSpanPanel() {
+    spanPanelVisible.value = !spanPanelVisible.value;
+  }
+
+  function toggleMinTimeline() {
+    minTimelineVisible.value = !minTimelineVisible.value;
   }
 
   function handleDownload() {
