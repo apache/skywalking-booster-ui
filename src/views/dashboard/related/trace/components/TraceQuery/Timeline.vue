@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-timeline flex-v">
+  <div class="trace-timeline flex-v" :style="{ height: `calc(100% - ${containerHeightOffset}px)` }">
     <svg width="100%" :height="`${totalHeight + rowHeight}px`">
       <MinTimelineMarker :minTimestamp="selectedMinTimestamp" :maxTimestamp="selectedMaxTimestamp" :showLine="true" />
       <g
@@ -59,9 +59,12 @@ limitations under the License. -->
     selectedMinTimestamp: number;
     minTimestamp: number;
     maxTimestamp: number;
+    containerHeightOffset?: number;
   }
 
-  const props = defineProps<Props>();
+  const props = withDefaults(defineProps<Props>(), {
+    containerHeightOffset: 200,
+  });
   const traceStore = useTraceStore();
   const rowHeight = 25; // must match child component vertical spacing
 

@@ -68,6 +68,7 @@ limitations under the License. -->
           :maxTimestamp="maxTimestamp"
           :selectedMaxTimestamp="selectedMaxTimestamp"
           :selectedMinTimestamp="selectedMinTimestamp"
+          :containerHeightOffset="minTimelineVisible ? 200 : 0"
         />
       </div>
       <div class="detail-section-span" v-show="spanPanelVisible">
@@ -239,9 +240,10 @@ limitations under the License. -->
   }
 
   .tags-section {
-    max-height: calc(100vh - 330px);
+    max-height: calc(100vh - 360px);
     min-height: 200px;
     overflow: auto;
+    padding-right: 5px;
   }
 
   .no-data {
