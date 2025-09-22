@@ -54,19 +54,8 @@ limitations under the License. -->
   const svgEle = ref<SVGSVGElement | null>(null);
   const rowHeight = 15;
 
-  const minTimestamp = computed(() => {
-    const list = props.trace.spans.map((span) => span.timestamp);
-    if (list.length === 0) return 0;
-    return Math.min(...list);
-  });
-  const maxTimestamp = computed(() => {
-    const timestamps = props.trace.spans.map((span) => span.timestamp + (span.originalDuration || 0));
-    if (timestamps.length === 0) return 0;
-
-    return Math.max(...timestamps);
-  });
-  const selectedMinTimestamp = ref<number>(minTimestamp.value);
-  const selectedMaxTimestamp = ref<number>(maxTimestamp.value);
+  const selectedMinTimestamp = ref<number>(props.minTimestamp);
+  const selectedMaxTimestamp = ref<number>(props.maxTimestamp);
 
   // Calculate total height needed for all spans
   const totalHeight = computed(() => {

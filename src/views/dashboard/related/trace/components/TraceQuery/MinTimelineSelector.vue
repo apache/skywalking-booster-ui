@@ -130,7 +130,7 @@ limitations under the License. -->
       rootEl: svgEle.value,
       minTimestamp: props.minTimestamp,
       maxTimestamp: props.maxTimestamp,
-      opositeX: maxOpositeX.value,
+      selectedTimestamp: props.selectedMaxTimestamp,
       isSmallerThanOpositeX: true,
       setTimestamp: (value) => emit("setSelectedMinTimestamp", value),
     });
@@ -140,7 +140,7 @@ limitations under the License. -->
       rootEl: svgEle.value,
       minTimestamp: props.minTimestamp,
       maxTimestamp: props.maxTimestamp,
-      opositeX: minOpositeX.value,
+      selectedTimestamp: props.selectedMinTimestamp,
       isSmallerThanOpositeX: false,
       setTimestamp: (value) => emit("setSelectedMaxTimestamp", value),
     }),

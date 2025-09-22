@@ -13,20 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <rect
-    :transform="`translate(${indentX}, 0)`"
-    :x="`${startPct}%`"
-    :y="0"
-    :width="`${widthPct}%`"
-    :height="barHeight"
-    :fill="barColor"
-    rx="2"
-    ry="2"
-  />
+  <rect :x="`${startPct}%`" :y="0" :width="`${widthPct}%`" :height="barHeight" :fill="barColor" rx="2" ry="2" />
   <!-- Label and Duration Text -->
   <text
     v-if="showLabel"
-    :transform="`translate(${indentX}, 0)`"
     :x="0"
     :y="barHeight - 7"
     font-size="10"
@@ -74,7 +64,7 @@ limitations under the License. -->
   // Map duration to width percentage, with max duration = 100%
   const widthScale = computed(() => {
     const { selectedMinTimestamp, selectedMaxTimestamp, minTimestamp, maxTimestamp } = props;
-    let max = maxTimestamp - minTimestamp || 1;
+    let max = maxTimestamp - minTimestamp;
     if (selectedMaxTimestamp !== undefined && selectedMinTimestamp !== undefined) {
       max = selectedMaxTimestamp - selectedMinTimestamp;
     }
@@ -91,7 +81,8 @@ limitations under the License. -->
       start = selectedMinTimestamp > start ? (end < selectedMinTimestamp ? 0 : selectedMinTimestamp) : start;
     }
     const dur = start - (selectedMinTimestamp || minTimestamp);
-    return Math.max(0, widthScale.value(dur / 1000));
+
+    return Math.max(0, widthScale.value(dur));
   });
 
   const widthPct = computed(() => {

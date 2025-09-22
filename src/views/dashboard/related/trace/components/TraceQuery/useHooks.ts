@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 export const adjustPercentValue = (value: number) => {
   if (value <= 0) {
@@ -52,26 +52,35 @@ export const useRangeTimestampHandler = ({
   rootEl,
   minTimestamp,
   maxTimestamp,
-  opositeX,
+  selectedTimestamp,
   isSmallerThanOpositeX,
   setTimestamp,
 }: {
   rootEl: SVGSVGElement | null;
   minTimestamp: number;
   maxTimestamp: number;
-  opositeX: number;
+  selectedTimestamp: number;
   isSmallerThanOpositeX: boolean;
   setTimestamp: (value: number) => void;
 }) => {
   const currentX = ref<number>();
   const mouseDownX = ref<number>();
   const isDragging = ref(false);
+  const selectedTimestampComputed = ref(selectedTimestamp);
+  const opositeX = computed(() => {
+    return ((selectedTimestampComputed.value - minTimestamp) / (maxTimestamp - minTimestamp)) * 100;
+  });
 
   const onMouseMove = (e: MouseEvent) => {
     if (!rootEl) {
       return;
     }
-    const x = calculateX({ parentRect: rootEl.getBoundingClientRect(), x: e.pageX, opositeX, isSmallerThanOpositeX });
+    const x = calculateX({
+      parentRect: rootEl.getBoundingClientRect(),
+      x: e.pageX,
+      opositeX: opositeX.value,
+      isSmallerThanOpositeX,
+    });
     currentX.value = x;
   };
 
@@ -79,8 +88,16 @@ export const useRangeTimestampHandler = ({
     if (!rootEl) {
       return;
     }
-    const x = calculateX({ parentRect: rootEl.getBoundingClientRect(), x: e.pageX, opositeX, isSmallerThanOpositeX });
-    setTimestamp((x / 100) * (maxTimestamp - minTimestamp) + minTimestamp);
+
+    const x = calculateX({
+      parentRect: rootEl.getBoundingClientRect(),
+      x: e.pageX,
+      opositeX: opositeX.value,
+      isSmallerThanOpositeX,
+    });
+    const timestamp = (x / 100) * (maxTimestamp - minTimestamp) + minTimestamp;
+    selectedTimestampComputed.value = timestamp;
+    setTimestamp(timestamp);
     currentX.value = undefined;
     mouseDownX.value = undefined;
     isDragging.value = false;
@@ -96,10 +113,9 @@ export const useRangeTimestampHandler = ({
     const x = calculateX({
       parentRect: rootEl.getBoundingClientRect(),
       x: (e.currentTarget as SVGRectElement).getBoundingClientRect().x + 3,
-      opositeX,
+      opositeX: opositeX.value,
       isSmallerThanOpositeX,
     });
-
     currentX.value = x;
     mouseDownX.value = x;
     isDragging.value = true;
