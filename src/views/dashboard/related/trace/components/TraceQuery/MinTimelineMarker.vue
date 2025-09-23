@@ -18,9 +18,8 @@ limitations under the License. -->
       :x1="`${marker.position}%`"
       :y1="0"
       :x2="`${marker.position}%`"
-      y2="100%"
+      :y2="lineHeight ? `${lineHeight}` : '100%'"
       stroke="var(--el-border-color-light)"
-      v-if="showLine"
     />
     <text
       :key="`label-${marker.duration}`"
@@ -41,7 +40,7 @@ limitations under the License. -->
   interface Props {
     minTimestamp: number;
     maxTimestamp: number;
-    showLine?: boolean;
+    lineHeight?: number | string;
   }
 
   const props = defineProps<Props>();

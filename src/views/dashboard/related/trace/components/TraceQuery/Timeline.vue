@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="trace-timeline flex-v" :style="{ height: `calc(100% - ${containerHeightOffset}px)` }">
     <svg width="100%" :height="`${totalHeight + rowHeight}px`">
-      <MinTimelineMarker :minTimestamp="selectedMinTimestamp" :maxTimestamp="selectedMaxTimestamp" :showLine="true" />
+      <MinTimelineMarker :minTimestamp="selectedMinTimestamp" :maxTimestamp="selectedMaxTimestamp" :lineHeight="15" />
       <g
         v-for="item in flattenedSpans"
         :key="item.span.id"
