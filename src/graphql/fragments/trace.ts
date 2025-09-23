@@ -163,3 +163,8 @@ export const TraceSpansFromColdStage = {
   }
   `,
 };
+export const HasQueryTracesV2Support = {
+  query: `
+    hasQueryTracesV2Support
+  `,
+};

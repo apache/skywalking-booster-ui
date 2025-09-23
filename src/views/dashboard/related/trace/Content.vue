@@ -15,7 +15,12 @@ limitations under the License. -->
 <template>
   <div class="flex-h trace-type">
     <el-radio-group v-model="spansGraphType" size="small">
-      <el-radio-button v-for="option in GraphTypeOptions" :key="option.value" :value="option.value">
+      <el-radio-button
+        v-for="option in GraphTypeOptions"
+        :key="option.value"
+        :value="option.value"
+        v-show="option.value !== GraphTypeOptions[4].value && traceStore.hasQueryTracesV2Support"
+      >
         <Icon :iconName="option.icon" />
         {{ t(option.label) }}
       </el-radio-button>
@@ -45,6 +50,7 @@ limitations under the License. -->
   import { provide, ref, onMounted, onUnmounted } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
+  import { useTraceStore } from "@/store/modules/trace";
   import Filter from "./components/TraceList/Filter.vue";
   import SegmentList from "./components/TraceList/SegmentList.vue";
   import SpanList from "./components/TraceList/SpanList.vue";
@@ -60,6 +66,7 @@ limitations under the License. -->
   });
   const { t } = useI18n();
   provide("options", props.data);
+  const traceStore = useTraceStore();
   const serviceId = ref<string>("");
   const showIcon = ref<boolean>(false);
   const isLeft = ref<boolean>(true);
@@ -77,6 +84,10 @@ limitations under the License. -->
   ] as const;
   type SpansGraphType = typeof GraphTypeOptions[number]["value"];
   const spansGraphType = ref<SpansGraphType>(GraphTypeOptions[0].value);
+
+  onMounted(async () => {
+    await traceStore.getHasQueryTracesV2Support();
+  });
 
   function getService(id: string) {
     serviceId.value = id;

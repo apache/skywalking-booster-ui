@@ -40,6 +40,7 @@ interface TraceState {
   serviceList: string[];
   zipkinTraces: ZipkinTrace[];
   currentSpan: Nullable<ZipkinTrace>;
+  hasQueryTracesV2Support: boolean;
 }
 const { getDurationTime } = useDuration();
 
@@ -64,6 +65,7 @@ export const traceStore = defineStore({
     serviceList: [],
     zipkinTraces: [],
     currentSpan: null,
+    hasQueryTracesV2Support: false,
   }),
   actions: {
     setTraceCondition(data: Recordable) {
@@ -254,6 +256,11 @@ export const traceStore = defineStore({
         })
         .sort((a: ZipkinTrace, b: ZipkinTrace) => b.duration - a.duration);
 
+      return response;
+    },
+    async getHasQueryTracesV2Support() {
+      const response = await graphql.query("queryHasQueryTracesV2Support").params({});
+      this.hasQueryTracesV2Support = response.data.hasQueryTracesV2Support;
       return response;
     },
   },
