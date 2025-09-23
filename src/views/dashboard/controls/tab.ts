@@ -29,6 +29,7 @@ import AsyncProfiling from "./AsyncProfiling.vue";
 import TimeRange from "./TimeRange.vue";
 import ThirdPartyApp from "./ThirdPartyApp.vue";
 import TaskTimeline from "./TaskTimeline.vue";
+import SlowStatements from "./SlowStatements.vue";
 
 export default {
   Widget,
@@ -46,4 +47,5 @@ export default {
   ContinuousProfiling,
   AsyncProfiling,
   TaskTimeline,
+  SlowStatements,
 };
