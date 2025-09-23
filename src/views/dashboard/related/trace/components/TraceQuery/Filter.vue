@@ -38,7 +38,7 @@ limitations under the License. -->
   import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
   import ConditionTags from "@/views/components/ConditionTags.vue";
-  import { useTraceStore } from "@/store/modules/trace";
+  import { useTraceStore, PageSize } from "@/store/modules/trace";
   import { InitializationDurationRow } from "@/store/modules/app";
   import { Duration } from "@/types/app";
   import { useDuration } from "@/hooks/useDuration";
@@ -50,7 +50,7 @@ limitations under the License. -->
   const traceStore = useTraceStore();
   const appStore = useAppStoreWithOut();
   const { getMaxRange } = useDuration();
-  const limit = ref(10);
+  const limit = ref(PageSize);
   const tags = ref<{ key: string; value: string }[]>([]);
   const durationRow = ref<Duration>(InitializationDurationRow);
   const maxRange = computed(() =>

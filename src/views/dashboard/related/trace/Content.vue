@@ -50,6 +50,7 @@ limitations under the License. -->
   import { provide, ref, onMounted, onUnmounted } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
   import { useTraceStore } from "@/store/modules/trace";
   import Filter from "./components/TraceList/Filter.vue";
   import SegmentList from "./components/TraceList/SegmentList.vue";
@@ -84,10 +85,6 @@ limitations under the License. -->
   ] as const;
   type SpansGraphType = typeof GraphTypeOptions[number]["value"];
   const spansGraphType = ref<SpansGraphType>(GraphTypeOptions[0].value);
-
-  onMounted(async () => {
-    await traceStore.getHasQueryTracesV2Support();
-  });
 
   function getService(id: string) {
     serviceId.value = id;

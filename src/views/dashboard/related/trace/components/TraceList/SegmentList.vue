@@ -83,7 +83,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
-  import { useTraceStore } from "@/store/modules/trace";
+  import { useTraceStore, PageSize } from "@/store/modules/trace";
   import { ElMessage } from "element-plus";
   import { QueryOrders } from "@/views/dashboard/data";
   import type { Option } from "@/types/app";
@@ -94,7 +94,7 @@ limitations under the License. -->
   const traceStore = useTraceStore();
   const loading = ref<boolean>(false);
   const selectedKey = ref<string>("");
-  const pageSize = 20;
+  const pageSize = PageSize;
   const total = computed(() =>
     traceStore.traceList.length === pageSize
       ? pageSize * traceStore.conditions.paging.pageNum + 1

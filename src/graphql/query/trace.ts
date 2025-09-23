@@ -22,6 +22,7 @@ import {
   TraceTagValues,
   TraceSpansFromColdStage,
   HasQueryTracesV2Support,
+  QueryV2Traces,
 } from "../fragments/trace";
 
 export const queryTraces = `query queryTraces(${Traces.variable}) {${Traces.query}}`;
@@ -35,3 +36,5 @@ export const queryTraceTagValues = `query queryTraceTagValues(${TraceTagValues.v
 export const queryTraceSpansFromColdStage = `query queryTraceSpansFromColdStage(${TraceSpansFromColdStage.variable}) {${TraceSpansFromColdStage.query}}`;
 
 export const queryHasQueryTracesV2Support = `query queryHasQueryTracesV2Support {${HasQueryTracesV2Support.query}}`;
+
+export const queryV2Traces = `query queryV2Traces(${QueryV2Traces.variable}) {${QueryV2Traces.query}}`;

@@ -41,8 +41,11 @@ interface TraceState {
   zipkinTraces: ZipkinTrace[];
   currentSpan: Nullable<ZipkinTrace>;
   hasQueryTracesV2Support: boolean;
+  v2Traces: Trace[];
 }
 const { getDurationTime } = useDuration();
+
+export const PageSize = 20;
 
 export const traceStore = defineStore({
   id: "trace",
@@ -58,7 +61,7 @@ export const traceStore = defineStore({
       queryDuration: getDurationTime(),
       traceState: "ALL",
       queryOrder: QueryOrders[0].value,
-      paging: { pageNum: 1, pageSize: 20 },
+      paging: { pageNum: 1, pageSize: PageSize },
     },
     traceSpanLogs: [],
     selectorStore: useSelectorStore(),
@@ -66,6 +69,7 @@ export const traceStore = defineStore({
     zipkinTraces: [],
     currentSpan: null,
     hasQueryTracesV2Support: false,
+    v2Traces: [],
   }),
   actions: {
     setTraceCondition(data: Recordable) {
@@ -85,6 +89,11 @@ export const traceStore = defineStore({
     },
     setCurrentSpan(span: Nullable<ZipkinTrace>) {
       this.currentSpan = span || {};
+    },
+    setV2Spans(traceId: string) {
+      const trace = this.traceList.find((d: Trace) => d.traceId === traceId);
+      this.setTraceSpans(trace?.spans || []);
+      this.serviceList = Array.from(new Set(trace?.spans.map((i: Span) => i.serviceCode)));
     },
     resetState() {
       this.traceSpans = [];
@@ -169,6 +178,9 @@ export const traceStore = defineStore({
       return response;
     },
     async getTraces() {
+      if (this.hasQueryTracesV2Support) {
+        return this.fetchV2Traces();
+      }
       const response = await graphql.query("queryTraces").params({ condition: this.conditions });
       if (response.errors) {
         return response;
@@ -190,6 +202,10 @@ export const traceStore = defineStore({
       return response;
     },
     async getTraceSpans(params: { traceId: string }) {
+      if (this.hasQueryTracesV2Support) {
+        this.setV2Spans(params.traceId);
+        return new Promise((resolve) => resolve({}));
+      }
       const appStore = useAppStoreWithOut();
       let response;
       if (appStore.coldStageMode) {
@@ -261,6 +277,35 @@ export const traceStore = defineStore({
     async getHasQueryTracesV2Support() {
       const response = await graphql.query("queryHasQueryTracesV2Support").params({});
       this.hasQueryTracesV2Support = response.data.hasQueryTracesV2Support;
+      return response;
+    },
+    async fetchV2Traces() {
+      const response = await graphql.query("queryV2Traces").params({ condition: this.conditions });
+      if (response.errors) {
+        this.traceList = [];
+        this.setCurrentTrace({});
+        this.setTraceSpans([]);
+        return response;
+      }
+      this.v2Traces = response.data.queryTraces.traces || [];
+      this.traceList = this.v2Traces.map((d: Trace) => {
+        const parentSpan =
+          d.spans.find((span: Span) => span.parentSpanId === -1 && span.refs.length === 0) || ({} as Span);
+        return {
+          endpointNames: parentSpan.endpointName ? [parentSpan.endpointName] : [],
+          traceIds: parentSpan.traceId ? [{ value: parentSpan.traceId, label: parentSpan.traceId }] : [],
+          start: parentSpan.startTime,
+          duration: parentSpan.endTime - parentSpan.startTime,
+          isError: parentSpan.isError,
+          spans: d.spans,
+          traceId: parentSpan.traceId,
+        };
+      });
+      const trace = this.traceList[0];
+
+      this.serviceList = Array.from(new Set(trace.spans.map((i: Span) => i.serviceCode)));
+      this.setTraceSpans(trace.spans);
+      this.setCurrentTrace(trace || {});
       return response;
     },
   },
