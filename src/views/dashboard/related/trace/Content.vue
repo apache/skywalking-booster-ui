@@ -19,10 +19,14 @@ limitations under the License. -->
         v-for="option in GraphTypeOptions"
         :key="option.value"
         :value="option.value"
-        v-show="option.value !== GraphTypeOptions[4].value && traceStore.hasQueryTracesV2Support"
+        v-show="option.value !== GraphTypeOptions[4].value"
       >
         <Icon :iconName="option.icon" />
         {{ t(option.label) }}
+      </el-radio-button>
+      <el-radio-button v-if="traceStore.hasQueryTracesV2Support" :value="GraphTypeOptions[4].value">
+        <Icon :iconName="GraphTypeOptions[4].icon" />
+        {{ t(GraphTypeOptions[4].label) }}
       </el-radio-button>
     </el-radio-group>
   </div>
@@ -50,7 +54,6 @@ limitations under the License. -->
   import { provide, ref, onMounted, onUnmounted } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
-  import { ElMessage } from "element-plus";
   import { useTraceStore } from "@/store/modules/trace";
   import Filter from "./components/TraceList/Filter.vue";
   import SegmentList from "./components/TraceList/SegmentList.vue";

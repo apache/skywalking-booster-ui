@@ -25,13 +25,16 @@ limitations under the License. -->
   import Dashboard from "./dashboard/Edit.vue";
   import { useI18n } from "vue-i18n";
   import { DashboardItem } from "@/types/dashboard";
+  import { useTraceStore } from "@/store/modules/trace";
 
   const route = useRoute();
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
+  const traceStore = useTraceStore();
   const layer = ref<string>("GENERAL");
 
   getDashboard();
+  traceStore.getHasQueryTracesV2Support();
 
   async function getDashboard() {
     layer.value = String(route.meta.layer);

@@ -28,11 +28,10 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { provide, onMounted } from "vue";
+  import { provide } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
-  import { useTraceStore } from "@/store/modules/trace";
   import type { LayoutConfig } from "@/types/dashboard";
   import Content from "@/views/dashboard/related/trace/Content.vue";
 
@@ -48,11 +47,6 @@ limitations under the License. -->
   provide("options", props.data);
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const traceStore = useTraceStore();
-
-  onMounted(async () => {
-    await traceStore.getHasQueryTracesV2Support();
-  });
 
   function removeWidget() {
     dashboardStore.removeControls(props.data);

@@ -299,10 +299,11 @@ export const traceStore = defineStore({
           isError: parentSpan.isError,
           spans: d.spans,
           traceId: parentSpan.traceId,
+          key: parentSpan.traceId,
         };
       });
       const trace = this.traceList[0];
-
+      console.log(this.traceList);
       this.serviceList = Array.from(new Set(trace.spans.map((i: Span) => i.serviceCode)));
       this.setTraceSpans(trace.spans);
       this.setCurrentTrace(trace || {});
