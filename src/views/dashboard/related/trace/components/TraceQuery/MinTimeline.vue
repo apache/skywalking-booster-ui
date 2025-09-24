@@ -43,6 +43,7 @@ limitations under the License. -->
   import MinTimelineMarker from "./MinTimelineMarker.vue";
   import MinTimelineOverlay from "./MinTimelineOverlay.vue";
   import MinTimelineSelector from "./MinTimelineSelector.vue";
+  import { buildSpanTree, countTreeNodes, flattenTree } from "./helper";
 
   interface Props {
     trace: Trace;
@@ -58,100 +59,12 @@ limitations under the License. -->
   const selectedMaxTimestamp = ref<number>(props.maxTimestamp);
 
   // Calculate total height needed for all spans
-  const totalHeight = computed(() => {
-    const countSpans = (spans: Span[]): number => {
-      let count = spans.length;
-      for (const span of spans) {
-        if (span.children && span.children.length > 0) {
-          count += countSpans(span.children);
-        }
-      }
-      return count;
-    };
-    console.log(countSpans(treeSpans.value) * rowHeight);
-    return countSpans(treeSpans.value) * rowHeight;
-  });
+  const totalHeight = computed(() => countTreeNodes(treeSpans.value) * rowHeight);
 
   // Build tree structure based on parent-child relationships
-  const treeSpans = computed(() => {
-    const spans = props.trace.spans;
-    if (!spans.length) return [];
-
-    // Check if spans already have nested structure
-    const hasNestedSpans = spans.some((span) => span.children && span.children.length > 0);
-
-    if (hasNestedSpans) {
-      // Data is already in tree structure, just sort by duration
-      const sortedSpans = [...spans].sort((a, b) => (b.duration || 0) - (a.duration || 0));
-      return sortedSpans;
-    }
-
-    // Build tree from flat structure
-    // Create a map for quick span lookup
-    const spanMap = new Map<string, Span>();
-    for (const span of spans) {
-      spanMap.set(span.id, span);
-    }
-
-    // Find root spans (spans without parentId or parentId not in current trace)
-    const rootSpans: Span[] = [];
-    const processedSpans = new Set<string>();
-
-    for (const span of spans) {
-      if (!span.parentId || !spanMap.has(span.parentId)) {
-        rootSpans.push(span);
-        processedSpans.add(span.id);
-      }
-    }
-
-    // Recursive function to build tree structure
-    const buildTree = (parentSpan: Span): Span => {
-      const children = spans.filter((span) => span.parentId === parentSpan.id && !processedSpans.has(span.id));
-
-      // Mark children as processed
-      for (const child of children) {
-        processedSpans.add(child.id);
-      }
-
-      // Sort children by duration in descending order
-      children.sort((a, b) => (b.duration || 0) - (a.duration || 0));
-
-      // Recursively build children trees
-      const treeChildren = children.map((child) => buildTree(child));
-
-      return {
-        ...parentSpan,
-        children: treeChildren,
-      };
-    };
-
-    // Build tree for each root span
-    const treeRoots = rootSpans.map((rootSpan) => buildTree(rootSpan));
-
-    // Sort root spans by duration in descending order
-    treeRoots.sort((a, b) => (b.duration || 0) - (a.duration || 0));
-
-    return treeRoots;
-  });
+  const treeSpans = computed(() => buildSpanTree(props.trace.spans));
   // Flatten tree structure for rendering
-  const flattenedSpans = computed(() => {
-    const result: Array<{ span: Span; depth: number; y: number }> = [];
-    let currentY = 0;
-
-    const flatten = (spans: Span[], depth: number = 0) => {
-      for (const span of spans) {
-        result.push({ span, depth, y: currentY });
-        currentY += rowHeight;
-
-        if (span.children && span.children.length > 0) {
-          flatten(span.children, depth + 1);
-        }
-      }
-    };
-
-    flatten(treeSpans.value);
-    return result;
-  });
+  const flattenedSpans = computed(() => flattenTree(treeSpans.value, rowHeight));
   const emit = defineEmits(["updateSelectedMaxTimestamp", "updateSelectedMinTimestamp"]);
 
   const setSelectedMinTimestamp = (value: number) => {
