@@ -38,7 +38,7 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { computed, ref } from "vue";
-  import type { Trace, Span } from "@/types/trace";
+  import type { Trace } from "@/types/trace";
   import SpanTreeNode from "./SpanTreeNode.vue";
   import MinTimelineMarker from "./MinTimelineMarker.vue";
   import MinTimelineOverlay from "./MinTimelineOverlay.vue";

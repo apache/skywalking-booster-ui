@@ -268,8 +268,6 @@ limitations under the License. -->
 
   .detail-section-timeline {
     width: 65%;
-    // height: calc(100% - 100px);
-    // overflow: auto;
   }
 
   .detail-section-span {
