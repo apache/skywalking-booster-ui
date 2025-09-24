@@ -62,7 +62,7 @@ limitations under the License. -->
       <el-table-column label="Root" prop="label" />
       <el-table-column label="Start Time" prop="timestamp" width="220">
         <template #default="props">
-          {{ dateFormat(props.row.timestamp / 1000) }}
+          {{ dateFormat(props.row.start) }}
         </template>
       </el-table-column>
       <el-table-column label="Spans" prop="spans.length" width="100" />
@@ -75,7 +75,7 @@ limitations under the License. -->
               :text-inside="true"
               color="rgba(64, 158, 255, 0.4)"
             >
-              <div class="duration-value">{{ props.row.duration }}ms</div>
+              <div class="duration-value">{{ props.row.duration || 0 }}ms</div>
             </el-progress>
           </div>
         </template>
@@ -119,7 +119,7 @@ limitations under the License. -->
   import { Loading } from "@element-plus/icons-vue";
   import { dateFormat } from "@/utils/dateFormat";
   import { useTraceStore } from "@/store/modules/trace";
-  import type { ZipkinTrace } from "@/types/trace";
+  import type { Trace } from "@/types/trace";
   import type { Option } from "@/types/app";
   import { getServiceColor } from "./color";
   import TraceContent from "./TraceContent.vue";
@@ -130,7 +130,7 @@ limitations under the License. -->
   const tableRef = ref<InstanceType<typeof ElTable>>();
   const selectedServiceNames = ref<string[]>([]);
   const dialogVisible = ref<boolean>(false);
-  const selectedTrace = ref<ZipkinTrace | null>(null);
+  const selectedTrace = ref<Trace | null>(null);
   // Infinite scroll state
   const loadedItemsCount = ref<number>(PageSize);
   const loading = ref<boolean>(false);
@@ -138,21 +138,21 @@ limitations under the License. -->
 
   // Calculate max duration for progress bar scaling
   const maxDuration = computed(() => {
-    if (!traceStore.zipkinTraces.length) return 1;
-    const durations = traceStore.zipkinTraces.map((trace: ZipkinTrace) => trace.duration || 0);
+    if (!traceStore.traceList.length) return 1;
+    const durations = traceStore.traceList.map((trace: Trace) => trace.duration || 0);
     return Math.max(...durations);
   });
 
   // All filtered traces based on selected service names
-  const allFilteredTraces = computed<ZipkinTrace[]>(() => {
-    const rows = traceStore.zipkinTraces as ZipkinTrace[];
+  const allFilteredTraces = computed<Trace[]>(() => {
+    const rows = traceStore.traceList as Trace[];
     if (!selectedServiceNames.value.length) return rows;
     const selected = new Set(selectedServiceNames.value);
     return rows.filter((row) => {
-      const rowService = row?.localEndpoint?.serviceName;
+      const rowService = row?.serviceCode;
       if (rowService && selected.has(rowService)) return true;
       for (const s of row.spans || []) {
-        const name = s?.localEndpoint?.serviceName;
+        const name = s?.serviceCode;
         if (name && selected.has(name)) return true;
       }
       return false;
@@ -160,7 +160,7 @@ limitations under the License. -->
   });
 
   // Progressively loaded traces for infinite scroll
-  const filteredTraces = computed<ZipkinTrace[]>(() => {
+  const filteredTraces = computed<Trace[]>(() => {
     return allFilteredTraces.value.slice(0, loadedItemsCount.value);
   });
 
@@ -175,14 +175,14 @@ limitations under the License. -->
   // Service names options for the header Selector
   const serviceNames = computed<Option[]>(() => {
     const names = new Set<string>();
-    const rows = traceStore.zipkinTraces as ZipkinTrace[];
+    const rows = traceStore.traceList as Trace[];
     for (const row of rows) {
-      if (row?.localEndpoint?.serviceName) {
-        names.add(row.localEndpoint.serviceName);
+      if (row?.serviceCode) {
+        names.add(row.serviceCode);
       }
       for (const s of row.spans || []) {
-        if (s?.localEndpoint?.serviceName) {
-          names.add(s.localEndpoint.serviceName);
+        if (s?.serviceCode) {
+          names.add(s.serviceCode);
         }
       }
     }
@@ -191,15 +191,15 @@ limitations under the License. -->
       .map((n) => ({ label: n, value: n }));
   });
 
-  function getEndpoints(spans: ZipkinTrace[]) {
+  function getEndpoints(spans: Trace[]) {
     const endpoints = new Map<string, number>();
     for (const d of spans) {
-      endpoints.set(d.localEndpoint.serviceName, (endpoints.get(d.localEndpoint.serviceName) || 0) + 1);
+      endpoints.set(d.serviceCode, (endpoints.get(d.serviceCode) || 0) + 1);
     }
     return endpoints;
   }
 
-  function handleShowTrace(e: MouseEvent, row: ZipkinTrace) {
+  function handleShowTrace(e: MouseEvent, row: Trace) {
     selectedTrace.value = row;
     dialogVisible.value = true;
   }
@@ -210,7 +210,7 @@ limitations under the License. -->
     return Math.round((duration / maxDuration.value) * 100);
   }
 
-  function toggleServiceTags(serviceName: string, row: ZipkinTrace) {
+  function toggleServiceTags(serviceName: string, row: Trace) {
     // Toggle service selection
     selectedServiceNames.value = selectedServiceNames.value.includes(serviceName)
       ? selectedServiceNames.value.filter((name) => name !== serviceName)

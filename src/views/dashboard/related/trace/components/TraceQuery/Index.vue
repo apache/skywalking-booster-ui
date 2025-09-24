@@ -35,7 +35,7 @@ limitations under the License. -->
   });
   const traceStore = useTraceStore();
   onUnmounted(() => {
-    traceStore.setZipkinTraces([]);
+    traceStore.setTraceList([]);
     traceStore.setSelectedSpan(null);
   });
 </script>

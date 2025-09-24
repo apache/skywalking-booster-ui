@@ -41,11 +41,11 @@ limitations under the License. -->
 
 <script lang="ts" setup>
   import { computed } from "vue";
-  import type { ZipkinTrace } from "@/types/trace";
+  import type { Span } from "@/types/trace";
   import { getServiceColor } from "./color";
 
   interface Props {
-    span: ZipkinTrace;
+    span: Span;
     minTimestamp: number;
     maxTimestamp: number;
     depth?: number;
@@ -57,9 +57,6 @@ limitations under the License. -->
 
   const props = defineProps<Props>();
   const barHeight = 3; // px bar height
-
-  // Use depth from props, default to 0 if not provided
-  const indentX = computed(() => (props.depth || 0) * 12);
 
   // Map duration to width percentage, with max duration = 100%
   const widthScale = computed(() => {
@@ -75,8 +72,8 @@ limitations under the License. -->
   });
   const startPct = computed(() => {
     const { span, selectedMinTimestamp, minTimestamp } = props;
-    const end = span.timestamp + (span.originalDuration || 0);
-    let start = span.timestamp || 0;
+    const end = span.endTime;
+    let start = span.startTime;
     if (selectedMinTimestamp !== undefined) {
       start = selectedMinTimestamp > start ? (end < selectedMinTimestamp ? 0 : selectedMinTimestamp) : start;
     }
@@ -87,9 +84,9 @@ limitations under the License. -->
 
   const widthPct = computed(() => {
     const { span, selectedMinTimestamp, selectedMaxTimestamp } = props;
-    const { timestamp, originalDuration } = span;
-    let start = timestamp;
-    let end = timestamp + (originalDuration || 0);
+    const { startTime, endTime } = span;
+    let start = startTime;
+    let end = endTime;
     if (selectedMinTimestamp !== undefined) {
       start = selectedMinTimestamp > start ? selectedMinTimestamp : start;
       if (end < selectedMinTimestamp) {
@@ -98,7 +95,7 @@ limitations under the License. -->
     }
     if (selectedMaxTimestamp !== undefined) {
       end = selectedMaxTimestamp < end ? selectedMaxTimestamp : end;
-      if (timestamp > selectedMaxTimestamp) {
+      if (startTime > selectedMaxTimestamp) {
         return 0;
       }
     }
@@ -107,7 +104,7 @@ limitations under the License. -->
   });
 
   const barColor = computed(() => {
-    const serviceName = props.span.localEndpoint?.serviceName || "";
+    const serviceName = props.span.serviceCode || "";
     return getServiceColor(serviceName);
   });
 </script>

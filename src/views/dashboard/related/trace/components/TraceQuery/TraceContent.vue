@@ -39,7 +39,7 @@ limitations under the License. -->
         </div>
         <div>
           <span class="grey mr-5">{{ t("services") }}</span>
-          <span class="value">{{ trace.localEndpoint?.serviceName || "Unknown" }}</span>
+          <span class="value">{{ trace.serviceCode || "Unknown" }}</span>
         </div>
         <div>
           <span class="grey mr-5">{{ t("totalSpans") }}</span>
@@ -75,19 +75,19 @@ limitations under the License. -->
         <div class="detail-section">
           <div class="detail-item">
             <span class="grey mr-10">{{ t("serviceName") }}</span>
-            <span class="value">{{ currentSpan?.localEndpoint?.serviceName || "Unknown" }}</span>
+            <span class="value">{{ currentSpan?.serviceCode || "Unknown" }}</span>
           </div>
           <div class="detail-item">
-            <span class="grey mr-10">{{ t("spanName") }}</span>
-            <span class="value">{{ currentSpan?.name || "Unknown" }}</span>
+            <span class="grey mr-10">{{ t("endpointName") }}</span>
+            <span class="value">{{ currentSpan?.endpointName || "Unknown" }}</span>
           </div>
           <div class="detail-item">
-            <span class="grey mr-10">{{ t("spanId") }}</span>
-            <span class="value">{{ currentSpan?.id || "-" }}</span>
+            <span class="grey mr-10">{{ t("instance") }}</span>
+            <span class="value">{{ currentSpan?.serviceInstanceName || "Unknown" }}</span>
           </div>
           <div class="detail-item">
-            <span class="grey mr-10">{{ t("parentId") }}</span>
-            <span class="value">{{ currentSpan?.parentId || "none" }}</span>
+            <span class="grey mr-10">{{ t("component") }}</span>
+            <span class="value">{{ currentSpan?.component || "Unknown" }}</span>
           </div>
         </div>
         <h4>{{ t("tags") }}</h4>
@@ -95,9 +95,9 @@ limitations under the License. -->
           class="tags-section flex-v scroll_bar_style"
           v-if="currentSpan?.tags && Object.keys(currentSpan.tags).length > 0"
         >
-          <div v-for="(value, key) in currentSpan.tags" :key="key" class="tag-item">
-            <span class="grey" style="width: 200px">{{ key }}</span>
-            <span class="value">{{ value }}</span>
+          <div v-for="tag in currentSpan.tags" :key="tag.key" class="tag-item">
+            <span class="grey" style="width: 200px">{{ tag.key }}</span>
+            <span class="value">{{ tag.value }}</span>
           </div>
         </div>
         <div v-else class="no-data">No tags available</div>
@@ -118,7 +118,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { ElMessage } from "element-plus";
   import { ArrowDown } from "@element-plus/icons-vue";
-  import type { ZipkinTrace } from "@/types/trace";
+  import type { Trace, Span } from "@/types/trace";
   import SpansTableDrawer from "./SpansTableDrawer.vue";
   import Timeline from "./Timeline.vue";
   import MinTimeline from "./MinTimeline.vue";
@@ -127,7 +127,7 @@ limitations under the License. -->
   import TimelineTool from "./TimelineTool.vue";
 
   interface Props {
-    trace: ZipkinTrace;
+    trace: Trace;
   }
 
   const { t } = useI18n();
@@ -138,11 +138,11 @@ limitations under the License. -->
   // Time range like xScale domain [0, max]
   const minTimestamp = computed(() => {
     if (!props.trace.spans.length) return 0;
-    return Math.min(...props.trace.spans.map((s) => s.timestamp || 0));
+    return Math.min(...props.trace.spans.map((s) => s.startTime || 0));
   });
 
   const maxTimestamp = computed(() => {
-    const timestamps = props.trace.spans.map((span) => span.timestamp + (span.originalDuration || 0));
+    const timestamps = props.trace.spans.map((span) => span.endTime || 0);
     if (timestamps.length === 0) return 0;
 
     return Math.max(...timestamps);
@@ -179,9 +179,9 @@ limitations under the License. -->
     const spans = trace.spans.map((span) => {
       const newSpan = {
         ...span,
-        duration: span.originalDuration,
+        duration: span.duration,
       };
-      delete newSpan.originalDuration;
+      delete newSpan.duration;
       delete newSpan.label;
       return newSpan;
     });
@@ -194,7 +194,7 @@ limitations under the License. -->
     }
   }
 
-  function handleViewSpan(span: ZipkinTrace) {
+  function handleViewSpan(span: Span) {
     traceStore.setCurrentSpan(span);
     spansTableVisible.value = false;
   }
@@ -268,6 +268,8 @@ limitations under the License. -->
 
   .detail-section-timeline {
     width: 65%;
+    // height: calc(100% - 100px);
+    // overflow: auto;
   }
 
   .detail-section-span {

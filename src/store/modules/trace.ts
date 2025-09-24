@@ -16,7 +16,7 @@
  */
 import { defineStore } from "pinia";
 import type { Instance, Endpoint, Service } from "@/types/selector";
-import type { Trace, Span, TraceCondition, ZipkinTrace } from "@/types/trace";
+import type { Trace, Span, TraceCondition } from "@/types/trace";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -38,8 +38,7 @@ interface TraceState {
   selectorStore: ReturnType<typeof useSelectorStore>;
   selectedSpan: Nullable<Span>;
   serviceList: string[];
-  zipkinTraces: ZipkinTrace[];
-  currentSpan: Nullable<ZipkinTrace>;
+  currentSpan: Nullable<Span>;
   hasQueryTracesV2Support: boolean;
   v2Traces: Trace[];
 }
@@ -66,7 +65,6 @@ export const traceStore = defineStore({
     traceSpanLogs: [],
     selectorStore: useSelectorStore(),
     serviceList: [],
-    zipkinTraces: [],
     currentSpan: null,
     hasQueryTracesV2Support: false,
     v2Traces: [],
@@ -84,16 +82,16 @@ export const traceStore = defineStore({
     setSelectedSpan(span: Nullable<Span>) {
       this.selectedSpan = span || {};
     },
-    setZipkinTraces(traces: ZipkinTrace[]) {
-      this.zipkinTraces = traces;
-    },
-    setCurrentSpan(span: Nullable<ZipkinTrace>) {
+    setCurrentSpan(span: Nullable<Span>) {
       this.currentSpan = span || {};
     },
     setV2Spans(traceId: string) {
       const trace = this.traceList.find((d: Trace) => d.traceId === traceId);
       this.setTraceSpans(trace?.spans || []);
       this.serviceList = Array.from(new Set(trace?.spans.map((i: Span) => i.serviceCode)));
+    },
+    setTraceList(traces: Trace[]) {
+      this.traceList = traces;
     },
     resetState() {
       this.traceSpans = [];
@@ -238,42 +236,6 @@ export const traceStore = defineStore({
     async getTagValues(tagKey: string) {
       return await graphql.query("queryTraceTagValues").params({ tagKey, duration: useAppStoreWithOut().durationTime });
     },
-    async getZipkinTraces(params: Record<string, unknown>) {
-      const response = await fetchQuery({
-        method: "get",
-        path: "ZipkinTraces",
-        json: params,
-      });
-
-      this.zipkinTraces = response
-        .map((list: ZipkinTrace[]) => {
-          const newList = list.map((d: ZipkinTrace) => {
-            return {
-              ...d,
-              label: `${d.localEndpoint.serviceName}: ${d.name}`,
-              originalDuration: d.duration,
-              duration: d.duration ? Number((d.duration / 1000).toFixed(3)) : 0,
-            };
-          });
-          const p =
-            newList.find((d: ZipkinTrace) => !d.parentId || newList.find((p: ZipkinTrace) => p.id === d.parentId)) ||
-            newList[0];
-          if (!p) {
-            return {
-              name: "Unknown",
-              duration: 0,
-              spans: [],
-            };
-          }
-          return {
-            ...p,
-            spans: newList,
-          };
-        })
-        .sort((a: ZipkinTrace, b: ZipkinTrace) => b.duration - a.duration);
-
-      return response;
-    },
     async getHasQueryTracesV2Support() {
       const response = await graphql.query("queryHasQueryTracesV2Support").params({});
       this.hasQueryTracesV2Support = response.data.hasQueryTracesV2Support;
@@ -288,22 +250,41 @@ export const traceStore = defineStore({
         return response;
       }
       this.v2Traces = response.data.queryTraces.traces || [];
-      this.traceList = this.v2Traces.map((d: Trace) => {
-        const parentSpan =
-          d.spans.find((span: Span) => span.parentSpanId === -1 && span.refs.length === 0) || ({} as Span);
-        return {
-          endpointNames: parentSpan.endpointName ? [parentSpan.endpointName] : [],
-          traceIds: parentSpan.traceId ? [{ value: parentSpan.traceId, label: parentSpan.traceId }] : [],
-          start: parentSpan.startTime,
-          duration: parentSpan.endTime - parentSpan.startTime,
-          isError: parentSpan.isError,
-          spans: d.spans,
-          traceId: parentSpan.traceId,
-          key: parentSpan.traceId,
-        };
-      });
+      this.traceList = this.v2Traces
+        .map((d: Trace) => {
+          const newSpans = d.spans.map((span: Span) => {
+            const parentId =
+              span.parentSpanId === -1 && span.refs.length !== 0
+                ? `${span.refs[0].traceId}-${span.refs[0].parentSegmentId}-${span.refs[0].parentSpanId}`
+                : "";
+            return {
+              ...span,
+              duration: span.endTime - span.startTime,
+              id: `${span.traceId}-${span.segmentId}-${span.spanId}`,
+              parentId: parentId ? parentId : `${span.traceId}-${span.segmentId}-${span.parentSpanId}`,
+              label: `${span.serviceCode}: ${span.endpointName}`,
+            };
+          });
+          const trace =
+            newSpans.find((span: Span) => span.parentSpanId === -1 && span.refs.length === 0) || newSpans[0];
+          return {
+            endpointNames: trace.endpointName ? [trace.endpointName] : [],
+            traceIds: trace.traceId ? [{ value: trace.traceId, label: trace.traceId }] : [],
+            start: trace.startTime,
+            duration: trace.endTime - trace.startTime,
+            isError: trace.isError,
+            spans: newSpans,
+            traceId: trace.id,
+            key: trace.traceId,
+            serviceCode: trace.serviceCode,
+            label: `${trace.serviceCode}: ${trace.endpointName}`,
+            id: trace.id,
+            parentId: trace.parentId,
+          };
+        })
+        .sort((a: Trace, b: Trace) => b.duration - a.duration);
       const trace = this.traceList[0];
-      console.log(this.traceList);
+
       this.serviceList = Array.from(new Set(trace.spans.map((i: Span) => i.serviceCode)));
       this.setTraceSpans(trace.spans);
       this.setCurrentTrace(trace || {});

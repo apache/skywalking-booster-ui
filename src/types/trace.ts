@@ -27,32 +27,10 @@ export interface Trace {
   spans: Span[];
   endpointNames: string[];
   traceId: string;
-}
-
-export interface ZipkinTrace {
-  duration: number;
-  kind: string;
-  localEndpoint: LocalEndpoint;
-  timestamp: number;
-  traceId: string;
-  parentId?: string;
-  annotations: Annotation[];
-  tags: Record<string, string>;
-  name: string;
-  spans: ZipkinTrace[];
+  serviceCode: string;
+  label: string;
   id: string;
-  label?: string;
-  originalDuration?: number;
-}
-
-export interface LocalEndpoint {
-  serviceName: string;
-  ipv4: string;
-}
-
-export interface Annotation {
-  timestamp: number;
-  value: string;
+  parentId: string;
 }
 
 export interface Span {
@@ -72,6 +50,7 @@ export interface Span {
   refs: Array<Ref>;
   startTime: number;
   endTime: number;
+  duration?: number;
   dur?: number;
   children?: Span[];
   tags?: { value: string; key: string }[];
@@ -89,6 +68,8 @@ export interface Span {
   avgTime?: number;
   count?: number;
   profiled?: boolean;
+  id: string;
+  parentId: string;
 }
 export type Ref = {
   type?: string;

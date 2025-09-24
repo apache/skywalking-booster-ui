@@ -48,13 +48,13 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { computed, ref, watch, onMounted, nextTick } from "vue";
-  import type { ZipkinTrace } from "@/types/trace";
+  import type { Trace, Span } from "@/types/trace";
   import SpanTreeNode from "./SpanTreeNode.vue";
   import { useTraceStore } from "@/store/modules/trace";
   import MinTimelineMarker from "./MinTimelineMarker.vue";
 
   interface Props {
-    trace: ZipkinTrace;
+    trace: Trace;
     selectedMaxTimestamp: number;
     selectedMinTimestamp: number;
     minTimestamp: number;
@@ -74,7 +74,7 @@ limitations under the License. -->
     if (!spans.length) return [];
 
     // Check if spans already have nested structure
-    const hasNestedSpans = spans.some((span) => span.spans && span.spans.length > 0);
+    const hasNestedSpans = spans.some((span) => span.children && span.children.length > 0);
 
     if (hasNestedSpans) {
       // Data is already in tree structure, just sort by duration
@@ -84,13 +84,13 @@ limitations under the License. -->
 
     // Build tree from flat structure
     // Create a map for quick span lookup
-    const spanMap = new Map<string, ZipkinTrace>();
+    const spanMap = new Map<string, Span>();
     for (const span of spans) {
       spanMap.set(span.id, span);
     }
 
     // Find root spans (spans without parentId or parentId not in current trace)
-    const rootSpans: ZipkinTrace[] = [];
+    const rootSpans: Span[] = [];
     const processedSpans = new Set<string>();
 
     for (const span of spans) {
@@ -101,7 +101,7 @@ limitations under the License. -->
     }
 
     // Recursive function to build tree structure
-    const buildTree = (parentSpan: ZipkinTrace): ZipkinTrace => {
+    const buildTree = (parentSpan: Span): Span => {
       const children = spans.filter((span) => span.parentId === parentSpan.id && !processedSpans.has(span.id));
 
       // Mark children as processed
@@ -117,7 +117,7 @@ limitations under the License. -->
 
       return {
         ...parentSpan,
-        spans: treeChildren,
+        children: treeChildren,
       };
     };
 
@@ -132,11 +132,11 @@ limitations under the License. -->
 
   // Calculate total height needed for all spans
   const totalHeight = computed(() => {
-    const countSpans = (spans: ZipkinTrace[]): number => {
+    const countSpans = (spans: Span[]): number => {
       let count = spans.length;
       for (const span of spans) {
-        if (span.spans && span.spans.length > 0) {
-          count += countSpans(span.spans);
+        if (span.children && span.children.length > 0) {
+          count += countSpans(span.children);
         }
       }
       return count;
@@ -146,16 +146,16 @@ limitations under the License. -->
 
   // Flatten tree structure for rendering
   const flattenedSpans = computed(() => {
-    const result: Array<{ span: ZipkinTrace; depth: number; y: number }> = [];
+    const result: Array<{ span: Span; depth: number; y: number }> = [];
     let currentY = 0;
 
-    const flatten = (spans: ZipkinTrace[], depth: number = 0) => {
+    const flatten = (spans: Span[], depth: number = 0) => {
       for (const span of spans) {
         result.push({ span, depth, y: currentY });
         currentY += rowHeight;
 
-        if (span.spans && span.spans.length > 0) {
-          flatten(span.spans, depth + 1);
+        if (span.children && span.children.length > 0) {
+          flatten(span.children, depth + 1);
         }
       }
     };
@@ -185,10 +185,10 @@ limitations under the License. -->
     }
   });
 
-  function selectSpan(span: ZipkinTrace) {
+  function selectSpan(span: Span) {
     traceStore.setCurrentSpan(span);
   }
-  function isSelected(span: ZipkinTrace) {
+  function isSelected(span: Span) {
     return !!traceStore.currentSpan && traceStore.currentSpan.id === span.id;
   }
 </script>

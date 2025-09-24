@@ -91,7 +91,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import type { Option, DurationTime, Duration } from "@/types/app";
-  import { useTraceStore } from "@/store/modules/trace";
+  import { useTraceStore, PageSize } from "@/store/modules/trace";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useSelectorStore } from "@/store/modules/selectors";
@@ -127,7 +127,6 @@ limitations under the License. -->
   );
   const minTraceDuration = ref<number>();
   const maxTraceDuration = ref<number>();
-  const tagsList = ref<string[]>([]);
   const tagsMap = ref<Option[]>([]);
   const state = reactive<Recordable>({
     status: filters.status === "ERROR" ? Status[2] : Status[0],
@@ -221,7 +220,7 @@ limitations under the License. -->
       minTraceDuration: Number(minTraceDuration.value),
       maxTraceDuration: Number(maxTraceDuration.value),
       traceId: traceId.value || undefined,
-      paging: { pageNum: 1, pageSize: 20 },
+      paging: { pageNum: 1, pageSize: PageSize },
     };
     if (props.data.filters && props.data.filters.id) {
       param = {
@@ -267,8 +266,7 @@ limitations under the License. -->
       emits("get", state.service.id);
     }
   }
-  function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
-    tagsList.value = data.tagsList;
+  function updateTags(data: { tagsMap: Array<Option> }) {
     tagsMap.value = data.tagsMap;
   }
   async function searchEndpoints(keyword: string) {

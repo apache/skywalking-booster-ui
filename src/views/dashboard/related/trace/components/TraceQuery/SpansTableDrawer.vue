@@ -31,7 +31,7 @@ limitations under the License. -->
       >
         <el-table-column label="Span ID" prop="id">
           <template #default="props">
-            <el-link type="primary" @click="emit('viewSpan', props.row)">{{ props.row.id }}</el-link>
+            <el-link type="primary" @click="emit('viewSpan', props.row)">{{ props.row.endpointName }}</el-link>
           </template>
         </el-table-column>
 
@@ -53,17 +53,17 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ElDrawer, ElTable, ElTableColumn } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
-  import type { ZipkinTrace } from "@/types/trace";
+  import type { Span } from "@/types/trace";
 
   interface Props {
     visible: boolean;
-    spans: ZipkinTrace[];
+    spans: Span[];
     traceId: string;
   }
 
   interface Emits {
     (e: "update:visible", value: boolean): void;
-    (e: "viewSpan", span: ZipkinTrace): void;
+    (e: "viewSpan", span: Span): void;
   }
 
   defineProps<Props>();

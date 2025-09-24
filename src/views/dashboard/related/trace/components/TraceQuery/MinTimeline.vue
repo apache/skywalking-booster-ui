@@ -38,36 +38,37 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { computed, ref } from "vue";
-  import type { ZipkinTrace } from "@/types/trace";
+  import type { Trace, Span } from "@/types/trace";
   import SpanTreeNode from "./SpanTreeNode.vue";
   import MinTimelineMarker from "./MinTimelineMarker.vue";
   import MinTimelineOverlay from "./MinTimelineOverlay.vue";
   import MinTimelineSelector from "./MinTimelineSelector.vue";
 
   interface Props {
-    trace: ZipkinTrace;
+    trace: Trace;
     minTimestamp: number;
     maxTimestamp: number;
   }
 
   const props = defineProps<Props>();
   const svgEle = ref<SVGSVGElement | null>(null);
-  const rowHeight = 15;
+  const rowHeight = 12;
 
   const selectedMinTimestamp = ref<number>(props.minTimestamp);
   const selectedMaxTimestamp = ref<number>(props.maxTimestamp);
 
   // Calculate total height needed for all spans
   const totalHeight = computed(() => {
-    const countSpans = (spans: ZipkinTrace[]): number => {
+    const countSpans = (spans: Span[]): number => {
       let count = spans.length;
       for (const span of spans) {
-        if (span.spans && span.spans.length > 0) {
-          count += countSpans(span.spans);
+        if (span.children && span.children.length > 0) {
+          count += countSpans(span.children);
         }
       }
       return count;
     };
+    console.log(countSpans(treeSpans.value) * rowHeight);
     return countSpans(treeSpans.value) * rowHeight;
   });
 
@@ -76,13 +77,24 @@ limitations under the License. -->
     const spans = props.trace.spans;
     if (!spans.length) return [];
 
+    // Check if spans already have nested structure
+    const hasNestedSpans = spans.some((span) => span.children && span.children.length > 0);
+
+    if (hasNestedSpans) {
+      // Data is already in tree structure, just sort by duration
+      const sortedSpans = [...spans].sort((a, b) => (b.duration || 0) - (a.duration || 0));
+      return sortedSpans;
+    }
+
+    // Build tree from flat structure
     // Create a map for quick span lookup
-    const spanMap = new Map<string, ZipkinTrace>();
+    const spanMap = new Map<string, Span>();
     for (const span of spans) {
       spanMap.set(span.id, span);
     }
+
     // Find root spans (spans without parentId or parentId not in current trace)
-    const rootSpans: ZipkinTrace[] = [];
+    const rootSpans: Span[] = [];
     const processedSpans = new Set<string>();
 
     for (const span of spans) {
@@ -93,7 +105,7 @@ limitations under the License. -->
     }
 
     // Recursive function to build tree structure
-    const buildTree = (parentSpan: ZipkinTrace): ZipkinTrace => {
+    const buildTree = (parentSpan: Span): Span => {
       const children = spans.filter((span) => span.parentId === parentSpan.id && !processedSpans.has(span.id));
 
       // Mark children as processed
@@ -109,7 +121,7 @@ limitations under the License. -->
 
       return {
         ...parentSpan,
-        spans: treeChildren,
+        children: treeChildren,
       };
     };
 
@@ -123,16 +135,16 @@ limitations under the License. -->
   });
   // Flatten tree structure for rendering
   const flattenedSpans = computed(() => {
-    const result: Array<{ span: ZipkinTrace; depth: number; y: number }> = [];
+    const result: Array<{ span: Span; depth: number; y: number }> = [];
     let currentY = 0;
 
-    const flatten = (spans: ZipkinTrace[], depth: number = 0) => {
+    const flatten = (spans: Span[], depth: number = 0) => {
       for (const span of spans) {
         result.push({ span, depth, y: currentY });
         currentY += rowHeight;
 
-        if (span.spans && span.spans.length > 0) {
-          flatten(span.spans, depth + 1);
+        if (span.children && span.children.length > 0) {
+          flatten(span.children, depth + 1);
         }
       }
     };
@@ -154,8 +166,6 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .trace-min-timeline {
     width: 100%;
-    height: 190px;
-    overflow: auto;
     padding-right: 20px;
     padding-top: 5px;
     border-bottom: 1px solid var(--el-border-color-light);
