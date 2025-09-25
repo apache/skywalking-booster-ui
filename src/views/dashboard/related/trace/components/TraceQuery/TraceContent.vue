@@ -62,7 +62,7 @@ limitations under the License. -->
           @updateSelectedMinTimestamp="handleSelectedMinTimestamp"
         />
         <TimelineTool @toggleSpanPanel="toggleSpanPanel" @toggleMinTimeline="toggleMinTimeline" />
-        <Timeline
+        <SpansTree
           :trace="trace"
           :minTimestamp="minTimestamp"
           :maxTimestamp="maxTimestamp"
@@ -119,7 +119,7 @@ limitations under the License. -->
   import { ArrowDown } from "@element-plus/icons-vue";
   import type { Trace, Span } from "@/types/trace";
   import SpansTableDrawer from "./SpansTableDrawer.vue";
-  import Timeline from "./Timeline.vue";
+  import SpansTree from "./SpansTree.vue";
   import MinTimeline from "./MinTimeline.vue";
   import { saveFileAsJSON } from "@/utils/file";
   import { useTraceStore } from "@/store/modules/trace";

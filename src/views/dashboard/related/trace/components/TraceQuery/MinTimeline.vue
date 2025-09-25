@@ -31,7 +31,7 @@ limitations under the License. -->
         @setSelectedMaxTimestamp="setSelectedMaxTimestamp"
       />
       <g v-for="(item, index) in trace.spans" :key="index" :transform="`translate(0, ${(index + 1) * rowHeight + 3})`">
-        <SpanTreeNode :span="item" :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" :depth="index + 1" />
+        <SpanNode :span="item" :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" :depth="index + 1" />
       </g>
     </svg>
   </div>
@@ -39,7 +39,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import type { Trace } from "@/types/trace";
-  import SpanTreeNode from "./SpanTreeNode.vue";
+  import SpanNode from "./SpanNode.vue";
   import MinTimelineMarker from "./MinTimelineMarker.vue";
   import MinTimelineOverlay from "./MinTimelineOverlay.vue";
   import MinTimelineSelector from "./MinTimelineSelector.vue";

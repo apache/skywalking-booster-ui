@@ -33,19 +33,20 @@ limitations under the License. -->
     minTimestamp: number;
     maxTimestamp: number;
   }
-
+  const props = defineProps<Props>();
   const spansGraph = ref<HTMLDivElement | null>(null);
   const tree = ref<Nullable<any>>(null);
   const segmentId = ref<Span[]>([]);
   const refSpans = ref<Array<Ref>>([]);
   const fixSpansSize = ref<number>(0);
+  const traceStore = useTraceStore();
+  const rowHeight = 20; // must match child component vertical spacing
 
   onMounted(async () => {
     changeTree();
     if (!spansGraph.value) {
       return;
     }
-
     // Wait for DOM to be fully updated before initializing and drawing
     await nextTick();
     tree.value = new TreeGraph(spansGraph.value, selectSpan);
@@ -54,16 +55,10 @@ limitations under the License. -->
       getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
       fixSpansSize.value,
     );
-
     // Ensure the element has proper dimensions before drawing
     await nextTick();
     tree.value.draw();
   });
-
-  const props = defineProps<Props>();
-  const traceStore = useTraceStore();
-  const rowHeight = 20; // must match child component vertical spacing
-
   function changeTree() {
     if (props.trace.spans.length === 0) {
       return [];
