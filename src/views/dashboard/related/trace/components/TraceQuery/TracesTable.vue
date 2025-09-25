@@ -121,7 +121,7 @@ limitations under the License. -->
   import { useTraceStore } from "@/store/modules/trace";
   import type { Trace } from "@/types/trace";
   import type { Option } from "@/types/app";
-  import { getServiceColor } from "./color";
+  import { getServiceColor } from "@/utils/color";
   import TraceContent from "./TraceContent.vue";
 
   const PageSize = 10;

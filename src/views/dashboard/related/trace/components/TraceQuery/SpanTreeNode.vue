@@ -42,7 +42,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { computed } from "vue";
   import type { Span } from "@/types/trace";
-  import { getServiceColor } from "./color";
+  import { getServiceColor } from "@/utils/color";
 
   interface Props {
     span: Span;

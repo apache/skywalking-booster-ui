@@ -17,7 +17,7 @@ limitations under the License. -->
         class="charts-item mr-5"
         v-for="(i, index) in traceStore.serviceList"
         :key="index"
-        :style="`color:${computedScale(index)}`"
+        :style="`color:${getServiceColor(i)}`"
       >
         <Icon iconName="issue-open-m" class="mr-5" size="sm" />
         <span>{{ i }}</span>
@@ -41,8 +41,9 @@ limitations under the License. -->
   import Graph from "../D3Graph/Index.vue";
   import { Themes } from "@/constants/data";
   import { TraceGraphType } from "./constant";
+  import { getServiceColor } from "@/utils/color";
 
-  /* global defineProps, Recordable*/
+  /* global defineProps, Indexable*/
   defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
@@ -51,22 +52,14 @@ limitations under the License. -->
   const appStore = useAppStoreWithOut();
   const traceStore = useTraceStore();
 
-  function computedScale(i: number) {
-    const sequentialScale = d3
-      .scaleSequential()
-      .domain([0, traceStore.serviceList.length + 1])
-      .interpolator(d3.interpolateCool);
-    return sequentialScale(i);
-  }
-
   function downloadTrace() {
     const serializer = new XMLSerializer();
     const svgNode: any = d3.select(".trace-list").node();
     const source = `<?xml version="1.0" standalone="no"?>\r\n${serializer.serializeToString(svgNode)}`;
     const canvas = document.createElement("canvas");
     const context: any = canvas.getContext("2d");
-    canvas.width = (d3.select(".trace-list") as Recordable)._groups[0][0].clientWidth;
-    canvas.height = (d3.select(".trace-list") as Recordable)._groups[0][0].clientHeight;
+    canvas.width = (d3.select(".trace-list") as Indexable)._groups[0][0].clientWidth;
+    canvas.height = (d3.select(".trace-list") as Indexable)._groups[0][0].clientHeight;
     context.fillStyle = appStore.theme === Themes.Dark ? "#212224" : `#fff`;
     context.fillRect(0, 0, canvas.width, canvas.height);
     const image = new Image();

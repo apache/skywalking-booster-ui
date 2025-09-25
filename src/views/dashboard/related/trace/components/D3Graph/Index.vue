@@ -62,7 +62,7 @@ limitations under the License. -->
   import { TraceGraphType } from "../VisGraph/constant";
   import { Themes } from "@/constants/data";
   import type { SegmentSpan } from "@/types/profile";
-  import { buildSegmentForest, collapseTree, getRefsAllNodes } from "./utils/trace-tree";
+  import { buildSegmentForest, collapseTree, getRefsAllNodes } from "./utils/helper";
 
   /* global Recordable, Nullable */
   const props = defineProps({

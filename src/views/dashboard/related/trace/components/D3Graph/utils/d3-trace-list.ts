@@ -22,7 +22,7 @@ import dayjs from "dayjs";
 import icons from "@/assets/img/icons";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Themes } from "@/constants/data";
-import { useTraceStore } from "@/store/modules/trace";
+import { getServiceColor } from "@/utils/color";
 
 export default class ListGraph {
   private barHeight = 48;
@@ -38,10 +38,8 @@ export default class ListGraph {
   private data: any = [];
   private min = 0;
   private max = 0;
-  private list: any[] = [];
   private xScale: any = null;
   private xAxis: any = null;
-  private sequentialScale: any = null;
   private root: any = null;
   private selectedNode: any = null;
   constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
@@ -93,7 +91,6 @@ export default class ListGraph {
     this.data = data;
     this.min = d3.min(this.row.map((i) => i.startTime));
     this.max = d3.max(this.row.map((i) => i.endTime - this.min)) || 0;
-    this.list = useTraceStore().serviceList || [];
     this.xScale = d3
       .scaleLinear()
       .range([0, this.width * 0.4])
@@ -109,10 +106,6 @@ export default class ListGraph {
       .attr("class", "trace-xaxis")
       .attr("transform", `translate(${this.width * 0.6 - 20},${30})`)
       .call(this.xAxis);
-    this.sequentialScale = d3
-      .scaleSequential()
-      .domain([0, this.list.length + 1])
-      .interpolator(d3.interpolateCool);
     this.root = d3.hierarchy(this.data, (d) => d.children);
     this.root.x0 = 0;
     this.root.y0 = 0;
@@ -328,7 +321,7 @@ export default class ListGraph {
         return this.width * 0.6 - d.y - 25 + this.xScale(d.data.startTime - this.min) || 0;
       })
       .attr("y", -2)
-      .style("fill", (d: Recordable) => `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`);
+      .style("fill", (d: Recordable) => `${getServiceColor(d.data.serviceCode || "")}`);
     const nodeUpdate = nodeEnter.merge(node);
     nodeUpdate
       .transition()
@@ -340,11 +333,9 @@ export default class ListGraph {
       .attr("r", appStore.theme === Themes.Dark ? 4 : 3)
       .style("cursor", "pointer")
       .attr("stroke-width", appStore.theme === Themes.Dark ? 3 : 2.5)
-      .style("fill", (d: Recordable) =>
-        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "#eee",
-      )
+      .style("fill", (d: Recordable) => (d._children ? `${getServiceColor(d.data.serviceCode)}` : "#eee"))
       .style("stroke", (d: Recordable) =>
-        d.data.label === "TRACE_ROOT" ? "" : `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`,
+        d.data.label === "TRACE_ROOT" ? "" : `${getServiceColor(d.data.serviceCode)}`,
       )
       .on("click", (event: any, d: Recordable) => {
         event.stopPropagation();

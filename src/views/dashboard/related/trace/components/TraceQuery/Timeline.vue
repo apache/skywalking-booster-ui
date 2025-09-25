@@ -16,15 +16,15 @@ limitations under the License. -->
   <div
     class="trace-timeline"
     ref="spansGraph"
-    :style="{ width: `100%`, height: `${fixSpansSize * 20 + rowHeight}px` }"
+    :style="{ width: `100%`, height: `${(fixSpansSize + 1) * rowHeight}px` }"
   ></div>
 </template>
 <script lang="ts" setup>
-  import { computed, ref, watch, onMounted, nextTick } from "vue";
+  import { ref, onMounted, nextTick } from "vue";
   import type { Trace, Span, Ref } from "@/types/trace";
   import { useTraceStore } from "@/store/modules/trace";
   import TreeGraph from "../D3Graph/utils/d3-trace-list";
-  import { buildSegmentForest, collapseTree, getRefsAllNodes } from "../D3Graph/utils/trace-tree";
+  import { buildSegmentForest, collapseTree, getRefsAllNodes } from "../D3Graph/utils/helper";
   /* global Nullable */
   interface Props {
     trace: Trace;
@@ -32,7 +32,6 @@ limitations under the License. -->
     selectedMinTimestamp: number;
     minTimestamp: number;
     maxTimestamp: number;
-    containerHeightOffset?: number;
   }
 
   const spansGraph = ref<HTMLDivElement | null>(null);
@@ -41,27 +40,29 @@ limitations under the License. -->
   const refSpans = ref<Array<Ref>>([]);
   const fixSpansSize = ref<number>(0);
 
-  onMounted(() => {
+  onMounted(async () => {
     changeTree();
-    setTimeout(() => {
-      if (!spansGraph.value) {
-        return;
-      }
-      tree.value = new TreeGraph(spansGraph.value, selectSpan);
-      tree.value.init(
-        { label: "TRACE_ROOT", children: segmentId.value },
-        getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
-        fixSpansSize.value,
-      );
-      tree.value.draw();
-    }, 1000);
+    if (!spansGraph.value) {
+      return;
+    }
+
+    // Wait for DOM to be fully updated before initializing and drawing
+    await nextTick();
+    tree.value = new TreeGraph(spansGraph.value, selectSpan);
+    tree.value.init(
+      { label: "TRACE_ROOT", children: segmentId.value },
+      getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+      fixSpansSize.value,
+    );
+
+    // Ensure the element has proper dimensions before drawing
+    await nextTick();
+    tree.value.draw();
   });
 
-  const props = withDefaults(defineProps<Props>(), {
-    containerHeightOffset: 200,
-  });
+  const props = defineProps<Props>();
   const traceStore = useTraceStore();
-  const rowHeight = 25; // must match child component vertical spacing
+  const rowHeight = 20; // must match child component vertical spacing
 
   function changeTree() {
     if (props.trace.spans.length === 0) {
@@ -77,7 +78,6 @@ limitations under the License. -->
   }
 
   function selectSpan(span: any) {
-    console.log(span);
     traceStore.setCurrentSpan(span.data);
   }
 </script>

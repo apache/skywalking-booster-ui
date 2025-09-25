@@ -68,7 +68,6 @@ limitations under the License. -->
           :maxTimestamp="maxTimestamp"
           :selectedMaxTimestamp="selectedMaxTimestamp"
           :selectedMinTimestamp="selectedMinTimestamp"
-          :containerHeightOffset="minTimelineVisible ? 200 : 0"
         />
       </div>
       <div class="detail-section-span" v-show="spanPanelVisible">
