@@ -68,8 +68,6 @@ export interface Span {
   avgTime?: number;
   count?: number;
   profiled?: boolean;
-  id: string;
-  parentId: string;
 }
 export type Ref = {
   type?: string;

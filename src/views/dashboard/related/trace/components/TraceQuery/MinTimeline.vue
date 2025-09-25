@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-min-timeline flex-v">
-    <svg ref="svgEle" width="100%" :height="`${totalHeight + rowHeight}px`">
+    <svg ref="svgEle" width="100%" :height="`${(trace.spans.length + 1) * rowHeight}px`">
       <MinTimelineMarker :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" />
       <MinTimelineOverlay
         :minTimestamp="minTimestamp"
@@ -30,20 +30,19 @@ limitations under the License. -->
         @setSelectedMinTimestamp="setSelectedMinTimestamp"
         @setSelectedMaxTimestamp="setSelectedMaxTimestamp"
       />
-      <g v-for="item in flattenedSpans" :key="item.span.id" :transform="`translate(0, ${item.y + rowHeight})`">
-        <SpanTreeNode :span="item.span" :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" :depth="item.depth" />
+      <g v-for="(item, index) in trace.spans" :key="index" :transform="`translate(0, ${(index + 1) * rowHeight + 3})`">
+        <SpanTreeNode :span="item" :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" :depth="index + 1" />
       </g>
     </svg>
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed, ref } from "vue";
+  import { ref } from "vue";
   import type { Trace } from "@/types/trace";
   import SpanTreeNode from "./SpanTreeNode.vue";
   import MinTimelineMarker from "./MinTimelineMarker.vue";
   import MinTimelineOverlay from "./MinTimelineOverlay.vue";
   import MinTimelineSelector from "./MinTimelineSelector.vue";
-  import { buildSpanTree, countTreeNodes, flattenTree } from "./helper";
 
   interface Props {
     trace: Trace;
@@ -58,13 +57,6 @@ limitations under the License. -->
   const selectedMinTimestamp = ref<number>(props.minTimestamp);
   const selectedMaxTimestamp = ref<number>(props.maxTimestamp);
 
-  // Calculate total height needed for all spans
-  const totalHeight = computed(() => countTreeNodes(treeSpans.value) * rowHeight);
-
-  // Build tree structure based on parent-child relationships
-  const treeSpans = computed(() => buildSpanTree(props.trace.spans));
-  // Flatten tree structure for rendering
-  const flattenedSpans = computed(() => flattenTree(treeSpans.value, rowHeight));
   const emit = defineEmits(["updateSelectedMaxTimestamp", "updateSelectedMinTimestamp"]);
 
   const setSelectedMinTimestamp = (value: number) => {

@@ -96,7 +96,7 @@ export default class ListGraph {
     this.list = useTraceStore().serviceList || [];
     this.xScale = d3
       .scaleLinear()
-      .range([0, this.width * 0.387])
+      .range([0, this.width * 0.4])
       .domain([0, this.max]);
     this.xAxis = d3.axisTop(this.xScale).tickFormat((d: any) => {
       if (d === 0) return 0;
@@ -107,7 +107,7 @@ export default class ListGraph {
     this.svg
       .append("g")
       .attr("class", "trace-xaxis")
-      .attr("transform", `translate(${this.width * 0.618 - 20},${30})`)
+      .attr("transform", `translate(${this.width * 0.6 - 20},${30})`)
       .call(this.xAxis);
     this.sequentialScale = d3
       .scaleSequential()
@@ -325,7 +325,7 @@ export default class ListGraph {
       })
       .attr("x", (d: Recordable) => {
         if (!d.data.endTime || !d.data.startTime) return 0;
-        return this.width * 0.613 - d.y - 20 + this.xScale(d.data.startTime - this.min) || 0;
+        return this.width * 0.6 - d.y - 25 + this.xScale(d.data.startTime - this.min) || 0;
       })
       .attr("y", -2)
       .style("fill", (d: Recordable) => `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`);

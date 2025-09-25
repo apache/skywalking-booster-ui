@@ -25,7 +25,6 @@ import { QueryOrders } from "@/views/dashboard/data";
 import { EndpointsTopNDefault } from "../data";
 import { useDuration } from "@/hooks/useDuration";
 import { LogItem } from "@/types/log";
-import fetchQuery from "@/graphql/http";
 interface TraceState {
   services: Service[];
   instances: Instance[];
@@ -253,15 +252,10 @@ export const traceStore = defineStore({
       this.traceList = this.v2Traces
         .map((d: Trace) => {
           const newSpans = d.spans.map((span: Span) => {
-            const parentId =
-              span.parentSpanId === -1 && span.refs.length !== 0
-                ? `${span.refs[0].traceId}-${span.refs[0].parentSegmentId}-${span.refs[0].parentSpanId}`
-                : "";
             return {
               ...span,
+              traceId: span.traceId,
               duration: span.endTime - span.startTime,
-              id: `${span.traceId}-${span.segmentId}-${span.spanId}`,
-              parentId: parentId ? parentId : `${span.traceId}-${span.segmentId}-${span.parentSpanId}`,
               label: `${span.serviceCode}: ${span.endpointName}`,
             };
           });
@@ -274,12 +268,10 @@ export const traceStore = defineStore({
             duration: trace.endTime - trace.startTime,
             isError: trace.isError,
             spans: newSpans,
-            traceId: trace.id,
+            traceId: trace.traceId,
             key: trace.traceId,
             serviceCode: trace.serviceCode,
             label: `${trace.serviceCode}: ${trace.endpointName}`,
-            id: trace.id,
-            parentId: trace.parentId,
           };
         })
         .sort((a: Trace, b: Trace) => b.duration - a.duration);

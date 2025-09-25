@@ -13,47 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-timeline flex-v" :style="{ height: `calc(100% - ${containerHeightOffset}px)` }">
-    <svg width="100%" :height="`${totalHeight + rowHeight}px`">
-      <MinTimelineMarker :minTimestamp="selectedMinTimestamp" :maxTimestamp="selectedMaxTimestamp" :lineHeight="15" />
-      <g
-        v-for="item in flattenedSpans"
-        :key="item.span.id"
-        :transform="`translate(0, ${item.y + rowHeight + 12})`"
-        :style="{ cursor: 'pointer' }"
-        @click="selectSpan(item.span)"
-        class="trace-timeline-span"
-      >
-        <rect
-          x="0"
-          y="-16"
-          width="100%"
-          :height="rowHeight"
-          :fill="isSelected(item.span) ? 'var(--el-color-primary-light-9)' : 'transparent'"
-        />
-        <line x1="0" y1="2" x2="100%" y2="2" stroke="var(--el-border-color-light)" />
-        <SpanTreeNode
-          :span="item.span"
-          :minTimestamp="minTimestamp"
-          :maxTimestamp="maxTimestamp"
-          :depth="item.depth"
-          :selectedMaxTimestamp="selectedMaxTimestamp"
-          :selectedMinTimestamp="selectedMinTimestamp"
-          :showDuration="true"
-          :showLabel="true"
-        />
-      </g>
-    </svg>
-  </div>
+  <div
+    class="trace-timeline"
+    ref="spansGraph"
+    :style="{ width: `100%`, height: `${fixSpansSize * 20 + rowHeight}px` }"
+  ></div>
 </template>
 <script lang="ts" setup>
   import { computed, ref, watch, onMounted, nextTick } from "vue";
-  import type { Trace, Span } from "@/types/trace";
-  import SpanTreeNode from "./SpanTreeNode.vue";
+  import type { Trace, Span, Ref } from "@/types/trace";
   import { useTraceStore } from "@/store/modules/trace";
-  import MinTimelineMarker from "./MinTimelineMarker.vue";
-  import { buildSpanTree, countTreeNodes, flattenTree } from "./helper";
-
+  import TreeGraph from "../D3Graph/utils/d3-trace-list";
+  import { buildSegmentForest, collapseTree, getRefsAllNodes } from "../D3Graph/utils/trace-tree";
+  /* global Nullable */
   interface Props {
     trace: Trace;
     selectedMaxTimestamp: number;
@@ -63,55 +35,55 @@ limitations under the License. -->
     containerHeightOffset?: number;
   }
 
+  const spansGraph = ref<HTMLDivElement | null>(null);
+  const tree = ref<Nullable<any>>(null);
+  const segmentId = ref<Span[]>([]);
+  const refSpans = ref<Array<Ref>>([]);
+  const fixSpansSize = ref<number>(0);
+
+  onMounted(() => {
+    changeTree();
+    setTimeout(() => {
+      if (!spansGraph.value) {
+        return;
+      }
+      tree.value = new TreeGraph(spansGraph.value, selectSpan);
+      tree.value.init(
+        { label: "TRACE_ROOT", children: segmentId.value },
+        getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+        fixSpansSize.value,
+      );
+      tree.value.draw();
+    }, 1000);
+  });
+
   const props = withDefaults(defineProps<Props>(), {
     containerHeightOffset: 200,
   });
   const traceStore = useTraceStore();
   const rowHeight = 25; // must match child component vertical spacing
 
-  // Build tree structure based on parent-child relationships
-  const treeSpans = computed(() => buildSpanTree(props.trace.spans));
-
-  // Calculate total height needed for all spans
-  const totalHeight = computed(() => countTreeNodes(treeSpans.value) * rowHeight);
-
-  // Flatten tree structure for rendering
-  const flattenedSpans = computed(() => flattenTree(treeSpans.value, rowHeight));
-  // Auto-select the first span after initialization
-  const initialized = ref(false);
-  watch(
-    () => flattenedSpans.value,
-    (spans) => {
-      if (initialized.value) return;
-      if (spans && spans.length > 0) {
-        traceStore.setCurrentSpan(spans[0].span);
-        initialized.value = true;
-      }
-    },
-    { immediate: false, deep: false },
-  );
-
-  onMounted(async () => {
-    await nextTick();
-    if (!initialized.value && flattenedSpans.value && flattenedSpans.value.length > 0) {
-      traceStore.setCurrentSpan(flattenedSpans.value[0].span);
-      initialized.value = true;
+  function changeTree() {
+    if (props.trace.spans.length === 0) {
+      return [];
     }
-  });
-
-  function selectSpan(span: Span) {
-    traceStore.setCurrentSpan(span);
+    const { roots, fixSpansSize: fixSize, refSpans: refs } = buildSegmentForest(props.trace.spans, props.trace.traceId);
+    segmentId.value = roots as Span[];
+    fixSpansSize.value = fixSize;
+    refSpans.value = refs;
+    for (const root of segmentId.value) {
+      collapseTree(root as unknown as Span, refSpans.value);
+    }
   }
-  function isSelected(span: Span) {
-    return !!traceStore.currentSpan && traceStore.currentSpan.id === span.id;
+
+  function selectSpan(span: any) {
+    console.log(span);
+    traceStore.setCurrentSpan(span.data);
   }
 </script>
 <style lang="scss" scoped>
   .trace-timeline {
     width: 100%;
-    height: calc(100% - 200px);
-    overflow: auto;
-    padding-right: 20px;
     border-top: 1px solid var(--el-border-color-light);
   }
 

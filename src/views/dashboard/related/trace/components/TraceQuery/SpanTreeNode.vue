@@ -84,9 +84,8 @@ limitations under the License. -->
 
   const widthPct = computed(() => {
     const { span, selectedMinTimestamp, selectedMaxTimestamp } = props;
-    const { startTime, endTime } = span;
-    let start = startTime;
-    let end = endTime;
+    let start = span.startTime;
+    let end = span.endTime;
     if (selectedMinTimestamp !== undefined) {
       start = selectedMinTimestamp > start ? selectedMinTimestamp : start;
       if (end < selectedMinTimestamp) {
@@ -95,7 +94,7 @@ limitations under the License. -->
     }
     if (selectedMaxTimestamp !== undefined) {
       end = selectedMaxTimestamp < end ? selectedMaxTimestamp : end;
-      if (startTime > selectedMaxTimestamp) {
+      if (span.startTime > selectedMaxTimestamp) {
         return 0;
       }
     }
