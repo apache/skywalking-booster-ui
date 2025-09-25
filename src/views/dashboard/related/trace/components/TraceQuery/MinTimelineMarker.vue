@@ -44,10 +44,8 @@ limitations under the License. -->
   }
 
   const props = defineProps<Props>();
-  // Calculate markers duration for timeline
   const markers = computed(() => {
     const maxDuration = props.maxTimestamp - props.minTimestamp;
-    // Create markers with duration values and their corresponding percentage positions
     const markerDurations = [0, (maxDuration * 1) / 3, (maxDuration * 2) / 3, maxDuration];
 
     return markerDurations.map((duration) => ({

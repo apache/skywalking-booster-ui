@@ -25,13 +25,13 @@ limitations under the License. -->
         :data="spans"
         :border="true"
         :stripe="true"
-        :default-sort="{ prop: 'timestamp', order: 'ascending' }"
+        :default-sort="{ prop: 'startTime', order: 'ascending' }"
         style="width: 100%"
         max-height="calc(100vh - 40px)"
       >
         <el-table-column label="Endpoint Name" prop="endpointName">
           <template #default="props">
-            <el-link type="primary" @click="emit('viewSpan', props.row)">{{ props.row.endpointName }}</el-link>
+            <el-link type="primary" @click="onClickEndpoint(props.row)">{{ props.row.endpointName }}</el-link>
           </template>
         </el-table-column>
 
@@ -52,6 +52,7 @@ limitations under the License. -->
   import { ElDrawer, ElTable, ElTableColumn } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
   import type { Span } from "@/types/trace";
+  import { useTraceStore } from "@/store/modules/trace";
 
   interface Props {
     visible: boolean;
@@ -66,6 +67,12 @@ limitations under the License. -->
 
   defineProps<Props>();
   const emit = defineEmits<Emits>();
+  const traceStore = useTraceStore();
+
+  function onClickEndpoint(span: Span) {
+    traceStore.setCurrentSpan(span);
+    emit("viewSpan", span);
+  }
 
   function handleClose() {
     emit("update:visible", false);

@@ -159,15 +159,12 @@ limitations under the License. -->
     });
   });
 
-  // Progressively loaded traces for infinite scroll
   const filteredTraces = computed<Trace[]>(() => {
     return allFilteredTraces.value.slice(0, loadedItemsCount.value);
   });
 
-  // Total count for display
   const totalTraces = computed<number>(() => allFilteredTraces.value.length);
 
-  // Check if there are more items to load
   const hasMoreItems = computed<boolean>(() => {
     return loadedItemsCount.value < allFilteredTraces.value.length;
   });
@@ -204,14 +201,12 @@ limitations under the License. -->
     dialogVisible.value = true;
   }
 
-  // Calculate progress percentage for a given duration
   function getDurationProgress(duration: number): number {
     if (maxDuration.value === 0) return 0;
     return Math.round((duration / maxDuration.value) * 100);
   }
 
   function toggleServiceTags(serviceName: string, row: Trace) {
-    // Toggle service selection
     selectedServiceNames.value = selectedServiceNames.value.includes(serviceName)
       ? selectedServiceNames.value.filter((name) => name !== serviceName)
       : [...selectedServiceNames.value, serviceName];

@@ -108,10 +108,8 @@ limitations under the License. -->
     (e: "setSelectedMaxTimestamp", value: number): void;
   }>();
   const props = defineProps<Props>();
-
   const svgEle = ref<SVGSVGElement | null>(null);
 
-  // Get reference to parent SVG element
   onMounted(() => {
     const element = document.querySelector(".trace-min-timeline svg") as SVGSVGElement;
     if (element) {

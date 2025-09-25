@@ -56,9 +56,8 @@ limitations under the License. -->
   }
 
   const props = defineProps<Props>();
-  const barHeight = 3; // px bar height
+  const barHeight = 3;
 
-  // Map duration to width percentage, with max duration = 100%
   const widthScale = computed(() => {
     const { selectedMinTimestamp, selectedMaxTimestamp, minTimestamp, maxTimestamp } = props;
     let max = maxTimestamp - minTimestamp;

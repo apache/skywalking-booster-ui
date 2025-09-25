@@ -140,7 +140,6 @@ limitations under the License. -->
   }
 
   onBeforeUnmount(() => {
-    // Clean up any remaining document event listeners
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
     isDragging.value = false;

@@ -20,7 +20,7 @@ limitations under the License. -->
   ></div>
 </template>
 <script lang="ts" setup>
-  import { ref, onMounted, onUnmounted, nextTick } from "vue";
+  import { ref, onMounted, onUnmounted, nextTick, watch } from "vue";
   import type { Trace, Span, Ref } from "@/types/trace";
   import { useTraceStore } from "@/store/modules/trace";
   import TreeGraph from "../D3Graph/utils/d3-trace-list";
@@ -34,12 +34,13 @@ limitations under the License. -->
     maxTimestamp: number;
   }
   const props = defineProps<Props>();
+  const traceStore = useTraceStore();
   const spansGraph = ref<HTMLDivElement | null>(null);
   const tree = ref<Nullable<any>>(null);
   const segmentId = ref<Span[]>([]);
   const refSpans = ref<Array<Ref>>([]);
   const fixSpansSize = ref<number>(0);
-  const traceStore = useTraceStore();
+  const currentSpan = () => traceStore.currentSpan;
   const rowHeight = 20; // must match child component vertical spacing
 
   onMounted(async () => {
@@ -58,7 +59,6 @@ limitations under the License. -->
     // Ensure the element has proper dimensions before drawing
     await nextTick();
     tree.value.draw();
-    // Select root span initially
     selectInitialSpan();
     // Listen for layout changes triggered by span panel toggle and re-draw
     window.addEventListener("spanPanelToggled", onSpanPanelToggled);
@@ -83,7 +83,6 @@ limitations under the License. -->
     );
     await nextTick();
     tree.value.draw();
-    // Reselect root span after redraw
     selectInitialSpan();
   }
   function changeTree() {
@@ -116,6 +115,15 @@ limitations under the License. -->
       }
     }
   }
+  // React to external span selections (e.g., from SpansTableDrawer)
+  watch(
+    currentSpan,
+    (span) => {
+      if (!span || !tree.value || typeof tree.value.highlightSpan !== "function") return;
+      tree.value.highlightSpan(span as any);
+    },
+    { deep: false },
+  );
 </script>
 <style lang="scss" scoped>
   .trace-timeline {
