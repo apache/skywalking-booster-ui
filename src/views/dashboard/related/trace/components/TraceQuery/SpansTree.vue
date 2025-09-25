@@ -58,6 +58,8 @@ limitations under the License. -->
     // Ensure the element has proper dimensions before drawing
     await nextTick();
     tree.value.draw();
+    // Select root span initially
+    selectInitialSpan();
     // Listen for layout changes triggered by span panel toggle and re-draw
     window.addEventListener("spanPanelToggled", onSpanPanelToggled);
   });
@@ -81,6 +83,8 @@ limitations under the License. -->
     );
     await nextTick();
     tree.value.draw();
+    // Reselect root span after redraw
+    selectInitialSpan();
   }
   function changeTree() {
     if (props.trace.spans.length === 0) {
@@ -97,6 +101,20 @@ limitations under the License. -->
 
   function selectSpan(span: any) {
     traceStore.setCurrentSpan(span.data);
+    // Highlight selected node
+    if (tree.value && typeof tree.value.highlightSpan === "function") {
+      tree.value.highlightSpan(span.data);
+    }
+  }
+
+  function selectInitialSpan() {
+    if (segmentId.value && segmentId.value.length > 0) {
+      const root = segmentId.value[0];
+      traceStore.setCurrentSpan(root);
+      if (tree.value && typeof tree.value.highlightSpan === "function") {
+        tree.value.highlightSpan(root as any);
+      }
+    }
   }
 </script>
 <style lang="scss" scoped>

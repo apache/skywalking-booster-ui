@@ -17,7 +17,7 @@
 
 import * as d3 from "d3";
 import d3tip from "d3-tip";
-import type { Trace } from "@/types/trace";
+import type { Trace, Span } from "@/types/trace";
 import dayjs from "dayjs";
 import icons from "@/assets/img/icons";
 import { useAppStoreWithOut } from "@/store/modules/app";
@@ -421,6 +421,23 @@ export default class ListGraph {
       top: targetRect.top - containerRect.top + container?.scrollTop - 100,
       behavior: "smooth",
     });
+  }
+  highlightSpan(span: Recordable) {
+    if (!span) {
+      return;
+    }
+    const nodes = this.root?.descendants ? this.root.descendants() : [];
+    const targetNode = nodes.find(
+      (node: { data: Span }) =>
+        span.spanId === node.data.spanId &&
+        span.segmentId === node.data.segmentId &&
+        span.traceId === node.data.traceId,
+    );
+    if (!targetNode) return;
+    this.selectedNode?.classed("highlighted", false);
+    const sel = d3.select(`#list-node-${targetNode.id}`);
+    sel.classed("highlighted", true);
+    this.selectedNode = sel;
   }
   visDate(date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") {
     return dayjs(date).format(pattern);
