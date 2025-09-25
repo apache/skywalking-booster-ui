@@ -27,20 +27,18 @@ limitations under the License. -->
         :stripe="true"
         :default-sort="{ prop: 'timestamp', order: 'ascending' }"
         style="width: 100%"
-        max-height="calc(100vh - 200px)"
+        max-height="calc(100vh - 40px)"
       >
-        <el-table-column label="Span ID" prop="id">
+        <el-table-column label="Endpoint Name" prop="endpointName">
           <template #default="props">
             <el-link type="primary" @click="emit('viewSpan', props.row)">{{ props.row.endpointName }}</el-link>
           </template>
         </el-table-column>
 
-        <el-table-column label="Service Name" prop="localEndpoint.serviceName" />
-        <el-table-column label="Span Name" prop="name" />
-
-        <el-table-column label="Start Time" prop="timestamp" width="180">
+        <el-table-column label="Service Name" prop="serviceCode" />
+        <el-table-column label="Start Time" prop="startTime" width="180">
           <template #default="props">
-            {{ dateFormat(props.row.timestamp / 1000) }}
+            {{ dateFormat(props.row.startTime) }}
           </template>
         </el-table-column>
 
