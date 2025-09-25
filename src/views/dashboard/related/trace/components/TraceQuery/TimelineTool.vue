@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="timeline-tool flex-h">
-    <el-button class="flexible-minTimeline" size="small" @click="onToggleMinTimeline">
+    <el-button size="small" @click="onToggleMinTimeline">
       <Icon iconName="sort" size="middle" />
     </el-button>
-    <el-button size="small" @click="onToggleSpanPanel">
+    <el-button class="flexible-spanPanel" size="small" @click="onToggleSpanPanel">
       <Icon iconName="sort" size="middle" style="transform: rotate(90deg)" />
     </el-button>
   </div>
@@ -30,6 +30,8 @@ limitations under the License. -->
 
   function onToggleSpanPanel() {
     emit("toggleSpanPanel");
+    // Notify other components (e.g., SpansTree) to re-draw after panel layout changes
+    window.dispatchEvent(new CustomEvent("spanPanelToggled"));
   }
 
   function onToggleMinTimeline() {

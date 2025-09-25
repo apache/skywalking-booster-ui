@@ -20,7 +20,7 @@ limitations under the License. -->
   ></div>
 </template>
 <script lang="ts" setup>
-  import { ref, onMounted, nextTick } from "vue";
+  import { ref, onMounted, onUnmounted, nextTick } from "vue";
   import type { Trace, Span, Ref } from "@/types/trace";
   import { useTraceStore } from "@/store/modules/trace";
   import TreeGraph from "../D3Graph/utils/d3-trace-list";
@@ -58,7 +58,30 @@ limitations under the License. -->
     // Ensure the element has proper dimensions before drawing
     await nextTick();
     tree.value.draw();
+    // Listen for layout changes triggered by span panel toggle and re-draw
+    window.addEventListener("spanPanelToggled", onSpanPanelToggled);
   });
+
+  onUnmounted(() => {
+    window.removeEventListener("spanPanelToggled", onSpanPanelToggled);
+  });
+
+  async function onSpanPanelToggled() {
+    // Recreate graph so it recalculates width/height based on new layout
+    await nextTick();
+    changeTree();
+    if (!spansGraph.value) {
+      return;
+    }
+    tree.value = new TreeGraph(spansGraph.value, selectSpan);
+    tree.value.init(
+      { label: "TRACE_ROOT", children: segmentId.value },
+      getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+      fixSpansSize.value,
+    );
+    await nextTick();
+    tree.value.draw();
+  }
   function changeTree() {
     if (props.trace.spans.length === 0) {
       return [];

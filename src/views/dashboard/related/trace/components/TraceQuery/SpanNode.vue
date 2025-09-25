@@ -48,7 +48,7 @@ limitations under the License. -->
     span: Span;
     minTimestamp: number;
     maxTimestamp: number;
-    depth?: number;
+    depth: number;
     showDuration?: boolean;
     showLabel?: boolean;
     selectedMaxTimestamp?: number;
