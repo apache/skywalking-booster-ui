@@ -126,7 +126,7 @@ limitations under the License. -->
 
   const PageSize = 10;
   const traceStore = useTraceStore();
-  const expandAll = ref<boolean>(false);
+  const expandAll = ref<boolean>(true);
   const tableRef = ref<InstanceType<typeof ElTable>>();
   const selectedServiceNames = ref<string[]>([]);
   const dialogVisible = ref<boolean>(false);

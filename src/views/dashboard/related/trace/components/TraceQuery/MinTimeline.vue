@@ -13,27 +13,37 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-min-timeline scroll_bar_style">
-    <svg ref="svgEle" width="100%" :height="`${(trace.spans.length + 1) * rowHeight}px`">
-      <MinTimelineMarker :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" />
-      <MinTimelineOverlay
-        :minTimestamp="minTimestamp"
-        :maxTimestamp="maxTimestamp"
-        @setSelectedMinTimestamp="setSelectedMinTimestamp"
-        @setSelectedMaxTimestamp="setSelectedMaxTimestamp"
-      />
-      <MinTimelineSelector
-        :minTimestamp="minTimestamp"
-        :maxTimestamp="maxTimestamp"
-        :selectedMinTimestamp="selectedMinTimestamp"
-        :selectedMaxTimestamp="selectedMaxTimestamp"
-        @setSelectedMinTimestamp="setSelectedMinTimestamp"
-        @setSelectedMaxTimestamp="setSelectedMaxTimestamp"
-      />
-      <g v-for="(item, index) in trace.spans" :key="index" :transform="`translate(0, ${(index + 1) * rowHeight + 3})`">
-        <SpanNode :span="item" :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" :depth="index + 1" />
-      </g>
-    </svg>
+  <div class="trace-min-timeline">
+    <div class="timeline-marker-fixed">
+      <svg width="100%" height="20px">
+        <MinTimelineMarker :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" :lineHeight="20" />
+      </svg>
+    </div>
+    <div class="timeline-content scroll_bar_style">
+      <svg ref="svgEle" width="100%" :height="`${(trace.spans.length + 1) * rowHeight}px`">
+        <MinTimelineOverlay
+          :minTimestamp="minTimestamp"
+          :maxTimestamp="maxTimestamp"
+          @setSelectedMinTimestamp="setSelectedMinTimestamp"
+          @setSelectedMaxTimestamp="setSelectedMaxTimestamp"
+        />
+        <MinTimelineSelector
+          :minTimestamp="minTimestamp"
+          :maxTimestamp="maxTimestamp"
+          :selectedMinTimestamp="selectedMinTimestamp"
+          :selectedMaxTimestamp="selectedMaxTimestamp"
+          @setSelectedMinTimestamp="setSelectedMinTimestamp"
+          @setSelectedMaxTimestamp="setSelectedMaxTimestamp"
+        />
+        <g
+          v-for="(item, index) in trace.spans"
+          :key="index"
+          :transform="`translate(0, ${(index + 1) * rowHeight + 3})`"
+        >
+          <SpanNode :span="item" :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" :depth="index + 1" />
+        </g>
+      </svg>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -72,9 +82,24 @@ limitations under the License. -->
   .trace-min-timeline {
     width: 100%;
     max-height: 200px;
+    border-bottom: 1px solid var(--el-border-color-light);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timeline-marker-fixed {
+    width: 100%;
     padding-right: 20px;
     padding-top: 5px;
+    background: var(--el-bg-color);
     border-bottom: 1px solid var(--el-border-color-light);
+    z-index: 1;
+  }
+
+  .timeline-content {
+    flex: 1;
+    width: 100%;
+    padding-right: 20px;
     overflow: auto;
   }
 </style>
