@@ -18,7 +18,6 @@ limitations under the License. -->
       <div class="flex-h" style="justify-content: space-between">
         <h3>{{ trace.label }}</h3>
         <div>
-          <el-button class="mr-10" size="small" @click="showSpansTable">{{ t("spansTable") }}</el-button>
           <el-dropdown @command="handleDownload" trigger="click">
             <el-button size="small">
               {{ t("download") }}
@@ -76,13 +75,6 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <!-- Spans Table Drawer -->
-    <SpansTableDrawer
-      v-model:visible="spansTableVisible"
-      :spans="trace.spans || []"
-      :trace-id="trace.traceId"
-      @viewSpan="handleViewSpan"
-    />
   </div>
 </template>
 
@@ -91,8 +83,7 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { ElMessage } from "element-plus";
   import { ArrowDown } from "@element-plus/icons-vue";
-  import type { Trace, Span } from "@/types/trace";
-  import SpansTableDrawer from "./SpansTableDrawer.vue";
+  import type { Trace } from "@/types/trace";
   import MinTimeline from "./MinTimeline.vue";
   import { saveFileAsJSON } from "@/utils/file";
   import { useTraceStore } from "@/store/modules/trace";
@@ -106,7 +97,6 @@ limitations under the License. -->
 
   const { t } = useI18n();
   const props = defineProps<Props>();
-  const spansTableVisible = ref<boolean>(false);
   const traceStore = useTraceStore();
   // Time range like xScale domain [0, max]
   const minTimestamp = computed(() => {
@@ -124,10 +114,6 @@ limitations under the License. -->
   const selectedMinTimestamp = ref<number>(minTimestamp.value);
   const minTimelineVisible = ref<boolean>(true);
   const spansGraphType = ref<string>("List");
-
-  function showSpansTable() {
-    spansTableVisible.value = true;
-  }
 
   function handleSelectedMaxTimestamp(value: number) {
     selectedMaxTimestamp.value = value;
@@ -160,11 +146,6 @@ limitations under the License. -->
       console.error("Download error:", error);
       ElMessage.error("Failed to download file");
     }
-  }
-
-  function handleViewSpan(span: Span) {
-    traceStore.setCurrentSpan(span);
-    spansTableVisible.value = false;
   }
 </script>
 
