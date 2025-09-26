@@ -233,6 +233,17 @@ limitations under the License. -->
     setTimeout(() => {
       const nextBatch = Math.min(PageSize, allFilteredTraces.value.length - loadedItemsCount.value);
       loadedItemsCount.value += nextBatch;
+
+      // Apply current expand state to all currently visible items
+      nextTick(() => {
+        if (tableRef.value) {
+          const allVisibleItems = filteredTraces.value;
+          for (const row of allVisibleItems) {
+            tableRef.value.toggleRowExpansion(row, expandAll.value);
+          }
+        }
+      });
+
       loading.value = false;
     }, 300);
   }
@@ -250,7 +261,48 @@ limitations under the License. -->
   // Reset loaded items when filters change
   watch(selectedServiceNames, () => {
     loadedItemsCount.value = PageSize;
+    // Apply expand state to newly visible items after filter change
+    nextTick(() => {
+      if (tableRef.value) {
+        const visibleItems = filteredTraces.value;
+        for (const row of visibleItems) {
+          tableRef.value.toggleRowExpansion(row, expandAll.value);
+        }
+      }
+    });
   });
+
+  // Watch for expandAll state changes to apply to all visible items
+  watch(expandAll, () => {
+    nextTick(() => {
+      if (tableRef.value) {
+        const visibleItems = filteredTraces.value;
+        for (const row of visibleItems) {
+          tableRef.value.toggleRowExpansion(row, expandAll.value);
+        }
+      }
+    });
+  });
+
+  // Watch for trace list changes (when new query is executed) to reapply expand state
+  watch(
+    () => traceStore.traceList,
+    () => {
+      // Reset loaded items count when new data is loaded
+      loadedItemsCount.value = PageSize;
+
+      // Reapply expand state to newly loaded traces
+      nextTick(() => {
+        if (tableRef.value) {
+          const visibleItems = filteredTraces.value;
+          for (const row of visibleItems) {
+            tableRef.value.toggleRowExpansion(row, expandAll.value);
+          }
+        }
+      });
+    },
+    { deep: true },
+  );
 
   // Setup scroll listener
   onMounted(() => {
@@ -269,22 +321,8 @@ limitations under the License. -->
 
   // Toggle all table row expansions (only for loaded items)
   function toggleAllExpansion() {
-    nextTick(() => {
-      if (tableRef.value) {
-        const rows = filteredTraces.value;
-        if (expandAll.value) {
-          // Expand all rows
-          for (const row of rows) {
-            tableRef.value.toggleRowExpansion(row, true);
-          }
-        } else {
-          // Collapse all rows
-          for (const row of rows) {
-            tableRef.value.toggleRowExpansion(row, false);
-          }
-        }
-      }
-    });
+    // The expandAll watcher will handle applying the state to all visible items
+    // This function just needs to trigger the change
   }
 </script>
 <style lang="scss" scoped>
