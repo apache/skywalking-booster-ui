@@ -102,11 +102,11 @@ export default class ListGraph {
     this.row = row;
     this.data = data;
     this.minTimestamp = selectedMinTimestamp ?? d3.min(this.row.map((i) => i.startTime));
-    this.maxTimestamp = selectedMaxTimestamp ?? (d3.max(this.row.map((i) => i.endTime - this.minTimestamp)) || 0);
+    this.maxTimestamp = selectedMaxTimestamp ?? d3.max(this.row.map((i) => i.endTime));
     this.xScale = d3
       .scaleLinear()
       .range([0, this.width * 0.4])
-      .domain([this.minTimestamp, this.maxTimestamp]);
+      .domain([0, this.maxTimestamp - this.minTimestamp]);
     this.xAxis = d3.axisTop(this.xScale).tickFormat((d: any) => {
       if (d === 0) return 0;
       if (d >= 1000) return d / 1000 + "s";
@@ -339,7 +339,7 @@ export default class ListGraph {
         if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
         if (spanEnd > this.maxTimestamp) spanEnd = this.maxTimestamp;
 
-        return this.xScale(spanEnd) - this.xScale(spanStart) + 1 || 0;
+        return this.xScale(spanEnd - this.minTimestamp) - this.xScale(spanStart - this.minTimestamp) + 1 || 0;
       })
       .attr("x", (d: Recordable) => {
         if (!d.data.endTime || !d.data.startTime) return 0;
@@ -349,7 +349,7 @@ export default class ListGraph {
         let spanStart = d.data.startTime;
         if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
 
-        return this.width * 0.6 - d.y - 25 + this.xScale(spanStart) || 0;
+        return this.width * 0.6 - d.y - 25 + this.xScale(spanStart - this.minTimestamp) || 0;
       })
       .attr("y", -2)
       .style("fill", (d: Recordable) => `${getServiceColor(d.data.serviceCode || "")}`);
