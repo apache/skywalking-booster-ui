@@ -99,16 +99,19 @@ export default class ListGraph {
     d3.select("#trace-action-box").style("display", "none");
     this.row = row;
     this.data = data;
-    this.minTimestamp = selectedMinTimestamp ?? d3.min(this.row.map((i) => i.startTime));
-    this.maxTimestamp = selectedMaxTimestamp ?? d3.max(this.row.map((i) => i.endTime));
+    const min = d3.min(this.row.map((i) => i.startTime));
+    const max = d3.max(this.row.map((i) => i.endTime));
+    this.minTimestamp = selectedMinTimestamp ?? min;
+    this.maxTimestamp = selectedMaxTimestamp ?? max;
     this.xScale = d3
       .scaleLinear()
       .range([0, this.width * 0.4])
-      .domain([0, this.maxTimestamp - this.minTimestamp]);
+      .domain([this.minTimestamp, this.maxTimestamp]);
     this.xAxis = d3.axisTop(this.xScale).tickFormat((d: any) => {
-      if (d === 0) return 0;
-      if (d >= 1000) return d / 1000 + "s";
-      return d;
+      const t = d - min;
+      if (t === 0) return t.toFixed(2);
+      if (t >= 1000) return (t / 1000).toFixed(2) + "s";
+      return t.toFixed(2);
     });
     this.svg.attr("height", (this.row.length + fixSpansSize + 1) * this.barHeight);
     this.svg
@@ -345,7 +348,7 @@ export default class ListGraph {
         let spanStart = d.data.startTime;
         if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
 
-        return this.width * 0.6 - d.y - 25 + this.xScale(spanStart - this.minTimestamp) || 0;
+        return this.width * 0.6 - d.y - 25 + this.xScale(spanStart) || 0;
       })
       .attr("y", -2)
       .style("fill", (d: Recordable) => `${getServiceColor(d.data.serviceCode || "")}`);
