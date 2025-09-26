@@ -103,7 +103,7 @@ limitations under the License. -->
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { ElMessage } from "element-plus";
   import { EntityType, QueryOrders, Status } from "@/views/dashboard/data";
-  import type { LayoutConfig } from "@/types/dashboard";
+  import type { LayoutConfig, FilterDuration } from "@/types/dashboard";
   import { useDuration } from "@/hooks/useDuration";
 
   /*global defineProps, defineEmits, Recordable */
@@ -112,7 +112,7 @@ limitations under the License. -->
     needQuery: { type: Boolean, default: true },
     data: {
       type: Object as PropType<LayoutConfig>,
-      default: () => ({ graph: {} }),
+      default: () => ({}),
     },
   });
   const { t } = useI18n();
@@ -121,10 +121,10 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const traceStore: ReturnType<typeof useTraceStore> = useTraceStore();
   const { setDurationRow, getDurationTime, getMaxRange } = useDuration();
-  const filters = reactive<Recordable>(props.data.filters || {});
-  const traceId = ref<string>(filters.traceId || "");
-  const { duration: filtersDuration } = filters;
-  const duration = ref<DurationTime>(
+  const filters = computed(() => props.data.filters || {});
+  const traceId = ref<string>(filters.value.traceId || "");
+  const { duration: filtersDuration } = filters.value;
+  const duration = ref<DurationTime | FilterDuration>(
     filtersDuration
       ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: filtersDuration.step || "" }
       : getDurationTime(),
@@ -133,7 +133,7 @@ limitations under the License. -->
   const maxTraceDuration = ref<number>();
   const tagsMap = ref<Option[]>([]);
   const state = reactive<Recordable>({
-    status: filters.status === "ERROR" ? Status[2] : Status[0],
+    status: filters.value.status === "ERROR" ? Status[2] : Status[0],
     instance: { value: "0", label: "All" },
     endpoint: { value: "0", label: "All" },
     service: { value: "", label: "" },
@@ -142,9 +142,9 @@ limitations under the License. -->
   const maxRange = computed(() =>
     getMaxRange(appStore.coldStageMode ? appStore.recordsTTL?.coldTrace || 0 : appStore.recordsTTL?.trace || 0),
   );
-  if (filters.queryOrder) {
+  if (filters.value.queryOrder) {
     traceStore.setTraceCondition({
-      queryOrder: filters.queryOrder,
+      queryOrder: filters.value.queryOrder,
     });
   }
   if (props.needQuery) {
@@ -152,7 +152,7 @@ limitations under the License. -->
   }
 
   async function init() {
-    duration.value = filters.duration || appStore.durationTime;
+    duration.value = filters.value.duration || appStore.durationTime;
     if (dashboardStore.entity === EntityType[1].value) {
       await getServices();
     }

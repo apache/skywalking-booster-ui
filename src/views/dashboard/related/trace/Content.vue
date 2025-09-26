@@ -13,11 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <TraceQuery v-if="traceStore.hasQueryTracesV2Support" style="height: 100%" />
-  <div v-if="!traceStore.hasQueryTracesV2Support" class="search-bar">
+  <div class="search-bar">
     <Filter :needQuery="needQuery" :data="data" @get="getService" @search="popSegmentList" />
+    <div class="filter-row flex-h mt-10">
+      <div class="grey mr-10 label">{{ t("limit") }}</div>
+      <el-input-number size="small" v-model="limit" :min="10" @change="changeLimit" />
+    </div>
   </div>
-  <div v-if="!traceStore.hasQueryTracesV2Support" class="trace flex-h">
+  <TraceQuery v-if="traceStore.hasQueryTracesV2Support" style="height: 100%" />
+  <div v-else class="trace flex-h">
     <SegmentList class="trace-list" :style="`width: ${currentWidth}px;`" />
     <div
       @mouseover="showIcon = true"
@@ -36,7 +40,8 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { provide, ref, onMounted, onUnmounted } from "vue";
   import type { PropType } from "vue";
-  import { useTraceStore } from "@/store/modules/trace";
+  import { useI18n } from "vue-i18n";
+  import { useTraceStore, PageSize } from "@/store/modules/trace";
   import Filter from "./components/TraceList/Filter.vue";
   import SegmentList from "./components/TraceList/SegmentList.vue";
   import SpanList from "./components/TraceList/SpanList.vue";
@@ -51,6 +56,7 @@ limitations under the License. -->
     },
   });
   provide("options", props.data);
+  const { t } = useI18n();
   const traceStore = useTraceStore();
   const serviceId = ref<string>("");
   const showIcon = ref<boolean>(false);
@@ -58,11 +64,18 @@ limitations under the License. -->
   const currentWidth = ref<number>(280);
   const needQuery = ref<boolean>(true);
   const isDrag = ref<boolean>(false);
+  const limit = ref(PageSize);
   const defaultWidth = 280;
   const minArrowLeftWidth = 120;
 
   function getService(id: string) {
     serviceId.value = id;
+  }
+  function changeLimit(val: number | undefined) {
+    if (!val) return;
+    traceStore.setTraceCondition({
+      paging: { pageNum: 1, pageSize: val },
+    });
   }
 
   // When click the arrow, the width of the segment list is determined by the direction it points to.
@@ -171,5 +184,10 @@ limitations under the License. -->
   .trace-arrow {
     padding-bottom: 1px;
     color: $active-color;
+  }
+
+  .label {
+    height: 28px;
+    line-height: 28px;
   }
 </style>

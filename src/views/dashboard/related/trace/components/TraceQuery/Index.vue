@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-query flex-v">
-    <Filter />
     <TracesTable />
   </div>
 </template>
@@ -23,7 +22,6 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import type { LayoutConfig } from "@/types/dashboard";
   import { useTraceStore } from "@/store/modules/trace";
-  import Filter from "./Filter.vue";
   import TracesTable from "./TracesTable.vue";
 
   /*global defineProps */
