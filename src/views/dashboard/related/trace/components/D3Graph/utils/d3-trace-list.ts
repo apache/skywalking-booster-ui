@@ -320,7 +320,6 @@ export default class ListGraph {
       );
     nodeEnter
       .append("rect")
-      .attr("class", "trace-node-rect")
       .attr("rx", 2)
       .attr("ry", 2)
       .attr("height", 4)
@@ -337,6 +336,7 @@ export default class ListGraph {
         if (spanStart >= spanEnd) return 0;
         if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
         if (spanEnd > this.maxTimestamp) spanEnd = this.maxTimestamp;
+        if (spanStart >= spanEnd) return 0;
 
         return this.xScale(spanEnd - this.minTimestamp) - this.xScale(spanStart - this.minTimestamp) + 1 || 0;
       })

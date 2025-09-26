@@ -276,6 +276,12 @@ export const traceStore = defineStore({
         })
         .sort((a: Trace, b: Trace) => b.duration - a.duration);
       const trace = this.traceList[0];
+      if (!trace) {
+        this.traceList = [];
+        this.setCurrentTrace({});
+        this.setTraceSpans([]);
+        return response;
+      }
 
       this.serviceList = Array.from(new Set(trace.spans.map((i: Span) => i.serviceCode)));
       this.setTraceSpans(trace.spans);
