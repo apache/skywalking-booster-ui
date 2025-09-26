@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="trace-min-timeline flex-v">
+  <div class="trace-min-timeline scroll_bar_style">
     <svg ref="svgEle" width="100%" :height="`${(trace.spans.length + 1) * rowHeight}px`">
       <MinTimelineMarker :minTimestamp="minTimestamp" :maxTimestamp="maxTimestamp" />
       <MinTimelineOverlay
@@ -71,8 +71,10 @@ limitations under the License. -->
 <style lang="scss" scoped>
   .trace-min-timeline {
     width: 100%;
+    max-height: 200px;
     padding-right: 20px;
     padding-top: 5px;
     border-bottom: 1px solid var(--el-border-color-light);
+    overflow: auto;
   }
 </style>
