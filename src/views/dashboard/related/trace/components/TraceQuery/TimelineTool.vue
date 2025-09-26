@@ -14,33 +14,46 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="timeline-tool flex-h">
-    <el-button size="small" @click="onToggleMinTimeline">
-      <Icon iconName="sort" size="middle" />
-    </el-button>
-    <el-button class="flexible-spanPanel" size="small" @click="onToggleSpanPanel">
-      <Icon iconName="sort" size="middle" style="transform: rotate(90deg)" />
-    </el-button>
+    <div class="flex-h trace-type item">
+      <el-radio-group v-model="spansGraphType" size="small">
+        <el-radio-button v-for="option in GraphTypeOptions" :key="option.value" :value="option.value">
+          <Icon :iconName="option.icon" />
+          {{ t(option.label) }}
+        </el-radio-button>
+      </el-radio-group>
+    </div>
+    <div>
+      <el-button size="small" @click="onToggleMinTimeline">
+        <Icon iconName="sort" size="middle" />
+      </el-button>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
-  const emit = defineEmits<{
-    (e: "toggleSpanPanel"): void;
-    (e: "toggleMinTimeline"): void;
-  }>();
+  import { ref, watch } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { GraphTypeOptions } from "../VisGraph/constant";
 
-  function onToggleSpanPanel() {
-    emit("toggleSpanPanel");
-    // Notify other components (e.g., SpansTree) to re-draw after panel layout changes
-    window.dispatchEvent(new CustomEvent("spanPanelToggled"));
-  }
+  const emit = defineEmits<{
+    (e: "toggleMinTimeline"): void;
+    (e: "updateSpansGraphType", value: string): void;
+  }>();
+  const { t } = useI18n();
+  const spansGraphType = ref<string>("List");
 
   function onToggleMinTimeline() {
     emit("toggleMinTimeline");
   }
+
+  // Watch for changes in spansGraphType and emit to parent
+  watch(spansGraphType, (newValue) => {
+    emit("updateSpansGraphType", newValue);
+  });
 </script>
 <style lang="scss" scoped>
   .timeline-tool {
-    justify-content: flex-end;
-    padding: 10px;
+    justify-content: space-between;
+    padding: 10px 5px;
+    border-bottom: 1px solid var(--el-border-color-light);
   }
 </style>

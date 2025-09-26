@@ -83,7 +83,7 @@ limitations under the License. -->
       ref="eventGraph"
       v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"
     ></div>
-    <el-button class="popup-btn" type="primary" @click="getTaceLogs">
+    <el-button class="popup-btn" @click="getTaceLogs">
       {{ t("relatedTraceLogs") }}
     </el-button>
   </div>
@@ -287,9 +287,9 @@ limitations under the License. -->
   }
 
   .popup-btn {
-    margin-top: 40px;
-    width: 100%;
+    margin-top: 20px;
     text-align: center;
+    padding: 0 30px;
   }
 
   .item span {

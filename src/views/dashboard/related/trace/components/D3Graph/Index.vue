@@ -47,7 +47,7 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, onBeforeUnmount, onMounted } from "vue";
+  import { ref, watch, onBeforeUnmount, onMounted, nextTick } from "vue";
   import type { PropType } from "vue";
   import * as d3 from "d3";
   import dayjs from "dayjs";
@@ -57,6 +57,7 @@ limitations under the License. -->
   import SpanDetail from "./SpanDetail.vue";
   import TableContainer from "../Table/TableContainer.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useTraceStore } from "@/store/modules/trace";
   import { debounce } from "@/utils/debounce";
   import { mutationObserver } from "@/utils/mutation";
   import { TraceGraphType } from "../VisGraph/constant";
@@ -70,25 +71,48 @@ limitations under the License. -->
     traceId: { type: String, default: "" },
     type: { type: String, default: TraceGraphType.LIST },
     headerType: { type: String, default: "" },
+    selectedMaxTimestamp: { type: Number },
+    selectedMinTimestamp: { type: Number },
+    minTimestamp: { type: Number, default: 0 },
+    maxTimestamp: { type: Number, default: 0 },
   });
   const emits = defineEmits(["select"]);
   const appStore = useAppStoreWithOut();
   const loading = ref<boolean>(false);
   const showDetail = ref<boolean>(false);
   const fixSpansSize = ref<number>(0);
-  const segmentId = ref<Recordable[]>([]);
+  const segmentId = ref<Span[]>([]);
   const currentSpan = ref<Nullable<Span>>(null);
   const refSpans = ref<Array<Ref>>([]);
   const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
   const parentSpans = ref<Array<Span | SegmentSpan>>([]);
   const refParentSpans = ref<Array<Span | SegmentSpan>>([]);
+  const traceStore = useTraceStore();
   const debounceFunc = debounce(draw, 500);
-  const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
+  // Store previous timestamp values to check for significant changes
+  const prevSelectedMaxTimestamp = ref<number>(props.selectedMaxTimestamp || 0);
+  const prevSelectedMinTimestamp = ref<number>(props.selectedMinTimestamp || 0);
 
-  onMounted(() => {
+  const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
+  // Debounced version of onSpanPanelToggled to prevent excessive re-renders
+  const debouncedOnSpanPanelToggled = debounce(draw, 150);
+
+  // Check if timestamp change is significant enough to warrant a redraw
+  function isTimestampChangeSignificant(newMax: number, newMin: number): boolean {
+    const maxDiff = Math.abs(newMax - prevSelectedMaxTimestamp.value);
+    const minDiff = Math.abs(newMin - prevSelectedMinTimestamp.value);
+    const totalRange = props.maxTimestamp - props.minTimestamp;
+
+    // Consider change significant if it's more than 0.1% of the total range
+    const threshold = totalRange * 0.001;
+
+    return maxDiff > threshold || minDiff > threshold;
+  }
+  onMounted(async () => {
     loading.value = true;
     changeTree();
+    await nextTick();
     draw();
     loading.value = false;
     // monitor segment list width changes.
@@ -97,11 +121,12 @@ limitations under the License. -->
       debounceFunc();
     });
     window.addEventListener("resize", debounceFunc);
+    window.addEventListener("spanPanelToggled", draw);
   });
 
   function draw() {
     if (props.type === TraceGraphType.TABLE) {
-      segmentId.value = setLevel(segmentId.value);
+      segmentId.value = setLevel(segmentId.value) as Span[];
       return;
     }
     if (!traceGraph.value) {
@@ -114,16 +139,33 @@ limitations under the License. -->
         data: { label: "TRACE_ROOT", children: segmentId.value },
         row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
         fixSpansSize: fixSpansSize.value,
+        selectedMaxTimestamp: props.selectedMaxTimestamp,
+        selectedMinTimestamp: props.selectedMinTimestamp,
       });
       tree.value.draw();
+      selectInitialSpan();
       return;
     }
     if (props.type === TraceGraphType.TREE) {
-      tree.value = new TreeGraph(traceGraph.value, handleSelectSpan);
+      tree.value = new TreeGraph({ el: traceGraph.value, handleSelectSpan });
       tree.value.init(
-        { label: `${props.traceId}`, children: segmentId.value },
+        {
+          data: { label: `${props.traceId}`, children: segmentId.value },
+          row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+          selectedMaxTimestamp: props.selectedMaxTimestamp,
+          selectedMinTimestamp: props.selectedMinTimestamp,
+        },
         getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
       );
+    }
+  }
+  function selectInitialSpan() {
+    if (segmentId.value && segmentId.value.length > 0) {
+      const root = segmentId.value[0];
+      traceStore.setCurrentSpan(root);
+      if (tree.value && typeof tree.value.highlightSpan === "function") {
+        tree.value.highlightSpan(root as any);
+      }
     }
   }
   function handleSelectSpan(i: any) {
@@ -192,14 +234,14 @@ limitations under the License. -->
       return [];
     }
     const { roots, fixSpansSize: fixSize, refSpans: refs } = buildSegmentForest(props.data as Span[], props.traceId);
-    segmentId.value = roots as unknown as Recordable[];
+    segmentId.value = roots;
     fixSpansSize.value = fixSize;
     refSpans.value = refs;
     for (const root of segmentId.value) {
-      collapseTree(root as unknown as Span, refSpans.value);
+      collapseTree(root, refSpans.value);
     }
   }
-  function setLevel(arr: Recordable[], level = 1, totalExec?: number) {
+  function setLevel(arr: Span[], level = 1, totalExec?: number) {
     for (const item of arr) {
       item.level = level;
       totalExec = totalExec || item.endTime - item.startTime;
@@ -215,6 +257,7 @@ limitations under the License. -->
     d3.selectAll(".d3-tip").remove();
     window.removeEventListener("resize", debounceFunc);
     mutationObserver.deleteObserve("trigger-resize");
+    window.removeEventListener("spanPanelToggled", draw);
   });
   watch(
     () => props.data,
@@ -231,12 +274,35 @@ limitations under the License. -->
   watch(
     () => appStore.theme,
     () => {
-      tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
+      tree.value.init(
+        {
+          data: { label: "TRACE_ROOT", children: segmentId.value },
+          row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+          selectedMaxTimestamp: props.selectedMaxTimestamp,
+          selectedMinTimestamp: props.selectedMinTimestamp,
+        },
+        props.data,
+        fixSpansSize.value,
+      );
       tree.value.draw(() => {
         setTimeout(() => {
           loading.value = false;
         }, 200);
       });
+    },
+  );
+  watch(
+    () => [props.selectedMaxTimestamp, props.selectedMinTimestamp],
+    ([newMax, newMin]) => {
+      // Only trigger redraw if the change is significant
+      if (isTimestampChangeSignificant(newMax as number, newMin as number)) {
+        // Update previous values
+        prevSelectedMaxTimestamp.value = newMax as number;
+        prevSelectedMinTimestamp.value = newMin as number;
+
+        // Use debounced version to prevent excessive re-renders
+        debouncedOnSpanPanelToggled();
+      }
     },
   );
 </script>

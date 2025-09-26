@@ -22,18 +22,25 @@ limitations under the License. -->
         <Icon iconName="issue-open-m" class="mr-5" size="sm" />
         <span>{{ i }}</span>
       </span>
-      <el-button class="btn" size="small" type="primary" @click="downloadTrace">
-        {{ t("exportImage") }}
+      <el-button class="btn" size="small" @click="downloadTrace">
+        <Icon iconName="download" size="sm" />
       </el-button>
     </div>
     <div class="list">
-      <Graph :data="data" :traceId="traceId" :type="TraceGraphType.LIST" />
+      <Graph
+        :data="data"
+        :traceId="traceId"
+        :type="TraceGraphType.LIST"
+        :selectedMaxTimestamp="selectedMaxTimestamp"
+        :selectedMinTimestamp="selectedMinTimestamp"
+        :minTimestamp="minTimestamp"
+        :maxTimestamp="maxTimestamp"
+      />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
   import type { PropType } from "vue";
-  import { useI18n } from "vue-i18n";
   import * as d3 from "d3";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useTraceStore } from "@/store/modules/trace";
@@ -47,8 +54,11 @@ limitations under the License. -->
   defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
+    selectedMaxTimestamp: { type: Number },
+    selectedMinTimestamp: { type: Number },
+    minTimestamp: { type: Number },
+    maxTimestamp: { type: Number },
   });
-  const { t } = useI18n();
   const appStore = useAppStoreWithOut();
   const traceStore = useTraceStore();
 
@@ -87,6 +97,7 @@ limitations under the License. -->
     border: 1px solid;
     font-size: 11px;
     border-radius: 4px;
+    margin: 3px;
   }
 
   .btn {

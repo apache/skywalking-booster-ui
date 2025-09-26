@@ -32,6 +32,8 @@ limitations under the License. -->
     data: { type: Array as PropType<(Span | SegmentSpan)[]>, default: () => [] },
     traceId: { type: String, default: "" },
     headerType: { type: String, default: "" },
+    selectedMaxTimestamp: { type: Number },
+    selectedMinTimestamp: { type: Number },
   });
   const emits = defineEmits(["select"]);
 

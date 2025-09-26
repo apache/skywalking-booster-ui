@@ -45,7 +45,6 @@ export default class ListGraph {
     this.handleSelectSpan = handleSelectSpan;
     this.el = el;
     this.width = el.getBoundingClientRect().width - 10;
-    this.height = el.getBoundingClientRect().height - 10;
     d3.select(`.${this.el?.className} .trace-list`).remove();
     this.svg = d3
       .select(this.el)
@@ -325,7 +324,6 @@ export default class ListGraph {
       .attr("height", 4)
       .attr("width", (d: Recordable) => {
         if (!d.data.endTime || !d.data.startTime) return 0;
-
         // Calculate the actual start and end times within the visible range
         let spanStart = d.data.startTime;
         let spanEnd = d.data.endTime;
@@ -337,7 +335,6 @@ export default class ListGraph {
         if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
         if (spanEnd > this.maxTimestamp) spanEnd = this.maxTimestamp;
         if (spanStart >= spanEnd) return 0;
-
         return this.xScale(spanEnd - this.minTimestamp) - this.xScale(spanStart - this.minTimestamp) + 1 || 0;
       })
       .attr("x", (d: Recordable) => {

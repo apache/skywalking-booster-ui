@@ -36,6 +36,8 @@ limitations under the License. -->
     traceId: { type: String, default: "" },
     showBtnDetail: { type: Boolean, default: false },
     headerType: { type: String, default: "" },
+    selectedMaxTimestamp: { type: Number },
+    selectedMinTimestamp: { type: Number },
   });
   const emit = defineEmits(["load"]);
   const loading = ref<boolean>(true);

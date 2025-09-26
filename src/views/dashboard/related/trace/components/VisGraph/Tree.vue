@@ -17,7 +17,7 @@ limitations under the License. -->
         class="time-charts-item mr-5"
         v-for="(i, index) in traceStore.serviceList"
         :key="index"
-        :style="`color:${computedScale(index)}`"
+        :style="`color:${getServiceColor(i)}`"
       >
         <Icon iconName="issue-open-m" class="mr-5" size="sm" />
         <span>{{ i }}</span>
@@ -35,12 +35,20 @@ limitations under the License. -->
       </a>
     </div>
     <div class="trace-tree">
-      <Graph ref="charts" :data="data" :traceId="traceId" :type="TraceGraphType.TREE" />
+      <Graph
+        ref="charts"
+        :data="data"
+        :traceId="traceId"
+        :type="TraceGraphType.TREE"
+        :selectedMaxTimestamp="selectedMaxTimestamp"
+        :selectedMinTimestamp="selectedMinTimestamp"
+        :minTimestamp="minTimestamp"
+        :maxTimestamp="maxTimestamp"
+      />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import * as d3 from "d3";
   import Graph from "../D3Graph/Index.vue";
   import type { PropType } from "vue";
   import type { Span } from "@/types/trace";
@@ -48,27 +56,24 @@ limitations under the License. -->
   import { ref } from "vue";
   import { TraceGraphType } from "./constant";
   import { useTraceStore } from "@/store/modules/trace";
+  import { getServiceColor } from "@/utils/color";
 
   /* global defineProps */
   defineProps({
     data: { type: Array as PropType<Span[]>, default: () => [] },
     traceId: { type: String, default: "" },
+    selectedMaxTimestamp: { type: Number },
+    selectedMinTimestamp: { type: Number },
+    minTimestamp: { type: Number },
+    maxTimestamp: { type: Number },
   });
   const { t } = useI18n();
   const traceStore = useTraceStore();
   const charts = ref<any>(null);
-
-  function computedScale(i: number) {
-    const sequentialScale = d3
-      .scaleSequential()
-      .domain([0, traceStore.serviceList.length + 1])
-      .interpolator(d3.interpolateCool);
-    return sequentialScale(i);
-  }
 </script>
 <style lang="scss" scoped>
   .trace-tree {
-    height: 100%;
+    min-height: 400px;
     overflow: auto;
   }
 
@@ -84,7 +89,7 @@ limitations under the License. -->
   .trace-tree-charts {
     overflow: auto;
     padding: 10px;
-    position: relative;
+    // position: relative;
     height: 100%;
     width: 100%;
   }
@@ -95,5 +100,6 @@ limitations under the License. -->
     border: 1px solid;
     font-size: 11px;
     border-radius: 4px;
+    margin: 3px;
   }
 </style>

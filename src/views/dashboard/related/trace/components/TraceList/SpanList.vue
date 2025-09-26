@@ -84,13 +84,8 @@ limitations under the License. -->
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { WidgetType } from "@/views/dashboard/data";
+  import { GraphTypeOptions } from "../VisGraph/constant";
 
-  const GraphTypeOptions = [
-    { value: "List", icon: "list-bulleted", label: "list" },
-    { value: "Tree", icon: "issue-child", label: "tree" },
-    { value: "Table", icon: "table", label: "table" },
-    { value: "Statistics", icon: "statistics-bulleted", label: "statistics" },
-  ] as const;
   const props = {
     serviceId: { type: String, default: "" },
   };

@@ -52,7 +52,7 @@ limitations under the License. -->
       </div>
     </div>
     <div class="flex-h">
-      <div class="detail-section-timeline flex-v" :style="{ width: spanPanelVisible ? '65%' : '100%' }">
+      <div class="detail-section-timeline flex-v">
         <MinTimeline
           v-show="minTimelineVisible"
           :trace="trace"
@@ -61,16 +61,20 @@ limitations under the License. -->
           @updateSelectedMaxTimestamp="handleSelectedMaxTimestamp"
           @updateSelectedMinTimestamp="handleSelectedMinTimestamp"
         />
-        <TimelineTool @toggleSpanPanel="toggleSpanPanel" @toggleMinTimeline="toggleMinTimeline" />
-        <SpansTree
-          :trace="trace"
-          :minTimestamp="minTimestamp"
-          :maxTimestamp="maxTimestamp"
+        <TimelineTool @toggleMinTimeline="toggleMinTimeline" @updateSpansGraphType="handleSpansGraphTypeUpdate" />
+        <component
+          v-if="traceStore.currentTrace?.endpointNames"
+          :is="graphs[spansGraphType as keyof typeof graphs]"
+          :data="traceStore.traceSpans"
+          :traceId="traceStore.currentTrace?.traceIds?.[0]?.value"
+          :showBtnDetail="false"
+          :headerType="WidgetType.Trace"
           :selectedMaxTimestamp="selectedMaxTimestamp"
           :selectedMinTimestamp="selectedMinTimestamp"
+          :minTimestamp="minTimestamp"
+          :maxTimestamp="maxTimestamp"
         />
       </div>
-      <SpanDetails v-show="spanPanelVisible" />
     </div>
     <!-- Spans Table Drawer -->
     <SpansTableDrawer
@@ -89,12 +93,12 @@ limitations under the License. -->
   import { ArrowDown } from "@element-plus/icons-vue";
   import type { Trace, Span } from "@/types/trace";
   import SpansTableDrawer from "./SpansTableDrawer.vue";
-  import SpansTree from "./SpansTree.vue";
   import MinTimeline from "./MinTimeline.vue";
-  import SpanDetails from "./SpanDetails.vue";
   import { saveFileAsJSON } from "@/utils/file";
   import { useTraceStore } from "@/store/modules/trace";
   import TimelineTool from "./TimelineTool.vue";
+  import graphs from "../VisGraph/index";
+  import { WidgetType } from "@/views/dashboard/data";
 
   interface Props {
     trace: Trace;
@@ -118,8 +122,8 @@ limitations under the License. -->
   });
   const selectedMaxTimestamp = ref<number>(maxTimestamp.value);
   const selectedMinTimestamp = ref<number>(minTimestamp.value);
-  const spanPanelVisible = ref<boolean>(true);
   const minTimelineVisible = ref<boolean>(true);
+  const spansGraphType = ref<string>("List");
 
   function showSpansTable() {
     spansTableVisible.value = true;
@@ -133,12 +137,12 @@ limitations under the License. -->
     selectedMinTimestamp.value = value;
   }
 
-  function toggleSpanPanel() {
-    spanPanelVisible.value = !spanPanelVisible.value;
-  }
-
   function toggleMinTimeline() {
     minTimelineVisible.value = !minTimelineVisible.value;
+  }
+
+  function handleSpansGraphTypeUpdate(value: string) {
+    spansGraphType.value = value;
   }
 
   function handleDownload() {
@@ -184,6 +188,6 @@ limitations under the License. -->
   }
 
   .detail-section-timeline {
-    width: 65%;
+    width: 100%;
   }
 </style>
