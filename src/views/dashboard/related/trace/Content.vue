@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="search-bar">
     <Filter :needQuery="needQuery" :data="data" @get="getService" @search="popSegmentList" />
-    <div class="filter-row flex-h mt-10">
+    <div class="filter-row flex-h mt-10" v-if="traceStore.hasQueryTracesV2Support">
       <div class="grey mr-10 label">{{ t("limit") }}</div>
       <el-input-number size="small" v-model="limit" :min="10" @change="changeLimit" />
     </div>
