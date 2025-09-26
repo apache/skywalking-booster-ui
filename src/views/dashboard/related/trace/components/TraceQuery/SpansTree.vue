@@ -25,6 +25,7 @@ limitations under the License. -->
   import { useTraceStore } from "@/store/modules/trace";
   import TreeGraph from "../D3Graph/utils/d3-trace-list";
   import { buildSegmentForest, collapseTree, getRefsAllNodes } from "../D3Graph/utils/helper";
+  import { debounce } from "@/utils/debounce";
   /* global Nullable */
   interface Props {
     trace: Trace;
@@ -42,6 +43,25 @@ limitations under the License. -->
   const fixSpansSize = ref<number>(0);
   const currentSpan = () => traceStore.currentSpan;
   const rowHeight = 20; // must match child component vertical spacing
+
+  // Store previous timestamp values to check for significant changes
+  const prevSelectedMaxTimestamp = ref<number>(props.selectedMaxTimestamp);
+  const prevSelectedMinTimestamp = ref<number>(props.selectedMinTimestamp);
+
+  // Debounced version of onSpanPanelToggled to prevent excessive re-renders
+  const debouncedOnSpanPanelToggled = debounce(onSpanPanelToggled, 150);
+
+  // Check if timestamp change is significant enough to warrant a redraw
+  function isTimestampChangeSignificant(newMax: number, newMin: number): boolean {
+    const maxDiff = Math.abs(newMax - prevSelectedMaxTimestamp.value);
+    const minDiff = Math.abs(newMin - prevSelectedMinTimestamp.value);
+    const totalRange = props.maxTimestamp - props.minTimestamp;
+
+    // Consider change significant if it's more than 0.1% of the total range
+    const threshold = totalRange * 0.001;
+
+    return maxDiff > threshold || minDiff > threshold;
+  }
 
   onMounted(async () => {
     changeTree();
@@ -130,8 +150,16 @@ limitations under the License. -->
   );
   watch(
     () => [props.selectedMaxTimestamp, props.selectedMinTimestamp],
-    (value) => {
-      onSpanPanelToggled();
+    ([newMax, newMin]) => {
+      // Only trigger redraw if the change is significant
+      if (isTimestampChangeSignificant(newMax as number, newMin as number)) {
+        // Update previous values
+        prevSelectedMaxTimestamp.value = newMax as number;
+        prevSelectedMinTimestamp.value = newMin as number;
+
+        // Use debounced version to prevent excessive re-renders
+        debouncedOnSpanPanelToggled();
+      }
     },
   );
 </script>
