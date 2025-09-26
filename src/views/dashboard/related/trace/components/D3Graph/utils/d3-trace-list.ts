@@ -36,13 +36,13 @@ export default class ListGraph {
   private prompt: any = null;
   private row: any[] = [];
   private data: any = [];
-  private min = 0;
-  private max = 0;
+  private minTimestamp = 0;
+  private maxTimestamp = 0;
   private xScale: any = null;
   private xAxis: any = null;
   private root: any = null;
   private selectedNode: any = null;
-  constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
+  constructor({ el, handleSelectSpan }: { el: HTMLDivElement; handleSelectSpan: (i: Trace) => void }) {
     this.handleSelectSpan = handleSelectSpan;
     this.el = el;
     this.width = el.getBoundingClientRect().width - 10;
@@ -84,17 +84,29 @@ export default class ListGraph {
     L${d.target.y} ${d.target.x - 20}
     L${d.target.y} ${d.target.x - 5}`;
   }
-  init(data: Recordable, row: Recordable[], fixSpansSize: number) {
+  init({
+    data,
+    row,
+    fixSpansSize,
+    selectedMaxTimestamp,
+    selectedMinTimestamp,
+  }: {
+    data: Recordable;
+    row: Recordable[];
+    fixSpansSize: number;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+  }) {
     d3.select(`.${this.el?.className} .trace-xaxis`).remove();
     d3.select("#trace-action-box").style("display", "none");
     this.row = row;
     this.data = data;
-    this.min = d3.min(this.row.map((i) => i.startTime));
-    this.max = d3.max(this.row.map((i) => i.endTime - this.min)) || 0;
+    this.minTimestamp = selectedMinTimestamp ?? d3.min(this.row.map((i) => i.startTime));
+    this.maxTimestamp = selectedMaxTimestamp ?? (d3.max(this.row.map((i) => i.endTime - this.minTimestamp)) || 0);
     this.xScale = d3
       .scaleLinear()
       .range([0, this.width * 0.4])
-      .domain([0, this.max]);
+      .domain([this.minTimestamp, this.maxTimestamp]);
     this.xAxis = d3.axisTop(this.xScale).tickFormat((d: any) => {
       if (d === 0) return 0;
       if (d >= 1000) return d / 1000 + "s";
@@ -309,16 +321,35 @@ export default class ListGraph {
       );
     nodeEnter
       .append("rect")
+      .attr("class", "trace-node-rect")
       .attr("rx", 2)
       .attr("ry", 2)
       .attr("height", 4)
       .attr("width", (d: Recordable) => {
         if (!d.data.endTime || !d.data.startTime) return 0;
-        return this.xScale(d.data.endTime - d.data.startTime) + 1 || 0;
+
+        // Calculate the actual start and end times within the visible range
+        let spanStart = d.data.startTime;
+        let spanEnd = d.data.endTime;
+        const isIn = d.data.startTime > this.maxTimestamp || d.data.endTime < this.minTimestamp;
+        if (isIn) return 0;
+
+        // If the span is completely outside the visible range, don't show it
+        if (spanStart >= spanEnd) return 0;
+        if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
+        if (spanEnd > this.maxTimestamp) spanEnd = this.maxTimestamp;
+
+        return this.xScale(spanEnd) - this.xScale(spanStart) + 1 || 0;
       })
       .attr("x", (d: Recordable) => {
         if (!d.data.endTime || !d.data.startTime) return 0;
-        return this.width * 0.6 - d.y - 25 + this.xScale(d.data.startTime - this.min) || 0;
+        const isIn = d.data.startTime > this.maxTimestamp || d.data.endTime < this.minTimestamp;
+        if (isIn) return 0;
+        // Calculate the actual start time within the visible range
+        let spanStart = d.data.startTime;
+        if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
+
+        return this.width * 0.6 - d.y - 25 + this.xScale(spanStart) || 0;
       })
       .attr("y", -2)
       .style("fill", (d: Recordable) => `${getServiceColor(d.data.serviceCode || "")}`);

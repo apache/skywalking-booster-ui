@@ -109,12 +109,12 @@ limitations under the License. -->
     }
     d3.selectAll(".d3-tip").remove();
     if (props.type === TraceGraphType.LIST) {
-      tree.value = new ListGraph(traceGraph.value, handleSelectSpan);
-      tree.value.init(
-        { label: "TRACE_ROOT", children: segmentId.value },
-        getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
-        fixSpansSize.value,
-      );
+      tree.value = new ListGraph({ el: traceGraph.value, handleSelectSpan: handleSelectSpan });
+      tree.value.init({
+        data: { label: "TRACE_ROOT", children: segmentId.value },
+        row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+        fixSpansSize: fixSpansSize.value,
+      });
       tree.value.draw();
       return;
     }

@@ -50,12 +50,14 @@ limitations under the License. -->
     }
     // Wait for DOM to be fully updated before initializing and drawing
     await nextTick();
-    tree.value = new TreeGraph(spansGraph.value, selectSpan);
-    tree.value.init(
-      { label: "TRACE_ROOT", children: segmentId.value },
-      getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
-      fixSpansSize.value,
-    );
+    tree.value = new TreeGraph({ el: spansGraph.value, handleSelectSpan: selectSpan });
+    tree.value.init({
+      data: { label: "TRACE_ROOT", children: segmentId.value },
+      row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+      fixSpansSize: fixSpansSize.value,
+      selectedMaxTimestamp: props.selectedMaxTimestamp,
+      selectedMinTimestamp: props.selectedMinTimestamp,
+    });
     // Ensure the element has proper dimensions before drawing
     await nextTick();
     tree.value.draw();
@@ -75,12 +77,14 @@ limitations under the License. -->
     if (!spansGraph.value) {
       return;
     }
-    tree.value = new TreeGraph(spansGraph.value, selectSpan);
-    tree.value.init(
-      { label: "TRACE_ROOT", children: segmentId.value },
-      getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
-      fixSpansSize.value,
-    );
+    tree.value = new TreeGraph({ el: spansGraph.value, handleSelectSpan: selectSpan });
+    tree.value.init({
+      data: { label: "TRACE_ROOT", children: segmentId.value },
+      row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+      fixSpansSize: fixSpansSize.value,
+      selectedMaxTimestamp: props.selectedMaxTimestamp,
+      selectedMinTimestamp: props.selectedMinTimestamp,
+    });
     await nextTick();
     tree.value.draw();
     selectInitialSpan();
@@ -123,6 +127,12 @@ limitations under the License. -->
       tree.value.highlightSpan(span as any);
     },
     { deep: false },
+  );
+  watch(
+    () => [props.selectedMaxTimestamp, props.selectedMinTimestamp],
+    (value) => {
+      onSpanPanelToggled();
+    },
   );
 </script>
 <style lang="scss" scoped>
