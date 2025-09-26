@@ -233,7 +233,7 @@ limitations under the License. -->
         return a.startTime - b.startTime;
       });
 
-    tree.value = new ListGraph(eventGraph.value, selectEvent);
+    tree.value = new ListGraph({ el: eventGraph.value, handleSelectSpan: selectEvent });
     tree.value.init(
       {
         children: events,

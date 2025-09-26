@@ -31,6 +31,14 @@ limitations under the License. -->
         <span class="grey mr-10">{{ t("component") }}</span>
         <span class="value">{{ currentSpan?.component || "Unknown" }}</span>
       </div>
+      <div class="detail-item">
+        <span class="grey mr-10">Peer</span>
+        <span class="value">{{ currentSpan?.peer || "Unknown" }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="grey mr-10">{{ t("isError") }}</span>
+        <span class="value">{{ currentSpan?.isError ? "Yes" : "No" }}</span>
+      </div>
     </div>
     <h4>{{ t("tags") }}</h4>
     <div
@@ -43,17 +51,74 @@ limitations under the License. -->
       </div>
     </div>
     <div v-else class="no-data">No tags available</div>
+    <div class="mt-20">
+      <el-button @click="viewRelatedLogs">{{ t("relatedTraceLogs") }}</el-button>
+    </div>
+    <el-dialog
+      v-model="showRelatedLogs"
+      width="60%"
+      center
+      align-center
+      :destroy-on-close="true"
+      @closed="showRelatedLogs = false"
+    >
+      <el-pagination
+        v-model="pageNum"
+        :page-size="pageSize"
+        size="small"
+        layout="prev, pager, next"
+        :pager-count="5"
+        :total="total"
+        @current-change="turnPage"
+      />
+      <LogTable :tableData="traceStore.traceSpanLogs || []" :type="`service`" :noLink="true">
+        <div class="log-tips" v-if="!traceStore.traceSpanLogs.length">
+          {{ t("noData") }}
+        </div>
+      </LogTable>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { computed } from "vue";
+  import { computed, ref } from "vue";
   import { useI18n } from "vue-i18n";
+  import { ElMessage } from "element-plus";
   import { useTraceStore } from "@/store/modules/trace";
+  import LogTable from "@/views/dashboard/related/log/LogTable/Index.vue";
 
   const { t } = useI18n();
   const traceStore = useTraceStore();
+  const showRelatedLogs = ref<boolean>(false);
+  const pageNum = ref<number>(1);
+  const pageSize = ref<number>(10);
   const currentSpan = computed(() => traceStore.currentSpan);
+  const total = computed(() =>
+    traceStore.traceList.length === pageSize.value
+      ? pageSize.value * pageNum.value + 1
+      : pageSize.value * pageNum.value,
+  );
+
+  async function viewRelatedLogs() {
+    showRelatedLogs.value = true;
+    const res = await traceStore.getSpanLogs({
+      condition: {
+        relatedTrace: {
+          traceId: currentSpan.value?.traceId,
+          segmentId: currentSpan.value?.segmentId,
+          spanId: currentSpan.value?.spanId,
+        },
+        paging: { pageNum: pageNum.value, pageSize: pageSize.value },
+      },
+    });
+    if (res.errors) {
+      ElMessage.error(res.errors);
+    }
+  }
+  function turnPage(p: number) {
+    pageNum.value = p;
+    viewRelatedLogs();
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -89,7 +154,6 @@ limitations under the License. -->
 
   .tags-section {
     max-height: calc(100vh - 360px);
-    min-height: 200px;
     overflow: auto;
     padding-right: 5px;
   }
@@ -116,5 +180,11 @@ limitations under the License. -->
     align-items: center;
     padding: 5px 0;
     border-bottom: 1px solid var(--el-border-color-light);
+  }
+
+  .log-tips {
+    width: 100%;
+    text-align: center;
+    margin: 50px 0;
   }
 </style>
