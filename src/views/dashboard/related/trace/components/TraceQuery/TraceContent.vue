@@ -146,12 +146,7 @@ limitations under the License. -->
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const baseFilename = `trace-${trace.traceId}-${timestamp}`;
     const spans = trace.spans.map((span) => {
-      const newSpan = {
-        ...span,
-        duration: span.duration,
-      };
-      delete newSpan.duration;
-      delete newSpan.label;
+      const { duration, label, ...newSpan } = span;
       return newSpan;
     });
     try {
