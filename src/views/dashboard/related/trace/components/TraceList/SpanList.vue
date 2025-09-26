@@ -13,9 +13,16 @@ limitations under the License. -->
 <template>
   <div class="trace-detail" v-loading="loading">
     <div class="trace-detail-wrapper clear" v-if="traceStore.currentTrace?.endpointNames">
-      <h5 class="mb-5 mt-0">
-        <span class="vm">{{ traceStore.currentTrace?.endpointNames?.[0] }}</span>
-      </h5>
+      <div class="flex-h" style="justify-content: space-between">
+        <h5 class="mb-5 mt-0">
+          <span class="vm">{{ traceStore.currentTrace?.endpointNames?.[0] }}</span>
+        </h5>
+        <div>
+          <el-button size="small" class="mr-10" @click="searchTraceLogs">
+            {{ t("viewLogs") }}
+          </el-button>
+        </div>
+      </div>
       <div class="mb-5 blue">
         <Selector
           size="small"
@@ -41,18 +48,13 @@ limitations under the License. -->
           <div class="tag mr-5">{{ t("spans") }}</div>
           <span class="sm">{{ traceStore.traceSpans.length }}</span>
         </div>
-        <div class="flex-h trace-type">
+        <div class="flex-h trace-type item">
           <el-radio-group v-model="spansGraphType" size="small">
             <el-radio-button v-for="option in GraphTypeOptions" :key="option.value" :value="option.value">
               <Icon :iconName="option.icon" />
               {{ t(option.label) }}
             </el-radio-button>
           </el-radio-group>
-        </div>
-        <div>
-          <el-button size="small" class="mr-10" @click="searchTraceLogs">
-            {{ t("viewLogs") }}
-          </el-button>
         </div>
       </div>
     </div>
@@ -208,5 +210,17 @@ limitations under the License. -->
     padding-top: 50px;
     width: 100%;
     text-align: center;
+  }
+
+  .trace-type {
+    // padding: 10px 0 10px 10px;
+    border-bottom: 1px solid $border-color-primary;
+
+    /* Make radio buttons content align nicely with icons */
+    :deep(.el-radio-button__inner) {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
   }
 </style>

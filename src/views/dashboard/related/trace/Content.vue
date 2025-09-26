@@ -123,18 +123,6 @@ limitations under the License. -->
   });
 </script>
 <style lang="scss" scoped>
-  .trace-type {
-    padding: 10px 0 10px 10px;
-    border-bottom: 1px solid $border-color-primary;
-
-    /* Make radio buttons content align nicely with icons */
-    :deep(.el-radio-button__inner) {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-  }
-
   .search-bar {
     padding: 10px;
     font-size: $font-size-smaller;
