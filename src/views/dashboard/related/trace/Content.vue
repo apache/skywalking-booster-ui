@@ -13,28 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h trace-type">
-    <el-radio-group v-model="spansGraphType" size="small">
-      <el-radio-button
-        v-for="option in GraphTypeOptions"
-        :key="option.value"
-        :value="option.value"
-        v-show="option.value !== GraphTypeOptions[4].value"
-      >
-        <Icon :iconName="option.icon" />
-        {{ t(option.label) }}
-      </el-radio-button>
-      <el-radio-button v-if="traceStore.hasQueryTracesV2Support" :value="GraphTypeOptions[4].value">
-        <Icon :iconName="GraphTypeOptions[4].icon" />
-        {{ t(GraphTypeOptions[4].label) }}
-      </el-radio-button>
-    </el-radio-group>
-  </div>
-  <TraceQuery v-if="spansGraphType === GraphTypeOptions[4].value" style="height: calc(100% - 70px)" />
-  <div v-if="spansGraphType !== GraphTypeOptions[4].value" class="search-bar">
+  <TraceQuery v-if="traceStore.hasQueryTracesV2Support" style="height: 100%" />
+  <div v-if="!traceStore.hasQueryTracesV2Support" class="search-bar">
     <Filter :needQuery="needQuery" :data="data" @get="getService" @search="popSegmentList" />
   </div>
-  <div v-if="spansGraphType !== GraphTypeOptions[4].value" class="trace flex-h">
+  <div v-if="!traceStore.hasQueryTracesV2Support" class="trace flex-h">
     <SegmentList class="trace-list" :style="`width: ${currentWidth}px;`" />
     <div
       @mouseover="showIcon = true"
@@ -47,13 +30,12 @@ limitations under the License. -->
         <Icon class="trace-arrow" :icon-name="isLeft ? 'chevron-left' : 'chevron-right'" size="lg" />
       </span>
     </div>
-    <SpanList :serviceId="serviceId" :spansGraphType="spansGraphType" />
+    <SpanList :serviceId="serviceId" />
   </div>
 </template>
 <script lang="ts" setup>
   import { provide, ref, onMounted, onUnmounted } from "vue";
   import type { PropType } from "vue";
-  import { useI18n } from "vue-i18n";
   import { useTraceStore } from "@/store/modules/trace";
   import Filter from "./components/TraceList/Filter.vue";
   import SegmentList from "./components/TraceList/SegmentList.vue";
@@ -68,7 +50,6 @@ limitations under the License. -->
       default: () => ({}),
     },
   });
-  const { t } = useI18n();
   provide("options", props.data);
   const traceStore = useTraceStore();
   const serviceId = ref<string>("");
@@ -79,15 +60,6 @@ limitations under the License. -->
   const isDrag = ref<boolean>(false);
   const defaultWidth = 280;
   const minArrowLeftWidth = 120;
-  const GraphTypeOptions = [
-    { value: "List", icon: "list-bulleted", label: "list" },
-    { value: "Tree", icon: "issue-child", label: "tree" },
-    { value: "Table", icon: "table", label: "table" },
-    { value: "Statistics", icon: "statistics-bulleted", label: "statistics" },
-    { value: "Query", icon: "search", label: "query" },
-  ] as const;
-  type SpansGraphType = typeof GraphTypeOptions[number]["value"];
-  const spansGraphType = ref<SpansGraphType>(GraphTypeOptions[0].value);
 
   function getService(id: string) {
     serviceId.value = id;

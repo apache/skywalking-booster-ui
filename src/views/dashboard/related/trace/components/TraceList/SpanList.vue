@@ -41,6 +41,14 @@ limitations under the License. -->
           <div class="tag mr-5">{{ t("spans") }}</div>
           <span class="sm">{{ traceStore.traceSpans.length }}</span>
         </div>
+        <div class="flex-h trace-type">
+          <el-radio-group v-model="spansGraphType" size="small">
+            <el-radio-button v-for="option in GraphTypeOptions" :key="option.value" :value="option.value">
+              <Icon :iconName="option.icon" />
+              {{ t(option.label) }}
+            </el-radio-button>
+          </el-radio-group>
+        </div>
         <div>
           <el-button size="small" class="mr-10" @click="searchTraceLogs">
             {{ t("viewLogs") }}
@@ -75,9 +83,14 @@ limitations under the License. -->
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { WidgetType } from "@/views/dashboard/data";
 
+  const GraphTypeOptions = [
+    { value: "List", icon: "list-bulleted", label: "list" },
+    { value: "Tree", icon: "issue-child", label: "tree" },
+    { value: "Table", icon: "table", label: "table" },
+    { value: "Statistics", icon: "statistics-bulleted", label: "statistics" },
+  ] as const;
   const props = {
     serviceId: { type: String, default: "" },
-    spansGraphType: { type: String, default: "List" },
   };
 
   export default defineComponent({
@@ -93,6 +106,7 @@ limitations under the License. -->
       const traceStore = useTraceStore();
       const loading = ref<boolean>(false);
       const traceId = ref<string>("");
+      const spansGraphType = ref<string>("List");
 
       function handleClick() {
         copy(traceId.value || traceStore.currentTrace?.traceIds?.[0]?.value);
@@ -131,6 +145,8 @@ limitations under the License. -->
         loading,
         traceId,
         WidgetType,
+        spansGraphType,
+        GraphTypeOptions,
       };
     },
   });
