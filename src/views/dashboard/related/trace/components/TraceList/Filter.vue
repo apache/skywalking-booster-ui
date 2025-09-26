@@ -220,8 +220,10 @@ limitations under the License. -->
       minTraceDuration: Number(minTraceDuration.value),
       maxTraceDuration: Number(maxTraceDuration.value),
       traceId: traceId.value || undefined,
-      paging: { pageNum: 1, pageSize: PageSize },
     };
+    if (!traceStore.hasQueryTracesV2Support) {
+      param.paging = { pageNum: 1, pageSize: PageSize };
+    }
     if (props.data.filters && props.data.filters.id) {
       param = {
         ...param,
