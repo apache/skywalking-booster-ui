@@ -13,52 +13,56 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h row">
-    <div class="mr-10 flex-h" v-if="dashboardStore.entity === EntityType[1].value">
-      <span class="grey mr-5 label">{{ t("service") }}:</span>
-      <Selector
-        size="small"
-        :value="state.service.value"
-        :options="traceStore.services"
-        placeholder="Select a service"
-        @change="changeField('service', $event)"
-      />
+  <div class="flex-h row" style="justify-content: space-between">
+    <div class="flex-h">
+      <div class="mr-10 flex-h" v-if="dashboardStore.entity === EntityType[1].value">
+        <span class="grey mr-5 label">{{ t("service") }}:</span>
+        <Selector
+          size="small"
+          :value="state.service.value"
+          :options="traceStore.services"
+          placeholder="Select a service"
+          @change="changeField('service', $event)"
+        />
+      </div>
+      <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[3].value">
+        <span class="grey mr-5 label">{{ t("instance") }}:</span>
+        <Selector
+          size="small"
+          :value="state.instance.value"
+          :options="traceStore.instances"
+          placeholder="Select a instance"
+          @change="changeField('instance', $event)"
+        />
+      </div>
+      <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[2].value">
+        <span class="grey mr-5 label">{{ t("endpoint") }}:</span>
+        <Selector
+          size="small"
+          :value="state.endpoint.value"
+          :options="traceStore.endpoints"
+          placeholder="Select a endpoint"
+          :isRemote="true"
+          @change="changeField('endpoint', $event)"
+          @query="searchEndpoints"
+        />
+      </div>
+      <div class="mr-10 flex-h">
+        <span class="grey mr-5 label">{{ t("status") }}:</span>
+        <Selector
+          size="small"
+          :value="state.status.value"
+          :options="Status"
+          placeholder="Select a status"
+          @change="changeField('status', $event)"
+        />
+      </div>
     </div>
-    <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[3].value">
-      <span class="grey mr-5 label">{{ t("instance") }}:</span>
-      <Selector
-        size="small"
-        :value="state.instance.value"
-        :options="traceStore.instances"
-        placeholder="Select a instance"
-        @change="changeField('instance', $event)"
-      />
+    <div class="mr-10">
+      <el-button type="primary" @click="searchTraces">
+        {{ t("runQuery") }}
+      </el-button>
     </div>
-    <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[2].value">
-      <span class="grey mr-5 label">{{ t("endpoint") }}:</span>
-      <Selector
-        size="small"
-        :value="state.endpoint.value"
-        :options="traceStore.endpoints"
-        placeholder="Select a endpoint"
-        :isRemote="true"
-        @change="changeField('endpoint', $event)"
-        @query="searchEndpoints"
-      />
-    </div>
-    <div class="mr-10 flex-h">
-      <span class="grey mr-5 label">{{ t("status") }}:</span>
-      <Selector
-        size="small"
-        :value="state.status.value"
-        :options="Status"
-        placeholder="Select a status"
-        @change="changeField('status', $event)"
-      />
-    </div>
-    <el-button size="small" type="primary" @click="searchTraces" class="search-btn">
-      {{ t("search") }}
-    </el-button>
   </div>
   <div class="flex-h row">
     <div class="mr-10">
@@ -345,19 +349,10 @@ limitations under the License. -->
 
   .row {
     margin-bottom: 5px;
-    position: relative;
   }
 
   .traceId {
     width: 270px;
-  }
-
-  .search-btn {
-    cursor: pointer;
-    width: 80px;
-    position: absolute;
-    top: 0;
-    right: 10px;
   }
 
   .label {
