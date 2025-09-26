@@ -70,37 +70,7 @@ limitations under the License. -->
           :selectedMinTimestamp="selectedMinTimestamp"
         />
       </div>
-      <div class="detail-section-span" v-show="spanPanelVisible">
-        <div class="detail-section">
-          <div class="detail-item">
-            <span class="grey mr-10">{{ t("serviceName") }}</span>
-            <span class="value">{{ currentSpan?.serviceCode || "Unknown" }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="grey mr-10">{{ t("endpointName") }}</span>
-            <span class="value">{{ currentSpan?.endpointName || "Unknown" }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="grey mr-10">{{ t("instance") }}</span>
-            <span class="value">{{ currentSpan?.serviceInstanceName || "Unknown" }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="grey mr-10">{{ t("component") }}</span>
-            <span class="value">{{ currentSpan?.component || "Unknown" }}</span>
-          </div>
-        </div>
-        <h4>{{ t("tags") }}</h4>
-        <div
-          class="tags-section flex-v scroll_bar_style"
-          v-if="currentSpan?.tags && Object.keys(currentSpan.tags).length > 0"
-        >
-          <div v-for="tag in currentSpan.tags" :key="tag.key" class="tag-item">
-            <span class="grey" style="width: 200px">{{ tag.key }}</span>
-            <span class="value">{{ tag.value }}</span>
-          </div>
-        </div>
-        <div v-else class="no-data">No tags available</div>
-      </div>
+      <SpanDetails v-show="spanPanelVisible" />
     </div>
     <!-- Spans Table Drawer -->
     <SpansTableDrawer
@@ -121,6 +91,7 @@ limitations under the License. -->
   import SpansTableDrawer from "./SpansTableDrawer.vue";
   import SpansTree from "./SpansTree.vue";
   import MinTimeline from "./MinTimeline.vue";
+  import SpanDetails from "./SpanDetails.vue";
   import { saveFileAsJSON } from "@/utils/file";
   import { useTraceStore } from "@/store/modules/trace";
   import TimelineTool from "./TimelineTool.vue";
@@ -133,7 +104,6 @@ limitations under the License. -->
   const props = defineProps<Props>();
   const spansTableVisible = ref<boolean>(false);
   const traceStore = useTraceStore();
-  const currentSpan = computed(() => traceStore.currentSpan);
   // Time range like xScale domain [0, max]
   const minTimestamp = computed(() => {
     if (!props.trace.spans.length) return 0;
@@ -218,68 +188,7 @@ limitations under the License. -->
     gap: 20px;
   }
 
-  h4 {
-    margin: 20px 0 10px;
-    color: var(--el-text-color-primary);
-    font-size: 16px;
-    font-weight: 600;
-    border-bottom: 1px solid var(--el-border-color-light);
-    padding-bottom: 5px;
-  }
-
-  h4:first-child {
-    margin-top: 0;
-  }
-
-  .detail-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-  }
-
-  .detail-item {
-    display: inline-flex;
-    flex-direction: column;
-    padding-top: 5px;
-  }
-
-  .value {
-    word-break: break-all;
-  }
-
-  .tags-section {
-    max-height: calc(100vh - 360px);
-    min-height: 200px;
-    overflow: auto;
-    padding-right: 5px;
-  }
-
-  .no-data {
-    color: var(--el-text-color-placeholder);
-    font-style: italic;
-    text-align: center;
-    padding: 20px;
-    background-color: var(--el-fill-color-lighter);
-    border-radius: 4px;
-    border: 1px dashed var(--el-border-color-light);
-  }
-
   .detail-section-timeline {
     width: 65%;
-  }
-
-  .detail-section-span {
-    width: 35%;
-    overflow: auto;
-    border-left: 1px solid var(--el-border-color-light);
-    padding: 10px 0 0 10px;
-  }
-
-  .tag-item {
-    display: inline-flex;
-    align-items: center;
-    padding: 5px 0;
-    border-bottom: 1px solid var(--el-border-color-light);
   }
 </style>

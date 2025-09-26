@@ -23,7 +23,6 @@ import icons from "@/assets/img/icons";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Themes } from "@/constants/data";
 import { getServiceColor } from "@/utils/color";
-
 export default class ListGraph {
   private barHeight = 48;
   private handleSelectSpan: Nullable<(i: Trace) => void> = null;
@@ -91,8 +90,8 @@ export default class ListGraph {
     selectedMaxTimestamp,
     selectedMinTimestamp,
   }: {
-    data: Recordable;
-    row: Recordable[];
+    data: Indexable;
+    row: Indexable[];
     fixSpansSize: number;
     selectedMaxTimestamp?: number;
     selectedMinTimestamp?: number;
