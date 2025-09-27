@@ -106,12 +106,11 @@ export default class ListGraph {
     this.xScale = d3
       .scaleLinear()
       .range([0, this.width * 0.4])
-      .domain([this.minTimestamp, this.maxTimestamp]);
+      .domain([this.minTimestamp - min, this.maxTimestamp - min]);
     this.xAxis = d3.axisTop(this.xScale).tickFormat((d: any) => {
-      const t = d - min;
-      if (t === 0) return t.toFixed(2);
-      if (t >= 1000) return (t / 1000).toFixed(2) + "s";
-      return t.toFixed(2);
+      if (d === 0) return d.toFixed(2);
+      if (d >= 1000) return (d / 1000).toFixed(2) + "s";
+      return d.toFixed(2);
     });
     this.svg.attr("height", (this.row.length + fixSpansSize + 1) * this.barHeight);
     this.svg
@@ -330,6 +329,7 @@ export default class ListGraph {
         // Calculate the actual start and end times within the visible range
         let spanStart = d.data.startTime;
         let spanEnd = d.data.endTime;
+
         const isIn = d.data.startTime > this.maxTimestamp || d.data.endTime < this.minTimestamp;
         if (isIn) return 0;
 
@@ -338,7 +338,8 @@ export default class ListGraph {
         if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
         if (spanEnd > this.maxTimestamp) spanEnd = this.maxTimestamp;
         if (spanStart >= spanEnd) return 0;
-        return this.xScale(spanEnd - this.minTimestamp) - this.xScale(spanStart - this.minTimestamp) + 1 || 0;
+        const min = d3.min(this.row.map((i) => i.startTime));
+        return this.xScale(spanEnd - min) - this.xScale(spanStart - min) + 1 || 0;
       })
       .attr("x", (d: Recordable) => {
         if (!d.data.endTime || !d.data.startTime) return 0;
@@ -347,8 +348,8 @@ export default class ListGraph {
         // Calculate the actual start time within the visible range
         let spanStart = d.data.startTime;
         if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
-
-        return this.width * 0.6 - d.y - 25 + this.xScale(spanStart) || 0;
+        const min = d3.min(this.row.map((i) => i.startTime));
+        return this.width * 0.6 - d.y - 25 + this.xScale(spanStart - min) || 0;
       })
       .attr("y", -2)
       .style("fill", (d: Recordable) => `${getServiceColor(d.data.serviceCode || "")}`);

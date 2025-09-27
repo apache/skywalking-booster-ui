@@ -197,6 +197,7 @@ limitations under the License. -->
   }
 
   function handleShowTrace(e: MouseEvent, row: Trace) {
+    traceStore.setCurrentTrace(row);
     selectedTrace.value = row;
     dialogVisible.value = true;
   }
