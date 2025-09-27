@@ -23,6 +23,8 @@ import icons from "@/assets/img/icons";
 import { useAppStoreWithOut } from "@/store/modules/app";
 import { Themes } from "@/constants/data";
 import { getServiceColor } from "@/utils/color";
+
+const xScaleWidth = 0.55;
 export default class ListGraph {
   private barHeight = 48;
   private handleSelectSpan: Nullable<(i: Trace) => void> = null;
@@ -105,7 +107,7 @@ export default class ListGraph {
     this.maxTimestamp = selectedMaxTimestamp ?? max;
     this.xScale = d3
       .scaleLinear()
-      .range([0, this.width * 0.4])
+      .range([0, this.width * xScaleWidth])
       .domain([this.minTimestamp - min, this.maxTimestamp - min]);
     this.xAxis = d3.axisTop(this.xScale).tickFormat((d: any) => {
       if (d === 0) return d.toFixed(2);
@@ -116,7 +118,7 @@ export default class ListGraph {
     this.svg
       .append("g")
       .attr("class", "trace-xaxis")
-      .attr("transform", `translate(${this.width * 0.6 - 20},${30})`)
+      .attr("transform", `translate(${this.width * (1 - xScaleWidth) - 20},${30})`)
       .call(this.xAxis);
     this.root = d3.hierarchy(this.data, (d) => d.children);
     this.root.x0 = 0;
@@ -251,19 +253,21 @@ export default class ListGraph {
       .append("text")
       .attr("x", 13)
       .attr("y", 5)
-      .attr("fill", `#e54c17`)
+      .attr("fill", `var(--el-color-danger)`)
       .html((d: Recordable) => (d.data.isError ? "◉" : ""));
     nodeEnter
       .append("text")
       .attr("class", "node-text")
       .attr("x", 35)
       .attr("y", -6)
-      .attr("fill", (d: Recordable) => (d.data.isError ? `#e54c17` : appStore.theme === Themes.Dark ? "#eee" : "#333"))
+      .attr("fill", (d: Recordable) =>
+        d.data.isError ? `var(--el-color-danger)` : appStore.theme === Themes.Dark ? "#eee" : "#333",
+      )
       .html((d: Recordable) => {
         if (d.data.label === "TRACE_ROOT") {
           return "";
         }
-        const label = d.data.label.length > 30 ? `${d.data.label.slice(0, 30)}...` : `${d.data.label}`;
+        const label = d.data.label.length > 20 ? `${d.data.label.slice(0, 20)}...` : `${d.data.label}`;
         return label;
       });
     nodeEnter
@@ -349,7 +353,7 @@ export default class ListGraph {
         let spanStart = d.data.startTime;
         if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
         const min = d3.min(this.row.map((i) => i.startTime));
-        return this.width * 0.6 - d.y - 25 + this.xScale(spanStart - min) || 0;
+        return this.width * (1 - xScaleWidth) - d.y - 25 + this.xScale(spanStart - min) || 0;
       })
       .attr("y", -2)
       .style("fill", (d: Recordable) => `${getServiceColor(d.data.serviceCode || "")}`);
