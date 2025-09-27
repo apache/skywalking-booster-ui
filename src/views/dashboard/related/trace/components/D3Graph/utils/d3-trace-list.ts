@@ -24,9 +24,9 @@ import { useAppStoreWithOut } from "@/store/modules/app";
 import { Themes } from "@/constants/data";
 import { getServiceColor } from "@/utils/color";
 
-const xScaleWidth = 0.55;
+const xScaleWidth = 0.6;
 export default class ListGraph {
-  private barHeight = 48;
+  private barHeight = 32;
   private handleSelectSpan: Nullable<(i: Trace) => void> = null;
   private el: Nullable<HTMLDivElement> = null;
   private i = 0;
@@ -78,7 +78,7 @@ export default class ListGraph {
     this.svg.call(this.tip);
     this.svg.call(this.prompt);
   }
-  diagonal(d: Recordable) {
+  diagonal(d: Indexable) {
     return `M ${d.source.y} ${d.source.x + 5}
     L ${d.source.y} ${d.target.x - 30}
     L${d.target.y} ${d.target.x - 20}
@@ -193,12 +193,12 @@ export default class ListGraph {
       });
     nodeEnter
       .append("rect")
-      .attr("height", 42)
+      .attr("height", this.barHeight)
       .attr("ry", 2)
       .attr("rx", 2)
-      .attr("y", -22)
+      .attr("y", -this.barHeight / 2)
       .attr("x", 20)
-      .attr("width", "100%")
+      .attr("width", "200px")
       .attr("fill", "rgba(0,0,0,0)");
     nodeEnter
       .append("image")
@@ -223,7 +223,7 @@ export default class ListGraph {
     nodeEnter
       .append("image")
       .attr("width", 16)
-      .attr("height", 16)
+      .attr("height", 14)
       .attr("x", 6)
       .attr("y", -8)
       .attr("xlink:href", (d: any) => {
@@ -251,23 +251,18 @@ export default class ListGraph {
       });
     nodeEnter
       .append("text")
-      .attr("x", 13)
-      .attr("y", 5)
-      .attr("fill", `var(--el-color-danger)`)
-      .html((d: Recordable) => (d.data.isError ? "◉" : ""));
-    nodeEnter
-      .append("text")
       .attr("class", "node-text")
       .attr("x", 35)
-      .attr("y", -6)
+      .attr("y", -1)
+      .style("font-size", "10px")
       .attr("fill", (d: Recordable) =>
         d.data.isError ? `var(--el-color-danger)` : appStore.theme === Themes.Dark ? "#eee" : "#333",
       )
-      .html((d: Recordable) => {
+      .html((d: { data: Span }) => {
         if (d.data.label === "TRACE_ROOT") {
           return "";
         }
-        const label = d.data.label.length > 20 ? `${d.data.label.slice(0, 20)}...` : `${d.data.label}`;
+        const label = (d.data.label || "").length > 12 ? `${d.data.label?.slice(0, 12)}...` : `${d.data.label}`;
         return label;
       });
     nodeEnter
@@ -297,7 +292,6 @@ export default class ListGraph {
       .attr("x", 267)
       .attr("y", -1)
       .attr("fill", "#e66")
-      .style("font-size", "10px")
       .text((d: Recordable) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
@@ -311,8 +305,10 @@ export default class ListGraph {
       .attr("class", "node-text")
       .attr("x", 35)
       .attr("y", 12)
-      .attr("fill", appStore.theme === Themes.Dark ? "#777" : "#ccc")
-      .style("font-size", "11px")
+      .attr("fill", (d: Recordable) =>
+        d.data.isError ? `var(--el-color-danger)` : appStore.theme === Themes.Dark ? "#777" : "#ccc",
+      )
+      .style("font-size", "10px")
       .text(
         (d: Recordable) =>
           `${d.data.layer || ""} ${
@@ -365,9 +361,9 @@ export default class ListGraph {
       .style("opacity", 1);
     nodeUpdate
       .append("circle")
-      .attr("r", appStore.theme === Themes.Dark ? 4 : 3)
+      .attr("r", 3)
       .style("cursor", "pointer")
-      .attr("stroke-width", appStore.theme === Themes.Dark ? 3 : 2.5)
+      .attr("stroke-width", 2)
       .style("fill", (d: Recordable) => (d._children ? `${getServiceColor(d.data.serviceCode)}` : "#eee"))
       .style("stroke", (d: Recordable) =>
         d.data.label === "TRACE_ROOT" ? "" : `${getServiceColor(d.data.serviceCode)}`,
@@ -398,7 +394,7 @@ export default class ListGraph {
       .attr("stroke-width", 2)
       .attr("transform", `translate(5, 0)`)
       .attr("d", () => {
-        const o = { x: source.x0 + 40, y: source.y0 };
+        const o = { x: source.x0, y: source.y0 };
         return this.diagonal({ source: o, target: o });
       })
       .transition()
