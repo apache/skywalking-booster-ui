@@ -148,15 +148,12 @@ limitations under the License. -->
     }
     if (props.type === TraceGraphType.TREE) {
       tree.value = new TreeGraph({ el: traceGraph.value, handleSelectSpan });
-      tree.value.init(
-        {
-          data: { label: `${props.traceId}`, children: segmentId.value },
-          row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
-          selectedMaxTimestamp: props.selectedMaxTimestamp,
-          selectedMinTimestamp: props.selectedMinTimestamp,
-        },
-        getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
-      );
+      tree.value.init({
+        data: { label: `${props.traceId}`, children: segmentId.value },
+        row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+        selectedMaxTimestamp: props.selectedMaxTimestamp,
+        selectedMinTimestamp: props.selectedMinTimestamp,
+      });
     }
   }
   function selectInitialSpan() {
@@ -274,16 +271,22 @@ limitations under the License. -->
   watch(
     () => appStore.theme,
     () => {
-      tree.value.init(
-        {
+      if (props.type === TraceGraphType.LIST) {
+        tree.value.init({
           data: { label: "TRACE_ROOT", children: segmentId.value },
+          row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+          fixSpansSize: fixSpansSize.value,
+          selectedMaxTimestamp: props.selectedMaxTimestamp,
+          selectedMinTimestamp: props.selectedMinTimestamp,
+        });
+      } else if (props.type === TraceGraphType.TREE) {
+        tree.value.init({
+          data: { label: `${props.traceId}`, children: segmentId.value },
           row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
           selectedMaxTimestamp: props.selectedMaxTimestamp,
           selectedMinTimestamp: props.selectedMinTimestamp,
-        },
-        props.data,
-        fixSpansSize.value,
-      );
+        });
+      }
       tree.value.draw(() => {
         setTimeout(() => {
           loading.value = false;

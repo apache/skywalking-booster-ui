@@ -74,6 +74,7 @@ html {
   --sw-scrollbar-track: #eee;
   --sw-scrollbar-thumb: #aaa;
   --sw-font-grey-color: #a7aebb;
+  --sw-trace-list-path: rgba(0, 0, 0, 0.1);
 }
 
 html.dark {
@@ -120,6 +121,7 @@ html.dark {
   --sw-scrollbar-track: #252a2f;
   --sw-scrollbar-thumb: #888;
   --sw-font-grey-color: #a7aebb;
+  --sw-trace-list-path: rgba(244, 244, 244, 0.4);
 }
 
 .el-drawer__header {

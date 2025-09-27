@@ -49,7 +49,7 @@ limitations under the License. -->
     const markerDurations = [0, (maxDuration * 1) / 3, (maxDuration * 2) / 3, maxDuration];
 
     return markerDurations.map((duration) => ({
-      duration: duration.toFixed(3),
+      duration: duration.toFixed(2),
       position: maxDuration > 0 ? (duration / maxDuration) * 100 : 0,
     }));
   });

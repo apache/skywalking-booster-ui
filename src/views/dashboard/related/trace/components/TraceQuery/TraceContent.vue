@@ -64,8 +64,8 @@ limitations under the License. -->
         <component
           v-if="traceStore.currentTrace?.endpointNames"
           :is="graphs[spansGraphType as keyof typeof graphs]"
-          :data="traceStore.traceSpans"
-          :traceId="traceStore.currentTrace?.traceIds?.[0]?.value"
+          :data="trace.spans"
+          :traceId="traceStore.currentTrace?.traceId"
           :showBtnDetail="false"
           :headerType="WidgetType.Trace"
           :selectedMaxTimestamp="selectedMaxTimestamp"

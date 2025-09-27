@@ -49,7 +49,7 @@ limitations under the License. -->
             <el-tag
               v-for="(value, key) in getEndpoints(props.row.spans)"
               :key="key"
-              class="mr-10 cp"
+              class="mr-5 cp"
               disable-transitions
               :style="{ backgroundColor: getServiceColor(value[0]), color: 'white', border: 'none' }"
               @click="toggleServiceTags(value[0], props.row)"
@@ -197,6 +197,7 @@ limitations under the License. -->
   }
 
   function handleShowTrace(e: MouseEvent, row: Trace) {
+    traceStore.setCurrentTrace(row);
     selectedTrace.value = row;
     dialogVisible.value = true;
   }

@@ -72,8 +72,8 @@ export const traceStore = defineStore({
     setTraceCondition(data: Recordable) {
       this.conditions = { ...this.conditions, ...data };
     },
-    setCurrentTrace(trace: Trace) {
-      this.currentTrace = trace;
+    setCurrentTrace(trace: Nullable<Trace>) {
+      this.currentTrace = trace || {};
     },
     setTraceSpans(spans: Span[]) {
       this.traceSpans = spans;

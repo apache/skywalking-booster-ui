@@ -68,6 +68,8 @@ export interface Span {
   avgTime?: number;
   count?: number;
   profiled?: boolean;
+  startTimeNanos?: number;
+  event?: string;
 }
 export type Ref = {
   type?: string;
