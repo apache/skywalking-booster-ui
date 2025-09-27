@@ -20,7 +20,6 @@ import d3tip from "d3-tip";
 import type { Trace, Span } from "@/types/trace";
 import dayjs from "dayjs";
 import icons from "@/assets/img/icons";
-import { useAppStoreWithOut } from "@/store/modules/app";
 import { getServiceColor } from "@/utils/color";
 
 const xScaleWidth = 0.6;
@@ -147,7 +146,6 @@ export default class ListGraph {
   }
   update(source: Recordable, callback: Function) {
     const t = this;
-    const appStore = useAppStoreWithOut();
     const nodes = this.root.descendants();
     let index = -1;
     this.root.eachBefore((n: Recordable) => {
@@ -222,7 +220,7 @@ export default class ListGraph {
     nodeEnter
       .append("image")
       .attr("width", 16)
-      .attr("height", 14)
+      .attr("height", 16)
       .attr("x", 6)
       .attr("y", -8)
       .attr("xlink:href", (d: any) => {
@@ -288,6 +286,7 @@ export default class ListGraph {
       .attr("x", 267)
       .attr("y", -1)
       .attr("fill", "#e66")
+      .style("font-size", "10px")
       .text((d: { data: Span }) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
@@ -385,7 +384,7 @@ export default class ListGraph {
       .attr("stroke-width", 2)
       .attr("transform", `translate(5, 0)`)
       .attr("d", () => {
-        const o = { x: source.x0, y: source.y0 };
+        const o = { x: source.x0 + 40, y: source.y0 };
         return this.diagonal({ source: o, target: o });
       })
       .transition()

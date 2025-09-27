@@ -39,7 +39,7 @@ limitations under the License. -->
     (e: "updateSpansGraphType", value: string): void;
   }>();
   const { t } = useI18n();
-  const spansGraphType = ref<string>("List");
+  const spansGraphType = ref<string>(GraphTypeOptions[2].value);
 
   function onToggleMinTimeline() {
     emit("toggleMinTimeline");

@@ -90,6 +90,7 @@ limitations under the License. -->
   import TimelineTool from "./TimelineTool.vue";
   import graphs from "../VisGraph/index";
   import { WidgetType } from "@/views/dashboard/data";
+  import { GraphTypeOptions } from "../VisGraph/constant";
 
   interface Props {
     trace: Trace;
@@ -113,7 +114,7 @@ limitations under the License. -->
   const selectedMaxTimestamp = ref<number>(maxTimestamp.value);
   const selectedMinTimestamp = ref<number>(minTimestamp.value);
   const minTimelineVisible = ref<boolean>(true);
-  const spansGraphType = ref<string>("List");
+  const spansGraphType = ref<string>(GraphTypeOptions[2].value);
 
   function handleSelectedMaxTimestamp(value: number) {
     selectedMaxTimestamp.value = value;

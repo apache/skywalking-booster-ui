@@ -19,7 +19,6 @@ import * as d3 from "d3";
 import d3tip from "d3-tip";
 import type { Trace, Span } from "@/types/trace";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { useTraceStore } from "@/store/modules/trace";
 import { Themes } from "@/constants/data";
 import { getServiceColor } from "@/utils/color";
 
