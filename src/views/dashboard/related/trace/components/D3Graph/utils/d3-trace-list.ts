@@ -222,7 +222,7 @@ export default class ListGraph {
     nodeEnter
       .append("image")
       .attr("width", 16)
-      .attr("height", 16)
+      .attr("height", 14)
       .attr("x", 6)
       .attr("y", -8)
       .attr("xlink:href", (d: any) => {
@@ -288,7 +288,6 @@ export default class ListGraph {
       .attr("x", 267)
       .attr("y", -1)
       .attr("fill", "#e66")
-      .style("font-size", "10px")
       .text((d: { data: Span }) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
@@ -386,7 +385,7 @@ export default class ListGraph {
       .attr("stroke-width", 2)
       .attr("transform", `translate(5, 0)`)
       .attr("d", () => {
-        const o = { x: source.x0 + 40, y: source.y0 };
+        const o = { x: source.x0, y: source.y0 };
         return this.diagonal({ source: o, target: o });
       })
       .transition()
