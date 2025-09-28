@@ -49,15 +49,16 @@ limitations under the License. -->
   </div>
   <div v-else>
     <div
-      @click="selectSpan"
       :class="[
         'trace-item',
         'level' + ((data.level || 0) - 1),
         { 'trace-item-error': data.isError },
         { profiled: data.profiled === false },
         `trace-item-${data.key}`,
+        { highlighted: inTimeRange },
       ]"
       :data-text="data.profiled === false ? 'No Thread Dump' : ''"
+      @click="hideActionBox"
     >
       <div
         :class="['method', 'level' + ((data.level || 0) - 1)]"
@@ -65,6 +66,8 @@ limitations under the License. -->
           'text-indent': ((data.level || 0) - 1) * 10 + 'px',
           width: `${method}px`,
         }"
+        @click="selectSpan"
+        @click.stop
       >
         <Icon
           :style="!displayChildren ? 'transform: rotate(-90deg);' : ''"
@@ -73,6 +76,7 @@ limitations under the License. -->
           iconName="arrow-down"
           size="sm"
           class="mr-5"
+          @click="hideActionBox"
         />
         <el-tooltip
           :content="data.type === 'Entry' ? 'Entry' : 'Exit'"
@@ -90,7 +94,7 @@ limitations under the License. -->
           </span>
         </el-tooltip>
         <el-tooltip :content="data.endpointName" placement="top" :show-after="300">
-          <span>
+          <span class="link-span">
             {{ data.endpointName }}
           </span>
         </el-tooltip>
@@ -116,7 +120,7 @@ limitations under the License. -->
       </div>
       <div class="application">
         <el-tooltip :show-after="300" :content="data.serviceCode || '-'" placement="top">
-          <span>{{ data.serviceCode }}</span>
+          <span :style="{ color: getServiceColor(data.serviceCode || '') }">{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
       <div class="application" v-show="headerType === WidgetType.Profile" @click="viewSpan($event)">
@@ -128,12 +132,15 @@ limitations under the License. -->
     </div>
     <div v-show="data.children && data.children.length > 0 && displayChildren" class="children-trace">
       <table-item
-        :method="method"
         v-for="(child, index) in data.children"
+        :method="method"
         :key="index"
         :data="child"
         :type="type"
         :headerType="headerType"
+        :selectedMaxTimestamp="selectedMaxTimestamp"
+        :selectedMinTimestamp="selectedMinTimestamp"
+        @selectedSpan="selectItem"
       />
     </div>
     <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
@@ -141,136 +148,150 @@ limitations under the License. -->
     </el-dialog>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
   import { useI18n } from "vue-i18n";
-  import { ref, computed, defineComponent, watch } from "vue";
-  import type { PropType } from "vue";
+  import { ref, computed, watch } from "vue";
   import SpanDetail from "../D3Graph/SpanDetail.vue";
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useTraceStore } from "@/store/modules/trace";
-  import { Themes } from "@/constants/data";
-  import { TraceGraphType } from "../constant";
+  import { TraceGraphType } from "../VisGraph/constant";
   import { WidgetType } from "@/views/dashboard/data";
   import type { Span, Ref } from "@/types/trace";
+  import { getServiceColor } from "@/utils/color";
 
-  /*global Recordable*/
-  const props = {
-    data: { type: Object as PropType<Span>, default: () => ({}) },
-    method: { type: Number, default: 0 },
-    type: { type: String, default: "" },
-    headerType: { type: String, default: "" },
-    traceId: { type: String, traceId: "" },
-  };
-  export default defineComponent({
-    name: "TableItem",
-    props,
-    components: { SpanDetail },
-    setup(props) {
-      const appStore = useAppStoreWithOut();
-      const traceStore = useTraceStore();
-      const displayChildren = ref<boolean>(true);
-      const showDetail = ref<boolean>(false);
-      const { t } = useI18n();
-      const selfTime = computed(() => (props.data.dur ? props.data.dur : 0));
-      const execTime = computed(() =>
-        props.data.endTime - props.data.startTime ? props.data.endTime - props.data.startTime : 0,
-      );
-      const outterPercent = computed(() => {
-        if (props.data.level === 1) {
-          return "100%";
-        } else {
-          const data = props.data;
-          const exec = data.endTime - data.startTime ? data.endTime - data.startTime : 0;
-          let result = (exec / (data.totalExec || 0)) * 100;
-          result = result > 100 ? 100 : result;
-          const resultStr = result.toFixed(4) + "%";
-          return resultStr === "0.0000%" ? "0.9%" : resultStr;
-        }
-      });
-      const innerPercent = computed(() => {
-        const result = (selfTime.value / execTime.value) * 100;
-        const resultStr = result.toFixed(4) + "%";
-        return resultStr === "0.0000%" ? "0.9%" : resultStr;
-      });
-      const isCrossThread = computed(() => {
-        const key = props.data.refs?.findIndex((d: Ref) => d.type === "CROSS_THREAD") ?? -1;
-        return key > -1 ? true : false;
-      });
-      function toggle() {
-        displayChildren.value = !displayChildren.value;
-      }
-      function showSelectSpan(dom: HTMLSpanElement) {
-        if (!dom) {
-          return;
-        }
-        const items: any = document.querySelectorAll(".trace-item");
-        for (const item of items) {
-          item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
-        }
-        dom.style.background = appStore.theme === Themes.Dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
-        const p: any = document.getElementsByClassName("profiled")[0];
-        if (p) {
-          p.style.background = appStore.theme === Themes.Dark ? "#333" : "#eee";
-        }
-      }
-      function selectSpan(event: Recordable) {
-        const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
-        selectedItem(props.data);
-        if (props.headerType === WidgetType.Profile) {
-          showSelectSpan(dom);
-          return;
-        }
-        viewSpanDetail(dom);
-      }
-      function viewSpan(event: Recordable) {
-        showDetail.value = true;
-        const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
-        selectedItem(props.data);
-        viewSpanDetail(dom);
-      }
-      function selectedItem(span: Span) {
-        traceStore.setSelectedSpan(span);
-      }
-      function viewSpanDetail(dom: HTMLSpanElement) {
-        showSelectSpan(dom);
-        if (props.type === TraceGraphType.STATISTICS) {
-          showDetail.value = true;
-        }
-      }
-      watch(
-        () => appStore.theme,
-        () => {
-          const items: any = document.querySelectorAll(".trace-item");
-          for (const item of items) {
-            item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
-          }
-          const p: any = document.getElementsByClassName("profiled")[0];
-          if (p) {
-            p.style.background = appStore.theme === Themes.Dark ? "#333" : "#eee";
-          }
-        },
-      );
-      return {
-        displayChildren,
-        outterPercent,
-        innerPercent,
-        isCrossThread,
-        viewSpanDetail,
-        toggle,
-        dateFormat,
-        showSelectSpan,
-        showDetail,
-        selectSpan,
-        selectedItem,
-        viewSpan,
-        t,
-        appStore,
-        TraceGraphType,
-        WidgetType,
-      };
-    },
+  interface Props {
+    data: Span;
+    method: number;
+    type?: string;
+    headerType?: string;
+    traceId?: string;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+  }
+  interface Emits {
+    (e: "selectedSpan", value: Span): void;
+  }
+  const emits = defineEmits<Emits>();
+  const props = defineProps<Props>();
+  const appStore = useAppStoreWithOut();
+  const traceStore = useTraceStore();
+  const displayChildren = ref<boolean>(true);
+  const showDetail = ref<boolean>(false);
+  const { t } = useI18n();
+  const selfTime = computed(() => (props.data.dur ? props.data.dur : 0));
+  const execTime = computed(() =>
+    props.data.endTime - props.data.startTime > 0 ? props.data.endTime - props.data.startTime : 0,
+  );
+  const outterPercent = computed(() => {
+    if (props.data.level === 1) {
+      return "100%";
+    } else {
+      const { data } = props;
+      let result = (execTime.value / (data.totalExec || 0)) * 100;
+      result = result > 100 ? 100 : result;
+      const resultStr = result.toFixed(4) + "%";
+      return resultStr === "0.0000%" ? "0.9%" : resultStr;
+    }
   });
+  const innerPercent = computed(() => {
+    const result = (selfTime.value / execTime.value) * 100;
+    const resultStr = result.toFixed(4) + "%";
+    return resultStr === "0.0000%" ? "0.9%" : resultStr;
+  });
+  const isCrossThread = computed(() => {
+    const key = props.data.refs?.findIndex((d: Ref) => d.type === "CROSS_THREAD") ?? -1;
+    return key > -1 ? true : false;
+  });
+  const inTimeRange = computed(() => {
+    if (props.selectedMinTimestamp === undefined || props.selectedMaxTimestamp === undefined) {
+      return true;
+    }
+
+    return props.data.startTime <= props.selectedMaxTimestamp && props.data.endTime >= props.selectedMinTimestamp;
+  });
+  function toggle() {
+    displayChildren.value = !displayChildren.value;
+  }
+  function selectItem(span: Span) {
+    emits("selectedSpan", span);
+  }
+  function showSelectSpan(dom: HTMLSpanElement) {
+    if (!dom) {
+      return;
+    }
+    const items: HTMLSpanElement[] = Array.from(document.querySelectorAll(".trace-item")) as HTMLSpanElement[];
+    for (const item of items) {
+      item.style.background = "transparent";
+    }
+    dom.style.background = "var(--sw-trace-table-selected)";
+    const p = document.getElementsByClassName("profiled")[0] as HTMLSpanElement | null;
+    if (p) {
+      p.style.background = "var(--border-color-primary)";
+    }
+  }
+  function selectSpan(event: MouseEvent) {
+    emits("selectedSpan", props.data);
+    const dom = event
+      .composedPath()
+      .find((d: EventTarget) => (d as HTMLElement).className.includes("trace-item")) as HTMLSpanElement;
+    selectedItem(props.data);
+    if (props.headerType === WidgetType.Profile) {
+      showSelectSpan(dom);
+      return;
+    }
+    viewSpanDetail(dom);
+    if (props.type === TraceGraphType.STATISTICS) {
+      return;
+    }
+    const item: HTMLSpanElement | null = document.querySelector("#trace-action-box");
+    const tableBox = document.querySelector(".trace-table-charts")?.getBoundingClientRect();
+    if (!tableBox || !item) {
+      return;
+    }
+    const offsetX = event.x - tableBox.x;
+    const offsetY = event.y - tableBox.y;
+    item.style.display = "block";
+    item.style.top = `${offsetY + 20}px`;
+    item.style.left = `${offsetX + 10}px`;
+  }
+  function viewSpan(event: MouseEvent) {
+    showDetail.value = true;
+    const dom = event
+      .composedPath()
+      .find((d: EventTarget) => (d as HTMLElement).className.includes("trace-item")) as HTMLSpanElement;
+    selectedItem(props.data);
+    viewSpanDetail(dom);
+  }
+  function selectedItem(span: Span) {
+    traceStore.setSelectedSpan(span);
+    emits("selectedSpan", span);
+  }
+  function viewSpanDetail(dom: HTMLSpanElement) {
+    showSelectSpan(dom);
+    if (props.type === TraceGraphType.STATISTICS) {
+      showDetail.value = true;
+    }
+  }
+  function hideActionBox() {
+    const item: HTMLSpanElement | null = document.querySelector("#trace-action-box");
+    if (item) {
+      item.style.display = "none";
+    }
+  }
+  watch(
+    () => appStore.theme,
+    () => {
+      const items: HTMLSpanElement[] = Array.from(document.querySelectorAll(".trace-item")) as HTMLSpanElement[];
+      for (const item of items) {
+        item.style.background = "transparent";
+      }
+      const p = document.getElementsByClassName("profiled")[0] as HTMLSpanElement | null;
+      if (p) {
+        p.style.background = "var(--border-color-primary)";
+      }
+    },
+  );
 </script>
 <style lang="scss" scoped>
   @import url("./table.scss");
@@ -288,6 +309,10 @@ limitations under the License. -->
     &:hover {
       background: rgb(0 0 0 / 4%);
     }
+  }
+
+  .highlighted {
+    color: var(--el-color-primary);
   }
 
   .profiled {
@@ -334,7 +359,6 @@ limitations under the License. -->
   .trace-item {
     white-space: nowrap;
     position: relative;
-    cursor: pointer;
   }
 
   .trace-item.selected {
@@ -358,6 +382,7 @@ limitations under the License. -->
 
   .trace-item > div.method {
     padding-left: 10px;
+    cursor: pointer;
   }
 
   .trace-item div.exec-percent {
@@ -384,5 +409,9 @@ limitations under the License. -->
       border: none;
       top: 1px;
     }
+  }
+
+  .link-span {
+    text-decoration: underline;
   }
 </style>

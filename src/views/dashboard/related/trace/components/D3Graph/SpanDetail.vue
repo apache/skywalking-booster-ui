@@ -83,7 +83,7 @@ limitations under the License. -->
       ref="eventGraph"
       v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"
     ></div>
-    <el-button class="popup-btn" type="primary" @click="getTaceLogs">
+    <el-button class="popup-btn" @click="getTaceLogs">
       {{ t("relatedTraceLogs") }}
     </el-button>
   </div>
@@ -149,9 +149,8 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, computed, onMounted, inject } from "vue";
   import { useI18n } from "vue-i18n";
-  import type { PropType } from "vue";
   import dayjs from "dayjs";
-  import ListGraph from "../../utils/d3-trace-list";
+  import ListGraph from "./utils/d3-trace-list";
   import copy from "@/utils/copy";
   import { ElMessage } from "element-plus";
   import { dateFormat } from "@/utils/dateFormat";
@@ -163,10 +162,11 @@ limitations under the License. -->
   import { WidgetType } from "@/views/dashboard/data";
   import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
   /*global defineProps, Nullable, Recordable */
-  const props = defineProps({
-    currentSpan: { type: Object as PropType<Span>, default: () => ({}) },
-    traceId: { type: String, default: "" },
-  });
+  type Props = {
+    currentSpan: Span;
+    traceId?: string;
+  };
+  const props = defineProps<Props>();
   const options: LayoutConfig | null = inject("options") || null;
   const { t } = useI18n();
   const traceStore = useTraceStore();
@@ -233,7 +233,7 @@ limitations under the License. -->
         return a.startTime - b.startTime;
       });
 
-    tree.value = new ListGraph(eventGraph.value, selectEvent);
+    tree.value = new ListGraph({ el: eventGraph.value, handleSelectSpan: selectEvent });
     tree.value.init(
       {
         children: events,
@@ -287,9 +287,9 @@ limitations under the License. -->
   }
 
   .popup-btn {
-    margin-top: 40px;
-    width: 100%;
+    margin-top: 20px;
     text-align: center;
+    padding: 0 30px;
   }
 
   .item span {

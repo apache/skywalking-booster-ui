@@ -13,14 +13,16 @@ limitations under the License. -->
 <template>
   <div class="trace-detail" v-loading="loading">
     <div class="trace-detail-wrapper clear" v-if="traceStore.currentTrace?.endpointNames">
-      <h5 class="mb-5 mt-0">
-        <span class="vm">{{ traceStore.currentTrace?.endpointNames?.[0] }}</span>
-        <div class="trace-log-btn">
-          <el-button size="small" class="mr-10" type="primary" @click="searchTraceLogs">
+      <div class="flex-h" style="justify-content: space-between">
+        <h5 class="mb-5 mt-0">
+          <span class="vm">{{ traceStore.currentTrace?.endpointNames?.[0] }}</span>
+        </h5>
+        <div>
+          <el-button size="small" class="mr-10" @click="searchTraceLogs">
             {{ t("viewLogs") }}
           </el-button>
         </div>
-      </h5>
+      </div>
       <div class="mb-5 blue">
         <Selector
           size="small"
@@ -46,33 +48,13 @@ limitations under the License. -->
           <div class="tag mr-5">{{ t("spans") }}</div>
           <span class="sm">{{ traceStore.traceSpans.length }}</span>
         </div>
-        <div>
-          <el-button class="grey" size="small" :class="{ ghost: displayMode !== 'List' }" @click="displayMode = 'List'">
-            <Icon class="mr-5" size="sm" iconName="list-bulleted" />
-            {{ t("list") }}
-          </el-button>
-          <el-button class="grey" size="small" :class="{ ghost: displayMode !== 'Tree' }" @click="displayMode = 'Tree'">
-            <Icon class="mr-5" size="sm" iconName="issue-child" />
-            {{ t("tree") }}
-          </el-button>
-          <el-button
-            class="grey"
-            size="small"
-            :class="{ ghost: displayMode !== 'Table' }"
-            @click="displayMode = 'Table'"
-          >
-            <Icon class="mr-5" size="sm" iconName="table" />
-            {{ t("table") }}
-          </el-button>
-          <el-button
-            class="grey"
-            size="small"
-            :class="{ ghost: displayMode !== 'Statistics' }"
-            @click="displayMode = 'Statistics'"
-          >
-            <Icon class="mr-5" size="sm" iconName="statistics-bulleted" />
-            {{ t("statistics") }}
-          </el-button>
+        <div class="flex-h trace-type item">
+          <el-radio-group v-model="spansGraphType" size="small">
+            <el-radio-button v-for="option in GraphTypeOptions" :key="option.value" :value="option.value">
+              <Icon :iconName="option.icon" />
+              {{ t(option.label) }}
+            </el-radio-button>
+          </el-radio-group>
         </div>
       </div>
     </div>
@@ -80,7 +62,7 @@ limitations under the License. -->
     <div class="trace-chart">
       <component
         v-if="traceStore.currentTrace?.endpointNames"
-        :is="displayMode"
+        :is="spansGraphType"
         :data="traceStore.traceSpans"
         :traceId="traceStore.currentTrace?.traceIds?.[0]?.value"
         :showBtnDetail="false"
@@ -95,13 +77,14 @@ limitations under the License. -->
   import { useTraceStore } from "@/store/modules/trace";
   import type { Option } from "@/types/app";
   import copy from "@/utils/copy";
-  import graphs from "./components/index";
+  import graphs from "../VisGraph/index";
   import { ElMessage } from "element-plus";
   import getDashboard from "@/hooks/useDashboardsSession";
   import type { LayoutConfig } from "@/types/dashboard";
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { WidgetType } from "@/views/dashboard/data";
+  import { GraphTypeOptions } from "../VisGraph/constant";
 
   const props = {
     serviceId: { type: String, default: "" },
@@ -120,7 +103,7 @@ limitations under the License. -->
       const traceStore = useTraceStore();
       const loading = ref<boolean>(false);
       const traceId = ref<string>("");
-      const displayMode = ref<string>("List");
+      const spansGraphType = ref<string>("List");
 
       function handleClick() {
         copy(traceId.value || traceStore.currentTrace?.traceIds?.[0]?.value);
@@ -150,7 +133,6 @@ limitations under the License. -->
       }
       return {
         traceStore,
-        displayMode,
         dateFormat,
         changeTraceId,
         handleClick,
@@ -160,6 +142,8 @@ limitations under the License. -->
         loading,
         traceId,
         WidgetType,
+        spansGraphType,
+        GraphTypeOptions,
       };
     },
   });
@@ -196,6 +180,7 @@ limitations under the License. -->
 
   .item {
     justify-content: space-between;
+    align-items: center;
   }
 
   .trace-detail-ids {
@@ -206,10 +191,6 @@ limitations under the License. -->
     border: 1px solid;
     border-radius: 4px;
     width: 300px;
-  }
-
-  .trace-log-btn {
-    float: right;
   }
 
   .tag {
@@ -224,5 +205,17 @@ limitations under the License. -->
     padding-top: 50px;
     width: 100%;
     text-align: center;
+  }
+
+  .trace-type {
+    // padding: 10px 0 10px 10px;
+    border-bottom: 1px solid $border-color-primary;
+
+    /* Make radio buttons content align nicely with icons */
+    :deep(.el-radio-button__inner) {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
   }
 </style>

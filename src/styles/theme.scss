@@ -71,6 +71,11 @@ html {
   --sw-marketplace-border: #dedfe0;
   --sw-grid-item-active: #d4d7de;
   --sw-trace-line: #999;
+  --sw-scrollbar-track: #eee;
+  --sw-scrollbar-thumb: #aaa;
+  --sw-font-grey-color: #a7aebb;
+  --sw-trace-list-path: rgba(0, 0, 0, 0.1);
+  --sw-trace-table-selected: rgba(0, 0, 0, 0.1);
 }
 
 html.dark {
@@ -81,7 +86,7 @@ html.dark {
   --disabled-color: #999;
   --dashboard-tool-bg: #000;
   --text-color-placeholder: #ccc;
-  --border-color: #262629;
+  --border-color: #333;
   --border-color-primary: #4b4b52;
   --layout-background: #000;
   --box-shadow-color: #606266;
@@ -114,6 +119,11 @@ html.dark {
   --sw-marketplace-border: #606266;
   --sw-grid-item-active: #73767a;
   --sw-trace-line: #e8e8e8;
+  --sw-scrollbar-track: #252a2f;
+  --sw-scrollbar-thumb: #888;
+  --sw-font-grey-color: #a7aebb;
+  --sw-trace-list-path: rgba(244, 244, 244, 0.4);
+  --sw-trace-table-selected: rgba(255, 255, 255, 0.1);
 }
 
 .el-drawer__header {

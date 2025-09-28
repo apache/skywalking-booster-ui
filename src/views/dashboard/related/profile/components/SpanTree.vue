@@ -41,7 +41,7 @@ limitations under the License. -->
     </div>
     <div class="profile-table">
       <Table
-        :data="(profileStore.segmentSpans as SegmentSpan[])"
+        :tableData="(profileStore.segmentSpans as SegmentSpan[])"
         :traceId="profileStore.currentSegment?.traceId"
         :headerType="WidgetType.Profile"
         @select="selectSpan"
@@ -52,7 +52,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
-  import Table from "../../trace/components/Table.vue";
+  import Table from "@/views/dashboard/related/trace/components/Table/TableContainer.vue";
   import { useProfileStore } from "@/store/modules/profile";
   import Selector from "@/components/Selector.vue";
   import type { SegmentSpan, ProfileTimeRange, ProfileAnalyzeParams } from "@/types/profile";

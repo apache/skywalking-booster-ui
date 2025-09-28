@@ -91,7 +91,7 @@ limitations under the License. -->
   import timeFormat from "@/utils/timeFormat";
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { ElMessage } from "element-plus";
-  import { EntityType, QueryOrders, Status } from "../../data";
+  import { EntityType, QueryOrders, Status } from "@/views/dashboard/data";
   import type { LayoutConfig } from "@/types/dashboard";
 
   const FiltersKeys: { [key: string]: string } = {

@@ -16,11 +16,11 @@ limitations under the License. -->
 <template>
   <div class="trace-table">
     <div class="trace-table-header" v-if="type === TraceGraphType.STATISTICS">
-      <div :class="item.label" v-for="(item, index) in headerData" :key="index">
+      <div :class="item.label" v-for="(item, index) in headerData as typeof StatisticsConstant" :key="index">
         {{ item.value }}
         <span
           class="r cp"
-          @click="sortStatistics(item.key)"
+          @click="sortStatistics(item.key || '')"
           :key="componentKey"
           v-if="item.key !== 'endpointName' && item.key !== 'type'"
         >
@@ -47,34 +47,41 @@ limitations under the License. -->
       :key="`key${index}`"
       :type="type"
       :headerType="headerType"
-      @click="selectItem"
+      :selectedMaxTimestamp="selectedMaxTimestamp"
+      :selectedMinTimestamp="selectedMinTimestamp"
+      @selectedSpan="selectItem"
     />
     <slot></slot>
   </div>
 </template>
 <script lang="ts" setup>
   import { ref, onMounted } from "vue";
-  import type { PropType } from "vue";
-  import { useTraceStore } from "@/store/modules/trace";
+  import type { Span } from "@/types/trace";
   import TableItem from "./TableItem.vue";
   import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
-  import { TraceGraphType } from "../constant";
+  import { TraceGraphType } from "../VisGraph/constant";
   import { WidgetType } from "@/views/dashboard/data";
 
-  /* global defineProps, Nullable, defineEmits, Recordable*/
-  const props = defineProps({
-    tableData: { type: Array as PropType<Recordable>, default: () => [] },
-    type: { type: String, default: "" },
-    headerType: { type: String, default: "" },
-    traceId: { type: String, default: "" },
-  });
-  const emits = defineEmits(["select"]);
-  const traceStore = useTraceStore();
+  /* global defineProps, Nullable, defineEmits*/
+  type Props = {
+    tableData: Span[];
+    type?: string;
+    headerType?: string;
+    traceId: string;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+  };
+  type Emits = {
+    (e: "select", value: Span): void;
+  };
+  const props = defineProps<Props>();
+  const emits = defineEmits<Emits>();
+
   const method = ref<number>(300);
   const componentKey = ref<number>(300);
   const flag = ref<boolean>(true);
   const dragger = ref<Nullable<HTMLSpanElement>>(null);
-  let headerData: Recordable[] = TraceConstant;
+  let headerData: typeof TraceConstant | typeof ProfileConstant | typeof StatisticsConstant = TraceConstant;
 
   if (props.headerType === WidgetType.Profile) {
     headerData = ProfileConstant;
@@ -104,31 +111,15 @@ limitations under the License. -->
       };
     };
   });
-  function selectItem(event: MouseEvent) {
-    emits("select", traceStore.selectedSpan);
-    if (props.headerType === WidgetType.Profile) {
-      return;
-    }
-    if (props.type === TraceGraphType.STATISTICS) {
-      return;
-    }
-    const item: any = document.querySelector("#trace-action-box");
-    const tableBox = document.querySelector(".trace-table-charts")?.getBoundingClientRect();
-    if (!tableBox) {
-      return;
-    }
-    const offsetX = event.x - tableBox.x;
-    const offsetY = event.y - tableBox.y;
-    item.style.display = "block";
-    item.style.top = `${offsetY + 20}px`;
-    item.style.left = `${offsetX + 10}px`;
+  function selectItem(span: Span) {
+    emits("select", span);
   }
   function sortStatistics(key: string) {
     const element = props.tableData;
     for (let i = 0; i < element.length; i++) {
       for (let j = 0; j < element.length - i - 1; j++) {
-        let val1;
-        let val2;
+        let val1: number | undefined;
+        let val2: number | undefined;
         if (key === "maxTime") {
           val1 = element[j].maxTime;
           val2 = element[j + 1].maxTime;
@@ -150,13 +141,13 @@ limitations under the License. -->
           val2 = element[j + 1].count;
         }
         if (flag.value) {
-          if (val1 < val2) {
+          if (val1 && val2 && val1 < val2) {
             const tmp = element[j];
             element[j] = element[j + 1];
             element[j + 1] = tmp;
           }
         } else {
-          if (val1 > val2) {
+          if (val1 && val2 && val1 > val2) {
             const tmp = element[j];
             element[j] = element[j + 1];
             element[j + 1] = tmp;

@@ -163,3 +163,73 @@ export const TraceSpansFromColdStage = {
   }
   `,
 };
+export const HasQueryTracesV2Support = {
+  query: `
+    hasQueryTracesV2Support
+  `,
+};
+
+export const QueryV2Traces = {
+  variable: "$condition: TraceQueryCondition",
+  query: `
+    queryTraces(condition: $condition) {
+      traces {
+        spans {
+          traceId
+          segmentId
+          spanId
+          parentSpanId
+          refs {
+            traceId
+            parentSegmentId
+            parentSpanId
+            type
+          }
+          serviceCode
+          serviceInstanceName
+          startTime
+          endTime
+          endpointName
+          type
+          peer
+          component
+          isError
+          layer
+          tags {
+            key
+            value
+          }
+          logs {
+            time
+            data {
+              key
+              value
+            }
+          }
+          attachedEvents {
+            startTime {
+              seconds
+              nanos
+            }
+            event
+            endTime {
+              seconds
+              nanos
+            }
+            tags {
+              key
+              value
+            }
+            summary {
+              key
+              value
+            }
+          }
+        }
+      }
+      retrievedTimeRange {
+        startTime
+        endTime
+      }
+    }`,
+};

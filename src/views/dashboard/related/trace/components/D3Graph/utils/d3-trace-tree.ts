@@ -19,8 +19,8 @@ import * as d3 from "d3";
 import d3tip from "d3-tip";
 import type { Trace, Span } from "@/types/trace";
 import { useAppStoreWithOut } from "@/store/modules/app";
-import { useTraceStore } from "@/store/modules/trace";
 import { Themes } from "@/constants/data";
+import { getServiceColor } from "@/utils/color";
 
 export default class TraceMap {
   private i = 0;
@@ -36,11 +36,9 @@ export default class TraceMap {
   private treemap: Nullable<any> = null;
   private data: Nullable<any> = null;
   private row: Nullable<any> = null;
-  private min = 0;
-  private max = 0;
-  private list: string[] = [];
+  private minTimestamp = 0;
+  private maxTimestamp = 0;
   private xScale: Nullable<any> = null;
-  private sequentialScale: Nullable<any> = null;
   private root: Nullable<any> = null;
   private topSlowMax: number[] = [];
   private topSlowMin: number[] = [];
@@ -49,14 +47,14 @@ export default class TraceMap {
   private nodeUpdate: Nullable<any> = null;
   private selectedNode: any = null;
 
-  constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
+  constructor({ el, handleSelectSpan }: { el: HTMLDivElement; handleSelectSpan: (i: Trace) => void }) {
     this.el = el;
     this.handleSelectSpan = handleSelectSpan;
     this.i = 0;
     this.topSlow = [];
     this.topChild = [];
-    this.width = el.clientWidth - 20;
-    this.height = el.clientHeight - 30;
+    this.width = el.getBoundingClientRect().width - 10;
+    this.height = el.getBoundingClientRect().height - 10;
     d3.select(`.${this.el?.className} .d3-trace-tree`).remove();
     this.body = d3
       .select(this.el)
@@ -81,19 +79,28 @@ export default class TraceMap {
     this.svg = this.body.append("g").attr("transform", () => `translate(120, 0)`);
     this.svg.call(this.tip);
   }
-  init(data: Recordable, row: Recordable) {
+  init({
+    data,
+    row,
+    selectedMaxTimestamp,
+    selectedMinTimestamp,
+  }: {
+    data: Span;
+    row: Span[];
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+  }) {
     d3.select("#trace-action-box").style("display", "none");
     this.treemap = d3.tree().size([row.length * 35, this.width]);
     this.row = row;
     this.data = data;
-    this.min = Number(d3.min(this.row.map((i: Span) => i.startTime)));
-    this.max = Number(d3.max(this.row.map((i: Span) => i.endTime - this.min)));
-    this.list = useTraceStore().serviceList || [];
-    this.xScale = d3.scaleLinear().range([0, 100]).domain([0, this.max]);
-    this.sequentialScale = d3
-      .scaleSequential()
-      .domain([0, this.list.length + 1])
-      .interpolator(d3.interpolateCool);
+    this.minTimestamp = selectedMinTimestamp ?? Number(d3.min(this.row.map((i: Span) => i.startTime)));
+    this.maxTimestamp =
+      selectedMaxTimestamp ?? Number(d3.max(this.row.map((i: Span) => i.endTime - this.minTimestamp)));
+    this.xScale = d3
+      .scaleLinear()
+      .range([0, 100])
+      .domain([0, this.maxTimestamp - this.minTimestamp]);
 
     this.body.call(this.getZoomBehavior(this.svg));
     this.root = d3.hierarchy(this.data, (d) => d.children);
@@ -102,7 +109,7 @@ export default class TraceMap {
     this.topSlow = [];
     this.topChild = [];
     const that = this;
-    this.root.children.forEach(collapse);
+    this.root.children?.forEach(collapse);
     this.topSlowMax = this.topSlow.sort((a: number, b: number) => b - a)[0];
     this.topSlowMin = this.topSlow.sort((a: number, b: number) => b - a)[4];
     this.topChildMax = this.topChild.sort((a: number, b: number) => b - a)[0];
@@ -218,11 +225,9 @@ export default class TraceMap {
       .append("circle")
       .attr("class", "node")
       .attr("r", 2)
-      .attr("stroke", (d: Recordable) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)))
+      .attr("stroke", (d: Recordable) => getServiceColor(d.data.serviceCode))
       .attr("stroke-width", 2.5)
-      .attr("fill", (d: Recordable) =>
-        d.data.children.length ? this.sequentialScale(this.list.indexOf(d.data.serviceCode)) : "#fff",
-      );
+      .attr("fill", (d: Recordable) => (d.data.children.length ? getServiceColor(d.data.serviceCode) : "#fff"));
     nodeEnter
       .append("text")
       .attr("class", "trace-node-text")
@@ -276,21 +281,31 @@ export default class TraceMap {
       .attr("rx", 1)
       .attr("ry", 1)
       .attr("height", 2)
-      .attr("width", (d: Recordable) => {
-        if (!d.data.endTime || !d.data.startTime) return 0;
-        return this.xScale(d.data.endTime - d.data.startTime) + 1 || 0;
+      .attr("width", (d: { data: Span }) => {
+        let spanStart = d.data.startTime;
+        let spanEnd = d.data.endTime;
+        if (!spanEnd || !spanStart) return 0;
+        if (spanStart > this.maxTimestamp || spanEnd < this.minTimestamp) return 0;
+        if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
+        if (spanEnd > this.maxTimestamp) spanEnd = this.maxTimestamp;
+        return this.xScale(spanEnd - spanStart) + 1 || 0;
       })
-      .attr("x", (d: Recordable) => {
-        if (!d.data.endTime || !d.data.startTime) {
+      .attr("x", (d: Indexable) => {
+        let spanStart = d.data.startTime;
+        let spanEnd = d.data.endTime;
+        if (!spanEnd || !spanStart) {
           return 0;
         }
+        if (spanStart > this.maxTimestamp || spanEnd < this.minTimestamp) return 0;
+        if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
+        if (spanEnd > this.maxTimestamp) spanEnd = this.maxTimestamp;
         if (d.children || d._children) {
-          return -110 + this.xScale(d.data.startTime - this.min);
+          return -110 + this.xScale(spanStart - this.minTimestamp);
         }
-        return 10 + this.xScale(d.data.startTime - this.min);
+        return 10 + this.xScale(spanStart - this.minTimestamp);
       })
       .attr("y", -1)
-      .style("fill", (d: Recordable) => this.sequentialScale(this.list.indexOf(d.data.serviceCode)));
+      .style("fill", (d: { data: Span }) => getServiceColor(d.data.serviceCode));
     const nodeUpdate = nodeEnter.merge(node);
     this.nodeUpdate = nodeUpdate;
     nodeUpdate

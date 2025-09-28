@@ -310,6 +310,9 @@ limitations under the License. -->
         break;
     }
     dates.value = [start, end];
+    if (!props.showButtons) {
+      ok(true);
+    }
   };
   const submit = () => {
     inputDates.value = dates.value;

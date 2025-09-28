@@ -17,13 +17,12 @@
 
 import * as d3 from "d3";
 import d3tip from "d3-tip";
-import type { Trace } from "@/types/trace";
+import type { Trace, Span } from "@/types/trace";
 import dayjs from "dayjs";
 import icons from "@/assets/img/icons";
-import { useAppStoreWithOut } from "@/store/modules/app";
-import { Themes } from "@/constants/data";
-import { useTraceStore } from "@/store/modules/trace";
+import { getServiceColor } from "@/utils/color";
 
+const xScaleWidth = 0.6;
 export default class ListGraph {
   private barHeight = 48;
   private handleSelectSpan: Nullable<(i: Trace) => void> = null;
@@ -36,19 +35,16 @@ export default class ListGraph {
   private prompt: any = null;
   private row: any[] = [];
   private data: any = [];
-  private min = 0;
-  private max = 0;
-  private list: any[] = [];
+  private minTimestamp = 0;
+  private maxTimestamp = 0;
   private xScale: any = null;
   private xAxis: any = null;
-  private sequentialScale: any = null;
   private root: any = null;
   private selectedNode: any = null;
-  constructor(el: HTMLDivElement, handleSelectSpan: (i: Trace) => void) {
+  constructor({ el, handleSelectSpan }: { el: HTMLDivElement; handleSelectSpan: (i: Trace) => void }) {
     this.handleSelectSpan = handleSelectSpan;
     this.el = el;
     this.width = el.getBoundingClientRect().width - 10;
-    this.height = el.getBoundingClientRect().height - 10;
     d3.select(`.${this.el?.className} .trace-list`).remove();
     this.svg = d3
       .select(this.el)
@@ -80,39 +76,48 @@ export default class ListGraph {
     this.svg.call(this.tip);
     this.svg.call(this.prompt);
   }
-  diagonal(d: Recordable) {
+  diagonal(d: Indexable) {
     return `M ${d.source.y} ${d.source.x + 5}
     L ${d.source.y} ${d.target.x - 30}
     L${d.target.y} ${d.target.x - 20}
     L${d.target.y} ${d.target.x - 5}`;
   }
-  init(data: Recordable, row: Recordable[], fixSpansSize: number) {
+  init({
+    data,
+    row,
+    fixSpansSize,
+    selectedMaxTimestamp,
+    selectedMinTimestamp,
+  }: {
+    data: Indexable;
+    row: Indexable[];
+    fixSpansSize: number;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+  }) {
     d3.select(`.${this.el?.className} .trace-xaxis`).remove();
     d3.select("#trace-action-box").style("display", "none");
     this.row = row;
     this.data = data;
-    this.min = d3.min(this.row.map((i) => i.startTime));
-    this.max = d3.max(this.row.map((i) => i.endTime - this.min)) || 0;
-    this.list = useTraceStore().serviceList || [];
+    const min = d3.min(this.row.map((i) => i.startTime));
+    const max = d3.max(this.row.map((i) => i.endTime));
+    this.minTimestamp = selectedMinTimestamp ?? min;
+    this.maxTimestamp = selectedMaxTimestamp ?? max;
     this.xScale = d3
       .scaleLinear()
-      .range([0, this.width * 0.387])
-      .domain([0, this.max]);
+      .range([0, this.width * xScaleWidth])
+      .domain([this.minTimestamp - min, this.maxTimestamp - min]);
     this.xAxis = d3.axisTop(this.xScale).tickFormat((d: any) => {
-      if (d === 0) return 0;
-      if (d >= 1000) return d / 1000 + "s";
-      return d;
+      if (d === 0) return d.toFixed(2);
+      if (d >= 1000) return (d / 1000).toFixed(2) + "s";
+      return d.toFixed(2);
     });
     this.svg.attr("height", (this.row.length + fixSpansSize + 1) * this.barHeight);
     this.svg
       .append("g")
       .attr("class", "trace-xaxis")
-      .attr("transform", `translate(${this.width * 0.618 - 20},${30})`)
+      .attr("transform", `translate(${this.width * (1 - xScaleWidth) - 20},${30})`)
       .call(this.xAxis);
-    this.sequentialScale = d3
-      .scaleSequential()
-      .domain([0, this.list.length + 1])
-      .interpolator(d3.interpolateCool);
     this.root = d3.hierarchy(this.data, (d) => d.children);
     this.root.x0 = 0;
     this.root.y0 = 0;
@@ -141,7 +146,6 @@ export default class ListGraph {
   }
   update(source: Recordable, callback: Function) {
     const t = this;
-    const appStore = useAppStoreWithOut();
     const nodes = this.root.descendants();
     let index = -1;
     this.root.eachBefore((n: Recordable) => {
@@ -186,12 +190,12 @@ export default class ListGraph {
       });
     nodeEnter
       .append("rect")
-      .attr("height", 42)
+      .attr("height", this.barHeight)
       .attr("ry", 2)
       .attr("rx", 2)
-      .attr("y", -22)
+      .attr("y", -this.barHeight / 2)
       .attr("x", 20)
-      .attr("width", "100%")
+      .attr("width", "200px")
       .attr("fill", "rgba(0,0,0,0)");
     nodeEnter
       .append("image")
@@ -244,22 +248,16 @@ export default class ListGraph {
       });
     nodeEnter
       .append("text")
-      .attr("x", 13)
-      .attr("y", 5)
-      .attr("fill", `#e54c17`)
-      .html((d: Recordable) => (d.data.isError ? "◉" : ""));
-    nodeEnter
-      .append("text")
       .attr("class", "node-text")
       .attr("x", 35)
       .attr("y", -6)
-      .attr("fill", (d: Recordable) => (d.data.isError ? `#e54c17` : appStore.theme === Themes.Dark ? "#eee" : "#333"))
-      .html((d: Recordable) => {
+      .attr("fill", (d: { data: Span }) => (d.data.isError ? `var(--el-color-danger)` : `var(--font-color)`))
+      .html((d: { data: Span }) => {
+        const { label } = d.data;
         if (d.data.label === "TRACE_ROOT") {
           return "";
         }
-        const label = d.data.label.length > 30 ? `${d.data.label.slice(0, 30)}...` : `${d.data.label}`;
-        return label;
+        return (label || "").length > 30 ? `${label?.slice(0, 30)}...` : `${label}`;
       });
     nodeEnter
       .append("circle")
@@ -289,7 +287,7 @@ export default class ListGraph {
       .attr("y", -1)
       .attr("fill", "#e66")
       .style("font-size", "10px")
-      .text((d: Recordable) => {
+      .text((d: { data: Span }) => {
         const events = d.data.attachedEvents;
         if (events && events.length) {
           return `${events.length}`;
@@ -302,18 +300,15 @@ export default class ListGraph {
       .attr("class", "node-text")
       .attr("x", 35)
       .attr("y", 12)
-      .attr("fill", appStore.theme === Themes.Dark ? "#777" : "#ccc")
+      .attr("fill", (d: { data: Span }) => (d.data.isError ? `var(--el-color-danger)` : `var(--disabled-color)`))
       .style("font-size", "11px")
-      .text(
-        (d: Recordable) =>
-          `${d.data.layer || ""} ${
-            d.data.component
-              ? "- " + d.data.component
-              : d.data.event
-              ? this.visDate(d.data.startTime) + ":" + d.data.startTimeNanos
-              : ""
-          }`,
-      );
+      .text((d: { data: Span }) => {
+        const { layer, component, event, startTime, startTimeNanos } = d.data;
+        const text = `${layer || ""} ${
+          component ? "- " + component : event ? this.visDate(startTime) + ":" + startTimeNanos : ""
+        }`;
+        return text.length > 20 ? `${text?.slice(0, 20)}...` : `${text}`;
+      });
     nodeEnter
       .append("rect")
       .attr("rx", 2)
@@ -321,15 +316,33 @@ export default class ListGraph {
       .attr("height", 4)
       .attr("width", (d: Recordable) => {
         if (!d.data.endTime || !d.data.startTime) return 0;
-        return this.xScale(d.data.endTime - d.data.startTime) + 1 || 0;
+        // Calculate the actual start and end times within the visible range
+        let spanStart = d.data.startTime;
+        let spanEnd = d.data.endTime;
+
+        const isIn = d.data.startTime > this.maxTimestamp || d.data.endTime < this.minTimestamp;
+        if (isIn) return 0;
+
+        // If the span is completely outside the visible range, don't show it
+        if (spanStart >= spanEnd) return 0;
+        if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
+        if (spanEnd > this.maxTimestamp) spanEnd = this.maxTimestamp;
+        if (spanStart >= spanEnd) return 0;
+        const min = d3.min(this.row.map((i) => i.startTime));
+        return this.xScale(spanEnd - min) - this.xScale(spanStart - min) + 1 || 0;
       })
-      .attr("x", (d: Recordable) =>
-        !d.data.endTime || !d.data.startTime
-          ? 0
-          : this.width * 0.618 - 20 - d.y + this.xScale(d.data.startTime - this.min) || 0,
-      )
+      .attr("x", (d: Recordable) => {
+        if (!d.data.endTime || !d.data.startTime) return 0;
+        const isIn = d.data.startTime > this.maxTimestamp || d.data.endTime < this.minTimestamp;
+        if (isIn) return 0;
+        // Calculate the actual start time within the visible range
+        let spanStart = d.data.startTime;
+        if (spanStart < this.minTimestamp) spanStart = this.minTimestamp;
+        const min = d3.min(this.row.map((i) => i.startTime));
+        return this.width * (1 - xScaleWidth) - d.y - 25 + this.xScale(spanStart - min) || 0;
+      })
       .attr("y", -2)
-      .style("fill", (d: Recordable) => `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`);
+      .style("fill", (d: Recordable) => `${getServiceColor(d.data.serviceCode || "")}`);
     const nodeUpdate = nodeEnter.merge(node);
     nodeUpdate
       .transition()
@@ -338,14 +351,12 @@ export default class ListGraph {
       .style("opacity", 1);
     nodeUpdate
       .append("circle")
-      .attr("r", appStore.theme === Themes.Dark ? 4 : 3)
+      .attr("r", 3)
       .style("cursor", "pointer")
-      .attr("stroke-width", appStore.theme === Themes.Dark ? 3 : 2.5)
-      .style("fill", (d: Recordable) =>
-        d._children ? `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}` : "#eee",
-      )
+      .attr("stroke-width", 3)
+      .style("fill", (d: Recordable) => (d._children ? `${getServiceColor(d.data.serviceCode)}` : "#eee"))
       .style("stroke", (d: Recordable) =>
-        d.data.label === "TRACE_ROOT" ? "" : `${this.sequentialScale(this.list.indexOf(d.data.serviceCode))}`,
+        d.data.label === "TRACE_ROOT" ? "" : `${getServiceColor(d.data.serviceCode)}`,
       )
       .on("click", (event: any, d: Recordable) => {
         event.stopPropagation();
@@ -368,8 +379,8 @@ export default class ListGraph {
       .enter()
       .insert("path", "g")
       .attr("class", "trace-link")
-      .attr("fill", appStore.theme === Themes.Dark ? "rgba(244,244,244,0)" : "rgba(0,0,0,0)")
-      .attr("stroke", appStore.theme === Themes.Dark ? "rgba(244,244,244,0.4)" : "rgba(0, 0, 0, 0.1)")
+      .attr("fill", "none")
+      .attr("stroke", "var(--sw-trace-list-path)")
       .attr("stroke-width", 2)
       .attr("transform", `translate(5, 0)`)
       .attr("d", () => {
@@ -431,6 +442,23 @@ export default class ListGraph {
       top: targetRect.top - containerRect.top + container?.scrollTop - 100,
       behavior: "smooth",
     });
+  }
+  highlightSpan(span: Recordable) {
+    if (!span) {
+      return;
+    }
+    const nodes = this.root?.descendants ? this.root.descendants() : [];
+    const targetNode = nodes.find(
+      (node: { data: Span }) =>
+        span.spanId === node.data.spanId &&
+        span.segmentId === node.data.segmentId &&
+        span.traceId === node.data.traceId,
+    );
+    if (!targetNode) return;
+    this.selectedNode?.classed("highlighted", false);
+    const sel = d3.select(`#list-node-${targetNode.id}`);
+    sel.classed("highlighted", true);
+    this.selectedNode = sel;
   }
   visDate(date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") {
     return dayjs(date).format(pattern);

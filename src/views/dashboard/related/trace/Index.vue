@@ -14,27 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="trace-wrapper flex-v">
-    <div class="header">
-      <Header :data="data" />
+    <div class="search-bar">
+      <SearchBar :data="data" />
     </div>
     <div class="trace flex-h">
-      <TraceList />
-      <TraceDetail />
+      <SegmentList />
+      <SpanList />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
   import { provide } from "vue";
   import type { PropType } from "vue";
-  import Header from "./Header.vue";
-  import TraceList from "./TraceList.vue";
-  import TraceDetail from "./Detail.vue";
   import type { LayoutConfig } from "@/types/dashboard";
+  import SearchBar from "./components/TraceList/SearchBar.vue";
+  import SegmentList from "./components/TraceList/SegmentList.vue";
+  import SpanList from "./components/TraceList/SpanList.vue";
   /*global defineProps */
   const props = defineProps({
     data: {
       type: Object as PropType<LayoutConfig>,
-      default: () => ({ graph: {} }),
+      default: () => ({}),
     },
   });
   provide("options", props.data);
@@ -46,19 +46,5 @@ limitations under the License. -->
     font-size: $font-size-smaller;
     position: relative;
     overflow: auto;
-  }
-
-  .header {
-    padding: 10px;
-    font-size: $font-size-smaller;
-    border-bottom: 1px solid $border-color;
-    min-width: 1200px;
-  }
-
-  .trace {
-    width: 100%;
-    overflow: auto;
-    min-width: 1200px;
-    height: calc(100% - 100px);
   }
 </style>

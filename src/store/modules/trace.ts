@@ -37,8 +37,14 @@ interface TraceState {
   selectorStore: ReturnType<typeof useSelectorStore>;
   selectedSpan: Nullable<Span>;
   serviceList: string[];
+  currentSpan: Nullable<Span>;
+  hasQueryTracesV2Support: boolean;
+  v2Traces: Trace[];
+  loading: boolean;
 }
 const { getDurationTime } = useDuration();
+
+export const PageSize = 20;
 
 export const traceStore = defineStore({
   id: "trace",
@@ -54,24 +60,39 @@ export const traceStore = defineStore({
       queryDuration: getDurationTime(),
       traceState: "ALL",
       queryOrder: QueryOrders[0].value,
-      paging: { pageNum: 1, pageSize: 20 },
+      paging: { pageNum: 1, pageSize: PageSize },
     },
     traceSpanLogs: [],
     selectorStore: useSelectorStore(),
     serviceList: [],
+    currentSpan: null,
+    hasQueryTracesV2Support: false,
+    v2Traces: [],
+    loading: false,
   }),
   actions: {
     setTraceCondition(data: Recordable) {
       this.conditions = { ...this.conditions, ...data };
     },
-    setCurrentTrace(trace: Trace) {
-      this.currentTrace = trace;
+    setCurrentTrace(trace: Nullable<Trace>) {
+      this.currentTrace = trace || {};
     },
     setTraceSpans(spans: Span[]) {
       this.traceSpans = spans;
     },
-    setSelectedSpan(span: Span) {
-      this.selectedSpan = span;
+    setSelectedSpan(span: Nullable<Span>) {
+      this.selectedSpan = span || {};
+    },
+    setCurrentSpan(span: Nullable<Span>) {
+      this.currentSpan = span || {};
+    },
+    setV2Spans(traceId: string) {
+      const trace = this.traceList.find((d: Trace) => d.traceId === traceId);
+      this.setTraceSpans(trace?.spans || []);
+      this.serviceList = Array.from(new Set(trace?.spans.map((i: Span) => i.serviceCode)));
+    },
+    setTraceList(traces: Trace[]) {
+      this.traceList = traces;
     },
     resetState() {
       this.traceSpans = [];
@@ -156,14 +177,20 @@ export const traceStore = defineStore({
       return response;
     },
     async getTraces() {
+      if (this.hasQueryTracesV2Support) {
+        return this.fetchV2Traces();
+      }
+      this.loading = true;
       const response = await graphql.query("queryTraces").params({ condition: this.conditions });
       if (response.errors) {
+        this.loading = false;
         return response;
       }
       if (!response.data.data.traces.length) {
         this.traceList = [];
         this.setCurrentTrace({});
         this.setTraceSpans([]);
+        this.loading = false;
         return response;
       }
       this.getTraceSpans({ traceId: response.data.data.traces[0].traceIds[0] });
@@ -177,8 +204,13 @@ export const traceStore = defineStore({
       return response;
     },
     async getTraceSpans(params: { traceId: string }) {
+      if (this.hasQueryTracesV2Support) {
+        this.setV2Spans(params.traceId);
+        return new Promise((resolve) => resolve({}));
+      }
       const appStore = useAppStoreWithOut();
       let response;
+      this.loading = true;
       if (appStore.coldStageMode) {
         response = await graphql
           .query("queryTraceSpansFromColdStage")
@@ -186,6 +218,7 @@ export const traceStore = defineStore({
       } else {
         response = await graphql.query("querySpans").params(params);
       }
+      this.loading = false;
       if (response.errors) {
         return response;
       }
@@ -208,6 +241,61 @@ export const traceStore = defineStore({
     },
     async getTagValues(tagKey: string) {
       return await graphql.query("queryTraceTagValues").params({ tagKey, duration: useAppStoreWithOut().durationTime });
+    },
+    async getHasQueryTracesV2Support() {
+      const response = await graphql.query("queryHasQueryTracesV2Support").params({});
+      this.hasQueryTracesV2Support = response.data.hasQueryTracesV2Support;
+      return response;
+    },
+    async fetchV2Traces() {
+      this.loading = true;
+      const response = await graphql.query("queryV2Traces").params({ condition: this.conditions });
+      this.loading = false;
+      if (response.errors) {
+        this.traceList = [];
+        this.setCurrentTrace({});
+        this.setTraceSpans([]);
+        return response;
+      }
+      this.v2Traces = response.data.queryTraces.traces || [];
+      this.traceList = this.v2Traces
+        .map((d: Trace) => {
+          const newSpans = d.spans.map((span: Span) => {
+            return {
+              ...span,
+              traceId: span.traceId,
+              duration: span.endTime - span.startTime,
+              label: `${span.serviceCode}: ${span.endpointName}`,
+            };
+          });
+          const trace =
+            newSpans.find((span: Span) => span.parentSpanId === -1 && span.refs.length === 0) || newSpans[0];
+          return {
+            endpointNames: trace.endpointName ? [trace.endpointName] : [],
+            traceIds: trace.traceId ? [{ value: trace.traceId, label: trace.traceId }] : [],
+            start: trace.startTime,
+            duration: trace.endTime - trace.startTime,
+            isError: trace.isError,
+            spans: newSpans,
+            traceId: trace.traceId,
+            key: trace.traceId,
+            serviceCode: trace.serviceCode,
+            label: `${trace.serviceCode}: ${trace.endpointName}`,
+          };
+        })
+        .sort((a: Trace, b: Trace) => b.duration - a.duration);
+      const trace = this.traceList[0];
+      if (!trace) {
+        this.traceList = [];
+        this.setCurrentTrace({});
+        this.setTraceSpans([]);
+        return response;
+      }
+
+      this.serviceList = Array.from(new Set(trace.spans.map((i: Span) => i.serviceCode)));
+      this.setTraceSpans(trace.spans);
+      this.setCurrentTrace(trace || {});
+      return response;
     },
   },
 });

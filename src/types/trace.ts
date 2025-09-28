@@ -27,6 +27,10 @@ export interface Trace {
   spans: Span[];
   endpointNames: string[];
   traceId: string;
+  serviceCode: string;
+  label: string;
+  id: string;
+  parentId: string;
 }
 
 export interface Span {
@@ -46,6 +50,7 @@ export interface Span {
   refs: Array<Ref>;
   startTime: number;
   endTime: number;
+  duration?: number;
   dur?: number;
   children?: Span[];
   tags?: { value: string; key: string }[];
@@ -63,6 +68,8 @@ export interface Span {
   avgTime?: number;
   count?: number;
   profiled?: boolean;
+  startTimeNanos?: number;
+  event?: string;
 }
 export type Ref = {
   type?: string;

@@ -13,52 +13,56 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="flex-h row">
-    <div class="mr-10 flex-h" v-if="dashboardStore.entity === EntityType[1].value">
-      <span class="grey mr-5 label">{{ t("service") }}:</span>
-      <Selector
-        size="small"
-        :value="state.service.value"
-        :options="traceStore.services"
-        placeholder="Select a service"
-        @change="changeField('service', $event)"
-      />
+  <div class="flex-h row" style="justify-content: space-between">
+    <div class="flex-h">
+      <div class="mr-10 flex-h" v-if="dashboardStore.entity === EntityType[1].value">
+        <span class="grey mr-5 label">{{ t("service") }}:</span>
+        <Selector
+          size="small"
+          :value="state.service.value"
+          :options="traceStore.services"
+          placeholder="Select a service"
+          @change="changeField('service', $event)"
+        />
+      </div>
+      <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[3].value">
+        <span class="grey mr-5 label">{{ t("instance") }}:</span>
+        <Selector
+          size="small"
+          :value="state.instance.value"
+          :options="traceStore.instances"
+          placeholder="Select a instance"
+          @change="changeField('instance', $event)"
+        />
+      </div>
+      <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[2].value">
+        <span class="grey mr-5 label">{{ t("endpoint") }}:</span>
+        <Selector
+          size="small"
+          :value="state.endpoint.value"
+          :options="traceStore.endpoints"
+          placeholder="Select a endpoint"
+          :isRemote="true"
+          @change="changeField('endpoint', $event)"
+          @query="searchEndpoints"
+        />
+      </div>
+      <div class="mr-10 flex-h">
+        <span class="grey mr-5 label">{{ t("status") }}:</span>
+        <Selector
+          size="small"
+          :value="state.status.value"
+          :options="Status"
+          placeholder="Select a status"
+          @change="changeField('status', $event)"
+        />
+      </div>
     </div>
-    <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[3].value">
-      <span class="grey mr-5 label">{{ t("instance") }}:</span>
-      <Selector
-        size="small"
-        :value="state.instance.value"
-        :options="traceStore.instances"
-        placeholder="Select a instance"
-        @change="changeField('instance', $event)"
-      />
+    <div class="mr-10">
+      <el-button type="primary" @click="searchTraces" :loading="traceStore.loading">
+        {{ t("runQuery") }}
+      </el-button>
     </div>
-    <div class="mr-10 flex-h" v-if="dashboardStore.entity !== EntityType[2].value">
-      <span class="grey mr-5 label">{{ t("endpoint") }}:</span>
-      <Selector
-        size="small"
-        :value="state.endpoint.value"
-        :options="traceStore.endpoints"
-        placeholder="Select a endpoint"
-        :isRemote="true"
-        @change="changeField('endpoint', $event)"
-        @query="searchEndpoints"
-      />
-    </div>
-    <div class="mr-10 flex-h">
-      <span class="grey mr-5 label">{{ t("status") }}:</span>
-      <Selector
-        size="small"
-        :value="state.status.value"
-        :options="Status"
-        placeholder="Select a status"
-        @change="changeField('status', $event)"
-      />
-    </div>
-    <el-button size="small" type="primary" @click="searchTraces" class="search-btn">
-      {{ t("search") }}
-    </el-button>
   </div>
   <div class="flex-h row">
     <div class="mr-10">
@@ -72,7 +76,7 @@ limitations under the License. -->
       <el-input size="small" class="inputs" v-model="maxTraceDuration" type="number" />
     </div>
     <div>
-      <span class="sm b grey mr-5">{{ t("timeRange") }}:</span>
+      <span class="sm b grey mr-5">{{ t("timeRange") }}</span>
       <TimePicker
         :value="[durationRow.start, durationRow.end]"
         :maxRange="maxRange"
@@ -91,15 +95,15 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import type { Option, DurationTime, Duration } from "@/types/app";
-  import { useTraceStore } from "@/store/modules/trace";
+  import { useTraceStore, PageSize } from "@/store/modules/trace";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useSelectorStore } from "@/store/modules/selectors";
   import timeFormat from "@/utils/timeFormat";
   import ConditionTags from "@/views/components/ConditionTags.vue";
   import { ElMessage } from "element-plus";
-  import { EntityType, QueryOrders, Status } from "../../data";
-  import type { LayoutConfig } from "@/types/dashboard";
+  import { EntityType, QueryOrders, Status } from "@/views/dashboard/data";
+  import type { LayoutConfig, FilterDuration } from "@/types/dashboard";
   import { useDuration } from "@/hooks/useDuration";
 
   /*global defineProps, defineEmits, Recordable */
@@ -108,7 +112,7 @@ limitations under the License. -->
     needQuery: { type: Boolean, default: true },
     data: {
       type: Object as PropType<LayoutConfig>,
-      default: () => ({ graph: {} }),
+      default: () => ({}),
     },
   });
   const { t } = useI18n();
@@ -117,20 +121,19 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const traceStore: ReturnType<typeof useTraceStore> = useTraceStore();
   const { setDurationRow, getDurationTime, getMaxRange } = useDuration();
-  const filters = reactive<Recordable>(props.data.filters || {});
-  const traceId = ref<string>(filters.traceId || "");
-  const { duration: filtersDuration } = filters;
-  const duration = ref<DurationTime>(
+  const filters = computed(() => props.data.filters || {});
+  const traceId = ref<string>(filters.value.traceId || "");
+  const { duration: filtersDuration } = filters.value;
+  const duration = ref<DurationTime | FilterDuration>(
     filtersDuration
       ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: filtersDuration.step || "" }
       : getDurationTime(),
   );
   const minTraceDuration = ref<number>();
   const maxTraceDuration = ref<number>();
-  const tagsList = ref<string[]>([]);
   const tagsMap = ref<Option[]>([]);
   const state = reactive<Recordable>({
-    status: filters.status === "ERROR" ? Status[2] : Status[0],
+    status: filters.value.status === "ERROR" ? Status[2] : Status[0],
     instance: { value: "0", label: "All" },
     endpoint: { value: "0", label: "All" },
     service: { value: "", label: "" },
@@ -139,9 +142,9 @@ limitations under the License. -->
   const maxRange = computed(() =>
     getMaxRange(appStore.coldStageMode ? appStore.recordsTTL?.coldTrace || 0 : appStore.recordsTTL?.trace || 0),
   );
-  if (filters.queryOrder) {
+  if (filters.value.queryOrder) {
     traceStore.setTraceCondition({
-      queryOrder: filters.queryOrder,
+      queryOrder: filters.value.queryOrder,
     });
   }
   if (props.needQuery) {
@@ -149,7 +152,7 @@ limitations under the License. -->
   }
 
   async function init() {
-    duration.value = filters.duration || appStore.durationTime;
+    duration.value = filters.value.duration || appStore.durationTime;
     if (dashboardStore.entity === EntityType[1].value) {
       await getServices();
     }
@@ -221,8 +224,10 @@ limitations under the License. -->
       minTraceDuration: Number(minTraceDuration.value),
       maxTraceDuration: Number(maxTraceDuration.value),
       traceId: traceId.value || undefined,
-      paging: { pageNum: 1, pageSize: 20 },
     };
+    if (!traceStore.hasQueryTracesV2Support) {
+      param.paging = { pageNum: 1, pageSize: PageSize };
+    }
     if (props.data.filters && props.data.filters.id) {
       param = {
         ...param,
@@ -267,8 +272,7 @@ limitations under the License. -->
       emits("get", state.service.id);
     }
   }
-  function updateTags(data: { tagsMap: Array<Option>; tagsList: string[] }) {
-    tagsList.value = data.tagsList;
+  function updateTags(data: { tagsMap: Array<Option> }) {
     tagsMap.value = data.tagsMap;
   }
   async function searchEndpoints(keyword: string) {
@@ -345,19 +349,10 @@ limitations under the License. -->
 
   .row {
     margin-bottom: 5px;
-    position: relative;
   }
 
   .traceId {
     width: 270px;
-  }
-
-  .search-btn {
-    cursor: pointer;
-    width: 80px;
-    position: absolute;
-    top: 0;
-    right: 10px;
   }
 
   .label {

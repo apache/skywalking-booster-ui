@@ -20,6 +20,8 @@ limitations under the License. -->
     :type="type"
     :headerType="headerType"
     :traceId="traceId"
+    :selectedMaxTimestamp="selectedMaxTimestamp"
+    :selectedMinTimestamp="selectedMinTimestamp"
     @select="handleSelectSpan"
   >
     <div class="trace-tips" v-if="!segmentId.length">{{ $t("noData") }}</div>
@@ -47,47 +49,74 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, onBeforeUnmount, onMounted } from "vue";
-  import type { PropType } from "vue";
+  import { ref, watch, onBeforeUnmount, onMounted, nextTick } from "vue";
   import * as d3 from "d3";
   import dayjs from "dayjs";
-  import ListGraph from "../../utils/d3-trace-list";
-  import TreeGraph from "../../utils/d3-trace-tree";
+  import ListGraph from "./utils/d3-trace-list";
+  import TreeGraph from "./utils/d3-trace-tree";
   import type { Span, Ref } from "@/types/trace";
   import SpanDetail from "./SpanDetail.vue";
   import TableContainer from "../Table/TableContainer.vue";
   import { useAppStoreWithOut } from "@/store/modules/app";
+  import { useTraceStore } from "@/store/modules/trace";
   import { debounce } from "@/utils/debounce";
   import { mutationObserver } from "@/utils/mutation";
-  import { TraceGraphType } from "../constant";
-  import { Themes } from "@/constants/data";
+  import { TraceGraphType } from "../VisGraph/constant";
   import type { SegmentSpan } from "@/types/profile";
+  import { buildSegmentForest, collapseTree, getRefsAllNodes } from "./utils/helper";
 
-  /* global Recordable, Nullable */
-  const props = defineProps({
-    data: { type: Array as PropType<(Span | SegmentSpan)[]>, default: () => [] },
-    traceId: { type: String, default: "" },
-    type: { type: String, default: TraceGraphType.LIST },
-    headerType: { type: String, default: "" },
-  });
-  const emits = defineEmits(["select"]);
+  /* global Nullable */
+  type Props = {
+    data: (Span | SegmentSpan)[];
+    traceId: string;
+    type: string;
+    headerType?: string;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+    minTimestamp: number;
+    maxTimestamp: number;
+  };
+  type Emits = {
+    (e: "select", value: Span): void;
+  };
+  const props = defineProps<Props>();
+  const emits = defineEmits<Emits>();
   const appStore = useAppStoreWithOut();
   const loading = ref<boolean>(false);
   const showDetail = ref<boolean>(false);
   const fixSpansSize = ref<number>(0);
-  const segmentId = ref<Recordable[]>([]);
+  const segmentId = ref<Span[]>([]);
   const currentSpan = ref<Nullable<Span>>(null);
   const refSpans = ref<Array<Ref>>([]);
   const tree = ref<Nullable<any>>(null);
   const traceGraph = ref<Nullable<HTMLDivElement>>(null);
   const parentSpans = ref<Array<Span | SegmentSpan>>([]);
   const refParentSpans = ref<Array<Span | SegmentSpan>>([]);
+  const traceStore = useTraceStore();
   const debounceFunc = debounce(draw, 500);
-  const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
+  // Store previous timestamp values to check for significant changes
+  const prevSelectedMaxTimestamp = ref<number>(props.selectedMaxTimestamp || 0);
+  const prevSelectedMinTimestamp = ref<number>(props.selectedMinTimestamp || 0);
 
-  onMounted(() => {
+  const visDate = (date: number, pattern = "YYYY-MM-DD HH:mm:ss:SSS") => dayjs(date).format(pattern);
+  // Debounced version of onSpanPanelToggled to prevent excessive re-renders
+  const debouncedOnSpanPanelToggled = debounce(draw, 150);
+
+  // Check if timestamp change is significant enough to warrant a redraw
+  function isTimestampChangeSignificant(newMax: number, newMin: number): boolean {
+    const maxDiff = Math.abs(newMax - prevSelectedMaxTimestamp.value);
+    const minDiff = Math.abs(newMin - prevSelectedMinTimestamp.value);
+    const totalRange = props.maxTimestamp - props.minTimestamp;
+
+    // Consider change significant if it's more than 0.1% of the total range
+    const threshold = totalRange * 0.001;
+
+    return maxDiff > threshold || minDiff > threshold;
+  }
+  onMounted(async () => {
     loading.value = true;
     changeTree();
+    await nextTick();
     draw();
     loading.value = false;
     // monitor segment list width changes.
@@ -96,11 +125,12 @@ limitations under the License. -->
       debounceFunc();
     });
     window.addEventListener("resize", debounceFunc);
+    window.addEventListener("spanPanelToggled", draw);
   });
 
   function draw() {
     if (props.type === TraceGraphType.TABLE) {
-      segmentId.value = setLevel(segmentId.value);
+      segmentId.value = setLevel(segmentId.value) as Span[];
       return;
     }
     if (!traceGraph.value) {
@@ -108,21 +138,35 @@ limitations under the License. -->
     }
     d3.selectAll(".d3-tip").remove();
     if (props.type === TraceGraphType.LIST) {
-      tree.value = new ListGraph(traceGraph.value, handleSelectSpan);
-      tree.value.init(
-        { label: "TRACE_ROOT", children: segmentId.value },
-        getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
-        fixSpansSize.value,
-      );
+      tree.value = new ListGraph({ el: traceGraph.value, handleSelectSpan: handleSelectSpan });
+      tree.value.init({
+        data: { label: "TRACE_ROOT", children: segmentId.value },
+        row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+        fixSpansSize: fixSpansSize.value,
+        selectedMaxTimestamp: props.selectedMaxTimestamp,
+        selectedMinTimestamp: props.selectedMinTimestamp,
+      });
       tree.value.draw();
+      selectInitialSpan();
       return;
     }
     if (props.type === TraceGraphType.TREE) {
-      tree.value = new TreeGraph(traceGraph.value, handleSelectSpan);
-      tree.value.init(
-        { label: `${props.traceId}`, children: segmentId.value },
-        getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
-      );
+      tree.value = new TreeGraph({ el: traceGraph.value, handleSelectSpan });
+      tree.value.init({
+        data: { label: `${props.traceId}`, children: segmentId.value },
+        row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+        selectedMaxTimestamp: props.selectedMaxTimestamp,
+        selectedMinTimestamp: props.selectedMinTimestamp,
+      });
+    }
+  }
+  function selectInitialSpan() {
+    if (segmentId.value && segmentId.value.length > 0) {
+      const root = segmentId.value[0];
+      traceStore.setCurrentSpan(root);
+      if (tree.value && typeof tree.value.highlightSpan === "function") {
+        tree.value.highlightSpan(root as any);
+      }
     }
   }
   function handleSelectSpan(i: any) {
@@ -162,7 +206,7 @@ limitations under the License. -->
       item && parentSpans.value.push(item);
     }
   }
-  function viewParentSpan(span: Recordable) {
+  function viewParentSpan(span: Span) {
     if (props.type === TraceGraphType.TABLE) {
       setTableSpanStyle(span);
       return;
@@ -173,234 +217,34 @@ limitations under the License. -->
     showDetail.value = true;
     hideActionBox();
   }
-  function setTableSpanStyle(span: Recordable) {
-    const itemDom: any = document.querySelector(`.trace-item-${span.key}`);
-    const items: any = document.querySelectorAll(".trace-item");
+  function setTableSpanStyle(span: Span) {
+    const itemDom: HTMLSpanElement | null = document.querySelector(`.trace-item-${span.key}`);
+    const items: HTMLSpanElement[] = Array.from(document.querySelectorAll(".trace-item")) as HTMLSpanElement[];
     for (const item of items) {
-      item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
+      item.style.background = "transparent";
     }
-    itemDom.style.background = appStore.theme === Themes.Dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+    if (itemDom) {
+      itemDom.style.background = "var(--sw-trace-table-selected)";
+    }
     hideActionBox();
   }
   function hideActionBox() {
     const box: any = document.querySelector("#trace-action-box");
     box.style.display = "none";
   }
-  function traverseTree(node: Recordable, spanId: string, segmentId: string, data: Recordable) {
-    if (!node || node.isBroken) {
-      return;
-    }
-    if (node.spanId === spanId && node.segmentId === segmentId) {
-      node.children.push(data);
-      return;
-    }
-    for (const nodeItem of node.children || []) {
-      traverseTree(nodeItem, spanId, segmentId, data);
-    }
-  }
   function changeTree() {
-    if (props.data.length === 0) {
+    if (!props.data.length) {
       return [];
     }
-    segmentId.value = [];
-    const segmentGroup: Recordable = {};
-    const segmentIdGroup: string[] = [];
-    const fixSpans: Span[] = [];
-    const segmentHeaders: Span[] = [];
-    for (const span of props.data) {
-      if (span.refs.length) {
-        refSpans.value.push(...span.refs);
-      }
-      if (span.parentSpanId === -1) {
-        segmentHeaders.push(span);
-      } else {
-        const item = props.data.find(
-          (i: Span) => i.traceId === span.traceId && i.segmentId === span.segmentId && i.spanId === span.spanId - 1,
-        );
-        const content = fixSpans.find(
-          (i: Span) =>
-            i.traceId === span.traceId &&
-            i.segmentId === span.segmentId &&
-            i.spanId === span.spanId - 1 &&
-            i.parentSpanId === span.spanId - 2,
-        );
-        if (!item && !content) {
-          fixSpans.push({
-            traceId: span.traceId,
-            segmentId: span.segmentId,
-            spanId: span.spanId - 1,
-            parentSpanId: span.spanId - 2,
-            refs: [],
-            endpointName: `VNode: ${span.segmentId}`,
-            serviceCode: "VirtualNode",
-            type: `[Broken] ${span.type}`,
-            peer: "",
-            component: `VirtualNode: #${span.spanId - 1}`,
-            isError: true,
-            isBroken: true,
-            layer: "Broken",
-            tags: [],
-            logs: [],
-            startTime: 0,
-            endTime: 0,
-          });
-        }
-      }
-    }
-    for (const span of segmentHeaders) {
-      if (span.refs.length) {
-        let exit = null;
-        for (const ref of span.refs) {
-          const e = props.data.find(
-            (i: Recordable) =>
-              ref.traceId === i.traceId && ref.parentSegmentId === i.segmentId && ref.parentSpanId === i.spanId,
-          );
-          if (e) {
-            exit = e;
-          }
-        }
-        if (!exit) {
-          const ref = span.refs[0];
-          // create a known broken node.
-          const parentSpanId = ref.parentSpanId > -1 ? 0 : -1;
-          const content = fixSpans.find(
-            (i: Span) =>
-              i.traceId === ref.traceId &&
-              i.segmentId === ref.parentSegmentId &&
-              i.spanId === ref.parentSpanId &&
-              i.parentSpanId === parentSpanId,
-          );
-          if (!content) {
-            fixSpans.push({
-              traceId: ref.traceId,
-              segmentId: ref.parentSegmentId,
-              spanId: ref.parentSpanId,
-              parentSpanId,
-              refs: [],
-              endpointName: `VNode: ${ref.parentSegmentId}`,
-              serviceCode: "VirtualNode",
-              type: `[Broken] ${ref.type}`,
-              peer: "",
-              component: `VirtualNode: #${ref.parentSpanId}`,
-              isError: true,
-              isBroken: true,
-              layer: "Broken",
-              tags: [],
-              logs: [],
-              startTime: 0,
-              endTime: 0,
-            });
-          }
-          // if root broken node is not exist, create a root broken node.
-          if (parentSpanId > -1) {
-            const content = fixSpans.find(
-              (i: Span) =>
-                i.traceId === ref.traceId &&
-                i.segmentId === ref.parentSegmentId &&
-                i.spanId === 0 &&
-                i.parentSpanId === -1,
-            );
-            if (!content) {
-              fixSpans.push({
-                traceId: ref.traceId,
-                segmentId: ref.parentSegmentId,
-                spanId: 0,
-                parentSpanId: -1,
-                refs: [],
-                endpointName: `VNode: ${ref.parentSegmentId}`,
-                serviceCode: "VirtualNode",
-                type: `[Broken] ${ref.type}`,
-                peer: "",
-                component: `VirtualNode: #0`,
-                isError: true,
-                isBroken: true,
-                layer: "Broken",
-                tags: [],
-                logs: [],
-                startTime: 0,
-                endTime: 0,
-              });
-            }
-          }
-        }
-      }
-    }
-    for (const i of [...fixSpans, ...props.data]) {
-      i.label = i.endpointName || "no operation name";
-      i.key = Math.random().toString(36).substring(2, 36);
-      i.children = [];
-      if (segmentGroup[i.segmentId]) {
-        segmentGroup[i.segmentId].push(i);
-      } else {
-        segmentIdGroup.push(i.segmentId);
-        segmentGroup[i.segmentId] = [i];
-      }
-    }
-    fixSpansSize.value = fixSpans.length;
-    for (const id of segmentIdGroup) {
-      const currentSegment = segmentGroup[id].sort((a: Span, b: Span) => b.parentSpanId - a.parentSpanId);
-      for (const s of currentSegment) {
-        const index = currentSegment.findIndex((i: Span) => i.spanId === s.parentSpanId);
-        if (index > -1) {
-          if (
-            (currentSegment[index].isBroken && currentSegment[index].parentSpanId === -1) ||
-            !currentSegment[index].isBroken
-          ) {
-            currentSegment[index].children.push(s);
-            currentSegment[index].children.sort((a: Span, b: Span) => a.spanId - b.spanId);
-          }
-        }
-        if (s.isBroken) {
-          const children = props.data.filter((span: Span) =>
-            span.refs.find(
-              (d) => d.traceId === s.traceId && d.parentSegmentId === s.segmentId && d.parentSpanId === s.spanId,
-            ),
-          );
-          if (children.length) {
-            s.children.push(...children);
-          }
-        }
-      }
-      segmentGroup[id] = currentSegment[currentSegment.length - 1];
-    }
-    for (const id of segmentIdGroup) {
-      for (const ref of segmentGroup[id].refs) {
-        if (ref.traceId === props.traceId) {
-          traverseTree(segmentGroup[ref.parentSegmentId], ref.parentSpanId, ref.parentSegmentId, segmentGroup[id]);
-        }
-      }
-    }
-    for (const i in segmentGroup) {
-      for (const ref of segmentGroup[i].refs) {
-        if (!segmentGroup[ref.parentSegmentId]) {
-          segmentId.value.push(segmentGroup[i]);
-        }
-      }
-      if (!segmentGroup[i].refs.length && segmentGroup[i].parentSpanId === -1) {
-        segmentId.value.push(segmentGroup[i]);
-      }
-    }
-    for (const i of segmentId.value) {
-      collapse(i);
+    const { roots, fixSpansSize: fixSize, refSpans: refs } = buildSegmentForest(props.data as Span[], props.traceId);
+    segmentId.value = roots;
+    fixSpansSize.value = fixSize;
+    refSpans.value = refs;
+    for (const root of segmentId.value) {
+      collapseTree(root, refSpans.value);
     }
   }
-  function collapse(d: Span | Recordable) {
-    if (d.children) {
-      const item = refSpans.value.find((s: Ref) => s.parentSpanId === d.spanId && s.parentSegmentId === d.segmentId);
-      let dur = d.endTime - d.startTime;
-      for (const i of d.children) {
-        dur -= i.endTime - i.startTime;
-      }
-      d.dur = dur < 0 ? 0 : dur;
-      if (item) {
-        d.children = d.children.sort(compare("startTime"));
-      }
-      for (const i of d.children) {
-        collapse(i);
-      }
-    }
-  }
-  function setLevel(arr: Recordable[], level = 1, totalExec?: number) {
+  function setLevel(arr: Span[], level = 1, totalExec?: number) {
     for (const item of arr) {
       item.level = level;
       totalExec = totalExec || item.endTime - item.startTime;
@@ -411,34 +255,12 @@ limitations under the License. -->
     }
     return arr;
   }
-  function getRefsAllNodes(tree: Recordable) {
-    let nodes = [];
-    let stack = [tree];
 
-    while (stack.length > 0) {
-      const node = stack.pop();
-      nodes.push(node);
-
-      if (node?.children && node.children.length > 0) {
-        for (let i = node.children.length - 1; i >= 0; i--) {
-          stack.push(node.children[i]);
-        }
-      }
-    }
-
-    return nodes;
-  }
-  function compare(p: string) {
-    return (m: Recordable, n: Recordable) => {
-      const a = m[p];
-      const b = n[p];
-      return a - b;
-    };
-  }
   onBeforeUnmount(() => {
     d3.selectAll(".d3-tip").remove();
     window.removeEventListener("resize", debounceFunc);
     mutationObserver.deleteObserve("trigger-resize");
+    window.removeEventListener("spanPanelToggled", draw);
   });
   watch(
     () => props.data,
@@ -455,12 +277,41 @@ limitations under the License. -->
   watch(
     () => appStore.theme,
     () => {
-      tree.value.init({ label: "TRACE_ROOT", children: segmentId.value }, props.data, fixSpansSize.value);
+      if (props.type === TraceGraphType.LIST) {
+        tree.value.init({
+          data: { label: "TRACE_ROOT", children: segmentId.value },
+          row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+          fixSpansSize: fixSpansSize.value,
+          selectedMaxTimestamp: props.selectedMaxTimestamp,
+          selectedMinTimestamp: props.selectedMinTimestamp,
+        });
+      } else if (props.type === TraceGraphType.TREE) {
+        tree.value.init({
+          data: { label: `${props.traceId}`, children: segmentId.value },
+          row: getRefsAllNodes({ label: "TRACE_ROOT", children: segmentId.value }),
+          selectedMaxTimestamp: props.selectedMaxTimestamp,
+          selectedMinTimestamp: props.selectedMinTimestamp,
+        });
+      }
       tree.value.draw(() => {
         setTimeout(() => {
           loading.value = false;
         }, 200);
       });
+    },
+  );
+  watch(
+    () => [props.selectedMaxTimestamp, props.selectedMinTimestamp],
+    ([newMax, newMin]) => {
+      // Only trigger redraw if the change is significant
+      if (isTimestampChangeSignificant(newMax as number, newMin as number)) {
+        // Update previous values
+        prevSelectedMaxTimestamp.value = newMax as number;
+        prevSelectedMinTimestamp.value = newMin as number;
+
+        // Use debounced version to prevent excessive re-renders
+        debouncedOnSpanPanelToggled();
+      }
     },
   );
 </script>

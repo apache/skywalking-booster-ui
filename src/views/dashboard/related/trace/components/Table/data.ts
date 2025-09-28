@@ -48,7 +48,7 @@ export const ProfileConstant = [
     label: "application",
     value: "Operation",
   },
-];
+] as const;
 
 export const TraceConstant = [
   {
@@ -83,7 +83,7 @@ export const TraceConstant = [
     label: "application",
     value: "Attached Events",
   },
-];
+] as const;
 
 export const StatisticsConstant = [
   {
@@ -121,4 +121,4 @@ export const StatisticsConstant = [
     value: "Hits",
     key: "count",
   },
-];
+] as const;

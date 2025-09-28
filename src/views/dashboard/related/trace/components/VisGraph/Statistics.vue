@@ -17,29 +17,39 @@ limitations under the License. -->
     <div class="trace-t-loading" v-show="loading">
       <Icon iconName="spinner" size="sm" />
     </div>
-    <TableContainer :tableData="tableData" :type="TraceGraphType.STATISTICS" :headerType="headerType">
+    <TableContainer
+      :tableData="tableData"
+      :type="TraceGraphType.STATISTICS"
+      :headerType="headerType"
+      :traceId="traceId"
+    >
       <div class="trace-tips" v-if="!tableData.length">{{ $t("noData") }}</div>
     </TableContainer>
   </div>
 </template>
 <script lang="ts" setup>
   import { ref, watch, onMounted } from "vue";
-  import type { PropType } from "vue";
-  import TableContainer from "./Table/TableContainer.vue";
-  import traceTable from "../utils/trace-table";
+  import TableContainer from "../Table/TableContainer.vue";
+  import traceTable from "../D3Graph/utils/trace-table";
   import type { StatisticsSpan, Span, StatisticsGroupRef } from "@/types/trace";
   import { TraceGraphType } from "./constant";
 
-  /* global defineProps, defineEmits, Recordable*/
-  const props = defineProps({
-    data: { type: Array as PropType<Span[]>, default: () => [] },
-    traceId: { type: String, default: "" },
-    showBtnDetail: { type: Boolean, default: false },
-    headerType: { type: String, default: "" },
-  });
-  const emit = defineEmits(["load"]);
+  /* global defineProps, defineEmits*/
+  type Props = {
+    data: Span[];
+    traceId: string;
+    showBtnDetail: boolean;
+    headerType: string;
+    selectedMaxTimestamp: number;
+    selectedMinTimestamp: number;
+  };
+  type Emits = {
+    (e: "load", callback: () => void): void;
+  };
+  const props = defineProps<Props>();
+  const emit = defineEmits<Emits>();
   const loading = ref<boolean>(true);
-  const tableData = ref<Recordable>([]);
+  const tableData = ref<any[]>([]);
   const list = ref<any[]>([]);
 
   onMounted(() => {

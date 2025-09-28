@@ -17,7 +17,7 @@ limitations under the License. -->
     <div :class="isCollapse ? 'logo-icon-collapse' : 'logo-icon'">
       <Icon :size="isCollapse ? 'xl' : 'logo'" :iconName="isCollapse ? 'logo' : 'logo-sw'" />
     </div>
-    <div class="menu scroll_bar_dark" :style="isCollapse ? {} : { width: '220px' }">
+    <div class="menu scroll_bar_style" :style="isCollapse ? {} : { width: '220px' }">
       <el-menu
         active-text-color="#448dfe"
         background-color="#252a2f"
