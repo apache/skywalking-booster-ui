@@ -137,7 +137,7 @@ limitations under the License. -->
         :data="child"
         :type="type"
         :headerType="headerType"
-        @selectedSpan="() => emits('selectedSpan', child)"
+        @selectedSpan="selectItem"
       />
     </div>
     <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
@@ -200,6 +200,9 @@ limitations under the License. -->
   });
   function toggle() {
     displayChildren.value = !displayChildren.value;
+  }
+  function selectItem(span: Span) {
+    emits("selectedSpan", span);
   }
   function showSelectSpan(dom: HTMLSpanElement) {
     if (!dom) {
