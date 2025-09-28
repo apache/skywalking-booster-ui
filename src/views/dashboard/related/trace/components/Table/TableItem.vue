@@ -206,11 +206,7 @@ limitations under the License. -->
     if (props.selectedMinTimestamp === undefined || props.selectedMaxTimestamp === undefined) {
       return true;
     }
-    if (props.data.startTime === props.data.endTime) {
-      console.log(props.data.startTime);
-      console.log(props.selectedMinTimestamp);
-      console.log(props.selectedMaxTimestamp);
-    }
+
     return props.data.startTime >= props.selectedMinTimestamp || props.data.endTime <= props.selectedMaxTimestamp;
   });
   function toggle() {
