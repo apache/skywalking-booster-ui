@@ -341,12 +341,8 @@ limitations under the License. -->
   }
 
   .trace-item {
-    display: flex;
-    flex-direction: row;
     white-space: nowrap;
     position: relative;
-    width: 100%;
-    padding: 2px 0;
   }
 
   .trace-item.selected {
@@ -374,7 +370,7 @@ limitations under the License. -->
   }
 
   .trace-item div.exec-percent {
-    width: calc(100% - 1050px);
+    width: 100px;
     height: 30px;
     padding: 0 8px;
 
