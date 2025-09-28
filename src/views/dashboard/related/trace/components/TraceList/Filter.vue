@@ -59,7 +59,7 @@ limitations under the License. -->
       </div>
     </div>
     <div class="mr-10">
-      <el-button type="primary" @click="searchTraces">
+      <el-button type="primary" @click="searchTraces" :loading="traceStore.loading">
         {{ t("runQuery") }}
       </el-button>
     </div>

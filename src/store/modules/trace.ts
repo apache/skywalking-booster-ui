@@ -180,14 +180,17 @@ export const traceStore = defineStore({
       if (this.hasQueryTracesV2Support) {
         return this.fetchV2Traces();
       }
+      this.loading = true;
       const response = await graphql.query("queryTraces").params({ condition: this.conditions });
       if (response.errors) {
+        this.loading = false;
         return response;
       }
       if (!response.data.data.traces.length) {
         this.traceList = [];
         this.setCurrentTrace({});
         this.setTraceSpans([]);
+        this.loading = false;
         return response;
       }
       this.getTraceSpans({ traceId: response.data.data.traces[0].traceIds[0] });
@@ -207,6 +210,7 @@ export const traceStore = defineStore({
       }
       const appStore = useAppStoreWithOut();
       let response;
+      this.loading = true;
       if (appStore.coldStageMode) {
         response = await graphql
           .query("queryTraceSpansFromColdStage")
@@ -214,6 +218,7 @@ export const traceStore = defineStore({
       } else {
         response = await graphql.query("querySpans").params(params);
       }
+      this.loading = false;
       if (response.errors) {
         return response;
       }
