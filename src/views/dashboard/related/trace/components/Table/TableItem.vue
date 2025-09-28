@@ -207,7 +207,7 @@ limitations under the License. -->
       return true;
     }
 
-    return props.data.startTime >= props.selectedMinTimestamp || props.data.endTime <= props.selectedMaxTimestamp;
+    return props.data.startTime <= props.selectedMaxTimestamp && props.data.endTime >= props.selectedMinTimestamp;
   });
   function toggle() {
     displayChildren.value = !displayChildren.value;
