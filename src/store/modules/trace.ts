@@ -40,6 +40,7 @@ interface TraceState {
   currentSpan: Nullable<Span>;
   hasQueryTracesV2Support: boolean;
   v2Traces: Trace[];
+  loading: boolean;
 }
 const { getDurationTime } = useDuration();
 
@@ -67,6 +68,7 @@ export const traceStore = defineStore({
     currentSpan: null,
     hasQueryTracesV2Support: false,
     v2Traces: [],
+    loading: false,
   }),
   actions: {
     setTraceCondition(data: Recordable) {
@@ -241,7 +243,9 @@ export const traceStore = defineStore({
       return response;
     },
     async fetchV2Traces() {
+      this.loading = true;
       const response = await graphql.query("queryV2Traces").params({ condition: this.conditions });
+      this.loading = false;
       if (response.errors) {
         this.traceList = [];
         this.setCurrentTrace({});

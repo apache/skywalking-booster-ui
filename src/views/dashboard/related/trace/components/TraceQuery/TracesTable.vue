@@ -42,6 +42,7 @@ limitations under the License. -->
       :preserve-expanded-content="true"
       :default-sort="{ prop: 'duration', order: 'descending' }"
       style="width: 100%"
+      v-loading="traceStore.loading"
     >
       <el-table-column type="expand">
         <template #default="props">
