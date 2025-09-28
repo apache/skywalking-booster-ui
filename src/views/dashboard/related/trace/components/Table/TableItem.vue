@@ -49,7 +49,6 @@ limitations under the License. -->
   </div>
   <div v-else>
     <div
-      @click="selectSpan"
       :class="[
         'trace-item',
         'level' + ((data.level || 0) - 1),
@@ -65,6 +64,7 @@ limitations under the License. -->
           'text-indent': ((data.level || 0) - 1) * 10 + 'px',
           width: `${method}px`,
         }"
+        @click="selectSpan"
       >
         <Icon
           :style="!displayChildren ? 'transform: rotate(-90deg);' : ''"
@@ -141,138 +141,113 @@ limitations under the License. -->
     </el-dialog>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
   import { useI18n } from "vue-i18n";
-  import { ref, computed, defineComponent, watch } from "vue";
-  import type { PropType } from "vue";
+  import { ref, computed, watch } from "vue";
   import SpanDetail from "../D3Graph/SpanDetail.vue";
   import { dateFormat } from "@/utils/dateFormat";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useTraceStore } from "@/store/modules/trace";
-  import { Themes } from "@/constants/data";
   import { TraceGraphType } from "../VisGraph/constant";
   import { WidgetType } from "@/views/dashboard/data";
   import type { Span, Ref } from "@/types/trace";
   import { getServiceColor } from "@/utils/color";
 
-  /*global Recordable*/
-  const props = {
-    data: { type: Object as PropType<Span>, default: () => ({}) },
-    method: { type: Number, default: 0 },
-    type: { type: String, default: "" },
-    headerType: { type: String, default: "" },
-    traceId: { type: String, traceId: "" },
-  };
-  export default defineComponent({
-    name: "TableItem",
-    props,
-    components: { SpanDetail },
-    setup(props) {
-      const appStore = useAppStoreWithOut();
-      const traceStore = useTraceStore();
-      const displayChildren = ref<boolean>(true);
-      const showDetail = ref<boolean>(false);
-      const { t } = useI18n();
-      const selfTime = computed(() => (props.data.dur ? props.data.dur : 0));
-      const execTime = computed(() =>
-        props.data.endTime - props.data.startTime ? props.data.endTime - props.data.startTime : 0,
-      );
-      const outterPercent = computed(() => {
-        if (props.data.level === 1) {
-          return "100%";
-        } else {
-          const data = props.data;
-          const exec = data.endTime - data.startTime ? data.endTime - data.startTime : 0;
-          let result = (exec / (data.totalExec || 0)) * 100;
-          result = result > 100 ? 100 : result;
-          const resultStr = result.toFixed(4) + "%";
-          return resultStr === "0.0000%" ? "0.9%" : resultStr;
-        }
-      });
-      const innerPercent = computed(() => {
-        const result = (selfTime.value / execTime.value) * 100;
-        const resultStr = result.toFixed(4) + "%";
-        return resultStr === "0.0000%" ? "0.9%" : resultStr;
-      });
-      const isCrossThread = computed(() => {
-        const key = props.data.refs?.findIndex((d: Ref) => d.type === "CROSS_THREAD") ?? -1;
-        return key > -1 ? true : false;
-      });
-      function toggle() {
-        displayChildren.value = !displayChildren.value;
-      }
-      function showSelectSpan(dom: HTMLSpanElement) {
-        if (!dom) {
-          return;
-        }
-        const items: any = document.querySelectorAll(".trace-item");
-        for (const item of items) {
-          item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
-        }
-        dom.style.background = appStore.theme === Themes.Dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
-        const p: any = document.getElementsByClassName("profiled")[0];
-        if (p) {
-          p.style.background = appStore.theme === Themes.Dark ? "#333" : "#eee";
-        }
-      }
-      function selectSpan(event: Recordable) {
-        const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
-        selectedItem(props.data);
-        if (props.headerType === WidgetType.Profile) {
-          showSelectSpan(dom);
-          return;
-        }
-        viewSpanDetail(dom);
-      }
-      function viewSpan(event: Recordable) {
-        showDetail.value = true;
-        const dom = event.composedPath().find((d: Recordable) => d.className.includes("trace-item"));
-        selectedItem(props.data);
-        viewSpanDetail(dom);
-      }
-      function selectedItem(span: Span) {
-        traceStore.setSelectedSpan(span);
-      }
-      function viewSpanDetail(dom: HTMLSpanElement) {
-        showSelectSpan(dom);
-        if (props.type === TraceGraphType.STATISTICS) {
-          showDetail.value = true;
-        }
-      }
-      watch(
-        () => appStore.theme,
-        () => {
-          const items: any = document.querySelectorAll(".trace-item");
-          for (const item of items) {
-            item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
-          }
-          const p: any = document.getElementsByClassName("profiled")[0];
-          if (p) {
-            p.style.background = appStore.theme === Themes.Dark ? "#333" : "#eee";
-          }
-        },
-      );
-      return {
-        displayChildren,
-        outterPercent,
-        innerPercent,
-        isCrossThread,
-        viewSpanDetail,
-        toggle,
-        dateFormat,
-        showSelectSpan,
-        showDetail,
-        selectSpan,
-        selectedItem,
-        viewSpan,
-        t,
-        appStore,
-        TraceGraphType,
-        WidgetType,
-        getServiceColor,
-      };
-    },
+  interface Props {
+    data: Span;
+    method: number;
+    type: string;
+    headerType: string;
+    traceId?: string;
+  }
+  const props = defineProps<Props>();
+  const appStore = useAppStoreWithOut();
+  const traceStore = useTraceStore();
+  const displayChildren = ref<boolean>(true);
+  const showDetail = ref<boolean>(false);
+  const { t } = useI18n();
+  const selfTime = computed(() => (props.data.dur ? props.data.dur : 0));
+  const execTime = computed(() =>
+    props.data.endTime - props.data.startTime > 0 ? props.data.endTime - props.data.startTime : 0,
+  );
+  const outterPercent = computed(() => {
+    if (props.data.level === 1) {
+      return "100%";
+    } else {
+      const { data } = props;
+      let result = (execTime.value / (data.totalExec || 0)) * 100;
+      result = result > 100 ? 100 : result;
+      const resultStr = result.toFixed(4) + "%";
+      return resultStr === "0.0000%" ? "0.9%" : resultStr;
+    }
   });
+  const innerPercent = computed(() => {
+    const result = (selfTime.value / execTime.value) * 100;
+    const resultStr = result.toFixed(4) + "%";
+    return resultStr === "0.0000%" ? "0.9%" : resultStr;
+  });
+  const isCrossThread = computed(() => {
+    const key = props.data.refs?.findIndex((d: Ref) => d.type === "CROSS_THREAD") ?? -1;
+    return key > -1 ? true : false;
+  });
+  function toggle() {
+    displayChildren.value = !displayChildren.value;
+  }
+  function showSelectSpan(dom: HTMLSpanElement) {
+    if (!dom) {
+      return;
+    }
+    const items: any = document.querySelectorAll(".trace-item");
+    for (const item of items) {
+      item.style.background = "var(--theme-background)";
+    }
+    dom.style.background = "var(--sw-trace-table-selected)";
+    const p: any = document.getElementsByClassName("profiled")[0];
+    if (p) {
+      p.style.background = "var(--border-color-primary)";
+    }
+  }
+  function selectSpan(event: MouseEvent) {
+    const dom = event
+      .composedPath()
+      .find((d: EventTarget) => (d as HTMLElement).className.includes("trace-item")) as HTMLSpanElement;
+    selectedItem(props.data);
+    if (props.headerType === WidgetType.Profile) {
+      showSelectSpan(dom);
+      return;
+    }
+    viewSpanDetail(dom);
+  }
+  function viewSpan(event: MouseEvent) {
+    showDetail.value = true;
+    const dom = event
+      .composedPath()
+      .find((d: EventTarget) => (d as HTMLElement).className.includes("trace-item")) as HTMLSpanElement;
+    selectedItem(props.data);
+    viewSpanDetail(dom);
+  }
+  function selectedItem(span: Span) {
+    traceStore.setSelectedSpan(span);
+  }
+  function viewSpanDetail(dom: HTMLSpanElement) {
+    showSelectSpan(dom);
+    if (props.type === TraceGraphType.STATISTICS) {
+      showDetail.value = true;
+    }
+  }
+  watch(
+    () => appStore.theme,
+    () => {
+      const items: any = document.querySelectorAll(".trace-item");
+      for (const item of items) {
+        item.style.background = "var(--theme-background)";
+      }
+      const p: any = document.getElementsByClassName("profiled")[0];
+      if (p) {
+        p.style.background = "var(--border-color-primary)";
+      }
+    },
+  );
 </script>
 <style lang="scss" scoped>
   @import url("./table.scss");
