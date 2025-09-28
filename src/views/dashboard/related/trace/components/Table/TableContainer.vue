@@ -16,11 +16,11 @@ limitations under the License. -->
 <template>
   <div class="trace-table">
     <div class="trace-table-header" v-if="type === TraceGraphType.STATISTICS">
-      <div :class="item.label" v-for="(item, index) in headerData" :key="index">
+      <div :class="item.label" v-for="(item, index) in headerData as typeof StatisticsConstant" :key="index">
         {{ item.value }}
         <span
           class="r cp"
-          @click="sortStatistics(item.key)"
+          @click="sortStatistics(item.key || '')"
           :key="componentKey"
           v-if="item.key !== 'endpointName' && item.key !== 'type'"
         >
@@ -74,7 +74,7 @@ limitations under the License. -->
   const componentKey = ref<number>(300);
   const flag = ref<boolean>(true);
   const dragger = ref<Nullable<HTMLSpanElement>>(null);
-  let headerData: Recordable[] = TraceConstant;
+  let headerData: typeof TraceConstant | typeof ProfileConstant | typeof StatisticsConstant = TraceConstant;
 
   if (props.headerType === WidgetType.Profile) {
     headerData = ProfileConstant;

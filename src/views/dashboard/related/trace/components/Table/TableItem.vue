@@ -116,7 +116,7 @@ limitations under the License. -->
       </div>
       <div class="application">
         <el-tooltip :show-after="300" :content="data.serviceCode || '-'" placement="top">
-          <span>{{ data.serviceCode }}</span>
+          <span :style="{ color: getServiceColor(data.serviceCode || '') }">{{ data.serviceCode }}</span>
         </el-tooltip>
       </div>
       <div class="application" v-show="headerType === WidgetType.Profile" @click="viewSpan($event)">
@@ -153,6 +153,7 @@ limitations under the License. -->
   import { TraceGraphType } from "../VisGraph/constant";
   import { WidgetType } from "@/views/dashboard/data";
   import type { Span, Ref } from "@/types/trace";
+  import { getServiceColor } from "@/utils/color";
 
   /*global Recordable*/
   const props = {
@@ -268,6 +269,7 @@ limitations under the License. -->
         appStore,
         TraceGraphType,
         WidgetType,
+        getServiceColor,
       };
     },
   });
