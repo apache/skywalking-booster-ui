@@ -47,6 +47,8 @@ limitations under the License. -->
       :key="`key${index}`"
       :type="type"
       :headerType="headerType"
+      :selectedMaxTimestamp="selectedMaxTimestamp"
+      :selectedMinTimestamp="selectedMinTimestamp"
       @selectedSpan="selectItem"
     />
     <slot></slot>
@@ -54,21 +56,24 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { ref, onMounted } from "vue";
-  import type { PropType } from "vue";
   import type { Span } from "@/types/trace";
   import TableItem from "./TableItem.vue";
   import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
   import { TraceGraphType } from "../VisGraph/constant";
   import { WidgetType } from "@/views/dashboard/data";
 
-  /* global defineProps, Nullable, defineEmits, Recordable*/
-  const props = defineProps({
-    tableData: { type: Array as PropType<Recordable>, default: () => [] },
-    type: { type: String, default: "" },
-    headerType: { type: String, default: "" },
-    traceId: { type: String, default: "" },
-  });
+  /* global defineProps, Nullable, defineEmits*/
+  type Props = {
+    tableData: Span[];
+    type: string;
+    headerType?: string;
+    traceId: string;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+  };
+  const props = defineProps<Props>();
   const emits = defineEmits(["select"]);
+
   const method = ref<number>(300);
   const componentKey = ref<number>(300);
   const flag = ref<boolean>(true);
@@ -110,8 +115,8 @@ limitations under the License. -->
     const element = props.tableData;
     for (let i = 0; i < element.length; i++) {
       for (let j = 0; j < element.length - i - 1; j++) {
-        let val1;
-        let val2;
+        let val1: number | undefined;
+        let val2: number | undefined;
         if (key === "maxTime") {
           val1 = element[j].maxTime;
           val2 = element[j + 1].maxTime;
@@ -133,13 +138,13 @@ limitations under the License. -->
           val2 = element[j + 1].count;
         }
         if (flag.value) {
-          if (val1 < val2) {
+          if (val1 && val2 && val1 < val2) {
             const tmp = element[j];
             element[j] = element[j + 1];
             element[j + 1] = tmp;
           }
         } else {
-          if (val1 > val2) {
+          if (val1 && val2 && val1 > val2) {
             const tmp = element[j];
             element[j] = element[j + 1];
             element[j + 1] = tmp;

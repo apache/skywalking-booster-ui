@@ -137,6 +137,8 @@ limitations under the License. -->
         :data="child"
         :type="type"
         :headerType="headerType"
+        :selectedMaxTimestamp="selectedMaxTimestamp"
+        :selectedMinTimestamp="selectedMinTimestamp"
         @selectedSpan="selectItem"
       />
     </div>
@@ -161,8 +163,10 @@ limitations under the License. -->
     data: Span;
     method: number;
     type: string;
-    headerType: string;
+    headerType?: string;
     traceId?: string;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
   }
   interface Emits {
     (e: "selectedSpan", value: Span): void;
@@ -197,6 +201,12 @@ limitations under the License. -->
   const isCrossThread = computed(() => {
     const key = props.data.refs?.findIndex((d: Ref) => d.type === "CROSS_THREAD") ?? -1;
     return key > -1 ? true : false;
+  });
+  const inTimeRange = computed(() => {
+    if (props.selectedMinTimestamp === undefined || props.selectedMaxTimestamp === undefined) {
+      return true;
+    }
+    return props.data.startTime >= props.selectedMinTimestamp && props.data.endTime <= props.selectedMaxTimestamp;
   });
   function toggle() {
     displayChildren.value = !displayChildren.value;

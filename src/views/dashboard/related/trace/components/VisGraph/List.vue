@@ -40,7 +40,6 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import type { PropType } from "vue";
   import * as d3 from "d3";
   import { useAppStoreWithOut } from "@/store/modules/app";
   import { useTraceStore } from "@/store/modules/trace";
@@ -51,14 +50,15 @@ limitations under the License. -->
   import { getServiceColor } from "@/utils/color";
 
   /* global defineProps, Indexable*/
-  defineProps({
-    data: { type: Array as PropType<Span[]>, default: () => [] },
-    traceId: { type: String, default: "" },
-    selectedMaxTimestamp: { type: Number },
-    selectedMinTimestamp: { type: Number },
-    minTimestamp: { type: Number },
-    maxTimestamp: { type: Number },
-  });
+  type Props = {
+    data: Span[];
+    traceId: string;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+    minTimestamp: number;
+    maxTimestamp: number;
+  };
+  defineProps<Props>();
   const appStore = useAppStoreWithOut();
   const traceStore = useTraceStore();
 

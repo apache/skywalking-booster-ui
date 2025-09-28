@@ -20,6 +20,8 @@ limitations under the License. -->
     :type="type"
     :headerType="headerType"
     :traceId="traceId"
+    :selectedMaxTimestamp="selectedMaxTimestamp"
+    :selectedMinTimestamp="selectedMinTimestamp"
     @select="handleSelectSpan"
   >
     <div class="trace-tips" v-if="!segmentId.length">{{ $t("noData") }}</div>
@@ -48,7 +50,6 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import { ref, watch, onBeforeUnmount, onMounted, nextTick } from "vue";
-  import type { PropType } from "vue";
   import * as d3 from "d3";
   import dayjs from "dayjs";
   import ListGraph from "./utils/d3-trace-list";
@@ -66,17 +67,21 @@ limitations under the License. -->
   import { buildSegmentForest, collapseTree, getRefsAllNodes } from "./utils/helper";
 
   /* global Recordable, Nullable */
-  const props = defineProps({
-    data: { type: Array as PropType<(Span | SegmentSpan)[]>, default: () => [] },
-    traceId: { type: String, default: "" },
-    type: { type: String, default: TraceGraphType.LIST },
-    headerType: { type: String, default: "" },
-    selectedMaxTimestamp: { type: Number },
-    selectedMinTimestamp: { type: Number },
-    minTimestamp: { type: Number, default: 0 },
-    maxTimestamp: { type: Number, default: 0 },
-  });
-  const emits = defineEmits(["select"]);
+  type Props = {
+    data: (Span | SegmentSpan)[];
+    traceId: string;
+    type: string;
+    headerType?: string;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+    minTimestamp: number;
+    maxTimestamp: number;
+  };
+  type Emits = {
+    (e: "select", value: Span): void;
+  };
+  const props = defineProps<Props>();
+  const emits = defineEmits<Emits>();
   const appStore = useAppStoreWithOut();
   const loading = ref<boolean>(false);
   const showDetail = ref<boolean>(false);
@@ -202,7 +207,7 @@ limitations under the License. -->
       item && parentSpans.value.push(item);
     }
   }
-  function viewParentSpan(span: Recordable) {
+  function viewParentSpan(span: Span) {
     if (props.type === TraceGraphType.TABLE) {
       setTableSpanStyle(span);
       return;
@@ -213,13 +218,15 @@ limitations under the License. -->
     showDetail.value = true;
     hideActionBox();
   }
-  function setTableSpanStyle(span: Recordable) {
-    const itemDom: any = document.querySelector(`.trace-item-${span.key}`);
-    const items: any = document.querySelectorAll(".trace-item");
+  function setTableSpanStyle(span: Span) {
+    const itemDom: HTMLSpanElement | null = document.querySelector(`.trace-item-${span.key}`);
+    const items: HTMLSpanElement[] = Array.from(document.querySelectorAll(".trace-item")) as HTMLSpanElement[];
     for (const item of items) {
-      item.style.background = appStore.theme === Themes.Dark ? "#212224" : "#fff";
+      item.style.background = "transparent";
     }
-    itemDom.style.background = appStore.theme === Themes.Dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+    if (itemDom) {
+      itemDom.style.background = "var(--sw-trace-table-selected)";
+    }
     hideActionBox();
   }
   function hideActionBox() {
