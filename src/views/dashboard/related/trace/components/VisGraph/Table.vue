@@ -18,26 +18,34 @@ limitations under the License. -->
       :type="TraceGraphType.TABLE"
       :headerType="headerType"
       @select="getSelectedSpan"
+      :selectedMaxTimestamp="selectedMaxTimestamp"
+      :selectedMinTimestamp="selectedMinTimestamp"
+      :minTimestamp="minTimestamp"
+      :maxTimestamp="maxTimestamp"
     />
   </div>
 </template>
 <script lang="ts" setup>
-  import type { PropType } from "vue";
-  import type { Span } from "@/types/trace";
   import type { SegmentSpan } from "@/types/profile";
   import Graph from "../D3Graph/Index.vue";
   import { TraceGraphType } from "../VisGraph/constant";
 
-  defineProps({
-    data: { type: Array as PropType<(Span | SegmentSpan)[]>, default: () => [] },
-    traceId: { type: String, default: "" },
-    headerType: { type: String, default: "" },
-    selectedMaxTimestamp: { type: Number },
-    selectedMinTimestamp: { type: Number },
-  });
-  const emits = defineEmits(["select"]);
+  type Props = {
+    data: SegmentSpan[];
+    traceId: string;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+    minTimestamp: number;
+    maxTimestamp: number;
+    headerType?: string;
+  };
+  type Emits = {
+    (e: "select", value: SegmentSpan): void;
+  };
+  defineProps<Props>();
+  const emits = defineEmits<Emits>();
 
-  function getSelectedSpan(span: Span) {
+  function getSelectedSpan(span: SegmentSpan) {
     emits("select", span);
   }
 </script>

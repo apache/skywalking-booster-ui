@@ -71,8 +71,11 @@ limitations under the License. -->
     selectedMaxTimestamp?: number;
     selectedMinTimestamp?: number;
   };
+  type Emits = {
+    (e: "select", value: Span): void;
+  };
   const props = defineProps<Props>();
-  const emits = defineEmits(["select"]);
+  const emits = defineEmits<Emits>();
 
   const method = ref<number>(300);
   const componentKey = ref<number>(300);

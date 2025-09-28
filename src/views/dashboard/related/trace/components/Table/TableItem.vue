@@ -60,7 +60,7 @@ limitations under the License. -->
       @click="hideActionBox"
     >
       <div
-        :class="['method', 'level' + ((data.level || 0) - 1)]"
+        :class="['method', 'level' + ((data.level || 0) - 1), { highlighted: inTimeRange }]"
         :style="{
           'text-indent': ((data.level || 0) - 1) * 10 + 'px',
           width: `${method}px`,
@@ -206,7 +206,7 @@ limitations under the License. -->
     if (props.selectedMinTimestamp === undefined || props.selectedMaxTimestamp === undefined) {
       return true;
     }
-    return props.data.startTime >= props.selectedMinTimestamp && props.data.endTime <= props.selectedMaxTimestamp;
+    return props.data.startTime >= props.selectedMinTimestamp || props.data.endTime <= props.selectedMaxTimestamp;
   });
   function toggle() {
     displayChildren.value = !displayChildren.value;
@@ -307,6 +307,10 @@ limitations under the License. -->
     &:hover {
       background: rgb(0 0 0 / 4%);
     }
+  }
+
+  .highlighted {
+    color: var(--el-color-primary);
   }
 
   .profiled {

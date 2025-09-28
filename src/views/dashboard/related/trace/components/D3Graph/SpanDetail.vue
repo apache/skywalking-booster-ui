@@ -149,7 +149,6 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, computed, onMounted, inject } from "vue";
   import { useI18n } from "vue-i18n";
-  import type { PropType } from "vue";
   import dayjs from "dayjs";
   import ListGraph from "./utils/d3-trace-list";
   import copy from "@/utils/copy";
@@ -163,10 +162,11 @@ limitations under the License. -->
   import { WidgetType } from "@/views/dashboard/data";
   import type { LayoutConfig, DashboardItem } from "@/types/dashboard";
   /*global defineProps, Nullable, Recordable */
-  const props = defineProps({
-    currentSpan: { type: Object as PropType<Span>, default: () => ({}) },
-    traceId: { type: String, default: "" },
-  });
+  type Props = {
+    currentSpan: Span;
+    traceId?: string;
+  };
+  const props = defineProps<Props>();
   const options: LayoutConfig | null = inject("options") || null;
   const { t } = useI18n();
   const traceStore = useTraceStore();

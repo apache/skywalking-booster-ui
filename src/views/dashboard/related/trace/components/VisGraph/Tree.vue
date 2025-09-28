@@ -50,7 +50,6 @@ limitations under the License. -->
 </template>
 <script lang="ts" setup>
   import Graph from "../D3Graph/Index.vue";
-  import type { PropType } from "vue";
   import type { Span } from "@/types/trace";
   import { useI18n } from "vue-i18n";
   import { ref } from "vue";
@@ -58,15 +57,19 @@ limitations under the License. -->
   import { useTraceStore } from "@/store/modules/trace";
   import { getServiceColor } from "@/utils/color";
 
-  /* global defineProps */
-  defineProps({
-    data: { type: Array as PropType<Span[]>, default: () => [] },
-    traceId: { type: String, default: "" },
-    selectedMaxTimestamp: { type: Number },
-    selectedMinTimestamp: { type: Number },
-    minTimestamp: { type: Number },
-    maxTimestamp: { type: Number },
-  });
+  type Props = {
+    data: Span[];
+    traceId: string;
+    selectedMaxTimestamp?: number;
+    selectedMinTimestamp?: number;
+    minTimestamp: number;
+    maxTimestamp: number;
+  };
+  defineProps<Props>();
+  type Emits = {
+    (e: "select", value: Span): void;
+  };
+  const emits = defineEmits<Emits>();
   const { t } = useI18n();
   const traceStore = useTraceStore();
   const charts = ref<any>(null);
