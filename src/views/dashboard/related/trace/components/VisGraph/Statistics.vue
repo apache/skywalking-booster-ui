@@ -34,7 +34,7 @@ limitations under the License. -->
   import type { StatisticsSpan, Span, StatisticsGroupRef } from "@/types/trace";
   import { TraceGraphType } from "./constant";
 
-  /* global defineProps, defineEmits, Indexable*/
+  /* global defineProps, defineEmits*/
   type Props = {
     data: Span[];
     traceId: string;

@@ -66,10 +66,6 @@ limitations under the License. -->
     maxTimestamp: number;
   };
   defineProps<Props>();
-  type Emits = {
-    (e: "select", value: Span): void;
-  };
-  const emits = defineEmits<Emits>();
   const { t } = useI18n();
   const traceStore = useTraceStore();
   const charts = ref<any>(null);

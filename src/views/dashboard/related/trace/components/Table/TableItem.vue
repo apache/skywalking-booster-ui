@@ -162,7 +162,7 @@ limitations under the License. -->
   interface Props {
     data: Span;
     method: number;
-    type: string;
+    type?: string;
     headerType?: string;
     traceId?: string;
     selectedMaxTimestamp?: number;

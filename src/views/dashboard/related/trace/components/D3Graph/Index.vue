@@ -62,11 +62,10 @@ limitations under the License. -->
   import { debounce } from "@/utils/debounce";
   import { mutationObserver } from "@/utils/mutation";
   import { TraceGraphType } from "../VisGraph/constant";
-  import { Themes } from "@/constants/data";
   import type { SegmentSpan } from "@/types/profile";
   import { buildSegmentForest, collapseTree, getRefsAllNodes } from "./utils/helper";
 
-  /* global Recordable, Nullable */
+  /* global Nullable */
   type Props = {
     data: (Span | SegmentSpan)[];
     traceId: string;

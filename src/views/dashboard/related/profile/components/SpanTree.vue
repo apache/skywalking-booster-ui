@@ -41,7 +41,7 @@ limitations under the License. -->
     </div>
     <div class="profile-table">
       <Table
-        :data="(profileStore.segmentSpans as SegmentSpan[])"
+        :tableData="(profileStore.segmentSpans as SegmentSpan[])"
         :traceId="profileStore.currentSegment?.traceId"
         :headerType="WidgetType.Profile"
         @select="selectSpan"
