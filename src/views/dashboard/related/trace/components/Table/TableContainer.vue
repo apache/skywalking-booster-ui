@@ -65,7 +65,7 @@ limitations under the License. -->
   /* global defineProps, Nullable, defineEmits*/
   type Props = {
     tableData: Span[];
-    type: string;
+    type?: string;
     headerType?: string;
     traceId: string;
     selectedMaxTimestamp?: number;
