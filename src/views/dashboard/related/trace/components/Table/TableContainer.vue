@@ -47,7 +47,7 @@ limitations under the License. -->
       :key="`key${index}`"
       :type="type"
       :headerType="headerType"
-      @click="selectItem"
+      @selectedSpan="selectItem"
     />
     <slot></slot>
   </div>
@@ -55,7 +55,7 @@ limitations under the License. -->
 <script lang="ts" setup>
   import { ref, onMounted } from "vue";
   import type { PropType } from "vue";
-  import { useTraceStore } from "@/store/modules/trace";
+  import type { Span } from "@/types/trace";
   import TableItem from "./TableItem.vue";
   import { ProfileConstant, TraceConstant, StatisticsConstant } from "./data";
   import { TraceGraphType } from "../VisGraph/constant";
@@ -69,7 +69,6 @@ limitations under the License. -->
     traceId: { type: String, default: "" },
   });
   const emits = defineEmits(["select"]);
-  const traceStore = useTraceStore();
   const method = ref<number>(300);
   const componentKey = ref<number>(300);
   const flag = ref<boolean>(true);
@@ -104,24 +103,8 @@ limitations under the License. -->
       };
     };
   });
-  function selectItem(event: MouseEvent) {
-    emits("select", traceStore.selectedSpan);
-    if (props.headerType === WidgetType.Profile) {
-      return;
-    }
-    if (props.type === TraceGraphType.STATISTICS) {
-      return;
-    }
-    const item: any = document.querySelector("#trace-action-box");
-    const tableBox = document.querySelector(".trace-table-charts")?.getBoundingClientRect();
-    if (!tableBox) {
-      return;
-    }
-    const offsetX = event.x - tableBox.x;
-    const offsetY = event.y - tableBox.y;
-    item.style.display = "block";
-    item.style.top = `${offsetY + 20}px`;
-    item.style.left = `${offsetX + 10}px`;
+  function selectItem(span: Span) {
+    emits("select", span);
   }
   function sortStatistics(key: string) {
     const element = props.tableData;

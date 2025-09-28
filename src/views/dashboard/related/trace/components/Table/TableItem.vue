@@ -57,6 +57,7 @@ limitations under the License. -->
         `trace-item-${data.key}`,
       ]"
       :data-text="data.profiled === false ? 'No Thread Dump' : ''"
+      @click="hideActionBox"
     >
       <div
         :class="['method', 'level' + ((data.level || 0) - 1)]"
@@ -65,6 +66,7 @@ limitations under the License. -->
           width: `${method}px`,
         }"
         @click="selectSpan"
+        @click.stop
       >
         <Icon
           :style="!displayChildren ? 'transform: rotate(-90deg);' : ''"
@@ -73,6 +75,7 @@ limitations under the License. -->
           iconName="arrow-down"
           size="sm"
           class="mr-5"
+          @click="hideActionBox"
         />
         <el-tooltip
           :content="data.type === 'Entry' ? 'Entry' : 'Exit'"
@@ -128,12 +131,13 @@ limitations under the License. -->
     </div>
     <div v-show="data.children && data.children.length > 0 && displayChildren" class="children-trace">
       <table-item
-        :method="method"
         v-for="(child, index) in data.children"
+        :method="method"
         :key="index"
         :data="child"
         :type="type"
         :headerType="headerType"
+        @selectedSpan="() => emits('selectedSpan', child)"
       />
     </div>
     <el-dialog v-model="showDetail" :destroy-on-close="true" fullscreen @closed="showDetail = false">
@@ -160,6 +164,10 @@ limitations under the License. -->
     headerType: string;
     traceId?: string;
   }
+  interface Emits {
+    (e: "selectedSpan", value: Span): void;
+  }
+  const emits = defineEmits<Emits>();
   const props = defineProps<Props>();
   const appStore = useAppStoreWithOut();
   const traceStore = useTraceStore();
@@ -197,17 +205,18 @@ limitations under the License. -->
     if (!dom) {
       return;
     }
-    const items: any = document.querySelectorAll(".trace-item");
+    const items: HTMLSpanElement[] = Array.from(document.querySelectorAll(".trace-item")) as HTMLSpanElement[];
     for (const item of items) {
-      item.style.background = "var(--theme-background)";
+      item.style.background = "transparent";
     }
     dom.style.background = "var(--sw-trace-table-selected)";
-    const p: any = document.getElementsByClassName("profiled")[0];
+    const p = document.getElementsByClassName("profiled")[0] as HTMLSpanElement | null;
     if (p) {
       p.style.background = "var(--border-color-primary)";
     }
   }
   function selectSpan(event: MouseEvent) {
+    emits("selectedSpan", props.data);
     const dom = event
       .composedPath()
       .find((d: EventTarget) => (d as HTMLElement).className.includes("trace-item")) as HTMLSpanElement;
@@ -217,6 +226,19 @@ limitations under the License. -->
       return;
     }
     viewSpanDetail(dom);
+    if (props.type === TraceGraphType.STATISTICS) {
+      return;
+    }
+    const item: HTMLSpanElement | null = document.querySelector("#trace-action-box");
+    const tableBox = document.querySelector(".trace-table-charts")?.getBoundingClientRect();
+    if (!tableBox || !item) {
+      return;
+    }
+    const offsetX = event.x - tableBox.x;
+    const offsetY = event.y - tableBox.y;
+    item.style.display = "block";
+    item.style.top = `${offsetY + 20}px`;
+    item.style.left = `${offsetX + 10}px`;
   }
   function viewSpan(event: MouseEvent) {
     showDetail.value = true;
@@ -228,6 +250,7 @@ limitations under the License. -->
   }
   function selectedItem(span: Span) {
     traceStore.setSelectedSpan(span);
+    emits("selectedSpan", span);
   }
   function viewSpanDetail(dom: HTMLSpanElement) {
     showSelectSpan(dom);
@@ -235,14 +258,20 @@ limitations under the License. -->
       showDetail.value = true;
     }
   }
+  function hideActionBox() {
+    const item: HTMLSpanElement | null = document.querySelector("#trace-action-box");
+    if (item) {
+      item.style.display = "none";
+    }
+  }
   watch(
     () => appStore.theme,
     () => {
-      const items: any = document.querySelectorAll(".trace-item");
+      const items: HTMLSpanElement[] = Array.from(document.querySelectorAll(".trace-item")) as HTMLSpanElement[];
       for (const item of items) {
-        item.style.background = "var(--theme-background)";
+        item.style.background = "transparent";
       }
-      const p: any = document.getElementsByClassName("profiled")[0];
+      const p = document.getElementsByClassName("profiled")[0] as HTMLSpanElement | null;
       if (p) {
         p.style.background = "var(--border-color-primary)";
       }
@@ -311,7 +340,6 @@ limitations under the License. -->
   .trace-item {
     white-space: nowrap;
     position: relative;
-    cursor: pointer;
   }
 
   .trace-item.selected {
@@ -335,6 +363,7 @@ limitations under the License. -->
 
   .trace-item > div.method {
     padding-left: 10px;
+    cursor: pointer;
   }
 
   .trace-item div.exec-percent {
