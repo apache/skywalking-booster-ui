@@ -55,6 +55,7 @@ limitations under the License. -->
         { 'trace-item-error': data.isError },
         { profiled: data.profiled === false },
         `trace-item-${data.key}`,
+        { highlighted: inTimeRange },
       ]"
       :data-text="data.profiled === false ? 'No Thread Dump' : ''"
       @click="hideActionBox"
@@ -93,7 +94,7 @@ limitations under the License. -->
           </span>
         </el-tooltip>
         <el-tooltip :content="data.endpointName" placement="top" :show-after="300">
-          <span class="link-span" :class="{ highlighted: inTimeRange }">
+          <span class="link-span">
             {{ data.endpointName }}
           </span>
         </el-tooltip>
