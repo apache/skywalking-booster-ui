@@ -89,6 +89,7 @@ limitations under the License. -->
   import router from "@/router";
   import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
+  import { useTraceStore } from "@/store/modules/trace";
   import type { DashboardItem } from "@/types/dashboard";
   import timeFormat from "@/utils/timeFormat";
   import { MetricCatalog } from "@/views/dashboard/data";
@@ -98,10 +99,10 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { useRoute } from "vue-router";
 
-  /*global Indexable */
   const { t, te } = useI18n();
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
+  const traceStore = useTraceStore();
   const route = useRoute();
   const pathNames = ref<{ path?: string; name: string; selected: boolean }[][]>([]);
   const showTimeRangeTips = ref<boolean>(false);
@@ -124,6 +125,7 @@ limitations under the License. -->
   getVersion();
   getNavPaths();
   setTTL();
+  traceStore.getHasQueryTracesV2Support();
 
   function changeTheme() {
     const root = document.documentElement;
@@ -391,7 +393,7 @@ limitations under the License. -->
   }
 
   function resetDuration() {
-    const { duration }: Indexable = route.params;
+    const { duration } = route.params as { duration: string };
     if (duration) {
       const d = JSON.parse(duration);
 

@@ -60,7 +60,7 @@ limitations under the License. -->
       @click="hideActionBox"
     >
       <div
-        :class="['method', 'level' + ((data.level || 0) - 1), { highlighted: inTimeRange }]"
+        :class="['method', 'level' + ((data.level || 0) - 1)]"
         :style="{
           'text-indent': ((data.level || 0) - 1) * 10 + 'px',
           width: `${method}px`,
@@ -93,7 +93,7 @@ limitations under the License. -->
           </span>
         </el-tooltip>
         <el-tooltip :content="data.endpointName" placement="top" :show-after="300">
-          <span class="link-span">
+          <span class="link-span" :class="{ highlighted: inTimeRange }">
             {{ data.endpointName }}
           </span>
         </el-tooltip>
@@ -205,6 +205,11 @@ limitations under the License. -->
   const inTimeRange = computed(() => {
     if (props.selectedMinTimestamp === undefined || props.selectedMaxTimestamp === undefined) {
       return true;
+    }
+    if (props.data.startTime === props.data.endTime) {
+      console.log(props.data.startTime);
+      console.log(props.selectedMinTimestamp);
+      console.log(props.selectedMaxTimestamp);
     }
     return props.data.startTime >= props.selectedMinTimestamp || props.data.endTime <= props.selectedMaxTimestamp;
   });
