@@ -93,7 +93,7 @@ limitations under the License. -->
           </span>
         </el-tooltip>
         <el-tooltip :content="data.endpointName" placement="top" :show-after="300">
-          <span>
+          <span class="link-span">
             {{ data.endpointName }}
           </span>
         </el-tooltip>
@@ -341,8 +341,12 @@ limitations under the License. -->
   }
 
   .trace-item {
+    display: flex;
+    flex-direction: row;
     white-space: nowrap;
     position: relative;
+    width: 100%;
+    padding: 2px 0;
   }
 
   .trace-item.selected {
@@ -370,7 +374,7 @@ limitations under the License. -->
   }
 
   .trace-item div.exec-percent {
-    width: 100px;
+    width: calc(100% - 1050px);
     height: 30px;
     padding: 0 8px;
 
@@ -393,5 +397,9 @@ limitations under the License. -->
       border: none;
       top: 1px;
     }
+  }
+
+  .link-span {
+    text-decoration: underline;
   }
 </style>

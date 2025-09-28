@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="flex-h content">
     <TaskList />
     <div class="vis-graph ml-5">
-      <div class="mb-20">
+      <div class="mb-20 mt-10">
         <Filter />
       </div>
       <div class="stack" v-loading="asyncProfilingStore.loadingTree">
