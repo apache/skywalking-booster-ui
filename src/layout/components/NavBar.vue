@@ -85,7 +85,6 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { Themes } from "@/constants/data";
   import router from "@/router";
   import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useDashboardStore } from "@/store/modules/dashboard";
@@ -98,49 +97,25 @@ limitations under the License. -->
   import { ref, watch } from "vue";
   import { useI18n } from "vue-i18n";
   import { useRoute } from "vue-router";
+  import { useTheme } from "@/hooks/useTheme";
 
   const { t, te } = useI18n();
   const appStore = useAppStoreWithOut();
   const dashboardStore = useDashboardStore();
   const traceStore = useTraceStore();
   const route = useRoute();
+  const { theme, themeSwitchRef, initializeTheme, handleChangeTheme } = useTheme();
   const pathNames = ref<{ path?: string; name: string; selected: boolean }[][]>([]);
   const showTimeRangeTips = ref<boolean>(false);
   const pageTitle = ref<string>("");
-  const theme = ref<boolean>(true);
-  const themeSwitchRef = ref<HTMLElement>();
   const coldStage = ref<boolean>(false);
 
-  const savedTheme = window.localStorage.getItem("theme-is-dark");
-  if (savedTheme === "false") {
-    theme.value = false;
-  }
-  if (savedTheme === "") {
-    // read the theme preference from system setting if there is no user setting
-    theme.value = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-
-  changeTheme();
+  initializeTheme();
   resetDuration();
   getVersion();
   getNavPaths();
   setTTL();
   traceStore.getHasQueryTracesV2Support();
-
-  function changeTheme() {
-    const root = document.documentElement;
-
-    if (theme.value) {
-      root.classList.add(Themes.Dark);
-      root.classList.remove(Themes.Light);
-      appStore.setTheme(Themes.Dark);
-    } else {
-      root.classList.add(Themes.Light);
-      root.classList.remove(Themes.Dark);
-      appStore.setTheme(Themes.Light);
-    }
-    window.localStorage.setItem("theme-is-dark", String(theme.value));
-  }
 
   function changeDataMode() {
     appStore.setColdStageMode(coldStage.value);
@@ -158,35 +133,6 @@ limitations under the License. -->
       });
     }
     appStore.setDuration(InitializationDurationRow);
-  }
-
-  function handleChangeTheme() {
-    const x = themeSwitchRef.value?.offsetLeft ?? 0;
-    const y = themeSwitchRef.value?.offsetTop ?? 0;
-    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-    // compatibility handling
-    if (!document.startViewTransition) {
-      changeTheme();
-      return;
-    }
-    // api: https://developer.chrome.com/docs/web-platform/view-transitions
-    const transition = document.startViewTransition(() => {
-      changeTheme();
-    });
-
-    transition.ready.then(() => {
-      const clipPath = [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`];
-      document.documentElement.animate(
-        {
-          clipPath: !theme.value ? clipPath.reverse() : clipPath,
-        },
-        {
-          duration: 500,
-          easing: "ease-in",
-          pseudoElement: !theme.value ? "::view-transition-old(root)" : "::view-transition-new(root)",
-        },
-      );
-    });
   }
 
   function getName(list: any[]) {

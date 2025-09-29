@@ -13,40 +13,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
-  <div class="app-wrapper flex-h">
-    <SideBar v-if="notTraceRoute" />
-    <div class="main-container">
-      <NavBar v-if="notTraceRoute" />
-      <AppMain />
-    </div>
+  <div style="padding: 20px">
+    <TraceContent v-if="traceStore.currentTrace" :trace="traceStore.currentTrace" />
+    <div style="text-align: center; padding: 20px" v-if="!traceStore.loading && !traceStore.currentTrace"
+      >No trace found</div
+    >
   </div>
 </template>
+
 <script lang="ts" setup>
-  import { AppMain, SideBar, NavBar } from "./components";
   import { useRoute } from "vue-router";
-  import { computed, onMounted } from "vue";
-  import { useTheme } from "@/hooks/useTheme";
+  import { computed, onMounted, provide } from "vue";
+  import { useTraceStore } from "@/store/modules/trace";
+  import TraceContent from "@/views/dashboard/related/trace/components/TraceQuery/TraceContent.vue";
 
   const route = useRoute();
-  const { initializeTheme } = useTheme();
-
-  // Check if current route matches the trace route pattern
-  const notTraceRoute = computed(() => {
-    return !route.path.startsWith("/traces/");
-  });
-
-  // Initialize theme to preserve theme when NavBar is hidden
+  const traceStore = useTraceStore();
+  const traceId = computed(() => route.params.traceId as string);
+  provide("options", {});
   onMounted(() => {
-    initializeTheme();
+    if (traceId.value) {
+      traceStore.setTraceCondition({
+        traceId: traceId.value,
+      });
+      traceStore.fetchV2Traces();
+    }
   });
 </script>
-<style lang="scss" scoped>
-  .app-wrapper {
-    height: 100%;
-  }
-
-  .main-container {
-    flex-grow: 2;
-    height: 100%;
-  }
-</style>

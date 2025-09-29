@@ -153,7 +153,9 @@ limitations under the License. -->
     }
   }
   function handleCopyTraceId() {
-    copy(traceStore.currentTrace?.traceId || "");
+    if (!traceStore.currentTrace?.traceId) return;
+    const url = `${window.location.origin}/traces/${traceStore.currentTrace.traceId}`;
+    copy(url);
   }
 </script>
 
