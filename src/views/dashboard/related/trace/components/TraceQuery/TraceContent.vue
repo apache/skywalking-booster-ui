@@ -188,4 +188,10 @@ limitations under the License. -->
   .detail-section-timeline {
     width: 100%;
   }
+
+  .link {
+    color: var(--el-color-primary);
+    cursor: pointer;
+    text-decoration: underline;
+  }
 </style>

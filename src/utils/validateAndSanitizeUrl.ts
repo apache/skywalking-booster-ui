@@ -22,7 +22,7 @@ export function validateAndSanitizeUrl(url: string): { isValid: boolean; sanitiz
   }
   try {
     let inputUrl = url;
-    if (!url.includes("http")) {
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
       inputUrl = `${location.origin}${url}`;
     }
     // Create URL object to validate the URL format
