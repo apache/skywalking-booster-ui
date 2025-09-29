@@ -154,8 +154,8 @@ limitations under the License. -->
   }
   function handleCopyTraceId() {
     if (!traceStore.currentTrace?.traceId) return;
-    const url = `${window.location.origin}/traces/${traceStore.currentTrace.traceId}`;
-    copy(url);
+    const traceUrl = `${window.location.origin}/traces/${traceStore.currentTrace.traceId}`;
+    copy(traceUrl);
   }
 </script>
 
