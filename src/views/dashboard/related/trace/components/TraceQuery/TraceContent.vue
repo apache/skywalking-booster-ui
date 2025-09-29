@@ -46,7 +46,7 @@ limitations under the License. -->
         </div>
         <div class="trace-id-container flex-h" style="align-items: center">
           <span class="grey mr-5">{{ t("traceID") }}</span>
-          <span class="value">{{ trace.traceId }}</span>
+          <span class="value cp link" @click="viewTrace">{{ trace.traceId }}</span>
           <span class="value ml-5 cp" @click="handleCopyTraceId">
             <Icon size="middle" iconName="copy" />
           </span>
@@ -95,6 +95,7 @@ limitations under the License. -->
   import { WidgetType } from "@/views/dashboard/data";
   import { GraphTypeOptions } from "../VisGraph/constant";
   import copy from "@/utils/copy";
+  import router from "@/router";
 
   interface Props {
     trace: Trace;
@@ -152,10 +153,16 @@ limitations under the License. -->
       ElMessage.error("Failed to download file");
     }
   }
+  function viewTrace() {
+    if (!traceStore.currentTrace?.traceId) return;
+    const traceUrl = `/traces/${traceStore.currentTrace.traceId}`;
+    const routeUrl = router.resolve({ path: traceUrl });
+
+    window.open(routeUrl.href, "_blank");
+  }
   function handleCopyTraceId() {
     if (!traceStore.currentTrace?.traceId) return;
-    const url = `${window.location.origin}/traces/${traceStore.currentTrace.traceId}`;
-    copy(url);
+    copy(traceStore.currentTrace?.traceId);
   }
 </script>
 
