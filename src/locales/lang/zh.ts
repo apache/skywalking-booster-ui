@@ -410,5 +410,6 @@ const msg = {
   totalSpans: "总跨度",
   spanName: "跨度名称",
   parentId: "父ID",
+  shareTrace: "分享Trace",
 };
 export default msg;

@@ -412,5 +412,6 @@ const msg = {
   totalSpans: "Total Spans",
   spanName: "Span name",
   parentId: "Parent ID",
+  shareTrace: "Share This Trace",
 };
 export default msg;

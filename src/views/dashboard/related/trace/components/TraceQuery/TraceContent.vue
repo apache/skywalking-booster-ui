@@ -17,7 +17,13 @@ limitations under the License. -->
     <div class="trace-info">
       <div class="flex-h" style="justify-content: space-between">
         <h3>{{ trace.label }}</h3>
-        <div>
+        <div class="flex-h">
+          <div class="mr-5 cp">
+            <el-button size="small" @click="viewTrace">
+              {{ t("shareTrace") }}
+              <Icon class="ml-5" size="small" iconName="link" />
+            </el-button>
+          </div>
           <el-dropdown @command="handleDownload" trigger="click">
             <el-button size="small">
               {{ t("download") }}
@@ -46,7 +52,7 @@ limitations under the License. -->
         </div>
         <div class="trace-id-container flex-h" style="align-items: center">
           <span class="grey mr-5">{{ t("traceID") }}</span>
-          <span class="value cp link" @click="viewTrace">{{ trace.traceId }}</span>
+          <span class="value">{{ trace.traceId }}</span>
           <span class="value ml-5 cp" @click="handleCopyTraceId">
             <Icon size="middle" iconName="copy" />
           </span>
@@ -187,11 +193,5 @@ limitations under the License. -->
 
   .detail-section-timeline {
     width: 100%;
-  }
-
-  .link {
-    color: var(--el-color-primary);
-    cursor: pointer;
-    text-decoration: underline;
   }
 </style>
