@@ -23,6 +23,7 @@ import { routesAlarm } from "./alarm";
 import routesLayers from "./layer";
 import { routesSettings } from "./settings";
 import { routesNotFound } from "./notFound";
+import { routesTrace } from "./trace";
 
 /**
  * Combine all route configurations
@@ -34,6 +35,7 @@ export const routes: AppRouteRecordRaw[] = [
   ...routesDashboard,
   ...routesSettings,
   ...routesNotFound,
+  ...routesTrace,
 ];
 
 /**

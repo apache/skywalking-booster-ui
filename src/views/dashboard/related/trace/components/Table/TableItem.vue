@@ -100,7 +100,7 @@ limitations under the License. -->
         </el-tooltip>
       </div>
       <div class="start-time">
-        {{ dateFormat(data.startTime) }}
+        {{ data.startTime ? dateFormat(data.startTime) : "" }}
       </div>
       <div class="exec-ms">
         {{ data.endTime - data.startTime ? data.endTime - data.startTime : "0" }}

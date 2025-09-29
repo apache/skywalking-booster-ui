@@ -23,6 +23,7 @@ export const ROUTE_NAMES = {
   SETTINGS: "Settings",
   NOT_FOUND: "NotFound",
   LAYER: "Layer",
+  TRACE: "Trace",
 } as const;
 
 // Route Paths
@@ -39,6 +40,7 @@ export const ROUTE_PATHS = {
   },
   ALARM: "/alerting",
   SETTINGS: "/settings",
+  TRACE: "/traces/:traceId",
   NOT_FOUND: "/:pathMatch(.*)*",
 } as const;
 

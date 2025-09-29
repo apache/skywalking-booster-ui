@@ -121,6 +121,39 @@ vi.mock("../notFound", () => ({
   ],
 }));
 
+vi.mock("../trace", () => ({
+  routesTrace: [
+    {
+      name: "Trace",
+      path: "",
+      meta: {
+        title: "Trace",
+        i18nKey: "trace",
+        icon: "timeline",
+        hasGroup: false,
+        activate: true,
+        breadcrumb: true,
+        notShow: false,
+      },
+      children: [
+        {
+          name: "ViewTrace",
+          path: "/traces/:traceId",
+          meta: {
+            title: "Trace View",
+            i18nKey: "traceView",
+            icon: "timeline",
+            hasGroup: false,
+            activate: true,
+            breadcrumb: true,
+            notShow: false,
+          },
+        },
+      ],
+    },
+  ],
+}));
+
 // Mock guards
 vi.mock("../guards", () => ({
   applyGuards: vi.fn(),
@@ -144,6 +177,7 @@ describe("Router Index - Route Structure", () => {
         expect.objectContaining({ name: "Dashboard" }),
         expect.objectContaining({ name: "Settings" }),
         expect.objectContaining({ name: "NotFound" }),
+        expect.objectContaining({ name: "Trace" }),
       ]);
     });
 
@@ -183,6 +217,14 @@ describe("Router Index - Route Structure", () => {
       expect(routes).toContainEqual(
         expect.objectContaining({
           name: "NotFound",
+        }),
+      );
+    });
+
+    it("should include trace routes", () => {
+      expect(routes).toContainEqual(
+        expect.objectContaining({
+          name: "Trace",
         }),
       );
     });

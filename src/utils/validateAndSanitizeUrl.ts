@@ -16,12 +16,15 @@
  */
 
 // URL validation function to prevent XSS
-export function validateAndSanitizeUrl(inputUrl: string): { isValid: boolean; sanitizedUrl: string; error: string } {
-  if (!inputUrl.trim()) {
+export function validateAndSanitizeUrl(url: string): { isValid: boolean; sanitizedUrl: string; error: string } {
+  if (!url.trim()) {
     return { isValid: true, sanitizedUrl: "", error: "" };
   }
-
   try {
+    let inputUrl = url;
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      inputUrl = `${location.origin}${url}`;
+    }
     // Create URL object to validate the URL format
     const urlObj = new URL(inputUrl);
 
@@ -55,6 +58,7 @@ export function validateAndSanitizeUrl(inputUrl: string): { isValid: boolean; sa
       error: "",
     };
   } catch (error) {
+    console.error(error);
     return {
       isValid: false,
       sanitizedUrl: "",

@@ -412,5 +412,6 @@ const msg = {
   totalSpans: "Total Lapso",
   spanName: "Nombre de Lapso",
   parentId: "ID Padre",
+  shareTrace: "Compartir Traza",
 };
 export default msg;

@@ -17,7 +17,13 @@ limitations under the License. -->
     <div class="trace-info">
       <div class="flex-h" style="justify-content: space-between">
         <h3>{{ trace.label }}</h3>
-        <div>
+        <div class="flex-h">
+          <div class="mr-5 cp">
+            <el-button size="small" @click="viewTrace">
+              {{ t("shareTrace") }}
+              <Icon class="ml-5" size="small" iconName="link" />
+            </el-button>
+          </div>
           <el-dropdown @command="handleDownload" trigger="click">
             <el-button size="small">
               {{ t("download") }}
@@ -44,9 +50,12 @@ limitations under the License. -->
           <span class="grey mr-5">{{ t("totalSpans") }}</span>
           <span class="value">{{ trace.spans?.length || 0 }}</span>
         </div>
-        <div>
+        <div class="trace-id-container flex-h" style="align-items: center">
           <span class="grey mr-5">{{ t("traceID") }}</span>
           <span class="value">{{ trace.traceId }}</span>
+          <span class="value ml-5 cp" @click="handleCopyTraceId">
+            <Icon size="middle" iconName="copy" />
+          </span>
         </div>
       </div>
     </div>
@@ -91,6 +100,8 @@ limitations under the License. -->
   import graphs from "../VisGraph/index";
   import { WidgetType } from "@/views/dashboard/data";
   import { GraphTypeOptions } from "../VisGraph/constant";
+  import copy from "@/utils/copy";
+  import router from "@/router";
 
   interface Props {
     trace: Trace;
@@ -147,6 +158,17 @@ limitations under the License. -->
       console.error("Download error:", error);
       ElMessage.error("Failed to download file");
     }
+  }
+  function viewTrace() {
+    if (!traceStore.currentTrace?.traceId) return;
+    const traceUrl = `/traces/${traceStore.currentTrace.traceId}`;
+    const routeUrl = router.resolve({ path: traceUrl });
+
+    window.open(routeUrl.href, "_blank");
+  }
+  function handleCopyTraceId() {
+    if (!traceStore.currentTrace?.traceId) return;
+    copy(traceStore.currentTrace?.traceId);
   }
 </script>
 

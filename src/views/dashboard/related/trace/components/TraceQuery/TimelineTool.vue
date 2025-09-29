@@ -16,7 +16,7 @@ limitations under the License. -->
   <div class="timeline-tool flex-h">
     <div class="flex-h trace-type item">
       <el-radio-group v-model="spansGraphType" size="small">
-        <el-radio-button v-for="option in GraphTypeOptions" :key="option.value" :value="option.value">
+        <el-radio-button v-for="option in reorderedOptions" :key="option.value" :value="option.value">
           <Icon :iconName="option.icon" />
           {{ t(option.label) }}
         </el-radio-button>
@@ -39,7 +39,13 @@ limitations under the License. -->
     (e: "updateSpansGraphType", value: string): void;
   }>();
   const { t } = useI18n();
-  const spansGraphType = ref<string>(GraphTypeOptions[2].value);
+  const reorderedOptions = [
+    GraphTypeOptions[2], // Table
+    GraphTypeOptions[0], // List
+    GraphTypeOptions[1], // Tree
+    GraphTypeOptions[3], // Statistics
+  ];
+  const spansGraphType = ref<string>(reorderedOptions[0].value);
 
   function onToggleMinTimeline() {
     emit("toggleMinTimeline");

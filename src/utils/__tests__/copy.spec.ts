@@ -72,7 +72,7 @@ describe("copy utility function", () => {
     });
   });
 
-  it("should show error notification for HTTP protocol", () => {
+  it("should show error notification for HTTP protocol in production", () => {
     const testText = "test text to copy";
 
     // Set protocol to HTTP
@@ -81,7 +81,10 @@ describe("copy utility function", () => {
       writable: true,
     });
 
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "production";
     copy(testText);
+    process.env.NODE_ENV = originalEnv;
 
     expect(ElNotification).toHaveBeenCalledWith({
       title: "Warning",
@@ -127,20 +130,15 @@ describe("copy utility function", () => {
     });
   });
 
-  it("should handle empty string", async () => {
+  it("should do nothing when text is empty", async () => {
     const testText = "";
     mockClipboard.writeText.mockResolvedValue(undefined);
 
     copy(testText);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
-
-    expect(mockClipboard.writeText).toHaveBeenCalledWith("");
-    expect(ElNotification).toHaveBeenCalledWith({
-      title: "Success",
-      message: "Copied",
-      type: "success",
-    });
+    expect(mockClipboard.writeText).not.toHaveBeenCalled();
+    expect(ElNotification).not.toHaveBeenCalled();
   });
 
   it("should handle long text", async () => {
@@ -205,7 +203,7 @@ describe("copy utility function", () => {
     expect(ElNotification).toHaveBeenCalledTimes(3);
   });
 
-  it("should handle HTTP protocol and clipboard not available", () => {
+  it("should handle HTTP protocol and clipboard not available in production", () => {
     const testText = "test text";
 
     // Set protocol to HTTP
@@ -214,7 +212,10 @@ describe("copy utility function", () => {
       writable: true,
     });
 
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "production";
     copy(testText);
+    process.env.NODE_ENV = originalEnv;
 
     // Should show HTTP error, not clipboard error
     expect(ElNotification).toHaveBeenCalledWith({
@@ -224,7 +225,7 @@ describe("copy utility function", () => {
     });
   });
 
-  it("should handle file protocol", () => {
+  it("should handle file protocol when clipboard is unavailable", () => {
     const testText = "test text";
 
     // Set protocol to file and ensure clipboard is not available
