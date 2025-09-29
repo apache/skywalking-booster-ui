@@ -20,11 +20,11 @@ export function validateAndSanitizeUrl(url: string): { isValid: boolean; sanitiz
   if (!url.trim()) {
     return { isValid: true, sanitizedUrl: "", error: "" };
   }
-  let inputUrl = url;
-  if (!url.includes("http")) {
-    inputUrl = `${location.origin}${url}`;
-  }
   try {
+    let inputUrl = url;
+    if (!url.includes("http")) {
+      inputUrl = `${location.origin}${url}`;
+    }
     // Create URL object to validate the URL format
     const urlObj = new URL(inputUrl);
 
