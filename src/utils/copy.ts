@@ -21,7 +21,9 @@ export default (text: string): void => {
   if (!text) {
     return;
   }
-  if (location.protocol === "http:" && process.env.NODE_ENV === "production") {
+  // Clipboard functionality is restricted in production HTTP environments for security reasons.
+  // In development, clipboard is allowed even over HTTP to ease testing.
+  if (process.env.NODE_ENV === "production" && location.protocol === "http:") {
     ElNotification({
       title: "Warning",
       message: "Clipboard is not supported in HTTP environments",
