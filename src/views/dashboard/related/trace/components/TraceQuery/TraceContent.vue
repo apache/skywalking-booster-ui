@@ -44,9 +44,12 @@ limitations under the License. -->
           <span class="grey mr-5">{{ t("totalSpans") }}</span>
           <span class="value">{{ trace.spans?.length || 0 }}</span>
         </div>
-        <div>
+        <div class="trace-id-container flex-h" style="align-items: center">
           <span class="grey mr-5">{{ t("traceID") }}</span>
           <span class="value">{{ trace.traceId }}</span>
+          <span class="value ml-5 cp" @click="handleCopyTraceId">
+            <Icon size="middle" iconName="copy" />
+          </span>
         </div>
       </div>
     </div>
@@ -91,6 +94,7 @@ limitations under the License. -->
   import graphs from "../VisGraph/index";
   import { WidgetType } from "@/views/dashboard/data";
   import { GraphTypeOptions } from "../VisGraph/constant";
+  import copy from "@/utils/copy";
 
   interface Props {
     trace: Trace;
@@ -147,6 +151,9 @@ limitations under the License. -->
       console.error("Download error:", error);
       ElMessage.error("Failed to download file");
     }
+  }
+  function handleCopyTraceId() {
+    copy(traceStore.currentTrace?.traceId || "");
   }
 </script>
 

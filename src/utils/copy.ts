@@ -18,7 +18,10 @@
 import { ElNotification } from "element-plus";
 
 export default (text: string): void => {
-  if (location.protocol === "http:") {
+  if (!text) {
+    return;
+  }
+  if (location.protocol === "http:" && process.env.NODE_ENV === "production") {
     ElNotification({
       title: "Warning",
       message: "Clipboard is not supported in HTTP environments",
