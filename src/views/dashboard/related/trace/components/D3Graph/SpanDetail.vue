@@ -49,14 +49,16 @@ limitations under the License. -->
       </span>
     </div>
     <h5 class="mb-10" v-if="currentSpan.tags && currentSpan.tags.length"> {{ t("tags") }}. </h5>
-    <div class="mb-10 clear item" v-for="i in currentSpan.tags" :key="i.key">
-      <span class="g-sm-4 grey">{{ i.key }}:</span>
-      <span class="g-sm-8 wba">
-        {{ i.value }}
-        <span v-if="i.key === 'db.statement' && i.value" class="grey link-hover cp ml-5" @click="copy(i.value)">
-          <Icon size="middle" iconName="review-list" />
+    <div class="scroll_bar_style" style="max-height: 200px; overflow: auto">
+      <div class="mb-10 clear item" v-for="i in currentSpan.tags" :key="i.key">
+        <span class="g-sm-4 grey">{{ i.key }}:</span>
+        <span class="g-sm-8 wba">
+          {{ i.value }}
+          <span v-if="i.key === 'db.statement' && i.value" class="grey link-hover cp ml-5" @click="copy(i.value)">
+            <Icon size="middle" iconName="review-list" />
+          </span>
         </span>
-      </span>
+      </div>
     </div>
     <h5 class="mb-10" v-if="currentSpan.logs" v-show="currentSpan.logs.length"> {{ t("logs") }}. </h5>
     <div v-for="(i, index) in currentSpan.logs" :key="index">
@@ -279,7 +281,7 @@ limitations under the License. -->
   .attach-events {
     width: 100%;
     margin: 0 5px 5px 0;
-    height: 400px;
+    height: 300px;
     overflow-y: auto;
   }
 
