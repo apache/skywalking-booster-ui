@@ -81,7 +81,7 @@ limitations under the License. -->
     </div>
     <h5 class="mb-10" v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"> {{ t("events") }}. </h5>
     <div
-      class="attach-events scroll_bar_style"
+      class="attach-events"
       ref="eventGraph"
       v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"
     ></div>
@@ -283,6 +283,7 @@ limitations under the License. -->
     margin: 0 5px 5px 0;
     height: 300px;
     overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .popup-btn {
