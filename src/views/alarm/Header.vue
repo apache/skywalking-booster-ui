@@ -28,7 +28,7 @@ limitations under the License. -->
       </div>
       <div class="mr-10 ml-10">
         <span class="grey">{{ t("searchKeyword") }}: </span>
-        <el-input size="small" v-model="keyword" class="alarm-tool-input" @change="refreshAlarms({ pageNum: 1 })" />
+        <el-input size="small" v-model="keyword" class="alarm-tool-input" />
       </div>
       <div>
         <span class="sm b grey mr-5">{{ t("timeRange") }}:</span>
@@ -57,7 +57,12 @@ limitations under the License. -->
         />
       </div>
     </div>
-    <ConditionTags :type="'ALARM'" @update="(data) => refreshAlarms({ pageNum: 1, tagsMap: data.tagsMap })" />
+    <div class="flex-h mt-5" style="justify-content: space-between">
+      <ConditionTags :type="'ALARM'" @update="(data) => changeTags(data.tagsMap)" />
+      <el-button size="small" type="primary" @click="refreshAlarms({ pageNum: 1 })">
+        {{ t("runQuery") }}
+      </el-button>
+    </div>
   </nav>
 </template>
 <script lang="ts" setup>
@@ -72,7 +77,7 @@ limitations under the License. -->
   import timeFormat from "@/utils/timeFormat";
   import type { DurationTime, Duration } from "@/types/app";
   import { Themes } from "@/constants/data";
-  /*global Recordable */
+  /*global Indexable */
   const appStore = useAppStoreWithOut();
   const alarmStore = useAlarmStore();
   const { t } = useI18n();
@@ -83,6 +88,8 @@ limitations under the License. -->
   const pageNum = ref<number>(1);
   const duration = ref<DurationTime>(getDurationTime());
   const durationRow = ref<Duration>(InitializationDurationRow);
+  const tagsMap = ref<{ key: string; value: string }[]>();
+
   const total = computed(() =>
     alarmStore.alarms.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
   );
@@ -92,14 +99,14 @@ limitations under the License. -->
 
   refreshAlarms({ pageNum: 1 });
 
-  async function refreshAlarms(param: { pageNum: number; tagsMap?: Recordable }) {
-    const params: Recordable = {
+  async function refreshAlarms(param: { pageNum: number }) {
+    const params: Indexable = {
       duration: duration.value,
       paging: {
         pageNum: param.pageNum,
         pageSize,
       },
-      tags: param.tagsMap,
+      tags: tagsMap.value,
     };
     params.scope = entity.value || undefined;
     params.keyword = keyword.value || undefined;
@@ -114,17 +121,19 @@ limitations under the License. -->
     durationRow.value = timeFormat(val);
     setDurationRow(durationRow.value);
     duration.value = getDurationTime();
-    refreshAlarms({ pageNum: 1 });
   }
 
   function changeEntity(param: { value: string }[]) {
     entity.value = param[0].value;
-    refreshAlarms({ pageNum: 1 });
   }
 
   function changePage(p: number) {
     pageNum.value = p;
     refreshAlarms({ pageNum: p });
+  }
+
+  function changeTags(tags?: { key: string; value: string }[]) {
+    tagsMap.value = tags || undefined;
   }
 
   watch(
