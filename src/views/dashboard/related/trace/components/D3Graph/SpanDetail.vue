@@ -79,7 +79,7 @@ limitations under the License. -->
     </div>
     <h5 class="mb-10" v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"> {{ t("events") }}. </h5>
     <div
-      class="attach-events"
+      class="attach-events scroll_bar_style"
       ref="eventGraph"
       v-if="currentSpan.attachedEvents && currentSpan.attachedEvents.length"
     ></div>
@@ -234,14 +234,11 @@ limitations under the License. -->
       });
 
     tree.value = new ListGraph({ el: eventGraph.value, handleSelectSpan: selectEvent });
-    tree.value.init(
-      {
-        children: events,
-        label: "",
-      },
-      events,
-      0,
-    );
+    tree.value.init({
+      data: { children: events, label: "" },
+      row: events,
+      fixSpansSize: 0,
+    });
     tree.value.draw();
   }
 
@@ -283,7 +280,7 @@ limitations under the License. -->
     width: 100%;
     margin: 0 5px 5px 0;
     height: 400px;
-    overflow: auto;
+    overflow-y: auto;
   }
 
   .popup-btn {
