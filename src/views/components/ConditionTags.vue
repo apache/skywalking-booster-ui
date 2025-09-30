@@ -64,7 +64,7 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import { useAppStoreWithOut } from "@/store/modules/app";
 
-  /*global defineEmits, defineProps, Recordable */
+  /*global defineEmits, defineProps, Indexable */
   const emit = defineEmits(["update"]);
   const props = defineProps({
     type: { type: String, default: "TRACE" },
@@ -112,7 +112,7 @@ limitations under the License. -->
     emit("update", { tagsMap, tagsList: tagsList.value });
   }
   async function fetchTagKeys() {
-    let resp: Recordable = {};
+    let resp: Indexable = {};
     if (props.type === "TRACE") {
       resp = await traceStore.getTagKeys();
     }
@@ -139,7 +139,7 @@ limitations under the License. -->
 
   async function fetchTagValues() {
     const param = tags.value.split("=")[0];
-    let resp: Recordable = {};
+    let resp: Indexable = {};
     if (props.type === "TRACE") {
       resp = await traceStore.getTagValues(param);
     }
