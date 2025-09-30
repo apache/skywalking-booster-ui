@@ -64,7 +64,7 @@ function generateHash(str: string) {
 }
 
 export function getServiceColor(serviceName: string): string {
-  if (!serviceName) return "#eee";
+  if (!serviceName) return "var(--el-color-primary)";
   const hash = generateHash(serviceName);
   return ServicePalette[hash % ServicePalette.length];
 }
