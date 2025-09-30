@@ -148,6 +148,7 @@ limitations under the License. -->
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const baseFilename = `trace-${trace.traceId}-${timestamp}`;
     const spans = trace.spans.map((span) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { duration, label, ...newSpan } = span;
       return newSpan;
     });
