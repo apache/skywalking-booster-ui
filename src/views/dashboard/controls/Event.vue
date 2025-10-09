@@ -14,19 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="event-wrapper flex-v">
-    <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
-      <template #reference>
-        <span class="delete cp">
-          <Icon iconName="ellipsis_v" size="middle" class="operation" />
-        </span>
-      </template>
-      <div class="tools" @click="editConfig">
-        <span>{{ t("edit") }}</span>
-      </div>
-      <div class="tools" @click="removeWidget">
-        <span>{{ t("delete") }}</span>
-      </div>
-    </el-popover>
+    <div class="operations">
+      <span class="cp">
+        <Icon iconName="sort" size="middle" />
+      </span>
+      <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
+        <template #reference>
+          <span class="cp">
+            <Icon iconName="ellipsis_v" size="middle" />
+          </span>
+        </template>
+        <div class="tools" @click="editConfig">
+          <span>{{ t("edit") }}</span>
+        </div>
+        <div class="tools" @click="removeWidget">
+          <span>{{ t("delete") }}</span>
+        </div>
+      </el-popover>
+    </div>
     <div class="header">
       <Header :needQuery="needQuery" />
     </div>
@@ -72,7 +77,7 @@ limitations under the License. -->
     overflow: auto;
   }
 
-  .delete {
+  .operations {
     position: absolute;
     top: 5px;
     right: 3px;
