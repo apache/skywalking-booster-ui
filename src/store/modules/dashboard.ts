@@ -253,9 +253,13 @@ export const dashboardStore = defineStore({
     setTopology(show: boolean) {
       this.showTopology = show;
     },
+    setLayouts(param: LayoutConfig[]) {
+      this.layout = param;
+    },
     setConfigs(param: LayoutConfig) {
       const actived = this.activedGridItem.split("-");
       const index = this.layout.findIndex((d: LayoutConfig) => actived[0] === d.i);
+
       if (actived.length === 3) {
         const tabIndex = Number(actived[1]);
         const itemIndex = (this.layout[index].children || [])[tabIndex].children.findIndex(
@@ -270,11 +274,13 @@ export const dashboardStore = defineStore({
         this.setCurrentTabItems((this.layout[index].children || [])[tabIndex].children);
         return;
       }
-      this.layout[index] = {
-        ...this.layout[index],
+      const layout = JSON.parse(JSON.stringify(this.layout));
+      layout[index] = {
+        ...layout[index],
         ...param,
       };
-      this.selectedGrid = this.layout[index];
+      this.setLayouts(layout);
+      this.selectedGrid = layout;
     },
     setWidget(param: LayoutConfig) {
       for (let i = 0; i < this.layout.length; i++) {

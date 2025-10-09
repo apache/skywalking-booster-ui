@@ -95,6 +95,8 @@ limitations under the License. -->
       :is-draggable="dashboardStore.editMode"
       :is-resizable="dashboardStore.editMode"
       @layout-updated="layoutUpdatedEvent"
+      :vertical-compact="true"
+      :auto-size="true"
     >
       <grid-item
         v-for="item in dashboardStore.currentTabItems"

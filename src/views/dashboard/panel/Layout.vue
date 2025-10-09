@@ -15,14 +15,16 @@ limitations under the License. -->
 <template>
   <grid-layout
     v-if="dashboardStore.layout.length"
-    :layout="dashboardStore.layout"
-    :colNum="24"
-    :rowHeight="10"
-    :isDraggable="dashboardStore.editMode"
-    :isResizable="dashboardStore.editMode"
+    v-model:layout="dashboardStore.layout"
+    :col-num="24"
+    :row-height="10"
+    :is-draggable="dashboardStore.editMode"
+    :is-resizable="dashboardStore.editMode"
     v-loading.fullscreen.lock="loading"
     element-loading-text="Loading..."
     element-loading-background="rgba(122, 122, 122, 0.8)"
+    :vertical-compact="true"
+    :auto-size="true"
   >
     <grid-item
       v-for="item in dashboardStore.layout"
@@ -34,7 +36,7 @@ limitations under the License. -->
       :key="item.id"
       @click="clickGrid(item, $event)"
       :class="{ active: dashboardStore.activedGridItem === item.i }"
-      :dragIgnoreFrom="dragIgnoreFrom"
+      :drag-ignore-from="dragIgnoreFrom"
     >
       <component :is="item.type" :data="item" :metricsValues="metricsValues" />
     </grid-item>

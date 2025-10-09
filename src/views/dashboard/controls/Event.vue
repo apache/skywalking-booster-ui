@@ -15,7 +15,7 @@ limitations under the License. -->
 <template>
   <div class="event-wrapper flex-v">
     <div class="operations">
-      <span class="cp">
+      <span class="cp" @click="handleCollapse">
         <Icon iconName="sort" size="middle" />
       </span>
       <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
@@ -41,6 +41,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
+  import { ref } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
@@ -59,6 +60,8 @@ limitations under the License. -->
   });
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
+  const collapsedState = ref(false);
+  const originalState = ref({ h: props.data.h });
 
   function removeWidget() {
     dashboardStore.removeControls(props.data);
@@ -66,6 +69,15 @@ limitations under the License. -->
   function editConfig() {
     dashboardStore.setConfigPanel(true);
     dashboardStore.selectWidget(props.data);
+  }
+  function handleCollapse() {
+    dashboardStore.activeGridItem(props.data.i);
+    collapsedState.value = !collapsedState.value;
+    if (collapsedState.value) {
+      dashboardStore.setConfigs({ ...props.data, ...{ h: 3 } });
+    } else {
+      dashboardStore.setConfigs({ ...props.data, ...originalState.value });
+    }
   }
 </script>
 <style lang="scss" scoped>
