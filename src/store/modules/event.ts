@@ -36,8 +36,8 @@ export const eventStore = defineStore({
   state: (): eventState => ({
     loading: false,
     events: [],
-    instances: [{ value: "", label: "All" }],
-    endpoints: [{ value: "", label: "All" }],
+    instances: [{ value: "0", label: "All" }],
+    endpoints: [{ value: "0", label: "All" }],
     condition: null,
   }),
   actions: {
@@ -58,7 +58,7 @@ export const eventStore = defineStore({
       if (response.errors) {
         return response;
       }
-      this.instances = [{ value: "", label: "All" }, ...response.data.pods];
+      this.instances = [{ value: "0", label: "All" }, ...response.data.pods];
       return response;
     },
     async getEndpoints(keyword?: string) {
@@ -75,7 +75,7 @@ export const eventStore = defineStore({
       if (response.errors) {
         return response;
       }
-      this.endpoints = [{ value: "", label: "All" }, ...response.data.pods];
+      this.endpoints = [{ value: "0", label: "All" }, ...response.data.pods];
       return response;
     },
     async getEvents() {

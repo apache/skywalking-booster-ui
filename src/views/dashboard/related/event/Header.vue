@@ -86,8 +86,8 @@ limitations under the License. -->
   const pageSize = 20;
   const pageNum = ref<number>(1);
   const state = reactive<any>({
-    instance: { value: "", label: "All", id: "" },
-    endpoint: { value: "", label: "All", id: "" },
+    instance: { value: "0", label: "All" },
+    endpoint: { value: "0", label: "All" },
     eventType: { value: "", label: "All" },
   });
   const total = computed(() =>
@@ -99,8 +99,8 @@ limitations under the License. -->
   async function init() {
     fetchSelectors();
     await queryEvents();
-    state.instance = { value: "", label: "All" };
-    state.endpoint = { value: "", label: "All" };
+    state.instance = { value: "0", label: "All" };
+    state.endpoint = { value: "0", label: "All" };
   }
 
   function fetchSelectors() {
@@ -138,13 +138,13 @@ limitations under the License. -->
     state.instance = eventStore.instances[0];
   }
   async function queryEvents() {
-    let endpoint = state.endpoint.value,
-      instance = state.instance.value;
+    let endpoint = state.endpoint.value === "0" ? undefined : state.endpoint.value,
+      instance = state.instance.value === "0" ? undefined : state.instance.value;
     if (dashboardStore.entity === EntityType[2].value) {
-      endpoint = selectorStore.currentPod && selectorStore.currentPod.id;
+      endpoint = selectorStore.currentPod?.id;
     }
     if (dashboardStore.entity === EntityType[3].value) {
-      instance = selectorStore.currentPod && selectorStore.currentPod.id;
+      instance = selectorStore.currentPod?.id;
     }
     if (!selectorStore.currentService) {
       return;
