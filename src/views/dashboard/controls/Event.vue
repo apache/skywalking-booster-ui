@@ -35,9 +35,11 @@ limitations under the License. -->
     <div class="header">
       <Header :needQuery="needQuery" />
     </div>
-    <div class="event" v-if="!collapsedState">
-      <Content :data="data" />
-    </div>
+    <Transition name="collapse">
+      <div class="event" v-if="!collapsedState">
+        <Content :data="data" />
+      </div>
+    </Transition>
   </div>
 </template>
 <script lang="ts" setup>
@@ -119,5 +121,25 @@ limitations under the License. -->
   .event {
     width: 100%;
     height: calc(100% - 80px);
+  }
+
+  .collapse-enter-active,
+  .collapse-leave-active {
+    transition: all 0.8s ease;
+    overflow: hidden;
+  }
+
+  .collapse-enter-from,
+  .collapse-leave-to {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+
+  .collapse-enter-to,
+  .collapse-leave-from {
+    opacity: 1;
+    max-height: 1000px;
+    transform: translateY(0);
   }
 </style>
