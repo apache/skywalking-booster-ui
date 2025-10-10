@@ -325,7 +325,7 @@ const msg = {
   message: "信息",
   tooltipsContent: "提示内容",
   alarmDetail: "警告详情",
-  recoveredOn: "恢复于",
+  recoveredAt: "恢复于",
   scope: "范围",
   destService: "终点服务",
   destServiceInstance: "终点实例",

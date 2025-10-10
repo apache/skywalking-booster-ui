@@ -328,7 +328,7 @@ const msg = {
   message: "Message",
   tooltipsContent: "Tooltip Content",
   alarmDetail: "Alarm Detail",
-  recoveredOn: "Recovered On",
+  recoveredAt: "Recovered At",
   scope: "Scope",
   destService: "Destination Service",
   destServiceInstance: "Destination Service Instance",

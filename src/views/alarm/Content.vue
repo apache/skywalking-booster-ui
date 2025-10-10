@@ -38,7 +38,7 @@ limitations under the License. -->
           {{ dateFormat(parseInt(i.startTime)) }}
         </div>
         <div class="grey sm" v-if="i.recoveryTime">
-          {{ t("recoveredOn") }} {{ dateFormat(parseInt(i.recoveryTime)) }}
+          {{ t("recoveredAt") }} {{ dateFormat(parseInt(i.recoveryTime)) }}
         </div>
       </div>
     </div>

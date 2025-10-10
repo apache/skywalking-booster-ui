@@ -325,7 +325,7 @@ const msg = {
   message: "Mensaje",
   tooltipsContent: "Contenido de Información de Herramienta",
   alarmDetail: "Detalle Alarma",
-  recoveredOn: "Recuperado En",
+  recoveredAt: "Recuperado En",
   scope: "Alcance",
   destService: "Servicio Destinación",
   destServiceInstance: "Instancia Servicio Destinación",
