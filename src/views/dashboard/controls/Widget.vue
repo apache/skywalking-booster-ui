@@ -122,10 +122,10 @@ limitations under the License. -->
         };
         const metrics: { [key: string]: { source: { [key: string]: unknown }; typesOfMQE: string[] } } =
           (await useDashboardQueryProcessor([config])) || {};
-        const params = metrics[data.value.i];
+        const params = metrics[data.value.i] || {};
         loading.value = false;
         state.source = params.source || {};
-        typesOfMQE.value = params.typesOfMQE;
+        typesOfMQE.value = params.typesOfMQE || [];
       }
 
       function removeWidget() {

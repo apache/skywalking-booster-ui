@@ -411,5 +411,6 @@ const msg = {
   spanName: "跨度名称",
   parentId: "父ID",
   shareTrace: "分享Trace",
+  eventDefaultCollapse: "默认折叠",
 };
 export default msg;

@@ -48,6 +48,7 @@ export interface LayoutConfig {
   id?: string;
   associate?: { widgetId: string }[];
   eventAssociate?: boolean;
+  eventDefaultCollapse?: boolean;
   filters?: Filters;
   relatedTrace?: RelatedTrace;
   subExpressions?: string[];

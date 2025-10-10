@@ -413,5 +413,6 @@ const msg = {
   spanName: "Nombre de Lapso",
   parentId: "ID Padre",
   shareTrace: "Compartir Traza",
+  eventDefaultCollapse: "Default Collapse",
 };
 export default msg;

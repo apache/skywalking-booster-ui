@@ -15,6 +15,10 @@ limitations under the License. -->
     <div class="config-label flex-h mr-20">{{ t("enableAssociate") }}</div>
     <el-switch v-model="eventAssociate" active-text="Yes" inactive-text="No" @change="updateConfig" />
   </div>
+  <div class="config-item flex-h">
+    <div class="config-label flex-h mr-20">{{ t("eventDefaultCollapse") }}</div>
+    <el-switch v-model="eventDefaultCollapse" active-text="Yes" inactive-text="No" @change="updateConfig" />
+  </div>
   <ConfigurationFooter />
 </template>
 <script lang="ts" setup>
@@ -28,10 +32,19 @@ limitations under the License. -->
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
   const eventAssociate = ref(dashboardStore.selectedGrid?.eventAssociate || false);
+  const eventDefaultCollapse = ref(
+    dashboardStore.selectedGrid?.eventDefaultCollapse === undefined
+      ? true
+      : dashboardStore.selectedGrid?.eventDefaultCollapse,
+  );
 
   function updateConfig() {
     const { selectedGrid } = dashboardStore;
 
-    dashboardStore.selectWidget({ ...selectedGrid, eventAssociate: eventAssociate.value } as LayoutConfig);
+    dashboardStore.selectWidget({
+      ...selectedGrid,
+      eventAssociate: eventAssociate.value,
+      eventDefaultCollapse: eventDefaultCollapse.value,
+    } as LayoutConfig);
   }
 </script>

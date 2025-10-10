@@ -256,8 +256,8 @@ export const dashboardStore = defineStore({
     setLayouts(param: LayoutConfig[]) {
       this.layout = param;
     },
-    setConfigs(param: LayoutConfig) {
-      const actived = this.activedGridItem.split("-");
+    setConfigs(param: LayoutConfig, gridIndex?: string) {
+      const actived = gridIndex || this.activedGridItem.split("-");
       const index = this.layout.findIndex((d: LayoutConfig) => actived[0] === d.i);
 
       if (actived.length === 3) {
