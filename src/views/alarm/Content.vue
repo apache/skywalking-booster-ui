@@ -34,6 +34,9 @@ limitations under the License. -->
             {{ t(i.scope.toLowerCase()) }}
           </div>
         </div>
+        <div class="grey sm show-xs">
+          {{ dateFormat(parseInt(i.startTime)) }}
+        </div>
         <div class="grey sm" v-if="i.recoveryTime">
           {{ t("recoveredOn") }} {{ dateFormat(parseInt(i.recoveryTime)) }}
         </div>
