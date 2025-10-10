@@ -14,28 +14,37 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="event-wrapper flex-v">
-    <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
-      <template #reference>
-        <span class="delete cp">
-          <Icon iconName="ellipsis_v" size="middle" class="operation" />
-        </span>
-      </template>
-      <div class="tools" @click="editConfig">
-        <span>{{ t("edit") }}</span>
-      </div>
-      <div class="tools" @click="removeWidget">
-        <span>{{ t("delete") }}</span>
-      </div>
-    </el-popover>
-    <div class="header">
-      <Header :needQuery="needQuery" />
+    <div class="operations">
+      <span class="cp" @click="handleCollapse">
+        <Icon iconName="sort" size="middle" />
+      </span>
+      <el-popover placement="bottom" trigger="click" :width="100" v-if="dashboardStore.editMode">
+        <template #reference>
+          <span class="cp">
+            <Icon iconName="ellipsis_v" size="middle" />
+          </span>
+        </template>
+        <div class="tools" @click="editConfig">
+          <span>{{ t("edit") }}</span>
+        </div>
+        <div class="tools" @click="removeWidget">
+          <span>{{ t("delete") }}</span>
+        </div>
+      </el-popover>
     </div>
-    <div class="event">
-      <Content :data="data" />
-    </div>
+    <div class="event-inspector" v-if="collapsedState"> Event Timeline Inspector </div>
+    <Transition name="collapse" v-else>
+      <div class="timeline">
+        <Header :needQuery="needQuery" />
+        <div class="event mt-10">
+          <Content :data="data" />
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 <script lang="ts" setup>
+  import { ref, watch, onMounted, nextTick } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
@@ -54,6 +63,17 @@ limitations under the License. -->
   });
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
+  const collapsedState = ref(true);
+  const originalState = ref({ h: props.data.h });
+
+  onMounted(() => {
+    collapsedState.value = props.data.eventDefaultCollapse === undefined ? true : props.data.eventDefaultCollapse;
+    if (collapsedState.value) {
+      dashboardStore.setConfigs({ ...props.data, ...{ h: 3 } }, props.data.i);
+    } else {
+      dashboardStore.setConfigs({ ...props.data, ...originalState.value }, props.data.i);
+    }
+  });
 
   function removeWidget() {
     dashboardStore.removeControls(props.data);
@@ -62,6 +82,24 @@ limitations under the License. -->
     dashboardStore.setConfigPanel(true);
     dashboardStore.selectWidget(props.data);
   }
+  function handleCollapse() {
+    dashboardStore.activeGridItem(props.data.i);
+    collapsedState.value = !collapsedState.value;
+    if (collapsedState.value) {
+      dashboardStore.setConfigs({ ...props.data, ...{ h: 3 } });
+    } else {
+      dashboardStore.setConfigs({ ...props.data, ...originalState.value });
+    }
+  }
+
+  watch(
+    () => props.data.h,
+    (newHeight) => {
+      if (!collapsedState.value) {
+        originalState.value = { h: newHeight };
+      }
+    },
+  );
 </script>
 <style lang="scss" scoped>
   .event-wrapper {
@@ -72,14 +110,14 @@ limitations under the License. -->
     overflow: auto;
   }
 
-  .delete {
+  .operations {
     position: absolute;
     top: 5px;
     right: 3px;
     z-index: 9999;
   }
 
-  .header {
+  .timeline {
     padding: 10px;
     font-size: $font-size-smaller;
     border-bottom: 1px solid $border-color;
@@ -102,5 +140,32 @@ limitations under the License. -->
   .event {
     width: 100%;
     height: calc(100% - 80px);
+  }
+
+  .collapse-enter-active,
+  .collapse-leave-active {
+    transition: all 0.8s ease;
+    overflow: hidden;
+  }
+
+  .collapse-enter-from,
+  .collapse-leave-to {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+
+  .collapse-enter-to,
+  .collapse-leave-from {
+    opacity: 1;
+    max-height: 1000px;
+    transform: translateY(0);
+  }
+
+  .event-inspector {
+    text-align: center;
+    line-height: 45px;
+    font-size: $font-size-normal;
+    font-weight: bold;
   }
 </style>

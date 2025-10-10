@@ -51,6 +51,7 @@ limitations under the License. -->
       width: 0,
       height: 0,
     };
+    visTimeline();
     useThrottleFn(resize, 500)();
   });
 

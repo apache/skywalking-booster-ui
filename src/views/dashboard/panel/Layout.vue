@@ -23,6 +23,8 @@ limitations under the License. -->
     v-loading.fullscreen.lock="loading"
     element-loading-text="Loading..."
     element-loading-background="rgba(122, 122, 122, 0.8)"
+    :vertical-compact="true"
+    :auto-size="true"
   >
     <grid-item
       v-for="item in dashboardStore.layout"

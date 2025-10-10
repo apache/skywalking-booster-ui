@@ -413,5 +413,6 @@ const msg = {
   spanName: "Span name",
   parentId: "Parent ID",
   shareTrace: "Share This Trace",
+  eventDefaultCollapse: "Default Collapse",
 };
 export default msg;
