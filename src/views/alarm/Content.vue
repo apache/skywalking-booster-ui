@@ -34,8 +34,8 @@ limitations under the License. -->
             {{ t(i.scope.toLowerCase()) }}
           </div>
         </div>
-        <div class="grey sm show-xs">
-          {{ dateFormat(parseInt(i.startTime)) }}
+        <div class="grey sm" v-if="i.recoveryTime">
+          {{ t("recoveredOn") }} {{ dateFormat(parseInt(i.recoveryTime)) }}
         </div>
       </div>
     </div>
@@ -52,6 +52,9 @@ limitations under the License. -->
       <span class="g-sm-2 grey">{{ t(item.value) }}:</span>
       <span v-if="item.label === 'startTime'">
         {{ dateFormat(currentDetail[item.label]) }}
+      </span>
+      <span v-else-if="item.label === 'recoveryTime'">
+        {{ currentDetail[item.label] ? dateFormat(currentDetail[item.label]) : "" }}
       </span>
       <span v-else-if="item.label === 'tags'">
         <div v-for="(d, index) in alarmTags" :key="index">{{ d }}</div>
