@@ -43,7 +43,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, watch } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
@@ -64,6 +64,15 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const collapsedState = ref(false);
   const originalState = ref({ h: props.data.h });
+
+  watch(
+    () => props.data.h,
+    (newHeight) => {
+      if (!collapsedState.value) {
+        originalState.value = { h: newHeight };
+      }
+    },
+  );
 
   function removeWidget() {
     dashboardStore.removeControls(props.data);
