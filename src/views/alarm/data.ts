@@ -41,6 +41,10 @@ export const AlarmDetailCol = [
     value: "startTime",
   },
   {
+    label: "recoveryTime",
+    value: "recoveryTime",
+  },
+  {
     label: "tags",
     value: "tags",
   },
