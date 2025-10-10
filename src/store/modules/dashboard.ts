@@ -280,7 +280,7 @@ export const dashboardStore = defineStore({
         ...param,
       };
       this.setLayouts(layout);
-      this.selectedGrid = layout;
+      this.selectedGrid = layout[index];
     },
     setWidget(param: LayoutConfig) {
       for (let i = 0; i < this.layout.length; i++) {
