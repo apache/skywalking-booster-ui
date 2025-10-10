@@ -35,7 +35,7 @@ limitations under the License. -->
     <div class="header">
       <Header :needQuery="needQuery" />
     </div>
-    <div class="event">
+    <div class="event" v-if="!collapsedState">
       <Content :data="data" />
     </div>
   </div>
