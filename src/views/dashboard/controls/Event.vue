@@ -32,12 +32,13 @@ limitations under the License. -->
         </div>
       </el-popover>
     </div>
-    <div class="header">
-      <Header :needQuery="needQuery" />
-    </div>
-    <Transition name="collapse">
-      <div class="event" v-if="!collapsedState">
-        <Content :data="data" />
+    <div class="event-inspector" v-if="collapsedState"> Event Timeline Inspector </div>
+    <Transition name="collapse" v-else>
+      <div class="timeline">
+        <Header :needQuery="needQuery" />
+        <div class="event mt-10">
+          <Content :data="data" />
+        </div>
       </div>
     </Transition>
   </div>
@@ -62,7 +63,7 @@ limitations under the License. -->
   });
   const { t } = useI18n();
   const dashboardStore = useDashboardStore();
-  const collapsedState = ref(false);
+  const collapsedState = ref(true);
   const originalState = ref({ h: props.data.h });
 
   watch(
@@ -107,7 +108,7 @@ limitations under the License. -->
     z-index: 9999;
   }
 
-  .header {
+  .timeline {
     padding: 10px;
     font-size: $font-size-smaller;
     border-bottom: 1px solid $border-color;
@@ -150,5 +151,12 @@ limitations under the License. -->
     opacity: 1;
     max-height: 1000px;
     transform: translateY(0);
+  }
+
+  .event-inspector {
+    text-align: center;
+    line-height: 45px;
+    font-size: $font-size-normal;
+    font-weight: bold;
   }
 </style>
