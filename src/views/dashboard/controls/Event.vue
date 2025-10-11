@@ -44,7 +44,7 @@ limitations under the License. -->
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, onMounted, nextTick } from "vue";
+  import { ref, watch, onMounted } from "vue";
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { useDashboardStore } from "@/store/modules/dashboard";
@@ -65,11 +65,12 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const collapsedState = ref(true);
   const originalState = ref({ h: props.data.h });
+  const CollapsedHeight = 2;
 
   onMounted(() => {
     collapsedState.value = props.data.eventDefaultCollapse === undefined ? true : props.data.eventDefaultCollapse;
     if (collapsedState.value) {
-      dashboardStore.setConfigs({ ...props.data, ...{ h: 3 } }, props.data.i);
+      dashboardStore.setConfigs({ ...props.data, ...{ h: CollapsedHeight } }, props.data.i);
     } else {
       dashboardStore.setConfigs({ ...props.data, ...originalState.value }, props.data.i);
     }
@@ -86,7 +87,7 @@ limitations under the License. -->
     dashboardStore.activeGridItem(props.data.i);
     collapsedState.value = !collapsedState.value;
     if (collapsedState.value) {
-      dashboardStore.setConfigs({ ...props.data, ...{ h: 3 } });
+      dashboardStore.setConfigs({ ...props.data, ...{ h: CollapsedHeight } });
     } else {
       dashboardStore.setConfigs({ ...props.data, ...originalState.value });
     }
@@ -164,7 +165,7 @@ limitations under the License. -->
 
   .event-inspector {
     text-align: center;
-    line-height: 45px;
+    line-height: 30px;
     font-size: $font-size-normal;
     font-weight: bold;
   }
