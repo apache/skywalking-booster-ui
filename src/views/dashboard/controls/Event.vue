@@ -164,8 +164,10 @@ limitations under the License. -->
   }
 
   .event-inspector {
-    text-align: center;
-    line-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
     font-size: $font-size-normal;
     font-weight: bold;
   }
