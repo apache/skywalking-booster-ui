@@ -55,7 +55,7 @@ limitations under the License. -->
         </template>
       </el-table-column>
       <el-table-column label="Root" prop="label" />
-      <el-table-column label="Start Time" prop="start" width="220" sortable :sort-method="sortByStartTime">
+      <el-table-column label="Start Time" prop="start" width="220" sortable>
         <template #default="props">
           {{ dateFormat(props.row.start) }}
         </template>
