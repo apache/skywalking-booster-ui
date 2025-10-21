@@ -225,7 +225,6 @@ limitations under the License. -->
   }
 
   function sortByStartTime(a: Trace, b: Trace): number {
-    expandAll.value = true;
     // Convert start time strings to Date objects for comparison
     const dateA = new Date(a.start);
     const dateB = new Date(b.start);
@@ -236,6 +235,17 @@ limitations under the License. -->
     if (isNaN(dateB.getTime())) return -1;
 
     return dateA.getTime() - dateB.getTime();
+  }
+
+  function applyExpandState() {
+    nextTick(() => {
+      if (tableRef.value) {
+        const visibleItems = filteredTraces.value;
+        for (const row of visibleItems) {
+          tableRef.value.toggleRowExpansion(row, expandAll.value);
+        }
+      }
+    });
   }
 
   function handleSortChange(sortInfo: { prop: string; order: string | null }) {
@@ -250,6 +260,9 @@ limitations under the License. -->
 
     // Reset loaded items count when sort changes
     loadedItemsCount.value = PageSize;
+
+    // Preserve expand state when sorting changes
+    applyExpandState();
   }
 
   function toggleServiceTags(serviceName: string, row: Trace) {
@@ -268,7 +281,6 @@ limitations under the License. -->
   function changeServiceFilters(selected: Option[]) {
     selectedServiceNames.value = selected.map((o) => String(o.value));
   }
-
   // Infinite scroll handlers
   function loadMoreItems() {
     if (loading.value || !hasMoreItems.value) return;
@@ -279,17 +291,7 @@ limitations under the License. -->
     setTimeout(() => {
       const nextBatch = Math.min(PageSize, allFilteredTraces.value.length - loadedItemsCount.value);
       loadedItemsCount.value += nextBatch;
-
-      // Apply current expand state to all currently visible items
-      nextTick(() => {
-        if (tableRef.value) {
-          const allVisibleItems = filteredTraces.value;
-          for (const row of allVisibleItems) {
-            tableRef.value.toggleRowExpansion(row, expandAll.value);
-          }
-        }
-      });
-
+      applyExpandState();
       loading.value = false;
     }, 300);
   }
@@ -309,25 +311,13 @@ limitations under the License. -->
     loadedItemsCount.value = PageSize;
     // Apply expand state to newly visible items after filter change
     nextTick(() => {
-      if (tableRef.value) {
-        const visibleItems = filteredTraces.value;
-        for (const row of visibleItems) {
-          tableRef.value.toggleRowExpansion(row, expandAll.value);
-        }
-      }
+      applyExpandState();
     });
   });
 
   // Watch for expandAll state changes to apply to all visible items
   watch(expandAll, () => {
-    nextTick(() => {
-      if (tableRef.value) {
-        const visibleItems = filteredTraces.value;
-        for (const row of visibleItems) {
-          tableRef.value.toggleRowExpansion(row, expandAll.value);
-        }
-      }
-    });
+    applyExpandState();
   });
 
   // Watch for trace list changes (when new query is executed) to reapply expand state
@@ -338,14 +328,7 @@ limitations under the License. -->
       loadedItemsCount.value = PageSize;
 
       // Reapply expand state to newly loaded traces
-      nextTick(() => {
-        if (tableRef.value) {
-          const visibleItems = filteredTraces.value;
-          for (const row of visibleItems) {
-            tableRef.value.toggleRowExpansion(row, expandAll.value);
-          }
-        }
-      });
+      applyExpandState();
     },
     { deep: true },
   );

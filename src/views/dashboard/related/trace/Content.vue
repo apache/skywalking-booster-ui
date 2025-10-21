@@ -16,9 +16,7 @@ limitations under the License. -->
   <div class="search-bar">
     <Filter :needQuery="needQuery" :data="data" @get="getService" @search="popSegmentList" />
     <div class="filter-row flex-h mt-10" v-if="traceStore.hasQueryTracesV2Support">
-      <div class="grey mr-10 label">{{ t("limit") }}</div>
-      <el-input-number size="small" v-model="limit" :min="10" @change="changeLimit" />
-      <div class="grey mr-10 label ml-20">{{ t("queryOrder") }}</div>
+      <div class="grey mr-10 label">{{ t("setOrder") }}</div>
       <Selector
         v-model="queryOrder"
         :options="QueryOrders"
@@ -26,6 +24,8 @@ limitations under the License. -->
         size="small"
         style="width: 120px"
       />
+      <div class="grey mr-10 label ml-20">{{ t("limit") }}</div>
+      <el-input-number size="small" v-model="limit" :min="10" @change="changeLimit" />
     </div>
   </div>
   <TraceQuery v-if="traceStore.hasQueryTracesV2Support" style="height: 100%" />
@@ -88,7 +88,6 @@ limitations under the License. -->
     });
   }
   function changeQueryOrder() {
-    console.log(queryOrder.value);
     traceStore.setTraceCondition({
       queryOrder: queryOrder.value,
     });
