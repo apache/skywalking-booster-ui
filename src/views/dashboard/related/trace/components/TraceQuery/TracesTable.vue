@@ -16,14 +16,7 @@ limitations under the License. -->
   <div class="flex-h result-header">
     <div style="align-items: center"> {{ filteredTraces.length }} of {{ totalTraces }} Results </div>
     <div class="flex-h" style="align-items: center">
-      <el-switch
-        v-model="expandAll"
-        size="large"
-        active-text="Expand All"
-        inactive-text="Collapse All"
-        class="mr-20"
-        @change="toggleAllExpansion"
-      />
+      <el-switch v-model="expandAll" size="large" active-text="Expand All" inactive-text="Collapse All" class="mr-20" />
       <Selector
         placeholder="Service filters"
         @change="changeServiceFilters"
@@ -43,6 +36,7 @@ limitations under the License. -->
       :default-sort="{ prop: 'duration', order: 'descending' }"
       style="width: 100%"
       v-loading="traceStore.loading"
+      @sort-change="handleSortChange"
     >
       <el-table-column type="expand">
         <template #default="props">
@@ -61,7 +55,7 @@ limitations under the License. -->
         </template>
       </el-table-column>
       <el-table-column label="Root" prop="label" />
-      <el-table-column label="Start Time" prop="timestamp" width="220">
+      <el-table-column label="Start Time" prop="start" width="220" sortable>
         <template #default="props">
           {{ dateFormat(props.row.start) }}
         </template>
@@ -137,6 +131,9 @@ limitations under the License. -->
   const loading = ref<boolean>(false);
   const loadMoreThreshold = 100; // pixels from bottom to trigger load
 
+  // Sort state for infinite scroll
+  const currentSort = ref<{ prop: string; order: string } | null>({ prop: "duration", order: "descending" });
+
   // Calculate max duration for progress bar scaling
   const maxDuration = computed(() => {
     if (!traceStore.traceList.length) return 1;
@@ -161,7 +158,26 @@ limitations under the License. -->
   });
 
   const filteredTraces = computed<Trace[]>(() => {
-    return allFilteredTraces.value.slice(0, loadedItemsCount.value);
+    let sortedTraces = [...allFilteredTraces.value];
+
+    // Apply sorting if there's a current sort
+    if (currentSort.value) {
+      sortedTraces.sort((a, b) => {
+        const { prop, order } = currentSort.value!;
+
+        if (prop === "start") {
+          const result = sortByStartTime(a, b);
+          return order === "ascending" ? result : -result;
+        } else if (prop === "duration") {
+          const result = a.duration - b.duration;
+          return order === "ascending" ? result : -result;
+        }
+
+        return 0;
+      });
+    }
+
+    return sortedTraces.slice(0, loadedItemsCount.value);
   });
 
   const totalTraces = computed<number>(() => allFilteredTraces.value.length);
@@ -208,6 +224,47 @@ limitations under the License. -->
     return Math.round((duration / maxDuration.value) * 100);
   }
 
+  function sortByStartTime(a: Trace, b: Trace): number {
+    // Convert start time strings to Date objects for comparison
+    const dateA = new Date(a.start);
+    const dateB = new Date(b.start);
+
+    // Handle invalid dates
+    if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
+    if (isNaN(dateA.getTime())) return 1;
+    if (isNaN(dateB.getTime())) return -1;
+
+    return dateA.getTime() - dateB.getTime();
+  }
+
+  function applyExpandState() {
+    nextTick(() => {
+      if (tableRef.value) {
+        const visibleItems = filteredTraces.value;
+        for (const row of visibleItems) {
+          tableRef.value.toggleRowExpansion(row, expandAll.value);
+        }
+      }
+    });
+  }
+
+  function handleSortChange(sortInfo: { prop: string; order: string | null }) {
+    if (sortInfo.order) {
+      currentSort.value = {
+        prop: sortInfo.prop,
+        order: sortInfo.order,
+      };
+    } else {
+      currentSort.value = null;
+    }
+
+    // Reset loaded items count when sort changes
+    loadedItemsCount.value = PageSize;
+
+    // Preserve expand state when sorting changes
+    applyExpandState();
+  }
+
   function toggleServiceTags(serviceName: string, row: Trace) {
     selectedServiceNames.value = selectedServiceNames.value.includes(serviceName)
       ? selectedServiceNames.value.filter((name) => name !== serviceName)
@@ -224,7 +281,6 @@ limitations under the License. -->
   function changeServiceFilters(selected: Option[]) {
     selectedServiceNames.value = selected.map((o) => String(o.value));
   }
-
   // Infinite scroll handlers
   function loadMoreItems() {
     if (loading.value || !hasMoreItems.value) return;
@@ -235,17 +291,7 @@ limitations under the License. -->
     setTimeout(() => {
       const nextBatch = Math.min(PageSize, allFilteredTraces.value.length - loadedItemsCount.value);
       loadedItemsCount.value += nextBatch;
-
-      // Apply current expand state to all currently visible items
-      nextTick(() => {
-        if (tableRef.value) {
-          const allVisibleItems = filteredTraces.value;
-          for (const row of allVisibleItems) {
-            tableRef.value.toggleRowExpansion(row, expandAll.value);
-          }
-        }
-      });
-
+      applyExpandState();
       loading.value = false;
     }, 300);
   }
@@ -265,25 +311,13 @@ limitations under the License. -->
     loadedItemsCount.value = PageSize;
     // Apply expand state to newly visible items after filter change
     nextTick(() => {
-      if (tableRef.value) {
-        const visibleItems = filteredTraces.value;
-        for (const row of visibleItems) {
-          tableRef.value.toggleRowExpansion(row, expandAll.value);
-        }
-      }
+      applyExpandState();
     });
   });
 
   // Watch for expandAll state changes to apply to all visible items
   watch(expandAll, () => {
-    nextTick(() => {
-      if (tableRef.value) {
-        const visibleItems = filteredTraces.value;
-        for (const row of visibleItems) {
-          tableRef.value.toggleRowExpansion(row, expandAll.value);
-        }
-      }
-    });
+    applyExpandState();
   });
 
   // Watch for trace list changes (when new query is executed) to reapply expand state
@@ -294,14 +328,7 @@ limitations under the License. -->
       loadedItemsCount.value = PageSize;
 
       // Reapply expand state to newly loaded traces
-      nextTick(() => {
-        if (tableRef.value) {
-          const visibleItems = filteredTraces.value;
-          for (const row of visibleItems) {
-            tableRef.value.toggleRowExpansion(row, expandAll.value);
-          }
-        }
-      });
+      applyExpandState();
     },
     { deep: true },
   );
@@ -320,12 +347,6 @@ limitations under the License. -->
       tableContainer.removeEventListener("scroll", handleScroll);
     }
   });
-
-  // Toggle all table row expansions (only for loaded items)
-  function toggleAllExpansion() {
-    // The expandAll watcher will handle applying the state to all visible items
-    // This function just needs to trigger the change
-  }
 </script>
 <style lang="scss" scoped>
   .trace-query-table {
