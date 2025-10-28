@@ -126,6 +126,8 @@ const titles = {
   self_observability_satellite: "Satellite",
   self_observability_satellite_desc:
     "Satellite: an open-source agent designed for the cloud-native infrastructures, which provides a low-cost, high-efficient, and more secure way to collect telemetry data. It is the recommended load balancer for telemetry collecting.",
+  self_observability_banyandb: "BanyanDB Server",
+  self_observability_banyandb_desc: "Proporcione la monitorización de BanyanDB a través del receptor Prometheus de OpenTelemetry.",
   self_observability_java_agent: "SkyWalking Java Agent",
   self_observability_java_agent_desc:
     "La auto-observabilidad de SkyWalking Java Agent, que proporciona la capacidad de medir el rendimiento del trazado y las estadísticas de errores de los plugins.",
