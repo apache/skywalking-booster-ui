@@ -37,7 +37,7 @@ limitations under the License. -->
               {{ te(menu.i18nKey) ? t(menu.i18nKey) : menu.title }}
             </div>
           </router-link>
-          <div class="mt-10"> {{ te(menu.descKey) ? t(menu.descKey) : "" }} </div>
+          <div class="mt-10"> {{ te(menu.descKey) ? t(menu.descKey) : menu.description }} </div>
           <el-link :href="menu.documentLink" target="_blank" class="link" v-show="menu.documentLink">
             <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
           </el-link>
@@ -50,7 +50,7 @@ limitations under the License. -->
               {{ te(item.i18nKey) ? t(item.i18nKey) : item.title }}
             </div>
           </router-link>
-          <div class="mt-10"> {{ te(item.descKey) ? t(item.descKey) : "" }} </div>
+          <div class="mt-10"> {{ te(item.descKey) ? t(item.descKey) : item.description }} </div>
           <el-link :href="item.documentLink" target="_blank" class="link" v-show="item.documentLink">
             <el-button class="mt-10" size="small" type="primary"> {{ t("document") }} </el-button>
           </el-link>
