@@ -70,7 +70,7 @@ limitations under the License. -->
   const currentItems = ref<MenuOptions>(appStore.allMenus[0] || {});
   const searchText = ref<string>("");
   const menus = ref<MenuOptions[]>(appStore.allMenus || []);
-  console.log(menus.value);
+
   function handleItems(item: MenuOptions) {
     currentItems.value = item;
   }
