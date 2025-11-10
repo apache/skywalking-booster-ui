@@ -293,7 +293,7 @@ limitations under the License. -->
           selectedMinTimestamp: props.selectedMinTimestamp,
         });
       }
-      tree.value.draw(() => {
+      tree.value?.draw(() => {
         setTimeout(() => {
           loading.value = false;
         }, 200);
