@@ -24,6 +24,6 @@ export enum TraceGraphType {
 export const GraphTypeOptions = [
   { value: "List", icon: "list-bulleted", label: "list" },
   { value: "Tree", icon: "issue-child", label: "tree" },
-  { value: "Table", icon: "table", label: "table" },
+  { value: "Table", icon: "list-tree", label: "table" },
   { value: "Statistics", icon: "statistics-bulleted", label: "statistics" },
 ] as const;
