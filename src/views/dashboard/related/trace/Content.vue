@@ -16,7 +16,15 @@ limitations under the License. -->
   <div class="search-bar">
     <Filter :needQuery="needQuery" :data="data" @get="getService" @search="popSegmentList" />
     <div class="filter-row flex-h mt-10" v-if="traceStore.hasQueryTracesV2Support">
-      <div class="grey mr-10 label">{{ t("limit") }}</div>
+      <div class="grey mr-10 label">{{ t("setOrder") }}</div>
+      <Selector
+        v-model="queryOrder"
+        :options="QueryOrders"
+        @change="changeQueryOrder"
+        size="small"
+        style="width: 120px"
+      />
+      <div class="grey mr-10 label ml-20">{{ t("limit") }}</div>
       <el-input-number size="small" v-model="limit" :min="10" @change="changeLimit" />
     </div>
   </div>
@@ -48,6 +56,7 @@ limitations under the License. -->
   import type { LayoutConfig } from "@/types/dashboard";
   import { mutationObserver } from "@/utils/mutation";
   import TraceQuery from "./components/TraceQuery/Index.vue";
+  import { QueryOrders } from "@/views/dashboard/data";
   /*global defineProps */
   const props = defineProps({
     data: {
@@ -64,6 +73,7 @@ limitations under the License. -->
   const currentWidth = ref<number>(280);
   const needQuery = ref<boolean>(true);
   const isDrag = ref<boolean>(false);
+  const queryOrder = ref<string>(QueryOrders[0].value);
   const limit = ref(PageSize);
   const defaultWidth = 280;
   const minArrowLeftWidth = 120;
@@ -77,7 +87,11 @@ limitations under the License. -->
       paging: { pageNum: 1, pageSize: val },
     });
   }
-
+  function changeQueryOrder() {
+    traceStore.setTraceCondition({
+      queryOrder: queryOrder.value,
+    });
+  }
   // When click the arrow, the width of the segment list is determined by the direction it points to.
   function triggerArrow() {
     currentWidth.value = isLeft.value ? 0 : defaultWidth;

@@ -111,6 +111,8 @@ const titles = {
   self_observability_satellite: "Satellite",
   self_observability_satellite_desc:
     "Satellite：为云原生基础设施设计的开源代理，提供了一种低成本、高效、更安全的遥测数据收集方式。它是遥测采集的推荐负载均衡器。",
+  self_observability_banyandb: "BanyanDB Server",
+  self_observability_banyandb_desc: "通过OpenTelemetry的Prometheus接收器提供BanyanDB监控",
   self_observability_java_agent: "SkyWalking Java Agent",
   self_observability_java_agent_desc: "SkyWalking Java Agent 自监控提供了对 agent 插件的性能追踪和错误统计。",
   self_observability_go_agent: "SkyWalking Go Agent",
