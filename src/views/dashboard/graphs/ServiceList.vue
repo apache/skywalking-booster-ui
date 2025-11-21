@@ -191,6 +191,7 @@ limitations under the License. -->
       ElMessage.error("No this dashboard");
       return;
     }
+    selectorStore.setCurrentService(scope.row);
     const path = `/dashboard/${dashboard.layer}/${dashboard.entity}/${scope.row.id}/${dashboard.name}`;
 
     router.push(path);
