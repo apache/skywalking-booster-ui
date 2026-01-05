@@ -55,7 +55,11 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const type = ref<string>(dashboardStore.layerId === "BROWSER" ? "browser" : "service");
   const pageSize = ref<number>(PageSizeDefault);
-  const total = computed(() => pageSize.value * logStore.conditions.paging.pageNum);
+  const total = computed(() =>
+    logStore.logs.length >= pageSize.value
+      ? (pageSize.value - 1) * logStore.conditions.paging.pageNum + 1
+      : (pageSize.value - 1) * logStore.conditions.paging.pageNum,
+  );
   const displayLogs = computed(() =>
     logStore.logs.length === pageSize.value ? logStore.logs.slice(0, pageSize.value - 1) : logStore.logs,
   );
