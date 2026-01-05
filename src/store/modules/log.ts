@@ -37,7 +37,7 @@ interface LogState {
 }
 const { getDurationTime } = useDuration();
 
-export const PageSizeDefault = 20;
+export const PageSizeDefault = 21;
 
 export const logStore = defineStore({
   id: "log",
