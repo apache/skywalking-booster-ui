@@ -37,6 +37,8 @@ interface LogState {
 }
 const { getDurationTime } = useDuration();
 
+export const PageSizeDefault = 21;
+
 export const logStore = defineStore({
   id: "log",
   state: (): LogState => ({
@@ -45,7 +47,7 @@ export const logStore = defineStore({
     endpoints: [{ value: "0", label: "All" }],
     conditions: {
       queryDuration: getDurationTime(),
-      paging: { pageNum: 1, pageSize: 15 },
+      paging: { pageNum: 1, pageSize: PageSizeDefault },
     },
     supportQueryLogsByKeywords: true,
     selectorStore: useSelectorStore(),

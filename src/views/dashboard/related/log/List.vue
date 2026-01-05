@@ -14,17 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div>
-    <LogTable v-loading="logStore.loadLogs" :tableData="logStore.logs || []" :type="type" :noLink="false" :data="data">
+    <LogTable v-loading="logStore.loadLogs" :tableData="displayLogs" :type="type" :noLink="false" :data="data">
       <div class="log-tips" v-if="!logStore.logs.length">{{ t("noData") }}</div>
     </LogTable>
     <div class="mt-5 mb-5">
       <el-pagination
         v-model="logStore.conditions.paging.pageNum"
-        :page-size="pageSize"
+        :page-size="pageSize - 1"
         size="small"
         layout="prev, pager, next"
-        :pager-count="5"
         :total="total"
+        :pager-count="5"
         @current-change="updatePage"
         :style="`float: right`"
       />
@@ -37,7 +37,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import type { LayoutConfig } from "@/types/dashboard";
   import LogTable from "./LogTable/Index.vue";
-  import { useLogStore } from "@/store/modules/log";
+  import { useLogStore, PageSizeDefault } from "@/store/modules/log";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { ElMessage } from "element-plus";
 
@@ -54,11 +54,14 @@ limitations under the License. -->
   const logStore = useLogStore();
   const dashboardStore = useDashboardStore();
   const type = ref<string>(dashboardStore.layerId === "BROWSER" ? "browser" : "service");
-  const pageSize = ref<number>(15);
+  const pageSize = ref<number>(PageSizeDefault);
   const total = computed(() =>
-    logStore.logs.length === pageSize.value
-      ? pageSize.value * logStore.conditions.paging.pageNum + 1
-      : pageSize.value * logStore.conditions.paging.pageNum,
+    logStore.logs.length >= pageSize.value
+      ? (pageSize.value - 1) * logStore.conditions.paging.pageNum + 1
+      : (pageSize.value - 1) * logStore.conditions.paging.pageNum,
+  );
+  const displayLogs = computed(() =>
+    logStore.logs.length === pageSize.value ? logStore.logs.slice(0, pageSize.value - 1) : logStore.logs,
   );
   function updatePage(p: number) {
     logStore.setLogCondition({
