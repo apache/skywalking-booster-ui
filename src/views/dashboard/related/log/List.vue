@@ -20,11 +20,10 @@ limitations under the License. -->
     <div class="mt-5 mb-5">
       <el-pagination
         v-model="logStore.conditions.paging.pageNum"
-        :page-size="pageSize"
+        :page-size="pageSize - 1"
         size="small"
         layout="prev, pager, next"
-        :pager-count="5"
-        :total="total"
+        :total="pageSize"
         @current-change="updatePage"
         :style="`float: right`"
       />
@@ -55,13 +54,8 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const type = ref<string>(dashboardStore.layerId === "BROWSER" ? "browser" : "service");
   const pageSize = ref<number>(PageSizeDefault);
-  const total = computed(() =>
-    logStore.logs.length < pageSize.value
-      ? pageSize.value * logStore.conditions.paging.pageNum
-      : pageSize.value * logStore.conditions.paging.pageNum + 1,
-  );
   const displayLogs = computed(() =>
-    logStore.logs.length === pageSize.value ? logStore.logs.slice(0, pageSize.value) : logStore.logs,
+    logStore.logs.length === pageSize.value ? logStore.logs.slice(0, pageSize.value - 1) : logStore.logs,
   );
   function updatePage(p: number) {
     logStore.setLogCondition({
