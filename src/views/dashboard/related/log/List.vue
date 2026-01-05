@@ -23,7 +23,7 @@ limitations under the License. -->
         :page-size="pageSize - 1"
         size="small"
         layout="prev, pager, next"
-        :total="pageSize"
+        :total="total"
         :pager-count="5"
         @current-change="updatePage"
         :style="`float: right`"
@@ -55,6 +55,7 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const type = ref<string>(dashboardStore.layerId === "BROWSER" ? "browser" : "service");
   const pageSize = ref<number>(PageSizeDefault);
+  const total = computed(() => pageSize.value * logStore.conditions.paging.pageNum);
   const displayLogs = computed(() =>
     logStore.logs.length === pageSize.value ? logStore.logs.slice(0, pageSize.value - 1) : logStore.logs,
   );
