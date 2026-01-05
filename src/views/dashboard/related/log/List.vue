@@ -24,6 +24,7 @@ limitations under the License. -->
         size="small"
         layout="prev, pager, next"
         :total="pageSize"
+        :pager-count="5"
         @current-change="updatePage"
         :style="`float: right`"
       />
