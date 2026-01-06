@@ -63,7 +63,7 @@ export const logStore = defineStore({
       this.logs = [];
       this.conditions = {
         queryDuration: getDurationTime(),
-        paging: { pageNum: 1, pageSize: 15 },
+        paging: { pageNum: 1, pageSize: PageSizeDefault },
       };
     },
     setLogHeaderType(type: string) {

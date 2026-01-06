@@ -133,7 +133,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import { useI18n } from "vue-i18n";
   import { ElMessage } from "element-plus";
-  import { useLogStore } from "@/store/modules/log";
+  import { useLogStore, PageSizeDefault } from "@/store/modules/log";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useSelectorStore } from "@/store/modules/selectors";
@@ -274,7 +274,7 @@ limitations under the License. -->
         serviceId: selectorStore.currentService ? selectorStore.currentService.id : state.service.id,
         pagePathId: endpoint || state.endpoint.id || undefined,
         serviceVersionId: instance || state.instance.id || undefined,
-        paging: { pageNum: 1, pageSize: 15 },
+        paging: { pageNum: 1, pageSize: PageSizeDefault },
         queryDuration: duration,
         category: state.category.value,
       });
@@ -292,7 +292,7 @@ limitations under the License. -->
         keywordsOfContent: keywordsOfContent.value,
         excludingKeywordsOfContent: excludingKeywordsOfContent.value,
         tags: tagsMap.value.length ? tagsMap.value : undefined,
-        paging: { pageNum: 1, pageSize: 15 },
+        paging: { pageNum: 1, pageSize: PageSizeDefault },
         relatedTrace: traceId.value ? { traceId: traceId.value, segmentId, spanId } : undefined,
       });
     }
