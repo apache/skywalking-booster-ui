@@ -17,18 +17,12 @@ limitations under the License. -->
     <LogTable v-loading="logStore.loadLogs" :tableData="displayLogs" :type="type" :noLink="false" :data="data">
       <div class="log-tips" v-if="!logStore.logs.length">{{ t("noData") }}</div>
     </LogTable>
-    <div class="mt-5 mb-5">
-      <el-pagination
-        v-model="logStore.conditions.paging.pageNum"
-        :page-size="pageSize - 1"
-        size="small"
-        layout="prev, pager, next"
-        :total="total"
-        :pager-count="5"
-        @current-change="updatePage"
-        :style="`float: right`"
-      />
-    </div>
+    <Pagination
+      v-model:currentPage="logStore.conditions.paging.pageNum"
+      :pageSize="pageSize"
+      :total="logStore.logs.length"
+      @change="updatePage"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -37,6 +31,7 @@ limitations under the License. -->
   import type { PropType } from "vue";
   import type { LayoutConfig } from "@/types/dashboard";
   import LogTable from "./LogTable/Index.vue";
+  import Pagination from "@/views/components/Pagination.vue";
   import { useLogStore, PageSizeDefault } from "@/store/modules/log";
   import { useDashboardStore } from "@/store/modules/dashboard";
   import { ElMessage } from "element-plus";
@@ -55,11 +50,6 @@ limitations under the License. -->
   const dashboardStore = useDashboardStore();
   const type = ref<string>(dashboardStore.layerId === "BROWSER" ? "browser" : "service");
   const pageSize = ref<number>(PageSizeDefault);
-  const total = computed(() =>
-    logStore.logs.length >= pageSize.value
-      ? (pageSize.value - 1) * logStore.conditions.paging.pageNum + 1
-      : (pageSize.value - 1) * logStore.conditions.paging.pageNum,
-  );
   const displayLogs = computed(() =>
     logStore.logs.length === pageSize.value ? logStore.logs.slice(0, pageSize.value - 1) : logStore.logs,
   );

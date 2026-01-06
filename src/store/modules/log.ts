@@ -37,7 +37,7 @@ interface LogState {
 }
 const { getDurationTime } = useDuration();
 
-export const PageSizeDefault = 21;
+export const PageSizeDefault = 20;
 
 export const logStore = defineStore({
   id: "log",
@@ -63,7 +63,7 @@ export const logStore = defineStore({
       this.logs = [];
       this.conditions = {
         queryDuration: getDurationTime(),
-        paging: { pageNum: 1, pageSize: 15 },
+        paging: { pageNum: 1, pageSize: PageSizeDefault },
       };
     },
     setLogHeaderType(type: string) {
