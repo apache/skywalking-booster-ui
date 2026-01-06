@@ -23,7 +23,6 @@ export const Alarm = {
         key: id
         message
         startTime
-        recoveryTime
         scope
         name
         tags {

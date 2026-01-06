@@ -49,13 +49,13 @@ limitations under the License. -->
   const logStore = useLogStore();
   const dashboardStore = useDashboardStore();
   const type = ref<string>(dashboardStore.layerId === "BROWSER" ? "browser" : "service");
-  const pageSize = ref<number>(PageSizeDefault);
+  const pageSize = PageSizeDefault;
   const displayLogs = computed(() =>
-    logStore.logs.length === pageSize.value ? logStore.logs.slice(0, pageSize.value - 1) : logStore.logs,
+    logStore.logs.length === pageSize ? logStore.logs.slice(0, pageSize - 1) : logStore.logs,
   );
   function updatePage(p: number) {
     logStore.setLogCondition({
-      paging: { pageNum: p, pageSize: pageSize.value },
+      paging: { pageNum: p, pageSize: pageSize },
     });
     queryLogs();
   }
