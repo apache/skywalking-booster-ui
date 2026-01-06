@@ -41,19 +41,11 @@ limitations under the License. -->
         />
       </div>
       <div class="pagination">
-        <el-pagination
-          v-model="pageNum"
-          :page-size="pageSize"
-          layout="prev, pager, next"
-          :total="total"
-          @current-change="changePage"
-          :pager-count="5"
-          size="small"
-          :style="
-            appStore.theme === Themes.Light
-              ? `--el-pagination-bg-color: #f0f2f5; --el-pagination-button-disabled-bg-color: #f0f2f5;`
-              : ''
-          "
+        <Pagination
+          v-model:currentPage="pageNum"
+          :pageSize="pageSize"
+          :total="alarmStore.alarms.length"
+          @change="changePage"
         />
       </div>
     </div>
@@ -70,19 +62,19 @@ limitations under the License. -->
   import { useI18n } from "vue-i18n";
   import { ElMessage } from "element-plus";
   import ConditionTags from "@/views/components/ConditionTags.vue";
-  import { AlarmOptions } from "./data";
+  import Pagination from "@/views/components/Pagination.vue";
+  import { AlarmOptions, PageSizeDefaultAlarm } from "./data";
   import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/app";
   import { useAlarmStore } from "@/store/modules/alarm";
   import { useDuration } from "@/hooks/useDuration";
   import timeFormat from "@/utils/timeFormat";
   import type { DurationTime, Duration } from "@/types/app";
-  import { Themes } from "@/constants/data";
   /*global Indexable */
   const appStore = useAppStoreWithOut();
   const alarmStore = useAlarmStore();
   const { t } = useI18n();
   const { setDurationRow, getDurationTime, getMaxRange } = useDuration();
-  const pageSize = 20;
+  const pageSize = PageSizeDefaultAlarm;
   const entity = ref<string>("");
   const keyword = ref<string>("");
   const pageNum = ref<number>(1);
@@ -90,9 +82,6 @@ limitations under the License. -->
   const durationRow = ref<Duration>(InitializationDurationRow);
   const tagsMap = ref<{ key: string; value: string }[]>();
 
-  const total = computed(() =>
-    alarmStore.alarms.length === pageSize ? pageSize * pageNum.value + 1 : pageSize * pageNum.value,
-  );
   const maxRange = computed(() =>
     getMaxRange(appStore.coldStageMode ? appStore.recordsTTL?.coldNormal || 0 : appStore.recordsTTL?.normal || 0),
   );

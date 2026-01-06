@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div class="timeline-table clear" v-loading="alarmStore.loading">
-    <div v-for="(i, index) in alarmStore.alarms" :key="index" class="clear timeline-item">
+    <div v-for="(i, index) in displayAlarms" :key="index" class="clear timeline-item">
       <div class="g-sm-3 grey sm hide-xs time-line tr">
         {{ dateFormat(parseInt(i.startTime)) }}
       </div>
@@ -42,7 +42,7 @@ limitations under the License. -->
         </div>
       </div>
     </div>
-    <div v-if="!alarmStore.alarms.length" class="tips">{{ t("noData") }}</div>
+    <div v-if="!displayAlarms.length" class="tips">{{ t("noData") }}</div>
   </div>
   <el-dialog
     v-model="isShowDetails"
@@ -125,11 +125,11 @@ limitations under the License. -->
   </el-dialog>
 </template>
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
   import type { Alarm, Event } from "@/types/alarm";
   import { useAlarmStore } from "@/store/modules/alarm";
-  import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys } from "./data";
+  import { EventsDetailHeaders, AlarmDetailCol, EventsDetailKeys, PageSizeDefaultAlarm } from "./data";
   import { dateFormat } from "@/utils/dateFormat";
   import Snapshot from "./components/Snapshot.vue";
 
@@ -141,6 +141,11 @@ limitations under the License. -->
   const alarmTags = ref<string[]>([]);
   const currentEvents = ref<any[]>([]);
   const currentEvent = ref<Event | any>({});
+  const pageSize = PageSizeDefaultAlarm;
+
+  const displayAlarms = computed(() =>
+    alarmStore.alarms.length >= pageSize ? alarmStore.alarms.slice(0, pageSize - 1) : alarmStore.alarms,
+  );
 
   function showDetails(item: Alarm) {
     isShowDetails.value = true;
