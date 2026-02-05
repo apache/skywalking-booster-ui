@@ -55,9 +55,7 @@ export function createValidationGuard() {
     // Validate route parameters if needed
     if (to.params && Object.keys(to.params).length > 0) {
       // Add custom validation logic here
-      const hasValidParams = Object.values(to.params).every(
-        (param) => param !== undefined && param !== null && param !== "",
-      );
+      const hasValidParams = Object.values(to.params).every((param) => param !== undefined);
 
       if (!hasValidParams) {
         next({ name: "NotFound" });
