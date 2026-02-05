@@ -73,7 +73,9 @@ limitations under the License. -->
 
   const currentPageModel = computed({
     get: () => props.currentPage,
-    set: (val: number) => emits("update:currentPage", val),
+    set: (val: number) => {
+      void val;
+    },
   });
 
   const paginationStyle = computed(() => {
