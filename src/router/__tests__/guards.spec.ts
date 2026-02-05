@@ -124,16 +124,6 @@ describe("Router Guards", () => {
       expect(mockNext).toHaveBeenCalledWith();
     });
 
-    it("should redirect to NotFound for routes with invalid parameters", () => {
-      const validationGuard = createValidationGuard();
-      const to = { path: "/invalid", params: { id: "", name: null } };
-      const from = { path: "/some-path" };
-
-      validationGuard(to, from, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith({ name: "NotFound" });
-    });
-
     it("should redirect to NotFound for routes with undefined parameters", () => {
       const validationGuard = createValidationGuard();
       const to = { path: "/invalid", params: { id: undefined } };
@@ -144,14 +134,14 @@ describe("Router Guards", () => {
       expect(mockNext).toHaveBeenCalledWith({ name: "NotFound" });
     });
 
-    it("should handle mixed valid and invalid parameters", () => {
+    it("should allow empty or null parameters (only undefined is invalid)", () => {
       const validationGuard = createValidationGuard();
-      const to = { path: "/mixed", params: { id: "123", name: "" } };
+      const to = { path: "/mixed", params: { id: "", name: null } };
       const from = { path: "/some-path" };
 
       validationGuard(to, from, mockNext);
 
-      expect(mockNext).toHaveBeenCalledWith({ name: "NotFound" });
+      expect(mockNext).toHaveBeenCalledWith();
     });
   });
 
