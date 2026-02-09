@@ -36,25 +36,29 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 // Mock ResizeObserver
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+globalThis.ResizeObserver = class ResizeObserver {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+};
 
 // Mock IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+globalThis.IntersectionObserver = class IntersectionObserver {
+  root = null;
+  rootMargin = "";
+  thresholds = [];
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+  takeRecords = vi.fn(() => []);
+} as any;
 
 // Mock requestAnimationFrame
-global.requestAnimationFrame = vi.fn((cb: FrameRequestCallback) => {
+globalThis.requestAnimationFrame = vi.fn((cb: FrameRequestCallback) => {
   const id = setTimeout(cb, 0);
   return id as unknown as number;
 });
-global.cancelAnimationFrame = vi.fn();
+globalThis.cancelAnimationFrame = vi.fn();
 
 // Configure Vue Test Utils
 config.global.plugins = [ElementPlus];
