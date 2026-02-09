@@ -46,6 +46,7 @@ export const InitializationDurationRow = {
   start: new Date(new Date().getTime() - 1800000),
   end: new Date(),
   step: TimeType.MINUTE_TIME,
+  coldStage: false,
 };
 
 export const appStore = defineStore({
@@ -62,7 +63,7 @@ export const appStore = defineStore({
     reloadTimer: null,
     allMenus: [],
     theme: Themes.Dark,
-    coldStageMode: false,
+    coldStageMode: InitializationDurationRow.coldStage || false,
     maxRange: [],
     metricsTTL: null,
     recordsTTL: null,
@@ -73,6 +74,7 @@ export const appStore = defineStore({
         start: getLocalTime(this.utc, this.durationRow.start),
         end: getLocalTime(this.utc, this.durationRow.end),
         step: this.durationRow.step,
+        coldStage: this.durationRow.coldStage,
       };
     },
     durationTime(): DurationTime {
@@ -80,6 +82,7 @@ export const appStore = defineStore({
         start: dateFormatStep(this.duration.start, this.duration.step, true),
         end: dateFormatStep(this.duration.end, this.duration.step, true),
         step: this.duration.step,
+        coldStage: this.duration.coldStage,
       };
     },
     intervalUnix(): number[] {
@@ -124,10 +127,10 @@ export const appStore = defineStore({
   },
   actions: {
     setDuration(data: Duration): void {
-      this.durationRow = data;
+      this.durationRow = { ...data, coldStage: this.coldStageMode };
     },
     updateDurationRow(data: Duration) {
-      this.durationRow = data;
+      this.durationRow = { ...data, coldStage: this.coldStageMode };
     },
     setMaxRange(times: Date[]) {
       this.maxRange = times;

@@ -22,11 +22,13 @@ export interface Duration {
   start: Date;
   end: Date;
   step: string;
+  coldStage?: boolean;
 }
 export interface DurationTime {
   start: string;
   end: string;
   step: string;
+  coldStage?: boolean;
 }
 export type Paging = {
   pageNum: number;
