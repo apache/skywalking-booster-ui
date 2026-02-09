@@ -18,7 +18,9 @@ import { defineStore } from "pinia";
 import { store } from "@/store";
 import graphql from "@/graphql";
 import type { Alarm } from "@/types/alarm";
-import { useAppStoreWithOut } from "@/store/modules/app";
+import { useDuration } from "@/hooks/useDuration";
+
+const { getDurationTime } = useDuration();
 
 interface AlarmState {
   loading: boolean;
@@ -48,10 +50,14 @@ export const alarmStore = defineStore({
       return res.data;
     },
     async getAlarmTagKeys() {
-      return await graphql.query("queryAlarmTagKeys").params({ duration: useAppStoreWithOut().durationTime });
+      return await graphql
+        .query("queryAlarmTagKeys")
+        .params({ duration: { ...getDurationTime(), coldStage: undefined } });
     },
     async getAlarmTagValues(tagKey: string) {
-      return await graphql.query("queryAlarmTagValues").params({ tagKey, duration: useAppStoreWithOut().durationTime });
+      return await graphql
+        .query("queryAlarmTagValues")
+        .params({ tagKey, duration: { ...getDurationTime(), coldStage: undefined } });
     },
   },
 });

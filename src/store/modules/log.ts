@@ -152,10 +152,14 @@ export const logStore = defineStore({
       return response;
     },
     async getLogTagKeys() {
-      return await graphql.query("queryLogTagKeys").params({ duration: useAppStoreWithOut().durationTime });
+      return await graphql
+        .query("queryLogTagKeys")
+        .params({ duration: { ...getDurationTime(), coldStage: undefined } });
     },
     async getLogTagValues(tagKey: string) {
-      return await graphql.query("queryLogTagValues").params({ tagKey, duration: useAppStoreWithOut().durationTime });
+      return await graphql
+        .query("queryLogTagValues")
+        .params({ tagKey, duration: { ...getDurationTime(), coldStage: undefined } });
     },
   },
 });

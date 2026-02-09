@@ -32,12 +32,13 @@ export function useDuration() {
     };
   }
   function getDurationTime(): DurationTime {
-    const { start, step, end, coldStage } = getDuration();
+    const appStore = useAppStoreWithOut();
+    const { start, step, end } = getDuration();
     return {
       start: dateFormatStep(start, step, true),
       end: dateFormatStep(end, step, true),
       step,
-      coldStage,
+      coldStage: appStore.coldStageMode,
     };
   }
   function setDurationRow(data: Duration) {
