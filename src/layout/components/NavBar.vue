@@ -54,10 +54,10 @@ limitations under the License. -->
         <el-switch
           v-model="coldStage"
           inline-prompt
-          active-text="Active Data"
-          inactive-text="Cold Data"
+          active-text="Cold Excluded"
+          inactive-text="Cold Only"
           @change="changeDataMode"
-          width="90px"
+          width="105px"
         />
       </span>
       <span class="ml-5" ref="themeSwitchRef">
