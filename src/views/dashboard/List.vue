@@ -539,8 +539,8 @@ limitations under the License. -->
       cancelButtonText: "Cancel",
       inputValue: row.name,
     })
-      .then(({ value }) => {
-        updateName(row, value);
+      .then(() => {
+        updateName(row);
       })
       .catch(() => {
         ElMessage({
@@ -549,8 +549,8 @@ limitations under the License. -->
         });
       });
   }
-  async function updateName(d: DashboardItem, value: string) {
-    if (new RegExp(/\s/).test(value)) {
+  async function updateName(d: DashboardItem) {
+    if (new RegExp(/\s/).test(d.name)) {
       ElMessage.error("The name cannot contain spaces, carriage returns, etc");
       return;
     }
@@ -559,7 +559,7 @@ limitations under the License. -->
     const c = {
       ...JSON.parse(layout).configuration,
       ...d,
-      name: value,
+      name: d.name,
     };
     delete c.id;
     delete c.filters;
@@ -575,7 +575,7 @@ limitations under the License. -->
     }
     dashboardStore.setCurrentDashboard({
       ...d,
-      name: value,
+      name: d.name,
     });
     dashboards.value = dashboardStore.dashboards.map((item: DashboardItem) => {
       if (dashboardStore.currentDashboard?.id === item.id) {
