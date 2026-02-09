@@ -177,15 +177,15 @@ limitations under the License. -->
     // Initialize TTL handling without triggering duration update
     if (coldStage.value) {
       handleMetricsTTL({
-        minute: appStore.metricsTTL?.coldMinute || NaN,
-        hour: appStore.metricsTTL?.coldHour || NaN,
-        day: appStore.metricsTTL?.coldDay || NaN,
+        minute: appStore.metricsTTL?.coldMinute ?? NaN,
+        hour: appStore.metricsTTL?.coldHour ?? NaN,
+        day: appStore.metricsTTL?.coldDay ?? NaN,
       });
     } else {
       handleMetricsTTL({
-        minute: appStore.metricsTTL?.minute || NaN,
-        hour: appStore.metricsTTL?.hour || NaN,
-        day: appStore.metricsTTL?.day || NaN,
+        minute: appStore.metricsTTL?.minute ?? NaN,
+        hour: appStore.metricsTTL?.hour ?? NaN,
+        day: appStore.metricsTTL?.day ?? NaN,
       });
     }
   }
