@@ -28,18 +28,22 @@ export function useDuration() {
       start: getLocalTime(appStore.utc, durationRow.start),
       end: getLocalTime(appStore.utc, durationRow.end),
       step: durationRow.step,
+      coldStage: appStore.coldStageMode,
     };
   }
   function getDurationTime(): DurationTime {
+    const appStore = useAppStoreWithOut();
     const { start, step, end } = getDuration();
     return {
       start: dateFormatStep(start, step, true),
       end: dateFormatStep(end, step, true),
-      step: step,
+      step,
+      coldStage: appStore.coldStageMode,
     };
   }
   function setDurationRow(data: Duration) {
-    durationRow = data;
+    const appStore = useAppStoreWithOut();
+    durationRow = { ...data, coldStage: appStore.coldStageMode };
   }
   function getMaxRange(day: number) {
     if (day === undefined || day === null) {

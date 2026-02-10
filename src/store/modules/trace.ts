@@ -237,10 +237,14 @@ export const traceStore = defineStore({
       return response;
     },
     async getTagKeys() {
-      return await graphql.query("queryTraceTagKeys").params({ duration: useAppStoreWithOut().durationTime });
+      return await graphql
+        .query("queryTraceTagKeys")
+        .params({ duration: { ...getDurationTime(), coldStage: undefined } });
     },
     async getTagValues(tagKey: string) {
-      return await graphql.query("queryTraceTagValues").params({ tagKey, duration: useAppStoreWithOut().durationTime });
+      return await graphql
+        .query("queryTraceTagValues")
+        .params({ tagKey, duration: { ...getDurationTime(), coldStage: undefined } });
     },
     async getHasQueryTracesV2Support() {
       const response = await graphql.query("queryHasQueryTracesV2Support").params({});

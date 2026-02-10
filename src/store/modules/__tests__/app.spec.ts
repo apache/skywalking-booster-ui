@@ -82,6 +82,7 @@ describe("App Store", () => {
       expect(store.durationRow.start).toBeInstanceOf(Date);
       expect(store.durationRow.end).toBeInstanceOf(Date);
       expect(store.durationRow.step).toBe(TimeType.MINUTE_TIME);
+      expect(store.durationRow.coldStage).toBe(false);
     });
   });
 
@@ -94,6 +95,7 @@ describe("App Store", () => {
       expect(duration.start).toBeInstanceOf(Date);
       expect(duration.end).toBeInstanceOf(Date);
       expect(duration.step).toBe(TimeType.MINUTE_TIME);
+      expect(duration.coldStage).toBe(false);
     });
 
     it("should return correct duration time", () => {
@@ -104,6 +106,7 @@ describe("App Store", () => {
       expect(durationTime.start).toBe("2023-01-01 12:00");
       expect(durationTime.end).toBe("2023-01-01 12:00");
       expect(durationTime.step).toBe(TimeType.MINUTE_TIME);
+      expect(durationTime.coldStage).toBe(false);
     });
 
     it("should calculate interval unix correctly for MINUTE", () => {
@@ -156,7 +159,7 @@ describe("App Store", () => {
 
       store.setDuration(newDuration);
 
-      expect(store.durationRow).toEqual(newDuration);
+      expect(store.durationRow).toEqual({ ...newDuration, coldStage: false });
     });
 
     it("should update duration row correctly", () => {
@@ -169,7 +172,7 @@ describe("App Store", () => {
 
       store.updateDurationRow(newDuration);
 
-      expect(store.durationRow).toEqual(newDuration);
+      expect(store.durationRow).toEqual({ ...newDuration, coldStage: false });
     });
 
     it("should set max range correctly", () => {
@@ -229,6 +232,55 @@ describe("App Store", () => {
       store.setColdStageMode(true);
 
       expect(store.coldStageMode).toBe(true);
+    });
+
+    it("should set duration with coldStage when coldStageMode is enabled", () => {
+      const store = appStore();
+      store.setColdStageMode(true);
+
+      const newDuration = {
+        start: new Date("2023-01-01"),
+        end: new Date("2023-01-02"),
+        step: "HOUR",
+      };
+
+      store.setDuration(newDuration);
+
+      expect(store.durationRow).toEqual({ ...newDuration, coldStage: true });
+      expect(store.duration.coldStage).toBe(true);
+    });
+
+    it("should update duration row with coldStage when coldStageMode is enabled", () => {
+      const store = appStore();
+      store.setColdStageMode(true);
+
+      const newDuration = {
+        start: new Date("2023-02-01"),
+        end: new Date("2023-02-02"),
+        step: "DAY",
+      };
+
+      store.updateDurationRow(newDuration);
+
+      expect(store.durationRow).toEqual({ ...newDuration, coldStage: true });
+      expect(store.duration.coldStage).toBe(true);
+    });
+
+    it("should return correct duration time with coldStage when coldStageMode is enabled", () => {
+      const store = appStore();
+      store.setColdStageMode(true);
+
+      // Need to update duration row after setting cold stage mode
+      const newDuration = {
+        start: new Date("2023-01-01"),
+        end: new Date("2023-01-02"),
+        step: "HOUR",
+      };
+      store.setDuration(newDuration);
+
+      const durationTime = store.durationTime;
+
+      expect(durationTime.coldStage).toBe(true);
     });
 
     it("should set reload timer correctly", () => {
