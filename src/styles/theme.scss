@@ -451,13 +451,6 @@ html {
   }
 }
 
-/* Smooth color transitions only during theme changes */
-html.theme-transitioning * {
-  transition: background-color var(--sw-transition-base), border-color var(--sw-transition-base),
-    color var(--sw-transition-base), fill var(--sw-transition-base), stroke var(--sw-transition-base),
-    box-shadow var(--sw-transition-base) !important;
-}
-
 /* ============================================
    ACCESSIBILITY: REDUCED MOTION
    ============================================ */
@@ -475,11 +468,6 @@ html.theme-transitioning * {
         animation: none !important;
       }
     }
-  }
-
-  /* Disable theme color transitions */
-  html.theme-transitioning * {
-    transition: none !important;
   }
 
   /* Disable component animations */
