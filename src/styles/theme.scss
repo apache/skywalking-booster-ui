@@ -15,135 +15,296 @@
  * limitations under the License.
  */
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
 @keyframes topo-dash {
   from {
     stroke-dashoffset: 10;
   }
-
   to {
     stroke-dashoffset: 0;
   }
 }
+
+@keyframes theme-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   BASE THEME TOKENS
+   ============================================ */
 :root {
+  /* Brand Colors */
   --sw-green: #70c877;
   --sw-orange: #e6a23c;
+  --sw-red: #e66;
+  --sw-blue-primary: #409eff;
+
+  /* Animation */
   --sw-topo-animation: topo-dash 0.3s linear infinite;
+
+  /* Timing Functions */
+  --sw-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --sw-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Transitions */
+  --sw-transition-fast: 150ms var(--sw-ease-smooth);
+  --sw-transition-base: 250ms var(--sw-ease-smooth);
+  --sw-transition-slow: 350ms var(--sw-ease-smooth);
+
+  /* Shadows */
+  --sw-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --sw-shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --sw-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --sw-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
+/* ============================================
+   LIGHT THEME
+   ============================================ */
 html {
-  --el-color-primary: #409eff;
+  color-scheme: light;
+
+  /* === Element Plus Integration === */
+  --el-color-primary: var(--sw-blue-primary);
   --el-color-info-light-9: #666;
-  --theme-background: #fff;
-  --font-color: #3d444f;
-  --disabled-color: #ccc;
-  --dashboard-tool-bg: rgb(240 242 245);
-  --text-color-placeholder: #666;
-  --border-color: #dcdfe6;
-  --border-color-primary: #eee;
-  --layout-background: #f7f9fa;
-  --box-shadow-color: #ccc;
-  --sw-bg-color-overlay: #fff;
-  --sw-border-color-light: #e4e7ed;
-  --popper-hover-bg: #eee;
-  --sw-icon-btn-bg: #eee;
-  --sw-icon-btn-color: #666;
-  --sw-icon-btn-border: #ccc;
-  --sw-table-col: #fff;
-  --sw-config-header: aliceblue;
-  --sw-topology-color: #666;
-  --vis-tooltip-bg: #fff;
-  --sw-topology-switch-icon: rgba(0, 0, 0, 0.3);
-  --sw-topology-box-shadow: #eee 1px 2px 10px;
-  --sw-topology-setting-bg: #fff;
-  --sw-topology-border: 1px solid #999;
-  --sw-trace-success: rgb(46 47 51 / 10%);
-  --sw-trace-list-border: rgb(0 0 0 / 10%);
-  --sw-list-selected: #ededed;
-  --sw-table-header: #f3f4f9;
-  --sw-list-hover: rgb(0 0 0 / 4%);
-  --sw-setting-color: #606266;
-  --sw-alarm-tool: #f0f2f5;
-  --sw-alarm-tool-border: #c1c5ca41;
-  --sw-table-color: #000;
-  --sw-event-vis-selected: #1a1a1a;
-  --sw-time-axis-text: #4d4d4d;
-  --sw-drawer-header: #72767b;
-  --sw-marketplace-border: #dedfe0;
-  --sw-grid-item-active: #d4d7de;
-  --sw-trace-line: #999;
-  --sw-scrollbar-track: #eee;
-  --sw-scrollbar-thumb: #aaa;
-  --sw-font-grey-color: #a7aebb;
-  --sw-trace-list-path: rgba(0, 0, 0, 0.1);
-  --sw-trace-table-selected: rgba(0, 0, 0, 0.1);
+  --el-fill-color-blank: transparent;
+
+  /* === Foundation === */
+  --theme-background: hsl(0, 0%, 100%);
+  --layout-background: hsl(210, 20%, 98%);
+
+  /* === Typography === */
+  --font-color: hsl(220, 13%, 28%);
+  --font-color-secondary: hsl(220, 9%, 46%);
+  --font-grey-color: hsl(220, 12%, 68%);
+  --text-color-placeholder: hsl(0, 0%, 40%);
+  --disabled-color: hsl(0, 0%, 80%);
+
+  /* === Surfaces & Overlays === */
+  --sw-bg-color-overlay: hsl(0, 0%, 100%);
+  --sw-config-header: hsl(208, 100%, 97%);
+  --dashboard-tool-bg: hsl(220, 14%, 96%);
+  --sw-alarm-tool: hsl(220, 14%, 94%);
+  --sw-table-header: hsl(225, 25%, 97%);
+
+  /* === Borders === */
+  --border-color: hsl(214, 15%, 91%);
+  --border-color-primary: hsl(0, 0%, 93%);
+  --sw-border-color-light: hsl(214, 18%, 91%);
+  --sw-alarm-tool-border: hsl(220, 13%, 80%, 0.25);
+  --sw-marketplace-border: hsl(220, 5%, 87%);
+
+  /* === Interactive States === */
+  --sw-list-hover: hsl(0, 0%, 0%, 0.04);
+  --sw-list-selected: hsl(0, 0%, 93%);
+  --popper-hover-bg: hsl(0, 0%, 93%);
+  --sw-grid-item-active: hsl(222, 13%, 85%);
+
+  /* === Buttons & Icons === */
+  --sw-icon-btn-bg: hsl(0, 0%, 93%);
+  --sw-icon-btn-color: hsl(0, 0%, 40%);
+  --sw-icon-btn-border: hsl(0, 0%, 80%);
+
+  /* === Tables === */
+  --sw-table-col: hsl(0, 0%, 100%);
+  --sw-table-color: hsl(0, 0%, 0%);
+  --sw-setting-color: hsl(220, 18%, 38%);
+
+  /* === Topology === */
+  --sw-topology-color: hsl(0, 0%, 40%);
+  --sw-topology-switch-icon: hsl(0, 0%, 0%, 0.3);
+  --sw-topology-box-shadow: var(--sw-shadow-lg);
+  --sw-topology-setting-bg: hsl(0, 0%, 100%);
+  --sw-topology-border: 1px solid hsl(0, 0%, 60%);
+
+  /* === Trace & Events === */
+  --sw-trace-success: hsl(220, 13%, 18%, 0.1);
+  --sw-trace-list-border: hsl(0, 0%, 0%, 0.1);
+  --sw-trace-list-path: hsl(0, 0%, 0%, 0.1);
+  --sw-trace-table-selected: hsl(0, 0%, 0%, 0.1);
+  --sw-trace-line: hsl(0, 0%, 60%);
+  --sw-event-vis-selected: hsl(0, 0%, 10%);
+  --sw-time-axis-text: hsl(0, 0%, 30%);
+
+  /* === Tooltips & Popovers === */
+  --vis-tooltip-bg: hsl(0, 0%, 100%);
+
+  /* === Drawer & Modal === */
+  --sw-drawer-header: hsl(220, 9%, 46%);
+
+  /* === Scrollbars === */
+  --sw-scrollbar-track: hsl(0, 0%, 93%);
+  --sw-scrollbar-thumb: hsl(0, 0%, 67%);
+
+  /* === Shadows === */
+  --box-shadow-color: hsl(0, 0%, 80%);
 }
 
+/* ============================================
+   DARK THEME
+   ============================================ */
 html.dark {
-  --el-color-primary: #409eff;
-  --el-color-info-light-9: #333;
-  --theme-background: #212224;
-  --font-color: #fafbfc;
-  --disabled-color: #999;
-  --dashboard-tool-bg: #000;
-  --text-color-placeholder: #ccc;
-  --border-color: #333;
-  --border-color-primary: #4b4b52;
-  --layout-background: #000;
-  --box-shadow-color: #606266;
-  --sw-bg-color-overlay: #1d1e1f;
-  --sw-border-color-light: #414243;
-  --popper-hover-bg: rgb(64, 158, 255, 0.1);
-  --sw-icon-btn-bg: #222;
-  --sw-icon-btn-color: #ccc;
-  --sw-icon-btn-border: #999;
+  color-scheme: dark;
+
+  /* === Element Plus Integration === */
+  --el-color-primary: var(--sw-blue-primary);
+  --el-color-info-light-9: hsl(0, 0%, 20%);
+  --el-fill-color-blank: transparent;
+
+  /* === Foundation === */
+  --theme-background: hsl(220, 6%, 13%);
+  --layout-background: hsl(0, 0%, 0%);
+
+  /* === Typography === */
+  --font-color: hsl(210, 17%, 98%);
+  --font-color-secondary: hsl(220, 9%, 78%);
+  --font-grey-color: hsl(220, 12%, 68%);
+  --text-color-placeholder: hsl(0, 0%, 80%);
+  --disabled-color: hsl(0, 0%, 60%);
+
+  /* === Surfaces & Overlays === */
+  --sw-bg-color-overlay: hsl(220, 7%, 12%);
+  --sw-config-header: hsl(210, 6%, 19%);
+  --dashboard-tool-bg: hsl(0, 0%, 0%);
+  --sw-alarm-tool: hsl(210, 6%, 19%);
+  --sw-table-header: hsl(210, 6%, 19%);
+
+  /* === Borders === */
+  --border-color: hsl(0, 0%, 20%);
+  --border-color-primary: hsl(225, 5%, 30%);
+  --sw-border-color-light: hsl(214, 5%, 26%);
+  --sw-alarm-tool-border: hsl(0, 0%, 27%);
+  --sw-marketplace-border: hsl(220, 7%, 38%);
+
+  /* === Interactive States === */
+  --sw-list-hover: hsl(220, 6%, 15%);
+  --sw-list-selected: hsl(220, 13%, 28%);
+  --popper-hover-bg: hsl(207, 100%, 62%, 0.1);
+  --sw-grid-item-active: hsl(220, 5%, 46%);
+
+  /* === Buttons & Icons === */
+  --sw-icon-btn-bg: hsl(0, 0%, 13%);
+  --sw-icon-btn-color: hsl(0, 0%, 80%);
+  --sw-icon-btn-border: hsl(0, 0%, 60%);
+
+  /* === Tables === */
   --sw-table-col: none;
-  --sw-config-header: #303133;
-  --sw-topology-color: #ccc;
-  --vis-tooltip-bg: #414243;
-  --sw-topology-switch-icon: #999;
-  --sw-topology-box-shadow: 0 0 2px 0 #444;
-  --sw-topology-setting-bg: #333;
-  --sw-topology-border: 1px solid #666;
-  --sw-trace-success: #aaa;
-  --sw-trace-list-border: #333133;
-  --sw-list-hover: #262629;
-  --sw-table-header: #303133;
-  --sw-list-selected: #3d444f;
-  --sw-setting-color: #eee;
-  --sw-alarm-tool: #303133;
-  --sw-alarm-tool-border: #444;
-  --sw-table-color: #fff;
-  --sw-event-vis-selected: #fff;
-  --sw-time-axis-text: #aaa;
-  --sw-drawer-header: #e9e9eb;
-  --sw-marketplace-border: #606266;
-  --sw-grid-item-active: #73767a;
-  --sw-trace-line: #e8e8e8;
-  --sw-scrollbar-track: #252a2f;
-  --sw-scrollbar-thumb: #888;
-  --sw-font-grey-color: #a7aebb;
-  --sw-trace-list-path: rgba(244, 244, 244, 0.4);
-  --sw-trace-table-selected: rgba(255, 255, 255, 0.1);
+  --sw-table-color: hsl(0, 0%, 100%);
+  --sw-setting-color: hsl(0, 0%, 93%);
+
+  /* === Topology === */
+  --sw-topology-color: hsl(0, 0%, 80%);
+  --sw-topology-switch-icon: hsl(0, 0%, 60%);
+  --sw-topology-box-shadow: 0 0 2px 0 hsl(0, 0%, 27%);
+  --sw-topology-setting-bg: hsl(0, 0%, 20%);
+  --sw-topology-border: 1px solid hsl(0, 0%, 40%);
+
+  /* === Trace & Events === */
+  --sw-trace-success: hsl(0, 0%, 67%);
+  --sw-trace-list-border: hsl(220, 3%, 20%);
+  --sw-trace-list-path: hsl(0, 0%, 96%, 0.4);
+  --sw-trace-table-selected: hsl(0, 0%, 100%, 0.1);
+  --sw-trace-line: hsl(0, 0%, 91%);
+  --sw-event-vis-selected: hsl(0, 0%, 100%);
+  --sw-time-axis-text: hsl(0, 0%, 67%);
+
+  /* === Tooltips & Popovers === */
+  --vis-tooltip-bg: hsl(214, 5%, 26%);
+
+  /* === Drawer & Modal === */
+  --sw-drawer-header: hsl(240, 5%, 91%);
+
+  /* === Scrollbars === */
+  --sw-scrollbar-track: hsl(210, 11%, 15%);
+  --sw-scrollbar-thumb: hsl(0, 0%, 53%);
+
+  /* === Shadows === */
+  --box-shadow-color: hsl(220, 7%, 38%);
 }
 
+/* ============================================
+   ELEMENT PLUS OVERRIDES
+   ============================================ */
+
+/* === Drawer === */
 .el-drawer__header {
+  margin-bottom: 0;
+  padding-left: 10px;
+  font-size: 16px;
   color: var(--sw-drawer-header);
 }
 
+.el-drawer__body {
+  padding: 0;
+}
+
+/* === Table === */
 .el-table {
   --el-table-tr-bg-color: var(--theme-background);
   --el-table-header-bg-color: var(--theme-background);
 }
 
+/* === Popper === */
 .el-popper.is-light {
   background: var(--sw-bg-color-overlay);
   border: 1px solid var(--sw-border-color-light);
+  box-shadow: var(--sw-shadow-md);
 }
 
+/* === Switch === */
 .el-switch {
-  --el-switch-off-color: #aaa;
+  --el-switch-off-color: var(--disabled-color);
 }
 
+/* === Menu === */
+.el-menu {
+  --el-menu-item-height: 50px;
+}
+
+.el-menu-item-group__title {
+  display: none;
+}
+
+.el-sub-menu {
+  .el-menu-item {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 0 0 56px !important;
+  }
+}
+
+.el-sub-menu__title {
+  .el-icon.menu-icons {
+    margin-top: -5px !important;
+  }
+}
+
+/* === Input === */
+.el-input-number .el-input__inner {
+  text-align: left !important;
+}
+
+.el-input--small .el-input__inner {
+  --el-input-inner-height: calc(var(--el-input-height, 24px));
+}
+
+/* === Loading === */
+.el-loading-mask {
+  background-color: var(--theme-background);
+  backdrop-filter: blur(2px);
+}
+
+/* ============================================
+   SCSS VARIABLES (Legacy Support)
+   ============================================ */
 $tool-icon-btn-bg: var(--sw-icon-btn-bg);
 $tool-icon-btn-color: var(--sw-icon-btn-color);
 $popper-hover-bg-color: var(--popper-hover-bg);
@@ -160,90 +321,23 @@ $theme-background: var(--theme-background);
 $active-background: var(--el-color-primary);
 $font-size-smaller: 12px;
 $font-size-normal: 14px;
-$error-color: #e66;
+$error-color: var(--sw-red);
 
+/* ============================================
+   COMPONENT STYLES
+   ============================================ */
+
+/* === Interactive Elements === */
 .opt:hover {
   background-color: var(--sw-list-hover) !important;
-}
-
-.el-loading-mask {
-  background-color: var(--theme-background);
-}
-
-.el-menu {
-  --el-menu-item-height: 50px;
-}
-
-.el-menu-item-group__title {
-  display: none;
-}
-
-.el-sub-menu .el-menu-item {
-  height: 40px;
-  line-height: 40px;
-  padding: 0 0 0 56px !important;
-}
-
-.el-sub-menu__title {
-  .el-icon.menu-icons {
-    margin-top: -5px !important;
-  }
-}
-
-.el-drawer__header {
-  margin-bottom: 0;
-  padding-left: 10px;
-  font-size: 16px;
-}
-
-.el-drawer__body {
-  padding: 0;
+  transition: background-color var(--sw-transition-fast);
 }
 
 .switch {
   margin: 0 5px;
 }
 
-div.vis-tooltip {
-  max-width: 600px;
-  overflow: hidden;
-  background-color: var(--vis-tooltip-bg) !important;
-  white-space: normal !important;
-  font-size: $font-size-smaller !important;
-  color: var(--font-color) !important;
-}
-
-.vis-item {
-  cursor: pointer;
-  height: 20px;
-}
-
-.vis-item.Error {
-  background-color: $error-color;
-  opacity: 0.8;
-  border-color: $error-color;
-  color: var(--sw-event-vis-selected) !important;
-}
-
-.vis-item.Normal {
-  background-color: #fac858;
-  border-color: #fac858;
-  color: var(--sw-event-vis-selected) !important;
-}
-
-.vis-item .vis-item-content {
-  padding: 0 3px !important;
-}
-
-.vis-item.vis-selected.Error,
-.vis-item.vis-selected.Normal {
-  color: var(--sw-event-vis-selected) !important;
-}
-
-.vis-time-axis .vis-text {
-  color: var(--sw-time-axis-text) !important;
-}
-
+/* === Menu Visibility === */
 .el-menu--vertical.sub-list {
   display: none;
 }
@@ -252,34 +346,119 @@ div:has(> a.menu-title) {
   display: none;
 }
 
-.el-input-number .el-input__inner {
-  text-align: left !important;
+/* ============================================
+   VIS.JS TIMELINE CUSTOMIZATION
+   ============================================ */
+
+/* === Tooltip === */
+div.vis-tooltip {
+  max-width: 600px;
+  overflow: hidden;
+  background-color: var(--vis-tooltip-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--sw-shadow-md) !important;
+  white-space: normal !important;
+  font-size: $font-size-smaller !important;
+  color: var(--font-color) !important;
+  border-radius: 6px;
+  padding: 8px 12px;
 }
 
-.el-input--small .el-input__inner {
-  --el-input-inner-height: calc(var(--el-input-height, 24px));
+/* === Timeline Items === */
+.vis-item {
+  cursor: pointer;
+  height: 20px;
+  border-radius: 4px;
+  transition: transform var(--sw-transition-fast), box-shadow var(--sw-transition-fast);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--sw-shadow-sm);
+  }
+
+  &.Error {
+    background-color: $error-color;
+    opacity: 0.8;
+    border-color: $error-color;
+    color: var(--sw-event-vis-selected) !important;
+  }
+
+  &.Normal {
+    background-color: #fac858;
+    border-color: #fac858;
+    color: var(--sw-event-vis-selected) !important;
+  }
+
+  .vis-item-content {
+    padding: 0 3px !important;
+  }
+
+  &.vis-selected {
+    &.Error,
+    &.Normal {
+      color: var(--sw-event-vis-selected) !important;
+      box-shadow: var(--sw-shadow-base);
+    }
+  }
 }
 
+/* === Time Axis === */
+.vis-time-axis .vis-text {
+  color: var(--sw-time-axis-text) !important;
+  font-size: $font-size-smaller;
+}
+
+/* ============================================
+   VIEW TRANSITIONS
+   ============================================ */
 html {
+  /* Smooth theme switching with fade */
   &::view-transition-old(root),
   &::view-transition-new(root) {
     animation: none;
     mix-blend-mode: normal;
   }
 
+  /* Light to Dark: Fade out light, fade in dark */
   &.dark {
     &::view-transition-old(root) {
       z-index: 1;
+      animation: theme-fade-out 0.35s var(--sw-ease-smooth);
     }
     &::view-transition-new(root) {
       z-index: 999;
+      animation: theme-fade-in 0.35s var(--sw-ease-smooth);
     }
   }
 
+  /* Dark to Light: Fade out dark, fade in light */
   &::view-transition-old(root) {
     z-index: 999;
+    animation: theme-fade-out 0.35s var(--sw-ease-smooth);
   }
   &::view-transition-new(root) {
     z-index: 1;
+    animation: theme-fade-in 0.35s var(--sw-ease-smooth);
   }
+}
+
+@keyframes theme-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Smooth color transitions on all themed elements */
+* {
+  transition: background-color var(--sw-transition-base), border-color var(--sw-transition-base),
+    color var(--sw-transition-base), fill var(--sw-transition-base), stroke var(--sw-transition-base),
+    box-shadow var(--sw-transition-base);
+}
+
+/* Prevent transition on page load */
+html:not(.theme-transition-ready) * {
+  transition: none !important;
 }
