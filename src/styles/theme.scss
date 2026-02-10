@@ -99,11 +99,11 @@ html {
   --border-color: hsl(214, 15%, 91%);
   --border-color-primary: hsl(0, 0%, 93%);
   --sw-border-color-light: hsl(214, 18%, 91%);
-  --sw-alarm-tool-border: hsl(220, 13%, 80%, 0.25);
+  --sw-alarm-tool-border: hsl(220 13% 80% / 0.25);
   --sw-marketplace-border: hsl(220, 5%, 87%);
 
   /* === Interactive States === */
-  --sw-list-hover: hsl(0, 0%, 0%, 0.04);
+  --sw-list-hover: hsl(0 0% 0% / 0.04);
   --sw-list-selected: hsl(0, 0%, 93%);
   --popper-hover-bg: hsl(0, 0%, 93%);
   --sw-grid-item-active: hsl(222, 13%, 85%);
@@ -120,16 +120,16 @@ html {
 
   /* === Topology === */
   --sw-topology-color: hsl(0, 0%, 40%);
-  --sw-topology-switch-icon: hsl(0, 0%, 0%, 0.3);
+  --sw-topology-switch-icon: hsl(0 0% 0% / 0.3);
   --sw-topology-box-shadow: var(--sw-shadow-lg);
   --sw-topology-setting-bg: hsl(0, 0%, 100%);
   --sw-topology-border: 1px solid hsl(0, 0%, 60%);
 
   /* === Trace & Events === */
-  --sw-trace-success: hsl(220, 13%, 18%, 0.1);
-  --sw-trace-list-border: hsl(0, 0%, 0%, 0.1);
-  --sw-trace-list-path: hsl(0, 0%, 0%, 0.1);
-  --sw-trace-table-selected: hsl(0, 0%, 0%, 0.1);
+  --sw-trace-success: hsl(220 13% 18% / 0.1);
+  --sw-trace-list-border: hsl(0 0% 0% / 0.1);
+  --sw-trace-list-path: hsl(0 0% 0% / 0.1);
+  --sw-trace-table-selected: hsl(0 0% 0% / 0.1);
   --sw-trace-line: hsl(0, 0%, 60%);
   --sw-event-vis-selected: hsl(0, 0%, 10%);
   --sw-time-axis-text: hsl(0, 0%, 30%);
@@ -187,7 +187,7 @@ html.dark {
   /* === Interactive States === */
   --sw-list-hover: hsl(220, 6%, 15%);
   --sw-list-selected: hsl(220, 13%, 28%);
-  --popper-hover-bg: hsl(207, 100%, 62%, 0.1);
+  --popper-hover-bg: hsl(207 100% 62% / 0.1);
   --sw-grid-item-active: hsl(220, 5%, 46%);
 
   /* === Buttons & Icons === */
@@ -210,8 +210,8 @@ html.dark {
   /* === Trace & Events === */
   --sw-trace-success: hsl(0, 0%, 67%);
   --sw-trace-list-border: hsl(220, 3%, 20%);
-  --sw-trace-list-path: hsl(0, 0%, 96%, 0.4);
-  --sw-trace-table-selected: hsl(0, 0%, 100%, 0.1);
+  --sw-trace-list-path: hsl(0 0% 96% / 0.4);
+  --sw-trace-table-selected: hsl(0 0% 100% / 0.1);
   --sw-trace-line: hsl(0, 0%, 91%);
   --sw-event-vis-selected: hsl(0, 0%, 100%);
   --sw-time-axis-text: hsl(0, 0%, 67%);
