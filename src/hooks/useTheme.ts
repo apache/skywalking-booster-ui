@@ -58,6 +58,14 @@ export function useTheme() {
 
   // Handle theme change with transition animation
   function handleChangeTheme() {
+    const prefersReducedMotion =
+      typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) {
+      applyTheme();
+      return;
+    }
+
     const x = themeSwitchRef.value?.offsetLeft ?? 0;
     const y = themeSwitchRef.value?.offsetTop ?? 0;
     const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
