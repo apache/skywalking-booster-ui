@@ -451,14 +451,56 @@ html {
   }
 }
 
-/* Smooth color transitions on all themed elements */
-* {
+/* Smooth color transitions only during theme changes */
+html.theme-transitioning * {
   transition: background-color var(--sw-transition-base), border-color var(--sw-transition-base),
     color var(--sw-transition-base), fill var(--sw-transition-base), stroke var(--sw-transition-base),
-    box-shadow var(--sw-transition-base);
+    box-shadow var(--sw-transition-base) !important;
 }
 
-/* Prevent transition on page load */
-html:not(.theme-transition-ready) * {
-  transition: none !important;
+/* ============================================
+   ACCESSIBILITY: REDUCED MOTION
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable view transition animations */
+  html {
+    &::view-transition-old(root),
+    &::view-transition-new(root) {
+      animation: none !important;
+    }
+
+    &.dark {
+      &::view-transition-old(root),
+      &::view-transition-new(root) {
+        animation: none !important;
+      }
+    }
+  }
+
+  /* Disable theme color transitions */
+  html.theme-transitioning * {
+    transition: none !important;
+  }
+
+  /* Disable component animations */
+  .vis-item {
+    transition: none !important;
+
+    &:hover {
+      transform: none !important;
+    }
+  }
+
+  .opt:hover {
+    transition: none !important;
+  }
+
+  /* Disable all keyframe animations */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
