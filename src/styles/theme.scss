@@ -340,9 +340,12 @@ $error-color: var(--sw-red);
    ============================================ */
 
 /* === Interactive Elements === */
+.opt {
+  transition: background-color var(--sw-transition-fast);
+}
+
 .opt:hover {
   background-color: var(--sw-list-hover) !important;
-  transition: background-color var(--sw-transition-fast);
 }
 
 .switch {
