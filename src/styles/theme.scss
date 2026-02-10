@@ -299,9 +299,21 @@ html.dark {
 /* === Loading === */
 .el-loading-mask {
   background-color: var(--theme-background);
-  backdrop-filter: blur(2px);
 }
 
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .el-loading-mask {
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-reduced-motion: reduce) {
+  .el-loading-mask {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
 /* ============================================
    SCSS VARIABLES (Legacy Support)
    ============================================ */
