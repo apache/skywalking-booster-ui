@@ -21,10 +21,10 @@ const titles = {
     "Observe services and relative direct dependencies through telemetry data collected from SkyWalking Agents.",
   general_service_services: "Services",
   general_service_services_desc: "Observe services through telemetry data collected from SkyWalking Agent.",
-  general_service_virtual_database: "Visual Database",
+  general_service_virtual_database: "Virtual Database",
   general_service_virtual_database_desc:
     "Observe the virtual databases which are conjectured by language agents through various plugins.",
-  general_service_virtual_cache: "Visual Cache",
+  general_service_virtual_cache: "Virtual Cache",
   general_service_virtual_cache_desc:
     "Observe the virtual cache servers which are conjectured by language agents through various plugins.",
   general_service_virtual_mq: "Virtual MQ",
