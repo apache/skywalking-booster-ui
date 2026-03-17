@@ -146,6 +146,12 @@ const titles = {
   data_processing_engine_flink: "Flink",
   data_processing_engine_flink_desc:
     "Apache Flink is a framework and distributed processing engine for stateful computations over unbounded and bounded data streams. Flink has been designed to run in all common cluster environments, perform computations at in-memory speed and at any scale.",
+  gen_ai: "IA Generativa",
+  gen_ai_desc:
+    "La Inteligencia Artificial Generativa (GenAI) es una categoría de IA capaz de crear contenido nuevo. Permite monitorear proveedores de GenAI e invocaciones a sus modelos.",
+  virtual_gen_ai: "IA Generativa Virtual",
+  virtual_gen_ai_desc:
+    "Monitorea los servicios y modelos de IA generativa virtual detectados por los agentes a través de diversos complementos (plugins).",
 };
 
 export default titles;

@@ -126,6 +126,10 @@ const titles = {
   data_processing_engine_flink: "Flink",
   data_processing_engine_flink_desc:
     "Apache Flink 是一个框架和分布式处理引擎，用于在无边界和有边界数据流上进行有状态的计算。Flink 能在所有常见集群环境中运行，并能以内存速度和任意规模进行计算。",
+  gen_ai: "生成式人工智能 (GenAI)",
+  gen_ai_desc: "提供对 GenAI 供应商及模型调用的性能指标、用量和成本的全面监控。",
+  virtual_gen_ai: "虚拟 GenAI",
+  virtual_gen_ai_desc: "由语言探针通过拦截 AI SDK 调用，自动推导出的虚拟 GenAI 逻辑服务与模型视图。",
 };
 
 export default titles;
