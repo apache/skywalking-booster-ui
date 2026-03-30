@@ -18,6 +18,7 @@ import { useAppStoreWithOut, InitializationDurationRow } from "@/store/modules/a
 import type { Duration, DurationTime } from "@/types/app";
 import getLocalTime from "@/utils/localtime";
 import dateFormatStep from "@/utils/dateFormat";
+import { TimeType } from "@/constants/data";
 
 export function useDuration() {
   let durationRow: Duration = InitializationDurationRow;
@@ -27,13 +28,14 @@ export function useDuration() {
     return {
       start: getLocalTime(appStore.utc, durationRow.start),
       end: getLocalTime(appStore.utc, durationRow.end),
-      step: durationRow.step,
+      step: TimeType.SENCOND_TIME,
       coldStage: appStore.coldStageMode,
     };
   }
   function getDurationTime(): DurationTime {
     const appStore = useAppStoreWithOut();
-    const { start, step, end } = getDuration();
+    const { start, end } = getDuration();
+    const step = TimeType.SENCOND_TIME;
     return {
       start: dateFormatStep(start, step, true),
       end: dateFormatStep(end, step, true),
@@ -43,7 +45,7 @@ export function useDuration() {
   }
   function setDurationRow(data: Duration) {
     const appStore = useAppStoreWithOut();
-    durationRow = { ...data, coldStage: appStore.coldStageMode };
+    durationRow = { ...data, coldStage: appStore.coldStageMode, step: TimeType.SENCOND_TIME };
   }
   function getMaxRange(day: number) {
     if (day === undefined || day === null) {
