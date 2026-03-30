@@ -16,10 +16,10 @@
  */
 
 export enum TimeType {
+  SENCOND_TIME = "SECOND",
   MINUTE_TIME = "MINUTE",
   HOUR_TIME = "HOUR",
   DAY_TIME = "DAY",
-  SENCOND_TIME = "SECOND",
 }
 
 export const Languages = [
