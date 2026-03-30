@@ -46,6 +46,7 @@ vi.mock("@/utils/dateFormat", () => ({
 describe("useDuration hook", () => {
   const mockAppStore = {
     utc: false,
+    coldStageMode: false,
   } as unknown as ReturnType<typeof useAppStoreWithOut>;
 
   beforeEach(() => {
@@ -66,7 +67,7 @@ describe("useDuration hook", () => {
       setDurationRow(newDuration);
       const result = getDurationTime();
 
-      expect(result.step).toBe("DAY");
+      expect(result.step).toBe("SECOND");
     });
   });
 
@@ -77,9 +78,10 @@ describe("useDuration hook", () => {
       const result = getDurationTime();
 
       expect(result).toEqual({
-        start: "2023-01-01",
-        end: "2023-01-01",
-        step: "HOUR",
+        start: "2023-01-01 00",
+        end: "2023-01-01 00",
+        step: "SECOND",
+        coldStage: false,
       });
     });
 
@@ -152,7 +154,7 @@ describe("useDuration hook", () => {
 
       // Test getDurationTime
       const durationTime = getDurationTime();
-      expect(durationTime.step).toBe("MINUTE");
+      expect(durationTime.step).toBe("SECOND");
 
       // Test getMaxRange
       const maxRange = getMaxRange(5);

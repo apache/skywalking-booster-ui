@@ -105,6 +105,7 @@ limitations under the License. -->
   import { EntityType, QueryOrders, Status } from "@/views/dashboard/data";
   import type { LayoutConfig, FilterDuration } from "@/types/dashboard";
   import { useDuration } from "@/hooks/useDuration";
+  import { TimeType } from "@/constants/data";
 
   /*global defineProps, defineEmits, Recordable */
   const emits = defineEmits(["get", "search"]);
@@ -126,7 +127,7 @@ limitations under the License. -->
   const { duration: filtersDuration } = filters.value;
   const duration = ref<DurationTime | FilterDuration>(
     filtersDuration
-      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: filtersDuration.step || "" }
+      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: TimeType.SECOND_TIME }
       : getDurationTime(),
   );
   const minTraceDuration = ref<number>();
@@ -152,7 +153,6 @@ limitations under the License. -->
   }
 
   async function init() {
-    duration.value = filters.value.duration || appStore.durationTime;
     if (dashboardStore.entity === EntityType[1].value) {
       await getServices();
     }
@@ -335,7 +335,7 @@ limitations under the License. -->
         ? {
             start: filtersDuration.startTime || "",
             end: filtersDuration.endTime || "",
-            step: filtersDuration.step || "",
+            step: TimeType.SECOND_TIME,
           }
         : getDurationTime();
       init();

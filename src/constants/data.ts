@@ -16,6 +16,7 @@
  */
 
 export enum TimeType {
+  SECOND_TIME = "SECOND",
   MINUTE_TIME = "MINUTE",
   HOUR_TIME = "HOUR",
   DAY_TIME = "DAY",
