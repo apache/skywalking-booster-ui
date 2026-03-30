@@ -153,7 +153,6 @@ limitations under the License. -->
   }
 
   async function init() {
-    duration.value = filters.value.duration || getDurationTime();
     if (dashboardStore.entity === EntityType[1].value) {
       await getServices();
     }
