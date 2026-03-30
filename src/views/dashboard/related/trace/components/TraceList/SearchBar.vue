@@ -94,6 +94,7 @@ limitations under the License. -->
   import { EntityType, QueryOrders, Status } from "@/views/dashboard/data";
   import type { LayoutConfig } from "@/types/dashboard";
   import { TimeType } from "@/constants/data";
+  import { useDuration } from "@/hooks/useDuration";
 
   const FiltersKeys: { [key: string]: string } = {
     status: "traceState",
@@ -102,6 +103,7 @@ limitations under the License. -->
     minTraceDuration: "minTraceDuration",
     maxTraceDuration: "maxTraceDuration",
   };
+  const { getDurationTime } = useDuration();
 
   // Type-safe function to get condition value
   const getConditionValue = (key: string): string | number | undefined => {
@@ -134,7 +136,7 @@ limitations under the License. -->
   const duration = ref<DurationTime>(
     filtersDuration
       ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: TimeType.SENCOND_TIME }
-      : appStore.durationTime,
+      : getDurationTime(),
   );
   const state = reactive<Recordable>({
     instance: "",
