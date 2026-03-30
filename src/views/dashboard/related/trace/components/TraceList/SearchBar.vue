@@ -93,6 +93,7 @@ limitations under the License. -->
   import { ElMessage } from "element-plus";
   import { EntityType, QueryOrders, Status } from "@/views/dashboard/data";
   import type { LayoutConfig } from "@/types/dashboard";
+  import { TimeType } from "@/constants/data";
 
   const FiltersKeys: { [key: string]: string } = {
     status: "traceState",
@@ -132,7 +133,7 @@ limitations under the License. -->
   const { duration: filtersDuration } = props.data.filters || {};
   const duration = ref<DurationTime>(
     filtersDuration
-      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: filtersDuration.step || "" }
+      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: TimeType.SENCOND_TIME }
       : appStore.durationTime,
   );
   const state = reactive<Recordable>({
