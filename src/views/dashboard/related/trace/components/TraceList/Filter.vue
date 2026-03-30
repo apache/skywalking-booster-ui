@@ -127,7 +127,7 @@ limitations under the License. -->
   const { duration: filtersDuration } = filters.value;
   const duration = ref<DurationTime | FilterDuration>(
     filtersDuration
-      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: TimeType.SENCOND_TIME }
+      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: TimeType.SECOND_TIME }
       : getDurationTime(),
   );
   const minTraceDuration = ref<number>();
@@ -336,7 +336,7 @@ limitations under the License. -->
         ? {
             start: filtersDuration.startTime || "",
             end: filtersDuration.endTime || "",
-            step: TimeType.SENCOND_TIME,
+            step: TimeType.SECOND_TIME,
           }
         : getDurationTime();
       init();

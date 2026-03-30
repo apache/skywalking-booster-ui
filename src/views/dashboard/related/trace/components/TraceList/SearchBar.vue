@@ -103,7 +103,6 @@ limitations under the License. -->
     minTraceDuration: "minTraceDuration",
     maxTraceDuration: "maxTraceDuration",
   };
-  const { getDurationTime } = useDuration();
 
   // Type-safe function to get condition value
   const getConditionValue = (key: string): string | number | undefined => {
@@ -133,9 +132,10 @@ limitations under the License. -->
   const tagsMap = ref<Option[]>([]);
   const traceId = ref<string>(filters.refId || "");
   const { duration: filtersDuration } = props.data.filters || {};
+  const { getDurationTime } = useDuration();
   const duration = ref<DurationTime>(
     filtersDuration
-      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: TimeType.SENCOND_TIME }
+      ? { start: filtersDuration.startTime || "", end: filtersDuration.endTime || "", step: TimeType.SECOND_TIME }
       : getDurationTime(),
   );
   const state = reactive<Recordable>({

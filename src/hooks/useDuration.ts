@@ -28,14 +28,14 @@ export function useDuration() {
     return {
       start: getLocalTime(appStore.utc, durationRow.start),
       end: getLocalTime(appStore.utc, durationRow.end),
-      step: TimeType.SENCOND_TIME,
+      step: TimeType.SECOND_TIME,
       coldStage: appStore.coldStageMode,
     };
   }
   function getDurationTime(): DurationTime {
     const appStore = useAppStoreWithOut();
     const { start, end } = getDuration();
-    const step = TimeType.SENCOND_TIME;
+    const step = TimeType.SECOND_TIME;
     return {
       start: dateFormatStep(start, step, true),
       end: dateFormatStep(end, step, true),
@@ -45,7 +45,7 @@ export function useDuration() {
   }
   function setDurationRow(data: Duration) {
     const appStore = useAppStoreWithOut();
-    durationRow = { ...data, coldStage: appStore.coldStageMode, step: TimeType.SENCOND_TIME };
+    durationRow = { ...data, coldStage: appStore.coldStageMode, step: TimeType.SECOND_TIME };
   }
   function getMaxRange(day: number) {
     if (day === undefined || day === null) {
