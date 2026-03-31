@@ -150,6 +150,8 @@ const titles = {
   virtual_gen_ai: "Virtual GenAI",
   virtual_gen_ai_desc:
     "Observe the virtual GenAI services and models which are conjectured by language agents through various plugins.",
+  envoy_ai_gateway: "Envoy AI Gateway",
+  envoy_ai_gateway_desc: "Provide Envoy AI Gateway monitoring through OpenTelemetry OTLP metrics and access logs.",
 };
 
 export default titles;

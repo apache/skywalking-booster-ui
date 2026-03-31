@@ -130,6 +130,8 @@ const titles = {
   gen_ai_desc: "提供对 GenAI 供应商及模型调用的性能指标、用量和成本的全面监控。",
   virtual_gen_ai: "虚拟 GenAI",
   virtual_gen_ai_desc: "由语言探针通过拦截 AI SDK 调用，自动推导出的虚拟 GenAI 逻辑服务与模型视图。",
+  envoy_ai_gateway: "Envoy AI 网关",
+  envoy_ai_gateway_desc: "通过 OpenTelemetry OTLP 指标和访问日志提供 Envoy AI 网关监控。",
 };
 
 export default titles;

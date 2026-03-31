@@ -152,6 +152,9 @@ const titles = {
   virtual_gen_ai: "IA Generativa Virtual",
   virtual_gen_ai_desc:
     "Monitorea los servicios y modelos de IA generativa virtual detectados por los agentes a través de diversos complementos (plugins).",
+  envoy_ai_gateway: "Puerta de Enlace de IA Envoy",
+  envoy_ai_gateway_desc:
+    "Proporciona monitoreo de Envoy AI Gateway a través de métricas OTLP y logs de acceso de OpenTelemetry.",
 };
 
 export default titles;
