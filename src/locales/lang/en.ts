@@ -395,6 +395,7 @@ const msg = {
   errorInstances: "Error Instances",
   successInstances: "Success Instances",
   profilingEvents: "Async Profiling Events",
+  pprofEvent: "PProf Event",
   execArgs: "Exec Args",
   instances: "Instances",
   snapshot: "Snapshot",
@@ -407,6 +408,14 @@ const msg = {
   maxDuration: "Max Duration",
   minutes: "Minutes",
   invalidProfilingDurationRange: "Please enter a valid duration between 1 and 900 seconds",
+  invalidPprofDuration: "Please enter a valid duration in minutes",
+  invalidPprofDumpPeriod: "Please enter a valid dump period",
+  pprofDumpPeriod: "Dump Period",
+  pprofDurationHint: "Duration is required for CPU, BLOCK and MUTEX tasks.",
+  pprofDumpPeriodBlockHint:
+    "For BLOCK tasks, dump period is required and represents the blocked nanoseconds sampling rate. 1 samples every event.",
+  pprofDumpPeriodMutexHint:
+    "For MUTEX tasks, dump period is required and represents the contention occurrences sampling rate. 1 samples every event.",
   taskCreatedSuccessfully: "Task created successfully",
   runQuery: "Run Query",
   spansTable: "Spans Table",

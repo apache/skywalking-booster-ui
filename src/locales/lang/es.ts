@@ -394,6 +394,7 @@ const msg = {
   errorInstances: "Error Instances",
   successInstances: "Success Instances",
   profilingEvents: "Async Profiling Events",
+  pprofEvent: "Evento PProf",
   execArgs: "Exec Args",
   instances: "Instances",
   snapshot: "Snapshot",
@@ -407,6 +408,14 @@ const msg = {
   maxDuration: "Duración Máxima",
   minutes: "Minutos",
   invalidProfilingDurationRange: "Por favor ingrese una duración válida entre 1 y 900 segundos",
+  invalidPprofDuration: "Por favor ingrese una duración válida en minutos",
+  invalidPprofDumpPeriod: "Por favor ingrese un período de volcado válido",
+  pprofDumpPeriod: "Período de Volcado",
+  pprofDurationHint: "La duración es obligatoria para tareas CPU, BLOCK y MUTEX.",
+  pprofDumpPeriodBlockHint:
+    "Para tareas BLOCK, el período de volcado es obligatorio y representa la tasa de muestreo en nanosegundos bloqueados. 1 muestrea todos los eventos.",
+  pprofDumpPeriodMutexHint:
+    "Para tareas MUTEX, el período de volcado es obligatorio y representa la tasa de muestreo por ocurrencias de contención. 1 muestrea todos los eventos.",
   taskCreatedSuccessfully: "Tarea creada exitosamente",
   runQuery: "Ejecutar Consulta",
   spansTable: "Tabla de Lapso",
