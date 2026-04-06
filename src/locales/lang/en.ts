@@ -417,6 +417,7 @@ const msg = {
   pprofDumpPeriodMutexHint:
     "For MUTEX tasks, dump period is required and represents the contention occurrences sampling rate. 1 samples every event.",
   taskCreatedSuccessfully: "Task created successfully",
+  taskCreationFailed: "Task creation failed",
   runQuery: "Run Query",
   spansTable: "Spans Table",
   download: "Download",

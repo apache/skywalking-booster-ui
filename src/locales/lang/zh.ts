@@ -413,6 +413,7 @@ const msg = {
   pprofDumpPeriodBlockHint: "BLOCK 任务必须设置采样率，单位是纳秒。设置为 1 表示采集所有阻塞事件。",
   pprofDumpPeriodMutexHint: "MUTEX 任务必须设置采样率，单位是竞争次数。设置为 1 表示采集所有互斥竞争事件。",
   taskCreatedSuccessfully: "任务创建成功",
+  taskCreationFailed: "任务创建失败",
   runQuery: "运行查询",
   spansTable: "Spans表格",
   download: "下载",

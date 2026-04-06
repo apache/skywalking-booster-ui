@@ -22,3 +22,14 @@ export function treeForeach(tree: any, func: (node: any) => void) {
   }
   return tree;
 }
+
+export function escapeHtml(str: string): string {
+  const htmlEscapes: Record<string, string> = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
+  };
+  return str.replace(/[&<>"']/g, (char) => htmlEscapes[char]);
+}

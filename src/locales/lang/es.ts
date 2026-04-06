@@ -417,6 +417,7 @@ const msg = {
   pprofDumpPeriodMutexHint:
     "Para tareas MUTEX, el período de volcado es obligatorio y representa la tasa de muestreo por ocurrencias de contención. 1 muestrea todos los eventos.",
   taskCreatedSuccessfully: "Tarea creada exitosamente",
+  taskCreationFailed: "Error al crear la tarea",
   runQuery: "Ejecutar Consulta",
   spansTable: "Tabla de Lapso",
   download: "Descargar",

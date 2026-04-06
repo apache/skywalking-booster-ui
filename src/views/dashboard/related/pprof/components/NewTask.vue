@@ -133,12 +133,20 @@ limitations under the License. -->
     loading.value = true;
     const res = await pprofStore.createTask(params);
     loading.value = false;
-    if (res?.errors) {
+    if (!res) {
+      ElMessage.error(t("taskCreationFailed"));
+      return;
+    }
+    if (res.errors) {
       ElMessage.error(res.errors);
       return;
     }
-    const result = res?.data?.task;
-    if (result?.errorReason) {
+    const result = res.data?.task;
+    if (!result) {
+      ElMessage.error(t("taskCreationFailed"));
+      return;
+    }
+    if (result.errorReason) {
       ElMessage.error(result.errorReason);
       return;
     }

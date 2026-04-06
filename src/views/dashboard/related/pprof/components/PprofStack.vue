@@ -16,6 +16,7 @@ limitations under the License. -->
   <div ref="graph"></div>
 </template>
 <script lang="ts" setup>
+  /* global Nullable */
   import { ref, watch } from "vue";
   import * as d3 from "d3";
   import d3tip from "d3-tip";
@@ -23,9 +24,8 @@ limitations under the License. -->
   import { usePprofStore } from "@/store/modules/pprof";
   import type { PprofStackElement, PprofFlameGraphNode } from "@/types/pprof";
   import "d3-flame-graph/dist/d3-flamegraph.css";
-  import { treeForeach } from "@/utils/flameGraph";
+  import { treeForeach, escapeHtml } from "@/utils/flameGraph";
 
-  /*global Nullable*/
   const pprofStore = usePprofStore();
   const stackTree = ref<Nullable<PprofFlameGraphNode>>(null);
   const selectStack = ref<Nullable<PprofFlameGraphNode>>(null);
@@ -81,7 +81,7 @@ limitations under the License. -->
       .attr("class", "d3-tip")
       .direction("s")
       .html((d: { data: PprofFlameGraphNode } & { parent: { data: PprofFlameGraphNode } }) => {
-        const name = d.data.name.replace("<", "&lt;").replace(">", "&gt;");
+        const name = escapeHtml(d.data.name);
         const rateOfParent =
           (d.parent &&
             `<div class="mb-5">Percentage Of Selected: ${
@@ -111,33 +111,39 @@ limitations under the License. -->
   }
 
   function processTree(arr: PprofStackElement[]): Nullable<PprofFlameGraphNode> {
-    const copyArr = JSON.parse(JSON.stringify(arr));
     const obj: Record<string, PprofFlameGraphNode> = {};
+    const childrenByParentId: Record<string, PprofFlameGraphNode[]> = {};
     let res = null as Nullable<PprofFlameGraphNode>;
-    for (const item of copyArr) {
-      item.parentId = String(Number(item.parentId) + 1);
-      item.originId = String(Number(item.id) + 1);
-      item.name = item.symbol;
-      delete item.id;
-      obj[item.originId] = item;
-    }
+    const copyArr = arr.map((item) => {
+      const node: PprofFlameGraphNode = {
+        parentId: String(Number(item.parentId) + 1),
+        originId: String(Number(item.id) + 1),
+        id: item.id,
+        name: item.symbol,
+        symbol: item.symbol,
+        dumpCount: item.dumpCount,
+        self: item.self,
+        value: 0,
+      };
+      obj[node.originId] = node;
+      // Group nodes by their parentId
+      if (childrenByParentId[node.parentId]) {
+        childrenByParentId[node.parentId].push(node);
+      } else {
+        childrenByParentId[node.parentId] = [node];
+      }
+      return node;
+    });
     const scale = d3.scaleLinear().domain([min.value, max.value]).range([1, 200]);
+    // Link children to parents in O(n) using the adjacency map
     for (const item of copyArr) {
+      item.value = Number(scale(item.dumpCount).toFixed(4));
       if (item.parentId === "0") {
-        const val = Number(scale(item.dumpCount).toFixed(4));
-        item.value = val;
         res = item as PprofFlameGraphNode;
       }
-      for (const key in obj) {
-        if (item.originId === obj[key].parentId) {
-          const val = Number(scale(obj[key].dumpCount).toFixed(4));
-          obj[key].value = val;
-          if (item.children) {
-            item.children.push(obj[key]);
-          } else {
-            item.children = [obj[key]];
-          }
-        }
+      const children = childrenByParentId[item.originId];
+      if (children) {
+        item.children = children;
       }
     }
     if (!res) {
