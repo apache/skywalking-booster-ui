@@ -26,6 +26,7 @@ import Event from "./Event.vue";
 import NetworkProfiling from "./NetworkProfiling.vue";
 import ContinuousProfiling from "./ContinuousProfiling.vue";
 import AsyncProfiling from "./AsyncProfiling.vue";
+import Pprof from "./Pprof.vue";
 import TimeRange from "./TimeRange.vue";
 import ThirdPartyApp from "./ThirdPartyApp.vue";
 import TaskTimeline from "./TaskTimeline.vue";
@@ -45,5 +46,6 @@ export default {
   ThirdPartyApp,
   ContinuousProfiling,
   AsyncProfiling,
+  Pprof,
   TaskTimeline,
 };
