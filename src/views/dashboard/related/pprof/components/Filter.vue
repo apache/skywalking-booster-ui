@@ -66,7 +66,7 @@ limitations under the License. -->
   watch(
     () => pprofStore.selectedTask?.successInstanceIds,
     (value) => {
-      serviceInstanceIds.value = [...(value || [])];
+      serviceInstanceIds.value = value || [];
       pprofStore.setAnalyzeTrees([]);
     },
     { immediate: true },
