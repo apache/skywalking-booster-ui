@@ -206,7 +206,6 @@ export async function useDashboardQueryProcessor(configList: DashboardWidgetConf
               // If the metrics label does not exist, use the configuration label or expression
               label = label ? `${metricConfig.label || name}, ${label}` : metricConfig.label || name;
             }
-            console.log("label", label, "values", values);
             source[label] = values;
           }
         }
