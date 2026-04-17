@@ -68,6 +68,12 @@ const titles = {
   // Browser
   browser: "Browser",
   browser_desc: "通过Apache SkyWalking Client JS提供Web应用程序、版本和页面的浏览器端监控。",
+  // Mobile
+  mobile: "移动端",
+  mobile_desc: "通过 OpenTelemetry SDK 提供移动应用监控。",
+  mobile_ios: "iOS",
+  mobile_ios_desc:
+    "通过 OpenTelemetry Swift SDK 提供 iOS 和 iPadOS 应用监控，包括 HTTP 性能、MetricKit 每日统计和崩溃诊断。",
   // Gateway
   gateway: "网关",
   gateway_desc: "API网关是位于客户端和后端服务集合之间的API管理工具。",
