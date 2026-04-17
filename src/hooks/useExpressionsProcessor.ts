@@ -192,7 +192,7 @@ export async function useDashboardQueryProcessor(configList: DashboardWidgetConf
           )
         ) {
           for (const item of results) {
-            let label: string = name;
+            let label: string = "" as string;
             if (item.metric) {
               const joined = item.metric.labels
                 .map((d: { key: string; value: string }) => `${d.key}=${d.value}`)
@@ -206,6 +206,7 @@ export async function useDashboardQueryProcessor(configList: DashboardWidgetConf
               // If the metrics label does not exist, use the configuration label or expression
               label = label ? `${metricConfig.label || name}, ${label}` : metricConfig.label || name;
             }
+            console.log("label", label, "values", values);
             source[label] = values;
           }
         }
