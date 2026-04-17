@@ -15,21 +15,25 @@
  * limitations under the License.
  */
 
-export function treeForeach(tree: any, func: (node: any) => void) {
-  for (const data of tree) {
-    data.children && treeForeach(data.children, func);
-    func(data);
-  }
-  return tree;
-}
+export const DurationOptions = [
+  { value: "1", label: "1 min" },
+  { value: "5", label: "5 min" },
+  { value: "10", label: "10 min" },
+  { value: "15", label: "15 min" },
+  { value: "30", label: "30 min" },
+  { value: "custom", label: "Custom" },
+];
 
-export function escapeHtml(str: string): string {
-  const htmlEscapes: Record<string, string> = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;",
-  };
-  return str.replace(/[&<>"']/g, (char) => htmlEscapes[char]);
-}
+export const PprofEvents = [
+  { label: "CPU", value: "CPU" },
+  { label: "HEAP", value: "HEAP" },
+  { label: "BLOCK", value: "BLOCK" },
+  { label: "MUTEX", value: "MUTEX" },
+  { label: "GOROUTINE", value: "GOROUTINE" },
+  { label: "THREADCREATE", value: "THREADCREATE" },
+  { label: "ALLOCS", value: "ALLOCS" },
+];
+
+export const DurationRequiredEvents = ["CPU", "BLOCK", "MUTEX"];
+
+export const DumpPeriodRequiredEvents = ["BLOCK", "MUTEX"];

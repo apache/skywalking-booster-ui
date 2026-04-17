@@ -51,6 +51,7 @@ export const ControlsTypes = [
   WidgetType.Ebpf,
   WidgetType.NetworkProfiling,
   WidgetType.AsyncProfiling,
+  WidgetType.Pprof,
   WidgetType.ThirdPartyApp,
   WidgetType.ContinuousProfiling,
   WidgetType.TaskTimeline,

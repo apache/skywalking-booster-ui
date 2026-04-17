@@ -27,6 +27,7 @@ import * as event from "./query/event";
 import * as ebpf from "./query/ebpf";
 import * as demandLog from "./query/demand-log";
 import * as asyncProfile from "./query/async-profile";
+import * as pprof from "./query/pprof";
 
 const query: { [key: string]: string } = {
   ...app,
@@ -41,6 +42,7 @@ const query: { [key: string]: string } = {
   ...ebpf,
   ...demandLog,
   ...asyncProfile,
+  ...pprof,
 };
 class Graphql {
   queryData = "";

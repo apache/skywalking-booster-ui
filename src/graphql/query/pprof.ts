@@ -15,21 +15,12 @@
  * limitations under the License.
  */
 
-export function treeForeach(tree: any, func: (node: any) => void) {
-  for (const data of tree) {
-    data.children && treeForeach(data.children, func);
-    func(data);
-  }
-  return tree;
-}
+import { GetPprofTaskList, GetPprofTaskProcess, CreatePprofTask, GetPprofAnalyze } from "../fragments/pprof";
 
-export function escapeHtml(str: string): string {
-  const htmlEscapes: Record<string, string> = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;",
-  };
-  return str.replace(/[&<>"']/g, (char) => htmlEscapes[char]);
-}
+export const getPprofTaskList = `query getPprofTaskList(${GetPprofTaskList.variable}) {${GetPprofTaskList.query}}`;
+
+export const getPprofTaskProcess = `query getPprofTaskProcess(${GetPprofTaskProcess.variable}) {${GetPprofTaskProcess.query}}`;
+
+export const savePprofTask = `mutation createPprofTask(${CreatePprofTask.variable}) {${CreatePprofTask.query}}`;
+
+export const getPprofAnalyze = `query getPprofAnalyze(${GetPprofAnalyze.variable}) {${GetPprofAnalyze.query}}`;
