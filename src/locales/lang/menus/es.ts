@@ -77,6 +77,12 @@ const titles = {
   // Browser
   browser: "Navegador",
   browser_desc: "Provide Browser-Side monitoring of Web-App, Versions and Pages, through Apache SkyWalking Client JS.",
+  // Mobile
+  mobile: "Mobile",
+  mobile_desc: "Mobile application monitoring via OpenTelemetry SDKs.",
+  mobile_ios: "iOS",
+  mobile_ios_desc:
+    "iOS and iPadOS app monitoring via OpenTelemetry Swift SDK. Provides HTTP performance, MetricKit daily stats, and crash diagnostics.",
   // Gateway
   gateway: "Puerta",
   gateway_desc:
