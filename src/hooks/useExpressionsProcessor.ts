@@ -192,7 +192,7 @@ export async function useDashboardQueryProcessor(configList: DashboardWidgetConf
           )
         ) {
           for (const item of results) {
-            let label: string = name;
+            let label: string = "" as string;
             if (item.metric) {
               const joined = item.metric.labels
                 .map((d: { key: string; value: string }) => `${d.key}=${d.value}`)
