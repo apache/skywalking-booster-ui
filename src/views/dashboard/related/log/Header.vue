@@ -480,7 +480,7 @@ limitations under the License. -->
   }
 
   .label {
-    line-height: 24px;
-    white-space: nowrap;
+    line-height: var(--el-input-height, 24px);
+    flex-shrink: 0;
   }
 </style>
