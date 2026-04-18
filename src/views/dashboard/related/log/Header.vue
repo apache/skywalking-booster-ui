@@ -72,7 +72,7 @@ limitations under the License. -->
   </div>
   <div class="flex-h row" v-show="!isBrowser">
     <div class="mr-10 traceId">
-      <span class="grey mr-5 label">{{ t("traceID") }}:</span>
+      <span class="grey mr-5">{{ t("traceID") }}:</span>
       <el-input v-model="traceId" class="inputs-max" size="small" />
     </div>
     <ConditionTags :type="'LOG'" @update="updateTags" />
@@ -480,6 +480,7 @@ limitations under the License. -->
   }
 
   .label {
-    line-height: 24px;
+    line-height: var(--el-input-height, 24px);
+    flex-shrink: 0;
   }
 </style>
