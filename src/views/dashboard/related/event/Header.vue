@@ -235,5 +235,6 @@ limitations under the License. -->
 
   .label {
     line-height: 24px;
+    white-space: nowrap;
   }
 </style>

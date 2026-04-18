@@ -66,7 +66,7 @@ limitations under the License. -->
   </div>
   <div class="flex-h row">
     <div class="mr-10">
-      <span class="grey mr-5">{{ t("traceID") }}:</span>
+      <span class="grey mr-5 label">{{ t("traceID") }}:</span>
       <el-input size="small" v-model="traceId" class="traceId" />
     </div>
     <div class="mr-10">
@@ -357,5 +357,6 @@ limitations under the License. -->
 
   .label {
     line-height: 24px;
+    white-space: nowrap;
   }
 </style>
