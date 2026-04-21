@@ -156,7 +156,6 @@ limitations under the License. -->
 
   .link {
     float: right;
-    margin-bottom: 20px;
   }
 
   .active {
