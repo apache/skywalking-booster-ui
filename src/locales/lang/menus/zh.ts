@@ -74,6 +74,12 @@ const titles = {
   mobile_ios: "iOS",
   mobile_ios_desc:
     "通过 OpenTelemetry Swift SDK 提供 iOS 和 iPadOS 应用监控，包括 HTTP 性能、MetricKit 每日统计和崩溃诊断。",
+  mobile_wechat_mini_program: "微信小程序",
+  mobile_wechat_mini_program_desc:
+    "通过 mini-program-monitor SDK 提供微信小程序监控。包括启动 / 渲染 / 路由 / 脚本 / 分包加载性能、请求延迟分位数、错误计数、按页面细分，以及出站 HTTP 的链路追踪下钻。",
+  mobile_alipay_mini_program: "支付宝小程序",
+  mobile_alipay_mini_program_desc:
+    "通过 mini-program-monitor SDK 提供支付宝小程序监控。包括基于生命周期的启动 / 渲染近似值、请求延迟分位数、错误计数、按页面细分，以及出站 HTTP 的链路追踪下钻。",
   // Gateway
   gateway: "网关",
   gateway_desc: "API网关是位于客户端和后端服务集合之间的API管理工具。",

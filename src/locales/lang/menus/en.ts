@@ -82,6 +82,12 @@ const titles = {
   mobile_ios: "iOS",
   mobile_ios_desc:
     "iOS and iPadOS app monitoring via OpenTelemetry Swift SDK. Provides HTTP performance, MetricKit daily stats, and crash diagnostics.",
+  mobile_wechat_mini_program: "WeChat Mini Program",
+  mobile_wechat_mini_program_desc:
+    "WeChat Mini Program monitoring via the mini-program-monitor SDK. Launch / render / route / script / package-load perf, request latency percentiles, error counts, per-page breakdowns, plus trace drill-down for outbound HTTP.",
+  mobile_alipay_mini_program: "Alipay Mini Program",
+  mobile_alipay_mini_program_desc:
+    "Alipay Mini Program monitoring via the mini-program-monitor SDK. Lifecycle-based launch / render approximations, request latency percentiles, error counts, per-page breakdowns, plus trace drill-down for outbound HTTP.",
   // Gateway
   gateway: "Gateway",
   gateway_desc:
