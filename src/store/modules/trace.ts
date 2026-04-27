@@ -178,7 +178,6 @@ export const traceStore = defineStore({
     },
     async getTraces() {
       this.loading = true;
-      await this.getHasQueryTracesV2Support();
       if (this.hasQueryTracesV2Support) {
         return this.fetchV2Traces();
       }
