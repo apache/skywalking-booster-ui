@@ -115,7 +115,6 @@ limitations under the License. -->
   getVersion();
   getNavPaths();
   setTTL();
-  traceStore.getHasQueryTracesV2Support();
 
   function changeDataMode() {
     appStore.setColdStageMode(coldStage.value);
