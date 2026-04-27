@@ -21,9 +21,7 @@ limitations under the License. -->
       />
       <SpanList v-if="!traceStore.hasQueryTracesV2Support" />
     </div>
-    <div style="text-align: center; padding: 20px" v-if="!traceStore.loading && !traceStore.currentTrace">
-      No trace found
-    </div>
+    <div style="text-align: center; padding: 20px" v-else> No trace found </div>
   </div>
 </template>
 

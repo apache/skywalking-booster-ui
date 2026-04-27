@@ -315,20 +315,10 @@ export const traceStore = defineStore({
         return;
       }
       this.setCurrentTrace({
-        duration: 0,
-        endpointNames: [],
-        isError: false,
-        key: traceId,
-        label: traceId,
-        operationNames: [],
-        segmentId: "",
-        serviceCode: "",
-        spans: [],
-        start: "0",
         traceIds: [{ value: traceId, label: traceId }],
         traceId: traceId,
-        id: traceId,
-        parentId: "",
+        endpointNames: [],
+        spans: [],
       });
       await this.getTraceSpans({ traceId });
       this.loading = false;
