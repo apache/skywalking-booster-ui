@@ -67,6 +67,8 @@ limitations under the License. -->
         :traceId="traceStore.currentTrace?.traceIds?.[0]?.value"
         :showBtnDetail="false"
         :headerType="WidgetType.Trace"
+        :minTimestamp="NaN"
+        :maxTimestamp="NaN"
       />
     </div>
   </div>

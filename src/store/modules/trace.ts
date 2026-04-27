@@ -177,10 +177,10 @@ export const traceStore = defineStore({
       return response;
     },
     async getTraces() {
+      this.loading = true;
       if (this.hasQueryTracesV2Support) {
         return this.fetchV2Traces();
       }
-      this.loading = true;
       const response = await graphql.query("queryTraces").params({ condition: this.conditions });
       if (response.errors) {
         this.loading = false;
@@ -193,14 +193,15 @@ export const traceStore = defineStore({
         this.loading = false;
         return response;
       }
-      this.getTraceSpans({ traceId: response.data.data.traces[0].traceIds[0] });
       this.traceList = response.data.data.traces.map((d: Trace) => {
         d.traceIds = d.traceIds.map((id: string) => {
           return { value: id, label: id };
         });
         return d;
       });
-      this.setCurrentTrace(response.data.data.traces[0] || {});
+      const currentTrace = this.traceList[0] || {};
+      this.setCurrentTrace(currentTrace);
+      await this.getTraceSpans({ traceId: currentTrace.traceIds?.[0]?.value || "" });
       return response;
     },
     async getTraceSpans(params: { traceId: string }) {
@@ -300,6 +301,27 @@ export const traceStore = defineStore({
       this.setTraceSpans(trace.spans);
       this.setCurrentTrace(trace || {});
       return response;
+    },
+
+    async getTraceByTraceId(traceId: string) {
+      this.loading = true;
+      this.setTraceCondition({
+        traceId: traceId,
+      });
+      await this.getHasQueryTracesV2Support();
+      if (this.hasQueryTracesV2Support) {
+        await this.fetchV2Traces();
+        this.loading = false;
+        return;
+      }
+      this.setCurrentTrace({
+        traceIds: [{ value: traceId, label: traceId }],
+        traceId: traceId,
+        endpointNames: [],
+        spans: [],
+      });
+      await this.getTraceSpans({ traceId });
+      this.loading = false;
     },
   },
 });

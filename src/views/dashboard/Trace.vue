@@ -14,10 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License. -->
 <template>
   <div style="padding: 20px">
-    <TraceContent v-if="traceStore.currentTrace" :trace="traceStore.currentTrace" />
-    <div style="text-align: center; padding: 20px" v-if="!traceStore.loading && !traceStore.currentTrace"
-      >No trace found</div
-    >
+    <div v-if="traceStore.traceSpans.length">
+      <TraceContent
+        v-if="traceStore.hasQueryTracesV2Support && traceStore.currentTrace"
+        :trace="traceStore.currentTrace"
+      />
+      <SpanList v-if="!traceStore.hasQueryTracesV2Support" />
+    </div>
+    <div style="text-align: center; padding: 20px" v-else> No trace found </div>
   </div>
 </template>
 
@@ -26,17 +30,16 @@ limitations under the License. -->
   import { computed, onMounted, provide } from "vue";
   import { useTraceStore } from "@/store/modules/trace";
   import TraceContent from "@/views/dashboard/related/trace/components/TraceQuery/TraceContent.vue";
+  import SpanList from "@/views/dashboard/related/trace/components/TraceList/SpanList.vue";
 
   const route = useRoute();
   const traceStore = useTraceStore();
   const traceId = computed(() => route.params.traceId as string);
   provide("options", {});
   onMounted(() => {
-    if (traceId.value) {
-      traceStore.setTraceCondition({
-        traceId: traceId.value,
-      });
-      traceStore.fetchV2Traces();
+    if (!traceId.value) {
+      return;
     }
+    traceStore.getTraceByTraceId(traceId.value);
   });
 </script>
