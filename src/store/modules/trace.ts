@@ -199,8 +199,9 @@ export const traceStore = defineStore({
         });
         return d;
       });
-      this.setCurrentTrace(response.data.data.traces[0] || {});
-      await this.getTraceSpans({ traceId: this.currentTrace?.traceId || "" });
+      const currentTrace = this.traceList[0] || {};
+      this.setCurrentTrace(currentTrace);
+      await this.getTraceSpans({ traceId: currentTrace.traceIds?.[0]?.value || "" });
       return response;
     },
     async getTraceSpans(params: { traceId: string }) {
