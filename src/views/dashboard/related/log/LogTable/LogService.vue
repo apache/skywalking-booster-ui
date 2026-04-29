@@ -27,7 +27,12 @@ limitations under the License. -->
           <Icon iconName="merge" />
         </el-tooltip>
       </span>
-      <span v-else v-html="highlightKeywords(getDataValue(item.label))"></span>
+      <span v-else>
+        <template v-for="(part, partIndex) in highlightKeywords(getDataValue(item.label))" :key="partIndex">
+          <span v-if="part.highlight" class="keyword-highlight">{{ part.text }}</span>
+          <template v-else>{{ part.text }}</template>
+        </template>
+      </span>
     </div>
   </div>
 </template>
@@ -59,10 +64,41 @@ limitations under the License. -->
     }
     return (props.data.tags.find((d: { key: string; value: string }) => d.key === "level") || {}).value || "";
   });
-  const highlightKeywords = (content: string) => {
-    const keywords = Object.values(logStore.conditions.keywordsOfContent || {});
-    const regex = new RegExp(keywords.join("|"), "gi");
-    return `${content}`.replace(regex, (match) => `<span style="color: red">${match}</span>`);
+  type HighlightPart = {
+    text: string;
+    highlight: boolean;
+  };
+
+  const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  const highlightKeywords = (content: string): HighlightPart[] => {
+    const text = `${content || ""}`;
+    const keywords = Object.values(logStore.conditions.keywordsOfContent || {})
+      .map((keyword) => `${keyword}`)
+      .filter(Boolean);
+
+    if (!keywords.length) {
+      return [{ text, highlight: false }];
+    }
+
+    const regex = new RegExp(keywords.map(escapeRegExp).join("|"), "gi");
+    const parts: HighlightPart[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push({ text: text.slice(lastIndex, match.index), highlight: false });
+      }
+      parts.push({ text: match[0], highlight: true });
+      lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+      parts.push({ text: text.slice(lastIndex), highlight: false });
+    }
+
+    return parts.length ? parts : [{ text, highlight: false }];
   };
 
   function getDataValue(label: string) {
@@ -164,5 +200,9 @@ limitations under the License. -->
 
   .warning {
     color: var(--sw-orange);
+  }
+
+  .keyword-highlight {
+    color: red;
   }
 </style>
