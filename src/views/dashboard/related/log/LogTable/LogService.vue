@@ -73,9 +73,9 @@ limitations under the License. -->
 
   const highlightKeywords = (content: string): HighlightPart[] => {
     const text = `${content || ""}`;
-    const keywords = Object.values(logStore.conditions.keywordsOfContent || {})
-      .map((keyword) => `${keyword}`)
-      .filter(Boolean);
+    const keywords = [
+      ...new Set(Object.values(logStore.conditions.keywordsOfContent || {}).map((keyword) => `${keyword}`.trim())),
+    ].filter(Boolean);
 
     if (!keywords.length) {
       return [{ text, highlight: false }];
@@ -203,6 +203,6 @@ limitations under the License. -->
   }
 
   .keyword-highlight {
-    color: red;
+    color: var(--sw-red);
   }
 </style>
