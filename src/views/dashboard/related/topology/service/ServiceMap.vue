@@ -304,70 +304,103 @@ limitations under the License. -->
     }
     return Number(d[legendMQE.expression]) && d.isReal ? icons.CUBEERROR : icons.CUBE;
   }
+
+  type TooltipRow = {
+    label: string;
+    value: unknown;
+  };
+
+  function isTooltipRow(row: TooltipRow | null): row is TooltipRow {
+    return Boolean(row);
+  }
+
+  function renderTooltipRows(rows: TooltipRow[]) {
+    tooltip.value.html("");
+    const row = tooltip.value.selectAll("div").data(rows).enter().append("div").attr("class", "mb-5");
+
+    row
+      .append("span")
+      .attr("class", "grey")
+      .text((d: TooltipRow) => `${d.label}: `);
+    row.append("span").text((d: TooltipRow) => `${d.value ?? ""}`);
+  }
+
   function showNodeTip(event: MouseEvent, data: Node) {
     const nodeMetrics: string[] = settings.value.nodeExpressions || [];
     const nodeMetricConfig = settings.value.nodeMetricConfig || [];
-    const html = nodeMetrics.map((m, index) => {
+    const metrics = nodeMetrics.map((m, index) => {
       const metric =
         topologyStore.nodeMetricValue[m]?.values?.find((val: { id: string; value: unknown }) => val.id === data.id) ||
         null;
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric?.value || NaN} ${
-        opt.unit || "unknown"
-      }</div>`;
+
+      return {
+        label: opt.label || m,
+        value: `${metric?.value || NaN} ${opt.unit || "unknown"}`,
+      };
     });
-    let tipHtml = `<div class="mb-5"><span class="grey">name: </span>${
-      data.name
-    }</div><div class="mb-5"><span class="grey">type: </span>${data.type || "UNKNOWN"}</div>`;
-    if (data.isReal) {
-      tipHtml = [tipHtml, ...html].join(" ");
-    }
+    const rows = [
+      { label: "name", value: data.name },
+      { label: "type", value: data.type || "UNKNOWN" },
+    ];
+    const tipRows = data.isReal ? [...rows, ...metrics] : rows;
+
     tooltip.value
       .style("top", event.offsetY + 10 + "px")
       .style("left", event.offsetX + 10 + "px")
-      .style("visibility", "visible")
-      .html(tipHtml);
+      .style("visibility", "visible");
+    renderTooltipRows(tipRows);
   }
   function showLinkTip(event: MouseEvent, data: Call) {
     const linkClientMetrics: string[] = settings.value.linkClientExpressions || [];
     const linkServerMetricConfig: MetricConfigOpt[] = settings.value.linkServerMetricConfig || [];
     const linkClientMetricConfig: MetricConfigOpt[] = settings.value.linkClientMetricConfig || [];
     const linkServerMetrics: string[] = settings.value.linkServerExpressions || [];
-    const htmlServer = linkServerMetrics.map((m, index) => {
-      const metric = topologyStore.linkServerMetrics[m]?.values?.find(
-        (val: { id: string; value: unknown }) => val.id === data.id,
-      );
-      if (metric) {
-        const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
-        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value || NaN} ${
-          opt.unit || ""
-        }</div>`;
-      }
-    });
-    const htmlClient = linkClientMetrics.map((m: string, index: number) => {
-      const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
-      const metric = topologyStore.linkClientMetrics[m]?.values?.find(
-        (val: { id: string; value: unknown }) => val.id === data.id,
-      );
-      if (metric) {
-        return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric.value || NaN} ${
-          opt.unit || ""
-        }</div>`;
-      }
-    });
-    const html = [
-      ...htmlServer,
-      ...htmlClient,
-      `<div><span class="grey">${t("detectPoint")}:</span>${data.detectPoints.join(" | ")}</div>`,
-    ].join(" ");
+    const serverRows = linkServerMetrics
+      .map((m, index): TooltipRow | null => {
+        const metric = topologyStore.linkServerMetrics[m]?.values?.find(
+          (val: { id: string; value: unknown }) => val.id === data.id,
+        );
+        if (metric) {
+          const opt: MetricConfigOpt = linkServerMetricConfig[index] || {};
+          return {
+            label: opt.label || m,
+            value: `${metric.value || NaN} ${opt.unit || ""}`,
+          };
+        }
+        return null;
+      })
+      .filter(isTooltipRow);
+    const clientRows = linkClientMetrics
+      .map((m: string, index: number): TooltipRow | null => {
+        const opt: MetricConfigOpt = linkClientMetricConfig[index] || {};
+        const metric = topologyStore.linkClientMetrics[m]?.values?.find(
+          (val: { id: string; value: unknown }) => val.id === data.id,
+        );
+        if (metric) {
+          return {
+            label: opt.label || m,
+            value: `${metric.value || NaN} ${opt.unit || ""}`,
+          };
+        }
+        return null;
+      })
+      .filter(isTooltipRow);
+    const rows = [
+      ...serverRows,
+      ...clientRows,
+      {
+        label: t("detectPoint"),
+        value: data.detectPoints.join(" | "),
+      },
+    ];
 
     tooltip.value
       .style("top", event.offsetY + "px")
       .style("left", event.offsetX + "px")
-      .style("visibility", "visible")
-      .html(html);
+      .style("visibility", "visible");
+    renderTooltipRows(rows);
   }
-
   function hideTip() {
     tooltip.value.style("visibility", "hidden");
   }

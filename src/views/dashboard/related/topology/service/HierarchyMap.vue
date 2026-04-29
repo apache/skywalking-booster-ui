@@ -130,26 +130,32 @@ limitations under the License. -->
       ).dashboard || {};
     const exprssions = dashboard.expressions || [];
     const nodeMetricConfig = dashboard.expressionsConfig || [];
-    const html = exprssions.map((m: string, index: number) => {
+    const metrics = exprssions.map((m: string, index: number) => {
       const metric =
         topologyStore.hierarchyNodeMetrics[data.layer || ""][m].values.find(
           (val: { id: string; value: unknown }) => val.id === data.id,
         ) || null;
       const opt: MetricConfigOpt = nodeMetricConfig[index] || {};
-      return ` <div class="mb-5"><span class="grey">${opt.label || m}: </span>${metric?.value || NaN} ${
-        opt.unit || ""
-      }</div>`;
-    });
-    const tipHtml = [
-      `<div class="mb-5"><span class="grey">name: </span>${data.name}</div><div class="mb-5"><span class="grey">layer: </span>${data.layer}</div>`,
-      ...html,
-    ].join(" ");
 
+      return {
+        label: opt.label || m,
+        value: `${metric?.value || NaN} ${opt.unit || ""}`,
+      };
+    });
     popover.value
       .style("top", event.offsetY + 10 + "px")
       .style("left", event.offsetX + 10 + "px")
       .style("visibility", "visible")
-      .html(tipHtml);
+      .html("");
+
+    const rows = [{ label: "name", value: data.name }, { label: "layer", value: data.layer }, ...metrics];
+
+    const row = popover.value.selectAll("div").data(rows).enter().append("div").attr("class", "mb-5");
+    row
+      .append("span")
+      .attr("class", "grey")
+      .text((d: { label: string }) => `${d.label}: `);
+    row.append("span").text((d: { value: unknown }) => `${d.value ?? ""}`);
   }
 
   function hideTip() {
