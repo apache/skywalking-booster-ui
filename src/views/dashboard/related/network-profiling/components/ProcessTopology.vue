@@ -461,14 +461,28 @@ limitations under the License. -->
     }
   }
 
-  function showNodeTip(d: ProcessNode, event: MouseEvent) {
-    const tipHtml = ` <div class="mb-5"><span class="grey">name: </span>${d.name}</div>`;
+  type TooltipRow = {
+    label: string;
+    value: unknown;
+  };
 
+  function renderTooltipRows(rows: TooltipRow[]) {
+    tooltip.value.html("");
+    const row = tooltip.value.selectAll("div").data(rows).enter().append("div").attr("class", "mb-5");
+
+    row
+      .append("span")
+      .attr("class", "grey")
+      .text((d: TooltipRow) => `${d.label}: `);
+    row.append("span").text((d: TooltipRow) => `${d.value ?? ""}`);
+  }
+
+  function showNodeTip(d: ProcessNode, event: MouseEvent) {
     tooltip.value
       .style("top", event.offsetY + "px")
       .style("left", event.offsetX + "px")
-      .style("visibility", "visible")
-      .html(tipHtml);
+      .style("visibility", "visible");
+    renderTooltipRows([{ label: "name", value: d.name }]);
   }
 
   function hideNodeTip() {
@@ -487,14 +501,14 @@ limitations under the License. -->
     if (types.includes("tls")) {
       l = "TLS";
     }
-    const tipHtml = `<div><span class="grey">${t("detectPoint")}: </span>${link.detectPoints.join(" | ")}</div>
-        <div><span class="grey">Type: </span>${l}</div>`;
-
     tooltip.value
       .style("top", event.offsetY + "px")
       .style("left", event.offsetX + "px")
-      .style("visibility", "visible")
-      .html(tipHtml);
+      .style("visibility", "visible");
+    renderTooltipRows([
+      { label: t("detectPoint"), value: link.detectPoints.join(" | ") },
+      { label: "Type", value: l },
+    ]);
   }
 
   function hideLinkTip() {
