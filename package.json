@@ -35,7 +35,7 @@
     "monaco-editor": "^0.34.1",
     "pinia": "^2.0.28",
     "vis-timeline": "^8.5.1",
-    "vue": "^3.2.45",
+    "vue": "^3.5.43",
     "vue-grid-layout": "^3.0.0-beta1",
     "vue-i18n": "^9.14.5",
     "vue-router": "^4.1.6",
